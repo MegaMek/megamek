@@ -29,6 +29,8 @@ public interface Targetable
     public static final int TYPE_SEARCHLIGHT          = 12;
     public static final int TYPE_FLARE_DELIVER        = 13;
     public static final int TYPE_HEX_BOMB             = 14;
+    public static final int TYPE_FUEL_TANK            = 15;
+    public static final int TYPE_FUEL_TANK_IGNITE     = 16;
 
     public int getTargetType();
     public int getTargetId();

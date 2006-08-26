@@ -182,9 +182,10 @@ public class PushAttackAction
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
-            return new ToHitData( ToHitData.IMPOSSIBLE,
-                                  "You can not push a building (well, you can, but it won't do anything)." );
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
+            return new ToHitData(ToHitData.IMPOSSIBLE,
+                    "You can not push a building (well, you can, but it won't do anything).");
         }
 
         // Can't target woods or ignite a building with a physical.

@@ -481,7 +481,7 @@ public class MiniMap extends Canvas {
             } else if (heightDisplayMode == SHOW_GROUND_HEIGHT) {
                 height = h.floor();
             } else if (heightDisplayMode == SHOW_TOTAL_HEIGHT) {
-                height = (h.getTerrain(Terrains.BUILDING) != null) ? h.ceiling() : h.floor();
+                height = ((h.getTerrain(Terrains.BUILDING) != null) || (h.getTerrain(Terrains.FUEL_TANK) != null)) ? h.ceiling() : h.floor();
             }
             if (height != 0) {
                 g.drawString(height + "", baseX + 5, baseY + 5); //$NON-NLS-1$
@@ -882,7 +882,7 @@ public class MiniMap extends Canvas {
                 if (g < 0) g = 0;
                 if (b < 0) b = 0;
                 return new Color(r, g, b);
-
+            case Terrains.FUEL_TANK:
             case Terrains.BUILDING:
                 level = Math.abs(x.ceiling());
                 // By experiment it is possible to make only 6 distinctive color steps

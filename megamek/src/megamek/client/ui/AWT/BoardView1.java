@@ -1365,6 +1365,8 @@ public class BoardView1
                 stringsSize ++;
             if (mhex.containsTerrain(Terrains.BUILDING))
                 stringsSize ++;
+            if (mhex.containsTerrain(Terrains.FUEL_TANK))
+                stringsSize ++;
             if (mhex.containsTerrain(Terrains.BRIDGE)) 
                 stringsSize ++;
             if (mhex.containsTerrain(Terrains.JUNGLE)) 
@@ -1430,10 +1432,10 @@ public class BoardView1
             }
 
             // Do we have a building?
-            if ( mhex.containsTerrain(Terrains.BUILDING) ) {
+            if ((mhex.containsTerrain(Terrains.FUEL_TANK)) || (mhex.containsTerrain(Terrains.BUILDING))) {
                 // Get the building.
                 Building bldg = game.getBoard().getBuildingAt( mcoords );
-                StringBuffer buf = new StringBuffer( Messages.getString("BoardView1.Height") ); //$NON-NLS-1$
+                StringBuffer buf = new StringBuffer(Messages.getString("BoardView1.Height")); //$NON-NLS-1$
                 // Each hex of a building has its own elevation.
                 buf.append( mhex.terrainLevel(Terrains.BLDG_ELEV) );
                 buf.append( " " ); //$NON-NLS-1$

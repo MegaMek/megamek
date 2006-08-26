@@ -31,6 +31,7 @@ import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentMode;
 import megamek.common.EquipmentType;
 import megamek.common.Flare;
+import megamek.common.FuelTank;
 import megamek.common.Game;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
@@ -630,7 +631,7 @@ public class Server implements Runnable {
                 //send(connId, createReportPacket(player));
                 send(connId, createAllReportsPacket(player));
 
-                // Send Entites *before* other phase changes.
+                // Send entities *before* other phase changes.
                 if (doBlind()) {
                     send(connId, createFilteredFullEntitiesPacket(player));
                 }
@@ -2839,19 +2840,16 @@ public class Server implements Runnable {
      * @param   collapse - a <code>boolean</code> value that specifies that
      *          the building collapsed (when <code>true</code>).
      */
-    private void addAffectedBldg( Building bldg, boolean collapse ) {
+    private void addAffectedBldg(Building bldg, boolean collapse) {
 
         // If the building collapsed, then the clients have already
         // been notified, so remove it from the notification list.
-        if ( collapse ) {
-            System.err.print( "Removing building from a list of " + affectedBldgs.size() + '\n' );//killme
-            affectedBldgs.remove( bldg );
-            System.err.print( "... now list of " + affectedBldgs.size() + '\n' );//killme
-        }
-
-        // Otherwise, make sure that this building is tracked.
-        else {
-            affectedBldgs.put( bldg, Boolean.FALSE );
+        if (collapse) {
+            System.err.print("Removing building from a list of " + affectedBldgs.size() + '\n');//killme
+            affectedBldgs.remove(bldg);
+            System.err.print("... now list of " + affectedBldgs.size() + '\n');//killme
+        } else { // Otherwise, make sure that this building is tracked.
+            affectedBldgs.put(bldg, Boolean.FALSE);
         }
     }
 
@@ -3697,9 +3695,11 @@ public class Server implements Runnable {
                                 ( entity );
                             if ( !bldgSuffered ) {
                                 Report buildingReport = damageBuilding( bldg, chargeDamage );
-                                buildingReport.indent(2);
-                                buildingReport.subject = entity.getId();
-                                addReport(buildingReport);
+                                if (buildingReport != null) {
+                                    buildingReport.indent(2);
+                                    buildingReport.subject = entity.getId();
+                                    addReport(buildingReport);
+                                }
 
                                 // Apply damage to the attacker.
                                 int toAttacker = ChargeAttackAction.getDamageTakenBy
@@ -7967,7 +7967,11 @@ public class Server implements Runnable {
                 && !isAngelECMAffected)
                 || wtype.getAmmoType() == AmmoType.T_NARC
                 || ae.getSwarmTargetId() == wr.waa.getTargetId()
-                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE || target.getTargetType() == Targetable.TYPE_BUILDING) && ae.getPosition().distance(target.getPosition()) <= 1) {
+                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
+                    || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
+                    || target.getTargetType() == Targetable.TYPE_FUEL_TANK
+                    || target.getTargetType() == Targetable.TYPE_BUILDING)
+                && ae.getPosition().distance(target.getPosition()) <= 1) {
             bAllShotsHit = true;
         }
 
@@ -8422,10 +8426,12 @@ public class Server implements Runnable {
                     int toBldg = hits * nDamPerHit;
                     if ( toBldg > 0 ) {
                         Report buildingReport = damageBuilding( bldg, toBldg );
-                        buildingReport.indent(2);
-                        buildingReport.newlines = 1;
-                        buildingReport.subject = subjectId;
-                        addReport(buildingReport);
+                        if (buildingReport != null) {
+                            buildingReport.indent(2);
+                            buildingReport.newlines = 1;
+                            buildingReport.subject = subjectId;
+                            addReport(buildingReport);
+                        }
                     }
 
                 } // End rounds-hit
@@ -8468,9 +8474,12 @@ public class Server implements Runnable {
                     damageBuilding( bldg,
                                     Math.min( toBldg, bldgAbsorbs ),
                                     " absorbs the shots, taking "  );
-                buildingReport.newlines = 1;
-                buildingReport.subject = subjectId;
-                addReport(buildingReport);
+                if (buildingReport != null) {
+                    buildingReport.newlines = 1;
+                    buildingReport.subject = subjectId;
+                    addReport(buildingReport);
+                }
+
                 return !bMissed;
             }
             nDamPerHit = Compute.d6(hits);
@@ -8515,9 +8524,11 @@ public class Server implements Runnable {
                     damageBuilding( bldg,
                                     Math.min( toBldg, bldgAbsorbs ),
                                     " absorbs the shots, taking "  );
-                buildingReport.newlines = 1;
-                buildingReport.subject = subjectId;
-                addReport(buildingReport);
+                if (buildingReport != null) {
+                    buildingReport.newlines = 1;
+                    buildingReport.subject = subjectId;
+                    addReport(buildingReport);
+                }
                 return !bMissed;
             }
 
@@ -8538,9 +8549,11 @@ public class Server implements Runnable {
             // instead of later and then clear the variable.
             if ( bldgAbsorbs > 0 ) {
                 Report buildingReport = damageBuilding( bldg, bldgAbsorbs );
-                buildingReport.indent(2);
-                buildingReport.subject = subjectId;
-                addReport(buildingReport);
+                if (buildingReport != null) {
+                    buildingReport.indent(2);
+                    buildingReport.subject = subjectId;
+                    addReport(buildingReport);
+                }
                 bldgAbsorbs = 0;
             }
 
@@ -8807,8 +8820,8 @@ public class Server implements Runnable {
             }
 
             // Targeting a building.
-            if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
-
+            if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                    || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
                 // Is the building hit by Inferno rounds?
                 if ( bInferno ) {
 
@@ -8846,10 +8859,12 @@ public class Server implements Runnable {
                     }
                     addNewLines();
                     Report buildingReport = damageBuilding( bldg, nDamage );
-                    buildingReport.indent(2);
-                    buildingReport.newlines = 1;
-                    buildingReport.subject = subjectId;
-                    addReport(buildingReport);
+                    if (buildingReport != null) {
+                        buildingReport.indent(2);
+                        buildingReport.newlines = 1;
+                        buildingReport.subject = subjectId;
+                        addReport(buildingReport);
+                    }
 
                     // Damage any infantry in the hex.
                     damageInfantryIn( bldg, nDamage );
@@ -8885,10 +8900,12 @@ public class Server implements Runnable {
                             int toBldg = nDamPerHit * Math.min( bldgAbsorbs,
                                                                 hits );
                             Report buildingReport = damageBuilding( bldg, toBldg );
-                            buildingReport.indent(2);
-                            buildingReport.newlines = 1;
-                            buildingReport.subject = subjectId;
-                            addReport(buildingReport);
+                            if (buildingReport != null) {
+                                buildingReport.indent(2);
+                                buildingReport.newlines = 1;
+                                buildingReport.subject = subjectId;
+                                addReport(buildingReport);
+                            }
                         }
 
                      return !bMissed;
@@ -9035,9 +9052,11 @@ public class Server implements Runnable {
                         nDamage -= toBldg;
                         addNewLines();
                         Report buildingReport = damageBuilding( bldg, toBldg );
-                        buildingReport.indent(2);
-                        buildingReport.subject = subjectId;
-                        addReport(buildingReport);
+                        if (buildingReport != null) {
+                            buildingReport.indent(2);
+                            buildingReport.subject = subjectId;
+                            addReport(buildingReport);
+                        }
                     }
 
                     // A building may absorb the entire shot.
@@ -9360,9 +9379,11 @@ public class Server implements Runnable {
                 // Only report if damage was done to the building.
                 if ( damage > 0 ) {
                     Report buildingReport = damageBuilding( bldg, damage );
-                    buildingReport.indent();
-                    buildingReport.subject = ae.getId();
-                    addReport(buildingReport);
+                    if (buildingReport != null) {
+                        buildingReport.indent();
+                        buildingReport.subject = ae.getId();
+                        addReport(buildingReport);
+                    }
                 }
 
             }
@@ -9370,17 +9391,19 @@ public class Server implements Runnable {
         }
 
         // Targeting a building.
-        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
-
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             // The building takes the full brunt of the attack.
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
             Report buildingReport = damageBuilding( bldg, damage );
-            buildingReport.indent();
-            buildingReport.newlines = 1;
-            buildingReport.subject = ae.getId();
-            addReport(buildingReport);
+            if (buildingReport != null) {
+                buildingReport.indent();
+                buildingReport.newlines = 1;
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
 
             // Damage any infantry in the hex.
             damageInfantryIn( bldg, damage );
@@ -9405,9 +9428,11 @@ public class Server implements Runnable {
             damage -= toBldg;
             addNewLines();
             Report buildingReport = damageBuilding( bldg, toBldg );
-            buildingReport.indent();
-            buildingReport.subject = ae.getId();
-            addReport(buildingReport);
+            if (buildingReport != null) {
+                buildingReport.indent();
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
         }
 
         // A building may absorb the entire shot.
@@ -9545,9 +9570,11 @@ public class Server implements Runnable {
                 // Only report if damage was done to the building.
                 if ( damage > 0 ) {
                     Report buildingReport = damageBuilding( bldg, damage );
-                    buildingReport.indent();
-                    buildingReport.subject = ae.getId();
-                    addReport(buildingReport);
+                    if (buildingReport != null) {
+                        buildingReport.indent();
+                        buildingReport.subject = ae.getId();
+                        addReport(buildingReport);
+                    }
                 }
 
             }
@@ -9555,16 +9582,18 @@ public class Server implements Runnable {
         }
 
         // Targeting a building.
-        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
-
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             // The building takes the full brunt of the attack.
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
             Report buildingReport = damageBuilding( bldg, damage );
-            buildingReport.indent();
-            buildingReport.subject = ae.getId();
-            addReport(buildingReport);
+            if (buildingReport != null) {
+                buildingReport.indent();
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
 
             // Damage any infantry in the hex.
             damageInfantryIn( bldg, damage );
@@ -9589,9 +9618,11 @@ public class Server implements Runnable {
             damage -= toBldg;
             addNewLines();
             Report buildingReport = damageBuilding( bldg, toBldg );
-            buildingReport.indent();
-            buildingReport.subject = ae.getId();
-            addReport(buildingReport);
+            if (buildingReport != null) {
+                buildingReport.indent();
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
         }
 
         // A building may absorb the entire shot.
@@ -9752,9 +9783,11 @@ public class Server implements Runnable {
                 // Only report if damage was done to the building.
                 if ( damage > 0 ) {
                     Report buildingReport = damageBuilding( bldg, damage );
-                    buildingReport.indent();
-                    buildingReport.subject = ae.getId();
-                    addReport(buildingReport);
+                    if (buildingReport != null) {
+                        buildingReport.indent();
+                        buildingReport.subject = ae.getId();
+                        addReport(buildingReport);
+                    }
                 }
 
             }
@@ -9762,17 +9795,19 @@ public class Server implements Runnable {
         }
 
         // Targeting a building.
-        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
-
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             damage += pr.damageRight;
             // The building takes the full brunt of the attack.
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
             Report buildingReport = damageBuilding( bldg, damage );
-            buildingReport.indent();
-            buildingReport.subject = ae.getId();
-            addReport(buildingReport);
+            if (buildingReport != null) {
+                buildingReport.indent();
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
 
             // Damage any infantry in the hex.
             damageInfantryIn( bldg, damage );
@@ -9801,9 +9836,11 @@ public class Server implements Runnable {
                 damage -= toBldg;
                 addNewLines();
                 Report buildingReport = damageBuilding( bldg, toBldg );
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+                if (buildingReport != null) {
+                    buildingReport.indent();
+                    buildingReport.subject = ae.getId();
+                    addReport(buildingReport);
+                }
             }
     
             // A building may absorb the entire shot.
@@ -9909,9 +9946,11 @@ public class Server implements Runnable {
                 // Only report if damage was done to the building.
                 if ( damage > 0 ) {
                     Report buildingReport = damageBuilding( bldg, damage );
-                    buildingReport.indent();
-                    buildingReport.subject = ae.getId();
-                    addReport(buildingReport);
+                    if (buildingReport != null) {
+                        buildingReport.indent();
+                        buildingReport.subject = ae.getId();
+                        addReport(buildingReport);
+                    }
                 }
 
             }
@@ -9919,16 +9958,18 @@ public class Server implements Runnable {
         }
 
         // Targeting a building.
-        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
-
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             // The building takes the full brunt of the attack.
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
             Report buildingReport = damageBuilding( bldg, damage );
-            buildingReport.indent();
-            buildingReport.subject = ae.getId();
-            addReport(buildingReport);
+            if (buildingReport != null) {
+                buildingReport.indent();
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
 
             // Damage any infantry in the hex.
             damageInfantryIn( bldg, damage );
@@ -9953,9 +9994,11 @@ public class Server implements Runnable {
             damage -= toBldg;
             addNewLines();
             Report buildingReport = damageBuilding( bldg, toBldg );
-            buildingReport.indent();
-            buildingReport.subject = ae.getId();
-            addReport(buildingReport);
+            if (buildingReport != null) {
+                buildingReport.indent();
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
         }
 
         // A building may absorb the entire shot.
@@ -10377,9 +10420,11 @@ public class Server implements Runnable {
                 // Only report if damage was done to the building.
                 if ( damage > 0 ) {
                     Report buildingReport = damageBuilding( bldg, damage );
-                    buildingReport.indent();
-                    buildingReport.subject = ae.getId();
-                    addReport(buildingReport);
+                    if (buildingReport != null) {
+                        buildingReport.indent();
+                        buildingReport.subject = ae.getId();
+                        addReport(buildingReport);
+                    }
                 }
 
             }
@@ -10387,16 +10432,18 @@ public class Server implements Runnable {
         }
 
         // Targeting a building.
-        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
-
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             // The building takes the full brunt of the attack.
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
             Report buildingReport = damageBuilding( bldg, damage );
-            buildingReport.indent();
-            buildingReport.subject = ae.getId();
-            addReport(buildingReport);
+            if (buildingReport != null) {
+                buildingReport.indent();
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
 
             // Damage any infantry in the hex.
             damageInfantryIn( bldg, damage );
@@ -10421,9 +10468,11 @@ public class Server implements Runnable {
             damage -= toBldg;
             addNewLines();
             Report buildingReport = damageBuilding( bldg, toBldg );
-            buildingReport.indent();
-            buildingReport.subject = ae.getId();
-            addReport(buildingReport);
+            if (buildingReport != null) {
+                buildingReport.indent();
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
         }
 
         // A building may absorb the entire shot.
@@ -11081,19 +11130,18 @@ public class Server implements Runnable {
             addReport(r);
             // move attacker to side hex
             doEntityDisplacement(ae, src, dest, null);
-        }
-
-        // Targeting a building.
-        else if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
-
+        } else if ((target.getTargetType() == Targetable.TYPE_BUILDING)
+                || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) { // Targeting a building.
             // The building takes the full brunt of the attack.
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
             Report buildingReport = damageBuilding( bldg, damage );
-            buildingReport.indent();
-            buildingReport.subject = ae.getId();
-            addReport(buildingReport);
+            if (buildingReport != null) {
+                buildingReport.indent();
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
 
             // Damage any infantry in the hex.
             damageInfantryIn( bldg, damage );
@@ -11219,9 +11267,11 @@ public class Server implements Runnable {
                 cluster -= toBldg;
                 addNewLines();
                 Report buildingReport = damageBuilding( bldg, toBldg );
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+                if (buildingReport != null) {
+                    buildingReport.indent();
+                    buildingReport.subject = ae.getId();
+                    addReport(buildingReport);
+                }
             }
 
             // A building may absorb the entire shot.
@@ -11456,21 +11506,20 @@ public class Server implements Runnable {
         addReport(r);
 
         // Targeting a building.
-        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING) || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
 
             // The building takes the full brunt of the attack.
             Report buildingReport = damageBuilding( bldg, damage );
-            buildingReport.indent();
-            buildingReport.subject = ae.getId();
-            addReport(buildingReport);
+            if (buildingReport != null) {
+                buildingReport.indent();
+                buildingReport.subject = ae.getId();
+                addReport(buildingReport);
+            }
 
             // Damage any infantry in the hex.
             damageInfantryIn( bldg, damage );
 
-        }
-
-        // Target isn't building.
-        else {
+        } else { // Target isn't building.
             if (glancing) {
                 damage = (int)Math.floor(damage/2.0);
             }
@@ -11541,8 +11590,7 @@ public class Server implements Runnable {
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(ToHitData.HIT_KICK, ToHitData.SIDE_FRONT);
-            addReport(
-                                      damageEntity(ae, hit, cluster));
+            addReport(damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
         }
 
@@ -11550,7 +11598,7 @@ public class Server implements Runnable {
 
         // That's it for target buildings.
         // TODO: where do I put the attacker?!?
-        if ( target.getTargetType() == Targetable.TYPE_BUILDING ) {
+        if ((target.getTargetType() == Targetable.TYPE_BUILDING) || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
             return;
         }
 
@@ -12077,11 +12125,11 @@ public class Server implements Runnable {
                 continue;
             }
             IHex entityHex = game.getBoard().getHex(entity.getPosition());
-            if (entity instanceof Infantry &&
-                    !(entity instanceof BattleArmor) &&
-                    game.getTemperatureDifference() > 0 &&
-                    !entityHex.containsTerrain(Terrains.BUILDING) &&
-                    entity.getTransportId() == Entity.NONE ) {
+            if (entity instanceof Infantry
+                    && !(entity instanceof BattleArmor)
+                    && game.getTemperatureDifference() > 0
+                    && !entityHex.containsTerrain(Terrains.BUILDING)
+                    && entity.getTransportId() == Entity.NONE ) {
                 Report r = new Report(5090);
                 r.subject = entity.getId();
                 r.addDesc(entity);
@@ -12783,15 +12831,16 @@ public class Server implements Runnable {
         // Is the infantry in the open?
         if ( isPlatoon && !te.isDestroyed() && !te.isDoomed() && ((Infantry)te).getDugIn() != Infantry.DUG_IN_COMPLETE) {
             te_hex = game.getBoard().getHex( te.getPosition() );
-            if ( te_hex != null &&
-                 bFrag != 6 &&
-                 !te_hex.containsTerrain( Terrains.WOODS ) &&
-                 !te_hex.containsTerrain( Terrains.JUNGLE ) &&
-                 !te_hex.containsTerrain( Terrains.ROUGH ) &&
-                 !te_hex.containsTerrain( Terrains.RUBBLE ) &&
-                 !te_hex.containsTerrain( Terrains.SWAMP ) &&
-                 !te_hex.containsTerrain( Terrains.BUILDING ) &&
-                 !te_hex.containsTerrain(Terrains.FORTIFIED)) {
+            if (te_hex != null
+                    && bFrag != 6
+                    && !te_hex.containsTerrain(Terrains.WOODS)
+                    && !te_hex.containsTerrain(Terrains.JUNGLE)
+                    && !te_hex.containsTerrain(Terrains.ROUGH)
+                    && !te_hex.containsTerrain(Terrains.RUBBLE)
+                    && !te_hex.containsTerrain(Terrains.SWAMP)
+                    && !te_hex.containsTerrain(Terrains.BUILDING)
+                    && !te_hex.containsTerrain(Terrains.FUEL_TANK)
+                    && !te_hex.containsTerrain(Terrains.FORTIFIED)) {
                 // PBI.  Damage is doubled.
                 damage *= 2;
                 r = new Report(6040);
@@ -13636,7 +13685,7 @@ public class Server implements Runnable {
             en.getCrew().setDoomed(true);
 
             //This is a hack so MM.NET marks the mech as not salvageable
-            if ( en instanceof Mech )
+            if (en instanceof Mech)
                 destroyLocation(en, Mech.LOC_CT);
 
             //Light our hex on fire
@@ -13657,62 +13706,108 @@ public class Server implements Runnable {
 
             //ICE explosions don't hurt anyone else, but fusion do
             if (mech.getEngine().isFusion()) {
-                //Nuke anyone that is in our hex
-                Enumeration entitesWithMe = game.getEntities(en.getPosition());
-                Hashtable entitesHit = new Hashtable();
-
-                entitesHit.put(en, en);
-
-                while (entitesWithMe.hasMoreElements()) {
-                    Entity entity = (Entity)entitesWithMe.nextElement();
-                    if ( entity.equals(en) )
-                        continue;
-                    vDesc.addAll( destroyEntity(entity, "engine explosion proximity", false, false));
-                    // Kill the crew
-                    entity.getCrew().setDoomed(true);
-                    entitesHit.put(entity, entity);
-                }
-
-                //Now we damage people near us
                 int engineRating = en.getEngine().getRating();
-                int[] damages = { 999, (engineRating / 10), (engineRating / 20), (engineRating / 40) };
-                Vector entites = game.getEntitiesVector();
-                for (int i = 0; i < entites.size(); i++) {
-                    Entity entity = (Entity)entites.elementAt(i);
-
-                    if (entitesHit.containsKey(entity))
-                        continue;
-
-                    if ( entity.isDoomed() || entity.isDestroyed() || !entity.isDeployed() )
-                        continue;
-
-                    int range = en.getPosition().distance(entity.getPosition());
-
-                    if ( range > 3 )
-                        continue;
-
-                    int damage = damages[range];
-
-                    r = new Report(6175);
-                    r.subject = entity.getId();
-                    r.indent(2);
-                    r.addDesc(entity);
-                    r.add(damage);
-                    r.newlines = 0;
-                    vDesc.addElement(r);
-
-                    while (damage > 0) {
-                        int cluster = Math.min(5, damage);
-                        HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(en, entity));
-                        vDesc.addAll( damageEntity(entity, hit, cluster));
-                        damage -= cluster;
-                    }
-                    Report.addNewline(vDesc);
-                }
+                doFusionEngineExplosion(engineRating, en.getPosition(), vDesc);
             }
         }
 
         return didExplode;
+    }
+
+    /**
+     * Extract explosion functionality for generalized explosions in areas.
+     */
+    public void doFusionEngineExplosion(int engineRating, Coords position, Vector vDesc)
+    {
+        int[] myDamages = {engineRating, (engineRating / 10), (engineRating / 20), (engineRating / 40)};
+        doExplosion(myDamages, true, position, vDesc);
+    }
+
+    /**
+     * General function to cause explosions in areas.
+     */
+    public void doExplosion(int damage, int degredation, boolean autoDestroyInSameHex, Coords position, Vector vDesc)
+    {
+        int[] myDamages = new int[1 + damage/degredation];
+        myDamages[0] = damage;
+        for (int x=1; x<myDamages.length; x++)
+            myDamages[x] = myDamages[x-1]-degredation;
+        doExplosion(myDamages, autoDestroyInSameHex, position, vDesc);
+    }
+
+    /**
+     * General function to cause explosions in areas.
+     */
+    public void doExplosion(int[] damages, boolean autoDestroyInSameHex, Coords position, Vector vDesc)
+    {
+        if (vDesc == null)
+            vDesc = new Vector();
+        Report r;
+        Hashtable entitiesHit = new Hashtable();
+
+        // We might need to nuke everyone in the explosion hex.  If so...
+        if (autoDestroyInSameHex) {
+            Enumeration entitiesWithMe = game.getEntities(position);
+
+            while (entitiesWithMe.hasMoreElements()) {
+                Entity entity = (Entity)entitiesWithMe.nextElement();
+                
+                entitiesHit.put(entity, entity);
+
+                //FIXME - I believe this is to avoid destroying it twice.  If it's not, this needs to be restored and fixed.
+                //if (entity.equals(en))
+                if (entity.isDestroyed())
+                    continue;
+
+                vDesc.addAll(destroyEntity(entity, "explosion proximity", false, false));
+                // Kill the crew
+                entity.getCrew().setDoomed(true);
+            }
+        }
+
+        //Now we damage people near the explosion.
+        Vector entities = game.getEntitiesVector();
+        for (int i = 0; i < entities.size(); i++) {
+            Entity entity = (Entity)entities.elementAt(i);
+
+            if (entitiesHit.containsKey(entity))
+                continue;
+
+            if (entity.isDoomed()
+                    || entity.isDestroyed()
+                    || !entity.isDeployed()) {
+                //FIXME
+                // IS this the behavior we want?
+                // This means, incidentally, that salvage is never affected by explosions
+                // as long as it was destroyed before the explosion.
+                continue;
+            }
+
+            int range = position.distance(entity.getPosition());
+
+            if (range >= damages.length) {
+                // Yeah, this is fine.  It's outside the blast radius.
+                continue;
+            }
+
+            int damage = damages[range];
+
+            r = new Report(6175);
+            r.subject = entity.getId();
+            r.indent(2);
+            r.addDesc(entity);
+            r.add(damage);
+            r.newlines = 0;
+            vDesc.addElement(r);
+
+            while (damage > 0) {
+                int cluster = Math.min(5, damage);
+                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(position, entity));
+                vDesc.addAll(damageEntity(entity, hit, cluster));
+                damage -= cluster;
+            }
+            Report.addNewline(vDesc);
+        }
     }
 
     /**
@@ -15488,10 +15583,11 @@ public class Server implements Runnable {
             return true;
         }
 
-        if ( !bAnyTerrain &&
-             !hex.containsTerrain(Terrains.WOODS) &&
-             !hex.containsTerrain(Terrains.JUNGLE) &&
-             !hex.containsTerrain(Terrains.BUILDING) ) {
+        if (!bAnyTerrain
+                && !hex.containsTerrain(Terrains.WOODS)
+                && !hex.containsTerrain(Terrains.JUNGLE)
+                && !hex.containsTerrain(Terrains.FUEL_TANK)
+                && !hex.containsTerrain(Terrains.BUILDING)) {
             return false;
         }
 
@@ -15583,7 +15679,9 @@ public class Server implements Runnable {
             return;
         }
         // Have to check if it's inferno smoke or from a heavy/hardened building - heavy smoke from those
-        if (infernoBurning || Building.MEDIUM < smokeHex.terrainLevel(Terrains.BUILDING)) {
+        if (infernoBurning
+                || Building.MEDIUM < smokeHex.terrainLevel(Terrains.FUEL_TANK)
+                || Building.MEDIUM < smokeHex.terrainLevel(Terrains.BUILDING)) {
             if (smokeHex.terrainLevel(Terrains.SMOKE) == 2){
                 //heavy smoke fills hex
                 r = new Report(5180, Report.PUBLIC);
@@ -17660,7 +17758,7 @@ public class Server implements Runnable {
      *          why the building took the damage.
      * @return  a <code>Report</code> to be shown to the players.
      */
-    private Report damageBuilding( Building bldg, int damage, String why ) {
+    private Report damageBuilding(Building bldg, int damage, String why) {
         Report r = new Report(1210);
         r.newlines = 0;
 
@@ -17668,16 +17766,32 @@ public class Server implements Runnable {
         if ( bldg != null && damage > 0 ) {
             int curCF = bldg.getCurrentCF();
             final int startingCF = curCF;
-            curCF -= Math.min( curCF, damage );
-            bldg.setCurrentCF( curCF );
+            curCF -= Math.min(curCF, damage);
+            bldg.setCurrentCF(curCF);
             r.messageId = 3435;
-            r.add( bldg.getName() );
-            r.add( why );
-            r.add( damage );
+            r.add(bldg.getName());
+            r.add(why);
+            r.add(damage);
 
             // If the CF is zero, the building should fall.
-            if ( curCF == 0 && startingCF != 0 ) {
-                r.messageId = 3440;
+            if (curCF == 0 && startingCF != 0) {
+                if (bldg instanceof FuelTank) {
+                    // If this is a fuel tank, we'll give it its own message.
+                    r.messageId = 3441;
+                    addReport(r);
+
+                    // ...But we ALSO need to blow up everything nearby.
+                    // Bwahahahahaha...
+                    //FIXME
+                    r = new Report(3560);
+                    addReport(r);
+                    Vector vRep = new Vector();
+                    doExplosion(((FuelTank)bldg).getMagnitude(), 10, false, (Coords)(bldg.getCoords().nextElement()), vRep);
+                    addReport(vRep);
+                    return null;
+                } else {
+                    r.messageId = 3440;
+                }
             }
 
         }
@@ -19224,8 +19338,10 @@ public class Server implements Runnable {
             if(!(ammo != null && ammo.getMunitionType() == AmmoType.M_FLECHETTE)) {
                 //damage the building
                 r = damageBuilding( bldg, damage );
-                r.subject = subjectId;
-                addReport(r);
+                if (r != null) {
+                    r.subject = subjectId;
+                    addReport(r);
+                }
                 addNewLines();
             }
         }

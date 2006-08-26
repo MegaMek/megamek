@@ -83,7 +83,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         final int targetHeight = targetElevation + target.getHeight();
         Building bldg = game.getBoard().getBuildingAt( this.getTargetPos() );
         ToHitData toHit = null;
-        boolean targIsBuilding = (getTargetType() == Targetable.TYPE_BUILDING);
+        boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK) || (getTargetType() == Targetable.TYPE_BUILDING));
 
         // can't target yourself
         if (ae.equals(te)) {
@@ -163,8 +163,9 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if (target.getTargetType() == Targetable.TYPE_BUILDING ||
-            target instanceof GunEmplacement) {
+        if (target.getTargetType() == Targetable.TYPE_BUILDING
+                || target.getTargetType() == Targetable.TYPE_FUEL_TANK
+                || target instanceof GunEmplacement) {
             return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Targeting adjacent building.");
         }
 

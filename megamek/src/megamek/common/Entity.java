@@ -774,7 +774,7 @@ public abstract class Entity extends TurnOrdered
                 int bldcur = Math.max(0, current.terrainLevel(Terrains.BLDG_ELEV));
                 int bldnex = Math.max(0, next.terrainLevel(Terrains.BLDG_ELEV));
                 if((assumedElevation == bldcur && climb && (this instanceof Mech))
-                    || retVal > bldnex) {
+                        || retVal > bldnex) {
                     retVal = bldnex;
                 }
             }

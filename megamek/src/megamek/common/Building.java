@@ -20,7 +20,7 @@ import java.util.Enumeration;
 import java.io.Serializable;
 
 /**
- * This class represents a single, possibly multi-hex building in the board.
+ * This class represents a single, possibly multi-hex building on the board.
  *
  * @author  Suvarov454@sourceforge.net (James A. Damour )
  * @version $Revision$
@@ -218,9 +218,11 @@ public class Building implements Serializable {
 
         // Set the building's name.
         StringBuffer buffer = new StringBuffer();
-        if(structureType == Terrains.BUILDING) {
+        if (structureType == Terrains.FUEL_TANK) {
+            buffer.append("Fuel Tank #");
+        } else if (structureType == Terrains.BUILDING) {
             buffer.append("Building #");
-        } else if(structureType == Terrains.BRIDGE) {
+        } else if (structureType == Terrains.BRIDGE) {
             buffer.append("Bridge #");
         } else {
             buffer.append("Structure #");
@@ -338,9 +340,9 @@ public class Building implements Serializable {
      *          <code>IllegalArgumentException</code> is thrown.
      */
     public void setCurrentCF( int cf ) {
-        if ( cf < 0 ) {
+        if (cf < 0) {
             throw new IllegalArgumentException
-                ( "Invalid value for Construction Factor: " + cf );
+                ("Invalid value for Construction Factor: " + cf);
         }
 
         this.currentCF = cf;

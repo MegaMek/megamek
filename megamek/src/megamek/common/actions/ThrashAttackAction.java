@@ -94,16 +94,19 @@ public class ThrashAttackAction extends AbstractAttackAction {
         // Check terrain.
         IHex hex = game.getBoard().getHex(ae.getPosition());
         if (hex.containsTerrain(Terrains.WOODS)
-            || hex.containsTerrain(Terrains.JUNGLE)
-            || hex.containsTerrain(Terrains.ROUGH)
-            || hex.containsTerrain(Terrains.RUBBLE)
-            || hex.containsTerrain(Terrains.BUILDING)) {
+                || hex.containsTerrain(Terrains.JUNGLE)
+                || hex.containsTerrain(Terrains.ROUGH)
+                || hex.containsTerrain(Terrains.RUBBLE)
+                || hex.containsTerrain(Terrains.FUEL_TANK)
+                || hex.containsTerrain(Terrains.BUILDING)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Not a clear or pavement hex.");
         }
 
         // Can't target woods or a building with a thrash attack.
         if (target.getTargetType() == Targetable.TYPE_BUILDING
             || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
+            || target.getTargetType() == Targetable.TYPE_FUEL_TANK
+            || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
             || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
             || target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Invalid attack");

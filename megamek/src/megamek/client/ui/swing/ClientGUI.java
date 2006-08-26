@@ -934,6 +934,11 @@ public class ClientGUI
                     if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
                         popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_IGNITE)));
                     }
+                } else if (h != null && h.containsTerrain(Terrains.FUEL_TANK)) {
+                    popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.getBoard(), false)));
+                    if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
+                        popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.getBoard(), true)));
+                    }
                 } else if (h != null && h.containsTerrain(Terrains.BUILDING)) {
                     popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.getBoard(), false)));
                     if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$

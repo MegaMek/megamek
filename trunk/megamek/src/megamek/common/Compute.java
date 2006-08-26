@@ -20,6 +20,7 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+import megamek.common.Coords;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -2274,6 +2275,10 @@ public class Compute {
         }
         return LosEffects.calculateLos(game, ae.getId(), target).canSee()
                 && ae.getCrew().isActive();
+    }
+
+    public static int targetSideTable(Coords inPosition, Targetable target) {
+        return target.sideTable(inPosition);
     }
 
     public static int targetSideTable(Entity attacker, Targetable target) {

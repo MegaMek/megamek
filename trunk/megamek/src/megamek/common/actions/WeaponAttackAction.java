@@ -493,21 +493,25 @@ public class WeaponAttackAction extends AbstractAttackAction {
     
     
         // Attacks against adjacent buildings automatically hit.
-        if ( distance == 1 &&
-             ( target.getTargetType() == Targetable.TYPE_BUILDING ||
-               target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
-               target instanceof GunEmplacement ) ) {
-            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
-                                  "Targeting adjacent building." );
+        if (distance == 1
+                && (target.getTargetType() == Targetable.TYPE_BUILDING
+                    || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
+                    || target.getTargetType() == Targetable.TYPE_FUEL_TANK
+                    || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
+                    || target instanceof GunEmplacement)) {
+            return new ToHitData(ToHitData.AUTOMATIC_SUCCESS,
+                                  "Targeting adjacent building.");
         }
     
         // Attacks against buildings from inside automatically hit.
-        if ( null != los.getThruBldg() &&
-             ( target.getTargetType() == Targetable.TYPE_BUILDING ||
-               target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
-               target instanceof GunEmplacement ) ) {
-            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
-                                  "Targeting building from inside (are you SURE this is a good idea?)." );
+        if (null != los.getThruBldg()
+                && (target.getTargetType() == Targetable.TYPE_BUILDING
+                    || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
+                    || target.getTargetType() == Targetable.TYPE_FUEL_TANK
+                    || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
+                    || target instanceof GunEmplacement)) {
+            return new ToHitData(ToHitData.AUTOMATIC_SUCCESS,
+                    "Targeting building from inside (are you SURE this is a good idea?).");
         }
     
         // add range mods
@@ -1014,6 +1018,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 && game.getOptions().booleanOption("no_ignite_clear")
                 && !(game.getBoard().getHex(((HexTarget) target).getPosition()).containsTerrain(Terrains.WOODS)
                     || game.getBoard().getHex(((HexTarget) target).getPosition()).containsTerrain(Terrains.JUNGLE)
+                    || game.getBoard().getHex(((HexTarget) target).getPosition()).containsTerrain(Terrains.FUEL_TANK)
                     || game.getBoard().getHex(((HexTarget) target).getPosition()).containsTerrain(Terrains.BUILDING))) {
             return "Only woods and building hexes can be set on fire intentionally.";
         }

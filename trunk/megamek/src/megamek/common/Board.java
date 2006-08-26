@@ -207,13 +207,11 @@ public class Board implements Serializable, IBoard {
      * Initialize all hexes
      */
     protected void initializeAll() {
-
         // Initialize all buildings.
         buildings.removeAllElements();
         if (bldgByCoords == null) {
             bldgByCoords = new Hashtable();
-        }
-        else {
+        } else {
             bldgByCoords.clear();
         }
 
@@ -222,15 +220,15 @@ public class Board implements Serializable, IBoard {
             for (int x = 0; x < width; x++) {
                 // Does this hex contain a building?
                 IHex curHex = getHex( x, y );
-                if ( curHex != null && curHex.containsTerrain(Terrains.BUILDING)) {
-
+                if (curHex != null
+                        && (curHex.containsTerrain(Terrains.BUILDING))) {
                     // Yup, but is it a repeat?
                     Coords coords = new Coords(x,y);
                     if ( !bldgByCoords.containsKey(coords) ) {
 
                         // Nope.  Try to create an object for the new building.
                         try {
-                            Building bldg = new Building( coords, this, Terrains.BUILDING );
+                            Building bldg = new Building(coords, this, Terrains.BUILDING);
                             buildings.addElement( bldg );
 
                             // Each building will identify the hexes it covers.
@@ -238,18 +236,41 @@ public class Board implements Serializable, IBoard {
                             while ( iter.hasMoreElements() ) {
                                 bldgByCoords.put( iter.nextElement(), bldg );
                             }
-                        }
-                        catch ( IllegalArgumentException excep ) {
+                        } catch (IllegalArgumentException excep) {
                             // Log the error and remove the
                             // building from the board.
                             System.err.println( "Unable to create building." );
                             excep.printStackTrace();
-                            curHex.removeTerrain( Terrains.BUILDING );
+                            curHex.removeTerrain(Terrains.BUILDING);
                         }
-
                     } // End building-is-new
+                } // End hex-has-building
+                if (curHex != null
+                        && (curHex.containsTerrain(Terrains.FUEL_TANK))) {
+                    // Yup, but is it a repeat?
+                    Coords coords = new Coords(x,y);
+                    if ( !bldgByCoords.containsKey(coords) ) {
 
-                } // End hex-has-building                    
+                        // Nope.  Try to create an object for the new building.
+                        try {
+                            int magnitude = curHex.getTerrain(Terrains.FUEL_TANK_MAGN).getLevel();
+                            FuelTank bldg = new FuelTank(coords, this, Terrains.FUEL_TANK, magnitude);
+                            buildings.addElement(bldg);
+
+                            // Each building will identify the hexes it covers.
+                            Enumeration iter = bldg.getCoords();
+                            while ( iter.hasMoreElements() ) {
+                                bldgByCoords.put( iter.nextElement(), bldg );
+                            }
+                        } catch (IllegalArgumentException excep) {
+                            // Log the error and remove the
+                            // building from the board.
+                            System.err.println( "Unable to create building." );
+                            excep.printStackTrace();
+                            curHex.removeTerrain(Terrains.BUILDING);
+                        }
+                    } // End building-is-new
+                } // End hex-has-building
                 if ( curHex != null && curHex.containsTerrain(Terrains.BRIDGE)) {
 
                     // Yup, but is it a repeat?
@@ -622,11 +643,10 @@ public class Board implements Serializable, IBoard {
                         }
                         hexBuff.append(terrain.toString());
                         // Do something funky to save building exits.
-                        if ( Terrains.BUILDING == j &&
-                             !terrain.hasExitsSpecified() &&
-                             terrain.getExits() != 0 ) {
-                            hexBuff.append( ":" )
-                                .append( terrain.getExits() );
+                        if (((Terrains.BUILDING == j) || (j == Terrains.FUEL_TANK))
+                                && !terrain.hasExitsSpecified()
+                                && terrain.getExits() != 0) {
+                            hexBuff.append(":").append(terrain.getExits());
                         }
                         firstTerrain = false;
                     }
@@ -934,12 +954,15 @@ public class Board implements Serializable, IBoard {
             this.bldgByCoords.remove( coords );
 
             // Remove the building terrain.
-            curHex.removeTerrain( Terrains.BUILDING );
-            curHex.removeTerrain( Terrains.BLDG_CF );
-            curHex.removeTerrain( Terrains.BLDG_ELEV );
-            curHex.removeTerrain( Terrains.BRIDGE );
-            curHex.removeTerrain( Terrains.BRIDGE_CF );
-            curHex.removeTerrain( Terrains.BRIDGE_ELEV );
+            curHex.removeTerrain(Terrains.BUILDING);
+            curHex.removeTerrain(Terrains.BLDG_CF);
+            curHex.removeTerrain(Terrains.BLDG_ELEV);
+            curHex.removeTerrain(Terrains.FUEL_TANK);
+            curHex.removeTerrain(Terrains.FUEL_TANK_CF);
+            curHex.removeTerrain(Terrains.FUEL_TANK_ELEV);
+            curHex.removeTerrain(Terrains.BRIDGE);
+            curHex.removeTerrain(Terrains.BRIDGE_CF);
+            curHex.removeTerrain(Terrains.BRIDGE_ELEV);
 
             // Add rubble terrain that matches the building type.
             curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.RUBBLE, bldg.getType()));

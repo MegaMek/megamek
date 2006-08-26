@@ -270,7 +270,7 @@ public interface IBoard {
      *          be returned.
      */
     public abstract Building getBuildingAt(Coords coords);
-    
+
     /**
      * Collapse an array of buildings.
      *

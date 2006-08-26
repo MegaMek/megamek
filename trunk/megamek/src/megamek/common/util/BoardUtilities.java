@@ -289,12 +289,12 @@ public class BoardUtilities {
         if(buildings.size() == 0) {
             buildings = cityBuilder.generateCity(roadNeeded);
         }
-        for(int i=0; i<buildings.size();i++){
+        for(int i=0; i<buildings.size();i++) {
             placeBuilding(result, (BuildingTemplate)(buildings.elementAt(i)));
         }
         return result;
     }
-    
+
     private static void placeBuilding(IBoard board, BuildingTemplate building) {
         int type = building.getType();
         int cf = building.getCF();
@@ -307,11 +307,12 @@ public class BoardUtilities {
             IHex hex = board.getHex(c);
             //work out exits...
             int exits = 0;
-            for(int dir=0;dir<6;dir++) {
-                if(building.containsCoords(c.translated(dir))) {
+            for (int dir=0;dir<6;dir++) {
+                if (building.containsCoords(c.translated(dir))) {
                     exits |= (1<<dir);
                 }
             }
+
             //remove everything
             hex.removeAllTerrains();
             hex.addTerrain(tf.createTerrain(Terrains.PAVEMENT, 1));
@@ -327,7 +328,7 @@ public class BoardUtilities {
             ((IHex)(hexes.elementAt(j))).setElevation(level / hexes.size());
         }
     }
-    
+
     /**
      * Places randomly some connected Woods.
      * @param probHeavy The probability that a wood is a heavy wood (in %).
@@ -1065,6 +1066,16 @@ public class BoardUtilities {
                 terr = oldHex.getTerrain(Terrains.BUILDING);
                 if ( null != terr ) {
                     terr.flipExits( horiz, vert );
+                }
+
+                // Update the fuel tank exits in the swapped hexes.
+                terr = newHex.getTerrain(Terrains.FUEL_TANK);
+                if (null != terr) {
+                    terr.flipExits(horiz, vert);
+                }
+                terr = oldHex.getTerrain(Terrains.FUEL_TANK);
+                if (null != terr) {
+                    terr.flipExits(horiz, vert);
                 }
 
                 // Update the bridge exits in the swapped hexes.

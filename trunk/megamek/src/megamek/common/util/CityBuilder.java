@@ -93,7 +93,6 @@ public class CityBuilder {
     }
 
     public Vector placeBuildings(int radius) {
-            
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
         Vector<BuildingTemplate> buildingList = new Vector<BuildingTemplate>();

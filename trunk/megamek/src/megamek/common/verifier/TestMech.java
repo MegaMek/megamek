@@ -27,6 +27,7 @@ import megamek.common.EquipmentType;
 import megamek.common.WeaponType;
 import megamek.common.AmmoType;
 import megamek.common.MiscType;
+import megamek.common.TechConstants;
 import megamek.common.util.StringUtil;
 
 import java.util.Vector;
@@ -373,6 +374,20 @@ public class TestMech extends TestEntity {
         return correct;
     }
 
+    public boolean correctMovement(StringBuffer buff) {
+        if(mech.getOriginalJumpMP() > mech.getOriginalRunMPwithoutMASC()) {
+            buff.append("Jump MP exceeds run MP\n");
+            return false;
+        }
+        if(mech.getOriginalJumpMP() > mech.getOriginalWalkMP()
+                && mech.getTechLevel() != TechConstants.T_CLAN_LEVEL_3
+                && mech.getTechLevel() != TechConstants.T_IS_LEVEL_3) {
+            buff.append("Jump MP exceeds walk MP for level 2 construction");
+            return false;
+        }
+        return true;
+    }
+    
     public boolean correctEntity(StringBuffer buff) {
         return correctEntity(buff, true);
     }
@@ -401,6 +416,7 @@ public class TestMech extends TestEntity {
             correct = false;
         if (hasIllegalTechLevels(buff, ignoreAmmo))
             correct = false;
+        correct = correct && correctMovement(buff);
         return correct;
     }
 

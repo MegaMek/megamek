@@ -1218,15 +1218,12 @@ public class MovementDisplay
 
                     // Determine how much damage the charger will take.
                     int toAttacker = 0;
-                    if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+                    if (target.getTargetType() == Targetable.TYPE_ENTITY) {
                         Entity te = (Entity) target;
                         toAttacker = ChargeAttackAction.getDamageTakenBy(ce,te, client.game.getOptions().booleanOption("maxtech_charge_damage"), cmd.getHexesMoved()); //$NON-NLS-1$
-                    }
-                    else if ( target.getTargetType() ==
-                              Targetable.TYPE_BUILDING ) {
-                        Building bldg = client.game.getBoard().getBuildingAt
-                            ( moveto );
-                        toAttacker = ChargeAttackAction.getDamageTakenBy(ce,bldg);
+                    } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK) || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
+                        Building bldg = client.game.getBoard().getBuildingAt(moveto);
+                        toAttacker = ChargeAttackAction.getDamageTakenBy(ce, bldg);
                     }
 
                     // Ask the player if they want to charge.

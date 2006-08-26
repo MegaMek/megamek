@@ -163,8 +163,9 @@ public class PunchAttackAction
         }
 
         // Attacks against adjacent buildings automatically hit.
-        if ( target.getTargetType() == Targetable.TYPE_BUILDING ||
-             target instanceof GunEmplacement ) {
+        if (target.getTargetType() == Targetable.TYPE_BUILDING
+                || target.getTargetType() == Targetable.TYPE_FUEL_TANK
+                || target instanceof GunEmplacement) {
             return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
                                   "Targeting adjacent building." );
         }

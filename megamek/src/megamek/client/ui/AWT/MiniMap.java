@@ -454,7 +454,7 @@ public class MiniMap extends Canvas  {
             } else if (heightDisplayMode == SHOW_GROUND_HEIGHT) {
                 height = h.floor();
             } else if (heightDisplayMode == SHOW_TOTAL_HEIGHT) {
-                height = (h.getTerrain(Terrains.BUILDING) != null) ? h.ceiling() : h.floor();
+                height = ((h.getTerrain(Terrains.BUILDING) != null) || (h.getTerrain(Terrains.FUEL_TANK) != null)) ? h.ceiling() : h.floor();
             }
             if (height != 0) {
                 g.drawString(height + "", baseX + 5, baseY + 5); //$NON-NLS-1$
@@ -839,37 +839,36 @@ public class MiniMap extends Canvas  {
 
         int r, g, b;
         switch (terrain) {
-        case 0 :
-        case Terrains.WOODS :
-        case Terrains.JUNGLE :
-        case Terrains.ROUGH :
-        case Terrains.RUBBLE :
-        case Terrains.WATER :
-        case Terrains.PAVEMENT :
-        case Terrains.ICE :
-            level = Math.abs(x.floor());
-            // By experiment it is possible to make only 6 distinctive color steps
-            if (level > 10) level = 10;
-            r = terrColor.getRed()-level*15;
-            g = terrColor.getGreen()-level*15;
-            b = terrColor.getBlue()-level*15;
-            if (r < 0) r = 0;
-            if (g < 0) g = 0;
-            if (b < 0) b = 0;
-            return new Color(r, g, b);
-
-        case Terrains.BUILDING :
-            level = Math.abs(x.ceiling());
-            // By experiment it is possible to make only 6 distinctive color steps
-            if (level > 10) level = 10;
-            r = terrColor.getRed()-level*15;
-            g = terrColor.getGreen()-level*15;
-            b = terrColor.getBlue()-level*15;
-            if (r < 0) r = 0;
-            if (g < 0) g = 0;
-            if (b < 0) b = 0;
-            return new Color(r, g, b);
-
+            case 0 :
+            case Terrains.WOODS :
+            case Terrains.JUNGLE :
+            case Terrains.ROUGH :
+            case Terrains.RUBBLE :
+            case Terrains.WATER :
+            case Terrains.PAVEMENT :
+            case Terrains.ICE :
+                level = Math.abs(x.floor());
+                // By experiment it is possible to make only 6 distinctive color steps
+                if (level > 10) level = 10;
+                r = terrColor.getRed()-level*15;
+                g = terrColor.getGreen()-level*15;
+                b = terrColor.getBlue()-level*15;
+                if (r < 0) r = 0;
+                if (g < 0) g = 0;
+                if (b < 0) b = 0;
+                return new Color(r, g, b);
+            case Terrains.FUEL_TANK:
+            case Terrains.BUILDING :
+                level = Math.abs(x.ceiling());
+                // By experiment it is possible to make only 6 distinctive color steps
+                if (level > 10) level = 10;
+                r = terrColor.getRed()-level*15;
+                g = terrColor.getGreen()-level*15;
+                b = terrColor.getBlue()-level*15;
+                if (r < 0) r = 0;
+                if (g < 0) g = 0;
+                if (b < 0) b = 0;
+                return new Color(r, g, b);
         }
         /*
           if (terrain < 5){

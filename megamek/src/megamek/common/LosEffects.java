@@ -217,9 +217,11 @@ public class LosEffects {
 
         int attEl = ae.absHeight() + attHex.getElevation();
         int targEl;
-        if ( target.getTargetType() == Targetable.TYPE_ENTITY ||
-             target.getTargetType() == Targetable.TYPE_BUILDING ||
-             target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) {
+        if (target.getTargetType() == Targetable.TYPE_ENTITY
+                || target.getTargetType() == Targetable.TYPE_FUEL_TANK
+                || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
+                || target.getTargetType() == Targetable.TYPE_BUILDING
+                || target.getTargetType() == Targetable.TYPE_BLDG_IGNITE) {
             targEl = target.absHeight() + targetHex.getElevation();
         } else {
             targEl = game.getBoard().getHex(target.getPosition()).surface();

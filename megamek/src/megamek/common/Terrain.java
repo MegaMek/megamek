@@ -67,7 +67,7 @@ public class Terrain implements ITerrain, Serializable {
             this.exitsSpecified = false;
 
             // Buildings *never* use implicit exits.
-            if ( this.type == Terrains.BUILDING ) {
+            if ((this.type == Terrains.BUILDING) || (this.type == Terrains.FUEL_TANK)) {
                 this.exitsSpecified = true;
             }
         } else {

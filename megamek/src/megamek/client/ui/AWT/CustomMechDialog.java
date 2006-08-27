@@ -1115,24 +1115,24 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 gunnery = Integer.parseInt(fldGunnery.getText());
                 piloting =  Integer.parseInt(fldPiloting.getText());
             } catch (NumberFormatException e) {
-                new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterValidSkills")).show(); //$NON-NLS-1$ //$NON-NLS-2$
+                new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterValidSkills")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             
             // keep these reasonable, please
             if (gunnery < 0 || gunnery > 7 || piloting < 0 || piloting > 7) {
-                new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterSkillsBetween0_7")).show(); //$NON-NLS-1$ //$NON-NLS-2$
+                new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterSkillsBetween0_7")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             if (chOffBoard.getState()){
                 try {
                     offBoardDistance = distance;
                 } catch (NumberFormatException e) {
-                    new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterValidSkills")).show(); //$NON-NLS-1$ //$NON-NLS-2$
+                    new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterValidSkills")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
                 }
                 if (offBoardDistance < 17) {
-                    new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.OffboardDistance")).show(); //$NON-NLS-1$ //$NON-NLS-2$
+                    new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.OffboardDistance")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                     return;
                 }
                 entity.setOffBoard( offBoardDistance,

@@ -33,7 +33,6 @@ import megamek.common.util.BuildingBlock;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -289,9 +288,8 @@ public class MechFileParser {
     }
 
     private static boolean getResponse(String prompt) {
-        DataInputStream in = new DataInputStream(System.in);
         String response = null;
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         System.out.print(prompt);
         try {
             response = in.readLine();
@@ -301,5 +299,9 @@ public class MechFileParser {
             return true;
         else
             return false;
+    }
+    
+    public static void dispose() {
+        canonUnitNames = null;
     }
 }

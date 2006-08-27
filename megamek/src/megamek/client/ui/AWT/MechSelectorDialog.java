@@ -357,7 +357,7 @@ public class MechSelectorDialog
         pack();
         setLocation(computeDesiredLocation());
 
-        unitLoadingDialog.hide();
+        unitLoadingDialog.setVisible(false);
 
         final Hashtable hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
         if (hFailedFiles != null && hFailedFiles.size() > 0) {
@@ -712,11 +712,13 @@ public class MechSelectorDialog
         return new Point(desiredX, desiredY);
     }
 
-    public void show() {
-        updatePlayerChoice();
-        updateTechChoice();
-        setLocation(computeDesiredLocation());
-        super.show();
+    public void setVisible(boolean show) {
+        if(show) {
+            updatePlayerChoice();
+            updateTechChoice();
+            setLocation(computeDesiredLocation());
+        }
+        super.setVisible(show);
     }
 
     private String formatMech(MechSummary ms) {

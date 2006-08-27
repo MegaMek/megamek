@@ -65,7 +65,6 @@ public class TripAttackAction extends PhysicalAttackAction
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int attackerHeight = attackerElevation + ae.getHeight();
         final int targetElevation = target.getElevation() + targHex.getElevation();
-        final int targetHeight = targetElevation + target.getHeight();
 
         ToHitData toHit;
 
@@ -84,6 +83,9 @@ public class TripAttackAction extends PhysicalAttackAction
 
         // check range
         final int range = ae.getPosition().distance(target.getPosition());
+        if(range > 1) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target out of range");
+        }
 
         int limb1 = Entity.LOC_NONE;
         int limb2 = Entity.LOC_NONE;

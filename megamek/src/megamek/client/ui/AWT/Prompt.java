@@ -64,13 +64,13 @@ public class Prompt extends Dialog implements ActionListener {
     }
     
     public boolean showDialog() {
-        show();
+        setVisible(true);
         return ok;
     }
 
     public void actionPerformed(ActionEvent evt) {
         ok = evt.getSource() == butOk;
-        hide();
+        setVisible(false);
         dispose();
     }
 

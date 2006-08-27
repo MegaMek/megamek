@@ -647,7 +647,8 @@ public class ScenarioLoader
     {
         ScenarioLoader sl = new ScenarioLoader(new File(saArgs[0]));
         IGame g = sl.createGame();
-        System.out.println("Successfully loaded.");
+        if(g != null)
+            System.out.println("Successfully loaded.");
     }
     
     /*

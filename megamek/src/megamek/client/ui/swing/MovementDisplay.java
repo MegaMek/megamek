@@ -1746,9 +1746,6 @@ public class MovementDisplay
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        final Entity ce = ce();
-
-
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;

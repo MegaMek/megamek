@@ -35,7 +35,6 @@ public class RotateFilter extends RGBImageFilter {
     
     private static final int  ALPHA_CLIP = 144;
     
-    private double angle;
     private double sin;
     private double cos;
     
@@ -45,13 +44,10 @@ public class RotateFilter extends RGBImageFilter {
     private double cy;
     private int[] raster;
     
-    private int count = 0;
-
     /** Creates new RotateFilter1 */
     public RotateFilter(double angle) {
-  this.angle = angle;
-  this.sin = Math.sin(angle);
-  this.cos = Math.cos(angle);
+        this.sin = Math.sin(angle);
+        this.cos = Math.cos(angle);
     }
     
     /**

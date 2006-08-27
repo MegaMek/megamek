@@ -677,7 +677,7 @@ public class PhysicalDisplay
                         Messages.getString("PhysicalDisplay.ChooseClubDialog.title"), //$NON-NLS-1$
                         Messages.getString("PhysicalDisplay.ChooseClubDialog.message"), //$NON-NLS-1$
                         names );
-            choiceDialog.show();
+            choiceDialog.setVisible(true);
             if ( choiceDialog.getAnswer() == true ) {
                 return clubs.get( choiceDialog.getChoice() );
             }
@@ -811,7 +811,7 @@ public class PhysicalDisplay
             choices[2] = both.toString();
             dlg = new SingleChoiceDialog
                 ( clientgui.frame, title, warn.toString(), choices );
-            dlg.show();
+            dlg.setVisible(true);
             if ( dlg.getAnswer() ) {
                 disableButtons();
                 switch ( dlg.getChoice() ) {
@@ -840,7 +840,7 @@ public class PhysicalDisplay
             choices[0] = left.toString();
             dlg = new SingleChoiceDialog
                 ( clientgui.frame, title, warn.toString(), choices );
-            dlg.show();
+            dlg.setVisible(true);
             if ( dlg.getAnswer() ) {
                 disableButtons();
                 attacks.addElement( new BrushOffAttackAction
@@ -857,7 +857,7 @@ public class PhysicalDisplay
             choices[0] = right.toString();
             dlg = new SingleChoiceDialog
                 ( clientgui.frame, title, warn.toString(), choices );
-            dlg.show();
+            dlg.setVisible(true);
             if ( dlg.getAnswer() ) {
                 disableButtons();
                 attacks.addElement( new BrushOffAttackAction
@@ -1132,7 +1132,7 @@ public class PhysicalDisplay
                         Messages.getString("PhysicalDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
                         Messages.getString("PhysicalDisplay.ChooseTargetDialog.message", new Object[]{pos.getBoardNum()}), //$NON-NLS-1$
                         names );
-            choiceDialog.show();
+            choiceDialog.setVisible(true);
             if ( choiceDialog.getAnswer() == true ) {
                 choice = (Targetable) targets.elementAt
                     ( choiceDialog.getChoice() );

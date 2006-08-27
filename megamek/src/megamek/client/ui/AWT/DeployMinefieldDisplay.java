@@ -57,10 +57,7 @@ public class DeployMinefieldDisplay
     private Button            butUnload;
     private Button            butDone;
 
-    private int                cen;    // current entity number
-
     // is the shift key held?
-    private boolean            turnMode = false;
     private boolean                 deployM = false;
     private boolean                 deployC = false;
     private boolean                 deployV = false;
@@ -241,7 +238,7 @@ public class DeployMinefieldDisplay
                 p.setNbrMFCommand(p.getNbrMFCommand() - 1);
             } else if (deployV) {
                 VibrabombSettingDialog vsd  = new VibrabombSettingDialog(clientgui.frame);
-                vsd.show();
+                vsd.setVisible(true);
 
                 // Hack warning...              
                 clientgui.bv.stopScrolling();
@@ -252,7 +249,7 @@ public class DeployMinefieldDisplay
             }
             client.game.addMinefield(mf);
             deployedMinefields.addElement(mf);
-            clientgui.bv.update(clientgui.bv.getGraphics());
+            clientgui.bv.repaint();
         }
         
         if (p.getNbrMFConventional() == 0 &&

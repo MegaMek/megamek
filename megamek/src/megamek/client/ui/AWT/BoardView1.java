@@ -70,8 +70,6 @@ public class BoardView1
                 //1.09f, 1.17f
             };
     
-    private ImageCache[] scaledImageCaches;
-
     // the index of zoom factor 1.00f
     private static final int BASE_ZOOM_INDEX = 7;
 
@@ -160,10 +158,9 @@ public class BoardView1
     private boolean              useLOSTool = true;
 
     // Initial scale factor for sprites and map
-    private boolean                 hasZoomed = false;
     public      int                     zoomIndex;
     private float               scale;
-    private Hashtable scaledImageCache = new Hashtable();
+    private ImageCache<Image,Image> scaledImageCache = new ImageCache();
         
     // Displayables (Chat box, etc.)
     private Vector               displayables = new Vector();
@@ -207,6 +204,8 @@ public class BoardView1
     
     //hexes with ECM effect
     private Hashtable<Coords, Integer> ecmHexes = null;
+    
+    private boolean dirtyBoard = true;
 
     /**
      * Construct a new board view for the specified game
@@ -246,7 +245,6 @@ public class BoardView1
         
         zoomIndex = GUIPreferences.getInstance().getMapZoomIndex();
         checkZoomIndex();
-        hasZoomed = true;
         scale = ZOOM_FACTORS[ zoomIndex ];
         
         updateFontSizes();
@@ -265,10 +263,6 @@ public class BoardView1
         firstLOSSprite = new CursorSprite(Color.red);
         secondLOSSprite = new CursorSprite(Color.red);
         
-        scaledImageCaches = new ImageCache[ZOOM_FACTORS.length];
-        for(int i = 0;i<scaledImageCaches.length;i++) {
-            scaledImageCaches[i] = new ImageCache();
-        }
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
     }
     
@@ -341,7 +335,7 @@ public class BoardView1
         }
     }
 
-    public void addMovingUnit(Entity entity, java.util.Vector movePath) {
+    private void addMovingUnit(Entity entity, Vector movePath) {
         if ( !movePath.isEmpty() ) {
             Object[] o = new Object[2];
             o[0] = entity;
@@ -349,7 +343,7 @@ public class BoardView1
             movingUnits.addElement(o);
 
             GhostEntitySprite ghostSprite = new GhostEntitySprite(entity);
-            ghostEntitySprites.addElement(ghostSprite);
+            ghostEntitySprites.add(ghostSprite);
 
             // Center on the starting hex of the moving unit.
             UnitLocation loc = ( (UnitLocation) movePath.elementAt(0) );
@@ -448,7 +442,7 @@ public class BoardView1
         }
         
         // make sure board rectangle contains our current view rectangle
-        if (boardImage == null || !boardRect.union(view).equals(boardRect)) {
+        if (boardImage == null || !boardRect.union(view).equals(boardRect) || dirtyBoard) {
             updateBoardImage();
         }
 
@@ -531,7 +525,7 @@ public class BoardView1
             Graphics tmpGraphics = tmpImage.getGraphics();
             tmpGraphics.drawImage(backImage, offset.x, offset.y, this);
             g.drawImage(tmpImage, 0, 0, this);
-            hasZoomed=false;
+            tmpGraphics.dispose();
         } else {
             g.drawImage(backImage, offset.x, offset.y, this);
         }
@@ -621,23 +615,23 @@ public class BoardView1
             return base;
         }
         
-        
-        Image scaled = (Image) scaledImageCaches[zoomIndex].get(base);
+        Image scaled = (Image) scaledImageCache.get(base);
         if (scaled == null) {
             Dimension d = getImageBounds(base).getSize();
             d.width *= scale;
             d.height *= scale;
-            
             scaled = scale(base, d.width, d.height);
-
             MediaTracker tracker = new MediaTracker(this);
             tracker.addImage( scaled, 1 );
             // Wait for image to load
             try{
                 tracker.waitForID( 1 );
-            } catch ( InterruptedException e ){ e.printStackTrace(); }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            tracker.removeImage(scaled);
               
-            scaledImageCaches[zoomIndex].put(base, scaled);
+            scaledImageCache.put(base, scaled);
         }
         return scaled;
     }
@@ -661,39 +655,6 @@ public class BoardView1
         return new Rectangle(-im.getWidth(null) / 2, -im.getHeight(null) / 2, im.getWidth(null), im.getHeight(null));
     }
 
-    /**
-     * The key assigned to each scaled and cached image. Enables easy
-     * retrieval from the hash table.
-     */
-    private static class ScaledCacheKey {
-        private Image base;
-        private Dimension bounds;
-
-        public ScaledCacheKey(Image base, Dimension bounds) {
-          this.bounds = bounds;
-          this.base = base;
-        }
-
-        public boolean equals(Object o) {
-          if (this == o) return true;
-          if (!(o instanceof ScaledCacheKey)) return false;
-
-          final ScaledCacheKey scaledCacheKey = (ScaledCacheKey) o;
-
-          if (!base.equals(scaledCacheKey.base)) return false;
-          if (!bounds.equals(scaledCacheKey.bounds)) return false;
-
-          return true;
-        }
-
-        public int hashCode() {
-          int result;
-          result = base.hashCode();
-          result = 29 * result + bounds.hashCode();
-          return result;
-        }
-      }
-    
     /**
      * Draw an outline around legal deployment hexes
      */
@@ -968,6 +929,8 @@ public class BoardView1
             //boardImage = createImage(boardSize.width, boardSize.height);
             /* ----- */
 
+            if(boardGraph != null)
+                boardGraph.dispose();
             boardGraph = boardImage.getGraphics();
 
             // Handle resizes correctly.
@@ -975,9 +938,9 @@ public class BoardView1
             boardRect = new Rectangle(view);
             System.out.println("boardview1: made a new board buffer " + boardRect); //$NON-NLS-1$
             drawHexes(view);
-            
+            dirtyBoard = false;            
         }
-        if (!boardRect.union(view).equals(boardRect)) {
+        if (!boardRect.union(view).equals(boardRect) || dirtyBoard) {
             moveBoardImage();
         }
     }
@@ -991,6 +954,7 @@ public class BoardView1
         Graphics temp = boardImage.getGraphics();
         boardGraph = entireBoard.getGraphics();
         drawHexes(new Rectangle(boardSize));
+        boardGraph.dispose();
         boardGraph = temp;
         return entireBoard;
     }
@@ -1002,8 +966,9 @@ public class BoardView1
         // salvage the old
 
         boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
+        
         boardGraph.copyArea(0, 0, boardRect.width, boardRect.height,
-                            boardRect.x - view.x, boardRect.y - view.y);
+                boardRect.x - view.x, boardRect.y - view.y);
 
         // what's left to paint?
         int midX = Math.max(view.x, boardRect.x);
@@ -1012,20 +977,25 @@ public class BoardView1
         Rectangle unRight = new Rectangle(boardRect.x + boardRect.width, view.y, view.x -boardRect.x, view.height);
         Rectangle unTop = new Rectangle(midX, view.y, midWidth, boardRect.y - view.y);
         Rectangle unBottom = new Rectangle(midX, boardRect.y + boardRect.height, midWidth, view.y - boardRect.y);
-
+        
         // update boardRect
         boardRect = new Rectangle(view);
-
-        // paint needed areas
-        if (unLeft.width > 0) {
-            drawHexes(unLeft);
-        } else if (unRight.width > 0) {
-            drawHexes(unRight);
-        }
-        if (unTop.height > 0) {
-            drawHexes(unTop);
-        } else if (unBottom.height > 0) {
-            drawHexes(unBottom);
+        
+        if(dirtyBoard) {
+            drawHexes(view);
+            dirtyBoard = false;
+        } else {
+            // paint needed areas
+            if (unLeft.width > 0) {
+                drawHexes(unLeft);
+            } else if (unRight.width > 0) {
+                drawHexes(unRight);
+            }
+            if (unTop.height > 0) {
+                drawHexes(unTop);
+            } else if (unBottom.height > 0) {
+                drawHexes(unBottom);
+            }
         }
     }
 
@@ -1320,7 +1290,7 @@ public class BoardView1
             // set tip location
             tipWindow.setLocation(tipLoc);
 
-            tipWindow.show();
+            tipWindow.setVisible(true);
         } catch (Exception e) {
             tipWindow = new Window(frame);
         }
@@ -1462,7 +1432,7 @@ public class BoardView1
             }
 
             if (game.containsMinefield(mcoords)) {
-                java.util.Vector minefields = game.getMinefields(mcoords);
+                Vector minefields = game.getMinefields(mcoords);
                 for (int i = 0; i < minefields.size(); i++){
                     Minefield mf = (Minefield) minefields.elementAt(i);
                     String owner =  " (" + game.getPlayer(mf.getPlayerId()).getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -1500,7 +1470,7 @@ public class BoardView1
             final EntitySprite eSprite = (EntitySprite)i.next();
             if (eSprite.isInside(point)) {
                 final String[] entityStrings = eSprite.getTooltip();
-                java.lang.System.arraycopy(entityStrings, 0, strings, stringsIndex, entityStrings.length);
+                System.arraycopy(entityStrings, 0, strings, stringsIndex, entityStrings.length);
                 stringsIndex += entityStrings.length;
             }
         }
@@ -1510,7 +1480,7 @@ public class BoardView1
             final AttackSprite aSprite = (AttackSprite)i.next();
             if (aSprite.isInside(point)) {
                 final String[] attackStrings = aSprite.getTooltip();
-                java.lang.System.arraycopy(attackStrings, 0, strings, stringsIndex, attackStrings.length);
+                System.arraycopy(attackStrings, 0, strings, stringsIndex, attackStrings.length);
                 stringsIndex += 1 + aSprite.weaponDescs.size();
             }
         }
@@ -1691,7 +1661,7 @@ public class BoardView1
         }
 
         clearC3Networks();
-        for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = (Entity)i.nextElement();
             if (entity.getPosition() == null) continue;
 
@@ -1747,7 +1717,7 @@ public class BoardView1
 
         clearMovementData();
 
-        for (java.util.Enumeration i = md.getSteps(); i.hasMoreElements();) {
+        for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = (MoveStep)i.nextElement();
             // check old movement path for reusable step sprites
             boolean found = false;
@@ -2011,7 +1981,7 @@ public class BoardView1
             AlertDialog alert = new AlertDialog(frame,
                                                 Messages.getString("BoardView1.LOSTitle"), //$NON-NLS-1$
                                                 message.toString(), false);
-            alert.show();
+            alert.setVisible(true);
         }
     }
 
@@ -2503,6 +2473,8 @@ public class BoardView1
      * 
      */
     public void zoomIn(){
+        if(zoomIndex == ZOOM_FACTORS.length - 1)
+            return;
         zoomIndex++;
         zoom();
     }
@@ -2512,6 +2484,8 @@ public class BoardView1
      *
      */
     public void zoomOut(){
+        if(zoomIndex == 0)
+            return;
         zoomIndex--;
         zoom();
     }
@@ -2552,6 +2526,8 @@ public class BoardView1
         hex_size = new Dimension((int)(HEX_W*scale), (int)(HEX_H*scale));
 
         final Dimension size = getSize();
+        
+        scaledImageCache = new ImageCache();
 
         updateBoard();
 
@@ -2562,7 +2538,7 @@ public class BoardView1
         updateFontSizes();
         updateBoardImage();
         
-        update(this.getGraphics());
+        repaint();
     }
     
     private void updateFontSizes(){
@@ -2688,19 +2664,13 @@ public class BoardView1
 
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer, boolean makeTranslucent) {
             if (isReady()) {
-                Image tmpImage;
-                if (zoomIndex == BASE_ZOOM_INDEX ){
-                    tmpImage = image;
-                } else {
-                    tmpImage = getScaledImage(image);
-                }
                 if (makeTranslucent) {
                     Graphics2D g2 = (Graphics2D) g;
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-                    g2.drawImage(tmpImage, x, y, observer);
+                    g2.drawImage(image, x, y, observer);
                     g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
                 } else {
-                    g.drawImage(tmpImage, x, y, observer);
+                    g.drawImage(image, x, y, observer);
                 }
             } else {
                 // grrr... we'll be ready next time!
@@ -2758,8 +2728,15 @@ public class BoardView1
             graph.drawPolygon(hexPoly);
 
             // create final image
-            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
-                                                             new KeyAlphaFilter(TRANSPARENT)));
+            if (zoomIndex == BASE_ZOOM_INDEX ){
+                image = createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT))));
+            }
+            graph.dispose();
+            tempImage.flush();
         }
 
         public void setOffScreen(){
@@ -2784,7 +2761,6 @@ public class BoardView1
     
     private class GhostEntitySprite extends Sprite {
         private Entity entity;
-        private Rectangle entityRect;
         private Rectangle modelRect;
 
         public GhostEntitySprite(Entity entity) {
@@ -2799,11 +2775,6 @@ public class BoardView1
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
             this.bounds = tempBounds;
-            this.entityRect = new Rectangle(
-                    bounds.x + (int)(20*scale),
-                    bounds.y + (int)(14*scale), 
-                    (int)(44*scale), 
-                    (int)(44*scale));
             this.image = null;
         }
 
@@ -2831,8 +2802,15 @@ public class BoardView1
             graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
 
             // create final image
-            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
-                                                             new KeyAlphaFilter(TRANSPARENT)));
+            if (zoomIndex == BASE_ZOOM_INDEX ){
+                image = createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT))));
+            }
+            graph.dispose();
+            tempImage.flush();
         }
 
         public Rectangle getBounds(){
@@ -2840,11 +2818,6 @@ public class BoardView1
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
             this.bounds = tempBounds;
         
-            this.entityRect = new Rectangle(bounds.x + (int)(20*scale),
-                    bounds.y + (int)(14*scale),
-                    (int)(44*scale),
-                    (int)(44*scale));
-            
             return bounds;
         }
         
@@ -2857,7 +2830,6 @@ public class BoardView1
     private class MovingEntitySprite extends Sprite {
         private int facing;
         private Entity entity;
-        private Rectangle entityRect;
         private Rectangle modelRect;
 
         public MovingEntitySprite(Entity entity, Coords position, int facing) {
@@ -2873,10 +2845,6 @@ public class BoardView1
             tempBounds.setLocation(getHexLocation(position));
 
             this.bounds = tempBounds;
-            this.entityRect = new Rectangle(bounds.x + (int)(20*scale),
-                    bounds.y + (int)(14*scale),
-                    (int)(44*scale),
-                    (int)(44*scale));
             this.image = null;
         }
         
@@ -2904,8 +2872,15 @@ public class BoardView1
             graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
 
             // create final image
-            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
-                                                             new KeyAlphaFilter(TRANSPARENT)));
+            if (zoomIndex == BASE_ZOOM_INDEX ){
+                image = createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT))));
+            }
+            graph.dispose();
+            tempImage.flush();
         }
     }
 
@@ -2917,7 +2892,6 @@ public class BoardView1
     private class WreckSprite extends Sprite
     {
         private Entity entity;
-        private Rectangle entityRect;
         private Rectangle modelRect;
 
         public WreckSprite(Entity entity) {
@@ -2933,11 +2907,6 @@ public class BoardView1
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
             this.bounds = tempBounds;
-            this.entityRect = new Rectangle(
-                    bounds.x + (int)(20*scale),
-                    bounds.y + (int)(14*scale),
-                    (int)(44*scale),
-                    (int)(44*scale));
             this.image = null;
         }
 
@@ -2945,13 +2914,7 @@ public class BoardView1
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
             this.bounds = tempBounds;
-        
-            this.entityRect = new Rectangle(
-                    bounds.x + (int)(20*scale),
-                    bounds.y + (int)(14*scale),
-                    (int)(44*scale),
-                    (int)(44*scale));
-            
+                    
             return bounds;
         }
         
@@ -3007,9 +2970,15 @@ public class BoardView1
                              tempRect.y + tempRect.height - 1);
 
             // create final image
-            this.image = createImage
-                (new FilteredImageSource(tempImage.getSource(),
-                                         new KeyAlphaFilter(TRANSPARENT)));
+            if (zoomIndex == BASE_ZOOM_INDEX ){
+                image = createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT))));
+            }
+            graph.dispose();
+            tempImage.flush();
         }
 
         /**
@@ -3318,8 +3287,15 @@ public class BoardView1
             }
 
             // create final image
-            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
-                                                             new KeyAlphaFilter(TRANSPARENT)));
+            if (zoomIndex == BASE_ZOOM_INDEX ){
+                image = createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT))));
+            }
+            graph.dispose();
+            tempImage.flush();
         }
 
         /*
@@ -3625,8 +3601,15 @@ public class BoardView1
             }
 
             // create final image
-            this.image = createImage(new FilteredImageSource(tempImage.getSource(),
-                                                             new KeyAlphaFilter(TRANSPARENT)));
+            if (zoomIndex == BASE_ZOOM_INDEX ){
+                image = createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT)));
+            } else {
+                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
+                        new KeyAlphaFilter(TRANSPARENT))));
+            }
+            graph.dispose();
+            tempImage.flush();
         }
 
         public Rectangle getBounds(){
@@ -4330,11 +4313,11 @@ public class BoardView1
         }
 
         public void gameEntityChange(GameEntityChangeEvent e) {
-            java.util.Vector mp = e.getMovePath();
+            Vector mp = e.getMovePath();
+            updateEcmList();
             if (mp != null && mp.size() > 0 && GUIPreferences.getInstance().getShowMoveStep()) {
                 addMovingUnit(e.getEntity(), mp);
             }else {
-                updateEcmList();
                 redrawEntity(e.getEntity());
             }
         }
@@ -4395,12 +4378,16 @@ public class BoardView1
 
     protected synchronized void updateBoard() {
         updateBoardSize();
+        if(backGraph != null)
+            backGraph.dispose();
         backGraph = null;
         backImage = null;
         backSize = null;
         boardImage = null;
+        if(boardGraph != null)
+            boardGraph.dispose();
         boardGraph = null;
-        tileManager.reset();
+        //tileManager.reset();
         redrawAllEntities();
     }
     
@@ -4522,6 +4509,7 @@ public class BoardView1
         }
         synchronized(this) {
             ecmHexes = table;
+            dirtyBoard = true;
         }
         repaint(100);
     }

@@ -370,7 +370,6 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         int smokeLevel = currentHex.terrainLevel(Terrains.SMOKE);
                         Coords smokeCoords = driftAddSmoke(currentXCoord, currentYCoord, windDir, windStr);
                         //                        System.out.println(currentCoords.toString() + " to " + smokeCoords.toString());
-                        IHex smokeHex = game.getBoard().getHex(smokeCoords);
                         if( board.contains(smokeCoords)) { // don't add it to the vector if it's not on board!
                             SmokeToAdd.addElement(new SmokeDrift(new Coords(smokeCoords), smokeLevel));
                         }

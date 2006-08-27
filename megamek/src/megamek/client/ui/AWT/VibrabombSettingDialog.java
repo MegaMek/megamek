@@ -83,7 +83,7 @@ public class VibrabombSettingDialog
                 AlertDialog ad = new AlertDialog(frame,
                                                 Messages.getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
                                                 Messages.getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
-                ad.show();
+                ad.setVisible(true);
                 return;
             }
             
@@ -91,7 +91,7 @@ public class VibrabombSettingDialog
                 AlertDialog ad = new AlertDialog(frame,
                                                 Messages.getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
                                                 Messages.getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
-                ad.show();
+                ad.setVisible(true);
                 return;
             }
         }

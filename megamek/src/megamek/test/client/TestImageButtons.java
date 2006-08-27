@@ -43,13 +43,13 @@ public class TestImageButtons {
         camo.setPreferredSize( 84, 72 );
         camo.addActionListener( new ActionListener() { 
                 public void actionPerformed( ActionEvent event ) {
-                    dialog.show();
+                    dialog.setVisible(true);
                 } 
             } );
         camo.addKeyListener( new KeyAdapter() {
                 public void keyPressed( KeyEvent event ) {
                     if ( KeyEvent.VK_ENTER == event.getKeyCode() ) {
-                        dialog.show();
+                        dialog.setVisible(true);
                     }
                 } 
             } );
@@ -58,7 +58,7 @@ public class TestImageButtons {
         // Construct a dialog.
         dialog = new Dialog( frame, "Choose a pattern", true );
         dialog.addWindowListener( new WindowAdapter() {
-                public void windowClosing( WindowEvent e ) { dialog.hide(); }
+                public void windowClosing( WindowEvent e ) { dialog.setVisible(false); }
             } );
 
         // Create a main panel for the dialog.
@@ -93,7 +93,7 @@ public class TestImageButtons {
                                        .getScaledInstance(size.width,
                                                           size.height,
                                                           Image.SCALE_FAST) );
-                        dialog.hide();
+                        dialog.setVisible(false);
                     }
                 }
             } );                        
@@ -115,7 +115,7 @@ public class TestImageButtons {
                                    .getScaledInstance(size.width,
                                                       size.height,
                                                       Image.SCALE_FAST) );
-                    dialog.hide();
+                    dialog.setVisible(false);
                 }
             } );
         imgButton.addKeyListener( new KeyAdapter() {
@@ -128,7 +128,7 @@ public class TestImageButtons {
                                        .getScaledInstance(size.width,
                                                           size.height,
                                                           Image.SCALE_FAST) );
-                        dialog.hide();
+                        dialog.setVisible(false);
                     }
                 }
             } );
@@ -144,7 +144,7 @@ public class TestImageButtons {
                     camo.setBackground( color.getBackground() );
                     camo.setLabel( color.getLabel() );
                     camo.setImage( null );
-                    dialog.hide();
+                    dialog.setVisible(false);
                 }
             } );
         color.addKeyListener( new KeyAdapter() {
@@ -153,7 +153,7 @@ public class TestImageButtons {
                         camo.setBackground( color.getBackground() );
                         camo.setLabel( color.getLabel() );
                         camo.setImage( null );
-                        dialog.hide();
+                        dialog.setVisible(false);
                     }
                 }
             } );
@@ -162,7 +162,7 @@ public class TestImageButtons {
         // Show the window.
         dialog.pack();
         frame.pack();
-        frame.show();
+        frame.setVisible(true);
     }
 
     public static void main( String[] args ) {

@@ -114,7 +114,7 @@ public class DeploymentDisplay
         butRemove = new Button(Messages.getString("DeploymentDisplay.Remove")); //$NON-NLS-1$
         butRemove.addActionListener(this);
         butRemove.setActionCommand(DEPLOY_REMOVE);
-        butRemove.setEnabled(true);
+        setRemoveEnabled(true);
 
         butAssaultDrop = new Button(Messages.getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
         butAssaultDrop.addActionListener(this);
@@ -402,7 +402,7 @@ public class DeploymentDisplay
             AlertDialog dlg = new AlertDialog( clientgui.frame,
                                                Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
                                                Messages.getString("DeploymentDisplay.cantDeployInto", new Object[]{ce().getShortName(), moveto.getBoardNum()})); //$NON-NLS-1$
-            dlg.show();
+            dlg.setVisible(true);
             return;
         } else if (Compute.stackingViolation(client.game, ce().getId(), moveto) != null) {
             // check if deployed unit violates stacking
@@ -478,7 +478,7 @@ public class DeploymentDisplay
                                             Messages.getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
                                             Messages.getString("DeploymentDisplay.loadUnitDialog.message", new Object[]{ce().getShortName(), ce().getUnusedString()}), //$NON-NLS-1$
                                             names );
-                choiceDialog.show();
+                choiceDialog.setVisible(true);
                 if ( choiceDialog.getAnswer() == true ) {
                     other = (Entity) choices.elementAt( choiceDialog.getChoice() );
                     // Please note, the Server may never get this load order.
@@ -491,7 +491,7 @@ public class DeploymentDisplay
                 AlertDialog alert = new AlertDialog( clientgui.frame,
                                                      Messages.getString("DeploymentDisplay.allertDialog1.title"), //$NON-NLS-1$
                                                      Messages.getString("DeploymentDisplay.allertDialog1.message", new Object[]{ce().getShortName()})); //$NON-NLS-1$
-                alert.show();
+                alert.setVisible(true);
             }
 
         } // End load-unit
@@ -511,7 +511,7 @@ public class DeploymentDisplay
                                             Messages.getString("DeploymentDisplay.unloadUnitDialog.title"), //$NON-NLS-1$
                                             Messages.getString("DeploymentDisplay.unloadUnitDialog.message", new Object[]{ce().getShortName(), ce().getUnusedString()}), //$NON-NLS-1$
                                             names );
-                choiceDialog.show();
+                choiceDialog.setVisible(true);
                 if ( choiceDialog.getAnswer() == true ) {
                     other = (Entity) choices.elementAt( choiceDialog.getChoice() );
                     // Please note, the Server never got this load order.
@@ -531,7 +531,7 @@ public class DeploymentDisplay
                 AlertDialog alert = new AlertDialog( clientgui.frame,
                                                      Messages.getString("DeploymentDisplay.allertDialog2.title"), //$NON-NLS-1$
                                                      Messages.getString("DeploymentDisplay.allertDialog2.message",new Object[]{ce().getShortName()})); //$NON-NLS-1$
-                alert.show();
+                alert.setVisible(true);
             }
 
         } // End unload-unit

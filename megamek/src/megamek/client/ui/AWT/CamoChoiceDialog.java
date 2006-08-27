@@ -93,7 +93,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         setItemName( prevItem );
 
         // And hide the dialog.
-        hide();
+        setVisible(false);
     }
 
     /** 
@@ -198,7 +198,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
                 err.printStackTrace();
                 AlertDialog dlg = new AlertDialog
                     ( frame, Messages.getString("CamoChoiceDialog.error_getting_camo"), err.getMessage() ); //$NON-NLS-1$
-                dlg.show();
+                dlg.setVisible(true);
                 dlg.dispose();
             }
         }
@@ -439,7 +439,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             err.printStackTrace();
             AlertDialog dlg = new AlertDialog
                 ( frame, Messages.getString("CamoChoiceDialog.error_getting_camo"), err.getMessage() ); //$NON-NLS-1$
-            dlg.show();
+            dlg.setVisible(true);
             dlg.dispose();
         }
     }
@@ -479,7 +479,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             err.printStackTrace();
             AlertDialog dlg = new AlertDialog
                 ( frame, Messages.getString("CamoChoiceDialog.error_getting_camo"), err.getMessage() ); //$NON-NLS-1$
-            dlg.show();
+            dlg.setVisible(true);
             dlg.dispose();
         }
         if ( null == image ) return null;
@@ -621,20 +621,22 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
     /**
      * Show the dialog.  Make sure that all selections have been applied.
      * <p/>
-     * Overrides <code>Dialog#show()</code>.
+     * Overrides <code>Component#setVisible()</code>.
      */
-    public void show() {
+    public void setVisible(boolean show) {
 
-        // Make sure the "keep" button is set correctly.
-        setPrevSelection( categories.getSelectedItem(),
-                          items.getSelectedItem() );
-
-        // Make sure the "select" button is set correctly.
-        itemStateChanged( new ItemEvent(items, 0, items.getSelectedItem(),
-                                        ItemEvent.SELECTED) );
-
-        // Now show the dialog.
-        super.show();
+        if(show) {
+            // Make sure the "keep" button is set correctly.
+            setPrevSelection( categories.getSelectedItem(),
+                              items.getSelectedItem() );
+    
+            // Make sure the "select" button is set correctly.
+            itemStateChanged( new ItemEvent(items, 0, items.getSelectedItem(),
+                                            ItemEvent.SELECTED) );
+    
+            // Now show the dialog.
+        }
+        super.setVisible(show);
     }
 
 }

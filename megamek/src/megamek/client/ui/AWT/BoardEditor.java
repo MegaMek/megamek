@@ -160,13 +160,13 @@ public class BoardEditor extends Container implements ItemListener,
         setupEditorPanel();
         setupFrame();
 
-        frame.show();
+        frame.setVisible(true);
 
         if (true==GUIPreferences.getInstance().getNagForMapEdReadme()) {
             String title = Messages.getString("BoardEditor.readme.title"); //$NON-NLS-1$
             String body = Messages.getString("BoardEditor.readme.message"); //$NON-NLS-1$
             ConfirmDialog confirm = new ConfirmDialog(frame,title,body,true);
-            confirm.show();
+            confirm.setVisible(true);
 
             if ( !confirm.getShowAgain() ) {
                 GUIPreferences.getInstance().setNagForMapEdReadme(false);
@@ -470,7 +470,7 @@ public class BoardEditor extends Container implements ItemListener,
         // display new board dialog
         BoardNewDialog bnd = new BoardNewDialog(frame, lisTerrain.getItems(), lisTerrain.getSelectedIndex());
         bnd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-        bnd.show();
+        bnd.setVisible(true);
         
         if(bnd.getX() > 0 || bnd.getY() > 0) {
             IHex[] newHexes = new IHex[ bnd.getX() * bnd.getY() ]; 
@@ -487,7 +487,7 @@ public class BoardEditor extends Container implements ItemListener,
     
     public void boardNew() {
         RandomMapDialog rmd = new RandomMapDialog(frame, this, mapSettings);
-        rmd.show();
+        rmd.setVisible(true);
         
         board = BoardUtilities.generateRandom(mapSettings);
         game.setBoard(board);
@@ -505,7 +505,7 @@ public class BoardEditor extends Container implements ItemListener,
         FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.loadBoard"), FileDialog.LOAD); //$NON-NLS-1$
         fd.setDirectory("data" + File.separator + "boards"); //$NON-NLS-1$ //$NON-NLS-2$
         fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-        fd.show();
+        fd.setVisible(true);
         
         if(fd.getFile() == null) {
             // I want a file, y'know!
@@ -571,7 +571,7 @@ public class BoardEditor extends Container implements ItemListener,
         waitD.setLocation(
                     frame.getSize().width / 2 - waitD.getSize().width / 2,
                     frame.getSize().height / 2 - waitD.getSize().height / 2);
-        waitD.show();
+        waitD.setVisible(true);
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
@@ -596,7 +596,7 @@ public class BoardEditor extends Container implements ItemListener,
         } catch (IOException e) {
             e.printStackTrace();
         }
-        waitD.hide();
+        waitD.setVisible(false);
         frame.setCursor(Cursor.getDefaultCursor());
     }
 
@@ -608,7 +608,7 @@ public class BoardEditor extends Container implements ItemListener,
         FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.saveBoardAs"), FileDialog.SAVE); //$NON-NLS-1$
         fd.setDirectory("data" + File.separator + "boards"); //$NON-NLS-1$ //$NON-NLS-2$
         fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
-        fd.show();
+        fd.setVisible(true);
         
         if(fd.getFile() == null) {
             // I want a file, y'know!
@@ -660,7 +660,7 @@ public class BoardEditor extends Container implements ItemListener,
         }
 
         // Open the dialog and wait for it's return.
-        fd.show();
+        fd.setVisible(true);
 
         if(fd.getFile() == null) {
             // I want a file, y'know!
@@ -725,7 +725,7 @@ public class BoardEditor extends Container implements ItemListener,
         }
 
         // Show the about dialog.
-        this.about.show();
+        this.about.setVisible(true);
     }
 
     /**
@@ -739,7 +739,7 @@ public class BoardEditor extends Container implements ItemListener,
         }
 
         // Show the help dialog.
-        this.help.show();
+        this.help.setVisible(true);
     }
 
     /**
@@ -752,7 +752,7 @@ public class BoardEditor extends Container implements ItemListener,
         }
 
         // Show the settings dialog.
-        this.setdlg.show();
+        this.setdlg.setVisible(true);
     }
 
     //
@@ -788,7 +788,7 @@ public class BoardEditor extends Container implements ItemListener,
             ExitsDialog ed = new ExitsDialog(frame);
             cheTerrExitSpecified.setState(true);
             ed.setExits(Integer.parseInt(texTerrExits.getText()));
-            ed.show();
+            ed.setVisible(true);
             texTerrExits.setText(Integer.toString(ed.getExits()));
             addSetTerrain();
         } else if (ae.getActionCommand().equalsIgnoreCase("viewMiniMap")) { //$NON-NLS-1$

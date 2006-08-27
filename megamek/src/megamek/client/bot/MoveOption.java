@@ -141,7 +141,7 @@ public class MoveOption extends MovePath implements Cloneable {
         this.threat = base.threat;
         this.damage = base.damage;
         this.movement_threat = base.movement_threat;
-        this.tv = new ArrayList(tv);
+        this.tv = new ArrayList(base.tv);
         this.self_threat = base.self_threat;
         this.inDanger = base.inDanger;
         this.doomed = base.doomed;

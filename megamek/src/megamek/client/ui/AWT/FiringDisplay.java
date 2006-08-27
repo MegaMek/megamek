@@ -367,7 +367,7 @@ public class FiringDisplay
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog
                 ( clientgui.getFrame(), ce() );
-            dialog.show();
+            dialog.setVisible(true);
             attacks.removeAllElements();
             Enumeration actions = dialog.getActions();
             while ( actions.hasMoreElements() ) {
@@ -685,7 +685,7 @@ public class FiringDisplay
             {
                 VibrabombSettingDialog vsd  =
                     new VibrabombSettingDialog( clientgui.frame );
-                vsd.show();
+                vsd.setVisible(true);
                 waa.setOtherAttackInfo(vsd.getSetting());
             }
         }
@@ -1100,7 +1100,7 @@ public class FiringDisplay
             }
             // Display the game options dialog.
             clientgui.getGameOptionsDialog().update(client.game.getOptions());
-            clientgui.getGameOptionsDialog().show();
+            clientgui.getGameOptionsDialog().setVisible(true);
         } else if (ev.getActionCommand().equals(FIRE_FIRE)) {
             fire();
         } else if (ev.getActionCommand().equals(FIRE_SKIP)) {
@@ -1370,7 +1370,7 @@ public class FiringDisplay
                       this,
                       this);
 
-        asd.show();
+        asd.setVisible(true);
         updateTarget();
       }
     }
@@ -1437,7 +1437,7 @@ public class FiringDisplay
       if (asd != null) {
         aimingAt = Entity.LOC_NONE;
         aimingMode = IAimingModes.AIM_MODE_NONE;
-        asd.hide();
+        asd.setVisible(false);
         asd = null;
         updateTarget();
       }
@@ -1714,7 +1714,7 @@ public class FiringDisplay
                                         Messages.getString("FiringDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
                                         Messages.getString("FiringDisplay.ChooseTargetDialog.message", new Object[]{pos.getBoardNum()}), //$NON-NLS-1$ 
                                         names );
-            choiceDialog.show();
+            choiceDialog.setVisible(true);
             if ( choiceDialog.getAnswer() == true ) {
                 choice = (Targetable) targets.elementAt
                     ( choiceDialog.getChoice() );

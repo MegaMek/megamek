@@ -41,7 +41,7 @@ public class GameLog {
     //private long maxFilesize = Long.MAX_VALUE;
     private File logfile;
     
-    Writer writer;
+    BufferedWriter writer;
 
     /** Creates GameLog named @filename */
     //public GameLog(String filename, boolean append, long maxSize) {
@@ -51,13 +51,13 @@ public class GameLog {
             if (!logDir.exists()) {
                 logDir.mkdir();
             }
-            logfile = new File(LOG_DIR + File.separator + filename);
             //maxFilesize = maxSize;
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 filename = StringUtil.addDateTimeStamp(filename);
             }
+            logfile = new File(LOG_DIR + File.separator + filename);
             //writer = new BufferedWriter(new FileWriter(LOG_DIR + File.separator + filename, append));
-            writer = new BufferedWriter(new FileWriter(LOG_DIR + File.separator + filename));
+            writer = new BufferedWriter(new FileWriter(logfile));
             append("Log file opened " + new Date().toString()); //$NON-NLS-1$
         } catch (IOException ex) {
             writer = null;
@@ -77,7 +77,7 @@ public class GameLog {
         }
         try {
             writer.write(toLog);
-            writer.write("\r\n"); //$NON-NLS-1$
+            writer.newLine();
             writer.flush();
         } catch (IOException ex) {
             //duhhhh...

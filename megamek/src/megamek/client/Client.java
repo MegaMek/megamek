@@ -277,6 +277,9 @@ public class Client {
             sendDone(true);
             break;
         case IGame.PHASE_DEPLOYMENT :
+            //free some memory thats only needed in lounge
+            MechSummaryCache.dispose();
+            MechFileParser.dispose();
             memDump("entering deployment phase"); //$NON-NLS-1$
             break;
         case IGame.PHASE_TARGETING :
@@ -295,6 +298,7 @@ public class Client {
             memDump("entering physical phase"); //$NON-NLS-1$
             break;
         case IGame.PHASE_LOUNGE :
+            MechSummaryCache.getInstance();
             duplicateNameHash = new Hashtable(); //reset this
             break;
         }

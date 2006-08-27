@@ -322,83 +322,85 @@ public class CommonSettingsDialog extends ClientDialog
      * <p/>
      * Overrides <code>Dialog#show()</code>.
      */
-    public void show() {
-        GUIPreferences gs = GUIPreferences.getInstance();
-        IClientPreferences cs = PreferenceManager.getClientPreferences();
-        
-        minimapEnabled.setState( gs.getMinimapEnabled() );
-        autoEndFiring.setState( gs.getAutoEndFiring() );
-        autoDeclareSearchlight.setState( gs.getAutoDeclareSearchlight());
-        nagForMASC.setState( gs.getNagForMASC() );
-        nagForPSR.setState( gs.getNagForPSR() );
-        nagForNoAction.setState( gs.getNagForNoAction() );
-        animateMove.setState( gs.getShowMoveStep() );
-        showWrecks.setState( gs.getShowWrecks() );
-        soundMute.setState( gs.getSoundMute() );
-        showMapHexPopup.setState( gs.getShowMapHexPopup() );
-        tooltipDelay.setText( Integer.toString(gs.getTooltipDelay() ) );
-        mouseWheelZoom.setState( gs.getMouseWheelZoom());
-
-        // Select the correct char set (give a nice default to start).
-        unitStartChar.select(0);
-        for ( int loop = 0; loop < unitStartChar.getItemCount(); loop++ ) {
-            if ( unitStartChar.getItem(loop).charAt(0) ==
-                 PreferenceManager.getClientPreferences().getUnitStartChar() ) {
-                unitStartChar.select(loop);
-                break;
+    public void setVisible(boolean show) {
+        if(show) {
+            GUIPreferences gs = GUIPreferences.getInstance();
+            IClientPreferences cs = PreferenceManager.getClientPreferences();
+            
+            minimapEnabled.setState( gs.getMinimapEnabled() );
+            autoEndFiring.setState( gs.getAutoEndFiring() );
+            autoDeclareSearchlight.setState( gs.getAutoDeclareSearchlight());
+            nagForMASC.setState( gs.getNagForMASC() );
+            nagForPSR.setState( gs.getNagForPSR() );
+            nagForNoAction.setState( gs.getNagForNoAction() );
+            animateMove.setState( gs.getShowMoveStep() );
+            showWrecks.setState( gs.getShowWrecks() );
+            soundMute.setState( gs.getSoundMute() );
+            showMapHexPopup.setState( gs.getShowMapHexPopup() );
+            tooltipDelay.setText( Integer.toString(gs.getTooltipDelay() ) );
+            mouseWheelZoom.setState( gs.getMouseWheelZoom());
+    
+            // Select the correct char set (give a nice default to start).
+            unitStartChar.select(0);
+            for ( int loop = 0; loop < unitStartChar.getItemCount(); loop++ ) {
+                if ( unitStartChar.getItem(loop).charAt(0) ==
+                     PreferenceManager.getClientPreferences().getUnitStartChar() ) {
+                    unitStartChar.select(loop);
+                    break;
+                }
             }
+    
+            maxPathfinderTime.setText( Integer.toString(cs.getMaxPathfinderTime() ) );
+    
+            rightDragScroll.setState( gs.getRightDragScroll() );
+            ctlScroll.setState( gs.getCtlScroll() );
+            clickEdgeScroll.setState( gs.getClickEdgeScroll() );
+            alwaysRightClickScroll.setState( gs.getAlwaysRightClickScroll() );
+            autoEdgeScroll.setState( gs.getAutoEdgeScroll() );
+            scrollSensitivity.setText( Integer.toString(gs.getScrollSensitivity() ) );
+    
+            keepGameLog.setState( cs.keepGameLog() );
+            gameLogFilename.setEnabled(keepGameLog.getState());
+            gameLogFilename.setText( cs.getGameLogFilename() );
+            //gameLogMaxSize.setEnabled(keepGameLog.getState());
+            //gameLogMaxSize.setText( Integer.toString(cs.getGameLogMaxSize()) );
+            stampFilenames.setState( cs.stampFilenames() );
+            stampFormat.setEnabled(stampFilenames.getState());
+            stampFormat.setText(cs.getStampFormat());
+    
+            defaultAutoejectDisabled.setState( cs.defaultAutoejectDisabled() );
+            showUnitId.setState( cs.getShowUnitId() );
+    
+            int index = 0;
+            if (cs.getLocaleString().startsWith("de"))
+                index = 1;
+            if (cs.getLocaleString().startsWith("ru"))
+                index = 2;
+            locale.select(index);
+            
+            chatloungeTabs.setState(gs.getChatLoungeTabs() );
+            
+            showMapsheets.setState(gs.getShowMapsheets());
+    
+            File dir = new File("data" + File.separator +
+                    "images" + 
+                    File.separator + "hexes" + File.separator);
+            tileSets = dir.listFiles(new FilenameFilter() {
+                public boolean accept(File direc, String name) { 
+                    if(name.endsWith(".tileset")) return true;
+                    return false;}
+            });
+            tileSetChoice.removeAll();
+            for(int i=0;i<tileSets.length;i++) {
+                String name = tileSets[i].getName();
+                tileSetChoice.add(name.substring(0,name.length() - 8));
+                if(name.equals(cs.getMapTileset()))
+                    tileSetChoice.select(i);
+            }
+    
+            getFocus.setState( gs.getFocus() );
         }
-
-        maxPathfinderTime.setText( Integer.toString(cs.getMaxPathfinderTime() ) );
-
-        rightDragScroll.setState( gs.getRightDragScroll() );
-        ctlScroll.setState( gs.getCtlScroll() );
-        clickEdgeScroll.setState( gs.getClickEdgeScroll() );
-        alwaysRightClickScroll.setState( gs.getAlwaysRightClickScroll() );
-        autoEdgeScroll.setState( gs.getAutoEdgeScroll() );
-        scrollSensitivity.setText( Integer.toString(gs.getScrollSensitivity() ) );
-
-        keepGameLog.setState( cs.keepGameLog() );
-        gameLogFilename.setEnabled(keepGameLog.getState());
-        gameLogFilename.setText( cs.getGameLogFilename() );
-        //gameLogMaxSize.setEnabled(keepGameLog.getState());
-        //gameLogMaxSize.setText( Integer.toString(cs.getGameLogMaxSize()) );
-        stampFilenames.setState( cs.stampFilenames() );
-        stampFormat.setEnabled(stampFilenames.getState());
-        stampFormat.setText(cs.getStampFormat());
-
-        defaultAutoejectDisabled.setState( cs.defaultAutoejectDisabled() );
-        showUnitId.setState( cs.getShowUnitId() );
-
-        int index = 0;
-        if (cs.getLocaleString().startsWith("de"))
-            index = 1;
-        if (cs.getLocaleString().startsWith("ru"))
-            index = 2;
-        locale.select(index);
-        
-        chatloungeTabs.setState(gs.getChatLoungeTabs() );
-        
-        showMapsheets.setState(gs.getShowMapsheets());
-
-        File dir = new File("data" + File.separator +
-                "images" + 
-                File.separator + "hexes" + File.separator);
-        tileSets = dir.listFiles(new FilenameFilter() {
-            public boolean accept(File direc, String name) { 
-                if(name.endsWith(".tileset")) return true;
-                return false;}
-        });
-        tileSetChoice.removeAll();
-        for(int i=0;i<tileSets.length;i++) {
-            String name = tileSets[i].getName();
-            tileSetChoice.add(name.substring(0,name.length() - 8));
-            if(name.equals(cs.getMapTileset()))
-                tileSetChoice.select(i);
-        }
-
-        getFocus.setState( gs.getFocus() );
-        super.show();
+        super.setVisible(show);
     }
 
     /**

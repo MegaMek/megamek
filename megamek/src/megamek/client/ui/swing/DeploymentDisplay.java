@@ -116,7 +116,7 @@ public class DeploymentDisplay
         butRemove = new JButton(Messages.getString("DeploymentDisplay.Remove")); //$NON-NLS-1$
         butRemove.addActionListener(this);
         butRemove.setActionCommand(DEPLOY_REMOVE);
-        butRemove.setEnabled(true);
+        setRemoveEnabled(true);
         butAssaultDrop = new JButton(Messages.getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
         butAssaultDrop.addActionListener(this);
         butAssaultDrop.setActionCommand(DEPLOY_ASSAULTDROP);

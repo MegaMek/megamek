@@ -48,7 +48,6 @@ public class SelectArtyAutoHitHexDisplay
     private Button            butA;
     private Button            butDone;
 
-    private boolean           artyEnabled;
     private Player            p;
     private Vector            artyAutoHitHexes = new Vector();
 
@@ -237,9 +236,6 @@ public class SelectArtyAutoHitHexDisplay
             endMyTurn();
             client.sendArtyAutoHitHexes(artyAutoHitHexes);
             client.sendPlayerInfo();
-        }
-        if (ev.getActionCommand().equals(SET_HIT_HEX)) {
-            artyEnabled = true;          
         }
     } // End public void actionPerformed(ActionEvent ev)
     

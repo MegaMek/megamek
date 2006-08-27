@@ -40,6 +40,8 @@ import megamek.client.ui.AWT.util.ImageCache;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
+import java.util.Vector;
 
 /**
  * Matches each hex with an appropriate image.
@@ -51,9 +53,12 @@ public class HexTileset {
     
     private ArrayList bases = new ArrayList();
     private ArrayList supers = new ArrayList();
-    private ImageCache hexToImageCache = new ImageCache();
+    private ImageCache<IHex,Image> hexToImageCache = new ImageCache<IHex,Image>();
+    private ImageCache<IHex,List<Image>> hexToImageListCache = new ImageCache<IHex,List<Image>>();
 
-    /** Creates new HexTileset */
+    /**
+     * Creates new HexTileset
+     */
     public HexTileset() {
     }
     
@@ -77,24 +82,27 @@ public class HexTileset {
         List supers = supersFor(hexCopy, comp);
         Image base = baseFor(hexCopy, comp);
         Object[] pair = new Object[] {base, supers};
-        hexToImageCache.put(hex, pair);
+        hexToImageCache.put(hex, base);
+        hexToImageListCache.put(hex,supers);
         return pair;
     }
     
     public synchronized Image getBase(IHex hex, Component comp) {
-        Object[] pair = (Object[])hexToImageCache.get(hex);
-        if (pair == null) {
-          pair = assignMatch(hex, comp);
+        Image i = hexToImageCache.get(hex);
+        if (i == null) {
+            Object[] pair = assignMatch(hex, comp);
+            return (Image) pair[0];
         }
-        return (Image) pair[0];
+        return i;
     }
     
-    public synchronized List getSupers(IHex hex, Component comp) {
-        Object[] pair = (Object[])hexToImageCache.get(hex);
-        if (pair == null) {
-          pair = assignMatch(hex, comp);
+    public synchronized List<Image> getSupers(IHex hex, Component comp) {
+        List<Image> l = hexToImageListCache.get(hex);
+        if (l == null) {
+            Object[] pair = assignMatch(hex, comp);
+            return (List<Image>) pair[1];
         }
-        return (List) pair[1];
+        return l;
     }
     
     /**
@@ -226,8 +234,8 @@ public class HexTileset {
      */
     public synchronized void trackHexImages(IHex hex, MediaTracker tracker) {
 
-        Image base = (Image)((Object[])hexToImageCache.get(hex))[0];
-        List superImgs = (List)((Object[])hexToImageCache.get(hex))[1];
+        Image base = hexToImageCache.get(hex);
+        List<Image> superImgs = hexToImageListCache.get(hex);
 
         // add base
         tracker.addImage(base, 1);        
@@ -248,6 +256,7 @@ public class HexTileset {
     
     public synchronized void reset() {
         hexToImageCache = new ImageCache();
+        hexToImageListCache = new ImageCache();
     }
 
     /**
@@ -350,14 +359,14 @@ public class HexTileset {
         private IHex hex;
         private String imageFile;
         private Image image;
-        private java.util.Vector images;
-        private java.util.Vector filenames;
-        private java.util.Random r;
+        private Vector images;
+        private Vector filenames;
+        private Random r;
         
         public HexEntry(IHex hex, String imageFile) {
             this.hex = hex;
             this.imageFile = imageFile;
-            r = new java.util.Random();
+            r = new Random();
             filenames = StringUtil.splitString(imageFile, ";"); //$NON-NLS-1$
         }
         
@@ -391,7 +400,7 @@ public class HexTileset {
     }
         
         public void loadImage(Component comp) {
-          images = new java.util.Vector();
+            images = new Vector();
           for (int i = 0; i < filenames.size(); i++) {
             String filename = (String) filenames.elementAt(i);
             images.addElement(comp.getToolkit().getImage("data/images/hexes/" + filename)); //$NON-NLS-1$

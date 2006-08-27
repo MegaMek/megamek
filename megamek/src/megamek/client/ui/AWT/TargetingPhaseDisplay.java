@@ -84,7 +84,6 @@ public class TargetingPhaseDisplay
 
     private Entity[]            visibleTargets  = null;
     private int                 lastTargetID    = -1;
-    private boolean            showTargetChoice = true;
 
     /**
      * Creates and lays out a new targeting phase display
@@ -314,7 +313,7 @@ public class TargetingPhaseDisplay
             disableButtons();
             TriggerAPPodDialog dialog = new TriggerAPPodDialog
                 ( clientgui.getFrame(), ce() );
-            dialog.show();
+            dialog.setVisible(true);
             attacks.removeAllElements();
             Enumeration actions = dialog.getActions();
             while ( actions.hasMoreElements() ) {
@@ -486,7 +485,7 @@ public class TargetingPhaseDisplay
                waa.setAmmoId(ce().getEquipmentNum(ammoMount));
                if (((AmmoType)(ammoMount.getType())).getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
                    VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.frame);
-                   vsd.show();
+                   vsd.setVisible(true);
                    waa.setOtherAttackInfo(vsd.getSetting());
                }
         }
@@ -754,15 +753,10 @@ public class TargetingPhaseDisplay
         
         if ( null == targ )
             return;
-        
-        // HACK : don't show the choice dialog.
-        this.showTargetChoice = false;
-        
+                
         clientgui.bv.centerOnHex(targ.getPosition());
         clientgui.getBoardView().select(targ.getPosition());
         
-        // HACK : show the choice dialog again.
-        this.showTargetChoice = true;
         target(targ);
     }
 
@@ -894,7 +888,7 @@ public class TargetingPhaseDisplay
             }
             // Display the game options dialog.
             clientgui.getGameOptionsDialog().update(client.game.getOptions());
-            clientgui.getGameOptionsDialog().show();
+            clientgui.getGameOptionsDialog().setVisible(true);
         } else if (ev.getActionCommand().equals(FIRE_FIRE)) {
             fire();
         } else if (ev.getActionCommand().equals(FIRE_SKIP)) {

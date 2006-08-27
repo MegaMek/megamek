@@ -215,7 +215,7 @@ public class PacketTool extends Frame implements Runnable {
             fd.setFile( boardName.getText() );
         }
         fd.setLocation(this.getLocation().x + 150, this.getLocation().y + 100);
-        fd.show();
+        fd.setVisible(true);
         
         if(fd.getFile() == null) {
             // I want a file, y'know!

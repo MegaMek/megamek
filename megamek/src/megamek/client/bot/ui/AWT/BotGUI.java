@@ -59,7 +59,7 @@ public class BotGUI implements GameListener {
                 screenSize.width / 2 - frame.getSize().width / 2,
                 screenSize.height / 2 - frame.getSize().height / 2);
             ConfirmDialog confirm = new ConfirmDialog(frame, title, body, true);
-            confirm.show();
+            confirm.setVisible(true);
 
             if (!confirm.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForBotReadme(false);
@@ -67,7 +67,7 @@ public class BotGUI implements GameListener {
 
             if (confirm.getAnswer()) {
                 File helpfile = new File("docs/ai-readme.txt"); //$NON-NLS-1$
-                new CommonHelpDialog(frame, helpfile).show();
+                new CommonHelpDialog(frame, helpfile).setVisible(true);
             }
         }
     }

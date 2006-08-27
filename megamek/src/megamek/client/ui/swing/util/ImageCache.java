@@ -16,6 +16,8 @@ package megamek.client.ui.swing.util;
 
 import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.List;
+import java.awt.Image;
 
 /**
  * @author pjm1
@@ -24,12 +26,12 @@ import java.util.LinkedList;
  *         with a LinkedHashMap<Hex, Image> and LinkedHashMap<Hex,List<Image>> and the
  *         methods should be reworked to have that take care of all the LRU removal.
  */
-public class ImageCache {
+public class ImageCache<K,V> {
 
     public static int MAX_SIZE = 500;
     private int maxSize;
-    private Hashtable cache;
-    private LinkedList lru = new LinkedList();
+    private Hashtable<K,V> cache;
+    private LinkedList<K> lru = new LinkedList();
 
     public ImageCache() {
         cache = new Hashtable(MAX_SIZE * 5 / 4, .75f);
@@ -41,24 +43,36 @@ public class ImageCache {
         maxSize = max;
     }
 
-    public synchronized Object put(Object key, Object value) {
+    public synchronized V put(K key, V value) {
         if ((key == null) || (value == null)) return null;
 
         if (cache.containsKey(key)) {
             lru.remove(key);
         } else {
             if (cache.size() == maxSize) { // must remove one element
-                Object keyToNix = lru.removeFirst();
-                cache.remove(key);
+                K keyToNix = lru.removeFirst();
+                V valToNix = cache.get(key);
+                cache.remove(keyToNix);
+                //Images must be flushed before dereference
+                if(valToNix instanceof Image) {
+                    ((Image)valToNix).flush();
+                } 
+                else if(valToNix instanceof List) {
+                    for(Object o:((List)valToNix)) {
+                        if(o instanceof Image) {
+                            ((Image)o).flush();
+                        }
+                    }
+                }
             }
         }
         lru.addLast(key);
         cache.put(key, value);
-
+        
         return value;
     }
-
-    public synchronized Object get(Object key) {
+    
+    public synchronized V get(K key) {
         if (!cache.containsKey(key)) return null;
         lru.remove(key);
         lru.addLast(key);

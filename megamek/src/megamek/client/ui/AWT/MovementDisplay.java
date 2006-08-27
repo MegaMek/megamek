@@ -1433,7 +1433,7 @@ public class MovementDisplay
                                         Messages.getString("MovementDisplay.UnloadUnitDialog.title"), //$NON-NLS-1$
                                         question,
                                         names );
-            choiceDialog.show();
+            choiceDialog.setVisible(true);
             if ( choiceDialog.getAnswer() == true ) {
                 choice = (Entity) this.loadedUnits.elementAt( choiceDialog.getChoice() );
             }
@@ -1500,7 +1500,7 @@ public class MovementDisplay
                                         Messages.getString("MovementDisplay.ChooseTargetDialog.title"), //$NON-NLS-1$
                                         question.toString(),
                                         names );
-            choiceDialog.show();
+            choiceDialog.setVisible(true);
             if ( choiceDialog.getAnswer() == true ) {
                 choice = (Targetable) targets.elementAt( choiceDialog.getChoice() );
             }
@@ -1513,7 +1513,7 @@ public class MovementDisplay
     
     private int chooseMineToLay() {
         MineLayingDialog mld = new MineLayingDialog(clientgui.frame,ce());
-        mld.show();
+        mld.setVisible(true);
         if (mld.getAnswer() == true) {
             return mld.getMine();
         } else {
@@ -1775,7 +1775,7 @@ public class MovementDisplay
                 Mounted m = ce().getEquipment(i);
                 if (m.getMineType() == Mounted.MINE_VIBRABOMB) {
                     VibrabombSettingDialog vsd  = new VibrabombSettingDialog(clientgui.frame);
-                    vsd.show();
+                    vsd.setVisible(true);
                     m.setVibraSetting(vsd.getSetting());
                 }
                 cmd.addStep(MovePath.STEP_LAY_MINE, i);

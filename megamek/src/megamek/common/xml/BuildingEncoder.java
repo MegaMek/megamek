@@ -112,7 +112,6 @@ public class BuildingEncoder {
         int type = -1;
         int id = -1;
         String name = null;
-        boolean isBurning = false;
 
         // Walk the building node's children.
         Enumeration children = node.elements();

@@ -122,7 +122,7 @@ public class CommonHelpDialog extends Dialog
      * Close this dialog.
      */
     /* package */ void quit() {
-        this.hide();
+        this.setVisible(false);
     }
 
 }

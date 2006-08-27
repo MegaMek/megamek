@@ -1138,13 +1138,13 @@ public class ChatLounge
             }
         } catch (NumberFormatException e) {
             AlertDialog ad = new AlertDialog(clientgui.frame, Messages.getString("ChatLounge.MinefieldAlert.title"), Messages.getString("ChatLounge.MinefieldAlert.message")); //$NON-NLS-1$ //$NON-NLS-2$
-            ad.show();
+            ad.setVisible(true);
             return;
         }
 
         if (nbrConv < 0 || nbrCmd < 0 || nbrVibra < 0) {
             AlertDialog ad = new AlertDialog(clientgui.frame, Messages.getString("ChatLounge.MinefieldAlert.title"), Messages.getString("ChatLounge.MinefieldAlert.message")); //$NON-NLS-1$ //$NON-NLS-2$
-            ad.show();
+            ad.setVisible(true);
             return;
         }
         Client c = getPlayerListSelected(lisMinefield);
@@ -1191,7 +1191,7 @@ public class ChatLounge
         CustomMechDialog cmd = new CustomMechDialog(clientgui, c, entity, editable);
         cmd.refreshOptions();
         cmd.setTitle(entity.getShortName());
-        cmd.show();
+        cmd.setVisible(true);
         if (editable && cmd.isOkay()) {
             // send changes
             c.sendUpdateEntity(entity);
@@ -1248,22 +1248,22 @@ public class ChatLounge
         dialog.setSize(300, 450);
 
         dialog.validate();
-        dialog.show();
+        dialog.setVisible(true);
     }
 
     /**
      * Pop up the dialog to load a mech
      */
     public void loadMech() {
-        clientgui.getMechSelectorDialog().show();
+        clientgui.getMechSelectorDialog().setVisible(true);
     }
 
     public void loadCustomBA() {
-        clientgui.getCustomBADialog().show();
+        clientgui.getCustomBADialog().setVisible(true);
     }
 
     public void viewGroup() {
-        new MechGroupView(clientgui.getFrame(), client, entityCorrespondance).show();
+        new MechGroupView(clientgui.getFrame(), client, entityCorrespondance).setVisible(true);
     }
 
     //
@@ -1452,7 +1452,7 @@ public class ChatLounge
         } else if (ev.getSource() == butChangeBoard || ev.getSource() == lisBoardsSelected) {
             // board settings
             clientgui.getBoardSelectionDialog().update(client.getMapSettings(), true);
-            clientgui.getBoardSelectionDialog().show();
+            clientgui.getBoardSelectionDialog().setVisible(true);
         } else if (ev.getSource() == butOptions) {
             // Make sure the game options dialog is editable.
             if (!clientgui.getGameOptionsDialog().isEditable()) {
@@ -1460,16 +1460,16 @@ public class ChatLounge
             }
             // Display the game options dialog.
             clientgui.getGameOptionsDialog().update(client.game.getOptions());
-            clientgui.getGameOptionsDialog().show();
+            clientgui.getGameOptionsDialog().setVisible(true);
         } else if (ev.getSource() == butChangeStart || ev.getSource() == lisStarts) {
-            clientgui.getStartingPositionDialog().update();
             Client c = getPlayerListSelected(lisStarts);
             if (c == null) {
                 clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             clientgui.getStartingPositionDialog().setClient(c);
-            clientgui.getStartingPositionDialog().show();
+            clientgui.getStartingPositionDialog().update();
+            clientgui.getStartingPositionDialog().setVisible(true);
         } else if (ev.getSource() == butMechReadout) {
             mechReadout();
         } else if (ev.getSource() == butViewGroup) {
@@ -1485,7 +1485,7 @@ public class ChatLounge
         } else if (ev.getSource() == butMinefield) {
             updateMinefield();
         } else if (ev.getSource() == butCamo) {
-            camoDialog.show();
+            camoDialog.setVisible(true);
         } else if (ev.getSource() == butAddBot) {
             String name = name = "Bot" + lisPlayerInfo.getItemCount(); //$NON-NLS-1$
             Prompt p = new Prompt(clientgui.frame, Messages.getString("ChatLounge.ChooseBotName"), Messages.getString("ChatLounge.Name"), name, 15); //$NON-NLS-1$ //$NON-NLS-2$

@@ -43,18 +43,9 @@ public class ReportDisplay
     private TabPanel        tabs;
     private Vector          vTextArea;
 
-    private Window            mechw;
-    private MechDisplay        mechd;
-    private    boolean            mechdOn;
-    
     // buttons
     private Button            readyB;
     private Button            rerollInitiativeB;
-    
-    // let's keep track of what we're moving, too
-    private int                cen;    // current entity number
-    private MovePath    md;        // movement data
-    private MovePath    cmd;    // considering movement data
     
     private boolean rerolled; //have we rerolled an init?
     

@@ -59,7 +59,7 @@ public class MiniReportDisplay extends Dialog
             GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);
             GUIPreferences.getInstance().setMiniReportPosY(getLocation().y);
 
-            hide();
+            setVisible(false);
         }
     }
 }

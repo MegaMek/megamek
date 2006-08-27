@@ -47,7 +47,7 @@ public class MechSummaryCache {
         void doneLoading();
     }
 
-    private static final MechSummaryCache m_instance = new MechSummaryCache();
+    private static MechSummaryCache m_instance;
 
     private boolean initialized = false;
     private boolean initializing = false;
@@ -56,19 +56,29 @@ public class MechSummaryCache {
     private StringBuffer loadReport = new StringBuffer();
     private final static String CONFIG_FILENAME = "data/mechfiles/UnitVerifierOptions.xml"; //should be a client option?
     private EntityVerifier entityVerifier = null;
+    private Thread loader;
 
     public static synchronized MechSummaryCache getInstance() {
+        if(m_instance == null)
+            m_instance = new MechSummaryCache();
         if (!m_instance.initialized && !m_instance.initializing) {
             m_instance.initializing = true;
-            Thread t = new Thread(new Runnable() {
+            m_instance.loader = new Thread(new Runnable() {
                 public void run() {
                     m_instance.loadMechData();
                 }
             }, "Mech Cach Loader");
-            t.setPriority(Thread.NORM_PRIORITY - 1);
-            t.start();
+            m_instance.loader.setPriority(Thread.NORM_PRIORITY - 1);
+            m_instance.loader.start();
         }
         return m_instance;
+    }
+    
+    public static synchronized void dispose() {
+        if(m_instance != null) {
+            m_instance.loader.interrupt();
+            m_instance = null;
+        }
     }
 
     public boolean isInitialized() {
@@ -149,6 +159,10 @@ public class MechSummaryCache {
                 BufferedReader br = new BufferedReader(new FileReader(CACHE));
                 String s;
                 while ((s = br.readLine()) != null) {
+                    if(Thread.interrupted()) {
+                        done();
+                        return;
+                    }
                     MechSummary ms = new MechSummary();
                     // manually do a string tokenizer.  Much faster
                     int nIndex1 = s.indexOf(SEPARATOR);
@@ -337,6 +351,10 @@ public class MechSummaryCache {
 
         if (sa != null) {
             for (int x = 0; x < sa.length; x++) {
+                if(Thread.interrupted()) {
+                    done();
+                    return false;
+                }
                 File f = new File(fDir, sa[x]);
                 if (f.equals(CACHE)) {
                     continue;
@@ -431,6 +449,10 @@ public class MechSummaryCache {
             .append(fZipFile.getPath()).append("...\n");
 
         for (java.util.Enumeration i = zFile.entries(); i.hasMoreElements();) {
+            if(Thread.interrupted()) {
+                done();
+                return false;
+            }
             ZipEntry zEntry = (ZipEntry) i.nextElement();
 
             if (zEntry.isDirectory()) {

@@ -70,10 +70,7 @@ public class DeployMinefieldDisplay
     private JButton butUnload;
     private JButton butDone;
 
-    private int cen;    // current entity number
-
     // is the shift key held?
-    private boolean turnMode = false;
     private boolean deployM = false;
     private boolean deployC = false;
     private boolean deployV = false;

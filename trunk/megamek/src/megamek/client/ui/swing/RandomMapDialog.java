@@ -66,7 +66,6 @@ public class RandomMapDialog
     private JPanel panOptions;
 
     private JLabel labBoardSize;
-    private JLabel labBoardDivider;
     private JTextField texBoardWidth;
     private JTextField texBoardHeight;
 
@@ -598,7 +597,6 @@ public class RandomMapDialog
         panOptions.setLayout(gridbag);
 
         labBoardSize = new JLabel(Messages.getString("RandomMapDialog.BoardSize"), JLabel.LEFT); //$NON-NLS-1$
-        labBoardDivider = new JLabel("x", JLabel.CENTER); //$NON-NLS-1$
         texBoardWidth = new JTextField(2);
         texBoardWidth.addFocusListener(this);
         texBoardHeight = new JTextField(2);

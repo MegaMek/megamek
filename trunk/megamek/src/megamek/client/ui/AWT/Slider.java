@@ -78,13 +78,13 @@ public class Slider extends Dialog implements ActionListener, AdjustmentListener
     }
     
     public boolean showDialog() {
-        show();
+        setVisible(true);
         return ok;
     }
 
     public void actionPerformed(ActionEvent evt) {
         ok = evt.getSource() == butOk;
-        hide();
+        setVisible(false);
         dispose();
     }
 

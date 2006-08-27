@@ -248,7 +248,7 @@ public class Ruler extends Dialog implements BoardViewListener {
 
       validate();
 
-      hide();
+      setVisible(false);
    }
    protected void processWindowEvent(WindowEvent e) {
       if (e.getID() == WindowEvent.WINDOW_CLOSING) {
@@ -289,14 +289,14 @@ public class Ruler extends Dialog implements BoardViewListener {
       } else if (start.equals(c)) {
          clear();
 
-         hide();
+         setVisible(false);
       } else {
          end = c;
 
          distance = start.distance(end);
 
          setText();
-         show();
+         setVisible(true);
       }
    }
 
@@ -417,26 +417,26 @@ public class Ruler extends Dialog implements BoardViewListener {
       heightLabel2.setForeground(endColor);
 
       setText();
-      show();
+      setVisible(true);
 
       bv.drawRuler(start, end, startColor, endColor);
    }
 
    void butClose_actionPerformed(ActionEvent e) {
       clear();
-      hide();
+      setVisible(false);
 
       bv.drawRuler(start, end, startColor, endColor);
    }
 
    void height1_keyReleased(KeyEvent e) {
       setText();
-      show();
+      setVisible(true);
    }
 
    void height2_keyReleased(KeyEvent e) {
       setText();
-      show();
+      setVisible(true);
    }
 
    public void boardChangedEntity(BoardViewEvent b) {

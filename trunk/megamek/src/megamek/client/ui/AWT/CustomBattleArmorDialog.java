@@ -700,11 +700,13 @@ public class CustomBattleArmorDialog
         return new Point(desiredX, desiredY);
     }
 
-    public void show() {
-        updatePlayerChoice();
-        setLocation(computeDesiredLocation());
-        super.show();
-        m_BAView.setCaretPosition(0);
+    public void setVisible(boolean show) {
+        if(show) {
+            updatePlayerChoice();
+            setLocation(computeDesiredLocation());
+            m_BAView.setCaretPosition(0);
+        }
+        super.setVisible(show);
     }
 
     public void actionPerformed(ActionEvent ae) {
@@ -828,7 +830,7 @@ public class CustomBattleArmorDialog
         } else if ((ae.getSource() == m_bPick) || (ae.getSource() == m_bPickClose)) {
             // Here, we need to add the current BA as a new entity, if it can legally do so...
             if (!isValid()) {
-                new megamek.client.ui.AWT.AlertDialog(m_clientgui.frame, "Can't do that!", "You can't add an invalid unit.").show();
+                new megamek.client.ui.AWT.AlertDialog(m_clientgui.frame, "Can't do that!", "You can't add an invalid unit.").setVisible(true);
                 return;
             }
             try {

@@ -236,6 +236,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements ActionLis
                 }
             }
         }
+        client = null;
         setVisible(false);
     }
     

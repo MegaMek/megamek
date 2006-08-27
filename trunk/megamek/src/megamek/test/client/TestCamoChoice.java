@@ -54,7 +54,7 @@ public class TestCamoChoice extends Frame implements ActionListener,
                     System.exit(1);
                 }
             });
-        frame.show();
+        frame.setVisible(true);
 
     }
 
@@ -83,7 +83,7 @@ public class TestCamoChoice extends Frame implements ActionListener,
     }
 
     public void actionPerformed( ActionEvent event ) {
-        dialog.show();
+        dialog.setVisible(true);
     }
 
     public void itemStateChanged( ItemEvent event ) {

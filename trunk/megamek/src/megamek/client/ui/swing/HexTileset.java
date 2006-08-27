@@ -50,7 +50,8 @@ public class HexTileset {
 
     private ArrayList bases = new ArrayList();
     private ArrayList supers = new ArrayList();
-    private ImageCache hexToImageCache = new ImageCache();
+    private ImageCache<IHex,Image> hexToImageCache = new ImageCache<IHex,Image>();
+    private ImageCache<IHex,List<Image>> hexToImageListCache = new ImageCache<IHex,List<Image>>();
 
     /**
      * Creates new HexTileset
@@ -78,24 +79,27 @@ public class HexTileset {
         List supers = supersFor(hexCopy, comp);
         Image base = baseFor(hexCopy, comp);
         Object[] pair = new Object[]{base, supers};
-        hexToImageCache.put(hex, pair);
+        hexToImageCache.put(hex, base);
+        hexToImageListCache.put(hex,supers);
         return pair;
     }
 
     public synchronized Image getBase(IHex hex, JComponent comp) {
-        Object[] pair = (Object[]) hexToImageCache.get(hex);
-        if (pair == null) {
-            pair = assignMatch(hex, comp);
+        Image i = hexToImageCache.get(hex);
+        if (i == null) {
+            Object[] pair = assignMatch(hex, comp);
+            return (Image) pair[0];
         }
-        return (Image) pair[0];
+        return i;
     }
 
-    public synchronized List getSupers(IHex hex, JComponent comp) {
-        Object[] pair = (Object[]) hexToImageCache.get(hex);
-        if (pair == null) {
-            pair = assignMatch(hex, comp);
+    public synchronized List<Image> getSupers(IHex hex, JComponent comp) {
+        List<Image> l = hexToImageListCache.get(hex);
+        if (l == null) {
+            Object[] pair = assignMatch(hex, comp);
+            return (List<Image>) pair[1];
         }
-        return (List) pair[1];
+        return l;
     }
 
     /**
@@ -227,8 +231,8 @@ public class HexTileset {
      */
     public synchronized void trackHexImages(IHex hex, MediaTracker tracker) {
 
-        Image base = (Image) ((Object[]) hexToImageCache.get(hex))[0];
-        List superImgs = (List) ((Object[]) hexToImageCache.get(hex))[1];
+        Image base = hexToImageCache.get(hex);
+        List<Image> superImgs = hexToImageListCache.get(hex);
 
         // add base
         tracker.addImage(base, 1);        
@@ -249,6 +253,7 @@ public class HexTileset {
 
     public synchronized void reset() {
         hexToImageCache = new ImageCache();
+        hexToImageListCache = new ImageCache();
     }
 
     /**

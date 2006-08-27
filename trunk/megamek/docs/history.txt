@@ -13,6 +13,10 @@ v0.31.12 (SVN)
 + Added four unofficial maps to showcase alternate terrains
 + Added missing message to German report string files (in English, sadly)
 + Bug 1422110: Frags no longer damage buildings.
++ Cleanup of warnings in gui
++ Bug 1528962: large memory leak when changing zoom levels
++ Bug 1526913: ECM bubble redraw issue
++ Discard unit cache and canon units list when game is started, to free memory
 
 v0.31.11 (2006-08-11, 3:33 GMT-8)
 + Corrected map size label message reference.

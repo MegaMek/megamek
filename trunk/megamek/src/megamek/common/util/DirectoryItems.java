@@ -129,9 +129,6 @@ public class DirectoryItems implements Categorized {
             // Get the entry's file.
             File file = new File( rootDir, contents[entry] );
 
-            // Convert the entry to upper case.
-            String ucName = contents[entry].toUpperCase();
-
             // Is this entry a sub-directory?
             if ( file.isDirectory() ) {
 

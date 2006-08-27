@@ -199,7 +199,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
                                   te.getMovementMode() == IEntityMovementMode.VTOL &&
                                   te.getElevation() > 0 &&
                                   (usesAmmo && atype.getMunitionType() == AmmoType.M_STANDARD);
-        boolean isPPCwithoutInhibitor = wtype.getInternalName()=="Particle Cannon" && game.getOptions().booleanOption("maxtech_ppc_inhibitors") && weapon.curMode().equals("Field Inhibitor OFF");
         boolean isHaywireINarced = ae.isINarcedWith((long) INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
         boolean isECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
@@ -239,7 +238,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
             //target type checked later because its different for direct/indirect (BMRr p77 on board arrow IV)
             isHoming = true;
         } 
-        int attEl = ae.absHeight();
         int targEl;
     
         if (te == null) {
@@ -472,7 +470,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return toHit;
         }
         if (isArtilleryIndirect) {
-            int boardRange=(int)Math.ceil((double) (distance / 17f));
             if (isHoming) {
                 return new ToHitData(4, "Homing shot (will miss if TAG misses)");
             }
@@ -599,7 +596,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
     
         // target in water?
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
         if (targHex.containsTerrain(Terrains.WATER)
                 && targHex.terrainLevel(Terrains.WATER) == 1
@@ -1219,8 +1215,6 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return "Must target the Mek being swarmed.";
         }
         
-        int aElev = ae.getElevation();
-        int tElev = target.getElevation();
         int distance = Compute.effectiveDistance(game, ae, target);
 
         if(atype != null && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {

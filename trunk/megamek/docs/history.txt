@@ -17,6 +17,7 @@ v0.31.12 (SVN)
 + Bug 1528962: large memory leak when changing zoom levels
 + Bug 1526913: ECM bubble redraw issue
 + Discard unit cache and canon units list when game is started, to free memory
++ Explosions now correctly damage buildings.
 
 v0.31.11 (2006-08-11, 3:33 GMT-8)
 + Corrected map size label message reference.

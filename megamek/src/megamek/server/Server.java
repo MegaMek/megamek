@@ -13726,25 +13726,25 @@ public class Server implements Runnable {
     public void doFusionEngineExplosion(int engineRating, Coords position, Vector vDesc)
     {
         int[] myDamages = {engineRating, (engineRating / 10), (engineRating / 20), (engineRating / 40)};
-        doExplosion(myDamages, true, position, vDesc);
+        doExplosion(myDamages, true, position, false, vDesc);
     }
 
     /**
      * General function to cause explosions in areas.
      */
-    public void doExplosion(int damage, int degredation, boolean autoDestroyInSameHex, Coords position, Vector vDesc)
+    public void doExplosion(int damage, int degredation, boolean autoDestroyInSameHex, Coords position, boolean allowShelter, Vector vDesc)
     {
         int[] myDamages = new int[1 + damage/degredation];
         myDamages[0] = damage;
         for (int x=1; x<myDamages.length; x++)
             myDamages[x] = myDamages[x-1]-degredation;
-        doExplosion(myDamages, autoDestroyInSameHex, position, vDesc);
+        doExplosion(myDamages, autoDestroyInSameHex, position, allowShelter, vDesc);
     }
 
     /**
      * General function to cause explosions in areas.
      */
-    public void doExplosion(int[] damages, boolean autoDestroyInSameHex, Coords position, Vector vDesc)
+    public void doExplosion(int[] damages, boolean autoDestroyInSameHex, Coords position, boolean allowShelter, Vector vDesc)
     {
         if (vDesc == null)
             vDesc = new Vector();
@@ -13760,8 +13760,6 @@ public class Server implements Runnable {
                 
                 entitiesHit.put(entity, entity);
 
-                //FIXME - I believe this is to avoid destroying it twice.  If it's not, this needs to be restored and fixed.
-                //if (entity.equals(en))
                 if (entity.isDestroyed())
                     continue;
 
@@ -13771,7 +13769,43 @@ public class Server implements Runnable {
             }
         }
 
-        //Now we damage people near the explosion.
+        // We need to damage buildings.
+        Enumeration bldgs = game.getBoard().getBuildings();
+        while (bldgs.hasMoreElements()) {
+            final Building bldg = (Building) bldgs.nextElement();
+
+            // Lets find the closest hex from the building.
+            Enumeration hexes = bldg.getCoords();
+            Coords closestPos;
+            try {
+                closestPos = (Coords)hexes.nextElement();
+            } catch (Exception e) {
+                continue;
+            }
+            int closestDist = position.distance(closestPos);
+            while (hexes.hasMoreElements()) {
+                final Coords coords = (Coords)hexes.nextElement();
+
+                if (position.distance(closestPos) < closestDist) {
+                    closestDist = position.distance(closestPos);
+                    closestPos = coords;
+                }
+                // No physical attack works at distances > 1.
+                //if (getPosition().distance(coords) > 1) {
+                    //continue;
+                //}
+
+                // Can the entity target *this* hex of the building?
+                //final BuildingTarget target = new BuildingTarget(coords, game.getBoard(), false);
+            }
+            if (closestDist >= damages.length)
+                continue; // It's not close enough to take damage.
+            Report r2 = damageBuilding(bldg, damages[closestDist]);
+            if (r2 != null)
+                vDesc.addElement(r2);
+        }
+
+        // Now we damage people near the explosion.
         Vector entities = game.getEntitiesVector();
         for (int i = 0; i < entities.size(); i++) {
             Entity entity = (Entity)entities.elementAt(i);
@@ -13798,6 +13832,16 @@ public class Server implements Runnable {
 
             int damage = damages[range];
 
+            //if (allowShelter && isSheltered())
+            //FIXME: Need to implement the sheltering calculations.
+            if (allowShelter && false)
+            {
+                r = new Report();
+                r.addDesc(entity);
+                vDesc.addElement(r);
+                continue;
+            }
+
             r = new Report(6175);
             r.subject = entity.getId();
             r.indent(2);
@@ -13814,6 +13858,29 @@ public class Server implements Runnable {
             }
             Report.addNewline(vDesc);
         }
+    }
+
+    public void doNuclearExplosion(int nukeType, Vector vDesc) {
+        switch (nukeType) {
+            case 0:
+            case 1:
+                doNuclearExplosion(100, 5, 40, 0, vDesc);
+            case 2:
+                doNuclearExplosion(1000, 23, 86, 0, vDesc);
+            case 3:
+                doNuclearExplosion(10000, 109, 184, 0, vDesc);
+            case 4:
+                doNuclearExplosion(100000, 505, 396, 0, vDesc);
+            default:
+                // This isn't a valid nuke type by HS:3070 rules.
+                // And since that's our only current source...
+                return;
+        }
+    }
+
+    public void doNuclearExplosion(int baseDamage, int degredation, int secondaryRadius, int craterDepth, Vector vDesc) {
+        //FIXME
+        // Do stuff.
     }
 
     /**
@@ -17778,6 +17845,7 @@ public class Server implements Runnable {
             r.add(bldg.getName());
             r.add(why);
             r.add(damage);
+            r.newlines = 1;
 
             // If the CF is zero, the building should fall.
             if (curCF == 0 && startingCF != 0) {
@@ -17790,9 +17858,10 @@ public class Server implements Runnable {
                     // Bwahahahahaha...
                     //FIXME
                     r = new Report(3560);
+                    r.newlines = 1;
                     addReport(r);
                     Vector vRep = new Vector();
-                    doExplosion(((FuelTank)bldg).getMagnitude(), 10, false, (Coords)(bldg.getCoords().nextElement()), vRep);
+                    doExplosion(((FuelTank)bldg).getMagnitude(), 10, false, (Coords)(bldg.getCoords().nextElement()), true, vRep);
                     addReport(vRep);
                     return null;
                 } else {

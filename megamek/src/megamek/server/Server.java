@@ -8424,6 +8424,8 @@ public class Server implements Runnable {
 
                     // Only report if damage was done to the building.
                     int toBldg = hits * nDamPerHit;
+                    if (bFragmentation)
+                        toBldg = 0; // Buildings aren't damaged by frags, ever.
                     if ( toBldg > 0 ) {
                         Report buildingReport = damageBuilding( bldg, toBldg );
                         if (buildingReport != null) {
@@ -8858,6 +8860,10 @@ public class Server implements Runnable {
                         addReport(r);
                     }
                     addNewLines();
+                    if (bFragmentation) {
+                        nDamage = 0;
+                        addReport(new Report(3565));
+                    }
                     Report buildingReport = damageBuilding( bldg, nDamage );
                     if (buildingReport != null) {
                         buildingReport.indent(2);

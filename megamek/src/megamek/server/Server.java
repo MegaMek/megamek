@@ -202,7 +202,7 @@ public class Server implements Runnable {
     // canceling each other
     private Vector              physicalResults = new Vector();
 
-    private Vector<DynamicTerrainProcessor> terrainProcessors = new Vector();
+    private Vector<DynamicTerrainProcessor> terrainProcessors = new Vector();    
 
     /* Tracks entities which have been destroyed recently.  Allows refactoring of the
      * damage and kill logic from Server, where it is now, to the Entity subclasses eventually.
@@ -663,6 +663,18 @@ public class Server implements Runnable {
 
         } // Found the player.
 
+    }
+    
+    /**
+     * Resend entities to the player
+     * called by seeall command
+     */
+    public void sendEntities(int connId) {
+        if(doBlind()) {
+            send(connId, createFilteredEntitiesPacket(getPlayer(connId)));
+        } else {
+            send(connId, createEntitiesPacket());
+        }
     }
 
     /**
@@ -15957,6 +15969,7 @@ public class Server implements Runnable {
                 if (bTeamVision) {
                     addTeammates(vCanSee, e.getOwner());
                 }
+                addObservers(vCanSee);
             }
         }
         return vCanSee;
@@ -15993,6 +16006,20 @@ public class Server implements Runnable {
     }
 
     /**
+     * Adds observers to the Vector.
+     * Utility function for whoCanSee.
+     */
+    private void addObservers(Vector vector) {
+        Vector vPlayers = game.getPlayersVector();
+        for (int j = 0; j < vPlayers.size(); j++) {
+            Player p = (Player)vPlayers.elementAt(j);
+            if (p.isObserver() && !vector.contains(p)) {
+                vector.addElement(p);
+            }
+        }
+    }
+
+    /**
      * Send the complete list of entities to the players.
      * If double_blind is in effect, enforce it by filtering the entities
      */
@@ -16014,14 +16041,27 @@ public class Server implements Runnable {
      * Filters an entity vector according to LOS
      */
     private Vector filterEntities(Player pViewer, Vector vEntities) {
-        Vector vCanSee = new Vector();
-        Vector vAllEntities = game.getEntitiesVector();
-        Vector vMyEntities = new Vector();
+        Vector<Entity> vCanSee = new Vector();
+        Vector<Entity> vAllEntities = game.getEntitiesVector();
+        Vector<Entity> vMyEntities = new Vector();
         boolean bTeamVision = game.getOptions().booleanOption("team_vision");
 
         // If they can see all, return the input list
         if (pViewer.canSeeAll()) {
             return vEntities;
+        }
+        
+        if(pViewer.isObserver()) {
+            vMyEntities.addAll(vAllEntities);
+            for(Entity a:vMyEntities) {
+                for(Entity b:vMyEntities) {
+                    if(a.isEnemyOf(b) && Compute.canSee(game,a,b)) {
+                        vCanSee.add(a);
+                        vCanSee.add(b);
+                    }
+                }
+            }
+            return vCanSee;
         }
 
         for (int x = 0; x < vAllEntities.size(); x++) {

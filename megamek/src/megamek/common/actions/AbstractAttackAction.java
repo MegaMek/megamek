@@ -134,7 +134,8 @@ public abstract class AbstractAttackAction
             }
             //Certain ammunitions reduce the penalty
             else if(atype != null) {
-                if(atype.getAmmoType() == AmmoType.T_AC &&
+                if((atype.getAmmoType() == AmmoType.T_AC
+                        || atype.getAmmoType() == AmmoType.T_LAC) &&
                    (atype.getMunitionType() == AmmoType.M_INCENDIARY_AC || 
                    atype.getMunitionType() == AmmoType.M_TRACER)) {
                     toHit.addModifier(-1, "incendiary/tracer ammo");

@@ -5778,6 +5778,7 @@ public class Server implements Runnable {
                         IEntityRemovalConditions.REMOVE_PUSHED));
                 //entity forced from the field
                 r = new Report(2230);
+                r.subject = entity.getId();
                 r.addDesc(entity);
                 addReport(r);
                 // TODO: remove passengers and swarmers.
@@ -10631,6 +10632,7 @@ public class Server implements Runnable {
         }
         // if our target has a push against us, we need to resolve both now
         if (targetPushResult != null) {
+            targetPushResult.pushBackResolved = true;
             // do both hit?
             if (targetPushResult.roll >= targetPushResult.toHit.getValue() &&
                 roll >= toHit.getValue()) {
@@ -10649,7 +10651,6 @@ public class Server implements Runnable {
                 pushPRD.setCumulative(false); // see Bug# 811987 for more info
                 game.addPSR(pushPRD);
                 game.addPSR(targetPushPRD);
-                targetPushResult.pushBackResolved = true;
                 return;
             }
         }

@@ -10588,6 +10588,8 @@ public class Server implements Runnable {
         if (pr.pushBackResolved) {
             return;
         }
+        //don't try this one again
+        pr.pushBackResolved = true;
 
         if (lastEntityId != paa.getEntityId()) {
             //who is making the attack
@@ -10630,19 +10632,21 @@ public class Server implements Runnable {
                 targetPushResult = tpr;
             }
         }
-        // if our target has a push against us, we need to resolve both now
-        if (targetPushResult != null) {
+        // if our target has a push against us, 
+        // and we are hitting, we need to resolve both now
+        if (targetPushResult != null
+                && !targetPushResult.pushBackResolved
+                && roll >= toHit.getValue()) {
             targetPushResult.pushBackResolved = true;
-            // do both hit?
-            if (targetPushResult.roll >= targetPushResult.toHit.getValue() &&
-                roll >= toHit.getValue()) {
+            // do they hit?
+            if (targetPushResult.roll >= targetPushResult.toHit.getValue()) {
                 r = new Report(4165);
                 r.subject = ae.getId();
                 r.addDesc(te);
                 r.addDesc(te);
                 r.addDesc(ae);
-                r.add(toHit.getValue());
-                r.add(roll);
+                r.add(targetPushResult.toHit.getValue());
+                r.add(targetPushResult.roll);
                 r.addDesc(ae);
                 addReport(r);
                 PilotingRollData targetPushPRD = new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was pushed");
@@ -10652,6 +10656,15 @@ public class Server implements Runnable {
                 game.addPSR(pushPRD);
                 game.addPSR(targetPushPRD);
                 return;
+            } else {
+                //report the miss
+                r = new Report(4166);
+                r.subject = ae.getId();
+                r.addDesc(te);
+                r.addDesc(ae);
+                r.add(targetPushResult.toHit.getValue());
+                r.add(targetPushResult.roll);
+                addReport(r);
             }
         }
 

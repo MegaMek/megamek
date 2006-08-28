@@ -557,8 +557,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 }
             }
             // precision ammo reduces this modifier
-            else if (atype != null && atype.getAmmoType() == AmmoType.T_AC
-                    && atype.getAmmoType() == AmmoType.T_AC
+            else if (atype != null 
+                    && (atype.getAmmoType() == AmmoType.T_AC
+                        || atype.getAmmoType() == AmmoType.T_LAC)
                     && atype.getMunitionType() == AmmoType.M_PRECISION) {
                 int nAdjust = Math.min(2, thTemp.getValue());
                 if (nAdjust > 0) {
@@ -570,7 +571,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Armor Piercing ammo is a flat +1
         if ( atype != null
              && (atype.getAmmoType() == AmmoType.T_AC
-             && atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) ) {
+                     || atype.getAmmoType() == AmmoType.T_LAC)
+             && atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING ) {
             toHit.addModifier( 1, "Armor-Piercing Ammo" );
         }
     

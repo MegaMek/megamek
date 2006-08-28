@@ -22,6 +22,7 @@ v0.31.12 (SVN)
   visible to at least one enemy, without doing /seeall
 + In double blind, /seeall sends you the entity list immediately,
   so you can see units on the board without waiting for them to move
++ Added artemis capable ammo to MTFs with artemis IV
 
 v0.31.11 (2006-08-11, 3:33 GMT-8)
 + Corrected map size label message reference.

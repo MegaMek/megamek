@@ -1929,8 +1929,9 @@ public class Compute {
                                 if (((((abin_type.getAmmoType() == AmmoType.T_LRM) || (abin_type
                                         .getAmmoType() == AmmoType.T_SRM))) && (abin_type
                                         .getMunitionType() == AmmoType.M_FRAGMENTATION))
-                                        || ((abin_type.getAmmoType() == AmmoType.T_AC) && (abin_type
-                                                .getMunitionType() == AmmoType.M_FLECHETTE))) {
+                                        || ((abin_type.getAmmoType() == AmmoType.T_AC
+                                                || abin_type.getAmmoType() == AmmoType.T_LAC) && 
+                                                (abin_type.getMunitionType() == AmmoType.M_FLECHETTE))) {
                                     ammo_multiple = 0.0;
                                     if (target instanceof Infantry) {
                                         if (!(target instanceof BattleArmor)) {
@@ -1962,7 +1963,8 @@ public class Compute {
                                 // to reflect scaled crit chance
                                 // Other armor-penetrating ammo types should be
                                 // tested here, such as Tandem-charge SRMs
-                                if ((abin_type.getAmmoType() == AmmoType.T_AC)
+                                if ((abin_type.getAmmoType() == AmmoType.T_AC
+                                        || abin_type.getAmmoType() == AmmoType.T_LAC)
                                         && abin_type.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
                                     if ((target instanceof Mech)
                                             || (target instanceof Tank)) {

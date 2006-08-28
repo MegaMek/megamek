@@ -7065,15 +7065,24 @@ public class Server implements Runnable {
       boolean bInferno = usesAmmo && (atype.getAmmoType() == AmmoType.T_SRM || atype.getAmmoType() == AmmoType.T_BA_INFERNO) && atype.getMunitionType() == AmmoType.M_INFERNO;
       boolean bFragmentation = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) && atype.getMunitionType() == AmmoType.M_FRAGMENTATION;
       boolean bAcidHead = usesAmmo && atype.getAmmoType() == AmmoType.T_SRM && atype.getMunitionType() == AmmoType.M_AX_HEAD;
-      boolean bFlechette = usesAmmo && atype.getAmmoType() == AmmoType.T_AC && atype.getMunitionType() == AmmoType.M_FLECHETTE;
+      boolean bFlechette = usesAmmo && 
+              (atype.getAmmoType() == AmmoType.T_AC ||
+               atype.getAmmoType() == AmmoType.T_LAC) &&
+          atype.getMunitionType() == AmmoType.M_FLECHETTE;
       boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
       boolean bArtilleryFLAK = target.getTargetType() == Targetable.TYPE_ENTITY
                                && wtype.hasFlag(WeaponType.F_ARTILLERY)
                                && (usesAmmo && atype.getMunitionType() == AmmoType.M_STANDARD)
                                && entityTarget.getMovementMode() == IEntityMovementMode.VTOL
                                && entityTarget.getElevation() > 0;
-      boolean bIncendiary = usesAmmo && atype.getAmmoType() == AmmoType.T_AC && atype.getMunitionType() == AmmoType.M_INCENDIARY_AC;
-      boolean bTracer = usesAmmo && atype.getAmmoType() == AmmoType.T_AC && atype.getMunitionType() == AmmoType.M_TRACER;
+      boolean bIncendiary = usesAmmo && 
+              (atype.getAmmoType() == AmmoType.T_AC ||
+               atype.getAmmoType() == AmmoType.T_LAC) &&
+          atype.getMunitionType() == AmmoType.M_INCENDIARY_AC;
+      boolean bTracer = usesAmmo && 
+              (atype.getAmmoType() == AmmoType.T_AC ||
+               atype.getAmmoType() == AmmoType.T_LAC)&& 
+          atype.getMunitionType() == AmmoType.M_TRACER;
       boolean bAntiTSM = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) && atype.getMunitionType() == AmmoType.M_ANTI_TSM;
       boolean bSwarm = usesAmmo && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SWARM;
       boolean bSwarmI = usesAmmo && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SWARM_I;
@@ -9106,7 +9115,7 @@ public class Server implements Runnable {
                         }
                         addReport(
                                               damageEntity(entityTarget, hit, nDamage, false, 3, false, false, throughFront) );
-                    } else if(bIncendiary && usesAmmo && atype.getAmmoType() == AmmoType.T_AC) {
+                    } else if(bIncendiary) {
                         //incendiary AC ammo
                         if (bGlancing) {
                             hit.makeGlancingBlow();
@@ -9127,7 +9136,8 @@ public class Server implements Runnable {
                         addReport(damageEntity(entityTarget, hit, nDamage, false, 6, false, false, throughFront));
                     } else {
                         if (usesAmmo
-                                && atype.getAmmoType() == AmmoType.T_AC
+                                && (atype.getAmmoType() == AmmoType.T_AC
+                                        || atype.getAmmoType() == AmmoType.T_LAC)
                                 && atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING
                                 && !(entityTarget.getArmorType() == EquipmentType.T_ARMOR_HARDENED))
                             hit.makeArmorPiercing(atype);
@@ -15252,7 +15262,8 @@ public class Server implements Runnable {
 
         // special case.  ACs only explode when firing incendiary ammo
         if (mounted.getType() instanceof WeaponType &&
-                ((WeaponType)mounted.getType()).getAmmoType() == AmmoType.T_AC) {
+                (((WeaponType)mounted.getType()).getAmmoType() == AmmoType.T_AC
+                        ||((WeaponType)mounted.getType()).getAmmoType() == AmmoType.T_LAC)) {
             if (!mounted.isUsedThisRound()) {
                 return vDesc;
             }

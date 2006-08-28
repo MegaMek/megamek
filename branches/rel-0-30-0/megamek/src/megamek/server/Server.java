@@ -9408,6 +9408,8 @@ implements Runnable, ConnectionHandler {
         if (pr.pushBackResolved) {
             return;
         }
+        //don't try this one again
+        pr.pushBackResolved = true;
 
         if (lastEntityId != paa.getEntityId()) {
             //who is making the attack
@@ -9450,18 +9452,21 @@ implements Runnable, ConnectionHandler {
                 targetPushResult = tpr;
             }
         }
-        // if our target has a push against us, we need to resolve both now
-        if (targetPushResult != null) {
-            // do both hit?
-            if (targetPushResult.roll >= targetPushResult.toHit.getValue() &&
-                roll >= toHit.getValue()) {
+        // if our target has a push against us, 
+        // and we are hitting, we need to resolve both now
+        if (targetPushResult != null
+                && !targetPushResult.pushBackResolved
+                && roll >= toHit.getValue()) {
+            targetPushResult.pushBackResolved = true;
+            // do they hit?
+            if (targetPushResult.roll >= targetPushResult.toHit.getValue()) {
                 r = new Report(4165);
                 r.subject = ae.getId();
                 r.addDesc(te);
                 r.addDesc(te);
                 r.addDesc(ae);
-                r.add(toHit.getValue());
-                r.add(roll);
+                r.add(targetPushResult.toHit.getValue());
+                r.add(targetPushResult.roll);
                 r.addDesc(ae);
                 vPhaseReport.addElement(r);
                 PilotingRollData targetPushPRD = new PilotingRollData(te.getId(), getKickPushPSRMod(ae, te, 0), "was pushed");
@@ -9470,8 +9475,16 @@ implements Runnable, ConnectionHandler {
                 pushPRD.setCumulative(false); // see Bug# 811987 for more info
                 game.addPSR(pushPRD);
                 game.addPSR(targetPushPRD);
-                targetPushResult.pushBackResolved = true;
                 return;
+            } else {
+                //report the miss
+                r = new Report(4166);
+                r.subject = ae.getId();
+                r.addDesc(te);
+                r.addDesc(ae);
+                r.add(targetPushResult.toHit.getValue());
+                r.add(targetPushResult.roll);
+                vPhaseReport.addElement(r);
             }
         }
 

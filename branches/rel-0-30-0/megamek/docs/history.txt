@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.30.11 (CVS)
++ Bug 1461254: Push against Push
 
 v0.30.10 (2006-07-15, 17:15 GMT+2)
 + Bug: ECM was working when pilot is unconscious.

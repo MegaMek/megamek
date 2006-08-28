@@ -574,7 +574,9 @@ public class Tank
         double[] speedFactorTable = {0.44,0.54,0.65,0.77,0.88,1,1.12,1.24,1.37,
                                      1.5,1.63,1.76,1.89,2.02,2.16,2.3,2.44,2.58,
                                      2.72,2.86,3,3.15,3.29,3.44,3.59,3.74};
-        double speedFactor = speedFactorTable[getOriginalRunMP()];
+        double speedFactor = 3.74;
+        if(getOriginalRunMP() < speedFactorTable.length)
+            speedFactor = speedFactorTable[getOriginalRunMP()];
         /* Vehicles don't use the same speed factor calc as 'Mechs!
         double speedFactor = getOriginalRunMP() - 5;
         speedFactor /= 10;

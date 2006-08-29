@@ -13562,7 +13562,7 @@ public class Server implements Runnable {
                 }
             }
             else if (hit.getEffect() == HitData.EFFECT_GUN_EMPLACEMENT_TURRET) {
-                r = new Report(6147);
+                r = new Report(6145);
                 r.subject = te_n;
                 r.indent(3);
                 vDesc.addElement(r);

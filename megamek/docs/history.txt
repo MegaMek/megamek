@@ -28,6 +28,7 @@ v0.31.12 (SVN)
 + Bug 1461254: Push against Push
 + Removed JRE1.5 APIs
 + Added missing german translations.
++ Fixed wrong Exception-catch
 
 v0.31.11 (2006-08-11, 3:33 GMT-8)
 + Corrected map size label message reference.

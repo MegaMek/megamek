@@ -1786,7 +1786,7 @@ public abstract class Entity extends TurnOrdered
     public Mounted getEquipment(int index) {
         try {
             return (Mounted)equipmentList.get(index);
-        } catch (ArrayIndexOutOfBoundsException ex) {
+        } catch (IndexOutOfBoundsException ex) {
             return null;
         }
     }

@@ -26,6 +26,7 @@ v0.31.12 (SVN)
 + Bug: fixed exception when calculating BV of absurdly fast vehicles
 + Bug 1424570: light AC treated as AC everywhere special ammos are checked
 + Bug 1461254: Push against Push
++ Removed JRE1.5 APIs
 
 v0.31.11 (2006-08-11, 3:33 GMT-8)
 + Corrected map size label message reference.

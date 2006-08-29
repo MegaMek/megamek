@@ -317,15 +317,14 @@ public abstract class Entity extends TurnOrdered
             if ( Entity.NONE == ownerId ) {
                 throw new IllegalStateException
                     ( "Entity doesn't know its owner's ID." );
-            } else {
-                Player player = game.getPlayer(ownerId);
-                if ( null == player ) {
-                    System.err.println
-                        ( "Entity can't find player #" + ownerId );
-                } else {
-                    setOwner( player );
-                }
             }
+			Player player = game.getPlayer(ownerId);
+			if ( null == player ) {
+			    System.err.println
+			        ( "Entity can't find player #" + ownerId );
+			} else {
+			    setOwner( player );
+			}
         }
 
         // Also set game for each entity "loaded" in this entity.
@@ -391,9 +390,8 @@ public abstract class Entity extends TurnOrdered
     public boolean isClanArmor() {
         if (getArmorTechLevel() == TechConstants.T_TECH_UNKNOWN)
             return isClan();
-        else
-            return ((getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_2)
-                    || (getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_3));
+		return ((getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_2)
+		        || (getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_3));
     }
 
     public boolean isMixedTech() {
@@ -896,9 +894,8 @@ public abstract class Entity extends TurnOrdered
         if(getMovementMode() == IEntityMovementMode.VTOL) {
             if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER) || hex.containsTerrain(Terrains.JUNGLE)) {
                 return (assumedElevation <=50 && altitude > hex.ceiling());
-            } else {
-                return (assumedElevation <=50 && altitude >= hex.ceiling());
             }
+			return (assumedElevation <=50 && altitude >= hex.ceiling());
         } else if (getMovementMode() == IEntityMovementMode.SUBMARINE
                 || (getMovementMode() == IEntityMovementMode.QUAD_SWIM&& hasUMU())
                 || (getMovementMode() == IEntityMovementMode.BIPED_SWIM&& hasUMU())) {
@@ -1768,9 +1765,8 @@ public abstract class Entity extends TurnOrdered
     public int getEquipmentNum(Mounted mounted) {
         if (mounted != null) {
             return equipmentList.indexOf(mounted);
-        } else {
-            return -1;
         }
+		return -1;
     }
 
     /**
@@ -1785,7 +1781,7 @@ public abstract class Entity extends TurnOrdered
      */
     public Mounted getEquipment(int index) {
         try {
-            return (Mounted)equipmentList.get(index);
+            return equipmentList.get(index);
         } catch (IndexOutOfBoundsException ex) {
             return null;
         }
@@ -1794,7 +1790,7 @@ public abstract class Entity extends TurnOrdered
     public EquipmentType getEquipmentType(CriticalSlot cs) {
         if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
             return null;
-        Mounted m = (Mounted)equipmentList.get(cs.getIndex());
+        Mounted m = equipmentList.get(cs.getIndex());
         return m.getType();
     }
 
@@ -2124,9 +2120,8 @@ public abstract class Entity extends TurnOrdered
         if (getCritical(loc, slot) == null) {
             setCritical(loc, slot, cs);
             return true;
-        } else {
-            return addCritical(loc, cs);
         }
+		return addCritical(loc, cs);
     }
 
     /**
@@ -2760,9 +2755,8 @@ public abstract class Entity extends TurnOrdered
                 if ( BattleArmor.SINGLE_HEX_ECM
                      .equals(type.getInternalName()) ) {
                     return 0;
-                } else {
-                    return 6;
                 }
+				return 6;
             }
         }
         return Entity.NONE;
@@ -3112,9 +3106,8 @@ public abstract class Entity extends TurnOrdered
       }
       if (C3Master == NONE) {
           return null;
-      } else {
-          return game.getEntity(C3Master);
       }
+	return game.getEntity(C3Master);
     }
 
     /**
@@ -3895,9 +3888,8 @@ public abstract class Entity extends TurnOrdered
             && getMovementMode() != IEntityMovementMode.QUAD_SWIM
             && !isPavementStep) {
             return checkWaterMove(curHex.terrainLevel(Terrains.WATER));
-        } else {
-            return checkWaterMove(0);
         }
+		return checkWaterMove(0);
     }
 
     /**
@@ -5443,13 +5435,12 @@ public abstract class Entity extends TurnOrdered
             if(tc.distance(getPosition()) <= 8)
                 return true;
             return false;
-        } else {
-            //using FASA map sheets
-            if((tc.x / 16 == getPosition().x / 16) && (tc.y / 17 == getPosition().y / 17)) {
-                return true;
-            }
-            return false;
         }
+		//using FASA map sheets
+		if((tc.x / 16 == getPosition().x / 16) && (tc.y / 17 == getPosition().y / 17)) {
+		    return true;
+		}
+		return false;
     }
 
     public abstract boolean doomedInVacuum();
@@ -5504,10 +5495,9 @@ public abstract class Entity extends TurnOrdered
                 }
             }
             return false;
-        } else {
-            if (tmpP.hasHomingRounds())
-                return true;
         }
+		if (tmpP.hasHomingRounds())
+		    return true;
 
         // If all else fails, don't give the penalty.
         return false;
@@ -5535,10 +5525,9 @@ public abstract class Entity extends TurnOrdered
                 }
             }
             return false;
-        } else {
-            if (tmpP.hasTAG())
-                return true;
         }
+		if (tmpP.hasTAG())
+		    return true;
 
         // If all else fails, don't give the penalty.
         return false;
@@ -5618,17 +5607,16 @@ public abstract class Entity extends TurnOrdered
             } else {
                 return ToHitData.SIDE_FRONT;
             }
-        } else {
-            if (fa > 90 && fa <= 150) {
-                return ToHitData.SIDE_RIGHT;
-            } else if (fa > 150 && fa < 210) {
-                return ToHitData.SIDE_REAR;
-            } else if (fa >= 210 && fa < 270) {
-                return ToHitData.SIDE_LEFT;
-            } else {
-                return ToHitData.SIDE_FRONT;
-            }
         }
+		if (fa > 90 && fa <= 150) {
+		    return ToHitData.SIDE_RIGHT;
+		} else if (fa > 150 && fa < 210) {
+		    return ToHitData.SIDE_REAR;
+		} else if (fa >= 210 && fa < 270) {
+		    return ToHitData.SIDE_LEFT;
+		} else {
+		    return ToHitData.SIDE_FRONT;
+		}
     }
     
     public boolean canGoHullDown () {
@@ -5712,15 +5700,12 @@ public abstract class Entity extends TurnOrdered
             if (s.toLowerCase().indexOf("(IS)") != -1
                 || s.toLowerCase().indexOf("Inner Sphere") != -1)
                 return true;
-            else
-                return false;
-        } else { //Inner Sphere base
-            if (s.toLowerCase().indexOf("(C)") != -1
-                || s.toLowerCase().indexOf("Clan") != -1)
-                return true;
-            else
-                return false;
+			return false;
         }
+		if (s.toLowerCase().indexOf("(C)") != -1
+		    || s.toLowerCase().indexOf("Clan") != -1)
+		    return true;
+		return false;
     }
 
     /**

@@ -278,98 +278,96 @@ public class ScenarioLoader
                 vEntities.copyInto(out);
                 return out;
             }
-            else {
-                Entity e = parseEntityLine(s);
-                
-                //Damage Plan Stuff
-                boolean dpCreated = false;
-                DamagePlan dp = new DamagePlan(e);
-                s = p.getProperty("Unit_" + sFaction + "_" + i + "_Damage");
-                if (s != null) {
-                    int nBlocks = Integer.parseInt(s);
-                    m_vDamagePlans.addElement(new DamagePlan(e, nBlocks));
-                }
-                
-                //Add the Specif Dammage if it exists
-                s = p.getProperty("Unit_" + sFaction + "_" + i + "_DamageSpecific");
-                if (s != null) {
-                  StringTokenizer st = new StringTokenizer(s,",");
-                  while (st.hasMoreTokens()) {
-                    dp.AddSpecificDammage(st.nextToken());
-                  }
-                  dpCreated = true;
-                }
+			Entity e = parseEntityLine(s);
+			
+			//Damage Plan Stuff
+			boolean dpCreated = false;
+			DamagePlan dp = new DamagePlan(e);
+			s = p.getProperty("Unit_" + sFaction + "_" + i + "_Damage");
+			if (s != null) {
+			    int nBlocks = Integer.parseInt(s);
+			    m_vDamagePlans.addElement(new DamagePlan(e, nBlocks));
+			}
+			
+			//Add the Specif Dammage if it exists
+			s = p.getProperty("Unit_" + sFaction + "_" + i + "_DamageSpecific");
+			if (s != null) {
+			  StringTokenizer st = new StringTokenizer(s,",");
+			  while (st.hasMoreTokens()) {
+			    dp.AddSpecificDammage(st.nextToken());
+			  }
+			  dpCreated = true;
+			}
 
-                //Add Crit Hits if it exists
-                boolean chpCreated = false;
-                s = p.getProperty("Unit_" + sFaction + "_" + i + "_CritHit");
-                CritHitPlan chp = new CritHitPlan(e);
-                if (s != null) {
-                  StringTokenizer st = new StringTokenizer(s,",");
-                  while (st.hasMoreTokens()) {
-                    chp.AddCritHit(st.nextToken());
-                  }
-                  chpCreated = true;
-                }
-                
-                //Add Set Ammo Locations
-                boolean sapCreated = false;
-                s = p.getProperty("Unit_" + sFaction + "_" + i + "_SetAmmoTo");
-                SetAmmoPlan sap = new SetAmmoPlan(e);
-                if (s != null) {
-                  StringTokenizer st = new StringTokenizer(s,",");
-                  while (st.hasMoreTokens()) {
-                    sap.AddSetAmmoTo(st.nextToken());
-                  }
-                  sapCreated = true;
-                }
-                
-                
-                if (chpCreated) m_vCritHitPlans.addElement(chp);
-                if (dpCreated) m_vDamagePlans.addElement(dp);
-                if (sapCreated) m_vSetAmmoTo.addElement(sap);
-                
-                
-                //Check for advantages
-                  s = p.getProperty("Unit_" + sFaction + "_" + i + "_Advantages");
-                  if ( null != s ) {
-                    parseAdvantages(e, s);
-                  }
-                  
-                //Check for autoeject
-                  s = p.getProperty("Unit_" + sFaction + "_" + i + "_AutoEject");
-                  if ( null != s) {
-                      parseAutoEject(e, s);
-                  }
-                  
-                //Check for deployment
-                  s = p.getProperty("Unit_" + sFaction + "_" + i + "_DeploymentRound");
-                  if ( null != s ) {
-                    int round = 0;
-                    
-                    try {
-                      round = Integer.parseInt(s);
-                    } catch ( Exception ex ) {
-                      throw new Exception("Bad deployment round setting (" + s + ") for unit " + sFaction + ":" + i);
-                    }
-                    
-                    if ( round < 0 ) {
-                      System.out.println("Deployment round setting of '" + round + "' for " + sFaction + ":" + i + " will be ignored and set to 0");
-                      round = 0;
-                    }
-                    
-                    if ( round > 0 ) {
-                      if ( player.getStartingPos() == 0 ) {
-                        throw new Exception("Can not combine a starting position of 'any' with delayed deployment.");
-                      }
-                      
-                      System.out.println(e.getDisplayName() + " will be deployed before round " + round);
-                      e.setDeployRound(round);
-                    }
-                  }
-                  
-                vEntities.addElement(e);
-            }
+			//Add Crit Hits if it exists
+			boolean chpCreated = false;
+			s = p.getProperty("Unit_" + sFaction + "_" + i + "_CritHit");
+			CritHitPlan chp = new CritHitPlan(e);
+			if (s != null) {
+			  StringTokenizer st = new StringTokenizer(s,",");
+			  while (st.hasMoreTokens()) {
+			    chp.AddCritHit(st.nextToken());
+			  }
+			  chpCreated = true;
+			}
+			
+			//Add Set Ammo Locations
+			boolean sapCreated = false;
+			s = p.getProperty("Unit_" + sFaction + "_" + i + "_SetAmmoTo");
+			SetAmmoPlan sap = new SetAmmoPlan(e);
+			if (s != null) {
+			  StringTokenizer st = new StringTokenizer(s,",");
+			  while (st.hasMoreTokens()) {
+			    sap.AddSetAmmoTo(st.nextToken());
+			  }
+			  sapCreated = true;
+			}
+			
+			
+			if (chpCreated) m_vCritHitPlans.addElement(chp);
+			if (dpCreated) m_vDamagePlans.addElement(dp);
+			if (sapCreated) m_vSetAmmoTo.addElement(sap);
+			
+			
+			//Check for advantages
+			  s = p.getProperty("Unit_" + sFaction + "_" + i + "_Advantages");
+			  if ( null != s ) {
+			    parseAdvantages(e, s);
+			  }
+			  
+			//Check for autoeject
+			  s = p.getProperty("Unit_" + sFaction + "_" + i + "_AutoEject");
+			  if ( null != s) {
+			      parseAutoEject(e, s);
+			  }
+			  
+			//Check for deployment
+			  s = p.getProperty("Unit_" + sFaction + "_" + i + "_DeploymentRound");
+			  if ( null != s ) {
+			    int round = 0;
+			    
+			    try {
+			      round = Integer.parseInt(s);
+			    } catch ( Exception ex ) {
+			      throw new Exception("Bad deployment round setting (" + s + ") for unit " + sFaction + ":" + i);
+			    }
+			    
+			    if ( round < 0 ) {
+			      System.out.println("Deployment round setting of '" + round + "' for " + sFaction + ":" + i + " will be ignored and set to 0");
+			      round = 0;
+			    }
+			    
+			    if ( round > 0 ) {
+			      if ( player.getStartingPos() == 0 ) {
+			        throw new Exception("Can not combine a starting position of 'any' with delayed deployment.");
+			      }
+			      
+			      System.out.println(e.getDisplayName() + " will be deployed before round " + round);
+			      e.setDeployRound(round);
+			    }
+			  }
+			  
+			vEntities.addElement(e);
         }        
     }
     

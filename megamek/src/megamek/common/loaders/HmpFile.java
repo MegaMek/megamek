@@ -612,7 +612,7 @@ System.out.println(name+" "+model+" "+year);
             throws EntityLoadingException {
         // Use pass-by-value in case we need the original criticals
         // later (getMtf for example).
-        long[] crits = (long[]) criticals.clone();
+        long[] crits = criticals.clone();
 
         for (int i = 0; i < mech.getNumberOfCriticals(location); i++) {
             if (mech.getCritical(location, i) == null) {

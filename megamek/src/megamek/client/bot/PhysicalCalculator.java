@@ -183,7 +183,7 @@ public final class PhysicalCalculator {
                     // If pod is Nemesis
                     if (test_pod.getType() == INarcPod.NEMESIS) {
                         // Pod is +variable, based on movement
-                        test_ranking += (double) (entity.getWalkMP() + entity.getJumpMP()) / 2.0;
+                        test_ranking += (entity.getWalkMP() + entity.getJumpMP()) / 2.0;
                     }
                     // If this pod is best, retain it and its ranking
                     if (test_ranking > pod_ranking) {
@@ -436,7 +436,7 @@ public final class PhysicalCalculator {
                     }
                     // Modify damage to reflect how bad it is for target to be prone
                     if (to.getWalkMP() > 0) {
-                        dmg = dmg * Math.sqrt(1.0 / (double) to.getWalkMP() + to.getJumpMP());
+                        dmg = dmg * Math.sqrt(1.0 /  to.getWalkMP() + to.getJumpMP());
                     } else {
                         dmg *= Math.max(1.0, Math.sqrt(to.getJumpMP()));
                     }
@@ -521,7 +521,7 @@ public final class PhysicalCalculator {
         // Calculate self damage, due to possible fall from missing a kick
         self_damage = calculateFallingDamage(1.0 - Compute.oddsAbove(odds.getValue()) / 100.0, from);
         if (from.getWalkMP() > 0) {
-            self_damage = self_damage * Math.sqrt(1.0 / (double) from.getWalkMP() + from.getJumpMP());
+            self_damage = self_damage * Math.sqrt(1.0 / from.getWalkMP() + from.getJumpMP());
         } else {
             self_damage = self_damage * Math.sqrt(from.getJumpMP());
         }

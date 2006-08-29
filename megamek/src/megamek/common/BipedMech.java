@@ -148,9 +148,8 @@ public class BipedMech extends Mech {
     public int getRunMP(boolean gravity) {
         if ( countBadLegs() == 0 ) {
             return super.getRunMP(gravity);
-        } else {
-            return getWalkMP(gravity);
         }
+		return getWalkMP(gravity);
     }
 
     /**
@@ -160,9 +159,8 @@ public class BipedMech extends Mech {
     public int getRunMPwithoutMASC(boolean gravity) {
         if ( countBadLegs() == 0 ) {
             return super.getRunMPwithoutMASC(gravity);
-        } else {
-            return getWalkMP(gravity);
         }
+		return getWalkMP(gravity);
     }
     
     /**

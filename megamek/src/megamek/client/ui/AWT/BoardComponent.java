@@ -37,7 +37,7 @@ public class BoardComponent extends Panel {
 
     /** Creates new BoardComponent */
     public BoardComponent(BoardView1 bv) {
-         this.bv = bv;
+        this.bv = bv;
          
         // layout
         GridBagLayout gridbag = new GridBagLayout();

@@ -217,14 +217,12 @@ public abstract class Mech
             if (amount<cowlArmor) {
                 cowlArmor -= amount;
                 return 0;
-            } else {
-                amount -= cowlArmor;
-                cowlArmor = 0;
-                return amount;
             }
-        } else {
-            return amount; // No cowl - return full damage
+			amount -= cowlArmor;
+			cowlArmor = 0;
+			return amount;
         }
+		return amount; // No cowl - return full damage
     }
     /**
      * Returns the location that transferred damage or crits will go to from a given location.
@@ -704,10 +702,8 @@ public abstract class Mech
     public String getRunMPasString() {
         if (hasArmedMASC()) {
             return getRunMPwithoutMASC() + "(" + getRunMP() + ")";
-        } else {
-            return Integer.toString(getRunMP());
         }
-
+		return Integer.toString(getRunMP());
     }
 
     /**
@@ -1030,9 +1026,8 @@ public abstract class Mech
         int rotate = dir - getFacing();
         if (canChangeSecondaryFacing()) {
             return rotate == 0 || rotate == 1 || rotate == -1 || rotate == -5;
-        } else {
-            return rotate == 0;
         }
+		return rotate == 0;
     }
 
     /**
@@ -1062,9 +1057,8 @@ public abstract class Mech
     public int getArmor(int loc, boolean rear) {
         if (rear && hasRearArmor(loc)) {
             return rearArmor[loc];
-        } else {
-            return super.getArmor(loc, rear);
         }
+		return super.getArmor(loc, rear);
     }
 
     /**
@@ -1074,9 +1068,8 @@ public abstract class Mech
     public int getOArmor(int loc, boolean rear) {
         if (rear && hasRearArmor(loc)) {
             return orig_rearArmor[loc];
-        } else {
-            return super.getOArmor(loc, rear);
         }
+		return super.getOArmor(loc, rear);
     }
 
     /**
@@ -1191,9 +1184,7 @@ public abstract class Mech
                             result.setUndoneLocation(tac(table, side, Mech.LOC_CT, false));
                             return result;
                         } // if
-                        else {
-                            return tac(table, side, Mech.LOC_CT, false);
-                        } // else
+                        return tac(table, side, Mech.LOC_CT, false);
                     case 3:
                         return new HitData(Mech.LOC_RLEG);
                     case 4:
@@ -1218,9 +1209,7 @@ public abstract class Mech
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
                         } // if
-                        else {
-                            return new HitData(Mech.LOC_HEAD);
-                        } // else
+                        return new HitData(Mech.LOC_HEAD);
                     }
                 } else {
                     switch( roll ) {
@@ -1232,9 +1221,7 @@ public abstract class Mech
                             result.setUndoneLocation(tac(table, side, Mech.LOC_CT, false));
                             return result;
                         } // if
-                        else {
-                            return tac(table, side, Mech.LOC_CT, false);
-                        } // else
+                        return tac(table, side, Mech.LOC_CT, false);
                     case 3:
                     case 4:
                         return new HitData(Mech.LOC_RARM);
@@ -1259,9 +1246,7 @@ public abstract class Mech
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                             return result;
                         } // if
-                        else {
-                            return new HitData(Mech.LOC_HEAD);
-                        } // else
+                        return new HitData(Mech.LOC_HEAD);
                     }
                 }
             }
@@ -1276,9 +1261,7 @@ public abstract class Mech
                         result.setUndoneLocation(tac(table, side, Mech.LOC_LT, false));
                         return result;
                     } // if
-                    else {
-                        return tac(table, side, Mech.LOC_LT, false);
-                    } // else
+                    return tac(table, side, Mech.LOC_LT, false);
                 case 3:
                     return new HitData(Mech.LOC_LLEG);
                 case 4:
@@ -1304,9 +1287,7 @@ public abstract class Mech
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                         return result;
                     } // if
-                    else {
-                        return new HitData(Mech.LOC_HEAD);
-                    } // else
+                    return new HitData(Mech.LOC_HEAD);
                 }
             }
             else if(side == ToHitData.SIDE_RIGHT) {
@@ -1320,9 +1301,7 @@ public abstract class Mech
                         result.setUndoneLocation(tac(table, side, Mech.LOC_RT, false));
                         return result;
                     } // if
-                    else {
-                        return tac(table, side, Mech.LOC_RT, false);
-                    } // else
+                    return tac(table, side, Mech.LOC_RT, false);
                 case 3:
                     return new HitData(Mech.LOC_RLEG);
                 case 4:
@@ -1348,9 +1327,7 @@ public abstract class Mech
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                         return result;
                     } // if
-                    else {
-                        return new HitData(Mech.LOC_HEAD);
-                    } // else
+                    return new HitData(Mech.LOC_HEAD);
                 }
             }
             else if(side == ToHitData.SIDE_REAR) {
@@ -1366,9 +1343,7 @@ public abstract class Mech
                             result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
                             return result;
                         } // if
-                        else {
-                            return tac(table, side, Mech.LOC_CT, true);
-                        } // else                                                                       
+                        return tac(table, side, Mech.LOC_CT, true);
                     case 3:
                         return new HitData(Mech.LOC_RARM, true);
                     case 4:
@@ -1393,9 +1368,7 @@ public abstract class Mech
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
                             return result;
                         } // if
-                        else {
-                            return new HitData(Mech.LOC_HEAD, true);
-                        } // else
+                        return new HitData(Mech.LOC_HEAD, true);
                     }
                 } else {
                     switch( roll ) {
@@ -1407,9 +1380,7 @@ public abstract class Mech
                             result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
                             return result;
                         } // if
-                        else {
-                            return tac(table, side, Mech.LOC_CT, true);
-                        } // else
+                        return tac(table, side, Mech.LOC_CT, true);
                     case 3:
                     case 4:
                         return new HitData(Mech.LOC_RARM, true);
@@ -1434,14 +1405,12 @@ public abstract class Mech
                             result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
                             return result;
                         } // if
-                        else {
-                            return new HitData(Mech.LOC_HEAD, true);
-                        } // else
+                        return new HitData(Mech.LOC_HEAD, true);
                     }
                 }
             }
         }
-        if(table == ToHitData.HIT_PUNCH) {
+        if (table == ToHitData.HIT_PUNCH) {
             roll = Compute.d6(1);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
@@ -1455,7 +1424,7 @@ public abstract class Mech
             } catch ( Throwable thrown ) {
                 thrown.printStackTrace();
             }
-            if(side == ToHitData.SIDE_FRONT) {
+            if (side == ToHitData.SIDE_FRONT) {
                 // front punch hits
                 switch( roll ) {
                 case 1:
@@ -1476,12 +1445,10 @@ public abstract class Mech
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                         return result;
                     } // if
-                    else {
-                        return new HitData(Mech.LOC_HEAD);
-                    } // else
+                    return new HitData(Mech.LOC_HEAD);
                 }
             }
-            if(side == ToHitData.SIDE_LEFT) {
+            if (side == ToHitData.SIDE_LEFT) {
                 // left side punch hits
                 switch( roll ) {
                 case 1:
@@ -1500,12 +1467,10 @@ public abstract class Mech
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                         return result;
                     } // if
-                    else {
-                        return new HitData(Mech.LOC_HEAD);
-                    } // else
+                    return new HitData(Mech.LOC_HEAD);
                 }
             }
-            if(side == ToHitData.SIDE_RIGHT) {
+            if (side == ToHitData.SIDE_RIGHT) {
                 // right side punch hits
                 switch( roll ) {
                 case 1:
@@ -1524,12 +1489,10 @@ public abstract class Mech
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
                         return result;
                     } // if
-                    else {
-                        return new HitData(Mech.LOC_HEAD);
-                    } // else
+                    return new HitData(Mech.LOC_HEAD);
                 }
             }
-            if(side == ToHitData.SIDE_REAR) {
+            if (side == ToHitData.SIDE_REAR) {
                 // rear punch hits
                 switch( roll ) {
                 case 1:
@@ -1550,13 +1513,11 @@ public abstract class Mech
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
                         return result;
                     } // if
-                    else {
-                        return new HitData(Mech.LOC_HEAD, true);
-                    } // else
+                    return new HitData(Mech.LOC_HEAD, true);
                 }
             }
         }
-        if(table == ToHitData.HIT_KICK) {
+        if (table == ToHitData.HIT_KICK) {
             roll = Compute.d6(1);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();                
@@ -1570,7 +1531,7 @@ public abstract class Mech
             } catch ( Throwable thrown ) {
                 thrown.printStackTrace();
             }
-            if(side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_REAR) {
+            if (side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_REAR) {
                 // front/rear kick hits
                 switch( roll ) {
                 case 1:
@@ -1585,16 +1546,16 @@ public abstract class Mech
                                        (side == ToHitData.SIDE_REAR));
                 }
             }
-            if(side == ToHitData.SIDE_LEFT) {
+            if (side == ToHitData.SIDE_LEFT) {
                 // left side kick hits
                 return new HitData(Mech.LOC_LLEG);
             }
-            if(side == ToHitData.SIDE_RIGHT) {
+            if (side == ToHitData.SIDE_RIGHT) {
                 // right side kick hits
                 return new HitData(Mech.LOC_RLEG);
             }
         }
-        if(table == ToHitData.HIT_SWARM) {
+        if (table == ToHitData.HIT_SWARM) {
             roll = Compute.d6(2);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
@@ -1618,9 +1579,7 @@ public abstract class Mech
                     result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL));
                     return result;
                 } // if
-                else {
-                    return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
-                } // else
+                return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
             case 3:
                 return new HitData(Mech.LOC_CT, true,
                                    HitData.EFFECT_CRITICAL);
@@ -1656,12 +1615,10 @@ public abstract class Mech
                     result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL));
                     return result;
                 } // if
-                else {
-                    return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
-                } // else
+                return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
             }
         }
-        if(table == ToHitData.HIT_ABOVE) {
+        if (table == ToHitData.HIT_ABOVE) {
             roll = Compute.d6(1);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
@@ -1700,12 +1657,10 @@ public abstract class Mech
                     result.setUndoneLocation(new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR)));
                     return result;
                 } // if
-                else {
-                    return new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR));
-                } // else
+                return new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR));
             }
         }
-        if(table == ToHitData.HIT_BELOW) {
+        if (table == ToHitData.HIT_BELOW) {
             roll = Compute.d6(1);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
@@ -1776,10 +1731,9 @@ public abstract class Mech
         case LOC_RARM :
             return new HitData(LOC_RT, hit.isRear());
         case LOC_HEAD :
-            if(getCockpitType() == COCKPIT_TORSO_MOUNTED)
+            if (getCockpitType() == COCKPIT_TORSO_MOUNTED)
                 return new HitData(LOC_NONE); //not destroyed by head loss
-            else
-                return new HitData(LOC_DESTROYED);
+            return new HitData(LOC_DESTROYED);
         case LOC_CT :
         default:
             return new HitData(LOC_DESTROYED);
@@ -2311,7 +2265,7 @@ public abstract class Mech
 
         int finalBV = (int)Math.round(dbv + obv + xbv);
 
-        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
+        int retVal = (int)Math.round((finalBV) * pilotFactor);
         return retVal;
     }
 
@@ -2404,10 +2358,10 @@ public abstract class Mech
         //find the maximum length of the columns.
         for (int l = 0; l < left.length; l++) {
             maxLeft = Math.max(maxLeft, left[l].length());
-            maxRight = (int)Math.max(maxRight, commafy.format(costs[l]).length());
+            maxRight = Math.max(maxRight, commafy.format(costs[l]).length());
         }
         maxLeft += 5; //leave some padding in the middle
-        maxRight = (int)Math.max(maxRight, commafy.format(cost).length());
+        maxRight = Math.max(maxRight, commafy.format(cost).length());
         for (int i = 0; i < left.length; i++) {
             String both;
             if (costs[i] < 0) { //negative marks it as a multiplier
@@ -2837,8 +2791,7 @@ public abstract class Mech
         String result = EquipmentMessages.getString("SystemType.Gyro."+inName);
         if (result != null)
             return result;
-        else
-            return inName;
+        return inName;
     }
 
     public static String getCockpitDisplayString(int inType) {
@@ -2865,8 +2818,7 @@ public abstract class Mech
         String result = EquipmentMessages.getString("SystemType.Cockpit."+inName);
         if (result != null)
             return result;
-        else
-            return inName;
+        return inName;
     }
 
     public boolean canAssaultDrop() {
@@ -2969,7 +2921,7 @@ public abstract class Mech
 
         sb.append( "Weapons:" ).append( weaponList.size() ).append( nl );
         for (int i = 0; i < weaponList.size(); i++) {
-            Mounted m = (Mounted)weaponList.get(i);
+            Mounted m = weaponList.get(i);
             sb.append( m.getName() ).append( ", " )
                 .append( getLocationName(m.getLocation()) ).append( nl );
         }
@@ -3025,15 +2977,14 @@ public abstract class Mech
     public boolean addCockpit() {
         if (getEmptyCriticals(LOC_HEAD) < 5) {
             return false;
-        } else {
-            addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-            addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-            addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-            addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-            addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-            setCockpitType(COCKPIT_STANDARD);
-            return true;
         }
+		addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+		addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+		addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+		addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+		setCockpitType(COCKPIT_STANDARD);
+		return true;
     }
 
     /**
@@ -3046,14 +2997,13 @@ public abstract class Mech
     public boolean addSmallCockpit() {
         if (getEmptyCriticals(LOC_HEAD) < 4) {
             return false;
-        } else {
-            addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-            addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-            addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-            addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-            setCockpitType(COCKPIT_SMALL);
-            return true;
         }
+		addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+		addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+		addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+		setCockpitType(COCKPIT_SMALL);
+		return true;
     }
 
     /*
@@ -3117,13 +3067,12 @@ public abstract class Mech
     public boolean addGyro() {
         if (getEmptyCriticals(LOC_CT) < 4) {
             return false;
-        } else {
-            addCompactGyro();
-            addCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-            addCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-            setGyroType(GYRO_STANDARD);
-            return true;
         }
+		addCompactGyro();
+		addCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+		addCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+		setGyroType(GYRO_STANDARD);
+		return true;
     }
 
     /**
@@ -3137,12 +3086,11 @@ public abstract class Mech
     public boolean addCompactGyro() {
         if (getEmptyCriticals(LOC_CT) < 2) {
             return false;
-        } else {
-            addCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-            addCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-            setGyroType(GYRO_COMPACT);
-            return true;
         }
+		addCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+		addCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+		setGyroType(GYRO_COMPACT);
+		return true;
     }
 
     /**
@@ -3156,13 +3104,12 @@ public abstract class Mech
     public boolean addXLGyro() {
         if (getEmptyCriticals(LOC_CT) < 6) {
             return false;
-        } else {
-            addGyro();
-            addCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-            addCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-            setGyroType(GYRO_XL);
-            return true;
         }
+		addGyro();
+		addCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+		addCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+		setGyroType(GYRO_XL);
+		return true;
     }
 
     /**
@@ -3177,9 +3124,8 @@ public abstract class Mech
         if (addGyro()) {
             setGyroType(GYRO_HEAVY_DUTY);
             return true;
-        } else {
-            return false;
         }
+		return false;
     }
 
     /**

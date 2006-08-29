@@ -315,9 +315,8 @@ public class MechView {
     private static String renderArmor(int nArmor) {
         if (nArmor <= 0) {
             return "xx"; //$NON-NLS-1$
-        } else {
-            return makeLength(String.valueOf(nArmor), 2, true);
         }
+		return makeLength(String.valueOf(nArmor), 2, true);
     }
 
     private static final String SPACES = "                                   "; //$NON-NLS-1$
@@ -329,9 +328,8 @@ public class MechView {
         } else if (l < n) {
             if (bRightJustify) {
                 return SPACES.substring(0, n - l) + s;
-            } else {
-                return s + SPACES.substring(0, n - l);
             }
+			return s + SPACES.substring(0, n - l);
         } else {
             return s.substring(0, n - 2) + ".."; //$NON-NLS-1$
         }

@@ -454,11 +454,10 @@ public class CityBuilder {
             }
             Coords end = tryToBuildBridge(coords, nextDirection); 
             return end;
-        } else {
-            connectHexes(coords, next, roadStyle);
-            connectHexes(next, coords, roadStyle);
-            return next;
         }
+		connectHexes(coords, next, roadStyle);
+		connectHexes(next, coords, roadStyle);
+		return next;
     }
     
     private Coords resumeAfterObstacle(Coords coords, int nextDirection) {

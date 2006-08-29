@@ -58,17 +58,15 @@ public class UnitType {
     public static String getTypeName(int type) {
         if (type >= 0 && type < SIZE) {
             return names[type];
-        } else {
-            throw new IllegalArgumentException("Unknown unit type");            
         }
+        throw new IllegalArgumentException("Unknown unit type");
     }
 
     public static String getTypeDisplayableName(int type) {
         if (type >= 0 && type < SIZE) {
             return Messages.getString("UnitType."+names[type]);
-        } else {
-            throw new IllegalArgumentException("Unknown unit type");            
         }
+        throw new IllegalArgumentException("Unknown unit type");
     }
     
 }

@@ -199,10 +199,9 @@ public class GameOptions extends AbstractOptions implements Serializable {
             }
         
             return changedOptions;
-        } else {
-            System.out.println("Root node of game options file is incorrectly named. Name should be 'options' but name is '" + optionsNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-            return changedOptions;
         }
+		System.out.println("Root node of game options file is incorrectly named. Name should be 'options' but name is '" + optionsNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+		return changedOptions;
     }
     
     private IOption parseOptionNode(ParsedXML node) {

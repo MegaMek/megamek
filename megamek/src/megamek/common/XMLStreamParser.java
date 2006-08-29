@@ -807,8 +807,7 @@ public class XMLStreamParser implements XMLResponder {
                                         counter < this.locAmmoCount ) {
 
                                     // Is this mounted in the current location?
-                                    Mounted mounted = 
-                                        (Mounted) ammo.next();
+                                    Mounted mounted = ammo.next();
                                     if ( mounted.getLocation() == loc ) {
 
                                         // Increment the loop counter.

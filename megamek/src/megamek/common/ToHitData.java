@@ -132,9 +132,8 @@ public class ToHitData extends TargetRoll
                 break;
             }
             return " (using " + tdesc + "table)";
-        } else {
-            return "";
         }
+        return "";
     }
     
     public int getCover() {

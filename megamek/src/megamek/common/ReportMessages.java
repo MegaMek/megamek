@@ -50,8 +50,7 @@ public class ReportMessages {
         String s = getString(key);
         if (s!=null)
             return MessageFormat.format(getString(key),args);
-        else
-            return null;
+        return null;
     }
     
 }

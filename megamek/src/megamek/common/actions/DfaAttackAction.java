@@ -112,13 +112,12 @@ public class DfaAttackAction extends DisplacementAttackAction {
             final MoveStep step = (MoveStep)i.nextElement();
             if (!step.isLegal()) {
                 break;
-            } else {
-                if (step.getType() == MovePath.STEP_DFA) {
-                    chargeStep = step;
-                } else {
-                    chargeSrc = step.getPosition();
-                }
             }
+			if (step.getType() == MovePath.STEP_DFA) {
+			    chargeStep = step;
+			} else {
+			    chargeSrc = step.getPosition();
+			}
         }
 
         // need to reach target

@@ -669,9 +669,8 @@ public class MapSettings implements Serializable {
             (this.mountainWidthMax != other.getMountainWidthMax()) ||
             (this.boardBuildings != other.getBoardBuildings())) {
             return false;
-        } else { 
-            return true;
         }
+		return true;
     } /* equalMapGenParameters */
 
     /** clone! */

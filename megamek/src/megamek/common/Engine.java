@@ -359,17 +359,16 @@ public class Engine implements Serializable
                 return 0.75; // large XL
             else
                 return 1.125; // large
-        } else {
-            //normal sized or compact engine
-            if(sideCrits >=6)
-                return 0.5; // IS XXL
-            else if (sideCrits >=3)
-                return 0.75; // IS XL, clan XXL
-            else if (sideCrits >0)
-                return 1.125; // IS L, clan XL
-            else
-                return 1.5; //standard, compact, ice
         }
+		//normal sized or compact engine
+		if(sideCrits >=6)
+		    return 0.5; // IS XXL
+		else if (sideCrits >=3)
+		    return 0.75; // IS XL, clan XXL
+		else if (sideCrits >0)
+		    return 1.125; // IS L, clan XL
+		else
+		    return 1.5; //standard, compact, ice
     }
 
     public int getBaseCost() {
@@ -416,13 +415,11 @@ public class Engine implements Serializable
         if (level == 3) {
             if (hasFlag(CLAN_ENGINE))
                 return TechConstants.T_CLAN_LEVEL_3;
-            else
-                return TechConstants.T_IS_LEVEL_3;
+			return TechConstants.T_IS_LEVEL_3;
         } else if (level == 2) {
             if (hasFlag(CLAN_ENGINE))
                 return TechConstants.T_CLAN_LEVEL_2;
-            else
-                return TechConstants.T_IS_LEVEL_2;
+			return TechConstants.T_IS_LEVEL_2;
         } else {
             return TechConstants.T_IS_LEVEL_1;
         }

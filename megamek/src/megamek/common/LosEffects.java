@@ -341,9 +341,8 @@ public class LosEffects {
         double degree = ai.attackPos.degree(ai.targetPos);
         if (degree % 60 == 30) {
             return LosEffects.losDivided(game, ai);
-        } else {
-            return LosEffects.losStraight(game, ai);
         }
+		return LosEffects.losStraight(game, ai);
     }
 
     /**

@@ -1241,13 +1241,12 @@ public class MovementDisplay
                         clearAllMoves();
                     }
                     return;
-                } else {
-                    // if not valid, tell why
-                    clientgui.doAlertDialog( Messages.getString("MovementDisplay.CantCharge"), //$NON-NLS-1$
-                                          toHit.getDesc() );
-                    clearAllMoves();
-                    return;
                 }
+				// if not valid, tell why
+				clientgui.doAlertDialog( Messages.getString("MovementDisplay.CantCharge"), //$NON-NLS-1$
+				                      toHit.getDesc() );
+				clearAllMoves();
+				return;
             } else if (gear == MovementDisplay.GEAR_DFA) {
                 // check if target is valid
                 final Targetable target = this.chooseTarget( b.getCoords() );
@@ -1279,13 +1278,12 @@ public class MovementDisplay
                     }
                     return;
 
-                } else {
-                    // if not valid, tell why
-                    clientgui.doAlertDialog( Messages.getString("MovementDisplay.CantDFA"), //$NON-NLS-1$
-                                          toHit.getDesc() );
-                    clearAllMoves();
-                    return;
                 }
+				// if not valid, tell why
+				clientgui.doAlertDialog( Messages.getString("MovementDisplay.CantDFA"), //$NON-NLS-1$
+				                      toHit.getDesc() );
+				clearAllMoves();
+				return;
             }
 
             butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
@@ -1393,10 +1391,9 @@ public class MovementDisplay
 
                     // We can stop looking.
                     break;
-                } else {
-                    // Nope. Discard it.
-                    other = null;
                 }
+				// Nope. Discard it.
+				other = null;
             } // Check the next entity in this position.
             if (!isGood) {
                 setLoadEnabled(false);
@@ -1516,9 +1513,8 @@ public class MovementDisplay
         mld.setVisible(true);
         if (mld.getAnswer() == true) {
             return mld.getMine();
-        } else {
-            return -1;
         }
+		return -1;
     }
 
     //

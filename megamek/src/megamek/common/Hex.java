@@ -226,9 +226,8 @@ public class Hex implements IHex, Serializable {
         ITerrain terrain = getTerrain(type);
         if (terrain != null) {
             return terrain.getLevel() == level;
-        } else {
-            return false;
         }
+		return false;
     }
 
     /* (non-Javadoc)
@@ -247,9 +246,8 @@ public class Hex implements IHex, Serializable {
         ITerrain terrain = getTerrain(type);
         if (terrain != null) {
             return terrain.getLevel();
-        } else {
-            return ITerrain.LEVEL_NONE;
         }
+		return ITerrain.LEVEL_NONE;
     }
 
     /* (non-Javadoc)

@@ -610,7 +610,7 @@ public class CEntity {
         
         // Create short, medium, and long range values for each arc
         
-        this.rd_bracket = (int) this.long_range/4;
+        this.rd_bracket = this.long_range/4;
         
         for (int range_walk = (this.entity instanceof Infantry ? 0 : 1); range_walk < this.long_range; range_walk++){
             if (range_walk <= this.rd_bracket){
@@ -842,7 +842,7 @@ public class CEntity {
             for (int j = 1; j < 2; j++) {
                 MoveOption.Key key = new MoveOption.Key(dest, i, j);
                 MoveOption es = null;
-                if ((es = (MoveOption) getAllMoves().get(key)) != null) {
+                if ((es = getAllMoves().get(key)) != null) {
                     result.add(es);
                 }
             }
@@ -1187,8 +1187,7 @@ public class CEntity {
             return ToHitData.SIDE_RIGHT;
         if (fa >= 240 && fa <= 300)
             return ToHitData.SIDE_LEFT;
-        else
-            return ToHitData.SIDE_REAR;
+        return ToHitData.SIDE_REAR;
     }
 
     public static int firingArcToHitArc(int arc) {

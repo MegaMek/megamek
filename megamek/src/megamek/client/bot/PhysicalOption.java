@@ -73,11 +73,10 @@ public class PhysicalOption {
             case KICK_RIGHT :
                 return new KickAttackAction(attacker.getId(), target.getId(), KickAttackAction.RIGHT);
             case USE_CLUB :
-                if (club != null){
+                if (club != null) {
                     return new ClubAttackAction(attacker.getId(), target.getId(), club);
-                } else {
-                    return null;
                 }
+                return null;
             case PUSH_ATTACK :
                 return new PushAttackAction(attacker.getId(), target.getId(), target.getPosition());
             case TRIP_ATTACK :
@@ -86,26 +85,23 @@ public class PhysicalOption {
                 if (target == null){
                     return new BrushOffAttackAction(attacker.getId(), i_target.getTargetType(), 
                             i_target.getTargetId(), BrushOffAttackAction.LEFT);
-                } else {
-                    return new BrushOffAttackAction(attacker.getId(), target.getTargetType(), 
-                            target.getId(), BrushOffAttackAction.LEFT);
-                } 
+                }
+                return new BrushOffAttackAction(attacker.getId(), target.getTargetType(),
+                		target.getId(), BrushOffAttackAction.LEFT);
             case BRUSH_RIGHT :
                 if (target == null){
                     return new BrushOffAttackAction(attacker.getId(), i_target.getTargetType(), 
                             i_target.getTargetId(), BrushOffAttackAction.RIGHT);
-                } else {
-                    return new BrushOffAttackAction(attacker.getId(), target.getTargetType(), 
+                }
+                return new BrushOffAttackAction(attacker.getId(), target.getTargetType(), 
                             target.getId(), BrushOffAttackAction.RIGHT);
-                } 
             case BRUSH_BOTH :
                 if (target == null){
                     return new BrushOffAttackAction(attacker.getId(), i_target.getTargetType(), 
                             i_target.getTargetId(), BrushOffAttackAction.BOTH);
-                } else {
-                    return new BrushOffAttackAction(attacker.getId(), target.getTargetType(), 
+                }
+                return new BrushOffAttackAction(attacker.getId(), target.getTargetType(), 
                             target.getId(), BrushOffAttackAction.BOTH);
-                } 
             /*case THRASH_INF :
                 return new ThrashAttackAction(attacker.getId(), target.getId());
             */  

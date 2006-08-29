@@ -179,8 +179,7 @@ public class EquipmentType {
         String result = EquipmentMessages.getString("EquipmentType."+name);
         if (result != null)
             return result;
-        else
-            return name;
+		return name;
     }
 
     public String getInternalName() {
@@ -334,8 +333,7 @@ public class EquipmentType {
     public int getModesCount() {
         if (modes != null)
             return modes.size();
-        else
-            return 0;
+        return 0;
     }
 
     /**
@@ -346,17 +344,16 @@ public class EquipmentType {
     public Enumeration getModes() {
         if (modes != null) {
             return modes.elements();
-        } else {
-            return new Enumeration() {
-                public boolean hasMoreElements() {
-                    return false;
-                }
-                public Object nextElement() {
-                    return null;
-                }
-                
-            };
         }
+		return new Enumeration() {
+		    public boolean hasMoreElements() {
+		        return false;
+		    }
+		    public Object nextElement() {
+		        return null;
+		    }
+		    
+		};
     }
 
     /**
@@ -568,7 +565,6 @@ public class EquipmentType {
     public boolean equals(EquipmentType e) {
         if (e != null && this.internalName.equals(e.internalName))
             return true;
-        else
-            return false;
+        return false;
     }
 }

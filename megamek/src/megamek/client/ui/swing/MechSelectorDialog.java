@@ -915,18 +915,17 @@ public class MechSelectorDialog
             if (selected == -1) {
                 clearMechPreview();
                 return;
-            } else {
-                MechSummary ms = m_mechsCurrent[selected];
-                try {
-                    Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-                    previewMech(entity);
-                } catch (EntityLoadingException ex) {
-                    System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    ex.printStackTrace();
-                    clearMechPreview();
-                    return;
-                }
             }
+			MechSummary ms = m_mechsCurrent[selected];
+			try {
+			    Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+			    previewMech(entity);
+			} catch (EntityLoadingException ex) {
+			    System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			    ex.printStackTrace();
+			    clearMechPreview();
+			    return;
+			}
         }
     }
 }

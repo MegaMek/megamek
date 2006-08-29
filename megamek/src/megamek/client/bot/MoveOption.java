@@ -78,11 +78,11 @@ public class MoveOption extends MovePath implements Cloneable {
         }
 
         public MoveOption get(MoveOption es) {
-            return (MoveOption) super.get(es.getKey());
+            return super.get(es.getKey());
         }
 
         public MoveOption remove(MoveOption es) {
-            return (MoveOption) super.remove(es.getKey());
+            return super.remove(es.getKey());
         }
     }
 

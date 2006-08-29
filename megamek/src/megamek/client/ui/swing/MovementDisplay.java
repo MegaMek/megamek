@@ -1147,13 +1147,12 @@ public class MovementDisplay
                         clearAllMoves();
                     }
                     return;
-                } else {
-                    // if not valid, tell why
-                    clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantCharge"), //$NON-NLS-1$
-                            toHit.getDesc());
-                    clearAllMoves();
-                    return;
                 }
+				// if not valid, tell why
+				clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantCharge"), //$NON-NLS-1$
+				        toHit.getDesc());
+				clearAllMoves();
+				return;
             } else if (gear == MovementDisplay.GEAR_DFA) {
                 // check if target is valid
                 final Targetable target = chooseTarget(b.getCoords());
@@ -1184,13 +1183,12 @@ public class MovementDisplay
                         clearAllMoves();
                     }
                     return;
-                } else {
-                    // if not valid, tell why
-                    clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantDFA"), //$NON-NLS-1$
-                            toHit.getDesc());
-                    clearAllMoves();
-                    return;
                 }
+				// if not valid, tell why
+				clientgui.doAlertDialog(Messages.getString("MovementDisplay.CantDFA"), //$NON-NLS-1$
+				        toHit.getDesc());
+				clearAllMoves();
+				return;
             }
             butDone.setText(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
             updateProneButtons();
@@ -1290,10 +1288,9 @@ public class MovementDisplay
 
                     // We can stop looking.
                     break;
-                } else {
-                    // Nope. Discard it.
-                    other = null;
                 }
+				// Nope. Discard it.
+				other = null;
             } // Check the next entity in this position.
             if (!isGood) {
                 setLoadEnabled(false);
@@ -1378,7 +1375,7 @@ public class MovementDisplay
         // Do we have a single choice?
         if (targets.size() == 1) {
             // Return  that choice.
-            choice = (Targetable) targets.get(0);
+            choice = targets.get(0);
         }
 
         // If we have multiple choices, display a selection dialog.
@@ -1387,7 +1384,7 @@ public class MovementDisplay
             String question = Messages.getString("MovementDisplay.ChooseTargetDialog.message", new Object[]{//$NON-NLS-1$
                 pos.getBoardNum()});
             for (int loop = 0; loop < names.length; loop++) {
-                names[loop] = ((Targetable) targets.get(loop)).getDisplayName();
+                names[loop] = targets.get(loop).getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
                     new SingleChoiceDialog(clientgui.frame,
@@ -1396,7 +1393,7 @@ public class MovementDisplay
                             names);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer()) {
-                choice = (Targetable) targets.get(choiceDialog.getChoice());
+                choice = targets.get(choiceDialog.getChoice());
             }
         } // End have-choices
 
@@ -1409,9 +1406,8 @@ public class MovementDisplay
         mld.setVisible(true);
         if (mld.getAnswer()) {
             return mld.getMine();
-        } else {
-            return -1;
         }
+		return -1;
     }
 
     //

@@ -83,8 +83,7 @@ public class ArmlessMech extends BipedMech {
         if(hit.getLocation() == LOC_LARM
                 ||hit.getLocation() == LOC_RARM) {
             return new HitData(LOC_NONE);
-        } else {
-            return super.getTransferLocation(hit);
         }
+		return super.getTransferLocation(hit);
     }
 }

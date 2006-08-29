@@ -477,7 +477,7 @@ public class GunEmplacement extends Entity
         //return (int)Math.round((dbv + obv + xbv) * pilotFactor);
         int finalBV = (int)Math.round(dbv + obv + xbv);
 
-        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
+        int retVal = (int)Math.round((finalBV) * pilotFactor);
         return retVal;
     }
     

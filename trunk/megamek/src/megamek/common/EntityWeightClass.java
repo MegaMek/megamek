@@ -40,17 +40,15 @@ public class EntityWeightClass {
     public static int getClassLimit(int wClass) {
         if (wClass >=0 && wClass < SIZE) {
             return weightLimits[wClass];
-        } else {
-            throw new IllegalArgumentException("Unknown Weight Class");            
         }
+		throw new IllegalArgumentException("Unknown Weight Class");
     }
 
     public static String getClassName(int wClass) {
         if (wClass >=0 && wClass < SIZE) {
             return Messages.getString("EntityWeightClass."+wClass);
-        } else {
-            throw new IllegalArgumentException("Unknown Weight Class");            
         }
+		throw new IllegalArgumentException("Unknown Weight Class");
     }
     
 }

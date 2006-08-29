@@ -316,10 +316,10 @@ public class TestBot extends BotClient {
         MoveOption[] result = new MoveOption[Math.min(move_array.length, 20)];
         int offset = 0;
         for (int i = 0; i < Math.min(move_array.length, 20); i++) {
-            MoveOption next = (MoveOption) move_array[i];
+            MoveOption next = move_array[i];
             if (next.isPhysical && self.range_damages[CEntity.RANGE_SHORT] > 5 && next.doomed) {
                 if (offset + 20 < move_array.length) {
-                    next = (MoveOption) move_array[offset + 20];
+                    next = move_array[offset + 20];
                     offset++;
                 }
             }
@@ -343,7 +343,7 @@ public class TestBot extends BotClient {
         }
         System.out.println(self.getEntity().getShortName() + " has " + move_array.length + " moves" );
         for (int i = 0; i < move_array.length; i++) {
-            MoveOption option = (MoveOption) move_array[i];
+            MoveOption option = move_array[i];
             option.setState();
             for (int e = 0; e < enemies.size(); e++) { // for each enemy
                 Entity en = (Entity) enemies.get(e);
@@ -497,7 +497,7 @@ public class TestBot extends BotClient {
         MoveOption[] move_array = self.pass.values().toArray(new MoveOption[0]);
         self.pass.clear();
         for (int j = 0; j < move_array.length && friends > 2; j++) {
-            MoveOption option = (MoveOption) move_array[j];
+            MoveOption option = move_array[j];
             for (int e = 0; e < enemy_array.size(); e++) {
                 Entity en = (Entity) enemy_array.get(e);
                 CEntity enemy = centities.get(en);
@@ -532,7 +532,7 @@ public class TestBot extends BotClient {
         self.pass.clear();
 
         for (int j = 0; j < move_array.length; j++) {
-            MoveOption option = (MoveOption) move_array[j];
+            MoveOption option =  move_array[j];
             option.setState();
             double adjustment = 0;
             double temp_adjustment = 0;
@@ -649,7 +649,7 @@ public class TestBot extends BotClient {
                 for (int j = 0; j < move_array.length; j++) {
                     MoveOption option = null;
                     to_check.clear();
-                    option = (MoveOption) move_array[j];
+                    option = move_array[j];
                     option.setState();
                     //check for damning hexes specifically
                     //could also look at intervening defensive
@@ -789,7 +789,7 @@ public class TestBot extends BotClient {
 
         if (self.engaged) {
             for (int j = 0; j < move_array.length; j++) {
-                MoveOption option = (MoveOption) move_array[j];
+                MoveOption option = move_array[j];
                 option.setState();
                 GAAttack temp = this.bestAttack(option);
                 if (temp != null) {
@@ -1583,9 +1583,9 @@ public class TestBot extends BotClient {
                 min = lance.getResult();
                 this.old_moves = lance;
             } else if (
-                    ((MoveOption[]) possible.get(0)) != null
-                    && ((MoveOption[]) possible.get(0)).length > 0) {
-                min = ((MoveOption[]) possible.get(0))[0];
+                    possible.get(0) != null
+                    && possible.get(0).length > 0) {
+                min =  possible.get(0)[0];
             }
         }
         if (min == null) {

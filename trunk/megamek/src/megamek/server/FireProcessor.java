@@ -446,13 +446,9 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 smokeHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, 1));
                 return true;
             }
-            else {
-                return true;
-            }
+			return true;
         }
-        else {
-            return false;
-        }
+		return false;
     }
 
     public void driftSmokeReport(Coords smokeCoords, int size, boolean dis) {

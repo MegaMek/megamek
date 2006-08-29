@@ -81,20 +81,19 @@ public class ImprovedAveragingScaleFilter extends AreaAveragingScaleFilter {
         if ((status == IMAGEABORTED) || (status == IMAGEERROR)) {
             consumer.imageComplete(status);
             return;
-        } else {
-            // get orig image width and height
-            int pixels[] = new int[savedWidth];
-            int position;
-            for (int yy = 0; yy < savedHeight; yy++) {
-                position = 0;
-                int start = yy * savedWidth;
-                for (int xx = 0; xx < savedWidth; xx++) {
-                    pixels[position++] = savedPixels[start + xx];
-                }
-                super.setPixels(0, yy, savedWidth, 1, defaultCM,
-                        pixels, 0, savedWidth);
-            }
-            consumer.imageComplete(status);
         }
+		// get orig image width and height
+		int pixels[] = new int[savedWidth];
+		int position;
+		for (int yy = 0; yy < savedHeight; yy++) {
+		    position = 0;
+		    int start = yy * savedWidth;
+		    for (int xx = 0; xx < savedWidth; xx++) {
+		        pixels[position++] = savedPixels[start + xx];
+		    }
+		    super.setPixels(0, yy, savedWidth, 1, defaultCM,
+		            pixels, 0, savedWidth);
+		}
+		consumer.imageComplete(status);
     }
 }

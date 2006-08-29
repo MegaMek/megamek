@@ -3395,13 +3395,12 @@ public class Server implements Runnable {
                                 // The entity's movement is completed.
                                 return;
 
-                            } else {
-                                // Nope.  Update the report.
-                                r = new Report(2035);
-                                r.subject = entity.getId();
-                                r.indent();
-                                addReport(r);
                             }
+							// Nope.  Update the report.
+							r = new Report(2035);
+							r.subject = entity.getId();
+							r.indent();
+							addReport(r);
                             // Stay in the current hex and stop skidding.
                             break;
                         }
@@ -3961,19 +3960,18 @@ public class Server implements Runnable {
                                 // TODO: remove passengers and swarmers.
                                 // The entity's movement is completed.
                                 return;
-                            } else {
-                                // Nope.  Update the report.
-                                r = new Report(2035);
-                                r.subject = entity.getId();
-                                addReport(r);
                             }
+							// Nope.  Update the report.
+							r = new Report(2035);
+							r.subject = entity.getId();
+							addReport(r);
                             // Stay in the current hex and stop skidding.
                             break;
                         }
                         IHex hex = game.getBoard().getHex(newPos);
                         int terrainLevel = hex.ceiling() - hex.surface();
                         int newElevation=entity.calcElevation(game.getBoard().getHex(curPos), game.getBoard().getHex(newPos), curVTOLElevation, step.climbMode());
-                        if(newElevation<=terrainLevel) {
+                        if (newElevation<=terrainLevel) {
                             r = new Report(2105);
                             r.subject = entity.getId();
                             r.add(newPos.getBoardNum(), true);
@@ -4418,19 +4416,18 @@ public class Server implements Runnable {
                     // check to see if we washed off infernos
                     checkForWashedInfernos(entity, curPos);
                     break;
-                } else {
-                    // Being swarmed
-                    entity.setPosition(curPos);
-                    if (doDislodgeSwarmerSkillCheck(entity,
-                                                    rollTarget,
-                                                    curPos)) {
-                        // Entity falls
-                        curFacing = entity.getFacing();
-                        curPos = entity.getPosition();
-                        fellDuringMovement = true;
-                        break;
-                    }
                 }
+				// Being swarmed
+				entity.setPosition(curPos);
+				if (doDislodgeSwarmerSkillCheck(entity,
+				                                rollTarget,
+				                                curPos)) {
+				    // Entity falls
+				    curFacing = entity.getFacing();
+				    curPos = entity.getPosition();
+				    fellDuringMovement = true;
+				    break;
+				}
             }
 
             //going hull down
@@ -5513,20 +5510,19 @@ public class Server implements Runnable {
             r.choose(false);
             addReport(r);
             return false;
-        } else {
-            // Dislodged swarmers don't get turns.
-            int swarmerId = entity.getSwarmAttackerId();
-            final Entity swarmer = game.getEntity( swarmerId );
-            game.removeTurnFor( swarmer );
-            send( createTurnVectorPacket() );
-
-            // Update the report and cause a fall.
-            r.choose(true);
-            addReport(r);
-            entity.setPosition( curPos );
-            doEntityFallsInto(entity, curPos, curPos, roll, false);
-            return true;
         }
+		// Dislodged swarmers don't get turns.
+		int swarmerId = entity.getSwarmAttackerId();
+		final Entity swarmer = game.getEntity( swarmerId );
+		game.removeTurnFor( swarmer );
+		send( createTurnVectorPacket() );
+
+		// Update the report and cause a fall.
+		r.choose(true);
+		addReport(r);
+		entity.setPosition( curPos );
+		doEntityFallsInto(entity, curPos, curPos, roll, false);
+		return true;
     }
 
     /**
@@ -5802,47 +5798,46 @@ public class Server implements Runnable {
                 roll = entity.getBasePilotingRoll();
             doEntityFallsInto(entity, src, dest, roll);
             return;
-        } else {
-            //move the entity into the new location gently
-            entity.setPosition(dest);
-            entity.setElevation(entity.elevationOccupied(destHex) - destHex.surface());
-            Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
-            if (violation == null) {
-                // move and roll normally
-                r = new Report(2235);
-                r.indent();
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(dest.getBoardNum(), true);
-                addReport(r);
-            } else {
-                // domino effect: move & displace target
-                r = new Report(2240);
-                r.indent();
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                r.add(dest.getBoardNum(), true);
-                r.addDesc(violation);
-                addReport(r);
-            }
-            // trigger any special things for moving to the new hex
-            doEntityDisplacementMinefieldCheck(entity, src, dest);
-            doSetLocationsExposure(entity, destHex, false, entity.getElevation());
-            if (roll != null) {
-                game.addPSR(roll);
-            }
-            // Update the entity's postion on the client.
-            entityUpdate( entity.getId() );
-
-            if(violation != null) {
-                doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
-                // Update the violating entity's postion on the client,
-                // if it didn't get displaced off the board.
-                if ( !game.isOutOfGame(violation) ) {
-                    entityUpdate( violation.getId() );
-                }
-            }
         }
+		//move the entity into the new location gently
+		entity.setPosition(dest);
+		entity.setElevation(entity.elevationOccupied(destHex) - destHex.surface());
+		Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
+		if (violation == null) {
+		    // move and roll normally
+		    r = new Report(2235);
+		    r.indent();
+		    r.subject = entity.getId();
+		    r.addDesc(entity);
+		    r.add(dest.getBoardNum(), true);
+		    addReport(r);
+		} else {
+		    // domino effect: move & displace target
+		    r = new Report(2240);
+		    r.indent();
+		    r.subject = entity.getId();
+		    r.addDesc(entity);
+		    r.add(dest.getBoardNum(), true);
+		    r.addDesc(violation);
+		    addReport(r);
+		}
+		// trigger any special things for moving to the new hex
+		doEntityDisplacementMinefieldCheck(entity, src, dest);
+		doSetLocationsExposure(entity, destHex, false, entity.getElevation());
+		if (roll != null) {
+		    game.addPSR(roll);
+		}
+		// Update the entity's postion on the client.
+		entityUpdate( entity.getId() );
+
+		if(violation != null) {
+		    doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
+		    // Update the violating entity's postion on the client,
+		    // if it didn't get displaced off the board.
+		    if ( !game.isOutOfGame(violation) ) {
+		        entityUpdate( violation.getId() );
+		    }
+		}
     }
 
     private void doEntityDisplacementMinefieldCheck(Entity entity, Coords src, Coords dest) {
@@ -5913,10 +5908,8 @@ public class Server implements Runnable {
                 System.err.println("error: " + entity + " can not load entity #" + loaded );
                 break;
             }
-            else {
-                // Have the deployed unit load the indicated unit.
-                loadUnit( entity, loaded );
-            }
+			// Have the deployed unit load the indicated unit.
+			loadUnit( entity, loaded );
         }
 
         entity.setPosition(coords);
@@ -7151,22 +7144,21 @@ public class Server implements Runnable {
               r.add(toHit.getDesc());
               addReport(r);
               return true;
-          } else {
-              //swarming ended succesfully
-              r = new Report(3110);
-              r.subject = subjectId;
-              addReport(r);
-              // Only apply the "stop swarm 'attack'" to the swarmed Mek.
-              if (ae.getSwarmTargetId() != target.getTargetId()) {
-                  Entity other = game.getEntity(ae.getSwarmTargetId());
-                  other.setSwarmAttackerId(Entity.NONE);
-              }
-              else {
-                  entityTarget.setSwarmAttackerId(Entity.NONE);
-              }
-              ae.setSwarmTargetId(Entity.NONE);
-              return true;
           }
+		  //swarming ended succesfully
+		  r = new Report(3110);
+		  r.subject = subjectId;
+		  addReport(r);
+		  // Only apply the "stop swarm 'attack'" to the swarmed Mek.
+		  if (ae.getSwarmTargetId() != target.getTargetId()) {
+		      Entity other = game.getEntity(ae.getSwarmTargetId());
+		      other.setSwarmAttackerId(Entity.NONE);
+		  }
+		  else {
+		      entityTarget.setSwarmAttackerId(Entity.NONE);
+		  }
+		  ae.setSwarmTargetId(Entity.NONE);
+		  return true;
       }
 
       // Report weapon attack and its to-hit value.
@@ -10656,16 +10648,15 @@ public class Server implements Runnable {
                 game.addPSR(pushPRD);
                 game.addPSR(targetPushPRD);
                 return;
-            } else {
-                //report the miss
-                r = new Report(4166);
-                r.subject = ae.getId();
-                r.addDesc(te);
-                r.addDesc(ae);
-                r.add(targetPushResult.toHit.getValue());
-                r.add(targetPushResult.roll);
-                addReport(r);
             }
+			//report the miss
+			r = new Report(4166);
+			r.subject = ae.getId();
+			r.addDesc(te);
+			r.addDesc(ae);
+			r.add(targetPushResult.toHit.getValue());
+			r.add(targetPushResult.roll);
+			addReport(r);
         }
 
         // do we hit?
@@ -10849,8 +10840,8 @@ public class Server implements Runnable {
         }
 
         // we hit...
-        ((Mech)ae).setGrappled(te.getId(), true);
-        ((Mech)te).setGrappled(ae.getId(), false);
+        ae.setGrappled(te.getId(), true);
+        te.setGrappled(ae.getId(), false);
         Coords pos = te.getPosition();
         ae.setPosition(pos);
         ae.setElevation(te.getElevation());
@@ -11735,17 +11726,15 @@ public class Server implements Runnable {
                 }
                 continue;
             }
-            else {
-                // Meks gain heat from inferno hits.
-                if ( entity.infernos.isStillBurning() ) {
-                    int infernoHeat = entity.infernos.getHeat();
-                    entity.heatBuildup += infernoHeat;
-                    r = new Report(5010);
-                    r.subject = entity.getId();
-                    r.add(infernoHeat);
-                    addReport(r);
-                }
-            }
+			// Meks gain heat from inferno hits.
+			if ( entity.infernos.isStillBurning() ) {
+			    int infernoHeat = entity.infernos.getHeat();
+			    entity.heatBuildup += infernoHeat;
+			    r = new Report(5010);
+			    r.subject = entity.getId();
+			    r.add(infernoHeat);
+			    addReport(r);
+			}
 
             // should we even bother?
             if ( entity.isDestroyed() || entity.isDoomed() ||
@@ -12571,10 +12560,9 @@ public class Server implements Runnable {
                     doEntityFall(entity, base);
                 }
                 return;
-            } else {
-                r.choose(true);
-                addReport(r);
             }
+			r.choose(true);
+			addReport(r);
         }
     }
 
@@ -15713,9 +15701,8 @@ public class Server implements Runnable {
         if (fireRoll >= roll) {
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
             return true;
-        } else {
-            return false;
         }
+		return false;
     }
 
     /**
@@ -16092,7 +16079,7 @@ public class Server implements Runnable {
         }
 
         for (int x = 0; x < vAllEntities.size(); x++) {
-            Entity e = (Entity)vAllEntities.elementAt(x);
+            Entity e = vAllEntities.elementAt(x);
             if (e.getOwner() == pViewer || bTeamVision && !e.getOwner().isEnemyOf(pViewer)) {
                 vMyEntities.addElement(e);
             }
@@ -16105,7 +16092,7 @@ public class Server implements Runnable {
                 continue;
             }
             for (int y = 0; y < vMyEntities.size(); y++) {
-                Entity e2 = (Entity)vMyEntities.elementAt(y);
+                Entity e2 = vMyEntities.elementAt(y);
                 if(e2.isOffBoard()) {
                     continue;
                 }
@@ -16213,11 +16200,10 @@ public class Server implements Runnable {
             }
             System.err.println("filterPastReports() end");
             return filteredReports;
-        } else {
-            //don't bother filtering if double-blind rules aren't in effect
-            System.err.println("filterPastReports() end");
-            return pastReports;
         }
+		//don't bother filtering if double-blind rules aren't in effect
+		System.err.println("filterPastReports() end");
+		return pastReports;
     }
 
     /**
@@ -16772,8 +16758,7 @@ public class Server implements Runnable {
         //report so this will handel that issue.
         if ( p == null || !doBlind() )
             return new Packet(Packet.COMMAND_SENDING_REPORTS, filterReportVector(vPhaseReport, p));
-        else
-            return new Packet(Packet.COMMAND_SENDING_REPORTS, p.getTurnReport());
+		return new Packet(Packet.COMMAND_SENDING_REPORTS, p.getTurnReport());
     }
 
     /**
@@ -17931,9 +17916,8 @@ public class Server implements Runnable {
                     doExplosion(((FuelTank)bldg).getMagnitude(), 10, false, (Coords)(bldg.getCoords().nextElement()), true, vRep);
                     addReport(vRep);
                     return null;
-                } else {
-                    r.messageId = 3440;
                 }
+				r.messageId = 3440;
             }
 
         }
@@ -18005,14 +17989,13 @@ public class Server implements Runnable {
                     .append( " should not send multiple 'unload stranded entity' packets." );
                 sendServerChat( message.toString() );
                 return;
-            } else {
-                // This player is not from the current connection.
-                // Record this player to determine if this turn is done.
-                other = game.getPlayer( action.getPlayerId() );
-                if ( !declared.contains( other ) ) {
-                    declared.addElement( other );
-                }
             }
+			// This player is not from the current connection.
+			// Record this player to determine if this turn is done.
+			other = game.getPlayer( action.getPlayerId() );
+			if ( !declared.contains( other ) ) {
+			    declared.addElement( other );
+			}
         } // Handle the next "unload stranded" action.
 
         // Make sure the player selected at least *one* valid entity ID.
@@ -18163,9 +18146,8 @@ public class Server implements Runnable {
                 info.shots++;
                 game.updateTagInfo(info,bestIndex);
                 break; //got a target, stop searching
-            } else {
-                entityTarget = null;
             }
+			entityTarget = null;
             //nothing found on 1st pass, so clear shots fired to 0
             System.err.println("nothing on 1st pass");
             game.clearTagInfoShots(ae, tc);

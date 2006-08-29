@@ -571,9 +571,8 @@ public class ClientGUI
             if (component instanceof ReportDisplay) {
                 if (reportHandled) {
                     continue;
-                } else {
-                    reportHandled = true;
                 }
+				reportHandled = true;
             }
             if (component instanceof Distractable) {
                 ((Distractable) component).removeAllListeners();

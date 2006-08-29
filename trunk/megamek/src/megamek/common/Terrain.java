@@ -81,9 +81,7 @@ public class Terrain implements ITerrain, Serializable {
         if (string.equals("*")) {
             return WILDCARD;
         }
-        else {
-            return Integer.parseInt(string);
-        }
+		return Integer.parseInt(string);
     }
     
     public int getType() {

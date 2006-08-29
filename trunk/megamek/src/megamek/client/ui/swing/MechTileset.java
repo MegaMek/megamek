@@ -167,8 +167,8 @@ public class MechTileset {
             if (entity.getMovementMode() == IEntityMovementMode.WHEELED) {
                 if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
                     return default_wheeled_heavy;
-                } else
-                    return default_wheeled;
+                }
+				return default_wheeled;
             }
             if (entity.getMovementMode() == IEntityMovementMode.HOVER) {
                 return default_hover;

@@ -246,9 +246,7 @@ public abstract class Connection {
         if (socket != null) {
             return socket.getInetAddress().toString();
         }
-        else {
-            return "Unknown";
-        }
+		return "Unknown";
     }
 
     /**

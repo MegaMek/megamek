@@ -67,8 +67,7 @@ public abstract class UnitStatusFormatter {
         return sb.toString();
     }
 
-    private static String formatHeader(Entity e)
-    {
+    private static String formatHeader(Entity e) {
         StringBuffer sb = new StringBuffer(1024);
         sb.append("Model: ")
             .append(e.getChassis())
@@ -90,8 +89,7 @@ public abstract class UnitStatusFormatter {
         return sb.toString();
     }
 
-    private static String formatAmmo(Entity e)
-    {
+    private static String formatAmmo(Entity e) {
         StringBuffer sb = new StringBuffer(1024);
         for (Mounted weap : e.getWeaponList()) {
                 sb.append(weap.getName());
@@ -101,8 +99,7 @@ public abstract class UnitStatusFormatter {
             }
 
         return sb.toString();
-    }
-      
+    }      
 
     private static String formatCrits(Entity e) {
         StringBuffer sb = new StringBuffer();
@@ -158,8 +155,7 @@ public abstract class UnitStatusFormatter {
         return "";
     }
     
-    private static String formatArmorTank(Tank t)
-    {
+    private static String formatArmorTank(Tank t) {
         StringBuffer sb = new StringBuffer(1024);
         sb.append("      ARMOR               INTERNAL")
             .append( CommonConstants.NL )
@@ -217,8 +213,7 @@ public abstract class UnitStatusFormatter {
         return sb.toString();
     }
 
-    private static String formatArmorMech(Mech m)
-    {
+    private static String formatArmorMech(Mech m) {
         StringBuffer sb = new StringBuffer(1024);
         sb.append("         FRONT                REAR                INTERNAL");
         sb.append( CommonConstants.NL );
@@ -312,8 +307,7 @@ public abstract class UnitStatusFormatter {
         return sb.toString();
     }
     
-    private static String formatArmorProtomech(Protomech m)
-    {
+    private static String formatArmorProtomech(Protomech m) {
         StringBuffer sb = new StringBuffer(1024);
         sb.append("         FRONT                INTERNAL");
         sb.append( CommonConstants.NL );
@@ -373,8 +367,7 @@ public abstract class UnitStatusFormatter {
         return sb.toString();
     }
 
-    private static String formatArmorGunEmplacement(GunEmplacement ge)
-    {
+    private static String formatArmorGunEmplacement(GunEmplacement ge) {
         StringBuffer sb = new StringBuffer(1024);
         if (ge.hasTurret()) {
             sb.append("             --------").append( CommonConstants.NL )
@@ -392,27 +385,20 @@ public abstract class UnitStatusFormatter {
         return sb.toString();
     }
 
-    private static String renderArmor(int nArmor)
-    {
+    private static String renderArmor(int nArmor) {
         return renderArmor(nArmor, 2);
     }
-    private static String renderArmor(int nArmor, int spaces)
-    {
+    private static String renderArmor(int nArmor, int spaces) {
         if (nArmor <= 0) {
             if ( 1 == spaces ) {
                 return "x";
-            } else {
-                return "xx";
             }
+            return "xx";
         }
-        else {
-            return StringUtil.makeLength(String.valueOf(nArmor), spaces, true);
-        }
+        return StringUtil.makeLength(String.valueOf(nArmor), spaces, true);
     }
 
-    public static void main(String[] ARGS)
-        throws Exception
-    {
+    public static void main(String[] ARGS) throws Exception {
         MechSummary ms = MechSummaryCache.getInstance().getMech(ARGS[0]);
         Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
         System.out.println(format(e));

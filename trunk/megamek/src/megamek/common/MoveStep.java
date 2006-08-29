@@ -1402,10 +1402,9 @@ public class MoveStep implements Serializable {
 
                     // We can stop looking.
                     break;
-                } else {
-                    // Nope. Discard it.
-                    other = null;
                 }
+				// Nope. Discard it.
+				other = null;
 
             } // Check the next entity in this position.
 

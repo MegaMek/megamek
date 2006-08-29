@@ -169,15 +169,14 @@ public class MiscType extends EquipmentType {
                 } else {
                     return 4.0f;
                 }
-            } else {
-                if (entity.getWeight() <= 55.0) {
-                    return 0.5f;
-                } else if (entity.getWeight() <= 85.0) {
-                    return 1.0f;
-                } else {
-                    return 2.0f;
-                }
             }
+			if (entity.getWeight() <= 55.0) {
+			    return 0.5f;
+			} else if (entity.getWeight() <= 85.0) {
+			    return 1.0f;
+			} else {
+			    return 2.0f;
+			}
         } else if (hasFlag(F_UMU)) {
             if (entity.getWeight() <= 55.0) {
                 return 0.5f;
@@ -204,14 +203,11 @@ public class MiscType extends EquipmentType {
                 Engine e = entity.getEngine();
                 if(e == null) return 0.0f;
                 return (float)(Math.ceil(e.getWeightEngine() / 10.0 * 2.0) / 2.0);
-            } else {
-                if (entity.isClan()) {
-                    return Math.round(entity.getWeight() / 25.0f);
-                }
-                else {
-                    return Math.round(entity.getWeight() / 20.0f);
-                }
             }
+			if (entity.isClan()) {
+			    return Math.round(entity.getWeight() / 25.0f);
+			}
+			return Math.round(entity.getWeight() / 20.0f);
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
@@ -224,9 +220,7 @@ public class MiscType extends EquipmentType {
             if (entity.isClan()) {
                 return (float)Math.ceil(fTons / 5.0f);
             }
-            else {
-                return (float)Math.ceil(fTons / 4.0f);
-            }
+			return (float)Math.ceil(fTons / 4.0f);
         } else if ( EquipmentType.getArmorTypeName(T_ARMOR_FERRO_FIBROUS).equals(internalName) ) {
             double tons = 0.0;
             if ( entity.isClanArmor()) {
@@ -292,9 +286,7 @@ public class MiscType extends EquipmentType {
             if (entity.isClan()) {
                 return Math.round(entity.getWeight() / 25.0f);
             }
-            else {
-                return Math.round(entity.getWeight() / 20.0f);
-            }
+			return Math.round(entity.getWeight() / 20.0f);
         } else if (hasFlag(F_TARGCOMP)) {
             // based on tonnage of direct_fire weaponry
             double fTons = 0.0;
@@ -307,21 +299,17 @@ public class MiscType extends EquipmentType {
             if (entity.isClan()) {
                 return (int)Math.ceil(fTons / 5.0f);
             }
-            else {
-                return (int)Math.ceil(fTons / 4.0f);
-            }
+			return (int)Math.ceil(fTons / 4.0f);
         } else if ( EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS).equals(internalName) ) {
             if ( entity.isClanArmor() ) {
                 return 7;
-            } else {
-                return 14;
             }
+			return 14;
         } else if ( EquipmentType.getStructureTypeName(T_STRUCTURE_ENDO_STEEL).equals(internalName) ) {
             if ( entity.isClan() ) {
                 return 7;
-            } else {
-                return 14;
             }
+			return 14;
         } else if (hasFlag(F_JUMP_BOOSTER)) {
             return (entity instanceof QuadMech) ? 8 : 4; // all slots in all legs
         } else if (hasFlag(F_HAND_WEAPON)
@@ -367,9 +355,8 @@ public class MiscType extends EquipmentType {
             }
             if (fFrontBV > fRearBV) {
                 return fFrontBV * 0.2 + fRearBV * 0.1;
-            } else {
-                return fRearBV * 0.2 + fFrontBV * 0.1;
             }
+			return fRearBV * 0.2 + fFrontBV * 0.1;
         } else if (hasFlag(F_HAND_WEAPON)
                 && hasSubType(S_CLAW)) {
             return (Math.ceil(entity.getWeight() / 7.0)) * 1.275;

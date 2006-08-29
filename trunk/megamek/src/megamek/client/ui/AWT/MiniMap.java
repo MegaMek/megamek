@@ -962,14 +962,13 @@ public class MiniMap extends Canvas  {
         }else{
             if ((x < margin) || (x > (getSize().width -  leftMargin)) || (y < topMargin) || (y > (getSize().height - topMargin - 14))){
                 return;
-            } else {
-                if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-                    //              m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
-                    m_bview.mouseAction(translateCoords(x - leftMargin, y - topMargin), IBoardView.BOARD_HEX_CLICK, me.getModifiers());
-                } else {
-                    m_bview.centerOnHex(translateCoords(x - leftMargin, y - topMargin));
-                }
             }
+			if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+			    //              m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
+			    m_bview.mouseAction(translateCoords(x - leftMargin, y - topMargin), IBoardView.BOARD_HEX_CLICK, me.getModifiers());
+			} else {
+			    m_bview.centerOnHex(translateCoords(x - leftMargin, y - topMargin));
+			}
         }
     }
 

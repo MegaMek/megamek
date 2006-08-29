@@ -65,8 +65,7 @@ public class EquipmentMode {
         String result = EquipmentMessages.getString("EquipmentMode."+name);
         if (result != null)
             return result;
-        else
-            return name;
+		return name;
     }
     
     /**

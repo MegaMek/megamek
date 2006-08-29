@@ -631,7 +631,7 @@ public final class BoardView1
         if (zoomIndex == BASE_ZOOM_INDEX) {
             return base;
         }
-        Image scaled = (Image) scaledImageCache.get(base);
+        Image scaled = scaledImageCache.get(base);
         if (scaled == null) {
             Dimension d = getImageBounds(base).getSize();
             d.width *= scale;
@@ -2400,9 +2400,8 @@ public final class BoardView1
                 prepare();
                 repaint();
                 return false;
-            } else {
-                return true;
             }
+			return true;
         }
 
         /**
@@ -3027,9 +3026,8 @@ public final class BoardView1
                     || (game.getOptions().booleanOption("team_vision") //$NON-NLS-1$
                     && e.getOwner().getTeam() == getLocalPlayer().getTeam()))) {
                 return true;
-            } else {
-                return false;
             }
+			return false;
         }
 
         private Color getStatusBarColor(double percentRemaining) {

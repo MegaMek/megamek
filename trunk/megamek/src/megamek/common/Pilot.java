@@ -264,16 +264,14 @@ public class Pilot
         int index = s.indexOf(" ");
         if (index == -1)
             return new Boolean(true);
-        else {
-            String t = s.substring(index + 1,s.length());
-            Object result;
-            try {
-                result = Integer.valueOf(t);
-            } catch (NumberFormatException e) {
-                result = t;
-            } // try-catch
-            return result;
-        } // else
+		String t = s.substring(index + 1,s.length());
+		Object result;
+		try {
+		    result = Integer.valueOf(t);
+		} catch (NumberFormatException e) {
+		    result = t;
+		} // try-catch
+		return result;
     }
 
     public String getDesc() {

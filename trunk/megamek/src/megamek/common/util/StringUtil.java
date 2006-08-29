@@ -97,8 +97,7 @@ public class StringUtil {
      * @param n the desired length of the resultant string
      * @param bRightJustify true if the string should be right justified
      */
-    public static String makeLength(String s, int n, boolean bRightJustify)
-    {
+    public static String makeLength(String s, int n, boolean bRightJustify) {
         int l = s.length();
         if (l == n) {
             return s;
@@ -107,9 +106,7 @@ public class StringUtil {
             if (bRightJustify) {
                 return SPACES.substring(0, n - l) + s;
             }
-            else {
-                return s + SPACES.substring(0, n - l);
-            }
+			return s + SPACES.substring(0, n - l);
         }
         else {
             return s.substring(0, n - 2) + "..";
@@ -132,9 +129,8 @@ public class StringUtil {
         Date current = new Date();
         if (filename.lastIndexOf(".") == -1) {
             return filename + formatter.format(current);
-        } else {
-            return filename.substring(0, filename.lastIndexOf(".")) + formatter.format(current) + filename.substring(filename.lastIndexOf("."));
         }
+		return filename.substring(0, filename.lastIndexOf(".")) + formatter.format(current) + filename.substring(filename.lastIndexOf("."));
     }
 
 }

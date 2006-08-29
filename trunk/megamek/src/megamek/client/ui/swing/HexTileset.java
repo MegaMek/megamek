@@ -386,14 +386,8 @@ public class HexTileset {
             if (images.size() > 1) {
                 int rand = (int) (r.nextDouble() * images.size());
                 return (Image) images.elementAt(rand);
-            } else {
-                return (Image) images.firstElement();
             }
-/*      if (image == null) {
-        return image    loadImage(comp);
-      }
-      return image;
-*/
+			return (Image) images.firstElement();
         }
 
         public void loadImage(JComponent comp) {

@@ -241,7 +241,7 @@ public class Infantry
      */
     public int getRunMP(boolean gravity) {
         if (gravity) return applyGravityEffectsOnMP(this.getOriginalRunMP());
-        else return this.getOriginalRunMP();
+		return this.getOriginalRunMP();
     }
 
 
@@ -527,9 +527,8 @@ public class Infantry
              || wtype.getInternalName() == SWARM_MEK
              || wtype.getInternalName() == STOP_SWARM)
              && dugIn == DUG_IN_NONE)
-            return Compute.ARC_360; 
-        else
-            return Compute.ARC_FORWARD;
+            return Compute.ARC_360;
+		return Compute.ARC_FORWARD;
     }
 
     /**
@@ -537,14 +536,13 @@ public class Infantry
      * But field guns act like turret mounted on a tank
      */
     public boolean isSecondaryArcWeapon(int wn) { 
-        if(this instanceof BattleArmor)
+        if (this instanceof BattleArmor)
             return false; 
         Mounted mounted = getEquipment(wn);
         WeaponType wtype = (WeaponType)mounted.getType();
-        if(wtype.hasFlag(WeaponType.F_INFANTRY))
-            return false; 
-        else
-            return true;
+        if (wtype.hasFlag(WeaponType.F_INFANTRY))
+            return false;
+		return true;
     }
 
     /**
@@ -728,7 +726,7 @@ public class Infantry
 
         int finalBV = (int)Math.round(dBV);
 
-        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
+        int retVal = (int)Math.round((finalBV) * pilotFactor);
         return retVal;
     } // End public int calculateBattleValue()
 

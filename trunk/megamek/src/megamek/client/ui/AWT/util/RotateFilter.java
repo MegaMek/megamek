@@ -117,9 +117,8 @@ public class RotateFilter extends RGBImageFilter {
     private final int pixel(int x, int y) {
         if (x < 0 || y < 0 || x >= width || y >= height) {
             return 0;
-        } else {
-            return raster[y * width + x];
         }
+		return raster[y * width + x];
     }
     
     private final int alpha(int pix) {

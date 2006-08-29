@@ -630,7 +630,7 @@ public class MechSelectorDialog
         if (weapon1 > -1) {
             weaponLine1Active = true;
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().get(i)).getType();
+                WeaponType wt = (WeaponType)(entity.getWeaponList().get(i)).getType();
                 if (wt.getName().equals(m_cWeapons1.getSelectedItem())) {
                     count++;
                 }
@@ -647,7 +647,7 @@ public class MechSelectorDialog
         if (weapon2 > -1) {
             weaponLine2Active = true;
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                WeaponType wt = (WeaponType)((Mounted)entity.getWeaponList().get(i)).getType();
+                WeaponType wt = (WeaponType)(entity.getWeaponList().get(i)).getType();
                 if (wt.getName().equals(m_cWeapons2.getSelectedItem())) {
                     count++;
                 }
@@ -804,18 +804,18 @@ public class MechSelectorDialog
                 clearMechPreview();
                 return;
             }
-            else {
-                MechSummary ms = m_mechsCurrent[selected];
-                try {
-                    Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
-                    previewMech(entity);
-                } catch (EntityLoadingException ex) {
-                    System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    ex.printStackTrace();
-                    clearMechPreview();
-                    return;
-                }
-            }
+			MechSummary ms = m_mechsCurrent[selected];
+			try {
+				Entity entity = new MechFileParser(ms.getSourceFile(), ms
+						.getEntryName()).getEntity();
+				previewMech(entity);
+			} catch (EntityLoadingException ex) {
+				System.out
+						.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				ex.printStackTrace();
+				clearMechPreview();
+				return;
+			}
         } else if (ie.getSource() == m_cModel ||
                    ie.getSource() == m_cName ||
                    ie.getSource() == m_cTons ||

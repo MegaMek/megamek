@@ -180,9 +180,8 @@ public class Board implements Serializable, IBoard {
     public IHex getHex(int x, int y) {
         if(contains(x, y)) {
             return data[y * width + x];
-        } else {
-            return null;
         }
+		return null;
     }
     
     /**

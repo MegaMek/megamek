@@ -226,7 +226,7 @@ public class MechDisplay extends JPanel {
         public void onResize() {
             int w = getSize().width;
             Rectangle r = getContentBounds();
-            int dx = Math.round((float) ((w - r.width) / 2));
+            int dx = Math.round(((w - r.width) / 2));
             if (dx < minLeftMargin) dx = minLeftMargin;
             int dy = minTopMargin;
             if (r != null) setContentMargins(dx, dy, dx, dy);
@@ -288,8 +288,8 @@ public class MechDisplay extends JPanel {
         public void onResize() {
             Rectangle r = getContentBounds();
             if (r == null) return;
-            int w = Math.round((float) ((getSize().width - r.width) / 2));
-            int h = Math.round((float) ((getSize().height - r.height) / 2));
+            int w = Math.round(((getSize().width - r.width) / 2));
+            int h = Math.round(((getSize().height - r.height) / 2));
             int dx = w < minLeftMargin ? minLeftMargin : w;
             int dy = h < minTopMargin ? minTopMargin : h;
             setContentMargins(dx, dy, minRightMargin, minBottomMargin);
@@ -1822,15 +1822,15 @@ public class MechDisplay extends JPanel {
                     ((DefaultListModel) narcList.getModel()).addElement(buff.toString());
                 }
             }
-            if (en.isINarcedWith((long) INarcPod.ECM)) {
+            if (en.isINarcedWith(INarcPod.ECM)) {
                 buff = new StringBuffer(Messages.getString("MechDisplay.iNarcECMPodAttached")); //$NON-NLS-1$
                 ((DefaultListModel) narcList.getModel()).addElement(buff.toString());
             }
-            if (en.isINarcedWith((long) INarcPod.HAYWIRE)) {
+            if (en.isINarcedWith(INarcPod.HAYWIRE)) {
                 buff = new StringBuffer(Messages.getString("MechDisplay.iNarcHaywirePodAttached")); //$NON-NLS-1$
                 ((DefaultListModel) narcList.getModel()).addElement(buff.toString());
             }
-            if (en.isINarcedWith((long) INarcPod.NEMESIS)) {
+            if (en.isINarcedWith(INarcPod.NEMESIS)) {
                 buff = new StringBuffer(Messages.getString("MechDisplay.iNarcNemesisPodAttached")); //$NON-NLS-1$
                 ((DefaultListModel) narcList.getModel()).addElement(buff.toString());
             }

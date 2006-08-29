@@ -73,11 +73,10 @@ public class ArtilleryTracker implements Serializable {
         ArtilleryModifier am = getModifierByCoords(weaponMods, coords);
         if(am != null) {
             return am.getModifier();
-        } else {
-            am = new ArtilleryModifier(coords,0);
-            weaponMods.addElement(am);
-            return 0;
         }
+		am = new ArtilleryModifier(coords,0);
+		weaponMods.addElement(am);
+		return 0;
     }
 
     /**

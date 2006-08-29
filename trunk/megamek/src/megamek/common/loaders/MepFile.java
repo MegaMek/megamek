@@ -286,10 +286,8 @@ public class MepFile implements IMechLoader {
                                 mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, mech.getEquipmentNum(m), etype.isHittable()));
                                 continue;
                             }
-                            else {
-                                m = mech.addEquipment(etype, loc, rearMounted);
-                                hSharedEquip.put(etype, m);
-                            }
+							m = mech.addEquipment(etype, loc, rearMounted);
+							hSharedEquip.put(etype, m);
                         } else {
                             mech.addEquipment(etype, loc, rearMounted);
                         }

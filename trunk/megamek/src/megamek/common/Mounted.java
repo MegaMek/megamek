@@ -138,8 +138,7 @@ public class Mounted implements Serializable, RoundUpdated {
     public EquipmentMode curMode() {
         if (mode >= 0 && mode < type.getModesCount())
             return type.getMode(mode);
-        else
-            return null;
+		return null;
     }
 
     /**
@@ -149,9 +148,8 @@ public class Mounted implements Serializable, RoundUpdated {
     public EquipmentMode pendingMode() {
         if (pendingMode < 0 || pendingMode >= type.getModesCount()) {
             return EquipmentMode.getMode("None");
-        } else {        
-            return type.getMode(pendingMode);
         }
+		return type.getMode(pendingMode);
     }
 
     /**
@@ -281,9 +279,8 @@ public class Mounted implements Serializable, RoundUpdated {
     public int usedInPhase () {
         if (usedThisRound) {
             return phase;
-        } else {
-            return IGame.PHASE_UNKNOWN;
         }
+		return IGame.PHASE_UNKNOWN;
     }
     public boolean isBreached() {
         return useless;
@@ -528,9 +525,8 @@ public class Mounted implements Serializable, RoundUpdated {
             this.useless || this.shotsLeft <= 0 ||
             this.location == Entity.LOC_NONE) {
             return false;
-        } else {
-            return true;
         }
+		return true;
     }
     
     /**

@@ -283,14 +283,13 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             final MoveStep step = (MoveStep) i.nextElement();
             if (step.getMovementType() == IEntityMovementType.MOVE_ILLEGAL) {
                 break;
-            } else {
-                if (step.getType() == MovePath.STEP_CHARGE) {
-                    chargeStep = step;
-                } else {
-                    chargeSrc = step.getPosition();
-                    chargeEl = step.getElevation();
-                }
             }
+			if (step.getType() == MovePath.STEP_CHARGE) {
+			    chargeStep = step;
+			} else {
+			    chargeSrc = step.getPosition();
+			    chargeEl = step.getElevation();
+			}
         }
 
         // need to reach target
@@ -333,9 +332,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
     public static int getDamageTakenBy(Entity entity, Entity target, boolean maxtech, int distance) {
         if (!maxtech) {
             return (int) Math.ceil(target.getWeight() / 10.0 * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
-        } else {
-            return (int) Math.floor(target.getWeight() / 20.0 * distance * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
         }
+		return (int) Math.floor(target.getWeight() / 20.0 * distance * (entity.getLocationStatus(1) == ILocationExposureStatus.WET ? 0.5 : 1));
     }
 
 }

@@ -109,17 +109,14 @@ public class Option implements IOption, Serializable {
     public boolean booleanValue() {
         if (type == INTEGER) {
             return (Integer) value > 0;
-        } else {
-            if (type == CHOICE || type == STRING) {
-                if (value.equals("None") || value.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
-                    return false;
-                } else {
-                    return true;
-                }
-            } else {
-                return ((Boolean)value).booleanValue();
-            }
         }
+		if (type == CHOICE || type == STRING) {
+		    if (value.equals("None") || value.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+		        return false;
+		    }
+			return true;
+		}
+		return ((Boolean)value).booleanValue();
     }
 
     public int intValue() {

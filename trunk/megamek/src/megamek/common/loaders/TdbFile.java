@@ -657,10 +657,8 @@ public class TdbFile implements IMechLoader {
                                                                    mech.getEquipmentNum(m), etype.isHittable()));
                             continue;
                         }
-                        else {
-                            m = mech.addEquipment(etype, loc, rearMounted);
-                            hSharedEquip.put(etype, m);
-                        }
+						m = mech.addEquipment(etype, loc, rearMounted);
+						hSharedEquip.put(etype, m);
                     }
                     else if (etype instanceof WeaponType &&
                             etype.hasFlag(WeaponType.F_SPLITABLE)) {

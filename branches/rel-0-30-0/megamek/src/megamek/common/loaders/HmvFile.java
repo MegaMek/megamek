@@ -415,7 +415,13 @@ public class HmvFile
    */
   private float readFloat(DataInputStream dis) throws IOException {
       int bits = dis.readInt();
-      return Float.intBitsToFloat(Integer.reverseBytes(bits));
+      //Integer.reverseBytes is not supported in 1.4
+      //return Float.intBitsToFloat(Integer.reverseBytes(bits));
+      bits = ((bits & 0xFF000000) >> 24) |
+              ((bits & 0x00FF0000) >> 8) |
+              ((bits & 0x0000FF00) << 8) |
+              ((bits & 0x000000FF) << 24);
+      return Float.intBitsToFloat(bits);
   }
   
   /**

@@ -56,10 +56,9 @@ public class GameReports implements Serializable {
         }
         if (round <= reports.size()) {
             return (Vector)reports.elementAt(round - 1);
-        } else {
-            System.err.println("ERROR: GameReports.get() was asked for reports of a round which it does not posses.");
-            return null;
         }
+		System.err.println("ERROR: GameReports.get() was asked for reports of a round which it does not posses.");
+		return null;
     }
 
     //Get all the reports.

@@ -78,24 +78,17 @@ public class TechConstants {
         if (level >= 0 && level < SIZE) {
             return T_NAMES[level];
         }
-        else
-        {
-            throw new IllegalArgumentException("Unknown tech level");            
-        }
+		throw new IllegalArgumentException("Unknown tech level");
     }
 
     public static String getLevelDisplayableName(int level) {
         if (level >= 0 && level < SIZE) {
             return Messages.getString("TechLevel."+T_NAMES[level]);
         }
-        else
-        {
-            throw new IllegalArgumentException("Unknown tech level");            
-        }
+		throw new IllegalArgumentException("Unknown tech level");
     }
 
-    public static boolean isLegal(int entityTechlevel, int equipmentTechlevel)
-    {
+    public static boolean isLegal(int entityTechlevel, int equipmentTechlevel){
         return isLegal(entityTechlevel, equipmentTechlevel, false);
     }
 
@@ -109,11 +102,11 @@ public class TechConstants {
             return true;
 
         // If it's unknown, we're not gonna be able to check it one way or the other, so...
-        if (equipmentTechlevel == T_TECH_UNKNOWN)
-            if (ignoreUnknown)
+        if (equipmentTechlevel == T_TECH_UNKNOWN) {
+        	if (ignoreUnknown)
                 return true;
-            else
-                return false;
+            return false;
+        }            
 
         // If they match, we're all good.
         if (entityTechlevel == equipmentTechlevel)

@@ -116,7 +116,7 @@ public final class TroopSpace implements Transporter {
 
         // We must have enough space for the new troops.
         // POSSIBLE BUG: we may have to take the Math.ceil() of the weight.
-        else if ( this.currentSpace < (double)unit.getWeight() ) {
+        else if ( this.currentSpace < unit.getWeight() ) {
             result = false;
         }
 

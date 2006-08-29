@@ -146,9 +146,7 @@ public class InfernoTracker
         if ( turnsLeftToBurn > 0 || turnsIVLeftToBurn > 0 ) {
             return true;
         }
-        else {
-            return false;
-        }
+		return false;
     }
 
     /**

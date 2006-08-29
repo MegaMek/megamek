@@ -31,8 +31,7 @@ public class KeyAlphaFilter extends RGBImageFilter
     public int filterRGB(int x, int y, int RGB) {
         if (RGB == keyColor) {
             return 0;
-        } else {
-            return RGB;
         }
+		return RGB;
     }
 }

@@ -422,16 +422,15 @@ public class MovePath implements Cloneable, Serializable {
                 default :
                     return turn;
             }
-        } else {
-            switch (turn) {
-                case MovePath.STEP_TURN_LEFT :
-                    return MovePath.STEP_LATERAL_LEFT_BACKWARDS;
-                case MovePath.STEP_TURN_RIGHT :
-                    return MovePath.STEP_LATERAL_RIGHT_BACKWARDS;
-                default :
-                    return turn;
-            }
         }
+		switch (turn) {
+		    case MovePath.STEP_TURN_LEFT :
+		        return MovePath.STEP_LATERAL_LEFT_BACKWARDS;
+		    case MovePath.STEP_TURN_RIGHT :
+		        return MovePath.STEP_LATERAL_RIGHT_BACKWARDS;
+		    default :
+		        return turn;
+		}
     }
 
     /**

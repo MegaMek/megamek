@@ -908,7 +908,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
             Hashtable uniqueWeapons = new Hashtable();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                Mounted m = (Mounted)entity.getWeaponList().get(i);
+                Mounted m = entity.getWeaponList().get(i);
                 uniqueWeapons.put(m.getName(),new Boolean(true));
             }
             for (Enumeration e = uniqueWeapons.keys(); e.hasMoreElements(); ) {

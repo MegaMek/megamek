@@ -235,7 +235,7 @@ public class VTOL extends Tank {
         //return (int)Math.round((dbv + obv + xbv) * pilotFactor);
         int finalBV = (int)Math.round(dbv + obv + xbv);
 
-        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
+        int retVal = (int)Math.round(finalBV * pilotFactor);
         return retVal;
     }
 
@@ -341,9 +341,7 @@ public class VTOL extends Tank {
                     }
                     return new HitData(nArmorLoc);
                 }
-                else {
-                    return new HitData(nArmorLoc);
-                }
+                return new HitData(nArmorLoc);
             case 10:
             case 11:
                 return new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);

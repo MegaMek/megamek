@@ -167,9 +167,8 @@ public class Minefield implements Serializable, Cloneable {
             mf.coords.equals(coords) &&
             mf.type == this.type) {
             return true;
-        } else {
-            return false;
         }
+		return false;
     }
     
     public void setDamage(int damage) {

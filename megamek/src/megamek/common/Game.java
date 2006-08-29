@@ -1305,9 +1305,8 @@ public class Game implements Serializable, IGame
             int count = vector.size();
             int random = Compute.randomInt(count);
             return (Entity)vector.elementAt(random);
-        } else {
-            return null;
         }
+        return null;
     }
     
     /**
@@ -2132,10 +2131,10 @@ public class Game implements Serializable, IGame
     public boolean isPlayerVictor(Player player) {
         if (player.getTeam() == Player.TEAM_NONE) {
             return player.getId() == victoryPlayerId;
-        } else {
-            return player.getTeam() == victoryTeam;
-        }
+        } 
+        return player.getTeam() == victoryTeam;
     }
+    
     /** Shortcut to isPlayerVictor(Player player) */
     public boolean isPlayerVictor(int playerId) {
         return isPlayerVictor(getPlayer(playerId));

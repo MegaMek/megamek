@@ -141,9 +141,8 @@ public class Tank
     {
         if (game.getOptions().booleanOption("no_immobile_vehicles")) {
             return super.isImmobile();
-        } else {
-            return super.isImmobile() || m_bImmobile;
         }
+		return super.isImmobile() || m_bImmobile;
     }
 
     
@@ -176,8 +175,7 @@ public class Tank
         }
     }
     
-    public void lockTurret()
-    {
+    public void lockTurret() {
         m_bTurretLocked = true;
     }
 
@@ -190,8 +188,7 @@ public class Tank
         this.crew.setUnconscious(true);
     }
 
-    public void stunCrew()
-    {
+    public void stunCrew() {
         setStunnedTurns( 3 );
     }
 
@@ -215,8 +212,7 @@ public class Tank
         m_bImmobile |= m_bImmobileHit;
     }
     
-    public void newRound(int roundNumber)
-    {
+    public void newRound(int roundNumber) {
         super.newRound(roundNumber);
         
         // check for crew stun
@@ -384,9 +380,7 @@ public class Tank
                 if (bSide || getMovementMode() == IEntityMovementMode.HOVER || getMovementMode() == IEntityMovementMode.HYDROFOIL) {
                     return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
-                else {
-                    return new HitData(nArmorLoc);
-                }
+                return new HitData(nArmorLoc);
             case 6:
             case 7:
             case 8:
@@ -395,30 +389,22 @@ public class Tank
                 if (bSide && ((getMovementMode() == IEntityMovementMode.HOVER) || (getMovementMode() == IEntityMovementMode.HYDROFOIL))) {
                     return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
-                else {
-                    return new HitData(nArmorLoc);
-                }
+                return new HitData(nArmorLoc);
             case 10:
                 if (m_bHasNoTurret) {
                     return new HitData(nArmorLoc);
                 }
-                else {
-                    return new HitData(LOC_TURRET);
-                }
+                return new HitData(LOC_TURRET);
             case 11:
                 if (m_bHasNoTurret) {
                     return new HitData(nArmorLoc);
                 }
-                else {
-                    return new HitData(LOC_TURRET, false, HitData.EFFECT_VEHICLE_TURRETLOCK);
-                }
+                return new HitData(LOC_TURRET, false, HitData.EFFECT_VEHICLE_TURRETLOCK);
             case 12:
                 if (m_bHasNoTurret || bSide) {
                     return new HitData(nArmorLoc, false, HitData.EFFECT_CRITICAL);
                 }
-                else {
-                    return new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
-                }
+                return new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
         }
         return null;
     }
@@ -455,7 +441,7 @@ public class Tank
         dbv += getTotalArmor();
 
         // total internal structure        
-        dbv += ((double)getTotalInternal()) / 2.0;
+        dbv += getTotalInternal() / 2.0;
 
         // add defensive equipment
         double dEquipmentBV = 0;
@@ -613,7 +599,7 @@ public class Tank
         //return (int)Math.round((dbv + obv + xbv) * pilotFactor);
         int finalBV = (int)Math.round(dbv + obv + xbv);
 
-        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
+        int retVal = (int)Math.round(finalBV * pilotFactor);
         return retVal;
     }
     

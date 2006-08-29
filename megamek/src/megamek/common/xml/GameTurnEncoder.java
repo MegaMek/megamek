@@ -40,8 +40,7 @@ public class GameTurnEncoder {
      * @throws  <code>IOException</code> if there's any error on write.
      */
     public static void encode( GameTurn option, Writer out )
-        throws IOException
-    {
+        throws IOException {
     }
 
     /**

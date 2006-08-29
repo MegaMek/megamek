@@ -123,11 +123,10 @@ public class IdealHex
         IdealHex hex = cache[index];
         if (hex != null) {
             return hex;
-        } else {
-            hex = new IdealHex(coords);
-            cache[index] = hex;
-            return hex;
         }
+		hex = new IdealHex(coords);
+		cache[index] = hex;
+		return hex;
     }
 }
  

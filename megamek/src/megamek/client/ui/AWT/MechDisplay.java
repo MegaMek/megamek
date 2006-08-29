@@ -820,7 +820,7 @@ public class MechDisplay extends BufferedPanel {
             m_chAmmo.setEnabled(false);
 
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
-                Mounted mounted = (Mounted) entity.getWeaponList().get(i);
+                Mounted mounted = entity.getWeaponList().get(i);
                 WeaponType wtype = (WeaponType) mounted.getType();
                 StringBuffer wn = new StringBuffer(mounted.getDesc());
                 wn.append(" ["); //$NON-NLS-1$
@@ -923,7 +923,7 @@ public class MechDisplay extends BufferedPanel {
             if (selected == -1) {
                 return -1;
             }
-            return entity.getEquipmentNum((Mounted) entity.getWeaponList().get(selected));
+            return entity.getEquipmentNum(entity.getWeaponList().get(selected));
         }
 
         /**
@@ -945,7 +945,7 @@ public class MechDisplay extends BufferedPanel {
                 wExtR.setText("---"); //$NON-NLS-1$
                 return;
             }
-            Mounted mounted = (Mounted) entity.getWeaponList().get(weaponList.getSelectedIndex());
+            Mounted mounted = entity.getWeaponList().get(weaponList.getSelectedIndex());
             WeaponType wtype = (WeaponType) mounted.getType();
             // update weapon display
             wNameR.setText(mounted.getDesc());
@@ -1123,7 +1123,7 @@ public class MechDisplay extends BufferedPanel {
                 if (n == -1) {
                     return;
                 }
-                Mounted mWeap = (Mounted) entity.getWeaponList().get(n);
+                Mounted mWeap = entity.getWeaponList().get(n);
                 Mounted mAmmo = (Mounted) vAmmo.elementAt(m_chAmmo.getSelectedIndex());
                 entity.loadWeapon(mWeap, mAmmo);
 

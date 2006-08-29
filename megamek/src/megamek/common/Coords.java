@@ -161,14 +161,12 @@ public class Coords
             case 5:
                 if((x & 1) == 1) 
                     return y - (distance / 2);
-                else
-                    return y - ((distance + 1) / 2);
+                return y - ((distance + 1) / 2);
             case 2:
             case 4:
                 if((x & 1) == 0) 
                     return y + (distance / 2);
-                else
-                    return y + ((distance + 1) / 2);
+                return y + ((distance + 1) / 2);
             case 3:
                 return y + distance;
             default:

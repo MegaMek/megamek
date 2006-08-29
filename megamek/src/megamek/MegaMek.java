@@ -311,14 +311,14 @@ public class MegaMek {
         }
 
         private void processRestOfInput() {
-            Vector v = new Vector();
+            Vector<String> v = new Vector<String>();
             while(getArgValue() != null ) {
                 v.addElement(getArgValue());
                 nextArg();
             }
             setToken(TOK_EOF);
             setTokenValue(null);
-            restArgs = (String[])v.toArray(new String[0]);
+            restArgs = v.toArray(new String[0]);
         }
     }
  }

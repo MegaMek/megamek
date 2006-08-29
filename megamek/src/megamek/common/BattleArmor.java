@@ -342,9 +342,8 @@ public class BattleArmor
     public int getJumpMP() {
         if ( this.isBurdened() ) {
             return 0;
-        } else {
-            return super.getJumpMP();
         }
+		return super.getJumpMP();
     }
 
     /**
@@ -641,7 +640,7 @@ public class BattleArmor
 
         int finalBV = (int)Math.round(bv);
 
-        int retVal = (int)Math.round(((double)finalBV) * pilotFactor);
+        int retVal = (int)Math.round(finalBV * pilotFactor);
         return retVal;
     }
 

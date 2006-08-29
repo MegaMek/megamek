@@ -68,9 +68,8 @@ public class MechFileParser {
                 ex.printStackTrace();
                 if (ex instanceof EntityLoadingException) {
                     throw new EntityLoadingException("While parsing file " + f.getName() + ", " + ex.getMessage());
-                } else {
-                    throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
                 }
+                throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
             }
         } else {
             // try zip file
@@ -97,9 +96,8 @@ public class MechFileParser {
             ex.printStackTrace();
             if (ex instanceof EntityLoadingException) {
                 throw new EntityLoadingException(ex.getMessage());
-            } else {
-                throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
             }
+            throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
         }
     }
 
@@ -297,8 +295,7 @@ public class MechFileParser {
         }
         if (response != null && response.toLowerCase().indexOf("y") == 0)
             return true;
-        else
-            return false;
+        return false;
     }
     
     public static void dispose() {

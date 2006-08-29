@@ -199,7 +199,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                                   te.getMovementMode() == IEntityMovementMode.VTOL &&
                                   te.getElevation() > 0 &&
                                   (usesAmmo && atype.getMunitionType() == AmmoType.M_STANDARD);
-        boolean isHaywireINarced = ae.isINarcedWith((long) INarcPod.HAYWIRE);
+        boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
         boolean isECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
         boolean isTAG = wtype.hasFlag(WeaponType.F_TAG);
@@ -1239,7 +1239,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
         }
         if (isArtilleryIndirect) {
-            int boardRange=(int)Math.ceil((double) (distance / 17f));
+            int boardRange=(int)Math.ceil(distance / 17f);
             if (boardRange>wtype.getLongRange()) {
                 return "Indirect artillery attack out of range";
             }

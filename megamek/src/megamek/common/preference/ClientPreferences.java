@@ -245,30 +245,26 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
             //return Locale.getDefault();
             return Locale.US;
         }
-        else
-            return locale;
+		return locale;
     }
 
     public String getLocaleString() {
         if (locale == null)
             return "";
-        else {
-            StringBuffer result = new StringBuffer();             
-            if (locale.getLanguage().length() != 0) {
-                result.append(locale.getLanguage());
-                if (locale.getCountry().length() != 0) {
-                    result.append("_"+locale.getCountry());
-                    if (locale.getVariant().length() != 0) {
-                        result.append("_"+locale.getVariant());
-                    }
-                }
-            }
-            return result.toString();
-        }
+		StringBuffer result = new StringBuffer();             
+		if (locale.getLanguage().length() != 0) {
+		    result.append(locale.getLanguage());
+		    if (locale.getCountry().length() != 0) {
+		        result.append("_"+locale.getCountry());
+		        if (locale.getVariant().length() != 0) {
+		            result.append("_"+locale.getVariant());
+		        }
+		    }
+		}
+		return result.toString();
     }
 
-    protected void setMekHitLocLog()
-    {
+    protected void setMekHitLocLog() {
         String name = store.getString(MEK_HIT_LOC_LOG);
         if (name.length()!=0) {
             try {

@@ -302,13 +302,13 @@ public class RandomMapDialog
                 this.setVisible(false);
             }
         } else if (e.getSource().equals(butSave)) {
-            FileDialog fd = new FileDialog(this, Messages.getString("RandomMapDialog.FileSaveDialog"), FileDialog.SAVE); //$NON-NLS-1$
+            FileDialog fd = new FileDialog(frame, Messages.getString("RandomMapDialog.FileSaveDialog"), FileDialog.SAVE); //$NON-NLS-1$
             fd.setDirectory("./data/boards/");
             fd.setFilenameFilter(new FilenameFilter() { public boolean accept(File f, String s) {return s.endsWith(".xml"); } });
             fd.setModal(true);
             fd.setVisible(true);
             String filename = fd.getDirectory() + File.separator + fd.getFile();
-            if(!filename.contains("."))
+            if(filename.indexOf('.') == -1)
                 filename = filename + ".xml";
             File f = new File(filename);
             try {
@@ -317,7 +317,7 @@ public class RandomMapDialog
                 ex.printStackTrace();
             }
         } else if (e.getSource().equals(butLoad)) {
-            FileDialog fd = new FileDialog(this, Messages.getString("RandomMapDialog.FileLoadDialog"), FileDialog.LOAD); //$NON-NLS-1$
+            FileDialog fd = new FileDialog(frame, Messages.getString("RandomMapDialog.FileLoadDialog"), FileDialog.LOAD); //$NON-NLS-1$
             fd.setDirectory("./data/boards/");
             fd.setFilenameFilter(new FilenameFilter() { public boolean accept(File f, String s) {return s.endsWith(".xml"); } });
             fd.setModal(true);

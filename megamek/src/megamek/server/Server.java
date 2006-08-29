@@ -15925,9 +15925,11 @@ public class Server implements Runnable {
         Entity eTarget = game.getEntity(nEntityID);
         if(eTarget == null) {
             if(game.getOutOfGameEntity(nEntityID) != null) {
-                System.err.printf("S: attempted to send entity update for out of game entity, id was %d\n", nEntityID);
+                System.err.print("S: attempted to send entity update for out of game entity, id was ");
+                System.err.println(nEntityID);
             } else {
-                System.err.printf("S: attempted to send entity update for null entity, id was %d\n", nEntityID);
+                System.err.print("S: attempted to send entity update for null entity, id was ");
+                System.err.println(nEntityID);
             }
             return; //do not send the update it will crash the client
         }

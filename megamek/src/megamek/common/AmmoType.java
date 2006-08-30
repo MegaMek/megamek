@@ -70,7 +70,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_PXLRM             = 45;
     public static final int     T_HSRM              = 46;
     public static final int     T_MRM_STREAK        = 47;
-    public static final int     NUM_TYPES           = 48;
+    public static final int     T_MPOD              = 48;
+    public static final int     NUM_TYPES           = 49;
     
 
     // ammo flags
@@ -293,6 +294,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISHeavyFlamerAmmo());
         EquipmentType.addType(createCoolantPod());
         EquipmentType.addType(createISRailGunAmmo());
+        EquipmentType.addType(createISMPodAmmo());
         
         // Start of Level2 Ammo
         EquipmentType.addType(createISLB2XAmmo());
@@ -458,6 +460,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLLRT19Ammo());
         EquipmentType.addType(createCLLRT20Ammo());
         EquipmentType.addType(createCLMagshotGRAmmo());
+        EquipmentType.addType(createCLMPodAmmo());
         base = createCLLongTomAmmo();
         clanArtyAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -5401,6 +5404,44 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 44;
         ammo.cost = 10000;
+
+        return ammo;
+    }
+
+    public static AmmoType createISMPodAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "MPod Ammo";
+        ammo.setInternalName("IS M-Pod Ammo");
+        ammo.addLookupName("IS MPod Ammo");
+        ammo.damagePerShot = 1;
+        ammo.toHitModifier = -1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_MPOD;
+        ammo.munitionType = M_CLUSTER;
+        ammo.shots = 15;
+        ammo.bv = 0;
+        ammo.cost = 0;
+
+        return ammo;
+    }
+    
+    public static AmmoType createCLMPodAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        ammo.name = "MPod Ammo";
+        ammo.setInternalName("Clan M-Pod Ammo");
+        ammo.addLookupName("Clan MPod Ammo");
+        ammo.damagePerShot = 1;
+        ammo.toHitModifier = -1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_MPOD;
+        ammo.munitionType = M_CLUSTER;
+        ammo.shots = 15;
+        ammo.bv = 0;
+        ammo.cost = 0;
 
         return ammo;
     }

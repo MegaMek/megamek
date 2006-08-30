@@ -32,6 +32,7 @@ v0.31.12 (SVN)
 + Removed oodles of unnecessary casts and 'else's.
 + Patch 1534314: Solaris 7 MPod Weapons
 + Data 1545661: 3055U Mek MTFs
++ Added updated retroweaver-rt.jar, so clients work again with Java 1.4
 
 v0.31.11 (2006-08-11, 3:33 GMT-8)
 + Corrected map size label message reference.

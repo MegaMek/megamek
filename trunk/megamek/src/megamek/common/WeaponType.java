@@ -353,7 +353,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISPXLRM10()); //guessed from fluff
         EquipmentType.addType(createISPXLRM15()); //guessed from fluff
         EquipmentType.addType(createISPXLRM20()); //guessed from fluff
-
+        EquipmentType.addType(createISMPod());
         
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -447,6 +447,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLLaserAMS());
         EquipmentType.addType(createCLPlasmaRifle());
         EquipmentType.addType(createCLMagshotGR());
+        EquipmentType.addType(createCLMPod());
 
         //Protomech weapons
         EquipmentType.addType(createCLPROLRM1() );
@@ -10297,6 +10298,58 @@ public class WeaponType extends EquipmentType {
         weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_MISSILE;
         weapon.cost = 500000;
+
+        return weapon;
+    }
+
+    public static WeaponType createISMPod() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "M-Pod";
+        weapon.setInternalName("ISMPod");
+        weapon.addLookupName("ISMPod");
+        weapon.addLookupName("ISM-Pod");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_MPOD;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.extremeRange = 4;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_ONESHOT;
+        weapon.bv = 5;
+        weapon.cost = 6000;
+
+        return weapon;
+    }
+
+    public static WeaponType createCLMPod() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
+        weapon.name = "M-Pod";
+        weapon.setInternalName("CLMPod");
+        weapon.addLookupName("CLMPod");
+        weapon.addLookupName("CLM-Pod");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_MPOD;
+        weapon.minimumRange = 0;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.extremeRange = 4;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 1;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_ONESHOT;
+        weapon.bv = 5;
+        weapon.cost = 6000;
 
         return weapon;
     }

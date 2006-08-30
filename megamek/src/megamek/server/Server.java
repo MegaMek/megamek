@@ -8273,11 +8273,24 @@ public class Server implements Runnable {
 
         } else if (usesAmmo
                 && (atype.getAmmoType() == AmmoType.T_AC_LBX
-                || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
-                && atype.getMunitionType() == AmmoType.M_CLUSTER) {
+                || atype.getAmmoType() == AmmoType.T_AC_LBX_THB
+                || atype.getAmmoType() == AmmoType.T_MPOD)
+                && (atype.getMunitionType() == AmmoType.M_CLUSTER) ) {
             // Cluster shots break into single point clusters.
             bSalvo = true;
             hits = wtype.getRackSize();
+            if ( wtype.getAmmoType() == AmmoType.T_MPOD ){
+                if (nRange == 1){
+                    hits = 15;
+                } else if (nRange == 2){
+                    hits = 10;
+                } else if ( nRange == 3){
+                    hits = 5;
+                } else if ( nRange == 4){
+                    hits = 2;
+                }
+            } else
+                hits = wtype.getRackSize();
             // war of 3039 prototype LBXs get -1 mod on missile chart
             int nMod = wtype.hasFlag(WeaponType.F_PROTOTYPE) ? 0 : -1;
             if ( !bAllShotsHit ) {

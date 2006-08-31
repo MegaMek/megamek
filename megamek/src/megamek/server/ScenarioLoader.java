@@ -250,6 +250,12 @@ public class ScenarioLoader
         }
         // game's ready
         g.getOptions().initialize();
+        String optionFile = p.getProperty("GameOptionsFile");
+        if(optionFile == null) {
+            g.getOptions().loadOptions();
+        } else {
+            g.getOptions().loadOptions(new File(m_scenFile.getParentFile(), optionFile));
+        }
 
         // set wind
         g.determineWind();
@@ -633,9 +639,7 @@ public class ScenarioLoader
             }
 
             value.setLength( loop + 1 );
-            //I know Sun recommends using setProperty instead, but Java 1.1
-            // doesn't support setProperty.
-            fixed.put( key, value.toString() );
+            fixed.setProperty( key, value.toString() );
         }
         return fixed;
     }

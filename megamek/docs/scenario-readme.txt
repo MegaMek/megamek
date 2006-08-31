@@ -18,6 +18,7 @@ Any line begining with the "#" is a comment and is not read by MegaMek when load
 11. Faction (B) Unit list 
 12. Advantages
 13. Initial Damage to Units
+14. Game options
 
 Here is a breakdown of each section: 
 1. The MegaMek Version 
@@ -249,4 +250,10 @@ Unit_WacosRangers_10=Javelin JVN-10N,Sgt Eric Long,4,4,NE,11,16
 Unit_WacosRangers_11=Locust LCT-1V,Jolly Jim Smith,3,4,S,10,17 
 Unit_WacosRangers_12=Locust LCT-1V,Anita Michei,2,5,S,09,17 
 
+14. Game options
+# This is an xml file which can be created by copying your
+# mmconf/gameoptions.xml
+# path is specified relative to the scenario file
+# This is one way to set victory conditions
+GameOptionsFile=Example_options.xml
 # Destroy the enemy!

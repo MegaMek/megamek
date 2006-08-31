@@ -708,12 +708,12 @@ public class BattleArmor
         // N.B. Rather than mucking with Compute#getTargetMovementModifier,
         // I decided to apply a -1 modifier here... the total works out.
         if ( isMimetic ) {
-            if ( 3 == this.delta_distance ) {
-            result = new TargetRoll( -1,
-                                     "mimetic armor cancels movement bonus" );
+            int mmod = 3 - delta_distance;
+            mmod -= Compute.getTargetMovementModifier(game,getId()).getValue();
+            if (mmod < 0) {
+                result = new TargetRoll(mmod, "mimetic armor cancels movement bonus");
             } else {
-                result = new TargetRoll( 3 - this.delta_distance,
-                                         "mimetic armor" );
+                result = new TargetRoll(mmod, "mimetic armor");
             }
         }
         

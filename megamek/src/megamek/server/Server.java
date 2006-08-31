@@ -254,18 +254,15 @@ public class Server implements Runnable {
      * @param   port the <code>int</code> value that specifies the port that
      *          is used
      */
-    public Server(String password, int port) {
+    public Server(String password, int port) throws IOException {
         this.password = password.length() > 0 ? password : null;
         // initialize server socket
-        try {
-            serverSocket = new ServerSocket(port);
-        } catch(IOException ex) {
-            System.err.println("could not create server socket on port "+port);
-        }
+        serverSocket = new ServerSocket(port);
 
         motd = createMotd();
 
         game.getOptions().initialize();
+        game.getOptions().loadOptions();
 
         changePhase(IGame.PHASE_LOUNGE);
 
@@ -289,9 +286,6 @@ public class Server implements Runnable {
 
         System.out.println("s: password = " + this.password);
 
-        connector = new Thread(this, "Connection Listener");
-        connector.start();
-
         // register commands
         registerCommand(new DefeatCommand(this));
         registerCommand(new HelpCommand(this));
@@ -310,6 +304,10 @@ public class Server implements Runnable {
         terrainProcessors.add(new FireProcessor(this));
         terrainProcessors.add(new GeyserProcessor(this));
         terrainProcessors.add(new ElevatorProcessor(this));
+
+        //Fully initialised, now accept connections
+        connector = new Thread(this, "Connection Listener");
+        connector.start();
     }
 
     /**
@@ -791,7 +789,19 @@ public class Server implements Runnable {
         send(createEntitiesPacket());
         send(new Packet(Packet.COMMAND_SENDING_MINEFIELDS, new Vector()));
 
-        //TODO: remove ghosts
+        //remove ghosts
+        ArrayList<Player> ghosts = new ArrayList();
+        for(Enumeration<Player> players = game.getPlayers(); players.hasMoreElements();) {
+            Player p = players.nextElement();
+            if(p.isGhost()) {
+                ghosts.add(p);
+            }
+        }
+        for(Player p:ghosts) {
+            game.removePlayer(p.getId());
+            send(new Packet(Packet.COMMAND_PLAYER_REMOVE,
+                    new Integer(p.getId())));
+        }
 
         // reset all players
         resetPlayersDone();

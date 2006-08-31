@@ -15,6 +15,7 @@
 package megamek.server;
 
 import java.io.File;
+import java.io.IOException;
 
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
@@ -40,10 +41,16 @@ public class DedicatedServer {
             // kick off a RNG check
             megamek.common.Compute.d6();
             // start server
-            Server dedicated = new Server(PreferenceManager.getClientPreferences().getLastServerPass(),
-                    usePort);
-            // load game options from xml file if available
-            dedicated.getGame().getOptions().loadOptions(null);
+            Server dedicated;
+            try {
+                dedicated = new Server(PreferenceManager.getClientPreferences().getLastServerPass(),usePort);
+            } catch(IOException ex) {
+                StringBuffer error = new StringBuffer();
+                error.append("Error: could not start server at localhost")
+                    .append(":").append(usePort).append(" (").append(ex.getMessage()).append(").");
+                System.err.println(error.toString());
+                return;
+            }
             if (null != savegameFileName) {
                 dedicated.loadGame(new File(savegameFileName));
             }

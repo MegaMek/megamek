@@ -159,15 +159,18 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     }
 
     public void doSave() {
-        Vector output = new Vector();
-      
+        GameOptions.saveOptions(getOptions());
+    }
+    
+    public Vector<IBasicOption> getOptions() {
+        Vector<IBasicOption> output = new Vector();
+        
         for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
             DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();        
             IBasicOption option = comp.changedOption();        
             output.addElement(option);
         }
-      
-        GameOptions.saveOptions(output);
+        return output;
     }
 
     public void resetToDefaults() {
@@ -367,6 +370,43 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
                 }
             }
         }
+        if (option.getName().equals("individual_initiative")) { //$NON-NLS-1$
+            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+                if (comp_i.option.getName().equals("protos_deploy_even")) { //$NON-NLS-1$
+                    comp_i.setEditable(false);
+                    comp_i.setState(false);
+                }
+                if (comp_i.option.getName().equals("protos_move_even")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setState(false);
+                }
+                if (comp_i.option.getName().equals("protos_move_multi")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setState(false);
+                }
+                if (comp_i.option.getName().equals("protos_move_later")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setState(false);
+                }
+                if (comp_i.option.getName().equals("inf_deploy_even")) { //$NON-NLS-1$
+                    comp_i.setEditable(false);
+                    comp_i.setState(false);
+                }
+                if (comp_i.option.getName().equals("inf_move_even")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setState(false);
+                }
+                if (comp_i.option.getName().equals("inf_move_multi")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setState(false);
+                }
+                if (comp_i.option.getName().equals("inf_move_later")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setState(false);
+                }
+            }
+        }
         if (option.getName().equals("vacuum")) { //$NON-NLS-1$
             for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
                 DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
@@ -432,6 +472,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         } else if (e.getSource() == butDefaults) {
             resetToDefaults();
             return;
+        } else if (e.getSource() == butCancel ){
+            refreshOptions();
         }
 
         this.setVisible(false);

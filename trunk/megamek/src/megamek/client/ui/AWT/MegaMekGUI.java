@@ -49,6 +49,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Vector;
@@ -115,7 +116,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         frame.setVisible(true);
 
         // tell the user about the readme...
-        if (true == GUIPreferences.getInstance().getNagForReadme()) {
+        if (GUIPreferences.getInstance().getNagForReadme()) {
             ConfirmDialog confirm = new ConfirmDialog(frame, 
                     Messages.getString("MegaMek.welcome.title") + MegaMek.VERSION, //$NON-NLS-1$ 
                     Messages.getString("MegaMek.welcome.message"), //$NON-NLS-1$
@@ -239,7 +240,7 @@ public class MegaMekGUI implements IMegaMekGUI {
     public void showGameOptions() {
         GameOptions options = new GameOptions();
         options.initialize();
-        options.loadOptions(null);
+        options.loadOptions();
         if (optdlg == null) {
             optdlg = new GameOptionsDialog(frame, options);
         }
@@ -326,21 +327,32 @@ public class MegaMekGUI implements IMegaMekGUI {
         // kick off a RNG check
         megamek.common.Compute.d6();
         // start server
-        server = new Server(hd.serverPass, hd.port);
+        try {
+            server = new Server(hd.serverPass, hd.port);
+        } catch(IOException ex) {
+            System.err.println("could not create server socket on port "+hd.port);
+            StringBuffer error = new StringBuffer();
+            error.append("Error: could not start server at localhost")
+                .append(":").append(hd.port).append(" (").append(ex.getMessage()).append(").");
+            new AlertDialog(frame, Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
+            return;
+        }
         // initialize client
         client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
 
         if (!client.connect()) {
+            StringBuffer error = new StringBuffer();
+            error.append("Error: could not connect to server at localhost")
+                .append(":").append(hd.port).append(".");
+            new AlertDialog(frame, Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
+            frame.setVisible(false);
+            client.die();
         }
 
         launch(gui.getFrame());
 
-        Vector changedOptions = server.getGame().getOptions().loadOptions(hd.serverPass);
-        if ( changedOptions.size() > 0 ) {
-            client.sendGameOptions(hd.serverPass, changedOptions);
-        }
         optdlg = null;
     }
 
@@ -388,7 +400,16 @@ public class MegaMekGUI implements IMegaMekGUI {
         // kick off a RNG check
         megamek.common.Compute.d6();
         // start server
-        server = new Server(hd.serverPass, hd.port);
+        try {
+            server = new Server(hd.serverPass, hd.port);
+        } catch(IOException ex) {
+            System.err.println("could not create server socket on port "+hd.port);
+            StringBuffer error = new StringBuffer();
+            error.append("Error: could not start server at localhost")
+                .append(":").append(hd.port).append(" (").append(ex.getMessage()).append(").");
+            new AlertDialog(frame, Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
+            return;
+        }
         if (!server.loadGame(new File(fd.getDirectory(), fd.getFile()))) {
             new AlertDialog(frame, Messages.getString("MegaMek.LoadGameAlert.title"), Messages.getString("MegaMek.LoadGameAlert.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
             server = null;
@@ -399,6 +420,12 @@ public class MegaMekGUI implements IMegaMekGUI {
         gui.initialize();
 
         if (!client.connect()) {
+            StringBuffer error = new StringBuffer();
+            error.append("Error: could not connect to server at localhost")
+                .append(":").append(hd.port).append(".");
+            new AlertDialog(frame, Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
+            frame.setVisible(false);
+            client.die();
         }
 
         optdlg = null;
@@ -472,7 +499,16 @@ public class MegaMekGUI implements IMegaMekGUI {
         // kick off a RNG check
         megamek.common.Compute.d6();
         // start server
-        server = new Server(hd.serverPass, hd.port);
+        try {
+            server = new Server(hd.serverPass, hd.port);
+        } catch(IOException ex) {
+            System.err.println("could not create server socket on port "+hd.port);
+            StringBuffer error = new StringBuffer();
+            error.append("Error: could not start server at localhost")
+                .append(":").append(hd.port).append(" (").append(ex.getMessage()).append(").");
+            new AlertDialog(frame, Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
+            return;
+        }
         server.setGame(g);
 
         // apply any scenario damage
@@ -485,11 +521,12 @@ public class MegaMekGUI implements IMegaMekGUI {
             gui.initialize();
 
             if (!client.connect()) {
-            }
-
-            Vector changedOptions = server.getGame().getOptions().loadOptions(hd.serverPass);
-            if ( changedOptions.size() > 0 ) {
-                client.sendGameOptions(hd.serverPass, changedOptions);
+                StringBuffer error = new StringBuffer();
+                error.append("Error: could not connect to server at localhost")
+                    .append(":").append(hd.port).append(".");
+                new AlertDialog(frame, Messages.getString("MegaMek.HostGameAllert.title"), error.toString()).setVisible(true); //$NON-NLS-1$
+                frame.setVisible(false);
+                client.die();
             }
 
             // popup options dialog

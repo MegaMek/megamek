@@ -1992,7 +1992,9 @@ public class Server implements Runnable {
 
         switch (game.getPhase()) {
             case IGame.PHASE_DEPLOYMENT :
-                sendServerChat("Turns cannot be skipped in the deployment phase.");
+                // allow skipping during deployment,
+                // we need that when someone removes a unit.
+                endCurrentTurn(null);
                 break;
             case IGame.PHASE_MOVEMENT :
                 if ( toSkip != null ) {

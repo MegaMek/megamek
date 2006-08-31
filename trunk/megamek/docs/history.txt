@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.31.12 (SVN)
+v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types
 + Bug 1371053: Fixed handling of pilot modifiers for BV.
 + Bug: fixed spikes break rolls

@@ -274,6 +274,8 @@ The Mechanized Infantry are the same as the Mechanized Infantry first appearing 
 
 33) The Pop-Up Mine Launcher is introduced here.  I initially mistook this for a new piece of equipment, but it’s actually just the weapon used on the old Sloth Battle Armor. The Pop-Up Mine Launcher originally performed an attack similar to an Anti-'Mech Leg Attack only targeting a 'Mech's Center Torso or a Vehicle's Front, and the rules for it have been updated in line with Anti-BattleMech Leg Attacks so that 4 damage is inflicted regardless of whether not critical hits are inflicted.
 
+34) Mimetic Armour adds to movement modifiers instead of replacing them (p228)
+
 AEROSPACE UNITS
 1) Aerospace units firing at VTOLs, WiGEs, or other units using VTOL movement MP do so as they would attack an Aerospace Fighter flying at an Altitude of 1, adding a +5 modifier.
 

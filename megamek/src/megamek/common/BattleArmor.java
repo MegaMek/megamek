@@ -757,6 +757,7 @@ public class BattleArmor
     public TargetRoll getStealthModifier(int range) {
         TargetRoll result = null;
 
+        //TODO: eliminate duplicate code
         if (armorType != -1) {
             /*
             Here, in order, are the armor types used by custom Battle Armor at this point:
@@ -854,10 +855,12 @@ public class BattleArmor
                 }
             } else if (armorType == 8) {
                 // Mimetic Armor
-                if (3 == this.delta_distance) {
-                    result = new TargetRoll(-1, "mimetic armor cancels movement bonus");
+                int mmod = 3 - delta_distance;
+                mmod -= Compute.getTargetMovementModifier(game,getId()).getValue();
+                if (mmod < 0) {
+                    result = new TargetRoll(mmod, "mimetic armor cancels movement bonus");
                 } else {
-                    result = new TargetRoll(3 - this.delta_distance, "mimetic armor");
+                    result = new TargetRoll(mmod, "mimetic armor");
                 }
             }
         } else {
@@ -869,13 +872,14 @@ public class BattleArmor
             //      3 hexes moved   +0 movement modifier
             // N.B. Rather than mucking with Compute#getTargetMovementModifier,
             // I decided to apply a -1 modifier here... the total works out.
+            // FIXME: TotalWarfare pg 228 changes the mimetic mod to just add to other mods
             if (isMimetic) {
-                if (3 == this.delta_distance) {
-                    result = new TargetRoll(-1,
-                                         "mimetic armor cancels movement bonus");
+                int mmod = 3 - delta_distance;
+                mmod -= Compute.getTargetMovementModifier(game,getId()).getValue();
+                if (mmod < 0) {
+                    result = new TargetRoll(mmod, "mimetic armor cancels movement bonus");
                 } else {
-                    result = new TargetRoll(3 - this.delta_distance,
-                                             "mimetic armor");
+                    result = new TargetRoll(mmod, "mimetic armor");
                 }
             }
     

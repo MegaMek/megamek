@@ -24,6 +24,8 @@ import megamek.common.IGame;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IBasicOption;
+import megamek.common.options.IOption;
 import megamek.common.preference.PreferenceManager;
 import megamek.server.ScenarioLoader;
 import megamek.server.Server;
@@ -97,13 +99,6 @@ public class MegaMekGUI implements IMegaMekGUI {
         frame.setLocation(screenSize.width / 2 - frame.getSize().width / 2,
                 screenSize.height / 2 - frame.getSize().height / 2);
 
-        // Apparently, the MSJDK doesn't handle the menu bar very well,
-        //  so we'll try this hack.
-        if (System.getProperty("java.vendor").indexOf("Microsoft") != -1) { //$NON-NLS-1$ //$NON-NLS-2$
-            Dimension windowSize = frame.getSize();
-            windowSize.height += 25;
-            frame.setSize(windowSize);
-        }
         //init the cache
         MechSummaryCache.getInstance();
 
@@ -436,6 +431,17 @@ public class MegaMekGUI implements IMegaMekGUI {
             JOptionPane.showMessageDialog(frame, Messages.getString("MegaMek.HostScenarioAllert.message") + e.getMessage(), Messages.getString("MegaMek.HostScenarioAllert.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
+        
+        // popup options dialog
+        GameOptionsDialog god = new GameOptionsDialog(frame, g.getOptions());
+        god.update(g.getOptions());
+        god.setEditable(true);
+        god.setVisible(true);
+        for(IBasicOption opt:god.getOptions()) {
+            IOption orig = g.getOptions().getOption(opt.getName());
+            orig.setValue(opt.getValue());
+        }
+        god=null;
 
         // get player types and colors set
         Player[] pa = new Player[g.getPlayersVector().size()];
@@ -503,10 +509,6 @@ public class MegaMekGUI implements IMegaMekGUI {
                 frame.setVisible(false);
                 client.die();
             }
-
-            // popup options dialog
-            gui.getGameOptionsDialog().update(client.game.getOptions());
-            gui.getGameOptionsDialog().setVisible(true);
         }
         optdlg = null;
 

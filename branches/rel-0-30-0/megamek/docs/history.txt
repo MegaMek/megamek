@@ -5,6 +5,7 @@ v0.30.11 (CVS)
 + Removed JRE1.5 APIs
 + Bug 1464952/1298206: purifier's mimetic armour now cancels jump
 + Bug 1512296: destroyed heat sinks were still working
++ Bug 1508964: Critical Hits Not Reporting in entitystatus.txt
 
 v0.30.10 (2006-07-15, 17:15 GMT+2)
 + Bug: ECM was working when pilot is unconscious.

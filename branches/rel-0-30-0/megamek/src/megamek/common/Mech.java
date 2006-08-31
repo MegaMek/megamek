@@ -787,22 +787,22 @@ public abstract class Mech
      */
     public int getHeatCapacity() {
         int capacity = 0;
-        boolean doubleSinks=false;
+        int activeCount = getActiveSinks();
         
         for (Enumeration i = miscList.elements(); i.hasMoreElements();) {
             Mounted mounted = (Mounted)i.nextElement();
+            if(activeCount <= 0) break;
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
+                activeCount--;
             } else if(mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
-                doubleSinks=true;
+                activeCount--;
                 capacity += 2;
             }
         }
-        //test for disabled sinks
-        capacity-=(getNumberOfSinks() - getActiveSinks())*(doubleSinks? 2: 1);
         
         return capacity;
     }

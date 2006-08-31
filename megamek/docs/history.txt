@@ -36,6 +36,15 @@ v0.31.12 (SVN)
 + Bug 1464952/1298206: purifier's mimetic armour now cancels +1 for jump
   Note this is changed in TW so mimetic doesnt cancel anything so I've 
   documented that and added a FIXME for when we change ruleset
++ Changed "host game" startup so that game options are loaded by the Server
+  instead of the MegamekGUI, to address a rare lockup caused by game options
+  being sent before the player name.  (unfortunately unlikely to be the same
+  as 1546375, although the symptom was the same the log is different).
++ errors setting up games are now alerted to the user (or logged for 
+  dedicated server).  As a consequence, Server's constructor now throws 
+  IOException.  No impact on mekwars as far as I can see.  Previously we
+  we threw NullPointerException.
++ /reset command now removes ghosts
 
 v0.31.11 (2006-08-11, 3:33 GMT-8)
 + Corrected map size label message reference.

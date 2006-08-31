@@ -216,6 +216,10 @@ public class MechFileParser {
                     throw new EntityLoadingException("Unable to find an ECM Suite.  Mechs with Stealth Armor must also be equipped with an ECM Suite.");
                 }
             } // End link-Stealth
+            
+            if(ent instanceof Mech && m.getType().hasFlag(MiscType.F_CASE)) {
+                ((Mech)ent).setAutoEject(false);
+            }
 
         } // Check the next piece of equipment.
         

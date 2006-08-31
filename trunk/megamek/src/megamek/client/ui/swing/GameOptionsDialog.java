@@ -180,15 +180,18 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     }
 
     private void doSave() {
-        Vector output = new Vector();
-
-        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-            DialogOptionComponent comp = (DialogOptionComponent) i.nextElement();
-            IBasicOption option = comp.changedOption();
+        GameOptions.saveOptions(getOptions());
+    }
+    
+    public Vector<IBasicOption> getOptions() {
+        Vector<IBasicOption> output = new Vector();
+        
+        for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();        
+            IBasicOption option = comp.changedOption();        
             output.addElement(option);
         }
-
-        GameOptions.saveOptions(output);
+        return output;
     }
 
     private void resetToDefaults() {
@@ -385,6 +388,43 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
                 }
                 if ("protos_move_multi".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
+                }
+            }
+        }
+        if (option.getName().equals("individual_initiative")) { //$NON-NLS-1$
+            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+                if (comp_i.option.getName().equals("protos_deploy_even")) { //$NON-NLS-1$
+                    comp_i.setEditable(false);
+                    comp_i.setSelected(false);
+                }
+                if (comp_i.option.getName().equals("protos_move_even")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setSelected(false);
+                }
+                if (comp_i.option.getName().equals("protos_move_multi")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setSelected(false);
+                }
+                if (comp_i.option.getName().equals("protos_move_later")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setSelected(false);
+                }
+                if (comp_i.option.getName().equals("inf_deploy_even")) { //$NON-NLS-1$
+                    comp_i.setEditable(false);
+                    comp_i.setSelected(false);
+                }
+                if (comp_i.option.getName().equals("inf_move_even")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setSelected(false);
+                }
+                if (comp_i.option.getName().equals("inf_move_multi")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setSelected(false);
+                }
+                if (comp_i.option.getName().equals("inf_move_later")) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setSelected(false);
                 }
             }
         }

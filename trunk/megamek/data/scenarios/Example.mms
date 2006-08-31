@@ -171,3 +171,10 @@ Unit_Kurita_6_CritHit=2:10
 # Would set Ammo at Slot 2:11 to 3 points
 # 
 Unit_Kurita_6_SetAmmoTo=2:11-1
+
+# Set game options file
+# This is an xml file which can be created by copying your
+# mmconf/gameoptions.xml
+# path is specified relative to the scenario file
+# This is one way to set victory conditions
+GameOptionsFile=Example_options.xml

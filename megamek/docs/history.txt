@@ -2,6 +2,7 @@
 ----------------
 v0.31.13-dev (SVN)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen
++ Bug 1508964: Critical Hits Not Reporting in entitystatus.txt
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

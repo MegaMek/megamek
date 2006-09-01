@@ -58,6 +58,7 @@ public class TestBot extends BotClient {
     protected ChatProcessor chatp = new ChatProcessor();
 
     public int ignore = 10;
+    boolean debug = false;
 
     int enemies_moved = 0;
     GALance old_moves = null;
@@ -66,6 +67,7 @@ public class TestBot extends BotClient {
     public TestBot(String name, String host, int port) {
         super(name, host, port);
         ignore = config.getIgnoreLevel();
+        debug = config.isDebug(); 
     }
 
     public void initialize() {
@@ -291,7 +293,8 @@ public class TestBot extends BotClient {
             option.self_threat *= .5;
             //TODO: should scale to the unit bv
             double terrain = 2 * ((double) Compute.getTargetTerrainModifier(game, option.getEntity()).getValue());
-            option.tv.add(terrain + " Terrain Adjusment " + "\n");
+            if(debug)
+                option.tv.add(terrain + " Terrain Adjusment " + "\n");
             option.self_threat -= terrain;
         }
 
@@ -391,7 +394,8 @@ public class TestBot extends BotClient {
                     di.threat = max;
                     di.max_threat = max;
                     option.threat += max;
-                    option.tv.add(max + " Threat " + e + "\n");
+                    if(debug)
+                        option.tv.add(max + " Threat " + e + "\n");
                 }
                 /*
                  * As a first approximation, take the maximum to a single
@@ -406,7 +410,8 @@ public class TestBot extends BotClient {
                         MoveOption.DamageInfo di = option.getDamageInfo(enemy, true);
                         di.damage = max;
                         di.min_damage = max;
-                        option.tv.add(max + " Damage " + e + "\n");
+                        if(debug)
+                            option.tv.add(max + " Damage " + e + "\n");
                         option.damage = Math.max(max, option.damage);
                     }
                 } else {
@@ -583,7 +588,8 @@ public class TestBot extends BotClient {
                                 * Math.sqrt(((double) self.bv) / enemy.bv)
                                 / ((double) distance / 6 + 1);
                         option.self_threat += mod;
-                        option.tv.add(mod + " " + fa + " Back to enemy\n");
+                        if(debug)
+                            option.tv.add(mod + " " + fa + " Back to enemy\n");
                     }
                 }
             }
@@ -623,7 +629,8 @@ public class TestBot extends BotClient {
             } else if (option.damage < .5 * (1 + self.range_damages[self.range])) {
                 option.self_threat += adjustment;
             }
-            option.tv.add(option.self_threat + " Initial Damage Adjustment " + "\n");
+            if(debug)
+                option.tv.add(option.self_threat + " Initial Damage Adjustment " + "\n");
         }
 
         return move_array;
@@ -747,8 +754,10 @@ public class TestBot extends BotClient {
                         if (max_threat - max_damage > di.threat - di.damage) {
                             di.threat = max_threat;
                             di.damage = max_damage;
-                            option.tv.add(max_threat + " Spec Threat " + e + "\n");
-                            option.tv.add(max_damage + " Spec Damage " + e + "\n");
+                            if(debug) {
+                                option.tv.add(max_threat + " Spec Threat " + e + "\n");
+                                option.tv.add(max_damage + " Spec Damage " + e + "\n");
+                            }
                         }
                     }
                     //update estimates
@@ -804,7 +813,8 @@ public class TestBot extends BotClient {
                     if (!enemy.canMove()) {
                         option.setThreat(enemy,
                                 (option.getThreat(enemy) + this.attackUtility(enemy.current, self)) / 2);
-                        option.tv.add(option.getThreat(enemy) + " Revised Threat " + e + " \n");
+                        if(debug)
+                            option.tv.add(option.getThreat(enemy) + " Revised Threat " + e + " \n");
                         if (!option.isPhysical) {
                             if (temp != null) {
                                 option.setDamage(enemy, (option.getDamage(enemy) + temp.getDamageUtility(enemy)) / 2);
@@ -812,19 +822,22 @@ public class TestBot extends BotClient {
                                 //probably zero, but just in case
                                 option.setDamage(enemy, option.getMinDamage(enemy));
                             }
-                            option.tv.add(option.getDamage(enemy) + " Revised Damage " + e + " \n");
+                            if(debug)
+                                option.tv.add(option.getDamage(enemy) + " Revised Damage " + e + " \n");
                             //this needs to be reworked
                             if (option.getFinalCoords().distance(enemy.current.getFinalCoords()) == 1) {
                                 PhysicalOption p =
                                         PhysicalCalculator.getBestPhysicalAttack(option.getEntity(), enemy.getEntity(), game);
                                 if (p != null) {
                                     option.setDamage(enemy, option.getDamage(enemy) + p.expectedDmg);
-                                    option.tv.add(p.expectedDmg + " Physical Damage " + e + " \n");
+                                    if(debug)
+                                        option.tv.add(p.expectedDmg + " Physical Damage " + e + " \n");
                                 }
                                 p = PhysicalCalculator.getBestPhysicalAttack(enemy.getEntity(), option.getEntity(), game);
                                 if (p != null) {
                                     option.setThreat(enemy, option.getThreat(enemy) + .5 * p.expectedDmg);
-                                    option.tv.add(.5 * p.expectedDmg + " Physical Threat " + e + " \n");
+                                    if(debug)
+                                        option.tv.add(.5 * p.expectedDmg + " Physical Threat " + e + " \n");
                                 }
                             }
                         }
@@ -845,8 +858,10 @@ public class TestBot extends BotClient {
                 for (Iterator i = option.damageInfos.values().iterator(); i.hasNext();) {
                     option.threat += ((MoveOption.DamageInfo) i.next()).threat;
                 }
-                option.tv.add(option.threat + " Revised Threat Utility\n");
-                option.tv.add(option.damage + " Revised Damage Utility\n");
+                if(debug) {
+                    option.tv.add(option.threat + " Revised Threat Utility\n");
+                    option.tv.add(option.damage + " Revised Damage Utility\n");
+                }
             }
         }
         Arrays.sort(move_array, new MoveOption.WeightedComparator(1, 1));

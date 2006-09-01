@@ -42,19 +42,12 @@ import megamek.common.actions.WeaponAttackAction;
 public class Compute {
 
     public static final int ARC_360 = 0;
-
     public static final int ARC_FORWARD = 1;
-
     public static final int ARC_LEFTARM = 2;
-
     public static final int ARC_RIGHTARM = 3;
-
     public static final int ARC_REAR = 4;
-
     public static final int ARC_LEFTSIDE = 5;
-
     public static final int ARC_RIGHTSIDE = 6;
-
     public static final int ARC_MAINGUN = 7;
     public static final int ARC_NORTH = 8;
     public static final int ARC_EAST = 9;

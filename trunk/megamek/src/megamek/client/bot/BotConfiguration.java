@@ -32,4 +32,13 @@ public class BotConfiguration {
                 return 10;
         }
     }
+    
+    public boolean isDebug() {
+        try {
+            boolean result = Boolean.parseBoolean(BotProperties.getProperty("Debug", "false"));
+            return result;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

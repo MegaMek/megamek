@@ -4,6 +4,10 @@ v0.31.13-dev (SVN)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen
 + Bug 1508964: Critical Hits Not Reporting in entitystatus.txt
 + Added data files from MercSupplement: Updates and Jihad Hotspots: 3070
++ Some bot debug information which is only interesting for a developer working
+  on bot strategy is disabled by default, it can be enabled by adding "Debug=true"
+  line to mmconf/bot.properties.  This substantially reduces the size of MoveOption
+  so the bot memory leak is manageable. (379 rounds for bot vs bot lance size game)
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

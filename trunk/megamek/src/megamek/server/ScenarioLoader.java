@@ -497,13 +497,13 @@ public class ScenarioLoader
             out[x].setStartingPos(nDir);
             
             //Check for team setup
-              int team = Player.TEAM_NONE;
+            int team = Player.TEAM_NONE;
               
-              try {
+            try {
                 team = Integer.parseInt(p.getProperty("Team_" + out[x].getName()));
-              } catch ( Exception e ) {
+            } catch ( Exception e ) {
                 team = Player.TEAM_NONE;
-              }
+            }
               
             out[x].setTeam(team);
 

@@ -11,6 +11,7 @@ v0.31.13-dev (SVN)
 + Bug 1550129: can now charge unit standing on bridge again
 + Bug 1550208: mad dog B has wrong ammo
 + Bug: Clan half-ton MG ammo had BV 1 instead of 0.5.
++ Bug: NPE in cache loader when starting scenario
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

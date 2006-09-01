@@ -67,17 +67,19 @@ public class MechSummaryCache {
                 public void run() {
                     m_instance.loadMechData();
                 }
-            }, "Mech Cach Loader");
+            }, "Mech Cache Loader");
             m_instance.loader.setPriority(Thread.NORM_PRIORITY - 1);
             m_instance.loader.start();
         }
         return m_instance;
     }
     
-    public static synchronized void dispose() {
+    public static void dispose() {
         if(m_instance != null) {
-            m_instance.loader.interrupt();
-            m_instance = null;
+            synchronized(m_instance) {
+                m_instance.loader.interrupt();
+                m_instance = null;
+            }
         }
     }
 

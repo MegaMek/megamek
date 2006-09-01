@@ -6,6 +6,7 @@ v0.30.11 (CVS)
 + Bug 1464952/1298206: purifier's mimetic armour now cancels jump
 + Bug 1512296: destroyed heat sinks were still working
 + Bug 1508964: Critical Hits Not Reporting in entitystatus.txt
++ Bug: Clan half-ton MG ammo had BV 1 instead of 0.5.
 
 v0.30.10 (2006-07-15, 17:15 GMT+2)
 + Bug: ECM was working when pilot is unconscious.

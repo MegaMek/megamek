@@ -121,7 +121,7 @@ public class MoveOption extends MovePath implements Cloneable {
     double threat = 0;
 
     private transient CEntity centity;
-    transient ArrayList tv = new ArrayList();
+    transient ArrayList<String> tv = new ArrayList<String>();
     transient HashMap damageInfos = new HashMap();
     private Coords pos;
     private int facing;
@@ -141,7 +141,7 @@ public class MoveOption extends MovePath implements Cloneable {
         this.threat = base.threat;
         this.damage = base.damage;
         this.movement_threat = base.movement_threat;
-        this.tv = new ArrayList(base.tv);
+        this.tv = new ArrayList<String>(base.tv);
         this.self_threat = base.self_threat;
         this.inDanger = base.inDanger;
         this.doomed = base.doomed;
@@ -198,7 +198,8 @@ public class MoveOption extends MovePath implements Cloneable {
                     getCEntity().getThreatUtility(.2 * this.entity.getWeight(), ToHitData.SIDE_REAR)
                         * (1 - Math.pow(getCEntity().base_psr_odds, 2));
                 this.movement_threat += cur_threat;
-                this.tv.add(cur_threat + " Movement Threat \r\n");
+                if(centity.getTb().debug)
+                    this.tv.add(cur_threat + " Movement Threat \r\n");
             }
         }
         return this;

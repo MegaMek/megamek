@@ -1219,4 +1219,8 @@ public class CEntity {
         return entity.getId();
     }
 
+    public TestBot getTb() {
+        return tb;
+    }
+
 }

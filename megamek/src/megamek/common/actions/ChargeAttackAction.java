@@ -154,7 +154,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // Can't target units in buildings (from the outside).
-        if ((null != bldg) && (!targIsBuilding)) {
+        if ((null != bldg) && (!targIsBuilding)
+                && te != null && Compute.isInBuilding(game,te)) {
             if (!Compute.isInBuilding(game, ae)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building");
             } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(bldg)) {

@@ -2424,7 +2424,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_MG;
         ammo.shots = 50;
         ammo.tonnage = 0.5f;
-        ammo.bv = 1;
+        ammo.bv = 0.5f;
         ammo.cost = 500;
 
         return ammo;
@@ -2465,7 +2465,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_MG;
         ammo.shots = 100;
         ammo.tonnage = 0.5f;
-        ammo.bv = 1;
+        ammo.bv = 0.5f;
         ammo.cost = 500;
 
         return ammo;
@@ -2504,7 +2504,7 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_MG;
         ammo.shots = 100;
         ammo.tonnage = 0.5f;
-        ammo.bv = 1;
+        ammo.bv = 0.5f;
         ammo.cost = 250;
 
         return ammo;

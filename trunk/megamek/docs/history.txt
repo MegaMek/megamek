@@ -9,6 +9,7 @@ v0.31.13-dev (SVN)
   line to mmconf/bot.properties.  This substantially reduces the size of MoveOption
   so the bot memory leak is manageable. (379 rounds for bot vs bot lance size game)
 + Bug 1550129: can now charge unit standing on bridge again
++ Bug 1550208: mad dog B has wrong ammo
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

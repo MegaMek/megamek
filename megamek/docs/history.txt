@@ -24,6 +24,9 @@ v0.31.13-dev (SVN)
 + Corrected wrong report number in nuclear explosions.
 + Improved report formatting for nuclear explosions.
 + "/nuke" chat command now functions to allow nukes of all types.
++ Corrected /nuke to accept coordinates rather than hex index numbers.
++ Changed Hex.removeAllTerrains to set new elevation at the bottom of Water, if present.
++ Corrected missing files (NukeAttackAction and NukeCommand).
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

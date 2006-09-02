@@ -16,6 +16,9 @@ v0.31.13-dev (SVN)
 + Partial implementation of ProtoMech cost calculations.
 + A couple of other minor bug-fixes that I can't remember offhand.
 + Bug 1550556: initial BV wasn't calculated for scenarios
++ Bug 1519330: Getting up and running in water now not allowed
+  unless you fell in starting hex, which is allowed.
++ Bug 1326043: No movement modifier for VTOLs after sideslip
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

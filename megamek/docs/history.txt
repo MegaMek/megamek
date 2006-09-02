@@ -20,6 +20,9 @@ v0.31.13-dev (SVN)
   unless you fell in starting hex, which is allowed.
 + Bug 1326043: No movement modifier for VTOLs after sideslip
 + bug 1551047: Incorrect JJs on Pouncer Prime
++ Corrected multiple filtering errors in nuclear explosions.
++ Corrected wrong report number in nuclear explosions.
++ Improved report formatting for nuclear explosions.
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

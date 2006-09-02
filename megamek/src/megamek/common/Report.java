@@ -16,8 +16,9 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Vector;
+import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import megamek.common.Entity;
 
@@ -519,5 +520,17 @@ public class Report implements Serializable {
         }
         sb.insert(i+1, "</hidden>");
         return sb;
+    }
+
+    public static void indentAll(Vector vDesc, int amount) {
+        // Just avoid an error condition.
+        if (vDesc == null)
+            return;
+
+        Enumeration x = vDesc.elements();
+        while (x.hasMoreElements()) {
+            Report r = (Report)x.nextElement();
+            r.indent(amount);
+        }
     }
 }

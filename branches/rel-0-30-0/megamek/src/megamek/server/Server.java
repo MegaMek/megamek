@@ -2701,22 +2701,14 @@ implements Runnable, ConnectionHandler {
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();
         int curVTOLElevation = entity.getElevation();
-        int distance = 0;
-        int mpUsed = 0;
-        int moveType = IEntityMovementType.MOVE_NONE;
-        int overallMoveType = IEntityMovementType.MOVE_NONE;
         // if the entity already used some MPs,
         // it previously tried to get up and fell,
         // and then got another turn. set moveType
         // and overallMoveType accordingly
-        if (entity.mpUsed > 0) {
-            moveType = IEntityMovementType.MOVE_WALK;
-            overallMoveType = IEntityMovementType.MOVE_WALK;
-            if (entity.mpUsed > entity.getWalkMP()) {
-                moveType = IEntityMovementType.MOVE_RUN;
-                overallMoveType = IEntityMovementType.MOVE_RUN;
-            }
-        }
+        int distance = entity.delta_distance;
+        int mpUsed = entity.mpUsed;
+        int moveType = entity.moved;
+        int overallMoveType = entity.moved;
         boolean firstStep;
         boolean wasProne;
         boolean fellDuringMovement;

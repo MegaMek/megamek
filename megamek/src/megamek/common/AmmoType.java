@@ -139,6 +139,9 @@ public class AmmoType extends EquipmentType {
     public static final long     M_VIBRABOMB_IV      = 0x100000000L;
     public static final long     M_SMOKE             = 0x200000000L;
 
+    // Nuclear Munitions
+    public static final long     M_DAVY_CROCKETT_M   = 0x800000000L;
+
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
         "Extended Range", "High Explosive", "Flare", "Fragmentation", "Inferno",
@@ -786,6 +789,8 @@ public class AmmoType extends EquipmentType {
                                                    1, M_FLARE, TechConstants.T_IS_LEVEL_3 ) );
         munitions.addElement( new MunitionMutator( "Cluster",
                                                    1, M_CLUSTER, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.addElement( new MunitionMutator( "Davy Crockett-M",
+                                                   5, M_DAVY_CROCKETT_M, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -809,6 +814,8 @@ public class AmmoType extends EquipmentType {
                                                    1, M_INFERNO_IV, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
                                                    1, M_VIBRABOMB_IV, TechConstants.T_CLAN_LEVEL_2 ) );
+        munitions.addElement( new MunitionMutator( "Davy Crockett-M",
+                                                   5, M_DAVY_CROCKETT_M, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Illumination",
                 1, M_FLARE, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.addElement( new MunitionMutator( "Cluster",
@@ -863,7 +870,13 @@ public class AmmoType extends EquipmentType {
                 EquipmentType.addType( mutator.createMunitionType( base ) );
             }
         }
-        
+
+        // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
+        base = createISLongTomAmmo();
+        mutator =  new MunitionMutator( "Davy Crockett-M",
+                                               5, M_DAVY_CROCKETT_M, TechConstants.T_IS_LEVEL_3 );
+        EquipmentType.addType( mutator.createMunitionType( base ) );
+
         // Create the munition types for Clan Artillery launchers.
         munitions.removeAllElements();
         munitions.addElement( new MunitionMutator( "(Clan) Smoke",
@@ -5745,6 +5758,12 @@ public class AmmoType extends EquipmentType {
                 cost *= 1;
             if (munition.getMunitionType() == AmmoType.M_VIBRABOMB_IV)
                 cost *= 2;
+
+            // This is just a hack to make it expensive.
+            // We don't actually have a price for this.
+            if (munition.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M)
+                cost *= 50;
+
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_SRM))
                     && munition.getMunitionType() == AmmoType.M_NARC_CAPABLE)
                 cost *= 2;

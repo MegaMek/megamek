@@ -83,6 +83,8 @@ public interface IBoard {
      * @param dir direction
      */
     public abstract IHex getHexInDir(Coords c, int dir);
+
+    public abstract Enumeration getHexesAtDistance(Coords coords, int distance);
     
     /**
      * Gets the hex in the specified direction from the specified starting

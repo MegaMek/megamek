@@ -35,6 +35,7 @@ import megamek.common.FuelTank;
 import megamek.common.Game;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
+import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
@@ -71,6 +72,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Team;
+import megamek.common.Terrain;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.TurnOrdered;
@@ -7024,102 +7026,102 @@ public class Server implements Runnable {
      * @return wether we hit or not, only needed for nemesis pod stuff
      */
     private boolean resolveWeaponAttack(WeaponResult wr, int lastEntityId, boolean isNemesisConfused, int swarmMissilesLeft) {
-      // If it's an artillery shot, the shooting entity
-      // might have died in the meantime
-      Entity ae = game.getEntity( wr.waa.getEntityId() );
-      if (ae == null) {
+        // If it's an artillery shot, the shooting entity
+        // might have died in the meantime
+        Entity ae = game.getEntity( wr.waa.getEntityId() );
+        if (ae == null) {
           ae = game.getOutOfGameEntity( wr.waa.getEntityId() );
-      }
-      Targetable target = game.getTarget(wr.waa.getTargetType(),
+        }
+        Targetable target = game.getTarget(wr.waa.getTargetType(),
                                          wr.waa.getTargetId());
-      Report r;
-      boolean throughFront;
-      if (target instanceof Mech) {
+        Report r;
+        boolean throughFront;
+        if (target instanceof Mech) {
           throughFront = Compute.isThroughFrontHex(game, wr.waa.getEntityId(), (Entity)target);
-      } else {
+        } else {
           throughFront = true;
-      }
+        }
 
-      int subjectId = Entity.NONE;
-      Entity entityTarget = null;
-      if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+        int subjectId = Entity.NONE;
+        Entity entityTarget = null;
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
           entityTarget = (Entity) target;
           // The target of the attack should definately see the report.
           // The attacker usually will, but they might not if the attack
           // was indirect without a spotter.
           subjectId = entityTarget.getId();
-      } else {
+        } else {
           //The target is not an entity, so we will show the report to
           // the attacker instead.
           subjectId = ae.getId();
-      }
-      final Mounted weapon = ae.getEquipment(wr.waa.getWeaponId());
-      final WeaponType wtype = (WeaponType) weapon.getType();
-      final boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
-      // 2002-09-16 Infantry weapons have unlimited ammo.
-      final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
+        }
+        final Mounted weapon = ae.getEquipment(wr.waa.getWeaponId());
+        final WeaponType wtype = (WeaponType) weapon.getType();
+        final boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
+        // 2002-09-16 Infantry weapons have unlimited ammo.
+        final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
           wtype.getAmmoType() != AmmoType.T_BA_MG &&
           wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
           !isWeaponInfantry;
-      //retrieve ammo from the WeaponAttackAction rather than weapon.getLinked, because selected ammo may have changed
-      //in the case of artillery attacks
-      Mounted ammo = usesAmmo ? ae.getEquipment(wr.waa.getAmmoId()) : null;
-      final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
-      Infantry platoon = null;
-      final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
-      ToHitData toHit = wr.toHit;
-      boolean bInferno = usesAmmo && (atype.getAmmoType() == AmmoType.T_SRM || atype.getAmmoType() == AmmoType.T_BA_INFERNO) && atype.getMunitionType() == AmmoType.M_INFERNO;
-      boolean bFragmentation = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) && atype.getMunitionType() == AmmoType.M_FRAGMENTATION;
-      boolean bAcidHead = usesAmmo && atype.getAmmoType() == AmmoType.T_SRM && atype.getMunitionType() == AmmoType.M_AX_HEAD;
-      boolean bFlechette = usesAmmo && 
+        //retrieve ammo from the WeaponAttackAction rather than weapon.getLinked, because selected ammo may have changed
+        //in the case of artillery attacks
+        Mounted ammo = usesAmmo ? ae.getEquipment(wr.waa.getAmmoId()) : null;
+        final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
+        Infantry platoon = null;
+        final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
+        ToHitData toHit = wr.toHit;
+        boolean bInferno = usesAmmo && (atype.getAmmoType() == AmmoType.T_SRM || atype.getAmmoType() == AmmoType.T_BA_INFERNO) && atype.getMunitionType() == AmmoType.M_INFERNO;
+        boolean bFragmentation = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) && atype.getMunitionType() == AmmoType.M_FRAGMENTATION;
+        boolean bAcidHead = usesAmmo && atype.getAmmoType() == AmmoType.T_SRM && atype.getMunitionType() == AmmoType.M_AX_HEAD;
+        boolean bFlechette = usesAmmo && 
               (atype.getAmmoType() == AmmoType.T_AC ||
                atype.getAmmoType() == AmmoType.T_LAC) &&
           atype.getMunitionType() == AmmoType.M_FLECHETTE;
-      boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
-      boolean bArtilleryFLAK = target.getTargetType() == Targetable.TYPE_ENTITY
+        boolean bArtillery = target.getTargetType() == Targetable.TYPE_HEX_ARTILLERY;
+        boolean bArtilleryFLAK = target.getTargetType() == Targetable.TYPE_ENTITY
                                && wtype.hasFlag(WeaponType.F_ARTILLERY)
                                && (usesAmmo && atype.getMunitionType() == AmmoType.M_STANDARD)
                                && entityTarget.getMovementMode() == IEntityMovementMode.VTOL
                                && entityTarget.getElevation() > 0;
-      boolean bIncendiary = usesAmmo && 
+        boolean bIncendiary = usesAmmo && 
               (atype.getAmmoType() == AmmoType.T_AC ||
                atype.getAmmoType() == AmmoType.T_LAC) &&
           atype.getMunitionType() == AmmoType.M_INCENDIARY_AC;
-      boolean bTracer = usesAmmo && 
+        boolean bTracer = usesAmmo && 
               (atype.getAmmoType() == AmmoType.T_AC ||
                atype.getAmmoType() == AmmoType.T_LAC)&& 
           atype.getMunitionType() == AmmoType.M_TRACER;
-      boolean bAntiTSM = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) && atype.getMunitionType() == AmmoType.M_ANTI_TSM;
-      boolean bSwarm = usesAmmo && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SWARM;
-      boolean bSwarmI = usesAmmo && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SWARM_I;
-      boolean isIndirect = (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+        boolean bAntiTSM = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) && atype.getMunitionType() == AmmoType.M_ANTI_TSM;
+        boolean bSwarm = usesAmmo && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SWARM;
+        boolean bSwarmI = usesAmmo && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SWARM_I;
+        boolean isIndirect = (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                                && weapon.curMode().equals("Indirect");
-      boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
-      boolean bGlancing = false; // For Glancing Hits Rule
-      int swarmMissilesNowLeft = 0;
-      int hits = 1, glancingMissileMod = 0;
-      int glancingCritMod = 0;
+        boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
+        boolean bGlancing = false; // For Glancing Hits Rule
+        int swarmMissilesNowLeft = 0;
+        int hits = 1, glancingMissileMod = 0;
+        int glancingCritMod = 0;
 
-      if (!bInferno) {
+        if (!bInferno) {
         // also check for inferno infantry
         bInferno = isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO);
-      }
-      final boolean targetInBuilding =
+        }
+        final boolean targetInBuilding =
           Compute.isInBuilding(game, entityTarget);
-      if ((bArtillery||bArtilleryFLAK) && game.getPhase()==IGame.PHASE_FIRING) { //if direct artillery
+        if ((bArtillery||bArtilleryFLAK) && game.getPhase()==IGame.PHASE_FIRING) { //if direct artillery
           wr.artyAttackerCoords=ae.getPosition();
-      }
-      if ( (bSwarm || bSwarmI) && entityTarget != null) {
+        }
+        if ( (bSwarm || bSwarmI) && entityTarget != null) {
           entityTarget.addTargetedBySwarm(ae.getId(), wr.waa.getWeaponId());
-      }
+        }
 
-      // Which building takes the damage?
-      Building bldg = game.getBoard().getBuildingAt(target.getPosition());
+        // Which building takes the damage?
+        Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
-      // Are we iNarc Nemesis Confusable?
-      boolean isNemesisConfusable = false;
-      Mounted mLinker = weapon.getLinkedBy();
-      if ( wtype.getAmmoType() == AmmoType.T_ATM ||
+        // Are we iNarc Nemesis Confusable?
+        boolean isNemesisConfusable = false;
+        Mounted mLinker = weapon.getLinkedBy();
+        if ( wtype.getAmmoType() == AmmoType.T_ATM ||
               mLinker != null && mLinker.getType() instanceof MiscType && !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() && mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) {
           if ((!weapon.getType().hasModes() ||
                !weapon.curMode().equals("Indirect")) &&
@@ -7127,28 +7129,28 @@ public class Server implements Runnable {
                   (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
               isNemesisConfusable = true;
           }
-      } else if (wtype.getAmmoType() == AmmoType.T_LRM ||
+        } else if (wtype.getAmmoType() == AmmoType.T_LRM ||
                  wtype.getAmmoType() == AmmoType.T_SRM) {
           if (usesAmmo && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
               isNemesisConfusable = true;
           }
-      }
+        }
       
-      //set last target
-      if(entityTarget != null) {
+        //set last target
+        if(entityTarget != null) {
           ae.setLastTarget(entityTarget.getId());
-      }
+        }
 
-      if (lastEntityId != ae.getId()) {
+        if (lastEntityId != ae.getId()) {
           //report who is firing
           r = new Report(3100);
           r.subject = subjectId;
           r.addDesc(ae);
           addReport(r);
-      }
+        }
 
-      // Swarming infantry can stop during any weapons phase after start.
-      if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
+        // Swarming infantry can stop during any weapons phase after start.
+        if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
           // ... but only as their *only* attack action.
           if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
               r = new Report(3105);
@@ -7157,39 +7159,39 @@ public class Server implements Runnable {
               addReport(r);
               return true;
           }
-		  //swarming ended succesfully
-		  r = new Report(3110);
-		  r.subject = subjectId;
-		  addReport(r);
-		  // Only apply the "stop swarm 'attack'" to the swarmed Mek.
-		  if (ae.getSwarmTargetId() != target.getTargetId()) {
-		      Entity other = game.getEntity(ae.getSwarmTargetId());
-		      other.setSwarmAttackerId(Entity.NONE);
-		  }
-		  else {
-		      entityTarget.setSwarmAttackerId(Entity.NONE);
-		  }
-		  ae.setSwarmTargetId(Entity.NONE);
-		  return true;
-      }
+          //swarming ended succesfully
+          r = new Report(3110);
+          r.subject = subjectId;
+          addReport(r);
+          // Only apply the "stop swarm 'attack'" to the swarmed Mek.
+          if (ae.getSwarmTargetId() != target.getTargetId()) {
+              Entity other = game.getEntity(ae.getSwarmTargetId());
+              other.setSwarmAttackerId(Entity.NONE);
+          }
+          else {
+              entityTarget.setSwarmAttackerId(Entity.NONE);
+          }
+          ae.setSwarmTargetId(Entity.NONE);
+          return true;
+        }
 
-      // Report weapon attack and its to-hit value.
-      r = new Report(3115);
-      r.indent();
-      r.newlines = 0;
-      r.subject = subjectId;
-      r.add(wtype.getName());
-      if (entityTarget != null) {
+        // Report weapon attack and its to-hit value.
+        r = new Report(3115);
+        r.indent();
+        r.newlines = 0;
+        r.subject = subjectId;
+        r.add(wtype.getName());
+        if (entityTarget != null) {
           r.addDesc(entityTarget);
-      } else {
+        } else {
           r.messageId = 3120;
           r.add(target.getDisplayName(), true);
-      }
-      addReport(r);
+        }
+        addReport(r);
 
-      boolean shotAtNemesisTarget = false;
-      // check for nemesis
-      if (isNemesisConfusable && !isNemesisConfused) {
+        boolean shotAtNemesisTarget = false;
+        // check for nemesis
+        if (isNemesisConfusable && !isNemesisConfused) {
           // loop through nemesis targets
           for (Enumeration e = game.getNemesisTargets(ae, target.getPosition());e.hasMoreElements();) {
               Entity entity = (Entity)e.nextElement();
@@ -7207,46 +7209,46 @@ public class Server implements Runnable {
               if (resolveWeaponAttack(newWr, ae.getId(), true)) return true;
               shotAtNemesisTarget = true;
           }
-      }
-      if (shotAtNemesisTarget) {
+        }
+        if (shotAtNemesisTarget) {
           //back to original target
           r = new Report(3130);
           r.subject = subjectId;
           r.newlines = 0;
           addReport(r);
-      }
-      if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        }
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
           r = new Report(3135);
           r.subject = subjectId;
           r.add(toHit.getDesc());
           addReport(r);
           return false;
-      }
-      else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        }
+        else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
           r = new Report(3140);
           r.newlines = 0;
           r.subject = subjectId;
           r.add(toHit.getDesc());
           addReport(r);
-      }
-      else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        }
+        else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
           r = new Report(3145);
           r.newlines = 0;
           r.subject = subjectId;
           r.add(toHit.getDesc());
           addReport(r);
-      }
-      else {
+        }
+        else {
           //roll to hit
           r = new Report(3150);
           r.newlines = 0;
           r.subject = subjectId;
           r.add(toHit.getValue());
           addReport(r);
-      }
+        }
 
-      // if firing an HGR unbraced, schedule a PSR
-      if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY && ae.mpUsed > 0) {
+        // if firing an HGR unbraced, schedule a PSR
+        if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY && ae.mpUsed > 0) {
           // the mod is weight-based
           int nMod;
           switch (ae.getWeightClass()) {
@@ -7266,21 +7268,21 @@ public class Server implements Runnable {
                                           "fired HeavyGauss unbraced");
           psr.setCumulative(false);
           game.addPSR(psr);
-      }
+        }
 
-      // dice have been rolled, thanks
-      r = new Report(3155);
-      r.newlines = 0;
-      r.subject = subjectId;
-      r.add(wr.roll);
-      addReport(r);
+        // dice have been rolled, thanks
+        r = new Report(3155);
+        r.newlines = 0;
+        r.subject = subjectId;
+        r.add(wr.roll);
+        addReport(r);
 
-      // check for AC or Prototype jams
-      int nShots = weapon.howManyShots();
-      if (nShots > 1 ||
-              wtype.hasFlag(WeaponType.F_PROTOTYPE) && wtype.getAmmoType() != AmmoType.T_NA ) {
-          int jamCheck = 0;
-          if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) && weapon.curMode().equals("Ultra") ||
+        // check for AC or Prototype jams
+        int nShots = weapon.howManyShots();
+        if (nShots > 1
+                || wtype.hasFlag(WeaponType.F_PROTOTYPE) && wtype.getAmmoType() != AmmoType.T_NA ) {
+            int jamCheck = 0;
+            if ((wtype.getAmmoType() == AmmoType.T_AC_ULTRA || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) && weapon.curMode().equals("Ultra") ||
               wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
               jamCheck = 2;
               if (weapon.getType().hasModes() &&
@@ -7288,7 +7290,7 @@ public class Server implements Runnable {
                       wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
                   jamCheck = 4;
               }
-          } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+            } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
               if (nShots == 2) {
                   jamCheck = 2;
               } else if (nShots == 4) {
@@ -7296,9 +7298,9 @@ public class Server implements Runnable {
               } else if (nShots == 6) {
                   jamCheck = 4;
               }
-          }
+            }
 
-          if (jamCheck > 0 && wr.roll <= jamCheck) {
+            if (jamCheck > 0 && wr.roll <= jamCheck) {
               r = new Report(1210);
               // ultras and prototypes are destroyed by jamming
               if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA
@@ -7317,99 +7319,99 @@ public class Server implements Runnable {
               r.subject = subjectId;
               addReport(r);
               return true;
-          }
-      }
+            }
+        }
 
-      // Resolve roll for disengaged field inhibitors on PPCs, if needed
-      if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")
-          && wtype.hasModes()
-          && weapon.curMode().equals("Field Inhibitor OFF") ) {
-          int rollTarget = 0;
-          int dieRoll = Compute.d6(2);
-          int distance = Compute.effectiveDistance(game, ae, target);
+        // Resolve roll for disengaged field inhibitors on PPCs, if needed
+        if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")
+            && wtype.hasModes()
+            && weapon.curMode().equals("Field Inhibitor OFF") ) {
+            int rollTarget = 0;
+            int dieRoll = Compute.d6(2);
+            int distance = Compute.effectiveDistance(game, ae, target);
 
-          if (distance>=3) {
+            if (distance>=3) {
               rollTarget = 3;
-          } else if (distance == 2) {
+            } else if (distance == 2) {
               rollTarget = 6;
-          } else if (distance == 1) {
+            } else if (distance == 1) {
               rollTarget = 10;
-          }
-          //roll to avoid damage
-          r = new Report(3175);
-          r.subject = ae.getId();
-          r.indent();
-          addReport(r);
-          r = new Report(3180);
-          r.subject = ae.getId();
-          r.indent();
-          r.add(rollTarget);
-          r.add(dieRoll);
-          if (dieRoll<rollTarget) {
-              // Oops, we ruined our day...
-              int wlocation = weapon.getLocation();
-              int wid = ae.getEquipmentNum(weapon);
-              int slot = 0;
-              weapon.setDestroyed (true);
-              for (int i=0; i<ae.getNumberOfCriticals(wlocation); i++) {
-                  CriticalSlot slot1 = ae.getCritical (wlocation, i);
-                  if (slot1 == null || slot1.getType() != CriticalSlot.TYPE_SYSTEM) {
-                      continue;
-                  }
-                  Mounted mounted = ae.getEquipment(slot1.getIndex());
-                  if (mounted.equals(weapon)) {
-                      ae.hitAllCriticals(wlocation,i);
-                  }
-              }
-              // Bug 1066147 : damage is *not* like an ammo explosion,
-              //        but it *does* get applied directly to the IS.
-              r.choose(false);
-              addReport(r);
-              addReport( damageEntity(ae, new HitData(wlocation), 10, false, 0, true));
-              r = new Report(3185);
-              r.subject = ae.getId();
-              addReport(r);
-          } else {
-              r.choose(true);
-              addReport(r);
-          }
-      }
+            }
+            //roll to avoid damage
+            r = new Report(3175);
+            r.subject = ae.getId();
+            r.indent();
+            addReport(r);
+            r = new Report(3180);
+            r.subject = ae.getId();
+            r.indent();
+            r.add(rollTarget);
+            r.add(dieRoll);
+            if (dieRoll<rollTarget) {
+                // Oops, we ruined our day...
+                int wlocation = weapon.getLocation();
+                int wid = ae.getEquipmentNum(weapon);
+                int slot = 0;
+                weapon.setDestroyed (true);
+                for (int i=0; i<ae.getNumberOfCriticals(wlocation); i++) {
+                    CriticalSlot slot1 = ae.getCritical (wlocation, i);
+                    if (slot1 == null || slot1.getType() != CriticalSlot.TYPE_SYSTEM) {
+                        continue;
+                    }
+                    Mounted mounted = ae.getEquipment(slot1.getIndex());
+                    if (mounted.equals(weapon)) {
+                        ae.hitAllCriticals(wlocation,i);
+                    }
+                }
+                // Bug 1066147 : damage is *not* like an ammo explosion,
+                //        but it *does* get applied directly to the IS.
+                r.choose(false);
+                addReport(r);
+                addReport( damageEntity(ae, new HitData(wlocation), 10, false, 0, true));
+                r = new Report(3185);
+                r.subject = ae.getId();
+                addReport(r);
+            } else {
+                r.choose(true);
+                addReport(r);
+            }
+        }
 
-      // do we hit?
-      boolean bMissed = wr.roll < toHit.getValue();
+        // do we hit?
+        boolean bMissed = wr.roll < toHit.getValue();
       
-      //If target is grappled, miss could result in friendly fire
-      if(bMissed && 
-              target instanceof Mech
-              && ((Mech)target).getGrappled() != Entity.NONE) {
-          int newId = ((Mech)target).getGrappled();
-          Entity newEntity = game.getEntity(newId);
-          toHit.addModifier(-1, "friendly fire");
-          r = new Report(3555);
-          r.subject = newId;
-          r.addDesc(newEntity);
-          r.newlines = 0;
-          addReport(r);
-          wr.roll = Compute.d6(2);
-          r = new Report(3150);
-          r.subject = newId;
-          r.add(toHit.getValueAsString());
-          r.newlines = 0;
-          addReport(r);
-          r = new Report(3155);
-          r.subject = newId;
-          r.add(wr.roll);
-          r.newlines = 0;
-          addReport(r);
-          if(wr.roll >= toHit.getValue()) {
-              //Hit, change targets
-              target = newEntity;
-              entityTarget = newEntity;
-              subjectId = newId;
-              bMissed = false;
-          }
-      }
-      
+        //If target is grappled, miss could result in friendly fire
+        if(bMissed
+                && target instanceof Mech
+                && ((Mech)target).getGrappled() != Entity.NONE) {
+            int newId = ((Mech)target).getGrappled();
+            Entity newEntity = game.getEntity(newId);
+            toHit.addModifier(-1, "friendly fire");
+            r = new Report(3555);
+            r.subject = newId;
+            r.addDesc(newEntity);
+            r.newlines = 0;
+            addReport(r);
+            wr.roll = Compute.d6(2);
+            r = new Report(3150);
+            r.subject = newId;
+            r.add(toHit.getValueAsString());
+            r.newlines = 0;
+            addReport(r);
+            r = new Report(3155);
+            r.subject = newId;
+            r.add(wr.roll);
+            r.newlines = 0;
+            addReport(r);
+            if (wr.roll >= toHit.getValue()) {
+                //Hit, change targets
+                target = newEntity;
+                entityTarget = newEntity;
+                subjectId = newId;
+                bMissed = false;
+            }
+        }
+
       if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
           if (wr.roll == toHit.getValue()) {
               bGlancing = true;
@@ -7619,7 +7621,7 @@ public class Server implements Runnable {
 
           if (usesAmmo) {
               //Check for various non-explosive types
-              if(atype.getMunitionType() == AmmoType.M_FLARE) {
+              if (atype.getMunitionType() == AmmoType.M_FLARE) {
                   int radius;
                   if(atype.getAmmoType() == AmmoType.T_ARROW_IV)
                       radius = 4;
@@ -7629,23 +7631,30 @@ public class Server implements Runnable {
                       deliverArtilleryFlare(coords,radius);
                   return !bMissed;
               }
-              if(atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
+              if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
                   deliverArtilleryInferno(coords, subjectId);
                   return !bMissed;
               }
-              if(atype.getMunitionType() == AmmoType.M_FASCAM) {
+              if (atype.getMunitionType() == AmmoType.M_FASCAM) {
                   deliverFASCAMMinefield(coords, ae.getOwner().getId());
                   return !bMissed;
               }
-              if(atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
+              if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
                   deliverThunderVibraMinefield(coords, ae.getOwner().getId(), 20,
                                                wr.waa.getOtherAttackInfo());
                   return !bMissed;
               }
-              if(atype.getMunitionType() == AmmoType.M_SMOKE) {
+              if (atype.getMunitionType() == AmmoType.M_SMOKE) {
                   deliverArtillerySmoke(coords);
                   return !bMissed;
               }
+                if (atype.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
+                    // The appropriate term here is "Bwahahahahaha..."
+                    Vector vDesc = new Vector();
+                    doNuclearExplosion(coords, 1, vDesc);
+                    addReport(vDesc);
+                    return !bMissed;
+                }
           }
 
           artilleryDamageArea(coords, wr.artyAttackerCoords, atype, subjectId, ae, false, 0);
@@ -8215,11 +8224,15 @@ public class Server implements Runnable {
                 sSalvoType = " acid-head missile(s) ";
             }
 
+            if (ae.isSufferingEMI()) {
+                nSalvoBonus -= 2;
+            }
+
             // Large MRM missile racks roll twice.
             // MRM missiles never recieve hit bonuses.
             if ( wtype.getRackSize() == 30 || wtype.getRackSize() == 40 ) {
-                hits = Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod, maxtechmissiles | bGlancing) +
-                    Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod, maxtechmissiles | bGlancing);
+                hits = Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod+(ae.isSufferingEMI()?-2:0), maxtechmissiles | bGlancing) +
+                    Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod+(ae.isSufferingEMI()?-2:0), maxtechmissiles | bGlancing);
             }
 
             // Battle Armor units multiply their racksize by the number
@@ -8235,10 +8248,10 @@ public class Server implements Runnable {
                     // Account for more than 20 missles hitting.
                     hits = 0;
                     while ( temp > 20 ) {
-                        hits += Compute.missilesHit( 20, nMissilesModifier+glancingMissileMod, maxtechmissiles | bGlancing );
+                        hits += Compute.missilesHit( 20, nMissilesModifier+glancingMissileMod+(ae.isSufferingEMI()?-2:0), maxtechmissiles | bGlancing );
                         temp -= 20;
                     }
-                    hits += Compute.missilesHit( temp, nMissilesModifier+glancingMissileMod, maxtechmissiles | bGlancing );
+                    hits += Compute.missilesHit( temp, nMissilesModifier+glancingMissileMod+(ae.isSufferingEMI()?-2:0), maxtechmissiles | bGlancing );
                 } // End not-all-shots-hit
             }
 
@@ -8307,12 +8320,12 @@ public class Server implements Runnable {
             int nMod = wtype.hasFlag(WeaponType.F_PROTOTYPE) ? 0 : -1;
             if ( !bAllShotsHit ) {
                 if (!bGlancing) {
-                    hits = Compute.missilesHit( hits, nMod );
+                    hits = Compute.missilesHit( hits, nMod+(ae.isSufferingEMI()?-2:0) );
                 } else {
                     // if glancing blow, half the number of missiles that hit,
                     // that halves damage. do this, and not adjust number of
                     // pellets, because maxtech only talks about missile weapons
-                    hits = Compute.missilesHit(hits, nMod)/2;
+                    hits = Compute.missilesHit(hits, nMod+(ae.isSufferingEMI()?-2:0))/2;
                 }
             }
             nDamPerHit = 1;
@@ -8321,7 +8334,7 @@ public class Server implements Runnable {
             bSalvo = true;
             hits = nShots;
             if ( !bAllShotsHit ) {
-                hits = Compute.missilesHit( hits );
+                hits = Compute.missilesHit(hits, (ae.isSufferingEMI()?-2:0));
             }
         }
         else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
@@ -12895,7 +12908,8 @@ public class Server implements Runnable {
                     && !te_hex.containsTerrain(Terrains.SWAMP)
                     && !te_hex.containsTerrain(Terrains.BUILDING)
                     && !te_hex.containsTerrain(Terrains.FUEL_TANK)
-                    && !te_hex.containsTerrain(Terrains.FORTIFIED)) {
+                    && !te_hex.containsTerrain(Terrains.FORTIFIED)
+                    && !ammoExplosion) {
                 // PBI.  Damage is doubled.
                 damage *= 2;
                 r = new Report(6040);
@@ -13783,7 +13797,7 @@ public class Server implements Runnable {
      */
     public void doExplosion(int damage, int degredation, boolean autoDestroyInSameHex, Coords position, boolean allowShelter, Vector vDesc)
     {
-        int[] myDamages = new int[1 + damage/degredation];
+        int[] myDamages = new int[damage/degredation];
         myDamages[0] = damage;
         for (int x=1; x<myDamages.length; x++)
             myDamages[x] = myDamages[x-1]-degredation;
@@ -13881,14 +13895,18 @@ public class Server implements Runnable {
 
             int damage = damages[range];
 
-            //if (allowShelter && isSheltered())
-            //FIXME: Need to implement the sheltering calculations.
-            if (allowShelter && false)
-            {
-                r = new Report();
-                r.addDesc(entity);
-                vDesc.addElement(r);
-                continue;
+            if (allowShelter && canShelter(entity, position)) {
+                if (isSheltered(entity, position, true)) {
+                    r = new Report(6545);
+                    r.addDesc(entity);
+                    vDesc.addElement(r);
+                    continue;
+                } else {
+                    // If shelter is allowed but didn't work, report that.
+                    r = new Report(6546);
+                    r.addDesc(entity);
+                    vDesc.addElement(r);
+                }
             }
 
             r = new Report(6175);
@@ -13909,17 +13927,62 @@ public class Server implements Runnable {
         }
     }
 
-    public void doNuclearExplosion(int nukeType, Vector vDesc) {
+    public boolean canShelter(Entity entity, Coords position) {
+        // What is the next hex in the direction of the blast?
+        Coords shelteringCoords = Coords.nextHex(entity.getPosition(), position);
+        IHex shelteringHex = game.getBoard().getHex(shelteringCoords);
+
+        // This is an error condition.  It really shouldn't ever happen.
+        if (shelteringHex == null)
+            return false;
+
+        // Now figure out the height to which that hex will provide shelter.
+        // It's worth noting, this assumes that any building in the hex has
+        // already survived the bomb blast.  In the case where a building
+        // won't survive the blast but hasn't actually taken the damage
+        // yet, this will be wrong.
+        int shelterLevel = shelteringHex.floor();
+        if (shelteringHex.containsTerrain(Terrains.BUILDING))
+            shelterLevel = shelteringHex.ceiling();
+
+        // Get the absolute height of the unit relative to level 0.
+        int entityAbsHeight = entity.absHeight() + game.getBoard().getHex(entity.getPosition()).surface();
+
+        // Now find the height that needs to be sheltered, and compare.
+        if (entityAbsHeight < shelterLevel)
+            return true;
+
+        // Well, if the above isn't true...  Give up.
+        return false;
+    }
+
+    public boolean isSheltered(Entity entity, Coords position, boolean canShelter) {
+        if (canShelter);
+            if (Compute.d6(2) >= 9)
+                return true;
+        return false;
+    }
+
+    public boolean isSheltered(Entity entity, Coords position) {
+        return isSheltered(entity, position, canShelter(entity, position));
+    }
+
+    public void doNuclearExplosion(Coords position, int nukeType, Vector vDesc) {
+        // Throws a nuke for one of the pre-defined types.
         switch (nukeType) {
             case 0:
             case 1:
-                doNuclearExplosion(100, 5, 40, 0, vDesc);
+                doNuclearExplosion(position, 100, 5, 40, 0, vDesc);
+                break;
             case 2:
-                doNuclearExplosion(1000, 23, 86, 0, vDesc);
+                doNuclearExplosion(position, 1000, 23, 86, 1, vDesc);
+                break;
             case 3:
-                doNuclearExplosion(10000, 109, 184, 0, vDesc);
+                doNuclearExplosion(position, 10000, 109, 184, 3, vDesc);
+                break;
             case 4:
-                doNuclearExplosion(100000, 505, 396, 0, vDesc);
+                doNuclearExplosion(position, 100000, 505, 396, 5, vDesc);
+                break;
             default:
                 // This isn't a valid nuke type by HS:3070 rules.
                 // And since that's our only current source...
@@ -13927,9 +13990,298 @@ public class Server implements Runnable {
         }
     }
 
-    public void doNuclearExplosion(int baseDamage, int degredation, int secondaryRadius, int craterDepth, Vector vDesc) {
-        //FIXME
-        // Do stuff.
+    public void doNuclearExplosion(Coords position, int baseDamage, int degredation, int secondaryRadius, int craterDepth, Vector vDesc) {
+        // First, crater the terrain.
+        // All terrain, units, buildings...  EVERYTHING in here is just gone.
+        // Gotta love nukes.
+        Report r = new Report(1215);
+        r.indent();
+        r.add(position.getBoardNum(), true);
+        addReport(r);
+
+        int curDepth = game.getBoard().getHex(position).floor() - craterDepth;
+        int range = 0;
+        while (range < 2*craterDepth) {
+            // Get the set of hexes at this range.
+            Enumeration hexSet = game.getBoard().getHexesAtDistance(position, range);
+
+            // Iterate through the hexes.
+            while (hexSet.hasMoreElements()) {
+                Coords myHexCoords = (Coords)hexSet.nextElement();
+                IHex myHex = game.getBoard().getHex(myHexCoords);
+                // In each hex, first, sink the terrain if necessary.
+                myHex.setElevation(myHex.getElevation() - craterDepth + (range/2));
+
+                // Then, remove ANY terrains here.
+                // I mean ALL of them; they're all just gone.
+                // No ruins, no water, no rough, no nothing.
+                myHex.removeAllTerrains();
+                myHex.clearExits();
+
+                sendChangedHex(myHexCoords);
+            }
+
+            // Now that the hexes are dealt with, increment the distance.
+            range++;
+
+            // Lastly, if the next distance is a multiple of 2...
+            // The crater depth goes down one.
+            if ((range > 0) && (range%2 == 0))
+                curDepth++;
+        }
+
+        // This is technically part of cratering, but...
+        // Now we destroy all the units inside the cratering range.
+        Enumeration entitiesInCrater = game.getEntities();
+        
+        while (entitiesInCrater.hasMoreElements()) {
+            Entity entity = (Entity)entitiesInCrater.nextElement();
+
+            // If it's too far away for this...
+            if (position.distance(entity.getPosition()) >= range)
+                continue;
+
+            // If it's already destroyed...
+            if (entity.isDestroyed())
+                continue;
+        
+            vDesc.addAll(destroyEntity(entity, "nuclear explosion proximity", false, false));
+            // Kill the crew
+            entity.getCrew().setDoomed(true);
+        }
+        entitiesInCrater = null;
+
+        // Then, do actual blast damage.
+        // Use the standard blast function for this.
+        // We pass in "fase" for "auto-kill everything in hex" because we already did.
+        doExplosion(baseDamage, degredation, false, position, true, vDesc);
+
+        // This ISN'T part of the blast, but if there's ANYTHING in the ground zero hex, destroy it.
+        Building tmpB = game.getBoard().getBuildingAt(position);
+        if (tmpB != null) {
+            r = new Report(2415);
+            r.add(tmpB.getName());
+            addReport(r);
+            collapseBuilding(tmpB, game.getPositionMap());
+        }
+        game.getBoard().getHex(position).removeAllTerrains();
+
+        // Next, for whatever's left, do terrain effects
+        // such as clearing, roughing, and boiling off water.
+        boolean damageFlag = true;
+        int damageAtRange = baseDamage - (degredation*range);
+        if (damageAtRange > 0) {
+            for (int x = range; damageFlag; x++) {
+                // Damage terrain as necessary.
+                // Get all the hexes, and then iterate through them.
+                Enumeration hexSet = game.getBoard().getHexesAtDistance(position, x);
+
+                // Iterate through the hexes.
+                while (hexSet.hasMoreElements()) {
+                    Coords myHexCoords = (Coords)hexSet.nextElement();
+                    IHex myHex = game.getBoard().getHex(myHexCoords);
+
+                    // For each 3000 damage, water level is reduced by 1.
+                    if ((damageAtRange >= 3000) && (myHex.containsTerrain(Terrains.WATER))) {
+                        int numCleared = damageAtRange/3000;
+                        int oldLevel = myHex.terrainLevel(Terrains.WATER);
+                        myHex.removeTerrain(Terrains.WATER);
+                        if (oldLevel > numCleared) {
+                            myHex.addTerrain(new Terrain(Terrains.WATER, oldLevel-numCleared));
+                        }
+                    }
+
+                    // ANY non-water hex that takes 200 becomes rough.
+                    if ((damageAtRange >= 200)
+                            && (!myHex.containsTerrain(Terrains.WATER))) {
+                        myHex.removeAllTerrains();
+                        myHex.clearExits();
+                        myHex.addTerrain(new Terrain(Terrains.ROUGH, 1));
+                    } else if ((damageAtRange >= 20)
+                            && ((myHex.containsTerrain(Terrains.WOODS))
+                                || (myHex.containsTerrain(Terrains.JUNGLE)))) {
+                        // Each 20 clears woods by 1 level.
+                        int numCleared = damageAtRange/20;
+                        int terrainType = (myHex.containsTerrain(Terrains.WOODS) ? Terrains.WOODS : Terrains.JUNGLE);
+                        int oldLevel = myHex.terrainLevel(terrainType);
+                        myHex.removeTerrain(terrainType);
+                        if (oldLevel > numCleared) {
+                            myHex.addTerrain(new Terrain(terrainType, oldLevel-numCleared));
+                        }
+                    }
+
+                    sendChangedHex(myHexCoords);
+                }
+
+                // Initialize for the next iteration.
+                damageAtRange = baseDamage - (degredation*x+1);
+
+                // If the damage is less than 20, it has no terrain effect.
+                if (damageAtRange < 20) {
+                    damageFlag = false;
+                }
+            }
+        }
+
+        // Lastly, do secondary effects.
+        Enumeration entitiesInSecondaryRange = game.getEntities();
+        while (entitiesInSecondaryRange.hasMoreElements()) {
+            Entity entity = (Entity)entitiesInSecondaryRange.nextElement();
+
+            // If it's too far away for this...
+            if (position.distance(entity.getPosition()) > secondaryRadius)
+                continue;
+
+            // If it's already destroyed...
+            if ((entity.isDoomed()) || (entity.isDestroyed()))
+                continue;
+        
+            // Actually do secondary effects against it.
+            // Since the effects are unit-dependant, we'll just define it in the entity.
+            applySecondaryNuclearEffects(entity, position, vDesc);
+        }
+
+        // All right.  We're done.
+        r = new Report(1215);
+        r.indent();
+        addReport(r);
+    }
+
+    /**
+     * Handles secondary effects from nuclear blasts against all units in range.
+     *
+     * @param entity The entity to affect.
+     * @param position The coordinates of the nuclear blast, for to-hit directions.
+     * @param vDesc a description vector to use for reports.
+     */
+    public void applySecondaryNuclearEffects(Entity entity, Coords position, Vector vDesc) {
+        // If it's already destroyed, give up.  We really don't care.
+        if (entity.isDestroyed())
+            return;
+
+        // Check to see if the infantry is in a protective structure.
+        boolean inHardenedBuilding = (Compute.isInBuilding(game, entity) && (game.getBoard().getHex(entity.getPosition()).terrainLevel(Terrains.BUILDING) == 4));
+
+        // Roll 2d6.
+        int roll = Compute.d6(2);
+
+        Report r = new Report(6555);
+        r.add(entity.getDisplayName());
+        r.add(roll);
+
+        // If they are in protective structure, add 2 to the roll.
+        if (inHardenedBuilding) {
+            roll += 2;
+            r.add(" + 2 (unit is in hardened building)");
+        } else {
+            r.add("");
+        }
+
+        // Also, if the entity is "hardened" against EMI, it gets a +2.
+        // For these purposes, I'm going to hand this off to the Entity itself to tell us.
+        // Right now, it IS based purely on class, but I won't rule out the idea of
+        // "nuclear hardening" as equipment for a support vehicle, for example.
+        if (entity.isNuclearHardened()) {
+            roll += 2;
+            r.add(" + 2 (unit is hardened against EMI)");
+        } else {
+            r.add("");
+        }
+
+        vDesc.add(r);
+
+        // Now, compare it to the table, and apply the effects.
+        if (roll <= 4) {
+            // The unit is destroyed.
+            // Sucks, doesn't it?
+            // This applies to all units.
+            // Yup, just sucks.
+            vDesc.addAll(destroyEntity(entity, "nuclear explosion secondary effects", false, false));
+            // Kill the crew
+            entity.getCrew().setDoomed(true);
+        } else if (roll <= 6) {
+            if (entity instanceof BattleArmor) {
+                // It takes 50% casualties, rounded up.
+                BattleArmor myBA = (BattleArmor)entity;
+                int numDeaths = (int)(Math.ceil(((float)(myBA.getNumberActiverTroopers()))/2.0));
+                for (int x=0; x<numDeaths; x++)
+                    vDesc.addAll(applyCriticalHit(entity, 0, null, false));
+            } else if (entity instanceof Infantry) {
+                // Standard infantry are auto-killed in this band, unless they're in a building.
+                if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BUILDING)) {
+                    // 50% casualties, rounded up.
+                    int damage = (int)(Math.ceil(((float)((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/2.0));
+                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(position, entity));
+                    vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
+                } else {
+                    vDesc.addAll(destroyEntity(entity, "nuclear explosion secondary effects", false, false));
+                    entity.getCrew().setDoomed(true);
+                }
+            } else if (entity instanceof Tank) {
+                // All vehicles suffer two critical hits...
+                HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+                hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+
+                // ...and a Crew Killed hit.
+                vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0, 4), false));
+            } else if ((entity instanceof Mech) || (entity instanceof Protomech)) {
+                // 'Mechs suffer two critical hits...
+                HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+                hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+
+                // and four pilot hits.
+                vDesc.addAll(damageCrew(entity, 4));
+            } else {
+                // Buildings and gun emplacements and such are only effected by the EMI.
+                // No auto-crits or anything.
+            }
+        } else if (roll <= 10) {
+            if (entity instanceof BattleArmor) {
+                // It takes 25% casualties, rounded up.
+                BattleArmor myBA = (BattleArmor)entity;
+                int numDeaths = (int)(Math.ceil(((float)(myBA.getNumberActiverTroopers()))/4.0));
+                for (int x=0; x<numDeaths; x++)
+                    vDesc.addAll(applyCriticalHit(entity, 0, null, false));
+            } else if (entity instanceof Infantry) {
+                if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BUILDING)) {
+                    // 25% casualties, rounded up.
+                    int damage = (int)(Math.ceil(((float)((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/4.0));
+                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(position, entity));
+                    vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
+                } else {
+                    // 50% casualties, rounded up.
+                    int damage = (int)(Math.ceil(((float)((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/2.0));
+                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(position, entity));
+                    vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
+                }
+            } else if (entity instanceof Tank) {
+                // It takes one crit...
+                HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+
+                // Plus a Crew Stunned critical.
+                vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0, 1), false));
+            } else if ((entity instanceof Mech) || (entity instanceof Protomech)) {
+                // 'Mechs suffer a critical hit...
+                HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
+                vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
+
+                // and two pilot hits.
+                vDesc.addAll(damageCrew(entity, 2));
+            } else {
+                // Buildings and gun emplacements and such are only effected by the EMI.
+                // No auto-crits or anything.
+            }
+        }
+        // If it's 11+, there are no secondary effects beyond EMI.
+        // Lucky bastards.
+
+        // And lastly, the unit is now affected by electromagnetic interference.
+        entity.setEMI(true);
     }
 
     /**
@@ -14093,11 +14445,19 @@ public class Server implements Runnable {
                     en.getCrew().setDoomed(!hasCASE);
                     break;
             }
-
-        } // End entity-is-tank
-
-        // Handle critical hits on system slots.
-        else if ( CriticalSlot.TYPE_SYSTEM == cs.getType() ) {
+            // End entity-is-tank
+        } else if (en instanceof BattleArmor) {
+            // We might as well handle this here.
+            // However, we're considering a crit against BA as a "crew kill".
+            BattleArmor ba = (BattleArmor)en;
+            r = new Report(6111);
+            int randomTrooper = ba.getRandomTrooper();
+            destroyLocation(ba, randomTrooper);
+            r.add(randomTrooper);
+            r.newlines = 1;
+            vDesc.add(r);
+        } else if ( CriticalSlot.TYPE_SYSTEM == cs.getType() ) {
+            // Handle critical hits on system slots.
             cs.setHit(true);
             if (en instanceof Protomech) {
                 int numHit=((Protomech)en).getCritsHit(loc);
@@ -17933,7 +18293,6 @@ public class Server implements Runnable {
 
                     // ...But we ALSO need to blow up everything nearby.
                     // Bwahahahahaha...
-                    //FIXME
                     r = new Report(3560);
                     r.newlines = 1;
                     addReport(r);

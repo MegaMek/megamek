@@ -91,7 +91,7 @@ public class Terrain implements ITerrain, Serializable {
     public int getLevel() {
         return level;
     }
-    
+
     public int getExits() {
         return exits;
     }

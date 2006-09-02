@@ -1139,7 +1139,7 @@ public abstract class Mech
     public HitData rollHitLocation(int table, int side) {
         return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
     }     
-     
+
     public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
         int roll = -1;
         
@@ -3325,5 +3325,9 @@ public abstract class Mech
             return false;
         }
         return super.isEligibleForMovement();
+    }
+
+    public boolean isNuclearHardened() {
+        return true;
     }
 }

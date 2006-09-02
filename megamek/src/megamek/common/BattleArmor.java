@@ -15,6 +15,7 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Vector;
 
 /**
  * This class represents a squad or point of battle armor equiped infantry,
@@ -241,6 +242,9 @@ public class BattleArmor
 
     // The next few things are never referenced!
     // Why do we even have them?...
+    // This looks like the beginnings of implementing 6-man squads, though.
+    // Which we DO want.
+    //FIXME
     public static final int     LOC_IS_1        = 1;
     public static final int     LOC_IS_2        = 2;
     public static final int     LOC_IS_3        = 3;
@@ -654,7 +658,7 @@ public class BattleArmor
 
         // If we're equipped with a Magnetic Mine
         // launcher, turn it to single shot mode.
-        for(Mounted m:getMisc()) {
+        for (Mounted m:getMisc()) {
             EquipmentType equip = m.getType();
             if ( BattleArmor.MINE_LAUNCHER.equals(equip.getInternalName()) ) {
                 m.setMode("Single");
@@ -945,9 +949,11 @@ public class BattleArmor
     }
     
     public double getCost() {
+        // Hopefully the cost is correctly set.
         if (myCost > 0)
             return myCost;
 
+        // If it's not, I guess we default to the book values...
         if (chassis.equals("Clan Elemental")) return 3500000;
         if (chassis.equals("Clan Gnome")) return 5250000;
         if (chassis.equals("Clan Salamander")) return 3325000;
@@ -996,5 +1002,31 @@ public class BattleArmor
 
     public boolean canAssaultDrop() {
         return true;
+    }
+
+    public boolean isNuclearHardened() {
+        return true;
+    }
+
+    public boolean isTrooperActive(int trooperNum) {
+        return (getInternal(trooperNum) > 0);
+    }
+
+    public int getNumberActiverTroopers() {
+        int count = 0;
+        // Initialize the troopers.
+        for (int loop = 1; loop < this.locations(); loop++)
+            if (isTrooperActive(loop))
+                count++;
+        return count;
+    }
+
+    public int getRandomTrooper() {
+        Vector activeTroops = new Vector();
+        for (int loop = 1; loop < this.locations(); loop++)
+            if (isTrooperActive(loop))
+                activeTroops.add(loop);
+        int locInt = Compute.randomInt(activeTroops.size());
+        return (Integer)(activeTroops.elementAt(locInt));
     }
 } // End public class BattleArmor extends Infantry implements Serializable

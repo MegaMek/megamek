@@ -313,10 +313,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     break;
                 }
             }
-        }
-        else if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
+        } else if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getSwarmMekBaseToHit( ae, te );
-    
+
             // If the attacker has Assault claws, give a -1 modifier.
             // We can stop looking when we find our first match.
             for (Mounted mount : ae.getMisc()) {
@@ -327,8 +326,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     break;
                 }
             }
-        }
-        else if ( Infantry.STOP_SWARM.equals( wtype.getInternalName() ) ) {
+        } else if ( Infantry.STOP_SWARM.equals( wtype.getInternalName() ) ) {
             // Can't stop if we're not swarming, otherwise automatic.
             return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
                                       "End swarm attack." );
@@ -366,6 +364,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
             return toHit;
         }
+
+        // If a unit is suffering from electromagnetic interference, they get a blanket +2.
+        // Sucks to be them.
+        if (ae.isSufferingEMI())
+            toHit.addModifier(+2, "electromagnetic interference");
 
         if ( ae.hasShield() ){
             //active shield has already been checked as it makes shots impossible

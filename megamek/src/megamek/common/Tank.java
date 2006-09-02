@@ -904,4 +904,7 @@ public class Tank
         return (getEngine().getRating() + getSuspensionFactor()) / (int)this.weight;
     }
 
+    public boolean isNuclearHardened() {
+        return true;
+    }
 }

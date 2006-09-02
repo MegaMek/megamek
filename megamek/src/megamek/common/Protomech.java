@@ -330,8 +330,11 @@ public class Protomech extends Entity implements Serializable {
 	}
 
 	/**
-	 * Returns the about of heat that the entity can sink each turn. Pmechs have
+	 * Returns the amount of heat that the entity can sink each turn. Pmechs have
 	 * no heat.
+	 * //FIXME
+	 * However, the number of heat sinks they have IS importnat...
+	 * For cost and validation purposes.
 	 */
 	public int getHeatCapacity() {
 
@@ -933,9 +936,52 @@ public class Protomech extends Entity implements Serializable {
 	 * @return The cost in C-Bills of the ProtoMech in question.
 	 */
 	public double getCost() {
-		// FIXME
-		// There should be an implementation here!
-		return 0;
+		double retVal = 0;
+
+        // Add the cockpit, a constant cost.
+        retVal += 500000;
+
+        // Add life support, a constant cost.
+        retVal += 75000;
+
+        // Sensor cost is based on tonnage.
+        retVal += 2000*weight;
+
+        // Musculature cost is based on tonnage.
+        retVal += 2000*weight;
+
+        // Internal Structure cost is based on tonnage.
+        retVal += 400*weight;
+
+        // Arm actuators are based on tonnage.
+        // Their cost is listed separately?
+        retVal += 2*180*weight;
+
+        // Leg actuators are based on tonnage.
+        retVal += 540*weight;
+
+        // Engine cost is based on tonnage and rating.
+        if (getEngine() != null)
+            retVal += (5000*weight*getEngine().getRating())/75;
+
+        // Jump jet cost is based on tonnage and jump MP.
+        retVal += weight*getJumpMP()*getJumpMP()*200;
+
+        // Heat sinks is constant per sink.
+        //FIXME
+        // Protos in MM currently don't keep track of sinks, so we can't do this.
+        //retVal += 2000*getHeatCapacity();
+
+        // Armor is linear on the armor value of the Protomech
+        retVal += getTotalArmor()*625;
+
+        // Add in equipment cost.
+        //FIXME
+
+        // Finally, apply the Final ProtoMech Cost Multiplier
+        retVal *= (double)(1+(double)(weight/100.0));
+
+		return retVal;
 	}
 
 	public boolean doomedInVacuum() {
@@ -949,4 +995,8 @@ public class Protomech extends Entity implements Serializable {
 	public boolean canAssaultDrop() {
 		return true;
 	}
+
+    public boolean isNuclearHardened() {
+        return true;
+    }
 }

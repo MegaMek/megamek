@@ -274,6 +274,9 @@ public class Hex implements IHex, Serializable {
      * @see megamek.common.IHex#removeAllTerrains()
      */
     public void removeAllTerrains() {
+        if (containsTerrain(Terrains.WATER)) {
+            setElevation(floor());
+        }
         for (int i = 0; i < terrains.length; i++) {
             terrains[i] = null;
         }

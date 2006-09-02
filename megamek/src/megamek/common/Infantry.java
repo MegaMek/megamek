@@ -814,8 +814,6 @@ public class Infantry
      * @return The cost in C-Bills of the 'Mech in question.
      */
     public double getCost() {
-        // FIXME
-        // There should be an implementation here!
         double cost = 0;
         double multiplier = 0;
         
@@ -949,5 +947,9 @@ public class Infantry
     
     public int getDugIn() {
     	return dugIn;
+    }
+
+    public boolean isNuclearHardened() {
+        return false;
     }
 } // End class Infantry

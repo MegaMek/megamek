@@ -249,7 +249,11 @@ public class Coords
         }
         return xd + ym;
     }
-    
+
+    public int distance(int x, int y) {
+        return distance(new Coords(x, y));
+    }
+
     /**
      * Returns a string representing a coordinate in "board number" format.
      */
@@ -373,7 +377,7 @@ public class Coords
      *
      * Not the most elegant solution, but it works.
      */
-    private static Coords nextHex(Coords current, IdealHex iSrc, IdealHex iDest, int[] directions) {
+    public static Coords nextHex(Coords current, IdealHex iSrc, IdealHex iDest, int[] directions) {
         for (int i = 0; i < directions.length; i++) {
             Coords testing = current.translated(directions[i]);
             if (IdealHex.get(testing).isIntersectedBy(iSrc.cx, iSrc.cy, iDest.cx, iDest.cy)) {
@@ -382,5 +386,48 @@ public class Coords
         }
         // if we're here then something's fishy!
         throw new RuntimeException("Couldn't find the next hex!");
+    }
+
+    /**
+     * Pass-thru version of the above that assumes current = iSrc.
+     */
+    public static Coords nextHex(Coords current, Coords destination) {
+        if (current == destination)
+            return current;
+        int[] directions;
+        if (current.x == destination.x) {
+            if (current.y > destination.y) {
+                directions = new int[1];
+                directions[0] = 0;
+            } else {
+                directions = new int[1];
+                directions[0] = 3;
+            }
+        } else if (current.x > destination.x) {
+            if (current.y > destination.y) {
+                directions = new int[3];
+                directions[0] = 4;
+                directions[1] = 5;
+                directions[2] = 0;
+            } else {
+                directions = new int[3];
+                directions[0] = 3;
+                directions[1] = 4;
+                directions[2] = 5;
+            }
+        } else {
+            if (current.y > destination.y) {
+                directions = new int[3];
+                directions[0] = 0;
+                directions[1] = 1;
+                directions[2] = 2;
+            } else {
+                directions = new int[3];
+                directions[0] = 1;
+                directions[1] = 2;
+                directions[2] = 3;
+            }
+        }
+        return nextHex(current, new IdealHex(current), new IdealHex(destination), directions);
     }
 }

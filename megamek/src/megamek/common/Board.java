@@ -166,7 +166,33 @@ public class Board implements Serializable, IBoard {
     public void newData(int width, int height) {
         newData(width, height, new IHex[width * height]);
     }
-    
+
+    public Enumeration getHexesAtDistance(Coords coords, int distance) {
+        // Initialize the one necessary variable.
+        Vector retVal = new Vector();
+
+        // Handle boundary conditions.
+        if (distance < 0) {
+            return retVal.elements();
+        }
+        if (distance == 0) {
+            retVal.add(coords);
+            return retVal.elements();
+        }
+
+        // Okay, handle the "real" case.
+        // This is a bit of a cludge.  Is there a better way to do this?
+        for (int x=0; x<width; x++) {
+            for (int y=0; y<height; y++) {
+                if (coords.distance(x,y) == distance) {
+                    retVal.add(new Coords(x,y));
+                    //retVal.add(getHex(x, y));
+                }
+            }
+        }
+        return retVal.elements();
+    }
+
     /**
      * Determines if this Board contains the (x, y) Coords,
      * and if so, returns the Hex at that position.
@@ -183,7 +209,7 @@ public class Board implements Serializable, IBoard {
         }
 		return null;
     }
-    
+
     /**
      * Gets the hex in the specified direction from the specified starting
      * coordinates.
@@ -968,6 +994,7 @@ public class Board implements Serializable, IBoard {
 
             // Any basement reduces the hex's elevation.
             if ( curHex.containsTerrain(Terrains.BLDG_BASEMENT)) {
+System.out.println("Setting basement elevation: "+elevation+":"+curHex);
                 elevation -= curHex.terrainLevel(Terrains.BLDG_BASEMENT);
                 curHex.removeTerrain(Terrains.BLDG_BASEMENT);
                 curHex.setElevation(elevation);

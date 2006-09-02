@@ -99,6 +99,7 @@ import megamek.common.actions.JumpJetAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.LayExplosivesAttackAction;
 import megamek.common.actions.LayMinefieldAction;
+import megamek.common.actions.NukeAttackAction;
 import megamek.common.actions.ProtomechPhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
@@ -131,6 +132,7 @@ import megamek.server.commands.FixElevationCommand;
 import megamek.server.commands.HelpCommand;
 import megamek.server.commands.KickCommand;
 import megamek.server.commands.LocalSaveGameCommand;
+import megamek.server.commands.NukeCommand;
 import megamek.server.commands.ResetCommand;
 import megamek.server.commands.RollCommand;
 import megamek.server.commands.SaveGameCommand;
@@ -301,6 +303,7 @@ public class Server implements Runnable {
         registerCommand(new SeeAllCommand(this));
         registerCommand(new LocalSaveGameCommand(this));
         registerCommand(new FixElevationCommand(this));
+        registerCommand(new NukeCommand(this));
 
         //register terrain processors
         terrainProcessors.add(new FireProcessor(this));
@@ -18576,14 +18579,17 @@ public class Server implements Runnable {
     private void resolveIndirectArtilleryAttacks()  {
         Vector results = new Vector(game.getArtillerySize());
         Vector attacks = new Vector(game.getArtillerySize());
+        Vector nukes = new Vector(game.getArtillerySize());
 
         // loop thru received attack actions, getting weapon results
         for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
             ArtilleryAttackAction aaa =
                 (ArtilleryAttackAction) i.nextElement();
 
-            // Does the attack land this turn?
-            if (aaa.turnsTilHit <= 0) {
+            if ((aaa instanceof NukeAttackAction) && (aaa.turnsTilHit <= 0)) {
+                // It's not REALLY an artillery attack; it's a generic nuke attack.
+                nukes.addElement(aaa);
+            } else if (aaa.turnsTilHit <= 0) { // Does the attack land this turn?
                 WeaponResult wr = aaa.getWR();
                 //HACK, for correct hit table resolution.
                 wr.artyAttackerCoords=aaa.getCoords();
@@ -18683,6 +18689,19 @@ public class Server implements Runnable {
             aaa.turnsTilHit--;
 
         } // Handle the next attack
+
+        Vector vDesc = new Vector();
+        // loop through all nukes and resolve.
+        for (Enumeration i = nukes.elements(); i.hasMoreElements();) {
+            NukeAttackAction myNuke = (NukeAttackAction)(i.nextElement());
+            if (myNuke.attackType == NukeAttackAction.TYPE_GENERIC) {
+                doNuclearExplosion(myNuke.target, myNuke.damage, myNuke.degeneration, myNuke.secondaryRadius, myNuke.craterDepth, vDesc);
+            } else {
+                doNuclearExplosion(myNuke.target, myNuke.nukeClass, vDesc);
+            }
+            game.removeArtilleryAttack(myNuke);
+        }
+        addReport(vDesc);
 
         // loop through weapon results and resolve
         int lastEntityId = Entity.NONE;

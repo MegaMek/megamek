@@ -13861,8 +13861,10 @@ public class Server implements Runnable {
             if (closestDist >= damages.length)
                 continue; // It's not close enough to take damage.
             Report r2 = damageBuilding(bldg, damages[closestDist]);
-            if (r2 != null)
+            if (r2 != null) {
+                r2.type = Report.PUBLIC;
                 vDesc.addElement(r2);
+            }
         }
 
         // Now we damage people near the explosion.
@@ -13988,10 +13990,15 @@ public class Server implements Runnable {
     }
 
     public void doNuclearExplosion(Coords position, int baseDamage, int degredation, int secondaryRadius, int craterDepth, Vector vDesc) {
+        // Just in case.
+        if (vDesc == null)
+            vDesc = new Vector();
+
         // First, crater the terrain.
         // All terrain, units, buildings...  EVERYTHING in here is just gone.
         // Gotta love nukes.
-        Report r = new Report(1215);
+        Report r = new Report(1215, Report.PUBLIC);
+        
         r.indent();
         r.add(position.getBoardNum(), true);
         addReport(r);
@@ -14051,7 +14058,13 @@ public class Server implements Runnable {
         // Then, do actual blast damage.
         // Use the standard blast function for this.
         // We pass in "fase" for "auto-kill everything in hex" because we already did.
-        doExplosion(baseDamage, degredation, false, position, true, vDesc);
+        Vector tmpV = new Vector();
+        doExplosion(baseDamage, degredation, false, position, true, tmpV);
+        Report.indentAll(tmpV, 2);
+        vDesc.addAll(tmpV);
+
+        // Just get rid of it for the balance of the function...
+        tmpV = null;
 
         // This ISN'T part of the blast, but if there's ANYTHING in the ground zero hex, destroy it.
         Building tmpB = game.getBoard().getBuildingAt(position);
@@ -14139,9 +14152,10 @@ public class Server implements Runnable {
         }
 
         // All right.  We're done.
-        r = new Report(1215);
+        r = new Report(1216, Report.PUBLIC);
         r.indent();
-        addReport(r);
+        r.newlines = 2;
+        vDesc.add(r);
     }
 
     /**
@@ -14163,6 +14177,7 @@ public class Server implements Runnable {
         int roll = Compute.d6(2);
 
         Report r = new Report(6555);
+        r.subject = entity.getId();
         r.add(entity.getDisplayName());
         r.add(roll);
 
@@ -14185,6 +14200,7 @@ public class Server implements Runnable {
             r.add("");
         }
 
+        r.indent(2);
         vDesc.add(r);
 
         // Now, compare it to the table, and apply the effects.
@@ -18286,15 +18302,18 @@ public class Server implements Runnable {
                 if (bldg instanceof FuelTank) {
                     // If this is a fuel tank, we'll give it its own message.
                     r.messageId = 3441;
+                    r.type = Report.PUBLIC;
                     addReport(r);
 
                     // ...But we ALSO need to blow up everything nearby.
                     // Bwahahahahaha...
                     r = new Report(3560);
+                    r.type = Report.PUBLIC;
                     r.newlines = 1;
                     addReport(r);
                     Vector vRep = new Vector();
                     doExplosion(((FuelTank)bldg).getMagnitude(), 10, false, (Coords)(bldg.getCoords().nextElement()), true, vRep);
+                    Report.indentAll(vRep, 2);
                     addReport(vRep);
                     return null;
                 }

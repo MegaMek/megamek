@@ -1718,7 +1718,11 @@ public class Server implements Runnable {
         }
     }
     
-    private void calculatePlayerBVs() {
+    /**
+     * Calculates all players initial BV, should only
+     * be called at start of game
+     */
+    public void calculatePlayerBVs() {
         for ( Enumeration players = game.getPlayers(); players.hasMoreElements(); )
             ((Player) players.nextElement()).setInitialBV();
     }

@@ -617,19 +617,21 @@ public class BoardView1
         
         Image scaled = scaledImageCache.get(base);
         if (scaled == null) {
-            Dimension d = getImageBounds(base).getSize();
-            d.width *= scale;
-            d.height *= scale;
-
-            // This causes errors.
-            // I don't know why.
-            // Happens with zoomed main maps, and seems to relate to morphing terrain and roads
-            //FIXME
-            if ((d.width != 0) && (d.height != 0))
-                scaled = scale(base, d.width, d.height);
-            else
-                scaled = base;
             MediaTracker tracker = new MediaTracker(this);
+            if(base.getWidth(null) == -1 ||
+                    base.getHeight(null) == -1) {
+                tracker.addImage(base,0);
+                try {
+                    tracker.waitForID(0);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                tracker.removeImage(base);
+            }
+            int width = (int)(base.getWidth( null ) * scale);
+            int height = (int)(base.getHeight( null ) * scale);
+
+            scaled = scale(base, width, height);
             tracker.addImage( scaled, 1 );
             // Wait for image to load
             try{
@@ -658,10 +660,6 @@ public class BoardView1
         return Toolkit.getDefaultToolkit().createImage(prod);
     }
     
-    private static Rectangle getImageBounds(Image im) {
-        return new Rectangle(-im.getWidth(null) / 2, -im.getHeight(null) / 2, im.getWidth(null), im.getHeight(null));
-    }
-
     /**
      * Draw an outline around legal deployment hexes
      */

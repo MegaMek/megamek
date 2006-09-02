@@ -124,9 +124,6 @@ public class MtfFile implements IMechLoader {
                     internalType = tmp;
                 } else if (tmp.startsWith("Myomer:")) {
                     myomerType = tmp;
-                } else {
-                    // Do we WANT to do anything here?
-                    //FIXME
                 }
                 tmp = r.readLine();
             }

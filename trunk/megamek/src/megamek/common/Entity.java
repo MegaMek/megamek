@@ -101,6 +101,7 @@ public abstract class Entity extends TurnOrdered
     protected boolean           canUnstickByJumping = false;
     protected int               taggedBy = -1;
     protected boolean           layingMines = false;
+    protected boolean           _isEMId = false;
     
     protected DisplacementAttackAction displacementAttack = null;
 
@@ -5729,4 +5730,17 @@ public abstract class Entity extends TurnOrdered
     public int getLastTarget() {
         return lastTarget;
     }
+
+    /**
+     * @returns whether or not the unit is suffering from Electromagnetic Interference
+     */
+    public boolean isSufferingEMI() {
+        return _isEMId;
+    }
+
+    public void setEMI(boolean inVal) {
+        _isEMId = inVal;
+    }
+
+    public abstract boolean isNuclearHardened();
 }

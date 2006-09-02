@@ -1852,6 +1852,11 @@ public class MechDisplay extends BufferedPanel {
                 narcList.add(Messages.getString("MechDisplay.OnFire"));
             }
 
+            // Show electromagnic interference.
+            if (en.isSufferingEMI()) {
+                narcList.add(Messages.getString("MechDisplay.IsEMId")); //$NON-NLS-1$
+            }
+
             // Show ECM affect.
             Coords pos = en.getPosition();
             if (Compute.isAffectedByECM(en, pos, pos)) {

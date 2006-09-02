@@ -23,7 +23,6 @@ import java.util.StringTokenizer;
  * @author Ben
  */
 public class Hex implements IHex, Serializable {
-
     private int elevation;
     private ITerrain[] terrains;
     private String theme;

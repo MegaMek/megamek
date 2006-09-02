@@ -620,7 +620,15 @@ public class BoardView1
             Dimension d = getImageBounds(base).getSize();
             d.width *= scale;
             d.height *= scale;
-            scaled = scale(base, d.width, d.height);
+
+            // This causes errors.
+            // I don't know why.
+            // Happens with zoomed main maps, and seems to relate to morphing terrain and roads
+            //FIXME
+            if ((d.width != 0) && (d.height != 0))
+                scaled = scale(base, d.width, d.height);
+            else
+                scaled = base;
             MediaTracker tracker = new MediaTracker(this);
             tracker.addImage( scaled, 1 );
             // Wait for image to load
@@ -641,7 +649,6 @@ public class BoardView1
      */
     private Image scale(Image img, int width, int height) {
         ImageFilter filter;
-
         filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
                                                   img.getHeight(null),
                                                   width, height);

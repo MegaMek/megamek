@@ -1845,6 +1845,11 @@ public class MechDisplay extends JPanel {
                 ((DefaultListModel) narcList.getModel()).addElement(Messages.getString("MechDisplay.OnFire"));
             }
 
+            // Show electromagnic interference.
+            if (en.isSufferingEMI()) {
+                ((DefaultListModel) narcList.getModel()).addElement(Messages.getString("MechDisplay.IsEMId")); //$NON-NLS-1$
+            }
+
             // Show ECM affect.
             Coords pos = en.getPosition();
             if (Compute.isAffectedByECM(en, pos, pos)) {

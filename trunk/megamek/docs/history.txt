@@ -12,6 +12,9 @@ v0.31.13-dev (SVN)
 + Bug 1550208: mad dog B has wrong ammo
 + Bug: Clan half-ton MG ammo had BV 1 instead of 0.5.
 + Bug: NPE in cache loader when starting scenario
++ Initial implementation of nukes.
++ Partial implementation of ProtoMech cost calculations.
++ A couple of other minor bug-fixes that I can't remember offhand.
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

@@ -586,4 +586,8 @@ public class GunEmplacement extends Entity
         }
         return true;
     }
+
+    public boolean isNuclearHardened() {
+        return true;
+    }
 }

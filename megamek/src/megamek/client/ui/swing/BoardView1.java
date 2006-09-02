@@ -633,15 +633,25 @@ public final class BoardView1
         }
         Image scaled = scaledImageCache.get(base);
         if (scaled == null) {
-            Dimension d = getImageBounds(base).getSize();
-            d.width *= scale;
-            d.height *= scale;
-            scaled = scale(base, d.width, d.height);
             MediaTracker tracker = new MediaTracker(this);
-            tracker.addImage(scaled, 1);
+            if(base.getWidth(null) == -1 ||
+                    base.getHeight(null) == -1) {
+                tracker.addImage(base,0);
+                try {
+                    tracker.waitForID(0);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                tracker.removeImage(base);
+            }
+            int width = (int)(base.getWidth( null ) * scale);
+            int height = (int)(base.getHeight( null ) * scale);
+
+            scaled = scale(base, width, height);
+            tracker.addImage( scaled, 1 );
             // Wait for image to load
-            try {
-                tracker.waitForID(1);
+            try{
+                tracker.waitForID( 1 );
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -663,10 +673,6 @@ public final class BoardView1
         ImageProducer prod;
         prod = new FilteredImageSource(img.getSource(), filter);
         return Toolkit.getDefaultToolkit().createImage(prod);
-    }
-
-    private static Rectangle getImageBounds(Image im) {
-        return new Rectangle(-im.getWidth(null) / 2, -im.getHeight(null) / 2, im.getWidth(null), im.getHeight(null));
     }
 
     /**

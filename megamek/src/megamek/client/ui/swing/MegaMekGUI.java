@@ -511,6 +511,9 @@ public class MegaMekGUI implements IMegaMekGUI {
             }
         }
         optdlg = null;
+        
+        //calculate initial BV
+        server.calculatePlayerBVs();
 
         // setup any bots
         for (int x = 0; x < pa.length; x++) {

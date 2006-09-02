@@ -26,10 +26,18 @@ implements Serializable
 {
     private WeaponResult wr;
     public int turnsTilHit;
-    /** IDs of possible spotters, won't know until it lands. */
-    private Vector spotterIds;
-    private final int playerId;
+    private Vector spotterIds; // IDs of possible spotters, won't know until it lands.
+    protected int playerId;
     private Coords firingCoords; //Coords of firing entity, needed for resolving attack direction.
+
+    public ArtilleryAttackAction() {
+        wr = null;
+        turnsTilHit = 0;
+        spotterIds = null;
+        playerId = 0;
+        firingCoords = null;
+    }
+
     public ArtilleryAttackAction(WeaponResult wr, IGame game,
                                  int playerId, Vector spotterIds,Coords coords) {
         this.wr = wr;
@@ -56,24 +64,31 @@ implements Serializable
             turnsTilHit = (distance<=17) ? 0 : ((distance/34)+1);
         }
     }
+
     public void setWR(WeaponResult wr) {
         this.wr=wr;
     }
+
     public WeaponResult getWR() {
         return wr;
     }
+
     public Vector getSpotterIds() {
         return spotterIds;
     }
+
     public int getPlayerId() {
         return playerId;
     }
+
     public void setSpotterIds(Vector spotterIds) {
         this.spotterIds=spotterIds;
     }
+
     public void setCoords(Coords coords) {
         this.firingCoords=coords;
     }
+
     public Coords getCoords() {
         return this.firingCoords;
     }

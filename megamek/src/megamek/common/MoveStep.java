@@ -323,9 +323,9 @@ public class MoveStep implements Serializable {
 
         // Is this the first step?
         if (prev == null) {
-            setFirstStep( true );
             prev = new MoveStep(parent, MovePath.STEP_FORWARDS);
             prev.setFromEntity(entity, game);
+            setFirstStep( prev.mpUsed == 0 ); // Bug 1519330 - its not a first step when continuing after a fall
         }
         switch (getType()) {
             case MovePath.STEP_UNLOAD :
@@ -502,13 +502,25 @@ public class MoveStep implements Serializable {
         climbMode = entity.climbMode();
         
         this.elevation = entity.getElevation();
+        movementType = entity.moved;
+        
+        int nMove = entity.getMovementMode();
 
-        // check pavement
+        // check pavement & water
         if (position != null) {
             IHex curHex = game.getBoard().getHex(position);
             if (curHex.hasPavement()) {
                 onlyPavement = true;
                 isPavementStep = true;
+            }
+            //if entity already moved into water it can't run now
+            if(curHex.containsTerrain(Terrains.WATER)
+                    && entity.getElevation() < 0
+                    && distance > 0
+                    && nMove != IEntityMovementMode.NAVAL
+                    && nMove != IEntityMovementMode.HYDROFOIL
+                    && nMove != IEntityMovementMode.SUBMARINE) {
+                isRunProhibited = true;
             }
         }
     }

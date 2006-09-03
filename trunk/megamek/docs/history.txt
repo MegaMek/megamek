@@ -35,6 +35,8 @@ v0.31.13-dev (SVN)
 + remove unnecessary casts and imports
 + Units that are the attacker in a charge sometimes got their damage applied to
   the wrong table.
++ Improve board preview
++ Make "remove unit" command work better.
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

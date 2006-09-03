@@ -335,7 +335,7 @@ public class MegaMekGUI implements IMegaMekGUI {
         client = new Client(hd.name, "localhost", hd.port); //$NON-NLS-1$
         ClientGUI gui = new ClientGUI(client);
         gui.initialize();
-
+        
         if (!client.connect()) {
             StringBuffer error = new StringBuffer();
             error.append("Error: could not connect to server at localhost")

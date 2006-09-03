@@ -76,6 +76,8 @@ public class BoardSelectionDialog
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     private Button butPreview = new Button(Messages.getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$
     
+    private Dialog mapPreviewW;
+    
     private boolean bDelayedSingleSelect = false;
     
 
@@ -120,11 +122,16 @@ public class BoardSelectionDialog
         this.add(panBoardsAvailable);
             
         gridbag.setConstraints(panButtons, c);
-        this.add(panButtons);        
+        this.add(panButtons);
+        
+        mapPreviewW = new Dialog(this.client.frame, Messages.getString("BoardSelectionDialog.MapPreview"), false); //$NON-NLS-1$
         
         addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) { setVisible(false); }
-    });
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+                mapPreviewW.setVisible(false);
+            }
+        });
         
         pack();
         setResizable(false);
@@ -233,8 +240,6 @@ public class BoardSelectionDialog
         
         gridbag.setConstraints(butPreview, c);
         panButtons.add(butPreview);
-        //invisible, because not yet working
-        butPreview.setVisible(false);
 
         c.weightx = 1.0;    c.weighty = 1.0;
         gridbag.setConstraints(labButtonSpace, c);
@@ -407,14 +412,12 @@ public class BoardSelectionDialog
             if (chkRotateBoard.getState()) {
                 BoardUtilities.flip(board, true, true);
             }
-            Dialog mapPreviewW = new Dialog(this.client.frame, Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
-            
             MapPreview mapPreview = null;
             try {
                 mapPreview = new MapPreview(mapPreviewW, board);
             } catch (IOException e) {
             }
-            mapPreviewW.addKeyListener(this);
+            mapPreviewW.removeAll();
             mapPreviewW.add(mapPreview);
             mapPreviewW.setVisible(true);
             mapPreview.initializeMap();

@@ -11293,7 +11293,8 @@ public class Server implements Runnable {
         
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
-            HitData hit = ae.rollHitLocation(toHit.getHitTable(),toHit.getSideTable());
+            HitData hit = ae.rollHitLocation(toHit.getHitTable(),
+                    ae.sideTable(te.getPosition()));
             if(spikes[hit.getLocation()] == 1) {
                 r = new Report(4335);
                 r.indent(2);

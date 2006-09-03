@@ -1147,6 +1147,7 @@ public class BoardView1
                 ypos -= 10;
             }
             if(height > 0) {
+                boardGraph.setColor(GUIPreferences.getInstance().getColor("AdvancedBuildingTextColor"));
                 drawCenteredString(
                         Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
                         drawX,

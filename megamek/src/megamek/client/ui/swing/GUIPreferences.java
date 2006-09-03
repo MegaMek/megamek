@@ -160,7 +160,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
         setDefault(ADVANCED_MAPSHEET_COLOR, "blue");
         store.setDefault(ADVANCED_TRANSLUCENT_HIDDEN_UNITS, true);
         store.setDefault(ADVANCED_ATTACK_ARROW_TRANSPARENCY, 0x80);
-        setDefault(ADVANCED_BUILDING_TEXT_COLOR, "yellow");
+        setDefault(ADVANCED_BUILDING_TEXT_COLOR, "blue");
 
         store.setDefault(AUTO_END_FIRING, true);
         store.setDefault(AUTO_DECLARE_SEARCHLIGHT, true);

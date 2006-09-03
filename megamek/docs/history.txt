@@ -27,6 +27,8 @@ v0.31.13-dev (SVN)
 + Corrected /nuke to accept coordinates rather than hex index numbers.
 + Changed Hex.removeAllTerrains to set new elevation at the bottom of Water, if present.
 + Corrected missing files (NukeAttackAction and NukeCommand).
++ Changed default color of building-height text to blue, and made it
+  configurable. See advanced Client Setting, BuildingTextColor.
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

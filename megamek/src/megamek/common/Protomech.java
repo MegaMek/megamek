@@ -979,7 +979,7 @@ public class Protomech extends Entity implements Serializable {
         //FIXME
 
         // Finally, apply the Final ProtoMech Cost Multiplier
-        retVal *= (double)(1+(double)(weight/100.0));
+        retVal *= 1+(weight/100.0);
 
 		return retVal;
 	}

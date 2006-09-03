@@ -35,7 +35,6 @@ import megamek.common.FuelTank;
 import megamek.common.Game;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
-import megamek.common.Hex;
 import megamek.common.HitData;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
@@ -11222,8 +11221,7 @@ public class Server implements Runnable {
             HitData hit = ae.rollHitLocation( ToHitData.HIT_NORMAL,
                                               ae.sideTable(target.getPosition())
                                                   );
-            addReport(
-                                  damageEntity( ae, hit, toAttacker, false, 0, false, false, throughFront));
+            addReport(damageEntity( ae, hit, toAttacker, false, 0, false, false, throughFront));
             addNewLines();
             entityUpdate( ae.getId() );
 
@@ -11295,7 +11293,7 @@ public class Server implements Runnable {
         
         while (damageTaken > 0) {
             int cluster = Math.min(5, damageTaken);
-            HitData hit = ae.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+            HitData hit = ae.rollHitLocation(toHit.getHitTable(),toHit.getSideTable());
             if(spikes[hit.getLocation()] == 1) {
                 r = new Report(4335);
                 r.indent(2);
@@ -13903,12 +13901,11 @@ public class Server implements Runnable {
                     r.addDesc(entity);
                     vDesc.addElement(r);
                     continue;
-                } else {
-                    // If shelter is allowed but didn't work, report that.
-                    r = new Report(6546);
-                    r.addDesc(entity);
-                    vDesc.addElement(r);
                 }
+                // If shelter is allowed but didn't work, report that.
+                r = new Report(6546);
+                r.addDesc(entity);
+                vDesc.addElement(r);
             }
 
             r = new Report(6175);
@@ -14219,14 +14216,14 @@ public class Server implements Runnable {
             if (entity instanceof BattleArmor) {
                 // It takes 50% casualties, rounded up.
                 BattleArmor myBA = (BattleArmor)entity;
-                int numDeaths = (int)(Math.ceil(((float)(myBA.getNumberActiverTroopers()))/2.0));
+                int numDeaths = (int)(Math.ceil((myBA.getNumberActiverTroopers()))/2.0);
                 for (int x=0; x<numDeaths; x++)
                     vDesc.addAll(applyCriticalHit(entity, 0, null, false));
             } else if (entity instanceof Infantry) {
                 // Standard infantry are auto-killed in this band, unless they're in a building.
                 if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BUILDING)) {
                     // 50% casualties, rounded up.
-                    int damage = (int)(Math.ceil(((float)((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/2.0));
+                    int damage = (int)(Math.ceil((((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/2.0));
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(position, entity));
                     vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
                 } else {
@@ -14259,18 +14256,18 @@ public class Server implements Runnable {
             if (entity instanceof BattleArmor) {
                 // It takes 25% casualties, rounded up.
                 BattleArmor myBA = (BattleArmor)entity;
-                int numDeaths = (int)(Math.ceil(((float)(myBA.getNumberActiverTroopers()))/4.0));
+                int numDeaths = (int)(Math.ceil(((myBA.getNumberActiverTroopers()))/4.0));
                 for (int x=0; x<numDeaths; x++)
                     vDesc.addAll(applyCriticalHit(entity, 0, null, false));
             } else if (entity instanceof Infantry) {
                 if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BUILDING)) {
                     // 25% casualties, rounded up.
-                    int damage = (int)(Math.ceil(((float)((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/4.0));
+                    int damage = (int)(Math.ceil((((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/4.0));
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(position, entity));
                     vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
                 } else {
                     // 50% casualties, rounded up.
-                    int damage = (int)(Math.ceil(((float)((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/2.0));
+                    int damage = (int)(Math.ceil((((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/2.0));
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(position, entity));
                     vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
                 }

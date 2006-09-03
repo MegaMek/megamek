@@ -16,10 +16,9 @@ package megamek.common.actions;
 
 import megamek.common.*;
 import java.io.Serializable;
-import java.util.*;
 /**
  *
- * ArtilleryAttackAction--not *actually* an action, but here's just as good as anywhere.  Holds the data needed for an artillery attack in flight.
+ * NukeAttackAction--not *actually* an action, but here's just as good as anywhere.  Holds the data needed for an artillery attack in flight.
  */
 public class NukeAttackAction extends ArtilleryAttackAction implements Serializable {
     public static int TYPE_GENERIC = 0;

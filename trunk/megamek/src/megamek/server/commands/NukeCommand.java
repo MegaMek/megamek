@@ -23,7 +23,6 @@ package megamek.server.commands;
 import megamek.common.*;
 import megamek.common.actions.NukeAttackAction;
 import megamek.server.*;
-import java.util.Enumeration;
 
 /**
  *

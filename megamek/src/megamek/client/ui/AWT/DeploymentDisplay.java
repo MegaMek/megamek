@@ -314,7 +314,11 @@ public class DeploymentDisplay
     private void remove() {
         disableButtons();
         client.sendDeleteEntity(cen);
-        beginMyTurn();
+        selectEntity(client.getNextDeployableEntityNum(cen));
+        if (client.getNextDeployableEntityNum(cen) == -1) {
+            butNext.setEnabled(false);
+            this.endMyTurn();
+        }
     }
 
     /**
@@ -427,7 +431,7 @@ public class DeploymentDisplay
         }
 
         if ( statusBarActionPerformed(ev, client) )
-          return;
+            return;
           
         if (!client.isMyTurn()) {
             // odd...

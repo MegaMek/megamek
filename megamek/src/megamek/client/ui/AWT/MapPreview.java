@@ -15,6 +15,9 @@
 package megamek.client.ui.AWT;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.io.*;
@@ -47,6 +50,7 @@ public class MapPreview extends Canvas  {
     private int          topMargin;
     private int          leftMargin;
     private static final int    buttonHeight = 14;
+    private boolean      minimized = false;
     private int          heightBufer;
     private Vector       roadHexIndexes = new Vector();
     private int          zoom = GUIPreferences.getInstance().getMinimapZoom();
@@ -69,6 +73,7 @@ public class MapPreview extends Canvas  {
         m_dialog = d;
         initializeColors();
         m_dialog.setResizable(false);
+        addMouseListener(mouseListener);
 
         // TODO: replace this quick-and-dirty with some real size calculator.
         Dimension size = getSize();
@@ -257,7 +262,14 @@ public class MapPreview extends Canvas  {
                 }
             }
         }
+        drawBtn(g);
         repaint();
+    }
+    
+    public void paint(Graphics g) {
+        if (m_mapImage != null) {
+            g.drawImage(m_mapImage, 0, 0, this);
+        }
     }
 
     private void paintHeight(Graphics g, IHex h, int x, int y) {
@@ -469,5 +481,131 @@ public class MapPreview extends Canvas  {
                 return new Color(r, g, b);
         }
         return terrColor;
+    }
+    
+    /**
+     * Draws green Button in the bottom to close and open mini map. Height of button is fixed to 14pix.
+     */
+    private void drawBtn(Graphics g){
+        int [] xPoints = new int[3];
+        int [] yPoints = new int[3];
+        Color oldColor = g.getColor();
+        if (minimized){
+            xPoints[0] = Math.round((getSize().width - 11) / 2);
+            yPoints[0] = getSize().height - 10;
+            xPoints[1] = xPoints[0] + 11;
+            yPoints[1] = yPoints[0];
+            xPoints[2] = xPoints[0] + 6;
+            yPoints[2] = yPoints[0] + 5;
+        } else {
+            xPoints[0] = Math.round((getSize().width - 11) / 2);
+            yPoints[0] = getSize().height - 4;
+            xPoints[1] = xPoints[0] + 11;
+            yPoints[1] = yPoints[0];
+            xPoints[2] = xPoints[0] + 5;
+            yPoints[2] = yPoints[0] - 5;
+        }
+        g.setColor(Color.green.darker().darker());
+        g.fillRect(0,getSize().height - 14,getSize().width,14);
+        g.setColor(Color.green.darker());
+        g.drawLine(0,getSize().height - 14,getSize().width,getSize().height -14);
+        g.drawLine(0,getSize().height - 14,0,getSize().height);
+        g.setColor(Color.black);
+        g.drawLine(0,getSize().height-1,getSize().width,getSize().height-1);
+        g.drawLine(getSize().width-1,getSize().height - 14,getSize().width-1,getSize().height);
+        g.setColor(Color.yellow);
+        g.fillPolygon(xPoints,yPoints,3);
+
+
+        //drawing "+" and "-" buttons
+        if (! minimized){
+            g.setColor(Color.black);
+            g.drawLine(14 - 1,getSize().height - 14, 14 - 1,getSize().height);
+            g.drawLine(getSize().width - 14 - 1,getSize().height - 14, getSize().width - 14 - 1,getSize().height);
+            g.setColor(Color.green.darker());
+            g.drawLine(14,getSize().height - 14, 14,getSize().height);
+            g.drawLine(getSize().width - 14 ,getSize().height - 14, getSize().width - 14,getSize().height);
+            if (zoom == 0){
+                g.setColor(Color.gray.brighter());
+            } else {
+                g.setColor(Color.yellow);
+            }
+            g.fillRect(3,getSize().height - 14 + 6, 8, 2);
+            if (zoom == (hexSide.length - 1)){
+                g.setColor(Color.gray.brighter());
+            } else {
+                g.setColor(Color.yellow);
+            }
+            g.fillRect(getSize().width - 14 + 3, getSize().height - 14 + 6, 8, 2);
+            g.fillRect(getSize().width - 14 + 6, getSize().height - 14 + 3, 2, 8);
+
+            if (zoom > 2) {
+                // Button for displying heights.
+                g.setColor(Color.black);
+                g.drawLine(28 - 1,getSize().height - 14, 28 - 1,getSize().height);
+                g.setColor(Color.green.darker());
+                g.drawLine(28, getSize().height - 14, 28, getSize().height);
+                g.setColor(Color.yellow);
+                String label;
+                switch (heightDisplayMode) {
+                case SHOW_NO_HEIGHT :
+                    label = Messages.getString("MiniMap.NoHeightLabel"); //$NON-NLS-1$
+                    break;
+                case SHOW_GROUND_HEIGHT :
+                    label = Messages.getString("MiniMap.GroundHeightLabel"); //$NON-NLS-1$
+                    break;
+                case SHOW_BUILDING_HEIGHT :
+                    label = Messages.getString("MiniMap.BuildingHeightLabel"); //$NON-NLS-1$
+                    break;
+                case SHOW_TOTAL_HEIGHT :
+                    label = Messages.getString("MiniMap.TotalHeightLabel"); //$NON-NLS-1$
+                    break;
+                default :
+                    label = ""; //$NON-NLS-1$
+                }
+                g.drawString(label, 17, getSize().height - 14 + 12);
+            }
+        }
+
+        g.setColor(oldColor);
+
+    }
+    
+    MouseListener mouseListener = new MouseAdapter(){
+        public void mousePressed(MouseEvent me) {
+            processMouseClick(me.getX(), me.getY(), me);
+        }
+    };
+    
+    private void processMouseClick(int x, int y, MouseEvent me){
+        if (y > (getSize().height - 14)){
+
+            if(x < 14){
+                if (zoom == 0) return;
+                zoom --;
+                initializeMap();
+            }else if (x < 28 && zoom > 2) {
+                heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
+                initializeMap();
+            }else if ( x> (getSize().width - 14)){
+                if (zoom == (hexSide.length - 1)) return;
+                zoom ++;
+                initializeMap();
+            } else{
+                if (minimized){
+                    //m_dialog.setResizable(true);
+                    setSize(getSize().width, heightBufer);
+                    m_mapImage = createImage(getSize().width, heightBufer);
+                }else{
+                    heightBufer = getSize().height;
+                    setSize(getSize().width, 14);
+                    m_mapImage = createImage(Math.max(1, getSize().width), 14);
+                    //m_dialog.setResizable(false);
+                }
+                minimized = ! minimized;
+                m_dialog.pack();
+                drawMap();
+            }
+        }
     }
 }

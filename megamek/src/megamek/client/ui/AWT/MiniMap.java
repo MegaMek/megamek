@@ -85,7 +85,7 @@ public class MiniMap extends Canvas  {
     private ClientGUI clientgui;
 
     /**
-     * Creates and lays out a new mech display.
+     * Creates and lays out a new minimap.
      */
     public MiniMap(Dialog d, IGame g, BoardView1 bview) throws IOException {
         m_game = g;

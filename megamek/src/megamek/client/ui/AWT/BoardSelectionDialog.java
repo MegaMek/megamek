@@ -22,9 +22,11 @@ package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.*;
 
 import megamek.common.*;
+import megamek.common.util.BoardUtilities;
 
 /**
  *
@@ -72,6 +74,7 @@ public class BoardSelectionDialog
     private Label labButtonSpace = new Label("", Label.CENTER); //$NON-NLS-1$
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
+    private Button butPreview = new Button(Messages.getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$
     
     private boolean bDelayedSingleSelect = false;
     
@@ -210,6 +213,7 @@ public class BoardSelectionDialog
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
         butRandomMap.addActionListener(this);
+        butPreview.addActionListener(this);
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -226,6 +230,11 @@ public class BoardSelectionDialog
         
         gridbag.setConstraints(butRandomMap, c);
         panButtons.add(butRandomMap);
+        
+        gridbag.setConstraints(butPreview, c);
+        panButtons.add(butPreview);
+        //invisible, because not yet working
+        butPreview.setVisible(false);
 
         c.weightx = 1.0;    c.weighty = 1.0;
         gridbag.setConstraints(labButtonSpace, c);
@@ -389,6 +398,29 @@ public class BoardSelectionDialog
         this.setVisible(false);
     }
     
+    public void previewBoard() {
+        String boardName = lisBoardsAvailable.getSelectedItem();
+        if ( !MapSettings.BOARD_RANDOM.equals(boardName) &&
+                !MapSettings.BOARD_SURPRISE.equals(boardName)) {
+            IBoard board = new Board(new Integer(texBoardWidth.getText()), new Integer(texBoardHeight.getText()));
+            board.load(boardName+".board");
+            if (chkRotateBoard.getState()) {
+                BoardUtilities.flip(board, true, true);
+            }
+            Dialog mapPreviewW = new Dialog(this.client.frame, Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
+            
+            MapPreview mapPreview = null;
+            try {
+                mapPreview = new MapPreview(mapPreviewW, board);
+            } catch (IOException e) {
+            }
+            mapPreviewW.addKeyListener(this);
+            mapPreviewW.add(mapPreview);
+            mapPreviewW.setVisible(true);
+            mapPreview.initializeMap();
+        }
+    }
+    
     public void actionPerformed(ActionEvent e) {
         
         if (e.getSource() == butChange || e.getSource() == lisBoardsAvailable) {
@@ -403,6 +435,8 @@ public class BoardSelectionDialog
             this.setVisible(false);
         } else if (e.getSource() == butRandomMap) {
             randomMapDialog.setVisible(true);
+        } else if (e.getSource() == butPreview) {
+            previewBoard();
         } else {
             try {
                 int board = Integer.parseInt(e.getActionCommand());

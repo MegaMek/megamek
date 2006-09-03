@@ -30,6 +30,9 @@ v0.31.13-dev (SVN)
 + Changed default color of building-height text to blue, and made it
   configurable. See advanced Client Setting, BuildingTextColor.
 + Data 1545661: updated RS 3055U Mek MTFs
++ initial implementation of Board preview in the BoardSelectionDialog, not
+  yet working
++ remove unnecessary casts and imports
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

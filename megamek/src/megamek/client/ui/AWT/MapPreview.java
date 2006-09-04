@@ -17,7 +17,6 @@ package megamek.client.ui.AWT;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.Enumeration;
 import java.util.Vector;
 import java.io.*;
@@ -73,7 +72,11 @@ public class MapPreview extends Canvas  {
         m_dialog = d;
         initializeColors();
         m_dialog.setResizable(false);
-        addMouseListener(mouseListener);
+        addMouseListener(new MouseAdapter(){
+            public void mousePressed(MouseEvent me) {
+                processMouseClick(me.getX(), me.getY(), me);
+            }
+        });
 
         // TODO: replace this quick-and-dirty with some real size calculator.
         Dimension size = getSize();
@@ -570,12 +573,6 @@ public class MapPreview extends Canvas  {
         g.setColor(oldColor);
 
     }
-    
-    MouseListener mouseListener = new MouseAdapter(){
-        public void mousePressed(MouseEvent me) {
-            processMouseClick(me.getX(), me.getY(), me);
-        }
-    };
     
     private void processMouseClick(int x, int y, MouseEvent me){
         if (y > (getSize().height - 14)){

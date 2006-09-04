@@ -2351,6 +2351,11 @@ public final class BoardView1
         hex_size = new Dimension((int) (HEX_W * scale), (int) (HEX_H * scale));
         final Dimension size = getSize();
         scaledImageCache = new ImageCache();
+        cursorSprite.prepare();
+        highlightSprite.prepare();
+        selectedSprite.prepare();
+        firstLOSSprite.prepare();
+        secondLOSSprite.prepare();
         updateBoard();
         view.setLocation(scroll);
         view.setSize(getOptimalView(size));

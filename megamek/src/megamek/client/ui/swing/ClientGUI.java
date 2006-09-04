@@ -58,10 +58,14 @@ import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -239,9 +243,35 @@ public class ClientGUI
         frame = new JFrame(Messages.getString("ClientGUI.title")); //$NON-NLS-1$
         menuBar.setGame(client.game);
         frame.setJMenuBar(menuBar);
+        Rectangle virtualBounds = new Rectangle();
+        GraphicsEnvironment ge = GraphicsEnvironment.
+                getLocalGraphicsEnvironment();
+        GraphicsDevice[] gs =
+                ge.getScreenDevices();
+        for (int j = 0; j < gs.length; j++) { 
+            GraphicsDevice gd = gs[j];
+            GraphicsConfiguration[] gc =
+                gd.getConfigurations();
+            for (int i=0; i < gc.length; i++) {
+                virtualBounds =
+                    virtualBounds.union(gc[i].getBounds());
+            }
+        } 
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
-            frame.setLocation(GUIPreferences.getInstance().getWindowPosX(), GUIPreferences.getInstance().getWindowPosY());
-            frame.setSize(GUIPreferences.getInstance().getWindowSizeWidth(), GUIPreferences.getInstance().getWindowSizeHeight());
+            int x = GUIPreferences.getInstance().getWindowPosX();
+            int y = GUIPreferences.getInstance().getWindowPosY();
+            int w = GUIPreferences.getInstance().getWindowSizeWidth();
+            int h = GUIPreferences.getInstance().getWindowSizeHeight();
+            if (x < virtualBounds.getMinX() || x + w >virtualBounds.getMaxX())
+                x = 0;
+            if (y < virtualBounds.getMinY() || y + h >virtualBounds.getMaxY())
+                y = 0;
+            if(w > virtualBounds.getWidth())
+                w = (int)virtualBounds.getWidth();
+            if(h > virtualBounds.getHeight())
+                h = (int)virtualBounds.getHeight();
+            frame.setLocation(x, y);
+            frame.setSize(w, h);
         } else {
             frame.setSize(800, 600);
         }

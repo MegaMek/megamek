@@ -42,6 +42,7 @@ v0.31.13-dev (SVN)
   for mapPreviewW in BoardSelectionDialog work, I can't figure out why they
   don't work :(
 + Bug: selected hex cursor wasn't rescaling when zoom level changed
++ Bug 1478186: Battlefield Screen could be placed offscreen
 
 v0.31.12 (2006-09-31, 21:04 GMT+2)
 + Bug 1542764: Clans allowed incorrect ammo types

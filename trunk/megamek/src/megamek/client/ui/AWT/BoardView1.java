@@ -2535,6 +2535,12 @@ public class BoardView1
         
         scaledImageCache = new ImageCache();
 
+        cursorSprite.prepare();
+        highlightSprite.prepare();
+        selectedSprite.prepare();
+        firstLOSSprite.prepare();
+        secondLOSSprite.prepare();
+
         updateBoard();
 
         view.setLocation(scroll);

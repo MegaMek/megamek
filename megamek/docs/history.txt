@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.31.13-dev (SVN)
+v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen
 + Bug 1508964: Critical Hits Not Reporting in entitystatus.txt
 + Added data files from MercSupplement: Updates and Jihad Hotspots: 3070

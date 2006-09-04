@@ -126,6 +126,12 @@ public class BoardSelectionDialog
         
         mapPreviewW = new Dialog(this.client.frame, Messages.getString("BoardSelectionDialog.MapPreview"), false); //$NON-NLS-1$
         
+        mapPreviewW.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
+        });
+        
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
@@ -401,12 +407,12 @@ public class BoardSelectionDialog
         
         client.getClient().sendMapSettings(mapSettings);
         this.setVisible(false);
+        mapPreviewW.setVisible(false);
     }
     
     public void previewBoard() {
         String boardName = lisBoardsAvailable.getSelectedItem();
-        if ( !MapSettings.BOARD_RANDOM.equals(boardName) &&
-                !MapSettings.BOARD_SURPRISE.equals(boardName)) {
+        if (lisBoardsAvailable.getSelectedIndex() > 2) {
             IBoard board = new Board(new Integer(texBoardWidth.getText()), new Integer(texBoardHeight.getText()));
             board.load(boardName+".board");
             if (chkRotateBoard.getState()) {
@@ -416,6 +422,7 @@ public class BoardSelectionDialog
             try {
                 mapPreview = new MapPreview(mapPreviewW, board);
             } catch (IOException e) {
+                e.printStackTrace();
             }
             mapPreviewW.removeAll();
             mapPreviewW.add(mapPreview);
@@ -436,6 +443,7 @@ public class BoardSelectionDialog
             send();
         } else if (e.getSource() == butCancel) {
             this.setVisible(false);
+            mapPreviewW.setVisible(false);
         } else if (e.getSource() == butRandomMap) {
             randomMapDialog.setVisible(true);
         } else if (e.getSource() == butPreview) {

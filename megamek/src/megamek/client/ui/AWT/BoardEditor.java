@@ -128,6 +128,8 @@ public class BoardEditor extends Container implements ItemListener,
     private Dialog minimapW;
     private MiniMap minimap;
     
+    private Coords lastClicked;
+    
     private MapSettings mapSettings = new MapSettings();
     /**
      * Creates and lays out a new Board Editor frame.
@@ -143,14 +145,24 @@ public class BoardEditor extends Container implements ItemListener,
         bv.addBoardViewListener(new BoardViewListenerAdapter(){
 
             public void hexMoused(BoardViewEvent b) {
-                bv.cursor(b.getCoords());
+                Coords c = b.getCoords();
+                if(c.equals(lastClicked))
+                    return;
+                lastClicked = c;
+                bv.cursor(c);
                 if((b.getModifiers() & InputEvent.ALT_MASK) != 0) {
                     setCurrentHex(board.getHex(b.getCoords()));
                 }
-                if((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+                else if((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
                     if(!board.getHex(b.getCoords()).equals(curHex)) {
                         paintHex(b.getCoords());
                     }
+                }
+                else if((b.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
+                    addToHex(b.getCoords());
+                }
+                else if((b.getModifiers() & InputEvent.BUTTON1_MASK) != 0){
+                    resurfaceHex(b.getCoords());
                 }
             }
         });
@@ -254,7 +266,7 @@ public class BoardEditor extends Container implements ItemListener,
             choTerrainType.add(Terrains.getName(i));
         }
         
-        texTerrainLevel = new TextField("0", 1); //$NON-NLS-1$
+        texTerrainLevel = new TextField("1", 1); //$NON-NLS-1$
         
         butAddTerrain = new Button(Messages.getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
         butAddTerrain.addActionListener(this);
@@ -379,6 +391,37 @@ public class BoardEditor extends Container implements ItemListener,
     }
     
     /**
+     * Apply the current Hex to the Board at the specified
+     * location.
+     */
+    public void resurfaceHex(Coords c) {
+        if(board.contains(c)) {
+            IHex newHex = curHex.duplicate();
+            newHex.setElevation(board.getHex(c).getElevation());
+            board.setHex(c, newHex);
+        }
+    }
+
+    /**
+     * Apply the current Hex to the Board at the specified
+     * location.
+     */
+    public void addToHex(Coords c) {
+        if(board.contains(c)) {
+            IHex newHex = curHex.duplicate();
+            IHex oldHex = board.getHex(c);
+            newHex.setElevation(oldHex.getElevation());
+            for(int i=0;i<Terrains.SIZE;i++) {
+                if(!newHex.containsTerrain(i)
+                        && oldHex.containsTerrain(i)) {
+                    newHex.addTerrain(oldHex.getTerrain(i));
+                }
+            }
+            board.setHex(c, newHex);
+        }
+    }
+
+    /**
      * Sets the current hex
      * 
      * @param hex            hex to set.
@@ -406,6 +449,7 @@ public class BoardEditor extends Container implements ItemListener,
             tm.clearHex(curHex);
         }
         canHex.repaint();
+        lastClicked = null;
     }
 
     /**

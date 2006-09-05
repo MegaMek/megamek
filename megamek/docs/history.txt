@@ -4,6 +4,8 @@ v0.31.14-dev (SVN)
 + Bug: assertion failure when observing double blind games
 + Bug 1306432 / 1456639: roads/buildings don't connect automatically
 + Bug: Davy Crocketts now correctly listed as level 3 for Clan A-IVs.
++ In map editor, shift + click adds terrain to the hex
+  left click alone sets terrain without changing elevation
 
 v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen

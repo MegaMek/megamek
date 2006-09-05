@@ -374,6 +374,7 @@ public class Board implements Serializable, IBoard {
             IHex other = getHexInDir(x, y, i);
             hex.setExits(other, i, this.roadsAutoExit);
         }
+        processBoardEvent(new BoardEvent(this, new Coords(x, y), BoardEvent.BOARD_CHANGED_HEX));
     }
     
     /**
@@ -421,7 +422,6 @@ public class Board implements Serializable, IBoard {
     public void setHex(int x, int y, IHex hex) {
         data[y * width + x] = hex;
         initializeAround(x, y);
-        processBoardEvent(new BoardEvent(this, new Coords(x, y), BoardEvent.BOARD_CHANGED_HEX));
     }
     
     /**

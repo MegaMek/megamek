@@ -815,7 +815,7 @@ public class AmmoType extends EquipmentType {
         munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
                                                    1, M_VIBRABOMB_IV, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.addElement( new MunitionMutator( "Davy Crockett-M",
-                                                   5, M_DAVY_CROCKETT_M, TechConstants.T_CLAN_LEVEL_2 ) );
+                                                   5, M_DAVY_CROCKETT_M, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.addElement( new MunitionMutator( "Illumination",
                 1, M_FLARE, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.addElement( new MunitionMutator( "Cluster",

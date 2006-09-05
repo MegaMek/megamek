@@ -1356,7 +1356,7 @@ public class MechDisplay extends BufferedPanel {
                             if (m.getType().hasModes()) {
                                 sb.append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
                                 if (m.getType() instanceof MiscType && ((MiscType) m.getType()).isShield()) {
-                                    sb.append(" " + ((MiscType) m.getType()).getDamageAbsorption(en, loc) + "/" + ((MiscType) m.getType()).getCurrentDamageCapacity(en, loc) + ")");
+                                    sb.append(" " + m.getDamageAbsorption(en, loc) + "/" +  m.getCurrentDamageCapacity(en, loc) + ")");
                                 }
                             }
                             break;

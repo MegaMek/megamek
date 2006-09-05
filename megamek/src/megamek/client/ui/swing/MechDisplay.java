@@ -1343,7 +1343,7 @@ public class MechDisplay extends JPanel {
                             if (m.getType().hasModes()) {
                                 sb.append(" (").append(m.curMode().getDisplayableName()).append(')'); //$NON-NLS-1$ //$NON-NLS-2$
                                 if (m.getType() instanceof MiscType && ((MiscType) m.getType()).isShield()) {
-                                    sb.append(" " + (m.getType()).getDamageAbsorption(en, loc) + '/' + (m.getType()).getCurrentDamageCapacity(en, loc) + ')');
+                                    sb.append(" " + m.getDamageAbsorption(en, loc) + '/' + m.getCurrentDamageCapacity(en, loc) + ')');
                                 }
                             }
                             break;

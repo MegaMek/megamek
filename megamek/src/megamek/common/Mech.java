@@ -2287,6 +2287,12 @@ public abstract class Mech
         double cockpitCost = 0;
         if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             cockpitCost = 750000;
+        } else if (getCockpitType() == Mech.COCKPIT_DUAL) {
+            //FIXME
+            cockpitCost = 0;
+        } else if (getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
+            //FIXME
+            cockpitCost = 0;
         } else if (getCockpitType() == Mech.COCKPIT_SMALL) {
             cockpitCost = 175000;
         } else {
@@ -3006,17 +3012,33 @@ public abstract class Mech
 		return true;
     }
 
-    /*
+    /**
+     * Dual Cockpits need to be implemented everywhere except here.
+     * FIXME
+     */
     public boolean addCommandConsole() {
-        // This needs to be implemented.
-        // FIXME
+		addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+		addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+		addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+		setCockpitType(COCKPIT_COMMAND_CONSOLE);
+		return true;
     }
 
+    /**
+     * Dual Cockpits need to be implemented everywhere except here.
+     * FIXME
+     */
     public boolean addDualCockpit() {
-        // This needs to be implemented.
-        // FIXME
+		addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+		addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+		addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+		setCockpitType(COCKPIT_DUAL);
+		return true;
     }
-    */
 
     /**
      * Add the critical slots necessary for a torso-mounted cockpit.

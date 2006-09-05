@@ -3336,7 +3336,7 @@ public class Server implements Runnable {
                 entity.setStuck(false);
                 entity.setCanUnstickByJumping(false);
             }
-
+            
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
                                           prevStep, prevFacing, curFacing,
@@ -3409,11 +3409,11 @@ public class Server implements Runnable {
                                 return;
 
                             }
-							// Nope.  Update the report.
-							r = new Report(2035);
-							r.subject = entity.getId();
-							r.indent();
-							addReport(r);
+                            // Nope.  Update the report.
+                            r = new Report(2035);
+                            r.subject = entity.getId();
+                            r.indent();
+                            addReport(r);
                             // Stay in the current hex and stop skidding.
                             break;
                         }
@@ -3942,6 +3942,8 @@ public class Server implements Runnable {
                 } // End failed-skid-psr
 
             } // End need-skid-psr
+            
+            // check sideslip
             if(entity instanceof VTOL) {
                 rollTarget = ((VTOL)entity).checkSideSlip(moveType, prevHex, overallMoveType,
                                           prevStep, prevFacing, curFacing,
@@ -4152,11 +4154,17 @@ public class Server implements Runnable {
                         boolean isOnGround = !i.hasMoreElements();
                         isOnGround |= step.getMovementType() != IEntityMovementType.MOVE_JUMP;
                         isOnGround &= step.getElevation() == 0;
+                        // set the new position temporarily, because
+                        // infantry otherwise would get double damage
+                        // when moving from clear into mined woods
+                        entity.setPosition(curPos);
                         if (isOnGround) {
                             enterMinefield(entity, mf, curPos, curPos, true);
                         } else if (mf.getType() == Minefield.TYPE_THUNDER_ACTIVE) {
                             enterMinefield(entity, mf, curPos, curPos, true, 2);
                         }
+                        // set original position again.
+                        entity.setPosition(lastPos);
                     }
                 }
             }

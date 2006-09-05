@@ -17,6 +17,8 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -304,7 +306,7 @@ public abstract class BotClient extends Client {
         int weapon_count;
 
         double av_range, best_fitness, ideal_elev;
-        double[] fitness;
+        //double[] fitness;
         double adjusted_damage, max_damage, total_damage;
 
         Coords highest_hex = new Coords();
@@ -323,43 +325,28 @@ public abstract class BotClient extends Client {
         //   Check for prohibited terrain, stacking limits
 
         switch (getLocalPlayer().getStartingPos()) {
-        default :
-        case 0 :
-            valid_array = new Coords[game.getBoard().getWidth()*game.getBoard().getHeight()];
-            fitness = new double[game.getBoard().getWidth()*game.getBoard().getHeight()];
-            break;
-        case 1 :
-            valid_array = new Coords[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
-            fitness = new double[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
-            break;
-        case 2 :
-            valid_array = new Coords[game.getBoard().getWidth()*3];
-            fitness = new double[game.getBoard().getWidth()*3];
-            break;
-        case 3 :
-            valid_array = new Coords[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
-            fitness = new double[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
-            break;
-        case 4 :
-            valid_array = new Coords[game.getBoard().getHeight()*3];
-            fitness = new double[game.getBoard().getHeight()*3];
-            break;
-        case 5 :
-            valid_array = new Coords[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
-            fitness = new double[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
-            break;
-        case 6 :
-            valid_array = new Coords[game.getBoard().getWidth()*3];
-            fitness = new double[game.getBoard().getWidth()*3];
-            break;
-        case 7 :
-            valid_array = new Coords[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
-            fitness = new double[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
-            break;
-        case 8 :
-            valid_array = new Coords[game.getBoard().getHeight()*3];
-            fitness = new double[game.getBoard().getHeight()*3];
-            break;
+            case 1:
+            case 3:
+            case 5:
+            case 7:
+                valid_array = new Coords[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
+                //fitness = new double[(3*game.getBoard().getWidth())+(3*game.getBoard().getHeight())-9];
+                break;
+            case 2:
+            case 6:
+                valid_array = new Coords[game.getBoard().getWidth()*3];
+                //fitness = new double[game.getBoard().getWidth()*3];
+                break;
+            case 4:
+            case 8:
+                valid_array = new Coords[game.getBoard().getHeight()*3];
+                //fitness = new double[game.getBoard().getHeight()*3];
+                break;
+            case 0:
+            default:
+                valid_array = new Coords[game.getBoard().getWidth()*game.getBoard().getHeight()];
+                //fitness = new double[game.getBoard().getWidth()*game.getBoard().getHeight()];
+                break;
         }
 
         counter = 0;
@@ -457,7 +444,7 @@ public abstract class BotClient extends Client {
             // Calculate the fitness factor for each hex and save it to the array
             //      -> Absolute difference between hex elevation and ideal elevation decreases fitness
 
-            fitness[valid_arr_index] = -1*(Math.abs(ideal_elev - game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).getElevation()));
+            valid_array[valid_arr_index].fitness = -1*(Math.abs(ideal_elev - game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).getElevation()));
 
             //      -> Approximate total damage taken in the current position; this keeps units from deploying into x-fires
             total_damage = 0.0;
@@ -476,7 +463,7 @@ public abstract class BotClient extends Client {
 
             }
 
-            fitness[valid_arr_index] = fitness[valid_arr_index] - (total_damage/10);
+            valid_array[valid_arr_index].fitness -= (total_damage/10);
 
             //      -> Find the best target for each weapon and approximate the damage; maybe we can kill stuff without moving!
             //      -> Conventional infantry ALWAYS come out on the short end of the stick in damage given/taken... solutions?   
@@ -497,7 +484,7 @@ public abstract class BotClient extends Client {
                 }
                 total_damage += max_damage;
             }
-            fitness[valid_arr_index] = fitness[valid_arr_index] + (total_damage/10);
+            valid_array[valid_arr_index].fitness += (total_damage/10);
 
             //   Mech
 
@@ -506,11 +493,11 @@ public abstract class BotClient extends Client {
                 //      -> Water isn't that great below depth 1 -> this saves actual ground space for infantry/vehicles (minor)
 
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WOODS)){
-                    fitness[valid_arr_index] += 1;
+                    valid_array[valid_arr_index].fitness += 1;
                 }
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WATER)){
                     if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).depth() > 1){
-                        fitness[valid_arr_index] -= game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).depth();
+                        valid_array[valid_arr_index].fitness -= game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).depth();
                     }
                 }
             }
@@ -523,13 +510,13 @@ public abstract class BotClient extends Client {
                 //      -> Massed infantry is more effective, so try to cluster them
 
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.ROUGH)){
-                    fitness[valid_arr_index] += 1.5;
+                    valid_array[valid_arr_index].fitness += 1.5;
                 }
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WOODS)){
-                    fitness[valid_arr_index] += 2;
+                    valid_array[valid_arr_index].fitness += 2;
                 }
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.BUILDING)){
-                    fitness[valid_arr_index] += 4;
+                    valid_array[valid_arr_index].fitness += 4;
                 }
                 highest_hex = valid_array[valid_arr_index];
                 Enumeration ent_list = game.getEntities(highest_hex);
@@ -538,7 +525,7 @@ public abstract class BotClient extends Client {
                     if (deployed_ent.getOwner() == test_ent.getOwner()
                             && !deployed_ent.equals(test_ent)) {
                         if (test_ent instanceof Infantry){
-                            fitness[valid_arr_index] += 2;
+                            valid_array[valid_arr_index].fitness += 2;
                             break;
                         }
                     }
@@ -553,7 +540,7 @@ public abstract class BotClient extends Client {
                             if (deployed_ent.getOwner() == test_ent.getOwner()
                                     && !deployed_ent.equals(test_ent)) {
                                 if (test_ent instanceof Infantry){
-                                    fitness[valid_arr_index] += 1;
+                                    valid_array[valid_arr_index].fitness += 1;
                                     break outer_loop;
                                 }
                             }
@@ -563,18 +550,22 @@ public abstract class BotClient extends Client {
                 // Not sure why bot tries to deploy infantry in water, it SHOULD be caught by the isHexProhibited method when
                 //   selecting hexes, but sometimes it has a mind of its own so...
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WATER)){
-                    fitness[valid_arr_index] -= 10;
+                    valid_array[valid_arr_index].fitness -= 10;
                 }
 
             }
 
+            //   VTOL *PLACEHOLDER*
+            // Currently, VTOLs are deployed as tanks, because they're a sub-class.
+            // This isn't correct in the long run, and eventually should be fixed.
+            //FIXME
             if(deployed_ent instanceof Tank){
 
                 //   Tracked vehicle
                 //      -> Trees increase fitness
                 if(deployed_ent.getMovementMode() == IEntityMovementMode.TRACKED){
                     if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WOODS)){
-                        fitness[valid_arr_index] += 2;
+                        valid_array[valid_arr_index].fitness += 2;
                     }
                 }
 
@@ -584,7 +575,7 @@ public abstract class BotClient extends Client {
                 //      -> Water in hex increases fitness, hover vehicles have an advantage in water areas
                 if(deployed_ent.getMovementMode() == IEntityMovementMode.HOVER){
                     if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WATER)){
-                        fitness[valid_arr_index] += 2;
+                        valid_array[valid_arr_index].fitness += 2;
                     }
                 }
 
@@ -595,55 +586,30 @@ public abstract class BotClient extends Client {
 
             if(deployed_ent instanceof Protomech){
                 if (game.getBoard().getHex(valid_array[valid_arr_index].x, valid_array[valid_arr_index].y).containsTerrain(Terrains.WOODS)){
-                    fitness[valid_arr_index] += 2;
+                    valid_array[valid_arr_index].fitness += 2;
                 }
             }
-            //   VTOL *PLACEHOLDER*
 
             // Record the highest fitness factor
 
-            if (fitness[valid_arr_index] > best_fitness){
-                best_fitness = fitness[valid_arr_index];
+            if (valid_array[valid_arr_index].fitness > best_fitness){
+                best_fitness = valid_array[valid_arr_index].fitness;
             }
         }
-
-        // For each valid deployment hex, find the first hex with the matching fitness factor
-        // The array has already been randomized
-        /*
-        fitness_count2 = 0;
-        for (valid_arr_index = 0; valid_arr_index < counter; valid_arr_index++){
-            if (fitness[valid_arr_index] == best_fitness){
-                highest_hex = valid_array[valid_arr_index];
-                valid_arr_index = fitness.length-1;
-            }
-        }
-        */
 
         // Now sort the valid array.
-        // Okay, this is gonna be INSANELY inefficient.
-        // That's mostly because we're using an annoying early version of Java.
-        // Once we get up to Java 1.5, we can streamline this like a bunch.
-        // Or just rewrite the damned function.
-        // FIXME
+        // We're just going to trust Java to not suck at this.
+        Arrays.sort(valid_array, new FitnessComparator());
 
-        boolean was_changed;
-        double temp_fitness;
-        do {
-            was_changed = false;
-            for (int x = 0; x < (valid_array.length - 1); x++){
-                if (fitness[x] < fitness[x + 1]){
-                    test_hex = valid_array[x+1];
-                    temp_fitness = fitness[x+1];
-                    valid_array[x+1] = valid_array[x];
-                    fitness[x+1] = fitness[x];
-                    valid_array[x] = test_hex;
-                    fitness[x] = temp_fitness;
-                    was_changed = true;
-                    break;
-                }
-            }
-        } while (was_changed == true);
         return valid_array;
+    }
+
+    class FitnessComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
+            Coords d1 = (Coords)o1;
+            Coords d2 = (Coords)o2;
+            return -1*Double.compare(d1.fitness, d2.fitness);
+        }
     }
 
     // Missile hits table

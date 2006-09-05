@@ -131,6 +131,11 @@ public class PunchAttackAction
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
         }
 
+        //Cannot punch with an arm that has an active shield on it.
+        if ( ae.hasActiveShield(armLoc) ){
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Cannot punch with shield in active mode");
+        }
+        
         //Set the base BTH
         int base = 4;
     

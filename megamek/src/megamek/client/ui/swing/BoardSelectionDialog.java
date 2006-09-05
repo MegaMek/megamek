@@ -20,8 +20,11 @@
 
 package megamek.client.ui.swing;
 
+import megamek.client.ui.AWT.Messages;
 import megamek.common.Board;
+import megamek.common.IBoard;
 import megamek.common.MapSettings;
+import megamek.common.util.BoardUtilities;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -45,6 +48,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.Enumeration;
 
 /**
@@ -90,6 +94,9 @@ public class BoardSelectionDialog
     private JLabel labButtonSpace = new JLabel("", JLabel.CENTER); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private JButton butPreview = new JButton(Messages.getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$
+    
+    private JDialog mapPreviewW;
 
     /**
      * Creates new BoardSelectionDialog
@@ -136,10 +143,19 @@ public class BoardSelectionDialog
 
         gridbag.setConstraints(panButtons, c);
         getContentPane().add(panButtons);
+        
+        mapPreviewW = new JDialog(this.client.frame, Messages.getString("BoardSelectionDialog.MapPreview"), false); //$NON-NLS-1$
+        
+        mapPreviewW.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
+        });
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
+                mapPreviewW.setVisible(false);
             }
         });
 
@@ -232,6 +248,7 @@ public class BoardSelectionDialog
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
         butRandomMap.addActionListener(this);
+        butPreview.addActionListener(this);
         
         // layout
         GridBagLayout gridbag = new GridBagLayout();
@@ -250,6 +267,9 @@ public class BoardSelectionDialog
 
         gridbag.setConstraints(butRandomMap, c);
         panButtons.add(butRandomMap);
+        
+        gridbag.setConstraints(butPreview, c);
+        panButtons.add(butPreview);
 
         c.weightx = 1.0;
         c.weighty = 1.0;
@@ -415,6 +435,28 @@ public class BoardSelectionDialog
 
         client.getClient().sendMapSettings(mapSettings);
         setVisible(false);
+        mapPreviewW.setVisible(false);
+    }
+    
+    public void previewBoard() {
+        String boardName = (String)lisBoardsAvailable.getSelectedValue();
+        if (lisBoardsAvailable.getSelectedIndex() > 2) {
+            IBoard board = new Board(new Integer(texBoardWidth.getText()), new Integer(texBoardHeight.getText()));
+            board.load(boardName+".board");
+            if (chkRotateBoard.isSelected()) {
+                BoardUtilities.flip(board, true, true);
+            }
+            MapPreview mapPreview = null;
+            try {
+                mapPreview = new MapPreview(mapPreviewW, board);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            mapPreviewW.removeAll();
+            mapPreviewW.add(mapPreview);
+            mapPreviewW.setVisible(true);
+            mapPreview.initializeMap();
+        }
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -431,6 +473,8 @@ public class BoardSelectionDialog
             setVisible(false);
         } else if (e.getSource().equals(butRandomMap)) {
             randomMapDialog.setVisible(true);
+        } else if (e.getSource().equals(butPreview)) {
+            previewBoard();
         } else if (e.getSource().equals(chkSelectAll)) {
             if (!chkSelectAll.isSelected()) {
                 lisBoardsSelected.setSelectedIndex(0);

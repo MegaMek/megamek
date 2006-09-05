@@ -3304,8 +3304,8 @@ public abstract class Mech
             
             EquipmentType type = m.getType();
             if (type instanceof MiscType && ((MiscType)type).isShield()) {
-                rate -= type.getDamageAbsorption(this,m.getLocation());
-                type.damageTaken++;
+                rate -= m.getDamageAbsorption(this,m.getLocation());
+                m.damageTaken++;
                 return Math.max(0,rate);
             }
         }

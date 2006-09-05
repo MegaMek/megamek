@@ -2491,6 +2491,9 @@ public abstract class Entity extends TurnOrdered
         if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
             return false;
         
+        if ( this.isShutDown() || ( this.getCrew().isKoThisRound() || this.getCrew().isUnconscious()) )
+            return false;
+        
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
             CriticalSlot cs = this.getCritical(location,slot);
             
@@ -2507,7 +2510,7 @@ public abstract class Entity extends TurnOrdered
             EquipmentType type = m.getType();
             if (type instanceof MiscType && ((MiscType)type).isShield()
                     && m.curMode().equals(MiscType.S_ACTIVE_SHIELD) ) {
-                return type.getCurrentDamageCapacity(this,m.getLocation()) > 0;
+                return m.getCurrentDamageCapacity(this,m.getLocation()) > 0;
             }
         }
         return false;
@@ -2547,6 +2550,9 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean hasPassiveShield(int location) {
         
+        if ( this.isShutDown() || ( this.getCrew().isKoThisRound() || this.getCrew().isUnconscious()) )
+            return false;
+        
         if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
             return false;
         
@@ -2566,7 +2572,7 @@ public abstract class Entity extends TurnOrdered
             EquipmentType type = m.getType();
             if (type instanceof MiscType && ((MiscType)type).isShield()
                     && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
-                return type.getCurrentDamageCapacity(this,m.getLocation()) > 0;
+                return m.getCurrentDamageCapacity(this,m.getLocation()) > 0;
             }
         }
         return false;
@@ -2594,8 +2600,11 @@ public abstract class Entity extends TurnOrdered
             Mounted m = this.getEquipment(cs.getIndex());
             EquipmentType type = m.getType();
             if (type instanceof MiscType && ((MiscType)type).isShield()
-                    && m.curMode().equals(MiscType.S_NO_SHIELD)) {
-                return type.getCurrentDamageCapacity(this,m.getLocation()) > 0;
+                    && ( m.curMode().equals(MiscType.S_NO_SHIELD) ||
+                        this.isShutDown() || //if he has a shield and the mek is SD or pilot KOed then it goes to no defense mode
+                        this.getCrew().isKoThisRound() || 
+                        this.getCrew().isUnconscious()) ) {
+                return m.getCurrentDamageCapacity(this,m.getLocation()) > 0;
             }
         }
         return false;

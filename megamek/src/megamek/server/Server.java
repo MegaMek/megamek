@@ -16468,9 +16468,9 @@ public class Server implements Runnable {
             vMyEntities.addAll(vAllEntities);
             for(Entity a:vMyEntities) {
                 for(Entity b:vMyEntities) {
-                    if(a.isEnemyOf(b) && Compute.canSee(game,a,b)) {
+                    if(a.isEnemyOf(b) && Compute.canSee(game,b,a)) {
                         vCanSee.add(a);
-                        vCanSee.add(b);
+                        break;
                     }
                 }
             }

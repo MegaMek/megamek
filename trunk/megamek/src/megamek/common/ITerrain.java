@@ -59,8 +59,8 @@ public interface ITerrain {
     
     /**
      * Sets the exit in specified direction
-     * @param direction
-     * @param connection
+     * @param direction - the direction to add/remove the exit
+     * @param connection - true to add, false to remove
      */
     public abstract void setExit(int direction, boolean connection);
     

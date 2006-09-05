@@ -15,6 +15,13 @@ information on the board file format, and the tileset file format.
     data/boards directory, and with the .board extention, when determining which 
     boards to load.  This means you should add a .board extention to all your
     filenames when saving.
+    
+  Quick Reference:
+  Left mouse button - paint terrain onto the board without changing elevation
+  CTRL + left mouse - paint terrain onto the board and update elevation
+  SHIFT + left mouse - add terrain from the work area to the board. (This is useful
+                       to add roads to a map on top of existing terrain)
+  ALT + left mouse - copy terrain from board to the work area
 
   The Hex Work Area
     Along the right side of the screen, above the save/load buttons, there are
@@ -23,12 +30,10 @@ information on the board file format, and the tileset file format.
     present in the working hex, and controls to remove, add, or adjust terrain.
 
     The working hex exists in a zone outside the map.  To apply your hex to the
-    map, place the cursor (outline) on the hex you wish to change, and press
-    the Ctrl key.  Make sure the keyboard focus is on the board (you may need
-    to click it again with the mouse) before you hit Ctrl.  To load a hex from
-    the board into the work area, put the cursor on a hex and hit Alt (may be
-    different on other computers.)  To make a small change to a single hex on
-    the board, you will need to load the hex into the work area, edit it, and
+    map, hold the Ctrl key, then click the hex on the board you want to change.
+    To load a hex from the board into the work area, hold the Alt key, then click
+    the hex on the board you want to copy.  To make a small change to a single hex
+    on the board, you will need to load the hex into the work area, edit it, and
     then place it back on the map.  For efficient use, use the working hex like 
     a paintbrush to change all the applicable terrain of one type before moving
     to another type of terrain.
@@ -108,7 +113,7 @@ information on the board file format, and the tileset file format.
         road: 1
         fire: 1
         smoke: 1
-        swamp: 1 (not functional in v0.29)
+        swamp: 1 
         building: 1-4; 1 = light ... 4 = hardened
         bldg_cf: 0-150; defaults to 15, 40, 90, or 120 if not specified
         bldg_elev: 1+; you must supply a number if a building is supplied.
@@ -118,6 +123,21 @@ information on the board file format, and the tileset file format.
         bridge_cf: 0-150; defaults to 15, 40, 90, or 120 if not specified
         bridge_elev: any; surface of the bridge, defaults to 0 if not present
         fluff: 1-9; see the notes above.
+        arms: 1-2; blown off limbs
+        legs: 1-2; blown off limbs
+        ice: 1; combine with water to make "thin ice"
+        fortified: 1
+        geyser: 1-3; 1 is dormant, 2 is active, 3 is a magma vent
+        magma: 1-2; 1 is crust, 2 is liquid
+        jungle: 1-3; as woods
+        mud: 1-2; normal/deep
+        rapids: 1
+        sand: 1
+        snow: 1
+        tundra: 1
+        impassable: 1; this prevents units entering or deploying, e.g. for underground
+        elevator: (any); each exit corresponds to a die roll it will move on, and the 
+                         terrain level is the new elevation after it moves.
         
     Future additions may include ice, as well as some of the terrain present in
     the Maximum Tech sourcebook (jungle, magma, etc.)

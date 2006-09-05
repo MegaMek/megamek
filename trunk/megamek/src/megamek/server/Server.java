@@ -10359,6 +10359,10 @@ public class Server implements Runnable {
         // restore club attack
         caa.getClub().restore();
 
+        //Shield bash causes 1 point of damage to the shield
+        if ( ((MiscType)caa.getClub().getType()).isShield() )
+            ((Mech)ae).shieldAbsorptionDamage(1,caa.getClub().getLocation(),false);
+            
         if (lastEntityId != caa.getEntityId()) {
             //who is making the attacks
             r = new Report(4005);

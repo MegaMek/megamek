@@ -43,6 +43,8 @@ public class Coords
     public int            x;
     public int            y;
 
+    public double         fitness = 0; // Included for the bot.
+
     /**
      * Allow at most 30 boards (510 hexes) in the 'y' direction.
      */

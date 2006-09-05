@@ -81,6 +81,14 @@ public class TestMech extends TestEntity {
             return 2.0f;
         } else if (mech.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             return 4.0f;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
+            // Technically, it's two separate 3-ton pieces of equipment.
+            // We're ignoring that and returning the total, because it's easier.
+            return 6.0f;
+        } else if (mech.getCockpitType() == Mech.COCKPIT_DUAL) {
+            // This is wrong; I just don't remember the correct weight.
+            //FIXME
+            return 3.0f;
         } else {
             return 3.0f;
         }

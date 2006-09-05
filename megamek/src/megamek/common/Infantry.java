@@ -886,10 +886,10 @@ public class Infantry
     }
 
     public boolean doomedInVacuum() {
-        // FIXME
         // We're assuming that infantry have environmental suits of some sort.
         // Vac suits, battle armor, whatever.
         // This isn't necessarily a true assumption.
+        // FIXME
         return false;
     }
 

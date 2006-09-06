@@ -11,6 +11,8 @@ v0.31.14-dev (SVN)
 + Added board preview to Swing UI.
 + Bug 1430249: infantry take double damage from minefield in woods, when moving
   from clear terrain into woods
++ Bug 1365757: Golem BA : ACs fires wrong
+  (note this fix includes an updated golem.blk unit file)
 
 v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen

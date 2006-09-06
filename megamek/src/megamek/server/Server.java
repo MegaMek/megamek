@@ -4672,7 +4672,8 @@ public class Server implements Runnable {
         doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false, entity.getElevation());
 
         // should we give another turn to the entity to keep moving?
-        if (fellDuringMovement && !turnOver && entity.mpUsed < entity.getRunMP()
+        if (!game.getOptions().booleanOption("falls_end_movement") // Not if this option is set
+        && fellDuringMovement && !turnOver && entity.mpUsed < entity.getRunMP()
         && entity.isSelectableThisTurn() && !entity.isDoomed()) {
             entity.applyDamage();
             entity.setDone(false);
@@ -8405,7 +8406,8 @@ public class Server implements Runnable {
         if (bGlancing && !wtype.hasFlag(WeaponType.F_MISSILE) && !wtype.hasFlag(WeaponType.F_MISSILE_HITS)
                 && !(usesAmmo
                 && (atype.getAmmoType() == AmmoType.T_AC_LBX
-                || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                || atype.getAmmoType() == AmmoType.T_AC_LBX_THB
+                || atype.getAmmoType() == AmmoType.T_MPOD)
                 && atype.getMunitionType() == AmmoType.M_CLUSTER)) {
             nDamPerHit = (int)Math.floor(nDamPerHit/2.0);
         }

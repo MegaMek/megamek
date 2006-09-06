@@ -843,9 +843,20 @@ public class Protomech extends Entity implements Serializable {
 		vDesc.addElement(r);
 		vDesc.addAll(crew.getDescVector(true));
 		r = new Report(7070, Report.PUBLIC);
-		r.newlines = 2;
 		r.add(getKillNumber());
 		vDesc.addElement(r);
+        
+        if(isDestroyed()) {
+            Entity killer = game.getEntity(killerId);
+            if(killer != null) {
+                r = new Report(7072, Report.PUBLIC);
+                r.addDesc(killer);
+            } else {
+                r = new Report(7073, Report.PUBLIC);
+            }
+            vDesc.addElement(r);
+        }
+        r.newlines = 2;
 
 		return vDesc;
 	}

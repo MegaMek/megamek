@@ -167,7 +167,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"armed_mechwarriors", false); //$NON-NLS-1$
         addOption(ruleBreakers,"auto_abandon_unit", false); //$NON-NLS-1$
         addOption(ruleBreakers,"no_ignite_clear", false); //$NON-NLS-1$
-        addOption(ruleBreakers,"falls_end_movement", false); // What this patch is all about
+        addOption(ruleBreakers,"falls_end_movement", false); //$NON-NLS-1$
     }
 
     public Vector loadOptions() {

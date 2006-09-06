@@ -658,84 +658,84 @@ public class Game implements Serializable, IGame
     }
 
     public void setDeploymentComplete(boolean deploymentComplete) {
-      this.deploymentComplete = deploymentComplete;
+        this.deploymentComplete = deploymentComplete;
     }
-
+    
     public boolean isDeploymentComplete() {
-      return deploymentComplete;
+        return deploymentComplete;
     }
-
-  /**
-   * Sets up up the hashtable of who deploys when
-   */
+    
+    /**
+     * Sets up up the hashtable of who deploys when
+     */
     public void setupRoundDeployment() {
-      deploymentTable = new Hashtable();
-
-      for ( int i = 0; i < entities.size(); i++ ) {
-        Entity ent = (Entity)entities.elementAt(i);
-        if (ent.isDeployed()) {
-            continue;
+        deploymentTable = new Hashtable();
+        
+        for ( int i = 0; i < entities.size(); i++ ) {
+            Entity ent = (Entity)entities.elementAt(i);
+            if (ent.isDeployed()) {
+                continue;
+            }
+            
+            Vector roundVec = (Vector)deploymentTable.get(new Integer(ent.getDeployRound()));
+            
+            if ( null == roundVec ) {
+                roundVec = new Vector();
+                deploymentTable.put(new Integer(ent.getDeployRound()), roundVec);
+            }
+            
+            roundVec.addElement(ent);
+            lastDeploymentRound = Math.max(lastDeploymentRound, ent.getDeployRound());
         }
-
-        Vector roundVec = (Vector)deploymentTable.get(new Integer(ent.getDeployRound()));
-
-        if ( null == roundVec ) {
-          roundVec = new Vector();
-          deploymentTable.put(new Integer(ent.getDeployRound()), roundVec);
-        }
-
-        roundVec.addElement(ent);
-        lastDeploymentRound = Math.max(lastDeploymentRound, ent.getDeployRound());
-      }
     }
-
-  /**
-   * Checks to see if we've past our deployment completion
-   */
+    
+    /**
+     * Checks to see if we've past our deployment completion
+     */
     public void checkForCompleteDeployment() {
-      setDeploymentComplete(lastDeploymentRound < getRoundCount());
+        setDeploymentComplete(lastDeploymentRound < getRoundCount());
     }
-
-   /**
-    * Check to see if we should deploy this round
-    */
+    
+    /**
+     * Check to see if we should deploy this round
+     */
     public boolean shouldDeployThisRound() {
-      return shouldDeployForRound(getRoundCount());
+        return shouldDeployForRound(getRoundCount());
     }
-
+    
     public boolean shouldDeployForRound(int round) {
-      Vector vec = getEntitiesToDeployForRound(round);
-
-      return ( ((null == vec) || (vec.size() == 0)) ? false : true);
+        Vector vec = getEntitiesToDeployForRound(round);
+        
+        return ( ((null == vec) || (vec.size() == 0)) ? false : true);
     }
-
+    
     private Vector getEntitiesToDeployForRound(int round) {
-      return (Vector)deploymentTable.get(new Integer(round));
+        return (Vector)deploymentTable.get(new Integer(round));
     }
-
-   /**
-    * Clear this round from this list of entities to deploy
-    */
+    
+    /**
+     * Clear this round from this list of entities to deploy
+     */
     public void clearDeploymentThisRound() {
-      deploymentTable.remove(new Integer(getRoundCount()));
+        deploymentTable.remove(new Integer(getRoundCount()));
     }
 
    /**
     * Returns a vector of entities that have not yet deployed
     */
     public Vector getUndeployedEntities() {
-      Vector entList = new Vector();
-      Enumeration iter = deploymentTable.elements();
-
-      while ( iter.hasMoreElements() ) {
-        Vector vecTemp = (Vector)iter.nextElement();
-
-        for ( int i = 0; i < vecTemp.size(); i++ ) {
-          entList.addElement(vecTemp.elementAt(i));
+        Vector entList = new Vector();
+        Enumeration iter = deploymentTable.elements();
+        
+        while ( iter.hasMoreElements() ) {
+            Vector vecTemp = (Vector)iter.nextElement();
+            
+            for ( int i = 0; i < vecTemp.size(); i++ ) {
+                entList.addElement(vecTemp.elementAt(i));
+            }
         }
-      }
-
-      return entList;
+        
+        return entList;
     }
 
     /**

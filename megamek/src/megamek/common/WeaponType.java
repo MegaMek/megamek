@@ -541,6 +541,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createBAMineLauncher());
 
         EquipmentType.addType(createBABearhunterAC());
+        EquipmentType.addType(createBATwinBearhunterAC());
         EquipmentType.addType(createBACLMediumPulseLaser());
         EquipmentType.addType(createBAIncendiaryNeedler());
         EquipmentType.addType(createBALightRecRifle());
@@ -7970,6 +7971,31 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC;
+
+        return weapon;
+    }
+
+    public static WeaponType createBATwinBearhunterAC() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Twin Bearhunter ACs";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-Twin Bearhunter Superheavy ACs");
+        weapon.heat = 0;
+        weapon.toHitModifier = 1;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 0;
+        weapon.mediumRange = 1;
+        weapon.longRange = 2;
+        weapon.extremeRange = 2;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_NO_FIRES | F_BALLISTIC | F_DOUBLE_HITS;
 
         return weapon;
     }

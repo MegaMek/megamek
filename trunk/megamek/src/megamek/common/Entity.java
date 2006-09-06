@@ -125,7 +125,7 @@ public abstract class Entity extends TurnOrdered
 
     public boolean              spotting;
     private boolean             clearingMinefield = false;
-    private int                 killerId = Entity.NONE;
+    protected int               killerId = Entity.NONE;
     private int                 offBoardDistance = 0;
     private int                 offBoardDirection = IOffBoardDirections.NONE;
     private int                 retreatedDirection = IOffBoardDirections.NONE;

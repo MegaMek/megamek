@@ -14055,6 +14055,11 @@ public class Server implements Runnable {
         
         while (entitiesInCrater.hasMoreElements()) {
             Entity entity = (Entity)entitiesInCrater.nextElement();
+            
+            // loaded units don't have a position,
+            // so we don't count 'em here
+            if (entity.getTransportId() != Entity.NONE)
+                continue;
 
             // If it's too far away for this...
             if (position.distance(entity.getPosition()) >= range)

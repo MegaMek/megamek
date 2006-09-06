@@ -13,6 +13,7 @@ v0.31.14-dev (SVN)
   from clear terrain into woods
 + Bug 1365757: Golem BA : ACs fires wrong
   (note this fix includes an updated golem.blk unit file)
++ Show in victory report who killed each dead unit
 
 v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen

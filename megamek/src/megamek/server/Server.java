@@ -9190,7 +9190,6 @@ public class Server implements Runnable {
                     }
                 }
                 hits -= nCluster;
-                creditKill(entityTarget, ae);
             } else {
                 System.err.println("Unable to resolve hit against "+target.getDisplayName());
                 if(entityTarget == null) {
@@ -9242,6 +9241,7 @@ public class Server implements Runnable {
             }
         }
 
+        creditKill(entityTarget, ae);
         return !bMissed;
     }
 

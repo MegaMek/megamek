@@ -17,6 +17,12 @@ v0.31.14-dev (SVN)
 + RFE 1550948: Option to have falls end movement
 + Patch 1553164: MPOD Bug Fix
 + Bug 1552980: Problem with nukes and infantry carriers
++ Bug 1433534: Units always enter buildings on ground level
++ infantry/BA can now jump into buildings per BMR clarification/TW book
+  (first jump into the hex, then use the up/down controls to select floor)
++ Jumping out of a building now requires a PSR to avoid damage as it should
++ Updated the readme to explain how to move in cities, mention GCJ and move 
+  MS java to unsupported/won't work.
 
 v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen

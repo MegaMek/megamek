@@ -270,8 +270,15 @@ public class MoveStep implements Serializable {
             setElevation(1 + Math.max(entity.elevationOccupied(game.getBoard().getHex(prev.getPosition())), entity.elevationOccupied(game.getBoard().getHex(getPosition()))));
         } else if (parent.isJumping()) {
             IHex hex = game.getBoard().getHex(getPosition());
-            setElevation(Math.max(-hex.depth(), hex.terrainLevel(Terrains.BLDG_ELEV)));
-            if(climbMode()) {
+            int maxElevation = entity.getJumpMP() + entity.getElevation() + game.getBoard().getHex(entity.getPosition()).surface() - hex.surface();
+            int building = hex.terrainLevel(Terrains.BLDG_ELEV);
+            if(entity instanceof Infantry) {
+                //infantry can jump into a building
+                setElevation(Math.max(-hex.depth(), Math.min(building,maxElevation)));
+            } else {
+                setElevation(Math.max(-hex.depth(), building));
+            }
+            if(climbMode() && maxElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
                 setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BRIDGE_ELEV)));
             }
         } else {
@@ -404,11 +411,11 @@ public class MoveStep implements Serializable {
                 break;
             case MovePath.STEP_UP :
                 setElevation(elevation+1);
-                setMp(1);
+                setMp(parent.isJumping()?0:1);
                 break;
             case MovePath.STEP_DOWN : 
                 setElevation(elevation-1);
-                setMp(1);
+                setMp(parent.isJumping()?0:1);
                 break;
             case MovePath.STEP_HULL_DOWN :
                 setMp(2);
@@ -1006,7 +1013,7 @@ public class MoveStep implements Serializable {
                 movementType = IEntityMovementType.MOVE_WALK;
             }
         }
-
+        
         int tmpWalkMP = entity.getWalkMP();
         
         if ( parent.getEntity().getMovementMode() == IEntityMovementMode.BIPED_SWIM
@@ -1538,6 +1545,15 @@ public class MoveStep implements Serializable {
             }                
         }
 
+        //Jumping into a building hex below the roof ends the move
+        //assume this applies also to sylph vtol movement
+        if(!(src.equals(dest)) &&
+                src != entity.getPosition() &&
+                (parent.isJumping() || entity.getMovementMode() == IEntityMovementMode.VTOL) &&
+                srcEl < srcHex.terrainLevel(Terrains.BLDG_ELEV)) {
+            return false;
+        }
+
         // If we are *in* restricted terrain, we can only leave via roads.
         if ( movementType != IEntityMovementType.MOVE_JUMP
              && movementType != IEntityMovementType.MOVE_VTOL_WALK
@@ -1605,6 +1621,7 @@ public class MoveStep implements Serializable {
             this.isUsingMASC == other.isUsingMASC &&
             this.targetNumberMASC == other.targetNumberMASC &&
             this.isPavementStep == other.isPavementStep &&
+            this.elevation == other.elevation &&
             this.isLegalEndPos() &&
             other.isLegalEndPos() ) {
             reuse = true;

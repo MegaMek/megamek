@@ -776,6 +776,10 @@ public abstract class Entity extends TurnOrdered
                         || retVal > bldnex) {
                     retVal = bldnex;
                 }
+                else if(bldnex + next.surface() > bldcur + current.surface()) {
+                    retVal += current.surface();
+                    retVal -= next.surface();
+                }
             }
             if((getMovementMode() != IEntityMovementMode.NAVAL)
                     && (getMovementMode() != IEntityMovementMode.HYDROFOIL)
@@ -893,10 +897,17 @@ public abstract class Entity extends TurnOrdered
     public boolean isElevationValid(int assumedElevation, IHex hex) {
         int altitude = assumedElevation + hex.surface();
         if(getMovementMode() == IEntityMovementMode.VTOL) {
-            if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER) || hex.containsTerrain(Terrains.JUNGLE)) {
+            if(this instanceof Infantry &&
+                    (hex.containsTerrain(Terrains.BUILDING) ||
+                     hex.containsTerrain(Terrains.WOODS) ||
+                     hex.containsTerrain(Terrains.JUNGLE))) {
+                //VTOL BA (sylph) can move as ground unit as well
+                return (assumedElevation <=50 && altitude >= hex.floor());
+            }
+            else if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.WATER) || hex.containsTerrain(Terrains.JUNGLE)) {
                 return (assumedElevation <=50 && altitude > hex.ceiling());
             }
-			return (assumedElevation <=50 && altitude >= hex.ceiling());
+            return (assumedElevation <=50 && altitude >= hex.ceiling());
         } else if (getMovementMode() == IEntityMovementMode.SUBMARINE
                 || (getMovementMode() == IEntityMovementMode.QUAD_SWIM&& hasUMU())
                 || (getMovementMode() == IEntityMovementMode.BIPED_SWIM&& hasUMU())) {
@@ -3961,15 +3972,16 @@ public abstract class Entity extends TurnOrdered
         IHex curHex = game.getBoard().getHex(curPos);
         IHex prevHex = game.getBoard().getHex(prevPos);
         // ineligable because of movement type or unit type
-        if(this instanceof Infantry || this instanceof Protomech || step.getMovementType() == IEntityMovementType.MOVE_JUMP)
+        if(this instanceof Infantry || this instanceof Protomech)
             return 0;
         
         int rv = 0;
         //check current hex for building
         if (step.getElevation()<curHex.terrainLevel(Terrains.BLDG_ELEV)) {
             rv += 2;
-        } else if (step.getElevation()==curHex.terrainLevel(Terrains.BLDG_ELEV)
-                || step.getElevation()==curHex.terrainLevel(Terrains.BRIDGE_ELEV)) {
+        } else if ((step.getElevation()==curHex.terrainLevel(Terrains.BLDG_ELEV)
+                || step.getElevation()==curHex.terrainLevel(Terrains.BRIDGE_ELEV))
+                && step.getMovementType() != IEntityMovementType.MOVE_JUMP) {
             rv += 4;
         }
         //check previous hex for building

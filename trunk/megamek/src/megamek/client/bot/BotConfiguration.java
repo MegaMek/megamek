@@ -35,8 +35,10 @@ public class BotConfiguration {
     
     public boolean isDebug() {
         try {
-            boolean result = Boolean.parseBoolean(BotProperties.getProperty("Debug", "false"));
-            return result;
+            if("true".equalsIgnoreCase(BotProperties.getProperty("Debug", "false"))) {
+                return true;
+            }
+            return false;
         } catch (Exception e) {
             return false;
         }

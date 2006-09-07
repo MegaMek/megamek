@@ -57,20 +57,21 @@ VM, here are some links.
 Sun Java (Linux, Solaris, Windows):
 http://java.sun.com/j2se/downloads.html
 
-Microsoft VM (Windows):
-Microsoft no longer makes their VM available for seperate download.
-Installing Windows XP SP1 should do the trick.  If you don't have Windows
-XP, and still want to use the MS VM, then please ask for help on the
-forum (http://sourceforge.net/forum/forum.php?forum_id=154580).  Keep
-in mind that you should be able to use Sun's Java VM (above) as an
-alternative since they have a windows version available.
-
 Mac OSX 10.1 and above:
 Java updates are included in OS updates for 10.1 and above.  There is no
 external way to update your Java VM.
 
 Earlier Mac OS versions:
 http://developer.apple.com/java/download.html
+
+GCJ/Gnu classpath (Linux):
+Of interest to experienced developers, there may be some
+compatibility problems.
+http://gcc.gnu.org/java/
+
+Microsoft VM (Windows):
+Microsoft no longer makes their VM available for seperate download.
+This version of MegaMek uses features not supported by the Microsoft JVM.
 
 IBM VM:
 MegaMek seems to react badly to this VM - it is not recommended.
@@ -250,6 +251,24 @@ dislodged into a Level 1 or deeper water hex.  Infantry dislodged in the
 Movement Phase can not move or fire for the rest of the turn.  Swarming units
 can not move off of their target Mek until they use the Stop Swarm action in
 the Weapons Fire Phase.
+
+VTOLs and VTOL BA use the "go up" and "go down" buttons to change 
+elevation (flight level).
+
+Movement around structures (buildings/bridges) is a little more complicated, because
+of the different floors a unit can occupy.  The "climb mode" button sets your current
+preference.  "Go thru" means you prefer to go under bridges or through the walls of
+buildings, if there is a choice.  "Climb up" means you prefer to climb on top of 
+structures when possible.  You can change mode multiple times during your movement,
+for example a stormcrow prime could use "climb up" to go over a heavy building to save
+MP, then change to "go thru" to pass a light building that won't support its weight.
+
+Infantry can move up and down inside buildings using the stairs.  This is accomplished
+by using the "go up" and "go down" buttons.
+Also, infantry that jump into a building can use the "go up" and "go down" buttons to
+choose which floor to jump through the window of.  Click the building hex you want to jump
+into first, and the game will pick the highest floor you can reach (or the roof).  Then use
+the "go down" button to select a lower floor if you want to.
 
 The Esc key clears all current movement.
 

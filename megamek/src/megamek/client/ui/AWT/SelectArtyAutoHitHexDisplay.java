@@ -114,11 +114,12 @@ public class SelectArtyAutoHitHexDisplay
      */
     private void beginMyTurn() {
         setArtyEnabled(5);
+        clientgui.bv.markDeploymentHexesFor(p);
         butDone.setEnabled(true);
     }
 
     /**
-     * Clears out old deployment data and disables relevant buttons.
+     * Clears out old data and disables relevant buttons.
      */
     private void endMyTurn() {
         // end my turn, then.

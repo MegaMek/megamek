@@ -291,6 +291,7 @@ public class MoveStep implements Serializable {
         if (!isPavementStep()
                 && destHex.terrainLevel(Terrains.WATER) > 0
                 && !(destHex.containsTerrain(Terrains.ICE) && elevation >= 0)
+                && !(destHex.terrainLevel(Terrains.BRIDGE_ELEV) == elevation)
                 && entity.getMovementMode() != IEntityMovementMode.HOVER
                 && entity.getMovementMode() != IEntityMovementMode.NAVAL
                 && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL

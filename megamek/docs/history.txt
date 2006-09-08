@@ -24,6 +24,7 @@ v0.31.14-dev (SVN)
 + Updated the readme to explain how to move in cities, mention GCJ and move 
   MS java to unsupported/won't work.
 + Hilight deployment zone during artillery-autohithex-selection.
++ Bug 1468767: No displacement after Accidential DFA
 
 v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen

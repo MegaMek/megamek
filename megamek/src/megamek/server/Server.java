@@ -5651,7 +5651,11 @@ public class Server implements Runnable {
         final IHex destHex = game.getBoard().getHex(dest);
         final int srcHeightAboveFloor = entity.getElevation() + srcHex.depth();
         final int fallElevation = Math.max(0, srcHex.floor() + srcHeightAboveFloor - destHex.floor());
-        int direction = src.direction(dest);
+        int direction;
+        if(src.equals(dest))
+            direction = Compute.d6()-1;
+        else
+            direction = src.direction(dest);
         Report r;
         // check entity in target hex
         Entity affaTarget = game.getAffaTarget(dest, entity);
@@ -17795,25 +17799,24 @@ public class Server implements Runnable {
     }
 
     private boolean checkBuildingCollapseWhileMoving(Building bldg, Entity entity, Coords curPos) {
+        Coords oldPos = entity.getPosition();
+        // Count the moving entity in its current position, not
+        // its pre-move postition.  Be sure to handle nulls.
+        entity.setPosition(curPos);
+
         // Get the position map of all entities in the game.
         Hashtable positionMap = game.getPositionMap();
 
-        // Count the moving entity in its current position, not
-        // its pre-move postition.  Be sure to handle nulls.
-        Vector entities = null;
-        if ( entity.getPosition() != null ) {
-            entities = (Vector) positionMap.get( entity.getPosition() );
-            entities.removeElement( entity );
-        }
-        entities = (Vector) positionMap.get( curPos );
-        if ( entities == null ) {
-            entities = new Vector();
-            positionMap.put( curPos, entities );
-        }
-        entities.addElement( entity );
-
         // Check for collapse of this building due to overloading, and return.
-        return checkForCollapse( bldg, positionMap );
+        boolean rv=checkForCollapse( bldg, positionMap );
+        
+        //If the entity was not displaced and didnt fall, move it back where it was
+        if(curPos.equals(entity.getPosition())
+                && !entity.isProne()) {
+            entity.setPosition(oldPos);
+        }
+        
+        return rv;
     }
 
     /**

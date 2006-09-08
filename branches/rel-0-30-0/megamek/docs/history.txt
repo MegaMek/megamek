@@ -1,6 +1,6 @@
 VERSION HISTORY:
 ----------------
-v0.30.11 (CVS)
+v0.30.11 (2006-09-08, 21:56 GMT +2)
 + Bug 1461254: Push against Push
 + Removed JRE1.5 APIs
 + Bug 1464952/1298206: purifier's mimetic armour now cancels jump

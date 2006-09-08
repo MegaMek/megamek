@@ -2291,8 +2291,9 @@ public abstract class Mech
             //FIXME
             cockpitCost = 0;
         } else if (getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
-            //FIXME
-            cockpitCost = 0;
+            // Command Consoles are listed as a cost of 500,000.
+            // That appears to be in addition to the primary cockpit.
+            cockpitCost = 700000;
         } else if (getCockpitType() == Mech.COCKPIT_SMALL) {
             cockpitCost = 175000;
         } else {

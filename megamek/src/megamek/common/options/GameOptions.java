@@ -84,6 +84,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level2,"vacuum", false); //$NON-NLS-1$
         addOption(level2,"night_battle", false); //$NON-NLS-1$
         addOption(level2,"assault_drop", false); //$NON-NLS-1$
+        addOption(level2,"hidden_units", false); //$NON-NLS-1$
         
         OptionGroup level3 = addGroup("level3"); //$NON-NLS-1$
         addOption(level3,"allow_nukes",false);

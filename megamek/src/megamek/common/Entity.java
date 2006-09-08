@@ -162,6 +162,8 @@ public abstract class Entity extends TurnOrdered
 
     protected int               movementMode  = IEntityMovementMode.NONE;
 
+    protected boolean           isHidden = false;
+
     /**
      * The components of this entity that can transport other entities.
      */
@@ -5764,4 +5766,12 @@ public abstract class Entity extends TurnOrdered
     }
 
     public abstract boolean isNuclearHardened();
+
+    public void setHidden(boolean inVal) {
+        isHidden = inVal;
+    }
+
+    public boolean isHidden() {
+        return isHidden;
+    }
 }

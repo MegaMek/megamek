@@ -16332,7 +16332,7 @@ public class Server implements Runnable {
 
     private void entityUpdate(int nEntityID, Vector movePath) {
         Entity eTarget = game.getEntity(nEntityID);
-        if(eTarget == null) {
+        if (eTarget == null) {
             if(game.getOutOfGameEntity(nEntityID) != null) {
                 System.err.print("S: attempted to send entity update for out of game entity, id was ");
                 System.err.println(nEntityID);
@@ -16340,11 +16340,15 @@ public class Server implements Runnable {
                 System.err.print("S: attempted to send entity update for null entity, id was ");
                 System.err.println(nEntityID);
             }
+
             return; //do not send the update it will crash the client
         }
+
+        // If we're doing double blind, be careful who can see it...
         if (doBlind()) {
             Vector vPlayers = game.getPlayersVector();
             Vector vCanSee = whoCanSee(eTarget);
+
             // send an entity update to everyone who can see
             Packet pack = createEntityPacket(nEntityID, movePath);
             for (int x = 0; x < vCanSee.size(); x++) {
@@ -16352,17 +16356,16 @@ public class Server implements Runnable {
                 send(p.getId(), pack);
             }
             // send an entity delete to everyone else
-            pack = createRemoveEntityPacket( nEntityID,
-                                             eTarget.getRemovalCondition() );
+            pack = createRemoveEntityPacket(nEntityID,
+                                             eTarget.getRemovalCondition());
             for (int x = 0; x < vPlayers.size(); x++) {
                 if (!vCanSee.contains(vPlayers.elementAt(x))) {
                     Player p = (Player)vPlayers.elementAt(x);
                     send(p.getId(), pack);
                 }
             }
-        }
-        else {
-            // everyone can see
+        } else {
+            // But if we're not, then everyone can see.
             send(createEntityPacket(nEntityID, movePath));
         }
     }
@@ -16385,6 +16388,7 @@ public class Server implements Runnable {
             addTeammates(vCanSee, entity.getOwner());
         }
 
+        // Deal with players who can see all.
         for (Enumeration p = game.getPlayers(); p.hasMoreElements();) {
             Player player = (Player)p.nextElement();
 
@@ -16392,22 +16396,28 @@ public class Server implements Runnable {
                 vCanSee.addElement(player);
         }
 
-        for (int i = 0; i < vEntities.size(); i++) {
-            Entity e = (Entity)vEntities.elementAt(i);
-            if (vCanSee.contains(e.getOwner()) || !e.isActive()) {
-                continue;
-            }
-            if(e.isOffBoard()) {
-                continue; //Off board units should not spot on board units
-            }
-            if (Compute.canSee(game, e, entity)) {
-                vCanSee.addElement(e.getOwner());
-                if (bTeamVision) {
-                    addTeammates(vCanSee, e.getOwner());
+        // If the entity is hidden, skip this; noone else will be able to see it.
+        if (!entity.isHidden()) {
+            for (int i = 0; i < vEntities.size(); i++) {
+                Entity e = (Entity)vEntities.elementAt(i);
+                if (vCanSee.contains(e.getOwner()) || !e.isActive()) {
+                    continue;
                 }
-                addObservers(vCanSee);
+    
+                //Off board units should not spot on board units
+                if (e.isOffBoard()) {
+                    continue;
+                }
+                if (Compute.canSee(game, e, entity)) {
+                    vCanSee.addElement(e.getOwner());
+                    if (bTeamVision) {
+                        addTeammates(vCanSee, e.getOwner());
+                    }
+                    addObservers(vCanSee);
+                }
             }
         }
+
         return vCanSee;
     }
 
@@ -16460,16 +16470,18 @@ public class Server implements Runnable {
      * If double_blind is in effect, enforce it by filtering the entities
      */
     private void entityAllUpdate() {
+        // If double-blind is in effect, filter each players' list individually, and then quit out...
         if (doBlind()) {
             Vector vPlayers = game.getPlayersVector();
             for (int x = 0; x < vPlayers.size(); x++) {
                 Player p = (Player)vPlayers.elementAt(x);
                 send(p.getId(), createFilteredEntitiesPacket(p));
             }
+            return;
         }
-        else {
-            send(createEntitiesPacket());
-        }
+
+        // Otherwise, send the full list.
+        send(createEntitiesPacket());
     }
 
 
@@ -16478,20 +16490,21 @@ public class Server implements Runnable {
      */
     private Vector filterEntities(Player pViewer, Vector vEntities) {
         Vector<Entity> vCanSee = new Vector();
-        Vector<Entity> vAllEntities = game.getEntitiesVector();
         Vector<Entity> vMyEntities = new Vector();
+        Vector<Entity> vAllEntities = game.getEntitiesVector();
         boolean bTeamVision = game.getOptions().booleanOption("team_vision");
 
         // If they can see all, return the input list
         if (pViewer.canSeeAll()) {
             return vEntities;
         }
-        
-        if(pViewer.isObserver()) {
+
+        // If they're an observer, they can see anything seen by any enemy.
+        if (pViewer.isObserver()) {
             vMyEntities.addAll(vAllEntities);
-            for(Entity a:vMyEntities) {
+            for (Entity a:vMyEntities) {
                 for(Entity b:vMyEntities) {
-                    if(a.isEnemyOf(b) && Compute.canSee(game,b,a)) {
+                    if (a.isEnemyOf(b) && Compute.canSee(game,b,a)) {
                         vCanSee.add(a);
                         break;
                     }
@@ -16500,6 +16513,7 @@ public class Server implements Runnable {
             return vCanSee;
         }
 
+        // If they aren't an observer and can't see all, create the list of "friendly" units.
         for (int x = 0; x < vAllEntities.size(); x++) {
             Entity e = vAllEntities.elementAt(x);
             if (e.getOwner() == pViewer || bTeamVision && !e.getOwner().isEnemyOf(pViewer)) {
@@ -16507,32 +16521,49 @@ public class Server implements Runnable {
             }
         }
 
+        // Then, break down the list by whether they're friendly,
+        // or whether or not any friendly unit can see them.
         for (int x = 0; x < vEntities.size(); x++) {
             Entity e = (Entity)vEntities.elementAt(x);
+
+            // If it's their own unit, obviously, they can see it.
             if (vMyEntities.contains(e)) {
                 vCanSee.addElement(e);
                 continue;
+            } else if (e.isHidden()) {
+                // If it's NOT friendly and is hidden, they can't see it, period.
+                // LOS doesn't matter.
+                continue;
             }
+
             for (int y = 0; y < vMyEntities.size(); y++) {
                 Entity e2 = vMyEntities.elementAt(y);
-                if(e2.isOffBoard()) {
+
+                // If they're off-board, skip it; they can't see anything.
+                if (e2.isOffBoard()) {
                     continue;
                 }
+
+                // Otherwise, if they can see the entity in question...
                 if (Compute.canSee(game, e2, e)) {
                     vCanSee.addElement(e);
                     break;
                 }
             }
         }
+
         return vCanSee;
     }
 
-    //optimize and document me
+    //FIXME
+    // Please optimize and document me.
     private Vector filterReportVector(Vector originalReportVector, Player p) {
+        // Only bother actually doing all this crap if double-blind is in effect.
         if (!doBlind()) {
-            //don't bother filtering if double-blind rules aren't in effect
             return (Vector)originalReportVector.clone();
         }
+
+        // But if it is, then filter everything properly.
         Vector filteredReportVector = new Vector();
         Report r;
         for (int i = 0; i < originalReportVector.size(); i++) {
@@ -16593,10 +16624,12 @@ public class Server implements Runnable {
     }
 
     private Vector filterPastReports(Vector pastReports, Player p) {
-        //This stuff really only needs to be printed for debug reasons. other wise the logs get
-        //filled to the brim when ever someone connects. --Torren.
+        // This stuff really only needs to be printed for debug reasons. other wise the logs get
+        // filled to the brim when ever someone connects. --Torren.
         System.err.println("filterPastReports() begin");
         System.err.println("  player is " + p.getName());
+
+        // Only actually bother with the filtering if double-blind is in effect.
         if (doBlind()) {
             //System.err.println("  pastReports vector is\n" + pastReports);
             Vector filteredReports = new Vector();
@@ -16623,7 +16656,7 @@ public class Server implements Runnable {
             System.err.println("filterPastReports() end");
             return filteredReports;
         }
-		//don't bother filtering if double-blind rules aren't in effect
+
 		System.err.println("filterPastReports() end");
 		return pastReports;
     }
@@ -16648,7 +16681,7 @@ public class Server implements Runnable {
                 }
             }
             if (previousVisibleValue != e.isVisibleToEnemy()
-                || previousSeenValue != e.isSeenByEnemy()) {
+                    || previousSeenValue != e.isSeenByEnemy()) {
                 sendVisibilityIndicator(e);
             }
         }
@@ -17176,9 +17209,9 @@ public class Server implements Runnable {
      * Creates a packet containing a Vector of Reports
      */
     private Packet createReportPacket(Player p) {
-        //when the final report is created MM sends a null player to create the
-        //report so this will handel that issue.
-        if ( p == null || !doBlind() )
+        // When the final report is created, MM sends a null player to create the
+        // report.  This will handle that issue.
+        if (p == null || !doBlind())
             return new Packet(Packet.COMMAND_SENDING_REPORTS, filterReportVector(vPhaseReport, p));
 		return new Packet(Packet.COMMAND_SENDING_REPORTS, p.getTurnReport());
     }
@@ -19706,13 +19739,14 @@ public class Server implements Runnable {
      */
     private  void addReport(Vector reports){
         //Only bother with player reports if doing double blind.
-        if ( doBlind())
+        if (doBlind()) {
             for (Enumeration i = connections.elements(); i.hasMoreElements();) {
                 final Connection conn = (Connection)i.nextElement();
                 Player p = game.getPlayer(conn.getId());
 
                 p.getTurnReport().addAll(filterReportVector(reports,p));
             }
+        }
         vPhaseReport.addAll(reports);
     }
 
@@ -19722,13 +19756,14 @@ public class Server implements Runnable {
      */
     private void addReport(Report report){
         //Only bother with player reports if doing double blind.
-        if ( doBlind())
+        if (doBlind()) {
             for (Enumeration i = connections.elements(); i.hasMoreElements();) {
                 final Connection conn = (Connection)i.nextElement();
                 Player p = game.getPlayer(conn.getId());
 
                 p.getTurnReport().addElement(filterReport(report,p,false));
             }
+        }
         vPhaseReport.addElement(report);
     }
 
@@ -19737,13 +19772,14 @@ public class Server implements Runnable {
      */
     private void clearReports(){
         //Only bother with player reports if doing double blind.
-        if ( doBlind())
+        if (doBlind()) {
             for (Enumeration i = connections.elements(); i.hasMoreElements();) {
                 final Connection conn = (Connection)i.nextElement();
                 Player p = game.getPlayer(conn.getId());
 
                 p.getTurnReport().removeAllElements();
             }
+        }
         vPhaseReport.removeAllElements();
     }
 
@@ -19753,13 +19789,14 @@ public class Server implements Runnable {
      */
     private void addNewLines(){
         //Only bother with player reports if doing double blind.
-        if ( doBlind())
+        if (doBlind()) {
             for (Enumeration i = connections.elements(); i.hasMoreElements();) {
                 final Connection conn = (Connection)i.nextElement();
                 Player p = game.getPlayer(conn.getId());
 
                 Report.addNewline(p.getTurnReport());
             }
+        }
         Report.addNewline(vPhaseReport);
     }
 

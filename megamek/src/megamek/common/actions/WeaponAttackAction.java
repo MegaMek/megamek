@@ -641,12 +641,18 @@ public class WeaponAttackAction extends AbstractAttackAction {
         toHit.append(Compute.getDamageWeaponMods(ae, weapon));
     
         // target immobile
-        toHit.append(Compute.getImmobileMod(target, aimingAt, aimingMode));
-    
+        ToHitData immobileMod = Compute.getImmobileMod(target, aimingAt, aimingMode);
+        if (immobileMod != null) {
+            toHit.append(immobileMod);
+            toSubtract += immobileMod.getValue();
+        }
+
         // attacker prone
         toHit.append(Compute.getProneMods(game, ae, weaponId));
-    
+
+        
         // target prone
+        ToHitData proneMod = null;
         if (te != null && te.isProne()) {
             // easier when point-blank
             if (distance <= 1) {
@@ -656,16 +662,19 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
                     // If the target is immoble, don't give a bonus for prone.
                     if ( !te.isImmobile() ) {
-                        toHit.addModifier(-4, "swarm prone target");
+                        proneMod = new ToHitData(-4, "swarm prone target");
                     }
                 } else {
-                    toHit.addModifier(-2, "target prone and adjacent");
+                    proneMod = new ToHitData(-2, "target prone and adjacent");
                 }
+            } else {
+                // Harder at range.
+                proneMod = new ToHitData(1, "target prone and at range");
             }
-            // harder at range
-            else {
-                toHit.addModifier(1, "target prone and at range");
-            }
+        }
+        if (proneMod != null) {
+            toHit.append(proneMod);
+            toSubtract += proneMod.getValue();
         }
     
         // weapon to-hit modifier
@@ -787,8 +796,20 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // add those for new target.
         if (exchangeSwarmTarget) {
             toHit.addModifier(-toSubtract, "original target mods");
+            toHit.append(Compute.getImmobileMod(oldTarget, aimingAt, aimingMode));
             toHit.append(Compute.getTargetMovementModifier(game, oldTarget.getId()));
             toHit.append(Compute.getTargetTerrainModifier(game, game.getEntity(oldTarget.getId())));
+            distance = Compute.effectiveDistance(game, ae, oldTarget);
+            if (oldTarget != null && oldTarget.isProne()) {
+                // easier when point-blank
+                if (distance <= 1) {
+                    proneMod = new ToHitData(-2, "target prone and adjacent");
+                } else {
+                    // Harder at range.
+                    proneMod = new ToHitData(1, "target prone and at range");
+                }
+            }
+            toHit.append(proneMod);
             if (!isECMAffected
                     && !oldTarget.isEnemyOf(ae)
                     && !(oldTarget.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)

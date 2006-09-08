@@ -10,6 +10,8 @@ v0.30.11 (CVS)
 + Bug 1326043: No movement modifier for VTOLs after sideslip
 + Remove calls to non-java 1.1 API that are not checked for.
   This still does not make us run on the MS JVM, though.
++ updated collections.jar, this time compiled with target=1.1, 
+  so that the stable release again works with Java 1.1
 
 v0.30.10 (2006-07-15, 17:15 GMT+2)
 + Bug: ECM was working when pilot is unconscious.

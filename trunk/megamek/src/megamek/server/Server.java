@@ -13793,7 +13793,7 @@ public class Server implements Runnable {
             //ICE explosions don't hurt anyone else, but fusion do
             if (mech.getEngine().isFusion()) {
                 int engineRating = en.getEngine().getRating();
-                doFusionEngineExplosion(engineRating, en.getPosition(), vDesc);
+                doFusionEngineExplosion(engineRating, en.getPosition(), vDesc, null);
             }
         }
 
@@ -13803,31 +13803,35 @@ public class Server implements Runnable {
     /**
      * Extract explosion functionality for generalized explosions in areas.
      */
-    public void doFusionEngineExplosion(int engineRating, Coords position, Vector vDesc)
+    public void doFusionEngineExplosion(int engineRating, Coords position, Vector vDesc, Vector vUnits)
     {
         int[] myDamages = {engineRating, (engineRating / 10), (engineRating / 20), (engineRating / 40)};
-        doExplosion(myDamages, true, position, false, vDesc);
+        doExplosion(myDamages, true, position, false, vDesc, vUnits);
     }
 
     /**
      * General function to cause explosions in areas.
      */
-    public void doExplosion(int damage, int degredation, boolean autoDestroyInSameHex, Coords position, boolean allowShelter, Vector vDesc)
+    public void doExplosion(int damage, int degredation, boolean autoDestroyInSameHex, Coords position, boolean allowShelter, Vector vDesc, Vector vUnits)
     {
         int[] myDamages = new int[damage/degredation];
         myDamages[0] = damage;
         for (int x=1; x<myDamages.length; x++)
             myDamages[x] = myDamages[x-1]-degredation;
-        doExplosion(myDamages, autoDestroyInSameHex, position, allowShelter, vDesc);
+        doExplosion(myDamages, autoDestroyInSameHex, position, allowShelter, vDesc, vUnits);
     }
 
     /**
      * General function to cause explosions in areas.
      */
-    public void doExplosion(int[] damages, boolean autoDestroyInSameHex, Coords position, boolean allowShelter, Vector vDesc)
+    public void doExplosion(int[] damages, boolean autoDestroyInSameHex, Coords position, boolean allowShelter, Vector vDesc, Vector vUnits)
     {
         if (vDesc == null)
             vDesc = new Vector();
+
+        if (vUnits == null)
+            vUnits = new Vector();
+
         Report r;
         Hashtable entitiesHit = new Hashtable();
 
@@ -13843,7 +13847,12 @@ public class Server implements Runnable {
                 if (entity.isDestroyed())
                     continue;
 
+                // Add the reports
                 vDesc.addAll(destroyEntity(entity, "explosion proximity", false, false));
+
+                // Add it to the "blasted units" list
+                vUnits.add(entity.getId());
+
                 // Kill the crew
                 entity.getCrew().setDoomed(true);
             }
@@ -13926,6 +13935,9 @@ public class Server implements Runnable {
                 r.addDesc(entity);
                 vDesc.addElement(r);
             }
+
+            // Since it's taking damage, add it to the list of units hit.
+            vUnits.add(entity.getId());
 
             r = new Report(6175);
             r.subject = entity.getId();
@@ -14083,9 +14095,38 @@ public class Server implements Runnable {
         // Use the standard blast function for this.
         // We pass in "fase" for "auto-kill everything in hex" because we already did.
         Vector tmpV = new Vector();
-        doExplosion(baseDamage, degredation, false, position, true, tmpV);
+        Vector blastedUnitsVec = new Vector();
+        doExplosion(baseDamage, degredation, false, position, true, tmpV, blastedUnitsVec);
         Report.indentAll(tmpV, 2);
         vDesc.addAll(tmpV);
+
+        // Everything that was blasted by the explosion has to make a piloting check at +6.
+        for (Object i : blastedUnitsVec) {
+            Entity o = game.getEntity((Integer)i);
+            if (o instanceof Mech) {
+                Mech bm = (Mech)o;
+                // Needs a piloting check at +6 to avoid falling over.
+                // Obviously not if it's already prone, though.
+                if (!bm.isProne()) {
+                    game.addPSR(new PilotingRollData(bm.getId(), 6, "hit by nuclear blast"));
+                }
+            } else if (o instanceof VTOL) {
+                // Needs a piloting check at +6 to avoid crashing.
+                // Wheeeeee!
+                VTOL vt = (VTOL)o;
+
+                // Check only applies if it's in the air.
+                //FIXME: is this actually correct?  What about buildings/bridges?
+                if (vt.getElevation() > 0) {
+                   game.addPSR(new PilotingRollData(vt.getId(), 6, "hit by nuclear blast"));
+                }
+            } else if (o instanceof Tank) {
+                // As per official answer on the rules questions board...
+                // Needs a piloting check at +6 to avoid a 1-level fall...
+                // But ONLY if a hover-tank.
+                //FIXME
+            }
+        }
 
         // Just get rid of it for the balance of the function...
         tmpV = null;
@@ -14434,7 +14475,7 @@ public class Server implements Runnable {
                             // crash.
                             Report.addNewline(vDesc);
                             //report problem: add 3 tabs
-                            vDesc.addAll( crashVTOL(vtol));
+                            vDesc.addAll(crashVTOL(vtol));
                         }
                     }
                     break;
@@ -18368,7 +18409,7 @@ public class Server implements Runnable {
                     r.newlines = 1;
                     addReport(r);
                     Vector vRep = new Vector();
-                    doExplosion(((FuelTank)bldg).getMagnitude(), 10, false, (Coords)(bldg.getCoords().nextElement()), true, vRep);
+                    doExplosion(((FuelTank)bldg).getMagnitude(), 10, false, (Coords)(bldg.getCoords().nextElement()), true, vRep, null);
                     Report.indentAll(vRep, 2);
                     addReport(vRep);
                     return null;

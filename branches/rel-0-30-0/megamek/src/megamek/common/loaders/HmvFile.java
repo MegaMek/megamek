@@ -18,11 +18,13 @@ import java.io.DataInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 
-import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
+
+
+import com.sun.java.util.collections.ArrayList;
+import com.sun.java.util.collections.Hashtable;
+import com.sun.java.util.collections.Iterator;
+import com.sun.java.util.collections.List;
 
 import megamek.common.AmmoType;
 import megamek.common.Entity;

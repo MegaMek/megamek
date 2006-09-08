@@ -124,6 +124,7 @@ public abstract class MMRandom {
         /**
          * Contruct, making a new thread to init the RNG
          */
+    
         public CryptoRandom() throws ClassNotFoundException, NoSuchMethodException {
             // hack: just check to see if there's java.util.Random@nextInt(int)
             new java.util.Random().getClass().getMethod("nextInt", new Class[] {Integer.TYPE});

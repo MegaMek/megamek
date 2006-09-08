@@ -16686,9 +16686,8 @@ implements Runnable, ConnectionHandler {
 
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected( true );
-        if(entity instanceof VTOL)
-        {
-            vDesc.addAll(crashVTOL((VTOL)entity));
+        if(entity instanceof VTOL) {
+        	Server.combineVectors(vDesc, crashVTOL((VTOL)entity));
         }
         Server.combineVectors(vDesc,
             destroyEntity(entity, "ejection", true, true));

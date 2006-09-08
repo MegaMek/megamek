@@ -8,6 +8,8 @@ v0.30.11 (CVS)
 + Bug 1508964: Critical Hits Not Reporting in entitystatus.txt
 + Bug: Clan half-ton MG ammo had BV 1 instead of 0.5.
 + Bug 1326043: No movement modifier for VTOLs after sideslip
++ Remove calls to non-java 1.1 API that are not checked for.
+  This still does not make us run on the MS JVM, though.
 
 v0.30.10 (2006-07-15, 17:15 GMT+2)
 + Bug: ECM was working when pilot is unconscious.

@@ -20,6 +20,8 @@
 
 package megamek.common;
 
+import com.sun.java.util.collections.UnsupportedOperationException;
+
 
 /**
  * Encapsulate all information known about a requested roll.  This information

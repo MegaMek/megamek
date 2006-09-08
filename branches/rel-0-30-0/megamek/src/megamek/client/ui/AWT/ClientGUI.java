@@ -154,7 +154,7 @@ public class ClientGUI
         return bv;
     }
 
-    /*
+    /**
      * Try to load the "bing" sound clip.
      */
     public void loadSoundClip() {

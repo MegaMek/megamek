@@ -27,6 +27,7 @@ v0.31.14-dev (SVN)
 + Bug 1468767: No displacement after Accidential DFA
 + Some infrastructure towards hidden units.  No way to hide or unhide units yet.
 + Bug 1553806: change MM to match common sense (prone/immobile mods from secondary target)
++ Bug: Nukes should cause a piloting check at +6 for units in the blast.
 
 v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen

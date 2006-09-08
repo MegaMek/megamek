@@ -229,7 +229,11 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         maxOptionWidth = Math.max( maxOptionWidth,
                                    optionComp.getPreferredSize().width );
 
-        if (option.getName().equals("inf_deploy_even")) { //$NON-NLS-1$
+        if (option.getName().equals("hidden_units")) {
+            // FIXME
+            // This is a convenient way to disable it until it's actually usable.
+            optionComp.setEditable(false);
+        } else if (option.getName().equals("inf_deploy_even")) { //$NON-NLS-1$
             if ( !(options.getOption("inf_move_even")).booleanValue() //$NON-NLS-1$
                  || !editable ) {
                 optionComp.setEditable(false);

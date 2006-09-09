@@ -39,7 +39,7 @@ public class BattleArmor
      * IS squads usually have 4 men, Clan points usually have 5.
      * Have a location that represents the entire squad.
      */
-    private static final int[]    IS_NUM_OF_SLOTS   = {7,1,1,1,1,1};
+    private static final int[]    IS_NUM_OF_SLOTS   = {7,2,2,2,2,2};
     private static final String[] IS_LOCATION_ABBRS = { "Squad",
                                                         "Trooper 1",
                                                         "Trooper 2",
@@ -52,7 +52,7 @@ public class BattleArmor
                                                         "Trooper 3",
                                                         "Trooper 4",
                                                         "Trooper 5" };
-    private static final int[]    CLAN_NUM_OF_SLOTS   = {10,1,1,1,1,1};
+    private static final int[]    CLAN_NUM_OF_SLOTS   = {10,2,2,2,2,2};
     private static final String[] CLAN_LOCATION_ABBRS = { "Point",
                                                           "Trooper 1",
                                                           "Trooper 2",
@@ -140,7 +140,7 @@ public class BattleArmor
     private String      stealthName = null;
 
     private int         vibroClawDamage = -1;
-
+    
     // Public and Protected constants, constructors, and methods.
 
     /**
@@ -1029,4 +1029,23 @@ public class BattleArmor
         int locInt = Compute.randomInt(activeTroops.size());
         return (Integer)(activeTroops.elementAt(locInt));
     }
+    
+    public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
+        //BA must carry the ammo in same location as the weapon.
+        //This allows for squad weapons and individual trooper weapons
+        //such as NARC and the support weapons in TW/TO 
+        if(mounted.getLocation() != mountedAmmo.getLocation())
+            return false;
+        return super.loadWeapon(mounted, mountedAmmo);
+    }
+
+    public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo) {
+        //BA must carry the ammo in same location as the weapon.
+        //This allows for squad weapons and individual trooper weapons
+        //such as NARC and the support weapons in TW/TO 
+        if(mounted.getLocation() != mountedAmmo.getLocation())
+            return false;
+        return super.loadWeaponWithSameAmmo(mounted, mountedAmmo);
+    }
+
 } // End public class BattleArmor extends Infantry implements Serializable

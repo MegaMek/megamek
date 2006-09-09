@@ -15917,20 +15917,30 @@ public class Server implements Runnable {
         }
 
         int waterDepth = fallHex.terrainLevel(Terrains.WATER);
+        int bridgeHeight = Math.max(0,fallHex.terrainLevel(Terrains.BRIDGE)) + fallHex.depth();
         int damageHeight = height;
+        int newElevation;
 
-
+        if(height >= bridgeHeight) {
+            damageHeight -= bridgeHeight;
+            waterDepth = 0;
+            newElevation = fallHex.terrainLevel(Terrains.BRIDGE);
+        }
+        else if(fallHex.containsTerrain(Terrains.ICE) && height >= fallHex.depth()) {
+            damageHeight -= fallHex.depth();
+            waterDepth = 0;
+            newElevation = 0;
+        }
         // HACK: if the dest hex is water, assume that the fall height given is
         // to the floor of the hex, and modifiy it so that it's to the surface
-        if (waterDepth > 0) {
+        else if (waterDepth > 0) {
             damageHeight = height - waterDepth;
+            newElevation = -waterDepth;
         } else {
             waterDepth = 0; //because it will be used to set elevation
+            newElevation = 0;
         }
 
-        if(fallHex.containsTerrain(Terrains.ICE)) {
-            waterDepth = 0;
-        }
 
         //Falling into water instantly destroys most non-mechs
         if(waterDepth > 0
@@ -16009,7 +16019,7 @@ public class Server implements Runnable {
         entity.setPosition(fallPos);
         entity.setFacing((entity.getFacing() + (facing - 1)) % 6);
         entity.setSecondaryFacing(entity.getFacing());
-        entity.setElevation(-waterDepth);
+        entity.setElevation(newElevation);
         if (waterDepth > 0) {
             for (int loop=0; loop< entity.locations();loop++){
                 entity.setLocationStatus(loop, ILocationExposureStatus.WET);
@@ -16111,7 +16121,7 @@ public class Server implements Runnable {
      * The mech falls down in place
      */
     private void doEntityFall(Entity entity, PilotingRollData roll) {
-        doEntityFall(entity, entity.getPosition(), 0, roll);
+        doEntityFall(entity, entity.getPosition(), entity.getElevation() + game.getBoard().getHex(entity.getPosition()).depth(), roll);
     }
 
     /**

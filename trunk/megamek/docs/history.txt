@@ -33,6 +33,7 @@ v0.31.14-dev (SVN)
 + Mech display now shows no minimum range for hotloaded ammo
 + Mech display now updates the "is hotloaded" label when changing ammo
 + made cluster hits table static member
++ Bug 1435078: Purifier (Narc) should be able to fire missiles individually
 
 v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen

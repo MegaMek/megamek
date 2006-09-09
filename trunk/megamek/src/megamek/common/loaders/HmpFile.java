@@ -444,7 +444,6 @@ public class HmpFile
             mech.setChassis(name);
             mech.setModel(model);
             mech.setYear(year);
-System.out.println(name+" "+model+" "+year);
             mech.setFluff(fluff);
 
             mech.setOmni(chassisType == ChassisType.BIPED_OMNI

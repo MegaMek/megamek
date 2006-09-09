@@ -4074,7 +4074,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 2;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4091,7 +4090,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4108,7 +4106,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_BA_INFERNO;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
         ammo.munitionType = M_INFERNO;
 
@@ -4127,7 +4124,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_BA_MICRO_BOMB;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4144,7 +4140,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_TORPEDO_COMBO;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
         ammo.cost = 30000;
 
@@ -4162,7 +4157,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 4;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4179,7 +4173,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 2;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4196,7 +4189,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 7;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4213,7 +4205,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_NARC;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 2;
-        ammo.hittable = false;
+        ammo.explosive = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4782,7 +4774,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4799,7 +4790,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4816,7 +4806,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4833,7 +4822,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4850,7 +4838,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_ROCKET_LAUNCHER;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4869,7 +4856,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4888,7 +4874,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4907,7 +4892,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4927,7 +4911,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4946,7 +4929,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;
@@ -4965,7 +4947,6 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.hittable = false;
         ammo.bv = 0;
 
         return ammo;

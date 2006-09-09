@@ -39,7 +39,8 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean useless = false;
     private boolean fired = false; //Only true for used OS stuff.
     private boolean rapidfire = false; //MGs in rapid-fire mode
-
+    private boolean hotloaded = false; //Hotloading for ammoType
+    
     private int mode; //Equipment's current state.  On or Off.  Sixshot or Fourshot, etc
     private int pendingMode = -1; // if mode changes happen at end of turn
 
@@ -392,6 +393,64 @@ public class Mounted implements Serializable, RoundUpdated {
         this.rapidfire = rapidfire;
     }
 
+    /**
+     * Checks to see if the current ammo for this weapon is hotloaded
+     * @return <code>true</code> if ammo is hotloaded or <code>false</code> if not
+     */
+    public boolean isHotLoaded(){
+     
+        boolean isHotLoaded = false;
+        
+        if ( this.getType() instanceof WeaponType ){
+            Mounted link = this.getLinked();
+            if ( link == null || !(link.getType() instanceof AmmoType) || link.getShotsLeft() <= 0)
+                return false;
+            
+                
+            isHotLoaded = this.getLinked().hotloaded;
+            
+            //Check to see if the ammo has its mode set to hotloaded.
+            //This is for vehicles that can change hotload status during combat.
+            if ( !isHotLoaded && this.getLinked().getType().hasModes() && this.getLinked().curMode().equals("HotLoad") )
+                isHotLoaded = true;
+            
+            return isHotLoaded;
+        }
+    
+        if ( this.getType() instanceof AmmoType && this.getShotsLeft() > 0){
+            isHotLoaded = this.hotloaded;
+            
+            //Check to see if the ammo has its mode set to hotloaded.
+            //This is for vehicles that can change hotload status during combat.
+            if ( !isHotLoaded && this.getType().hasModes() && this.curMode().equals("HotLoad") )
+                isHotLoaded = true;
+            
+            return isHotLoaded;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Sets the hotloading parameter for this weapons ammo.
+     * @param hotload
+     */
+    public void setHotLoad(boolean hotload){
+        
+        if ( this.getType() instanceof WeaponType ){
+            Mounted link = this.getLinked();
+            if ( link == null ||  !(link.getType() instanceof AmmoType) )
+                return;
+            if ( ((AmmoType)link.getType()).hasFlag(AmmoType.F_HOTLOAD) )
+                link.hotloaded = hotload;
+        }
+        if ( this.getType() instanceof AmmoType ){
+            if ( ((AmmoType)this.getType()).hasFlag(AmmoType.F_HOTLOAD) )
+                this.hotloaded = hotload;
+        }
+            
+    }
+    
 
     public int getLocation() {
         return location;
@@ -491,6 +550,11 @@ public class Mounted implements Serializable, RoundUpdated {
                 return wtype.getDamage();
             } else if (wtype.getAmmoType() == AmmoType.T_MAGSHOT) {
                 return 3;
+            }else if ( this.isHotLoaded() ){
+                Mounted link = this.getLinked();
+                AmmoType atype = ((AmmoType) link.getType());
+                int damage = wtype.getRackSize() * atype.getDamagePerShot();
+                return damage;
             }
         }
         // um, otherwise, I'm not sure

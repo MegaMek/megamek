@@ -54,6 +54,38 @@ public class Compute {
     public static final int ARC_WEST = 10;
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
+    
+    private static final int[][] clusterHitsTable = new int[][] {
+        { 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 },
+        { 3, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 },
+        { 4, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 },
+        { 5, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5 },
+        { 6, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 6 },
+        //{ 7, 2, 2, 3, 4, 4, 4, 4, 6, 6, 7, 7 },
+        { 8, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 8 },
+        { 9, 3, 3, 4, 5, 5, 5, 5, 7, 7, 9, 9 },
+        { 10, 3, 3, 4, 6, 6, 6, 6, 8, 8, 10, 10 },
+        //{ 11, 4, 4, 5, 7, 7, 7, 7, 9, 9, 11, 11 },
+        { 12, 4, 4, 5, 8, 8, 8, 8, 10, 10, 12, 12 },
+        //{ 13, 4, 4, 5, 8, 8, 8, 8, 11, 11, 13, 13 },
+        //{ 14, 5, 5, 6, 9, 9, 9, 9, 11, 11, 14, 14 },
+        { 15, 5, 5, 6, 9, 9, 9, 9, 12, 12, 15, 15 },
+        //{ 16, 5, 5, 7, 10, 10, 10, 10, 13, 13, 16, 16 },
+        //{ 17, 5, 5, 7, 10, 10, 10, 10, 14, 14, 17, 17 },
+        //{ 18, 6, 6, 8, 11, 11, 11, 11, 14, 14, 18, 18 },
+        //{ 19, 6, 6, 8, 11, 11, 11, 11, 15, 15, 19, 19 },
+        { 20, 6, 6, 9, 12, 12, 12, 12, 16, 16, 20, 20 } };
+    //{ 21, 7, 7, 9, 13, 13, 13, 13, 17, 17, 21, 21 },
+    //{ 22, 7, 7, 9, 14, 14, 14, 14, 18, 18, 22, 22 },
+    //{ 23, 7, 7, 10, 15, 15, 15, 15, 19, 19, 23, 23 },
+    //{ 24, 8, 8, 10, 16, 16, 16, 16, 20, 20, 24, 24 },
+    //{ 25, 8, 8, 10, 16, 16, 16, 16, 21, 21, 25, 25 },
+    //{ 26, 9, 9, 11, 17, 17, 17, 17, 21, 21, 26, 26 },
+    //{ 27, 9, 9, 11, 17, 17, 17, 17, 22, 22, 27, 27 },
+    //{ 28, 9, 9, 11, 17, 17, 17, 17, 23, 23, 28, 28 },
+    //{ 29, 10, 10, 12, 18, 18, 18, 18, 23, 23, 29, 29},
+    //{ 30, 10, 10, 12, 18, 18, 18, 18, 24, 24, 30, 30},
+    //{ 40, 12, 12, 18, 24, 24, 24, 24, 32, 32, 40, 40} };
 
     /** Wrapper to random#d6(n) */
     public static int d6(int dice) {
@@ -570,6 +602,12 @@ public class Compute {
                 }
             }
         }
+        
+        //Hotloaded weapons
+        if ( weapon.isHotLoaded() 
+                && game.getOptions().booleanOption("maxtech_hotload") )
+            weaponRanges[RangeType.RANGE_MINIMUM] = 0;
+        
         // is water involved?
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
@@ -1702,6 +1740,7 @@ public class Compute {
                     || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
                 fDamage = fHits * wt.getDamage();
             }
+            
         } else {
 
             // Direct fire weapons (and LBX slug rounds) just do a single shot
@@ -2291,17 +2330,39 @@ public class Compute {
      * Roll the number of missiles (or whatever) on the missile hit table, with
      * the specified mod to the roll.
      * 
+     * @param maxtech - either maxtech glancing blows or maxtech missile hit penalties
+     *                  are in effect so it is possible to roll less than a 2
      * @param missiles -
      *            the <code>int</code> number of missiles in the pack.
      * @param nMod -
      *            the <code>int</code> modifier to the roll for number of
      *            missiles that hit.
      */
-    public static int missilesHit(int missiles, int nMod, boolean maxtech) {
-        int nRoll = d6(2) + nMod;
+    public static int missilesHit(int missiles, int nMod, boolean maxtech, boolean hotloaded) {
+        int nRoll = d6(2);
         int minimum = maxtech ? 1 : 2;
-        nRoll = Math.min(Math.max(nRoll, minimum), 12);
 
+        if (hotloaded ){
+            int roll1 = d6(1);
+            int roll2 = d6(1);
+            int roll3 = d6(1);
+            int lowRoll1 = 0;
+            int lowRoll2 = 0;
+            
+            if ( roll1 <= roll2 && roll1 <= roll3){
+                lowRoll1 = roll1;
+                lowRoll2 = Math.min(roll2, roll3);
+            }else if ( roll2 <= roll1 && roll2 <= roll3 ){
+                lowRoll1 = roll2;
+                lowRoll2 = Math.min(roll1, roll3);
+            }else if ( roll3 <= roll1 && roll3 <= roll2 ){
+                lowRoll1 = roll3;
+                lowRoll2 = Math.min(roll2,roll1);
+            }
+            nRoll = lowRoll1 + lowRoll2;
+        }
+        nRoll += nMod;
+        nRoll = Math.min(Math.max(nRoll, minimum), 12);
         if (maxtech && nRoll == 1) {
             return 1;
         }
@@ -2309,22 +2370,9 @@ public class Compute {
             nRoll = 2;
         }
 
-        final int[][] hits = new int[][] {
-                { 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 },
-                { 3, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 },
-                { 4, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 },
-                { 5, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5 },
-                { 6, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 6 },
-                { 8, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 8 },
-                { 9, 3, 3, 4, 5, 5, 5, 5, 7, 7, 9, 9 },
-                { 10, 3, 3, 4, 6, 6, 6, 6, 8, 8, 10, 10 },
-                { 12, 4, 4, 5, 8, 8, 8, 8, 10, 10, 12, 12 },
-                { 15, 5, 5, 6, 9, 9, 9, 9, 12, 12, 15, 15 },
-                { 20, 6, 6, 9, 12, 12, 12, 12, 16, 16, 20, 20 } };
-
-        for (int i = 0; i < hits.length; i++) {
-            if (hits[i][0] >= missiles) {
-                return Math.min(missiles, hits[i][nRoll - 1]);
+        for (int i = 0; i < clusterHitsTable.length; i++) {
+            if (clusterHitsTable[i][0] >= missiles) {
+                return Math.min(missiles, clusterHitsTable[i][nRoll - 1]);
             }
         }
         throw new RuntimeException(
@@ -2332,7 +2380,11 @@ public class Compute {
     }
 
     public static int missilesHit(int missiles, int nMod) {
-        return missilesHit(missiles, nMod, false);
+        return missilesHit(missiles, nMod, false, false);
+    }
+
+    public static int missilesHit(int missiles, int nMod, boolean maxtech) {
+        return missilesHit(missiles, nMod, maxtech, false);
     }
 
     /**

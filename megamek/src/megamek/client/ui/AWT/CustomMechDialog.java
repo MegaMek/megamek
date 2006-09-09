@@ -677,6 +677,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         
         protected Label labDump = new Label(Messages.getString("CustomMechDialog.labDump")); //$NON-NLS-1$
         protected Checkbox chDump = new Checkbox();
+        protected Label labHotLoad= new Label(Messages.getString("CustomMechDialog.switchToHotLoading")); //$NON-NLS-1$
+        protected Checkbox chHotLoad = new Checkbox();
                 
         public MunitionChoicePanel(Mounted m, Vector vTypes) {
             m_vTypes = vTypes;
@@ -725,8 +727,33 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 c.anchor = GridBagConstraints.WEST;
                 g.setConstraints(chDump, c);
                 add(chDump);
+                if (clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload") 
+                        && curType.hasFlag(AmmoType.F_HOTLOAD) ) { //$NON-NLS-1$
+                    c.gridx = 0;
+                    c.gridy = 2;
+                    c.anchor = GridBagConstraints.EAST;
+                    g.setConstraints(labHotLoad, c);
+                    add(labHotLoad);
+                    c.gridx = 1;
+                    c.gridy = 2;
+                    c.anchor = GridBagConstraints.WEST;
+                    g.setConstraints(chHotLoad, c);
+                    add(chHotLoad);
+                }
+            }else if (clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload") 
+                        && curType.hasFlag(AmmoType.F_HOTLOAD) ) { //$NON-NLS-1$
+                    c.gridx = 0;
+                    c.gridy = 1;
+                    c.anchor = GridBagConstraints.EAST;
+                    g.setConstraints(labHotLoad, c);
+                    add(labHotLoad);
+                    c.gridx = 1;
+                    c.gridy = 1;
+                    c.anchor = GridBagConstraints.WEST;
+                    g.setConstraints(chHotLoad, c);
+                    add(chHotLoad);
+                }
             }
-        }
 
         public void applyChoice() {
             int n = m_choice.getSelectedIndex();
@@ -735,6 +762,11 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             if (chDump.getState()) {
                 m_mounted.setShotsLeft(0);
             }
+            if (clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload")){
+                if ( chHotLoad.getState() != m_mounted.isHotLoaded() )
+                    m_mounted.setHotLoad(chHotLoad.getState());
+            }
+
         }
 
         public void setEnabled(boolean enabled) {

@@ -858,6 +858,11 @@ public class MechDisplay extends BufferedPanel {
                     wn.append(Messages.getString("MechDisplay.rapidFire")); //$NON-NLS-1$
                 }
 
+                // Hotloaded Missiles/Launchers
+                if (mounted.isHotLoaded()) {
+                    wn.append(Messages.getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
+                }
+
                 // Fire Mode - lots of things have variable modes
                 if (wtype.hasModes()) {
                     wn.append(" ");
@@ -1006,8 +1011,7 @@ public class MechDisplay extends BufferedPanel {
 
             // Update the range display to account for the weapon's loaded ammo.
             if (null != mounted.getLinked()) {
-                AmmoType atype = (AmmoType) mounted.getLinked().getType();
-                updateRangeDisplayForAmmo(atype);
+                updateRangeDisplayForAmmo(mounted.getLinked());
             }
 
             // update ammo selector
@@ -1083,9 +1087,10 @@ public class MechDisplay extends BufferedPanel {
          *
          * @param atype - the <code>AmmoType</code> of the weapon's loaded ammo.
          */
-        private void updateRangeDisplayForAmmo(AmmoType atype) {
+        private void updateRangeDisplayForAmmo(Mounted mAmmo) {
 
-            // Only override the display for the various ATM ammos
+            AmmoType atype = (AmmoType) mAmmo.getType();
+            // Override the display for the various ATM ammos
             if (AmmoType.T_ATM == atype.getAmmoType()) {
                 if ((atype.getAmmoType() == AmmoType.T_ATM)
                         && atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
@@ -1109,6 +1114,10 @@ public class MechDisplay extends BufferedPanel {
                     wExtR.setText("16 - 20"); //$NON-NLS-1$
                 }
             } // End weapon-is-ATM
+            
+            //Min range 0 for hotload
+            if(mAmmo.isHotLoaded())
+                wMinR.setText("---");
 
         } // End private void updateRangeDisplayForAmmo( AmmoType )
 
@@ -1124,12 +1133,24 @@ public class MechDisplay extends BufferedPanel {
                     return;
                 }
                 Mounted mWeap = entity.getWeaponList().get(n);
+                Mounted oldAmmo = mWeap.getLinked();
                 Mounted mAmmo = (Mounted) vAmmo.elementAt(m_chAmmo.getSelectedIndex());
                 entity.loadWeapon(mWeap, mAmmo);
+                
+                // Refresh for hot load change
+                if(((oldAmmo == null || !oldAmmo.isHotLoaded()) &&
+                        mAmmo.isHotLoaded()) ||
+                        (oldAmmo != null && 
+                         oldAmmo.isHotLoaded() &&
+                         !mAmmo.isHotLoaded())) {
+                    displayMech(entity);
+                    weaponList.select(n);
+                    displaySelected();
+                }
 
                 // Update the range display to account for the weapon's loaded ammo.
-                AmmoType atype = (AmmoType) mAmmo.getType();
-                updateRangeDisplayForAmmo(atype);
+                
+                updateRangeDisplayForAmmo(mAmmo);
 
                 // When in the Firing Phase, update the targeting information.
                 // TODO: make this an accessor function instead of a member access.
@@ -1298,6 +1319,15 @@ public class MechDisplay extends BufferedPanel {
                         }
                     }
                 }
+                if (clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload")) {
+                    for (Mounted m : en.getEquipment()) {
+                        if ((m.getType() instanceof AmmoType)
+                                && m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
+                            return m;
+                        }
+                    }
+                }
+
             }
             final CriticalSlot cs = getSelectedCritical();
             if (null == cs) {
@@ -1353,6 +1383,8 @@ public class MechDisplay extends BufferedPanel {
                         case CriticalSlot.TYPE_EQUIPMENT:
                             Mounted m = en.getEquipment(cs.getIndex());
                             sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                            if ( m.isHotLoaded() )
+                                sb.append(Messages.getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
                             if (m.getType().hasModes()) {
                                 sb.append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
                                 if (m.getType() instanceof MiscType && ((MiscType) m.getType()).isShield()) {
@@ -1367,13 +1399,23 @@ public class MechDisplay extends BufferedPanel {
             if (en instanceof Tank || en instanceof GunEmplacement) {
                 if (en.hasTargComp()) {
                     for (Mounted m : en.getEquipment()) {
-                        if (m.getType() instanceof MiscType &&
-                                m.getType().hasFlag(MiscType.F_TARGCOMP)) {
+                        if ((m.getType() instanceof MiscType &&
+                                m.getType().hasFlag(MiscType.F_TARGCOMP))) {
                             StringBuffer sb = new StringBuffer(32);
                             sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                             if (m.getType().hasModes()) {
                                 sb.append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
                             }
+                            slotList.add(sb.toString());
+                        }
+                    }
+                }
+                if (clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload")) {
+                    for (Mounted m : en.getEquipment()) {
+                        if ((m.getType() instanceof AmmoType)
+                                && m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
+                            StringBuffer sb = new StringBuffer(32);
+                            sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
                             slotList.add(sb.toString());
                         }
                     }
@@ -1401,6 +1443,18 @@ public class MechDisplay extends BufferedPanel {
                         && IGame.PHASE_DEPLOYMENT != clientgui.getClient().game.getPhase()
                         && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive()) {
                     m_bDumpAmmo.setEnabled(true);
+                    if ( clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload") 
+                            && en instanceof Tank && m.getType().hasFlag(AmmoType.F_HOTLOAD) ){
+                        m_bDumpAmmo.setEnabled(false);
+                        modeLabel.setEnabled(true);
+                        m_chMode.setEnabled(true);
+                        m_chMode.removeAll();
+                        for (Enumeration e = m.getType().getModes(); e.hasMoreElements();) {
+                            EquipmentMode em = (EquipmentMode) e.nextElement();
+                            m_chMode.add(em.getDisplayableName());
+                        }
+                        m_chMode.select(m.curMode().getDisplayableName());
+                    }
                 } else if (m != null && bOwner && m.getType().hasModes()) {
                     if (!m.isDestroyed() && en.isActive()) {
                         m_chMode.setEnabled(true);
@@ -1518,7 +1572,7 @@ public class MechDisplay extends BufferedPanel {
 
                 if (bConfirmed) {
                     m.setPendingDump(bDumping);
-                    clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
+                    clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? -1 : 0);
                 }
             }
         }
@@ -1881,6 +1935,7 @@ public class MechDisplay extends BufferedPanel {
                 }
             }
 
+            
             // Show breached locations.
             for (int loc = 0; loc < en.locations(); loc++) {
                 if (ILocationExposureStatus.BREACHED == en.getLocationStatus(loc)) {

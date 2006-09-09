@@ -21,6 +21,7 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.ui.AWT.Messages;
 import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
@@ -50,10 +51,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+
+import java.awt.Checkbox;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -687,6 +691,8 @@ public class CustomMechDialog
 
         JLabel labDump = new JLabel(Messages.getString("CustomMechDialog.labDump")); //$NON-NLS-1$
         JCheckBox chDump = new JCheckBox();
+        JLabel labHotLoad= new JLabel(Messages.getString("CustomMechDialog.switchToHotLoading")); //$NON-NLS-1$
+        JCheckBox chHotLoad = new JCheckBox();
 
         MunitionChoicePanel(Mounted m, ArrayList vTypes) {
             m_vTypes = vTypes;
@@ -724,7 +730,7 @@ public class CustomMechDialog
             c.anchor = GridBagConstraints.WEST;
             g.setConstraints(m_choice, c);
             add(m_choice);
-            if (clientgui.getClient().game.getOptions().booleanOption("lobby_ammo_dump")) { //$NON-NLS-1$
+            if (clientgui.getClient().game.getOptions().booleanOption("lobby_ammo_dump") ) { //$NON-NLS-1$
                 c.gridx = 0;
                 c.gridy = 1;
                 c.anchor = GridBagConstraints.EAST;
@@ -735,7 +741,32 @@ public class CustomMechDialog
                 c.anchor = GridBagConstraints.WEST;
                 g.setConstraints(chDump, c);
                 add(chDump);
-            }
+                if (clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload") 
+                        && curType.hasFlag(AmmoType.F_HOTLOAD) ) { //$NON-NLS-1$
+                    c.gridx = 0;
+                    c.gridy = 2;
+                    c.anchor = GridBagConstraints.EAST;
+                    g.setConstraints(labHotLoad, c);
+                    add(labHotLoad);
+                    c.gridx = 1;
+                    c.gridy = 2;
+                    c.anchor = GridBagConstraints.WEST;
+                    g.setConstraints(chHotLoad, c);
+                    add(chHotLoad);
+                }
+            }else if (clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload") 
+                        && curType.hasFlag(AmmoType.F_HOTLOAD) ) { //$NON-NLS-1$
+                    c.gridx = 0;
+                    c.gridy = 1;
+                    c.anchor = GridBagConstraints.EAST;
+                    g.setConstraints(labHotLoad, c);
+                    add(labHotLoad);
+                    c.gridx = 1;
+                    c.gridy = 1;
+                    c.anchor = GridBagConstraints.WEST;
+                    g.setConstraints(chHotLoad, c);
+                    add(chHotLoad);
+                }
         }
 
         public void applyChoice() {
@@ -744,6 +775,10 @@ public class CustomMechDialog
             m_mounted.changeAmmoType(at);
             if (chDump.isSelected()) {
                 m_mounted.setShotsLeft(0);
+            }
+            if ( clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload") ){
+                if ( chHotLoad.isSelected() != m_mounted.isHotLoaded() )
+                    m_mounted.setHotLoad(chHotLoad.isSelected());
             }
         }
 

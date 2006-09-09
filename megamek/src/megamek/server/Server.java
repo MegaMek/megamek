@@ -8273,7 +8273,7 @@ public class Server implements Runnable {
             }
             // In all other circumstances, roll for hits.
             else {
-                hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | bGlancing);
+                hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | bGlancing, weapon.isHotLoaded());
                 // swarm missiles that didn't hit continue
                 if ( (bSwarm || bSwarmI) && swarmMissilesLeft == 0) {
                     swarmMissilesNowLeft = wtype.getRackSize() - hits;
@@ -14793,7 +14793,7 @@ public class Server implements Runnable {
             // Handle equipment explosions.
             // Equipment explosions are secondary effects and
             // do not occur when loading from a scenario.
-            if ( secondaryEffects && eqType.isExplosive() && !hitBefore ) {
+            if ( (secondaryEffects && eqType.isExplosive() || mounted.isHotLoaded()) && !hitBefore ) {
                 vDesc.addAll(explodeEquipment(en, loc, mounted));
             }
 
@@ -15768,6 +15768,40 @@ public class Server implements Runnable {
         r.indent(3);
         r.newlines = 0;
         vDesc.addElement(r);
+        // Mounted is a weapon and has Hot-Loaded ammo in it and it exploded now
+        // we need to roll for chain reaction
+        if (mounted.getType() instanceof WeaponType && mounted.isHotLoaded()) {
+            int roll = Compute.d6(2);
+            int ammoExploded = 0;
+            r = new Report(6077);
+            r.subject = en.getId();
+            r.add(roll);
+            r.indent(2);
+            vDesc.addElement(r);
+
+            // roll of 2-5 means a chain reaction happened
+            if (roll < 6) {
+                for (Mounted ammo : en.getAmmo()) {
+                    if (ammo.getLocation() == loc
+                            && ammo.getExplosionDamage() > 0) {
+                        ammoExploded++;
+                        vDesc.addAll(this.explodeEquipment(en, loc, ammo));
+                    }
+                }
+                if (ammoExploded == 0) {
+                    r = new Report(6078);
+                    r.subject = en.getId();
+                    r.indent(2);
+                    vDesc.addElement(r);
+                }
+            } else {
+                r = new Report(6079);
+                r.subject = en.getId();
+                r.indent(2);
+                vDesc.addElement(r);
+            }
+        }
+        
         mounted.setShotsLeft(0);
         vDesc.addAll( damageEntity(en, new HitData(loc), damage, true));
         Report.addNewline(vDesc);
@@ -16837,10 +16871,10 @@ public class Server implements Runnable {
         }
         Mounted m = e.getEquipment(equipId);
 
-        // a mode change for ammo means dumping
+        // a mode change for ammo means dumping or hotloading
         if (m.getType() instanceof AmmoType
-            && !m.getType().hasInstantModeSwitch()) {
-            m.setPendingDump(mode == 1);
+            && !m.getType().hasInstantModeSwitch() && mode <= 0) {
+            m.setPendingDump(mode == -1);
         }
         else {
             m.setMode(mode);

@@ -130,6 +130,11 @@ public class MiscType extends EquipmentType {
                                                     "Multi-Trac Targeting System",
                                                     "Multi-Trac II Targeting System"};
 
+    //New stuff for shields
+    protected int baseDamageAbsorptionRate = 0;
+    protected int baseDamageCapacity = 0;
+    protected int damageTaken = 0;
+
     /** Creates new MiscType */
     public MiscType() {
     }

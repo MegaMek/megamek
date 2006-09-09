@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.widget.ArmlessMechMapSet;
 import megamek.client.ui.swing.widget.BackGroundDrawer;
 import megamek.client.ui.swing.widget.BattleArmorMapSet;
@@ -856,6 +857,11 @@ public class MechDisplay extends JPanel {
                     wn.append(Messages.getString("MechDisplay.rapidFire")); //$NON-NLS-1$
                 }
 
+                // Hotloaded Missile Launchers
+                if (mounted.isHotLoaded()) {
+                    wn.append(Messages.getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
+                }
+
                 // Fire Mode - lots of things have variable modes
                 if (wtype.hasModes()) {
                     wn.append(' ');
@@ -1004,8 +1010,7 @@ public class MechDisplay extends JPanel {
 
             // Update the range display to account for the weapon's loaded ammo.
             if (mounted.getLinked() != null) {
-                AmmoType atype = (AmmoType) mounted.getLinked().getType();
-                updateRangeDisplayForAmmo(atype);
+                updateRangeDisplayForAmmo(mounted.getLinked());
             }
 
             // update ammo selector
@@ -1081,8 +1086,9 @@ public class MechDisplay extends JPanel {
          *
          * @param atype - the <code>AmmoType</code> of the weapon's loaded ammo.
          */
-        private void updateRangeDisplayForAmmo(AmmoType atype) {
+        private void updateRangeDisplayForAmmo(Mounted mAmmo) {
 
+            AmmoType atype = (AmmoType) mAmmo.getType();
             // Only override the display for the various ATM ammos
             if (atype.getAmmoType() == AmmoType.T_ATM) {
                 if (atype.getAmmoType() == AmmoType.T_ATM
@@ -1107,6 +1113,10 @@ public class MechDisplay extends JPanel {
                     wExtR.setText("16 - 20"); //$NON-NLS-1$
                 }
             } // End weapon-is-ATM
+            
+            //Min range 0 for hotload
+            if(mAmmo.isHotLoaded())
+                wMinR.setText("---");
 
         } // End private void updateRangeDisplayForAmmo( AmmoType )
 
@@ -1120,12 +1130,24 @@ public class MechDisplay extends JPanel {
                     return;
                 }
                 Mounted mWeap = entity.getWeaponList().get(n);
+                Mounted oldAmmo = mWeap.getLinked();
                 Mounted mAmmo = vAmmo.get(m_chAmmo.getSelectedIndex());
                 entity.loadWeapon(mWeap, mAmmo);
+                
+                // Refresh for hot load change
+                if(((oldAmmo == null || !oldAmmo.isHotLoaded()) &&
+                        mAmmo.isHotLoaded()) ||
+                        (oldAmmo != null && 
+                         oldAmmo.isHotLoaded() &&
+                         !mAmmo.isHotLoaded())) {
+                    displayMech(entity);
+                    weaponList.setSelectedIndex(n);
+                    displaySelected();
+                }
 
                 // Update the range display to account for the weapon's loaded ammo.
-                AmmoType atype = (AmmoType) mAmmo.getType();
-                updateRangeDisplayForAmmo(atype);
+                
+                updateRangeDisplayForAmmo(mAmmo);
 
                 // When in the Firing Phase, update the targeting information.
                 // TODO: make this an accessor function instead of a member access.
@@ -1340,6 +1362,8 @@ public class MechDisplay extends JPanel {
                         case CriticalSlot.TYPE_EQUIPMENT:
                             Mounted m = en.getEquipment(cs.getIndex());
                             sb.append(cs.isDestroyed() ? "*" : "").append(cs.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                            if ( m.isHotLoaded() )
+                                sb.append(Messages.getString("MechDisplay.isHotLoaded")); //$NON-NLS-1$
                             if (m.getType().hasModes()) {
                                 sb.append(" (").append(m.curMode().getDisplayableName()).append(')'); //$NON-NLS-1$ //$NON-NLS-2$
                                 if (m.getType() instanceof MiscType && ((MiscType) m.getType()).isShield()) {
@@ -1456,7 +1480,7 @@ public class MechDisplay extends JPanel {
 
                 if (bConfirmed) {
                     m.setPendingDump(bDumping);
-                    clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? 1 : 0);
+                    clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? -1 : 0);
                 }
             }
         }

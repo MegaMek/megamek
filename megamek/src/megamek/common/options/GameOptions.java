@@ -129,6 +129,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level3,"maxtech_dig_in", false); //$NON-NLS-1$
         addOption(level3,"maxtech_new_physicals", false); //$NON-NLS-1$
         addOption(level3,"maxtech_infantry_damage", false); //$NON-NLS-1$
+        addOption(level3,"maxtech_hotload", false); //$NON-NLS-1$
 
         OptionGroup ruleBreakers = addGroup("ruleBreakers"); //$NON-NLS-1$
         addOption(ruleBreakers,"no_tac", false); //$NON-NLS-1$

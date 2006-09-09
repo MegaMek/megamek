@@ -78,6 +78,7 @@ public class AmmoType extends EquipmentType {
     public static final long     F_MG                = 0x0001L;
     public static final long     F_BATTLEARMOR       = 0x0002L; // only used by BA squads
     public static final long     F_PROTOMECH         = 0x0004L; // only used by Protomechs
+    public static final long     F_HOTLOAD           = 0x0008L; // Ammo Can be hotloaded
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -162,7 +163,8 @@ public class AmmoType extends EquipmentType {
     private int ammoType;
     private long munitionType;
     protected int shots;
-
+    
+    
     public AmmoType() {
         criticals = 1;
         tonnage = 1.0f;
@@ -1052,6 +1054,8 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 24;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
         ammo.bv = 6;
         ammo.cost = 30000;
 
@@ -1071,6 +1075,9 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 12;
         ammo.bv = 11;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
+
         ammo.cost = 30000;
 
         return ammo;
@@ -1090,6 +1097,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 17;
         ammo.cost = 30000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -1108,6 +1117,9 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 23;
         ammo.cost = 30000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
+
 
         return ammo;
     }
@@ -1181,6 +1193,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 6;
         ammo.cost = 30000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -1200,6 +1214,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 11;
         ammo.cost = 30000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -1219,6 +1235,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 17;
         ammo.cost = 30000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -1238,6 +1256,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 23;
         ammo.cost = 30000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -3742,6 +3762,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -3761,6 +3783,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 14;
         ammo.cost = 75000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -3798,6 +3822,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -3817,6 +3843,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 10;
         ammo.bv = 26;
         ammo.cost = 75000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -3854,6 +3882,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -3873,6 +3903,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 7;
         ammo.bv = 36;
         ammo.cost = 75000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -3910,6 +3942,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -3929,6 +3963,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 5;
         ammo.bv = 52;
         ammo.cost = 75000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -4385,6 +4421,8 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -4403,6 +4441,8 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -4421,6 +4461,8 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -4439,6 +4481,8 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -4456,6 +4500,8 @@ public class AmmoType extends EquipmentType {
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 3;
         ammo.bv = 0;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5050,6 +5096,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 18;
         ammo.bv = 7;
         ammo.cost = 90000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5069,6 +5117,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 9;
         ammo.bv = 15;
         ammo.cost = 90000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5088,6 +5138,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 22;
         ammo.cost = 90000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5107,6 +5159,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 30;
         ammo.cost = 90000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5247,6 +5301,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 7;
         ammo.cost = 60000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5264,6 +5320,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 14;
         ammo.cost = 60000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5281,6 +5339,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 21;
         ammo.cost = 60000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5298,6 +5358,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 3;
         ammo.bv = 28;
         ammo.cost = 60000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5793,5 +5855,4 @@ public class AmmoType extends EquipmentType {
             return munition;
         }
     } // End private class MunitionMutator
-
 }

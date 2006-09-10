@@ -932,7 +932,7 @@ public class MoveStep implements Serializable {
             && type != MovePath.STEP_TURN_RIGHT) {
                 return; //can't move when digging in
             }
-            movementType = IEntityMovementType.MOVE_LEGAL;
+            movementType = IEntityMovementType.MOVE_NONE;
         }
         else if (type == MovePath.STEP_DIG_IN || 
                 type == MovePath.STEP_FORTIFY) {
@@ -949,7 +949,7 @@ public class MoveStep implements Serializable {
                 return; //already fortified - pointless
             }
             isDiggingIn = true;
-            movementType = IEntityMovementType.MOVE_LEGAL;          
+            movementType = IEntityMovementType.MOVE_NONE;          
         }
         
         // check to see if it's trying to flee and can legally do so.
@@ -960,19 +960,19 @@ public class MoveStep implements Serializable {
         
         // anyone who can and does lay mines is legal
         if (type == MovePath.STEP_LAY_MINE && entity.canLayMine()) {
-            movementType = IEntityMovementType.MOVE_LEGAL;
+            movementType = prev.movementType;
         }
 
         if (type == MovePath.STEP_CLIMB_MODE_ON ||
             type == MovePath.STEP_CLIMB_MODE_OFF) {
-            movementType = IEntityMovementType.MOVE_LEGAL;
+            movementType = prev.movementType;
         }
         // check for ejection (always legal?)
         if (type == MovePath.STEP_EJECT) {
             movementType = IEntityMovementType.MOVE_NONE;
         }
         if (type == MovePath.STEP_SEARCHLIGHT) {
-            movementType = IEntityMovementType.MOVE_LEGAL;
+            movementType = prev.movementType;
         }
         if (type == MovePath.STEP_UNJAM_RAC) {
             movementType = IEntityMovementType.MOVE_NONE;

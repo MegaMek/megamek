@@ -150,7 +150,7 @@ public class Client {
             }
         }
         System.out.println("client: died"); //$NON-NLS-1$
-        
+        System.out.flush();
     }
 
     /**

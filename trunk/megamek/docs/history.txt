@@ -35,6 +35,10 @@ v0.31.14-dev (SVN)
 + made cluster hits table static member
 + Bug 1435078: Purifier (Narc) should be able to fire missiles individually
 + Bug: mechs could fall through bridges in some circumstances
++ Implemented a connection watchdog on the server to handle pending connections
+  that don't do anything.  After 1 second, the server greeting packet is resent
+  every 500ms.  After 10 retries if the client still hasn't responded they are 
+  dropped.
 
 v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen

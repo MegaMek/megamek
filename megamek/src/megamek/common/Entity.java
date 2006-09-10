@@ -3110,16 +3110,20 @@ public abstract class Entity extends TurnOrdered
           else if ( eMaster.isShutDown() ) {
               return null;
           }
-          // Lance commanders can't connect to non-company commanders.
-          else if (!eMaster.C3MasterIs(eMaster)) {
-              C3Master = NONE;
-          }
           // Has our company commander lost his company command computer?
           else if ( ( eMaster.C3CompanyMasterIndex > LOC_NONE &&
-                      !eMaster.hasC3MM() ) ||
-                    ( eMaster.C3CompanyMasterIndex <= LOC_NONE &&
-                      !eMaster.hasC3M() ) ) {
+                  !eMaster.hasC3MM() ) ||
+                ( eMaster.C3CompanyMasterIndex <= LOC_NONE &&
+                  !eMaster.hasC3M() ) ) {
               C3Master = NONE;
+          }
+          //maximum depth of a c3 network is 2 levels.
+          else if (eMaster != this){
+              Entity eCompanyMaster = eMaster.getC3Master();
+              if ( eCompanyMaster != null && 
+                  eCompanyMaster.getC3Master() != eCompanyMaster) {
+                  C3Master = NONE;
+              }
           }
       }
       // If we aren't shut down, and if we don't have a company master

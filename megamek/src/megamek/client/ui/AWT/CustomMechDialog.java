@@ -1030,6 +1030,12 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             if (entity.hasC3i() != e.hasC3i()) {
                 continue;
             }
+            //maximum depth of a c3 network is 2 levels.
+            Entity eCompanyMaster = e.getC3Master();
+            if ( eCompanyMaster != null && 
+                eCompanyMaster.getC3Master() != eCompanyMaster) {
+                continue;
+            }
             int nodes = e.calculateFreeC3Nodes();
             if ( e.hasC3MM() && entity.hasC3M() && e.C3MasterIs(e) ) {
                 nodes = e.calculateFreeC3MNodes();
@@ -1063,7 +1069,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 }
                 listIndex++;
             }
-            else if ( e.C3MasterIs(e) != entity.hasC3M() ) {
+            else if ( e.C3MasterIs(e) && !entity.hasC3M() ) {
                 // If we're a slave-unit, we can only connect to sub-masters,
                 // not main masters likewise, if we're a master unit, we can
                 // only connect to main master units, not sub-masters.

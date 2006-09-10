@@ -162,6 +162,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 
 /**
@@ -205,7 +207,9 @@ public class Server implements Runnable {
     // canceling each other
     private Vector              physicalResults = new Vector();
 
-    private Vector<DynamicTerrainProcessor> terrainProcessors = new Vector();    
+    private Vector<DynamicTerrainProcessor> terrainProcessors = new Vector();
+    
+    private Timer timer = new Timer();
 
     /* Tracks entities which have been destroyed recently.  Allows refactoring of the
      * damage and kill logic from Server, where it is now, to the Entity subclasses eventually.
@@ -393,6 +397,8 @@ public class Server implements Runnable {
      * Shuts down the server.
      */
     public void die() {
+        timer.cancel();
+        
         // kill thread accepting new connections
         connector = null;
 
@@ -422,6 +428,7 @@ public class Server implements Runnable {
         }
         connections.removeAllElements();
         connectionIds.clear();
+        System.out.flush();
     }
 
     /**
@@ -17770,6 +17777,8 @@ public class Server implements Runnable {
                 connectionsPending.addElement(c);
 
                 greeting(id);
+                ConnectionWatchdog w = new ConnectionWatchdog(this, id);
+                timer.schedule(w, 1000, 500);
             } catch(IOException ex) {
 
             }
@@ -20295,5 +20304,42 @@ public class Server implements Runnable {
             }
         }
     }
+    
+    class ConnectionWatchdog extends TimerTask {
+
+        private Server server;
+        private int id;
+        private int failCount;
+        
+        public ConnectionWatchdog(Server server, int id) {
+            this.server = server;
+            this.id = id;
+            failCount = 0;
+        }
+        @Override
+        public void run() {
+            if(server.getPlayer(id) != null) {
+                //fully connected
+                cancel();
+                return;
+            }
+            if(server.getPendingConnection(id) == null) {
+                //dropped
+                cancel();
+                return;
+            }
+            System.err.println("Bark Bark");
+            if(failCount > 10) {
+                server.getPendingConnection(id).close();
+                cancel();
+                System.err.println("Growl");
+                return;
+            }
+            server.greeting(id);
+            failCount++;
+        }
+
+    }
+
 }
 

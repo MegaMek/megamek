@@ -104,13 +104,13 @@ public abstract class Connection {
      * Buffer of the last commands sent; Used for debugging purposes.
      */
     private CircularIntegerBuffer debugLastFewCommandsSent =
-        new CircularIntegerBuffer(5);
+        new CircularIntegerBuffer(50);
 
     /**
      * Buffer of the last commands received; Used for debugging purposes.
      */
     private CircularIntegerBuffer debugLastFewCommandsReceived =
-        new CircularIntegerBuffer(5);
+        new CircularIntegerBuffer(50);
 
     /**
      * Type of marshalling used to represent sent packets
@@ -202,6 +202,8 @@ public abstract class Connection {
      */
     public void close() {
         synchronized (this) {
+            System.err.print(getConnectionTypeAbbrevation());
+            sendQueue.reportContents();
             sendQueue.finish();
             receiver = null;
             sender = null;
@@ -370,6 +372,8 @@ public abstract class Connection {
         reportLastCommands(true);
         System.err.println();
         reportLastCommands(false);
+        System.err.println();
+        sendQueue.reportContents();
     }
 
     /**
@@ -481,8 +485,8 @@ public abstract class Connection {
         };        
         sender = new Thread(senderRunable, "Packet Sender (" + getId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
         
-        receiver.start();        
         sender.start();
+        receiver.start();
     }
     
     /**
@@ -539,6 +543,14 @@ public abstract class Connection {
         public synchronized boolean hasPending() {
             return queue.size() > 0;
         }
+        
+        public void reportContents() {
+            System.err.print("Contents of Send Queue: ");
+            for(SendPacket p:queue) {
+                System.err.print(p.command);
+            }
+            System.err.println();
+        }
     }
 
     /**
@@ -584,7 +596,6 @@ public abstract class Connection {
                 out.close();
                 data = bos.toByteArray();
                 bytesSent += data.length;
-                debugLastFewCommandsSent.push(packet.getCommand());
             } catch (Exception e) {
                 e.printStackTrace();
             }

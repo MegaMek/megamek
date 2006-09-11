@@ -1319,10 +1319,16 @@ public class MechDisplay extends BufferedPanel {
                         }
                     }
                 }
+                if (clientgui.getClient().game.getOptions().booleanOption("maxtech_eccm")) {
+                    for (Mounted m : en.getMisc()) {
+                        if (m.getType().hasFlag(MiscType.F_ECM)) {
+                            return m;
+                        }
+                    }
+                }
                 if (clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload")) {
-                    for (Mounted m : en.getEquipment()) {
-                        if ((m.getType() instanceof AmmoType)
-                                && m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
+                    for (Mounted m : en.getAmmo()) {
+                        if (m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
                             return m;
                         }
                     }

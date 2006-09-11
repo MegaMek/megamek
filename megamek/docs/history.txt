@@ -44,6 +44,7 @@ v0.31.14-dev (SVN)
 + Bug 1556279: Tanks can't switch ECM to ECCM.
 + Bug 1293410: Minimap can become too big
 + Bug 1556062: Units can fall to MIN_INT elevation.
++ Bug 1556279: tanks can't set modes on all mode-switchable equipment
 
 v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen

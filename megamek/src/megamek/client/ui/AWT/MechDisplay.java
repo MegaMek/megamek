@@ -1310,31 +1310,6 @@ public class MechDisplay extends BufferedPanel {
         }
 
         public Mounted getSelectedEquipment() {
-            if (en instanceof Tank) {
-                if (en.hasTargComp()) {
-                    for (Mounted m : en.getEquipment()) {
-                        if (m.getType() instanceof MiscType &&
-                                m.getType().hasFlag(MiscType.F_TARGCOMP)) {
-                            return m;
-                        }
-                    }
-                }
-                if (clientgui.getClient().game.getOptions().booleanOption("maxtech_eccm")) {
-                    for (Mounted m : en.getMisc()) {
-                        if (m.getType().hasFlag(MiscType.F_ECM)) {
-                            return m;
-                        }
-                    }
-                }
-                if (clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload")) {
-                    for (Mounted m : en.getAmmo()) {
-                        if (m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
-                            return m;
-                        }
-                    }
-                }
-
-            }
             final CriticalSlot cs = getSelectedCritical();
             if (null == cs) {
                 return null;
@@ -1355,11 +1330,6 @@ public class MechDisplay extends BufferedPanel {
             for (int i = 0; i < en.locations(); i++) {
                 if (en.getNumberOfCriticals(i) > 0) {
                     locList.add(en.getLocationName(i), i);
-                }
-            }
-            if (en instanceof Tank) {
-                if (en.hasTargComp()) {
-                    locList.add(en.getLocationName(0));
                 }
             }
             locList.select(0);
@@ -1401,45 +1371,6 @@ public class MechDisplay extends BufferedPanel {
                     }
                 }
                 slotList.add(sb.toString());
-            }
-            if (en instanceof Tank || en instanceof GunEmplacement) {
-                if (en.hasTargComp()) {
-                    for (Mounted m : en.getEquipment()) {
-                        if ((m.getType() instanceof MiscType &&
-                                m.getType().hasFlag(MiscType.F_TARGCOMP))) {
-                            StringBuffer sb = new StringBuffer(32);
-                            sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                            if (m.getType().hasModes()) {
-                                sb.append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-                            }
-                            slotList.add(sb.toString());
-                        }
-                    }
-                }
-                if (clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload")) {
-                    for (Mounted m : en.getAmmo()) {
-                        if (m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
-                            StringBuffer sb = new StringBuffer(32);
-                            sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                            if (m.getType().hasModes()) {
-                                sb.append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-                            }
-                            slotList.add(sb.toString());
-                        }
-                    }
-                }
-                if (clientgui.getClient().game.getOptions().booleanOption("maxtech_eccm")) {
-                    for (Mounted m : en.getMisc()) {
-                        if (m.getType().hasFlag(MiscType.F_ECM)) {
-                            StringBuffer sb = new StringBuffer(32);
-                            sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-                            if (m.getType().hasModes()) {
-                                sb.append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
-                            }
-                            slotList.add(sb.toString());
-                        }
-                    }
-                }
             }
         }
 

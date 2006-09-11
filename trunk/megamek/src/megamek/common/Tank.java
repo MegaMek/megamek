@@ -45,7 +45,7 @@ public class Tank
     public static final int        LOC_TURRET             = 5;
 
     // tanks have no critical slot limitations
-    private static final int[] NUM_OF_SLOTS = {0, 0, 0, 0, 0, 0};
+    private static final int[] NUM_OF_SLOTS = {25, 25, 25, 25, 25, 25};
     
     protected static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR", "TU" };
     protected static String[] LOCATION_NAMES = { "Body", "Front", "Right", "Left", "Rear", "Turret" };
@@ -917,5 +917,14 @@ public class Tank
 
     public boolean isNuclearHardened() {
         return true;
+    }
+    
+    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
+    throws LocationFullException {
+        super.addEquipment(mounted,loc, rearMounted);
+        // Add the piece equipment to our slots.
+        addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
+                                           getEquipmentNum(mounted),
+                                           true));
     }
 }

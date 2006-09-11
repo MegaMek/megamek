@@ -269,6 +269,45 @@ public class MiniMap extends Canvas  {
         leftMargin = margin;
         requiredWidth = m_game.getBoard().getWidth()*(currentHexSide + currentHexSideBySin30) + currentHexSideBySin30 + 2*margin;
         requiredHeight = (2*m_game.getBoard().getHeight() + 1)*currentHexSideByCos30 + 2*margin + buttonHeight;
+        //ensure its on screen
+        Rectangle virtualBounds = new Rectangle();
+        GraphicsEnvironment ge = GraphicsEnvironment.
+                getLocalGraphicsEnvironment();
+        GraphicsDevice[] gs =
+                ge.getScreenDevices();
+        for (int j = 0; j < gs.length; j++) { 
+            GraphicsDevice gd = gs[j];
+            GraphicsConfiguration[] gc =
+                gd.getConfigurations();
+            for (int i=0; i < gc.length; i++) {
+                virtualBounds =
+                    virtualBounds.union(gc[i].getBounds());
+            }
+        } 
+        //zoom out if its too big for the screen
+        while(zoom>0 && (requiredWidth>virtualBounds.width || requiredHeight>virtualBounds.height)) {
+            zoom--;
+            currentHexSide = hexSide[zoom];
+            currentHexSideByCos30 = hexSideByCos30[zoom];
+            currentHexSideBySin30 = hexSideBySin30[zoom];
+            requiredWidth = m_game.getBoard().getWidth()*(currentHexSide + currentHexSideBySin30) + currentHexSideBySin30 + 2*margin;
+            requiredHeight = (2*m_game.getBoard().getHeight() + 1)*currentHexSideByCos30 + 2*margin + buttonHeight;
+        }
+        int x = getParent().getLocation().x;
+        int y = getParent().getLocation().y;
+        if(x + requiredWidth > virtualBounds.getMaxX()) {
+            x = (int)(virtualBounds.getMaxX() - requiredWidth);
+        }
+        if(x < virtualBounds.getMinX()) {
+            x = (int)(virtualBounds.getMinX());
+        }
+        if(y + requiredHeight > virtualBounds.getMaxY()) {
+            y = (int)(virtualBounds.getMaxY() - requiredHeight);
+        }
+        if(y < virtualBounds.getMinY()) {
+            y = (int)(virtualBounds.getMinY());
+        }
+        getParent().setLocation(x,y);
         setSize(requiredWidth, requiredHeight);
         m_dialog.pack();
         //m_dialog.show();

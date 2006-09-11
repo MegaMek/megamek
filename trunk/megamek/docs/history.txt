@@ -42,6 +42,7 @@ v0.31.14-dev (SVN)
 + Bug 1297233: C3 master should be able to act as slave
 + Bug 1555770: Spotlight Activation
 + Bug 1556279: Tanks can't switch ECM to ECCM.
++ Bug 1293410: Minimap can become too big
 
 v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen

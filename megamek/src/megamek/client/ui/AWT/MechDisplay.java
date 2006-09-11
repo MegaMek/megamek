@@ -1417,11 +1417,25 @@ public class MechDisplay extends BufferedPanel {
                     }
                 }
                 if (clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload")) {
-                    for (Mounted m : en.getEquipment()) {
-                        if ((m.getType() instanceof AmmoType)
-                                && m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
+                    for (Mounted m : en.getAmmo()) {
+                        if (m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
                             StringBuffer sb = new StringBuffer(32);
                             sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                            if (m.getType().hasModes()) {
+                                sb.append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
+                            slotList.add(sb.toString());
+                        }
+                    }
+                }
+                if (clientgui.getClient().game.getOptions().booleanOption("maxtech_eccm")) {
+                    for (Mounted m : en.getMisc()) {
+                        if (m.getType().hasFlag(MiscType.F_ECM)) {
+                            StringBuffer sb = new StringBuffer(32);
+                            sb.append(m.isDestroyed() ? "*" : "").append(m.isBreached() ? "x" : "").append(m.getDesc()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+                            if (m.getType().hasModes()) {
+                                sb.append(" (").append(m.curMode().getDisplayableName()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+                            }
                             slotList.add(sb.toString());
                         }
                     }

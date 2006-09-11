@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.31.15-dev (SVN)
+
 v0.31.14 (2006-09-11, 19:00 GMT+2)
 + Bug: assertion failure when observing double blind games
 + Bug 1306432 / 1456639: roads/buildings don't connect automatically

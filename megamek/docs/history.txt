@@ -4,6 +4,7 @@ v0.31.15-dev (SVN)
 + Bug 1556826: Vehicle loses charge on falling 'mech.
 + Bug 1557074: jungle appears as clear hexes in atmospheric and simplified
   tilesets.
++ Bug 1557077: Changed MASC to not raise the to-hit too high if MASC isn't used.
 
 v0.31.14 (2006-09-11, 19:00 GMT+2)
 + Bug: assertion failure when observing double blind games

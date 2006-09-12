@@ -624,6 +624,12 @@ base 2 "woods:1" "" "boring/light_forest_2.gif"
 base 0 "woods:2" "" "boring/heavy_forest_0.gif"
 base 1 "woods:2" "" "boring/heavy_forest_1.gif"
 
+base 0 "jungle:1" "" "boring/light_forest_0.gif"
+base 1 "jungle:1" "" "boring/light_forest_1.gif"
+base 2 "jungle:1" "" "boring/light_forest_2.gif"
+base 0 "jungle:2" "" "boring/heavy_forest_0.gif"
+base 1 "jungle:2" "" "boring/heavy_forest_1.gif"
+
 base 0 "rough:1" "" "boring/beige_rough_0.gif"
 base 1 "rough:1" "" "boring/beige_rough_1.gif"
 base 2 "rough:1" "" "boring/beige_rough_1.gif"

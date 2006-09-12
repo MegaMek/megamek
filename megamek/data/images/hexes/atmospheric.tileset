@@ -40,6 +40,9 @@ super * "woods:2" "snow" "themes/snow_hf.png"
 super * "woods:1" "" "boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif"
 super * "woods:2" "" "boring/hf0.gif;boring/hf1.gif;boring/hf2.gif;boring/hf3.gif"
 
+super * "jungle:1" "" "boring/lf0.gif;boring/lf1.gif;boring/lf2.gif;boring/lf3.gif;boring/lf4.gif"
+super * "jungle:2" "" "boring/hf0.gif;boring/hf1.gif;boring/hf2.gif;boring/hf3.gif"
+
 super * "geyser:1" "" "boring/geyservent.gif"
 # geyser 2 is rendered with smoke
 super * "geyser:3" "" "boring/geyservent.gif"

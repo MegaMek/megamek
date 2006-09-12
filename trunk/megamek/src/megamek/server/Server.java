@@ -11158,8 +11158,9 @@ public class Server implements Runnable {
             addReport(r);
             return;
         }
-
-        if ((te != null) && (te.isProne())) {
+        
+        // target fell down, only for attacking Mechs, though
+        if ((te != null) && (te.isProne()) && ae instanceof Mech) {
             r = new Report(4205);
             r.subject = ae.getId();
             r.indent();

@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.31.15-dev (SVN)
++ Bug 1556826: Vehicle loses charge on falling 'mech.
 
 v0.31.14 (2006-09-11, 19:00 GMT+2)
 + Bug: assertion failure when observing double blind games

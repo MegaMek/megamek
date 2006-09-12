@@ -140,6 +140,7 @@ public abstract class Mech
 
     private static int[] MASC_FAILURE = {2, 4, 6, 10, 12, 12, 12};
     private int nMASCLevel = 0; // MASCLevel is the # of turns MASC has been used previously
+    private boolean bMASCWentUp = false;
     private boolean usedMASC = false; // Has masc been used?
     private int sinksOn = -1;
     private int sinksOnNextRound = -1;
@@ -486,8 +487,13 @@ public abstract class Mech
         // otherwise decrement.  Then, clear the counter 
         if (usedMASC) {
             nMASCLevel++;
+            bMASCWentUp = true;
         } else {
             nMASCLevel = Math.max(0, nMASCLevel - 1);
+            if (bMASCWentUp) {
+                nMASCLevel = Math.max(0, nMASCLevel - 1);
+                bMASCWentUp = false;
+            }
         }
 
         // Clear the MASC flag 

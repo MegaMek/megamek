@@ -266,19 +266,28 @@ public class MoveStep implements Serializable {
             setDistance(0); //start over after shifting gears
         }
         addDistance(1);
-        if(getType() == MovePath.STEP_DFA) {
-            setElevation(1 + Math.max(entity.elevationOccupied(game.getBoard().getHex(prev.getPosition())), entity.elevationOccupied(game.getBoard().getHex(getPosition()))));
+        if (getType() == MovePath.STEP_DFA) {
+            IHex hex = game.getBoard().getHex(getPosition());
+            setElevation(Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV)));
+            // If we're DFA-ing, we want to be 1 above the level of the target.
+            // However, if that puts us in the ground, we're instead 1 above the level of the hex right before the target.
+            int otherEl = 0;
+            IHex hex2 = game.getBoard().getHex(prev.getPosition());
+            otherEl = Math.max(0, hex2.terrainLevel(Terrains.BLDG_ELEV));
+            if (otherEl > getElevation())
+                setElevation(otherEl);
+            setElevation(getElevation() + 1);
         } else if (parent.isJumping()) {
             IHex hex = game.getBoard().getHex(getPosition());
             int maxElevation = entity.getJumpMP() + entity.getElevation() + game.getBoard().getHex(entity.getPosition()).surface() - hex.surface();
             int building = hex.terrainLevel(Terrains.BLDG_ELEV);
-            if(entity instanceof Infantry) {
+            if (entity instanceof Infantry) {
                 //infantry can jump into a building
                 setElevation(Math.max(-hex.depth(), Math.min(building,maxElevation)));
             } else {
                 setElevation(Math.max(-hex.depth(), building));
             }
-            if(climbMode() && maxElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
+            if (climbMode() && maxElevation >= hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
                 setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BRIDGE_ELEV)));
             }
         } else {
@@ -1515,11 +1524,12 @@ public class MoveStep implements Serializable {
         }
 
         // can't jump over too-high terrain
-        if ( movementType == IEntityMovementType.MOVE_JUMP
+        if (movementType == IEntityMovementType.MOVE_JUMP
              && ( destAlt
                   > (entity.getElevation()
                      + entity.game.getBoard().getHex(entity.getPosition()).getElevation()
-                     + entity.getJumpMPWithTerrain()) ) ) {
+                     + entity.getJumpMPWithTerrain()
+                     + (type == MovePath.STEP_DFA?1:0)) ) ) {
             return false;
         }
 
@@ -1595,7 +1605,7 @@ public class MoveStep implements Serializable {
         }
         
         //check the elevation is valid for the type of entity and hex
-        if(type != MovePath.STEP_DFA &&
+        if (type != MovePath.STEP_DFA &&
                 !entity.isElevationValid(elevation, destHex)) {
             if(parent.isJumping()) {
                 terrainInvalid = true;

@@ -6,6 +6,7 @@ v0.31.15-dev (SVN)
   tilesets.
 + Bug 1557077: Changed MASC to not raise the to-hit too high if MASC isn't used.
 + Bug 1556870: Changed method of elevation calculation for DFAs.
++ Bug: night battle modifier added twice for anti-mech attacks
 
 v0.31.14 (2006-09-11, 19:00 GMT+2)
 + Bug: assertion failure when observing double blind games

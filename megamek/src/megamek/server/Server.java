@@ -19628,6 +19628,7 @@ public class Server implements Runnable {
                 r.choose(true);
                 entity.setStuck(false);
                 entity.setCanUnstickByJumping(false);
+                entityUpdate(entity.getId());
             }
             addReport(r);
         }

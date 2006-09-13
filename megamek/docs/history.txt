@@ -1,6 +1,10 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.31.15-dev (SVN)
++ Bug 1293410: Minimap can become too big
++ Bug 1556062: Units can fall to MIN_INT elevation.
++ Bug 1556279: tanks can't set modes on all mode-switchable equipment
+(log edited to reflect reality, above 3 weren't included in 0.31.14)
 + Bug 1556826: Vehicle loses charge on falling 'mech.
 + Bug 1557074: jungle appears as clear hexes in atmospheric and simplified
   tilesets.
@@ -51,9 +55,7 @@ v0.31.14 (2006-09-11, 19:00 GMT+2)
 + Bug 1297233: C3 master should be able to act as slave
 + Bug 1555770: Spotlight Activation
 + Bug 1556279: Tanks can't switch ECM to ECCM.
-+ Bug 1293410: Minimap can become too big
-+ Bug 1556062: Units can fall to MIN_INT elevation.
-+ Bug 1556279: tanks can't set modes on all mode-switchable equipment
+(log edited to reflect reality, 3 bugs moved to 0.31.15)
 
 v0.31.13 (2006-09-04, 22:08 GMT+2)
 + Bug 1471321: when removing units in deployment, nonskippable turns happen

@@ -580,7 +580,7 @@ public class MovementDisplay
         // ^-- I suppose these should really be methods, a-la Entity.canCharge(), Entity.canDFA()...
         
         setWalkEnabled(!ce.isImmobile() && ce.getWalkMP() > 0 && !ce.isStuck());
-        setJumpEnabled(!ce.isImmobile() && ce.getJumpMP() > 0 && !ce.isStuck());
+        setJumpEnabled(!ce.isImmobile() && ce.getJumpMP() > 0 && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!ce.isImmobile() && ce.hasUMU() && client.game.getBoard().getHex(ce.getPosition()).containsTerrain(Terrains.WATER) );
         setBackUpEnabled(butWalk.isEnabled());
 

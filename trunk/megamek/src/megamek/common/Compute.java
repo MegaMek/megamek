@@ -3129,8 +3129,6 @@ public class Compute {
         int men = 0;
         int base = ToHitData.IMPOSSIBLE;
         StringBuffer reason = new StringBuffer();
-        final int nightModifier = (attacker.game.getOptions()
-                .booleanOption("night_battle")) ? +2 : 0;
 
         // Can only attack a Mek's legs.
         if (!(defender instanceof Mech)) {
@@ -3191,11 +3189,6 @@ public class Compute {
             reason.append("Attacker is not infantry.");
         }
 
-        if (nightModifier > 0) {
-            base += nightModifier;
-            reason.append("Night Battle, no Spotlights");
-        }
-
         // Return the ToHitData for this attack.
         // N.B. we attack the legs.
         return new ToHitData(base, reason.toString(), ToHitData.HIT_KICK,
@@ -3217,8 +3210,6 @@ public class Compute {
         int men = 0;
         int base = ToHitData.IMPOSSIBLE;
         StringBuffer reason = new StringBuffer();
-        final int nightModifier = (attacker.game.getOptions()
-                .booleanOption("night_battle")) ? +2 : 0;
 
         // Can only swarm a Mek.
         if (!(defender instanceof Mech)) {
@@ -3284,11 +3275,6 @@ public class Compute {
         // No one else can conduct leg attacks.
         else {
             reason.append("Attacker is not infantry.");
-        }
-
-        if (nightModifier > 0) {
-            base += nightModifier;
-            reason.append("Night Battle, no Spotlights");
         }
 
         // Return the ToHitData for this attack.

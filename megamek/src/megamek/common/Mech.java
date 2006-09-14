@@ -566,7 +566,7 @@ public abstract class Mech
     /**
      * Count non-hip leg actuator crits
      */
-      public int countLegActuatorCrits(int loc) {
+    public int countLegActuatorCrits(int loc) {
         if (isLocationBad(loc)) {
             return 0;
         }

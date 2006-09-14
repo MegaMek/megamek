@@ -104,7 +104,7 @@ public class BipedMech extends Mech {
         if(legsDestroyed > 0) {
             wmp = (legsDestroyed == 1) ? 1 : 0;
         } else {
-            if(hipHits > 0) {
+            if (hipHits > 0) {
                if (game != null && game.getOptions().booleanOption("maxtech_leg_damage")) {
                  wmp = (hipHits >= 1) ? wmp - (2 * hipHits) : 0;
                } else {
@@ -114,7 +114,7 @@ public class BipedMech extends Mech {
             wmp -= actuatorHits;
         }
         
-        if ( hasShield() ){
+        if (hasShield()) {
             wmp -= getNumberOfShields(MiscType.S_SHIELD_LARGE);
             wmp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
         }
@@ -146,7 +146,7 @@ public class BipedMech extends Mech {
      */
     
     public int getRunMP(boolean gravity) {
-        if ( countBadLegs() == 0 ) {
+        if (countBadLegs() == 0) {
             return super.getRunMP(gravity);
         }
 		return getWalkMP(gravity);
@@ -157,7 +157,7 @@ public class BipedMech extends Mech {
      */
        
     public int getRunMPwithoutMASC(boolean gravity) {
-        if ( countBadLegs() == 0 ) {
+        if (countBadLegs() == 0) {
             return super.getRunMPwithoutMASC(gravity);
         }
 		return getWalkMP(gravity);

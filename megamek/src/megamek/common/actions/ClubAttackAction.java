@@ -170,7 +170,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_FLAIL))
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_WRECKING_BALL))
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_LANCE))
-                || (((MiscType)club.getType()).hasSubType(MiscType.S_BUZZSAW))) {
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_BUZZSAW))
+                || (((MiscType)club.getType()).hasSubType(MiscType.S_DUAL_SAW))) {
             needsHand = false;
         }
         

@@ -13903,6 +13903,7 @@ public class Server implements Runnable {
                 vDesc.addElement(r2);
             }
         }
+        applyBuildingDamage();
 
         // Now we damage people near the explosion.
         Vector entities = game.getEntitiesVector();
@@ -13935,11 +13936,13 @@ public class Server implements Runnable {
                 if (isSheltered(entity, position, true)) {
                     r = new Report(6545);
                     r.addDesc(entity);
+                    r.subject = entity.getId();
                     vDesc.addElement(r);
                     continue;
                 }
                 // If shelter is allowed but didn't work, report that.
                 r = new Report(6546);
+                r.subject = entity.getId();
                 r.addDesc(entity);
                 vDesc.addElement(r);
             }
@@ -14076,7 +14079,7 @@ public class Server implements Runnable {
         // This is technically part of cratering, but...
         // Now we destroy all the units inside the cratering range.
         Enumeration entitiesInCrater = game.getEntities();
-        
+
         while (entitiesInCrater.hasMoreElements()) {
             Entity entity = (Entity)entitiesInCrater.nextElement();
             

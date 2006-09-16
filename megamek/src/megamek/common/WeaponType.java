@@ -6148,6 +6148,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
+        weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_BALLISTIC;
 
         return weapon;
@@ -8828,7 +8829,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
-      weapon.setModes(new String[] {"", "Indirect"});
+        weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_BATTLEARMOR | F_BALLISTIC;
 
         return weapon;
@@ -8853,6 +8854,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
+        weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_BATTLEARMOR | F_BALLISTIC;
 
         return weapon;
@@ -8877,6 +8879,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;
+        weapon.setModes(new String[] {"", "Indirect"});
         weapon.flags |= F_BATTLEARMOR | F_BALLISTIC;
 
         return weapon;

@@ -6,7 +6,7 @@ Components (Units)
 
 - Battlemechs			Yes		None
 - Protomechs			Yes		None
-- Vehicles			Partial		No Submarines.
+- Vehicles			Yes		None
 - Infantry			Yes		None
 
 Components (Mapsheets)
@@ -182,13 +182,13 @@ Vehicles (Movement)
 
 - Movement			Yes		None
 - VTOL Movement			Yes		None
-- Naval Movement		Partial		Submarines are missing
+- Naval Movement		Yes		None
 
 Vehicles (Combat)
 
 - Combat			Yes		None
 - VTOL Combat			Yes		None
-- Naval Combat			Partial		Submarines are missing
+- Naval Combat			Yes		None
 
 Infantry (Movement)
 
@@ -232,7 +232,7 @@ Special Case Rules (Artillery)
 - Setup				Yes		None
 - Targeting			Yes		None
 - Damage			Yes		None
-- Smoke Rounds			No		None
+- Smoke Rounds			Yes		Only work with maxtech fire and smoke rules
 - Onboard Artillery		Yes		None
 - Arrows IV Artillery		Yes		None
 - Arrows IV Munitions		Yes		None

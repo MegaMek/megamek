@@ -336,8 +336,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISMagshotGR());
         EquipmentType.addType(createFireExtinguisher());
         
-        EquipmentType.addType(createISLightPPC()); //guessed from fluff
-        EquipmentType.addType(createISHeavyPPC()); //guessed from fluff
+        EquipmentType.addType(createISLightPPC());
+        EquipmentType.addType(createISHeavyPPC());
         EquipmentType.addType(createISRAC10()); //MFUK
         EquipmentType.addType(createISRAC20()); //MFUK
         EquipmentType.addType(createISLAC10()); //MFUK
@@ -9799,7 +9799,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterMediumRange = 7;
         weapon.waterLongRange = 10;
         weapon.waterExtremeRange = 14;
-        weapon.tonnage = 7.0f;
+        weapon.tonnage = 6.0f;
         weapon.criticals = 2;
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 176;
@@ -9877,7 +9877,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterLongRange = 10;
         weapon.waterExtremeRange = 14;
         weapon.tonnage = 10.0f;
-        weapon.criticals = 6;
+        weapon.criticals = 4;
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 316;
         weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
@@ -9906,7 +9906,7 @@ public class WeaponType extends EquipmentType {
         weapon.waterMediumRange = 7;
         weapon.waterLongRange = 10;
         weapon.waterExtremeRange = 14;
-        weapon.tonnage = 4.0f;
+        weapon.tonnage = 3.0f;
         weapon.criticals = 2;
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 88;

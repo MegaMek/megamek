@@ -54,6 +54,10 @@ public class BoardUtilities {
         // Copy the data from the sub-boards.
         for (int i = 0; i < sheetHeight; i++) {
             for (int j = 0; j < sheetWidth; j++) {
+                IBoard b = boards[i*sheetWidth+j];
+                if(b.getWidth() != width || b.getHeight() != height) {
+                    throw new IllegalArgumentException("board is the wrong size, expected "+width+"x"+height+", got "+b.getWidth()+"x"+b.getHeight());
+                }
                 copyBoardInto(resultData, resultWidth, j * width, i * height, boards[i * sheetWidth + j]);
                 // Copy in the other board's options.
                 if ( boards[i * sheetWidth + j].getRoadsAutoExit() == false ) {

@@ -612,6 +612,8 @@ public class ScenarioLoader
             }
         }
         
+        // if only one board just return it.
+        if(ba.length == 1) return ba[0];
         // construct the big board
         return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba);
     }

@@ -5751,14 +5751,16 @@ public class AmmoType extends EquipmentType {
             // check for cost
             //TODO: ammo for weapons using artemis should cost double
             double cost = base.cost;
-            if ((munition.getAmmoType() == AmmoType.T_AC) && (munition.getMunitionType() == AmmoType.M_ARMOR_PIERCING))
-                cost *= 4;
-            if ((munition.getAmmoType() == AmmoType.T_AC) && munition.getMunitionType() == AmmoType.M_FLECHETTE)
-                cost *= 1.5;
-            if ((munition.getAmmoType() == AmmoType.T_AC) && munition.getMunitionType() == AmmoType.M_INCENDIARY_AC)
-                cost *= 2;
-            if ((munition.getAmmoType() == AmmoType.T_AC) && munition.getMunitionType() == AmmoType.M_PRECISION)
-                cost *= 6;
+            if(munition.getAmmoType() == T_AC || munition.getAmmoType() == T_LAC) {
+                if (munition.getMunitionType() == AmmoType.M_ARMOR_PIERCING)
+                    cost *= 4;
+                if (munition.getMunitionType() == AmmoType.M_FLECHETTE)
+                    cost *= 1.5;
+                if (munition.getMunitionType() == AmmoType.M_INCENDIARY_AC)
+                    cost *= 2;
+                if (munition.getMunitionType() == AmmoType.M_PRECISION)
+                    cost *= 6;
+            }
             if (((munition.getAmmoType() == AmmoType.T_LRM) || (munition.getAmmoType() == AmmoType.T_SRM))
                     && munition.getMunitionType() == AmmoType.M_FRAGMENTATION)
                 cost *= 2;

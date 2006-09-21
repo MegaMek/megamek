@@ -21,6 +21,7 @@ v0.31.15-dev (SVN)
 + Corrections to weapon stats for light/heavy/snub nose PPC
 + Update BMRr features list
 + add MaxTech features list
++ Bug 1562560: LAC's with special ammo cost the same as standard ammo
 
 v0.31.14 (2006-09-11, 19:00 GMT+2)
 + Bug: assertion failure when observing double blind games

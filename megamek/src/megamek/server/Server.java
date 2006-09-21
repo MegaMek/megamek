@@ -12424,7 +12424,7 @@ public class Server implements Runnable {
      * Resolves and reports all piloting skill rolls for a single mech.
      */
     void resolvePilotingRolls(Entity entity) {
-        resolvePilotingRolls(entity, false, null, null);
+        resolvePilotingRolls(entity, false, entity.getPosition(), entity.getPosition());
     }
     void resolvePilotingRolls( Entity entity, boolean moving,
                                Coords src, Coords dest ) {
@@ -12523,18 +12523,24 @@ public class Server implements Runnable {
             return;
         }
 
-        if ( entity.hasUMU()
-                && game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.WATER)
-                && game.getBoard().getHex(entity.getPosition()).depth() > 1)
-            return;
-
-        //Mech is floating in the water due to umus being dested now return them to the bottom
-        if( entity instanceof Mech
-                && !entity.hasUMU()
-                && game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.WATER)
-                && game.getBoard().getHex(entity.getPosition()).depth() > 1 ){
-            entity.setElevation(game.getBoard().getHex(entity.getPosition()).floor());
-       }
+        //Mechs with UMU float and don't have to roll???
+        if(entity instanceof Mech) {
+            IHex hex = game.getBoard().getHex(dest);
+            int water = hex.terrainLevel(Terrains.WATER); 
+            if(water > 0
+                    && entity.getElevation() != -hex.depth()
+                    &&(entity.getElevation() < 0
+                            || (entity.getElevation() == 0
+                                    && hex.terrainLevel(Terrains.BRIDGE_ELEV) != 0
+                                    && !hex.containsTerrain(Terrains.ICE)))) {
+                //mech is floating in water....
+                if(entity.hasUMU())
+                    return;
+                else {
+                    game.addPSR(new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "lost bouyancy"));
+                }
+            }
+        }
 
         // add all cumulative rolls, count all rolls
         Vector rolls = new Vector();

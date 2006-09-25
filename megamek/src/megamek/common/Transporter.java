@@ -100,5 +100,10 @@ public interface Transporter extends Serializable {
      *          if no unit is transported on the outside at that location.
      */
     public Entity getExteriorUnitAt( int loc, boolean isRear );
+    
+    /**
+     * @return list of all units carried externally by this transporter
+     */
+    public List<Entity> getExternalUnits();
 
 } // End public interface Transporter

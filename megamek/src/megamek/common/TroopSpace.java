@@ -218,4 +218,9 @@ public final class TroopSpace implements Transporter {
      */
     public Entity getExteriorUnitAt( int loc, boolean isRear ) { return null; }
 
+    public final List<Entity> getExternalUnits() {
+        ArrayList<Entity> rv = new ArrayList<Entity>(1);
+        return rv;
+    }
+
 } // End package class TroopSpace implements Transporter

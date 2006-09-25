@@ -167,7 +167,7 @@ public abstract class Entity extends TurnOrdered
     /**
      * The components of this entity that can transport other entities.
      */
-    private Vector                transports = new Vector();
+    private Vector<Transporter>   transports = new Vector<Transporter>();
 
     /** 
      * The ids of the MechWarriors this entity has picked up
@@ -4336,9 +4336,7 @@ public abstract class Entity extends TurnOrdered
         // Walk through this entity's transport components;
         // check each for blockage in turn.
         // Stop after the first match.
-        Enumeration iter = this.transports.elements();
-        while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
+        for(Transporter next : transports) {
             if ( next.isWeaponBlockedAt( loc, isRear ) ) {
                 return true;
             }
@@ -4367,9 +4365,7 @@ public abstract class Entity extends TurnOrdered
         // Walk through this entity's transport components;
         // check each for an exterior unit in turn.
         // Stop after the first match.
-        Enumeration iter = this.transports.elements();
-        while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
+        for(Transporter next : transports) {
             Entity exterior = next.getExteriorUnitAt( loc, isRear );
             if ( null != exterior ) {
                 return exterior;
@@ -4379,6 +4375,14 @@ public abstract class Entity extends TurnOrdered
         // If we got here, none of our transports
         // carry an exterior unit at that location.
         return null;
+    }
+    
+    public ArrayList<Entity> getExternalUnits() {
+        ArrayList<Entity> rv = new ArrayList<Entity>();
+        for(Transporter t : transports) {
+            rv.addAll(t.getExternalUnits());
+        }
+        return rv;
     }
 
     public HitData getTrooperAtLocation(HitData hit, Entity transport) {

@@ -24,6 +24,7 @@ v0.31.15-dev (SVN)
 + Bug 1562560: LAC's with special ammo cost the same as standard ammo
 + Bug 1562913: wrong elevation after walking into depth 2 water on level 1
 + Data 1554992: IS Omni images
++ Bug 1563886: NPE in engine explosion with loaded BA
 
 v0.31.14 (2006-09-11, 19:00 GMT+2)
 + Bug: assertion failure when observing double blind games

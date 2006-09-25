@@ -12799,7 +12799,7 @@ public class Server implements Runnable {
                                boolean ammoExplosion, int bFrag,
                                boolean damageIS, boolean areaSatArty) {
         return damageEntity (te, hit, damage, ammoExplosion, bFrag, damageIS,
-                             false, true);
+                areaSatArty, true);
     }
 
     /**
@@ -12813,6 +12813,8 @@ public class Server implements Runnable {
      *          directly to the IS, hurts the pilot, causes auto-ejects,
      *          and can blow the unit to smithereens
      * @param bFrag If 0, nothing; if 1, Fragmentation; if 2, Flechette.
+     * 3 acid head, 4 incendiary, 5 firedrake, 6 maxtech infantry damage
+     * 7 ignore passenger FIXME: this is getting ugly 
      * @param damageIS Should the target location's internal structure be
      *          damaged directly?
      * @param areaSatArty Is the damage from an area saturating artillery
@@ -13160,7 +13162,7 @@ public class Server implements Runnable {
                 Entity passenger = te.getExteriorUnitAt( nLoc, hit.isRear() );
                 // Does an exterior passenger absorb some of the damage?
                 if ( !ammoExplosion && null != passenger
-                        && !passenger.isDoomed() ) {
+                        && !passenger.isDoomed() && bFrag != 7) {
                     // Yup.  Roll up some hit data for that passenger.
                     r = new Report(6075);
                     r.subject = passenger.getId();
@@ -13822,6 +13824,17 @@ public class Server implements Runnable {
         int[] myDamages = {engineRating, (engineRating / 10), (engineRating / 20), (engineRating / 40)};
         doExplosion(myDamages, true, position, false, vDesc, vUnits);
     }
+    
+    private Coords getEntityActualPosition(Entity e) {
+        Coords rv = e.getPosition();
+        if(rv == null) {
+            Entity transport = game.getEntity(e.getTransportId());
+            if(transport != null) {
+                rv = transport.getPosition();
+            }
+        }
+        return rv;
+    }
 
     /**
      * General function to cause explosions in areas.
@@ -13847,30 +13860,7 @@ public class Server implements Runnable {
             vUnits = new Vector();
 
         Report r;
-        Hashtable entitiesHit = new Hashtable();
-
-        // We might need to nuke everyone in the explosion hex.  If so...
-        if (autoDestroyInSameHex) {
-            Enumeration entitiesWithMe = game.getEntities(position);
-
-            while (entitiesWithMe.hasMoreElements()) {
-                Entity entity = (Entity)entitiesWithMe.nextElement();
-                
-                entitiesHit.put(entity, entity);
-
-                if (entity.isDestroyed())
-                    continue;
-
-                // Add the reports
-                vDesc.addAll(destroyEntity(entity, "explosion proximity", false, false));
-
-                // Add it to the "blasted units" list
-                vUnits.add(entity.getId());
-
-                // Kill the crew
-                entity.getCrew().setDoomed(true);
-            }
-        }
+        HashSet<Entity> entitiesHit = new HashSet<Entity>();
 
         // We need to damage buildings.
         Enumeration bldgs = game.getBoard().getBuildings();
@@ -13893,13 +13883,6 @@ public class Server implements Runnable {
                     closestDist = position.distance(closestPos);
                     closestPos = coords;
                 }
-                // No physical attack works at distances > 1.
-                //if (getPosition().distance(coords) > 1) {
-                    //continue;
-                //}
-
-                // Can the entity target *this* hex of the building?
-                //final BuildingTarget target = new BuildingTarget(coords, game.getBoard(), false);
             }
             if (closestDist >= damages.length)
                 continue; // It's not close enough to take damage.
@@ -13913,14 +13896,14 @@ public class Server implements Runnable {
 
         // Now we damage people near the explosion.
         Vector entities = game.getEntitiesVector();
+        ArrayList<Entity> loaded = new ArrayList<Entity>();
         for (int i = 0; i < entities.size(); i++) {
             Entity entity = (Entity)entities.elementAt(i);
 
-            if (entitiesHit.containsKey(entity))
+            if (entitiesHit.contains(entity))
                 continue;
 
-            if (entity.isDoomed()
-                    || entity.isDestroyed()
+            if (entity.isDestroyed()
                     || !entity.isDeployed()) {
                 //FIXME
                 // IS this the behavior we want?
@@ -13929,17 +13912,42 @@ public class Server implements Runnable {
                 continue;
             }
 
-            int range = position.distance(entity.getPosition());
+            Coords entityPos = entity.getPosition();
+            if(entityPos == null) {
+                //maybe its loaded?
+                Entity transport = game.getEntity(entity.getTransportId());
+                if(transport != null) {
+                    loaded.add(entity);
+                }
+                continue;
+            }
+            int range = position.distance(entityPos);
 
             if (range >= damages.length) {
                 // Yeah, this is fine.  It's outside the blast radius.
                 continue;
             }
+            
+            // We might need to nuke everyone in the explosion hex.  If so...
+            if(range == 0 && autoDestroyInSameHex) {
+                // Add the reports
+                vDesc.addAll(destroyEntity(entity, "explosion proximity", false, false));
+
+                // Add it to the "blasted units" list
+                vUnits.add(entity.getId());
+
+                // Kill the crew
+                entity.getCrew().setDoomed(true);
+                
+                entitiesHit.add(entity);
+                
+                continue;
+            }
 
             int damage = damages[range];
 
-            if (allowShelter && canShelter(entity, position)) {
-                if (isSheltered(entity, position, true)) {
+            if (allowShelter && canShelter(entityPos, position, entity.absHeight())) {
+                if (isSheltered()) {
                     r = new Report(6545);
                     r.addDesc(entity);
                     r.subject = entity.getId();
@@ -13967,16 +13975,72 @@ public class Server implements Runnable {
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(position, entity));
-                vDesc.addAll(damageEntity(entity, hit, cluster));
+                vDesc.addAll(damageEntity(entity, hit, cluster, false, 7, false, true));
                 damage -= cluster;
             }
             Report.addNewline(vDesc);
         }
+        
+        //now deal with loaded units...
+        for(Entity e : loaded) {
+            //This can be null, if the transport died from damage
+            final Entity transporter = game.getEntity(e.getTransportId());
+            if(transporter == null
+                    || transporter.getExternalUnits().contains(e)) {
+                //Its external or transport was destroyed - hit it.
+                final Coords entityPos = (transporter==null?e.getPosition():transporter.getPosition());
+                final int range = position.distance(entityPos);
+
+                if (range >= damages.length) {
+                    // Yeah, this is fine.  It's outside the blast radius.
+                    continue;
+                }
+
+                int damage = damages[range];
+                if(allowShelter) {
+                    final int absHeight = (transporter==null?e.absHeight():transporter.absHeight());
+                    if(entityPos != null 
+                            && canShelter(entityPos, position, absHeight)) {
+                        if(isSheltered ()) {
+                            r = new Report(6545);
+                            r.addDesc(e);
+                            r.subject = e.getId();
+                            vDesc.addElement(r);
+                            continue;
+                        }
+                        // If shelter is allowed but didn't work, report that.
+                        r = new Report(6546);
+                        r.subject = e.getId();
+                        r.addDesc(e);
+                        vDesc.addElement(r);
+                    }
+                }
+                //No shelter
+                // Since it's taking damage, add it to the list of units hit.
+                vUnits.add(e.getId());
+
+                r = new Report(6175);
+                r.subject = e.getId();
+                r.indent(2);
+                r.addDesc(e);
+                r.add(damage);
+                r.newlines = 0;
+                vDesc.addElement(r);
+
+                while (damage > 0) {
+                    int cluster = Math.min(5, damage);
+                    HitData hit = e.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    vDesc.addAll(damageEntity(e, hit, cluster, false, 7, false, true));
+                    damage -= cluster;
+                }
+                Report.addNewline(vDesc);
+            }
+        }
     }
 
-    public boolean canShelter(Entity entity, Coords position) {
+    public boolean canShelter(Coords entityPosition, Coords position, int entityAbsHeight) {
         // What is the next hex in the direction of the blast?
-        Coords shelteringCoords = Coords.nextHex(entity.getPosition(), position);
+        Coords shelteringCoords = Coords.nextHex(entityPosition, position);
         IHex shelteringHex = game.getBoard().getHex(shelteringCoords);
 
         // This is an error condition.  It really shouldn't ever happen.
@@ -13993,7 +14057,7 @@ public class Server implements Runnable {
             shelterLevel = shelteringHex.ceiling();
 
         // Get the absolute height of the unit relative to level 0.
-        int entityAbsHeight = entity.absHeight() + game.getBoard().getHex(entity.getPosition()).surface();
+        entityAbsHeight += game.getBoard().getHex(entityPosition).surface();
 
         // Now find the height that needs to be sheltered, and compare.
         if (entityAbsHeight < shelterLevel)
@@ -14003,15 +14067,13 @@ public class Server implements Runnable {
         return false;
     }
 
-    public boolean isSheltered(Entity entity, Coords position, boolean canShelter) {
-        if (canShelter);
-            if (Compute.d6(2) >= 9)
-                return true;
+    /**
+     * @return true if the unit succeeds a shelter roll
+     */
+    private boolean isSheltered() {
+        if (Compute.d6(2) >= 9)
+            return true;
         return false;
-    }
-
-    public boolean isSheltered(Entity entity, Coords position) {
-        return isSheltered(entity, position, canShelter(entity, position));
     }
 
     public void doNuclearExplosion(Coords position, int nukeType, Vector vDesc) {

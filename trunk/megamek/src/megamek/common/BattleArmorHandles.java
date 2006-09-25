@@ -15,7 +15,9 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -331,6 +333,12 @@ import java.util.Vector;
 
         // No troopers at that location.
         return null;
+    }
+    
+    public final List<Entity> getExternalUnits() {
+        ArrayList<Entity> rv = new ArrayList<Entity>(1);
+        rv.add(troopers);
+        return rv;
     }
 
 } // End package class BattleArmorHandles implements Transporter

@@ -23,6 +23,10 @@ package megamek.common;
 
 import java.io.Serializable;
 
+import megamek.client.ui.AWT.ClientGUI;
+import megamek.common.options.GameOptions;
+import megamek.common.options.Option;
+
 /**
  * This describes equipment mounted on a mech.
  *
@@ -356,6 +360,11 @@ public class Mounted implements Serializable, RoundUpdated {
                 && this.curMode().equals("Ultra")) {
             nShots = 2;
         }
+        //sets number of shots for AC rapid mode
+        else if ( (wtype.getAmmoType() == AmmoType.T_AC || (wtype.getAmmoType() == AmmoType.T_LAC))
+                    && this.curMode().equals("Rapid")) {
+                nShots = 2;
+            }
         else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY ||
                  wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
             if (this.curMode().equals("2-shot")) {

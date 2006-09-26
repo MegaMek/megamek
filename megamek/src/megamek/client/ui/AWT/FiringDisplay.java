@@ -440,6 +440,13 @@ public class FiringDisplay
             return;
         }
         
+        //disables mode button for AC's if maxtech_rapid_ac is not turned on
+        if (  m.getType()instanceof WeaponType
+               && (((WeaponType)m.getType()).getAmmoType() == AmmoType.T_AC || ((WeaponType)m.getType()).getAmmoType() == AmmoType.T_LAC )
+                && !clientgui.getClient().game.getOptions().booleanOption("maxtech_rapid_ac") ) {
+            return;
+        }
+        
         // send change to the server
         int nMode = m.switchMode();
         client.sendModeChange(cen, wn, nMode);

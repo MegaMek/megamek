@@ -1418,6 +1418,13 @@ public class MechDisplay extends BufferedPanel {
                         m_chMode.removeAll();
                         return;
                     }
+                    //disables AC mode switching from system tab if maxtech_rapid_ac is not turned on
+                    if (  m.getType()instanceof WeaponType
+                           && (((WeaponType)m.getType()).getAmmoType() == AmmoType.T_AC || ((WeaponType)m.getType()).getAmmoType() == AmmoType.T_LAC )
+                            && !clientgui.getClient().game.getOptions().booleanOption("maxtech_rapid_ac") ) {
+                        m_chMode.removeAll();
+                        return;
+                    }
                     modeLabel.setEnabled(true);
                     m_chMode.removeAll();
                     for (Enumeration e = m.getType().getModes(); e.hasMoreElements();) {

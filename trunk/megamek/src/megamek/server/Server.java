@@ -7308,7 +7308,12 @@ public class Server implements Runnable {
                       weapon.curMode().equals("Ultra") &&
                       wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
                   jamCheck = 4;
-              }
+              } 
+            //adds AC rapidfire jam check
+            } else if ( wtype.getAmmoType() == AmmoType.T_AC || wtype.getAmmoType() == AmmoType.T_LAC ) {
+               if (nShots == 2) {
+                  jamCheck = 4;
+                  }
             } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
               if (nShots == 2) {
                   jamCheck = 2;
@@ -7327,6 +7332,35 @@ public class Server implements Runnable {
                   r.messageId = 3160;
                   weapon.setJammed(true);
                   weapon.setHit(true);
+                  //Checks for jams and explodes rapid fire AC's
+              } else if (wtype.getAmmoType() == AmmoType.T_AC
+                    || wtype.getAmmoType() == AmmoType.T_LAC ) {
+                  if (wr.roll > 2) {
+                   r.messageId = 3161;
+                    weapon.setJammed(true);
+                    weapon.setHit(true);
+                  } else {
+                   r.messageId = 3162;
+                    weapon.setJammed(true);
+                    weapon.setHit(true);  
+                    int wlocation = weapon.getLocation ();
+                    weapon.setDestroyed (true);
+                      for (int i=0; i<ae.getNumberOfCriticals(wlocation); i++) {
+                        CriticalSlot slot1 = ae.getCritical (wlocation, i);
+                        if (slot1 == null || slot1.getType() != CriticalSlot.TYPE_SYSTEM) {
+                          continue;
+                        }
+                        Mounted mounted = ae.getEquipment(slot1.getIndex());
+                        if (mounted.equals (weapon)) {
+                          ae.hitAllCriticals(wlocation,i);
+                          break;
+                        }
+                     }
+                    r.choose(false);
+                    addReport(r);
+                    addReport( damageEntity(ae, new HitData(wlocation), wtype.getDamage(), false, 0, true));
+                    return true;
+                  }
               } else if (wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
                   r.messageId = 3165;
                   weapon.setJammed(true);

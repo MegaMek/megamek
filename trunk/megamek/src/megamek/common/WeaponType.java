@@ -33,7 +33,7 @@ public class WeaponType extends EquipmentType {
     public static final long     F_PPC                = 0x000000008L; //              "
     public static final long     F_AUTO_TARGET        = 0x000000010L; // for weapons that target automatically (AMS)
     public static final long     F_NO_FIRES           = 0x000000020L; // cannot start fires
-    public static final long     F_PROTOMECH          = 0x000000040L; //Protomech weapons, which need weird ammo stuff.
+    public static final long     F_PROTOMECH          = 0x000000040L; // Protomech weapons, which need weird ammo stuff.
     public static final long     F_SOLO_ATTACK        = 0x000000080L; // must be only weapon attacking
     public static final long     F_SPLITABLE          = 0x000000100L; // Weapons that can be split between locations
     public static final long     F_MG                 = 0x000000200L; // MGL; for rapid fire set up
@@ -42,7 +42,7 @@ public class WeaponType extends EquipmentType {
     public static final long     F_BATTLEARMOR        = 0x000001000L; // multiple shots resolved in one to-hit (kinda like RAC, only not)
     public static final long     F_DOUBLE_HITS        = 0x000002000L; // two shots hit per one rolled
     public static final long     F_MISSILE_HITS       = 0x000004000L; // use missile rules or # of hits
-    public static final long     F_ONESHOT            = 0x000008000L; //weapon is oneShot.
+    public static final long     F_ONESHOT            = 0x000008000L; // weapon is oneShot.
     public static final long     F_ARTILLERY          = 0x000010000L;
     public static final long     F_BALLISTIC          = 0x000020000L; // For Gunnery/Ballistic skill
     public static final long     F_ENERGY             = 0x000040000L; // For Gunnery/Energy skill
@@ -813,6 +813,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 37;
+        String[] modes = { "", "Rapid" };
+        weapon.setModes(modes);
         weapon.cost = 75000;
         weapon.explosive = true; //when firing incendiary ammo
 
@@ -841,6 +843,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 70;
+        String[] modes = { "", "Rapid" };
+        weapon.setModes(modes);
         weapon.cost = 125000;
         weapon.explosive = true; //when firing incendiary ammo
 
@@ -869,6 +873,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 7;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 124;
+        String[] modes = { "", "Rapid" };
+        weapon.setModes(modes);
         weapon.cost = 200000;
         weapon.explosive = true; //when firing incendiary ammo
 
@@ -897,6 +903,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 10;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 178;
+        String[] modes = { "", "Rapid" };
+        weapon.setModes(modes);
         weapon.cost = 300000;
         weapon.explosive = true; //when firing incendiary ammo
 
@@ -9427,6 +9435,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 30;
+        String[] modes = { "", "Rapid" };
+        weapon.setModes(modes);
         weapon.cost = 100000;
         weapon.explosive = true; //when firing incendiary ammo
 
@@ -9455,6 +9465,8 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 62;
+        String[] modes = { "", "Rapid" };
+        weapon.setModes(modes);
         weapon.cost = 150000;
         weapon.explosive = true; //when firing incendiary ammo
 

@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.31.15-dev (SVN)
+v0.31.15, 0.32.0 Release Candidate 1 (2006-09-27, 22:55 GMT+2)
 + Bug 1293410: Minimap can become too big
 + Bug 1556062: Units can fall to MIN_INT elevation.
 + Bug 1556279: tanks can't set modes on all mode-switchable equipment

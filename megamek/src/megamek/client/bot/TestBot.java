@@ -1507,13 +1507,13 @@ public class TestBot extends BotClient {
                 } else {
                     av_range += wtype.getLongRange();
                 }
-                weapon_count = ++weapon_count;
+                weapon_count++;
             }
         }
         for (Mounted mounted :getEntity(entNum).getAmmo()) {
             AmmoType atype = (AmmoType) mounted.getType();
             if (atype.getAmmoType() == AmmoType.T_ATM) {
-                weapon_count = ++weapon_count;
+                weapon_count++;
                 av_range += 15.0;
                 if ((atype.getAmmoType() == AmmoType.T_ATM)
                         && atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {

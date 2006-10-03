@@ -12558,7 +12558,7 @@ public class Server implements Runnable {
         }
 
         //Mechs with UMU float and don't have to roll???
-        if(entity instanceof Mech) {
+        if (entity instanceof Mech) {
             IHex hex = game.getBoard().getHex(dest);
             int water = hex.terrainLevel(Terrains.WATER); 
             if(water > 0
@@ -12568,11 +12568,9 @@ public class Server implements Runnable {
                                     && hex.terrainLevel(Terrains.BRIDGE_ELEV) != 0
                                     && !hex.containsTerrain(Terrains.ICE)))) {
                 //mech is floating in water....
-                if(entity.hasUMU())
+                if (entity.hasUMU())
                     return;
-                else {
-                    game.addPSR(new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "lost bouyancy"));
-                }
+                game.addPSR(new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "lost bouyancy"));
             }
         }
 

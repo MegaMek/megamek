@@ -23,9 +23,6 @@ package megamek.common;
 
 import java.io.Serializable;
 
-import megamek.client.ui.AWT.ClientGUI;
-import megamek.common.options.GameOptions;
-import megamek.common.options.Option;
 
 /**
  * This describes equipment mounted on a mech.

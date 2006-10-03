@@ -1487,7 +1487,7 @@ public class ChatLounge
         } else if (ev.getSource() == butCamo) {
             camoDialog.setVisible(true);
         } else if (ev.getSource() == butAddBot) {
-            String name = name = "Bot" + lisPlayerInfo.getItemCount(); //$NON-NLS-1$
+            String name = "Bot" + lisPlayerInfo.getItemCount(); //$NON-NLS-1$
             Prompt p = new Prompt(clientgui.frame, Messages.getString("ChatLounge.ChooseBotName"), Messages.getString("ChatLounge.Name"), name, 15); //$NON-NLS-1$ //$NON-NLS-2$
             if (!p.showDialog()){
                 return;

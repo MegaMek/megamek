@@ -247,7 +247,7 @@ public abstract class PicMap extends JComponent {
             BackGroundDrawer bgd = (BackGroundDrawer) iter.nextElement();
             bgd.drawInto(g, w, h);
         }
-        Rectangle oldClip = (Rectangle) g.getClip();
+        Shape oldClip = g.getClip();
         g.setClip(new Rectangle(leftMargin,
                 topMargin,
                 w - leftMargin - rightMargin,

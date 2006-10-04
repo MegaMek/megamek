@@ -359,7 +359,7 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         //sets number of shots for AC rapid mode
         else if ( (wtype.getAmmoType() == AmmoType.T_AC || (wtype.getAmmoType() == AmmoType.T_LAC))
-                    && this.curMode().equals("Rapid")) {
+                    && wtype.hasModes() && this.curMode().equals("Rapid")) {
                 nShots = 2;
             }
         else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY ||

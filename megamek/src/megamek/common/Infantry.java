@@ -57,7 +57,7 @@ public class Infantry
     /**
      * The kind of weapons used by this platoon.
      */
-    private long         weapons = 0;
+    private int         weapons = 0;
 
     /**
      * The amount of damage the platoon can do if it hits.
@@ -87,6 +87,19 @@ public class Infantry
     public static final int DUG_IN_FORTIFYING2 = 4; //no protection, can't attack
     private int dugIn = DUG_IN_NONE;
     
+    private static final int DAMAGE_BALLISTIC_RIFLE[] =
+    { 0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,14,14,15,15,16 };
+    private static final int DAMAGE_ENERGY_RIFLE[] =
+    { 0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,5,5,5,6,6,6,6,7,7,7,8,8,8,8 };
+    private static final int DAMAGE_MACHINE_GUN[] =
+    { 0,1,1,2,2,3,3,4,4,5,6,6,7,7,8,8,9,10,10,11,11,12,12,13,13,14,15,15,16,16,17 };
+    private static final int DAMAGE_SRM[] =
+    { 0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15 };
+    private static final int DAMAGE_LRM[] =
+    { 0,0,1,1,2,2,3,3,3,4,4,5,5,6,6,6,7,7,8,8,9,9,9,10,10,11,11,11,12,12,13 };
+    private static final int DAMAGE_FLAMER[] =
+    { 0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,12,13,13,14,14 };
+    
     /**
      * Set up the damage array for this platoon for the given weapon type.
      *
@@ -94,47 +107,31 @@ public class Infantry
      * @exception IllegalArgumentException if a bad weapon
      *          type is passed.
      */
-    private void setDamage( long weapon )
+    private void setDamage( int weapon )
     {
-        int man;
-        int points; // MGs and Flamers have wierd damage profiles.
-        double men_per_point;
-
-        // The platoon does no damage when its out of men.
-        this.damage[0] = 0;
-
-        // The various weapons require different amounts of
-        // men to cause additional points of damage.
-        if (weapon == INF_RIFLE || weapon == INF_LRM)
-            men_per_point = 4.0;
-        else if (weapon == INF_MG || weapon == INF_FLAMER)
-            men_per_point = 3.0;
-        else if (weapon == INF_LASER || weapon == INF_SRM)
-            men_per_point = 2.0;
-        else throw new IllegalArgumentException( "Unknown infantry weapon: " + weapon );
-
-        // Loop through the men in the platoon, and assign damage based
-        // upon the number of men it takes to do a point of damage.
-        for ( man = 1, points = 1;
-              man <= INF_PLT_MAX_MEN; 
-              man++, points++ ) {
-
-            // Round all fractions up.
-            this.damage[man] = (int) Math.ceil( points / men_per_point );
-
-            // MGs and Flamers do something wierd for the first point of damage
-            if ( 1 == man && ( INF_MG == weapon || INF_FLAMER == weapon ) ) {
-                points--;
-            }
-
-        } // Handle the next man in the platoon.
-
-        // MGs and Flamers do something wierd for the last point of damage
-        if ( INF_MG == weapon || INF_FLAMER == weapon ) {
-            this.damage[INF_PLT_MAX_MEN] =
-                (int) Math.ceil( INF_PLT_MAX_MEN / men_per_point );
+        switch(weapon) {
+            case INF_RIFLE:
+                damage = DAMAGE_BALLISTIC_RIFLE;
+                break;
+            case INF_MG:
+                damage = DAMAGE_MACHINE_GUN;
+                break;
+            case INF_FLAMER:
+                damage = DAMAGE_FLAMER;
+                break;
+            case INF_LASER:
+                damage = DAMAGE_ENERGY_RIFLE;
+                break;
+            case INF_SRM:
+                damage = DAMAGE_SRM;
+                break;
+            case INF_LRM:        
+                damage = DAMAGE_LRM;
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown infantry weapon");
         }
-
+        assert(damage.length == INF_PLT_MAX_MEN+1);
     } // End private void setDamage( int ) throws Exception
 
     // Public and Protected constants, constructors, and methods.
@@ -142,7 +139,12 @@ public class Infantry
     /**
      * The maximum number of men in an infantry platoon.
      */
-    public static final int     INF_PLT_MAX_MEN = 28;
+    public static final int     INF_PLT_MAX_MEN = 30;
+
+    /**
+     * The maximum number of men in an infantry platoon.
+     */
+    public static final int     INF_PLT_FOOT_MAX_MEN = 21;
 
     /**
      * The maximum number of men in an infantry platoon.
@@ -422,7 +424,7 @@ public class Infantry
         switch (this.getMovementMode()) {
         case IEntityMovementMode.INF_LEG:
         case IEntityMovementMode.INF_MOTORIZED:
-            this.initializeInternal( INF_PLT_MAX_MEN, LOC_INFANTRY );
+            this.initializeInternal( INF_PLT_FOOT_MAX_MEN, LOC_INFANTRY );
             break;
         case IEntityMovementMode.INF_JUMP:
             this.initializeInternal( INF_PLT_JUMP_MAX_MEN, LOC_INFANTRY );
@@ -480,10 +482,10 @@ public class Infantry
                 weaponType = weapon.getFlags() & 
                     (WeaponType.F_LASER + WeaponType.F_FLAMER );
             }
-            this.weapons = weaponType;
+            this.weapons = (int)weaponType;
 
             // Update our damage profile.
-            this.setDamage( weaponType );
+            this.setDamage( weapons );
 
             // Inferno SRMs do half damage (rounded down).
             if ( weapon.hasFlag(WeaponType.F_INFERNO) ) {

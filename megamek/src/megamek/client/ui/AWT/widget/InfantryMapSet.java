@@ -33,8 +33,8 @@ public class InfantryMapSet implements DisplayMapSet{
     private Image infImage;
     //Reference to Component class required to handle images and fonts
     private Component comp;
-     // Assuming that it will be no more that 28 men in platoon
-    private PMPicArea[] areas = new PMPicArea[28];
+     // Assuming that it will be no more that Infantry.INF_PLT_MAX_MEN men in platoon
+    private PMPicArea[] areas = new PMPicArea[Infantry.INF_PLT_MAX_MEN];
     // Main areas group that will be passing to PicMap
     private PMAreasGroup content = new PMAreasGroup();
     //Label
@@ -66,7 +66,7 @@ public class InfantryMapSet implements DisplayMapSet{
        for (int i = 0; i < men; i++){
                areas[i].setVisible(true);
        }
-       for (int i = men; i < 28; i++){
+       for (int i = men; i < Infantry.INF_PLT_MAX_MEN; i++){
                areas[i].setVisible(false);
        }
        
@@ -78,7 +78,7 @@ public class InfantryMapSet implements DisplayMapSet{
         int stepY = 42;
         infImage = comp.getToolkit().getImage(IMAGE_DIR+"/inf.gif"); //$NON-NLS-1$
         PMUtil.setImage(infImage, comp);
-        for(int i = 0; i < 28; i++){
+        for(int i = 0; i < Infantry.INF_PLT_MAX_MEN; i++){
             int shiftX = (i % 5) * stepX;
             int shiftY = (i / 5) * stepY;
             areas[i] = new PMPicArea(infImage);

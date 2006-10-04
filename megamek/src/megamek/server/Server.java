@@ -4456,6 +4456,13 @@ public class Server implements Runnable {
 				    fellDuringMovement = true;
 				    break;
 				}
+                else {
+                    // roll failed, go prone but don't dislodge swarmers
+                    entity.setProne(true);
+                    // check to see if we washed off infernos
+                    checkForWashedInfernos(entity, curPos);
+                    break;
+                }
             }
 
             //going hull down
@@ -4502,6 +4509,93 @@ public class Server implements Runnable {
         if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
             doSkillCheckInPlace(entity, rollTarget);
         }
+
+        // If the entity is being swarmed, erratic movement may dislodge the fleas.
+        final int swarmerId = entity.getSwarmAttackerId();
+        if ( Entity.NONE != swarmerId && md.contains(MovePath.STEP_SHAKE_OFF_SWARMERS)) {
+            final Entity swarmer = game.getEntity( swarmerId );
+            final PilotingRollData roll =
+                entity.getBasePilotingRoll();
+
+            entity.addPilotingModifierForTerrain(roll);
+
+            // Add a +4 modifier.
+            if(md.getLastStepMovementType() == IEntityMovementType.MOVE_VTOL_RUN)
+                roll.addModifier( 2, "dislodge swarming infantry with VTOL movement" );
+            else
+                roll.addModifier( 4, "dislodge swarming infantry" );
+
+            // If the swarmer has Assault claws, give a 1 modifier.
+            // We can stop looking when we find our first match.
+            for (Mounted mount : swarmer.getMisc()) {
+                EquipmentType equip = mount.getType();
+                if ( BattleArmor.ASSAULT_CLAW.equals
+                     (equip.getInternalName()) ) {
+                    roll.addModifier( 1, "swarmer has assault claws" );
+                    break;
+                }
+                if ( equip.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                    roll.addModifier( 1, "swarmer has magnetic claw");
+                    break;
+                }
+            }
+
+            // okay, print the info
+            r = new Report(2125);
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            addReport(r);
+
+            // roll
+            final int diceRoll = Compute.d6(2);
+            r = new Report(2130);
+            r.subject = entity.getId();
+            r.add(roll.getValueAsString());
+            r.add(roll.getDesc());
+            r.add(diceRoll);
+            if (diceRoll < roll.getValue()) {
+                r.choose(false);
+                addReport(r);
+            } else {
+                // Dislodged swarmers don't get turns.
+                game.removeTurnFor( swarmer );
+                send( createTurnVectorPacket() );
+
+                // Update the report and the swarmer's status.
+                r.choose(true);
+                addReport(r);
+                entity.setSwarmAttackerId( Entity.NONE );
+                swarmer.setSwarmTargetId( Entity.NONE );
+                
+                IHex curHex = game.getBoard().getHex(curPos);
+
+                // Did the infantry fall into water?
+                if ( curHex.terrainLevel(Terrains.WATER) > 0 ) {
+                    // Swarming infantry die.
+                    swarmer.setPosition( curPos );
+                    r = new Report(2135);
+                    r.subject = entity.getId();
+                    r.indent();
+                    r.addDesc(swarmer);
+                    addReport(r);
+                    addReport(
+                        destroyEntity(swarmer, "a watery grave", false));
+                } else {
+                    // Swarming infantry take a 3d6 point hit.
+                    // ASSUMPTION : damage should not be doubled.
+                    r = new Report(2140);
+                    r.subject = entity.getId();
+                    r.indent();
+                    r.addDesc(swarmer);
+                    addReport(r);
+                    addReport(damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), Compute.d6(3)));
+                    addNewLines();
+                    swarmer.setPosition( curPos );
+                }
+                entityUpdate( swarmerId );
+            } // End successful-PSR
+
+        } // End try-to-dislodge-swarmers
 
         // but the danger isn't over yet!  landing from a jump can be risky!
         if (overallMoveType == IEntityMovementType.MOVE_JUMP && !entity.isMakingDfa()) {
@@ -4594,7 +4688,6 @@ public class Server implements Runnable {
             }
 
             // If the entity is being swarmed, jumping may dislodge the fleas.
-            final int swarmerId = entity.getSwarmAttackerId();
             if ( Entity.NONE != swarmerId ) {
                 final Entity swarmer = game.getEntity( swarmerId );
                 final PilotingRollData roll =
@@ -4612,6 +4705,10 @@ public class Server implements Runnable {
                     if ( BattleArmor.ASSAULT_CLAW.equals
                          (equip.getInternalName()) ) {
                         roll.addModifier( 1, "swarmer has assault claws" );
+                        break;
+                    }
+                    if ( equip.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                        roll.addModifier( 1, "swarmer has magnetic claw");
                         break;
                     }
                 }
@@ -4655,14 +4752,14 @@ public class Server implements Runnable {
                         addReport(
                             destroyEntity(swarmer, "a watery grave", false));
                     } else {
-                        // Swarming infantry take an 11 point hit.
+                        // Swarming infantry take a 3d6 point hit.
                         // ASSUMPTION : damage should not be doubled.
                         r = new Report(2140);
                         r.subject = entity.getId();
                         r.indent();
                         r.addDesc(swarmer);
                         addReport(r);
-                        addReport(damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 11));
+                        addReport(damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), Compute.d6(3)));
                         addNewLines();
                         swarmer.setPosition( curPos );
                     }
@@ -4695,7 +4792,6 @@ public class Server implements Runnable {
         }
 
         // If the entity is being swarmed, update the attacker's position.
-        final int swarmerId = entity.getSwarmAttackerId();
         if ( Entity.NONE != swarmerId ) {
             final Entity swarmer = game.getEntity( swarmerId );
             swarmer.setPosition( curPos );
@@ -6936,91 +7032,90 @@ public class Server implements Runnable {
        return tryIgniteHex(c, entityId, bInferno, nTargetRoll, false);
    }
 
-    private void tryClearHex(Coords c, int nTarget, int entityId) {
+    private void tryClearHex(Coords c, int nDamage, int entityId) {
         IHex h = game.getBoard().getHex(c);
-        int woods = h.terrainLevel(Terrains.WOODS);
-        int jungle = h.terrainLevel(Terrains.JUNGLE);
-        boolean ice = h.containsTerrain(Terrains.ICE);
+        if(h==null)
+            return;
+        ITerrain woods = h.getTerrain(Terrains.WOODS);
+        ITerrain jungle = h.getTerrain(Terrains.JUNGLE);
+        ITerrain ice = h.getTerrain(Terrains.ICE);
         Report r;
-        if (woods == ITerrain.LEVEL_NONE && jungle == ITerrain.LEVEL_NONE && !ice) {
-            //woods already cleared
-            r = new Report(3075);
-            r.indent(3);
-            r.subject = entityId;
-            addReport(r);
-        } else {
-            int woodsRoll = Compute.d6(2);
-            r = new Report(3080);
-            r.indent(3);
-            r.subject = entityId;
-            r.add(nTarget);
-            r.add(woodsRoll);
-            r.newlines = 0;
-            addReport(r);
-            if(woodsRoll >= nTarget) {
-                if(woods > 2) {
-                    h.removeTerrain(Terrains.WOODS);
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, woods - 1));
-                    //ultra heavy converted to heavy
-                    r = new Report(3082);
-                    r.subject = entityId;
-                    addReport(r);
-                }
-                else if(woods == 2) {
-                    h.removeTerrain(Terrains.WOODS);
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, woods - 1));
-                    //heavy converted to light
-                    r = new Report(3085);
-                    r.subject = entityId;
-                    addReport(r);
-                }
-                else if(woods == 1) {
-                    h.removeTerrain(Terrains.WOODS);
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
-                    //light converted to rough
-                    r = new Report(3090);
-                    r.subject = entityId;
-                    addReport(r);
-                }
-                else if(jungle > 2) {
-                    h.removeTerrain(Terrains.JUNGLE);
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE, jungle - 1));
-                    //ultra heavy converted to heavy
-                    r = new Report(3083);
-                    r.subject = entityId;
-                    addReport(r);
-                }
-                else if(jungle == 2) {
-                    h.removeTerrain(Terrains.JUNGLE);
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE, jungle - 1));
-                    //heavy converted to light
-                    r = new Report(3086);
-                    r.subject = entityId;
-                    addReport(r);
-                }
-                else if(jungle == 1) {
-                    h.removeTerrain(Terrains.JUNGLE);
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
-                    //light converted to rough
-                    r = new Report(3091);
-                    r.subject = entityId;
-                    addReport(r);
-                }
-                else if(ice) {
-                    h.removeTerrain(Terrains.ICE);
-                    r = new Report(3092);
-                    r.subject = entityId;
-                    addReport(r);
-                    resolveIceBroken(c);
-                }
-                sendChangedHex(c);
-            } else {
-                //fails to clear woods
-                r = new Report(3095);
+        if(woods != null) {
+            int tf = woods.getTerrainFactor() - nDamage;
+            int level = woods.getLevel();
+            if(tf < 0) {
+                h.removeTerrain(Terrains.WOODS);
+                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+                //light converted to rough
+                r = new Report(3090);
                 r.subject = entityId;
                 addReport(r);
             }
+            else if(tf <= 50 && level > 1) {
+                h.removeTerrain(Terrains.WOODS);
+                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, 1));
+                //heavy converted to light
+                r = new Report(3085);
+                r.subject = entityId;
+                addReport(r);                    
+            }
+            else if(tf <= 90 && level > 2) {
+                h.removeTerrain(Terrains.WOODS);
+                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS, 2));
+                //ultra heavy converted to heavy
+                r = new Report(3082);
+                r.subject = entityId;
+                addReport(r);                    
+            }
+            else {
+                woods.setTerrainFactor(tf);
+            }
         }
+        if(jungle != null) {
+            int tf = jungle.getTerrainFactor() - nDamage;
+            int level = jungle.getLevel();
+            if(tf < 0) {
+                h.removeTerrain(Terrains.JUNGLE);
+                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
+                //light converted to rough
+                r = new Report(3091);
+                r.subject = entityId;
+                addReport(r);
+            }
+            else if(tf <= 50 && level > 1) {
+                h.removeTerrain(Terrains.JUNGLE);
+                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE, 1));
+                //heavy converted to light
+                r = new Report(3086);
+                r.subject = entityId;
+                addReport(r);                    
+            }
+            else if(tf <= 90 && level > 2) {
+                h.removeTerrain(Terrains.JUNGLE);
+                h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE, 2));
+                //ultra heavy converted to heavy
+                r = new Report(3083);
+                r.subject = entityId;
+                addReport(r);                    
+            }
+            else {
+                jungle.setTerrainFactor(tf);
+            }
+        }
+        if(ice != null) {
+            int tf = ice.getTerrainFactor() - nDamage;
+            if(tf < 0) {
+                h.removeTerrain(Terrains.ICE);
+                //ice melted
+                r = new Report(3092);
+                r.subject = entityId;
+                addReport(r);
+            }
+            else {
+                ice.setTerrainFactor(tf);
+            }
+        }
+        sendChangedHex(c);
     }
 
     private void resolveWeaponAttack(WeaponResult wr, int lastEntityId) {
@@ -8047,19 +8142,22 @@ public class Server implements Runnable {
                 nMissilesModifier = -2;
             }
        }
-        // All shots fired by a Streak SRM weapon, during
-        // a Mech Swarm hit, or at an adjacent building.
+        // All shots hit in some conditions:
+        // - clearing woods
+        // - attacks during swarm
+        // - streak missiles
         if (((wtype.getAmmoType() == AmmoType.T_SRM_STREAK
                 || wtype.getAmmoType() == AmmoType.T_MRM_STREAK
                 || wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
                 && !isAngelECMAffected)
                 || wtype.getAmmoType() == AmmoType.T_NARC
                 || ae.getSwarmTargetId() == wr.waa.getTargetId()
-                || (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
+                || ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
                     || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
                     || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                     || target.getTargetType() == Targetable.TYPE_BUILDING)
-                && ae.getPosition().distance(target.getPosition()) <= 1) {
+                  && ae.getPosition().distance(target.getPosition()) <= 1)
+                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
             bAllShotsHit = true;
         }
 
@@ -8912,17 +9010,18 @@ public class Server implements Runnable {
                 r.add(nDamage);
                 addReport(r);
 
-                // Any clear attempt can result in accidental ignition, even
-                // weapons that can't normally start fires.  that's weird.
-                // Buildings can't be accidentally ignited.
-                if ( bldg == null) {
-                    boolean alreadyIgnited = game.getBoard().getHex(target.getPosition()).containsTerrain(Terrains.FIRE);
-                    boolean ignited = tryIgniteHex(target.getPosition(), subjectId, bInferno, 9);
-                    if (!alreadyIgnited && ignited) return !bMissed;
+                IHex hex = game.getBoard().getHex(target.getPosition());
+                if (hex.containsTerrain(Terrains.WOODS)
+                        || hex.containsTerrain(Terrains.JUNGLE)
+                        || hex.containsTerrain(Terrains.ICE)) {
+                    tryClearHex(target.getPosition(), nDamage, ae.getId());
+                } else {
+                    //woods already cleared
+                    r = new Report(3075);
+                    r.indent(3);
+                    r.subject = ae.getId();
+                    addReport(r);
                 }
-
-                int tn = 14 - nDamage;
-                tryClearHex(target.getPosition(), tn, ae.getId());
 
                 return !bMissed;
             }
@@ -13237,9 +13336,58 @@ public class Server implements Runnable {
                     }
 
                 } // End nLoc-has-exterior-passenger
+                
+                boolean bTorso = nLoc == Mech.LOC_CT || nLoc == Mech.LOC_RT || nLoc == Mech.LOC_LT;
+
+                //Does a swarming unit absorb damage?
+                int swarmer = te.getSwarmAttackerId();
+                if((!(te instanceof Mech) || bTorso) 
+                        && swarmer != Entity.NONE 
+                        && hit.getEffect() != HitData.EFFECT_CRITICAL
+                        && Compute.d6() >=5) {
+                    Entity swarm = game.getEntity(swarmer);
+                    // Yup.  Roll up some hit data for that passenger.
+                    r = new Report(6076);
+                    r.subject = swarmer;
+                    r.indent(3);
+                    r.addDesc(swarm);
+                    vDesc.addElement(r);
+
+                    HitData passHit = swarm.rollHitLocation( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
+
+                    // How much damage will the swarm absorb?
+                    int absorb = 0;
+                    HitData nextPassHit = passHit;
+                    do {
+                        if ( 0 < swarm.getArmor( nextPassHit ) ) {
+                            absorb += swarm.getArmor( nextPassHit );
+                        }
+                        if ( 0 < swarm.getInternal( nextPassHit ) ) {
+                            absorb += swarm.getInternal( nextPassHit );
+                        }
+                        nextPassHit = swarm.getTransferLocation( nextPassHit );
+                    } while ( damage > absorb && nextPassHit.getLocation() >= 0 );
+
+                    // Damage the swarm.
+                    vDesc.addAll( damageEntity(swarm, passHit, damage));
+
+                    // Did some damage pass on?
+                    if ( damage > absorb ) {
+                        // Yup.  Remove the absorbed damage.
+                        damage -= absorb;
+                        r = new Report(6080);
+                        r.subject = te_n;
+                        r.indent(1);
+                        r.add(damage);
+                        r.addDesc(te);
+                        vDesc.addElement(r);
+                    } else {
+                        // Nope.  Return our description.
+                        return vDesc;
+                    }
+                }
 
                 // is this a mech dumping ammo being hit in the rear torso?
-                boolean bTorso = nLoc == Mech.LOC_CT || nLoc == Mech.LOC_RT || nLoc == Mech.LOC_LT;
                 if (te instanceof Mech && hit.isRear() && bTorso) {
                     for (Mounted mAmmo : te.getAmmo()) {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed() &&
@@ -16203,14 +16351,14 @@ public class Server implements Runnable {
                 addReport(r);
                 addReport( destroyEntity(swarmer, "a watery grave", false));
             } else {
-                // Swarming infantry take an 11 point hit.
+                // Swarming infantry take a 2d6 point hit.
                 // ASSUMPTION : damage should not be doubled.
                 r = new Report(2335);
                 r.newlines = 0;
                 r.subject = swarmer.getId();
                 r.addDesc(swarmer);
                 addReport(r);
-                addReport( damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 11));
+                addReport( damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), Compute.d6(2)));
                 ((Report) vPhaseReport.elementAt(vPhaseReport.size() - 1)).newlines++;
             }
             swarmer.setPosition( fallPos );
@@ -20129,6 +20277,9 @@ public class Server implements Runnable {
 
         Report r;
 
+        if(!flak) {
+            tryClearHex(coords,damage*2,subjectId);
+        }
         Building bldg = game.getBoard().getBuildingAt(coords);
         int bldgAbsorbs = 0;
         if(bldg != null
@@ -20220,8 +20371,12 @@ public class Server implements Runnable {
                 }
             }
 
+            // convention infantry take x2 damage from AE weapons 
+            if(entity instanceof Infantry && !(entity instanceof BattleArmor))
+
             //Entity/ammo specific damage modifiers
             if(ammo != null) {
+                    hits *= 2;
                 if(ammo.getMunitionType() == AmmoType.M_CLUSTER) {
                     if(hex.containsTerrain(Terrains.FORTIFIED)
                             && entity instanceof Infantry
@@ -20267,11 +20422,21 @@ public class Server implements Runnable {
             r.add(toHit.getTableDesc());
             r.add(hits);
             addReport(r);
-            while(hits>0) {
-                HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-
-                addReport( damageEntity(entity, hit, Math.min(cluster, hits), false, 0, false, true, false));
-                hits -= Math.min(5,hits);
+            if(entity instanceof BattleArmor) {
+                //BA take full damage to each trooper, ouch!
+                for(int loc = 0;loc<entity.locations();loc++) {
+                    if(entity.getInternal(loc) > 0) {
+                        HitData hit = new HitData(loc);
+                        addReport(damageEntity(entity,hit,hits, false, 0, false, true, false));
+                    }
+                }
+            } else {
+                while(hits>0) {
+                    HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+    
+                    addReport( damageEntity(entity, hit, Math.min(cluster, hits), false, 0, false, true, false));
+                    hits -= Math.min(5,hits);
+                }
             }
             if(killer != null) {
                 creditKill(entity, killer);

@@ -3160,13 +3160,13 @@ public class Compute {
             } else {
                 men = inf.getShootingStrength();
                 if (men >= 4)
-                    base = 4;
+                    base = inf.getCrew().getPiloting();
                 else if (men >= 3)
-                    base = 7;
+                    base = inf.getCrew().getPiloting() + 2;
                 else if (men >= 2)
-                    base = 10;
+                    base = inf.getCrew().getPiloting() + 5;
                 else if (men >= 1)
-                    base = 12;
+                    base = inf.getCrew().getPiloting() + 7;
                 reason.append(men);
                 reason.append(" trooper(s) active");
             }
@@ -3175,13 +3175,13 @@ public class Compute {
             Infantry inf = (Infantry) attacker;
             men = inf.getShootingStrength();
             if (men >= 22)
-                base = 4;
+                base = inf.getCrew().getPiloting();
             else if (men >= 16)
-                base = 7;
+                base = inf.getCrew().getPiloting() + 2;
             else if (men >= 10)
-                base = 10;
+                base = inf.getCrew().getPiloting() + 5;
             else if (men >= 5)
-                base = 12;
+                base = inf.getCrew().getPiloting() + 7;
             reason.append(men);
             reason.append(" men alive");
         } else {
@@ -3212,8 +3212,9 @@ public class Compute {
         StringBuffer reason = new StringBuffer();
 
         // Can only swarm a Mek.
-        if (!(defender instanceof Mech)) {
-            reason.append("Defender is not a Mek.");
+        if (!(defender instanceof Mech) &&
+                !(defender instanceof Tank)) {
+            reason.append("Defender is not a Mek or vehicle.");
         }
 
         // Can't target a transported entity.
@@ -3252,9 +3253,9 @@ public class Compute {
             } else {
                 men = inf.getShootingStrength();
                 if (men >= 4)
-                    base = 7;
+                    base = inf.getCrew().getPiloting() + 2;
                 else if (men >= 1)
-                    base = 10;
+                    base = inf.getCrew().getPiloting() + 5;
                 reason.append(men);
                 reason.append(" trooper(s) active");
             }
@@ -3265,9 +3266,9 @@ public class Compute {
             Infantry inf = (Infantry) attacker;
             men = inf.getShootingStrength();
             if (men >= 22)
-                base = 7;
+                base = inf.getCrew().getPiloting() + 2;
             else if (men >= 16)
-                base = 10;
+                base = inf.getCrew().getPiloting() + 5;
             reason.append(men);
             reason.append(" men alive");
         }

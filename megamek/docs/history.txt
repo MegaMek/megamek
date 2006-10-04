@@ -6,6 +6,7 @@ v0.33.0 (SVN)
 + Clearing woods changed to TW rules
 + Anti mech attacks partially updated for TW rules (swarm pulls in too many rules)
 + Tank and quad hit location tables partially updated for TW rules
++ Infantry anti-mech skill is customisable
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

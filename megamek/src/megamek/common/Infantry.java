@@ -229,14 +229,6 @@ public class Infantry
     public int clipSecondaryFacing( int dir ) { return dir; }
     
     /**
-     * Infantry have no piloting skill (set to 5 for BV purposes)
-     */
-    public void setCrew(Pilot p) {
-        super.setCrew(p);
-        this.getCrew().setPiloting(5);
-    }
-
-    /**
      * Return this Infantry's run MP.
      */
     public int getRunMP(boolean gravity) {

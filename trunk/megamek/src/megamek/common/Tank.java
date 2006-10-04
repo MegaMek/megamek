@@ -354,6 +354,7 @@ public class Tank
     public HitData rollHitLocation(int table, int side) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
+        int motiveMod = 0;
         if (side == ToHitData.SIDE_FRONT && isHullDown() && !m_bHasNoTurret) {
         	//on a hull down vee, all front hits go to turret if one exists.
         	nArmorLoc = LOC_TURRET;
@@ -361,13 +362,16 @@ public class Tank
         if (side == ToHitData.SIDE_LEFT) {
             nArmorLoc = LOC_LEFT;
             bSide = true;
+            motiveMod = 2;
         }
         else if (side == ToHitData.SIDE_RIGHT) {
             nArmorLoc = LOC_RIGHT;
             bSide = true;
+            motiveMod = 2;
         }
         else if (side == ToHitData.SIDE_REAR) {
             nArmorLoc = LOC_REAR;
+            motiveMod = 1;
         }
         HitData rv = new HitData(nArmorLoc);
         switch (Compute.d6(2)) {
@@ -375,10 +379,12 @@ public class Tank
                 rv.setEffect(HitData.EFFECT_CRITICAL);
                 break;
             case 3:
-                rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DESTROYED);
+                rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                rv.setMotiveMod(motiveMod);
                 break;
             case 4:
                 rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                rv.setMotiveMod(motiveMod);
                 break;
             case 5:
                 if (bSide) {
@@ -386,6 +392,7 @@ public class Tank
                 } else {
                     rv = new HitData(LOC_RIGHT,false,HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
+                rv.setMotiveMod(motiveMod);
                 break;
             case 6:
             case 7:
@@ -401,6 +408,7 @@ public class Tank
                 } else {
                     rv = new HitData(LOC_LEFT,false,HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
+                rv.setMotiveMod(motiveMod);
                 break;
             case 10:
                 if (!m_bHasNoTurret) {
@@ -418,8 +426,8 @@ public class Tank
                 }
                 rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
         }
-        if(table==ToHitData.HIT_SWARM)
-            rv.setEffect(HitData.EFFECT_CRITICAL);
+        if(table == ToHitData.HIT_SWARM)
+            rv.setEffect(rv.getEffect() | HitData.EFFECT_CRITICAL);
         return rv;
     }
         

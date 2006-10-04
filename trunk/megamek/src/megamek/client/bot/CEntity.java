@@ -1131,7 +1131,7 @@ public class CEntity {
                 if (wt.hasFlag(WeaponType.F_INFANTRY)) {
                     // Weapons fielded by conventional infantry and light BA
                     // Field guns should be handled under the normal weapons section
-                    fDamage = inf_attacker.getDamage(inf_attacker.
+                    fDamage = 0.6f * inf_attacker.getDamage(inf_attacker.
                             getShootingStrength());
                     if (attacker instanceof BattleArmor){
                         fDamage = inf_attacker.getDamage(ba_attacker.

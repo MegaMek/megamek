@@ -8230,9 +8230,14 @@ public class Server implements Runnable {
         else if (isWeaponInfantry) {
             bSalvo = true;
             platoon = (Infantry)ae;
-            nCluster = 5;
+            nCluster = 2;
             nDamPerHit = 1;
-            hits = platoon.getDamage(platoon.getShootingStrength());
+            hits = Compute.missilesHit(platoon.getDamage(platoon.getShootingStrength()));
+            if(wtype.hasFlag(WeaponType.F_MG)
+                    && target instanceof Infantry 
+                    && !(target instanceof BattleArmor)) {
+                hits += Compute.d6();
+            }
             //TODO: Hmm, this should be localizable
             sSalvoType = " damage are inflicted by the shots that ";
 
@@ -8379,16 +8384,9 @@ public class Server implements Runnable {
                 nSalvoBonus -= 2;
             }
 
-            // Large MRM missile racks roll twice.
-            // MRM missiles never recieve hit bonuses.
-            if ( wtype.getRackSize() == 30 || wtype.getRackSize() == 40 ) {
-                hits = Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod+(ae.isSufferingEMI()?-2:0), maxtechmissiles | bGlancing) +
-                    Compute.missilesHit(wtype.getRackSize() / 2, nMissilesModifier+glancingMissileMod+(ae.isSufferingEMI()?-2:0), maxtechmissiles | bGlancing);
-            }
-
             // Battle Armor units multiply their racksize by the number
             // of men shooting and they can't get missile hit bonuses.
-            else if ( ae instanceof BattleArmor ) {
+            if ( ae instanceof BattleArmor ) {
                 platoon = (Infantry) ae;
                 int temp = wtype.getRackSize() * platoon.getShootingStrength();
 

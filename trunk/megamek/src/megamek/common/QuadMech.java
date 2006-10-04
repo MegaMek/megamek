@@ -538,6 +538,69 @@ public class QuadMech extends Mech {
 				}
 			}
 		}
+        if (table == ToHitData.HIT_SWARM) {
+            roll = Compute.d6(2);
+            try {
+                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
+                if ( pw != null ) {
+                    pw.print( table );
+                    pw.print( "\t" );
+                    pw.print( side );
+                    pw.print( "\t" );
+                    pw.println( roll );
+                }
+            } catch ( Throwable thrown ) {
+                thrown.printStackTrace();
+            }
+            // Swarm attack locations.
+            switch( roll ) {
+            case 2:
+                if (crew.hasEdgeRemaining() 
+                        && crew.getOptions().booleanOption("edge_when_headhit")) {
+                    crew.decreaseEdge();
+                    HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                    result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL));
+                    return result;
+                } // if
+                return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
+            case 3:
+                return new HitData(Mech.LOC_RT, false,
+                                   HitData.EFFECT_CRITICAL);
+            case 4:
+                return new HitData(Mech.LOC_CT, true,
+                                   HitData.EFFECT_CRITICAL);
+            case 5:
+                return new HitData(Mech.LOC_RT, true,
+                                   HitData.EFFECT_CRITICAL);
+            case 6:
+                return new HitData(Mech.LOC_RT, false,
+                                   HitData.EFFECT_CRITICAL);
+            case 7:
+                return new HitData(Mech.LOC_CT, false,
+                                   HitData.EFFECT_CRITICAL);
+            case 8:
+                return new HitData(Mech.LOC_LT, false,
+                                   HitData.EFFECT_CRITICAL);
+            case 9:
+                return new HitData(Mech.LOC_LT, true,
+                                   HitData.EFFECT_CRITICAL);
+            case 10:
+                return new HitData(Mech.LOC_CT, true,
+                                   HitData.EFFECT_CRITICAL);
+            case 11:
+                return new HitData(Mech.LOC_LT, false,
+                                   HitData.EFFECT_CRITICAL);
+            case 12:
+                if (crew.hasEdgeRemaining()
+                        && crew.getOptions().booleanOption("edge_when_headhit")) {
+                    crew.decreaseEdge();
+                    HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                    result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL));
+                    return result;
+                } // if
+                return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
+            }
+        }
 		return super.rollHitLocation(table, side, aimedLocation, aimingMode);
 	}
 

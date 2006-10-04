@@ -295,6 +295,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Mine Launchers don't use gunnery.
         if ( Infantry.LEG_ATTACK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getLegAttackBaseToHit( ae, te );
+            if(toHit.getValue() == ToHitData.IMPOSSIBLE)
+                return toHit;
     
             // If the attacker has Assault claws, give a -1 modifier.
             // We can stop looking when we find our first match.
@@ -308,6 +310,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
         } else if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getSwarmMekBaseToHit( ae, te );
+            if(toHit.getValue() == ToHitData.IMPOSSIBLE)
+                return toHit;
+            
+            if(te instanceof Tank) {
+                toHit.addModifier(-2, "target is vehicle");
+            }
 
             // If the attacker has Assault claws, give a -1 modifier.
             // We can stop looking when we find our first match.
@@ -317,6 +325,30 @@ public class WeaponAttackAction extends AbstractAttackAction {
                      (equip.getInternalName()) ) {
                     toHit.addModifier( -1, "attacker has assault claws" );
                     break;
+                }
+                if (equip.hasFlag(MiscType.F_MAGNETIC_CLAMP)) {
+                    toHit.addModifier( -1, "attacker has magnetic claws" );
+                    break;
+                }
+            }
+            
+            //If the defender carries mechanized BA, they can fight off the swarm
+            for(Entity e:te.getExternalUnits()) {
+                if(e instanceof BattleArmor) {
+                    BattleArmor ba = (BattleArmor)e;
+                    int def = ba.getShootingStrength();
+                    int att = ((Infantry)ae).getShootingStrength();
+                    if(!(ae instanceof BattleArmor)) {
+                        if(att >=28) att=5;
+                        else if(att >= 24) att=4;
+                        else if(att >= 21) att=3;
+                        else if(att >= 18) att=2;
+                        else att=1;
+                    }
+                    def = def + 2 - att;
+                    if(def >0) {
+                        toHit.addModifier(def, "Defending mechanized BA");
+                    }
                 }
             }
         } else if ( Infantry.STOP_SWARM.equals( wtype.getInternalName() ) ) {
@@ -332,10 +364,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // they can only target the Mek they're swarming.
         else if ( te != null && ae.getSwarmTargetId() == te.getId() ) {
             // Only certain weapons can be used in a swarm attack.
+            if(wtype.hasFlag(WeaponType.F_MISSILE)) {
+                return new ToHitData(ToHitData.IMPOSSIBLE, "Missile weapons can't be used in swarm attack");
+            }
+            int side = te instanceof Tank?ToHitData.SIDE_RANDOM:ToHitData.SIDE_FRONT;
             return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
                                       "Attack during swarm.",
                                       ToHitData.HIT_SWARM,
-                                      ToHitData.SIDE_FRONT );
+                                      side );
         }
         else if (isArtilleryFLAK) {
             toHit = new ToHitData(9, "artillery FLAK");
@@ -649,17 +685,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (te != null && te.isProne()) {
             // easier when point-blank
             if (distance <= 1) {
-                // BMRr, pg. 72: Swarm Mek attacks get "an additional -4
-                // if the BattleMech is prone or immoble."  I interpret
-                // this to mean that the bonus gets applied *ONCE*.
-                if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
-                    // If the target is immoble, don't give a bonus for prone.
-                    if ( !te.isImmobile() ) {
-                        proneMod = new ToHitData(-4, "swarm prone target");
-                    }
-                } else {
-                    proneMod = new ToHitData(-2, "target prone and adjacent");
-                }
+                // TW, pg. 221: Swarm Mek attacks apply prone/immobile mods as normal.
+                proneMod = new ToHitData(-2, "target prone and adjacent");
             } else {
                 // Harder at range.
                 proneMod = new ToHitData(1, "target prone and at range");

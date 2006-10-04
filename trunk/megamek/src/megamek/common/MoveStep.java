@@ -436,6 +436,10 @@ public class MoveStep implements Serializable {
             case MovePath.STEP_CLIMB_MODE_OFF:
                 setClimbMode(false);
                 break;
+            case MovePath.STEP_SHAKE_OFF_SWARMERS:
+                //Counts as flank move but you can only use cruise MP
+                setMp(entity.getRunMP() - entity.getWalkMP());
+                break;
             default :
                 setMp(0);
         }
@@ -1156,6 +1160,20 @@ public class MoveStep implements Serializable {
                 }
             } else {
                 movementType = IEntityMovementType.MOVE_ILLEGAL;
+            }
+        }
+        
+        if(stepType == MovePath.STEP_SHAKE_OFF_SWARMERS) {
+            if(getMp() == 0 || !(entity instanceof Tank)) {
+                // Can't shake off swarmers if you can't flank
+                movementType = IEntityMovementType.MOVE_ILLEGAL;
+            }
+            else {
+                // And its always considered to be flank movement
+                if(entity.getMovementMode() == IEntityMovementMode.VTOL)
+                    movementType = IEntityMovementType.MOVE_VTOL_RUN;
+                else
+                    movementType = IEntityMovementType.MOVE_RUN;
             }
         }
 

@@ -40,6 +40,16 @@ public interface ITerrain {
     public abstract int getLevel();
 
     /**
+     * @return terrain factor
+     */
+    public abstract int getTerrainFactor();
+    
+    /**
+     * set terrain factor
+     */
+    public abstract void setTerrainFactor(int tf);
+    
+    /**
      * 
      * @return exits
      */

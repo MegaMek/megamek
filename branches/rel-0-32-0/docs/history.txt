@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.32.1 (SVN)
+
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1
 

@@ -35,6 +35,7 @@ import megamek.common.Mounted;
 import megamek.common.Pilot;
 import megamek.common.Player;
 import megamek.common.Protomech;
+import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 import megamek.common.options.IOption;
@@ -157,6 +158,13 @@ public class CustomMechDialog
 
         texDesc.setEditable(false);
         
+        if(entity instanceof Tank)
+            labPiloting.setText(Messages.getString("CustomMechDialog.labDriving"));
+        else if (entity instanceof Infantry)
+            labPiloting.setText(Messages.getString("CustomMechDialog.labAntiMech"));
+        else
+            labPiloting.setText(Messages.getString("CustomMechDialog.labPiloting"));
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();

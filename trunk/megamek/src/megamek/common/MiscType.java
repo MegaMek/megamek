@@ -1422,6 +1422,7 @@ public class MiscType extends EquipmentType {
         misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO);
         misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_LIGHT_FERRO));
         misc.addLookupName("Light Ferro-Fibrous Armor");
+        misc.addLookupName("LightFerro");
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 7;
         misc.hittable = false;

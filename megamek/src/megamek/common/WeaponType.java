@@ -9796,7 +9796,7 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
-        weapon.name = "Snub Nosed Particle Cannon";
+        weapon.name = "Snub Nosed Particle Projection Cannon";
         weapon.setInternalName("ISSNPPC");
         weapon.addLookupName("ISSnubNosedPPC");
         weapon.heat = 11;
@@ -9814,9 +9814,11 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 6.0f;
         weapon.criticals = 2;
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
+        // Warning: this BV is unofficial.
+        //FIXME
         weapon.bv = 176;
         weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
-        weapon.cost = 400000;
+        weapon.cost = 0;
 
         return weapon;
     }
@@ -9841,7 +9843,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_SINGLE_TARGET;
         weapon.explosive = true;
         weapon.bv = 411;
-        weapon.cost = 300000;
+        weapon.cost = 0;
 
         return weapon;
     }
@@ -9863,7 +9865,10 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_SOLO_ATTACK | F_NO_FIRES | F_EXTINGUISHER;
-        weapon.bv = 0; // ???
+        // Warning: this BV is unofficial.
+        //FIXME
+        weapon.bv = 0;
+        weapon.cost = 0;
 
         return weapon;
     }
@@ -9872,7 +9877,7 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
-        weapon.name = "Heavy Particle Cannon";
+        weapon.name = "Heavy Particle Projection Cannon";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("ISHeavyPPC");
         weapon.addLookupName("ISHPPC");
@@ -9891,9 +9896,11 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 10.0f;
         weapon.criticals = 4;
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
+        // Warning: this BV is unofficial.
+        //FIXME
         weapon.bv = 316;
         weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
-        weapon.cost = 300000;
+        weapon.cost = 0;
 
         return weapon;
     }
@@ -9902,7 +9909,7 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
-        weapon.name = "Light Particle Cannon";
+        weapon.name = "Light Particle Projection Cannon";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("ISLightPPC");
         weapon.addLookupName("ISLPPC");
@@ -9921,9 +9928,11 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 3.0f;
         weapon.criticals = 2;
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
+        // Warning: this BV is unofficial.
+        //FIXME
         weapon.bv = 88;
         weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
-        weapon.cost = 100000;
+        weapon.cost = 0;
 
         return weapon;
     }

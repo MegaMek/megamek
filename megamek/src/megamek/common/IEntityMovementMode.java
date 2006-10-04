@@ -34,4 +34,7 @@ public interface IEntityMovementMode {
     public static final int INF_JUMP = 12;
     public static final int BIPED_SWIM = 13;
     public static final int QUAD_SWIM = 14;
+    public static final int WIGE = 15;
+    public static final int AERODYNE = 16;
+    public static final int SPHEROID = 17;
 }

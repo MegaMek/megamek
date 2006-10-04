@@ -320,39 +320,44 @@ public class VTOL extends Tank {
         else if (side == ToHitData.SIDE_REAR) {
             nArmorLoc = LOC_REAR;
         }
+        HitData rv = new HitData(nArmorLoc);
         switch (Compute.d6(2)) {
             case 2:
-                return new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL);//also rotor destroyed?
+                rv.setEffect(HitData.EFFECT_CRITICAL);
+                break;
             case 3:
-                return new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DESTROYED);
             case 4:
+                rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                break;
             case 5:
-                return new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                if(bSide)
+                    rv = new HitData(LOC_FRONT);
+                else
+                    rv = new HitData(LOC_RIGHT);
+                break;
             case 6:
             case 7:
+                break;
             case 8:
-                return new HitData(nArmorLoc);
-            case 9:
-                if (bSide) {
-                    //TODO:somehow report this to the gamelog
-                    Mounted mWeap = getMainWeapon();
-                    if (mWeap != null) {
-                        mWeap.setHit(true);
-                    }
-                    return new HitData(nArmorLoc);
+                if(bSide) {
+                    rv.setEffect(HitData.EFFECT_CRITICAL);
                 }
-                return new HitData(nArmorLoc);
+                break;
+            case 9:
+                if(bSide)
+                    rv = new HitData(LOC_REAR);
+                else
+                    rv = new HitData(LOC_LEFT);
+                break;
             case 10:
             case 11:
-                return new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
             case 12:
-                if (getOriginalWalkMP() > 0) {
-                    //TODO:somehow get this to report in the gamelog
-                    setOriginalWalkMP(getOriginalWalkMP()-1);
-                }
-                return new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL);                
+                rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL | HitData.EFFECT_VEHICLE_MOVE_DAMAGED);                
         }
-        return null;
+        if(table == ToHitData.HIT_SWARM)
+            rv.setEffect(rv.getEffect() | HitData.EFFECT_CRITICAL);
+        return rv;
     }
 
     public boolean doomedInVacuum() {

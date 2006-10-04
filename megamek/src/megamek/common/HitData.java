@@ -19,20 +19,19 @@ package megamek.common;
  */
 public class HitData
 {
-    public static final int        EFFECT_NONE = 0;
-    public static final int        EFFECT_CRITICAL = 1;
-    public static final int        EFFECT_VEHICLE_MOVE_DESTROYED = 2;
-    public static final int        EFFECT_VEHICLE_MOVE_DAMAGED = 3;
-    public static final int        EFFECT_VEHICLE_TURRETLOCK = 4;
-    public static final int        EFFECT_GUN_EMPLACEMENT_WEAPONS = 5;
-    public static final int        EFFECT_GUN_EMPLACEMENT_TURRET = 6;
-    public static final int        EFFECT_GUN_EMPLACEMENT_CREW = 7;
+    public static final int EFFECT_NONE = 0;
+    public static final int EFFECT_CRITICAL =                0x0001;
+    public static final int EFFECT_VEHICLE_MOVE_DAMAGED =    0x0002;
+    public static final int EFFECT_GUN_EMPLACEMENT_WEAPONS = 0x0004;
+    public static final int EFFECT_GUN_EMPLACEMENT_TURRET =  0x0008;
+    public static final int EFFECT_GUN_EMPLACEMENT_CREW =    0x0010;
     
     private int location;
     private boolean rear;
     private int effect;
     private boolean hitAimedLocation = false;
     private int specCritMod = 0;
+    private int motiveMod = 0;
     private int glancing = 0;
     private boolean fromFront = true; // True if attack came in through hex in
                                       // front of target
@@ -114,6 +113,14 @@ public class HitData
     
     public int getEffect() {
         return effect;
+    }
+    
+    public int getMotiveMod() {
+        return motiveMod;
+    }
+    
+    public void setMotiveMod(int mod) {
+        motiveMod = mod;
     }
     
     public void setEffect(int effect) {

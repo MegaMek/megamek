@@ -30,6 +30,7 @@ public class Terrain implements ITerrain, Serializable {
     private int level;
     private boolean exitsSpecified = false;
     private int exits;
+    private int terrainFactor;
     
     /**
      * Terrain constructor
@@ -43,6 +44,7 @@ public class Terrain implements ITerrain, Serializable {
         this.level = level;
         this.exitsSpecified = exitsSpecified;
         this.exits = exits;
+        this.terrainFactor = 40 * level + 10;
     }
     
     public Terrain(ITerrain other) {
@@ -50,6 +52,7 @@ public class Terrain implements ITerrain, Serializable {
         this.level = other.getLevel();
         this.exitsSpecified = other.hasExitsSpecified();
         this.exits = other.getExits();
+        this.terrainFactor = other.getTerrainFactor();
     }
     
     /**
@@ -75,6 +78,7 @@ public class Terrain implements ITerrain, Serializable {
             this.exitsSpecified = true;
             this.exits = levelFor(terrain.substring(lastColon + 1));
         }
+        this.terrainFactor = 40 * level + 10;
     }
     
     public static int levelFor(String string) {
@@ -90,6 +94,14 @@ public class Terrain implements ITerrain, Serializable {
     
     public int getLevel() {
         return level;
+    }
+
+    public int getTerrainFactor() {
+        return terrainFactor;
+    }
+    
+    public void setTerrainFactor(int tf) {
+        terrainFactor = tf;
     }
 
     public int getExits() {

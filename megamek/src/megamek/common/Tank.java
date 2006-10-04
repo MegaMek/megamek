@@ -369,44 +369,58 @@ public class Tank
         else if (side == ToHitData.SIDE_REAR) {
             nArmorLoc = LOC_REAR;
         }
+        HitData rv = new HitData(nArmorLoc);
         switch (Compute.d6(2)) {
             case 2:
-                return new HitData(nArmorLoc, false, HitData.EFFECT_CRITICAL);
+                rv.setEffect(HitData.EFFECT_CRITICAL);
+                break;
             case 3:
-                return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DESTROYED);
+                rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DESTROYED);
+                break;
             case 4:
-                return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                rv.setEffect(HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                break;
             case 5:
-                if (bSide || getMovementMode() == IEntityMovementMode.HOVER || getMovementMode() == IEntityMovementMode.HYDROFOIL) {
-                    return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                if (bSide) {
+                    rv = new HitData(LOC_FRONT,false,HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                } else {
+                    rv = new HitData(LOC_RIGHT,false,HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
-                return new HitData(nArmorLoc);
+                break;
             case 6:
             case 7:
+                break;
             case 8:
-                return new HitData(nArmorLoc);
+                if(bSide) {
+                    rv.setEffect(HitData.EFFECT_CRITICAL);
+                }
+                break;
             case 9:
-                if (bSide && ((getMovementMode() == IEntityMovementMode.HOVER) || (getMovementMode() == IEntityMovementMode.HYDROFOIL))) {
-                    return new HitData(nArmorLoc, false, HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                if (bSide) {
+                    rv = new HitData(LOC_REAR,false,HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                } else {
+                    rv = new HitData(LOC_LEFT,false,HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
-                return new HitData(nArmorLoc);
+                break;
             case 10:
-                if (m_bHasNoTurret) {
-                    return new HitData(nArmorLoc);
+                if (!m_bHasNoTurret) {
+                    rv = new HitData(LOC_TURRET);
                 }
-                return new HitData(LOC_TURRET);
+                break;
             case 11:
-                if (m_bHasNoTurret) {
-                    return new HitData(nArmorLoc);
+                if (!m_bHasNoTurret) {
+                    rv = new HitData(LOC_TURRET);
                 }
-                return new HitData(LOC_TURRET, false, HitData.EFFECT_VEHICLE_TURRETLOCK);
+                break;
             case 12:
                 if (m_bHasNoTurret || bSide) {
-                    return new HitData(nArmorLoc, false, HitData.EFFECT_CRITICAL);
+                    rv.setEffect(HitData.EFFECT_CRITICAL);
                 }
-                return new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
+                rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
         }
-        return null;
+        if(table==ToHitData.HIT_SWARM)
+            rv.setEffect(HitData.EFFECT_CRITICAL);
+        return rv;
     }
         
     /**

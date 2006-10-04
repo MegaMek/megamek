@@ -1281,6 +1281,8 @@ public final class BoardView1
                 stringsSize ++;
             else if (mhex.containsTerrain(Terrains.WOODS)) 
                 stringsSize ++;
+            if (mhex.containsTerrain(Terrains.ICE))
+                stringsSize ++;
         }
         stringsSize += game.getNbrMinefields(mcoords);
         
@@ -1310,25 +1312,33 @@ public final class BoardView1
 
             if (mhex.containsTerrain(Terrains.JUNGLE)) {
                 int ttl = mhex.getTerrain(Terrains.JUNGLE).getLevel();
+                int tf = mhex.getTerrain(Terrains.JUNGLE).getTerrainFactor();
                 if (ttl == 1)
-                    strings[stringsIndex] = "Light Jungle";
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipLightJungle",new Object[]{tf});
                 else if (ttl == 2)
-                    strings[stringsIndex] = "Heavy Jungle";
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipHeavyJungle",new Object[]{tf});
                 else if (ttl == 3)
-                    strings[stringsIndex] = "Ultra-Heavy Jungle";
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipUltraJungle",new Object[]{tf});
                 else
-                    strings[stringsIndex] = "Jungle";
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipJungle",new Object[]{tf});
                 stringsIndex += 1;
             } else if (mhex.containsTerrain(Terrains.WOODS)) {
                 int ttl = mhex.getTerrain(Terrains.WOODS).getLevel();
+                int tf = mhex.getTerrain(Terrains.WOODS).getTerrainFactor();
                 if (ttl == 1)
-                    strings[stringsIndex] = "Light Woods";
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipLightWoods",new Object[]{tf});
                 else if (ttl == 2)
-                    strings[stringsIndex] = "Heavy Woods";
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipHeavyWoods",new Object[]{tf});
                 else if (ttl == 3)
-                    strings[stringsIndex] = "Ultra-Heavy Woods";
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipUltraWoods",new Object[]{tf});
                 else
-                    strings[stringsIndex] = "Woods";
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipWoods",new Object[]{tf});
+                stringsIndex += 1;
+            } 
+                
+            if (mhex.containsTerrain(Terrains.ICE)) {
+                int tf = mhex.getTerrain(Terrains.WOODS).getTerrainFactor();
+                strings[stringsIndex] = Messages.getString("BoardView1.TipIce",new Object[]{tf});
                 stringsIndex += 1;
             }
 

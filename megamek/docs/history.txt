@@ -2,6 +2,7 @@
 ----------------
 v0.33.0 (SVN)
 + Corrected names of snub-nose, light, and heavy PPCs.
++ Added PXH-7K and MAD-4K (RS:PPU)
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

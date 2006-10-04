@@ -13010,8 +13010,8 @@ public class Server implements Runnable {
         if (te instanceof Mech
                 && te.getArmorType() == EquipmentType.T_ARMOR_HARDENED)
             hardenedArmor = true;
-        int crits = hit.getEffect() == HitData.EFFECT_CRITICAL && !hardenedArmor ? 1 : 0;
-        int specCrits = hit.getEffect() == HitData.EFFECT_CRITICAL && hardenedArmor ? 1 : 0;
+        int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) && !hardenedArmor ? 1 : 0;
+        int specCrits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) && hardenedArmor ? 1 : 0;
         HitData nextHit = null;
 
         // Some "hits" on a Protomech are actually misses.
@@ -13343,7 +13343,7 @@ public class Server implements Runnable {
                 int swarmer = te.getSwarmAttackerId();
                 if((!(te instanceof Mech) || bTorso) 
                         && swarmer != Entity.NONE 
-                        && hit.getEffect() != HitData.EFFECT_CRITICAL
+                        && (hit.getEffect() & HitData.EFFECT_CRITICAL) == 0
                         && Compute.d6() >=5) {
                     Entity swarm = game.getEntity(swarmer);
                     // Yup.  Roll up some hit data for that passenger.
@@ -13654,7 +13654,8 @@ public class Server implements Runnable {
                         if (te instanceof VTOL && hit.getLocation() == VTOL.LOC_ROTOR) {
                             //if rotor is destroyed, movement goes bleh.
                             //I think this will work?
-                            hit.setEffect(HitData.EFFECT_VEHICLE_MOVE_DESTROYED);
+                            te.setOriginalWalkMP(0);
+                            vDesc.addAll(crashVTOL((VTOL)te));
 
                         }
                     }
@@ -13744,54 +13745,11 @@ public class Server implements Runnable {
             vDesc.addAll( breachCheck(te, hit.getLocation(), null));
 
             // resolve special results
-            if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
-                r = new Report(6135);
-                r.subject = te_n;
-                r.indent(3);
-                vDesc.addElement(r);
-                int nMP = te.getOriginalWalkMP();
-                if (nMP > 0) {
-                    te.setOriginalWalkMP(nMP - 1);
-
-                    if (te.getOriginalWalkMP()==0) {
-                        // From http://www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf
-                        // page 19, tanks are only immobile if they take that critical hit.
-                        // ((Tank)te).immobilize();
-
-                        // Hovercraft reduced to 0MP over water sink
-                        if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
-                             game.getBoard().getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0
-                             &&!game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ICE)) {
-                            vDesc.addAll( destroyEntity(te, "a watery grave", false) );
-                        }
-                    }
-                }
-            } else if (hit.getEffect() == HitData.EFFECT_VEHICLE_MOVE_DESTROYED) {
-                r = new Report(6140);
-                r.subject = te_n;
-                r.indent(3);
-                vDesc.addElement(r);
-                ((Tank)te).immobilize();
-                // Does the hovercraft sink?
-                te_hex = game.getBoard().getHex( te.getPosition() );
-                if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
-                     te_hex.terrainLevel(Terrains.WATER) > 0 &&
-                     !te_hex.containsTerrain(Terrains.ICE)) {
-                    vDesc.addAll( destroyEntity(te, "a watery grave", false) );
-                }
-                if(te instanceof VTOL) {
-                    Report.addNewline(vDesc);
-                    //report problem: add tab
-                    vDesc.addAll( crashVTOL((VTOL)te));
-                }
-            } else if (hit.getEffect() == HitData.EFFECT_VEHICLE_TURRETLOCK) {
-                r = new Report(6145);
-                r.subject = te_n;
-                r.indent(3);
-                vDesc.addElement(r);
-                ((Tank)te).lockTurret();
+            if ((hit.getEffect() & HitData.EFFECT_VEHICLE_MOVE_DAMAGED) 
+                    == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
+                vDesc.addAll(vehicleMotiveDamage((Tank)te,hit.getMotiveMod()));
             }
-            else if (hit.getEffect() ==
+            else if ((hit.getEffect() & HitData.EFFECT_GUN_EMPLACEMENT_WEAPONS)==
                      HitData.EFFECT_GUN_EMPLACEMENT_WEAPONS) {
                 r = new Report(6146);
                 r.subject = te_n;
@@ -13801,14 +13759,16 @@ public class Server implements Runnable {
                     mounted.setDestroyed(true);
                 }
             }
-            else if (hit.getEffect() == HitData.EFFECT_GUN_EMPLACEMENT_TURRET) {
+            else if ((hit.getEffect() & HitData.EFFECT_GUN_EMPLACEMENT_TURRET) 
+                    == HitData.EFFECT_GUN_EMPLACEMENT_TURRET) {
                 r = new Report(6145);
                 r.subject = te_n;
                 r.indent(3);
                 vDesc.addElement(r);
                 ((GunEmplacement)te).setTurretLocked(true);
             }
-            else if (hit.getEffect() == HitData.EFFECT_GUN_EMPLACEMENT_CREW) {
+            else if ((hit.getEffect() & HitData.EFFECT_GUN_EMPLACEMENT_CREW)
+                    == HitData.EFFECT_GUN_EMPLACEMENT_CREW) {
                 r = new Report(6148);
                 r.subject = te_n;
                 r.indent(3);
@@ -19979,7 +19939,7 @@ public class Server implements Runnable {
                 addReport(r);
             }
             if(boomroll + penalty < 10) {
-                vehicleMotiveDamage(tank, penalty - 1);
+                addReport(vehicleMotiveDamage(tank, penalty - 1));
             } else {
                 resolveVehicleFire(tank, false);
                 if(boomroll + penalty >= 12) {
@@ -20011,72 +19971,95 @@ public class Server implements Runnable {
        addNewLines();
     }
 
-    private void vehicleMotiveDamage(Tank te, int modifier) {
-        Vector vDesc = new Vector();
+    private Vector<Report> vehicleMotiveDamage(Tank te, int modifier) {
+        Vector<Report> vDesc = new Vector<Report>();
         Report r;
+        r = new Report(1210, Report.PUBLIC);
+        vDesc.add(r);
+        switch(te.getMovementMode()) {
+        case IEntityMovementMode.HOVER:
+        case IEntityMovementMode.HYDROFOIL:
+            modifier += 3;
+            break;
+        case IEntityMovementMode.WHEELED:
+            modifier += 2;
+            break;
+        case IEntityMovementMode.WIGE:
+            modifier += 4;
+            break;
+        }
         int roll = Compute.d6(2) + modifier;
         r = new Report(6305);
         r.subject = te.getId();
         r.add("movement system");
         r.newlines = 0;
         r.indent(3);
-        vDesc.addElement(r);
+        vDesc.add(r);
         r = new Report(6310);
         r.subject = te.getId();
         r.add(roll);
         r.newlines = 0;
-        vDesc.addElement(r);
-        if(roll <= 7) {
+        vDesc.add(r);
+        r = new Report(3340);
+        r.add(modifier);
+        r.subject = te.getId();
+        vDesc.add(r);
+        
+        if(roll <= 5) {
             //no effect
             r = new Report(6005);
             r.subject = te.getId();
-            r.add(roll);
-            vDesc.addElement(r);
-        } else if (roll <=9) {
+            r.indent(3);
+            vDesc.add(r);
+        } else if (roll <=7) {
             //minor damage
             r = new Report(6470);
             r.subject = te.getId();
-            r.add(roll);
-            vDesc.addElement(r);
+            r.indent(3);
+            vDesc.add(r);
             te.addMovementDamage(1);
-        } else if (roll <12) {
-            //major damage
-            r = new Report(6135);
+        } else if (roll <=9) {
+            //moderate damage
+            r = new Report(6471);
             r.subject = te.getId();
-            vDesc.addElement(r);
+            r.indent(3);
+            vDesc.add(r);
             te.addMovementDamage(2);
             int nMP = te.getOriginalWalkMP();
             if (nMP > 0) {
                 te.setOriginalWalkMP(nMP - 1);
-
-                if (te.getOriginalWalkMP()==0) {
-                    // Hovercraft reduced to 0MP over water sink
-                    if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
-                         game.getBoard().getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 &&
-                         !game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ICE)) {
-                        vDesc.addAll( destroyEntity(te, "a watery grave", false) );
-                    }
-                }
+            }
+        } else if (roll <=11) {
+            //heavy damage
+            r = new Report(6472);
+            r.subject = te.getId();
+            r.indent(3);
+            vDesc.add(r);
+            te.addMovementDamage(3);
+            int nMP = te.getOriginalWalkMP();
+            if (nMP > 0) {
+                te.setOriginalWalkMP(nMP / 2);
             }
         } else  {
-            r = new Report(6140);
+            r = new Report(6473);
             r.subject = te.getId();
-            vDesc.addElement(r);
+            r.indent(3);
+            vDesc.add(r);
             te.immobilize();
-            // Does the hovercraft sink?
-            IHex te_hex = game.getBoard().getHex( te.getPosition() );
+        }
+        if (te.getOriginalWalkMP()==0 || te.isImmobile()) {
+            // Hovercraft reduced to 0MP over water sink
             if ( te.getMovementMode() == IEntityMovementMode.HOVER &&
-                 te_hex.terrainLevel(Terrains.WATER) > 0 &&
-                 !te_hex.containsTerrain(Terrains.ICE)) {
+                 game.getBoard().getHex( te.getPosition() ).terrainLevel(Terrains.WATER) > 0 &&
+                 !game.getBoard().getHex(te.getPosition()).containsTerrain(Terrains.ICE)) {
                 vDesc.addAll( destroyEntity(te, "a watery grave", false) );
             }
             if(te instanceof VTOL) {
-                Report.addNewline(vDesc);
                 //report problem: add tab
                 vDesc.addAll( crashVTOL((VTOL)te));
             }
         }
-        addReport(vDesc);
+        return vDesc;
     }
 
 
@@ -20399,7 +20382,7 @@ public class Server implements Runnable {
                         r.add(toHit.getTableDesc());
                         r.add(0);
                         addReport(r);
-                        vehicleMotiveDamage((Tank)entity, 0);
+                        addReport(vehicleMotiveDamage((Tank)entity, 0));
                         continue;
                     }
                     //non infantry are immune

@@ -5382,17 +5382,18 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
-        weapon.name = "Infantry Rifle";
+        weapon.name = "Inf. Ballistic Rifle";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("InfantryRifle");
+        weapon.addLookupName("Infantry Rifle");
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_AC;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
-        weapon.longRange = 2; // No long range.
-        weapon.extremeRange = 2; // No Extreme Range
+        weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES | F_BALLISTIC;
@@ -5480,11 +5481,10 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = 3;
-        weapon.shortRange = 6;
-        weapon.mediumRange = 9;
-        weapon.longRange = 12;
-        weapon.extremeRange = 18;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES| F_MISSILE;
@@ -5498,17 +5498,18 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
-        weapon.name = "Infantry Laser";
+        weapon.name = "Inf. Energy Rifle";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("InfantryLaser");
+        weapon.addLookupName("Infantry Laser");
         weapon.heat = 0;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.ammoType = AmmoType.T_NA;
         weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 1;
-        weapon.mediumRange = 2;
-        weapon.longRange = 3;
-        weapon.extremeRange = 4;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES | F_ENERGY;
@@ -5530,8 +5531,8 @@ public class WeaponType extends EquipmentType {
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
-        weapon.longRange = 2; // No long range.
-        weapon.extremeRange = 2; // No Extreme Range.
+        weapon.longRange = 3;
+        weapon.extremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_FLAMER | F_DIRECT_FIRE | F_INFANTRY | F_ENERGY;

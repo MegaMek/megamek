@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.31.16 (CVS)
+v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
++ no changes since RC1
 
 v0.31.15, 0.32.0 Release Candidate 1 (2006-09-27, 22:55 GMT+2)
 + Bug 1293410: Minimap can become too big

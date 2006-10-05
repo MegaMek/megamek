@@ -38,15 +38,15 @@ public class BattleArmorMapSet implements DisplayMapSet{
     //Picture with figure
     private Image battleArmorImage;
     //Images that shows how much armor + 1 internal damage left.
-    private Image[] armorImage = new Image[5];
+    private Image[] armorImage = new Image[BattleArmor.BA_MAX_MEN];
     //Reference to Component (required for Image handling)
     private Component comp;
     //Set of areas to show BA figures
-    private PMPicArea[] unitAreas =  new PMPicArea[5];
+    private PMPicArea[] unitAreas =  new PMPicArea[BattleArmor.BA_MAX_MEN];
     //Set of areas to show BA armor left
-    private PMPicArea[] armorAreas = new PMPicArea[5];
+    private PMPicArea[] armorAreas = new PMPicArea[BattleArmor.BA_MAX_MEN];
     //Set of labels to show BA armor left
-    private PMValueLabel[]    armorLabels = new PMValueLabel[5];
+    private PMValueLabel[]    armorLabels = new PMValueLabel[BattleArmor.BA_MAX_MEN];
     //Content group which will be sent to PicMap component
     private PMAreasGroup content = new PMAreasGroup();
     //Set of Backgrpund drawers which will be sent to PicMap component
@@ -71,7 +71,7 @@ public class BattleArmorMapSet implements DisplayMapSet{
         
         battleArmorImage = comp.getToolkit().getImage(IMAGE_DIR+"/battle_armor.gif"); //$NON-NLS-1$
         PMUtil.setImage(battleArmorImage, comp);
-        for(int i = 0; i < 5; i++){
+        for(int i = 0; i < BattleArmor.BA_MAX_MEN; i++){
             int shiftY = i * stepY;
             unitAreas[i] = new PMPicArea(battleArmorImage);
             unitAreas[i].translate(0, shiftY);
@@ -110,7 +110,7 @@ public class BattleArmorMapSet implements DisplayMapSet{
              armorLabels[x].setVisible(true);
              unitAreas[x].setVisible(true);
         }
-        for (int x=men; x<5; x++) {
+        for (int x=men; x<BattleArmor.BA_MAX_MEN; x++) {
              armorAreas[x].setVisible(false);
              armorLabels[x].setVisible(false);
              unitAreas[x].setVisible(false);

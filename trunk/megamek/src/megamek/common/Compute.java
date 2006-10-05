@@ -3282,32 +3282,6 @@ public class Compute {
         return new ToHitData(base, reason.toString());
     }
 
-    /**
-     * Determine the number of shots from a Battle Armor unit's attack hit.
-     * 
-     * @param shots -
-     *            the <code>int</code> number of shots from the unit.
-     * @return the <code>int</code> number of shots that hit the target.
-     */
-    public static int getBattleArmorHits(int shots) {
-        int nRoll = d6(2);
-
-        if (shots == 1) {
-            return 1;
-        }
-
-        if (shots > 5) {
-            throw new IllegalArgumentException("shots were greater than 5");
-        }
-
-        final int[][] hit_table = { { 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2 },
-                { 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3 },
-                { 1, 2, 2, 2, 2, 3, 3, 3, 4, 4, 4 },
-                { 1, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5 } };
-
-        return hit_table[shots - 2][nRoll - 2];
-    }
-
     public static boolean canPhysicalTarget(IGame game, int entityId,
             Targetable target) {
 

@@ -8191,7 +8191,7 @@ public class Server implements Runnable {
         else if ( wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER) ) {
             hits = nShots;
             if ( !bAllShotsHit ) {
-                hits = Compute.getBattleArmorHits( hits );
+                hits = Compute.missilesHit( hits );
             }
             bSalvo = true;
             sSalvoType = " mine(s) ";
@@ -8212,7 +8212,7 @@ public class Server implements Runnable {
             // All attacks during Mek Swarms hit; all
             // others use the Battle Armor hits table.
             if ( !bAllShotsHit ) {
-                hits = Compute.getBattleArmorHits( hits );
+                hits = Compute.missilesHit( hits );
             }
 
             // Handle Inferno SRM squads.
@@ -8394,11 +8394,11 @@ public class Server implements Runnable {
                 if ( bAllShotsHit ) {
                     hits = temp;
                 } else {
-                    // Account for more than 20 missles hitting.
+                    // Account for more than 30 missles hitting.
                     hits = 0;
-                    while ( temp > 20 ) {
-                        hits += Compute.missilesHit( 20, nMissilesModifier+glancingMissileMod+(ae.isSufferingEMI()?-2:0), maxtechmissiles | bGlancing );
-                        temp -= 20;
+                    while ( temp > 30 ) {
+                        hits += Compute.missilesHit( 30, nMissilesModifier+glancingMissileMod+(ae.isSufferingEMI()?-2:0), maxtechmissiles | bGlancing );
+                        temp -= 30;
                     }
                     hits += Compute.missilesHit( temp, nMissilesModifier+glancingMissileMod+(ae.isSufferingEMI()?-2:0), maxtechmissiles | bGlancing );
                 } // End not-all-shots-hit

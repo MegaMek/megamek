@@ -398,6 +398,24 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Sucks to be them.
         if (ae.isSufferingEMI())
             toHit.addModifier(+2, "electromagnetic interference");
+        
+        // Vehicles may suffer from criticals
+        if (ae instanceof Tank) {
+            Tank tank = (Tank)ae;
+            if(tank.isCommanderHit()) {
+                if(ae instanceof VTOL)
+                    toHit.addModifier(+1, "copilot injured");
+                else
+                    toHit.addModifier(+1, "commander injured");
+            }
+            int sensors = tank.getSensorHits();
+            if(sensors > 0)
+                toHit.addModifier(sensors, "sensor damage");
+            if(tank.isStabiliserHit(weapon.getLocation())) {
+                toHit.addModifier(Compute.getAttackerMovementModifier(game, tank.getId()).getValue(), 
+                        "stabiliser damage");
+            }
+        }
 
         if ( ae.hasShield() ){
             //active shield has already been checked as it makes shots impossible
@@ -990,6 +1008,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 return "Attacker sensors destroyed.";
         } else if (sensorHits > 1) {
             return "Attacker sensors destroyed.";
+        }
+        
+        if(ae instanceof Tank) {
+            sensorHits = ((Tank)ae).getSensorHits();
+            if(sensorHits > 3)
+                return "Attacker sensors destroyed.";
         }
     
         // Is the weapon blocked by a passenger?

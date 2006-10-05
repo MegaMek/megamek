@@ -39,32 +39,36 @@ public class BattleArmor
      * IS squads usually have 4 men, Clan points usually have 5.
      * Have a location that represents the entire squad.
      */
-    private static final int[]    IS_NUM_OF_SLOTS   = {7,2,2,2,2,2};
+    private static final int[]    IS_NUM_OF_SLOTS   = {7,2,2,2,2,2,2};
     private static final String[] IS_LOCATION_ABBRS = { "Squad",
                                                         "Trooper 1",
                                                         "Trooper 2",
                                                         "Trooper 3",
                                                         "Trooper 4",
-                                                        "Trooper 5"};
+                                                        "Trooper 5",
+                                                        "Trooper 6"};
     private static final String[] IS_LOCATION_NAMES = { "Squad",
                                                         "Trooper 1",
                                                         "Trooper 2",
                                                         "Trooper 3",
                                                         "Trooper 4",
-                                                        "Trooper 5" };
-    private static final int[]    CLAN_NUM_OF_SLOTS   = {10,2,2,2,2,2};
+                                                        "Trooper 5",
+                                                        "Trooper 6"};
+    private static final int[]    CLAN_NUM_OF_SLOTS   = {10,2,2,2,2,2,2};
     private static final String[] CLAN_LOCATION_ABBRS = { "Point",
                                                           "Trooper 1",
                                                           "Trooper 2",
                                                           "Trooper 3",
                                                           "Trooper 4",
-                                                          "Trooper 5"};
+                                                          "Trooper 5",
+                                                          "Trooper 6"};
     private static final String[] CLAN_LOCATION_NAMES = { "Point",
                                                           "Trooper 1",
                                                           "Trooper 2",
                                                           "Trooper 3",
                                                           "Trooper 4",
-                                                          "Trooper 5" };
+                                                          "Trooper 5",
+                                                          "Trooper 6" };
 
     public static final int MANIPULATOR_NONE = 0;
     public static final int MANIPULATOR_ARMORED_GLOVE = 1;
@@ -226,14 +230,9 @@ public class BattleArmor
     public static final String PURIFIER_SQUAD = "Purifier";
 
     /**
-     * The maximum number of men in an Inner Sphere battle armor squad.
+     * The maximum number of men in a battle armor squad.
      */
-    public static final int     BA_MAX_MEN = 4;
-
-    /**
-     * The maximum number of men in a Clan Elemental point.
-     */
-    public static final int     BA_CLAN_MAX_MEN = 5;
+    public static final int     BA_MAX_MEN = 6;
 
     /**
      * The location for infantry equipment.
@@ -278,10 +277,12 @@ public class BattleArmor
         int retVal = Math.round(getWeight());
         if (retVal == 0) {
             // Return one more than the maximum number of men in the unit.
-            if ( !this.isInitialized || this.isClan() ) {
-                retVal =  BA_CLAN_MAX_MEN + 1;
+            if ( !this.isInitialized) {
+                retVal =  6 + 1;
+            } else if(this.isClan() ) {
+                retVal =  5 + 1;
             }
-            retVal =  BA_MAX_MEN + 1;
+            retVal =  4 + 1;
         } else {
             retVal++;
         }
@@ -464,7 +465,10 @@ public class BattleArmor
                         loc = 2;
                     break;
                 case Mech.LOC_CT:
-                    loc = 5;
+                    if(hit.isRear())
+                        loc = 5;
+                    else
+                        loc = 6;
                     break;
             }
             if(loc < locations())

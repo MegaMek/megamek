@@ -10,6 +10,11 @@ v0.33.0 (SVN)
 + Update the motive system damage table, and make vehicles use it
 + Bug: NPE firing infantry rifle
 + Implemented infantry weapon changes from TW
++ New <troopers> tag in infantry BLK files
++ Updated infantry unit files to have the correct number of troopers
++ Foot infantry now restricted from firing on the move except with rifles
++ Created unit files for mechanized infantry, they load but don't work correctly yet
++ Infantry flamers can now inflict heat (TW rule change)
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

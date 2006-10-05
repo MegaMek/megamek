@@ -8232,7 +8232,7 @@ public class Server implements Runnable {
             platoon = (Infantry)ae;
             nCluster = 2;
             nDamPerHit = 1;
-            hits = Compute.missilesHit(platoon.getDamage(platoon.getShootingStrength()));
+            hits = platoon.getDamage(Compute.missilesHit(platoon.getShootingStrength()));
             if(wtype.hasFlag(WeaponType.F_MG)
                     && target instanceof Infantry 
                     && !(target instanceof BattleArmor)) {

@@ -1352,6 +1352,16 @@ public class MoveStep implements Serializable {
             Building bldg = game.getBoard().getBuildingAt(getPosition());
             mp += bldg.getType();
         }
+        
+        // Infantry (except mechanized) pay 1 less MP to enter woods
+        // Assumption - this doesn't apply to jungle
+        if(isInfantry 
+                && destHex.containsTerrain(Terrains.WOODS)
+                && (moveType == IEntityMovementMode.INF_JUMP
+                        || moveType == IEntityMovementMode.INF_LEG
+                        || moveType == IEntityMovementMode.INF_MOTORIZED)) {
+            mp--;
+        }
     }
 
     /**

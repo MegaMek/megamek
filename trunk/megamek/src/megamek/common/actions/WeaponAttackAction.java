@@ -1107,6 +1107,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 }
             }
         } else if(isAttackerInfantry && !(ae instanceof BattleArmor)) {
+            // check for trying to fire heavy weapons after moving
+            if(ae.getMovementMode() == IEntityMovementMode.INF_LEG
+                    && wtype.hasFlag(WeaponType.F_INFANTRY)
+                    && !wtype.hasFlag(WeaponType.F_LASER)
+                    && wtype.getAmmoType() != AmmoType.T_AC
+                    && ae.moved != IEntityMovementType.MOVE_NONE) {
+                return "Foot platoons can only fire rifles in same turn as moving";
+            }
             // check for trying to fire field gun after moving
             if(!wtype.hasFlag(WeaponType.F_INFANTRY) && ae.moved != IEntityMovementType.MOVE_NONE) {
                     return "Can't fire field guns in same turn as moving";

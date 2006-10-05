@@ -28,13 +28,14 @@ package megamek.common.loaders;
 
 import megamek.common.Entity;
 import megamek.common.Infantry;
+import megamek.common.MiscType;
 import megamek.common.TechConstants;
 import megamek.common.util.*;
 
 public class BLKInfantryFile extends BLKFile implements IMechLoader {    
     
     // HACK!!!  Infantry movement reuses Mech and Vehicle movement.
-    private static final String[] MOVES = { "","","","","","","","","","", "Leg","Motorized","Jump" };
+    private static final String[] MOVES = { "","","","Tracked", "Wheeled", "Hover","","","","", "Leg","Motorized","Jump" };
         
     public BLKInfantryFile(BuildingBlock bb) {
         dataFile = bb;
@@ -96,7 +97,14 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
 
         loadEquipment(t, "Platoon", Infantry.LOC_INFANTRY);
 
-        t.autoSetInternal();
+        if(dataFile.exists("troopers")) {
+            int troopers = dataFile.getDataAsInt("troopers")[0];
+            t.initializeInternal(troopers, Infantry.LOC_INFANTRY);
+            if(t.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR))
+                t.initializeArmor(troopers, Infantry.LOC_INFANTRY);
+        } else {
+            t.autoSetInternal();
+        }
         
         return t;        
     }

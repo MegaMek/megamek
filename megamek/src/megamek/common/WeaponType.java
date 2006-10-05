@@ -5536,9 +5536,8 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_FLAMER | F_DIRECT_FIRE | F_INFANTRY | F_ENERGY;
-        // In www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf,
-        // pg. 23, Randall Bills says "No" to flamer-equipped infantry
-        // doing heat instead of damage.
+        String[] modes = {"Damage", "Heat"};
+        weapon.setModes(modes);
 
         return weapon;
     }

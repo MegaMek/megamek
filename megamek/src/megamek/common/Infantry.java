@@ -576,122 +576,131 @@ public class Infantry
     public int calculateBattleValue() {
 
         double dBV = 0;
+        
+        int mm = this.getMovementMode();
+        
+        if(IEntityMovementMode.WHEELED == mm
+                || IEntityMovementMode.TRACKED == mm
+                || IEntityMovementMode.HOVER == mm) {
+//          FIXME, when techmanual comes out
+            mm = IEntityMovementMode.INF_MOTORIZED; 
+        }
 
         // BV is factor of anti-Mek training, movement type and weapon type.
         if ( this.antiMek ) {
 
             if (this.weapons == INF_RIFLE) {
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 32;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 42;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 46;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else if (this.weapons == INF_MG) {
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 47;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 63;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 62;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else if (this.weapons == INF_FLAMER) {
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 41;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 54;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 51;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else if (this.weapons == INF_LASER) {
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 60;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 70;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 71;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else if (this.weapons == INF_SRM) {
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 60;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 70;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 71;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else if (this.weapons == INF_LRM) {
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 56;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 75;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 87;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else throw new IllegalArgumentException
                     ( "Unknown infantry weapon: " + this.weapons );
         } // End anti-Mek-trained
         else {
             if (this.weapons == INF_RIFLE) {
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 23;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 28;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 29;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else if (this.weapons == INF_MG) {
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 31;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 39;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 37;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else if (this.weapons == INF_FLAMER) {
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 28;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 35;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 32;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else if (this.weapons == INF_LASER) {  
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 37;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 42;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 41;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else if (this.weapons == INF_SRM) {
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 60;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 70;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 71;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else if (this.weapons == INF_LRM) {
-                if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+                if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 56;
-                else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                     dBV = 75;
-                else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+                else if ( IEntityMovementMode.INF_JUMP == mm )
                     dBV = 87;
                 else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + this.getMovementMode() );
+                        ( "Unknown movement type: " + mm );
             } else throw new IllegalArgumentException
                     ( "Unknown infantry weapon: " + this.weapons );
 
@@ -822,67 +831,76 @@ public class Infantry
         double cost = 0;
         double multiplier = 0;
         
+        int mm = this.getMovementMode();
+        
+        if(IEntityMovementMode.WHEELED == mm
+                || IEntityMovementMode.TRACKED == mm
+                || IEntityMovementMode.HOVER == mm) {
+//          FIXME, when techmanual comes out
+            mm = IEntityMovementMode.INF_MOTORIZED; 
+        }
+
         if ( this.antiMek ) {
             multiplier = 5;
         } else {
             multiplier = 1;
         }
         if (this.weapons == INF_RIFLE) {
-            if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+            if ( IEntityMovementMode.INF_LEG == mm )
                 cost = 600000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                 cost = 960000;
-            else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_JUMP == mm )
                 cost = 1200000;
             else throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementMode() );
+                    ( "Unknown movement type: " + mm );
         } else if (this.weapons == INF_MG) {
-            if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+            if ( IEntityMovementMode.INF_LEG == mm )
                 cost = 800000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                 cost = 1280000;
-            else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_JUMP == mm )
                 cost = 1600000;
             else throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementMode() );
+                    ( "Unknown movement type: " + mm );
         } else if (this.weapons == INF_FLAMER) {
-            if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+            if ( IEntityMovementMode.INF_LEG == mm )
                 cost = 800000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                 cost = 1280000;
-            else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_JUMP == mm )
                 cost = 1600000;
             else throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementMode() );
+                    ( "Unknown movement type: " + mm );
         } else if (this.weapons == INF_LASER) {
-            if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+            if ( IEntityMovementMode.INF_LEG == mm )
                 cost = 1200000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                 cost = 1920000;
-            else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_JUMP == mm )
                 cost = 2400000;
             else throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementMode() );
+                    ( "Unknown movement type: " + mm );
         } else if (this.weapons == INF_SRM) {
-            if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+            if ( IEntityMovementMode.INF_LEG == mm )
                 cost = 1400000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                 cost = 2240000;
-            else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_JUMP == mm )
                 cost = 2800000;
             else
                 throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementMode() );
+                    ( "Unknown movement type: " + mm );
         } else if (this.weapons == INF_LRM) {
-            if ( IEntityMovementMode.INF_LEG == this.getMovementMode() )
+            if ( IEntityMovementMode.INF_LEG == mm )
                 cost = 1400000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
                 cost = 2240000;
-            else if ( IEntityMovementMode.INF_JUMP == this.getMovementMode() )
+            else if ( IEntityMovementMode.INF_JUMP == mm )
                 cost = 2800000;
             else
                 throw new IllegalArgumentException
-                    ( "Unknown movement type: " + this.getMovementMode() );
+                    ( "Unknown movement type: " + mm );
         } else throw new IllegalArgumentException
                     ( "Unknown infantry weapon: " + this.weapons );
         // End not-anti-Mek

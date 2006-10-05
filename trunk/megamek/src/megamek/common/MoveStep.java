@@ -1115,6 +1115,13 @@ public class MoveStep implements Serializable {
                 && entity.mpUsed < 1 && !entity.isStuck()) {
             movementType = IEntityMovementType.MOVE_RUN;
         }
+        
+        //VTOLs with a damaged flight stabiliser can't flank
+        if(entity instanceof VTOL
+                && movementType == IEntityMovementType.MOVE_VTOL_RUN
+                && ((VTOL)entity).isStabiliserHit(VTOL.LOC_ROTOR)) {
+            movementType = IEntityMovementType.MOVE_ILLEGAL;
+        }
 
         // amnesty for the first step
         if (isFirstStep()

@@ -15,6 +15,7 @@ v0.33.0 (SVN)
 + Foot infantry now restricted from firing on the move except with rifles
 + Created unit files for mechanized infantry, they load but don't work correctly yet
 + Infantry flamers can now inflict heat (TW rule change)
++ Non mechanized infantry pay 1 less MP to enter woods
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

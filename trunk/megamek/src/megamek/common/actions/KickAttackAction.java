@@ -121,10 +121,9 @@ public class KickAttackAction extends PhysicalAttackAction
         final int targetHeight = targetElevation + target.getHeight();
 
         int mule = 0;
-        boolean mulekick = game.getOptions().booleanOption("maxtech_mulekicks");
         int[] kickLegs = new int[2];
         if ( ae.entityIsQuad() ) {
-            if (mulekick && (leg==KickAttackAction.LEFTMULE || leg==KickAttackAction.RIGHTMULE)) {
+            if (leg==KickAttackAction.LEFTMULE || leg==KickAttackAction.RIGHTMULE) {
                 kickLegs[0] = Mech.LOC_RLEG;
                 kickLegs[1] = Mech.LOC_LLEG;
                 mule = 1; // To-hit modifier
@@ -143,12 +142,9 @@ public class KickAttackAction extends PhysicalAttackAction
 
         // arguments legal?
         // By allowing mulekicks, this gets a little more complicated :(
-        if (leg != KickAttackAction.RIGHT && leg != KickAttackAction.LEFT) {
-            if (!game.getOptions().booleanOption("maxtech_mulekicks")) {
-                throw new IllegalArgumentException("Leg must be LEFT or RIGHT");
-            } else if (leg != KickAttackAction.RIGHTMULE && leg != KickAttackAction.LEFTMULE) {
-                throw new IllegalArgumentException("Leg must be one of LEFT, RIGHT, LEFTMULE, or RIGHTMULE");
-            }
+        if (leg != KickAttackAction.RIGHT && leg != KickAttackAction.LEFT
+            && leg != KickAttackAction.RIGHTMULE && leg != KickAttackAction.LEFTMULE) {
+            throw new IllegalArgumentException("Leg must be one of LEFT, RIGHT, LEFTMULE, or RIGHTMULE");
         }
 
         // non-mechs can't kick
@@ -221,12 +217,7 @@ public class KickAttackAction extends PhysicalAttackAction
         }
 
         //Set the base BTH
-        int base = 3;
-
-        // Level 3 rule: the BTH is PSR - 2
-        if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting() - 2;
-        }
+        int base = ae.getCrew().getPiloting() - 2;
 
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
@@ -239,7 +230,7 @@ public class KickAttackAction extends PhysicalAttackAction
         }
 
         // Mulekick?
-        if (mulekick && mule!=0) {
+        if (mule!=0) {
             toHit.addModifier(mule, "Quad Mek making a mule kick");
         }
         

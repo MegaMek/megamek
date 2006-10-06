@@ -560,7 +560,7 @@ public class Tank
         dbv *= typeModifier;
         
         // adjust for target movement modifier
-        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false, false).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false).getValue();
         if (tmmRan > 5) {
             tmmRan = 5;
         }

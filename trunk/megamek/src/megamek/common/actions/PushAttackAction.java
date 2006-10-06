@@ -194,13 +194,9 @@ public class PushAttackAction
         }
 
         //Set the base BTH
-          int base = 4;
+        int base = ae.getCrew().getPiloting() - 1;
 
-          if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting() - 1;
-          }
-
-          toHit = new ToHitData(base, "base");
+        toHit = new ToHitData(base, "base");
 
         // attacker movement
         toHit.append(Compute.getAttackerMovementModifier(game, attackerId));

@@ -2094,8 +2094,8 @@ public abstract class Mech
         if (hasTSM()) {
             runMP = (int)Math.ceil((getWalkMP() + 1) * 1.5);
         }
-        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false, false).getValue();
-        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false, false).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false).getValue();
         int targetMovementModidifer = Math.max(tmmRan, tmmJumped);
         if (targetMovementModidifer > 5) {
             targetMovementModidifer = 5;
@@ -2663,6 +2663,9 @@ public abstract class Mech
     public boolean removePartialCoverHits(int location, int cover, int side) {
         //left and right cover are from attacker's POV.
         //if hitting front arc, need to swap them
+        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER)
+                && (location==Mech.LOC_CT || location==Mech.LOC_HEAD))
+                return true;
         if (side == ToHitData.SIDE_FRONT) {
             if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && location == Mech.LOC_LLEG)
                 return true;

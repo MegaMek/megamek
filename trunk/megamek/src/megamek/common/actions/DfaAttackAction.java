@@ -228,11 +228,7 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
 
         //Set the base BTH
-        int base = 5;
-
-        if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting();
-        }
+        int base = ae.getCrew().getPiloting();
 
         toHit = new ToHitData(base, "base");
 

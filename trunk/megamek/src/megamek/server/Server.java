@@ -9239,8 +9239,7 @@ public class Server implements Runnable {
                     // Report the result
                     addReport( specialDamageReport);
                 }
-                else if(game.getOptions().booleanOption("maxtech_partial_cover") &&
-                  toHit.getHitTable() == ToHitData.HIT_PARTIAL_COVER &&
+                else if(toHit.getHitTable() == ToHitData.HIT_PARTIAL_COVER &&
                   entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), toHit.getSideTable())) {
                     r = new Report(3460);
                     r.subject = entityTarget.getId();
@@ -9699,13 +9698,11 @@ public class Server implements Runnable {
         String legName = kaa.getLeg() == KickAttackAction.LEFT || kaa.getLeg() == KickAttackAction.LEFTMULE
         ? "Left "
         : "Right ";
-        if (game.getOptions().booleanOption("maxtech_mulekicks")) {
-            if ( kaa.getLeg() == KickAttackAction.LEFTMULE ||
-                    kaa.getLeg() == KickAttackAction.RIGHTMULE ) {
-                legName.concat(" rear ");
-            } else {
-                legName.concat(" front ");
-            }
+        if ( kaa.getLeg() == KickAttackAction.LEFTMULE ||
+                kaa.getLeg() == KickAttackAction.RIGHTMULE ) {
+            legName.concat(" rear ");
+        } else {
+            legName.concat(" front ");
         }
         legName.concat("leg");
         Report r;

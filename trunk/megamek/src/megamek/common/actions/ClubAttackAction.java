@@ -263,11 +263,7 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         //Set the base BTH
-        int base = 4;
-
-        if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting() - 1;
-        }
+        int base = ae.getCrew().getPiloting() - 1;
 
         // Various versions of physical weapons have different base bonuses and penalties.
         if (((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)

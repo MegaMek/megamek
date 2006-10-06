@@ -1,3 +1,5 @@
+Lines marked with a 'x' have been addressed in megamek
+
 COMPONENTS
 1) In addition to the units described in the BMRr, IndustrialMechs, Mechanized Infantry (as described in the Conventional Infantry Construction rules from Combat Operations) Conventional Fighters, Aerospace Fighters, Small Craft, Dropships, & numerous Support Vehicle types are described.
 
@@ -5,7 +7,7 @@ COMPONENTS
 
 3) There is a brief list of other units which will appear in other books, and what books they will appear in, such as Warships. 
 
-4)Smoke & Fire have been removed from the terrain section of Components and Railways have been added.
+x4) Smoke & Fire have been removed from the terrain section of Components and Railways have been added.
 
 PLAYING THE GAME
 1) At the very beginning of the Playing the Game chapter is a note on scale, where for the first time it is specified that the weapons ranges are truncated for gameplay purposes and do not reflect actual "in-universe" weapon ranges.  While irrelevant to gameplay, I found touches like these to be a nice addition to Total Warfare and the Battletech product line as a whole.
@@ -14,7 +16,7 @@ PLAYING THE GAME
 
 3) The Default Skill Level Table is greatly expanded to include a larger variety of crew types.
 
-4) An additional skill, The Anti-'Mech Skill, has been added for infantry, which all infantry possess.  Conventional Infantry have a typical value of 8 (as opposed to 5 for Anti-BattleMech Infantry/Battle Armor) and all infantry are now capable of performing Anti-Mech attacks.
+x4) An additional skill, The Anti-'Mech Skill, has been added for infantry, which all infantry possess.  Conventional Infantry have a typical value of 8 (as opposed to 5 for Anti-BattleMech Infantry/Battle Armor) and all infantry are now capable of performing Anti-Mech attacks.
 
 5) The section about damaging a Mechwarrior is expanded to cover the crew of all the different types of units.
 
@@ -22,7 +24,7 @@ MOVEMENT
 
 1) A ‘Mech missing both arms and one leg may no longer attempt to stand
 
-2) Infantry, Except Mechanized Infantry, use 1 less MP to enter Woods Hexes
+x2) Infantry, Except Mechanized Infantry, use 1 less MP to enter Woods Hexes
 
 3) Hovercraft now Sideslip when Flanking, just like VTOLs.
 
@@ -61,9 +63,9 @@ AEROSPACE MOVEMENT
 
 COMBAT
 
-1) Quad BattleMechs have a different Hit Location Table than Bipeds
+x1) Quad BattleMechs have a different Hit Location Table than Bipeds
 
-2) Partial Cover now +1 to hit/hits against the leg locations instead strike the intervening terrain and are ignored.
+x2) Partial Cover now +1 to hit/hits against the leg locations instead strike the intervening terrain and are ignored.
 
 3) No penalty for taking partial cover in Depth 1 water (Depth 1 water now provides a standard partial cover bonus with no -1 penalty)
 
@@ -71,9 +73,9 @@ COMBAT
 
 5) ‘Mechs may now spot for indirect attacks/use TAG and fire in the same turn, although spotting for indirect LRM fire typically incurs a +1 to hit penalty (no penalty for using TAG).
 
-6) When clearing woods, woods now have a number of Terrain Factor points, much like the Construction Factor of buildings, which must be reduced or eliminated to clear them.
+x6) When clearing woods, woods now have a number of Terrain Factor points, much like the Construction Factor of buildings, which must be reduced or eliminated to clear them.
 
-7) Missile Hits Table replaced by Expanded Cluster Hits Table which has a column for each number between 2 & 30 and 40.
+x7) Missile Hits Table replaced by Expanded Cluster Hits Table which has a column for each number between 2 & 30 and 40.
 
 8 ) Rotary ACs can now be fire any number of shots between 1-6 per turn
 
@@ -82,7 +84,7 @@ Ultra/Rotary ACs firing more than one round.
 
 10) A skidding unit suffers an additional +1 to hit modifier when attacking other units
 
-11) Target Movement Modifier Table increased to cover a speed of 25+ hexes per turn.  To-hit modifiers for Target Movement now go up to +5 at 18 hexes and +6 at 25+ hexes.
+x11) Target Movement Modifier Table increased to cover a speed of 25+ hexes per turn.  To-hit modifiers for Target Movement now go up to +5 at 18 hexes and +6 at 25+ hexes.
 
 12) +1 to hit modifier for Battle Armor only applies if the attacking unit isn’t infantry
 
@@ -129,7 +131,7 @@ Ultra/Rotary ACs firing more than one round.
 
 23) If a Physical attack might displace the target of another Physical attack, the attack by the unit with the lower initiative is resolved first.  If the target is displaced and the attacker moves into the displaced unit’s hex, then a physical attack targeted at the original target is now directed against the unit now    occupying the hex, a standard to-hit roll for the attack is made with a +1 modifier the attack is carried out as normal using the new target
 
-24) Physical Attacks now use the attackers Piloting Skill as the Base To-Hit # Modified as follows:
+x24) Physical Attacks now use the attackers Piloting Skill as the Base To-Hit # Modified as follows:
    Charging +/- the Attacker’s Difference in Skill from the Defender
    Clubbing -1
    Death From Above +/- the Attacker’s Difference in Skill from the Defender
@@ -141,7 +143,7 @@ Ultra/Rotary ACs firing more than one round.
 
 26) Targets of a Push attack cannot Countercharge the Pushing ‘Mech. (Probably a clarification)
 
-27) Quads may now kick (Mule Kick) into their rear arc, but suffer a +1 to hit modifier when doing so.
+x27) Quads may now kick (Mule Kick) into their rear arc, but suffer a +1 to hit modifier when doing so.
 
 28) When a 'Mech is charging another 'Mech on terrain which may cause skidding, if the 'Mech's pilot fails a piloting skill roll and falls during the weapon attack face, the 'Mech will now skid into the target, performing an unintentional charge, instead of simply falling.   
 
@@ -178,13 +180,13 @@ PROTOMECHS
 
 VEHICLES
 
-1) The new Vehicle Hit Location Table gives vehicles a good deal more survivability, although it has a tendancy to foul up their movement
+x1) The new Vehicle Hit Location Table gives vehicles a good deal more survivability, although it has a tendancy to foul up their movement
 
-2) The new Critical Hits Table combines the old Critical Hits Table with the Determining Critical Hits Table into one 2D6 roll.  The results are also signficantly less deadly to vehicles and less likely to result in an instant one-hit kill.
+x2) The new Critical Hits Table combines the old Critical Hits Table with the Determining Critical Hits Table into one 2D6 roll.  The results are also signficantly less deadly to vehicles and less likely to result in an instant one-hit kill.
 
-3) The Motive System Damage Table used to determine damage to a vehicle's mobility in place of the old, instant "-1 MP" penalties off the Vehicle Hit Location Table. 
+x3) The Motive System Damage Table used to determine damage to a vehicle's mobility in place of the old, instant "-1 MP" penalties off the Vehicle Hit Location Table. 
 
-4) The new VTOL Hit Location Table has significantly less chances of Rotor hits, and Rotors now take 1/10 damage from each individual weapon hit (rounded up).  The new VTOL critical table also significantly less deadly.
+x4) The new VTOL Hit Location Table has significantly less chances of Rotor hits, and Rotors now take 1/10 damage from each individual weapon hit (rounded up).  The new VTOL critical table also significantly less deadly.
 
 5) Attacks against surface naval vessels on the main body (front, left, right, and rear sides, but not the turret) cause Hull Breach the same as the Underwater Operations rules on a roll of 12 on 2D6.
 
@@ -194,7 +196,7 @@ SUPPORT VEHICLES
 In this section, rules for Airships, Tractors, Trailers, & the support variations of the standard Combat Vehicle types are provided, more or less as they appear in Combat Equipment.  Someone with more experience with Support Vehicles than I is welcome to nitpick this section, but it is similar enough to Combat Equipment minus the construction rules in my eye to safely pass over it.
 
 INFANTRY
-1) Conventional Infantry Units are reorganized.  Generic Infantry Platoon types are now:
+x1) Conventional Infantry Units are reorganized.  Generic Infantry Platoon types are now:
    Rifle (Ballistic)
    Rifle (Energy)
    Machine Gun
@@ -210,21 +212,21 @@ They also may now be of one of the following Movement Types:
    Mechanized/Tracked
 The Mechanized Infantry are the same as the Mechanized Infantry first appearing in the Combat Operations Infantry Construction Rules.  Unit Sizes have also changed, likely the result of new construction rules.  Standard IS SRM Infantry Squads are now 6 men, while Standard IS LRM Infantry Squads are now 5 men.  Mechanized/Wheeled Infantry Squads have 1 less soldier than the standard squad for their armament type, while Mechanized/Hover have 2 less.  Clan Stars appear to simply be shrunk to the nearest comparable number of points
 
-2)LRM, SRM, MG, & Flamer Foot Infantry are now move or fire
+x2) LRM, SRM, MG, & Flamer Foot Infantry are now move or fire
 
-3) Battle Armor Squads can now go to 6 Soldiers (for WOB/Comstar)
+x3) Battle Armor Squads can now go to 6 Soldiers (for WOB/Comstar)
 
-4) Infantry do not suffer from penalties to hit for their movement
+x4) Infantry do not suffer from penalties to hit for their movement
 
-5) Conventional Infantry attack rules have changed extensively.  A chart gives the maximum damage possible an Infantry Platoon may do based on the number of surviving members and it’s weaponry.  If the attack hits, the attacker rolls on the Cluster Hits Table on the column equal to that maximum damage value to get the actual amount of damage inflicted, which is applied in two point clusters.
+x5) Conventional Infantry attack rules have changed extensively.  A chart gives the maximum damage possible an Infantry Platoon may do based on the number of surviving members and it’s weaponry.  If the attack hits, the attacker rolls on the Cluster Hits Table on the column equal to that maximum damage value to get the actual amount of damage inflicted, which is applied in two point clusters.
 
 6) Conventional Infantry ignore penalties to hit from Steath Systems, but not Mimetic or Camo systems.
 
-7) Machine Gun Infantry do an additional 1D6 damage against other conventional infantry
+x7) Machine Gun Infantry do an additional 1D6 damage against other conventional infantry
 
 8 ) New rules make certain weapons very effective for killing conventional infantry, and other practically useless.  Conventional Infantry still take double damage in open terrain.  Mechanized Infantry take double damage from all attackers except other Infantry, who inflict half-damage.
 
-9) Battle Armor weapons attacks, as with other multi-hit attacks, now are rolled on the Cluster Hit Table
+x9) Battle Armor weapons attacks, as with other multi-hit attacks, now are rolled on the Cluster Hit Table
 
 10) Battle Armor can fire as a Rifle (Ballistic) squad of Conventional Infantry using their AP weapons, if they possess any.
 
@@ -232,27 +234,27 @@ The Mechanized Infantry are the same as the Mechanized Infantry first appearing 
 
 12) Battle Armor may now split their fire between different targets for a +1 to hit modifier, same as ‘Mechs and Vehicles.
 
-13) Area Effect Attacks inflict their full damage to each individual trooper in a Battle Armor Squad/Point
+x13) Area Effect Attacks inflict their full damage to each individual trooper in a Battle Armor Squad/Point
 
-14) ALL Infantry units now have an Anti-Mech skill, which is used like other skills to resolve Anti-Mech attacks.  Base is 8, typical Anti-Mech forces are 5.  The chance of success is still modified by number of surviving troopers
+x14) ALL Infantry units now have an Anti-Mech skill, which is used like other skills to resolve Anti-Mech attacks.  Base is 8, typical Anti-Mech forces are 5.  The chance of success is still modified by number of surviving troopers
 
-15) Mechanized Infantry may not make Anti-BattleMech attacks (this most likely was also true in the Combat Operations rules)
+x15) Mechanized Infantry may not make Anti-BattleMech attacks (this most likely was also true in the Combat Operations rules)
 
-16) ProtoMechs cannot be swarmed (probably a clarification?)
+x16) ProtoMechs cannot be swarmed (probably a clarification?)
 
 17) Anti-BattleMech Leg attacks always inflict 4 damage regardless of whether or not they inflict crits.  Battle Armor units made up of a type with one Vibroclaw gain a +1 damage bonus, or +2 bonus if made up of a type with two Vibroclaws. (5 or 6, not 9 or 14)
 
-18) BA with Magnetic Claws are -1 to hit when performing Swarm Attacks.  The Vibroclaw bonus to Leg Attack damage applies to Swarm attacks as well.
+x18) BA with Magnetic Claws are -1 to hit when performing Swarm Attacks.  The Vibroclaw bonus to Leg Attack damage applies to Swarm attacks as well.
 
-19) Friendly Mechanized Battle Armor may now defend a ‘Mech from swarm attacks, and may even board a BattleMech already being swarmed to fight off the attacking Infantry.  Friendly Battle Armor on a BattleMech cause Infantry attempting to Swarm that 'Mech to suffer a penalty to their to-hit roll to swarm.
+x19) Friendly Mechanized Battle Armor may now defend a ‘Mech from swarm attacks, and may even board a BattleMech already being swarmed to fight off the attacking Infantry.  Friendly Battle Armor on a BattleMech cause Infantry attempting to Swarm that 'Mech to suffer a penalty to their to-hit roll to swarm.
 
-20) Vehicles may be swarmed, and are -2 to hit.
+x20) Vehicles may be swarmed, and are -2 to hit.
 
-21) Magnetic Claws add a +1 penalty to attempting to remove Swarming Battle Armor
+x21) Magnetic Claws add a +1 penalty to attempting to remove Swarming Battle Armor
 
 22) Vehicles may attempt to use Erratic Maneuvers to shake off a Swarming Infantry unit.
 
-23) Shots fired at units which are being swarmed may strike the swarming infantry
+x23) Shots fired at units which are being swarmed may strike the swarming infantry
 
 24) The Swarming unit and the defending Battle Armor unit may make standard attacks against each other, so you can literally have an Infantry vs. Infantry Battle raging on the outside of a BattleMech (!)
 
@@ -260,7 +262,7 @@ The Mechanized Infantry are the same as the Mechanized Infantry first appearing 
 
 26) Rules for using weapons while carrying Mechanized Battle Armor was changed from cannot fire any torso weapons while carrying to not being able to fire any weapons from a location which currently is carrying a Battle Armor, or no left, right, or rear side weapons for Omnivehicles.
 
-27) -1 MP penalty for units carrying Mechanized Battle Armor using Magnetic Clamps
+x27) -1 MP penalty for units carrying Mechanized Battle Armor using Magnetic Clamps
 
 28) Mechanized Battle Armor fall off the ‘Mech if it falls, but not if it intentionally goes prone.
 
@@ -270,7 +272,7 @@ The Mechanized Infantry are the same as the Mechanized Infantry first appearing 
 
 31) Mechanized Battle Armor may fall off and take damage from the ‘Mech carrying them entering a building
 
-32) An attack against any location carrying a Battle Armor has a 33% chance of hitting the Battle Armor instead (5+ on 1D6).  Battle Armor riding a ‘Mechs location are destroyed when that location is destroyed, and may or may not survive the destruction of the ‘Mech they are riding on.
+x32) An attack against any location carrying a Battle Armor has a 33% chance of hitting the Battle Armor instead (5+ on 1D6).  Battle Armor riding a ‘Mechs location are destroyed when that location is destroyed, and may or may not survive the destruction of the ‘Mech they are riding on.
 
 33) The Pop-Up Mine Launcher is introduced here.  I initially mistook this for a new piece of equipment, but it’s actually just the weapon used on the old Sloth Battle Armor. The Pop-Up Mine Launcher originally performed an attack similar to an Anti-'Mech Leg Attack only targeting a 'Mech's Center Torso or a Vehicle's Front, and the rules for it have been updated in line with Anti-BattleMech Leg Attacks so that 4 damage is inflicted regardless of whether not critical hits are inflicted.
 

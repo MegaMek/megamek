@@ -156,12 +156,7 @@ public class TripAttackAction extends PhysicalAttackAction
         }
 
         //Set the base BTH
-        int base = 4;
-
-        // Level 3 rule: the BTH is PSR - 1
-        if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting() - 1;
-        }
+        int base = ae.getCrew().getPiloting() - 1;
 
         // Start the To-Hit
         toHit = new ToHitData(base, "base");

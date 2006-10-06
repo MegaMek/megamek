@@ -418,7 +418,7 @@ public class LosEffects {
                     //no bth mod for 25% cover
                     modifiers.addModifier(0, "target has 25% cover");
             } else {
-                modifiers.addModifier(3, "target has partial cover");
+                modifiers.addModifier(1, "target has partial cover");
             }
         }
         

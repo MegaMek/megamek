@@ -792,13 +792,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     && targEl == 0
                     && te.height() > 0)) {
                 //weapon underwater, target in partial water
-                toHit.setHitTable(ToHitData.HIT_KICK);
+                toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
+                toHit.setCover(LosEffects.COVER_UPPER);
             } else {
                 if(game.getOptions().booleanOption("maxtech_partial_cover")) {
                     toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                     toHit.setCover(los.getTargetCover());
                 } else {
-                    toHit.setHitTable(ToHitData.HIT_PUNCH);
+                    toHit.setHitTable(ToHitData.HIT_PARTIAL_COVER);
                     toHit.setCover(LosEffects.COVER_HORIZONTAL);
                 }
             }

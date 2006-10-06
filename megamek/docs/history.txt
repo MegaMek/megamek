@@ -28,6 +28,14 @@ v0.33.0 (SVN)
 + mechanised hover infantry and UMU infantry can cross water (removed the undine hardcode)
 + MP reduction for carrying Fa Shih on a non-omni
 + Omnivehicles can carry BA
++ removed maxtech physical BTH, as its integrated into core rules
++ removed quad punch/kick tables - great minds think alike :)
++ fire and minefields now default to off as they are now advanced rules.
++ removed maxtech target movement modifiers, as its integrated to core rules.
++ new target movement modifiers for 18-24 and 25+ hexes
++ removed maxtech mulekick option, as its now a standard rule
++ made TW partial cover rules standard.  Maxtech option is retained
+  for 75% and 25% and vertical cover.
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

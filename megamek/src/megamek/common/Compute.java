@@ -1301,7 +1301,6 @@ public class Compute {
                 entity.delta_distance,
                 ((entity.moved == IEntityMovementType.MOVE_JUMP)
                         || (entity.moved == IEntityMovementType.MOVE_VTOL_RUN) || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK)),
-                game.getOptions().booleanOption("maxtech_target_modifiers"),
                 entity.moved == IEntityMovementType.MOVE_VTOL_RUN
                         || entity.moved == IEntityMovementType.MOVE_VTOL_WALK
                         || entity.getMovementMode() == IEntityMovementMode.VTOL);
@@ -1319,35 +1318,21 @@ public class Compute {
      */
 
     public static ToHitData getTargetMovementModifier(int distance,
-            boolean jumped, boolean maxtech, boolean isVTOL) {
+            boolean jumped, boolean isVTOL) {
         ToHitData toHit = new ToHitData();
 
-        if (!maxtech) {
-            if (distance >= 3 && distance <= 4) {
-                toHit.addModifier(1, "target moved 3-4 hexes");
-            } else if (distance >= 5 && distance <= 6) {
-                toHit.addModifier(2, "target moved 5-6 hexes");
-            } else if (distance >= 7 && distance <= 9) {
-                toHit.addModifier(3, "target moved 7-9 hexes");
-            } else if (distance >= 10) {
-                toHit.addModifier(4, "target moved 10+ hexes");
-            }
-        } else {
-            if (distance >= 3 && distance <= 4) {
-                toHit.addModifier(1, "target moved 3-4 hexes");
-            } else if (distance >= 5 && distance <= 6) {
-                toHit.addModifier(2, "target moved 5-6 hexes");
-            } else if (distance >= 7 && distance <= 9) {
-                toHit.addModifier(3, "target moved 7-9 hexes");
-            } else if (distance >= 10 && distance <= 13) {
-                toHit.addModifier(4, "target moved 10-13 hexes");
-            } else if (distance >= 14 && distance <= 18) {
-                toHit.addModifier(5, "target moved 14-18 hexes");
-            } else if (distance >= 19 && distance <= 24) {
-                toHit.addModifier(6, "target moved 19-24 hexes");
-            } else if (distance >= 25) {
-                toHit.addModifier(7, "target moved 25+ hexes");
-            }
+        if (distance >= 3 && distance <= 4) {
+            toHit.addModifier(1, "target moved 3-4 hexes");
+        } else if (distance >= 5 && distance <= 6) {
+            toHit.addModifier(2, "target moved 5-6 hexes");
+        } else if (distance >= 7 && distance <= 9) {
+            toHit.addModifier(3, "target moved 7-9 hexes");
+        } else if (distance >= 10 && distance <=17) {
+            toHit.addModifier(4, "target moved 10-17 hexes");
+        } else if (distance >= 18 && distance <=24) {
+            toHit.addModifier(5, "target moved 18-24 hexes");
+        } else if (distance >= 25) {
+            toHit.addModifier(6, "target moved 25+ hexes");
         }
 
         if (jumped) {
@@ -3301,8 +3286,7 @@ public class Compute {
                 KickAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE)
             return true;
 
-        if (game.getOptions().booleanOption("maxtech_mulekicks")
-                && game.getEntity(entityId) instanceof QuadMech
+        if (game.getEntity(entityId) instanceof QuadMech
                 && (KickAttackAction.toHit(game, entityId, target,
                     KickAttackAction.LEFTMULE).getValue() != ToHitData.IMPOSSIBLE
                     || KickAttackAction.toHit(game, entityId, target,

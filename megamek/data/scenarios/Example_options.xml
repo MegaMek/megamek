@@ -257,10 +257,6 @@
       <optionvalue>false</optionvalue>
    </gameoption>
    <gameoption>
-      <optionname>maxtech_mechanized_ba</optionname>
-      <optionvalue>false</optionvalue>
-   </gameoption>
-   <gameoption>
       <optionname>maxtech_bap</optionname>
       <optionvalue>false</optionvalue>
    </gameoption>

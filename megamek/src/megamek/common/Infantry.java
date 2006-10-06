@@ -254,13 +254,19 @@ public class Infantry
     }
 
     /**
-     * Infantry can not enter water.
+     * Infantry can not enter water unless they have UMU mp or hover.
      */
     public boolean isHexProhibited( IHex hex ) {
         if(hex.containsTerrain(Terrains.IMPASSABLE)) return true;
         if(hex.containsTerrain(Terrains.MAGMA))
             return true;
-        return (hex.terrainLevel(Terrains.WATER) > 0 && !hex.containsTerrain(Terrains.ICE));
+        if(hex.terrainLevel(Terrains.WATER) > 0 && !hex.containsTerrain(Terrains.ICE)) {
+            if(getMovementMode() == IEntityMovementMode.HOVER
+                    || hasUMU())
+                return false;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -278,6 +284,10 @@ public class Infantry
                 return "Walked";
             case IEntityMovementMode.INF_MOTORIZED:
                 return "Biked";
+            case IEntityMovementMode.HOVER:
+            case IEntityMovementMode.TRACKED:
+            case IEntityMovementMode.WHEELED:
+                return "Drove";
             case IEntityMovementMode.INF_JUMP:
             default :
                 return "Unknown!";
@@ -308,6 +318,10 @@ public class Infantry
                 return "R";
             case IEntityMovementMode.INF_MOTORIZED:
                 return "B";
+            case IEntityMovementMode.HOVER:
+            case IEntityMovementMode.TRACKED:
+            case IEntityMovementMode.WHEELED:
+                return "D";
             default :
                 return "?";
             }

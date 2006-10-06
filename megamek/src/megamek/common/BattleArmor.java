@@ -148,11 +148,6 @@ public class BattleArmor
     // Public and Protected constants, constructors, and methods.
 
     /**
-     * Model name of the Clan's water elemental.
-     */
-    public static final String CLAN_WATER_ELEMENTAL = "Undine";
-
-    /**
      * Internal name of the Inner Sphere's disposable SRM2 ammo pack.
      */
     public static final String IS_DISPOSABLE_SRM2_AMMO =
@@ -352,19 +347,6 @@ public class BattleArmor
     }
 
     /**
-     * Most Infantry can not enter water.
-     */
-    public boolean isHexProhibited(IHex hex) {
-        // Oh, HELL no!
-        // This needs to be fixed.
-        // *grumbles*
-        if(hex.terrainLevel(Terrains.WATER) > 0 && !hex.containsTerrain(Terrains.ICE) 
-                && !this.getModel().equals(CLAN_WATER_ELEMENTAL))
-            return true;
-        return super.isHexProhibited(hex);
-    }
-
-    /**
      * Returns the name of the type of movement used.
      * This is Infantry-specific.
      */
@@ -448,8 +430,7 @@ public class BattleArmor
      * precondition: hit is a location covered by BA
      */
     public HitData getTrooperAtLocation(HitData hit, Entity transport) {
-        if(game.getOptions().booleanOption("maxtech_mechanized_ba") &&
-           transport instanceof Mech) {
+        if(transport instanceof Mech) {
             int loc = 99;
             switch(hit.getLocation()) {
                 case Mech.LOC_RT:
@@ -466,6 +447,39 @@ public class BattleArmor
                     break;
                 case Mech.LOC_CT:
                     if(hit.isRear())
+                        loc = 5;
+                    else
+                        loc = 6;
+                    break;
+            }
+            if(loc < locations())
+                return new HitData(loc);
+        }
+        else if (transport instanceof Tank) {
+            int loc = 99;
+            switch(hit.getLocation()) {
+                case Tank.LOC_RIGHT:
+                    //There are 2 troopers on each location, so pick
+                    //one randomly if both are alive.
+                    if(getInternal(1) > 0 && getInternal(2) > 0)
+                        loc = Compute.randomInt(2) + 1;
+                    else if(getInternal(1) > 0)
+                        loc = 1;
+                    else
+                        loc = 2;
+                    break;
+                case Tank.LOC_LEFT:
+                    if(getInternal(3) > 0 && getInternal(4) > 0)
+                        loc = Compute.randomInt(2) + 3;
+                    else if(getInternal(3) > 0)
+                        loc = 3;
+                    else
+                        loc = 4;
+                    break;
+                case Tank.LOC_REAR:
+                    if(getInternal(5) > 0 && getInternal(6) > 0)
+                        loc = Compute.randomInt(2) + 5;
+                    else if(getInternal(5) > 0)
                         loc = 5;
                     else
                         loc = 6;

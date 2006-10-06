@@ -1164,7 +1164,7 @@ public abstract class Entity extends TurnOrdered
     
     public int getWalkMP( boolean gravity ) {
         int mp = this.walkMP;
-        int minus=0;
+        int minus;
         if (game != null && game.getOptions().booleanOption("maxtech_heat")) {
             if (heat<30) {
                 minus = (heat / 5); 
@@ -1176,12 +1176,17 @@ public abstract class Entity extends TurnOrdered
                 minus = 7;
             } else if (heat>=31) {
                 minus = 6;
+            } else {
+                minus = 5;
             }
             mp = Math.max(mp-minus,0);
         } else {
             mp = Math.max(mp - (heat / 5), 0);
         }
-        mp = applyGravityEffectsOnMP(mp);
+        mp = Math.max(mp-getCargoMpReduction(), 0);
+        if(gravity) {
+            mp = applyGravityEffectsOnMP(mp);
+        }
         return mp;
     }
 
@@ -4381,6 +4386,14 @@ public abstract class Entity extends TurnOrdered
         ArrayList<Entity> rv = new ArrayList<Entity>();
         for(Transporter t : transports) {
             rv.addAll(t.getExternalUnits());
+        }
+        return rv;
+    }
+    
+    public int getCargoMpReduction() {
+        int rv = 0;
+        for(Transporter t : transports) {
+            rv += t.getCargoMpReduction();
         }
         return rv;
     }

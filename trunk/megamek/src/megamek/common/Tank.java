@@ -94,8 +94,9 @@ public class Tank
     */
     public int getWalkMP(boolean gravity) {
         int i;
-        int j;
-        if (gravity) j = applyGravityEffectsOnMP(getOriginalWalkMP());
+        int j = getOriginalWalkMP();
+        j = Math.max(0, j - getCargoMpReduction());
+        if (gravity) j = applyGravityEffectsOnMP(j);
         else j = getOriginalWalkMP();
         if (game != null) {
             i = game.getTemperatureDifference();
@@ -1178,4 +1179,22 @@ public class Tank
         }
         return CRIT_NONE;
     }
+
+    /**
+     * OmniVehicles have handles for Battle Armor squads to latch onto. Please
+     * note, this method should only be called during this Tank's construction.
+     * <p/>
+     * Overrides <code>Entity#setOmni(boolean)</code>
+     */
+    public void setOmni( boolean omni ) {
+
+        // Perform the superclass' action.
+        super.setOmni( omni );
+
+        // Add BattleArmorHandles to OmniMechs.
+        if ( omni && !hasBattleArmorHandles()) {
+            this.addTransporter( new BattleArmorHandlesTank() );
+        }
+    }
+
 }

@@ -223,4 +223,7 @@ public final class TroopSpace implements Transporter {
         return rv;
     }
 
+    public int getCargoMpReduction() {
+        return 0;
+    }
 } // End package class TroopSpace implements Transporter

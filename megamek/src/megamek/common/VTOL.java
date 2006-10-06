@@ -118,7 +118,7 @@ public class VTOL extends Tank {
         dbv *= typeModifier;
         
         // adjust for target movement modifier
-        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), true, false, true).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), true, true).getValue();
         if (tmmRan > 5) {
             tmmRan = 5;
         }

@@ -213,12 +213,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction
         }
 
         //Set the base BTH
-        int base = 5;
-
-        // Level 3 rule: the BTH is PSR + 2
-        if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting() + 2;
-        }
+        int base = ae.getCrew().getPiloting() + 2;
 
         // Start the To-Hit
         toHit = new ToHitData(base, "base");

@@ -414,131 +414,115 @@ public class QuadMech extends Mech {
 			}
 		}
 
-		if (game.getOptions().booleanOption("quad_hit_location_plus")) {
-			if (table == ToHitData.HIT_PUNCH) {
-				roll = Compute.d6(2);
-				try {
-					PrintWriter pw = PreferenceManager.getClientPreferences()
-							.getMekHitLocLog();
-					if (pw != null) {
-						pw.print(table);
-						pw.print("\t");
-						pw.print(side);
-						pw.print("\t");
-						pw.println(roll);
-					}
-				} catch (Throwable thrown) {
-					thrown.printStackTrace();
+		if (table == ToHitData.HIT_PUNCH) {
+			roll = Compute.d6();
+			try {
+				PrintWriter pw = PreferenceManager.getClientPreferences()
+						.getMekHitLocLog();
+				if (pw != null) {
+					pw.print(table);
+					pw.print("\t");
+					pw.print(side);
+					pw.print("\t");
+					pw.println(roll);
 				}
-				if (side == ToHitData.SIDE_FRONT) {
-					switch (roll) {
-					case 2:
-					case 3:
-					case 4:
-					case 5:
-						return new HitData(Mech.LOC_LT);
-					case 6:
-					case 8:
-						return new HitData(Mech.LOC_CT);
-					case 7:
-						return new HitData(Mech.LOC_HEAD);
-					case 9:
-					case 10:
-					case 11:
-					case 12:
-						return new HitData(Mech.LOC_RT);
-					}
-				} else if (side == ToHitData.SIDE_REAR) {
-					switch (roll) {
-					case 2:
-					case 3:
-					case 4:
-					case 5:
-						return new HitData(Mech.LOC_LT, true);
-					case 6:
-					case 8:
-						return new HitData(Mech.LOC_CT, true);
-					case 7:
-						return new HitData(Mech.LOC_HEAD, true);
-					case 9:
-					case 10:
-					case 11:
-					case 12:
-						return new HitData(Mech.LOC_RT, true);
-					}
-				} else if (side == ToHitData.SIDE_LEFT) {
-					switch (roll) {
-					case 2:
-					case 3:
-					case 4:
-					case 5:
-						return new HitData(Mech.LOC_LT);
-					case 6:
-					case 8:
-						return new HitData(Mech.LOC_CT);
-					case 7:
-						return new HitData(Mech.LOC_HEAD);
-					case 9:
-					case 10:
-					case 11:
-					case 12:
-						return new HitData(Mech.LOC_LT);
-					}
-				} else if (side == ToHitData.SIDE_RIGHT) {
-					switch (roll) {
-					case 2:
-					case 3:
-					case 4:
-					case 5:
-						return new HitData(Mech.LOC_RT);
-					case 6:
-					case 8:
-						return new HitData(Mech.LOC_CT);
-					case 7:
-						return new HitData(Mech.LOC_HEAD);
-					case 9:
-					case 10:
-					case 11:
-					case 12:
-						return new HitData(Mech.LOC_RT);
-					}
+			} catch (Throwable thrown) {
+				thrown.printStackTrace();
+			}
+			if (side == ToHitData.SIDE_FRONT) {
+				switch (roll) {
+                case 1:
+                    return new HitData(Mech.LOC_LARM);
+				case 2:
+                    return new HitData(Mech.LOC_LT);
+				case 3:
+                    return new HitData(Mech.LOC_CT);
+				case 4:
+                    return new HitData(Mech.LOC_RT);
+				case 5:
+                    return new HitData(Mech.LOC_RARM);
+				case 6:
+					return new HitData(Mech.LOC_HEAD);
 				}
-			} else if (table == ToHitData.HIT_KICK) {
-				roll = Compute.d6(1);
-				try {
-					PrintWriter pw = PreferenceManager.getClientPreferences()
-							.getMekHitLocLog();
-					if (pw != null) {
-						pw.print(table);
-						pw.print("\t");
-						pw.print(side);
-						pw.print("\t");
-						pw.println(roll);
-					}
-				} catch (Throwable thrown) {
-					thrown.printStackTrace();
+			} else if (side == ToHitData.SIDE_REAR) {
+				switch (roll) {
+                case 1:
+                    return new HitData(Mech.LOC_LLEG);
+                case 2:
+                    return new HitData(Mech.LOC_LT);
+                case 3:
+                    return new HitData(Mech.LOC_CT);
+                case 4:
+                    return new HitData(Mech.LOC_RT);
+                case 5:
+                    return new HitData(Mech.LOC_RLEG);
+                case 6:
+                    return new HitData(Mech.LOC_HEAD);
 				}
-				boolean left = (roll <= 3);
-				if (side == ToHitData.SIDE_FRONT) {
-					if (left)
-						return new HitData(Mech.LOC_LARM);
-					return new HitData(Mech.LOC_RARM);
-				} else if (side == ToHitData.SIDE_REAR) {
-					if (left)
-						return new HitData(Mech.LOC_LLEG);
-					return new HitData(Mech.LOC_RLEG);
-				} else if (side == ToHitData.SIDE_LEFT) {
-					if (left)
-						return new HitData(Mech.LOC_LLEG);
-					return new HitData(Mech.LOC_LARM);
-				} else if (side == ToHitData.SIDE_RIGHT) {
-					if (left)
-						return new HitData(Mech.LOC_RARM);
-					return new HitData(Mech.LOC_RLEG);
+			} else if (side == ToHitData.SIDE_LEFT) {
+				switch (roll) {
+                case 1:
+                case 2:
+                    return new HitData(Mech.LOC_LT);
+                case 3:
+                    return new HitData(Mech.LOC_CT);
+                case 4:
+                    return new HitData(Mech.LOC_LARM);
+                case 5:
+                    return new HitData(Mech.LOC_LLEG);
+                case 6:
+                    return new HitData(Mech.LOC_HEAD);
+				}
+			} else if (side == ToHitData.SIDE_RIGHT) {
+				switch (roll) {
+                case 1:
+                case 2:
+                    return new HitData(Mech.LOC_RT);
+                case 3:
+                    return new HitData(Mech.LOC_CT);
+                case 4:
+                    return new HitData(Mech.LOC_RARM);
+                case 5:
+                    return new HitData(Mech.LOC_RLEG);
+                case 6:
+                    return new HitData(Mech.LOC_HEAD);
 				}
 			}
+		} else if (table == ToHitData.HIT_KICK) {
+			roll = Compute.d6(1);
+			try {
+				PrintWriter pw = PreferenceManager.getClientPreferences()
+						.getMekHitLocLog();
+				if (pw != null) {
+					pw.print(table);
+					pw.print("\t");
+					pw.print(side);
+					pw.print("\t");
+					pw.println(roll);
+				}
+			} catch (Throwable thrown) {
+				thrown.printStackTrace();
+			}
+			boolean left = (roll <= 3);
+			if (side == ToHitData.SIDE_FRONT) {
+				if (left)
+					return new HitData(Mech.LOC_LARM);
+				return new HitData(Mech.LOC_RARM);
+			} else if (side == ToHitData.SIDE_REAR) {
+				if (left)
+					return new HitData(Mech.LOC_LLEG);
+				return new HitData(Mech.LOC_RLEG);
+			} else if (side == ToHitData.SIDE_LEFT) {
+				if (left)
+					return new HitData(Mech.LOC_LLEG);
+				return new HitData(Mech.LOC_LARM);
+			} else if (side == ToHitData.SIDE_RIGHT) {
+				if (left)
+					return new HitData(Mech.LOC_RARM);
+				return new HitData(Mech.LOC_RLEG);
+			}
 		}
-        if (table == ToHitData.HIT_SWARM) {
+        else if (table == ToHitData.HIT_SWARM) {
             roll = Compute.d6(2);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
@@ -605,40 +589,40 @@ public class QuadMech extends Mech {
 	}
 
 	public boolean removePartialCoverHits(int location, int cover, int side) {
-		// when using quad hit table, treat front legs like legs not arms.
-		if (game.getOptions().booleanOption("quad_hit_location")) {
-			// left and right cover are from attacker's POV.
-			// if hitting front arc, need to swap them
-			if (side == ToHitData.SIDE_FRONT) {
-				if ((cover & LosEffects.COVER_LOWRIGHT) != 0
-						&& (location == Mech.LOC_LARM || location == Mech.LOC_LLEG))
-					return true;
-				if ((cover & LosEffects.COVER_LOWLEFT) != 0
-						&& (location == Mech.LOC_RARM || location == Mech.LOC_RLEG))
-					return true;
-				if ((cover & LosEffects.COVER_RIGHT) != 0
-						&& location == Mech.LOC_LT)
-					return true;
-				if ((cover & LosEffects.COVER_LEFT) != 0
-						&& location == Mech.LOC_RT)
-					return true;
-			} else {
-				if ((cover & LosEffects.COVER_LOWLEFT) != 0
-						&& (location == Mech.LOC_LARM || location == Mech.LOC_LLEG))
-					return true;
-				if ((cover & LosEffects.COVER_LOWRIGHT) != 0
-						&& (location == Mech.LOC_RARM || location == Mech.LOC_RLEG))
-					return true;
-				if ((cover & LosEffects.COVER_LEFT) != 0
-						&& location == Mech.LOC_LT)
-					return true;
-				if ((cover & LosEffects.COVER_RIGHT) != 0
-						&& location == Mech.LOC_RT)
-					return true;
-			}
-			return false;
+		// treat front legs like legs not arms.
+        if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER)
+                && (location==Mech.LOC_CT || location==Mech.LOC_HEAD))
+                return true;
+		// left and right cover are from attacker's POV.
+		// if hitting front arc, need to swap them
+		if (side == ToHitData.SIDE_FRONT) {
+			if ((cover & LosEffects.COVER_LOWRIGHT) != 0
+					&& (location == Mech.LOC_LARM || location == Mech.LOC_LLEG))
+				return true;
+			if ((cover & LosEffects.COVER_LOWLEFT) != 0
+					&& (location == Mech.LOC_RARM || location == Mech.LOC_RLEG))
+				return true;
+			if ((cover & LosEffects.COVER_RIGHT) != 0
+					&& location == Mech.LOC_LT)
+				return true;
+			if ((cover & LosEffects.COVER_LEFT) != 0
+					&& location == Mech.LOC_RT)
+				return true;
+		} else {
+			if ((cover & LosEffects.COVER_LOWLEFT) != 0
+					&& (location == Mech.LOC_LARM || location == Mech.LOC_LLEG))
+				return true;
+			if ((cover & LosEffects.COVER_LOWRIGHT) != 0
+					&& (location == Mech.LOC_RARM || location == Mech.LOC_RLEG))
+				return true;
+			if ((cover & LosEffects.COVER_LEFT) != 0
+					&& location == Mech.LOC_LT)
+				return true;
+			if ((cover & LosEffects.COVER_RIGHT) != 0
+					&& location == Mech.LOC_RT)
+				return true;
 		}
-		return super.removePartialCoverHits(location, cover, side);
+		return false;
 	}
 
 	public boolean canGoHullDown() {

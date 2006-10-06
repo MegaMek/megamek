@@ -482,8 +482,7 @@ public class PhysicalDisplay
         ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHT);
         ToHitData rightRearLeg = null;
         ToHitData leftRearLeg = null;
-        if (client.game.getEntity(cen) instanceof QuadMech &&
-            client.game.getOptions().booleanOption("maxtech_mulekicks")) {
+        if (client.game.getEntity(cen) instanceof QuadMech) {
             rightRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHTMULE);
             leftRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFTMULE);
         }
@@ -497,8 +496,7 @@ public class PhysicalDisplay
             attackSide = KickAttackAction.RIGHT;
             attackLeg = rightLeg;
         }
-        if (client.game.getEntity(cen) instanceof QuadMech &&
-            client.game.getOptions().booleanOption("maxtech_mulekicks")) {
+        if (client.game.getEntity(cen) instanceof QuadMech) {
             if (value>rightRearLeg.getValue()) {
                 value = rightRearLeg.getValue();
                 attackSide = KickAttackAction.RIGHTMULE;
@@ -938,14 +936,13 @@ public class PhysicalDisplay
                    (client.game, cen, target, KickAttackAction.RIGHT);
                 boolean canKick = leftLeg.getValue() != ToHitData.IMPOSSIBLE 
                               || rightLeg.getValue() != ToHitData.IMPOSSIBLE;
-                if (client.game.getOptions().booleanOption("maxtech_mulekicks")) {
-                    ToHitData rightRearLeg = KickAttackAction.toHit
-                       (client.game, cen, target, KickAttackAction.RIGHTMULE);
-                    ToHitData leftRearLeg = KickAttackAction.toHit
-                       (client.game, cen, target, KickAttackAction.LEFTMULE);
-                    canKick |= (leftRearLeg.getValue() != ToHitData.IMPOSSIBLE)
-                            || (rightRearLeg.getValue() != ToHitData.IMPOSSIBLE);
-                }
+                ToHitData rightRearLeg = KickAttackAction.toHit
+                   (client.game, cen, target, KickAttackAction.RIGHTMULE);
+                ToHitData leftRearLeg = KickAttackAction.toHit
+                   (client.game, cen, target, KickAttackAction.LEFTMULE);
+                canKick |= (leftRearLeg.getValue() != ToHitData.IMPOSSIBLE)
+                        || (rightRearLeg.getValue() != ToHitData.IMPOSSIBLE);
+
                 setKickEnabled(canKick);
                 
                 // how about push?

@@ -137,11 +137,7 @@ public class PunchAttackAction
         }
         
         //Set the base BTH
-        int base = 4;
-    
-        if ( game.getOptions().booleanOption("maxtech_physical_BTH") ) {
-            base = ae.getCrew().getPiloting() - 1;
-        }
+        int base = ae.getCrew().getPiloting();
     
         toHit = new ToHitData(base, "base");
     

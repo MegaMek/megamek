@@ -76,9 +76,9 @@ public class GameOptions extends AbstractOptions implements Serializable {
 
         OptionGroup level2 = addGroup("level2"); //$NON-NLS-1$
         addOption(level2,"flamer_heat", true); //$NON-NLS-1$
-        addOption(level2,"fire", true); //$NON-NLS-1$
+        addOption(level2,"fire", false); //$NON-NLS-1$
         addOption(level2,"indirect_fire", true); //$NON-NLS-1$
-        addOption(level2,"minefields", true); //$NON-NLS-1$
+        addOption(level2,"minefields", false); //$NON-NLS-1$
         addOption(level2,"temperature", 25); //$NON-NLS-1$
         addOption(level2,"gravity", (float)1.0); //$NON-NLS-1$
         addOption(level2,"vacuum", false); //$NON-NLS-1$
@@ -98,11 +98,9 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level3,"floating_crits", false); //$NON-NLS-1$
         addOption(level3,"engine_explosions", false); //$NON-NLS-1$
         addOption(level3,"pilot_advantages", false); //$NON-NLS-1$
-        addOption(level3,"maxtech_physical_BTH", false); //$NON-NLS-1$
         addOption(level3,"maxtech_physical_psr", false); //$NON-NLS-1$
         addOption(level3,"maxtech_round_damage", false); //$NON-NLS-1$
         addOption(level3,"maxtech_prone_fire", false); //$NON-NLS-1$
-        addOption(level3,"maxtech_target_modifiers", false); //$NON-NLS-1$
         addOption(level3,"maxtech_leg_damage", false); //$NON-NLS-1$
         addOption(level3,"maxtech_fire", false); //$NON-NLS-1$
         addOption(level3,"maxtech_range", false); //$NON-NLS-1$
@@ -114,7 +112,6 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level3,"maxtech_glancing_blows", false); //$NON-NLS-1$
         addOption(level3,"maxtech_burst", false); //$NON-NLS-1$
         addOption(level3,"maxtech_heat", false); //$NON-NLS-1$
-        addOption(level3,"maxtech_mulekicks", false); //$NON-NLS-1$
         addOption(level3,"maxtech_partial_cover", false); //$NON-NLS-1$
         addOption(level3,"allow_level_3_targsys", false); //$NON-NLS-1$ 
         addOption(level3,"quad_hit_location", false); //$NON-NLS-1$
@@ -165,7 +162,6 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"all_have_ei_cockpit", false); //$NON-NLS-1$
         addOption(ruleBreakers,"canon_only",false); //$NON-NLS-1$
         addOption(ruleBreakers,"indirect_always_possible",false); //$NON-NLS-1$
-        addOption(ruleBreakers,"quad_hit_location_plus", false); //$NON-NLS-1$
         addOption(ruleBreakers,"armed_mechwarriors", false); //$NON-NLS-1$
         addOption(ruleBreakers,"auto_abandon_unit", false); //$NON-NLS-1$
         addOption(ruleBreakers,"no_ignite_clear", false); //$NON-NLS-1$

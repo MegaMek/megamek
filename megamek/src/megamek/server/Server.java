@@ -13295,6 +13295,7 @@ public class Server implements Runnable {
                 Entity passenger = te.getExteriorUnitAt( nLoc, hit.isRear() );
                 // Does an exterior passenger absorb some of the damage?
                 if ( !ammoExplosion && null != passenger
+                        && Compute.d6() >= 5
                         && !passenger.isDoomed() && bFrag != 7) {
                     // Yup.  Roll up some hit data for that passenger.
                     r = new Report(6075);
@@ -13586,10 +13587,10 @@ public class Server implements Runnable {
                             sendChangedHex(te.getPosition());
                         }
 
-                        // Level 3 mechanized BA, troopers riding on a location
+                        // Troopers riding on a location
                         // all die when the location is destroyed.
-                        if(game.getOptions().booleanOption("maxtech_mechanized_ba") &&
-                           te instanceof Mech) {
+                        if(te instanceof Mech
+                                || te instanceof Tank) {
                             Entity passenger = te.getExteriorUnitAt( hit.getLocation(), hit.isRear() );
                             if(null != passenger && !passenger.isDoomed()) {
                                 HitData passHit = passenger.getTrooperAtLocation( hit, te);
@@ -15277,7 +15278,7 @@ public class Server implements Runnable {
                         && doSkillCheckInPlace(t, psr)) {
                     int elevation = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
                     elevation = Math.max(elevation,0);
-                    elevation = Math.max(elevation, t.getElevation());
+                    elevation = Math.min(elevation, t.getElevation());
                     t.setElevation(elevation);
                 } else {
                     vDesc.addAll(crashVTOL((VTOL)t));
@@ -15349,6 +15350,22 @@ public class Server implements Runnable {
             r.subject = t.getId();
             vDesc.add(r);
             t.setDriverHit(true);
+            PilotingRollData psr = t.getBasePilotingRoll();
+            psr.addModifier(0, "pilot injury");
+            if(!doSkillCheckInPlace(t, psr)) {
+                r = new Report(6675);
+                r.subject = t.getId();
+                r.addDesc(t);
+                vDesc.add(r);
+                boolean crash = true;
+                if(t.canGoDown()) {
+                    t.setElevation(t.getElevation() - 1);
+                    crash = !t.canGoDown();
+                }
+                if(crash) {
+                    vDesc.addAll(crashVTOL((VTOL)t));
+                }
+            }
             break;
         case VTOL.CRIT_COPILOT:
             r = new Report(6655);
@@ -15902,6 +15919,9 @@ public class Server implements Runnable {
                 r.addDesc(mw);
                 vDesc.addElement(r);
             }
+            
+            //Mechanized BA that could die on a 3+
+            ArrayList<Entity> externalUnits = entity.getExternalUnits();
 
             // Handle escape of transported units.
             iter = entity.getLoadedUnits().elements();
@@ -15914,7 +15934,8 @@ public class Server implements Runnable {
                     other = (Entity) iter.nextElement();
 
                     // Can the other unit survive?
-                    if ( !survivable ) {
+                    if ( !survivable || 
+                            (externalUnits.contains(other) && Compute.d6() >= 3)) {
 
                         // Nope.
                         other.setDestroyed(true);

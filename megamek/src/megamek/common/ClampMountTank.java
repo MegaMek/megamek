@@ -33,16 +33,14 @@ package megamek.common;
     /**
      * The set of front locations blocked by loaded troopers.
      */
-    private static final int[] BLOCKED_LOCATIONS = { Tank.LOC_FRONT,
-                                                     Tank.LOC_RIGHT,
+    private static final int[] BLOCKED_LOCATIONS = { Tank.LOC_RIGHT,
                                                      Tank.LOC_LEFT,
                                                      Tank.LOC_REAR };
 
     /**
      * The set of front locations that load troopers externally.
      */
-    private static final int[] EXTERIOR_LOCATIONS = { Tank.LOC_FRONT,
-                                                      Tank.LOC_RIGHT,
+    private static final int[] EXTERIOR_LOCATIONS = { Tank.LOC_RIGHT,
                                                       Tank.LOC_LEFT,
                                                       Tank.LOC_REAR };
 

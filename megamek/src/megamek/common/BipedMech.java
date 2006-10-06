@@ -132,6 +132,8 @@ public class BipedMech extends Mech {
             }
         }
         
+        wmp = Math.max(wmp - getCargoMpReduction(), 0);
+        
         //gravity
         if (gravity) wmp = applyGravityEffectsOnMP(wmp);
         

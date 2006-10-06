@@ -341,4 +341,7 @@ import java.util.Vector;
         return rv;
     }
 
+    public int getCargoMpReduction() {
+        return 0;
+    }
 } // End package class BattleArmorHandles implements Transporter

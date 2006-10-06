@@ -105,5 +105,10 @@ public interface Transporter extends Serializable {
      * @return list of all units carried externally by this transporter
      */
     public List<Entity> getExternalUnits();
+    
+    /**
+     * @return the MP reduction due to cargo carried by this transporter
+     */
+    public int getCargoMpReduction();
 
 } // End public interface Transporter

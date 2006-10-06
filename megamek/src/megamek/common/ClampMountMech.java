@@ -81,4 +81,7 @@ package megamek.common;
         super();
     }
 
+    public int getCargoMpReduction() {
+        return getLoadedUnits().size();
+    }
 } // End package class ClampMountMech implements Transporter

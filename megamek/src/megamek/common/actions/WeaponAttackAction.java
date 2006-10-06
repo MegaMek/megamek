@@ -1132,6 +1132,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
         } else if(isAttackerInfantry && !(ae instanceof BattleArmor)) {
             // check for trying to fire heavy weapons after moving
+            // note antimech attacks which are allowed are solo attacks, above.
             if(ae.getMovementMode() == IEntityMovementMode.INF_LEG
                     && wtype.hasFlag(WeaponType.F_INFANTRY)
                     && !wtype.hasFlag(WeaponType.F_LASER)

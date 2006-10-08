@@ -25,7 +25,6 @@ implements Serializable {
     public ToHitData toHit = null; // stored before ammo depletion, jams
     public int roll = -1;
     public boolean revertsToSingleShot = false;
-    public int[] amsShotDown = new int[0];
-    public int amsShotDownTotal = 0;
+    public boolean amsEngaged = false;
     public Coords artyAttackerCoords=null; //HACK.  Someone do something much neater, PLEASE.
 }

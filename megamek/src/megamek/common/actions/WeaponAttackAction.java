@@ -1094,8 +1094,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         //  Also, enforce options for keeping vehicles and protos safe
         //  if those options are checked.
         if ( isInferno &&
-             (te instanceof Infantry
-              || te instanceof Tank && game.getOptions().booleanOption("vehicles_safe_from_infernos")
+             (te instanceof Tank && game.getOptions().booleanOption("vehicles_safe_from_infernos")
               || te instanceof Protomech && game.getOptions().booleanOption("protos_safe_from_infernos"))
               ) {
             return "Can not target that unit type with Inferno rounds.";

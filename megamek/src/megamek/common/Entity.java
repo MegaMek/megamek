@@ -107,6 +107,7 @@ public abstract class Entity extends TurnOrdered
 
     public int                  heat = 0;
     public int                  heatBuildup = 0;
+    public int                  heatFromExternal = 0;
     public int                  delta_distance = 0;
     public int                  mpUsed = 0;
     public int                  moved = IEntityMovementType.MOVE_NONE;

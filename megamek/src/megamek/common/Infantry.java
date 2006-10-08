@@ -95,6 +95,9 @@ public class Infantry
     { 0,1,1,2,2,3,3,4,4,5,6,6,7,7,8,8,9,10,10,11,11,12,12,13,13,14,15,15,16,16,17 };
     private static final int DAMAGE_SRM[] =
     { 0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15 };
+    // Inferno SRMs do half damage (rounded down).
+    private static final int DAMAGE_INFERNO_SRM[] =
+    { 0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7 };
     private static final int DAMAGE_LRM[] =
     { 0,0,1,1,2,2,3,3,3,4,4,5,5,6,6,6,7,7,8,8,9,9,9,10,10,11,11,11,12,12,13 };
     private static final int DAMAGE_FLAMER[] =
@@ -124,6 +127,9 @@ public class Infantry
                 break;
             case INF_SRM:
                 damage = DAMAGE_SRM;
+                break;
+            case INF_INFERNO_SRM:
+                damage = DAMAGE_INFERNO_SRM;
                 break;
             case INF_LRM:        
                 damage = DAMAGE_LRM;
@@ -163,12 +169,14 @@ public class Infantry
      * do not overlap for these six weapons.
      */
     public static final int     INF_UNKNOWN     = -1;// T_NA
-    public static final int     INF_RIFLE       = 1; // T_AC
-    public static final int     INF_MG          = 3; // T_MG
-    public static final int     INF_FLAMER      = 2; // F_FLAMER
-    public static final int     INF_LASER       = 4; // F_LASER
-    public static final int     INF_SRM         = 9; // T_SRM
-    public static final int     INF_LRM         = 7; // T_LRM
+    public static final int     INF_RIFLE       = AmmoType.T_AC;
+    public static final int     INF_MG          = AmmoType.T_MG;
+    public static final int     INF_FLAMER      = (int)WeaponType.F_FLAMER; 
+    public static final int     INF_LASER       = (int)WeaponType.F_LASER;
+    public static final int     INF_SRM         = AmmoType.T_SRM;
+    public static final int     INF_LRM         = AmmoType.T_LRM;
+    
+    public static final int     INF_INFERNO_SRM = (int)WeaponType.F_INFERNO;
 
     /**
      * The location for infantry equipment.
@@ -494,19 +502,12 @@ public class Infantry
             }
             else {
                 weaponType = weapon.getFlags() & 
-                    (WeaponType.F_LASER + WeaponType.F_FLAMER );
+                    (WeaponType.F_LASER + WeaponType.F_FLAMER + WeaponType.F_INFERNO);
             }
             this.weapons = (int)weaponType;
-
+            
             // Update our damage profile.
             this.setDamage( weapons );
-
-            // Inferno SRMs do half damage (rounded down).
-            if ( weapon.hasFlag(WeaponType.F_INFERNO) ) {
-                for ( int loop = 1; loop < damage.length; loop++ ) {
-                    damage[loop] = (int) Math.floor( damage[loop] / 2.0 );
-                }
-            }
 
         }
 /*        // Infantry platoons can't carry big equipment.
@@ -639,7 +640,7 @@ public class Infantry
                     dBV = 71;
                 else throw new IllegalArgumentException
                         ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_SRM) {
+            } else if (this.weapons == INF_SRM || weapons == INF_INFERNO_SRM) {
                 if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 60;
                 else if ( IEntityMovementMode.INF_MOTORIZED == mm )
@@ -697,7 +698,7 @@ public class Infantry
                     dBV = 41;
                 else throw new IllegalArgumentException
                         ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_SRM) {
+            } else if (this.weapons == INF_SRM || weapons == INF_INFERNO_SRM) {
                 if ( IEntityMovementMode.INF_LEG == mm )
                     dBV = 60;
                 else if ( IEntityMovementMode.INF_MOTORIZED == mm )
@@ -895,7 +896,7 @@ public class Infantry
                 cost = 2400000;
             else throw new IllegalArgumentException
                     ( "Unknown movement type: " + mm );
-        } else if (this.weapons == INF_SRM) {
+        } else if (this.weapons == INF_SRM || weapons == INF_INFERNO_SRM) {
             if ( IEntityMovementMode.INF_LEG == mm )
                 cost = 1400000;
             else if ( IEntityMovementMode.INF_MOTORIZED == mm )

@@ -6921,39 +6921,36 @@ public class Server implements Runnable {
         // any AMS attacks by the target?
         ArrayList vCounters = waa.getCounterEquipment();
         if (null != vCounters) {
-            // resolve AMS counter-fire
-            wr.amsShotDown = new int[vCounters.size()];
+            // resolve AMS counter-fire (only 1 AMS may engage each missile salvo)
             for (int x = 0; x < vCounters.size(); x++) {
-                wr.amsShotDown[x] = 0;
-
                 Mounted counter = (Mounted)vCounters.get(x);
-                Mounted mAmmo = counter.getLinked();
-                Entity ae = waa.getEntity(game);
-                if (!(counter.getType() instanceof WeaponType)
-                        || !counter.getType().hasFlag(WeaponType.F_AMS)
-                        || !counter.isReady()
-                        || counter.isMissing()
-                        || ae.hasShield() && ae.hasActiveShield(counter.getLocation(), false)) {
-                    continue;
+                if(counter.getType().hasFlag(WeaponType.F_AMS)
+                        && !wr.amsEngaged) {
+    
+                    Mounted mAmmo = counter.getLinked();
+                    Entity ae = waa.getEntity(game);
+                    if (!(counter.getType() instanceof WeaponType)
+                            || !counter.getType().hasFlag(WeaponType.F_AMS)
+                            || !counter.isReady()
+                            || counter.isMissing()
+                            || ae.hasShield() && ae.hasActiveShield(counter.getLocation(), false)) {
+                        continue;
+                    }
+    
+                    // build up some heat (assume target is ams owner)
+                    if (counter.getType().hasFlag(WeaponType.F_HEATASDICE))
+                        te.heatBuildup += Compute.d6(((WeaponType)counter.getType()).getHeat());
+                    else
+                        te.heatBuildup += ((WeaponType)counter.getType()).getHeat();
+    
+                    // decrement the ammo
+                    if (mAmmo != null)
+                        mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - 1));
+    
+                    // set the ams as having fired
+                    counter.setUsedThisRound(true);
+                    wr.amsEngaged = true;
                 }
-                // roll hits
-                int amsHits = Compute.d6(((WeaponType)counter.getType()).getDamage());
-
-                // build up some heat (assume target is ams owner)
-                if (counter.getType().hasFlag(WeaponType.F_HEATASDICE))
-                    te.heatBuildup += Compute.d6(((WeaponType)counter.getType()).getHeat());
-                else
-                    te.heatBuildup += ((WeaponType)counter.getType()).getHeat();
-
-                // decrement the ammo
-                if (mAmmo != null)
-                    mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - amsHits));
-
-                // set the ams as having fired
-                counter.setUsedThisRound(true);
-
-                wr.amsShotDown[x]    = amsHits;
-                wr.amsShotDownTotal += amsHits;
             }
         }
 
@@ -7862,14 +7859,11 @@ public class Server implements Runnable {
           }
 
           // Report any AMS action.
-          for (int i=0; i < wr.amsShotDown.length; i++) {
-              if (wr.amsShotDown[i] > 0) {
-                  r = new Report(3230);
-                  r.indent();
-                  r.subject = subjectId;
-                  r.add(wr.amsShotDown[i]);
-                  addReport(r);
-              }
+          if (wr.amsEngaged) {
+              r = new Report(3230);
+              r.indent();
+              r.subject = subjectId;
+              addReport(r);
           }
 
             // Figure out the maximum number of missile hits.
@@ -7894,18 +7888,18 @@ public class Server implements Runnable {
             // the shot is an automatic failure, or if it's from
             // a Streak rack, then Infernos can't ignite the hex
             // and any building is safe from damage.
-            if ( usesAmmo && wr.amsShotDownTotal >= maxMissiles
-                    || toHit.getValue() == TargetRoll.AUTOMATIC_FAIL
+            if ( usesAmmo && (/*wr.amsShotDownTotal >= maxMissiles
+                    || */toHit.getValue() == TargetRoll.AUTOMATIC_FAIL
                     || ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK
                             || wtype.getAmmoType() == AmmoType.T_MRM_STREAK
                             || wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
-                            && !isAngelECMAffected)) {
+                            && !isAngelECMAffected))) {
                 return !bMissed;
             }
             // If we're using swarm munition, set the number of missiles that
             // are left
             if ((bSwarm || bSwarmI) && entityTarget != null) {
-                swarmMissilesNowLeft -= wr.amsShotDownTotal;
+                //swarmMissilesNowLeft -= wr.amsShotDownTotal;
                 Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(), entityTarget, wr.waa.getWeaponId());
                 if (swarmTarget != null) {
                     r = new Report(3420);
@@ -7954,21 +7948,28 @@ public class Server implements Runnable {
             wtype.getAmmoType() == AmmoType.T_NARC &&
             atype.getMunitionType() != AmmoType.M_NARC_EX) {
 
-            if (wr.amsShotDownTotal > 0) {
+            if (wr.amsEngaged) {
                 r = new Report(3235);
                 r.subject = subjectId;
                 addReport(r);
-                for (int i=0; i < wr.amsShotDown.length; i++) {
-                    r = new Report(3230);
-                    r.indent(1);
-                    r.subject = subjectId;
-                    r.add(wr.amsShotDown[i]);
-                    addReport(r);
-                }
-                r = new Report(3240);
+                r = new Report(3230);
+                r.indent(1);
                 r.subject = subjectId;
                 addReport(r);
-            } else if (entityTarget == null) {
+                int destroyRoll = Compute.d6();
+                if(destroyRoll <= 3) {
+                    r = new Report(3240);
+                    r.subject = subjectId;
+                    r.add(destroyRoll);
+                    addReport(r);
+                    return !bMissed;
+                }
+                r = new Report(3241);
+                r.add(destroyRoll);
+                r.subject = subjectId;
+                addReport(r);
+            } 
+            if (entityTarget == null) {
                 r = new Report(3245);
                 r.subject = subjectId;
                 addReport(r);
@@ -7987,21 +7988,28 @@ public class Server implements Runnable {
             wtype.getAmmoType() == AmmoType.T_INARC &&
             atype.getMunitionType() != AmmoType.M_EXPLOSIVE) {
 
-            if (wr.amsShotDownTotal > 0) {
+            if (wr.amsEngaged) {
                 r = new Report(3235);
                 r.subject = subjectId;
                 addReport(r);
-                for (int i=0; i < wr.amsShotDown.length; i++) {
-                    r = new Report(3230);
-                    r.indent(1);
-                    r.subject = subjectId;
-                    r.add(wr.amsShotDown[i]);
-                    addReport(r);
-                }
-                r = new Report(3240);
+                r = new Report(3230);
+                r.indent(1);
                 r.subject = subjectId;
                 addReport(r);
-            } else if (entityTarget == null) {
+                int destroyRoll = Compute.d6();
+                if(destroyRoll <= 3) {
+                    r = new Report(3240);
+                    r.subject = subjectId;
+                    r.add(destroyRoll);
+                    addReport(r);
+                    return !bMissed;
+                }
+                r = new Report(3241);
+                r.add(destroyRoll);
+                r.subject = subjectId;
+                addReport(r);
+            } 
+            if (entityTarget == null) {
                 r = new Report(3245);
                 r.subject = subjectId;
                 addReport(r);
@@ -8382,6 +8390,14 @@ public class Server implements Runnable {
             if (ae.isSufferingEMI()) {
                 nSalvoBonus -= 2;
             }
+            
+            if(wr.amsEngaged) {
+                r = new Report(3230);
+                r.newlines = 0;
+                r.subject = subjectId;
+                addReport(r);
+                nSalvoBonus -= 4;
+            }
 
             // Battle Armor units multiply their racksize by the number
             // of men shooting and they can't get missile hit bonuses.
@@ -8403,9 +8419,13 @@ public class Server implements Runnable {
                 } // End not-all-shots-hit
             }
 
-            // If all shots hit, use the full racksize.
+            // If all shots hit, use the full racksize. (unless AMS engaged)
             else if ( bAllShotsHit ) {
-                hits = wtype.getRackSize();
+                if(wr.amsEngaged) {
+                    hits = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nMissilesModifier + glancingMissileMod, maxtechmissiles | bGlancing, weapon.isHotLoaded(), true);
+                } else {
+                    hits = wtype.getRackSize();
+                }
             }
             // In all other circumstances, roll for hits.
             else {
@@ -8578,7 +8598,7 @@ public class Server implements Runnable {
             if ( targetInBuilding && bldg != null && !(bSwarm || bSwarmI)) {
 
                 // Reduce the number of hits by AMS hits.
-                if (wr.amsShotDownTotal > 0) {
+/*                if (wr.amsShotDownTotal > 0) {
                     for (int i=0; i < wr.amsShotDown.length; i++) {
                         int shotDown = Math.min(wr.amsShotDown[i], hits);
                         r = new Report(3280);
@@ -8588,7 +8608,7 @@ public class Server implements Runnable {
                         addReport(r);
                     }
                     hits -= wr.amsShotDownTotal;
-                }
+                }*/
 
                 // Is the building hit by Inferno rounds?
                 if ( bInferno && hits > 0 ) {
@@ -8796,37 +8816,6 @@ public class Server implements Runnable {
             r.subject = subjectId;
             r.newlines = 0;
             addReport(r);
-
-            if (wr.amsShotDownTotal > 0) {
-                for (int i=0; i < wr.amsShotDown.length; i++) {
-                    int shotDown = Math.min(wr.amsShotDown[i], hits);
-                    r = new Report(3350);
-                    r.indent();
-                    r.subject = subjectId;
-                    r.add(wr.amsShotDown[i]);
-                    r.add(shotDown);
-                    r.newlines = 0;
-                    addReport(r);
-                }
-                hits -= wr.amsShotDownTotal;
-
-                addNewLines();
-                if (hits < 1) {
-                    //all missiles shot down
-                    r = new Report(3355);
-                    r.indent();
-                    r.subject = subjectId;
-                    r.newlines = 0;
-                    addReport(r);
-                } else {
-                    r = new Report(3360);
-                    r.indent();
-                    r.subject = subjectId;
-                    r.add(hits);
-                    r.newlines = 0;
-                    addReport(r);
-                }
-            }
         }
 
         // convert the ATM missile damages to LRM type 5 point cluster damage
@@ -8850,40 +8839,6 @@ public class Server implements Runnable {
             // If the attack was with inferno rounds then
             // do heat and fire instead of damage.
             if ( bInferno ) {
-                // AMS can shoot down infernos, too.
-                if (wr.amsShotDownTotal > 0) {
-                    for (int i=0; i < wr.amsShotDown.length; i++) {
-                        int shotDown = Math.min(wr.amsShotDown[i], hits);
-                        r = new Report(3350);
-                        r.indent();
-                        r.subject = subjectId;
-                        r.add(wr.amsShotDown[i]);
-                        r.add(shotDown);
-                        r.newlines = 0;
-                        addReport(r);
-                    }
-                    hits -= wr.amsShotDownTotal;
-
-                    addNewLines();
-                    if (hits < 1) {
-                        //all missiles shot down
-                        r = new Report(3355);
-                        r.indent();
-                        r.subject = subjectId;
-                        r.newlines = 0;
-                        addReport(r);
-                    } else {
-                        r = new Report(3360);
-                        r.indent();
-                        r.subject = subjectId;
-                        r.add(hits);
-                        r.newlines = 0;
-                        addReport(r);
-                    }
-                    if ( hits <= 0 ) {
-                        continue;
-                    }
-                }
 
                 // targeting a hex for ignition
                 if( target.getTargetType() == Targetable.TYPE_HEX_IGNITE ||

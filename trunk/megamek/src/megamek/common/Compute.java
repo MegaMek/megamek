@@ -1710,9 +1710,7 @@ public class Compute {
                         Mounted counter = (Mounted) vCounters.get(x);
                         if (counter.getType() instanceof WeaponType
                                 && counter.getType().hasFlag(WeaponType.F_AMS)) {
-                            float fAMS = 3.5f * ((WeaponType) counter.getType())
-                                    .getDamage();
-                            fHits = Math.max(0.0f, fHits - fAMS);
+                            fHits *= 0.6;
                         }
                     }
                 }
@@ -2311,6 +2309,9 @@ public class Compute {
         return missilesHit(missiles, 0);
     }
 
+    public static int missilesHit(int missiles, int nMod, boolean maxtech, boolean hotloaded) {
+        return missilesHit(missiles, nMod, maxtech, hotloaded, false);
+    }
     /**
      * Roll the number of missiles (or whatever) on the missile hit table, with
      * the specified mod to the roll.
@@ -2322,8 +2323,10 @@ public class Compute {
      * @param nMod -
      *            the <code>int</code> modifier to the roll for number of
      *            missiles that hit.
+     * @param hotloaded - roll 3d6 take worst 2
+     * @param streak - force a roll of 11 on the cluster table
      */
-    public static int missilesHit(int missiles, int nMod, boolean maxtech, boolean hotloaded) {
+     public static int missilesHit(int missiles, int nMod, boolean maxtech, boolean hotloaded, boolean streak) {
         int nRoll = d6(2);
         int minimum = maxtech ? 1 : 2;
 
@@ -2346,6 +2349,7 @@ public class Compute {
             }
             nRoll = lowRoll1 + lowRoll2;
         }
+        if(streak) nRoll = 11;
         nRoll += nMod;
         nRoll = Math.min(Math.max(nRoll, minimum), 12);
         if (maxtech && nRoll == 1) {

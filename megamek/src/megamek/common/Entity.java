@@ -4452,10 +4452,12 @@ public abstract class Entity extends TurnOrdered
      *
      * @param   range - an <code>int</code> value that must match one
      *          of the <code>Compute</code> class range constants.
+     * @param   ae - the entity making the attack, who maybe immune
+     *          to certain kinds of stealth
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier(int range) {
+    public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
 
         // Stealth must be active.

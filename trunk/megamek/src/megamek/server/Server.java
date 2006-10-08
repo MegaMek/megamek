@@ -21,6 +21,7 @@ import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Board;
 import megamek.common.Building;
+import megamek.common.BuildingTarget;
 import megamek.common.CommonConstants;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -4122,7 +4123,7 @@ public class Server implements Runnable {
                     else if(lastHex.terrainLevel(Terrains.MAGMA) == 2) {
                         heat+=5;
                     }
-                    entity.heatBuildup+=heat;
+                    entity.heatFromExternal+=heat;
                     r = new Report(2115);
                     r.subject = entity.getId();
                     r.addDesc(entity);
@@ -5136,6 +5137,102 @@ public class Server implements Runnable {
                 r.addDesc(entity);
                 r.add(entity.infernos.getTurnsLeftToBurn());
                 addReport(r);
+            }
+        }
+    }
+    
+    private void deliverInfernoMissiles(Entity ae, Targetable t, int missiles) {
+        IHex hex = game.getBoard().getHex(t.getPosition());
+        Report r;
+        //inferno missiles hit
+        r = new Report(3370);
+        r.subject = ae.getId();
+        r.add(missiles);
+        addReport(r);
+
+        switch(t.getTargetType()) {
+        case Targetable.TYPE_HEX_CLEAR:
+        case Targetable.TYPE_HEX_IGNITE:
+            tryClearHex(t.getPosition(), missiles * 4, ae.getId());
+            tryIgniteHex(t.getPosition(),ae.getId(), true, 0);
+            break;
+        case Targetable.TYPE_BLDG_IGNITE:
+        case Targetable.TYPE_BUILDING:
+            for(Enumeration<Entity> entities = game.getEntities(t.getPosition());entities.hasMoreElements();) {
+                Entity e = entities.nextElement();
+                if(e.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV))
+                    continue;
+                int roll = Compute.d6();
+                r = new Report(3560);
+                r.subject = e.getId();
+                r.addDesc(e);
+                r.add(roll);
+                addReport(r);
+                if(roll>=5) {
+                    deliverInfernoMissiles(ae, e, missiles);
+                }
+            }
+            addReport(damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2*missiles));
+            break;
+        case Targetable.TYPE_ENTITY:
+            Entity te = (Entity)t;
+            if(te instanceof Mech) {
+                r = new Report(3400);
+                r.add(2*missiles);
+                r.subject = te.getId();
+                r.choose(true);
+                addReport(r);
+                te.heatFromExternal += 2*missiles;
+            }
+            else if(te instanceof Tank
+                    || te instanceof Protomech) {
+                if(game.getOptions().booleanOption("vehicle_fires")
+                        && te instanceof Tank) {
+                    checkForVehicleFire((Tank)te, true);
+                }
+                int direction = Compute.targetSideTable(ae,te);
+                while(missiles-- > 0) {
+                    HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
+                    if(te instanceof Protomech && hit.getLocation() == Protomech.LOC_NMISS) {
+                        r = new Report(6035);
+                        r.subject = te.getId();
+                        addReport(r);
+                    } else {
+                        addReport(criticalEntity(te,hit.getLocation(),-2));
+                    }
+                }
+            }
+            else if(te instanceof BattleArmor) {
+                for(Mounted equip:te.getMisc()) {
+                    if ( BattleArmor.FIRE_PROTECTION.equals
+                        (equip.getType().getInternalName()) ) {
+                       r = new Report(3395);
+                       r.indent(2);
+                       r.subject = te.getId();
+                       r.addDesc(te);
+                       addReport(r);
+                       return;
+                    }
+                }
+                te.heatFromExternal += missiles;
+                while(te.heatFromExternal >=3) {
+                    te.heatFromExternal -= 3;
+                    HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    hit.setEffect(HitData.EFFECT_CRITICAL);
+                    addReport(damageEntity(te,hit,1));
+                }
+            }
+            else if(te instanceof Infantry) {
+                HitData hit = new HitData(Infantry.LOC_INFANTRY);
+                addReport(damageEntity(te,hit,3*missiles));
+            }
+            else {
+                //gun emplacements
+                int direction = Compute.targetSideTable(ae,te);
+                while(missiles-- > 0) {
+                    HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
+                    addReport(damageEntity(te,hit,2));
+                }
             }
         }
     }
@@ -6982,6 +7079,11 @@ public class Server implements Runnable {
         if ( hex == null ) {
             return false;
         }
+        
+        // Ignore if fire is not enabled as a game option
+        if(!game.getOptions().booleanOption("fire")) {
+            return false;
+        }
 
         // inferno always ignites
         if (bInferno) {
@@ -8119,7 +8221,7 @@ public class Server implements Runnable {
                         r.add(nDamage);
                         r.choose(false);
                         addReport(r);
-                        entityTarget.heatBuildup -= nDamage;
+                        entityTarget.heatFromExternal -= nDamage;
                         hits = 0;
                     }
                 }
@@ -8612,32 +8714,7 @@ public class Server implements Runnable {
 
                 // Is the building hit by Inferno rounds?
                 if ( bInferno && hits > 0 ) {
-
-                    // start a fire in the targets hex
-                    Coords c = target.getPosition();
-                    IHex h = game.getBoard().getHex(c);
-
-                    // Is there a fire in the hex already?
-                    if ( h.containsTerrain( Terrains.FIRE ) ) {
-                        r = new Report(3285);
-                        r.indent(2);
-                        r.subject = subjectId;
-                        r.add(hits);
-                        r.add(c.getBoardNum());
-                        addReport(r);
-                    } else {
-                        r = new Report(3290);
-                        r.indent(2);
-                        r.subject = subjectId;
-                        r.add(hits);
-                        r.add(c.getBoardNum());
-                        addReport(r);
-                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
-                    }
-                    game.getBoard().addInfernoTo
-                        ( c, InfernoTracker.STANDARD_ROUND, hits );
-                    sendChangedHex(c);
-
+                    deliverInfernoMissiles(ae, new BuildingTarget(target.getPosition(), game.getBoard(), false), hits);
                 }
 
                 // Damage the building in one big lump.
@@ -8839,74 +8916,8 @@ public class Server implements Runnable {
             // If the attack was with inferno rounds then
             // do heat and fire instead of damage.
             if ( bInferno ) {
-
-                // targeting a hex for ignition
-                if( target.getTargetType() == Targetable.TYPE_HEX_IGNITE ||
-                    target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ) {
-
-                    //inferno missiles hit
-                    r = new Report(3370);
-                    r.subject = subjectId;
-                    r.add(hits);
-                    addReport(r);
-
-                    // Unless there a fire in the hex already, start one.
-                    Coords c = target.getPosition();
-                    IHex h = game.getBoard().getHex(c);
-                    if ( !h.containsTerrain( Terrains.FIRE ) ) {
-                        r = new Report(3005);
-                        r.subject = subjectId;
-                        r.add(c.getBoardNum());
-                        addReport(r);
-                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
-                    }
-                    game.getBoard().addInfernoTo
-                        ( c, InfernoTracker.STANDARD_ROUND, hits );
-                    sendChangedHex(c);
-
-                    return !bMissed;
-                }
-
-                // Targeting an entity
-                if (entityTarget != null ) {
-                    r = new Report(3375);
-                    r.subject = subjectId;
-                    r.add(hits);
-                    addReport(r);
-
-                    if(game.getOptions().booleanOption("vehicle_fires")
-                            && entityTarget instanceof Tank) {
-                        checkForVehicleFire((Tank)entityTarget, true);
-                    } else {
-                        entityTarget.infernos.add( InfernoTracker.STANDARD_ROUND,
-                                hits );
-                        r = new Report(3205);
-                        r.indent(2);
-                        r.subject = subjectId;
-                        r.addDesc(entityTarget);
-                        r.add(entityTarget.infernos.getTurnsLeftToBurn());
-                        addReport(r);
-                    }
-
-                    // Start a fire in the targets hex, unless already on fire.
-                    Coords c = target.getPosition();
-                    IHex h = game.getBoard().getHex(c);
-
-                    // Unless there a fire in the hex already, start one.
-                    if ( !h.containsTerrain( Terrains.FIRE ) ) {
-                        r = new Report(3005);
-                        r.subject = subjectId;
-                        r.add(c.getBoardNum());
-                        addReport(r);
-                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
-                    }
-                    game.getBoard().addInfernoTo
-                        ( c, InfernoTracker.STANDARD_ROUND, 1 );
-                    sendChangedHex(c);
-
-                    return !bMissed;
-                }
-
+                deliverInfernoMissiles(ae, target, hits);
+                return !bMissed;
             } // End is-inferno
 
             // targeting a hex for igniting
@@ -8982,56 +8993,29 @@ public class Server implements Runnable {
             if ((target.getTargetType() == Targetable.TYPE_BUILDING)
                     || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
                 // Is the building hit by Inferno rounds?
-                if ( bInferno ) {
-
-                    // start a fire in the targets hex
-                    Coords c = target.getPosition();
-                    IHex h = game.getBoard().getHex(c);
-
-                    // Is there a fire in the hex already?
-                    if ( h.containsTerrain( Terrains.FIRE ) ) {
-                        r = new Report(3285);
-                        r.subject = subjectId;
-                        r.add(hits);
-                        r.add(c.getBoardNum());
-                        addReport(r);
-                    } else {
-                        r = new Report(3290);
-                        r.subject = subjectId;
-                        r.add(hits);
-                        r.add(c.getBoardNum());
-                        addReport(r);
-                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
-                    }
-                    game.getBoard().addInfernoTo
-                        ( c, InfernoTracker.STANDARD_ROUND, hits );
-                    sendChangedHex(c);
-
-                } else {
-                    // The building takes the full brunt of the attack.
-                    nDamage = nDamPerHit * hits;
-                    if ( !bSalvo ) {
-                        //hits!
-                        r = new Report(3390);
-                        r.subject = subjectId;
-                        addReport(r);
-                    }
-                    addNewLines();
-                    if (bFragmentation) {
-                        nDamage = 0;
-                        addReport(new Report(3565));
-                    }
-                    Report buildingReport = damageBuilding( bldg, nDamage );
-                    if (buildingReport != null) {
-                        buildingReport.indent(2);
-                        buildingReport.newlines = 1;
-                        buildingReport.subject = subjectId;
-                        addReport(buildingReport);
-                    }
-
-                    // Damage any infantry in the hex.
-                    damageInfantryIn( bldg, nDamage );
+                // The building takes the full brunt of the attack.
+                nDamage = nDamPerHit * hits;
+                if ( !bSalvo ) {
+                    //hits!
+                    r = new Report(3390);
+                    r.subject = subjectId;
+                    addReport(r);
                 }
+                addNewLines();
+                if (bFragmentation) {
+                    nDamage = 0;
+                    addReport(new Report(3565));
+                }
+                Report buildingReport = damageBuilding( bldg, nDamage );
+                if (buildingReport != null) {
+                    buildingReport.indent(2);
+                    buildingReport.newlines = 1;
+                    buildingReport.subject = subjectId;
+                    addReport(buildingReport);
+                }
+
+                // Damage any infantry in the hex.
+                damageInfantryIn( bldg, nDamage );
 
                 // And we're done!
                 return !bMissed;
@@ -9098,7 +9082,7 @@ public class Server implements Runnable {
                 r.choose(true);
                 r.newlines = 0;
                 addReport(r);
-                entityTarget.heatBuildup += nDamage;
+                entityTarget.heatFromExternal += nDamage;
                 hits = 0;
             } else if (entityTarget != null) {
                  HitData hit = entityTarget.rollHitLocation
@@ -9123,7 +9107,7 @@ public class Server implements Runnable {
                     r.choose(true);
                     r.newlines = 0;
                     addReport(r);
-                    entityTarget.heatBuildup += 5;
+                    entityTarget.heatFromExternal += 5;
                 }
 
                 // If a leg attacks hit a leg that isn't
@@ -11860,6 +11844,7 @@ public class Server implements Runnable {
             // heat doesn't matter for non-mechs
             if (!(entity instanceof Mech)) {
                 entity.heatBuildup = 0;
+                entity.heatFromExternal = 0;
 
                 if(game.getOptions().booleanOption("vehicle_fires")
                         && entity instanceof Tank) {
@@ -11874,7 +11859,7 @@ public class Server implements Runnable {
 			// Meks gain heat from inferno hits.
 			if ( entity.infernos.isStillBurning() ) {
 			    int infernoHeat = entity.infernos.getHeat();
-			    entity.heatBuildup += infernoHeat;
+			    entity.heatFromExternal += infernoHeat;
 			    r = new Report(5010);
 			    r.subject = entity.getId();
 			    r.add(infernoHeat);
@@ -11904,14 +11889,14 @@ public class Server implements Runnable {
             if ( entity instanceof Mech && game.getTemperatureDifference() != 0
                  && !((Mech)entity).hasLaserHeatSinks()) {
                 if (game.getOptions().intOption("temperature") > 50) {
-                    entity.heatBuildup += game.getTemperatureDifference();
+                    entity.heatFromExternal += game.getTemperatureDifference();
                     r = new Report(5020);
                     r.subject = entity.getId();
                     r.add(game.getTemperatureDifference());
                     addReport(r);
                 }
                 else {
-                    entity.heatBuildup -= game.getTemperatureDifference();
+                    entity.heatFromExternal -= game.getTemperatureDifference();
                     r = new Report(5025);
                     r.subject = entity.getId();
                     r.add(game.getTemperatureDifference());
@@ -11924,14 +11909,14 @@ public class Server implements Runnable {
             if (entityHex != null) {
                 if (entityHex.terrainLevel(Terrains.FIRE) == 2
                         && entity.getElevation() <=1) {
-                    entity.heatBuildup += 5;
+                    entity.heatFromExternal += 5;
                     r = new Report(5030);
                     r.subject = entity.getId();
                     addReport(r);
                 }
                 int magma = entityHex.terrainLevel(Terrains.MAGMA);
                 if(magma > 0 && entity.getElevation() == 0) {
-                    entity.heatBuildup += 5 * magma;
+                    entity.heatFromExternal += 5 * magma;
                     r = new Report(5032);
                     r.subject = entity.getId();
                     r.add(5 * magma);
@@ -11956,6 +11941,11 @@ public class Server implements Runnable {
                     entity.heatBuildup += vibroHeat;
                 }
             }
+            
+            //Add heat from external sources to the heat buildup
+            entity.heatBuildup += Math.min(15, entity.heatFromExternal);
+            entity.heatFromExternal = 0;
+            
             // if heatbuildup is negative due to temperature, set it to 0
             // for prettier turnreports
             if (entity.heatBuildup < 0) {
@@ -15148,7 +15138,6 @@ public class Server implements Runnable {
             //no effect
             r = new Report(6005);
             r.subject = t.getId();
-            r.newlines = 0;
             vDesc.add(r);
             break;
         case Tank.CRIT_AMMO:
@@ -16041,7 +16030,7 @@ public class Server implements Runnable {
                 || ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_BA_INFERNO)
                 && ((AmmoType)mounted.getType()).getMunitionType() == AmmoType.M_INFERNO
                 && mounted.getShotsLeft() > 0) {
-            en.heatBuildup += 30;
+            en.heatBuildup += Math.min(mounted.getExplosionDamage(),30);
         }
 
         // determine and deal damage
@@ -18122,11 +18111,12 @@ public class Server implements Runnable {
         if (boomloc != -1 && boomslot != -1) {
             CriticalSlot slot = entity.getCritical(boomloc, boomslot);
             slot.setHit(true);
-            entity.getEquipment(slot.getIndex()).setHit(true);
+            Mounted equip = entity.getEquipment(slot.getIndex());
+            equip.setHit(true);
             // We've allocated heatBuildup to heat in resolveHeat(),
             // so need to add to the entity's heat instead.
+            entity.heat += Math.min(equip.getExplosionDamage(),30);
             vDesc.addAll( explodeEquipment(entity, boomloc, boomslot));
-            entity.heat += 30;
             r = new Report(5155);
             r.indent();
             r.subject = entity.getId();

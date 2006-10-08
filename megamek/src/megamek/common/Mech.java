@@ -2522,15 +2522,19 @@ public abstract class Mech
      *
      * @param   range - an <code>int</code> value that must match one
      *          of the <code>Compute</code> class range constants.
+     * @param   ae - entity making the attack
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier( int range ) {
+    public TargetRoll getStealthModifier( int range, Entity ae ) {
         TargetRoll result = null;
 
         // Stealth must be active.
         if ( !isStealthActive() ) {
             result = new TargetRoll( 0, "stealth not active"  );
+        }
+        else if (ae instanceof Infantry) {
+            result = new TargetRoll( 0, "infantry ignore stealth"  );
         }
 
         // Determine the modifier based upon the range.

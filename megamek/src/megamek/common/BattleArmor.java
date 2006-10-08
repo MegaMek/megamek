@@ -773,11 +773,15 @@ public class BattleArmor
      *
      * @param   range - an <code>int</code> value that must match one
      *          of the <code>Compute</code> class range constants.
+     * @param   ae - the entity making the attack.
      * @return  a <code>TargetRoll</code> value that contains the stealth
      *          modifier for the given range.
      */
-    public TargetRoll getStealthModifier(int range) {
+    public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
+        
+        //Note: infantry are immune to stealth, but not camoflage
+        //or mimetic armor
 
         //TODO: eliminate duplicate code
         if (armorType != -1) {
@@ -793,7 +797,7 @@ public class BattleArmor
             7: "Fire Resistant",
             8: "Mimetic"
             */
-            if (armorType == 3) {
+            if (armorType == 3 && !(ae instanceof Infantry)) {
                 // Basic Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -813,7 +817,7 @@ public class BattleArmor
                         throw new IllegalArgumentException
                             ("Unknown range constant: " + range);
                 }
-            } else if (armorType == 4) {
+            } else if (armorType == 4 && !(ae instanceof Infantry)) {
                 // Prototype Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -833,7 +837,7 @@ public class BattleArmor
                         throw new IllegalArgumentException
                             ("Unknown range constant: " + range);
                 }
-            } else if (armorType == 5) {
+            } else if (armorType == 5 && !(ae instanceof Infantry)) {
                 // Standard Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -854,7 +858,7 @@ public class BattleArmor
                         throw new IllegalArgumentException
                             ("Unknown range constant: " + range);
                 }
-            } else if (armorType == 6) {
+            } else if (armorType == 6 && !(ae instanceof Infantry)) {
                 // Improved Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -876,37 +880,25 @@ public class BattleArmor
                             ("Unknown range constant: " + range);
                 }
             } else if (armorType == 8) {
-                // Mimetic Armor
                 int mmod = 3 - delta_distance;
-                mmod -= Compute.getTargetMovementModifier(game,getId()).getValue();
-                if (mmod < 0) {
-                    result = new TargetRoll(mmod, "mimetic armor cancels movement bonus");
-                } else {
-                    result = new TargetRoll(mmod, "mimetic armor");
-                }
+                mmod = Math.max(0,mmod);
+                result = new TargetRoll(mmod, "mimetic armor");
             }
         } else {
-            // Mimetic armor modifier is based upon and replaces the movement
-            // bonus as listed below (BMRr, pg. 71):
+            // Mimetic armor modifier is based upon the number of hexes moved,
+            // and adds to existing movement modifier (Total Warfare p228):
             //      0 hexes moved   +3 movement modifier
             //      1 hex moved     +2 movement modifier
             //      2 hexes moved   +1 movement modifier
-            //      3 hexes moved   +0 movement modifier
-            // N.B. Rather than mucking with Compute#getTargetMovementModifier,
-            // I decided to apply a -1 modifier here... the total works out.
-            // FIXME: TotalWarfare pg 228 changes the mimetic mod to just add to other mods
+            //      3+ hexes moved  +0 movement modifier
             if (isMimetic) {
                 int mmod = 3 - delta_distance;
-                mmod -= Compute.getTargetMovementModifier(game,getId()).getValue();
-                if (mmod < 0) {
-                    result = new TargetRoll(mmod, "mimetic armor cancels movement bonus");
-                } else {
-                    result = new TargetRoll(mmod, "mimetic armor");
-                }
+                mmod = Math.max(0,mmod);
+                result = new TargetRoll(mmod, "mimetic armor");
             }
     
             // Stealthy units alreay have their to-hit mods defined.
-            if (isStealthy) {
+            if (isStealthy && !(ae instanceof Infantry)) {
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
                     case RangeType.RANGE_SHORT:
@@ -931,15 +923,11 @@ public class BattleArmor
 
         // Simple camo modifier is on top of the movement modifier
         //      0 hexes moved   +2 movement modifier
-        //      1+ hexes moved  +1 movement modifier
+        //      1 hexes moved   +1 movement modifier
+        //      2+ hexes moved  no modifier
         // This can also be in addition to any armor except Mimetic!
         if (isSimpleCamo && delta_distance < 2) {
-            int mod = 0;
-            if (0 == this.delta_distance) {
-                mod = 2;
-            } else {
-                mod = 1;
-            }
+            int mod = Math.max(2 - delta_distance, 0);
             if (result == null)
                 result = new TargetRoll(mod, "camoflage");
             else

@@ -810,9 +810,9 @@ public class Compute {
 
         // add any target stealth modifier
         if (target instanceof Entity) {
-            TargetRoll tmpTR = ((Entity)target).getStealthModifier(usingRange);
+            TargetRoll tmpTR = ((Entity)target).getStealthModifier(usingRange, ae);
             if (tmpTR.getValue() != 0)
-                mods.append(((Entity)target).getStealthModifier(usingRange));
+                mods.append(((Entity)target).getStealthModifier(usingRange, ae));
         }
 
         return mods;

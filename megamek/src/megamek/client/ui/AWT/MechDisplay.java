@@ -784,6 +784,7 @@ public class MechDisplay extends BufferedPanel {
 
             int currentHeatBuildup = en.heat // heat from last round
                     + en.getEngineCritHeat() // heat engine crits will add
+                    + Math.min(15,en.heatFromExternal) // heat from external sources
                     + en.heatBuildup; // heat we're building up this round
             if (en instanceof Mech) {
                 if (en.infernos.isStillBurning()) { // hit with inferno ammo

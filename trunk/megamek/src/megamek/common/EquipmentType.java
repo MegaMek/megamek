@@ -20,6 +20,10 @@
 
 package megamek.common;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -473,5 +477,56 @@ public class EquipmentType {
         if (e != null && this.internalName.equals(e.internalName))
             return true;
         return false;
+    }
+    
+    public static void writeEquipmentDatabase(File f) {
+        try {
+            BufferedWriter w = new BufferedWriter(new FileWriter(f));
+            w.write("Megamek Equipment Database");
+            w.newLine();
+            w.write("This file can be regenerated with java -jar MegaMek.jar -eqdb ");
+            w.write(f.toString());
+            w.newLine();
+            w.write("Type,Tech,Rules,Name,Aliases");
+            w.newLine();
+            for(Enumeration e=EquipmentType.getAllTypes();e.hasMoreElements();) {
+                EquipmentType type = (EquipmentType)e.nextElement();
+                if(type instanceof AmmoType) {
+                    w.write("A,");
+                }
+                else if(type instanceof WeaponType) {
+                    w.write("W,");
+                }
+                else {
+                    w.write("M,");
+                }
+                switch(type.getTechLevel()) {
+                case TechConstants.T_IS_LEVEL_2:
+                case TechConstants.T_IS_LEVEL_2_ALL:
+                    w.write("IS,2,");
+                    break;
+                case TechConstants.T_IS_LEVEL_3:
+                    w.write("IS,3,");
+                    break;
+                case TechConstants.T_CLAN_LEVEL_2:
+                    w.write("Clan,2,");
+                    break;
+                case TechConstants.T_CLAN_LEVEL_3:
+                    w.write("Clan,3,");
+                    break;
+                default:
+                    w.write("Any,1,");
+                    break;
+                }
+                for(Enumeration<String> names = type.getNames();names.hasMoreElements();) {
+                    String name = names.nextElement();
+                    w.write(name + ",");
+                }
+                w.newLine();
+            }
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 }

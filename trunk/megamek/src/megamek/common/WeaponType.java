@@ -531,7 +531,6 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createTwinSmallPulseLaser());
         EquipmentType.addType(createTripleSmallLaser());
         EquipmentType.addType(createTripleMG());
-        EquipmentType.addType(createFenrirSRM4());
         EquipmentType.addType(createBAAutoGL());
         EquipmentType.addType(createBAMagshotGR());
         EquipmentType.addType(createBAISMediumLaser());
@@ -549,11 +548,15 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createBAMediumRecRifle());
         EquipmentType.addType(createBAPlasmaRifle());
         EquipmentType.addType(createBASingleSmallPulseLaser());
+        EquipmentType.addType(createBASRM1());
+        EquipmentType.addType(createBASRM2());
+        EquipmentType.addType(createBASRM3());
         EquipmentType.addType(createBASRM4());
+        EquipmentType.addType(createBASRM5());
+        EquipmentType.addType(createBASRM6());
         EquipmentType.addType(createBASupportPPC());
         EquipmentType.addType(createBAVibroClaws1());
         EquipmentType.addType(createBAVibroClaws2());
-        EquipmentType.addType(createPhalanxSRM4());
         EquipmentType.addType(createBAHeavyMG());
         EquipmentType.addType(createBALightMG());
         EquipmentType.addType(createBACLHeavyMediumLaser());
@@ -566,17 +569,17 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createBAMicroGrenade());
         EquipmentType.addType(createBAGrandMaulerGauss());
         EquipmentType.addType(createBATsunamiGaussRifle());
-        EquipmentType.addType(createCLAdvancedSRM1());
-        EquipmentType.addType(createCLAdvancedSRM2());
-        EquipmentType.addType(createCLAdvancedSRM3());
-        EquipmentType.addType(createCLAdvancedSRM4());
+        EquipmentType.addType(createBAAdvancedSRM1());
+        EquipmentType.addType(createBAAdvancedSRM2());
+        EquipmentType.addType(createBAAdvancedSRM3());
+        EquipmentType.addType(createBAAdvancedSRM4());
         EquipmentType.addType(createBAAdvancedSRM5());
-        EquipmentType.addType(createCLAdvancedSRM6());
-        EquipmentType.addType(createISLAWLauncher());
-        EquipmentType.addType(createISLAW2Launcher());
-        EquipmentType.addType(createISLAW3Launcher());
-        EquipmentType.addType(createISLAW4Launcher());
-        EquipmentType.addType(createISLAW5Launcher());
+        EquipmentType.addType(createBAAdvancedSRM6());
+        EquipmentType.addType(createBARL1());
+        EquipmentType.addType(createBARL2());
+        EquipmentType.addType(createBARL3());
+        EquipmentType.addType(createBARL4());
+        EquipmentType.addType(createBARL5());
         EquipmentType.addType(createISMRM1());
         EquipmentType.addType(createISMRM2());
         EquipmentType.addType(createISMRM3());
@@ -593,7 +596,7 @@ public class WeaponType extends EquipmentType {
 
     }
 
-    public static WeaponType createFlamer() {
+    private static WeaponType createFlamer() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -620,7 +623,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createVehicleFlamer() {
+    private static WeaponType createVehicleFlamer() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -648,7 +651,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLargeLaser() {
+    private static WeaponType createLargeLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -677,7 +680,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createMediumLaser() {
+    private static WeaponType createMediumLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -706,7 +709,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createSmallLaser() {
+    private static WeaponType createSmallLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -735,7 +738,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createPPC() {
+    private static WeaponType createPPC() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -765,7 +768,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createMG() {
+    private static WeaponType createMG() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -791,7 +794,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createAC2() {
+    private static WeaponType createAC2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -821,7 +824,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createAC5() {
+    private static WeaponType createAC5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -851,7 +854,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createAC10() {
+    private static WeaponType createAC10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -881,7 +884,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createAC20() {
+    private static WeaponType createAC20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -911,7 +914,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRM5() {
+    private static WeaponType createLRM5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -939,7 +942,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRM10() {
+    private static WeaponType createLRM10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -967,7 +970,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRM15() {
+    private static WeaponType createLRM15() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -995,7 +998,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRM20() {
+    private static WeaponType createLRM20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1023,7 +1026,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRT5() {
+    private static WeaponType createLRT5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1056,7 +1059,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRT10() {
+    private static WeaponType createLRT10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1089,7 +1092,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRT15() {
+    private static WeaponType createLRT15() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1122,7 +1125,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRT20() {
+    private static WeaponType createLRT20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1155,7 +1158,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLRM5OS() {
+    private static WeaponType createISLRM5OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1183,7 +1186,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLRM10OS() {
+    private static WeaponType createISLRM10OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1211,7 +1214,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLRM15OS() {
+    private static WeaponType createISLRM15OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1239,7 +1242,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLRM20OS() {
+    private static WeaponType createISLRM20OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1267,7 +1270,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISLRT5OS() {
+    private static WeaponType createISLRT5OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1300,7 +1303,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLRT10OS() {
+    private static WeaponType createISLRT10OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1333,7 +1336,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLRT15OS() {
+    private static WeaponType createISLRT15OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1366,7 +1369,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLRT20OS() {
+    private static WeaponType createISLRT20OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1399,7 +1402,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISRL10()  {
+    private static WeaponType createISRL10()  {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1425,7 +1428,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createISRL15()  {
+    private static WeaponType createISRL15()  {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1451,7 +1454,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createISRL20()  {
+    private static WeaponType createISRL20()  {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1478,7 +1481,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
    }
 
-    public static WeaponType createSRM2() {
+    private static WeaponType createSRM2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1505,7 +1508,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createSRM4() {
+    private static WeaponType createSRM4() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1532,7 +1535,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createSRM6() {
+    private static WeaponType createSRM6() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1559,7 +1562,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createSRT2() {
+    private static WeaponType createSRT2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1590,7 +1593,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createSRT4() {
+    private static WeaponType createSRT4() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1621,7 +1624,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createSRT6() {
+    private static WeaponType createSRT6() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -1654,7 +1657,7 @@ public class WeaponType extends EquipmentType {
 
     //Start of Inner Sphere Level2 weapons
 
-    public static WeaponType createISERPPC() {
+    private static WeaponType createISERPPC() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1682,7 +1685,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISERLargeLaser() {
+    private static WeaponType createISERLargeLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1710,7 +1713,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISERMediumLaser() {
+    private static WeaponType createISERMediumLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1738,7 +1741,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISERSmallLaser() {
+    private static WeaponType createISERSmallLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1766,7 +1769,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLargePulseLaser() {
+    private static WeaponType createISLargePulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1796,7 +1799,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMediumPulseLaser() {
+    private static WeaponType createISMediumPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1826,7 +1829,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISSmallPulseLaser() {
+    private static WeaponType createISSmallPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1856,7 +1859,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLargeXPulseLaser() {
+    private static WeaponType createISLargeXPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -1886,7 +1889,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMediumXPulseLaser() {
+    private static WeaponType createISMediumXPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -1916,7 +1919,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISSmallXPulseLaser() {
+    private static WeaponType createISSmallXPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -1946,7 +1949,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLBXAC2() {
+    private static WeaponType createISLBXAC2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1971,7 +1974,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLBXAC5() {
+    private static WeaponType createISLBXAC5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -1996,7 +1999,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLBXAC10() {
+    private static WeaponType createISLBXAC10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2021,7 +2024,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLBXAC20() {
+    private static WeaponType createISLBXAC20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2046,7 +2049,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISTHBLBXAC2() {
+    private static WeaponType createISTHBLBXAC2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -2071,7 +2074,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISTHBLBXAC5() {
+    private static WeaponType createISTHBLBXAC5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -2096,7 +2099,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISTHBLBXAC20() {
+    private static WeaponType createISTHBLBXAC20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -2121,7 +2124,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISGaussRifle() {
+    private static WeaponType createISGaussRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2146,7 +2149,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLightGaussRifle() {
+    private static WeaponType createISLightGaussRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2171,7 +2174,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISHeavyGaussRifle() {
+    private static WeaponType createISHeavyGaussRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2196,7 +2199,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISUltraAC2() {
+    private static WeaponType createISUltraAC2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2223,7 +2226,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISUltraAC5() {
+    private static WeaponType createISUltraAC5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2250,7 +2253,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISUltraAC10() {
+    private static WeaponType createISUltraAC10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2277,7 +2280,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISUltraAC20() {
+    private static WeaponType createISUltraAC20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2304,7 +2307,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISTHBUltraAC2() {
+    private static WeaponType createISTHBUltraAC2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -2331,7 +2334,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISTHBUltraAC10() {
+    private static WeaponType createISTHBUltraAC10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -2358,7 +2361,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISTHBUltraAC20() {
+    private static WeaponType createISTHBUltraAC20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -2385,7 +2388,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISRAC2() {
+    private static WeaponType createISRAC2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2415,7 +2418,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISRAC5() {
+    private static WeaponType createISRAC5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2445,7 +2448,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISStreakSRM2() {
+    private static WeaponType createISStreakSRM2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2471,7 +2474,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISSRM2OS() {
+    private static WeaponType createISSRM2OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -2498,7 +2501,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISSRT2OS() {
+    private static WeaponType createISSRT2OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -2531,7 +2534,7 @@ public class WeaponType extends EquipmentType {
     }
 
 
-    public static WeaponType createISStreakSRM2OS() {
+    private static WeaponType createISStreakSRM2OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2558,7 +2561,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISStreakSRM4() {
+    private static WeaponType createISStreakSRM4() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2584,7 +2587,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISSRM4OS() {
+    private static WeaponType createISSRM4OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -2611,7 +2614,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISSRT4OS() {
+    private static WeaponType createISSRT4OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -2643,7 +2646,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISStreakSRM4OS() {
+    private static WeaponType createISStreakSRM4OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2670,7 +2673,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISStreakSRM6() {
+    private static WeaponType createISStreakSRM6() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2696,7 +2699,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISSRM6OS() {
+    private static WeaponType createISSRM6OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -2723,7 +2726,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISSRT6OS() {
+    private static WeaponType createISSRT6OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -2755,7 +2758,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISStreakSRM6OS() {
+    private static WeaponType createISStreakSRM6OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2782,7 +2785,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM10() {
+    private static WeaponType createISMRM10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2810,7 +2813,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM20() {
+    private static WeaponType createISMRM20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2838,7 +2841,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM30() {
+    private static WeaponType createISMRM30() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2866,7 +2869,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM40() {
+    private static WeaponType createISMRM40() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2894,7 +2897,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM10OS() {
+    private static WeaponType createISMRM10OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2922,7 +2925,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM20OS() {
+    private static WeaponType createISMRM20OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2950,7 +2953,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM30OS() {
+    private static WeaponType createISMRM30OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -2978,7 +2981,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM40OS() {
+    private static WeaponType createISMRM40OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -3006,7 +3009,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISAMS() {
+    private static WeaponType createISAMS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -3031,7 +3034,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLaserAMS() {
+    private static WeaponType createISLaserAMS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -3055,7 +3058,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLaserAMSTHB() {
+    private static WeaponType createISLaserAMSTHB() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -3079,7 +3082,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISNarc() {
+    private static WeaponType createISNarc() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -3105,7 +3108,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISNarcOS() {
+    private static WeaponType createISNarcOS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -3131,7 +3134,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISImprovedNarc() {
+    private static WeaponType createISImprovedNarc() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -3157,7 +3160,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISImprovedNarcOS() {
+    private static WeaponType createISImprovedNarcOS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -3185,7 +3188,7 @@ public class WeaponType extends EquipmentType {
 
     // Start of Clan Level2 weapons
 
-    public static WeaponType createCLERPPC() {
+    private static WeaponType createCLERPPC() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3213,7 +3216,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLERLargeLaser() {
+    private static WeaponType createCLERLargeLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3241,7 +3244,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLERMediumLaser() {
+    private static WeaponType createCLERMediumLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3269,7 +3272,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLERSmallLaser() {
+    private static WeaponType createCLERSmallLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3297,7 +3300,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLERMicroLaser() {
+    private static WeaponType createCLERMicroLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3325,7 +3328,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLFlamer() {
+    private static WeaponType createCLFlamer() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3351,7 +3354,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLVehicleFlamer() {
+    private static WeaponType createCLVehicleFlamer() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3379,7 +3382,7 @@ public class WeaponType extends EquipmentType {
     }
 
 
-    public static WeaponType createCLHeavyLargeLaser() {
+    private static WeaponType createCLHeavyLargeLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3408,7 +3411,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLHeavyMediumLaser() {
+    private static WeaponType createCLHeavyMediumLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3437,7 +3440,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLHeavySmallLaser() {
+    private static WeaponType createCLHeavySmallLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3466,7 +3469,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLMG() {
+    private static WeaponType createCLMG() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3491,7 +3494,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLightMG() {
+    private static WeaponType createCLLightMG() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3516,7 +3519,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLHeavyMG() {
+    private static WeaponType createCLHeavyMG() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3541,7 +3544,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRT5() {
+    private static WeaponType createCLLRT5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3573,7 +3576,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRT10() {
+    private static WeaponType createCLLRT10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3605,7 +3608,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRT15() {
+    private static WeaponType createCLLRT15() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3637,7 +3640,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRT20() {
+    private static WeaponType createCLLRT20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3669,7 +3672,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRT5OS() {
+    private static WeaponType createCLLRT5OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3701,7 +3704,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRT10OS() {
+    private static WeaponType createCLLRT10OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3733,7 +3736,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRT15OS() {
+    private static WeaponType createCLLRT15OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3765,7 +3768,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRT20OS() {
+    private static WeaponType createCLLRT20OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3797,7 +3800,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRT2() {
+    private static WeaponType createCLSRT2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3828,7 +3831,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRT4() {
+    private static WeaponType createCLSRT4() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3859,7 +3862,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRT6() {
+    private static WeaponType createCLSRT6() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3890,7 +3893,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRT2OS() {
+    private static WeaponType createCLSRT2OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3921,7 +3924,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRT4OS() {
+    private static WeaponType createCLSRT4OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3952,7 +3955,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRT6OS() {
+    private static WeaponType createCLSRT6OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -3983,7 +3986,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createCLLRM5() {
+    private static WeaponType createCLLRM5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4010,7 +4013,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRM10() {
+    private static WeaponType createCLLRM10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4037,7 +4040,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRM15() {
+    private static WeaponType createCLLRM15() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4064,7 +4067,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRM20() {
+    private static WeaponType createCLLRM20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4091,7 +4094,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRM5OS() {
+    private static WeaponType createCLLRM5OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4118,7 +4121,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRM10OS() {
+    private static WeaponType createCLLRM10OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4145,7 +4148,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRM15OS() {
+    private static WeaponType createCLLRM15OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4172,7 +4175,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLRM20OS() {
+    private static WeaponType createCLLRM20OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4199,7 +4202,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRM2() {
+    private static WeaponType createCLSRM2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4225,7 +4228,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRM4() {
+    private static WeaponType createCLSRM4() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4251,7 +4254,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRM6() {
+    private static WeaponType createCLSRM6() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4277,7 +4280,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRM2OS() {
+    private static WeaponType createCLSRM2OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4303,7 +4306,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRM4OS() {
+    private static WeaponType createCLSRM4OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4329,7 +4332,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSRM6OS() {
+    private static WeaponType createCLSRM6OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4356,7 +4359,7 @@ public class WeaponType extends EquipmentType {
     }
 
 
-    public static WeaponType createCLLargePulseLaser() {
+    private static WeaponType createCLLargePulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4386,7 +4389,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLMediumPulseLaser() {
+    private static WeaponType createCLMediumPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4416,7 +4419,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSmallPulseLaser() {
+    private static WeaponType createCLSmallPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4446,7 +4449,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLERLargePulseLaser() {
+    private static WeaponType createCLERLargePulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -4476,7 +4479,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLERMediumPulseLaser() {
+    private static WeaponType createCLERMediumPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -4506,7 +4509,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLERSmallPulseLaser() {
+    private static WeaponType createCLERSmallPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -4536,7 +4539,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLMicroPulseLaser() {
+    private static WeaponType createCLMicroPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4565,7 +4568,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLBXAC2() {
+    private static WeaponType createCLLBXAC2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4590,7 +4593,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLBXAC5() {
+    private static WeaponType createCLLBXAC5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4615,7 +4618,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLBXAC10() {
+    private static WeaponType createCLLBXAC10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4640,7 +4643,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLBXAC20() {
+    private static WeaponType createCLLBXAC20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4665,7 +4668,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLGaussRifle() {
+    private static WeaponType createCLGaussRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4690,7 +4693,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLUltraAC2() {
+    private static WeaponType createCLUltraAC2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4717,7 +4720,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLUltraAC5() {
+    private static WeaponType createCLUltraAC5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4744,7 +4747,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLUltraAC10() {
+    private static WeaponType createCLUltraAC10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4771,7 +4774,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLUltraAC20() {
+    private static WeaponType createCLUltraAC20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4798,7 +4801,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLRAC2() {
+    private static WeaponType createCLRAC2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -4826,7 +4829,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLRAC5() {
+    private static WeaponType createCLRAC5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -4854,7 +4857,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLRAC10() {
+    private static WeaponType createCLRAC10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -4882,7 +4885,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLRAC20() {
+    private static WeaponType createCLRAC20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -4910,7 +4913,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakSRM2() {
+    private static WeaponType createCLStreakSRM2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4936,7 +4939,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakSRM4() {
+    private static WeaponType createCLStreakSRM4() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4962,7 +4965,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakSRM6() {
+    private static WeaponType createCLStreakSRM6() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -4988,7 +4991,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakSRM2OS() {
+    private static WeaponType createCLStreakSRM2OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5014,7 +5017,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakSRM4OS() {
+    private static WeaponType createCLStreakSRM4OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5040,7 +5043,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakSRM6OS() {
+    private static WeaponType createCLStreakSRM6OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5066,7 +5069,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLATM3() {
+    private static WeaponType createCLATM3() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5091,7 +5094,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLATM6() {
+    private static WeaponType createCLATM6() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5116,7 +5119,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLATM9() {
+    private static WeaponType createCLATM9() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5141,7 +5144,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLATM12() {
+    private static WeaponType createCLATM12() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5166,7 +5169,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakLRM5() {
+    private static WeaponType createCLStreakLRM5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -5192,7 +5195,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakLRM10() {
+    private static WeaponType createCLStreakLRM10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -5218,7 +5221,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakLRM15() {
+    private static WeaponType createCLStreakLRM15() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -5244,7 +5247,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakLRM20() {
+    private static WeaponType createCLStreakLRM20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -5270,7 +5273,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakLRM5OS() {
+    private static WeaponType createCLStreakLRM5OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -5297,7 +5300,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakLRM10OS() {
+    private static WeaponType createCLStreakLRM10OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -5324,7 +5327,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakLRM15OS() {
+    private static WeaponType createCLStreakLRM15OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -5351,7 +5354,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLStreakLRM20OS() {
+    private static WeaponType createCLStreakLRM20OS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -5378,7 +5381,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createInfRifle() {
+    private static WeaponType createInfRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -5402,7 +5405,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createInfMG() {
+    private static WeaponType createInfMG() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -5425,7 +5428,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createInfSRM() {
+    private static WeaponType createInfSRM() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -5448,7 +5451,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createInfInfernoSRM() {
+    private static WeaponType createInfInfernoSRM() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -5471,7 +5474,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createInfLRM() {
+    private static WeaponType createInfLRM() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -5494,7 +5497,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createInfLaser() {
+    private static WeaponType createInfLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -5518,7 +5521,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createInfFlamer() {
+    private static WeaponType createInfFlamer() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -5542,7 +5545,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLAMS() {
+    private static WeaponType createCLAMS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5567,7 +5570,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLaserAMS() {
+    private static WeaponType createCLLaserAMS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -5591,7 +5594,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLNarc() {
+    private static WeaponType createCLNarc() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5617,7 +5620,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLNarcOS() {
+    private static WeaponType createCLNarcOS() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5644,7 +5647,7 @@ public class WeaponType extends EquipmentType {
     }
 
     // Anti-Mek attacks
-    public static WeaponType createLegAttack() {
+    private static WeaponType createLegAttack() {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "Leg Attack";
@@ -5666,7 +5669,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createSwarmMek() {
+    private static WeaponType createSwarmMek() {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "Swarm Mek";
@@ -5688,7 +5691,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createStopSwarm() {
+    private static WeaponType createStopSwarm() {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "Stop Swarm Attack";
@@ -5711,7 +5714,7 @@ public class WeaponType extends EquipmentType {
     }
 
     // Start BattleArmor weapons
-    public static WeaponType createBAMG() {
+    private static WeaponType createBAMG() {
         WeaponType weapon = new WeaponType();
 
         weapon.name = "Machine Gun";
@@ -5734,7 +5737,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBASingleMG() {
+    private static WeaponType createBASingleMG() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -5757,7 +5760,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBASingleFlamer() {
+    private static WeaponType createBASingleFlamer() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -5779,7 +5782,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBAFlamer() {
+    private static WeaponType createBAFlamer() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -5802,7 +5805,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBASmallLaser() {
+    private static WeaponType createBASmallLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -5825,7 +5828,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBACLERSmallLaser() {
+    private static WeaponType createBACLERSmallLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5849,12 +5852,13 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLAdvancedSRM2() {
+    private static WeaponType createBAAdvancedSRM2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Advanced SRM 2";
         weapon.setInternalName("CLAdvancedSRM2");
+        weapon.addLookupName("BA-Advanced SRM-2");
         weapon.addLookupName("Clan Advanced SRM-2");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
@@ -5876,7 +5880,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBATwinFlamers() {
+    private static WeaponType createBATwinFlamers() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -5901,7 +5905,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBAInfernoSRM() {
+    private static WeaponType createBAInfernoSRM() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -5924,7 +5928,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBACLMicroPulseLaser() {
+    private static WeaponType createBACLMicroPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5948,7 +5952,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBAMicroBomb() {
+    private static WeaponType createBAMicroBomb() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -5971,7 +5975,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBACLERMicroLaser() {
+    private static WeaponType createBACLERMicroLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -5994,7 +5998,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createCLTorpedoLRM5() {
+    private static WeaponType createCLTorpedoLRM5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -6020,7 +6024,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBAISMediumPulseLaser() {
+    private static WeaponType createBAISMediumPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -6044,7 +6048,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createTwinSmallPulseLaser() {
+    private static WeaponType createTwinSmallPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -6068,7 +6072,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createTripleSmallLaser() {
+    private static WeaponType createTripleSmallLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -6091,7 +6095,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createTripleMG() {
+    private static WeaponType createTripleMG() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -6114,30 +6118,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createFenrirSRM4() {
-        WeaponType weapon = new WeaponType();
-
-        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "Fenrir SRM 4";
-        weapon.setInternalName("FenrirSRM4");
-        weapon.addLookupName("Fenrir SRM-4");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.extremeRange = 12;
-        weapon.tonnage = 0.0f;
-        weapon.criticals = 0;
-        weapon.flags |= F_DOUBLE_HITS | F_MISSILE;
-        weapon.bv = 0;
-
-        return weapon;
-    }
-    public static WeaponType createBAAutoGL() {
+    private static WeaponType createBAAutoGL() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -6161,7 +6142,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBAMagshotGR() {
+    private static WeaponType createBAMagshotGR() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -6185,7 +6166,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
 
     }
-    public static WeaponType createISMagshotGR() {
+    private static WeaponType createISMagshotGR() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -6210,7 +6191,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLMagshotGR() {
+    private static WeaponType createCLMagshotGR() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -6236,7 +6217,7 @@ public class WeaponType extends EquipmentType {
     }
 
 
-    public static WeaponType createBAISMediumLaser() {
+    private static WeaponType createBAISMediumLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -6259,7 +6240,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBAISERSmallLaser() {
+    private static WeaponType createBAISERSmallLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -6282,7 +6263,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBACompactNARC() {
+    private static WeaponType createBACompactNARC() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -6304,7 +6285,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createSlothSmallLaser() {
+    private static WeaponType createSlothSmallLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -6327,7 +6308,7 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-    public static WeaponType createBAMineLauncher() {
+    private static WeaponType createBAMineLauncher() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -6353,7 +6334,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT1() {
+    private static WeaponType createCLPROLRT1() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 1";
@@ -6380,7 +6361,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT2() {
+    private static WeaponType createCLPROLRT2() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 2";
@@ -6407,7 +6388,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT3() {
+    private static WeaponType createCLPROLRT3() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 3";
@@ -6434,7 +6415,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT4() {
+    private static WeaponType createCLPROLRT4() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 4";
@@ -6461,34 +6442,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT5() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "LRT 5";
-        weapon.setInternalName("CLCLLRTorpedo5");
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=5;
-        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 0;
-        weapon.mediumRange = 0;
-        weapon.longRange = 0;
-        weapon.extremeRange = 0;
-        weapon.waterShortRange = 7;
-        weapon.waterMediumRange = 14;
-        weapon.waterLongRange = 21;
-        weapon.waterExtremeRange = 28;
-        weapon.tonnage = 1f;
-        weapon.criticals=0;
-        weapon.bv = 55;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRT6() {
+    private static WeaponType createCLPROLRT6() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 6";
@@ -6515,7 +6469,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT7() {
+    private static WeaponType createCLPROLRT7() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 7";
@@ -6542,7 +6496,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT8() {
+    private static WeaponType createCLPROLRT8() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 8";
@@ -6569,7 +6523,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT9() {
+    private static WeaponType createCLPROLRT9() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 9";
@@ -6596,34 +6550,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT10() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "LRT 10";
-        weapon.setInternalName("CLLRTorpedo10");
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=10;
-        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 0;
-        weapon.mediumRange = 0;
-        weapon.longRange = 0;
-        weapon.extremeRange = 0;
-        weapon.waterShortRange = 7;
-        weapon.waterMediumRange = 14;
-        weapon.waterLongRange = 21;
-        weapon.waterExtremeRange = 28;
-        weapon.tonnage = 2f;
-        weapon.criticals=0;
-        weapon.bv = 109;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRT11() {
+    private static WeaponType createCLPROLRT11() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 11";
@@ -6650,7 +6577,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT12() {
+    private static WeaponType createCLPROLRT12() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 12";
@@ -6677,7 +6604,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT13() {
+    private static WeaponType createCLPROLRT13() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 13";
@@ -6704,7 +6631,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT14() {
+    private static WeaponType createCLPROLRT14() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 14";
@@ -6731,34 +6658,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT15() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "LRT 15";
-        weapon.setInternalName("CLLRTorpedo15");
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=15;
-        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 0;
-        weapon.mediumRange = 0;
-        weapon.longRange = 0;
-        weapon.extremeRange = 0;
-        weapon.waterShortRange = 7;
-        weapon.waterMediumRange = 14;
-        weapon.waterLongRange = 21;
-        weapon.waterExtremeRange = 28;
-        weapon.tonnage = 3f;
-        weapon.criticals=0;
-        weapon.bv = 164;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRT16() {
+    private static WeaponType createCLPROLRT16() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 16";
@@ -6785,7 +6685,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT17() {
+    private static WeaponType createCLPROLRT17() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 17";
@@ -6812,7 +6712,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT18() {
+    private static WeaponType createCLPROLRT18() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 18";
@@ -6839,7 +6739,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT19() {
+    private static WeaponType createCLPROLRT19() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRT 19";
@@ -6866,33 +6766,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRT20() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "LRT 20";
-        weapon.setInternalName("CLLRTorpedo20");
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=20;
-        weapon.ammoType = AmmoType.T_LRM_TORPEDO;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 0;
-        weapon.mediumRange = 0;
-        weapon.longRange = 0;
-        weapon.extremeRange = 0;
-        weapon.waterShortRange = 7;
-        weapon.waterMediumRange = 14;
-        weapon.waterLongRange = 21;
-        weapon.waterExtremeRange = 28;
-        weapon.tonnage = 4f;
-        weapon.criticals=0;
-        weapon.bv = 220;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-    public static WeaponType createCLPROSRM1() {
+    private static WeaponType createCLPROSRM1() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "SRM 1";
@@ -6913,28 +6787,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROSRM2() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRM 2";
-        weapon.setInternalName("CLSRM2");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.extremeRange = 12;
-        weapon.tonnage = 0.5f;
-        weapon.criticals = 0;
-        weapon.bv = 21;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROSRM3() {
+    private static WeaponType createCLPROSRM3() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "SRM 3";
@@ -6955,28 +6808,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROSRM4() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRM 4";
-        weapon.setInternalName("CLSRM4");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 4;
-        weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.extremeRange = 12;
-        weapon.tonnage = 1f;
-        weapon.criticals = 0;
-        weapon.bv = 39;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROSRM5() {
+    private static WeaponType createCLPROSRM5() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "SRM 5";
@@ -6997,28 +6829,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROSRM6() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRM 6";
-        weapon.setInternalName("CLSRM6");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 6;
-        weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.extremeRange = 12;
-        weapon.tonnage = 1.5f;
-        weapon.criticals = 0;
-        weapon.bv = 59;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM1() {
+    private static WeaponType createCLPROStreakSRM1() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Streak SRM 1";
@@ -7039,28 +6850,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROStreakSRM2() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "Streak SRM 2";
-        weapon.setInternalName("CLStreakSRM2");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.extremeRange = 16;
-        weapon.tonnage = 1f;
-        weapon.criticals = 0;
-        weapon.bv = 40;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM3() {
+    private static WeaponType createCLPROStreakSRM3() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Streak SRM 3";
@@ -7081,28 +6871,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROStreakSRM4() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "Streak SRM 4";
-        weapon.setInternalName("CLStreakSRM4");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 4;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.extremeRange = 16;
-        weapon.tonnage = 2f;
-        weapon.criticals = 0;
-        weapon.bv = 79;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROStreakSRM5() {
+    private static WeaponType createCLPROStreakSRM5() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Streak SRM 5";
@@ -7123,28 +6892,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROStreakSRM6() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "Streak SRM 6";
-        weapon.setInternalName("CLStreakSRM6");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 6;
-        weapon.ammoType = AmmoType.T_SRM_STREAK;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 4;
-        weapon.mediumRange = 8;
-        weapon.longRange = 12;
-        weapon.extremeRange = 16;
-        weapon.tonnage = 3f;
-        weapon.criticals = 0;
-        weapon.bv = 119;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-    
-    public static WeaponType createCLPROLRM1() {
+    private static WeaponType createCLPROLRM1() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 1";
@@ -7167,7 +6915,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM2() {
+    private static WeaponType createCLPROLRM2() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 2";
@@ -7190,7 +6938,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM3() {
+    private static WeaponType createCLPROLRM3() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 3";
@@ -7213,7 +6961,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM4() {
+    private static WeaponType createCLPROLRM4() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 4";
@@ -7236,30 +6984,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM5() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "LRM 5";
-        weapon.setInternalName("CLLRM5");
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=5;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.extremeRange = 28;
-        weapon.tonnage = 1f;
-        weapon.criticals=0;
-        weapon.bv = 55;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM6() {
+    private static WeaponType createCLPROLRM6() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 6";
@@ -7282,7 +7007,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM7() {
+    private static WeaponType createCLPROLRM7() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 7";
@@ -7305,7 +7030,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM8() {
+    private static WeaponType createCLPROLRM8() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 8";
@@ -7328,7 +7053,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM9() {
+    private static WeaponType createCLPROLRM9() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 9";
@@ -7351,30 +7076,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM10() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "LRM 10";
-        weapon.setInternalName("CLLRM10");
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=10;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.extremeRange = 28;
-        weapon.tonnage = 2f;
-        weapon.criticals=0;
-        weapon.bv = 109;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM11() {
+    private static WeaponType createCLPROLRM11() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 11";
@@ -7397,7 +7099,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM12() {
+    private static WeaponType createCLPROLRM12() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 12";
@@ -7420,7 +7122,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM13() {
+    private static WeaponType createCLPROLRM13() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 13";
@@ -7443,7 +7145,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM14() {
+    private static WeaponType createCLPROLRM14() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 14";
@@ -7466,30 +7168,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM15() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "LRM 15";
-        weapon.setInternalName("CLLRM15");
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=15;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.extremeRange = 28;
-        weapon.tonnage = 3f;
-        weapon.criticals=0;
-        weapon.bv = 164;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-
-    public static WeaponType createCLPROLRM16() {
+    private static WeaponType createCLPROLRM16() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 16";
@@ -7512,7 +7191,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM17() {
+    private static WeaponType createCLPROLRM17() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 17";
@@ -7535,7 +7214,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM18() {
+    private static WeaponType createCLPROLRM18() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 18";
@@ -7558,7 +7237,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM19() {
+    private static WeaponType createCLPROLRM19() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "LRM 19";
@@ -7581,29 +7260,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROLRM20() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "LRM 20";
-        weapon.setInternalName("CLLRM20");
-        weapon.heat = 0;
-        weapon.damage=DAMAGE_MISSILE;
-        weapon.rackSize=20;
-        weapon.ammoType = AmmoType.T_LRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 7;
-        weapon.mediumRange=14;
-        weapon.longRange =21;
-        weapon.extremeRange = 28;
-        weapon.tonnage = 4f;
-        weapon.criticals=0;
-        weapon.bv = 220;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        weapon.setModes(new String[] {"", "Indirect"});
-
-        return weapon;
-    }
-    public static WeaponType createCLPROSRT1() {
+    private static WeaponType createCLPROSRT1() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "SRT 1";
@@ -7624,28 +7281,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROSRT2() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRT 2";
-        weapon.setInternalName("CLSRTorpedo2");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.extremeRange = 12;
-        weapon.tonnage = 0.5f;
-        weapon.criticals = 0;
-        weapon.bv = 21;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROSRT3() {
+    private static WeaponType createCLPROSRT3() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "SRT 3";
@@ -7666,28 +7302,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROSRT4() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRT 4";
-        weapon.setInternalName("CLSRTorpedo4");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 4;
-        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.extremeRange = 12;
-        weapon.tonnage = 1f;
-        weapon.criticals = 0;
-        weapon.bv = 39;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createCLPROSRT5() {
+    private static WeaponType createCLPROSRT5() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "SRT 5";
@@ -7708,28 +7323,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPROSRT6() {
-        WeaponType weapon = new WeaponType();
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "SRT 6";
-        weapon.setInternalName("CLSRTorpedo6");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 6;
-        weapon.ammoType = AmmoType.T_SRM_TORPEDO;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.extremeRange = 12;
-        weapon.tonnage = 1.5f;
-        weapon.criticals = 0;
-        weapon.bv = 59;
-        weapon.flags |= F_PROTOMECH | F_MISSILE;
-        return weapon;
-    }
-
-    public static WeaponType createISArrowIVSystem() {
+    private static WeaponType createISArrowIVSystem() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
         weapon.name = "Arrow IV";
@@ -7755,7 +7349,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLArrowIVSystem() {
+    private static WeaponType createCLArrowIVSystem() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Arrow IV";
@@ -7781,7 +7375,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLongTom() {
+    private static WeaponType createISLongTom() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
         weapon.name = "Long Tom";
@@ -7806,7 +7400,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLongTom() {
+    private static WeaponType createCLLongTom() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Long Tom";
@@ -7831,7 +7425,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISSniper() {
+    private static WeaponType createISSniper() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
         weapon.name = "Sniper";
@@ -7856,7 +7450,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLSniper() {
+    private static WeaponType createCLSniper() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Sniper";
@@ -7881,7 +7475,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISThumper() {
+    private static WeaponType createISThumper() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
         weapon.name = "Thumper";
@@ -7906,7 +7500,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLThumper() {
+    private static WeaponType createCLThumper() {
         WeaponType weapon = new WeaponType();
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Thumper";
@@ -7933,7 +7527,7 @@ public class WeaponType extends EquipmentType {
 
     // Combat operations weapons.
 
-    public static WeaponType createBAAdvancedSRM5() {
+    private static WeaponType createBAAdvancedSRM5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -7959,7 +7553,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBABearhunterAC() {
+    private static WeaponType createBABearhunterAC() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -7984,7 +7578,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBATwinBearhunterAC() {
+    private static WeaponType createBATwinBearhunterAC() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -8009,7 +7603,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBACLMediumPulseLaser() {
+    private static WeaponType createBACLMediumPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -8038,7 +7632,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAIncendiaryNeedler() {
+    private static WeaponType createBAIncendiaryNeedler() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8062,7 +7656,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBALightRecRifle() {
+    private static WeaponType createBALightRecRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8086,7 +7680,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAKingDavidLightGaussRifle() {
+    private static WeaponType createBAKingDavidLightGaussRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8110,7 +7704,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAMediumRecRifle() {
+    private static WeaponType createBAMediumRecRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8134,7 +7728,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAPlasmaRifle() {
+    private static WeaponType createBAPlasmaRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8158,7 +7752,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBASingleSmallPulseLaser() {
+    private static WeaponType createBASingleSmallPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8186,13 +7780,14 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBASRM4() {
+    private static WeaponType createBASRM1() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "SRM 4";
-        weapon.setInternalName("BA-SRM4");
-        weapon.addLookupName("BA-SRM4");
+        weapon.name = "SRM 1";
+        weapon.setInternalName("BA-SRM1");
+        weapon.addLookupName("BASRM1");
+        weapon.addLookupName("BASRM-1");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 4;
@@ -8209,7 +7804,127 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBASupportPPC() {
+    private static WeaponType createBASRM2() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "SRM 2";
+        weapon.setInternalName("BA-SRM2");
+        weapon.addLookupName("BASRM2");
+        weapon.addLookupName("BASRM-2");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    private static WeaponType createBASRM3() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "SRM 3";
+        weapon.setInternalName("BA-SRM3");
+        weapon.addLookupName("BASRM3");
+        weapon.addLookupName("BASRM-3");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    private static WeaponType createBASRM4() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "SRM 4";
+        weapon.setInternalName("BA-SRM4");
+        weapon.addLookupName("BASRM4");
+        weapon.addLookupName("BASRM-4");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    private static WeaponType createBASRM5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "SRM 5";
+        weapon.setInternalName("BA-SRM5");
+        weapon.addLookupName("BASRM5");
+        weapon.addLookupName("BASRM-5");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    private static WeaponType createBASRM6() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "SRM 6";
+        weapon.setInternalName("BA-SRM6");
+        weapon.addLookupName("BASRM6");
+        weapon.addLookupName("BASRM-6");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 4;
+        weapon.ammoType = AmmoType.T_SRM;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.flags |= F_MISSILE;
+
+        return weapon;
+    }
+
+    private static WeaponType createBASupportPPC() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8233,7 +7948,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAVibroClaws1() {
+    private static WeaponType createBAVibroClaws1() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8259,7 +7974,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAVibroClaws2() {
+    private static WeaponType createBAVibroClaws2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8284,33 +7999,10 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
-
-    public static WeaponType createPhalanxSRM4() {
-        WeaponType weapon = new WeaponType();
-
-        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "Phalanx SRM 4";
-        weapon.setInternalName("PhalanxSRM4");
-        weapon.addLookupName("Phalanx SRM4");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_SRM;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 3;
-        weapon.mediumRange = 6;
-        weapon.longRange = 9;
-        weapon.extremeRange = 12;
-        weapon.tonnage = 0.0f;
-        weapon.criticals = 0;
-        weapon.flags |= F_DOUBLE_HITS | F_MISSILE;
-
-        return weapon;
-    }
     
     // War Of 3039 Prototype weapons
     
-    public static WeaponType createISLBXAC10Prototype() {
+    private static WeaponType createISLBXAC10Prototype() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -8335,7 +8027,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISGaussRiflePrototype() {
+    private static WeaponType createISGaussRiflePrototype() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -8360,7 +8052,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISERLargeLaserPrototype() {
+    private static WeaponType createISERLargeLaserPrototype() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -8389,7 +8081,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISMediumPulseLaserPrototype() {
+    private static WeaponType createISMediumPulseLaserPrototype() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -8419,7 +8111,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISUltraAC5Prototype() {
+    private static WeaponType createISUltraAC5Prototype() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -8446,7 +8138,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISTAG() {
+    private static WeaponType createISTAG() {
         WeaponType weapon = new WeaponType();
         
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8474,7 +8166,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLightTAG() {
+    private static WeaponType createISLightTAG() {
         WeaponType weapon = new WeaponType();
         
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8502,7 +8194,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLTAG() {
+    private static WeaponType createCLTAG() {
         WeaponType weapon = new WeaponType();
                 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -8530,7 +8222,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLLightTAG() {
+    private static WeaponType createCLLightTAG() {
         WeaponType weapon = new WeaponType();
         
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -8558,7 +8250,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createC3M() {
+    private static WeaponType createC3M() {
         WeaponType weapon = new WeaponType();
         
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8587,7 +8279,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createBAHeavyRecRifle() {
+    private static WeaponType createBAHeavyRecRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8611,7 +8303,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAHeavyMG() {
+    private static WeaponType createBAHeavyMG() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -8635,7 +8327,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBALightMG() {
+    private static WeaponType createBALightMG() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -8659,7 +8351,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBACLHeavyMediumLaser() {
+    private static WeaponType createBACLHeavyMediumLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -8688,7 +8380,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBACLHeavySmallLaser() {
+    private static WeaponType createBACLHeavySmallLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -8717,7 +8409,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBACLERMediumLaser() {
+    private static WeaponType createBACLERMediumLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -8741,7 +8433,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBACLSmallPulseLaser() {
+    private static WeaponType createBACLSmallPulseLaser() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -8770,7 +8462,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAGrandMaulerGauss() {
+    private static WeaponType createBAGrandMaulerGauss() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8794,7 +8486,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBATsunamiGaussRifle() {
+    private static WeaponType createBATsunamiGaussRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8818,7 +8510,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAMicroGrenade() {
+    private static WeaponType createBAMicroGrenade() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8843,7 +8535,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAISHeavyMortar() {
+    private static WeaponType createBAISHeavyMortar() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8868,7 +8560,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createBAISLightMortar() {
+    private static WeaponType createBAISLightMortar() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -8893,12 +8585,13 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLAdvancedSRM1() {
+    private static WeaponType createBAAdvancedSRM1() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Advanced SRM 1";
         weapon.setInternalName("CLAdvancedSRM1");
+        weapon.addLookupName("BA-Advanced SRM-1");
         weapon.addLookupName("Clan Advanced SRM-1");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
@@ -8920,12 +8613,13 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLAdvancedSRM3() {
+    private static WeaponType createBAAdvancedSRM3() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Advanced SRM 3";
         weapon.setInternalName("CLAdvancedSRM3");
+        weapon.addLookupName("BA-Advanced SRM-3");
         weapon.addLookupName("Clan Advanced SRM-3");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
@@ -8947,12 +8641,13 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLAdvancedSRM4() {
+    private static WeaponType createBAAdvancedSRM4() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Advanced SRM 4";
         weapon.setInternalName("CLAdvancedSRM4");
+        weapon.addLookupName("BA-Advanced SRM-4");
         weapon.addLookupName("Clan Advanced SRM-4");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
@@ -8974,12 +8669,13 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLAdvancedSRM6() {
+    private static WeaponType createBAAdvancedSRM6() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
         weapon.name = "Advanced SRM 6";
         weapon.setInternalName("CLAdvancedSRM6");
+        weapon.addLookupName("BA-Advanced SRM-6");
         weapon.addLookupName("Clan Advanced SRM-6");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
@@ -9001,12 +8697,13 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLAWLauncher() {
+    private static WeaponType createBARL1() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "LAW Launcher";
-        weapon.setInternalName(weapon.name);
+        weapon.name = "RL 1";
+        weapon.setInternalName("RL1");
+        weapon.addLookupName("LAW Launcher");
         weapon.addLookupName("ISLAW");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
@@ -9029,12 +8726,13 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLAW2Launcher() {
+    private static WeaponType createBARL2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "LAW 2 Launcher";
-        weapon.setInternalName(weapon.name);
+        weapon.name = "RL 2";
+        weapon.setInternalName("RL2");
+        weapon.addLookupName("LAW 2 Launcher");
         weapon.addLookupName("ISLAW2");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
@@ -9057,12 +8755,13 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLAW3Launcher() {
+    private static WeaponType createBARL3() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "LAW 3 Launcher";
-        weapon.setInternalName(weapon.name);
+        weapon.name = "RL 3";
+        weapon.setInternalName("RL3");
+        weapon.addLookupName("LAW 3 Launcher");
         weapon.addLookupName("ISLAW3");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
@@ -9085,12 +8784,13 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLAW4Launcher() {
+    private static WeaponType createBARL4() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "LAW 4 Launcher";
-        weapon.setInternalName(weapon.name);
+        weapon.name = "RL 4";
+        weapon.setInternalName("RL4");
+        weapon.addLookupName("LAW 4 Launcher");
         weapon.addLookupName("ISLAW4");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
@@ -9113,12 +8813,13 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLAW5Launcher() {
+    private static WeaponType createBARL5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "LAW 5 Launcher";
-        weapon.setInternalName(weapon.name);
+        weapon.name = "RL 5";
+        weapon.setInternalName("RL5");
+        weapon.addLookupName("LAW 5 Launcher");
         weapon.addLookupName("ISLAW5");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
@@ -9141,7 +8842,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM1() {
+    private static WeaponType createISMRM1() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -9169,7 +8870,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM2() {
+    private static WeaponType createISMRM2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -9197,7 +8898,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM3() {
+    private static WeaponType createISMRM3() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -9225,7 +8926,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM4() {
+    private static WeaponType createISMRM4() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -9253,7 +8954,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMRM5() {
+    private static WeaponType createISMRM5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -9281,7 +8982,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRM1() {
+    private static WeaponType createLRM1() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -9308,7 +9009,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRM2() {
+    private static WeaponType createLRM2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -9335,7 +9036,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRM3() {
+    private static WeaponType createLRM3() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -9362,7 +9063,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createLRM4() {
+    private static WeaponType createLRM4() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -9389,7 +9090,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createBADavidGaussRifle() {
+    private static WeaponType createBADavidGaussRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -9414,7 +9115,7 @@ public class WeaponType extends EquipmentType {
     
     }
 
-    public static WeaponType createISLAC2() {
+    private static WeaponType createISLAC2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9444,7 +9145,7 @@ public class WeaponType extends EquipmentType {
     }
 
 
-    public static WeaponType createISLAC5() {
+    private static WeaponType createISLAC5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9473,7 +9174,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISHeavyFlamer() {
+    private static WeaponType createISHeavyFlamer() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9501,7 +9202,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLPlasmaRifle() {
+    private static WeaponType createCLPlasmaRifle() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
@@ -9533,7 +9234,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISExtendedLRM5() {
+    private static WeaponType createISExtendedLRM5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9562,7 +9263,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISExtendedLRM10() {
+    private static WeaponType createISExtendedLRM10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9591,7 +9292,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISExtendedLRM15() {
+    private static WeaponType createISExtendedLRM15() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9620,7 +9321,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISExtendedLRM20() {
+    private static WeaponType createISExtendedLRM20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9649,7 +9350,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISThunderbolt5() {
+    private static WeaponType createISThunderbolt5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9677,7 +9378,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISThunderbolt10() {
+    private static WeaponType createISThunderbolt10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9706,7 +9407,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISThunderbolt15() {
+    private static WeaponType createISThunderbolt15() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9735,7 +9436,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISThunderbolt20() {
+    private static WeaponType createISThunderbolt20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9764,7 +9465,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISHERPPC() {
+    private static WeaponType createISHERPPC() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9792,7 +9493,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISSNPPC() {
+    private static WeaponType createISSNPPC() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9823,7 +9524,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISRailGun() {
+    private static WeaponType createISRailGun() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9848,7 +9549,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createFireExtinguisher() {
+    private static WeaponType createFireExtinguisher() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9873,7 +9574,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISHeavyPPC() {
+    private static WeaponType createISHeavyPPC() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9905,7 +9606,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISLightPPC() {
+    private static WeaponType createISLightPPC() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9937,7 +9638,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISRAC10() {
+    private static WeaponType createISRAC10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9967,7 +9668,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISRAC20() {
+    private static WeaponType createISRAC20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -9997,7 +9698,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISLAC10() {
+    private static WeaponType createISLAC10() {
         WeaponType weapon = new WeaponType();
     
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10024,7 +9725,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISLAC20() {
+    private static WeaponType createISLAC20() {
         WeaponType weapon = new WeaponType();
     
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10050,7 +9751,7 @@ public class WeaponType extends EquipmentType {
     
         return weapon;
     }
-    public static WeaponType createISStreakMRM10() {
+    private static WeaponType createISStreakMRM10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10078,7 +9779,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISStreakMRM20() {
+    private static WeaponType createISStreakMRM20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10106,7 +9807,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISStreakMRM30() {
+    private static WeaponType createISStreakMRM30() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10134,7 +9835,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISStreakMRM40() {
+    private static WeaponType createISStreakMRM40() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10162,7 +9863,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
     
-    public static WeaponType createISHawkSRM2() {
+    private static WeaponType createISHawkSRM2() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10188,7 +9889,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISHawkSRM4() {
+    private static WeaponType createISHawkSRM4() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10214,7 +9915,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISHawkSRM6() {
+    private static WeaponType createISHawkSRM6() {
         WeaponType weapon = new WeaponType();
         
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10240,7 +9941,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISPXLRM5() {
+    private static WeaponType createISPXLRM5() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10268,7 +9969,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISPXLRM10() {
+    private static WeaponType createISPXLRM10() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10296,7 +9997,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISPXLRM15() {
+    private static WeaponType createISPXLRM15() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10324,7 +10025,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISPXLRM20() {
+    private static WeaponType createISPXLRM20() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10352,7 +10053,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createISMPod() {
+    private static WeaponType createISMPod() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -10378,7 +10079,7 @@ public class WeaponType extends EquipmentType {
         return weapon;
     }
 
-    public static WeaponType createCLMPod() {
+    private static WeaponType createCLMPod() {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;

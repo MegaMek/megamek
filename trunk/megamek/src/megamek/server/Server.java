@@ -36,6 +36,7 @@ import megamek.common.FuelTank;
 import megamek.common.Game;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
+import megamek.common.HexTarget;
 import megamek.common.HitData;
 import megamek.common.IArmorState;
 import megamek.common.IBoard;
@@ -5151,6 +5152,32 @@ public class Server implements Runnable {
         addReport(r);
 
         switch(t.getTargetType()) {
+        case Targetable.TYPE_HEX_ARTILLERY:
+            //used for BA inferno explosion
+            for(Enumeration<Entity> entities = game.getEntities(t.getPosition());entities.hasMoreElements();) {
+                Entity e = entities.nextElement();
+                if(e.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV)) {
+                    r = new Report(6685);
+                    r.subject = e.getId();
+                    r.addDesc(e);
+                    addReport(r);
+                    deliverInfernoMissiles(ae, e, missiles);
+                } else {
+                    int roll = Compute.d6();
+                    r = new Report(3560);
+                    r.subject = e.getId();
+                    r.addDesc(e);
+                    r.add(roll);
+                    addReport(r);
+                    if(roll>=5) {
+                        deliverInfernoMissiles(ae, e, missiles);
+                    }
+                }
+            }
+            if(game.getBoard().getBuildingAt(t.getPosition()) != null) {
+                addReport(damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2*missiles));
+            }
+            //fall through
         case Targetable.TYPE_HEX_CLEAR:
         case Targetable.TYPE_HEX_IGNITE:
             tryClearHex(t.getPosition(), missiles * 4, ae.getId());
@@ -8458,6 +8485,12 @@ public class Server implements Runnable {
                 }
             }
 
+            // Advanced SRMs get a +1 bonus
+            if ( usesAmmo &&
+                 atype.getAmmoType() == AmmoType.T_SRM_ADVANCED) {
+                nSalvoBonus += 1;
+            }
+
             // If dealing with Inferno rounds set damage to zero and reset
             // all salvo bonuses (cannot mix with other special munitions).
             if (bInferno) {
@@ -8555,15 +8588,6 @@ public class Server implements Runnable {
                     hits = swarmMissilesLeft;
                 }
                 swarmMissilesNowLeft = swarmMissilesLeft - hits;
-            }
-
-            // Advanced SRMs may get additional missiles
-            if ( usesAmmo &&
-                 atype.getAmmoType() == AmmoType.T_SRM_ADVANCED) {
-                int tmp = wtype.getRackSize() * platoon.getShootingStrength();
-                if (hits%2 == 1 && hits < tmp) {
-                    hits++;
-                }
             }
 
         } else if (usesAmmo
@@ -9150,10 +9174,15 @@ public class Server implements Runnable {
                     }
                 }
 
-                // Special weapons do criticals instead of damage.
+                // Special weapons do criticals as well as damage.
                 if ( nDamPerHit == WeaponType.DAMAGE_SPECIAL ) {
                     // Do criticals.
-                    //String specialDamage = criticalEntity( entityTarget, hit.getLocation() );
+                    hit.setEffect(HitData.EFFECT_CRITICAL | hit.getEffect());
+                    int damage = 4;
+                    if (ae instanceof BattleArmor)
+                        damage += ((BattleArmor)ae).getVibroClawDamage();
+                    addReport(damageEntity(entityTarget, hit, damage, false, 0, false, false, throughFront));
+/*                    //String specialDamage = criticalEntity( entityTarget, hit.getLocation() );
                     Vector specialDamageReport = criticalEntity( entityTarget, hit.getLocation() );
 
                     // Replace "no effect" results with 4 points of damage.
@@ -9176,7 +9205,7 @@ public class Server implements Runnable {
                     }
 
                     // Report the result
-                    addReport( specialDamageReport);
+                    addReport( specialDamageReport);*/
                 }
                 else if(toHit.getHitTable() == ToHitData.HIT_PARTIAL_COVER &&
                   entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), toHit.getSideTable())) {
@@ -12844,28 +12873,29 @@ public class Server implements Runnable {
         }
     }
 
-    public Vector damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
+    private Vector damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
         return damageEntity(te, hit, damage, ammoExplosion, 0, false, false);
     }
 
+    /**
+     * public only because the scenario loader uses it
+     * @param te Entity that should be damaged
+     * @param hit Hit location
+     * @param damage amount of damage
+     * @return
+     */
     public Vector damageEntity(Entity te, HitData hit, int damage) {
         return damageEntity(te, hit, damage, false, 0, false, false);
     }
 
-    public Vector damageEntity(Entity te, HitData hit, int damage,
-                               boolean ammoExplosion, int bFrag) {
-        return damageEntity(te, hit, damage, ammoExplosion, bFrag,
-                            false, false);
-    }
-
-    public Vector damageEntity(Entity te, HitData hit, int damage,
+    private Vector damageEntity(Entity te, HitData hit, int damage,
                                boolean ammoExplosion, int bFrag,
                                boolean damageIS) {
         return damageEntity(te, hit, damage, ammoExplosion, bFrag,
                             damageIS, false);
     }
 
-    public Vector damageEntity(Entity te, HitData hit, int damage,
+    private Vector damageEntity(Entity te, HitData hit, int damage,
                                boolean ammoExplosion, int bFrag,
                                boolean damageIS, boolean areaSatArty) {
         return damageEntity (te, hit, damage, ammoExplosion, bFrag, damageIS,
@@ -13545,6 +13575,42 @@ public class Server implements Runnable {
                                 passHit.setEffect(HitData.EFFECT_CRITICAL); //ensures a kill
                                 if(passenger.getInternal(passHit) > 0) {
                                     vDesc.addAll(damageEntity(passenger, passHit, damage));
+                                }
+                            }
+                        }
+                        
+                        // BA inferno explosions
+                        if(te instanceof BattleArmor) {
+                            int infernos = 0;
+                            for(Mounted m:te.getEquipment()) {
+                                if(m.getType() instanceof AmmoType) {
+                                    AmmoType at = (AmmoType)m.getType();
+                                    if(at.getMunitionType() == AmmoType.M_INFERNO) {
+                                        infernos += at.getRackSize() * m.getShotsLeft();
+                                    }
+                                }
+                                else if(BattleArmor.FIRE_PROTECTION.equals(m.getName())) {
+                                    //immune to inferno explosion
+                                    infernos = 0;
+                                    break;
+                                }
+                            }
+                            if(infernos > 0) {
+                                int roll = Compute.d6(2);
+                                r = new Report(6680);
+                                r.add(roll);
+                                vDesc.add(r);
+                                if(roll >=8) {
+                                    Coords c = te.getPosition();
+                                    if(c==null) {
+                                        Entity transport = game.getEntity(te.getTransportId());
+                                        if(transport != null)
+                                            c = transport.getPosition();
+                                        deliverInfernoMissiles(te, te, infernos);
+                                    }
+                                    if(c != null) {
+                                        deliverInfernoMissiles(te, new HexTarget(c, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY), infernos);
+                                    }
                                 }
                             }
                         }

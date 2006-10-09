@@ -62,6 +62,9 @@ public class BLKFile {
                         throw new EntityLoadingException(ex.getMessage());
                     }
                 }
+                else if(equipName != "0"){
+                    t.addFailedEquipment(equipName);
+                }
             }
         }
     }

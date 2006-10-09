@@ -40,6 +40,19 @@ v0.33.0 (SVN)
 + infantry ignore stealth modifiers except camo/mimetic
 + rules changes for AMS
 + rules changes for inferno
++ rationalised BA ammo and weapon types
++ new unit files for most BA carrying SRM launchers
++ rules change for advanced SRM
++ custom BA can use the disposable missile pack of the longinus
+  by specifying the "BA Disposable SRM 2 Ammo".
++ new document: equipment.txt which is an auto generated 
+  equipment database.  Use -eqdb <filename> to update.
+  This database gives you all the equipment names for use in
+  text based unit files (mtf, blk).
+  You can import into your favourite spreadsheet or DB as a comma separated value file.
++ BA can customise ammo loadouts by TW rules.  Inferno SRM are working,
+  but torpedo and multipurpose missiles are not yet.
++ rules change for leg attack and popup mine (4 damage always inflicted as well as TAC roll)
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

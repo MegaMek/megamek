@@ -22,6 +22,7 @@ package megamek.client.ui.AWT;
 
 import megamek.client.Client;
 import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.EquipmentType;
@@ -371,7 +372,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         }
 
         // Can't set up munitions on infantry.
-        if ( !(entity instanceof Infantry) ) {
+        if ( !(entity instanceof Infantry) 
+                || (entity instanceof BattleArmor) ) {
             setupMunitions();
             c.anchor = GridBagConstraints.CENTER;
             gridbag.setConstraints(panMunitions, c);
@@ -616,7 +618,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
                 // All other ammo types need to match on rack size and tech.
                 if ( bTechMatch &&
                      atCheck.getRackSize() == at.getRackSize() &&
-                     !atCheck.hasFlag(AmmoType.F_BATTLEARMOR) &&
+                     atCheck.hasFlag(AmmoType.F_BATTLEARMOR)==at.hasFlag(AmmoType.F_BATTLEARMOR) &&
+                     atCheck.hasFlag(AmmoType.F_ENCUMBERING)==at.hasFlag(AmmoType.F_ENCUMBERING) &&
                      atCheck.getTonnage(entity) == at.getTonnage(entity) ) {
                     vTypes.addElement(atCheck);
                 }

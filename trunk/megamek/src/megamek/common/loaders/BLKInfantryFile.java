@@ -35,7 +35,7 @@ import megamek.common.util.*;
 public class BLKInfantryFile extends BLKFile implements IMechLoader {    
     
     // HACK!!!  Infantry movement reuses Mech and Vehicle movement.
-    private static final String[] MOVES = { "","","","Tracked", "Wheeled", "Hover","","","","", "Leg","Motorized","Jump" };
+    private static final String[] MOVES = { "","","","Tracked", "Wheeled", "Hover","","","","", "Leg","Motorized","Jump","","","","","", "Submarine" };
         
     public BLKInfantryFile(BuildingBlock bb) {
         dataFile = bb;

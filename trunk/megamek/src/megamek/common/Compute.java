@@ -299,6 +299,7 @@ public class Compute {
                         || entity.getMovementMode() == IEntityMovementMode.NAVAL
                         || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL 
                         || entity.getMovementMode() == IEntityMovementMode.SUBMARINE
+                        || entity.getMovementMode() == IEntityMovementMode.INF_UMU
                         || entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM
                         || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM)
                 && destHex.terrainLevel(Terrains.WATER) > 0 && !isPavementStep) {
@@ -653,13 +654,26 @@ public class Compute {
 
         if (weaponUnderwater) {
             weaponRanges = wtype.getWRanges();
+            boolean MPM = false;
+            if(wtype.getAmmoType() == AmmoType.T_SRM
+                    || wtype.getAmmoType() == AmmoType.T_MRM
+                    || wtype.getAmmoType() == AmmoType.T_LRM) {
+                AmmoType atype = (AmmoType) weapon.getLinked().getType();
+                if(atype.getMunitionType() == AmmoType.M_TORPEDO) {
+                    weaponRanges = wtype.getRanges();
+                }
+                else if(atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) {
+                    weaponRanges = wtype.getRanges();
+                    MPM = true;
+                }
+            }
             // HACK on ranges: for those without underwater range,
             // long == medium; iteration in rangeBracket() allows this
             if (weaponRanges[RangeType.RANGE_SHORT] == 0) {
                 return new ToHitData(ToHitData.IMPOSSIBLE,
                         "Weapon cannot fire underwater.");
             }
-            if (!targetUnderwater && !targetInPartialWater) {
+            if (!targetUnderwater && !targetInPartialWater && !MPM) {
                 // target on land or over water
                 return new ToHitData(ToHitData.IMPOSSIBLE,
                         "Weapon underwater, but not target.");

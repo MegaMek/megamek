@@ -37,4 +37,5 @@ public interface IEntityMovementMode {
     public static final int WIGE = 15;
     public static final int AERODYNE = 16;
     public static final int SPHEROID = 17;
+    public static final int INF_UMU = 18;
 }

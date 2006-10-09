@@ -53,6 +53,10 @@ v0.33.0 (SVN)
 + BA can customise ammo loadouts by TW rules.  Inferno SRM are working,
   but torpedo and multipurpose missiles are not yet.
 + rules change for leg attack and popup mine (4 damage always inflicted as well as TAC roll)
++ Infantry UMU movement
++ BA multi-purpose missile
++ Clan Undine
++ IS Submersible infantry (laser) [maxtech rules]
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

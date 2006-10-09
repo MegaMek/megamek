@@ -270,7 +270,7 @@ public class Infantry
             return true;
         if(hex.terrainLevel(Terrains.WATER) > 0 && !hex.containsTerrain(Terrains.ICE)) {
             if(getMovementMode() == IEntityMovementMode.HOVER
-                    || hasUMU())
+                    || getMovementMode() == IEntityMovementMode.INF_UMU)
                 return false;
             return true;
         }
@@ -596,7 +596,8 @@ public class Infantry
         
         if(IEntityMovementMode.WHEELED == mm
                 || IEntityMovementMode.TRACKED == mm
-                || IEntityMovementMode.HOVER == mm) {
+                || IEntityMovementMode.HOVER == mm
+                || IEntityMovementMode.INF_UMU == mm) {
 //          FIXME, when techmanual comes out
             mm = IEntityMovementMode.INF_MOTORIZED; 
         }
@@ -859,6 +860,11 @@ public class Infantry
             multiplier = 5;
         } else {
             multiplier = 1;
+        }
+        
+        if(IEntityMovementMode.INF_UMU == mm) {
+            mm = IEntityMovementMode.INF_LEG;
+            multiplier *= 2;
         }
         if (this.weapons == INF_RIFLE) {
             if ( IEntityMovementMode.INF_LEG == mm )

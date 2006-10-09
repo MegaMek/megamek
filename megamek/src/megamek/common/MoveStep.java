@@ -304,11 +304,12 @@ public class MoveStep implements Serializable {
                 && entity.getMovementMode() != IEntityMovementMode.HOVER
                 && entity.getMovementMode() != IEntityMovementMode.NAVAL
                 && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
+                && entity.getMovementMode() != IEntityMovementMode.INF_UMU
                 && !(elevation == 0 && entity.getMovementMode() == IEntityMovementMode.SUBMARINE) //sub can't flank underwater
                 && entity.getMovementMode() != IEntityMovementMode.VTOL) {
             setRunProhibited(true);
         }
-
+        
         int magmaLevel = destHex.terrainLevel(Terrains.MAGMA);
         if(elevation > 0) {
             magmaLevel = 0;
@@ -540,7 +541,8 @@ public class MoveStep implements Serializable {
                     && distance > 0
                     && nMove != IEntityMovementMode.NAVAL
                     && nMove != IEntityMovementMode.HYDROFOIL
-                    && nMove != IEntityMovementMode.SUBMARINE) {
+                    && nMove != IEntityMovementMode.SUBMARINE
+                    && nMove != IEntityMovementMode.INF_UMU) {
                 isRunProhibited = true;
             }
         }
@@ -1123,6 +1125,13 @@ public class MoveStep implements Serializable {
             movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
 
+        // check for UMU infantry on land
+        if(entity.getMovementMode() == IEntityMovementMode.INF_UMU
+                && !game.getBoard().getHex(curPos).containsTerrain(Terrains.WATER)
+                && movementType == IEntityMovementType.MOVE_RUN) {
+            movementType = IEntityMovementType.MOVE_ILLEGAL;
+        }
+
         // amnesty for the first step
         if (isFirstStep()
                 && movementType == IEntityMovementType.MOVE_ILLEGAL
@@ -1326,6 +1335,7 @@ public class MoveStep implements Serializable {
                     && (moveType != IEntityMovementMode.NAVAL)
                     && (moveType != IEntityMovementMode.HYDROFOIL)
                     && (moveType != IEntityMovementMode.SUBMARINE)
+                    && (moveType != IEntityMovementMode.INF_UMU)
                     && (moveType != IEntityMovementMode.VTOL)
                     && (moveType != IEntityMovementMode.BIPED_SWIM)
                     && (moveType != IEntityMovementMode.QUAD_SWIM)) {
@@ -1526,6 +1536,7 @@ public class MoveStep implements Serializable {
                 && nMove != IEntityMovementMode.NAVAL
                 && nMove != IEntityMovementMode.HYDROFOIL
                 && nMove != IEntityMovementMode.SUBMARINE
+                && nMove != IEntityMovementMode.INF_UMU
                 && nMove != IEntityMovementMode.VTOL
                 && destHex.terrainLevel(Terrains.WATER) > 0
                 && !(destHex.containsTerrain(Terrains.ICE) && elevation >= 0)

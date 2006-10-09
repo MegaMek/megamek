@@ -4518,7 +4518,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 3;
+        ammo.shots = 1;
         ammo.bv = 0;
         ammo.flags |= F_HOTLOAD;
         ammo.setModes(new String[] {"", "HotLoad"});
@@ -4538,7 +4538,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 3;
+        ammo.shots = 1;
         ammo.bv = 0;
         ammo.flags |= F_HOTLOAD;
         ammo.setModes(new String[] {"", "HotLoad"});
@@ -4558,7 +4558,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 3;
+        ammo.shots = 1;
         ammo.bv = 0;
         ammo.flags |= F_HOTLOAD;
         ammo.setModes(new String[] {"", "HotLoad"});
@@ -4578,7 +4578,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 3;
+        ammo.shots = 1;
         ammo.bv = 0;
         ammo.flags |= F_HOTLOAD;
         ammo.setModes(new String[] {"", "HotLoad"});
@@ -4597,7 +4597,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 3;
+        ammo.shots = 1;
         ammo.bv = 0;
         ammo.flags |= F_HOTLOAD;
         ammo.setModes(new String[] {"", "HotLoad"});
@@ -4617,7 +4617,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 3;
+        ammo.shots = 1;
         ammo.bv = 0;
 
         return ammo;
@@ -4635,7 +4635,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 3;
+        ammo.shots = 1;
         ammo.bv = 0;
 
         return ammo;
@@ -4653,7 +4653,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 3;
+        ammo.shots = 1;
         ammo.bv = 0;
 
         return ammo;
@@ -4671,7 +4671,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 4;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 3;
+        ammo.shots = 1;
         ammo.bv = 0;
 
         return ammo;
@@ -4689,7 +4689,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 3;
+        ammo.shots = 1;
         ammo.bv = 0;
 
         return ammo;

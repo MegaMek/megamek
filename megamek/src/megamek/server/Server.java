@@ -2852,6 +2852,7 @@ public class Server implements Runnable {
                 unit.getMovementMode() == IEntityMovementMode.HYDROFOIL ||
                 unit.getMovementMode() == IEntityMovementMode.NAVAL ||
                 unit.getMovementMode() == IEntityMovementMode.SUBMARINE ||
+                unit.getMovementMode() == IEntityMovementMode.INF_UMU ||
                 hex.containsTerrain(Terrains.ICE) ||
                 isBridge) {
                 // units that can float stay on the surface, or we go on the bridge
@@ -13585,7 +13586,8 @@ public class Server implements Runnable {
                             for(Mounted m:te.getEquipment()) {
                                 if(m.getType() instanceof AmmoType) {
                                     AmmoType at = (AmmoType)m.getType();
-                                    if(at.getMunitionType() == AmmoType.M_INFERNO) {
+                                    if(at.getAmmoType() == AmmoType.T_SRM 
+                                            && at.getMunitionType() == AmmoType.M_INFERNO) {
                                         infernos += at.getRackSize() * m.getShotsLeft();
                                     }
                                 }
@@ -16294,7 +16296,8 @@ public class Server implements Runnable {
                 && (entity.getRunMP() > 0 && entity.getMovementMode() != IEntityMovementMode.HOVER)
                 && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
                 && entity.getMovementMode() != IEntityMovementMode.NAVAL
-                && entity.getMovementMode() != IEntityMovementMode.SUBMARINE) {
+                && entity.getMovementMode() != IEntityMovementMode.SUBMARINE
+                && entity.getMovementMode() != IEntityMovementMode.INF_UMU) {
             addReport(
                     destroyEntity(entity, "a watery grave", false));
             return;
@@ -18447,7 +18450,8 @@ public class Server implements Runnable {
 
                     if(entity.getMovementMode() == IEntityMovementMode.HYDROFOIL
                             || entity.getMovementMode() == IEntityMovementMode.NAVAL
-                            || entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
+                            || entity.getMovementMode() == IEntityMovementMode.SUBMARINE
+                            || entity.getMovementMode() == IEntityMovementMode.INF_UMU) {
                         continue; //under the bridge even at same level
                     }
 

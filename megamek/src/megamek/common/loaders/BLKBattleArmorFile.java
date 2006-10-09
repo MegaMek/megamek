@@ -90,6 +90,8 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             nMotion = IEntityMovementMode.INF_JUMP;
         else if(sMotion.equalsIgnoreCase("vtol"))
             nMotion = IEntityMovementMode.VTOL;
+        else if(sMotion.equalsIgnoreCase("submarine"))
+            nMotion = IEntityMovementMode.INF_UMU;
         if (nMotion == -1) throw new EntityLoadingException("Invalid movement type: " + sMotion);
         t.setMovementMode(nMotion);
 

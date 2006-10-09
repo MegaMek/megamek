@@ -738,6 +738,9 @@ public abstract class Entity extends TurnOrdered
     public int calcElevation(IHex current, IHex next, int assumedElevation, boolean climb) {
         int retVal = assumedElevation;
         if ((getMovementMode() == IEntityMovementMode.SUBMARINE)
+                || (getMovementMode() == IEntityMovementMode.INF_UMU && 
+                        (current.containsTerrain(Terrains.WATER)
+                         || next.containsTerrain(Terrains.WATER)))
                 || (getMovementMode() == IEntityMovementMode.VTOL)
                 || (getMovementMode() == IEntityMovementMode.QUAD_SWIM && hasUMU())
                 || (getMovementMode() == IEntityMovementMode.BIPED_SWIM&& hasUMU())) {
@@ -855,6 +858,7 @@ public abstract class Entity extends TurnOrdered
             }
             break;
         case IEntityMovementMode.SUBMARINE:
+        case IEntityMovementMode.INF_UMU:
         case IEntityMovementMode.BIPED_SWIM:
         case IEntityMovementMode.QUAD_SWIM:
             minAlt = hex.floor();
@@ -883,6 +887,7 @@ public abstract class Entity extends TurnOrdered
             maxAlt = hex.surface() + 50;
             break;
         case IEntityMovementMode.SUBMARINE:
+        case IEntityMovementMode.INF_UMU:
         case IEntityMovementMode.BIPED_SWIM:
         case IEntityMovementMode.QUAD_SWIM:
             maxAlt = hex.surface();
@@ -912,6 +917,7 @@ public abstract class Entity extends TurnOrdered
             }
             return (assumedElevation <=50 && altitude >= hex.ceiling());
         } else if (getMovementMode() == IEntityMovementMode.SUBMARINE
+                || (getMovementMode() == IEntityMovementMode.INF_UMU && hex.containsTerrain(Terrains.WATER))
                 || (getMovementMode() == IEntityMovementMode.QUAD_SWIM&& hasUMU())
                 || (getMovementMode() == IEntityMovementMode.BIPED_SWIM&& hasUMU())) {
             return (altitude >= hex.floor() && altitude <= hex.surface());
@@ -2635,7 +2641,6 @@ public abstract class Entity extends TurnOrdered
      * @return <code>boolean</code> if the entity has usasble UMU crits.
      */
     public boolean hasUMU(){
-        
         if ( !(this instanceof Mech) )
             return false;
         
@@ -3594,6 +3599,7 @@ public abstract class Entity extends TurnOrdered
         case IEntityMovementMode.HYDROFOIL:
             return "Hydrofoil";
         case IEntityMovementMode.SUBMARINE:
+        case IEntityMovementMode.INF_UMU:
             return "Submarine";
         case IEntityMovementMode.INF_LEG:
             return "Leg";
@@ -3917,6 +3923,7 @@ public abstract class Entity extends TurnOrdered
             && getMovementMode() != IEntityMovementMode.NAVAL
             && getMovementMode() != IEntityMovementMode.HYDROFOIL
             && getMovementMode() != IEntityMovementMode.SUBMARINE
+            && getMovementMode() != IEntityMovementMode.INF_UMU
             && getMovementMode() != IEntityMovementMode.BIPED_SWIM
             && getMovementMode() != IEntityMovementMode.QUAD_SWIM
             && !isPavementStep) {

@@ -535,6 +535,7 @@ public class MovementDisplay
         if (ce.getMovementMode() == IEntityMovementMode.HYDROFOIL
                 || ce.getMovementMode() == IEntityMovementMode.NAVAL
                 || ce.getMovementMode() == IEntityMovementMode.SUBMARINE
+                || ce.getMovementMode() == IEntityMovementMode.INF_UMU
                 || ce.getMovementMode() == IEntityMovementMode.VTOL
                 || ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM
                 || ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM) {

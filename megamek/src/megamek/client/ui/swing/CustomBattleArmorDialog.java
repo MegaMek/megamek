@@ -1755,7 +1755,7 @@ public class CustomBattleArmorDialog
         if (stateJumpType == JUMP_TYPE_VTOL) {
             retVal.setMovementMode(IEntityMovementMode.VTOL);
         } else if (stateJumpType == JUMP_TYPE_UMU) {
-            retVal.setMovementMode(IEntityMovementMode.SUBMARINE);
+            retVal.setMovementMode(IEntityMovementMode.INF_UMU);
         } else {
             retVal.setMovementMode(IEntityMovementMode.INF_LEG);
         }

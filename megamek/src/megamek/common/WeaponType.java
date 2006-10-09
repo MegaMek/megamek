@@ -5513,6 +5513,11 @@ public class WeaponType extends EquipmentType {
         weapon.mediumRange = 4;
         weapon.longRange = 6;
         weapon.extremeRange = 8;
+        //maxtech says no range reduction, lets wait for techmanual...
+        weapon.waterShortRange = 2;
+        weapon.waterMediumRange = 4;
+        weapon.waterLongRange = 6;
+        weapon.waterExtremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_DIRECT_FIRE | F_INFANTRY | F_NO_FIRES | F_ENERGY;
@@ -8425,6 +8430,10 @@ public class WeaponType extends EquipmentType {
         weapon.mediumRange = 10;
         weapon.longRange = 15;
         weapon.extremeRange = 20;
+        weapon.waterShortRange = 3;
+        weapon.waterMediumRange = 7;
+        weapon.waterLongRange = 10;
+        weapon.waterExtremeRange = 14;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;

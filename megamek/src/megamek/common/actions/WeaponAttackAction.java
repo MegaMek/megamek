@@ -257,6 +257,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // 2 if intervening light woods (because target in woods + intervening woods is only +1 total)
         int eistatus=0;
 
+        boolean MPMelevationHack = false;
+        if(wtype.getAmmoType() == AmmoType.T_LRM
+                && atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE
+                && ae.getElevation() == -1
+                && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
+            MPMelevationHack = true;
+            //surface to fire
+            ae.setElevation(0);
+        }
         // check LOS (indirect LOS is from the spotter)
         LosEffects los;
         ToHitData losMods;
@@ -273,7 +282,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             losMods = los.losModifiers(game, eistatus);
             if ((atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                    || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO))
+                    || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
+                    || ((atype.getAmmoType() == AmmoType.T_SRM
+                            || atype.getAmmoType() == AmmoType.T_MRM
+                            || atype.getAmmoType() == AmmoType.T_LRM)
+                            && munition == AmmoType.M_TORPEDO))
                     && (los.getMinimumWaterDepth() < 1)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Torpedos must follow water their entire LOS");
             }
@@ -291,6 +304,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
             losMods = los.losModifiers(game);
         }
+        if(MPMelevationHack) {
+            //return to depth 1
+            ae.setElevation(-1);
+        }
+        
         // Leg attacks, Swarm attacks, and
         // Mine Launchers don't use gunnery.
         if ( Infantry.LEG_ATTACK.equals( wtype.getInternalName() ) ) {
@@ -1205,6 +1223,16 @@ public class WeaponAttackAction extends AbstractAttackAction {
         
         int eistatus=0;
 
+        boolean MPMelevationHack = false;
+        if(wtype.getAmmoType() == AmmoType.T_LRM
+                && atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE
+                && ae.getElevation() == -1
+                && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
+            MPMelevationHack = true;
+            //surface to fire
+            ae.setElevation(0);
+        }
+
         // check LOS (indirect LOS is from the spotter)
         LosEffects los;
         ToHitData losMods;
@@ -1232,6 +1260,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             losMods = los.losModifiers(game);
+        }
+        
+        if(MPMelevationHack) {
+            //and descend back to depth 1
+            ae.setElevation(-1);
         }
     
         // if LOS is blocked, block the shot

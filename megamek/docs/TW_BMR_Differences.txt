@@ -220,7 +220,7 @@ x4) Infantry do not suffer from penalties to hit for their movement
 
 x5) Conventional Infantry attack rules have changed extensively.  A chart gives the maximum damage possible an Infantry Platoon may do based on the number of surviving members and it’s weaponry.  If the attack hits, the attacker rolls on the Cluster Hits Table on the column equal to that maximum damage value to get the actual amount of damage inflicted, which is applied in two point clusters.
 
-6) Conventional Infantry ignore penalties to hit from Steath Systems, but not Mimetic or Camo systems.
+x6) Conventional Infantry ignore penalties to hit from Steath Systems, but not Mimetic or Camo systems.
 
 x7) Machine Gun Infantry do an additional 1D6 damage against other conventional infantry
 
@@ -242,7 +242,7 @@ x15) Mechanized Infantry may not make Anti-BattleMech attacks (this most likely 
 
 x16) ProtoMechs cannot be swarmed (probably a clarification?)
 
-17) Anti-BattleMech Leg attacks always inflict 4 damage regardless of whether or not they inflict crits.  Battle Armor units made up of a type with one Vibroclaw gain a +1 damage bonus, or +2 bonus if made up of a type with two Vibroclaws. (5 or 6, not 9 or 14)
+x17) Anti-BattleMech Leg attacks always inflict 4 damage regardless of whether or not they inflict crits.  Battle Armor units made up of a type with one Vibroclaw gain a +1 damage bonus, or +2 bonus if made up of a type with two Vibroclaws. (5 or 6, not 9 or 14)
 
 x18) BA with Magnetic Claws are -1 to hit when performing Swarm Attacks.  The Vibroclaw bonus to Leg Attack damage applies to Swarm attacks as well.
 
@@ -274,9 +274,9 @@ x27) -1 MP penalty for units carrying Mechanized Battle Armor using Magnetic Cla
 
 x32) An attack against any location carrying a Battle Armor has a 33% chance of hitting the Battle Armor instead (5+ on 1D6).  Battle Armor riding a ‘Mechs location are destroyed when that location is destroyed, and may or may not survive the destruction of the ‘Mech they are riding on.
 
-33) The Pop-Up Mine Launcher is introduced here.  I initially mistook this for a new piece of equipment, but it’s actually just the weapon used on the old Sloth Battle Armor. The Pop-Up Mine Launcher originally performed an attack similar to an Anti-'Mech Leg Attack only targeting a 'Mech's Center Torso or a Vehicle's Front, and the rules for it have been updated in line with Anti-BattleMech Leg Attacks so that 4 damage is inflicted regardless of whether not critical hits are inflicted.
+x33) The Pop-Up Mine Launcher is introduced here.  I initially mistook this for a new piece of equipment, but it’s actually just the weapon used on the old Sloth Battle Armor. The Pop-Up Mine Launcher originally performed an attack similar to an Anti-'Mech Leg Attack only targeting a 'Mech's Center Torso or a Vehicle's Front, and the rules for it have been updated in line with Anti-BattleMech Leg Attacks so that 4 damage is inflicted regardless of whether not critical hits are inflicted.
 
-34) Mimetic Armour adds to movement modifiers instead of replacing them (p228)
+x34) Mimetic Armour adds to movement modifiers instead of replacing them (p228)
 
 AEROSPACE UNITS
 1) Aerospace units firing at VTOLs, WiGEs, or other units using VTOL movement MP do so as they would attack an Aerospace Fighter flying at an Altitude of 1, adding a +5 modifier.

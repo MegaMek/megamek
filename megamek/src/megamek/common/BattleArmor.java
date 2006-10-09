@@ -722,12 +722,7 @@ public class BattleArmor
         // Clan Elemental points are never burdened by equipment.
         if ( !this.isClan() ) {
 
-            // As of 2004-04-04 only Longinus and Purifier squads get burdened.
-            String name = this.getShortName();
-            if ( -1 == name.indexOf( LONGINUS_SQUAD ) &&
-                 -1 == name.indexOf( PURIFIER_SQUAD ) ) {
-                return false;
-            }
+            // As of 2006-10-10 any squad can be burdened.
 
             // As of 2003-01-03, only ammo burdens the jump
             // Loop through the squad's equipment.
@@ -736,8 +731,7 @@ public class BattleArmor
 
                 // Un-jettisoned ammo packs burden squads.
                 if ( mounted.getShotsLeft() > 0 &&
-                     (type.getInternalName().equals(IS_DISPOSABLE_SRM2_AMMO) ||
-                      type.getInternalName().equals(IS_DISPOSABLE_NARC_AMMO))
+                     (type.hasFlag(AmmoType.F_ENCUMBERING))
                      ) {
                     return true;
                 }

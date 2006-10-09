@@ -231,6 +231,7 @@ public class MegaMek {
         private static final String OPTION_DEDICATED = "dedicated"; //$NON-NLS-1$
         private static final String OPTION_GUI = "gui"; //$NON-NLS-1$
         private static final String OPTION_LOG = "log"; //$NON-NLS-1$
+        private static final String OPTION_EQUIPMENT_DB = "eqdb"; //$NON-NLS-1$
 
         public CommandLineParser(String[] args) {
             super(args);
@@ -278,6 +279,10 @@ public class MegaMek {
                 nextToken();
                 parseLog();
             }
+            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_EQUIPMENT_DB)) {
+                nextToken();
+                processEquipmentDb();
+            }
 
             if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_DEDICATED)) {
                 nextToken();
@@ -307,6 +312,17 @@ public class MegaMek {
                 nextToken();
             } else {
                 error("GUI name expected"); //$NON-NLS-1$                
+            }
+        }
+        
+        private void processEquipmentDb() throws ParseException {
+            String filename;
+            if (getToken() == TOK_LITERAL) {
+                filename = getTokenValue();
+                nextToken();
+                megamek.common.EquipmentType.writeEquipmentDatabase(new File(filename));
+            } else {
+                error("file name expected"); //$NON-NLS-1$                
             }
         }
 

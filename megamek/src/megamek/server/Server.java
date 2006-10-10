@@ -14996,6 +14996,7 @@ public class Server implements Runnable {
                 r = new Report(6265);
                 r.subject = en.getId();
                 vDesc.addElement(r);
+                return new Vector();
             } else {
                 //set elevation 1st to avoid multiple crashes
                 en.setElevation(newElevation);
@@ -15277,20 +15278,42 @@ public class Server implements Runnable {
                 PilotingRollData psr = t.getBasePilotingRoll();
                 IHex hex = game.getBoard().getHex(t.getPosition());
                 psr.addModifier(4, "forced landing");
-                if(!hex.containsTerrain(Terrains.FUEL_TANK)
-                        && !hex.containsTerrain(Terrains.JUNGLE)
-                        && !hex.containsTerrain(Terrains.MAGMA)
-                        && !hex.containsTerrain(Terrains.MUD)
-                        && !hex.containsTerrain(Terrains.RUBBLE)
-                        && !hex.containsTerrain(Terrains.WATER)
-                        && !hex.containsTerrain(Terrains.WOODS)
-                        && doSkillCheckInPlace(t, psr)) {
-                    int elevation = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
-                    elevation = Math.max(elevation,0);
-                    elevation = Math.min(elevation, t.getElevation());
-                    t.setElevation(elevation);
-                } else {
-                    vDesc.addAll(crashVTOL((VTOL)t));
+                int elevation = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
+                elevation = Math.max(elevation,0);
+                elevation = Math.min(elevation, t.getElevation());
+                if(t.getElevation() > elevation) {
+                    if(!hex.containsTerrain(Terrains.FUEL_TANK)
+                            && !hex.containsTerrain(Terrains.JUNGLE)
+                            && !hex.containsTerrain(Terrains.MAGMA)
+                            && !hex.containsTerrain(Terrains.MUD)
+                            && !hex.containsTerrain(Terrains.RUBBLE)
+                            && !hex.containsTerrain(Terrains.WATER)
+                            && !hex.containsTerrain(Terrains.WOODS)) {
+                        r = new Report(2180);
+                        r.subject = t.getId();
+                        r.addDesc(t);
+                        r.add(psr.getLastPlainDesc(), true);
+                        vDesc.add(r);
+
+                        // roll
+                        final int diceRoll = Compute.d6(2);
+                        r = new Report(2185);
+                        r.subject = t.getId();
+                        r.add(psr.getValueAsString());
+                        r.add(psr.getDesc());
+                        r.add(diceRoll);
+                        if (diceRoll < psr.getValue()) {
+                            r.choose(false);
+                            vDesc.add(r);
+                            vDesc.addAll(crashVTOL((VTOL)t));
+                        } else {
+                            r.choose(true);
+                            vDesc.add(r);
+                            t.setElevation(elevation);
+                        }
+                    } else {
+                        vDesc.addAll(crashVTOL((VTOL)t));
+                    }
                 }
             }
             break;
@@ -15392,7 +15415,7 @@ public class Server implements Runnable {
                 t.setOriginalWalkMP(mp - 1);
             else if (mp==1) {
                 t.setOriginalWalkMP(0);
-                crashVTOL((VTOL)t);
+                vDesc.addAll(crashVTOL((VTOL)t));
             }
             break;
             }

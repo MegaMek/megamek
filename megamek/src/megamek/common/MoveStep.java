@@ -527,6 +527,11 @@ public class MoveStep implements Serializable {
         movementType = entity.moved;
         
         int nMove = entity.getMovementMode();
+        
+        //tanks with stunned crew can't flank
+        if(entity instanceof Tank && ((Tank)entity).getStunnedTurns() > 0) {
+            isRunProhibited = true;
+        }
 
         // check pavement & water
         if (position != null) {

@@ -1389,8 +1389,7 @@ public class Server implements Runnable {
 
         // Unless overridden by the "protos_move_multi" option, all Protomechs
         // in a unit declare fire, and they don't mix with infantry.
-        if ( protosMoved && !protosMoveMulti && isGeneralMoveTurn &&
-             game.getPhase() == IGame.PHASE_FIRING ) {
+        if ( protosMoved && !protosMoveMulti && isGeneralMoveTurn) {
 
             // What's the unit number and ID of the entity used?
             final char movingUnit = entityUsed.getUnitNumber();
@@ -2393,8 +2392,7 @@ public class Server implements Runnable {
                 game.getOptions().booleanOption("protos_deploy_even") && game.getPhase() == IGame.PHASE_DEPLOYMENT;
         boolean protosMoveMulti =
             game.getOptions().booleanOption("protos_move_multi");
-        boolean protosFireMulti = !protosMoveMulti &&
-            game.getPhase() == IGame.PHASE_FIRING;
+        boolean protosMoveByPoint = !protosMoveMulti;
         int evenMask = 0;
         if ( infMoveEven ) evenMask += GameTurn.CLASS_INFANTRY;
         if ( protosMoveEven ) evenMask += GameTurn.CLASS_PROTOMECH;
@@ -2407,21 +2405,30 @@ public class Server implements Runnable {
             player.resetOtherTurns();
 
             // Add turns for protomechs weapons declaration.
-            if ( protosFireMulti ) {
+            if ( protosMoveByPoint ) {
 
                 // How many Protomechs does the player have?
-                int numPlayerProtos = game.getSelectedEntityCount
+                Enumeration<Entity> playerProtos = game.getSelectedEntities
                     ( new EntitySelector() {
                             private final int ownerId = player.getId();
                             public boolean accept( Entity entity ) {
                                 if ( entity instanceof Protomech &&
-                                     ownerId == entity.getOwnerId() )
+                                     ownerId == entity.getOwnerId()
+                                     && entity.isSelectableThisTurn())
                                     return true;
                                 return false;
                             }
                         } );
-                int numProtoUnits =
-                    (int) Math.ceil( numPlayerProtos / 5.0 );
+                HashSet<Integer> points = new HashSet<Integer>();
+                int numPlayerProtos= 0;
+                for(;playerProtos.hasMoreElements();) {
+                    Entity proto = playerProtos.nextElement();
+                    numPlayerProtos++;
+                    points.add(new Integer(proto.getUnitNumber()));
+                }
+                int numProtoUnits =(int) Math.ceil( numPlayerProtos / 5.0 );
+                if(!protosMoveEven)
+                    numProtoUnits = points.size();
                 for ( int unit = 0; unit < numProtoUnits; unit++ ) {
                     if ( protosMoveEven ) player.incrementEvenTurns();
                     else player.incrementOtherTurns();
@@ -2444,7 +2451,7 @@ public class Server implements Runnable {
                     else player.incrementOtherTurns();
                 }
                 else if ( entity instanceof Protomech ) {
-                    if ( !protosFireMulti ) {
+                    if ( !protosMoveByPoint ) {
                         if ( protosMoveEven ) player.incrementEvenTurns();
                         else if ( protosMoveMulti ) player.incrementMultiTurns();
                         else player.incrementOtherTurns();

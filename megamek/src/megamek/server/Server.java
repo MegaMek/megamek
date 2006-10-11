@@ -15351,7 +15351,12 @@ public class Server implements Runnable {
             {
             r = new Report(6305);
             r.subject = t.getId();
-            ArrayList<Mounted> weapons = t.getWeaponList();
+            ArrayList<Mounted> weapons = new ArrayList<Mounted>();
+            for(Mounted weap: t.getWeaponList()) {
+                if(weap.getLocation() == loc) {
+                    weapons.add(weap);
+                }
+            }
             Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
             weapon.setHit(true);
             weapon.setDestroyed(true);
@@ -15363,7 +15368,12 @@ public class Server implements Runnable {
             {
             r = new Report(6645);
             r.subject = t.getId();
-            ArrayList<Mounted> weapons = t.getWeaponList();
+            ArrayList<Mounted> weapons = new ArrayList<Mounted>();
+            for(Mounted weap: t.getWeaponList()) {
+                if(weap.getLocation() == loc) {
+                    weapons.add(weap);
+                }
+            }
             Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
             weapon.setJammed(true);
             r.add(weapon.getName());

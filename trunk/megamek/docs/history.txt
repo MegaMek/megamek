@@ -73,6 +73,7 @@ v0.33.0 (SVN)
 + units going underwater while dumping ammo suffer automatic breaching
 + Bug: crew stunned criticals weren't having an effect
 + Bug: weapon destroyed/jammed criticals could hit weapon in different location
++ Swarmed vehicles can now shake off the swarmers
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

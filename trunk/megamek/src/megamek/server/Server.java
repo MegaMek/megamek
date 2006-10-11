@@ -4597,6 +4597,7 @@ public class Server implements Runnable {
                     r.subject = entity.getId();
                     r.indent();
                     r.addDesc(swarmer);
+                    r.add("3d6");
                     addReport(r);
                     addReport(damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), Compute.d6(3)));
                     addNewLines();
@@ -4768,6 +4769,7 @@ public class Server implements Runnable {
                         r.subject = entity.getId();
                         r.indent();
                         r.addDesc(swarmer);
+                        r.add("3d6");
                         addReport(r);
                         addReport(damageEntity(swarmer, swarmer.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), Compute.d6(3)));
                         addNewLines();

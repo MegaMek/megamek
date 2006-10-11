@@ -105,6 +105,7 @@ public class MovementDisplay
     public static final String    MOVE_SWIM = "moveSwim"; //$NON-NLS-1$
     public static final String    MOVE_DIG_IN = "moveDigIn"; //$NON-NLS-1$
     public static final String    MOVE_FORTIFY = "moveFortify"; //$NON-NLS-1$
+    public static final String    MOVE_SHAKE_OFF = "moveShakeOff"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -151,6 +152,8 @@ public class MovementDisplay
 
     private Button            butDigIn;
     private Button            butFortify;
+    
+    private Button            butShakeOff;
     
     private int               buttonLayout;
     
@@ -354,6 +357,12 @@ public class MovementDisplay
         butFortify.setActionCommand(MOVE_FORTIFY);
         butFortify.addKeyListener(this);
         
+        butShakeOff = new Button(Messages.getString("MovementDisplay.butShakeOff")); //$NON-NLS-1$
+        butShakeOff.addActionListener(this);
+        butShakeOff.setEnabled(false);
+        butShakeOff.setActionCommand(MOVE_SHAKE_OFF);
+        butShakeOff.addKeyListener(this);
+        
         butSpace = new Button(".");
         butSpace.setEnabled(false);
         butSpace.addKeyListener(this);
@@ -383,6 +392,7 @@ public class MovementDisplay
         buttonsMech.add(butLayMine);
         buttonsMech.add(butLower);
         buttonsMech.add(butRaise);
+        buttonsMech.add(butShakeOff);
 
         buttonsTank = new ArrayList(22);
         buttonsTank.add(butWalk);
@@ -399,6 +409,7 @@ public class MovementDisplay
         buttonsTank.add(butFlee);
         buttonsTank.add(butRAC);
         buttonsTank.add(butLayMine);
+        buttonsTank.add(butShakeOff);
         //these are last, they won't be used by tanks
         buttonsTank.add(butDfa);
         buttonsTank.add(butUp);
@@ -421,6 +432,7 @@ public class MovementDisplay
         buttonsVtol.add(butEject);
         buttonsVtol.add(butFlee);
         buttonsVtol.add(butRAC);
+        buttonsVtol.add(butShakeOff);
         //these are last, they won't be used by vtol
         buttonsVtol.add(butHullDown);
         buttonsVtol.add(butLayMine);
@@ -458,6 +470,7 @@ public class MovementDisplay
         buttonsInf.add(butDfa);
         buttonsInf.add(butUp);
         buttonsInf.add(butDown);
+        buttonsInf.add(butShakeOff);
 
         // layout button grid
         panButtons = new Panel();
@@ -649,6 +662,8 @@ public class MovementDisplay
             butDigIn.setEnabled(true);
         else
             butDigIn.setEnabled(false);
+        
+        butShakeOff.setEnabled(ce instanceof Tank && ce.getSwarmAttackerId() != Entity.NONE);
         
         setLayMineEnabled(ce.canLayMine());
 
@@ -1784,6 +1799,10 @@ public class MovementDisplay
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_FORTIFY)) {
             cmd.addStep(MovePath.STEP_FORTIFY);
+            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.repaint();
+        } else if (ev.getActionCommand().equals(MOVE_SHAKE_OFF)) {
+            cmd.addStep(MovePath.STEP_SHAKE_OFF_SWARMERS);
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
         }

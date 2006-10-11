@@ -58,6 +58,10 @@ v0.33.0 (SVN)
 + Clan Undine
 + IS Submersible infantry (laser) [maxtech rules]
 + Bug: multiple crash problem for VTOL engine critical hit
++ extended protomek initiative rules to cover all phases 
+  (TW style) instead of just fire phase (BMR style).  If you *don't*
+  want protomechs to move as points, use protos move multi with 1/mech
+  or individual initiative.
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

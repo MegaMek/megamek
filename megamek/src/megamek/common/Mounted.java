@@ -366,8 +366,12 @@ public class Mounted implements Serializable, RoundUpdated {
                  wtype.getInternalName().equals(BattleArmor.MINE_LAUNCHER)) {
             if (this.curMode().equals("2-shot")) {
                 nShots = 2;
+            } else if (this.curMode().equals("3-shot")) {
+                nShots = 3;
             } else if (this.curMode().equals("4-shot")) {
                 nShots = 4;
+            } else if (this.curMode().equals("5-shot")) {
+                nShots = 5;
             } else if (this.curMode().equals("6-shot")) {
                 nShots = 6;
             }

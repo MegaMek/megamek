@@ -67,9 +67,9 @@ x1) Quad BattleMechs have a different Hit Location Table than Bipeds
 
 x2) Partial Cover now +1 to hit/hits against the leg locations instead strike the intervening terrain and are ignored.
 
-3) No penalty for taking partial cover in Depth 1 water (Depth 1 water now provides a standard partial cover bonus with no -1 penalty)
+x3) No penalty for taking partial cover in Depth 1 water (Depth 1 water now provides a standard partial cover bonus with no -1 penalty)
 
-4) Ammo Dumping rules expanded to cover vehicles & aerospace craft
+x4) Ammo Dumping rules expanded to cover vehicles & aerospace craft
 
 5) ‘Mechs may now spot for indirect attacks/use TAG and fire in the same turn, although spotting for indirect LRM fire typically incurs a +1 to hit penalty (no penalty for using TAG).
 
@@ -77,20 +77,20 @@ x6) When clearing woods, woods now have a number of Terrain Factor points, much 
 
 x7) Missile Hits Table replaced by Expanded Cluster Hits Table which has a column for each number between 2 & 30 and 40.
 
-8 ) Rotary ACs can now be fire any number of shots between 1-6 per turn
+x8 ) Rotary ACs can now be fire any number of shots between 1-6 per turn
 
-9) Aimed/Called Shots with Targeting Computers may no longer be performed with Pulse Lasers or
+x9) Aimed/Called Shots with Targeting Computers may no longer be performed with Pulse Lasers or
 Ultra/Rotary ACs firing more than one round.
 
-10) A skidding unit suffers an additional +1 to hit modifier when attacking other units
+x10) A skidding unit suffers an additional +1 to hit modifier when attacking other units
 
 x11) Target Movement Modifier Table increased to cover a speed of 25+ hexes per turn.  To-hit modifiers for Target Movement now go up to +5 at 18 hexes and +6 at 25+ hexes.
 
-12) +1 to hit modifier for Battle Armor only applies if the attacking unit isn’t infantry
+x12) +1 to hit modifier for Battle Armor only applies if the attacking unit isn’t infantry
 
-13) Anti-Missile System improved significantly.  When activated, the AMS now incurs an automatic -4 penalty to the attackers roll on the Cluster Hit Table, and only uses one shot of ammo per activation.
+x13) Anti-Missile System improved significantly.  When activated, the AMS now incurs an automatic -4 penalty to the attackers roll on the Cluster Hit Table, and only uses one shot of ammo per activation.
 
-14) A-Pods now do a minimum of 1 point of damage on discharge
+x14) A-Pods now do a minimum of 1 point of damage on discharge
 
 15) Narc Missile Beacon eliminates need for spotter for indirect LRM fire
 
@@ -115,7 +115,7 @@ x11) Target Movement Modifier Table increased to cover a speed of 25+ hexes per 
 
 20) The Following Special Ammunition types are Tournament Legal: Armor Piercing (Standard & Light AC), Artemis IV (LRM/SRM), Cluster (LB-X), ECM Pod (iNarc), Explosive Pod (Narc/iNarc), Flechette (Standard & Light AC), Fragmentation (LRM/SRM), Haywaire Pod (iNarc), Homing Pod (Narc/iNarc), Inferno (SRM), Narc Seeking Missiles (LRM/SRM), Nemesis Pod (iNarc), Precision (Standard & Light AC), Semi-Guided (LRM)
 
-21) The rules for Infernos have changed extensively.  They now effect their target as follows:
+x21) The rules for Infernos have changed extensively.  They now effect their target as follows:
       Against Woods: 4 damage per missile
       Against Infantry: Each missile automatically kills 3 conventional infantry
          Every three missiles kill one Battle Armor Trooper (round down)
@@ -153,7 +153,7 @@ x27) Quads may now kick (Mule Kick) into their rear arc, but suffer a +1 to hit 
 31) Vehicles & Non-Aerospace  Airborne units can now be hit by accidental falls from above
 
 HEAT
-1) Heat applied from outside sources (Weapons & Environment) can never exceed 15 Heat Points per turn.  Any additional heat points have no effect.
+x1) Heat applied from outside sources (Weapons & Environment) can never exceed 15 Heat Points per turn.  Any additional heat points have no effect.
 
 BUILDINGS
 1) Multi-hex buildings now have a separate CF for each of their hexes, and each hex is destroyed individually.  However, if more than half of a multi-hex building has been destroyed, the remaining hexes all collapse as well.

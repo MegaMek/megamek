@@ -15250,10 +15250,11 @@ public class Server implements Runnable {
             t.getCrew().setDoomed(true);
             break;
         case Tank.CRIT_CREW_STUNNED:
+            t.stunCrew();
             r = new Report(6185);
+            r.add(t.getStunnedTurns() - 1);
             r.subject = t.getId();
             vDesc.add(r);
-            t.stunCrew();
             break;
         case Tank.CRIT_ENGINE:
             r = new Report(6210);

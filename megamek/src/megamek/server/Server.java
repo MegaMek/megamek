@@ -6742,23 +6742,13 @@ public class Server implements Runnable {
                  !(target instanceof BattleArmor) ) {
 
                 // Roll d6-1 for damage.
-                final int damage = Compute.d6() - 1;
+                final int damage = Math.min(1,Compute.d6() - 1);
 
-                // If the platoon took no damage, log it and go no further
-                if ( 0 == damage ) {
-                    r = new Report(3015);
-                    r.indent(2);
-                    r.subject = target.getId();
-                    r.addDesc(target);
-                    addReport(r);
-                }
-                else {
-                    // Damage the platoon.
-                    addReport( damageEntity( target, new HitData(Infantry.LOC_INFANTRY),damage ));
+                // Damage the platoon.
+                addReport( damageEntity( target, new HitData(Infantry.LOC_INFANTRY),damage ));
 
-                    // Damage from AP Pods is applied immediately.
-                    target.applyDamage();
-                }
+                // Damage from AP Pods is applied immediately.
+                target.applyDamage();
 
             } // End target-is-unarmored
 
@@ -7543,13 +7533,7 @@ public class Server implements Runnable {
                   jamCheck = 4;
                   }
             } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-              if (nShots == 2) {
-                  jamCheck = 2;
-              } else if (nShots == 4) {
-                  jamCheck = 3;
-              } else if (nShots == 6) {
-                  jamCheck = 4;
-              }
+              jamCheck = (nShots / 2) + 1;
             }
 
             if (jamCheck > 0 && wr.roll <= jamCheck) {
@@ -13371,7 +13355,8 @@ public class Server implements Runnable {
                 }
 
                 // is this a mech dumping ammo being hit in the rear torso?
-                if (te instanceof Mech && hit.isRear() && bTorso) {
+                if ((te instanceof Mech && hit.isRear() && bTorso)
+                        || (te instanceof Tank && hit.getLocation() == Tank.LOC_REAR)) {
                     for (Mounted mAmmo : te.getAmmo()) {
                         if (mAmmo.isDumping() && !mAmmo.isDestroyed() &&
                             !mAmmo.isHit()) {
@@ -15662,6 +15647,15 @@ public class Server implements Runnable {
         if (entity instanceof VTOL) {
             return vDesc;
         }
+        
+        boolean dumping=false;
+        for(Mounted m:entity.getAmmo()) {
+            if(m.isDumping()) {
+                //dumping ammo underwater is very stupid thing to do
+                dumping = true;
+                break;
+            }
+        }
 
         // This handles both water and vacuum breaches.
         if (entity.getLocationStatus(loc) > ILocationExposureStatus.NORMAL) {
@@ -15691,6 +15685,7 @@ public class Server implements Runnable {
             // Breach by damage or lack of armor.
             if ( breachroll >= 10
                  || !(entity.getArmor(loc) > 0)
+                 || (dumping && (!(entity instanceof Mech) || loc==Mech.LOC_CT || loc==Mech.LOC_RT || loc==Mech.LOC_LT))
                  || !(entity instanceof Mech ? entity.getArmor(loc, true) > 0 :
                       true) ) {
                 // functional HarJel prevents breach

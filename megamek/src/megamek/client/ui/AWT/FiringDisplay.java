@@ -1605,6 +1605,9 @@ public class FiringDisplay
           if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
             return false;
           }
+          if(weapon.howManyShots() > 1) {
+              return false;
+          }
           if ((atype != null)
                 && ((atype.getAmmoType() == AmmoType.T_AC_LBX)
                 || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))

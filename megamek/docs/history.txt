@@ -62,6 +62,15 @@ v0.33.0 (SVN)
   (TW style) instead of just fire phase (BMR style).  If you *don't*
   want protomechs to move as points, use protos move multi with 1/mech
   or individual initiative.
++ Mechs standing in water no longer suffer weapon fire penalties
++ Added water ranges for BA weapons
++ RAC can now fire any number from 1-6 shots
++ Rapid fire weapons are no longer allowed to use TC to aim shots
++ sylph no longer suffer a +3 to hit penalty when they move
++ +1 to hit penalty for skidding (stacks with +2 for running to make +3 total)
++ A-Pods now do a minimum of 1 point of damage on discharge
++ vehicles dumping ammo can suffer ammo explosion if hit on rear armour
++ units going underwater while dumping ammo suffer automatic breaching
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

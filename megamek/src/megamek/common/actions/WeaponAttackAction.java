@@ -1033,6 +1033,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
             sensorHits = ((Tank)ae).getSensorHits();
             if(sensorHits > 3)
                 return "Attacker sensors destroyed.";
+            if(((Tank)ae).getStunnedTurns() > 0)
+                return "Crew stunned";
         }
     
         // Is the weapon blocked by a passenger?

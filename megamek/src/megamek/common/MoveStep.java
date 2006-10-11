@@ -1108,6 +1108,14 @@ public class MoveStep implements Serializable {
             else
                 movementType = prev.movementType;
         }
+        if(movementType==IEntityMovementType.MOVE_WALK
+                && prev.movementType == IEntityMovementType.MOVE_RUN) {
+            movementType = IEntityMovementType.MOVE_RUN;
+        }
+        else if(movementType==IEntityMovementType.MOVE_VTOL_WALK
+                && prev.movementType == IEntityMovementType.MOVE_VTOL_RUN) {
+            movementType = IEntityMovementType.MOVE_VTOL_RUN;
+        }
             
         // Mechs with busted Gyro may make only one facing change
         if (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,

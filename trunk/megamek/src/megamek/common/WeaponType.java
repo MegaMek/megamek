@@ -2408,7 +2408,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 3;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 118;
-        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        String[] modes = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         weapon.setModes(modes);
 
         // explosive when jammed
@@ -2438,7 +2438,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 6;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 247;
-        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        String[] modes = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         weapon.setModes(modes);
 
         // explosive when jammed
@@ -4822,7 +4822,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 4;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 185;
-        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        String[] modes = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         weapon.setModes(modes);
         weapon.cost = 240000;
 
@@ -4850,7 +4850,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 5;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 360;
-        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        String[] modes = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         weapon.setModes(modes);
         weapon.cost = 400000;
 
@@ -4878,7 +4878,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 7;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 617;
-        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        String[] modes = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         weapon.setModes(modes);
         weapon.cost = 640000;
 
@@ -4906,7 +4906,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 10;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 823;
-        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        String[] modes = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         weapon.setModes(modes);
         weapon.cost = 960000;
 
@@ -5849,6 +5849,10 @@ public class WeaponType extends EquipmentType {
         weapon.mediumRange = 4;
         weapon.longRange = 6;
         weapon.extremeRange = 8;
+        weapon.waterShortRange = 1;
+        weapon.waterMediumRange = 2;
+        weapon.waterLongRange = 3;
+        weapon.waterExtremeRange = 4;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY | F_SINGLE_TARGET;
@@ -5950,6 +5954,10 @@ public class WeaponType extends EquipmentType {
         weapon.mediumRange = 2;
         weapon.longRange = 3;
         weapon.extremeRange = 4;
+        weapon.waterShortRange = 1;
+        weapon.waterMediumRange = 2;
+        weapon.waterLongRange = 2;
+        weapon.waterExtremeRange = 2; // No Extreme Range
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES| F_ENERGY;
@@ -5996,6 +6004,10 @@ public class WeaponType extends EquipmentType {
         weapon.mediumRange = 2;
         weapon.longRange = 4;
         weapon.extremeRange = 4; // No Extreme Range
+        weapon.waterShortRange = 1;
+        weapon.waterMediumRange = 2;
+        weapon.waterLongRange = 2; //no long range
+        weapon.waterExtremeRange = 2; // No Extreme Range
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_NO_FIRES | F_ENERGY | F_SINGLE_TARGET;
@@ -6046,6 +6058,10 @@ public class WeaponType extends EquipmentType {
         weapon.mediumRange = 4;
         weapon.longRange = 6;
         weapon.extremeRange = 8;
+        weapon.waterShortRange = 2;
+        weapon.waterMediumRange = 3;
+        weapon.waterLongRange = 4;
+        weapon.waterExtremeRange = 6;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE| F_ENERGY | F_SINGLE_TARGET;
@@ -6238,6 +6254,10 @@ public class WeaponType extends EquipmentType {
         weapon.mediumRange = 6;
         weapon.longRange = 9;
         weapon.extremeRange = 12;
+        weapon.waterShortRange = 2;
+        weapon.waterMediumRange = 4;
+        weapon.waterLongRange = 6;
+        weapon.waterExtremeRange = 8;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.flags |= F_LASER | F_BATTLEARMOR | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
@@ -9667,7 +9687,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 12;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         weapon.bv = 296;
-        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        String[] modes = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         weapon.setModes(modes);
 
         // explosive when jammed
@@ -9697,7 +9717,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 14;
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_SPLITABLE;
         weapon.bv = 474;
-        String[] modes = { "Single", "2-shot", "4-shot", "6-shot" };
+        String[] modes = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
         weapon.setModes(modes);
 
         // explosive when jammed

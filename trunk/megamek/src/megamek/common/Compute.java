@@ -1227,13 +1227,8 @@ public class Compute {
         final Entity entity = game.getEntity(entityId);
         ToHitData toHit = new ToHitData();
 
-        // infantry aren't affected by their own movement,
-        // unless it's flying Infantry (like the sylph)
+        // infantry aren't affected by their own movement.
         if (entity instanceof Infantry) {
-            if (movement == IEntityMovementType.MOVE_VTOL_WALK
-                    || movement == IEntityMovementType.MOVE_VTOL_RUN) {
-                toHit.addModifier(3, "attacker flew");
-            }
             return toHit;
         }
 
@@ -1245,9 +1240,10 @@ public class Compute {
                 || movement == IEntityMovementType.MOVE_VTOL_WALK) {
             toHit.addModifier(1, "attacker walked");
         } else if (movement == IEntityMovementType.MOVE_RUN
-                || movement == IEntityMovementType.MOVE_VTOL_RUN
-                || movement == IEntityMovementType.MOVE_SKID) {
+                || movement == IEntityMovementType.MOVE_VTOL_RUN) {
             toHit.addModifier(2, "attacker ran");
+        } else if (movement == IEntityMovementType.MOVE_SKID) {
+            toHit.addModifier(3, "attacker ran and skidded");
         } else if (movement == IEntityMovementType.MOVE_JUMP) {
             toHit.addModifier(3, "attacker jumped");
         }
@@ -1366,13 +1362,6 @@ public class Compute {
         final Entity attacker = game.getEntity(entityId);
         final IHex hex = game.getBoard().getHex(attacker.getPosition());
         ToHitData toHit = new ToHitData();
-
-        // Only BattleMechs in water get the terrain penalty for firing!
-        if (hex.terrainLevel(Terrains.WATER) > 0
-                && attacker.getElevation() < 0
-                && (attacker instanceof Mech)) {
-            toHit.addModifier(1, "attacker in water");
-        }
 
         return toHit;
     }
@@ -1494,13 +1483,6 @@ public class Compute {
             return toHit;
         }
         
-        // -1 bonus only against BattleMechs in water!
-        if (hex.terrainLevel(Terrains.WATER) > 0
-                && entityTarget.getElevation() < 0
-                && (entityTarget instanceof Mech)) {
-            toHit.addModifier(-1, "target in water");
-        }
-
         if (entityTarget.isStuck()) {
             toHit.addModifier(-2, "target stuck in swamp");
         }
@@ -1591,7 +1573,9 @@ public class Compute {
                 || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
             if ((weapon.curMode().getName() == "Ultra")
                     || (weapon.curMode().getName() == "2-shot")
+                    || (weapon.curMode().getName() == "3-shot")
                     || (weapon.curMode().getName() == "4-shot")
+                    || (weapon.curMode().getName() == "5-shot")
                     || (weapon.curMode().getName() == "6-shot")) {
                 use_table = true;
             }
@@ -1638,8 +1622,14 @@ public class Compute {
                         || (weapon.curMode().getName() == "2-shot")) {
                     fHits = expectedHitsByRackSize[2];
                 }
+                if (weapon.curMode().getName() == "3-shot") {
+                    fHits = expectedHitsByRackSize[3];
+                }
                 if (weapon.curMode().getName() == "4-shot") {
                     fHits = expectedHitsByRackSize[4];
+                }
+                if (weapon.curMode().getName() == "5-shot") {
+                    fHits = expectedHitsByRackSize[5];
                 }
                 if (weapon.curMode().getName() == "6-shot") {
                     fHits = expectedHitsByRackSize[6];

@@ -1905,6 +1905,9 @@ public class TestBot extends BotClient {
                             direct_fire = false;
                         }
                     }
+                    if(test_weapon.howManyShots() > 1) {
+                        direct_fire = false;
+                    }
         
                     // If the weapon is direct fire
                     

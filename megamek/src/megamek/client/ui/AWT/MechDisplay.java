@@ -1093,15 +1093,13 @@ public class MechDisplay extends BufferedPanel {
             AmmoType atype = (AmmoType) mAmmo.getType();
             // Override the display for the various ATM ammos
             if (AmmoType.T_ATM == atype.getAmmoType()) {
-                if ((atype.getAmmoType() == AmmoType.T_ATM)
-                        && atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
                     wMinR.setText("4"); //$NON-NLS-1$
                     wShortR.setText("1 - 9"); //$NON-NLS-1$
                     wMedR.setText("10 - 18"); //$NON-NLS-1$
                     wLongR.setText("19 - 27"); //$NON-NLS-1$
                     wExtR.setText("28 - 36"); //$NON-NLS-1$
-                } else if ((atype.getAmmoType() == AmmoType.T_ATM)
-                        && atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+                } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
                     wMinR.setText("---"); //$NON-NLS-1$
                     wShortR.setText("1 - 3"); //$NON-NLS-1$
                     wMedR.setText("4 - 6"); //$NON-NLS-1$
@@ -1115,6 +1113,21 @@ public class MechDisplay extends BufferedPanel {
                     wExtR.setText("16 - 20"); //$NON-NLS-1$
                 }
             } // End weapon-is-ATM
+            else if (atype.getAmmoType() == AmmoType.T_MML) {
+                if (atype.hasFlag(AmmoType.F_MML_LRM)) {
+                    wMinR.setText("6"); //$NON-NLS-1$
+                    wShortR.setText("1 - 7"); //$NON-NLS-1$
+                    wMedR.setText("8 - 14"); //$NON-NLS-1$
+                    wLongR.setText("15 - 21"); //$NON-NLS-1$
+                    wExtR.setText("21 - 28"); //$NON-NLS-1$
+                } else {
+                    wMinR.setText("---"); //$NON-NLS-1$
+                    wShortR.setText("1 - 3"); //$NON-NLS-1$
+                    wMedR.setText("4 - 6"); //$NON-NLS-1$
+                    wLongR.setText("7 - 9"); //$NON-NLS-1$
+                    wExtR.setText("10 - 12"); //$NON-NLS-1$
+                }
+            }
             
             //Min range 0 for hotload
             if(mAmmo.isHotLoaded())

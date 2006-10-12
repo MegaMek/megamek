@@ -13114,7 +13114,7 @@ public class Server implements Runnable {
             //here goes the fun :)
             //Shields take damage first then cowls then armor whee
             //Shield does not protect from ammo explosions or falls.
-            if ( !ammoExplosion && !hit.isFallDamage() && te.hasShield() ){
+            if ( !ammoExplosion && !hit.isFallDamage() && !damageIS && te.hasShield() ){
                 Mech me = (Mech)te;
                 int damageNew = me.shieldAbsorptionDamage(damage,hit.getLocation(),hit.isRear());
                 //if a shield absorbed the damage then lets tell the world about it.

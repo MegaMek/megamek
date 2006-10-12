@@ -427,6 +427,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLLongTom());
         EquipmentType.addType(createCLSniper());
         EquipmentType.addType(createCLThumper());
+        EquipmentType.addType(createCLHAG20());
+        EquipmentType.addType(createCLHAG30());
+        EquipmentType.addType(createCLHAG40());
 
         // Start of Clan Level3 weapons
         EquipmentType.addType(createCLERLargePulseLaser());
@@ -10130,6 +10133,84 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_ONESHOT;
         weapon.bv = 5;
         weapon.cost = 6000;
+
+        return weapon;
+    }
+
+    private static WeaponType createCLHAG20() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "HAG/20";
+        weapon.setInternalName("CLHAG20");
+        weapon.addLookupName("Clan HAG/20");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 20;
+        weapon.ammoType = AmmoType.T_HAG;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 8;
+        weapon.mediumRange = 16;
+        weapon.longRange = 24;
+        weapon.extremeRange = 32;
+        weapon.tonnage = 10.0f;
+        weapon.criticals = 6;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_MISSILE_HITS;
+        weapon.bv = 337;
+        weapon.cost = 480000;
+        weapon.explosive = true;
+
+        return weapon;
+    }
+
+    private static WeaponType createCLHAG30() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "HAG/30";
+        weapon.setInternalName("CLHAG30");
+        weapon.addLookupName("Clan HAG/30");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 30;
+        weapon.ammoType = AmmoType.T_HAG;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 8;
+        weapon.mediumRange = 16;
+        weapon.longRange = 24;
+        weapon.extremeRange = 32;
+        weapon.tonnage = 13.0f;
+        weapon.criticals = 8;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_MISSILE_HITS;
+        weapon.bv = 337;
+        weapon.cost = 480000;
+        weapon.explosive = true;
+
+        return weapon;
+    }
+
+    private static WeaponType createCLHAG40() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "HAG/40";
+        weapon.setInternalName("CLHAG40");
+        weapon.addLookupName("Clan HAG/40");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 40;
+        weapon.ammoType = AmmoType.T_HAG;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 8;
+        weapon.mediumRange = 16;
+        weapon.longRange = 24;
+        weapon.extremeRange = 32;
+        weapon.tonnage = 16.0f;
+        weapon.criticals = 10;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_MISSILE_HITS;
+        weapon.bv = 337;
+        weapon.cost = 480000;
+        weapon.explosive = true;
 
         return weapon;
     }

@@ -740,11 +740,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // ammo to-hit modifier
         if (te != null && te.getMovementMode() == IEntityMovementMode.VTOL
-                && (atype != null
-                && (atype.getAmmoType() == AmmoType.T_AC_LBX
-                || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
-                && atype.getMunitionType() == AmmoType.M_CLUSTER)
-                && te.getElevation() > game.getBoard().getHex(te.getPosition()).ceiling()) {
+                && atype != null
+                && (((atype.getAmmoType() == AmmoType.T_AC_LBX
+                      || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                     && atype.getMunitionType() == AmmoType.M_CLUSTER)
+                    || atype.getAmmoType() == AmmoType.T_HAG)
+                && te.getElevation() > 0
+                && te.getElevation() > game.getBoard().getHex(te.getPosition()).terrainLevel(Terrains.BLDG_ELEV)
+                && te.getElevation() != game.getBoard().getHex(te.getPosition()).terrainLevel(Terrains.BRIDGE_ELEV)) {
             toHit.addModifier(-3, "flak to-hit modifier");
         } else if (usesAmmo && atype.getToHitModifier() != 0) {
             toHit.addModifier(atype.getToHitModifier(), "ammunition to-hit modifier");

@@ -218,6 +218,9 @@ W,Clan,2,CLArrowIV,CLArrowIVSystem,Clan Arrow IV System,Clan Arrow IV Missile Sy
 W,Clan,2,CLLongTom,CLLongTomArtillery,Clan Long Tom,
 W,Clan,2,CLSniper,CLSniperArtillery,Clan Sniper,
 W,Clan,2,CLThumper,CLThumperArtillery,Clan Thumper,
+W,Clan,2,CLHAG20,Clan HAG/20,
+W,Clan,2,CLHAG30,Clan HAG/30,
+W,Clan,2,CLHAG40,Clan HAG/40,
 W,Clan,3,CLERLargePulseLaser,Clan ER Pulse Large Laser,Clan ER Large Pulse Laser,
 W,Clan,3,CLERMediumPulseLaser,Clan ER Pulse Med Laser,Clan ER Medium Pulse Laser,
 W,Clan,3,CLERSmallPulseLaser,Clan ER Pulse Small Laser,Clan ER Small Pulse Laser,
@@ -532,6 +535,9 @@ A,Clan,2,Clan Ammo Protomech LRTorpedo-19,Clan Ammo LRTorpedo-19,CLLRTorpedo19 A
 A,Clan,2,Clan Ammo LRTorpedo-20,CLLRTorpedo20 Ammo,Clan LRTorpedo 20 Ammo,CLLRT20 Ammo,
 A,IS,3,CLMagshotGR Ammo,Clan Magshot GR Ammo,
 A,Clan,3,Clan M-Pod Ammo,Clan MPod Ammo,
+A,Clan,2,HAG/20 Ammo,CLHAG20 Ammo,Clan HAG 20 Ammo,
+A,Clan,2,HAG/30 Ammo,CLHAG30 Ammo,Clan HAG 30 Ammo,
+A,Clan,2,HAG/40 Ammo,CLHAG40 Ammo,Clan HAG 40 Ammo,
 A,Clan,2,CLLongTomAmmo,CLLongTom Ammo,CLLongTomArtillery Ammo,Clan Ammo Long Tom,Clan Long Tom Ammo,
 A,Clan,2,CLThumperAmmo,CLThumper Ammo,CLThumperArtillery Ammo,Clan Ammo Thumper,Clan Thumper Ammo,
 A,Clan,2,CLThumperAmmo,CLThumper Ammo,CLThumperArtillery Ammo,Clan Ammo Thumper,Clan Thumper Ammo,
@@ -1087,5 +1093,4 @@ A,IS,3,ISArrowIVDavy Crockett-MAmmo,ISArrowIVDavy Crockett-M Ammo,ISArrowIV Davy
 A,Clan,2,CLArrowIVHomingAmmo,CLArrowIVHoming Ammo,CLArrowIV Homing Ammo,Clan Homing Ammo Arrow,Clan Arrow IV Homing Ammo,CLArrowIVAmmo - Homing,CLArrowIV Ammo - Homing,Clan Ammo Arrow - Homing,Clan Arrow IV Ammo - Homing,CLArrowIVAmmo (HO),CLArrowIV Ammo (HO),Clan Ammo Arrow (HO),Clan Arrow IV Ammo (HO),
 A,Clan,2,CLArrowIVFASCAMAmmo,CLArrowIVFASCAM Ammo,CLArrowIV FASCAM Ammo,Clan FASCAM Ammo Arrow,Clan Arrow IV FASCAM Ammo,CLArrowIVAmmo - FASCAM,CLArrowIV Ammo - FASCAM,Clan Ammo Arrow - FASCAM,Clan Arrow IV Ammo - FASCAM,
 A,Clan,2,CLArrowIVInferno-IVAmmo,CLArrowIVInferno-IV Ammo,CLArrowIV Inferno-IV Ammo,Clan Inferno-IV Ammo Arrow,Clan Arrow IV Inferno-IV Ammo,CLArrowIVAmmo - Inferno-IV,CLArrowIV Ammo - Inferno-IV,Clan Ammo Arrow - Inferno-IV,Clan Arrow IV Ammo - Inferno-IV,
-A,Clan,2,CLArrowIVVibrabomb-IVAmmo,CLArrowIVVibrabomb-IV Ammo,CLArrowIV Vibrabomb-IV Ammo,Clan Vibrabomb-IV Ammo Arrow,Clan Arrow IV Vibrabomb-IV Ammo,CLArrowIVAmmo - Vibrabomb-IV,CLArrowIV Ammo - Vibrabomb-IV,Clan Ammo Arrow - Vibrabomb-IV,Clan Arrow IV Ammo - Vibrabomb-IV,
-A,Clan,3,CLArrowIVDavy Crockett-MAmmo,CLArrowIVDavy Crockett-M Ammo,CLArrowIV Davy Crockett-M Ammo,Clan Dav
+A,Clan,2,CLArrowIVVibrabomb-IVAmmo,CLArrowIVVibrabomb-IV Ammo,CLArrowIV Vibrabomb-IV Ammo,Clan Vibrabomb-IV Ammo Arrow,Clan Arrow IV

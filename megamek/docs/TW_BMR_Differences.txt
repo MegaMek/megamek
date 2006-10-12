@@ -252,7 +252,7 @@ x20) Vehicles may be swarmed, and are -2 to hit.
 
 x21) Magnetic Claws add a +1 penalty to attempting to remove Swarming Battle Armor
 
-22) Vehicles may attempt to use Erratic Maneuvers to shake off a Swarming Infantry unit.
+x22) Vehicles may attempt to use Erratic Maneuvers to shake off a Swarming Infantry unit.
 
 x23) Shots fired at units which are being swarmed may strike the swarming infantry
 

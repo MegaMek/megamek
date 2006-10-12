@@ -74,6 +74,8 @@ v0.33.0 (SVN)
 + Bug: crew stunned criticals weren't having an effect
 + Bug: weapon destroyed/jammed criticals could hit weapon in different location
 + Swarmed vehicles can now shake off the swarmers
++ HAG/20, HAG/30, HAG/40 (using reverse engineered stats - bv and cost are wrong)
++ Bug: flak bonus not applied for vtol at elevation 1 over height 2 terrain
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

@@ -560,6 +560,8 @@ public class Mounted implements Serializable, RoundUpdated {
                 return wtype.getDamage();
             } else if (wtype.getAmmoType() == AmmoType.T_MAGSHOT) {
                 return 3;
+            } else if (wtype.getAmmoType() == AmmoType.T_HAG) {
+                return wtype.getRackSize() / 2;
             }else if ( this.isHotLoaded() ){
                 Mounted link = this.getLinked();
                 AmmoType atype = ((AmmoType) link.getType());

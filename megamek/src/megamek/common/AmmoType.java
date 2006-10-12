@@ -71,7 +71,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_HSRM              = 46;
     public static final int     T_MRM_STREAK        = 47;
     public static final int     T_MPOD              = 48;
-    public static final int     NUM_TYPES           = 49;
+    public static final int     T_HAG               = 49;
+    public static final int     NUM_TYPES           = 50;
     
 
     // ammo flags
@@ -475,6 +476,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLLRT20Ammo());
         EquipmentType.addType(createCLMagshotGRAmmo());
         EquipmentType.addType(createCLMPodAmmo());
+        EquipmentType.addType(createCLHAG20Ammo());
+        EquipmentType.addType(createCLHAG30Ammo());
+        EquipmentType.addType(createCLHAG40Ammo());
+        
         base = createCLLongTomAmmo();
         clanArtyAmmos.addElement( base );
         EquipmentType.addType( base );
@@ -5615,6 +5620,60 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 0;
         ammo.cost = 0;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLHAG20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "HAG/20 Ammo";
+        ammo.setInternalName(ammo.name);
+        ammo.addLookupName("CLHAG20 Ammo");
+        ammo.addLookupName("Clan HAG 20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_HAG;
+        ammo.shots = 6;
+        ammo.bv = 27;
+        ammo.cost = 30000;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLHAG30Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "HAG/30 Ammo";
+        ammo.setInternalName(ammo.name);
+        ammo.addLookupName("CLHAG30 Ammo");
+        ammo.addLookupName("Clan HAG 30 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 30;
+        ammo.ammoType = AmmoType.T_HAG;
+        ammo.shots = 4;
+        ammo.bv = 27;
+        ammo.cost = 30000;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLHAG40Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "HAG/40 Ammo";
+        ammo.setInternalName(ammo.name);
+        ammo.addLookupName("CLHAG40 Ammo");
+        ammo.addLookupName("Clan HAG 40 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 40;
+        ammo.ammoType = AmmoType.T_HAG;
+        ammo.shots = 3;
+        ammo.bv = 27;
+        ammo.cost = 30000;
 
         return ammo;
     }

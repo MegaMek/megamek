@@ -686,7 +686,8 @@ public class FiringDisplay
             AmmoType ammoType = (AmmoType)ammoMount.getType();
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
             if ( ((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
-                && (ammoType.getAmmoType() == AmmoType.T_LRM))
+                && (ammoType.getAmmoType() == AmmoType.T_LRM
+                        || ammoType.getAmmoType() == AmmoType.T_MML))
                  || ammoType.getMunitionType() == AmmoType.M_VIBRABOMB_IV)
                  
             {
@@ -1585,6 +1586,7 @@ public class FiringDisplay
               case (AmmoType.T_BA_INFERNO) :
               case (AmmoType.T_LRM_TORPEDO_COMBO) :
               case (AmmoType.T_ATM) :
+              case (AmmoType.T_MML) :
               case (AmmoType.T_EXLRM) :
               case (AmmoType.T_TBOLT5) :
               case (AmmoType.T_TBOLT10) :

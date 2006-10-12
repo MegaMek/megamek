@@ -183,7 +183,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
         boolean isIndirect = wtype.hasModes()
             && weapon.curMode().equals("Indirect");
         boolean isInferno =
-            atype != null && (atype.getAmmoType() == AmmoType.T_SRM || atype.getAmmoType() == AmmoType.T_BA_INFERNO) && atype.getMunitionType() == AmmoType.M_INFERNO ||
+            atype != null && (atype.getAmmoType() == AmmoType.T_SRM
+                    || atype.getAmmoType() == AmmoType.T_MML 
+                    || atype.getAmmoType() == AmmoType.T_BA_INFERNO) 
+                    && atype.getMunitionType() == AmmoType.M_INFERNO ||
                 isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO);
         boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == IGame.PHASE_FIRING;
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == IGame.PHASE_TARGETING || game.getPhase() == IGame.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
@@ -200,10 +203,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (te != null) {
             if (te.isINarcedBy(ae.getOwner().getTeam()) &&
                 atype != null &&
-                (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) &&
-                atype.getMunitionType() == AmmoType.M_NARC_CAPABLE &&
-                (wtype.getAmmoType() == AmmoType.T_LRM ||
-                 wtype.getAmmoType() == AmmoType.T_SRM)) {
+                (atype.getAmmoType() == AmmoType.T_LRM
+                        || atype.getAmmoType() == AmmoType.T_MML
+                        || atype.getAmmoType() == AmmoType.T_SRM) &&
+                atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
                 isINarcGuided = true;
             }
         }
@@ -285,7 +288,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     || (atype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
                     || ((atype.getAmmoType() == AmmoType.T_SRM
                             || atype.getAmmoType() == AmmoType.T_MRM
-                            || atype.getAmmoType() == AmmoType.T_LRM)
+                            || atype.getAmmoType() == AmmoType.T_LRM
+                            || atype.getAmmoType() == AmmoType.T_MML)
                             && munition == AmmoType.M_TORPEDO))
                     && (los.getMinimumWaterDepth() < 1)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Torpedos must follow water their entire LOS");
@@ -491,7 +495,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
         
         // Do we use Listen-Kill ammo from War of 3039 sourcebook?
         if (!isECMAffected && atype != null
-                && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM)
+                && (atype.getAmmoType() == AmmoType.T_LRM
+                        || atype.getAmmoType() == AmmoType.T_MML
+                        || atype.getAmmoType() == AmmoType.T_SRM)
                 && atype.getMunitionType() == AmmoType.M_LISTEN_KILL
                 && !(te != null && te.isClan())) {
             toHit.addModifier(-1, "Listen-Kill ammo");            
@@ -616,7 +622,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toSubtract += thTemp.getValue();
 
             // semiguided ammo negates this modifier, if TAG succeeded    
-            if (atype != null && atype.getAmmoType() == AmmoType.T_LRM &&
+            if (atype != null && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_MML) &&
                 atype.getMunitionType() == AmmoType.M_SEMIGUIDED &&
                 te.getTaggedBy() != -1) {
                 int nAdjust = thTemp.getValue();
@@ -647,7 +653,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // spotter movement, if applicable
         if (isIndirect) {
             // semiguided ammo negates this modifier, if TAG succeeded    
-            if (atype != null && atype.getAmmoType() == AmmoType.T_LRM &&
+            if (atype != null && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_MML) &&
                 atype.getMunitionType() == AmmoType.M_SEMIGUIDED &&
                 te.getTaggedBy() != -1) {
                 toHit.addModifier(-1 , "semiguided ignores spotter movement & indirect fire penalties");
@@ -926,7 +932,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
         if (target.getTargetType() == Targetable.TYPE_FLARE_DELIVER
                 && !(usesAmmo
-                && atype.getAmmoType() == AmmoType.T_LRM
+                && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_MML)
                 && atype.getMunitionType() == AmmoType.M_FLARE)) {
             return "Weapon can't deliver flares";
         }
@@ -942,7 +948,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
     
     
         if ( atype != null &&
-             atype.getAmmoType() == AmmoType.T_LRM &&
+             ( atype.getAmmoType() == AmmoType.T_LRM || 
+               atype.getAmmoType() == AmmoType.T_MML) &&
              ( atype.getMunitionType() == AmmoType.M_THUNDER ||
                atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE ||
                atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO ||
@@ -952,7 +959,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return "Weapon can only deliver minefields";
         }
         if ( atype != null &&
-             atype.getAmmoType() == AmmoType.T_LRM &&
+             (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_MML) &&
              atype.getMunitionType() == AmmoType.M_FLARE &&
              target.getTargetType() != Targetable.TYPE_FLARE_DELIVER) {
             return "Weapon can only deliver flares";
@@ -1194,6 +1201,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
             LosEffects.calculateLos(game, attackerId, target).canSee()) {
             return "Indirect fire impossible with direct LOS";
         }
+        if (isIndirect 
+                && usesAmmo 
+                && atype.getAmmoType() == AmmoType.T_MML 
+                && !atype.hasFlag(AmmoType.F_MML_LRM)) {
+            return "only LRM ammo can be fired indirectly";
+        }
         
         // hull down vees can't fire front weapons
         if(ae instanceof Tank && ae.isHullDown() && weapon.getLocation() == Tank.LOC_FRONT) {
@@ -1334,7 +1347,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         
         int distance = Compute.effectiveDistance(game, ae, target);
 
-        if(atype != null && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+        if(atype != null && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_MML) && atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
             if (te == null || te.getTaggedBy() == -1) {
                 // from a rules clarification
                 return "Semi-guided LRMs must target a unit tagged this turn";

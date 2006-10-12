@@ -299,6 +299,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLightTAG());
         EquipmentType.addType(createCLTAG());
         EquipmentType.addType(createCLLightTAG());
+        EquipmentType.addType(createISMML3());
+        EquipmentType.addType(createISMML5());
+        EquipmentType.addType(createISMML7());
+        EquipmentType.addType(createISMML9());
         
 
         // Start of Inner Sphere Level3 weapons
@@ -5068,6 +5072,90 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 24;
         weapon.flags |= F_MISSILE | F_ONESHOT;
         weapon.cost = 120000;
+
+        return weapon;
+    }
+
+    private static WeaponType createISMML3() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "MML 3";
+        weapon.setInternalName("ISMML3");
+        weapon.addLookupName("IS MML-3");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_MML;
+        weapon.tonnage = 1.5f;
+        weapon.criticals = 2;
+        weapon.bv = 53;
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 50000;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    private static WeaponType createISMML5() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "MML 5";
+        weapon.setInternalName("ISMML5");
+        weapon.addLookupName("IS MML-5");
+        weapon.heat = 2;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_MML;
+        weapon.tonnage = 3.0f;
+        weapon.criticals = 3;
+        weapon.bv = 90;
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 90000;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    private static WeaponType createISMML7() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "MML 7";
+        weapon.setInternalName("ISMML7");
+        weapon.addLookupName("IS MML-7");
+        weapon.heat = 4;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 7;
+        weapon.ammoType = AmmoType.T_MML;
+        weapon.tonnage = 4.5f;
+        weapon.criticals = 4;
+        weapon.bv = 120;
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 160000;
+        weapon.setModes(new String[] {"", "Indirect"});
+
+        return weapon;
+    }
+
+    private static WeaponType createISMML9() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "MML 9";
+        weapon.setInternalName("ISMML9");
+        weapon.addLookupName("IS MML-9");
+        weapon.heat = 5;
+        weapon.damage = DAMAGE_MISSILE;
+        weapon.rackSize = 9;
+        weapon.ammoType = AmmoType.T_MML;
+        weapon.tonnage = 6.0f;
+        weapon.criticals = 5;
+        weapon.bv = 147;
+        weapon.flags |= F_MISSILE;
+        weapon.cost = 225000;
+        weapon.setModes(new String[] {"", "Indirect"});
 
         return weapon;
     }

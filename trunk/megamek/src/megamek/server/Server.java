@@ -8408,6 +8408,7 @@ public class Server implements Runnable {
                  wtype.getAmmoType() == AmmoType.T_ATM ||
                  wtype.getAmmoType() == AmmoType.T_EXLRM ||
                  wtype.getAmmoType() == AmmoType.T_PXLRM ||
+                 wtype.getAmmoType() == AmmoType.T_HAG ||
                  wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER ) {
                 nCluster = 5;
             }
@@ -8483,6 +8484,15 @@ public class Server implements Runnable {
             if ( usesAmmo &&
                  atype.getAmmoType() == AmmoType.T_SRM_ADVANCED) {
                 nSalvoBonus += 1;
+            }
+            
+            // HAG get range dependent bonus
+            if( usesAmmo && atype.getAmmoType() == AmmoType.T_HAG) {
+                if(nRange <= wtype.getShortRange())
+                    nSalvoBonus += 2;
+                else if(nRange > wtype.getMediumRange())
+                    nSalvoBonus -= 2;
+                sSalvoType = " fragments ";
             }
 
             // If dealing with Inferno rounds set damage to zero and reset

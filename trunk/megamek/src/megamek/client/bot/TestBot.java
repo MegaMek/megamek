@@ -1515,13 +1515,20 @@ public class TestBot extends BotClient {
             if (atype.getAmmoType() == AmmoType.T_ATM) {
                 weapon_count++;
                 av_range += 15.0;
-                if ((atype.getAmmoType() == AmmoType.T_ATM)
-                        && atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+                if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
                     av_range -= 6;
                 }
-                if ((atype.getAmmoType() == AmmoType.T_ATM)
-                        && atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+                if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
                     av_range += 12.0;
+                }
+            }
+            if (atype.getAmmoType() == AmmoType.T_MML) {
+                weapon_count++;
+                if (atype.hasFlag(AmmoType.F_MML_LRM)) {
+                    av_range = 9;
+                }
+                else {
+                    av_range = 21.0;
                 }
             }
         }

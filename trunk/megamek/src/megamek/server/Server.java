@@ -1676,7 +1676,9 @@ public class Server implements Runnable {
             Entity entity = (Entity)e.nextElement();
             for(Mounted m : entity.getAmmo()) {
                 AmmoType atype = (AmmoType)m.getType();
-                if(atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+                if((atype.getAmmoType() == AmmoType.T_LRM
+                        || atype.getAmmoType() == AmmoType.T_MML)
+                        && atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
                     return true;
                 }
                 if((atype.getAmmoType() == AmmoType.T_ARROW_IV
@@ -5331,29 +5333,31 @@ public class Server implements Runnable {
                     Compute.d6(2) < mf.getTrigger() + hitMod) {
                     return;
                 }
-                entity.infernos.add( InfernoTracker.STANDARD_ROUND, mf.getDamage() );
+                
                 //report hitting an inferno mine
                 r = new Report(2155);
                 r.subject = entity.getId();
                 r.add(entity.getShortName(), true);
                 r.add(mf.getCoords().getBoardNum(), true);
-                r.addDesc(entity);
-                r.add(entity.infernos.getTurnsLeftToBurn());
                 addReport(r);
+                
+                deliverInfernoMissiles(entity, entity, mf.getDamage());
 
-                // start a fire in the targets hex
-                IHex h = game.getBoard().getHex(dest);
-
-                // Unless there a fire in the hex already, start one.
-                if ( !h.containsTerrain( Terrains.FIRE ) ) {
-                    r = new Report(3005);
-                    r.subject = entity.getId();
-                    r.add(dest.getBoardNum(), true);
-                    addReport(r);
-                    h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+                if(game.getOptions().booleanOption("fire")) {
+                    // start a fire in the targets hex
+                    IHex h = game.getBoard().getHex(dest);
+    
+                    // Unless there a fire in the hex already, start one.
+                    if ( !h.containsTerrain( Terrains.FIRE ) ) {
+                        r = new Report(3005);
+                        r.subject = entity.getId();
+                        r.add(dest.getBoardNum(), true);
+                        addReport(r);
+                        h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+                    }
+                    game.getBoard().addInfernoTo(dest, InfernoTracker.STANDARD_ROUND, 1);
+                    sendChangedHex(dest);
                 }
-                game.getBoard().addInfernoTo(dest, InfernoTracker.STANDARD_ROUND, 1);
-                sendChangedHex(dest);
                 break;
             }
         }
@@ -7309,9 +7313,19 @@ public class Server implements Runnable {
         Infantry platoon = null;
         final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
         ToHitData toHit = wr.toHit;
-        boolean bInferno = usesAmmo && (atype.getAmmoType() == AmmoType.T_SRM || atype.getAmmoType() == AmmoType.T_BA_INFERNO) && atype.getMunitionType() == AmmoType.M_INFERNO;
-        boolean bFragmentation = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) && atype.getMunitionType() == AmmoType.M_FRAGMENTATION;
-        boolean bAcidHead = usesAmmo && atype.getAmmoType() == AmmoType.T_SRM && atype.getMunitionType() == AmmoType.M_AX_HEAD;
+        boolean bInferno = usesAmmo 
+        && (atype.getAmmoType() == AmmoType.T_SRM 
+                || atype.getAmmoType() == AmmoType.T_MML
+                || atype.getAmmoType() == AmmoType.T_BA_INFERNO)
+                && atype.getMunitionType() == AmmoType.M_INFERNO;
+        boolean bFragmentation = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM 
+                || atype.getAmmoType() == AmmoType.T_MML
+                || atype.getAmmoType() == AmmoType.T_SRM)
+                && atype.getMunitionType() == AmmoType.M_FRAGMENTATION;
+        boolean bAcidHead = usesAmmo 
+        && (atype.getAmmoType() == AmmoType.T_SRM
+                || atype.getAmmoType() == AmmoType.T_MML)
+        && atype.getMunitionType() == AmmoType.M_AX_HEAD;
         boolean bFlechette = usesAmmo && 
               (atype.getAmmoType() == AmmoType.T_AC ||
                atype.getAmmoType() == AmmoType.T_LAC) &&
@@ -7330,10 +7344,19 @@ public class Server implements Runnable {
               (atype.getAmmoType() == AmmoType.T_AC ||
                atype.getAmmoType() == AmmoType.T_LAC)&& 
           atype.getMunitionType() == AmmoType.M_TRACER;
-        boolean bAntiTSM = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) && atype.getMunitionType() == AmmoType.M_ANTI_TSM;
-        boolean bSwarm = usesAmmo && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SWARM;
-        boolean bSwarmI = usesAmmo && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_SWARM_I;
-        boolean isIndirect = (wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
+        boolean bAntiTSM = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM
+                || atype.getAmmoType() == AmmoType.T_MML
+                || atype.getAmmoType() == AmmoType.T_SRM)
+                && atype.getMunitionType() == AmmoType.M_ANTI_TSM;
+        boolean bSwarm = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM 
+                || atype.getAmmoType() == AmmoType.T_MML) 
+                && atype.getMunitionType() == AmmoType.M_SWARM;
+        boolean bSwarmI = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM 
+                || atype.getAmmoType() == AmmoType.T_MML) 
+                && atype.getMunitionType() == AmmoType.M_SWARM_I;
+        boolean isIndirect = (wtype.getAmmoType() == AmmoType.T_LRM
+                || wtype.getAmmoType() == AmmoType.T_MML
+                || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
                                && weapon.curMode().equals("Indirect");
         boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
         boolean bGlancing = false; // For Glancing Hits Rule
@@ -7365,11 +7388,15 @@ public class Server implements Runnable {
           if ((!weapon.getType().hasModes() ||
                !weapon.curMode().equals("Indirect")) &&
               ( atype.getAmmoType() == AmmoType.T_ATM && (atype.getMunitionType() == AmmoType.M_STANDARD || atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE || atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ||
-                  (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+                  (atype.getAmmoType() == AmmoType.T_LRM 
+                          || atype.getAmmoType() == AmmoType.T_SRM 
+                          || atype.getAmmoType() == AmmoType.T_MML) 
+                          && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
               isNemesisConfusable = true;
           }
         } else if (wtype.getAmmoType() == AmmoType.T_LRM ||
-                 wtype.getAmmoType() == AmmoType.T_SRM) {
+                 wtype.getAmmoType() == AmmoType.T_SRM || 
+                 wtype.getAmmoType() == AmmoType.T_MML) {
           if (usesAmmo && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
               isNemesisConfusable = true;
           }
@@ -7827,31 +7854,26 @@ public class Server implements Runnable {
 
           // Handle the thunder munitions.
           if (atype.getAmmoType() == AmmoType.T_LRM
-                && atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
-              deliverThunderAugMinefield(coords, ae.getOwner().getId(),
-                                         atype.getRackSize());
+                  || atype.getAmmoType() == AmmoType.T_MML) {
+              if(atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED)
+                  deliverThunderAugMinefield(coords, ae.getOwner().getId(),
+                          atype.getRackSize());
+              else if (atype.getMunitionType() == AmmoType.M_THUNDER)
+                  deliverThunderMinefield(coords, ae.getOwner().getId(),
+                                          atype.getRackSize());
+              else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
+                  deliverThunderInfernoMinefield(coords, ae.getOwner().getId(),
+                                                 atype.getRackSize());
+              else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
+                  deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
+                                               atype.getRackSize(),
+                                               wr.waa.getOtherAttackInfo());
+              else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
+                  deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
+                                            atype.getRackSize());
+              else if (atype.getMunitionType() == AmmoType.M_FLARE)
+                  deliverFlare(coords, atype.getRackSize());
           }
-          else if (atype.getAmmoType() == AmmoType.T_LRM
-                    && atype.getMunitionType() == AmmoType.M_THUNDER) {
-              deliverThunderMinefield(coords, ae.getOwner().getId(),
-                                      atype.getRackSize());
-          }
-          else if (atype.getAmmoType() == AmmoType.T_LRM
-                    && atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO)
-              deliverThunderInfernoMinefield(coords, ae.getOwner().getId(),
-                                             atype.getRackSize());
-          else if (atype.getAmmoType() == AmmoType.T_LRM
-                    && atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
-              deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
-                                           atype.getRackSize(),
-                                           wr.waa.getOtherAttackInfo());
-          else if (atype.getAmmoType() == AmmoType.T_LRM
-                    && atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE)
-              deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
-                                        atype.getRackSize());
-          else if (atype.getAmmoType() == AmmoType.T_LRM
-                    && atype.getMunitionType() == AmmoType.M_FLARE)
-              deliverFlare(coords, atype.getRackSize());
           //else
           //{
           //...This is an error, but I'll just ignore it for now.
@@ -8412,11 +8434,19 @@ public class Server implements Runnable {
                  wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER ) {
                 nCluster = 5;
             }
+            
+            if(atype != null && atype.getAmmoType() == AmmoType.T_MML) {
+                if(atype.hasFlag(AmmoType.F_MML_LRM))
+                    nCluster = 5;
+                else
+                    nCluster = 1;
+            }
 
             // calculate # of missiles hitting
             if ( wtype.getAmmoType() == AmmoType.T_LRM ||
                  wtype.getAmmoType() == AmmoType.T_SRM ||
-                 wtype.getAmmoType() == AmmoType.T_ATM ) {
+                 wtype.getAmmoType() == AmmoType.T_ATM ||
+                 wtype.getAmmoType() == AmmoType.T_MML) {
 
                 // check for artemis, else check for narc and similar things
                 mLinker = weapon.getLinkedBy();
@@ -8447,7 +8477,7 @@ public class Server implements Runnable {
                         && (!weapon.getType().hasModes()
                             || !weapon.curMode().equals("Indirect"))
                         && ( atype.getAmmoType() == AmmoType.T_ATM && (atype.getMunitionType() == AmmoType.M_STANDARD || atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE || atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ||
-                            (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM) && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
+                            (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM || atype.getAmmoType() == AmmoType.T_MML) && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE)) {
                         nSalvoBonus += 2;
                     }
                 } else if (entityTarget != null &&
@@ -8473,7 +8503,7 @@ public class Server implements Runnable {
                     // and we are using narc ammo.
                     if (!bECMAffected
                             && !bMekStealthActive
-                            && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_SRM)
+                            && (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_MML || atype.getAmmoType() == AmmoType.T_SRM)
                             && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
                         nSalvoBonus += 2;
                     }
@@ -13590,7 +13620,8 @@ public class Server implements Runnable {
                             for(Mounted m:te.getEquipment()) {
                                 if(m.getType() instanceof AmmoType) {
                                     AmmoType at = (AmmoType)m.getType();
-                                    if(at.getAmmoType() == AmmoType.T_SRM 
+                                    if((at.getAmmoType() == AmmoType.T_SRM
+                                            || at.getAmmoType() == AmmoType.T_MML)
                                             && at.getMunitionType() == AmmoType.M_INFERNO) {
                                         infernos += at.getRackSize() * m.getShotsLeft();
                                     }
@@ -16143,7 +16174,8 @@ public class Server implements Runnable {
         // Inferno ammo causes heat buildup as well as the damage
         if (mounted.getType() instanceof AmmoType
                 && (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM
-                || ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_BA_INFERNO)
+                || ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_BA_INFERNO
+                || ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_MML)
                 && ((AmmoType)mounted.getType()).getMunitionType() == AmmoType.M_INFERNO
                 && mounted.getShotsLeft() > 0) {
             en.heatBuildup += Math.min(mounted.getExplosionDamage(),30);

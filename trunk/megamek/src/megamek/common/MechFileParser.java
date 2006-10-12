@@ -171,7 +171,9 @@ public class MechFileParser {
                     WeaponType wtype = (WeaponType)mWeapon.getType();
 
                     // only srm and lrm are valid for artemis
-                    if (wtype.getAmmoType() != AmmoType.T_LRM && wtype.getAmmoType() != AmmoType.T_SRM) {
+                    if (wtype.getAmmoType() != AmmoType.T_LRM
+                            && wtype.getAmmoType() != AmmoType.T_MML
+                            && wtype.getAmmoType() != AmmoType.T_SRM) {
                         continue;
                     }
 

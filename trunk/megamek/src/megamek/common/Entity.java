@@ -4558,7 +4558,9 @@ public abstract class Entity extends TurnOrdered
         // Walk through the unit's ammo, stop when we find a match.
         for(Mounted amounted : getAmmo()) {
             AmmoType atype = (AmmoType)amounted.getType();
-            if (((atype.getAmmoType() == AmmoType.T_SRM) || (atype.getAmmoType() == AmmoType.T_BA_INFERNO))
+            if (((atype.getAmmoType() == AmmoType.T_SRM)
+                    || (atype.getAmmoType() == AmmoType.T_MML)
+                    || (atype.getAmmoType() == AmmoType.T_BA_INFERNO))
                     && atype.getMunitionType() == AmmoType.M_INFERNO
                     && amounted.getShotsLeft() > 0 ) {
                 found = true;

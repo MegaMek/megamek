@@ -1075,7 +1075,8 @@ public class MoveStep implements Serializable {
                 // gravity psr
                 movementType = IEntityMovementType.MOVE_WALK;
                 entity.gotPavementBonus = true;
-            } else if (getMpUsed() <= entity.getRunMPwithoutMASC()
+            } else if ((getMpUsed() <= entity.getRunMPwithoutMASC()
+                    || (getMpUsed() <= entity.getRunMP() && entity instanceof Mech && ((Mech)entity).isMASCUsed()))
                        && !isRunProhibited()) {
                 if (parent.getEntity().getMovementMode() == IEntityMovementMode.VTOL)
                     movementType = IEntityMovementType.MOVE_VTOL_RUN;

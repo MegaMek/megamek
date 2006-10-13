@@ -3158,7 +3158,7 @@ public class Server implements Runnable {
         int overallMoveType = entity.moved;;
         boolean firstStep;
         boolean wasProne;
-        boolean fellDuringMovement;
+        boolean fellDuringMovement = false;
         boolean turnOver;
         int prevFacing = curFacing;
         IHex prevHex = null;
@@ -3179,28 +3179,6 @@ public class Server implements Runnable {
             game.addAction(cma);
         }
 
-        // check for MASC failure
-        if (entity instanceof Mech) {
-            Vector crits = new Vector();
-            Vector vReport = new Vector();
-            if (((Mech)entity).checkForMASCFailure(md, vReport, crits)) {
-                addReport(vReport);
-                CriticalSlot cs = null;
-                int loc = Entity.LOC_NONE;
-                for(Enumeration e = crits.elements();e.hasMoreElements();) {
-                    Object o = e.nextElement();
-                    if(o instanceof Integer)
-                        loc = (Integer) o;
-                    else if (o instanceof CriticalSlot) {
-                        cs = (CriticalSlot) o;
-                        applyCriticalHit(entity, loc, cs, true);
-                    }
-                }
-                // no movement after that
-                md.clear();
-            }
-        }
-
         overallMoveType = md.getLastStepMovementType();
 
         //check for starting in liquid magma
@@ -3211,7 +3189,6 @@ public class Server implements Runnable {
 
         // iterate through steps
         firstStep = true;
-        fellDuringMovement = false;
         turnOver = false;
         /* Bug 754610: Revert fix for bug 702735. */
         MoveStep prevStep = null;
@@ -3232,6 +3209,33 @@ public class Server implements Runnable {
             //stop if the entity already killed itself
             if(entity.isDestroyed() || entity.isDoomed()) {
                 break;
+            }
+
+            // check for MASC failure on first step
+            if (firstStep && entity instanceof Mech) {
+                Vector crits = new Vector();
+                Vector vReport = new Vector();
+                if (((Mech)entity).checkForMASCFailure(md, vReport, crits)) {
+                    addReport(vReport);
+                    CriticalSlot cs = null;
+                    int loc = Entity.LOC_NONE;
+                    for(Enumeration e = crits.elements();e.hasMoreElements();) {
+                        Object o = e.nextElement();
+                        if(o instanceof Integer)
+                            loc = (Integer) o;
+                        else if (o instanceof CriticalSlot) {
+                            cs = (CriticalSlot) o;
+                            addReport(applyCriticalHit(entity, loc, cs, true));
+                        }
+                    }
+                    //do any PSR immediately
+                    resolvePilotingRolls(entity);
+                    game.resetPSRs(entity);
+                    // let the player replot their move as MP might be changed
+                    md.clear();
+                    fellDuringMovement = true; // so they get a new turn
+                    break;
+                }
             }
 
             // check piloting skill for getting up

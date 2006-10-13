@@ -81,6 +81,7 @@ v0.33.0 (SVN)
 + Summoner Coelocanth / Drillson (MML) in unofficial.zip to demo the new tech
 + Bug 1575587: Shield Absorbs Low Gravity IS Damage
 + Some 3058U clan BA
++ Rules changes for MASC failure
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

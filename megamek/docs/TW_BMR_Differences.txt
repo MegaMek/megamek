@@ -94,7 +94,7 @@ x14) A-Pods now do a minimum of 1 point of damage on discharge
 
 15) Narc Missile Beacon eliminates need for spotter for indirect LRM fire
 
-16) MASC Failure now results in an instant critical hit to each leg.  It no longer prevents movement for the rest of the game.
+x16) MASC Failure now results in an instant critical hit to each leg.  It no longer prevents movement for the rest of the game.
 
 17) Apparently standard Narc Missile Beacons can now use a Pod which has the same effect as the iNarc Homing Pod, and visa versa.  I am unsure whether or not this is simply a mistake which slipped through or if this was intentional and there is some difference in ammo cost or BV which is unaccounted for in this section.
 

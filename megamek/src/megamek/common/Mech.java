@@ -366,6 +366,10 @@ public abstract class Mech
                     vDesc.addElement(r);
 
                     if(((MiscType)(equip.getType())).hasSubType(MiscType.S_SUPERCHARGER)) {
+                        if (equip.getType().hasFlag(MiscType.F_MASC)) {
+                            equip.setDestroyed(true);
+                            equip.setMode("Off");
+                        }
                         // do the damage - engine crits
                         int hits = 0;
                         int roll = Compute.d6(2);
@@ -409,26 +413,21 @@ public abstract class Mech
                             }
                         }
                     } else {
-                        // do the damage.  Rules say 'effects identical as if you took 2 hip crits'. 
-                        // We'll just do the hip crits
-                        vCriticals.add(new Integer(LOC_RLEG));
-                        vCriticals.add(getCritical(LOC_RLEG, 0));
-                        vCriticals.add(new Integer(LOC_LLEG));
-                        vCriticals.add(getCritical(LOC_LLEG, 0));
-                        //getCritical(LOC_RLEG, 0).setDestroyed(true);
-                        //getCritical(LOC_LLEG, 0).setDestroyed(true);
-                        if (this instanceof QuadMech) {
-                            //getCritical(LOC_RARM, 0).setDestroyed(true);
-                            //getCritical(LOC_LARM, 0).setDestroyed(true);
-                        vCriticals.add(new Integer(LOC_RARM));
-                        vCriticals.add(getCritical(LOC_RARM, 0));
-                        vCriticals.add(new Integer(LOC_LARM));
-                        vCriticals.add(getCritical(LOC_LARM, 0));
+                        // do the damage.
+                        // random crit on each leg, but MASC is not destroyed
+                        for(int loc=0;loc<locations();loc++) {
+                            if(locationIsLeg(loc) && getHittableCriticals(loc) > 0) {
+                                CriticalSlot slot = null;
+                                do {
+                                    int slotIndex = Compute.randomInt( getNumberOfCriticals(loc) );
+                                    slot = getCritical(loc, slotIndex);
+                                } while(!slot.isHittable());
+                                
+                                vCriticals.add(new Integer(loc));
+                                vCriticals.add(slot);
+                                
+                            }
                         }
-                    }
-                    if (equip.getType().hasFlag(MiscType.F_MASC)) {
-                        equip.setDestroyed(true);
-                        equip.setMode("Off");
                     }
                 } else {
                     r.choose(true);

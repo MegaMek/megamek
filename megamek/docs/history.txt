@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.0 (SVN)
+v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.
 + Added PXH-7K and MAD-4K (RS:PPU)
 + Clearing woods changed to TW rules

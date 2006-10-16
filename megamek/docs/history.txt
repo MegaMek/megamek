@@ -6,6 +6,7 @@ v0.33.1 (SVN)
 + Bug 1577506: BA SRM2 launchers don't show any ammo in game
 + Bug: multiple copies of same ammo in the customise dialog
 + Bug: .BLK format omni vehicles weren't omni. (now include <omni></omni>)
++ Default images for mechanized platoons - thanks to Carpe Mortis
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

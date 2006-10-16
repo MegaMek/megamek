@@ -329,13 +329,15 @@ public class EquipmentType {
     }
 
     public static void initializeTypes() {
-        EquipmentType.allTypes = new Vector();
-        EquipmentType.lookupHash = new Hashtable();
-        
-        // will I need any others?
-        WeaponType.initializeTypes();
-        AmmoType.initializeTypes();
-        MiscType.initializeTypes();
+        if(null==EquipmentType.allTypes) {
+            EquipmentType.allTypes = new Vector();
+            EquipmentType.lookupHash = new Hashtable();
+            
+            // will I need any others?
+            WeaponType.initializeTypes();
+            AmmoType.initializeTypes();
+            MiscType.initializeTypes();
+        }
     }
     
     public static Enumeration getAllTypes() {

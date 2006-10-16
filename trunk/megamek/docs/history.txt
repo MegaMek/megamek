@@ -1,6 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.33.1 (SVN)
++ Fix filename case for IS Omni images, so they show up on filename case-
+ sensitive OS.
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

@@ -4,6 +4,8 @@ v0.32.1 (SVN)
 + Bug: NPE when firing infantry rifle
 + Bug: flak bonus not applied for vtol at elevation 1 over height 2 terrain
 + Bug 1575587: Shield Absorbs Low Gravity IS Damage
++ Fix filename case for IS Omni images, so they show up on filename case-
+ sensitive OS.
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

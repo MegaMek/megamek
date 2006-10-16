@@ -166,6 +166,10 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
             loadEquipment(t, "Turret", Tank.LOC_TURRET);
         }
         loadEquipment(t, "Body", Tank.LOC_BODY);
+        
+        if(dataFile.exists("omni")) {
+            t.setOmni(true);
+        }
         return t;        
     }
 }

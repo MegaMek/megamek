@@ -8681,6 +8681,18 @@ public class Server implements Runnable {
         } else if (wtype.hasFlag(WeaponType.F_ENERGY)) {
             // Check for Altered Damage from Energy Weapons (MTR, pg.22)
             nDamPerHit = wtype.getDamage();
+            if(nDamPerHit==WeaponType.DAMAGE_VARIABLE) {
+                nDamPerHit = wtype.getRackSize();
+                if(wtype.hasFlag(WeaponType.F_PPC)) {
+                    //snub nose variable damage
+                    if(nRange > wtype.getMediumRange()) {
+                        nDamPerHit /= 2;
+                    }
+                    else if(nRange > wtype.getShortRange()) {
+                        nDamPerHit = ((nDamPerHit * 3) + 3)/4;
+                    }
+                }
+            }
             if (game.getOptions().booleanOption("maxtech_altdmg")) {
                 if (nRange<=1) {
                     nDamPerHit++;

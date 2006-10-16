@@ -9620,25 +9620,24 @@ public class WeaponType extends EquipmentType {
         weapon.name = "Snub Nosed Particle Projection Cannon";
         weapon.setInternalName("ISSNPPC");
         weapon.addLookupName("ISSnubNosedPPC");
-        weapon.heat = 11;
-        weapon.damage = 10;
+        weapon.heat = 10;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 10;
         weapon.ammoType = AmmoType.T_NA;
-        weapon.minimumRange = 3;
-        weapon.shortRange = 6;
-        weapon.mediumRange = 12;
-        weapon.longRange = 18;
-        weapon.extremeRange = 24;
-        weapon.waterShortRange = 4;
-        weapon.waterMediumRange = 7;
-        weapon.waterLongRange = 10;
-        weapon.waterExtremeRange = 14;
+        weapon.shortRange = 9;
+        weapon.mediumRange = 13;
+        weapon.longRange = 15;
+        weapon.extremeRange = 26;
+        weapon.waterShortRange = 6;
+        weapon.waterMediumRange = 8;
+        weapon.waterLongRange = 9;
+        weapon.waterExtremeRange = 16;
         weapon.tonnage = 6.0f;
         weapon.criticals = 2;
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         // Warning: this BV is unofficial.
         //FIXME
         weapon.bv = 176;
-        weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
         weapon.cost = 0;
 
         return weapon;
@@ -10233,7 +10232,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLHAG20");
         weapon.addLookupName("Clan HAG/20");
         weapon.heat = 4;
-        weapon.damage = DAMAGE_MISSILE;
+        weapon.damage = DAMAGE_VARIABLE;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_HAG;
         weapon.minimumRange = WEAPON_NA;
@@ -10259,7 +10258,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLHAG30");
         weapon.addLookupName("Clan HAG/30");
         weapon.heat = 4;
-        weapon.damage = DAMAGE_MISSILE;
+        weapon.damage = DAMAGE_VARIABLE;
         weapon.rackSize = 30;
         weapon.ammoType = AmmoType.T_HAG;
         weapon.minimumRange = WEAPON_NA;
@@ -10285,7 +10284,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLHAG40");
         weapon.addLookupName("Clan HAG/40");
         weapon.heat = 4;
-        weapon.damage = DAMAGE_MISSILE;
+        weapon.damage = DAMAGE_VARIABLE;
         weapon.rackSize = 40;
         weapon.ammoType = AmmoType.T_HAG;
         weapon.minimumRange = WEAPON_NA;

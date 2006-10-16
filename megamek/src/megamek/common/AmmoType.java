@@ -387,6 +387,10 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISStreakMRM20Ammo());
         EquipmentType.addType(createISStreakMRM30Ammo());
         EquipmentType.addType(createISStreakMRM40Ammo());
+        EquipmentType.addType(createISHeavyMGAmmo());
+        EquipmentType.addType(createISHeavyMGAmmoHalf());
+        EquipmentType.addType(createISLightMGAmmo());
+        EquipmentType.addType(createISLightMGAmmoHalf());
 
         base = createISMML3LRMAmmo();
         lrmAmmos.addElement( base );
@@ -1194,6 +1198,84 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0.5f;
         ammo.tonnage = 0.5f;
         ammo.cost = 500;
+
+        return ammo;
+    }
+
+    private static AmmoType createISHeavyMGAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Heavy Machine Gun Ammo";
+        ammo.setInternalName("IS Heavy Machine Gun Ammo - Full");
+        ammo.addLookupName("ISHeavyMG Ammo (100)");
+        ammo.addLookupName("IS Heavy Machine Gun Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_MG_HEAVY;
+        ammo.flags |= F_MG;
+        ammo.shots = 100;
+        ammo.bv = 1;
+        ammo.cost = 1000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISHeavyMGAmmoHalf() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Half Heavy Machine Gun Ammo";
+        ammo.setInternalName("IS Heavy Machine Gun Ammo - Half");
+        ammo.addLookupName("ISHeavyMG Ammo (50)");
+        ammo.addLookupName("IS Heavy Machine Gun Ammo (1/2 ton)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_MG_HEAVY;
+        ammo.flags |= F_MG;
+        ammo.shots = 50;
+        ammo.tonnage = 0.5f;
+        ammo.bv = 0.5f;
+        ammo.cost = 500;
+
+        return ammo;
+    }
+
+    private static AmmoType createISLightMGAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Light Machine Gun Ammo";
+        ammo.setInternalName("IS Light Machine Gun Ammo - Full");
+        ammo.addLookupName("ISLightMG Ammo (200)");
+        ammo.addLookupName("IS Light Machine Gun Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_MG_LIGHT;
+        ammo.flags |= F_MG;
+        ammo.shots = 200;
+        ammo.bv = 1;
+        ammo.cost = 500;
+
+        return ammo;
+    }
+
+    private static AmmoType createISLightMGAmmoHalf() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Half Light Machine Gun Ammo";
+        ammo.setInternalName("IS Light Machine Gun Ammo - Half");
+        ammo.addLookupName("ISLightMG Ammo (100)");
+        ammo.addLookupName("IS Light Machine Gun Ammo (1/2 ton)");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_MG_LIGHT;
+        ammo.flags |= F_MG;
+        ammo.shots = 100;
+        ammo.tonnage = 0.5f;
+        ammo.bv = 0.5f;
+        ammo.cost = 250;
 
         return ammo;
     }

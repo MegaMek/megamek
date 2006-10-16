@@ -7906,7 +7906,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("BASRM-1");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 4;
+        weapon.rackSize = 1;
         weapon.ammoType = AmmoType.T_SRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -7930,7 +7930,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("BASRM-2");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 4;
+        weapon.rackSize = 2;
         weapon.ammoType = AmmoType.T_SRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -7954,7 +7954,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("BASRM-3");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 4;
+        weapon.rackSize = 3;
         weapon.ammoType = AmmoType.T_SRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -8002,7 +8002,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("BASRM-5");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 4;
+        weapon.rackSize = 5;
         weapon.ammoType = AmmoType.T_SRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -8026,7 +8026,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("BASRM-6");
         weapon.heat = 0;
         weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 4;
+        weapon.rackSize = 6;
         weapon.ammoType = AmmoType.T_SRM;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;

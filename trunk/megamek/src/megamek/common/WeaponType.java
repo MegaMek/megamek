@@ -358,6 +358,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISPXLRM15()); //guessed from fluff
         EquipmentType.addType(createISPXLRM20()); //guessed from fluff
         EquipmentType.addType(createISMPod());
+        EquipmentType.addType(createISLightMG());
+        EquipmentType.addType(createISHeavyMG());
         
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -797,6 +799,56 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 5;
         weapon.flags |= F_BALLISTIC | F_MG;
         weapon.cost = 5000;
+
+        return weapon;
+    }
+
+    private static WeaponType createISLightMG() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "Light Machine Gun";
+        weapon.setInternalName("ISLightMG");
+        weapon.addLookupName("IS Light Machine Gun");
+        weapon.heat = 0;
+        weapon.damage = 1;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_MG_LIGHT;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.bv = 5;
+        weapon.flags |= F_BALLISTIC | F_MG;
+        weapon.cost = 5000;
+
+        return weapon;
+    }
+
+    private static WeaponType createISHeavyMG() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "Heavy Machine Gun";
+        weapon.setInternalName("ISHeavyMG");
+        weapon.addLookupName("IS Heavy Machine Gun");
+        weapon.heat = 0;
+        weapon.damage = 3;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_MG_HEAVY;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 2;
+        weapon.extremeRange = 2;
+        weapon.tonnage = 1.0f;
+        weapon.criticals = 1;
+        weapon.bv = 6;
+        weapon.flags |= F_BALLISTIC | F_MG;
+        weapon.cost = 7500;
 
         return weapon;
     }
@@ -3540,8 +3592,8 @@ public class WeaponType extends EquipmentType {
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
-        weapon.longRange = 3;
-        weapon.extremeRange = 4;
+        weapon.longRange = 2;
+        weapon.extremeRange = 2;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.bv = 6;

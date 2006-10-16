@@ -9,6 +9,7 @@ v0.33.1 (SVN)
 + Default images for mechanized platoons - thanks to Carpe Mortis
 + Bug: AMS was engaging HAG fire
 + Snub nose PPC range, heat and damage degradation set to TW values
++ IS light and heavy machine guns
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

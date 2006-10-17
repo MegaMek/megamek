@@ -749,6 +749,9 @@ public class Infantry
         
         if(isDestroyed()) {
             Entity killer = game.getEntity(killerId);
+            if(killer == null) {
+                killer = game.getOutOfGameEntity(killerId);
+            }
             if(killer != null) {
                 r = new Report(7072, Report.PUBLIC);
                 r.addDesc(killer);

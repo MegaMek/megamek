@@ -15,7 +15,9 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 public class AmmoType extends EquipmentType {
@@ -235,63 +237,62 @@ public class AmmoType extends EquipmentType {
 
     public static void initializeTypes() {
         // Save copies of the SRM and LRM ammos to use to create munitions.
-        Vector srmAmmos = new Vector(11);
-        Vector clanSrmAmmos = new Vector();
-        Vector baSrmAmmos = new Vector();
-        Vector baMrmAmmos = new Vector();
-        Vector clanBaLrmAmmos = new Vector();
-        Vector isBaLrmAmmos = new Vector();
-        Vector lrmAmmos = new Vector(26);
-        Vector clanLrmAmmos = new Vector();
-        Vector acAmmos  = new Vector(4);
-        Vector arrowAmmos = new Vector(4);
-        Vector clanArrowAmmos = new Vector(4);
-        Vector thumperAmmos = new Vector(2);
-        Vector artyAmmos = new Vector(6);
-        Vector clanArtyAmmos = new Vector(6);
-        Vector munitions = new Vector();
+        ArrayList<AmmoType> srmAmmos = new ArrayList<AmmoType>(11);
+        ArrayList<AmmoType> clanSrmAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> baSrmAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> baMrmAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> clanBaLrmAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> isBaLrmAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> lrmAmmos = new ArrayList<AmmoType>(26);
+        ArrayList<AmmoType> clanLrmAmmos = new ArrayList<AmmoType>();
+        ArrayList<AmmoType> acAmmos  = new ArrayList<AmmoType>(4);
+        ArrayList<AmmoType> arrowAmmos = new ArrayList<AmmoType>(4);
+        ArrayList<AmmoType> clanArrowAmmos = new ArrayList<AmmoType>(4);
+        ArrayList<AmmoType> thumperAmmos = new ArrayList<AmmoType>(2);
+        ArrayList<AmmoType> sniperAmmos = new ArrayList<AmmoType>(6);
+        ArrayList<AmmoType> longTomAmmos = new ArrayList<AmmoType>(6);
+        ArrayList<AmmoType> clanArtyAmmos = new ArrayList<AmmoType>(6);
+        ArrayList<MunitionMutator> munitions = new ArrayList<MunitionMutator>();
+        ArrayList<AmmoType> mmlAmmos = new ArrayList<AmmoType>();
 
-        Enumeration baseTypes = null;
-        Enumeration mutators = null;
         AmmoType base = null;
-        MunitionMutator mutator = null;
 
         // all level 1 ammo
         EquipmentType.addType(createISVehicleFlamerAmmo());
         EquipmentType.addType(createISMGAmmo());
         EquipmentType.addType(createISMGAmmoHalf());
         base = createISAC2Ammo();
-        acAmmos.addElement( base );
+        acAmmos.add( base );
         EquipmentType.addType( base );
         base = createISAC5Ammo();
-        acAmmos.addElement( base );
+        acAmmos.add( base );
         EquipmentType.addType( base );
         base = createISAC10Ammo();
-        acAmmos.addElement( base );
+        acAmmos.add( base );
         EquipmentType.addType( base );
         base = createISAC20Ammo();
-        acAmmos.addElement( base );
+        acAmmos.add( base );
         EquipmentType.addType( base );
         base = createISLRM5Ammo();
-        lrmAmmos.addElement( base );
+        lrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createISLRM10Ammo();
-        lrmAmmos.addElement( base );
+        lrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createISLRM15Ammo();
-        lrmAmmos.addElement( base );
+        lrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createISLRM20Ammo();
-        lrmAmmos.addElement( base );
+        lrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createISSRM2Ammo();
-        srmAmmos.addElement( base );
+        srmAmmos.add( base );
         EquipmentType.addType( base );
         base = createISSRM4Ammo();
-        srmAmmos.addElement( base );
+        srmAmmos.add( base );
         EquipmentType.addType( base );
         base = createISSRM6Ammo();
-        srmAmmos.addElement( base );
+        srmAmmos.add( base );
         EquipmentType.addType( base );
 
         // Level 3 Ammo
@@ -393,41 +394,49 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISLightMGAmmoHalf());
 
         base = createISMML3LRMAmmo();
-        lrmAmmos.addElement( base );
+        lrmAmmos.add( base );
+        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = createISMML3SRMAmmo();
-        srmAmmos.addElement( base );
+        srmAmmos.add( base );
+        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = createISMML5LRMAmmo();
-        lrmAmmos.addElement( base );
+        lrmAmmos.add( base );
+        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = createISMML5SRMAmmo();
-        srmAmmos.addElement( base );
+        srmAmmos.add( base );
+        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = createISMML7LRMAmmo();
-        lrmAmmos.addElement( base );
+        lrmAmmos.add( base );
+        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = createISMML7SRMAmmo();
-        srmAmmos.addElement( base );
+        srmAmmos.add( base );
+        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = createISMML9LRMAmmo();
-        lrmAmmos.addElement( base );
+        lrmAmmos.add( base );
+        mmlAmmos.add(base);
         EquipmentType.addType( base );
         base = createISMML9SRMAmmo();
-        srmAmmos.addElement( base );
+        srmAmmos.add( base );
+        mmlAmmos.add(base);
         EquipmentType.addType( base );
 
         base = createISLongTomAmmo();
-        artyAmmos.addElement( base );
+        longTomAmmos.add( base );
         EquipmentType.addType( base );
         base = createISSniperAmmo();
-        artyAmmos.addElement( base );
+        sniperAmmos.add( base );
         EquipmentType.addType( base );
         base = createISThumperAmmo();
-        thumperAmmos.addElement( base );
+        thumperAmmos.add( base );
         EquipmentType.addType( base );
         base = createISArrowIVAmmo();
-        arrowAmmos.addElement( base );
+        arrowAmmos.add( base );
         EquipmentType.addType( base );
 
         EquipmentType.addType(createCLLB2XAmmo());
@@ -512,94 +521,94 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLHAG40Ammo());
         
         base = createCLLongTomAmmo();
-        clanArtyAmmos.addElement( base );
+        clanArtyAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLSniperAmmo();
-        clanArtyAmmos.addElement( base );
+        clanArtyAmmos.add( base );
         base = createCLThumperAmmo();
         EquipmentType.addType( base );
-        clanArtyAmmos.addElement( base );
+        clanArtyAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLArrowIVAmmo();
-        clanArrowAmmos.addElement( base );
+        clanArrowAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLSRM1Ammo();
-        clanSrmAmmos.addElement( base );
+        clanSrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLSRM2Ammo();
-        clanSrmAmmos.addElement( base );
+        clanSrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLSRM3Ammo();
-        clanSrmAmmos.addElement( base );
+        clanSrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLSRM4Ammo();
-        clanSrmAmmos.addElement( base );
+        clanSrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLSRM5Ammo();
-        clanSrmAmmos.addElement( base );
+        clanSrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLSRM6Ammo();
-        clanSrmAmmos.addElement( base );
+        clanSrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM1Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM2Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM3Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM4Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM5Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM6Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM7Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM8Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM9Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM10Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM11Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM12Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM13Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM14Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM15Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM16Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM17Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM18Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM19Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
         base = createCLLRM20Ammo();
-        clanLrmAmmos.addElement( base );
+        clanLrmAmmos.add( base );
         EquipmentType.addType( base );
 
         // Start of BattleArmor ammo
@@ -697,364 +706,259 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLPROLightMGAmmo());
 
         // Create the munition types for IS SRM launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Inferno",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "Inferno",
                                                    1, M_INFERNO, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Fragmentation",
+        munitions.add( new MunitionMutator( "Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Narc-capable",
+        munitions.add( new MunitionMutator( "Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Artemis-capable",
+        munitions.add( new MunitionMutator( "Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Listen-Kill",
+        munitions.add( new MunitionMutator( "Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_IS_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Anti-TSM",
+        munitions.add( new MunitionMutator( "Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_IS_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Acid",
+        munitions.add( new MunitionMutator( "Acid",
                                                    1, M_AX_HEAD, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = srmAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(srmAmmos,munitions);
 
         // Create the munition types for Clan SRM launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "(Clan) Inferno",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "(Clan) Inferno",
                                                    1, M_INFERNO, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Fragmentation",
+        munitions.add( new MunitionMutator( "(Clan) Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Narc-capable",
+        munitions.add( new MunitionMutator( "(Clan) Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Artemis-capable",
+        munitions.add( new MunitionMutator( "(Clan) Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Listen-Kill",
+        munitions.add( new MunitionMutator( "(Clan) Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Anti-TSM",
+        munitions.add( new MunitionMutator( "(Clan) Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Acid",
+        munitions.add( new MunitionMutator( "(Clan) Acid",
                                                    1, M_AX_HEAD, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = clanSrmAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(clanSrmAmmos,munitions);
 
         // Create the munition types for BA SRM launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Inferno",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "Inferno",
                                                    1, M_INFERNO, TechConstants.T_ALLOWED_ALL ) );
-        munitions.addElement( new MunitionMutator( "Torpedo",
+        munitions.add( new MunitionMutator( "Torpedo",
                 1, M_TORPEDO, TechConstants.T_ALLOWED_ALL ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = baSrmAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(baSrmAmmos,munitions);
 
         // Create the munition types for BA MRM launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Torpedo",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "Torpedo",
                 1, M_TORPEDO, TechConstants.T_IS_LEVEL_2 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = baMrmAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(baMrmAmmos,munitions);
 
         // Create the munition types for IS BA LRM launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Torpedo",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "Torpedo",
                 1, M_TORPEDO, TechConstants.T_IS_LEVEL_2 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = isBaLrmAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(isBaLrmAmmos,munitions);
 
         // Create the munition types for clan BA LRM launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Multi-Purpose",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "Multi-Purpose",
                                                    1, M_MULTI_PURPOSE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Torpedo",
+        munitions.add( new MunitionMutator( "Torpedo",
                 1, M_TORPEDO, TechConstants.T_CLAN_LEVEL_2 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = clanBaLrmAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(clanBaLrmAmmos,munitions);
 
         // Create the munition types for IS LRM launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Flare",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "Flare",
                                                    1, M_FLARE, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Fragmentation",
+        munitions.add( new MunitionMutator( "Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Thunder",
+        munitions.add( new MunitionMutator( "Thunder",
                                                    1, M_THUNDER, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Augmented",
+        munitions.add( new MunitionMutator( "Thunder-Augmented",
                                                    2, M_THUNDER_AUGMENTED, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Inferno",
+        munitions.add( new MunitionMutator( "Thunder-Inferno",
                                                    2, M_THUNDER_INFERNO, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Active",
+        munitions.add( new MunitionMutator( "Thunder-Active",
                                                    2, M_THUNDER_ACTIVE, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Thunder-Vibrabomb",
+        munitions.add( new MunitionMutator( "Thunder-Vibrabomb",
                                                    2, M_THUNDER_VIBRABOMB, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Narc-capable",
+        munitions.add( new MunitionMutator( "Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Artemis-capable",
+        munitions.add( new MunitionMutator( "Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Semi-guided",
+        munitions.add( new MunitionMutator( "Semi-guided",
                                                    1, M_SEMIGUIDED, TechConstants.T_IS_LEVEL_2) );
-        munitions.addElement( new MunitionMutator( "Swarm",
+        munitions.add( new MunitionMutator( "Swarm",
                                                    1, M_SWARM, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Swarm-I",
+        munitions.add( new MunitionMutator( "Swarm-I",
                                                    1, M_SWARM_I, TechConstants.T_IS_LEVEL_2) );
-        munitions.addElement( new MunitionMutator( "Listen-Kill",
+        munitions.add( new MunitionMutator( "Listen-Kill",
                                                    1, M_LISTEN_KILL, TechConstants.T_IS_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Anti-TSM",
+        munitions.add( new MunitionMutator( "Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = lrmAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(lrmAmmos,munitions);
 
         // Create the munition types for Clan LRM launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "(Clan) Flare",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "(Clan) Flare",
                                                    1, M_FLARE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Fragmentation",
+        munitions.add( new MunitionMutator( "(Clan) Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Thunder",
+        munitions.add( new MunitionMutator( "(Clan) Thunder",
                                                    1, M_THUNDER, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Thunder-Augmented",
+        munitions.add( new MunitionMutator( "(Clan) Thunder-Augmented",
                                                    2, M_THUNDER_AUGMENTED, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Thunder-Inferno",
+        munitions.add( new MunitionMutator( "(Clan) Thunder-Inferno",
                                                    2, M_THUNDER_INFERNO, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Thunder-Active",
+        munitions.add( new MunitionMutator( "(Clan) Thunder-Active",
                                                    2, M_THUNDER_ACTIVE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Thunder-Vibrabomb",
+        munitions.add( new MunitionMutator( "(Clan) Thunder-Vibrabomb",
                                                    2, M_THUNDER_VIBRABOMB, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Narc-capable",
+        munitions.add( new MunitionMutator( "(Clan) Narc-capable",
                                                    1, M_NARC_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Artemis-capable",
+        munitions.add( new MunitionMutator( "(Clan) Artemis-capable",
                                                    1, M_ARTEMIS_CAPABLE, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Semi-guided",
+        munitions.add( new MunitionMutator( "(Clan) Semi-guided",
                                                    1, M_SEMIGUIDED, TechConstants.T_CLAN_LEVEL_2) );
-        munitions.addElement( new MunitionMutator( "(Clan) Swarm",
+        munitions.add( new MunitionMutator( "(Clan) Swarm",
                                                    1, M_SWARM, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Swarm-I",
+        munitions.add( new MunitionMutator( "(Clan) Swarm-I",
                                                    1, M_SWARM_I, TechConstants.T_CLAN_LEVEL_2) );
-        munitions.addElement( new MunitionMutator( "(Clan) Listen-Kill",
+        munitions.add( new MunitionMutator( "(Clan) Listen-Kill",
                                                  1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "(Clan) Anti-TSM",
+        munitions.add( new MunitionMutator( "(Clan) Anti-TSM",
                                                  1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = clanLrmAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(clanLrmAmmos,munitions);
+        
+        // Create the torpedo munitions for MMLs
+        munitions.clear();
+        munitions.add( new MunitionMutator( "Torpedo", 1, M_TORPEDO, TechConstants.T_IS_LEVEL_2));
+
+        // Walk through both the base types and the
+        // mutators, and create munition types.
+        createMunitions(mmlAmmos,munitions);
 
         // Create the munition types for AC rounds.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Precision",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "Precision",
                                                    2, M_PRECISION, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Armor-Piercing",
+        munitions.add( new MunitionMutator( "Armor-Piercing",
                                                    2, M_ARMOR_PIERCING, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Flechette",
+        munitions.add( new MunitionMutator( "Flechette",
                                                    1, M_FLECHETTE, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Incendiary",
+        munitions.add( new MunitionMutator( "Incendiary",
                                                    1, M_INCENDIARY_AC, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Tracer",
+        munitions.add( new MunitionMutator( "Tracer",
                                                    1, M_TRACER, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = acAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(acAmmos,munitions);
 
         // Create the munition types for IS Arrow IV launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Homing",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "Homing",
                                                    1, M_HOMING, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "FASCAM",
+        munitions.add( new MunitionMutator( "FASCAM",
                                                    1, M_FASCAM, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Inferno-IV",
+        munitions.add( new MunitionMutator( "Inferno-IV",
                                                    1, M_INFERNO_IV, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
+        munitions.add( new MunitionMutator( "Vibrabomb-IV",
                                                    1, M_VIBRABOMB_IV, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Illumination",
+        munitions.add( new MunitionMutator( "Illumination",
                                                    1, M_FLARE, TechConstants.T_IS_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Cluster",
+        munitions.add( new MunitionMutator( "Cluster",
                                                    1, M_CLUSTER, TechConstants.T_IS_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Davy Crockett-M",
+        munitions.add( new MunitionMutator( "Davy Crockett-M",
                                                    5, M_DAVY_CROCKETT_M, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = arrowAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(arrowAmmos,munitions);
         
         // Create the munition types for clan Arrow IV launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Homing",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "Homing",
                                                    1, M_HOMING, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "FASCAM",
+        munitions.add( new MunitionMutator( "FASCAM",
                                                    1, M_FASCAM, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Inferno-IV",
+        munitions.add( new MunitionMutator( "Inferno-IV",
                                                    1, M_INFERNO_IV, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Vibrabomb-IV",
+        munitions.add( new MunitionMutator( "Vibrabomb-IV",
                                                    1, M_VIBRABOMB_IV, TechConstants.T_CLAN_LEVEL_2 ) );
-        munitions.addElement( new MunitionMutator( "Davy Crockett-M",
+        munitions.add( new MunitionMutator( "Davy Crockett-M",
                                                    5, M_DAVY_CROCKETT_M, TechConstants.T_CLAN_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Illumination",
+        munitions.add( new MunitionMutator( "Illumination",
                 1, M_FLARE, TechConstants.T_CLAN_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Cluster",
+        munitions.add( new MunitionMutator( "Cluster",
                 1, M_CLUSTER, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = clanArrowAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(clanArrowAmmos,munitions);
 
         // Create the munition types for Artillery launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "Smoke",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "Smoke",
                                                    1, M_SMOKE, TechConstants.T_IS_LEVEL_2 ) );
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = thumperAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(thumperAmmos,munitions);
 
         // extra level 3 ammo for sniper & long tom but not thumper
-        munitions.addElement( new MunitionMutator( "Copperhead",
+        munitions.add( new MunitionMutator( "Copperhead",
                                                    1, M_HOMING, TechConstants.T_IS_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Illumination",
+        munitions.add( new MunitionMutator( "Illumination",
                                                    1, M_FLARE, TechConstants.T_IS_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Cluster",
+        munitions.add( new MunitionMutator( "Cluster",
                 1, M_CLUSTER, TechConstants.T_IS_LEVEL_3 ) );
-        munitions.addElement( new MunitionMutator( "Flechette",
+        munitions.add( new MunitionMutator( "Flechette",
                 1, M_FLECHETTE, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = artyAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(sniperAmmos,munitions);
 
         // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
-        base = createISLongTomAmmo();
-        mutator =  new MunitionMutator( "Davy Crockett-M",
-                                               5, M_DAVY_CROCKETT_M, TechConstants.T_IS_LEVEL_3 );
-        EquipmentType.addType( mutator.createMunitionType( base ) );
+        munitions.add( new MunitionMutator( "Davy Crockett-M",
+                                               5, M_DAVY_CROCKETT_M, TechConstants.T_IS_LEVEL_3 ));
+        createMunitions(longTomAmmos, munitions);
 
         // Create the munition types for Clan Artillery launchers.
-        munitions.removeAllElements();
-        munitions.addElement( new MunitionMutator( "(Clan) Smoke",
+        munitions.clear();
+        munitions.add( new MunitionMutator( "(Clan) Smoke",
                                                    1, M_SMOKE, TechConstants.T_CLAN_LEVEL_2 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
-        baseTypes = clanArtyAmmos.elements();
-        while ( baseTypes.hasMoreElements() ) {
-            base = (AmmoType) baseTypes.nextElement();
-            mutators = munitions.elements();
-            while ( mutators.hasMoreElements() ) {
-                mutator =  (MunitionMutator) mutators.nextElement();
-                EquipmentType.addType( mutator.createMunitionType( base ) );
-            }
-        }
+        createMunitions(clanArtyAmmos, munitions);
 
         // cache types that share a launcher for loadout purposes
         for (Enumeration e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
@@ -1069,6 +973,14 @@ public class AmmoType extends EquipmentType {
             }
 
             m_vaMunitions[nType].addElement(at);
+        }
+    }
+    
+    private static void createMunitions(List<AmmoType> bases, List<MunitionMutator> munitions) {
+        for(AmmoType base : bases) {
+            for(MunitionMutator mutator: munitions) {
+                EquipmentType.addType( mutator.createMunitionType( base ) );
+            }
         }
     }
 

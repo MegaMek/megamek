@@ -14586,7 +14586,7 @@ public class Server implements Runnable {
                 vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
 
                 // ...and a Crew Killed hit.
-                vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0, 4), false));
+                vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0, Tank.CRIT_CREW_KILLED), false));
             } else if ((entity instanceof Mech) || (entity instanceof Protomech)) {
                 // 'Mechs suffer two critical hits...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
@@ -14625,7 +14625,7 @@ public class Server implements Runnable {
                 vDesc.addAll(oneCriticalEntity(entity, hd.getLocation()));
 
                 // Plus a Crew Stunned critical.
-                vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0, 1), false));
+                vDesc.addAll(applyCriticalHit(entity, 0, new CriticalSlot(0, Tank.CRIT_CREW_STUNNED), false));
             } else if ((entity instanceof Mech) || (entity instanceof Protomech)) {
                 // 'Mechs suffer a critical hit...
                 HitData hd = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(position));
@@ -14681,9 +14681,253 @@ public class Server implements Runnable {
 
         // Handle hits on "critical slots" of tanks.
         if( en instanceof Tank ) {
-            throw new IllegalArgumentException("Tanks shouldnt be here");
+            Tank t = (Tank)en;
+            HitData hit;
+            switch(cs.getIndex()) {
+            case Tank.CRIT_NONE:
+                //no effect
+                r = new Report(6005);
+                r.subject = t.getId();
+                vDesc.add(r);
+                break;
+            case Tank.CRIT_AMMO:
+                //ammo explosion
+                r = new Report(6610);
+                r.subject = t.getId();
+                vDesc.add(r);
+                int damage = 0;
+                for(Mounted m:t.getAmmo()) {
+                    m.setHit(true);
+                    int tmp = m.getShotsLeft() * ((AmmoType)m.getType()).getDamagePerShot();
+                    damage += tmp;
+                    r = new Report(6390);
+                    r.subject = t.getId();
+                    r.add(m.getName());
+                    r.add(tmp);
+                    r.newlines = 0;
+                    vDesc.add(r);
+                }
+                hit = new HitData(loc);
+                vDesc.addAll(damageEntity(t, hit, damage, true));
+                break;
+            case Tank.CRIT_CARGO:
+                //Cargo/infantry damage
+                r = new Report(6615);
+                r.subject = t.getId();
+                vDesc.add(r);
+                Vector<Entity> passengers = t.getLoadedUnits();
+                Entity target = passengers.get(Compute.randomInt(passengers.size()));
+                hit = target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                vDesc.addAll(damageEntity(t, hit, 10)); //FIXME should be original weapon damage
+                break;
+            case Tank.CRIT_COMMANDER:
+                r = new Report(6600);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.setCommanderHit(true);
+                break;
+            case Tank.CRIT_DRIVER:
+                r = new Report(6605);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.setCommanderHit(true);
+                break;
+            case Tank.CRIT_CREW_KILLED:
+                r = new Report(6190);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.getCrew().setDoomed(true);
+                break;
+            case Tank.CRIT_CREW_STUNNED:
+                t.stunCrew();
+                r = new Report(6185);
+                r.add(t.getStunnedTurns() - 1);
+                r.subject = t.getId();
+                vDesc.add(r);
+                break;
+            case Tank.CRIT_ENGINE:
+                r = new Report(6210);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.immobilize();
+                t.lockTurret();
+                for(Mounted m:t.getWeaponList()) {
+                    WeaponType wtype = (WeaponType)m.getType();
+                    if(wtype.hasFlag(WeaponType.F_ENERGY))
+                        m.setBreached(true); //not destroyed, just unpowered
+                }
+                if(t instanceof VTOL) {
+                    PilotingRollData psr = t.getBasePilotingRoll();
+                    IHex hex = game.getBoard().getHex(t.getPosition());
+                    psr.addModifier(4, "forced landing");
+                    int elevation = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
+                    elevation = Math.max(elevation,0);
+                    elevation = Math.min(elevation, t.getElevation());
+                    if(t.getElevation() > elevation) {
+                        if(!hex.containsTerrain(Terrains.FUEL_TANK)
+                                && !hex.containsTerrain(Terrains.JUNGLE)
+                                && !hex.containsTerrain(Terrains.MAGMA)
+                                && !hex.containsTerrain(Terrains.MUD)
+                                && !hex.containsTerrain(Terrains.RUBBLE)
+                                && !hex.containsTerrain(Terrains.WATER)
+                                && !hex.containsTerrain(Terrains.WOODS)) {
+                            r = new Report(2180);
+                            r.subject = t.getId();
+                            r.addDesc(t);
+                            r.add(psr.getLastPlainDesc(), true);
+                            vDesc.add(r);
+
+                            // roll
+                            final int diceRoll = Compute.d6(2);
+                            r = new Report(2185);
+                            r.subject = t.getId();
+                            r.add(psr.getValueAsString());
+                            r.add(psr.getDesc());
+                            r.add(diceRoll);
+                            if (diceRoll < psr.getValue()) {
+                                r.choose(false);
+                                vDesc.add(r);
+                                vDesc.addAll(crashVTOL((VTOL)t));
+                            } else {
+                                r.choose(true);
+                                vDesc.add(r);
+                                t.setElevation(elevation);
+                            }
+                        } else {
+                            vDesc.addAll(crashVTOL((VTOL)t));
+                        }
+                    }
+                }
+                break;
+            case Tank.CRIT_FUEL_TANK:
+                r = new Report(6215);
+                r.subject = t.getId();
+                vDesc.add(r);
+                vDesc.addAll(destroyEntity(t, "fuel explosion", false, false));
+                break;
+            case Tank.CRIT_SENSOR:
+                r = new Report(6620);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.setSensorHits(t.getSensorHits() + 1);
+                break;
+            case Tank.CRIT_STABILIZER:
+                r = new Report(6625);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.setStabiliserHit(loc);
+                break;
+            case Tank.CRIT_TURRET_DESTROYED:
+                r = new Report(6630);
+                r.subject = t.getId();
+                vDesc.add(r);
+                destroyLocation(t,Tank.LOC_TURRET);
+                break;
+            case Tank.CRIT_TURRET_JAM:
+                //TODO: this should be clearable
+                r = new Report(6635);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.lockTurret();
+                break;
+            case Tank.CRIT_TURRET_LOCK:
+                r = new Report(6640);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.lockTurret();
+                break;
+            case Tank.CRIT_WEAPON_DESTROYED:
+                {
+                r = new Report(6305);
+                r.subject = t.getId();
+                ArrayList<Mounted> weapons = new ArrayList<Mounted>();
+                for(Mounted weap: t.getWeaponList()) {
+                    if(weap.getLocation() == loc) {
+                        weapons.add(weap);
+                    }
+                }
+                Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
+                weapon.setHit(true);
+                weapon.setDestroyed(true);
+                r.add(weapon.getName());
+                vDesc.add(r);
+                break;
+                }
+            case Tank.CRIT_WEAPON_JAM:
+                {
+                r = new Report(6645);
+                r.subject = t.getId();
+                ArrayList<Mounted> weapons = new ArrayList<Mounted>();
+                for(Mounted weap: t.getWeaponList()) {
+                    if(weap.getLocation() == loc) {
+                        weapons.add(weap);
+                    }
+                }
+                Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
+                weapon.setJammed(true);
+                r.add(weapon.getName());
+                vDesc.add(r);
+                break;
+                }
+            case VTOL.CRIT_PILOT:
+                r = new Report(6650);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.setDriverHit(true);
+                PilotingRollData psr = t.getBasePilotingRoll();
+                psr.addModifier(0, "pilot injury");
+                if(!doSkillCheckInPlace(t, psr)) {
+                    r = new Report(6675);
+                    r.subject = t.getId();
+                    r.addDesc(t);
+                    vDesc.add(r);
+                    boolean crash = true;
+                    if(t.canGoDown()) {
+                        t.setElevation(t.getElevation() - 1);
+                        crash = !t.canGoDown();
+                    }
+                    if(crash) {
+                        vDesc.addAll(crashVTOL((VTOL)t));
+                    }
+                }
+                break;
+            case VTOL.CRIT_COPILOT:
+                r = new Report(6655);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.setCommanderHit(true);
+                break;
+            case VTOL.CRIT_ROTOR_DAMAGE:
+                {
+                r = new Report(6660);
+                r.subject = t.getId();
+                vDesc.add(r);
+                int mp = t.getOriginalWalkMP();
+                if(mp > 1)
+                    t.setOriginalWalkMP(mp - 1);
+                else if (mp==1) {
+                    t.setOriginalWalkMP(0);
+                    vDesc.addAll(crashVTOL((VTOL)t));
+                }
+                break;
+                }
+            case VTOL.CRIT_ROTOR_DESTROYED:
+                r = new Report(6670);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.immobilize();
+                destroyLocation(t,VTOL.LOC_ROTOR);
+                vDesc.addAll(crashVTOL((VTOL)t));
+                break;
+            case VTOL.CRIT_FLIGHT_STABILIZER:
+                r = new Report(6665);
+                r.subject = t.getId();
+                vDesc.add(r);
+                t.setStabiliserHit(VTOL.LOC_ROTOR);
+                break;                
+            }
         }
-        if (en instanceof BattleArmor) {
+        else if (en instanceof BattleArmor) {
             // We might as well handle this here.
             // However, we're considering a crit against BA as a "crew kill".
             BattleArmor ba = (BattleArmor)en;
@@ -15250,252 +15494,9 @@ public class Server implements Runnable {
         r.newlines = 0;
         vDesc.add(r);
 
-        HitData hit;
         //now look up on vehicle crits table
         int critType = t.getCriticalEffect(roll, loc);
-        switch(critType) {
-        case Tank.CRIT_NONE:
-            //no effect
-            r = new Report(6005);
-            r.subject = t.getId();
-            vDesc.add(r);
-            break;
-        case Tank.CRIT_AMMO:
-            //ammo explosion
-            r = new Report(6610);
-            r.subject = t.getId();
-            vDesc.add(r);
-            int damage = 0;
-            for(Mounted m:t.getAmmo()) {
-                m.setHit(true);
-                int tmp = m.getShotsLeft() * ((AmmoType)m.getType()).getDamagePerShot();
-                damage += tmp;
-                r = new Report(6390);
-                r.subject = t.getId();
-                r.add(m.getName());
-                r.add(tmp);
-                r.newlines = 0;
-                vDesc.add(r);
-            }
-            hit = new HitData(loc);
-            vDesc.addAll(damageEntity(t, hit, damage, true));
-            break;
-        case Tank.CRIT_CARGO:
-            //Cargo/infantry damage
-            r = new Report(6615);
-            r.subject = t.getId();
-            vDesc.add(r);
-            Vector<Entity> passengers = t.getLoadedUnits();
-            Entity target = passengers.get(Compute.randomInt(passengers.size()));
-            hit = target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            vDesc.addAll(damageEntity(t, hit, 10)); //FIXME should be original weapon damage
-            break;
-        case Tank.CRIT_COMMANDER:
-            r = new Report(6600);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.setCommanderHit(true);
-            break;
-        case Tank.CRIT_DRIVER:
-            r = new Report(6605);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.setCommanderHit(true);
-            break;
-        case Tank.CRIT_CREW_KILLED:
-            r = new Report(6190);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.getCrew().setDoomed(true);
-            break;
-        case Tank.CRIT_CREW_STUNNED:
-            t.stunCrew();
-            r = new Report(6185);
-            r.add(t.getStunnedTurns() - 1);
-            r.subject = t.getId();
-            vDesc.add(r);
-            break;
-        case Tank.CRIT_ENGINE:
-            r = new Report(6210);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.immobilize();
-            t.lockTurret();
-            for(Mounted m:t.getWeaponList()) {
-                WeaponType wtype = (WeaponType)m.getType();
-                if(wtype.hasFlag(WeaponType.F_ENERGY))
-                    m.setBreached(true); //not destroyed, just unpowered
-            }
-            if(t instanceof VTOL) {
-                PilotingRollData psr = t.getBasePilotingRoll();
-                IHex hex = game.getBoard().getHex(t.getPosition());
-                psr.addModifier(4, "forced landing");
-                int elevation = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
-                elevation = Math.max(elevation,0);
-                elevation = Math.min(elevation, t.getElevation());
-                if(t.getElevation() > elevation) {
-                    if(!hex.containsTerrain(Terrains.FUEL_TANK)
-                            && !hex.containsTerrain(Terrains.JUNGLE)
-                            && !hex.containsTerrain(Terrains.MAGMA)
-                            && !hex.containsTerrain(Terrains.MUD)
-                            && !hex.containsTerrain(Terrains.RUBBLE)
-                            && !hex.containsTerrain(Terrains.WATER)
-                            && !hex.containsTerrain(Terrains.WOODS)) {
-                        r = new Report(2180);
-                        r.subject = t.getId();
-                        r.addDesc(t);
-                        r.add(psr.getLastPlainDesc(), true);
-                        vDesc.add(r);
-
-                        // roll
-                        final int diceRoll = Compute.d6(2);
-                        r = new Report(2185);
-                        r.subject = t.getId();
-                        r.add(psr.getValueAsString());
-                        r.add(psr.getDesc());
-                        r.add(diceRoll);
-                        if (diceRoll < psr.getValue()) {
-                            r.choose(false);
-                            vDesc.add(r);
-                            vDesc.addAll(crashVTOL((VTOL)t));
-                        } else {
-                            r.choose(true);
-                            vDesc.add(r);
-                            t.setElevation(elevation);
-                        }
-                    } else {
-                        vDesc.addAll(crashVTOL((VTOL)t));
-                    }
-                }
-            }
-            break;
-        case Tank.CRIT_FUEL_TANK:
-            r = new Report(6215);
-            r.subject = t.getId();
-            vDesc.add(r);
-            vDesc.addAll(destroyEntity(t, "fuel explosion", false, false));
-            break;
-        case Tank.CRIT_SENSOR:
-            r = new Report(6620);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.setSensorHits(t.getSensorHits() + 1);
-            break;
-        case Tank.CRIT_STABILIZER:
-            r = new Report(6625);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.setStabiliserHit(loc);
-            break;
-        case Tank.CRIT_TURRET_DESTROYED:
-            r = new Report(6630);
-            r.subject = t.getId();
-            vDesc.add(r);
-            destroyLocation(t,Tank.LOC_TURRET);
-            break;
-        case Tank.CRIT_TURRET_JAM:
-            //TODO: this should be clearable
-            r = new Report(6635);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.lockTurret();
-            break;
-        case Tank.CRIT_TURRET_LOCK:
-            r = new Report(6640);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.lockTurret();
-            break;
-        case Tank.CRIT_WEAPON_DESTROYED:
-            {
-            r = new Report(6305);
-            r.subject = t.getId();
-            ArrayList<Mounted> weapons = new ArrayList<Mounted>();
-            for(Mounted weap: t.getWeaponList()) {
-                if(weap.getLocation() == loc) {
-                    weapons.add(weap);
-                }
-            }
-            Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
-            weapon.setHit(true);
-            weapon.setDestroyed(true);
-            r.add(weapon.getName());
-            vDesc.add(r);
-            break;
-            }
-        case Tank.CRIT_WEAPON_JAM:
-            {
-            r = new Report(6645);
-            r.subject = t.getId();
-            ArrayList<Mounted> weapons = new ArrayList<Mounted>();
-            for(Mounted weap: t.getWeaponList()) {
-                if(weap.getLocation() == loc) {
-                    weapons.add(weap);
-                }
-            }
-            Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
-            weapon.setJammed(true);
-            r.add(weapon.getName());
-            vDesc.add(r);
-            break;
-            }
-        case VTOL.CRIT_PILOT:
-            r = new Report(6650);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.setDriverHit(true);
-            PilotingRollData psr = t.getBasePilotingRoll();
-            psr.addModifier(0, "pilot injury");
-            if(!doSkillCheckInPlace(t, psr)) {
-                r = new Report(6675);
-                r.subject = t.getId();
-                r.addDesc(t);
-                vDesc.add(r);
-                boolean crash = true;
-                if(t.canGoDown()) {
-                    t.setElevation(t.getElevation() - 1);
-                    crash = !t.canGoDown();
-                }
-                if(crash) {
-                    vDesc.addAll(crashVTOL((VTOL)t));
-                }
-            }
-            break;
-        case VTOL.CRIT_COPILOT:
-            r = new Report(6655);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.setCommanderHit(true);
-            break;
-        case VTOL.CRIT_ROTOR_DAMAGE:
-            {
-            r = new Report(6660);
-            r.subject = t.getId();
-            vDesc.add(r);
-            int mp = t.getOriginalWalkMP();
-            if(mp > 1)
-                t.setOriginalWalkMP(mp - 1);
-            else if (mp==1) {
-                t.setOriginalWalkMP(0);
-                vDesc.addAll(crashVTOL((VTOL)t));
-            }
-            break;
-            }
-        case VTOL.CRIT_ROTOR_DESTROYED:
-            r = new Report(6670);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.immobilize();
-            destroyLocation(t,VTOL.LOC_ROTOR);
-            vDesc.addAll(crashVTOL((VTOL)t));
-            break;
-        case VTOL.CRIT_FLIGHT_STABILIZER:
-            r = new Report(6665);
-            r.subject = t.getId();
-            vDesc.add(r);
-            t.setStabiliserHit(VTOL.LOC_ROTOR);
-            break;                
-        }
+        vDesc.addAll(applyCriticalHit(t, loc, new CriticalSlot(0,critType), true));
         return vDesc;
     }
 

@@ -13,6 +13,7 @@ v0.33.1 (SVN)
 + Bug: unit shown "destroyed by pilot error" if the unit that destroyed it was itself destroyed
 + Bug 1577419: MMLs Cannot Load Torpedoes 0.33.0
 + Bug 1577026: Nuclear Explosion Stops MegaMek 0.33.0
++ Bug 1577420: ELRMs Cannot be loaded from TDB
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

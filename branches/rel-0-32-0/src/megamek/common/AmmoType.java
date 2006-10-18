@@ -5071,6 +5071,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISExtendedLRM5 Ammo");
         ammo.addLookupName("IS ExtendedLRM 5 Ammo");
         ammo.addLookupName("ELRM-5 Ammo (THB)");
+        ammo.addLookupName("ELRM 5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_EXLRM;
@@ -5092,6 +5093,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISExtendedLRM10 Ammo");
         ammo.addLookupName("IS ExtendedLRM 10 Ammo");
         ammo.addLookupName("ELRM-10 Ammo (THB)");
+        ammo.addLookupName("ELRM 10 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_EXLRM;
@@ -5113,6 +5115,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISExtendedLRM15 Ammo");
         ammo.addLookupName("IS ExtendedLRM 15 Ammo");
         ammo.addLookupName("ELRM-15 Ammo (THB)");
+        ammo.addLookupName("ELRM 15 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_EXLRM;
@@ -5134,6 +5137,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISExtendedLRM20 Ammo");
         ammo.addLookupName("IS ExtendedLRM 20 Ammo");
         ammo.addLookupName("ELRM-20 Ammo (THB)");
+        ammo.addLookupName("ELRM 20 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_EXLRM;

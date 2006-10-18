@@ -7,6 +7,7 @@ v0.32.1 (SVN)
 + Fix filename case for IS Omni images, so they show up on filename case-
  sensitive OS.
 + Bug: unit shown "destroyed by pilot error" if the unit that destroyed it was itself destroyed
++ Bug 1577420: ELRMs Cannot be loaded from TDB
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

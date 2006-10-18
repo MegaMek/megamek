@@ -9543,6 +9543,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("ISExtendedLRM5");
         weapon.addLookupName("IS ExtendedLRM 5");
         weapon.addLookupName("ELRM-5 (THB)");
+        weapon.addLookupName("ELRM 5");
         weapon.heat = 3;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
@@ -9572,6 +9573,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("ISExtendedLRM10");
         weapon.addLookupName("IS ExtendedLRM 10");
         weapon.addLookupName("ELRM-10 (THB)");
+        weapon.addLookupName("ELRM 10");
         weapon.heat = 6;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 10;
@@ -9601,6 +9603,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("ISExtendedLRM15");
         weapon.addLookupName("IS ExtendedLRM 15");
         weapon.addLookupName("ELRM-15 (THB)");
+        weapon.addLookupName("ELRM 15");
         weapon.heat = 8;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 15;
@@ -9630,6 +9633,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("ISExtendedLRM20");
         weapon.addLookupName("IS ExtendedLRM 20");
         weapon.addLookupName("ELRM-20 (THB)");
+        weapon.addLookupName("ELRM 20");
         weapon.heat = 10;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 20;

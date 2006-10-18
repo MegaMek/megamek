@@ -151,7 +151,7 @@ public class TdbFile implements IMechLoader {
             root = TinyParser.parseXML(is);
         }
         catch (ParseException e) {
-            throw new EntityLoadingException("   Failure to parse XML (TinyParser exception)");
+            throw new EntityLoadingException("   Failure to parse XML ("+e.getLocalizedMessage()+")");
         }
         // Arbitrarily sized static arrays suck, or so a computer
         //  science teacher once told me.

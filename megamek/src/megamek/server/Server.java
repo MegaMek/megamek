@@ -61,6 +61,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.NarcPod;
 import megamek.common.PhysicalResult;
 import megamek.common.Pilot;
 import megamek.common.PilotingRollData;
@@ -7358,16 +7359,10 @@ public class Server implements Runnable {
         boolean bSwarmI = usesAmmo && (atype.getAmmoType() == AmmoType.T_LRM 
                 || atype.getAmmoType() == AmmoType.T_MML) 
                 && atype.getMunitionType() == AmmoType.M_SWARM_I;
-        boolean isIndirect = (wtype.getAmmoType() == AmmoType.T_LRM
-                || wtype.getAmmoType() == AmmoType.T_MML
-                || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)
-                               && weapon.curMode().equals("Indirect");
         boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
         boolean bGlancing = false; // For Glancing Hits Rule
         int swarmMissilesNowLeft = 0;
         int hits = 1, glancingMissileMod = 0;
-        int glancingCritMod = 0;
-
         if (!bInferno) {
         // also check for inferno infantry
         bInferno = isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO);
@@ -7648,8 +7643,6 @@ public class Server implements Runnable {
             if (dieRoll<rollTarget) {
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();
-                int wid = ae.getEquipmentNum(weapon);
-                int slot = 0;
                 weapon.setDestroyed (true);
                 for (int i=0; i<ae.getNumberOfCriticals(wlocation); i++) {
                     CriticalSlot slot1 = ae.getCritical (wlocation, i);
@@ -7714,7 +7707,6 @@ public class Server implements Runnable {
           if (wr.roll == toHit.getValue()) {
               bGlancing = true;
               glancingMissileMod = -4;
-              glancingCritMod = -2;
               r = new  Report(3186);
               r.subject = ae.getId();
               r.newlines = 0;
@@ -7722,12 +7714,10 @@ public class Server implements Runnable {
           } else {
               bGlancing = false;
               glancingMissileMod = 0;
-              glancingCritMod = 0;
           }
       } else {
           bGlancing = false;
           glancingMissileMod = 0;
-          glancingCritMod = 0;
       }
 
       // special case TAG.  No damage, but target is tagged until end of turn
@@ -7821,7 +7811,6 @@ public class Server implements Runnable {
                   return !bMissed;
               }
           }
-          int nCluster = 5;
           Infantry ba = (Infantry)ae;
           int ratedDamage = ba.getShootingStrength();
           artilleryDamageArea(coords, wr.artyAttackerCoords, atype, subjectId, ae, ratedDamage*2, ratedDamage, false, 0);
@@ -8123,11 +8112,21 @@ public class Server implements Runnable {
                 r.subject = subjectId;
                 addReport(r);
             } else {
-                entityTarget.setNarcedBy(ae.getOwner().getTeam());
-                //narced
-                r = new Report(3250);
-                r.subject = subjectId;
-                addReport(r);
+                HitData hit = entityTarget.rollHitLocation(wr.toHit.getHitTable(),wr.toHit.getSideTable());
+                if(toHit.getHitTable() == ToHitData.HIT_PARTIAL_COVER &&
+                        entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), toHit.getSideTable())) {
+                    r = new Report(3249);
+                    r.subject = subjectId;
+                    r.add(entityTarget.getLocationAbbr(hit));
+                    addReport(r);
+                } else {
+                    entityTarget.attachNarcPod(new NarcPod(ae.getOwner().getTeam(),hit.getLocation()));
+                    //narced
+                    r = new Report(3250);
+                    r.subject = subjectId;
+                    r.add(entityTarget.getLocationAbbr(hit));
+                    addReport(r);
+                }
             }
             return !bMissed;
         }
@@ -8163,33 +8162,50 @@ public class Server implements Runnable {
                 r.subject = subjectId;
                 addReport(r);
             } else {
-                INarcPod pod = null;
-                if (atype.getMunitionType() == AmmoType.M_ECM) {
-                    pod = new INarcPod( ae.getOwner().getTeam(),
-                                        INarcPod.ECM );
-                    r = new Report(3251);
+                HitData hit = entityTarget.rollHitLocation(wr.toHit.getHitTable(),wr.toHit.getSideTable());
+                if(toHit.getHitTable() == ToHitData.HIT_PARTIAL_COVER &&
+                        entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), toHit.getSideTable())) {
+                    r = new Report(3249);
                     r.subject = subjectId;
-                    addReport(r);
-                } else if (atype.getMunitionType() == AmmoType.M_HAYWIRE) {
-                    pod = new INarcPod( ae.getOwner().getTeam(),
-                                        INarcPod.HAYWIRE );
-                    r = new Report(3252);
-                    r.subject = subjectId;
-                    addReport(r);
-                } else if (atype.getMunitionType() == AmmoType.M_NEMESIS) {
-                    pod = new INarcPod( ae.getOwner().getTeam(),
-                                        INarcPod.NEMESIS );
-                    r = new Report(3253);
-                    r.subject = subjectId;
+                    r.add(entityTarget.getLocationAbbr(hit));
                     addReport(r);
                 } else {
-                    pod = new INarcPod( ae.getOwner().getTeam(),
-                                        INarcPod.HOMING );
-                    r = new Report(3254);
-                    r.subject = subjectId;
-                    addReport(r);
-                }
+                    INarcPod pod = null;
+                    if (atype.getMunitionType() == AmmoType.M_ECM) {
+                        pod = new INarcPod( ae.getOwner().getTeam(),
+                                            INarcPod.ECM,
+                                            hit.getLocation());
+                        r = new Report(3251);
+                        r.subject = subjectId;
+                        r.add(entityTarget.getLocationAbbr(hit));
+                        addReport(r);
+                    } else if (atype.getMunitionType() == AmmoType.M_HAYWIRE) {
+                        pod = new INarcPod( ae.getOwner().getTeam(),
+                                            INarcPod.HAYWIRE,
+                                            hit.getLocation() );
+                        r = new Report(3252);
+                        r.subject = subjectId;
+                        r.add(entityTarget.getLocationAbbr(hit));
+                        addReport(r);
+                    } else if (atype.getMunitionType() == AmmoType.M_NEMESIS) {
+                        pod = new INarcPod( ae.getOwner().getTeam(),
+                                            INarcPod.NEMESIS,
+                                            hit.getLocation() );
+                        r = new Report(3253);
+                        r.subject = subjectId;
+                        r.add(entityTarget.getLocationAbbr(hit));
+                        addReport(r);
+                    } else {
+                        pod = new INarcPod( ae.getOwner().getTeam(),
+                                            INarcPod.HOMING,
+                                            hit.getLocation() );
+                        r = new Report(3254);
+                        r.subject = subjectId;
+                        r.add(entityTarget.getLocationAbbr(hit));
+                        addReport(r);
+                    }
                 entityTarget.attachINarcPod(pod);
+                }
             }
             return !bMissed;
         }

@@ -32,14 +32,16 @@ public class INarcPod implements Serializable, Targetable {
     
     private int team;
     private int type;
+    private int location;
     
     /**
      * Creates a new <code>INarcPod</code>,
      * from the team and of the type specified.
      */
-    public INarcPod(int team, int type) {
+    public INarcPod(int team, int type, int location) {
         this.team = team;
         this.type = type;
+        this.location = location;
     }
     
     public int getTeam() {
@@ -48,6 +50,10 @@ public class INarcPod implements Serializable, Targetable {
     
     public int getType() {
         return type;
+    }
+    
+    public int getLocation() {
+        return location;
     }
     
     /**
@@ -106,7 +112,8 @@ public class INarcPod implements Serializable, Targetable {
         // Fun games with bitmasks.
         // TODO : test the @#$% out of this!!
         return new INarcPod( (id & 0xFFF0) >>> 4,
-                             (id & 0x000F) );
+                             (id & 0x000F),
+                             0);
     }
 
     // Implementation of Targetable interface.

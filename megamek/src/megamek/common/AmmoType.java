@@ -75,7 +75,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_MPOD              = 48;
     public static final int     T_HAG               = 49;
     public static final int     T_MML               = 50;
-    public static final int     NUM_TYPES           = 51;
+    public static final int     T_PLASMA            = 51;
+    public static final int     NUM_TYPES           = 52;
     
 
     // ammo flags
@@ -519,6 +520,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLHAG20Ammo());
         EquipmentType.addType(createCLHAG30Ammo());
         EquipmentType.addType(createCLHAG40Ammo());
+        EquipmentType.addType(createCLPlasmaCannonAmmo());
+        EquipmentType.addType(createISPlasmaRifleAmmo());
         
         base = createCLLongTomAmmo();
         clanArtyAmmos.add( base );
@@ -5854,6 +5857,40 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 40;
         ammo.ammoType = AmmoType.T_HAG;
         ammo.shots = 3;
+        ammo.bv = 27;
+        ammo.cost = 30000;
+        ammo.explosive = false;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLPlasmaCannonAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "Plasma Cannon Ammo";
+        ammo.setInternalName("CLPlasmaCannonAmmo");
+        ammo.damagePerShot = 0;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_PLASMA;
+        ammo.shots = 10;
+        ammo.bv = 27;
+        ammo.cost = 30000;
+        ammo.explosive = false;
+
+        return ammo;
+    }
+
+    private static AmmoType createISPlasmaRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Plasma Rifle Ammo";
+        ammo.setInternalName("ISPlasmaRifleAmmo");
+        ammo.damagePerShot = 10;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_PLASMA;
+        ammo.shots = 10;
         ammo.bv = 27;
         ammo.cost = 30000;
         ammo.explosive = false;

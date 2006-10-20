@@ -197,11 +197,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
                                   (usesAmmo && atype.getMunitionType() == AmmoType.M_STANDARD);
         boolean isHaywireINarced = ae.isINarcedWith(INarcPod.HAYWIRE);
         boolean isINarcGuided = false;
+        //for attacks where ECM along flight path makes a difference
         boolean isECMAffected = Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition());
+        //for attacks where only ECM on the target hex makes a difference
+        boolean isTargetECMAffected = Compute.isAffectedByECM(ae,target.getPosition(),target.getPosition());
         boolean isTAG = wtype.hasFlag(WeaponType.F_TAG);
         boolean isHoming = false;
         if (te != null) {
-            if (te.isINarcedBy(ae.getOwner().getTeam()) &&
+            if (!isTargetECMAffected &&
+                te.isINarcedBy(ae.getOwner().getTeam()) &&
                 atype != null &&
                 (atype.getAmmoType() == AmmoType.T_LRM
                         || atype.getAmmoType() == AmmoType.T_MML
@@ -222,7 +226,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                                     isAttackerInfantry, isIndirect,
                                     attackerId, weaponId, isArtilleryIndirect,
                                     ammo, isArtilleryFLAK, targetInBuilding,
-                                    isArtilleryDirect);
+                                    isArtilleryDirect, isTargetECMAffected);
         if (reason!=null) {
             return new ToHitData(ToHitData.IMPOSSIBLE, reason);
         }
@@ -250,8 +254,19 @@ public class WeaponAttackAction extends AbstractAttackAction {
     
         // if we're doing indirect fire, find a spotter
         Entity spotter = null;
+        boolean narcSpotter = false;
         if (isIndirect) {
-            spotter = Compute.findSpotter(game, ae, target);
+            if(target instanceof Entity && 
+                    !isTargetECMAffected &&
+                    usesAmmo &&
+                    atype.getMunitionType() == AmmoType.M_NARC_CAPABLE &&
+                    (te.isNarcedBy(ae.getOwner().getTeam()))) {
+                spotter = te;
+                narcSpotter = true;
+            }
+            else {
+                spotter = Compute.findSpotter(game, ae, target);
+            }
         }
     
         // EI system
@@ -299,7 +314,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // do not count attacker partial cover in indirect fire
             los.setAttackerCover(LosEffects.COVER_NONE);
 
-            if(spotter.hasActiveEiCockpit()) {
+            if(!narcSpotter && spotter.hasActiveEiCockpit()) {
                 if(los.getLightWoods() > 0)
                     eistatus = 2;
                 else
@@ -657,7 +672,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 atype.getMunitionType() == AmmoType.M_SEMIGUIDED &&
                 te.getTaggedBy() != -1) {
                 toHit.addModifier(-1 , "semiguided ignores spotter movement & indirect fire penalties");
-            } else {
+            } else if(!narcSpotter){
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
             }
         }
@@ -897,7 +912,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                               int attackerId, int weaponId, 
                               boolean isArtilleryIndirect, Mounted ammo,
                               boolean isArtilleryFLAK, boolean targetInBuilding,
-                              boolean isArtilleryDirect) {
+                              boolean isArtilleryDirect, boolean isTargetECMAffected) {
         boolean isHoming = false;
         ToHitData toHit = null;
 
@@ -1233,7 +1248,16 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
         Entity spotter = null;
         if (isIndirect) {
-            spotter = Compute.findSpotter(game, ae, target);
+            if(target instanceof Entity && 
+                    !isTargetECMAffected &&
+                    usesAmmo &&
+                    atype.getMunitionType() == AmmoType.M_NARC_CAPABLE &&
+                    (te.isNarcedBy(ae.getOwner().getTeam()))) {
+                spotter = te;
+            }
+            else {
+                spotter = Compute.findSpotter(game, ae, target);
+            }
             if (spotter == null) {
                 return "No available spotter";
             }
@@ -1295,6 +1319,14 @@ public class WeaponAttackAction extends AbstractAttackAction {
              te instanceof Infantry &&
              null == los.getThruBldg() ) {
             return "Attack on infantry crosses building exterior wall.";
+        }
+        
+        if(wtype.getAmmoType() == AmmoType.T_NARC
+                    || wtype.getAmmoType() == AmmoType.T_INARC) {
+            if(targetInBuilding)
+                return "Narc pods cannot be fired into or inside buildings.";
+            if(target instanceof Infantry)
+                return "Narc pods cannot be used to attack infantry.";
         }
         
         // attacker partial cover means no leg weapons

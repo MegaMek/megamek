@@ -152,6 +152,8 @@ public abstract class Entity extends TurnOrdered
     
     protected Vector            pendingINarcPods = new Vector();
     protected Vector            iNarcPods = new Vector();
+    protected ArrayList<NarcPod>            pendingNarcPods = new ArrayList<NarcPod>();
+    protected ArrayList<NarcPod>            narcPods = new ArrayList<NarcPod>();
 
     protected Vector            failedEquipmentList = new Vector();
 
@@ -3318,6 +3320,10 @@ public abstract class Entity extends TurnOrdered
             }
             pendingINarcPods = new Vector();
         }
+        if(pendingNarcPods.size() > 0) {
+            narcPods.addAll(pendingNarcPods);
+            pendingNarcPods.clear();
+        }
 
         for (Mounted m : getEquipment()){
             m.newRound(roundNumber);
@@ -3357,6 +3363,19 @@ public abstract class Entity extends TurnOrdered
                 setArmor(IArmorState.ARMOR_DESTROYED, i);
                 setArmor(IArmorState.ARMOR_DESTROYED, i, true);
                 setInternal(IArmorState.ARMOR_DESTROYED, i);
+                //destroy any Narc beacons
+                for(Iterator<NarcPod> iter=narcPods.iterator();iter.hasNext();) {
+                    NarcPod p = iter.next();
+                    if(p.getLocation() == i) {
+                        iter.remove();
+                    }
+                }
+                for(Iterator<INarcPod> iter=iNarcPods.iterator();iter.hasNext();) {
+                    INarcPod p = iter.next();
+                    if(p.getLocation() == i) {
+                        iter.remove();
+                    }
+                }
             }
         }
     }
@@ -3431,30 +3450,22 @@ public abstract class Entity extends TurnOrdered
     }
 
     /**
-     * add a narc pod from this team to the mech.  Unremovable
-     */
-    public void setNarcedBy(int nTeamID) {
-        // avoid overflow in ridiculous battles
-        if (nTeamID > (1 << Player.MAX_TEAMS)) {
-            System.out.println("Narc system can't handle team IDs this high!");
-            return;
-        }
-        long teamMask = 1;
-        if ( nTeamID > Player.TEAM_NONE ) {
-            teamMask = 1 << nTeamID;
-        }
-        m_lPendingNarc |= teamMask;
-    }
-
-    /**
      * has the team attached a narc pod to me?
      */
     public boolean isNarcedBy(int nTeamID) {
-        long teamMask = 1;
-        if ( nTeamID > Player.TEAM_NONE ) {
-            teamMask = 1 << nTeamID;
+        for(NarcPod p:narcPods) {
+            if(p.getTeam() == nTeamID)
+                return true;
         }
-        return (m_lNarcedBy & teamMask) > 0 && !isINarcedBy(nTeamID);
+        return false;
+    }
+    
+    /**
+     * add a narc pod from this team to the mech.  Unremovable
+     * @param pod The <code>INarcPod</code> to be attached.
+     */
+    public void attachNarcPod(NarcPod pod) {
+        this.pendingNarcPods.add(pod);
     }
     
     /**

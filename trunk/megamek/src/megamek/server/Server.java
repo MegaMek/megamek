@@ -5181,7 +5181,7 @@ public class Server implements Runnable {
                     deliverInfernoMissiles(ae, e, missiles);
                 } else {
                     int roll = Compute.d6();
-                    r = new Report(3560);
+                    r = new Report(3570);
                     r.subject = e.getId();
                     r.addDesc(e);
                     r.add(roll);
@@ -8992,6 +8992,46 @@ public class Server implements Runnable {
             nDamPerHit = 1;
         }
 
+        if(wtype.getAmmoType() == AmmoType.T_PLASMA) {
+            if(entityTarget instanceof Mech) {
+                int heatRoll = Compute.d6(wtype.getRackSize());
+                nDamPerHit = atype.getDamagePerShot();
+                if (!bSalvo) {
+                    //hits
+                    r = new Report(3390);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    addReport(r);
+                }
+                r = new Report(3400);
+                r.subject = subjectId;
+                r.indent(2);
+                r.add(heatRoll);
+                r.choose(true);
+                r.newlines = 0;
+                addReport(r);
+                entityTarget.heatFromExternal += heatRoll;
+            } else {
+                int heatRoll = Compute.d6(wtype.getRackSize() + 1);
+                nDamPerHit = 1;
+                hits = atype.getDamagePerShot() + heatRoll;
+                bSalvo = true;
+                nCluster = 5;
+                r = new Report(3575);
+                r.subject = subjectId;
+                r.newlines = 0;
+                r.add(hits);
+                addReport(r);
+                for (Mounted mount:entityTarget.getMisc()) {
+                    EquipmentType equip = mount.getType();
+                    if ( BattleArmor.FIRE_PROTECTION.equals
+                         (equip.getInternalName()) ) {
+                        hits /= 2;
+                    }
+                }
+            }
+        }
+
         // Make sure the player knows when his attack causes no damage.
         if ( hits == 0 ) {
             r = new Report(3365);
@@ -9199,7 +9239,7 @@ public class Server implements Runnable {
                     addReport(r);
                     entityTarget.heatFromExternal += 5;
                 }
-
+                
                 // If a leg attacks hit a leg that isn't
                 // there, then hit the other leg.
                 if ( wtype.getInternalName().equals("LegAttack") &&

@@ -477,8 +477,9 @@ public class Tank
             case 12:
                 if (m_bHasNoTurret || bSide) {
                     rv.setEffect(HitData.EFFECT_CRITICAL);
+                } else {
+                    rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
                 }
-                rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
         }
         if(table == ToHitData.HIT_SWARM)
             rv.setEffect(rv.getEffect() | HitData.EFFECT_CRITICAL);

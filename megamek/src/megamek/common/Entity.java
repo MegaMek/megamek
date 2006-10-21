@@ -2831,11 +2831,14 @@ public abstract class Entity extends TurnOrdered
                 if ( m.getName().equals("Bloodhound Active Probe (THB)")
                         || m.getName().equals("Bloodhound Active Probe"))
                     return 8;
-                if ( ((MiscType)m.getType()).internalName.equals("CLActiveProbe") 
-                        ||  ((MiscType)m.getType()).internalName.equals("WatchdogECMSuite") )
+                if ( (m.getType()).getInternalName().equals("CLActiveProbe") 
+                        ||  (m.getType()).getInternalName().equals("WatchdogECMSuite") )
                     return 5;
-                if ( ((MiscType)m.getType()).internalName.equals("CLLightActiveProbe") )
+                if ( (m.getType()).getInternalName().equals("CLLightActiveProbe") 
+                        || m.getType().getInternalName().equals("CLImprovedSensors"))
                     return 3;
+                if(m.getType().getInternalName().equals("ISImprovedSensors"))
+                    return 2;
                 return 4;//everthing else should be range 4
             }
         }

@@ -339,6 +339,7 @@ W,Clan,2,Ultra Heavy Support Laser,BA-CLHeavyMediumLaser,
 W,IS,2,Heavy Recoilless,BA-Heavy Recoilless Rifle,
 W,Clan,2,Semi-Portable Heavy Laser,BA-CLHeavySmallLaser,
 W,Clan,2,ER Heavy Support Laser,BA-CLERMediumLaser,
+W,IS,2,ER Heavy Support Laser,BA-ISERMediumLaser,
 W,Clan,2,Support Pulse Laser,BA-CLSmallPulseLaser,
 W,IS,2,Light Mortar,BA-ISLightMortar,
 W,IS,2,Heavy Mortar,BA-ISHeavyMortar,
@@ -1186,5 +1187,4 @@ A,IS,2,IS Ammo LAC/5 - Precision,ISLAC5 Ammo - Precision,IS Light Autocannon/5 A
 A,IS,2,IS Ammo LAC/5 - Armor-Piercing,ISLAC5 Ammo - Armor-Piercing,IS Light Autocannon/5 Ammo - Armor-Piercing,IS Armor-Piercing Ammo LAC/5,IS Armor-Piercing Ammo LAC/5,ISLAC5 Armor-Piercing Ammo,IS Light Autocannon/5 Armor-Piercing Ammo,
 A,IS,2,IS Ammo LAC/5 - Flechette,ISLAC5 Ammo - Flechette,IS Light Autocannon/5 Ammo - Flechette,IS Flechette Ammo LAC/5,IS Flechette Ammo LAC/5,ISLAC5 Flechette Ammo,IS Light Autocannon/5 Flechette Ammo,
 A,IS,2,IS Ammo LAC/5 - Incendiary,ISLAC5 Ammo - Incendiary,IS Light Autocannon/5 Ammo - Incendiary,IS Incendiary Ammo LAC/5,IS Incendiary Ammo LAC/5,ISLAC5 Incendiary Ammo,IS Light Autocannon/5 Incendiary Ammo,
-A,IS,3,IS Ammo LAC/5 - Tracer,ISLAC5 Ammo - Tracer,IS Light Autocannon/5 Ammo - Tracer,IS Tracer Ammo LAC/5,IS Tracer Ammo LAC/5,ISLAC5 Tracer Ammo,IS Light Autocannon/5 Tracer Ammo,
-A,IS,2,IS Ammo LAC/10 - Precision,ISLAC10 Amm
+A,IS,3,IS Ammo LAC/5 - Tracer,ISLAC5 Ammo - Tracer,IS Light Autocannon/5 Ammo - Tracer,IS Tracer Ammo LAC/5,IS Tracer Ammo LAC/5,ISLAC5 Tracer Ammo,IS Light Autocannon/5 Tracer A

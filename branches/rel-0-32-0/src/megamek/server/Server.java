@@ -14161,6 +14161,9 @@ public class Server implements Runnable {
                 // Then, remove ANY terrains here.
                 // I mean ALL of them; they're all just gone.
                 // No ruins, no water, no rough, no nothing.
+                if (myHex.containsTerrain(Terrains.WATER)) {
+                    myHex.setElevation(myHex.floor());
+                }
                 myHex.removeAllTerrains();
                 myHex.clearExits();
 
@@ -14250,7 +14253,11 @@ public class Server implements Runnable {
             addReport(r);
             collapseBuilding(tmpB, game.getPositionMap());
         }
-        game.getBoard().getHex(position).removeAllTerrains();
+        IHex gzHex = game.getBoard().getHex(position); 
+        if (gzHex.containsTerrain(Terrains.WATER)) {
+            gzHex.setElevation(gzHex.floor());
+        }
+        gzHex.removeAllTerrains();
 
         // Next, for whatever's left, do terrain effects
         // such as clearing, roughing, and boiling off water.

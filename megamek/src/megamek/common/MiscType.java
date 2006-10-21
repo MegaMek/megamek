@@ -489,7 +489,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createSimpleCamo());
         EquipmentType.addType(createParafoil());
         EquipmentType.addType(createBASearchlight());
-        
+        EquipmentType.addType(createISImprovedSensors());
+        EquipmentType.addType(createCLImprovedSensors());
     }
     
     public static MiscType createHeatSink() {
@@ -1579,6 +1580,34 @@ public class MiscType extends EquipmentType {
         misc.bv = 0;
         misc.techLevel = TechConstants.T_IS_LEVEL_3;
         
+        return misc;
+    }
+
+    public static MiscType createISImprovedSensors() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.name = "Improved Sensors";
+        misc.setInternalName("ISImprovedSensors");
+        misc.addLookupName("BAP (2 Hex)");
+        misc.tonnage = 0.0f;
+        misc.cost = 200000;
+        misc.flags |= F_BAP;
+
+        return misc;
+    }
+
+    public static MiscType createCLImprovedSensors() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.name = "Improved Sensors";
+        misc.setInternalName("CLImprovedSensors");
+        misc.addLookupName("BAP (3 Hex)");
+        misc.tonnage = 0.0f;
+        misc.cost = 200000;
+        misc.flags |= F_BAP;
+
         return misc;
     }
 

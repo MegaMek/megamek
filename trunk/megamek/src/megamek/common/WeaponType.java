@@ -573,6 +573,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createBAHeavyRecRifle());
         EquipmentType.addType(createBACLHeavySmallLaser());
         EquipmentType.addType(createBACLERMediumLaser());
+        EquipmentType.addType(createBAISERMediumLaser());
         EquipmentType.addType(createBACLSmallPulseLaser());
         EquipmentType.addType(createBAISLightMortar());
         EquipmentType.addType(createBAISHeavyMortar());
@@ -8598,6 +8599,34 @@ public class WeaponType extends EquipmentType {
         weapon.waterMediumRange = 7;
         weapon.waterLongRange = 10;
         weapon.waterExtremeRange = 14;
+        weapon.tonnage = 0.0f;
+        weapon.criticals = 0;
+        weapon.bv = 0;
+        weapon.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_LASER | F_ENERGY | F_SINGLE_TARGET;
+
+        return weapon;
+    }
+
+    private static WeaponType createBAISERMediumLaser() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "ER Heavy Support Laser";
+        weapon.setInternalName(weapon.name);
+        weapon.addLookupName("BA-ISERMediumLaser");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 5;
+        weapon.ammoType = AmmoType.T_NA;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 4;
+        weapon.mediumRange = 8;
+        weapon.longRange = 12;
+        weapon.extremeRange = 16;
+        weapon.waterShortRange = 3;
+        weapon.waterMediumRange = 5;
+        weapon.waterLongRange = 8;
+        weapon.waterExtremeRange = 10;
         weapon.tonnage = 0.0f;
         weapon.criticals = 0;
         weapon.bv = 0;

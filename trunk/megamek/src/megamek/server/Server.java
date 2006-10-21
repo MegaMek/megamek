@@ -7177,7 +7177,7 @@ public class Server implements Runnable {
         if(woods != null) {
             int tf = woods.getTerrainFactor() - nDamage;
             int level = woods.getLevel();
-            if(tf < 0) {
+            if(tf <= 0) {
                 h.removeTerrain(Terrains.WOODS);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH, 1));
                 //light converted to rough

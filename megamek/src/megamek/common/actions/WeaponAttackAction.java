@@ -276,7 +276,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         int eistatus=0;
 
         boolean MPMelevationHack = false;
-        if(wtype.getAmmoType() == AmmoType.T_LRM
+        if(usesAmmo && wtype.getAmmoType() == AmmoType.T_LRM
                 && atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE
                 && ae.getElevation() == -1
                 && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
@@ -1266,7 +1266,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         int eistatus=0;
 
         boolean MPMelevationHack = false;
-        if(wtype.getAmmoType() == AmmoType.T_LRM
+        if(usesAmmo && wtype.getAmmoType() == AmmoType.T_LRM
                 && atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE
                 && ae.getElevation() == -1
                 && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {

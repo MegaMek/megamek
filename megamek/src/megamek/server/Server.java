@@ -8318,6 +8318,7 @@ public class Server implements Runnable {
         // - clearing woods
         // - attacks during swarm
         // - streak missiles
+        // - target is conventional infantry
         if (((wtype.getAmmoType() == AmmoType.T_SRM_STREAK
                 || wtype.getAmmoType() == AmmoType.T_MRM_STREAK
                 || wtype.getAmmoType() == AmmoType.T_LRM_STREAK)
@@ -8329,7 +8330,8 @@ public class Server implements Runnable {
                     || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                     || target.getTargetType() == Targetable.TYPE_BUILDING)
                   && ae.getPosition().distance(target.getPosition()) <= 1)
-                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
+                || (target instanceof Infantry && !(target instanceof BattleArmor))) {
             bAllShotsHit = true;
         }
 
@@ -8883,11 +8885,18 @@ public class Server implements Runnable {
         }
 
         // Mech and Vehicle MGs do *DICE* of damage to PBI.
-        else if (usesAmmo && atype.hasFlag(AmmoType.F_MG) &&
+        else if (wtype.hasFlag(WeaponType.F_BURST_FIRE) &&
                   !isWeaponInfantry && target instanceof Infantry &&
                   !(target instanceof BattleArmor) && !weapon.isRapidfire()) {
 
             int dice = wtype.getDamage();
+            if(wtype.hasFlag(WeaponType.F_FLAMER)) {
+                dice *= 2;
+            }
+            else if(wtype.hasFlag(WeaponType.F_LASER)
+                    || wtype.getAmmoType() == AmmoType.T_MAGSHOT) {
+                dice = 2;
+            }
 
             // A building may absorb the entire shot.
             if ( nDamPerHit <= bldgAbsorbs ) {
@@ -9029,6 +9038,57 @@ public class Server implements Runnable {
                         hits /= 2;
                     }
                 }
+            }
+        }
+        
+        //modify damage for non infantry attacks vs infantry
+        else if(!(ae instanceof Infantry) 
+                && target instanceof Infantry
+                && !(target instanceof BattleArmor)
+                && !(wtype.hasFlag(WeaponType.F_BURST_FIRE))) {
+            if(bSalvo) {
+                if(usesAmmo && 
+                        (wtype.getAmmoType() == AmmoType.T_LRM ||
+                        wtype.getAmmoType() == AmmoType.T_SRM ||
+                        wtype.getAmmoType() == AmmoType.T_MML) &&
+                        atype.getMunitionType() == AmmoType.M_FRAGMENTATION) {
+                    //full damage - see TW errata
+                    nDamPerHit = wtype.getRackSize() * nDamPerHit;
+                    hits = 1;
+                }
+                else if(wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                    nDamPerHit = (((wtype.getRackSize() * nDamPerHit) + 9) / 10) + 1;
+                    hits = 1;
+                } else {
+                    nDamPerHit = (((wtype.getRackSize() * nDamPerHit) + 4) / 5);
+                    hits = 1;
+                }
+            }
+            else if(wtype.hasFlag(WeaponType.F_PULSE)) {
+                nDamPerHit = (((nDamPerHit) + 9) / 10) + 2;
+            }
+            else if(usesAmmo && 
+                    (wtype.getAmmoType() == AmmoType.T_AC ||
+                    wtype.getAmmoType() == AmmoType.T_LAC) &&
+                    atype.getMunitionType() == AmmoType.M_FLECHETTE) {
+                //full damage - see TW errata
+            }
+            else {
+                nDamPerHit = (((nDamPerHit) + 9) / 10);
+            }
+            //mechanized and heavy take double damage from non infantry
+            //for heavy its because number of troopers eliminated should ignore armour
+            //(1 point of armour isn't going to stop a light gauss slug, and thats the way
+            //it used to work with maxtech infantry damage).
+            if((entityTarget.getMovementMode() != IEntityMovementMode.INF_JUMP &&
+                    entityTarget.getMovementMode() != IEntityMovementMode.INF_LEG &&
+                    entityTarget.getMovementMode() != IEntityMovementMode.INF_MOTORIZED &&
+                    entityTarget.getMovementMode() != IEntityMovementMode.INF_UMU) ||
+                    entityTarget.getArmor(Infantry.LOC_INFANTRY) > 0) {
+                nDamPerHit *= 2;
+            }
+            if(bGlancing) {
+                nDamPerHit /= 2;
             }
         }
 
@@ -13175,15 +13235,7 @@ public class Server implements Runnable {
         switch (bFrag)
         {
         case 1:
-            if (isPlatoon) {
-                damage *= 2;
-                r = new Report(6045);
-                r.subject = te_n;
-                r.indent(2);
-                r.newlines = 0;
-                vDesc.addElement(r);
-            }
-            else if (te != null) {
+            if (!isPlatoon && te != null) {
                 damage = 0;
                 r = new Report(6050);
                 r.subject = te_n;
@@ -13193,15 +13245,7 @@ public class Server implements Runnable {
             }
             break;
         case 2:
-            if (isPlatoon) {
-                damage *= 2;
-                r = new Report(6055);
-                r.subject = te_n;
-                r.indent(2);
-                r.newlines = 0;
-                vDesc.addElement(r);
-            }
-            else if (te != null && !isBattleArmor) {
+            if (!isPlatoon && te != null && !isBattleArmor) {
                 damage /= 2;
                 r = new Report(6060);
                 r.subject = te_n;

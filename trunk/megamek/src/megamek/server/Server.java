@@ -4473,13 +4473,11 @@ public class Server implements Runnable {
 				    fellDuringMovement = true;
 				    break;
 				}
-                else {
-                    // roll failed, go prone but don't dislodge swarmers
-                    entity.setProne(true);
-                    // check to see if we washed off infernos
-                    checkForWashedInfernos(entity, curPos);
-                    break;
-                }
+				// roll failed, go prone but don't dislodge swarmers
+				entity.setProne(true);
+				// check to see if we washed off infernos
+				checkForWashedInfernos(entity, curPos);
+				break;
             }
 
             //going hull down
@@ -14805,6 +14803,10 @@ public class Server implements Runnable {
                 int damage = 0;
                 for(Mounted m:t.getAmmo()) {
                     m.setHit(true);
+                    // non-explosive ammo can't explode
+                    if (!m.getType().isExplosive()) {
+                        continue;
+                    }
                     int tmp = m.getShotsLeft() * ((AmmoType)m.getType()).getDamagePerShot();
                     damage += tmp;
                     r = new Report(6390);
@@ -15399,112 +15401,112 @@ public class Server implements Runnable {
                 r.subject = en.getId();
                 vDesc.addElement(r);
                 return new Vector();
-            } else {
-                //set elevation 1st to avoid multiple crashes
-                en.setElevation(newElevation);
-
-                //plummets to ground
-                r = new Report(6270);
-                r.subject = en.getId();
-                r.add(fall);
-                vDesc.addElement(r);
-
-                // facing after fall
-                String side;
-                int table;
-                int facing = Compute.d6();
-                switch(facing) {
-                    case 1:
-                    case 2:
-                        side = "right side";
-                        table = ToHitData.SIDE_RIGHT;
-                        break;
-                    case 3:
-                        side = "rear";
-                        table = ToHitData.SIDE_REAR;
-                        break;
-                    case 4:
-                    case 5:
-                        side = "left side";
-                        table = ToHitData.SIDE_LEFT;
-                        break;
-                    case 0:
-                    default:
-                        side = "front";
-                        table = ToHitData.SIDE_FRONT;
-                }
-
-                if(newElevation <= 0) {
-                    boolean waterFall= fallHex.containsTerrain(Terrains.WATER);
-                    if(waterFall && fallHex.containsTerrain(Terrains.ICE)) {
-                        int roll = Compute.d6(1);
-                        r = new Report(2118);
-                        r.subject = en.getId();
-                        r.add(en.getDisplayName(), true);
-                        r.add(roll);
-                        r.subject = en.getId();
-                        addReport(r);
-                        if(roll == 6) {
-                            resolveIceBroken(crashPos);
-                        } else {
-                            waterFall = false; //saved by ice
-                        }
-                    }
-                    if(waterFall) {
-                        //falls into water and is destroyed
-                        r = new Report(6275);
-                        r.subject = en.getId();
-                        vDesc.addElement(r);
-                        en.destroy("Fell into water",false, false);//not sure, is this salvagable?
-                    }
-                }
-
-                // calculate damage for hitting the surface
-                int damage = (int)Math.round(en.getWeight() / 10.0) * (fall + 1);
-
-                // adjust damage for gravity
-                damage = Math.round(damage * game.getOptions().floatOption("gravity"));
-                // report falling
-                r = new Report(6280);
-                r.subject = en.getId();
-                r.indent();
-                r.addDesc(en);
-                r.add(side);
-                r.add(damage);
-                r.newlines = 0;
-                vDesc.addElement(r);
-
-                en.setFacing((en.getFacing() + (facing - 1)) % 6);
-
-                boolean exploded=false;
-
-                // standard damage loop
-                while (damage > 0) {
-                    int cluster = Math.min(5, damage);
-                    HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
-                    int ISBefore[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};//hack?
-                    vDesc.addAll(
-                                          damageEntity(en, hit, cluster));
-                    int ISAfter[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};
-                    for(int x=0;x<=3;x++) {
-                        if(ISBefore[x]!=ISAfter[x]) {
-                            exploded=true;
-                        }
-                    }
-                    damage -= cluster;
-                }
-                if (exploded) {
-                    r = new Report(6285);
-                    r.subject = en.getId();
-                    r.addDesc(en);
-                    vDesc.addElement(r);
-                    vDesc.addAll( explodeVTOL(en));
-                }
-
-                //check for location exposure
-                doSetLocationsExposure(en, fallHex, false, newElevation);
-
             }
+            //set elevation 1st to avoid multiple crashes
+            en.setElevation(newElevation);
+
+            //plummets to ground
+            r = new Report(6270);
+            r.subject = en.getId();
+            r.add(fall);
+            vDesc.addElement(r);
+
+            // facing after fall
+            String side;
+            int table;
+            int facing = Compute.d6();
+            switch(facing) {
+            case 1:
+            case 2:
+                side = "right side";
+                table = ToHitData.SIDE_RIGHT;
+                break;
+            case 3:
+                side = "rear";
+                table = ToHitData.SIDE_REAR;
+                break;
+            case 4:
+            case 5:
+                side = "left side";
+                table = ToHitData.SIDE_LEFT;
+                break;
+            case 0:
+            default:
+                side = "front";
+            table = ToHitData.SIDE_FRONT;
+            }
+
+            if(newElevation <= 0) {
+                boolean waterFall= fallHex.containsTerrain(Terrains.WATER);
+                if(waterFall && fallHex.containsTerrain(Terrains.ICE)) {
+                    int roll = Compute.d6(1);
+                    r = new Report(2118);
+                    r.subject = en.getId();
+                    r.add(en.getDisplayName(), true);
+                    r.add(roll);
+                    r.subject = en.getId();
+                    addReport(r);
+                    if(roll == 6) {
+                        resolveIceBroken(crashPos);
+                    } else {
+                        waterFall = false; //saved by ice
+                    }
+                }
+                if(waterFall) {
+                    //falls into water and is destroyed
+                    r = new Report(6275);
+                    r.subject = en.getId();
+                    vDesc.addElement(r);
+                    en.destroy("Fell into water",false, false);//not sure, is this salvagable?
+                }
+            }
+
+            // calculate damage for hitting the surface
+            int damage = (int)Math.round(en.getWeight() / 10.0) * (fall + 1);
+
+            // adjust damage for gravity
+            damage = Math.round(damage * game.getOptions().floatOption("gravity"));
+            // report falling
+            r = new Report(6280);
+            r.subject = en.getId();
+            r.indent();
+            r.addDesc(en);
+            r.add(side);
+            r.add(damage);
+            r.newlines = 0;
+            vDesc.addElement(r);
+
+            en.setFacing((en.getFacing() + (facing - 1)) % 6);
+
+            boolean exploded=false;
+
+            // standard damage loop
+            while (damage > 0) {
+                int cluster = Math.min(5, damage);
+                HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
+                int ISBefore[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};//hack?
+                vDesc.addAll(
+                        damageEntity(en, hit, cluster));
+                int ISAfter[]={en.getInternal(Tank.LOC_FRONT), en.getInternal(Tank.LOC_RIGHT), en.getInternal(Tank.LOC_LEFT), en.getInternal(Tank.LOC_REAR)};
+                for(int x=0;x<=3;x++) {
+                    if(ISBefore[x]!=ISAfter[x]) {
+                        exploded=true;
+                    }
+                }
+                damage -= cluster;
+            }
+            if (exploded) {
+                r = new Report(6285);
+                r.subject = en.getId();
+                r.addDesc(en);
+                vDesc.addElement(r);
+                vDesc.addAll( explodeVTOL(en));
+            }
+
+            //check for location exposure
+            doSetLocationsExposure(en, fallHex, false, newElevation);
+
+
         } else {
             en.setElevation(0);//considered landed in the hex.
             //crashes into ground thanks to sideslip

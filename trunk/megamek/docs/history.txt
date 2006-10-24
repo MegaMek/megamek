@@ -26,6 +26,7 @@ v0.33.1 (SVN)
 + Corrected some conventional infantry unit files.
 + Bug: tank verifier didn't understand level 3 armour
 + Change TC aimed shot check to check for F_PULSE flag.
++ Don't explode non-explosive ammo when a tank gets a Ammo Explosion crit.
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

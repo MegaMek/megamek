@@ -392,8 +392,7 @@ public class VTOL extends Tank {
                 case 6:
                     if(!isDriverHit())
                         return CRIT_COPILOT;
-                    else
-                        return CRIT_CREW_KILLED;
+                    return CRIT_CREW_KILLED;
                 case 7:
                     for(Mounted m:getWeaponList()) {
                         if(m.getLocation() == loc 
@@ -412,8 +411,7 @@ public class VTOL extends Tank {
                 case 10:
                     if(!isCommanderHit())
                         return CRIT_PILOT;
-                    else
-                        return CRIT_CREW_KILLED;
+                    return CRIT_CREW_KILLED;
                 case 11:
                     for(Mounted m:getWeaponList()) {
                         if(m.getLocation() == loc

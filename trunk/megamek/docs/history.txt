@@ -17,7 +17,7 @@ v0.33.1 (SVN)
 + Rules changes for Narc
 + Bug: Tanks with no turret could take turret hits and die on a 12
 + Plasma weapons
-+ Pulse lasers are no longer direct fire (so they can't be aimed with TC)
++ Pulse lasers can't be aimed with TC
 + Bug: RMG rivers are at level -3
 + BA IS ER medium laser and improved sensors
 + Data 1581617: New and Corrected BA
@@ -25,6 +25,7 @@ v0.33.1 (SVN)
 + Non infantry vs infantry damage
 + Corrected some conventional infantry unit files.
 + Bug: tank verifier didn't understand level 3 armour
++ Change TC aimed shot check to check for F_PULSE flag.
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

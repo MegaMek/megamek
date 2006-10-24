@@ -24,6 +24,7 @@ v0.33.1 (SVN)
 + Bug: NPE with infantry LRM
 + Non infantry vs infantry damage
 + Corrected some conventional infantry unit files.
++ Bug: tank verifier didn't understand level 3 armour
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

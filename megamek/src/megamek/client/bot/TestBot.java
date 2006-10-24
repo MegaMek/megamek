@@ -1906,6 +1906,9 @@ public class TestBot extends BotClient {
                     if (((WeaponType) test_weapon.getType()).hasFlag(WeaponType.F_DIRECT_FIRE) == false){
                         direct_fire = false;
                     }
+                    if(test_weapon.getType().hasFlag(WeaponType.F_PULSE)) {
+                        direct_fire = false;
+                    }
                     if( (((WeaponType) test_weapon.getType()).getAmmoType() == AmmoType.T_AC_LBX) ||
                             (((WeaponType) test_weapon.getType()).getAmmoType() == AmmoType.T_AC_LBX)){
                         if (((AmmoType)test_weapon.getLinked().getType()).getAmmoType() == AmmoType.M_CLUSTER){

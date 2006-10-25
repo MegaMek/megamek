@@ -30,6 +30,7 @@ v0.33.1 (SVN)
 + Bug 1581512: LAC/2 and LAC/5 won't load from TDB Files
 + Light AC changed from level 3 to level 2
 + Bug: swarming mek could hit itself by "getting in the way" of damage
++ Bug: ammo explosion from heat could select an empty bin
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

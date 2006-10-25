@@ -9322,12 +9322,13 @@ public class WeaponType extends EquipmentType {
     private static WeaponType createISLAC2() {
         WeaponType weapon = new WeaponType();
 
-        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
         weapon.name = "Light Auto Cannon/2";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("IS Light AutoCannon/2");
         weapon.addLookupName("ISLAC2");
         weapon.addLookupName("IS Light Autocannon/2");
+        weapon.addLookupName("Light AC/2");
         weapon.heat = 1;
         weapon.damage = 2;
         weapon.rackSize = 2;
@@ -9352,12 +9353,13 @@ public class WeaponType extends EquipmentType {
     private static WeaponType createISLAC5() {
         WeaponType weapon = new WeaponType();
 
-        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
         weapon.name = "Light Auto Cannon/5";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("IS Light Auto Cannon/5");
         weapon.addLookupName("ISLAC5");
         weapon.addLookupName("IS Light Autocannon/5");
+        weapon.addLookupName("Light AC/5");
         weapon.heat = 1;
         weapon.damage = 5;
         weapon.rackSize = 5;
@@ -9914,6 +9916,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("IS Light AutoCannon/10");
         weapon.addLookupName("ISLAC10");
         weapon.addLookupName("IS Light Autocannon/10");
+        weapon.addLookupName("Light AC/10");
         weapon.heat = 3;
         weapon.damage = 10;
         weapon.rackSize = 10;
@@ -9941,6 +9944,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("IS Light Auto Cannon/20");
         weapon.addLookupName("ISLAC20");
         weapon.addLookupName("IS Light Autocannon/20");
+        weapon.addLookupName("Light AC/20");
         weapon.heat = 7;
         weapon.damage = 20;
         weapon.rackSize = 20;

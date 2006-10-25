@@ -15963,7 +15963,7 @@ public class Server implements Runnable {
                     continue;
                 }
                 //ignore empty bins
-                if (atype.getShots() == 0) {
+                if (mounted.getShotsLeft() == 0) {
                     continue;
                 }
                 // BMRr, pg. 48, compare one rack's

@@ -9406,6 +9406,8 @@ public class Server implements Runnable {
                         r.addDesc(entityTarget);
                         r.newlines = 0;
                         addReport(r);
+                    } else if (ae.getSwarmTargetId() == entityTarget.getId()) {
+                        addReport(damageEntity(entityTarget, hit, nDamage, false, 7, false, false, false));
                     } else if (bFragmentation) {
                         // If it's a frag missile...
                         if (bGlancing) {

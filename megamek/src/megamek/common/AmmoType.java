@@ -5256,11 +5256,12 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLAC2Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
         ammo.name = "LAC/2 Ammo";
         ammo.setInternalName("IS Ammo LAC/2");
         ammo.addLookupName("ISLAC2 Ammo");
         ammo.addLookupName("IS Light Autocannon/2 Ammo");
+        ammo.addLookupName("Light AC/2 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LAC;
@@ -5274,11 +5275,12 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createISLAC5Ammo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
         ammo.name = "LAC/5 Ammo";
         ammo.setInternalName("IS Ammo LAC/5");
         ammo.addLookupName("ISLAC5 Ammo");
         ammo.addLookupName("IS Light Autocannon/5 Ammo");
+        ammo.addLookupName("Light AC/5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LAC;
@@ -5297,6 +5299,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo LAC/10");
         ammo.addLookupName("ISLAC10 Ammo");
         ammo.addLookupName("IS Light Autocannon/10 Ammo");
+        ammo.addLookupName("Light AC/10 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_LAC;
@@ -5315,6 +5318,7 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("IS Ammo LAC/20");
         ammo.addLookupName("ISLAC20 Ammo");
         ammo.addLookupName("IS Light Autocannon/20 Ammo");
+        ammo.addLookupName("Light AC/20 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_LAC;

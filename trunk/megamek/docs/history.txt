@@ -31,6 +31,7 @@ v0.33.1 (SVN)
 + Light AC changed from level 3 to level 2
 + Bug: swarming mek could hit itself by "getting in the way" of damage
 + Bug: ammo explosion from heat could select an empty bin
++ Bug 1584814: check game option for fire is enabled before creating fires.
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

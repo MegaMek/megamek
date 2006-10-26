@@ -39,10 +39,12 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
     @Override
     void DoEndPhaseChanges(Vector<Report> vPhaseReport) {
-        this.vPhaseReport = vPhaseReport;
-        game = server.getGame();
-        resolveFire();
-        this.vPhaseReport = null;
+        if(game.getOptions().booleanOption("fire")) {
+            this.vPhaseReport = vPhaseReport;
+            game = server.getGame();
+            resolveFire();
+            this.vPhaseReport = null;
+        }
     }
 
     /**

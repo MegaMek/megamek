@@ -5102,7 +5102,8 @@ public class Server implements Runnable {
         IHex h = game.getBoard().getHex(coords);
         Report r;
         //Unless there is a fire in the hex already, start one.
-        if ( !h.containsTerrain( Terrains.FIRE ) ) {
+        if ( !h.containsTerrain( Terrains.FIRE ) &&
+                game.getOptions().booleanOption("fire")) {
             r = new Report(3005);
             r.subject = subjectId;
             r.indent(2);
@@ -5133,7 +5134,8 @@ public class Server implements Runnable {
             }
             h = game.getBoard().getHex(tempcoords);
             // Unless there is a fire in the hex already, start one.
-            if ( !h.containsTerrain( Terrains.FIRE ) ) {
+            if ( !h.containsTerrain( Terrains.FIRE ) &&
+                    game.getOptions().booleanOption("fire") ) {
                 r = new Report(3005);
                 r.subject = subjectId;
                 r.indent(2);
@@ -5611,8 +5613,8 @@ public class Server implements Runnable {
         Report r = new Report(2170);
         r.subject = entity.getId();
         r.addDesc(entity);
-        if ( hex.containsTerrain(Terrains.FIRE) ) {
-        } else {
+        if ( !hex.containsTerrain(Terrains.FIRE) &&
+                game.getOptions().booleanOption("fire") ) {
             r.messageId = 2175;
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
         }
@@ -14094,20 +14096,22 @@ public class Server implements Runnable {
             if (en instanceof Mech)
                 destroyLocation(en, Mech.LOC_CT);
 
-            //Light our hex on fire
-            final IHex curHex = game.getBoard().getHex(en.getPosition());
-
-            if (null != curHex
-                    && !curHex.containsTerrain(Terrains.FIRE)
-                    && (curHex.containsTerrain(Terrains.WOODS)
-                    || curHex.containsTerrain(Terrains.JUNGLE))) {
-                curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
-                r = new Report(6170, Report.PUBLIC);
-                r.subject = en.getId();
-                r.indent(2);
-                r.add(en.getPosition().getBoardNum());
-                vDesc.addElement(r);
-                sendChangedHex(en.getPosition());
+            if(game.getOptions().booleanOption("fire")) {
+                //Light our hex on fire
+                final IHex curHex = game.getBoard().getHex(en.getPosition());
+    
+                if (null != curHex
+                        && !curHex.containsTerrain(Terrains.FIRE)
+                        && (curHex.containsTerrain(Terrains.WOODS)
+                        || curHex.containsTerrain(Terrains.JUNGLE))) {
+                    curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+                    r = new Report(6170, Report.PUBLIC);
+                    r.subject = en.getId();
+                    r.indent(2);
+                    r.add(en.getPosition().getBoardNum());
+                    vDesc.addElement(r);
+                    sendChangedHex(en.getPosition());
+                }
             }
 
             //ICE explosions don't hurt anyone else, but fusion do
@@ -15562,14 +15566,16 @@ public class Server implements Runnable {
             vDesc.addElement(r);
         } else {
             Coords pos=en.getPosition();
-            IHex hex = game.getBoard().getHex(pos);
-            if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
-            } else {
-                game.getBoard().addInfernoTo(pos, InfernoTracker.STANDARD_ROUND, 1);
-                ((InfernoTracker)game.getBoard().getInfernos().get(pos)).setTurnsLeftToBurn(game.getBoard().getInfernoBurnTurns(pos)-2);  //massive hack
-                hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
-                sendChangedHex(pos);
+            if( game.getOptions().booleanOption("fire")) {
+                IHex hex = game.getBoard().getHex(pos);
+                if(hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
+                    hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+                } else {
+                    game.getBoard().addInfernoTo(pos, InfernoTracker.STANDARD_ROUND, 1);
+                    ((InfernoTracker)game.getBoard().getInfernos().get(pos)).setTurnsLeftToBurn(game.getBoard().getInfernoBurnTurns(pos)-2);  //massive hack
+                    hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
+                    sendChangedHex(pos);
+                }
             }
             destroyEntity(en, "crashed and burned", false, false);
         }

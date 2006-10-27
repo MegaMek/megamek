@@ -35,6 +35,7 @@ v0.33.1 (SVN)
 + AP gauss
 + Changed new PPCs from level 3 to level 2
 + Fix break in fire processor
++ RFE 1585612: Add info on why a mech is invalid
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

@@ -15,19 +15,26 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.ui.AWT.MechView;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
+import megamek.common.Mech;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
 import megamek.common.MechSummaryCache;
 import megamek.common.MechSummaryComparator;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestTank;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -57,6 +64,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -143,7 +151,9 @@ public class MechSelectorDialog
     private JComboBox m_chPlayer = new JComboBox();
 
     private boolean includeMaxTech;
-
+    
+    private EntityVerifier entityVerifier = new EntityVerifier(new File("data/mechfiles/UnitVerifierOptions.xml"));
+    
     public MechSelectorDialog(ClientGUI cl, UnitLoadingDialog uld) {
         super(cl.frame, Messages.getString("MechSelectorDialog.title"), true); //$NON-NLS-1$
         m_client = cl.getClient();
@@ -837,7 +847,19 @@ public class MechSelectorDialog
     void previewMech(Entity entity) {
         MechView mechView = new MechView(entity);
         m_mechView.setEditable(false);
-        m_mechView.setText(mechView.getMechReadout());
+        String readout = mechView.getMechReadout();
+        StringBuffer sb = new StringBuffer(readout);
+        m_mechView.setText(readout);
+        if(entity instanceof Mech || entity instanceof Tank) {
+            TestEntity testEntity = null;
+            if (entity instanceof Mech)
+                testEntity = new TestMech((Mech)entity, entityVerifier.mechOption, null);
+            if (entity instanceof Tank)
+                testEntity = new TestTank((Tank)entity, entityVerifier.tankOption, null);
+            if (!testEntity.correctEntity(sb, !m_clientgui.getClient().game.getOptions().booleanOption("is_eq_limits"))) {
+                m_mechView.setText(sb.toString());
+            }
+        }
         m_mechView.setCaretPosition(0);
 
         // Preview image of the unit...

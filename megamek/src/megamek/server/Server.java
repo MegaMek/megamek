@@ -17357,12 +17357,12 @@ public class Server implements Runnable {
             if (testEntity.correctEntity(sb, !game.getOptions().booleanOption("is_eq_limits"))) {
                 entity.setDesignValid(true);
             } else {
+                System.err.println(sb);
                 if (game.getOptions().booleanOption("allow_illegal_units")) {
                     entity.setDesignValid(false);
                 } else {
                     Player cheater = game.getPlayer( connIndex );
                     sendServerChat("Player " + cheater.getName() + " attempted to add an illegal unit design (" + entity.getShortNameRaw() + "), the unit was rejected.");
-                    System.err.println(sb);
                     return;
                 }
             }

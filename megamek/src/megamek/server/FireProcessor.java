@@ -34,14 +34,13 @@ public class FireProcessor extends DynamicTerrainProcessor {
     
     public FireProcessor(Server server) {
         super(server);
-        // TODO Auto-generated constructor stub
     }
 
     @Override
     void DoEndPhaseChanges(Vector<Report> vPhaseReport) {
+        game = server.getGame();
         if(game.getOptions().booleanOption("fire")) {
             this.vPhaseReport = vPhaseReport;
-            game = server.getGame();
             resolveFire();
             this.vPhaseReport = null;
         }

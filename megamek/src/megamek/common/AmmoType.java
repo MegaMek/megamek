@@ -522,6 +522,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLHAG40Ammo());
         EquipmentType.addType(createCLPlasmaCannonAmmo());
         EquipmentType.addType(createISPlasmaRifleAmmo());
+        EquipmentType.addType(createCLAPGaussRifleAmmo());
         
         base = createCLLongTomAmmo();
         clanArtyAmmos.add( base );
@@ -5568,6 +5569,7 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Magshot GR Ammo";
         ammo.setInternalName("CLMagshotGR Ammo");
         ammo.addLookupName("Clan Magshot GR Ammo");
+        ammo.rackSize = 2;
         ammo.damagePerShot = 2;
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_MAGSHOT;
@@ -5577,6 +5579,23 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createCLAPGaussRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AP Gauss Rifle Ammo";
+        ammo.setInternalName("CLAPGaussRifle Ammo");
+        ammo.addLookupName("Clan AP Gauss Rifle Ammo");
+        ammo.addLookupName("Clan Anti-Personnel Gauss Rifle Ammo");
+        ammo.rackSize = 3;
+        ammo.damagePerShot = 3;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_MAGSHOT;
+        ammo.shots = 40;
+        ammo.bv = 3;
+        ammo.cost = 1000;
+        return ammo;
+    }
 
     private static AmmoType createISPXLRM5Ammo() {
         AmmoType ammo = new AmmoType();

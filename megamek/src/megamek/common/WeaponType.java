@@ -439,6 +439,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLHAG30());
         EquipmentType.addType(createCLHAG40());
         EquipmentType.addType(createCLPlasmaCannon());
+        EquipmentType.addType(createCLAPGaussRifle());
 
         // Start of Clan Level3 weapons
         EquipmentType.addType(createCLERLargePulseLaser());
@@ -6368,6 +6369,7 @@ public class WeaponType extends EquipmentType {
         weapon.addLookupName("Clan Magshot Gauss Rifle");
         weapon.heat = 1;
         weapon.damage = 2;
+        weapon.rackSize = 2;
         weapon.ammoType = AmmoType.T_MAGSHOT;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 3;
@@ -6378,6 +6380,33 @@ public class WeaponType extends EquipmentType {
         weapon.explosive = true;
         weapon.criticals = 2;
         weapon.bv = 15;
+        weapon.cost = 8500;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_BURST_FIRE;
+
+        return weapon;
+    }
+
+    private static WeaponType createCLAPGaussRifle() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "AP Gauss Rifle";
+        weapon.setInternalName("CLAPGaussRifle");
+        weapon.addLookupName("Clan AP Gauss Rifle");
+        weapon.addLookupName("Clan Anti-Personnel Gauss Rifle");
+        weapon.heat = 1;
+        weapon.damage = 3;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_MAGSHOT;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 3;
+        weapon.mediumRange = 6;
+        weapon.longRange = 9;
+        weapon.extremeRange = 12;
+        weapon.tonnage = 0.5f;
+        weapon.explosive = true;
+        weapon.criticals = 1;
+        weapon.bv = 22;
         weapon.cost = 8500;
         weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_BURST_FIRE;
 
@@ -9706,7 +9735,7 @@ public class WeaponType extends EquipmentType {
     private static WeaponType createISSNPPC() {
         WeaponType weapon = new WeaponType();
 
-        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
         weapon.name = "Snub Nosed Particle Projection Cannon";
         weapon.setInternalName("ISSNPPC");
         weapon.addLookupName("ISSnubNosedPPC");
@@ -9786,7 +9815,7 @@ public class WeaponType extends EquipmentType {
     private static WeaponType createISHeavyPPC() {
         WeaponType weapon = new WeaponType();
 
-        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
         weapon.name = "Heavy Particle Projection Cannon";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("ISHeavyPPC");
@@ -9818,7 +9847,7 @@ public class WeaponType extends EquipmentType {
     private static WeaponType createISLightPPC() {
         WeaponType weapon = new WeaponType();
 
-        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
         weapon.name = "Light Particle Projection Cannon";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("ISLightPPC");

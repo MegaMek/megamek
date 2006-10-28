@@ -424,6 +424,8 @@ public class TestMech extends TestEntity {
             correct = false;
         if (hasIllegalTechLevels(buff, ignoreAmmo))
             correct = false;
+        if(hasIllegalEquipmentCombinations(buff))
+            correct = false;
         correct = correct && correctMovement(buff);
         return correct;
     }

@@ -617,6 +617,26 @@ public abstract class TestEntity implements TestEntityOption {
 
 		return hasFailedEquipment;
 	}
+    
+    /**
+     * Check if the unit has combinations of equipment which are not
+     * allowed in the construction rules.
+     * @param buff diagnostics are appended to this
+     * @return true if the entity is illegal
+     */
+    public boolean hasIllegalEquipmentCombinations(StringBuffer buff) {
+        int tagCount = 0;
+        boolean illegal = false;
+        for(Mounted m: getEntity().getWeaponList()) {
+            if(m.getType().hasFlag(WeaponType.F_TAG))
+                tagCount++;
+        }
+        if(tagCount > 1) {
+            buff.append("Unit has more than one TAG\n");
+            illegal = true;
+        }
+        return illegal;
+    }
 
 	public StringBuffer printFailedEquipment(StringBuffer buff) {
 		if (getEntity().getFailedEquipment().hasMoreElements())

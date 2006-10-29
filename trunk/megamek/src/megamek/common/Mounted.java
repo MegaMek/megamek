@@ -417,11 +417,13 @@ public class Mounted implements Serializable, RoundUpdated {
                 return false;
             
                 
-            isHotLoaded = this.getLinked().hotloaded;
-            
+            isHotLoaded = link.hotloaded;
+            if ( ((AmmoType)link.getType()).getMunitionType() == AmmoType.M_DEAD_FIRE )
+                return true;
+
             //Check to see if the ammo has its mode set to hotloaded.
             //This is for vehicles that can change hotload status during combat.
-            if ( !isHotLoaded && this.getLinked().getType().hasModes() && this.getLinked().curMode().equals("HotLoad") )
+            if ( !isHotLoaded && link.getType().hasModes() && link.curMode().equals("HotLoad") )
                 isHotLoaded = true;
             
             return isHotLoaded;
@@ -430,6 +432,9 @@ public class Mounted implements Serializable, RoundUpdated {
         if ( this.getType() instanceof AmmoType && this.getShotsLeft() > 0){
             isHotLoaded = this.hotloaded;
             
+        if ( ((AmmoType)this.getType()).getMunitionType() == AmmoType.M_DEAD_FIRE )
+            return true;
+
             //Check to see if the ammo has its mode set to hotloaded.
             //This is for vehicles that can change hotload status during combat.
             if ( !isHotLoaded && this.getType().hasModes() && this.curMode().equals("HotLoad") )
@@ -542,11 +547,20 @@ public class Mounted implements Serializable, RoundUpdated {
     public int getExplosionDamage() {
         if (type instanceof AmmoType) {
             AmmoType atype = (AmmoType)type;
-            return atype.getDamagePerShot() * atype.getRackSize() * shotsLeft;
+            int rackSize = atype.getRackSize();
+            int damagePerShot = atype.getDamagePerShot();
+            
+            //both Dead-Fire and Tandem-charge SRM's do 3 points of damage per shot when critted
+            //Dead-Fire LRM's do 2 points of damage per shot when critted.
+            if ( atype.getMunitionType() == AmmoType.M_DEAD_FIRE || 
+                 atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE )
+                damagePerShot++;
+            
+            return damagePerShot * rackSize * shotsLeft;
         } else if (type instanceof WeaponType) {
             WeaponType wtype = (WeaponType)type;
             //HACK: gauss rifle damage hardcoding
-            if (wtype.getAmmoType() == AmmoType.T_GAUSS) {
+            if (wtype.getAmmoType() == AmmoType.T_GAUSS || wtype.getAmmoType() == AmmoType.T_SBGAUSS) {
                 return 20;
             } else if (wtype.getAmmoType() == AmmoType.T_GAUSS_LIGHT) {
                 return 16;
@@ -565,7 +579,12 @@ public class Mounted implements Serializable, RoundUpdated {
             }else if ( this.isHotLoaded() ){
                 Mounted link = this.getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
-                int damage = wtype.getRackSize() * atype.getDamagePerShot();
+                int damagePerShot = atype.getDamagePerShot();
+                //Launchers with Dead-Fire missles in them do an extra point of damage per shot when critted
+                if ( atype.getAmmoType() == AmmoType.M_DEAD_FIRE )
+                    damagePerShot++;
+                
+                int damage = wtype.getRackSize() * damagePerShot;
                 return damage;
             }
         }

@@ -44,6 +44,7 @@ v0.33.1 (SVN)
 +	Heat seeking missiles from maxtech
 +	Tandem charge SRMs from THB
 +	Follow the Leader LRMs from THB
++ Update build.xml to work with retroweaver 1.2.5, updated retroweaver rt lib to 1.2.5
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

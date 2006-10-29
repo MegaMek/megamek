@@ -565,8 +565,6 @@ public class Compute {
         int[] weaponRanges = wtype.getRanges();
         boolean isAttackerInfantry = (ae instanceof Infantry);
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
-        boolean isLRMInfantry = isWeaponInfantry
-                && wtype.getAmmoType() == AmmoType.T_LRM;
         boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM)
                 || (wtype.getAmmoType() == AmmoType.T_MML)
                 || (wtype.getAmmoType() == AmmoType.T_EXLRM)

@@ -74,7 +74,8 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
             e.setTechLevel(TechConstants.T_IS_LEVEL_2);
         } else if (dataFile.getDataAsString("Type")[0].equals("IS Level 3")) {
             e.setTechLevel(TechConstants.T_IS_LEVEL_3);
-        } else if (dataFile.getDataAsString("Type")[0].equals("Clan")) {
+        } else if (dataFile.getDataAsString("Type")[0].equals("Clan")
+                || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
             e.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
         } else if (dataFile.getDataAsString("Type")[0].equals("Clan Level 3")) {
             e.setTechLevel(TechConstants.T_CLAN_LEVEL_3);

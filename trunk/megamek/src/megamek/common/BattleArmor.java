@@ -1047,5 +1047,147 @@ public class BattleArmor
             return false;
         return super.loadWeaponWithSameAmmo(mounted, mountedAmmo);
     }
+    
+    public final String getBLK() {
+        String newline = "\r\n";
+        StringBuffer buff = new StringBuffer();
+        buff.append("<BlockVersion>");
+        buff.append(newline);
+        buff.append("1");
+        buff.append(newline);
+        buff.append("</BlockVersion>");
+        buff.append(newline);
+
+        buff.append("<UnitType>");
+        buff.append(newline);
+        buff.append("BattleArmor");
+        buff.append(newline);
+        buff.append("</UnitType>");
+        buff.append(newline);
+
+        buff.append("<name>");
+        buff.append(newline);
+        buff.append(getChassis());
+        buff.append(newline);
+        buff.append("</name>");
+        buff.append(newline);
+
+        buff.append("<model>");
+        buff.append(newline);
+        buff.append(getModel());
+        buff.append(newline);
+        buff.append("</model>");
+        buff.append(newline);
+
+        buff.append("<year>");
+        buff.append(newline);
+        buff.append(getYear());
+        buff.append(newline);
+        buff.append("</year>");
+        buff.append(newline);
+        
+        buff.append("<type>");
+        buff.append(newline);
+        switch(getTechLevel()) {
+        case TechConstants.T_IS_LEVEL_1:
+            buff.append("IS Level 1");
+            break;
+        case TechConstants.T_IS_LEVEL_2:
+            buff.append("IS Level 2");
+            break;
+        case TechConstants.T_IS_LEVEL_3:
+            buff.append("IS Level 3");
+            break;
+        case TechConstants.T_CLAN_LEVEL_2:
+            buff.append("Clan Level 2");
+            break;
+        case TechConstants.T_CLAN_LEVEL_3:
+            buff.append("Clan Level 3");
+            break;
+        }
+        buff.append(newline);
+        buff.append("</type>");
+        buff.append(newline);
+        
+        buff.append("<tonnage>");
+        buff.append(newline);
+        buff.append(getWeight());
+        buff.append(newline);
+        buff.append("</tonnage>");
+        buff.append(newline);
+
+        buff.append("<bv>");
+        buff.append(newline);
+        buff.append(calculateBattleValue());
+        buff.append(newline);
+        buff.append("</bv>");
+        buff.append(newline);
+
+        buff.append("<motion_type>");
+        buff.append(newline);
+        switch(getMovementMode()) {
+        case IEntityMovementMode.INF_JUMP:
+            buff.append("jump");
+            break;
+        case IEntityMovementMode.INF_LEG:
+            buff.append("leg");
+            break;
+        case IEntityMovementMode.VTOL:
+            buff.append("vtol");
+            break;
+        case IEntityMovementMode.INF_UMU:
+            buff.append("submarine");
+            break;
+        }
+        buff.append(newline);
+        buff.append("</motion_type>");
+        buff.append(newline);
+
+        buff.append("<cruiseMP>");
+        buff.append(newline);
+        buff.append(getOriginalRunMP());
+        buff.append(newline);
+        buff.append("</cruiseMP>");
+        buff.append(newline);
+
+        buff.append("<jumpMP>");
+        buff.append(newline);
+        buff.append(getOriginalJumpMP());
+        buff.append(newline);
+        buff.append("</jumpMP>");
+        buff.append(newline);
+
+        buff.append("<armor>");
+        buff.append(newline);
+        buff.append(getOArmor(LOC_CLAN_1));
+        buff.append(newline);
+        buff.append("</armor>");
+        buff.append(newline);
+        
+        for(int i=0;i<locations();i++) {
+            boolean found = false;
+            for(Mounted m:getEquipment()) {
+                if(m.getLocation() == i) {
+                    if(!found) {
+                        found = true;
+                        buff.append("<");
+                        buff.append(getLocationName(i));
+                        buff.append(" equipment>");
+                        buff.append(newline);
+                    }
+                    buff.append(m.getType().getInternalName());
+                    buff.append(newline);
+                }
+            }
+            if(found) {
+                buff.append("</");
+                buff.append(getLocationName(i));
+                buff.append(" equipment>");
+                buff.append(newline);
+            }
+        }
+
+        return buff.toString();
+    }
 
 } // End public class BattleArmor extends Infantry implements Serializable

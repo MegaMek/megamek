@@ -71,7 +71,8 @@ public class BLKProtoFile extends BLKFile implements IMechLoader {
             t.setTechLevel(TechConstants.T_IS_LEVEL_2);
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 3")) {
             t.setTechLevel(TechConstants.T_IS_LEVEL_3);
-        } else if (dataFile.getDataAsString("type")[0].equals("Clan")) {
+        } else if (dataFile.getDataAsString("type")[0].equals("Clan")
+                || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_3);

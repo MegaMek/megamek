@@ -1346,8 +1346,6 @@ public class ClientGUI
         }
 
         public void gamePhaseChange(GamePhaseChangeEvent e) {
-            boolean showRerollButton = false;
-
             //This is a really lame place for this, but I couldn't find a
             //better one without making massive changes (which didn't seem
             //worth it for one little feature).
@@ -1379,7 +1377,6 @@ public class ClientGUI
                     }
                     break;
                 case IGame.PHASE_INITIATIVE_REPORT:
-                    showRerollButton = client.game.hasTacticalGenius(client.getLocalPlayer());
                 case IGame.PHASE_MOVEMENT_REPORT:
                 case IGame.PHASE_OFFBOARD_REPORT:
                 case IGame.PHASE_FIRING_REPORT:

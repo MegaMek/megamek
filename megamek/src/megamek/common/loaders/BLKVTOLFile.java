@@ -65,7 +65,8 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
             t.setTechLevel(TechConstants.T_IS_LEVEL_2);
         } else if (dataFile.getDataAsString("type")[0].equals("IS Level 3")) {
             t.setTechLevel(TechConstants.T_IS_LEVEL_3);
-        } else if (dataFile.getDataAsString("type")[0].equals("Clan")) {
+        } else if (dataFile.getDataAsString("type")[0].equals("Clan")
+                || dataFile.getDataAsString("type")[0].equals("Clan Level 2")) {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
@@ -104,8 +105,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         if ( transporters[index].startsWith( "TroopSpace:", 0 ) ) {
             // Everything after the ':' should be the space's size.
                     Double fsize = new Double( transporters[index].substring(11) );
-                    int size = fsize.intValue();
-            t.addTransporter( new TroopSpace(fsize.doubleValue()) );
+                    t.addTransporter( new TroopSpace(fsize.doubleValue()) );
         }
 
         } // Handle the next transportation component.

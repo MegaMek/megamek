@@ -40,10 +40,8 @@ public class NukeCommand extends ServerCommand {
      * Run this command with the arguments supplied
      */
     public void run(int connId, String[] args) {
-        int countbad = 0;
 
         // Check to make sure nuking is allowed by game options!
-        boolean doBlind = server.getGame().getOptions().booleanOption("really_allow_nukes");
         if (!(server.getGame().getOptions().booleanOption("really_allow_nukes") && server.getGame().getOptions().booleanOption("allow_nukes"))) {
             server.sendServerChat(connId, "Command-line nukes are not enabled in this game.");
             return;

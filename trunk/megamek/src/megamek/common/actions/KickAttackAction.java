@@ -63,7 +63,9 @@ public class KickAttackAction extends PhysicalAttackAction
      */
     public static int getDamageFor(Entity entity, int leg) {
         int[] kickLegs = new int[2];
-        if ( entity.entityIsQuad() ) {
+        if ( entity.entityIsQuad() 
+                && leg != LEFTMULE
+                && leg != RIGHTMULE) {
           kickLegs[0] = Mech.LOC_RARM;
           kickLegs[1] = Mech.LOC_LARM;
         } else {
@@ -71,7 +73,7 @@ public class KickAttackAction extends PhysicalAttackAction
           kickLegs[1] = Mech.LOC_LLEG;
         }
 
-        final int legLoc = (leg == KickAttackAction.RIGHT) ? kickLegs[0] : kickLegs[1];
+        final int legLoc = (leg == RIGHT || leg == RIGHTMULE) ? kickLegs[0] : kickLegs[1];
         int damage = (int)Math.floor(entity.getWeight() / 5.0);
         float multiplier = 1.0f;
 

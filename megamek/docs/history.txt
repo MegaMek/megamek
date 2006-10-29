@@ -38,6 +38,12 @@ v0.33.1 (SVN)
 + RFE 1585612: Add info on why a mech is invalid
 + RFE 1585610: Mark mechs with multiple TAG units as invalid
 + Bug: mule kicks used front leg criticals to detemine damage instead of rear
++ Patch 1556051: 
++	Silver bullet gauss rifle (aka IS HAG/15) from unbound
++	Dead fire missiles from THB
++	Heat seeking missiles from maxtech
++	Tandem charge SRMs from THB
++	Follow the Leader LRMs from THB
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

@@ -341,6 +341,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISRailGun());
         EquipmentType.addType(createISMagshotGR());
         EquipmentType.addType(createFireExtinguisher());
+        EquipmentType.addType(createISSBGaussRifle());
         
         EquipmentType.addType(createISLightPPC());
         EquipmentType.addType(createISHeavyPPC());
@@ -10344,6 +10345,33 @@ public class WeaponType extends EquipmentType {
 
         return weapon;
     }
+
+    
+    public static WeaponType createISSBGaussRifle() {
+        WeaponType weapon = new WeaponType();
+    
+        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
+        weapon.name = "Silver Bullet Gauss Rifle";
+        weapon.setInternalName("ISSBGaussRifle");
+        weapon.addLookupName("ISSBGaussRifle");
+        weapon.heat = 1;
+        weapon.rackSize = 15;
+        weapon.ammoType = AmmoType.T_SBGAUSS;
+        weapon.minimumRange = 2;
+        weapon.shortRange = 7;
+        weapon.mediumRange = 15;
+        weapon.longRange = 22;
+        weapon.extremeRange = 30;
+        weapon.tonnage = 15.0f;
+        weapon.criticals = 7;
+        weapon.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC | F_MISSILE_HITS;
+        weapon.explosive = true;
+        weapon.bv = 169;
+        weapon.cost = 350000;
+    
+        return weapon;
+    }
+     
 
     private static WeaponType createCLHAG20() {
         WeaponType weapon = new WeaponType();

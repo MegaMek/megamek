@@ -76,7 +76,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_HAG               = 49;
     public static final int     T_MML               = 50;
     public static final int     T_PLASMA            = 51;
-    public static final int     NUM_TYPES           = 52;
+    public static final int     T_SBGAUSS           = 52;
+    public static final int     NUM_TYPES           = 53;
     
 
     // ammo flags
@@ -95,64 +96,68 @@ public class AmmoType extends EquipmentType {
     public static final long     M_STANDARD          = 0;
 
     // AC Munition Types
-    public static final long     M_CLUSTER           = 0x000000001L;
-    public static final long     M_ARMOR_PIERCING    = 0x000000002L;
-    public static final long     M_FLECHETTE         = 0x000000004L;
-    public static final long     M_INCENDIARY_AC     = 0x000000008L;
-    public static final long     M_PRECISION         = 0x000000010L;
-    public static final long     M_TRACER            = 0x400000000L;
+    public static final long     M_CLUSTER           = 0x000000000001L;
+    public static final long     M_ARMOR_PIERCING    = 0x000000000002L;
+    public static final long     M_FLECHETTE         = 0x000000000004L;
+    public static final long     M_INCENDIARY_AC     = 0x000000000008L;
+    public static final long     M_PRECISION         = 0x000000000010L;
+    public static final long     M_TRACER            = 0x000400000000L;
 
     // ATM & MML Munition Types
-    public static final long     M_EXTENDED_RANGE    = 0x000000020L;
-    public static final long     M_HIGH_EXPLOSIVE    = 0x000000040L;
+    public static final long     M_EXTENDED_RANGE    = 0x000000000020L;
+    public static final long     M_HIGH_EXPLOSIVE    = 0x000000000040L;
 
     // LRM & SRM Munition Types
-    public static final long     M_FRAGMENTATION     = 0x000000080L;
-    public static final long     M_LISTEN_KILL       = 0x000000100L;
-    public static final long     M_ANTI_TSM          = 0x000000200L;
-    public static final long     M_NARC_CAPABLE      = 0x000000400L;
-    public static final long     M_ARTEMIS_CAPABLE   = 0x000000800L;
+    public static final long     M_FRAGMENTATION     = 0x000000000080L;
+    public static final long     M_LISTEN_KILL       = 0x000000000100L;
+    public static final long     M_ANTI_TSM          = 0x000000000200L;
+    public static final long     M_NARC_CAPABLE      = 0x000000000400L;
+    public static final long     M_ARTEMIS_CAPABLE   = 0x000000000800L;
+    public static final long     M_DEAD_FIRE         = 0x001000000000L;
+    public static final long     M_HEAT_SEEKING      = 0x002000000000L;
+    public static final long     M_TANDEM_CHARGE     = 0x004000000000L;
 
     // LRM Munition Types
     // Incendiary is special, though...
     //FIXME - I'm not implemented!!!
-    public static final long     M_INCENDIARY_LRM    = 0x000001000L;
-    public static final long     M_FLARE             = 0x000002000L;
-    public static final long     M_SEMIGUIDED        = 0x000004000L;
-    public static final long     M_SWARM             = 0x000008000L;
-    public static final long     M_SWARM_I           = 0x000010000L;
-    public static final long     M_THUNDER           = 0x000020000L;
-    public static final long     M_THUNDER_AUGMENTED = 0x000040000L;
-    public static final long     M_THUNDER_INFERNO   = 0x000080000L;
-    public static final long     M_THUNDER_VIBRABOMB = 0x000100000L;
-    public static final long     M_THUNDER_ACTIVE    = 0x000200000L;
-    public static final long     M_MULTI_PURPOSE     = 0x000400000L;
+    public static final long     M_INCENDIARY_LRM    = 0x000000001000L;
+    public static final long     M_FLARE             = 0x000000002000L;
+    public static final long     M_SEMIGUIDED        = 0x000000004000L;
+    public static final long     M_SWARM             = 0x000000008000L;
+    public static final long     M_SWARM_I           = 0x000000010000L;
+    public static final long     M_THUNDER           = 0x000000020000L;
+    public static final long     M_THUNDER_AUGMENTED = 0x000000040000L;
+    public static final long     M_THUNDER_INFERNO   = 0x000000080000L;
+    public static final long     M_THUNDER_VIBRABOMB = 0x000000100000L;
+    public static final long     M_THUNDER_ACTIVE    = 0x000000200000L;
+    public static final long     M_FOLLOW_THE_LEADER = 0x008000000000L;
+    public static final long     M_MULTI_PURPOSE     = 0x010000000000L;
 
     // SRM Munition Types
-    public static final long     M_INFERNO           = 0x000400000L;
-    public static final long     M_AX_HEAD           = 0x000800000L;
+    public static final long     M_INFERNO           = 0x000000400000L;
+    public static final long     M_AX_HEAD           = 0x000000800000L;
     
     //SRM, MRM and LRM
-    public static final long     M_TORPEDO           = 0x001000000L;
+    public static final long     M_TORPEDO           = 0x020000000000L;
 
     // iNarc Munition Types
-    public static final long     M_EXPLOSIVE         = 0x001000000L;
-    public static final long     M_ECM               = 0x002000000L;
-    public static final long     M_HAYWIRE           = 0x004000000L;
-    public static final long     M_NEMESIS           = 0x008000000L;
+    public static final long     M_EXPLOSIVE         = 0x000001000000L;
+    public static final long     M_ECM               = 0x000002000000L;
+    public static final long     M_HAYWIRE           = 0x000004000000L;
+    public static final long     M_NEMESIS           = 0x000008000000L;
 
     // Narc Munition Types
-    public static final long     M_NARC_EX           = 0x010000000L;
+    public static final long     M_NARC_EX           = 0x000010000000L;
 
     // Arrow IV Munition Types
-    public static final long     M_HOMING            = 0x020000000L;
-    public static final long     M_FASCAM            = 0x040000000L;
-    public static final long     M_INFERNO_IV        = 0x080000000L;
-    public static final long     M_VIBRABOMB_IV      = 0x100000000L;
-    public static final long     M_SMOKE             = 0x200000000L;
+    public static final long     M_HOMING            = 0x000020000000L;
+    public static final long     M_FASCAM            = 0x000040000000L;
+    public static final long     M_INFERNO_IV        = 0x000080000000L;
+    public static final long     M_VIBRABOMB_IV      = 0x000100000000L;
+    public static final long     M_SMOKE             = 0x000200000000L;
 
     // Nuclear Munitions
-    public static final long     M_DAVY_CROCKETT_M   = 0x800000000L;
+    public static final long     M_DAVY_CROCKETT_M   = 0x000800000000L;
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
@@ -393,7 +398,8 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISHeavyMGAmmoHalf());
         EquipmentType.addType(createISLightMGAmmo());
         EquipmentType.addType(createISLightMGAmmoHalf());
-
+        EquipmentType.addType(createISSBGaussRifleAmmo());
+        
         base = createISMML3LRMAmmo();
         lrmAmmos.add( base );
         mmlAmmos.add(base);
@@ -725,6 +731,12 @@ public class AmmoType extends EquipmentType {
                                                    1, M_ANTI_TSM, TechConstants.T_IS_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "Acid",
                                                    1, M_AX_HEAD, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "Dead-Fire",
+                                                   1, M_DEAD_FIRE, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "Heat-Seeking",
+                                                   1, M_HEAT_SEEKING, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "Tandem-Charge",
+                                                   1, M_TANDEM_CHARGE, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -746,6 +758,12 @@ public class AmmoType extends EquipmentType {
                                                    1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "(Clan) Acid",
                                                    1, M_AX_HEAD, TechConstants.T_CLAN_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "(Clan) Dead-Fire",
+                1, M_DEAD_FIRE, TechConstants.T_CLAN_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "(Clan) Heat-Seeking",
+                1, M_HEAT_SEEKING, TechConstants.T_CLAN_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "(Clan) Tandem-Charge",
+                1, M_TANDEM_CHARGE, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -821,6 +839,12 @@ public class AmmoType extends EquipmentType {
                                                    1, M_LISTEN_KILL, TechConstants.T_IS_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "Dead-Fire",
+                                                   1, M_DEAD_FIRE, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "Heat-Seeking",
+                                                   1, M_HEAT_SEEKING, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "Follow The Leader",
+                                                   1, M_FOLLOW_THE_LEADER, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -856,6 +880,12 @@ public class AmmoType extends EquipmentType {
                                                  1, M_LISTEN_KILL, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "(Clan) Anti-TSM",
                                                  1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "(Clan) Dead-Fire",
+                1, M_DEAD_FIRE, TechConstants.T_CLAN_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "(Clan) Heat-Seeking",
+                1, M_HEAT_SEEKING, TechConstants.T_CLAN_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "(Clan) Follow The Leader",
+                1, M_FOLLOW_THE_LEADER, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -5471,6 +5501,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 8;
         ammo.cost = 50000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5489,6 +5521,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 16;
         ammo.cost = 50000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5507,6 +5541,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 4;
         ammo.bv = 26;
         ammo.cost = 50000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5525,6 +5561,8 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 3;
         ammo.bv = 35;
         ammo.cost = 50000;
+        ammo.flags |= F_HOTLOAD;
+        ammo.setModes(new String[] {"", "HotLoad"});
 
         return ammo;
     }
@@ -5827,6 +5865,26 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
 
+        return ammo;
+    }
+
+    public static AmmoType createISSBGaussRifleAmmo() {
+        AmmoType ammo = new AmmoType();
+    
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Silver Bullet Gauss Ammo";
+        ammo.setInternalName("Silver Bullet Gauss Ammo");
+        ammo.addLookupName("IS SBGauss Rifle Ammo");
+        ammo.addLookupName("ISSBGauss Ammo");
+        ammo.addLookupName("ISSBGaussRifleAmmo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 15;
+        ammo.ammoType = AmmoType.T_SBGAUSS;
+        ammo.munitionType = M_CLUSTER;
+        ammo.shots = 8;
+        ammo.bv = 21;
+        ammo.cost = 25000;
+        
         return ammo;
     }
 
@@ -6237,7 +6295,11 @@ public class AmmoType extends EquipmentType {
                     && munition.getMunitionType() == AmmoType.M_LISTEN_KILL)
                 cost *= 1.1;
             if (((munition.getAmmoType() == AmmoType.T_LRM)|| (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.getMunitionType() == AmmoType.M_ANTI_TSM)
+                    && (munition.getMunitionType() == AmmoType.M_ANTI_TSM ||
+                         munition.getMunitionType() == AmmoType.M_DEAD_FIRE ||
+                         munition.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER ||
+                         munition.getMunitionType() == AmmoType.M_HEAT_SEEKING ||
+                         munition.getMunitionType() == AmmoType.M_TANDEM_CHARGE))
                 cost *= 2;
             munition.cost = cost;
             

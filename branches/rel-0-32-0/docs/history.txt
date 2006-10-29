@@ -12,6 +12,7 @@ v0.32.1 (SVN)
 + Bug: tank verifier didn't understand level 3 armour
 + Bug 1581512: LAC/2 and LAC/5 won't load from TDB Files
 + Bug: ammo explosion from heat could select an empty bin
++ Bug: mule kicks used front leg criticals to detemine damage instead of rear
 
 v0.32.0 STABLE RELEASE (2006-10-04, 18:55 GMT+2)
 + no changes since RC1

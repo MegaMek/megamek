@@ -1730,7 +1730,7 @@ public class Server implements Runnable {
                 break;
         }
     }
-    
+
     /**
      * Calculates all players initial BV, should only
      * be called at start of game
@@ -7318,8 +7318,10 @@ public class Server implements Runnable {
         Infantry platoon = null;
         final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
         ToHitData toHit = wr.toHit;
-        boolean bInferno = usesAmmo 
-        && (atype.getAmmoType() == AmmoType.T_SRM 
+        boolean bDeadFire = usesAmmo && (atype.getAmmoType() == AmmoType.T_SRM || atype.getAmmoType() == AmmoType.T_LRM)&& atype.getMunitionType() == AmmoType.M_DEAD_FIRE;
+        boolean bFLT = usesAmmo && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER;
+        boolean bTandemCharge = usesAmmo && atype.getAmmoType() == AmmoType.T_SRM && atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE;
+        boolean bInferno = usesAmmo && (atype.getAmmoType() == AmmoType.T_SRM 
                 || atype.getAmmoType() == AmmoType.T_MML
                 || atype.getAmmoType() == AmmoType.T_BA_INFERNO)
                 && atype.getMunitionType() == AmmoType.M_INFERNO;
@@ -7363,6 +7365,7 @@ public class Server implements Runnable {
         boolean bGlancing = false; // For Glancing Hits Rule
         int swarmMissilesNowLeft = 0;
         int hits = 1, glancingMissileMod = 0;
+        final boolean isHotLoaded = weapon.isHotLoaded();
         if (!bInferno) {
         // also check for inferno infantry
         bInferno = isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO);
@@ -8453,6 +8456,7 @@ public class Server implements Runnable {
                  wtype.getAmmoType() == AmmoType.T_EXLRM ||
                  wtype.getAmmoType() == AmmoType.T_PXLRM ||
                  wtype.getAmmoType() == AmmoType.T_HAG ||
+                 wtype.getAmmoType() == AmmoType.T_SBGAUSS ||
                  wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER ) {
                 nCluster = 5;
             }
@@ -8576,6 +8580,23 @@ public class Server implements Runnable {
                 nDamPerHit = 1;
                 nSalvoBonus = -2;
                 sSalvoType = " acid-head missile(s) ";
+            }
+
+            //Dead-Fire Missles do an extra pont of damage and hit in clusters of 1
+            //i.e. LRM's do 2 points per missle and SRM's do 3 points per missle.
+            if (bDeadFire) {
+                nDamPerHit++;
+                nCluster = 1;
+            }
+
+            //Follow The Leader LRM's all hit the same Location
+            if (bFLT) {
+                nCluster = wtype.getRackSize();
+            }
+
+            ///Tandem-Charge SRM's do 1 damage to external and 1 damage to IS but no crits unless all extrenal is gone.
+            if (bTandemCharge) {
+                nDamPerHit = 1;
             }
 
             if (ae.isSufferingEMI()) {
@@ -9450,7 +9471,17 @@ public class Server implements Runnable {
                             hit.makeGlancingBlow();
                         }
                         addReport(damageEntity(entityTarget, hit, nDamage, false, 6, false, false, throughFront));
-                    } else {
+                    } else if ( bTandemCharge ){
+                        
+                        if ( entityTarget.getArmor(hit.getLocation(),hit.isRear()) > 0 ){
+                                addReport(damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
+                                hit.setEffect(HitData.EFFECT_NO_CRITICALS);
+                                addNewLines();
+                                addReport(damageEntity(entityTarget, hit, nDamage, false, 0, true, false, throughFront));
+                        }else{
+                            addReport(damageEntity(entityTarget, hit, nDamage, false, 0, true, false, throughFront));
+                        } 
+                    }else {
                         if (usesAmmo
                                 && (atype.getAmmoType() == AmmoType.T_AC
                                         || atype.getAmmoType() == AmmoType.T_LAC)
@@ -13101,7 +13132,9 @@ public class Server implements Runnable {
         int te_n = te.getId();
         //This is good for shields if a shield absorps the hit it shouldn't
         //effect the pilot.
-        boolean isHeadHit = te instanceof Mech && ((Mech) te).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED && hit.getLocation() == Mech.LOC_HEAD;
+        //TC SRM's that hit the head do external and internal damage but its one hit and shouldn't cause
+        //2 hits to the pilot.
+        boolean isHeadHit = te instanceof Mech && ((Mech) te).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED && hit.getLocation() == Mech.LOC_HEAD && hit.getSpecCritMod() != 99;
 
         // show Locations which have rerolled with Edge
         HitData undoneLocation = hit.getUndoneLocation();
@@ -13943,7 +13976,9 @@ public class Server implements Runnable {
             }
             // roll all critical hits against this location
             // unless the section destroyed in a previous phase?
-            if (te.getInternal(hit) != IArmorState.ARMOR_DESTROYED) {
+            // Cause a crit.
+            if (te.getInternal(hit) != IArmorState.ARMOR_DESTROYED 
+                    && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS)) {
                 for (int i = 0; i < crits; i++) {
                     ((Report) vDesc.elementAt(vDesc.size() - 1)).newlines++;
                     vDesc.addAll( criticalEntity(te, hit.getLocation(), hit.glancingMod()) );
@@ -16344,7 +16379,10 @@ public class Server implements Runnable {
             if (roll < 6) {
                 for (Mounted ammo : en.getAmmo()) {
                     if (ammo.getLocation() == loc
-                            && ammo.getExplosionDamage() > 0) {
+                            && ammo.getExplosionDamage() > 0
+                            // Dead-Fire ammo bins are designed not to explode from the chain reaction
+                            // Of Critted Launchers with DFM or HotLoaded ammo.
+                            && ((AmmoType)ammo.getType()).getMunitionType() != AmmoType.M_DEAD_FIRE) {
                         ammoExploded++;
                         vDesc.addAll(this.explodeEquipment(en, loc, ammo));
                     }

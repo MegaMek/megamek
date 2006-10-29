@@ -7365,7 +7365,6 @@ public class Server implements Runnable {
         boolean bGlancing = false; // For Glancing Hits Rule
         int swarmMissilesNowLeft = 0;
         int hits = 1, glancingMissileMod = 0;
-        final boolean isHotLoaded = weapon.isHotLoaded();
         if (!bInferno) {
         // also check for inferno infantry
         bInferno = isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO);
@@ -12551,7 +12550,6 @@ public class Server implements Runnable {
             // according to maxtech, elevation 0 or 1 should be affected,
             // this makes sense for level 2 as well
             Coords c = entity.getPosition();
-            IHex h = game.getBoard().getHex(c.x, c.y);
             if (entity.getElevation() > 1) {
                 return;
             }
@@ -14718,7 +14716,6 @@ public class Server implements Runnable {
                 if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BUILDING)) {
                     // 50% casualties, rounded up.
                     int damage = (int)(Math.ceil((((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/2.0));
-                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(position, entity));
                     vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
                 } else {
                     vDesc.addAll(destroyEntity(entity, "nuclear explosion secondary effects", false, false));
@@ -14757,12 +14754,10 @@ public class Server implements Runnable {
                 if (game.getBoard().getHex(entity.getPosition()).containsTerrain(Terrains.BUILDING)) {
                     // 25% casualties, rounded up.
                     int damage = (int)(Math.ceil((((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/4.0));
-                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(position, entity));
                     vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
                 } else {
                     // 50% casualties, rounded up.
                     int damage = (int)(Math.ceil((((Infantry)entity).getInternal(Infantry.LOC_INFANTRY))/2.0));
-                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, Compute.targetSideTable(position, entity));
                     vDesc.addAll(damageEntity(entity, new HitData(Infantry.LOC_INFANTRY), damage, true));
                 }
             } else if (entity instanceof Tank) {
@@ -16944,7 +16939,6 @@ public class Server implements Runnable {
     private Vector scanForBoardsInDir (File dir, String addPath, int w, int h) {
         String fileList[] = dir.list();
         Vector tempList = new Vector();
-        Comparator sortComp = StringUtil.stringComparator();
         for (int i = 0; i < fileList.length; i++) {
             if (fileList[i].indexOf(".board") == -1) {
                 continue;
@@ -17878,9 +17872,6 @@ public class Server implements Runnable {
     /**
      * Creates a packet containing a single entity, for update
      */
-    private Packet createEntityPacket(int entityId) {
-        return createEntityPacket(entityId, new Vector());
-    }
     private Packet createEntityPacket(int entityId, Vector movePath) {
         final Entity entity = game.getEntity(entityId);
         final Object[] data = new Object[3];
@@ -18663,7 +18654,6 @@ public class Server implements Runnable {
 
                 // How many levels does this building have in this hex?
                 final IHex curHex = game.getBoard().getHex( coords );
-                final int hexElev = curHex.surface();
                 final int numFloors = Math.max(0,curHex.terrainLevel( Terrains.BLDG_ELEV ));
                 final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
                 int numLoads = numFloors;
@@ -18790,7 +18780,6 @@ public class Server implements Runnable {
 
                 // How many levels does this building have in this hex?
                 final IHex curHex = game.getBoard().getHex( coords );
-                final int hexElev = curHex.surface();
                 final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
                 final int numFloors = Math.max(bridgeEl, curHex.terrainLevel( Terrains.BLDG_ELEV ));
 

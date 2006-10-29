@@ -62,8 +62,6 @@ public class MapPreview extends Canvas  {
 
     private int          heightDisplayMode = SHOW_NO_HEIGHT;
 
-    private ClientGUI clientgui;
-
     /**
      * Creates and lays out a new map preview.
      */

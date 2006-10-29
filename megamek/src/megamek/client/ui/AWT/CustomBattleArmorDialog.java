@@ -16,6 +16,9 @@ package megamek.client.ui.AWT;
  
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.util.Vector;
 
 import megamek.client.Client;
@@ -28,16 +31,8 @@ import java.util.*;
 public class CustomBattleArmorDialog 
     extends Dialog implements ActionListener, ItemListener, KeyListener, 
     Runnable, TextListener, WindowListener {
-    // how long after a key is typed does a new search begin
-    private final static int KEY_TIMEOUT = 1000;
-     
-    // these indices should match up with the static values in the MechSummaryComparator
-    private String[] m_saSorts = { Messages.getString("MechSelectorDialog.0"), Messages.getString("MechSelectorDialog.1"), Messages.getString("MechSelectorDialog.2"), Messages.getString("MechSelectorDialog.3"), Messages.getString("MechSelectorDialog.4"), Messages.getString("MechSelectorDialog.5") }; //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-    
-    private MechSummary[] m_mechsCurrent;
     private Client m_client;
     private ClientGUI m_clientgui;
-    private UnitLoadingDialog unitLoadingDialog;
 
     private Panel m_pLeft = new Panel();
 
@@ -55,11 +50,8 @@ public class CustomBattleArmorDialog
     private Label m_labelGroundMP = new Label(Messages.getString("CustomBattleArmorDialog.m_labelGroundMP"), Label.RIGHT);
     private Choice m_chGroundMP = new Choice();
     private CheckboxGroup m_cbgJumpType = new CheckboxGroup();
-    private Label m_labelJumpQuery = new Label(Messages.getString("CustomBattleArmorDialog.m_jumpQuery"), Label.RIGHT);
     private Checkbox m_cbJumpQuery = new Checkbox(Messages.getString("CustomBattleArmorDialog.m_jumpQuery"), m_cbgJumpType, true);
-    private Label m_labelVTOLQuery = new Label(Messages.getString("CustomBattleArmorDialog.m_VTOLQuery"), Label.RIGHT);
     private Checkbox m_cbVTOLQuery = new Checkbox(Messages.getString("CustomBattleArmorDialog.m_VTOLQuery"), m_cbgJumpType, false);
-    private Label m_labelUMUQuery = new Label(Messages.getString("CustomBattleArmorDialog.m_UMUQuery"), Label.RIGHT);
     private Checkbox m_cbUMUQuery = new Checkbox(Messages.getString("CustomBattleArmorDialog.m_UMUQuery"), m_cbgJumpType, false);
     private Label m_labelJumpValue = new Label(Messages.getString("CustomBattleArmorDialog.m_labelJumpValue"), Label.RIGHT);
     private Choice m_chJumpValue = new Choice();
@@ -94,6 +86,7 @@ public class CustomBattleArmorDialog
     private Button m_bPick = new Button(Messages.getString("CustomBattleArmorDialog.m_bPick"));
     private Button m_bPickClose = new Button(Messages.getString("CustomBattleArmorDialog.m_bPickClose"));
     private Button m_bCancel = new Button(Messages.getString("CustomBattleArmorDialog.m_bClose"));
+    private Button m_bSave = new Button(Messages.getString("CustomBattleArmorDialog.m_bSave"));
     private Button m_buttonReset = new Button(Messages.getString("CustomBattleArmorDialog.m_buttonReset"));
     private Label m_labelPlayer = new Label(Messages.getString("CustomBattleArmorDialog.m_labelPlayer"), Label.RIGHT);
     private Choice m_chPlayer = new Choice();
@@ -220,11 +213,10 @@ public class CustomBattleArmorDialog
 
     private static final int F_CONFLICT_JUMP_GEAR = 0x00000001;
 
-    public CustomBattleArmorDialog(ClientGUI cl, UnitLoadingDialog uld) {
+    public CustomBattleArmorDialog(ClientGUI cl) {
         super(cl.frame, Messages.getString("CustomBattleArmorDialog.title"), true);
         m_client = cl.getClient();
         m_clientgui = cl;
-        unitLoadingDialog = uld;
 
         updatePlayerChoice();
 
@@ -382,6 +374,7 @@ public class CustomBattleArmorDialog
         m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         m_pButtons.add(m_bPick);
         m_pButtons.add(m_bPickClose);
+        m_pButtons.add(m_bSave);
         m_pButtons.add(m_buttonReset);
         m_pButtons.add(m_bCancel);
         m_pButtons.add(m_labelPlayer);
@@ -404,6 +397,7 @@ public class CustomBattleArmorDialog
         m_bPickClose.addActionListener(this);
         m_buttonReset.addActionListener(this);
         m_bCancel.addActionListener(this);
+        m_bSave.addActionListener(this);
         addWindowListener(this);
         updateWidgetEnablements();
         previewBA();
@@ -470,6 +464,7 @@ public class CustomBattleArmorDialog
         m_chMenPerSquad.add("3");
         m_chMenPerSquad.add("4");
         m_chMenPerSquad.add("5");
+        m_chMenPerSquad.add("6");
         m_chMenPerSquad.select(0);
 
         // Again, only two chassis types: Quad and Biped.
@@ -614,7 +609,6 @@ public class CustomBattleArmorDialog
     }
 
     private void updateGroundMPChoices() {
-        int tmp = m_chGroundMP.getSelectedIndex();
         m_chGroundMP.removeAll();
         if (stateChassisType == CHASSIS_TYPE_BIPED) {
             // Biped BA
@@ -834,7 +828,7 @@ public class CustomBattleArmorDialog
                 return;
             }
             try {
-                Entity e = getEntity();
+                BattleArmor e = getEntity();
                 Client c = null;
                 if (m_chPlayer.getSelectedIndex() > 0) {
                     String name = m_chPlayer.getSelectedItem();
@@ -849,6 +843,25 @@ public class CustomBattleArmorDialog
                 System.err.println("Error while loading custom BattleArmor!");
                 ex.printStackTrace();
                 return;
+            }
+        } else if(ae.getSource() == m_bSave ) {
+            FileDialog fd = new FileDialog(this, Messages.getString("CustomBattleArmorDialog.FileSaveDialog"), FileDialog.SAVE); //$NON-NLS-1$
+            fd.setDirectory("data/mechfiles/");
+            fd.setFile(m_tfBAName.getText()+".blk");
+            fd.setFilenameFilter(new FilenameFilter() { public boolean accept(File f, String s) {return s.endsWith(".blk"); } });
+            fd.setModal(true);
+            fd.setVisible(true);
+            String filename = fd.getDirectory() + File.separator + fd.getFile();
+            if(filename.indexOf('.') == -1)
+                filename = filename + ".blk";
+            File f = new File(filename);
+            try {
+                BattleArmor ba = getEntity();
+                FileWriter wr = new FileWriter(f);
+                wr.write(ba.getBLK());
+                wr.close();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
 
@@ -977,17 +990,6 @@ public class CustomBattleArmorDialog
         String preview = generateBattleArmorPreview();
         m_BAView.setEditable(false);
         m_BAView.setText(preview);
-    }
-
-    private static final String SPACES = "                        ";
-    private String makeLength(String s, int nLength) {
-        if (s.length() == nLength) {
-            return s;
-        } else if (s.length() > nLength) {
-            return s.substring(0, nLength - 2) + "..";
-        } else {
-            return s + SPACES.substring(0, nLength - s.length());
-        }
     }
 
     public void keyPressed(java.awt.event.KeyEvent ke) {
@@ -1756,6 +1758,10 @@ public class CustomBattleArmorDialog
             retVal.setMovementMode(IEntityMovementMode.VTOL);
         } else if (stateJumpType == JUMP_TYPE_UMU) {
             retVal.setMovementMode(IEntityMovementMode.INF_UMU);
+            retVal.setOriginalWalkMP(getTotalJumpMP());
+            retVal.setOriginalJumpMP(0);
+        } else if (getTotalJumpMP() > 0) {
+            retVal.setMovementMode(IEntityMovementMode.INF_JUMP);
         } else {
             retVal.setMovementMode(IEntityMovementMode.INF_LEG);
         }

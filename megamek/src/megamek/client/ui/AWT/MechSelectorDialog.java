@@ -119,7 +119,6 @@ public class MechSelectorDialog
     private TextArea m_mechView = new TextArea("",36,35);
     private Panel m_pLeft = new Panel();
 
-    private Panel m_pSearch = new Panel();
     private Choice m_cWalk = new Choice();
     private TextField m_tWalk = new TextField(2);
     private Choice m_cJump = new Choice();
@@ -473,7 +472,6 @@ public class MechSelectorDialog
         Vector vMechs = new Vector();
         int nClass = m_chWeightClass.getSelectedIndex();
         int nType = m_chType.getSelectedIndex();
-        String sType = m_chType.getSelectedItem();
         int nUnitType = m_chUnitType.getSelectedIndex();
         MechSummary[] mechs = MechSummaryCache.getInstance().getAllMechs();
         if ( mechs == null ) {

@@ -1404,18 +1404,6 @@ public class ChatLounge
                     }
                 }
             }
-            boolean anyDelayed = false;
-
-            Enumeration iter = client.getEntities();
-
-            while (iter.hasMoreElements()) {
-                Entity en = (Entity) iter.nextElement();
-
-                if (en.getDeployRound() > 0) {
-                    anyDelayed = true;
-                    break;
-                }
-            }
 
             boolean done = !client.getLocalPlayer().isDone();
             client.sendDone(done);

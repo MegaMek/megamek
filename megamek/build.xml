@@ -97,7 +97,7 @@
      <java classname="com.rc.retroweaver.Weaver">
         <arg line="-source ${builddir}"/>
         <classpath>
-           <pathelement location="${tooldir}/retroweaver/release/retroweaver.jar"/>
+           <pathelement location="${tooldir}/retroweaver/release/retroweaver-1.2.5.jar"/>
            <fileset dir="${tooldir}/retroweaver/lib" includes="*.jar"/>
         </classpath>
      </java>
@@ -214,7 +214,7 @@
      <java classname="com.rc.retroweaver.Weaver">
         <arg line="-source ${cvsbuilddir}"/>
         <classpath>
-           <pathelement location="${tooldir}/retroweaver/release/retroweaver.jar"/>
+           <pathelement location="${tooldir}/retroweaver/release/retroweaver-1.2.5.jar"/>
            <fileset dir="${tooldir}/retroweaver/lib" includes="*.jar"/>
         </classpath>
      </java>

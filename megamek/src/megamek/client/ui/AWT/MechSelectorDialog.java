@@ -29,7 +29,6 @@ import megamek.common.Mounted;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.UnitType;
-import megamek.common.VTOL;
 import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.verifier.EntityVerifier;

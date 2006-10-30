@@ -845,7 +845,7 @@ public class CustomBattleArmorDialog
                 return;
             }
         } else if(ae.getSource() == m_bSave ) {
-            FileDialog fd = new FileDialog(this, Messages.getString("CustomBattleArmorDialog.FileSaveDialog"), FileDialog.SAVE); //$NON-NLS-1$
+            FileDialog fd = new FileDialog(m_clientgui.frame, Messages.getString("CustomBattleArmorDialog.FileSaveDialog"), FileDialog.SAVE); //$NON-NLS-1$
             fd.setDirectory("data/mechfiles/");
             fd.setFile(m_tfBAName.getText()+".blk");
             fd.setFilenameFilter(new FilenameFilter() { public boolean accept(File f, String s) {return s.endsWith(".blk"); } });

@@ -109,9 +109,9 @@ public class PhysicalOption {
         return null;
     }
 
-    public Vector getVector() {
+    public Vector<AbstractAttackAction> getVector() {
         AbstractAttackAction aaa = toAction();
-        Vector v = new Vector();
+        Vector<AbstractAttackAction> v = new Vector<AbstractAttackAction>();
         if (aaa != null) {
             v.addElement(aaa);
         }

@@ -11,15 +11,13 @@ import megamek.common.WeaponType;
 
 public class AttackOption extends ToHitData {
     
-    public static class Sorter implements Comparator {
+    public static class Sorter implements Comparator<AttackOption> {
         CEntity primary = null;
     
         public Sorter(CEntity primary_target) {
             this.primary = primary_target;
         }
-        public int compare(Object obj, Object obj1) {
-            AttackOption a = (AttackOption) obj;
-            AttackOption a1 = (AttackOption) obj1;
+        public int compare(AttackOption a, AttackOption a1) {
             if (a.target.getKey().intValue() == a1.target.getKey().intValue()) {
                 WeaponType w = (WeaponType) a.weapon.getType();
                 WeaponType w1 = (WeaponType) a1.weapon.getType();

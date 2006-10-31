@@ -39,7 +39,7 @@ import java.util.HashMap;
 
 public class CEntity {
 
-    static class Table extends HashMap {
+    static class Table extends HashMap<Integer,CEntity> {
 
         private TestBot tb;
 
@@ -754,14 +754,14 @@ public class CEntity {
      * Dijkstra's algorithm.
      */
     protected MoveOption.Table calculateMoveOptions(MoveOption base) {
-        ArrayList possible = new ArrayList(); // New array of movement options
+        ArrayList<MoveOption> possible = new ArrayList<MoveOption>(); // New array of movement options
         MoveOption.Table discovered = new MoveOption.Table();
 
         // If this entity can jump, then... what is this doing?
         // ... I THINK its creating a duplicate of the base movment option, then adding
         // a jumping start
         if (entity.getJumpMPWithTerrain() > 0) {
-            possible.add(((MovePath) base.clone()).addStep(MovePath.STEP_START_JUMP));
+            possible.add(((MoveOption) base.clone()).addStep(MovePath.STEP_START_JUMP));
         }
 
         
@@ -796,7 +796,7 @@ public class CEntity {
                             right.addStep(MovePath.STEP_TURN_RIGHT);
                             discovered.put(right);
                         }
-                        int index = Collections.binarySearch(possible, next, MoveOption.DISTANCE_COMPARATOR);
+                        int index = Collections.<MoveOption>binarySearch(possible, next, MoveOption.DISTANCE_COMPARATOR);
                         if (index < 0) {
                             index = -index - 1;
                         }
@@ -836,8 +836,8 @@ public class CEntity {
     /**
      *  find all moves that get into dest
      */
-    public ArrayList findMoves(Coords dest) {
-        ArrayList result = new ArrayList();
+    public ArrayList<MoveOption> findMoves(Coords dest) {
+        ArrayList<MoveOption> result = new ArrayList<MoveOption>();
         for (int i = 0; i < 6; i++) {
             for (int j = 1; j < 2; j++) {
                 MoveOption.Key key = new MoveOption.Key(dest, i, j);

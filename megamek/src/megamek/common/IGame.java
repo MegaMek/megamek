@@ -304,7 +304,7 @@ public interface IGame {
     /**
      * Get a vector of entity objects that are "acceptable" to attack with this entity
      */
-    public abstract Vector getValidTargets(Entity entity);
+    public abstract Vector<Entity> getValidTargets(Entity entity);
     
     /**
      * Returns true if this phase has turns.  If false, the phase is simply
@@ -409,7 +409,7 @@ public interface IGame {
     /**
      * Returns the actual vector for the entities
      */
-    public abstract Vector getEntitiesVector();
+    public abstract Vector<Entity> getEntitiesVector();
     
     public abstract void setEntitiesVector(Vector entities);
 

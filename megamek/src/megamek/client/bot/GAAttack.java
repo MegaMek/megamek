@@ -34,7 +34,7 @@ public class GAAttack extends GA {
     protected CEntity attacker;
     protected IGame game;
     protected CEntity.Table targets;
-    protected ArrayList target_array = null;
+    protected ArrayList<Entity> target_array = null;
     protected ArrayList valid_target_indexes = null;
     protected boolean overheat_eligible = false;
     protected int firing_arc = 0;
@@ -45,8 +45,8 @@ public class GAAttack extends GA {
         this.attack = attack;
         this.attacker = attacker;
         this.game = tb.game;
-        this.target_array = new ArrayList(game.getEntitiesVector());
-        ArrayList temp = new ArrayList();
+        this.target_array = new ArrayList<Entity>(game.getEntitiesVector());
+        ArrayList<Integer> temp = new ArrayList<Integer>();
         for (int i = 0; i < target_array.size(); i++) {
             Entity entity = (Entity) target_array.get(i);
             if (entity.isEnemyOf(attacker.entity) && entity.isDeployed()) {

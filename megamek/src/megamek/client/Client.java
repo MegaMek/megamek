@@ -71,14 +71,14 @@ public class Client {
     public String roundReport;
 
     //And close client events!
-    private Vector closeClientListeners = new Vector();
+    private Vector<CloseClientListener> closeClientListeners = new Vector<CloseClientListener>();
 
     // we might want to keep a game log...
     private GameLog log;
     
     private boolean disconnectFlag = false;
 
-    private Hashtable duplicateNameHash = new Hashtable();
+    private Hashtable<String,Integer> duplicateNameHash = new Hashtable<String,Integer>();
 
     private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
 
@@ -299,7 +299,7 @@ public class Client {
             break;
         case IGame.PHASE_LOUNGE :
             MechSummaryCache.getInstance();
-            duplicateNameHash = new Hashtable(); //reset this
+            duplicateNameHash.clear(); //reset this
             break;
         }
     }

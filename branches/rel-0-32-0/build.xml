@@ -13,21 +13,17 @@
   <property name="builddir" value="classes"/>
   <property name="libdir" value="lib"/>
   <property name="datadir" value="data"/>
-  <property name="maindir" value="megamek"/>
   <property name="apidocdir" value="apidocs"/>
   <property name="docdir" value="docs"/>
-  <property name="cvsdir" value="cvsdev"/>
+  <property name="svndir" value="svndev"/>
 
   <import file="local.xml" optional="true"/>
 
-  <!-- same as maindir but under cvs -->
-  <property name="cvsmaindir" value="${cvsdir}/${maindir}"/>
+  <!-- same as builddir but under svn -->
+  <property name="svnbuilddir" value="${svndir}/${builddir}"/>
   
-  <!-- same as builddir but under cvs -->
-  <property name="cvsbuilddir" value="${cvsmaindir}/${builddir}"/>
-  
-  <!-- cvsroot used for cvs authentification --> 
-  <property name="cvsroot" value=":pserver:anonymous@megamek.cvs.sourceforge.net:/cvsroot/megamek" />
+  <!-- svnroot used for svn authentification --> 
+  <property name="svnroot" value="https://svn.sourceforge.net/svnroot/megamek/branches/rel-0-32-0"/>
   
   <property name="timestampfile" value="${logdir}/timestamp"/>
   <property name="TinyXMLsrc" value="TinyXML07-src.zip" />
@@ -39,7 +35,6 @@
   <!-- This is the relative path to the 'data' directory -->
   <property name="dataclasspath" value="."/>
 
-  
   <!-- Build the list of the lib/*.jar files to be included in the "Class-Path" attribute of the jar's manifest dynamically.  -->
   <pathconvert pathsep=" " property="jarclasspath">
      <path>
@@ -84,7 +79,7 @@
   <!-- This task converts java 1.5 class files to 1.4 class files. -->
   <!-- Note that you should run the jar task after this task is done. -->
   <!-- Requires the file local.xml to be present with a property called -->
-  <!-- tooldir defined set to the base directory where you unzipped -->
+  <!-- retroweaverdir defined set to the base directory where you unzipped -->
   <!-- retroweaver-all.jar to.  An example local.xml is provided below -->
   <!-- (note that all less than and greater than characters are shown as -->
   <!-- square brackets) -->
@@ -97,8 +92,8 @@
      <java classname="com.rc.retroweaver.Weaver">
         <arg line="-source ${builddir}"/>
         <classpath>
-           <pathelement location="${tooldir}/retroweaver/release/retroweaver-1.2.5.jar"/>
-           <fileset dir="${tooldir}/retroweaver/lib" includes="*.jar"/>
+           <pathelement location="${retroweaverdir}/release/retroweaver-1.2.5.jar"/>
+           <fileset dir="${retroweaverdir}/lib" includes="*.jar"/>
         </classpath>
      </java>
   </target>
@@ -135,7 +130,7 @@
   
   <target name="clean" description="Remove all compiled and generated files">
     <!-- Delete the ${build} directory tree -->
-    <delete dir="${builddir}/megamek"/>
+    <delete dir="${builddir}"/>
     <delete dir="${apidocdir}"/>
     <delete file="${timestampfile}"/>
     <delete file="${jarfile}"/>
@@ -150,79 +145,85 @@
   <target depends="clean, compile, weave, jar" name="full"/>
 
   <!-- generates the updated code & media package and the regular package (containing both) -->
-  <target name="packageAll" description="Generates 3 packages: code, media, code+media" depends="cvsdev-get, cvsdev-build, packageMedia, packageCode, cvsdev-package">
+  <target name="packageAll" description="Generates 3 packages: code, media, code+media" depends="svndev-get, svndev-build, packageMedia, packageCode, svndev-package">
   </target>
 
-  <target name="packageCode" description="Generates code package only" depends="cvsdev-get, cvsdev-build">
-    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-dev-upgrade-${DSTAMP}.zip" includes="${jarfile} docs/history.txt license.txt MegaMek.exe startup.sh mmconf/MegaMek.bat"/>
+  <target name="packageCode" description="Generates code package only" depends="svndev-get, svndev-build">
+    <zip basedir="${svndir}" zipfile="${basedir}/megamek-dev-upgrade-${DSTAMP}.zip" includes="${jarfile} docs/history.txt license.txt MegaMek.exe startup.sh mmconf/MegaMek.bat"/>
   </target>
 
-  <target name="packageMedia" description="Generates media package only" depends="cvsdev-get">
-    <zip basedir="${cvsmaindir}" zipfile="${basedir}/megamek-dev-media-${DSTAMP}.zip" includes="${datadir}/ ${confdir}/ ${docdir}/ *.txt stats.pl" excludes="*.jar"/>
+  <target name="packageMedia" description="Generates media package only" depends="svndev-get">
+    <zip basedir="${svndir}" zipfile="${basedir}/megamek-dev-media-${DSTAMP}.zip" includes="${datadir}/ ${confdir}/ ${docdir}/ *.txt stats.pl" excludes="*.jar"/>
   </target>
 
-  <target name="updateInstalledCode" description="Compiles, jars and installs the newest sources from cvs." depends="cvsdev-init"> 
+  <target name="updateInstalledCode" description="Compiles, jars and installs the newest sources from svn." depends="svndev-init"> 
     <!-- get the code -->
-    <antcall target="cvsdev-clean"/>
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/megamek"/>
-
-    <!-- downloading precompiled libraries that are needed for a successful build -->
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" package="megamek/${libdir}"/>
+    <antcall target="svndev-clean"/>
+  	<svn>
+  		<checkout url="${svnroot}/${srcdir}" destPath="${svndir}/${srcdir}"/>
+  		<checkout url="${svnroot}/${propdir}" destPath="${svndir}/${propdir}"/>
+  	    <!-- downloading precompiled libraries that are needed for a successful build -->
+  		<checkout url="${svnroot}/${libdir}" destPath="${svndir}/${libdir}"/>
+	</svn>
     
-    <antcall target="cvsdev-build"/>
+    <antcall target="svndev-build"/>
     
     <!-- Copy new MegaMek.jar and potentially updated libraries into user dir -->
     <copy todir="${basedir}" overwrite="true">
-        <fileset dir="${cvsmaindir}" includes="*.jar"/>
+        <fileset dir="${svndir}" includes="*.jar"/>
     </copy>
     <echo message="New '${jarfile}' has been build and installed"/>
   </target>
   
-  <target name="updateInstalledMedia" description="Gets the newest datafiles from cvs">
+  <target name="updateInstalledMedia" description="Gets the newest datafiles from svn">
     <!-- data files will be directly downloaded over existing ones -->
-    <cvs cvsRoot="${cvsroot}" package="megamek/data" command="checkout -P -d ${datadir}"/>
+  	<svn>
+  		<checkout url="${svnroot}/${datadir}" destPath="${svndir}/${datadir}"/>
+  	</svn>
     
     <echo message="datafiles updated."/>
   </target>
   
-  <target name="cvsdev-init">
+  <target name="svndev-init">
     <tstamp/>
-    <mkdir dir="${cvsdir}"/>
+    <mkdir dir="${svndir}"/>
   </target>
 
-  <!-- following cvsdev-* tasks get, build & package the current version from cvs -->
-  <target name="cvsdev-get" depends="cvsdev-init">
-    <cvs cvsRoot="${cvsroot}" dest="${cvsdir}" command="-z3 export -D '1 second ago'"  package="megamek"/>
+  <!-- following svndev-* tasks get, build & package the current version from svn -->
+  <target name="svndev-get" depends="svndev-init">
+  	<svn>
+  		<checkout url="${svnroot}" destPath="${svndir}"/>
+  	</svn>
   </target>
 
-  <target name="cvsdev-build" depends="cvsdev-init">
-    <mkdir dir="${cvsbuilddir}"/>
+  <target name="svndev-build" depends="svndev-init">
+    <mkdir dir="${svnbuilddir}"/>
 
     <!-- compile -->
-    <echo message="building MegaMek from CVS sources"/>
+    <echo message="building MegaMek from svn sources"/>
     <javac debug="true" debuglevel="lines,source"
          target="1.5" source="1.5"
-         destdir="${cvsbuilddir}" srcdir="${srcdir}">
+         destdir="${svnbuilddir}" srcdir="${svndir}/${srcdir}">
         <classpath> 
-           <pathelement location="${cvsmaindir}"/>
-           <fileset dir="${libdir}" includes="*.jar"/>
+           <pathelement location="${svndir}"/>
+           <fileset dir="${svndir}/${libdir}" includes="*.jar"/>
         </classpath>
     </javac>
     
     <!-- weave (maintain 1.4 compatability) -->
      <echo message="Applying Retroweaver to class files..."/>
      <java classname="com.rc.retroweaver.Weaver">
-        <arg line="-source ${cvsbuilddir}"/>
+        <arg line="-source ${svnbuilddir}"/>
         <classpath>
-           <pathelement location="${tooldir}/retroweaver/release/retroweaver-1.2.5.jar"/>
-           <fileset dir="${tooldir}/retroweaver/lib" includes="*.jar"/>
+           <pathelement location="${retroweaverdir}/release/retroweaver-1.2.5.jar"/>
+           <fileset dir="${retroweaverdir}/lib" includes="*.jar"/>
         </classpath>
      </java>
 
     <!-- jar -->
-    <jar basedir="${cvsbuilddir}" jarfile="${cvsmaindir}/${jarfile}">
-        <fileset dir="${propdir}" includes="**/*.properties"/>
-    	<fileset dir="${srcdir}" includes="**/*.properties"/>
+    <jar basedir="${svnbuilddir}" jarfile="${svndir}/${jarfile}">
+        <fileset dir="${svndir}/${propdir}" includes="**/*.properties"/>
+    	<fileset dir="${svndir}/${srcdir}" includes="**/*.properties"/>
         <manifest>
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Class-Path" value=". ${jarclasspath}"/>
@@ -231,26 +232,26 @@
     </jar>
     
     <!-- Ensure that the log directory exists. -->
-    <mkdir dir="${cvsmaindir}/${logdir}"/>
-    <touch file="${cvsmaindir}/${timestampfile}"/>
+    <mkdir dir="${svndir}/${logdir}"/>
+    <touch file="${svndir}/${timestampfile}"/>
   </target>
 
-  <target name="cvsdev-package" depends="cvsdev-build">
-    <delete file="${cvsmaindir}/${TinyXMLsrc}"/>
-    <!-- zip file generation from CVS sources -->
+  <target name="svndev-package" depends="svndev-build">
+    <delete file="${svndir}/${TinyXMLsrc}"/>
+    <!-- zip file generation from svn sources -->
     <!-- keep in mind that directory references for 'excludes' are -->
     <!-- relative to the zip-tasks basedir but 'zipfile' uses the -->
     <!-- absolute (project) ${basedir} -->
-    <zip zipfile="${basedir}/megamek-dev-cvs-${DSTAMP}.zip" basedir="${cvsmaindir}" excludes="${builddir}/"/>
+    <zip zipfile="${basedir}/megamek-dev-svn-${DSTAMP}.zip" basedir="${svndir}" excludes="${builddir}/"/>
   </target>
   
-  <target name="cvsdev-clean">
-    <delete dir="${cvsbuilddir}"/>
+  <target name="svndev-clean">
+    <delete dir="${svnbuilddir}"/>
   </target>
 
-  <target name="cvsdev" depends="cvsdev-init, cvsdev-get, cvsdev-build, cvsdev-package"/>
+  <target name="svndev" depends="svndev-init, svndev-get, svndev-build, svndev-package"/>
   
-  <target name="cleanCvs" description="removes everything inside 'cvsdev' and the dir itself">
-    <delete dir="${cvsdir}/"/>
+  <target name="cleansvn" description="removes everything inside 'svndev' and the dir itself">
+    <delete dir="${svndir}/"/>
   </target>
 </project>

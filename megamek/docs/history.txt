@@ -1,6 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.1 (SVN)
+v0.33.2 (SVN)
+
+v0.33.1 (2006-10-31 22:40 GMT+9)
 + Fix filename case for IS Omni images, so they show up on filename case-
  sensitive OS.
 + Bug 1577506: BA SRM2 launchers don't show any ammo in game
@@ -52,6 +54,7 @@ v0.33.1 (SVN)
 + rule change: Semi-guided can be fired as standard at a non tagged target
 + rule change: infantry have no movment modifier when spotting
 + build.xml updated with svn targets
++ fix to sylph upgrade BV and fenrir ERML model name
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

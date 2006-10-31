@@ -8437,11 +8437,12 @@ public class Server implements Runnable {
                 sSalvoType = " missile(s) ";
                 // Get the damage from the linked ammo.
                 nDamPerHit = atype.getDamagePerShot();
+                //Hotloaded weapons have no Min range so TBolts should not do half damage.
                 if ((wtype.getAmmoType() == AmmoType.T_TBOLT5
                         || wtype.getAmmoType() == AmmoType.T_TBOLT10
                         || wtype.getAmmoType() == AmmoType.T_TBOLT15
                         || wtype.getAmmoType() == AmmoType.T_TBOLT20
-                        ) && nRange <= wtype.getMinimumRange()) {
+                        ) && nRange <= wtype.getMinimumRange() && !weapon.isHotLoaded() ) {
                     nDamPerHit /= 2;
                 }
             }

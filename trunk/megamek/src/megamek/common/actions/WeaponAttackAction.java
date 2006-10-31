@@ -203,6 +203,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
         boolean isTargetECMAffected = Compute.isAffectedByECM(ae,target.getPosition(),target.getPosition());
         boolean isTAG = wtype.hasFlag(WeaponType.F_TAG);
         boolean isHoming = false;
+        boolean bHeatSeeking = atype != null && (atype.getAmmoType() == AmmoType.T_SRM
+                || atype.getAmmoType() == AmmoType.T_MML || atype.getAmmoType() == AmmoType.T_LRM) 
+                && atype.getMunitionType() == AmmoType.M_HEAT_SEEKING;
+ 
         if (te != null) {
             if (!isTargetECMAffected &&
                 te.isINarcedBy(ae.getOwner().getTeam()) &&
@@ -781,6 +785,20 @@ public class WeaponAttackAction extends AbstractAttackAction {
         
         if (isHaywireINarced) {
             toHit.addModifier(1, "iNarc Haywire pod");
+        }
+
+        // Heat Seeking Missles
+        if ( bHeatSeeking ){
+        	if ( te == null || te.heat == 0)
+                toHit.addModifier(2, "ammunition to-hit modifier");
+        	else if ( te.heat < 6 )
+                toHit.addModifier(0, "ammunition to-hit modifier");
+        	else if ( te.heat < 11 )
+                toHit.addModifier(-1, "ammunition to-hit modifier");
+        	else if ( te.heat < 16 )
+                toHit.addModifier(-2, "ammunition to-hit modifier");
+        	else
+        		toHit.addModifier(-3, "ammunition to-hit modifier");
         }
         
         //Heavy infantry have +1 penalty

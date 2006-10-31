@@ -203,10 +203,10 @@
     <echo message="building MegaMek from svn sources"/>
     <javac debug="true" debuglevel="lines,source"
          target="1.5" source="1.5"
-         destdir="${svnbuilddir}" srcdir="${srcdir}">
+         destdir="${svnbuilddir}" srcdir="${svndir}/${srcdir}">
         <classpath> 
            <pathelement location="${svndir}"/>
-           <fileset dir="${libdir}" includes="*.jar"/>
+           <fileset dir="${svndir}/${libdir}" includes="*.jar"/>
         </classpath>
     </javac>
     
@@ -222,8 +222,8 @@
 
     <!-- jar -->
     <jar basedir="${svnbuilddir}" jarfile="${svndir}/${jarfile}">
-        <fileset dir="${propdir}" includes="**/*.properties"/>
-    	<fileset dir="${srcdir}" includes="**/*.properties"/>
+        <fileset dir="${svndir}/${propdir}" includes="**/*.properties"/>
+    	<fileset dir="${svndir}/${srcdir}" includes="**/*.properties"/>
         <manifest>
             <attribute name="Built-By" value="${user.name}"/>
             <attribute name="Class-Path" value=". ${jarclasspath}"/>

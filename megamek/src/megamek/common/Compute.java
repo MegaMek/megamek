@@ -1264,6 +1264,11 @@ public class Compute {
     public static ToHitData getSpotterMovementModifier(IGame game,
             int entityId, int movement) {
         ToHitData toHit = new ToHitData();
+        
+        Entity e = game.getEntity(entityId);
+        if(e != null && e instanceof Infantry) {
+            return toHit;
+        }
 
         if (movement == IEntityMovementType.MOVE_WALK
                 || movement == IEntityMovementType.MOVE_VTOL_WALK) {

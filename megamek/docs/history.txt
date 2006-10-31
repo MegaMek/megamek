@@ -48,6 +48,9 @@ v0.33.1 (SVN)
 + cleaned some unused variable warnings
 + BattleArmor can now be saved to BLK file. 
 + Custom BA dialog has a new save button.
++ rule change: TAG is no longer exclusive with weapon fire
++ rule change: Semi-guided can be fired as standard at a non tagged target
++ rule change: infantry have no movment modifier when spotting
 
 v0.33.0 (2006-10-13 22:39 GMT+9)
 + Corrected names of snub-nose, light, and heavy PPCs.

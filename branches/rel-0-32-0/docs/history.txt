@@ -1,6 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.32.1 (SVN)
+v0.32.2 (SVN)
+
+v0.32.1 (2006-10-31, 21:08 GMT+9)
 + Bug: NPE when firing infantry rifle
 + Bug: flak bonus not applied for vtol at elevation 1 over height 2 terrain
 + Bug 1575587: Shield Absorbs Low Gravity IS Damage

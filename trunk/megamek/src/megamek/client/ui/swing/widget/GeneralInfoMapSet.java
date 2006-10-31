@@ -50,7 +50,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     mpR0, mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
     elevationR, buildingTypeR, buildingHeightR;
     private PMSimpleLabel[] advantagesR;
-    private Vector bgDrawers = new Vector();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
     private static final Font FONT_TITLE = new Font("SansSerif", Font.ITALIC, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
     private int yCoord = 1;
@@ -378,7 +378,7 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         return content;
     }
 
-    public Vector getBackgroundDrawers() {
+    public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 

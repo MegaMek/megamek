@@ -90,8 +90,8 @@ public abstract class BotClient extends Client {
     protected abstract Vector calculateMinefieldDeployment();
     protected abstract Vector calculateArtyAutoHitHexes();
     
-    public ArrayList getEntitiesOwned() {
-        ArrayList result = new ArrayList();
+    public ArrayList<Entity> getEntitiesOwned() {
+        ArrayList<Entity> result = new ArrayList<Entity>();
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity) i.nextElement();
             if (entity.getOwner().equals(this.getLocalPlayer()) 
@@ -102,8 +102,8 @@ public abstract class BotClient extends Client {
         return result;
     }
     
-    public ArrayList getEnemyEntities() {
-        ArrayList result = new ArrayList();
+    public ArrayList<Entity> getEnemyEntities() {
+        ArrayList<Entity> result = new ArrayList<Entity>();
         for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity) i.nextElement();
             if (entity.getOwner().isEnemyOf(this.getLocalPlayer()) 
@@ -611,10 +611,8 @@ public abstract class BotClient extends Client {
         return valid_array;
     }
 
-    class FitnessComparator implements Comparator {
-        public int compare(Object o1, Object o2) {
-            Coords d1 = (Coords)o1;
-            Coords d2 = (Coords)o2;
+    class FitnessComparator implements Comparator<Coords> {
+        public int compare(Coords d1, Coords d2) {
             return -1*Double.compare(d1.fitness, d2.fitness);
         }
     }

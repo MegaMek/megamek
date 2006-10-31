@@ -50,7 +50,7 @@ import java.util.HashMap;
  */
 public class MoveOption extends MovePath implements Cloneable {
 
-    public static class WeightedComparator implements Comparator {
+    public static class WeightedComparator implements Comparator<MoveOption> {
 
         private double utility_weight;
         private double damage_weight;
@@ -60,9 +60,7 @@ public class MoveOption extends MovePath implements Cloneable {
             damage_weight = damage;
         }
 
-        public int compare(Object arg0, Object arg1) {
-            MoveOption e0 = (MoveOption) arg0;
-            MoveOption e1 = (MoveOption) arg1;
+        public int compare(MoveOption e0, MoveOption e1) {
             if (damage_weight * e0.damage - utility_weight * e0.getUtility()
                 > damage_weight * e1.damage - utility_weight * e1.getUtility()) {
                 return -1;
@@ -84,13 +82,15 @@ public class MoveOption extends MovePath implements Cloneable {
         public MoveOption remove(MoveOption es) {
             return super.remove(es.getKey());
         }
+        
+        public ArrayList<MoveOption> getArray() {
+            return new ArrayList<MoveOption>(values());
+        }
     }
 
-    public static class DistanceComparator implements Comparator {
+    public static class DistanceComparator implements Comparator<MoveOption> {
 
-        public int compare(Object arg0, Object arg1) {
-            MoveOption e0 = (MoveOption) arg0;
-            MoveOption e1 = (MoveOption) arg1;
+        public int compare(MoveOption e0, MoveOption e1) {
             return e0.getDistUtility() < e1.getDistUtility() ? -1 : 1;
         }
     }
@@ -122,7 +122,7 @@ public class MoveOption extends MovePath implements Cloneable {
 
     private transient CEntity centity;
     transient ArrayList<String> tv = new ArrayList<String>();
-    transient HashMap damageInfos = new HashMap();
+    transient HashMap<CEntity,DamageInfo> damageInfos = new HashMap<CEntity,DamageInfo>();
     private Coords pos;
     private int facing;
     private boolean prone;
@@ -180,7 +180,7 @@ public class MoveOption extends MovePath implements Cloneable {
         return centity;
     }
 
-    public MovePath addStep(int step_type) {
+    public MoveOption addStep(int step_type) {
         super.addStep(step_type);
         MoveStep current = getLastStep();
         // running with gyro or hip hit is dangerous!

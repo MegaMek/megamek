@@ -62,7 +62,7 @@ public class GALance extends GA {
     //now they have a hard-coded hoard metality
     protected double getFitness(int iChromIndex) {
         Chromosome chrom = this.chromosomes[iChromIndex];
-        ArrayList possible = new ArrayList();
+        ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
         for (int iGene = 0; iGene < chromosomeDim; iGene++) {
             possible.add(new MoveOption(((MoveOption[]) this.moves.get(iGene))[chrom.genes[iGene]]));
         }
@@ -220,7 +220,7 @@ public class GALance extends GA {
 
     public MoveOption getResult() {
         Chromosome r = this.chromosomes[best];
-        ArrayList possible = new ArrayList();
+        ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
         for (int iGene = 0; iGene < chromosomeDim; iGene++) {
             possible.add(new MoveOption(((MoveOption[]) this.moves.get(iGene))[r.genes[iGene]]));
         }

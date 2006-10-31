@@ -4909,13 +4909,6 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
 
-        for(Mounted mounted : getWeaponList()) {
-              WeaponType wtype = (WeaponType)mounted.getType();
-              if (wtype.hasFlag(WeaponType.F_TAG) && mounted.isUsedThisRound()) {
-                  return false; //no weapons fire if you fired TAG
-              }
-          }
-
         // check game options
         if (!game.getOptions().booleanOption("skip_ineligable_firing")) {
             return true;

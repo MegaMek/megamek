@@ -5840,4 +5840,44 @@ public abstract class Entity extends TurnOrdered
     public void setCarcass(boolean carcass) {
         this.carcass = carcass;
     }
+    
+    /**
+     * Marks all equipment in a location on this entity as destroyed.
+     */
+    public void destroyLocation(int loc) {
+        // if it's already marked as destroyed, don't bother
+        if (getInternal(loc) < 0) {
+            return;
+        }
+        // mark armor, internal as doomed
+        setArmor(IArmorState.ARMOR_DOOMED, loc, false);
+        setInternal(IArmorState.ARMOR_DOOMED, loc);
+        if (hasRearArmor(loc)) {
+            setArmor(IArmorState.ARMOR_DOOMED, loc, true);
+        }
+        // equipment marked missing
+        for (Mounted mounted : getEquipment()) {
+            if (mounted.getLocation() == loc
+                    && mounted.getType().isHittable()) {
+                mounted.setMissing(true);
+            }
+        }
+        // all critical slots set as missing
+        for (int i = 0; i < getNumberOfCriticals(loc); i++) {
+            final CriticalSlot cs = getCritical(loc, i);
+            if (cs != null) {
+                // count engine hits for maxtech engine explosions
+                if (cs.getType() == CriticalSlot.TYPE_SYSTEM &&
+                    cs.getIndex() == Mech.SYSTEM_ENGINE &&
+                    !cs.isDamaged()) {
+                        engineHitsThisRound++;
+                }
+                cs.setMissing(true);
+            }
+        }
+        // dependent locations destroyed
+        if (getDependentLocation(loc) != Entity.LOC_NONE) {
+            destroyLocation(getDependentLocation(loc));
+        }
+    }
 }

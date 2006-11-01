@@ -13643,7 +13643,7 @@ public class Server implements Runnable {
                     if (te instanceof GunEmplacement) {
                         // gun emplacements have no internal,
                         // destroy the section
-                        destroyLocation(te, hit.getLocation());
+                        te.destroyLocation(hit.getLocation());
                         r = new Report(6115);
                         r.subject = te_n;
                         r.newlines = 0;
@@ -13651,10 +13651,7 @@ public class Server implements Runnable {
 
                         if (te.getTransferLocation(hit).getLocation() ==
                             Entity.LOC_DESTROYED) {
-                            vDesc.addAll(
-                                                  destroyEntity(te,
-                                                                "damage",
-                                                                false));
+                            vDesc.addAll(destroyEntity(te,"damage",false));
                         }
                     }
                 }
@@ -13829,7 +13826,7 @@ public class Server implements Runnable {
                         }
 
                         // Destroy the location.
-                        destroyLocation(te, hit.getLocation());
+                        te.destroyLocation(hit.getLocation());
                         te.damageThisPhase += absorbed;
                         damage -= absorbed;
 
@@ -14151,11 +14148,7 @@ public class Server implements Runnable {
             vDesc.addAll( destroyEntity(en, "engine explosion", false, false));
             //kill the crew
             en.getCrew().setDoomed(true);
-
-            //This is a hack so MM.NET marks the mech as not salvageable
-            if (en instanceof Mech)
-                destroyLocation(en, Mech.LOC_CT);
-
+            
             if(game.getOptions().booleanOption("fire")) {
                 //Light our hex on fire
                 final IHex curHex = game.getBoard().getHex(en.getPosition());
@@ -14993,7 +14986,7 @@ public class Server implements Runnable {
                 r = new Report(6630);
                 r.subject = t.getId();
                 vDesc.add(r);
-                destroyLocation(t,Tank.LOC_TURRET);
+                t.destroyLocation(Tank.LOC_TURRET);
                 break;
             case Tank.CRIT_TURRET_JAM:
                 //TODO: this should be clearable
@@ -15088,7 +15081,7 @@ public class Server implements Runnable {
                 r.subject = t.getId();
                 vDesc.add(r);
                 t.immobilize();
-                destroyLocation(t,VTOL.LOC_ROTOR);
+                t.destroyLocation(VTOL.LOC_ROTOR);
                 vDesc.addAll(crashVTOL((VTOL)t));
                 break;
             case VTOL.CRIT_FLIGHT_STABILIZER:
@@ -15105,7 +15098,7 @@ public class Server implements Runnable {
             BattleArmor ba = (BattleArmor)en;
             r = new Report(6111);
             int randomTrooper = ba.getRandomTrooper();
-            destroyLocation(ba, randomTrooper);
+            ba.destroyLocation(randomTrooper);
             r.add(randomTrooper);
             r.newlines = 1;
             vDesc.add(r);
@@ -15130,7 +15123,7 @@ public class Server implements Runnable {
                         r.subject = en.getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                        destroyLocation(en, loc);
+                        en.destroyLocation(loc);
                     }
                     break;
                 case Protomech.SYSTEM_ARMCRIT:
@@ -15139,7 +15132,7 @@ public class Server implements Runnable {
                         r.subject = en.getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                        destroyLocation(en,loc);
+                        en.destroyLocation(loc);
                     }
                     break;
                 case Protomech.SYSTEM_LEGCRIT:
@@ -15148,7 +15141,7 @@ public class Server implements Runnable {
                         r.subject = en.getId();
                         r.newlines = 0;
                         vDesc.addElement(r);
-                        destroyLocation(en,loc);
+                        en.destroyLocation(loc);
                     }
                     break;
                 case Protomech.SYSTEM_TORSOCRIT:
@@ -15747,7 +15740,7 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     vDesc.addElement(r);
                     if (en.getInternal(loc) > 0) {
-                        destroyLocation(en, loc);
+                        en.destroyLocation(loc);
                     }
                     if (null != hex) {
                         if (!hex.containsTerrain (Terrains.LEGS)) {
@@ -15768,7 +15761,7 @@ public class Server implements Runnable {
                     r.add(en.getLocationName(loc));
                     r.newlines = 0;
                     vDesc.addElement(r);
-                    destroyLocation(en, loc);
+                    en.destroyLocation(loc);
                     if (null != hex) {
                         if (!hex.containsTerrain( Terrains.ARMS)) {
                             hex.addTerrain (Terrains.getTerrainFactory().createTerrain(Terrains.ARMS, 1));
@@ -15788,7 +15781,7 @@ public class Server implements Runnable {
                     r.add(en.getLocationName(loc));
                     r.newlines = 0;
                     vDesc.addElement(r);
-                    destroyLocation(en, loc);
+                    en.destroyLocation(loc);
                     // Don't kill a pilot multiple times.
                     if ( Pilot.DEATH > en.getCrew().getHits() ) {
                         en.crew.setDoomed(true);
@@ -16065,50 +16058,6 @@ public class Server implements Runnable {
         }
 
         return vDesc;
-    }
-
-    /**
-     * Marks all equipment in a location on an entity as destroyed.
-     */
-    void destroyLocation(Entity en, int loc) {
-        // if it's already marked as destroyed, don't bother
-        if (en.getInternal(loc) < 0) {
-            return;
-        }
-        // mark armor, internal as doomed
-        en.setArmor(IArmorState.ARMOR_DOOMED, loc, false);
-        en.setInternal(IArmorState.ARMOR_DOOMED, loc);
-        if (en.hasRearArmor(loc)) {
-            en.setArmor(IArmorState.ARMOR_DOOMED, loc, true);
-        }
-        // equipment marked missing
-        for (Mounted mounted : en.getEquipment()) {
-            if (mounted.getLocation() == loc
-                    && mounted.getType().isHittable()) {
-                mounted.setMissing(true);
-            }
-        }
-        // all critical slots set as missing
-        for (int i = 0; i < en.getNumberOfCriticals(loc); i++) {
-            final CriticalSlot cs = en.getCritical(loc, i);
-            if (cs != null) {
-                // count engine hits for maxtech engine explosions
-                if (cs.getType() == CriticalSlot.TYPE_SYSTEM &&
-                    cs.getIndex() == Mech.SYSTEM_ENGINE &&
-                    !cs.isDamaged()) {
-                        en.engineHitsThisRound++;
-                }
-                cs.setMissing(true);
-            }
-        }
-        // if it's a leg, the entity falls
-        if (en instanceof Mech && en.locationIsLeg(loc)) {
-            game.addPSR(new PilotingRollData(en.getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
-        }
-        // dependent locations destroyed
-        if (en.getDependentLocation(loc) != Entity.LOC_NONE) {
-            destroyLocation(en, en.getDependentLocation(loc));
-        }
     }
 
     /**

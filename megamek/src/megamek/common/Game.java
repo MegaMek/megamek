@@ -672,7 +672,7 @@ public class Game implements Serializable, IGame
         deploymentTable = new Hashtable();
         
         for ( int i = 0; i < entities.size(); i++ ) {
-            Entity ent = (Entity)entities.elementAt(i);
+            Entity ent = entities.elementAt(i);
             if (ent.isDeployed()) {
                 continue;
             }
@@ -750,7 +750,7 @@ public class Game implements Serializable, IGame
             int prev = entities.indexOf(current) - 1;
             if (prev < 0)
                 prev = entities.size() - 1; //wrap around to end
-            return (Entity)entities.elementAt(prev);
+            return entities.elementAt(prev);
         }
         return null;
     }
@@ -760,7 +760,7 @@ public class Game implements Serializable, IGame
             int next = entities.indexOf(current)+1;
             if (next >= entities.size())
                 next = 0; // wrap-around to begining
-            return (Entity)entities.elementAt(next);
+            return entities.elementAt(next);
         }
         return null;
     }
@@ -1064,7 +1064,7 @@ public class Game implements Serializable, IGame
      */
 
     public Entity getEntity(int id) {
-        return (Entity)entityIds.get(new Integer(id));
+        return entityIds.get(new Integer(id));
     }
 
     public void addEntity(int id, Entity entity) {
@@ -1895,7 +1895,7 @@ public class Game implements Serializable, IGame
         if(getOptions().booleanOption("individual_initiative")) {
             Vector<TurnOrdered> vRerolls = new Vector<TurnOrdered>();
             for(int i=0;i<entities.size();i++) {
-                Entity e = (Entity)entities.elementAt(i);
+                Entity e = entities.elementAt(i);
                 if(initiativeRerollRequests.contains(getTeamForPlayer(e.getOwner()))) {
                     vRerolls.add(e);
                 }

@@ -788,7 +788,7 @@ public class MechSelectorDialog
                 Client c = null;
                 if (m_chPlayer.getSelectedIndex() > 0) {
                     String name = m_chPlayer.getSelectedItem();
-                    c = (Client)m_clientgui.getBots().get(name);
+                    c = m_clientgui.getBots().get(name);
                 }
                 if (c == null) {
                     c = m_client;

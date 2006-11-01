@@ -329,7 +329,7 @@ public class BoardUtilities {
         }
         //set everything to the same level
         for(int j=0;j<hexes.size();j++) {
-            ((IHex)(hexes.elementAt(j))).setElevation(level / hexes.size());
+            hexes.elementAt(j).setElevation(level / hexes.size());
         }
     }
 

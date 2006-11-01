@@ -138,7 +138,7 @@ public class Client {
         }
         
         for (int i = 0; i < closeClientListeners.size(); i++){
-            ((CloseClientListener)closeClientListeners.elementAt(i)).clientClosed();
+            closeClientListeners.elementAt(i).clientClosed();
         }
 
         if (log != null) {
@@ -1021,7 +1021,7 @@ public class Client {
         if (duplicateNameHash.get(entity.getShortName()) == null) {
             duplicateNameHash.put(entity.getShortName(), new Integer(1));
         } else {
-            int count = ((Integer)duplicateNameHash.get(entity.getShortName())).intValue();
+            int count = duplicateNameHash.get(entity.getShortName()).intValue();
             count++;
             duplicateNameHash.put(entity.getShortName(), new Integer(count));
             entity.duplicateMarker = count;

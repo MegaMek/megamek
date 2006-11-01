@@ -73,7 +73,7 @@ public class ChatProcessor {
                                 int y = Integer.parseInt(st.nextToken().trim());
                                 Entity en = tb.game.getFirstEntity(new Coords(x - 1, y - 1));
                                 if (en != null) {
-                                    if (en.isEnemyOf((Entity) tb.getEntitiesOwned().get(0))) {
+                                    if (en.isEnemyOf(tb.getEntitiesOwned().get(0))) {
                                         CEntity cen = tb.centities.get(en);
                                         cen.strategy.target += 3;
                                         System.out.println(cen.entity.getShortName() + " " + cen.strategy.target); //$NON-NLS-1$

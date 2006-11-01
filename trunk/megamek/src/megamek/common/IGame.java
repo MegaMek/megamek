@@ -982,7 +982,7 @@ public interface IGame {
      *          selector accepts.  This value will not be <code>null</code>
      *          but it may be empty.
      */
-    public abstract Enumeration getSelectedEntities(EntitySelector selector);
+    public abstract Enumeration<Entity> getSelectedEntities(EntitySelector selector);
     
     /**
      * Count all <code>Entity</code>s that pass the given selection criteria.

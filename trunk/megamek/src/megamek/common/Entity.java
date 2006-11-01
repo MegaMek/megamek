@@ -166,6 +166,8 @@ public abstract class Entity extends TurnOrdered
     protected int               movementMode  = IEntityMovementMode.NONE;
 
     protected boolean           isHidden = false;
+    
+    protected boolean carcass = false;
 
     /**
      * The components of this entity that can transport other entities.
@@ -570,7 +572,8 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isSelectableThisTurn() {
         return !done && (conveyance == Entity.NONE) &&
-            !this.unloadedThisTurn && !isClearingMinefield();
+            !this.unloadedThisTurn && !isClearingMinefield() &&
+            !isCarcass();
     }
 
     /**
@@ -4848,6 +4851,10 @@ public abstract class Entity extends TurnOrdered
         if ((phase == IGame.PHASE_DEPLOYMENT) == isDeployed()) {
             return false;
         }
+        
+        //carcass can't do anything
+        if(isCarcass())
+            return false;
 
         switch (phase) {
             case IGame.PHASE_MOVEMENT :
@@ -5821,5 +5828,16 @@ public abstract class Entity extends TurnOrdered
 
     public boolean isHidden() {
         return isHidden;
+    }
+
+    /**
+     * Is this unit a carcass, a carcass can take no action
+     */
+    public boolean isCarcass() {
+        return carcass;
+    }
+
+    public void setCarcass(boolean carcass) {
+        this.carcass = carcass;
     }
 }

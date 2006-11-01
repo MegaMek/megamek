@@ -293,8 +293,8 @@ public class Pilot
         return s;
     }
 
-    public Vector getDescVector(boolean gunneryOnly) {
-        Vector vDesc = new Vector();
+    public Vector<Report> getDescVector(boolean gunneryOnly) {
+        Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
         r = new Report();

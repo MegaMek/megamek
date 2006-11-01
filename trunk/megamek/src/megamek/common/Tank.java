@@ -692,8 +692,8 @@ public class Tank
         return prd;
     }
 
-    public Vector victoryReport() {
-        Vector vDesc = new Vector();
+    public Vector<Report> victoryReport() {
+        Vector<Report> vDesc = new Vector<Report>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;
@@ -1026,7 +1026,7 @@ public class Tank
             if(loc == LOC_FRONT) {
                 switch(roll) {
                 case 6:
-                    if(!isDriverHit())
+                    if(!isDriverHit() && !crew.isDead())
                         return CRIT_DRIVER;
                 case 7:
                     for(Mounted m:getWeaponList()) {
@@ -1044,7 +1044,7 @@ public class Tank
                     if(getSensorHits() < 4)
                         return CRIT_SENSOR;
                 case 10:
-                    if(!isCommanderHit())
+                    if(!isCommanderHit() && !crew.isDead())
                         return CRIT_COMMANDER;
                 case 11:
                     for(Mounted m:getWeaponList()) {

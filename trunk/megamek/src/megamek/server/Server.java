@@ -1126,7 +1126,7 @@ public class Server implements Runnable {
         //remove carcasses to the graveyard
         Vector<Entity> toRemove = new Vector<Entity>();
         for(Entity e:game.getEntitiesVector()) {
-            if(e.isCarcass())
+            if(e.isCarcass() && !e.isDestroyed())
                 toRemove.add(e);
         }
         for(Entity e:toRemove) {

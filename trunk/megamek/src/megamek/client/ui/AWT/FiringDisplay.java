@@ -485,6 +485,7 @@ public class FiringDisplay
         };
           
         TreeSet<Entity> tree = new TreeSet<Entity>(sortComp);
+        visibleTargets = new Entity[vec.size()];
         tree.addAll(vec);
         
         Iterator it = tree.iterator();

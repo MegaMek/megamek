@@ -66,11 +66,11 @@ public class Game implements Serializable, IGame
 
     public IBoard board = new Board();
 
-    private Vector entities = new Vector();
-    private Hashtable entityIds = new Hashtable();
+    private Vector<Entity> entities = new Vector<Entity>();
+    private Hashtable<Integer,Entity> entityIds = new Hashtable<Integer,Entity>();
 
     /** Track entities removed from the game (probably by death) */
-    private Vector vOutOfGame = new Vector();
+    private Vector<Entity> vOutOfGame = new Vector<Entity>();
 
     private Vector players = new Vector();
     private Vector teams   = new Vector(); // DES

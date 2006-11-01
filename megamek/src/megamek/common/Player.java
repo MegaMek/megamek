@@ -78,7 +78,7 @@ public final class Player extends TurnOrdered
 
     private String camoFileName = null;
 
-    private Vector visibleMinefields = new Vector();
+    private Vector<Minefield> visibleMinefields = new Vector<Minefield>();
     
     private boolean admitsDefeat = false;
     
@@ -92,7 +92,7 @@ public final class Player extends TurnOrdered
         visibleMinefields.addElement(mf);
     }
     
-    public void addMinefields(Vector minefields) {
+    public void addMinefields(Vector<Minefield> minefields) {
         for (int i = 0; i < minefields.size(); i++) {
             visibleMinefields.addElement(minefields.elementAt(i));
         }
@@ -349,7 +349,8 @@ public final class Player extends TurnOrdered
 
         while ( survivors.hasMoreElements() ) {
             Entity entity = (Entity) survivors.nextElement();
-            if ( entity.getOwner() == this )
+            if ( entity.getOwner() == this &&
+                    !entity.isCarcass())
                 bv += entity.calculateBattleValue();
         }
         return bv;

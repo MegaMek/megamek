@@ -186,7 +186,7 @@ public class ReportDisplay
             //Need a new tab for the new round.
 
             //get rid of phase tab
-            tabs.remove((Component)vTextArea.elementAt(vTextArea.size() - 1));
+            tabs.remove(vTextArea.elementAt(vTextArea.size() - 1));
             vTextArea.removeElementAt(vTextArea.size() - 1);
 
             //add as many round tabs as necessary to catch us up
@@ -207,14 +207,14 @@ public class ReportDisplay
             tabs.last();
         } else {
             //Update the previous rounds tab and the phase tab.
-            ((TextArea)vTextArea.elementAt(round - 1)).setText(roundText);
-            ((TextArea)vTextArea.elementAt(round)).setText(phaseText);
+            vTextArea.elementAt(round - 1).setText(roundText);
+            vTextArea.elementAt(round).setText(phaseText);
         }
     }
 
     public void appendReportTab(String additionalText) {
-        ((TextArea)vTextArea.elementAt(vTextArea.size() - 1)).append(additionalText);
-        ((TextArea)vTextArea.elementAt(vTextArea.size() - 2)).append(additionalText);
+        vTextArea.elementAt(vTextArea.size() - 1).append(additionalText);
+        vTextArea.elementAt(vTextArea.size() - 2).append(additionalText);
     }
 
     public void resetTabs() {

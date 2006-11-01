@@ -1168,7 +1168,7 @@ public class ChatLounge
         boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
         Client c = null;
         if (editable) {
-            c = (Client)clientgui.getBots().get(entity.getOwner().getName());
+            c = clientgui.getBots().get(entity.getOwner().getName());
         } else {
             editable |= entity.getOwnerId() == client.getLocalPlayer().getId();
             c = client;
@@ -1199,7 +1199,7 @@ public class ChatLounge
                 || (c3master == null && entity.getC3Master() != null)) {
                 playerUnits = c3members.elements();
                 while (playerUnits.hasMoreElements()) {
-                    Entity unit = (Entity) playerUnits.nextElement();
+                    Entity unit = playerUnits.nextElement();
                     c.sendUpdateEntity(unit);
                 }
             }
@@ -1418,7 +1418,7 @@ public class ChatLounge
         } else if (ev.getSource() == butDelete) {
             // delete mech
             Entity e = client.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
-            Client c = (Client)clientgui.getBots().get(e.getOwner().getName());
+            Client c = clientgui.getBots().get(e.getOwner().getName());
             if (c == null) {
                 c = client;
             }

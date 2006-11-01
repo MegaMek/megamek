@@ -161,10 +161,9 @@ public class TestBot extends BotClient {
                     lance.evolve();
                     min = lance.getResult();
                     this.old_moves = lance;
-                } else if (
-                        ((MoveOption[]) possible.get(0)) != null
-                        && ((MoveOption[]) possible.get(0)).length > 0) {
-                    min = ((MoveOption[]) possible.get(0))[0];
+                } else if (possible.get(0) != null
+                        && possible.get(0).length > 0) {
+                    min = possible.get(0)[0];
                 }
             }
         }
@@ -184,7 +183,7 @@ public class TestBot extends BotClient {
                     CEntity.getThreatHitArc(enemy.current.getFinalCoords(),
                             enemy.current.getFinalFacing(),
                             min.getFinalCoords());
-            MoveOption.DamageInfo di = (MoveOption.DamageInfo) min.damageInfos.get(enemy);
+            MoveOption.DamageInfo di = min.damageInfos.get(enemy);
             if (di != null) {
                 enemy.expected_damage[enemy_hit_arc] += di.min_damage;
             }
@@ -876,14 +875,14 @@ public class TestBot extends BotClient {
 
         //top 100 utility, mostly conservative
         for (int i = 0; i < filter && i < move_array.length; i++) {
-            pass.put((MoveOption) move_array[i]);
+            pass.put(move_array[i]);
         }
     }
 
     protected void initFiring() {
         ArrayList<Entity> entities = new ArrayList<Entity>(game.getEntitiesVector());
         for (int i = 0; i < entities.size(); i++) {
-            Entity entity = (Entity) entities.get(i);
+            Entity entity = entities.get(i);
             CEntity centity = centities.get(entity);
             centity.reset();
             centity.enemy_num = i;
@@ -1046,14 +1045,14 @@ public class TestBot extends BotClient {
                         (best_front_po.type == PhysicalOption.PUNCH_BOTH)) &&
                         (mw.getLocation() == Mech.LOC_LARM)) {
                     if (c.size() > 0) {
-                        front_la_dmg += ((AttackOption) c.get(c.size() - 2)).value;
+                        front_la_dmg += c.get(c.size() - 2).value;
                     }
                 }
                 if (((best_front_po.type == PhysicalOption.PUNCH_RIGHT) ||
                         (best_front_po.type == PhysicalOption.PUNCH_BOTH)) &&
                         (mw.getLocation() == Mech.LOC_RARM)) {
                     if (c.size() > 0) {
-                        front_ra_dmg += ((AttackOption) c.get(c.size() - 2)).value;
+                        front_ra_dmg += c.get(c.size() - 2).value;
                     }
                 }
                 // If this weapon is a push attack and an arm mounted
@@ -1083,12 +1082,12 @@ public class TestBot extends BotClient {
                         if (((best_left_po.type == PhysicalOption.PUNCH_LEFT) ||
                                 (best_left_po.type == PhysicalOption.PUNCH_BOTH)) &&
                                 (mw.getLocation() == Mech.LOC_LARM)) {
-                            left_la_dmg += ((AttackOption) c.get(c.size() - 2)).value;
+                            left_la_dmg += c.get(c.size() - 2).value;
                         }
                         if (((best_left_po.type == PhysicalOption.PUNCH_RIGHT) ||
                                 (best_left_po.type == PhysicalOption.PUNCH_BOTH)) &&
                                 (mw.getLocation() == Mech.LOC_RARM)) {
-                            left_ra_dmg += ((AttackOption) c.get(c.size() - 2)).value;
+                            left_ra_dmg += c.get(c.size() - 2).value;
                         }
                     }
                     left.add(c);
@@ -1103,12 +1102,12 @@ public class TestBot extends BotClient {
                         if (((best_right_po.type == PhysicalOption.PUNCH_LEFT) ||
                                 (best_right_po.type == PhysicalOption.PUNCH_BOTH)) &&
                                 (mw.getLocation() == Mech.LOC_LARM)) {
-                            right_la_dmg += ((AttackOption) c.get(c.size() - 2)).value;
+                            right_la_dmg += c.get(c.size() - 2).value;
                         }
                         if (((best_right_po.type == PhysicalOption.PUNCH_RIGHT) ||
                                 (best_right_po.type == PhysicalOption.PUNCH_BOTH)) &&
                                 (mw.getLocation() == Mech.LOC_RARM)) {
-                            right_ra_dmg += ((AttackOption) c.get(c.size() - 2)).value;
+                            right_ra_dmg += c.get(c.size() - 2).value;
                         }
                     }
                     right.add(c);
@@ -1143,7 +1142,7 @@ public class TestBot extends BotClient {
             }
         }
         for (int i = 0; i < arcs.size(); i++) {
-            ArrayList v = (ArrayList) arcs.get(i);
+            ArrayList v = arcs.get(i);
             if (v.size() > 0) {
                 GAAttack test =
                         new GAAttack(this,
@@ -1151,7 +1150,7 @@ public class TestBot extends BotClient {
                                 v,
                                 Math.max((v.size() + attacks[i]) * search_level, 20 * search_level),
                                 30 * search_level,
-                                en.isEnemyOf((Entity) getEntitiesOwned().get(0)));
+                                en.isEnemyOf(getEntitiesOwned().get(0)));
                 test.setFiringArc(i);
                 test.evolve();
                 if (target != null) {
@@ -1277,7 +1276,7 @@ public class TestBot extends BotClient {
         //maximum already selected (or default)
         Entity en = game.getEntity(best_entity);
         if (results != null) {
-            Entity primary_target = (Entity) game.getEntitiesVector().get(results[results.length - 1]);
+            Entity primary_target = game.getEntitiesVector().get(results[results.length - 1]);
             TreeSet<AttackOption> tm = new TreeSet<AttackOption>(new AttackOption.Sorter(centities.get(primary_target)));
             for (int i = 0; i < results.length - 1; i++) {
                 AttackOption a = (AttackOption) ((ArrayList) winner.get(i)).get(results[i]);
@@ -1351,7 +1350,7 @@ public class TestBot extends BotClient {
         double max_foe_bv = 0;
         CEntity max_foe = null;
         for (int i = 0; i < entities.size(); i++) {
-            Entity entity = (Entity) entities.get(i);
+            Entity entity = entities.get(i);
             CEntity centity = centities.get(entity);
             centity.enemy_num = i;
             double old_value = centity.bv * (centity.overall_armor_percent + 1);
@@ -1623,7 +1622,7 @@ public class TestBot extends BotClient {
                     CEntity.getThreatHitArc(enemy.current.getFinalCoords(),
                             enemy.current.getFinalFacing(),
                             min.getFinalCoords());
-            MoveOption.DamageInfo di = (MoveOption.DamageInfo) min.damageInfos.get(enemy);
+            MoveOption.DamageInfo di = min.damageInfos.get(enemy);
             if (di != null) {
                 enemy.expected_damage[enemy_hit_arc] += di.min_damage;
             }

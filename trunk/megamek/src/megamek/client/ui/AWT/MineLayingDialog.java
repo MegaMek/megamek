@@ -142,7 +142,7 @@ public class MineLayingDialog
      * @return  the <code>int</code> id of the mine to lay
      */
     public int getMine() {
-        Integer equipnr = (Integer)vMines.elementAt(chMines.getSelectedIndex());
+        Integer equipnr = vMines.elementAt(chMines.getSelectedIndex());
         Mounted mine = entity.getEquipment(equipnr);
         return entity.getEquipmentNum(mine);
     }

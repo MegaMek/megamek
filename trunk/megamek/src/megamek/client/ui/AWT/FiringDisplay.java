@@ -1704,7 +1704,7 @@ public class FiringDisplay
         if ( targets.size() == 1 ) {
 
             // Return  that choice.
-            choice = (Targetable) targets.elementAt( 0 );
+            choice = targets.elementAt( 0 );
 
         }
 
@@ -1712,8 +1712,7 @@ public class FiringDisplay
         else if ( targets.size() > 1 ) {
             String[] names = new String[ targets.size() ];
             for ( int loop = 0; loop < names.length; loop++ ) {
-                names[loop] = ( (Targetable)targets.elementAt(loop) )
-                    .getDisplayName();
+                names[loop] = targets.elementAt(loop).getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( clientgui.frame,
@@ -1722,8 +1721,7 @@ public class FiringDisplay
                                         names );
             choiceDialog.setVisible(true);
             if ( choiceDialog.getAnswer() == true ) {
-                choice = (Targetable) targets.elementAt
-                    ( choiceDialog.getChoice() );
+                choice = targets.elementAt(choiceDialog.getChoice());
             }
         } // End have-choices
 

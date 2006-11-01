@@ -5399,8 +5399,8 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean getTargetedBySwarm(int entityId, int weaponId) {
         for (int i = 0;i < hitBySwarmsEntity.size();i++) {
-            Integer entityIdToTest = (Integer)hitBySwarmsEntity.elementAt(i);
-            Integer weaponIdToTest = (Integer)hitBySwarmsWeapon.elementAt(i);
+            Integer entityIdToTest = hitBySwarmsEntity.elementAt(i);
+            Integer weaponIdToTest = hitBySwarmsWeapon.elementAt(i);
             if (entityId == entityIdToTest.intValue() &&
                 weaponId == weaponIdToTest.intValue()) {
                 return true;

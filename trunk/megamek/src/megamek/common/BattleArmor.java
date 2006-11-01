@@ -1027,7 +1027,7 @@ public class BattleArmor
             if (isTrooperActive(loop))
                 activeTroops.add(loop);
         int locInt = Compute.randomInt(activeTroops.size());
-        return (Integer)(activeTroops.elementAt(locInt));
+        return activeTroops.elementAt(locInt);
     }
     
     public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {

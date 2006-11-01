@@ -513,7 +513,7 @@ public class BoardView1
 
         // draw all the "displayables"
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
+            Displayable disp = displayables.elementAt(i);
             disp.draw(backGraph, backSize);
         }
 
@@ -1573,7 +1573,7 @@ public class BoardView1
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing) {
         Integer entityId = new Integer( entity.getId() );
-        EntitySprite sprite = (EntitySprite) entitySpriteIds.get( entityId );
+        EntitySprite sprite = entitySpriteIds.get( entityId );
         Vector<EntitySprite> newSprites;
         Hashtable<Integer,EntitySprite> newSpriteIds;
 
@@ -1587,8 +1587,7 @@ public class BoardView1
             entitySpriteIds = newSpriteIds;
         }
 
-        MovingEntitySprite mSprite =
-            (MovingEntitySprite) movingEntitySpriteIds.get( entityId );
+        MovingEntitySprite mSprite = movingEntitySpriteIds.get(entityId);
         Vector<MovingEntitySprite> newMovingSprites = new Vector<MovingEntitySprite>(movingEntitySprites);
         Hashtable<Integer,MovingEntitySprite> newMovingSpriteIds = new Hashtable<Integer,MovingEntitySprite>(movingEntitySpriteIds);
 
@@ -1619,7 +1618,7 @@ public class BoardView1
      */
     public void redrawEntity(Entity entity) {
         Integer entityId = new Integer( entity.getId() );
-        EntitySprite sprite = (EntitySprite)entitySpriteIds.get( entityId );
+        EntitySprite sprite = entitySpriteIds.get( entityId );
         Vector<EntitySprite> newSprites = new Vector<EntitySprite>(entitySprites);
         Hashtable<Integer,EntitySprite> newSpriteIds = new Hashtable<Integer,EntitySprite>(entitySpriteIds);
 
@@ -2308,7 +2307,7 @@ public class BoardView1
 
         isTipPossible = false;
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
+            Displayable disp = displayables.elementAt(i);
             if ((backSize != null) && (disp.isHit(point, backSize))) {
                 return;
             }
@@ -2358,7 +2357,7 @@ public class BoardView1
         oldMousePosition = mousePos;
 
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
+            Displayable disp = displayables.elementAt(i);
             if (disp.isReleased()) {
                 return;
             }
@@ -2399,7 +2398,7 @@ public class BoardView1
         }
 
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
+            Displayable disp = displayables.elementAt(i);
             if (disp.isDragged(point, backSize)) {
                 repaint();
                 return;
@@ -2451,7 +2450,7 @@ public class BoardView1
         }
 
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
+            Displayable disp = displayables.elementAt(i);
             if (disp.isBeingDragged()) {
                 isTipPossible = false;
                 return;
@@ -4445,7 +4444,7 @@ public class BoardView1
                 currentTime = System.currentTimeMillis();
                 boolean redraw = false;
                 for (int i = 0; i < displayables.size(); i++) {
-                    Displayable disp = (Displayable) displayables.elementAt(i);
+                    Displayable disp = displayables.elementAt(i);
                     if (!disp.isSliding()) {
                         disp.setIdleTime(currentTime - lastTime, true);
                     } else {

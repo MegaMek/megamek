@@ -53,7 +53,7 @@ public class CEntity {
 
         public CEntity get(Entity es) {
             CEntity result = null;
-            if ((result = (CEntity) super.get(new Integer(es.getId()))) == null) {
+            if ((result = super.get(new Integer(es.getId()))) == null) {
                 result = new CEntity(es, tb);
                 this.put(result);
             }
@@ -61,7 +61,7 @@ public class CEntity {
         }
 
         public CEntity get(int id) {
-            return (CEntity) get(new Integer(id));
+            return get(new Integer(id));
         }
     }
 
@@ -719,7 +719,7 @@ public class CEntity {
                 (this.entity.isProne() && this.base_psr_odds < .1 && 
                     !this.entity.isImmobile()))
                 ) { // If I have more friends, this isn't so bad
-                    if (this.entity.isEnemyOf((Entity) tb.getEntitiesOwned().get(0))) {
+                    if (this.entity.isEnemyOf(tb.getEntitiesOwned().get(0))) {
                         return Math.sqrt(t2) * this.strategy.target;
                     }
             }
@@ -771,7 +771,7 @@ public class CEntity {
         while (possible.size() > 0) {  // Keep going until the arraylist is empty (why?)
             
             // Get the first movement option, while stripping it from the arraylist
-            MoveOption min = (MoveOption) possible.remove(0);
+            MoveOption min = possible.remove(0);
             Iterator adjacent = min.getNextMoves(true, true).iterator();
             while (adjacent.hasNext()) {
                 MoveOption next = (MoveOption) adjacent.next();

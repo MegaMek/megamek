@@ -532,7 +532,7 @@ public final class BoardView1
 
         // draw all the "displayables"
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
+            Displayable disp = displayables.elementAt(i);
             disp.draw(backGraph, backSize);
         }
 
@@ -2168,7 +2168,7 @@ public final class BoardView1
         oldMousePosition = point;
         isTipPossible = false;
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
+            Displayable disp = displayables.elementAt(i);
             if ((backSize != null) && (disp.isHit(point, backSize))) {
                 return;
             }
@@ -2211,7 +2211,7 @@ public final class BoardView1
         isTipPossible = true;
         oldMousePosition = mousePos;
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
+            Displayable disp = displayables.elementAt(i);
             if (disp.isReleased()) {
                 return;
             }
@@ -2251,7 +2251,7 @@ public final class BoardView1
             return;
         }
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
+            Displayable disp = displayables.elementAt(i);
             if (disp.isDragged(point, backSize)) {
                 repaint();
                 return;
@@ -2298,7 +2298,7 @@ public final class BoardView1
             return;
         }
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = (Displayable) displayables.elementAt(i);
+            Displayable disp = displayables.elementAt(i);
             if (disp.isBeingDragged()) {
                 isTipPossible = false;
                 return;
@@ -4132,7 +4132,7 @@ public final class BoardView1
                 currentTime = System.currentTimeMillis();
                 boolean redraw = false;
                 for (int i = 0; i < displayables.size(); i++) {
-                    Displayable disp = (Displayable) displayables.elementAt(i);
+                    Displayable disp = displayables.elementAt(i);
                     if (!disp.isSliding()) {
                         disp.setIdleTime(currentTime - lastTime, true);
                     } else {

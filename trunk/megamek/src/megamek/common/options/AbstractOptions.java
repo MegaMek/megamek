@@ -52,7 +52,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
     }
     
     public IOption getOption(String name) {
-        return ((IOption)optionsHash.get(name));
+        return optionsHash.get(name);
     }
     
     public boolean booleanOption(String name) {

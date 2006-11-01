@@ -250,7 +250,7 @@ public class MovePath implements Cloneable, Serializable {
         if (index < 0 || index >= steps.size()) {
             return null;
         }
-        return (MoveStep) steps.elementAt(index);
+        return steps.elementAt(index);
     }
 
     /**
@@ -562,7 +562,7 @@ public class MovePath implements Cloneable, Serializable {
         int loopcount = 0;
 
         while (candidates.size() > 0 && keepLooping) {
-            MovePath candidatePath = (MovePath) candidates.remove(0);
+            MovePath candidatePath = candidates.remove(0);
             Coords startingPos = candidatePath.getFinalCoords();
             int startingElev = candidatePath.getFinalElevation();
             
@@ -572,12 +572,12 @@ public class MovePath implements Cloneable, Serializable {
                 break;
             }
 
-            Iterator adjacent = candidatePath.getNextMoves(step == STEP_BACKWARDS, step == STEP_FORWARDS).iterator();
+            Iterator<MovePath> adjacent = candidatePath.getNextMoves(step == STEP_BACKWARDS, step == STEP_FORWARDS).iterator();
             while (adjacent.hasNext()) {
-                MovePath expandedPath = (MovePath) adjacent.next();
+                MovePath expandedPath = adjacent.next();
 
                 if (expandedPath.getLastStep().isMovementPossible(this.game, startingPos, startingElev)) {
-                    MovePath found = (MovePath) discovered.get(expandedPath.getKey());
+                    MovePath found = discovered.get(expandedPath.getKey());
                     if (found != null && mpc.compare(found, expandedPath) <= 0) {
                         continue;
                     }
@@ -594,7 +594,7 @@ public class MovePath implements Cloneable, Serializable {
             }
             loopcount++;
             if (loopcount % 256 == 0 && keepLooping && candidates.size() > 0) {
-                MovePath front = (MovePath)candidates.get(0);
+                MovePath front = candidates.get(0);
                 if (front.getFinalCoords().distance(dest) < bestPath.getFinalCoords().distance(dest)) {
                     bestPath = front;
                     keepLooping = System.currentTimeMillis() < endTime;
@@ -650,7 +650,7 @@ public class MovePath implements Cloneable, Serializable {
      * facing/position/(jumping|prone) change, special steps (mine clearing and
      * such) must be handled elsewhere.
      */
-    public List getNextMoves(boolean backward, boolean forward) {
+    public List<MovePath> getNextMoves(boolean backward, boolean forward) {
         ArrayList<MovePath> result = new ArrayList<MovePath>();
         MoveStep last = getLastStep();
         if (isJumping()) {

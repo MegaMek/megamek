@@ -388,9 +388,9 @@ public class HexTileset {
             }
       if (images.size() > 1) {
           int rand = (int)(r.nextDouble() * images.size());
-          return (Image) images.elementAt(rand);
+          return images.elementAt(rand);
       }
-      return (Image) images.firstElement();
+      return images.firstElement();
 /*      if (image == null) {
         return image    loadImage(comp);
       }
@@ -401,7 +401,7 @@ public class HexTileset {
         public void loadImage(Component comp) {
             images = new Vector<Image>();
           for (int i = 0; i < filenames.size(); i++) {
-            String filename = (String) filenames.elementAt(i);
+            String filename = filenames.elementAt(i);
             images.addElement(comp.getToolkit().getImage("data/images/hexes/" + filename)); //$NON-NLS-1$
           }
 //      image = comp.getToolkit().getImage("data/images/hexes/" + imageFile);

@@ -73,7 +73,7 @@ public class EquipmentMode {
      * @return unique mode that corresponds to the given name
      */
     public static EquipmentMode getMode(String name) {
-        EquipmentMode mode = (EquipmentMode) modesHash.get(name);
+        EquipmentMode mode = modesHash.get(name);
         if (mode == null) {
             mode = new EquipmentMode(name); 
             modesHash.put(name, mode);            

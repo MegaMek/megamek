@@ -531,7 +531,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             }
 
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
-                AmmoType atCheck = (AmmoType)vAllTypes.elementAt(x);
+                AmmoType atCheck = vAllTypes.elementAt(x);
                 boolean bTechMatch = TechConstants.isLegal(entity.getTechLevel(), atCheck.getTechLevel());
                                 
                 // allow all lvl2 IS units to use level 1 ammo
@@ -872,19 +872,19 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
 
     public void disableMunitionEditing() {
         for (int i = 0; i < m_vMunitions.size(); i++) {
-            ((MunitionChoicePanel)m_vMunitions.elementAt(i)).setEnabled(false);
+            m_vMunitions.elementAt(i).setEnabled(false);
         }
     }
     
     public void disableMGSetting() {
         for (int i = 0; i < m_vMGs.size(); i++) {
-            ((RapidfireMGPanel)m_vMGs.elementAt(i)).setEnabled(false);
+            m_vMGs.elementAt(i).setEnabled(false);
         }
     }
     
     public void disableMineSetting() {
         for (int i = 0; i < m_vMines.size(); i++) {
-            ((MineChoicePanel)m_vMines.elementAt(i)).setEnabled(false);
+            m_vMines.elementAt(i).setEnabled(false);
         }
     }
 
@@ -1238,7 +1238,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             // entities and send an update packet for the other entity.
             if ( !entityUnitNum.isEmpty() &&
                  choUnitNum.getSelectedIndex() > 0 ) {
-                Entity other =  (Entity) this.entityUnitNum.elementAt
+                Entity other = this.entityUnitNum.elementAt
                     ( choUnitNum.getSelectedIndex() );
                 char temp = this.entity.getUnitNumber();
                 this.entity.setUnitNumber( other.getUnitNumber() );

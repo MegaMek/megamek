@@ -321,7 +321,7 @@ public class EquipmentType {
             EquipmentType.initializeTypes();
         }
 
-        return (EquipmentType) EquipmentType.lookupHash.get(key);
+        return EquipmentType.lookupHash.get(key);
     }
 
     public Enumeration<String> getNames() {

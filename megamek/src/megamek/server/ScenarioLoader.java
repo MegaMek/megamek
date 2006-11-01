@@ -75,7 +75,7 @@ public class ScenarioLoader
                         if (sd.setArmorTo == 0) {
                             //Mark destroy if internal armor is set to zero
                             System.out.println("\tSection Destoyed " + dp.entity.getLocationName(sd.loc));
-                            s.destroyLocation(dp.entity,sd.loc);
+                            dp.entity.destroyLocation(sd.loc);
                         }
                       }
                     }

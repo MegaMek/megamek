@@ -13,6 +13,7 @@ v0.33.2 (SVN)
 + RAC can still hit when they jam (TW change)
 + Tank carcasses (after crew killed crit, tank remains on field)
 + Added alternate ammo names for plasma ammos
++ Refactor destroyLocation out of Server, into Entity
 
 v0.33.1 (2006-10-31 22:40 GMT+9)
 + Fix filename case for IS Omni images, so they show up on filename case-

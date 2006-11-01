@@ -9,6 +9,7 @@ v0.33.2 (SVN)
 + Bug: occasional exceptions observing bot v bot games
 + Bug: missing misc equipment in equipment.txt
 + cleared a lot of warnings
++ Design year option in the add unit advanced search.
 
 v0.33.1 (2006-10-31 22:40 GMT+9)
 + Fix filename case for IS Omni images, so they show up on filename case-

@@ -5951,6 +5951,7 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
         ammo.name = "Plasma Cannon Ammo";
         ammo.setInternalName("CLPlasmaCannonAmmo");
+        ammo.addLookupName("CLPlasmaCannon Ammo");
         ammo.damagePerShot = 0;
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_PLASMA;
@@ -5968,6 +5969,7 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel = TechConstants.T_IS_LEVEL_2;
         ammo.name = "Plasma Rifle Ammo";
         ammo.setInternalName("ISPlasmaRifleAmmo");
+        ammo.addLookupName("ISPlasmaRifle Ammo");
         ammo.damagePerShot = 10;
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_PLASMA;

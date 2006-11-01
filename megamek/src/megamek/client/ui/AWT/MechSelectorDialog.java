@@ -131,6 +131,8 @@ public class MechSelectorDialog
     private Choice m_cWeapons2 = new Choice();
     private Checkbox m_chkEquipment = new Checkbox();
     private Choice m_cEquipment = new Choice();
+    private TextField m_tStartYear = new TextField(4);
+    private TextField m_tEndYear = new TextField(4);
     private Button m_bSearch = new Button(Messages.getString("MechSelectorDialog.Search.Search"));
     private Button m_bReset = new Button(Messages.getString("MechSelectorDialog.Search.Reset"));
     private Label m_lCount = new Label();
@@ -290,12 +292,16 @@ public class MechSelectorDialog
             Panel row7 = new Panel();
             row7.setLayout(new FlowLayout(FlowLayout.LEFT));
             row7.add(new Label(Messages.getString("MechSelectorDialog.Search.Equipment")));
+            row7.add(m_chkEquipment);
+            row7.add(m_cEquipment);
             m_pSouthParams.add(row7);
 
             Panel row8 = new Panel();
             row8.setLayout(new FlowLayout(FlowLayout.LEFT));
-            row8.add(m_chkEquipment);
-            row8.add(m_cEquipment);
+            row8.add(new Label(Messages.getString("MechSelectorDialog.Search.Year")));
+            row8.add(m_tStartYear);
+            row8.add(new Label("-"));
+            row8.add(m_tEndYear);
             m_pSouthParams.add(row8);
 
             Panel row9 = new Panel();
@@ -661,6 +667,18 @@ public class MechSelectorDialog
             }
             if (count >= weapon2)
                 foundWeapon2 = true;
+        }
+        
+        int startYear = Integer.MIN_VALUE;
+        int endYear = Integer.MAX_VALUE;
+        try {
+            startYear = Integer.parseInt(m_tStartYear.getText());
+        } catch (NumberFormatException ne) { }
+        try {
+            endYear = Integer.parseInt(m_tEndYear.getText());
+        } catch (NumberFormatException ne) { }
+        if(entity.getYear() < startYear || entity.getYear() > endYear) {
+            return false;
         }
 
         if (weaponLine1Active && !weaponLine2Active && !foundWeapon1)

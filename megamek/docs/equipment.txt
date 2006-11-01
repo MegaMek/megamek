@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb equipment.txt
 Type,Tech,Rules,Name,Aliases
 W,Any,1,Flamer,IS Flamer,ISFlamer,
 W,Any,1,Vehicle Flamer,IS Vehicle Flamer,ISVehicleFlamer,
@@ -1321,4 +1321,4 @@ A,IS,2,IS Ammo LAC/10 - Flechette,ISLAC10 Ammo - Flechette,IS Light Autocannon/1
 A,IS,2,IS Ammo LAC/10 - Incendiary,ISLAC10 Ammo - Incendiary,IS Light Autocannon/10 Ammo - Incendiary,Light AC/10 Ammo - Incendiary,IS Incendiary Ammo LAC/10,IS Incendiary Ammo LAC/10,ISLAC10 Incendiary Ammo,IS Light Autocannon/10 Incendiary Ammo,Light AC/10 Incendiary Ammo,
 A,IS,3,IS Ammo LAC/10 - Tracer,ISLAC10 Ammo - Tracer,IS Light Autocannon/10 Ammo - Tracer,Light AC/10 Ammo - Tracer,IS Tracer Ammo LAC/10,IS Tracer Ammo LAC/10,ISLAC10 Tracer Ammo,IS Light Autocannon/10 Tracer Ammo,Light AC/10 Tracer Ammo,
 A,IS,2,IS Ammo LAC/20 - Precision,ISLAC20 Ammo - Precision,IS Light Autocannon/20 Ammo - Precision,Light AC/20 Ammo - Precision,IS Precision Ammo LAC/20,IS Precision Ammo LAC/20,ISLAC20 Precision Ammo,IS Light Autocannon/20 Precision Ammo,Light AC/20 Precision Ammo,
-A,IS,2,IS Ammo LAC/20 - Armor-Piercing,ISLAC20 Ammo - Armor-Piercing,IS Light Autocannon/20 Ammo - Armor-Piercing,Light AC/20 Ammo - Armor-Piercing,IS Armor-Piercing Ammo LAC/20,IS Armor-Pie
+A,IS,2,IS Ammo LAC/20 - Armor-Piercing,ISLAC20 Ammo - Armor-Piercing,IS Light Autocannon/20 Ammo - Armor-Piercing,Light AC/20 Ammo - Armor-Piercing,IS Armor-Piercing Ammo LAC/20,IS Armor-Piercing

@@ -93,7 +93,7 @@ public abstract class TurnOrdered implements Serializable
         this.getInitiative().clear();
     }
 
-    public static void rollInitiative(Vector v) {
+    public static void rollInitiative(Vector<? extends TurnOrdered> v) {
         // Clear all rolls
         for (Enumeration i = v.elements(); i.hasMoreElements();) {
             final TurnOrdered item = (TurnOrdered)i.nextElement();
@@ -140,7 +140,7 @@ public abstract class TurnOrdered implements Serializable
      * initiative, and resolves ties.  The second argument is used
      * when a specific teams initiative should be re-rolled.
      */ 
-    public static void rollInitAndResolveTies(Vector v, Vector rerollRequests) {
+    public static void rollInitAndResolveTies(Vector<? extends TurnOrdered> v, Vector<? extends TurnOrdered> rerollRequests) {
         for (Enumeration i = v.elements(); i.hasMoreElements();) {
             final TurnOrdered item = (TurnOrdered)i.nextElement();
             if (rerollRequests == null) { //normal init roll
@@ -158,7 +158,7 @@ public abstract class TurnOrdered implements Serializable
         }
 
         // check for ties
-        Vector ties = new Vector();
+        Vector<TurnOrdered> ties = new Vector<TurnOrdered>();
         for (Enumeration i = v.elements(); i.hasMoreElements();) {
             final TurnOrdered item = (TurnOrdered)i.nextElement();
             ties.removeAllElements();
@@ -180,7 +180,7 @@ public abstract class TurnOrdered implements Serializable
     /**
      * This takes a Vector of TurnOrdered and generates a TurnVector. 
      */
-    public static TurnVectors generateTurnOrder( Vector v, IGame game ) {
+    public static TurnVectors generateTurnOrder( Vector<? extends TurnOrdered> v, IGame game ) {
         int[] num_even_turns = new int[v.size()];
         int[] num_normal_turns = new int[v.size()];
        
@@ -190,17 +190,12 @@ public abstract class TurnOrdered implements Serializable
         TurnOrdered[] order = new TurnOrdered[v.size()];
         int orderedItems = 0;
 
-        ArrayList plist = 
-        new ArrayList(v.size());
+        ArrayList<TurnOrdered> plist = new ArrayList<TurnOrdered>(v.size());
+        plist.addAll(v);
 
-        for (Enumeration i = v.elements(); i.hasMoreElements();) {
-            Object item = i.nextElement();
-            plist.add(item);
-        }
-
-        Collections.sort(plist, new Comparator() {
-            public int compare(Object o1, Object o2) {
-                return ((TurnOrdered)o1).getInitiative().compareTo(((TurnOrdered)o2).getInitiative());
+        Collections.sort(plist, new Comparator<TurnOrdered>() {
+            public int compare(TurnOrdered o1, TurnOrdered o2) {
+                return o1.getInitiative().compareTo(o2.getInitiative());
             }
         });
 

@@ -1013,13 +1013,19 @@ public class Server implements Runnable {
      */
     private void resetEntityPhase(int phase) {
         // first, mark doomed entities as destroyed and flag them
-        Vector toRemove = new Vector(0, 10);
+        Vector<Entity> toRemove = new Vector<Entity>(0, 10);
         for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
             final Entity entity = (Entity)e.nextElement();
 
             if (entity.crew.isDoomed()) {
+                entity.crew.setDoomed(false);
                 entity.crew.setDead(true);
-                entity.setDestroyed(true);
+                if(entity instanceof Tank) {
+                    entity.setCarcass(true);
+                    ((Tank)entity).immobilize();
+                } else {
+                    entity.setDestroyed(true);
+                }
             }
 
             if (entity.isDoomed()) {
@@ -1040,7 +1046,7 @@ public class Server implements Runnable {
                 }
             }
 
-            if (entity.isDestroyed() || entity.getCrew().isDead()) {
+            if (entity.isDestroyed()) {
                 toRemove.addElement(entity);
             }
         }
@@ -1116,6 +1122,18 @@ public class Server implements Runnable {
      */
     private void prepareVictoryReport() {
         Report r;
+        
+        //remove carcasses to the graveyard
+        Vector<Entity> toRemove = new Vector<Entity>();
+        for(Entity e:game.getEntitiesVector()) {
+            if(e.isCarcass())
+                toRemove.add(e);
+        }
+        for(Entity e:toRemove) {
+            destroyEntity(e,"crew death",false,true);
+            game.removeEntity(e.getId(),IEntityRemovalConditions.REMOVE_SALVAGEABLE);
+            e.setDestroyed(true);
+        }
 
         addReport(new Report(7000, Report.PUBLIC));
 
@@ -14824,9 +14842,9 @@ public class Server implements Runnable {
      *          normally <code>true</code>, but it will be <code>false</code>
      *          when the hit is being applied from a saved game or scenario.
      */
-    public Vector applyCriticalHit( Entity en, int loc, CriticalSlot cs,
+    public Vector<Report> applyCriticalHit( Entity en, int loc, CriticalSlot cs,
                                      boolean secondaryEffects ) {
-        Vector vDesc = new Vector();
+        Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
         // Handle hits on "critical slots" of tanks.
@@ -16143,9 +16161,9 @@ public class Server implements Runnable {
      * @return  a <code>Vector</code> of <code>Report</code> objects
      *          that can be sent to the output log.
      */
-    private Vector destroyEntity(Entity entity, String reason,
+    private Vector<Report> destroyEntity(Entity entity, String reason,
                                  boolean survivable, boolean canSalvage) {
-        Vector vDesc = new Vector();
+        Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
         // The unit can suffer an ammo explosion after it has been destroyed.
@@ -19525,7 +19543,7 @@ public class Server implements Runnable {
      * @param attacker The <code>Entity</code> that did the killing.
      */
     private void creditKill(Entity target, Entity attacker) {
-        if (target.isDoomed() && !target.getGaveKillCredit()) {
+        if ((target.isDoomed() || target.getCrew().isDoomed()) && !target.getGaveKillCredit()) {
             attacker.addKill(target);
         }
     }

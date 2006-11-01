@@ -63,6 +63,7 @@ public class MiscType extends EquipmentType {
     public static final long     F_UMU               = 0x100000000L;
     public static final long     F_COOLANT_SYSTEM    = 0x200000000L;
     public static final long     F_SPIKES            = 0x400000000L;
+    public static final long     F_B_POD            = 0x800000000L;
 
     // Secondary Flags for Physical Weapons
     public static final int     S_CLUB              = 0x00000001; // BMR
@@ -410,6 +411,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLActiveProbe());
         EquipmentType.addType(createCLLightActiveProbe());
         EquipmentType.addType(createISAPPod());
+        EquipmentType.addType(createISBPod());
         EquipmentType.addType(createCLAPPod());
         EquipmentType.addType(createSword());
 
@@ -1714,6 +1716,7 @@ public class MiscType extends EquipmentType {
         
         misc.name = "IS AP Pod";
         misc.setInternalName("ISAntiPersonnelPod");
+        misc.addLookupName("ISAPod");
         misc.addLookupName("IS A-Pod");
         misc.tonnage = 0.5f;
         misc.criticals = 1;
@@ -1722,6 +1725,24 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_AP_POD;
         misc.bv = 1;
+        
+        return misc;
+    }
+
+    public static MiscType createISBPod() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "IS B Pod";
+        misc.setInternalName("ISBattleArmorPersonnelPod");
+        misc.addLookupName("ISBPod");
+        misc.addLookupName("IS B-Pod");
+        misc.tonnage = 1.0f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.cost = 0;
+        misc.spreadable = false;
+        misc.flags |= F_B_POD;
+        misc.bv = 0;
         
         return misc;
     }

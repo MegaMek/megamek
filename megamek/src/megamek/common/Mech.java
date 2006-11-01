@@ -3379,4 +3379,12 @@ public abstract class Mech
     public boolean isNuclearHardened() {
         return true;
     }
+    
+    public void destroyLocation(int loc) {
+        super.destroyLocation(loc);
+        // if it's a leg, the entity falls
+        if (locationIsLeg(loc)) {
+            game.addPSR(new PilotingRollData(getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
+        }
+    }
 }

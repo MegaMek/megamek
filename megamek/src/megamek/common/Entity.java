@@ -599,7 +599,7 @@ public abstract class Entity extends TurnOrdered
      * Returns true if this entity is targetable for attacks
      */
     public boolean isTargetable() {
-        return !destroyed && !doomed && !crew.isDead() && deployed && !isOffBoard();
+        return !destroyed && !doomed && deployed && !isOffBoard();
     }
 
     public boolean isProne() {

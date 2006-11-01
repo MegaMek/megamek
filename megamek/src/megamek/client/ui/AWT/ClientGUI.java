@@ -731,7 +731,7 @@ public class ClientGUI
 
         // Get the new panel.
         String name = String.valueOf(phase);
-        curPanel = (Component) phaseComponents.get(name);
+        curPanel = phaseComponents.get(name);
         if (null == curPanel) {
             curPanel = initializePanel(phase);
         }
@@ -878,7 +878,7 @@ public class ClientGUI
             case IGame.PHASE_END_REPORT:
             case IGame.PHASE_VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
-                component = (Component) phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
+                component = phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
                 if (null == component) {
                     // no ReportDisplay to reuse -- get a new one
                     component = initializePanel(IGame.PHASE_INITIATIVE_REPORT);

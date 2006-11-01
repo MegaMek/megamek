@@ -90,7 +90,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * @see megamek.common.options.IOptionsInfo#getOptionInfo(java.lang.String)
      */
     public IOptionInfo getOptionInfo(String name) {
-        return ((IOptionInfo)optionsHash.get(name));
+        return optionsHash.get(name);
     }
 
     /* (non-Javadoc)
@@ -108,9 +108,9 @@ public class AbstractOptionsInfo implements IOptionsInfo {
         OptionGroup group = null;
         if (!finished) {
             for (int i = 0; i < groups.size(); i++) {
-                OptionGroup g = (OptionGroup)groups.elementAt(i); 
+                OptionGroup g = groups.elementAt(i); 
                 if ( g != null && g.getName().equals(name)) {
-                    group = ((OptionGroup)groups.elementAt(i));
+                    group = groups.elementAt(i);
                     break;
                 }
             }
@@ -137,7 +137,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      */
     protected String getGroupDisplayableName(String groupName) {
         for (int i = 0; i < groups.size(); i++) {
-            OptionGroup g = (OptionGroup)groups.elementAt(i); 
+            OptionGroup g = groups.elementAt(i); 
             if ( g != null && g.getName().equals(groupName)) {
                 return Messages.getString(name+GROUP_SUFFIX+groupName+DISPLAYABLE_NAME_SUFFIX);
             }

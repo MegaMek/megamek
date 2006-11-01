@@ -110,7 +110,7 @@ public class Building implements Serializable {
                     ( "The coordinates, " +
                       coords.getBoardNum() +
                       ", should contain the same type of building as " +
-                      ( (Coords) this.coordinates.elementAt(0)).getBoardNum() );
+                      this.coordinates.elementAt(0).getBoardNum() );
             }
             boolean hexHasCF = nextHex.containsTerrain( Terrains.BLDG_CF );
             if ( (hexHasCF && 
@@ -121,7 +121,7 @@ public class Building implements Serializable {
                     ( "The coordinates, " +
                       coords.getBoardNum() +
                       ", should contain a building with the same CF as " +
-                      ( (Coords) this.coordinates.elementAt(0)).getBoardNum() );
+                      this.coordinates.elementAt(0).getBoardNum() );
             }
         }
         // We passed our tests, add the next hex to this building.

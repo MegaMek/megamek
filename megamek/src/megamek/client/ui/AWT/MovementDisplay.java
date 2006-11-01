@@ -1439,7 +1439,7 @@ public class MovementDisplay
             String question = Messages.getString("MovementDisplay.UnloadUnitDialog.message", new Object[]{ //$NON-NLS-1$
                     ce.getShortName(),ce.getUnusedString()});
             for ( int loop = 0; loop < names.length; loop++ ) {
-                names[loop] = ( (Entity)this.loadedUnits.elementAt(loop) ).getShortName();
+                names[loop] = this.loadedUnits.elementAt(loop).getShortName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( clientgui.frame,
@@ -1448,13 +1448,13 @@ public class MovementDisplay
                                         names );
             choiceDialog.setVisible(true);
             if ( choiceDialog.getAnswer() == true ) {
-                choice = (Entity) this.loadedUnits.elementAt( choiceDialog.getChoice() );
+                choice = this.loadedUnits.elementAt(choiceDialog.getChoice());
             }
         } // End have-choices
 
         // Only one choice.
         else {
-            choice = (Entity) this.loadedUnits.elementAt( 0 );
+            choice = this.loadedUnits.elementAt(0);
             this.loadedUnits.removeElementAt( 0 );
         }
 
@@ -1496,7 +1496,7 @@ public class MovementDisplay
         if ( targets.size() == 1 ) {
 
             // Return  that choice.
-            choice = (Targetable) targets.elementAt( 0 );
+            choice = targets.elementAt( 0 );
 
         }
 
@@ -1506,7 +1506,7 @@ public class MovementDisplay
             String question = Messages.getString("MovementDisplay.ChooseTargetDialog.message", new Object[]{//$NON-NLS-1$
                     pos.getBoardNum()});
             for ( int loop = 0; loop < names.length; loop++ ) {
-                names[loop] = ( (Targetable)targets.elementAt(loop) ).getDisplayName();
+                names[loop] = targets.elementAt(loop).getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( clientgui.frame,
@@ -1515,7 +1515,7 @@ public class MovementDisplay
                                         names );
             choiceDialog.setVisible(true);
             if ( choiceDialog.getAnswer() == true ) {
-                choice = (Targetable) targets.elementAt( choiceDialog.getChoice() );
+                choice = targets.elementAt( choiceDialog.getChoice() );
             }
         } // End have-choices
 
@@ -1855,7 +1855,7 @@ public class MovementDisplay
         // Construct an array of stranded entity names
         names = new String[ stranded.size() ];
         for ( int index = 0; index < names.length; index++ ) {
-            entity = (Entity) stranded.elementAt(index);
+            entity = stranded.elementAt(index);
             transport = client.getEntity( entity.getTransportId() );
             String buffer;
             if ( null == transport ) {
@@ -1878,7 +1878,7 @@ public class MovementDisplay
         if ( null != indexes ) {
             ids = new int[indexes.length];
             for ( int index = 0; index < indexes.length; index++ ) {
-                entity = (Entity) stranded.elementAt(index);
+                entity = stranded.elementAt(index);
                 ids[index] = entity.getId();
             }
         }

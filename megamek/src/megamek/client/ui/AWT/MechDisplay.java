@@ -216,7 +216,7 @@ public class MechDisplay extends BufferedPanel {
      */
     public void processMechDisplayEvent(MechDisplayEvent event) {
         for (int i = 0; i < eventListeners.size(); i++) {
-            MechDisplayListener lis = (MechDisplayListener) (eventListeners.elementAt(i));
+            MechDisplayListener lis = eventListeners.elementAt(i);
             switch (event.getType()) {
                 case MechDisplayEvent.WEAPON_SELECTED:
                     lis.WeaponSelected(event);
@@ -1148,7 +1148,7 @@ public class MechDisplay extends BufferedPanel {
                 }
                 Mounted mWeap = entity.getWeaponList().get(n);
                 Mounted oldAmmo = mWeap.getLinked();
-                Mounted mAmmo = (Mounted) vAmmo.elementAt(m_chAmmo.getSelectedIndex());
+                Mounted mAmmo = vAmmo.elementAt(m_chAmmo.getSelectedIndex());
                 entity.loadWeapon(mWeap, mAmmo);
                 
                 // Refresh for hot load change

@@ -208,7 +208,7 @@ public class DirectoryItems implements Categorized {
     public Enumeration<String> getItemNames( String categoryName ) {
 
         // Get the category with the given name.
-        Categorized category = (Categorized) categories.get( categoryName );
+        Categorized category = categories.get( categoryName );
 
         // Return an empty Enumeration if we couldn't find the category.
         if ( null == category ) {
@@ -256,7 +256,7 @@ public class DirectoryItems implements Categorized {
         }
 
         // Get the category with the given name.
-        Categorized category = (Categorized) categories.get( categoryName );
+        Categorized category = categories.get( categoryName );
 
         // Is this a subcategory?
         if ( this != category ) {
@@ -271,7 +271,7 @@ public class DirectoryItems implements Categorized {
         }
 
         // Find the named entry.
-        ItemFile entry = (ItemFile) items.get( itemName );
+        ItemFile entry = items.get( itemName );
 
         // Return the item.
         return entry.getItem();

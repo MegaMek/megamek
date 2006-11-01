@@ -1087,7 +1087,7 @@ public class PhysicalDisplay
         // Convert the choices into a List of targets.
         Vector<Targetable> targets = new Vector<Targetable>();
         while ( choices.hasMoreElements() ) {
-            choice = (Targetable) choices.nextElement();
+            choice = choices.nextElement();
             if ( !ce().equals( choice ) ) {
                 targets.addElement( choice );
             }
@@ -1113,7 +1113,7 @@ public class PhysicalDisplay
         if ( targets.size() == 1 ) {
 
             // Return  that choice.
-            choice = (Targetable) targets.elementAt( 0 );
+            choice = targets.elementAt( 0 );
 
         }
 
@@ -1121,8 +1121,7 @@ public class PhysicalDisplay
         else if ( targets.size() > 1 ) {
             String[] names = new String[ targets.size() ];
             for ( int loop = 0; loop < names.length; loop++ ) {
-                names[loop] = ( (Targetable)targets.elementAt(loop) )
-                    .getDisplayName();
+                names[loop] = targets.elementAt(loop).getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
                 new SingleChoiceDialog( clientgui.frame,
@@ -1131,8 +1130,7 @@ public class PhysicalDisplay
                         names );
             choiceDialog.setVisible(true);
             if ( choiceDialog.getAnswer() == true ) {
-                choice = (Targetable) targets.elementAt
-                    ( choiceDialog.getChoice() );
+                choice = targets.elementAt(choiceDialog.getChoice());
             }
         } // End have-choices
 

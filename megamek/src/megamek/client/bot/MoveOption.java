@@ -495,7 +495,7 @@ public class MoveOption extends MovePath implements Cloneable {
     }
 
     public DamageInfo getDamageInfo(CEntity cen, boolean create) {
-        DamageInfo result = (DamageInfo) damageInfos.get(cen);
+        DamageInfo result = damageInfos.get(cen);
         if (create && result == null) {
             result = new DamageInfo();
             damageInfos.put(cen, result);

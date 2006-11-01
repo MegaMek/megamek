@@ -708,7 +708,7 @@ public class CustomBattleArmorDialog
             resetState();
             return;
         } else if (ae.getSource() == m_buttonAddTorso) {
-            BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chTorsoEquipment.getSelectedItem())));
+            BattleArmorEquipment tmpBAE = equipmentTypes.get(equipmentNames.indexOf(m_chTorsoEquipment.getSelectedItem()));
             if (torsoEquipment == null)
                 torsoEquipment = new Vector<BattleArmorEquipment>();
             torsoEquipment.add(tmpBAE);
@@ -723,7 +723,7 @@ public class CustomBattleArmorDialog
             // Nothing else in actionPerformed will matter, so lets move on!
             return;
         } else if (ae.getSource() == m_buttonAddRightArm) {
-            BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chRightArmEquipment.getSelectedItem())));
+            BattleArmorEquipment tmpBAE = equipmentTypes.get(equipmentNames.indexOf(m_chRightArmEquipment.getSelectedItem()));
             if (rightArmEquipment == null)
                 rightArmEquipment = new Vector<BattleArmorEquipment>();
             rightArmEquipment.add(tmpBAE);
@@ -738,7 +738,7 @@ public class CustomBattleArmorDialog
             // Nothing else in actionPerformed will matter, so lets move on!
             return;
         } else if (ae.getSource() == m_buttonAddLeftArm) {
-            BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chLeftArmEquipment.getSelectedItem())));
+            BattleArmorEquipment tmpBAE = equipmentTypes.get(equipmentNames.indexOf(m_chLeftArmEquipment.getSelectedItem()));
             if (leftArmEquipment == null)
                 leftArmEquipment = new Vector<BattleArmorEquipment>();
             leftArmEquipment.add(tmpBAE);
@@ -832,7 +832,7 @@ public class CustomBattleArmorDialog
                 Client c = null;
                 if (m_chPlayer.getSelectedIndex() > 0) {
                     String name = m_chPlayer.getSelectedItem();
-                    c = (Client)m_clientgui.getBots().get(name);
+                    c = m_clientgui.getBots().get(name);
                 }
                 if (c == null) {
                     c = m_client;

@@ -19073,7 +19073,7 @@ public class Server implements Runnable {
                     r.newlines = 1;
                     addReport(r);
                     Vector vRep = new Vector();
-                    doExplosion(((FuelTank)bldg).getMagnitude(), 10, false, (Coords)(bldg.getCoords().nextElement()), true, vRep, null);
+                    doExplosion(((FuelTank)bldg).getMagnitude(), 10, false, bldg.getCoords().nextElement(), true, vRep, null);
                     Report.indentAll(vRep, 2);
                     addReport(vRep);
                     return null;

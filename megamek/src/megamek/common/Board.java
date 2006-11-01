@@ -735,7 +735,7 @@ public class Board implements Serializable, IBoard {
         }
 
         // Do we already have a tracker for those coords?
-        tracker = (InfernoTracker) this.infernos.get( coords );
+        tracker = this.infernos.get( coords );
         if ( null == tracker ) {
             // Nope.  Make one.
             tracker = new InfernoTracker();
@@ -769,7 +769,7 @@ public class Board implements Serializable, IBoard {
 
         // Get the tracker for those coordinates
         // and see if the fire is still burning.
-        tracker = (InfernoTracker) this.infernos.get( coords );
+        tracker = this.infernos.get( coords );
         if ( null != tracker ) {
             if ( tracker.isStillBurning() ) {
                 result = true;
@@ -794,7 +794,7 @@ public class Board implements Serializable, IBoard {
 
         // Get the tracker for those coordinates, record the round
         // of burning and see if the fire is still burning.
-        tracker = (InfernoTracker) this.infernos.get( coords );
+        tracker = this.infernos.get( coords );
         if ( null != tracker ) {
             tracker.newRound(-1);
             if ( tracker.isStillBurning() ) {
@@ -843,7 +843,7 @@ public class Board implements Serializable, IBoard {
 
         // Get the tracker for those coordinates
         // and see if the fire is still burning.
-        tracker = (InfernoTracker) this.infernos.get( coords );
+        tracker = this.infernos.get( coords );
         if ( null != tracker ) {
             turns = tracker.getTurnsLeftToBurn();
         }
@@ -866,7 +866,7 @@ public class Board implements Serializable, IBoard {
 
         // Get the tracker for those coordinates
         // and see if the fire is still burning.
-        tracker = (InfernoTracker) this.infernos.get( coords );
+        tracker = this.infernos.get( coords );
         if ( null != tracker ) {
             turns = tracker.getArrowIVTurnsLeftToBurn();
         }
@@ -890,8 +890,8 @@ public class Board implements Serializable, IBoard {
      *          given coordinates, otherwise a <code>null</code> will
      *          be returned.
      */
-    public Building getBuildingAt( Coords coords ) {
-        return (Building) this.bldgByCoords.get( coords );
+    public Building getBuildingAt(Coords coords) {
+        return this.bldgByCoords.get(coords);
     }
 
     /**
@@ -916,7 +916,7 @@ public class Board implements Serializable, IBoard {
         Building local = null;
         Enumeration coords = other.getCoords();
         if ( coords.hasMoreElements() ) {
-            local = (Building) bldgByCoords.get( coords.nextElement() );
+            local = bldgByCoords.get(coords.nextElement());
             if ( !other.equals( local ) ) {
                 local = null;
             }

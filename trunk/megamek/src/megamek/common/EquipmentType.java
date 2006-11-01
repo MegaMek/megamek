@@ -115,7 +115,7 @@ public class EquipmentType {
 
     protected String    internalName = null;
 
-    private Vector      namesVector = new Vector();
+    private Vector<String>      namesVector = new Vector<String>();
 
     protected float     tonnage = 0;
     protected int       criticals = 0;
@@ -146,8 +146,8 @@ public class EquipmentType {
     protected boolean instantModeSwitch = true;
     
     // static list of eq
-    protected static Vector allTypes;
-    protected static Hashtable lookupHash;
+    protected static Vector<EquipmentType> allTypes;
+    protected static Hashtable<String,EquipmentType> lookupHash;
 
     /** Creates new EquipmentType */
     public EquipmentType() {
@@ -275,7 +275,7 @@ public class EquipmentType {
     protected void setModes(String[] modes) {
         megamek.debug.Assert.assertTrue(modes != null && modes.length >= 0, 
                 "List of modes must not be null or empty");
-        Vector newModes = new Vector(modes.length);
+        Vector<EquipmentMode> newModes = new Vector<EquipmentMode>(modes.length);
         for (int i = 0 ,l = modes.length; i < l; i++) {
             newModes.addElement(EquipmentMode.getMode(modes[i]));
         }
@@ -324,14 +324,14 @@ public class EquipmentType {
         return (EquipmentType) EquipmentType.lookupHash.get(key);
     }
 
-    public Enumeration getNames() {
+    public Enumeration<String> getNames() {
         return namesVector.elements();
     }
 
     public static void initializeTypes() {
         if(null==EquipmentType.allTypes) {
-            EquipmentType.allTypes = new Vector();
-            EquipmentType.lookupHash = new Hashtable();
+            EquipmentType.allTypes = new Vector<EquipmentType>();
+            EquipmentType.lookupHash = new Hashtable<String,EquipmentType>();
             
             // will I need any others?
             WeaponType.initializeTypes();
@@ -526,6 +526,8 @@ public class EquipmentType {
                 }
                 w.newLine();
             }
+            w.flush();
+            w.close();
         }
         catch(IOException e) {
             e.printStackTrace();

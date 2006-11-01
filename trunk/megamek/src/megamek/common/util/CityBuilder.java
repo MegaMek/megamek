@@ -98,7 +98,7 @@ public class CityBuilder {
         Vector<BuildingTemplate> buildingList = new Vector<BuildingTemplate>();
         HashSet<Coords> buildingUsed = new HashSet<Coords>();
         
-        Vector coordList = new Vector();
+        Vector<Coords> coordList = new Vector<Coords>();
         
         Coords centre = new Coords(width/2,height/2);
         double falloff = (double)mapSettings.getCityDensity() / (double)(radius*radius);
@@ -124,7 +124,7 @@ public class CityBuilder {
                 if(Compute.randomInt(100) > localdensity) {
                     continue; //empty lot
                 }
-                coordList = new Vector();
+                coordList = new Vector<Coords>();
                 coordList.add(coord);
                 buildingUsed.add(coord);
                 while(Compute.randomInt(100) < localdensity) {
@@ -399,7 +399,7 @@ public class CityBuilder {
      */
     private Coords tryToBuildBridge(Coords start, int direction) {
         if(!board.contains(start))return null;
-        Vector<Coords> hexes = new Vector(7);
+        Vector<Coords> hexes = new Vector<Coords>(7);
         Coords end = null;
         Coords next = start.translated(direction);
         while(hexes.size() < 6) {

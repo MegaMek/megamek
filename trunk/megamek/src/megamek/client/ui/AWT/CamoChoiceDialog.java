@@ -82,7 +82,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
     /** The registered camo selection listeners.
      */
-    private Vector listeners = new Vector();
+    private Vector<ItemListener> listeners = new Vector<ItemListener>();
 
     /** A helper function to close the dialog.
      */
@@ -389,10 +389,8 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
                     ( this, event.getID(), image, ItemEvent.ITEM_STATE_CHANGED );
 
                 // Alert the listeners.
-                Enumeration alerts = listeners.elements();
-                while ( alerts.hasMoreElements() ) {
-                    ( (ItemListener) alerts.nextElement() )
-                        .itemStateChanged( alert );
+                for(ItemListener l:listeners) {
+                    l.itemStateChanged(alert);
                 }
 
             } // End have-listeners

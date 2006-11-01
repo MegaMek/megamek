@@ -87,7 +87,7 @@ public class MovePath implements Cloneable, Serializable {
         }
     }
 
-    protected Vector steps = new Vector();
+    protected Vector<MoveStep> steps = new Vector<MoveStep>();
 
     protected transient IGame game;
     protected transient Entity entity;
@@ -371,7 +371,7 @@ public class MovePath implements Cloneable, Serializable {
      */
     public void clipToPossible() {
         // hopefully there's no impossible steps in the middle of possible ones
-        Vector goodSteps = new Vector();
+        Vector<MoveStep> goodSteps = new Vector<MoveStep>();
         for (final Enumeration i = steps.elements(); i.hasMoreElements();) {
             final MoveStep step = (MoveStep) i.nextElement();
             if (step.getMovementType() != IEntityMovementType.MOVE_ILLEGAL) {
@@ -552,10 +552,10 @@ public class MovePath implements Cloneable, Serializable {
 
         MovePath bestPath = (MovePath) this.clone();
 
-        HashMap discovered = new HashMap();
+        HashMap<MovePath.Key, MovePath> discovered = new HashMap<MovePath.Key, MovePath>();
         discovered.put(bestPath.getKey(), bestPath);
 
-        ArrayList candidates = new ArrayList();
+        ArrayList<MovePath> candidates = new ArrayList<MovePath>();
         candidates.add(bestPath);
 
         boolean keepLooping = this.getFinalCoords().distance(dest) > 1;
@@ -581,7 +581,7 @@ public class MovePath implements Cloneable, Serializable {
                     if (found != null && mpc.compare(found, expandedPath) <= 0) {
                         continue;
                     }
-                    int index = Collections.binarySearch(candidates, expandedPath, mpc);
+                    int index = Collections.<MovePath>binarySearch(candidates, expandedPath, mpc);
                     if (index < 0) {
                         index = -index - 1;
                     }
@@ -651,7 +651,7 @@ public class MovePath implements Cloneable, Serializable {
      * such) must be handled elsewhere.
      */
     public List getNextMoves(boolean backward, boolean forward) {
-        ArrayList result = new ArrayList();
+        ArrayList<MovePath> result = new ArrayList<MovePath>();
         MoveStep last = getLastStep();
         if (isJumping()) {
             MovePath left = (MovePath) this.clone();
@@ -735,7 +735,7 @@ public class MovePath implements Cloneable, Serializable {
         }
     }
 
-    protected static class MovePathComparator implements Comparator {
+    protected static class MovePathComparator implements Comparator<MovePath> {
         private Coords destination;
         boolean backward;
 
@@ -744,10 +744,7 @@ public class MovePath implements Cloneable, Serializable {
             this.backward = backward;
         }
 
-        public int compare(Object o1, Object o2) {
-            MovePath first = (MovePath) o1;
-            MovePath second = (MovePath) o2;
-
+        public int compare(MovePath first, MovePath second) {
             int firstDist = first.getMpUsed() + first.getFinalCoords().distance(destination) + getFacingDiff(first);
             int secondDist = second.getMpUsed() + second.getFinalCoords().distance(destination) + getFacingDiff(second);
             return firstDist - secondDist;

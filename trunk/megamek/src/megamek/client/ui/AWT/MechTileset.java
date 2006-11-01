@@ -73,8 +73,8 @@ public class MechTileset {
     private MechEntry default_proto;
     private MechEntry default_gun_emplacement;
     
-    private HashMap exact = new HashMap();
-    private HashMap chassis = new HashMap();
+    private HashMap<String,MechEntry> exact = new HashMap<String,MechEntry>();
+    private HashMap<String,MechEntry> chassis = new HashMap<String,MechEntry>();
     
     private String dir;
 

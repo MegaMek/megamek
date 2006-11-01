@@ -51,8 +51,8 @@ import java.util.Vector;
  */
 public class HexTileset {
     
-    private ArrayList bases = new ArrayList();
-    private ArrayList supers = new ArrayList();
+    private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();
+    private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();
     private ImageCache<IHex,Image> hexToImageCache = new ImageCache<IHex,Image>();
     private ImageCache<IHex,List<Image>> hexToImageListCache = new ImageCache<IHex,List<Image>>();
 
@@ -79,7 +79,7 @@ public class HexTileset {
      */
     public synchronized Object[] assignMatch(IHex hex, Component comp) {
         IHex hexCopy = hex.duplicate();
-        List supers = supersFor(hexCopy, comp);
+        List<Image> supers = supersFor(hexCopy, comp);
         Image base = baseFor(hexCopy, comp);
         Object[] pair = new Object[] {base, supers};
         hexToImageCache.put(hex, base);
@@ -111,8 +111,8 @@ public class HexTileset {
      * elements from the tileset hex are removed from the hex.  Thus you want
      * to pass a copy of the original to this function.
      */
-    private List supersFor(IHex hex, Component comp) {
-        ArrayList matches = new ArrayList();
+    private List<Image> supersFor(IHex hex, Component comp) {
+        ArrayList<Image> matches = new ArrayList<Image>();
         
         // find superimposed image matches
         for (Iterator i = supers.iterator(); i.hasNext();) {
@@ -255,8 +255,8 @@ public class HexTileset {
     }
     
     public synchronized void reset() {
-        hexToImageCache = new ImageCache();
-        hexToImageListCache = new ImageCache();
+        hexToImageCache = new ImageCache<IHex,Image>();
+        hexToImageListCache = new ImageCache<IHex,List<Image>>();
     }
 
     /**
@@ -359,8 +359,8 @@ public class HexTileset {
         private IHex hex;
         private String imageFile;
         private Image image;
-        private Vector images;
-        private Vector filenames;
+        private Vector<Image> images;
+        private Vector<String> filenames;
         private Random r;
         
         public HexEntry(IHex hex, String imageFile) {
@@ -399,7 +399,7 @@ public class HexTileset {
     }
         
         public void loadImage(Component comp) {
-            images = new Vector();
+            images = new Vector<Image>();
           for (int i = 0; i < filenames.size(); i++) {
             String filename = (String) filenames.elementAt(i);
             images.addElement(comp.getToolkit().getImage("data/images/hexes/" + filename)); //$NON-NLS-1$

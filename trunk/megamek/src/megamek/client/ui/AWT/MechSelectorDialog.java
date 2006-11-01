@@ -469,7 +469,7 @@ public class MechSelectorDialog
     }
 
     private void filterMechs(boolean calledByAdvancedSearch) {
-        Vector vMechs = new Vector();
+        Vector<MechSummary> vMechs = new Vector<MechSummary>();
         int nClass = m_chWeightClass.getSelectedIndex();
         int nType = m_chType.getSelectedIndex();
         int nUnitType = m_chUnitType.getSelectedIndex();
@@ -552,7 +552,7 @@ public class MechSelectorDialog
             filterMechs(true);
         }
 
-        Vector vMatches = new Vector();
+        Vector<MechSummary> vMatches = new Vector<MechSummary>();
         for (int i = 0; i < m_mechsCurrent.length; i++) {
             MechSummary ms = m_mechsCurrent[i];
             try {

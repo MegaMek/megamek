@@ -116,7 +116,7 @@ public class BoardUtilities {
         
         IBoard result = new Board(mapSettings.getBoardWidth(),mapSettings.getBoardHeight(), nb);
         /* initalize reverseHex */
-        HashMap reverseHex = new HashMap(2 * mapSettings.getBoardWidth() * mapSettings.getBoardHeight());
+        HashMap<IHex,Point> reverseHex = new HashMap<IHex,Point>(2 * mapSettings.getBoardWidth() * mapSettings.getBoardHeight());
         for (int y = 0; y < mapSettings.getBoardHeight(); y++) {
             for (int x = 0; x < mapSettings.getBoardWidth(); x++) {
                 reverseHex.put(result.getHex(x, y),new Point(x, y));
@@ -304,7 +304,7 @@ public class BoardUtilities {
         int cf = building.getCF();
         int height = building.getHeight();
         ITerrainFactory tf = Terrains.getTerrainFactory();
-        Vector hexes = new Vector();
+        Vector<IHex> hexes = new Vector<IHex>();
         int level=0;
         for(Enumeration i=building.getCoords();i.hasMoreElements();) {
             Coords c = (Coords)i.nextElement();
@@ -346,8 +346,8 @@ public class BoardUtilities {
         }
         IHex field;
         
-        HashSet alreadyUsed = new HashSet();
-        HashSet unUsed = new HashSet();
+        HashSet<IHex> alreadyUsed = new HashSet<IHex>();
+        HashSet<IHex> unUsed = new HashSet<IHex>();
         field = board.getHex(p.x, p.y);
         if (!field.containsTerrain(terrainType)) {
             unUsed.add(field);
@@ -405,10 +405,10 @@ public class BoardUtilities {
      * are stored in addition to all previously stored.
      * @param searchFrom The Hex where to start
      */
-    private static void findAllUnused(IBoard board, int terrainType, HashSet alreadyUsed,
-            HashSet unUsed, IHex searchFrom, HashMap reverseHex) {
+    private static void findAllUnused(IBoard board, int terrainType, HashSet<IHex> alreadyUsed,
+            HashSet<IHex> unUsed, IHex searchFrom, HashMap reverseHex) {
         IHex field;
-        HashSet notYetUsed = new HashSet();
+        HashSet<IHex> notYetUsed = new HashSet<IHex>();
         
         notYetUsed.add(searchFrom);
         do {
@@ -517,7 +517,7 @@ public class BoardUtilities {
      */
     public static void addRiver(IBoard board, HashMap reverseHex) {
         int minElevation = Integer.MAX_VALUE;
-        HashSet riverHexes = new HashSet();
+        HashSet<IHex> riverHexes = new HashSet<IHex>();
         IHex field;
         Point p = null;
         int direction = 0;
@@ -622,9 +622,9 @@ public class BoardUtilities {
      * extended. 
      * @return Hashset with the hexes from the side.
      */
-    private static HashSet extendRiverToSide(IBoard board, Point hexloc, int width, int direction, HashMap reverseHex) {
+    private static HashSet<IHex> extendRiverToSide(IBoard board, Point hexloc, int width, int direction, HashMap reverseHex) {
         Point current = new Point(hexloc);
-        HashSet result = new HashSet();
+        HashSet<IHex> result = new HashSet<IHex>();
         IHex hex;
         
         hex = board.getHexInDir(current.x, current.y, direction);
@@ -810,8 +810,8 @@ public class BoardUtilities {
     }
     
     protected static void addCliffs(IBoard board, int modifier) {
-        HashSet<Coords> ignore = new HashSet(); //previously considered hexes
-        Vector<Coords> candidate = new Vector();
+        HashSet<Coords> ignore = new HashSet<Coords>(); //previously considered hexes
+        Vector<Coords> candidate = new Vector<Coords>();
         for(int x=0;x<board.getWidth();x++) {
             for(int y=0;y<board.getHeight();y++) {
                 Coords c = new Coords(x,y);

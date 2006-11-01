@@ -54,7 +54,7 @@ public interface Transporter extends Serializable {
      *          The returned <code>Vector</code> is independant from the under-
      *          lying data structure; modifying one does not affect the other.
      */
-    public Vector getLoadedUnits();
+    public Vector<Entity> getLoadedUnits();
 
     /**
      * Unload the given unit.

@@ -20,8 +20,8 @@ import java.awt.event.*;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Comparator;
 import java.util.Collections;
 
@@ -810,15 +810,13 @@ public class ChatLounge
         categories.  Finally, a players units will be sorted by the
         order they were "added" to the list.
         */
-        LinkedList sortedEntities = new LinkedList();
+        ArrayList<Entity> sortedEntities = new ArrayList<Entity>();
         for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
             Entity entity = (Entity) i.nextElement();
             sortedEntities.add(entity);
         }
-        Collections.sort( sortedEntities, new Comparator() {
-                public int compare( Object aa, Object bb ) {
-                    Entity a = (Entity)aa;
-                    Entity b = (Entity)bb;
+        Collections.sort( sortedEntities, new Comparator<Entity>() {
+                public int compare( Entity a, Entity b ) {
                     Player p_a = a.getOwner();
                     Player p_b = b.getOwner();
                     int t_a = p_a.getTeam();
@@ -1178,10 +1176,10 @@ public class ChatLounge
         // When we customize a single entity's C3 network setting,
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();
-        Vector c3members = new Vector();
-        Enumeration playerUnits = c.game.getPlayerEntities(c.getLocalPlayer()).elements();
+        Vector<Entity> c3members = new Vector<Entity>();
+        Enumeration<Entity> playerUnits = c.game.getPlayerEntities(c.getLocalPlayer()).elements();
         while (playerUnits.hasMoreElements()) {
-            Entity unit = (Entity) playerUnits.nextElement();
+            Entity unit = playerUnits.nextElement();
             if (!entity.equals(unit) && entity.onSameC3NetworkAs(unit)) {
                 c3members.addElement(unit);
             }

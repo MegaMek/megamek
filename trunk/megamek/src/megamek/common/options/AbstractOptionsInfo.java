@@ -47,14 +47,14 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     /**
      * Hashtable of the <code>OptionInfo</code> used to store/find option info. 
      */
-    private Hashtable optionsHash = new Hashtable();
+    private Hashtable<String,OptionInfo> optionsHash = new Hashtable<String,OptionInfo>();
 
     /**
      * List of option groups. The order of groups is important. 
      * The first group added by <code>addGroup</code> is the first in the
      * <code>Enumeration</code> returned by <code>getGroups</code>   
      */
-    private Vector groups = new Vector();
+    private Vector<OptionGroup> groups = new Vector<OptionGroup>();
 
     /**
      * Flag that indicates that this filling the the options info data is

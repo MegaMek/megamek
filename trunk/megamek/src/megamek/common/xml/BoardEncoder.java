@@ -139,8 +139,8 @@ public class BoardEncoder {
         String attrStr = null;
         int attrVal = 0;
         Board retVal = null;
-        Vector buildings = new Vector();
-        Hashtable infernos = new Hashtable();
+        Vector<Building> buildings = new Vector<Building>();
+        Hashtable<Coords,InfernoTracker> infernos = new Hashtable<Coords,InfernoTracker>();
         int height = 0;
         int width = 0;
         IHex[] hexes = null;

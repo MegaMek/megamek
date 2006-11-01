@@ -75,7 +75,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     private Image artilleryAutohit;
     private Image artilleryAdjusted;
     private Image artilleryIncoming;
-    private HashMap<Integer, Image> ecmShades = new HashMap();
+    private HashMap<Integer, Image> ecmShades = new HashMap<Integer, Image>();
     private static final String NIGHT_IMAGE_FILE = "data/images/hexes/transparent/night.png";
     private static final String ARTILLERY_AUTOHIT_IMAGE_FILE = "data/images/hexes/artyauto.gif";
     private static final String ARTILLERY_ADJUSTED_IMAGE_FILE = "data/images/hexes/artyadj.gif";

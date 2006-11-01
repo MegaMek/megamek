@@ -109,12 +109,12 @@ public class CustomBattleArmorDialog
     private int stateManipulatorTypeLeft = 0;
     private int stateManipulatorTypeRight = 0;
     private int stateConflictFlags = 0;
-    private Vector leftArmEquipment = null;
-    private Vector rightArmEquipment = null;
-    private Vector torsoEquipment = null;
+    private Vector<BattleArmorEquipment> leftArmEquipment = null;
+    private Vector<BattleArmorEquipment> rightArmEquipment = null;
+    private Vector<BattleArmorEquipment> torsoEquipment = null;
 
-    private static ArrayList equipmentTypes = null;
-    private static ArrayList equipmentNames = null;
+    private static ArrayList<BattleArmorEquipment> equipmentTypes = null;
+    private static ArrayList<String> equipmentNames = null;
 
     private static final int TECH_BASE_IS = 0;
     private static final int TECH_BASE_CLAN = 1;
@@ -710,7 +710,7 @@ public class CustomBattleArmorDialog
         } else if (ae.getSource() == m_buttonAddTorso) {
             BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chTorsoEquipment.getSelectedItem())));
             if (torsoEquipment == null)
-                torsoEquipment = new Vector();
+                torsoEquipment = new Vector<BattleArmorEquipment>();
             torsoEquipment.add(tmpBAE);
             stateConflictFlags |= tmpBAE.conflictFlag;
 
@@ -725,7 +725,7 @@ public class CustomBattleArmorDialog
         } else if (ae.getSource() == m_buttonAddRightArm) {
             BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chRightArmEquipment.getSelectedItem())));
             if (rightArmEquipment == null)
-                rightArmEquipment = new Vector();
+                rightArmEquipment = new Vector<BattleArmorEquipment>();
             rightArmEquipment.add(tmpBAE);
             stateConflictFlags |= tmpBAE.conflictFlag;
 
@@ -740,7 +740,7 @@ public class CustomBattleArmorDialog
         } else if (ae.getSource() == m_buttonAddLeftArm) {
             BattleArmorEquipment tmpBAE = (BattleArmorEquipment)(equipmentTypes.get(equipmentNames.indexOf(m_chLeftArmEquipment.getSelectedItem())));
             if (leftArmEquipment == null)
-                leftArmEquipment = new Vector();
+                leftArmEquipment = new Vector<BattleArmorEquipment>();
             leftArmEquipment.add(tmpBAE);
             stateConflictFlags |= tmpBAE.conflictFlag;
 
@@ -1996,8 +1996,8 @@ public class CustomBattleArmorDialog
         }
 
         void initialize() {
-            CustomBattleArmorDialog.equipmentTypes = new ArrayList();
-            CustomBattleArmorDialog.equipmentNames = new ArrayList();
+            CustomBattleArmorDialog.equipmentTypes = new ArrayList<BattleArmorEquipment>();
+            CustomBattleArmorDialog.equipmentNames = new ArrayList<String>();
 
             // Weapons
             new BattleArmorEquipment("Support Machine Gun", "BA-Machine Gun", 100, 5000, 5, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);

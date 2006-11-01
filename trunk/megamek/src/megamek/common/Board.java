@@ -49,15 +49,15 @@ public class Board implements Serializable, IBoard {
     private IHex[] data;
     
     /** Building data structures. */
-    private Vector buildings = new Vector();
-    private transient Hashtable bldgByCoords = new Hashtable();
+    private Vector<Building> buildings = new Vector<Building>();
+    private transient Hashtable<Coords,Building> bldgByCoords = new Hashtable<Coords,Building>();
 
-    protected transient Vector boardListeners = new Vector();
+    protected transient Vector<BoardListener> boardListeners = new Vector<BoardListener>();
 
     /**
      * Record the infernos placed on the board.
      */
-    private Hashtable infernos = new Hashtable();
+    private Hashtable<Coords,InfernoTracker> infernos = new Hashtable<Coords,InfernoTracker>();
 
     /** Option to turn have roads auto-exiting to pavement. */
     private boolean roadsAutoExit = true;
@@ -123,7 +123,7 @@ public class Board implements Serializable, IBoard {
      *                  object is used directly without being copied.
      */
     public Board( int width, int height, IHex[] hexes,
-                  Vector bldgs, Hashtable infMap ) {
+                  Vector<Building> bldgs, Hashtable<Coords,InfernoTracker> infMap ) {
         this.width = width;
         this.height = height;
         data = hexes;
@@ -167,9 +167,9 @@ public class Board implements Serializable, IBoard {
         newData(width, height, new IHex[width * height]);
     }
 
-    public Enumeration getHexesAtDistance(Coords coords, int distance) {
+    public Enumeration<Coords> getHexesAtDistance(Coords coords, int distance) {
         // Initialize the one necessary variable.
-        Vector retVal = new Vector();
+        Vector<Coords> retVal = new Vector<Coords>();
 
         // Handle boundary conditions.
         if (distance < 0) {
@@ -235,7 +235,7 @@ public class Board implements Serializable, IBoard {
         // Initialize all buildings.
         buildings.removeAllElements();
         if (bldgByCoords == null) {
-            bldgByCoords = new Hashtable();
+            bldgByCoords = new Hashtable<Coords,Building>();
         } else {
             bldgByCoords.clear();
         }
@@ -257,7 +257,7 @@ public class Board implements Serializable, IBoard {
                             buildings.addElement( bldg );
 
                             // Each building will identify the hexes it covers.
-                            Enumeration iter = bldg.getCoords();
+                            Enumeration<Coords> iter = bldg.getCoords();
                             while ( iter.hasMoreElements() ) {
                                 bldgByCoords.put( iter.nextElement(), bldg );
                             }
@@ -283,7 +283,7 @@ public class Board implements Serializable, IBoard {
                             buildings.addElement(bldg);
 
                             // Each building will identify the hexes it covers.
-                            Enumeration iter = bldg.getCoords();
+                            Enumeration<Coords> iter = bldg.getCoords();
                             while ( iter.hasMoreElements() ) {
                                 bldgByCoords.put( iter.nextElement(), bldg );
                             }
@@ -308,7 +308,7 @@ public class Board implements Serializable, IBoard {
                             buildings.addElement( bldg );
 
                             // Each building will identify the hexes it covers.
-                            Enumeration iter = bldg.getCoords();
+                            Enumeration<Coords> iter = bldg.getCoords();
                             while ( iter.hasMoreElements() ) {
                                 bldgByCoords.put( iter.nextElement(), bldg );
                             }
@@ -816,7 +816,7 @@ public class Board implements Serializable, IBoard {
      */
     public Enumeration getInfernoBurningCoords() {
         // Only include *burning* inferno trackers.
-        Vector burning = new Vector();
+        Vector<Coords> burning = new Vector<Coords>();
         Enumeration iter = this.infernos.keys();
         while ( iter.hasMoreElements() ) {
             final Coords coords = (Coords) iter.nextElement();
@@ -1070,7 +1070,7 @@ System.out.println("Setting basement elevation: "+elevation+":"+curHex);
     private void createBldgByCoords() {
 
         // Make a new hashtable.
-        bldgByCoords = new Hashtable();
+        bldgByCoords = new Hashtable<Coords,Building>();
 
         // Walk through the vector of buildings.
         Enumeration loop = buildings.elements();
@@ -1078,7 +1078,7 @@ System.out.println("Setting basement elevation: "+elevation+":"+curHex);
             final Building bldg = (Building) loop.nextElement();
 
             // Each building identifies the hexes it covers.
-            Enumeration iter = bldg.getCoords();
+            Enumeration<Coords> iter = bldg.getCoords();
             while ( iter.hasMoreElements() ) {
                 bldgByCoords.put( iter.nextElement(), bldg );
             }
@@ -1108,7 +1108,10 @@ System.out.println("Setting basement elevation: "+elevation+":"+curHex);
      * @see megamek.common.IBoard#addBoardListener(megamek.common.BoardListener)
      */
     public void addBoardListener(BoardListener listener) {
-        getListeners().addElement(listener);
+        if (boardListeners == null) {
+            boardListeners = new Vector<BoardListener>();
+        }
+        boardListeners.addElement(listener);
     }
 
     /* (non-Javadoc)
@@ -1139,7 +1142,7 @@ System.out.println("Setting basement elevation: "+elevation+":"+curHex);
     
     protected Vector getListeners() {
         if (boardListeners == null) {
-            boardListeners = new Vector();
+            boardListeners = new Vector<BoardListener>();
         }
         return boardListeners;
     }

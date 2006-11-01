@@ -98,7 +98,7 @@ public abstract class Connection {
     /**
      * Connection listeners list
      */
-    private Vector connectionListeners = new Vector();
+    private Vector<ConnectionListener> connectionListeners = new Vector<ConnectionListener>();
 
     /**
      * Buffer of the last commands sent; Used for debugging purposes.
@@ -505,7 +505,7 @@ public abstract class Connection {
     
     private static class SendQueue {
 
-        private Vector<SendPacket> queue = new Vector();
+        private Vector<SendPacket> queue = new Vector<SendPacket>();
         private boolean finished = false;
 
         public synchronized void addPacket(SendPacket packet) {

@@ -18,6 +18,7 @@ import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.common.Entity;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.actions.EntityAction;
 import megamek.common.actions.TriggerAPPodAction;
 
 import java.awt.Button;
@@ -48,7 +49,7 @@ public class TriggerAPPodDialog
     private AdvancedLabel labMessage;
 
     /** The <code>FirePodTracker</code>s for the entity's active AP Pods. */
-    private Vector trackers = new Vector();
+    private Vector<TriggerPodTracker> trackers = new Vector<TriggerPodTracker>();
 
     /** The <code>int</code> ID of the entity that can fire AP Pods. */
     private int entityId = Entity.NONE;
@@ -188,8 +189,8 @@ public class TriggerAPPodDialog
      * @return  the <code>Enumeration</code> of <code>TriggerAPPodAction</code>
      *          objects that match the user's selections.
      */
-    public Enumeration getActions() {
-        Vector temp = new Vector();
+    public Enumeration <EntityAction>getActions() {
+        Vector<EntityAction> temp = new Vector<EntityAction>();
 
         // Walk through the list of AP Pod trackers.
         Enumeration pods = trackers.elements();

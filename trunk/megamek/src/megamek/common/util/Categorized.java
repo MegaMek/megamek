@@ -33,7 +33,7 @@ public interface Categorized {
      * @return  an <code>Enumeration</code> of <code>String</code> names.
      *          This value will not be <code>null</code>, but it may be empty.
      */
-    public Enumeration getCategoryNames();
+    public Enumeration<String> getCategoryNames();
 
     /**
      * Get the names of all the items in one of the categories.
@@ -43,7 +43,7 @@ public interface Categorized {
      * @return  an <code>Enumeration</code> of <code>String</code> names.
      *          This value will not be <code>null</code>, but it may be empty.
      */
-    public Enumeration getItemNames( String categoryName );
+    public Enumeration<String> getItemNames( String categoryName );
 
     /**
      * Get the indicated item from the correct catagory.

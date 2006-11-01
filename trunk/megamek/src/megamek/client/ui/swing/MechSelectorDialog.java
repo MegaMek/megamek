@@ -136,6 +136,8 @@ public class MechSelectorDialog
     private JComboBox m_cWeapons2 = new JComboBox();
     private JCheckBox m_chkEquipment = new JCheckBox();
     private JComboBox m_cEquipment = new JComboBox();
+    private JTextField m_tStartYear = new JTextField(4);
+    private JTextField m_tEndYear = new JTextField(4);
     private JButton m_bSearch = new JButton(Messages.getString("MechSelectorDialog.Search.Search"));
     private JButton m_bReset = new JButton(Messages.getString("MechSelectorDialog.Search.Reset"));
     private JLabel m_lCount = new JLabel();
@@ -296,12 +298,16 @@ public class MechSelectorDialog
             JPanel row7 = new JPanel();
             row7.setLayout(new FlowLayout(FlowLayout.LEFT));
             row7.add(new JLabel(Messages.getString("MechSelectorDialog.Search.Equipment")));
+            row7.add(m_chkEquipment);
+            row7.add(m_cEquipment);
             m_pSouthParams.add(row7);
 
             JPanel row8 = new JPanel();
             row8.setLayout(new FlowLayout(FlowLayout.LEFT));
-            row8.add(m_chkEquipment);
-            row8.add(m_cEquipment);
+            row8.add(new JLabel(Messages.getString("MechSelectorDialog.Search.Year")));
+            row8.add(m_tStartYear);
+            row8.add(new JLabel("-"));
+            row8.add(m_tEndYear);
             m_pSouthParams.add(row8);
 
             JPanel row9 = new JPanel();
@@ -672,6 +678,18 @@ public class MechSelectorDialog
             }
             if (count >= weapon2)
                 foundWeapon2 = true;
+        }
+        
+        int startYear = Integer.MIN_VALUE;
+        int endYear = Integer.MAX_VALUE;
+        try {
+            startYear = Integer.parseInt(m_tStartYear.getText());
+        } catch (NumberFormatException ne) { }
+        try {
+            endYear = Integer.parseInt(m_tEndYear.getText());
+        } catch (NumberFormatException ne) { }
+        if(entity.getYear() < startYear || entity.getYear() > endYear) {
+            return false;
         }
 
         if (weaponLine1Active && !weaponLine2Active && !foundWeapon1)

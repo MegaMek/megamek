@@ -14149,6 +14149,10 @@ public class Server implements Runnable {
             //kill the crew
             en.getCrew().setDoomed(true);
             
+            //This is a hack so MM.NET marks the mech as not salvageable
+            if (en instanceof Mech)
+                en.destroyLocation(Mech.LOC_CT);
+            
             if(game.getOptions().booleanOption("fire")) {
                 //Light our hex on fire
                 final IHex curHex = game.getBoard().getHex(en.getPosition());

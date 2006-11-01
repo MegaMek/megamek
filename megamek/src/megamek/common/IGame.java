@@ -399,24 +399,24 @@ public interface IGame {
     /**
      * Returns a vector of entities that have not yet deployed
      */
-    public abstract Vector getUndeployedEntities();
+    public abstract Vector<Entity> getUndeployedEntities();
     
     /**
      * Returns an enumeration of all the entites in the game.
      */
-    public abstract Enumeration getEntities();
+    public abstract Enumeration<Entity> getEntities();
     
     /**
      * Returns the actual vector for the entities
      */
     public abstract Vector<Entity> getEntitiesVector();
     
-    public abstract void setEntitiesVector(Vector entities);
+    public abstract void setEntitiesVector(Vector<Entity> entities);
 
     /**
      * Returns the actual vector for the out-of-game entities
      */
-    public abstract Vector getOutOfGameEntitiesVector();
+    public abstract Vector<Entity> getOutOfGameEntitiesVector();
     
     /**
      * Returns an out-of-game entity.
@@ -488,22 +488,22 @@ public interface IGame {
     /**
      * Returns an enumeration of salvagable entities.
      */
-    public abstract Enumeration getGraveyardEntities();
+    public abstract Enumeration<Entity> getGraveyardEntities();
     
     /**
      * Returns an enumeration of wrecked entities.
      */
-    public abstract Enumeration getWreckedEntities();
+    public abstract Enumeration<Entity> getWreckedEntities();
     
     /**
      * Returns an enumeration of entities that have retreated
      */
-    public abstract Enumeration getRetreatedEntities();
+    public abstract Enumeration<Entity> getRetreatedEntities();
     
     /**
      * Returns an enumeration of entities that were utterly destroyed
      */
-    public abstract Enumeration getDevastatedEntities();
+    public abstract Enumeration<Entity> getDevastatedEntities();
     
     /**
      * Return the current number of entities in the game.
@@ -568,7 +568,7 @@ public interface IGame {
     /**
      * Returns an Enumeration of the active entities at the given coordinates.
      */
-    public abstract Enumeration getEntities(Coords c);
+    public abstract Enumeration<Entity> getEntities(Coords c);
     
     /**
      * Returns a Target for an Accidental Fall From above, or null if no
@@ -705,7 +705,7 @@ public interface IGame {
      * @param   player - the <code>Player</code> whose entities are required.
      * @return  a <code>Vector</code> of <code>Entity</code>s.
      */
-    public abstract Vector getPlayerEntities(Player player);
+    public abstract Vector<Entity> getPlayerEntities(Player player);
     
     /**
      * Determines if the indicated entity is stranded on a transport that

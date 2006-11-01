@@ -23,10 +23,9 @@ import java.util.*;
  */
 public abstract class AbstractOptions implements IOptions, Serializable {
     
-    private Hashtable optionsHash = new Hashtable();
+    private Hashtable<String,Option> optionsHash = new Hashtable<String,Option>();
     
     protected AbstractOptions() {
-        optionsHash = new Hashtable();
         initialize();
         getOptionsInfoImp().finish();
     }

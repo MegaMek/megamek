@@ -2433,8 +2433,8 @@ public class Compute {
             ECCMCount++;
 
         // Only grab enemies with active ECM
-        Vector vEnemyCoords = new Vector(16);
-        Vector vECMRanges = new Vector(16);
+        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
+        Vector<Integer> vECMRanges = new Vector<Integer>(16);
         for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = (Entity) e.nextElement();
             Coords entPos = ent.getPosition();
@@ -2447,10 +2447,7 @@ public class Compute {
             }
 
             // Check the ECM effects of the entity's passengers.
-            Vector passengers = ent.getLoadedUnits();
-            Enumeration iter = passengers.elements();
-            while (iter.hasMoreElements()) {
-                Entity other = (Entity) iter.nextElement();
+            for(Entity other:ent.getLoadedUnits()) {
                 if (!other.isEnemyOf(ae) && other.hasActiveECCM()
                         && entPos != null && !other.equals(ae)) {
                     // TODO : only use the best ECM range in a given Coords.
@@ -2523,8 +2520,8 @@ public class Compute {
             ECCMCount++;
         
         // Only grab enemies with active ECM
-        Vector vEnemyCoords = new Vector(16);
-        Vector vECMRanges = new Vector(16);
+        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
+        Vector<Integer> vECMRanges = new Vector<Integer>(16);
         for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = (Entity) e.nextElement();
             Coords entPos = ent.getPosition();
@@ -2536,10 +2533,7 @@ public class Compute {
             }
 
             // Check the ECM effects of the entity's passengers.
-            Vector passengers = ent.getLoadedUnits();
-            Enumeration iter = passengers.elements();
-            while (iter.hasMoreElements()) {
-                Entity other = (Entity) iter.nextElement();
+            for(Entity other:ent.getLoadedUnits()) {
                 if (!other.isEnemyOf(ae) && other.hasActiveAngelECCM()
                         && entPos != null
                         && !other.equals(ae)) {
@@ -2618,8 +2612,8 @@ public class Compute {
             return true;
         
         // Only grab enemies with active ECM
-        Vector vEnemyCoords = new Vector(16);
-        Vector vECMRanges = new Vector(16);
+        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
+        Vector<Integer> vECMRanges = new Vector<Integer>(16);
         for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = (Entity) e.nextElement();
             Coords entPos = ent.getPosition();
@@ -2630,10 +2624,7 @@ public class Compute {
             }
 
             // Check the ECM effects of the entity's passengers.
-            Vector passengers = ent.getLoadedUnits();
-            Enumeration iter = passengers.elements();
-            while (iter.hasMoreElements()) {
-                Entity other = (Entity) iter.nextElement();
+            for(Entity other:ent.getLoadedUnits()) {
                 if (other.isEnemyOf(ae) && other.hasActiveECM()
                         && entPos != null) {
                     // TODO : only use the best ECM range in a given Coords.
@@ -2785,8 +2776,8 @@ public class Compute {
         int ECCMCount = 0;
 
         // Only grab enemies with active ECM
-        Vector vEnemyCoords = new Vector(16);
-        Vector vECMRanges = new Vector(16);
+        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
+        Vector<Integer> vECMRanges = new Vector<Integer>(16);
         for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = (Entity) e.nextElement();
             Coords entPos = ent.getPosition();
@@ -2868,8 +2859,8 @@ public class Compute {
         int ECCMCount = 0;
         
         // Only grab enemies with active ECCM
-        Vector vEnemyCoords = new Vector(16);
-        Vector vECMRanges = new Vector(16);
+        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
+        Vector<Integer> vECMRanges = new Vector<Integer>(16);
         for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = (Entity) e.nextElement();
             Coords entPos = ent.getPosition();
@@ -2957,8 +2948,8 @@ public class Compute {
             return true;
         
         // Only grab enemies with active ECM
-        Vector vEnemyCoords = new Vector(16);
-        Vector vECMRanges = new Vector(16);
+        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
+        Vector<Integer> vECMRanges = new Vector<Integer>(16);
         for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = (Entity) e.nextElement();
             Coords entPos = ent.getPosition();

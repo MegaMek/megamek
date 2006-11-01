@@ -1382,7 +1382,8 @@ public class TestBot extends BotClient {
             } else {
                 foes.add(centity);
                 foe_sum += new_value;
-                if (new_value > max_foe_bv) {
+                if (new_value > max_foe_bv
+                        || max_foe == null) {
                     max_foe_bv = new_value;
                     max_foe = centity;
                 }

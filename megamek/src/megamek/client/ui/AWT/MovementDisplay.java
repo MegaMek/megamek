@@ -176,7 +176,7 @@ public class MovementDisplay
     /**
      * A local copy of the current entity's loaded units.
      */
-    private Vector              loadedUnits = null;
+    private Vector<Entity>        loadedUnits = null;
 
     public static final int        GEAR_LAND        = 0;
     public static final int        GEAR_BACKUP      = 1;
@@ -368,7 +368,7 @@ public class MovementDisplay
         butSpace.addKeyListener(this);
         
         //add buttons to the lists, except space, more & next
-        buttonsMech = new ArrayList(22);
+        buttonsMech = new ArrayList<Button>(22);
         buttonsMech.add(butWalk);
         buttonsMech.add(butJump);
         buttonsMech.add(butBackup);
@@ -394,7 +394,7 @@ public class MovementDisplay
         buttonsMech.add(butRaise);
         buttonsMech.add(butShakeOff);
 
-        buttonsTank = new ArrayList(22);
+        buttonsTank = new ArrayList<Button>(22);
         buttonsTank.add(butWalk);
         buttonsTank.add(butBackup);
         buttonsTank.add(butTurn);
@@ -420,7 +420,7 @@ public class MovementDisplay
         buttonsTank.add(butLower);
         buttonsTank.add(butRaise);
 
-        buttonsVtol = new ArrayList(22);
+        buttonsVtol = new ArrayList<Button>(22);
         buttonsVtol.add(butWalk);
         buttonsVtol.add(butBackup);
         buttonsVtol.add(butLower);
@@ -446,7 +446,7 @@ public class MovementDisplay
         buttonsVtol.add(butDigIn);
         buttonsVtol.add(butFortify);
 
-        buttonsInf = new ArrayList(22);
+        buttonsInf = new ArrayList<Button>(22);
         buttonsInf.add(butWalk);
         buttonsInf.add(butJump);
         buttonsInf.add(butLower);
@@ -779,7 +779,7 @@ public class MovementDisplay
             loadedUnits = ce.getLoadedUnits();
         } else {
             // The variable, loadedUnits, can not be null.
-            loadedUnits = new Vector();
+            loadedUnits = new Vector<Entity>();
         }
         updateLoadButtons();
         updateElevationButtons();
@@ -1475,12 +1475,12 @@ public class MovementDisplay
         Targetable choice = null;
 
         // Get the available choices.
-        Enumeration choices = client.game.getEntities( pos );
+        Enumeration<Entity> choices = client.game.getEntities( pos );
 
         // Convert the choices into a List of targets.
-        Vector targets = new Vector();
+        Vector<Targetable> targets = new Vector<Targetable>();
         while ( choices.hasMoreElements() ) {
-            choice = (Targetable) choices.nextElement();
+            choice = choices.nextElement();
             if ( !ce.equals( choice ) ) {
                 targets.addElement( choice );
             }
@@ -1735,10 +1735,10 @@ public class MovementDisplay
             // Find the other friendly unit in our hex, add it
             // to our local list of loaded units, and then stop.
             Entity other = null;
-            Enumeration entities =
+            Enumeration<Entity> entities =
                 client.game.getEntities( ce.getPosition() );
             while ( entities.hasMoreElements() ) {
-                other = (Entity)entities.nextElement();
+                other = entities.nextElement();
                 if ( !ce.getOwner().isEnemyOf(other.getOwner()) &&
                      !ce.equals(other) ) {
                     loadedUnits.addElement( other );
@@ -1823,7 +1823,7 @@ public class MovementDisplay
      * dismount at the start of the turn.
      */
     private void unloadStranded() {
-        Vector stranded = new Vector();
+        Vector<Entity> stranded = new Vector<Entity>();
         String[] names = null;
         Entity entity = null;
         Entity transport = null;
@@ -1834,7 +1834,7 @@ public class MovementDisplay
 
         // Collect the stranded entities into the vector.
         // TODO : get a better interface to "game" and "turn"
-        Enumeration entities = client.getSelectedEntities
+        Enumeration<Entity> entities = client.getSelectedEntities
             ( new EntitySelector() {
                     private final IGame game =
                         MovementDisplay.this.client.game;

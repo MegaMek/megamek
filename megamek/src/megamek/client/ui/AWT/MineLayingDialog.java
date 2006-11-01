@@ -48,7 +48,7 @@ public class MineLayingDialog
     /** The <code>int</code> ID of the entity that lays the mine. */
     private Entity entity = null;
     private Choice chMines = new Choice();
-    private Vector vMines = new Vector();
+    private Vector<Integer> vMines = new Vector<Integer>();
 
     /**
      * Display a dialog that shows the mines on the entity, and allows

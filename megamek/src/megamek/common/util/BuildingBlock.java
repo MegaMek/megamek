@@ -37,7 +37,7 @@ import java.util.Vector;
  */
 public class BuildingBlock {
 
-    private Vector rawData;
+    private Vector<String> rawData;
     private static final int version = 1;
     private static final char comment = '#';
     
@@ -47,7 +47,7 @@ public class BuildingBlock {
      */
     public BuildingBlock() {
         //for holding the file we read/parse
-        rawData = new Vector();
+        rawData = new Vector<String>();
     }
  
     /** 
@@ -56,21 +56,21 @@ public class BuildingBlock {
      * can be an array of anything...such as comments.
      */    
     public BuildingBlock(String[] data) {
-        rawData = new Vector();
+        rawData = new Vector<String>();
 
-        rawData = this.makeVector(data);
+        rawData = makeVector(data);
     }
     
     /** 
      * Creates a new buildingBlock and fills it with the Vector.
      * @param data The Vector can be filled with anything.
      */    
-    public BuildingBlock(Vector data) {
+    public BuildingBlock(Vector<String> data) {
         rawData = data;
     }
 
     public BuildingBlock(InputStream is) {
-        rawData = new Vector();
+        rawData = new Vector<String>();
 
         this.readInputStream(is);
     }
@@ -96,7 +96,7 @@ public class BuildingBlock {
                 //check for blank lines & comment lines...
                 //don't add them to the rawData if they are
                 if (data.length() > 0 && !data.startsWith(""+BuildingBlock.comment))  //$NON-NLS-1$
-                    this.rawData.add(data);
+                    rawData.add(data);
             }
             in.close();
         } catch (IOException e) {
@@ -351,7 +351,7 @@ public class BuildingBlock {
      */    
     public Vector getDataAsVector(String blockName) {
         
-        Vector data;
+        Vector<String> data;
         int startIndex = 0, endIndex = 0;
         
         startIndex = this.findStartIndex(blockName);
@@ -360,13 +360,13 @@ public class BuildingBlock {
         
         if (startIndex == -1 || endIndex == -1) {
          
-            data = new Vector();
+            data = new Vector<String>();
             data.clear();
             return data;
             
         }
 
-        data = new Vector();
+        data = new Vector<String>();
 
         //fill up the data vector with the raw data we want...
         for ( int rawRecord = startIndex; rawRecord < endIndex; rawRecord++) {
@@ -586,9 +586,9 @@ public class BuildingBlock {
      * @param stringArray The String array to convert.
      * @return Returns the Vector created by the String[]
      */    
-    public Vector makeVector(String [] stringArray) {
+    public Vector<String> makeVector(String [] stringArray) {
      
-        Vector newVect = new Vector();
+        Vector<String> newVect = new Vector<String>();
         int c=0;
         
         try {

@@ -150,12 +150,12 @@ public abstract class Entity extends TurnOrdered
     protected ArrayList<Mounted>            ammoList = new ArrayList<Mounted>();
     protected ArrayList<Mounted>            miscList = new ArrayList<Mounted>();
     
-    protected Vector            pendingINarcPods = new Vector();
-    protected Vector            iNarcPods = new Vector();
+    protected Vector<INarcPod>            pendingINarcPods = new Vector<INarcPod>();
+    protected Vector<INarcPod>            iNarcPods = new Vector<INarcPod>();
     protected ArrayList<NarcPod>            pendingNarcPods = new ArrayList<NarcPod>();
     protected ArrayList<NarcPod>            narcPods = new ArrayList<NarcPod>();
 
-    protected Vector            failedEquipmentList = new Vector();
+    protected Vector<String>            failedEquipmentList = new Vector<String>();
 
     // which teams have NARCd us?  a long allows for 64 teams.
     protected long              m_lNarcedBy = 0;
@@ -175,7 +175,7 @@ public abstract class Entity extends TurnOrdered
     /** 
      * The ids of the MechWarriors this entity has picked up
      */
-    private Vector                pickedUpMechWarriors = new Vector();
+    private Vector<Integer>       pickedUpMechWarriors = new Vector<Integer>();
     
     /**
      * The ID of the <code>Entity</code> that has loaded this unit.
@@ -258,8 +258,8 @@ public abstract class Entity extends TurnOrdered
      * launcher
      */
     
-    private Vector hitBySwarmsEntity = new Vector();
-    private Vector hitBySwarmsWeapon = new Vector();
+    private Vector<Integer> hitBySwarmsEntity = new Vector<Integer>();
+    private Vector<Integer> hitBySwarmsWeapon = new Vector<Integer>();
     
     //Whether this unit is canon;
     private boolean canon;
@@ -3305,8 +3305,8 @@ public abstract class Entity extends TurnOrdered
         moved = IEntityMovementType.MOVE_NONE;
         gotPavementBonus = false;
         hitThisRoundByAntiTSM = false;
-        hitBySwarmsEntity = new Vector();
-        hitBySwarmsWeapon = new Vector();
+        hitBySwarmsEntity.clear();
+        hitBySwarmsWeapon.clear();
         setTaggedBy(-1);
         setLayingMines(false);
         setArmsFlipped(false);
@@ -3318,10 +3318,8 @@ public abstract class Entity extends TurnOrdered
         crew.setKoThisRound(false);
         m_lNarcedBy |= m_lPendingNarc;
         if (pendingINarcPods.size() > 0) {
-            for (int j = 0;j < pendingINarcPods.size();j++) {
-                iNarcPods.addElement(pendingINarcPods.elementAt(j));
-            }
-            pendingINarcPods = new Vector();
+            iNarcPods.addAll(pendingINarcPods);
+            pendingINarcPods = new Vector<INarcPod>();
         }
         if(pendingNarcPods.size() > 0) {
             narcPods.addAll(pendingNarcPods);
@@ -3374,6 +3372,18 @@ public abstract class Entity extends TurnOrdered
                     }
                 }
                 for(Iterator<INarcPod> iter=iNarcPods.iterator();iter.hasNext();) {
+                    INarcPod p = iter.next();
+                    if(p.getLocation() == i) {
+                        iter.remove();
+                    }
+                }
+                for(Iterator<NarcPod> iter=pendingNarcPods.iterator();iter.hasNext();) {
+                    NarcPod p = iter.next();
+                    if(p.getLocation() == i) {
+                        iter.remove();
+                    }
+                }
+                for(Iterator<INarcPod> iter=pendingINarcPods.iterator();iter.hasNext();) {
                     INarcPod p = iter.next();
                     if(p.getLocation() == i) {
                         iter.remove();
@@ -3435,7 +3445,7 @@ public abstract class Entity extends TurnOrdered
                 }
 
                 // make a new vector of only incoming attacks in arc
-                Vector vAttacksInArc = new Vector(vAttacks.size());
+                Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(vAttacks.size());
                 for (Enumeration i = vAttacks.elements(); i.hasMoreElements();) {
                     WeaponAttackAction waa = (WeaponAttackAction)i.nextElement();
                     if (Compute.isInArc(game, this.getId(), getEquipmentNum(weapon),
@@ -3511,7 +3521,7 @@ public abstract class Entity extends TurnOrdered
      * Remove all attached iNarc Pods
      */
     public void removeAllINarcPods() {
-        iNarcPods = new Vector();
+        iNarcPods.clear();
     }
     
     /**
@@ -4211,7 +4221,7 @@ public abstract class Entity extends TurnOrdered
      * probably only be called during construction.
      */
     public void removeAllTransporters() {
-        transports = new Vector();
+        transports = new Vector<Transporter>();
     }
 
     /**
@@ -4284,16 +4294,14 @@ public abstract class Entity extends TurnOrdered
      *          lying data structure; modifying one does not affect the other.
      *
      */
-    public Vector getLoadedUnits() {
-        Vector result = new Vector();
+    public Vector<Entity> getLoadedUnits() {
+        Vector<Entity> result = new Vector<Entity>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
-        Enumeration iter = this.transports.elements();
-        while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
-            for (Enumeration i = next.getLoadedUnits().elements(); i.hasMoreElements();) {
-                result.addElement(i.nextElement());
+        for(Transporter next:transports) {
+            for (Entity e:next.getLoadedUnits()) {
+                result.addElement(e);
             }
         }
 

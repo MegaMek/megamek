@@ -92,7 +92,7 @@ public class FiringDisplay
     private boolean            showTargetChoice = true;
   
     // shots we have so far.
-    private Vector attacks;  
+    private Vector<EntityAction> attacks;  
   
     // is the shift key held?
     private boolean            shiftheld;
@@ -117,7 +117,7 @@ public class FiringDisplay
         shiftheld = false;
     
         // fire
-        attacks = new Vector();
+        attacks = new Vector<EntityAction>();
 
         setupStatusBar(Messages.getString("FiringDisplay.waitingForFiringPhase")); //$NON-NLS-1$
         
@@ -369,7 +369,7 @@ public class FiringDisplay
                 ( clientgui.getFrame(), ce() );
             dialog.setVisible(true);
             attacks.removeAllElements();
-            Enumeration actions = dialog.getActions();
+            Enumeration<EntityAction> actions = dialog.getActions();
             while ( actions.hasMoreElements() ) {
                 attacks.addElement( actions.nextElement() );
             }
@@ -472,12 +472,9 @@ public class FiringDisplay
       private void cacheVisibleTargets() {
         clearVisibleTargets();
         
-        Vector vec = client.game.getValidTargets( ce() );
-        Comparator sortComp = new Comparator() {
-          public int compare(java.lang.Object x, java.lang.Object y) {
-            Entity entX = (Entity)x;
-            Entity entY = (Entity)y;
-        
+        Vector<Entity> vec = client.game.getValidTargets( ce() );
+        Comparator<Entity> sortComp = new Comparator<Entity>() {
+          public int compare(Entity entX, Entity entY) {
             int rangeToX = ce().getPosition().distance(entX.getPosition());
             int rangeToY = ce().getPosition().distance(entY.getPosition());
         
@@ -487,12 +484,8 @@ public class FiringDisplay
           }
         };
           
-        TreeSet tree = new TreeSet(sortComp);
-        visibleTargets = new Entity[vec.size()];
-              
-        for ( int i = 0; i < vec.size(); i++ ) {
-          tree.add(vec.elementAt(i));
-          }
+        TreeSet<Entity> tree = new TreeSet<Entity>(sortComp);
+        tree.addAll(vec);
         
         Iterator it = tree.iterator();
         int count = 0;
@@ -584,9 +577,8 @@ public class FiringDisplay
         
         // For bug 1002223
         // Re-compute the to-hit numbers by adding in correct order.
-        Vector newAttacks = new Vector();
-        for (Enumeration e=attacks.elements(); e.hasMoreElements();) {
-            Object o = e.nextElement();
+        Vector<EntityAction> newAttacks = new Vector<EntityAction>();
+        for (EntityAction o:attacks) {
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction)o;
                 Entity attacker = waa.getEntity(client.game);
@@ -603,8 +595,8 @@ public class FiringDisplay
                 newAttacks.addElement(o);
             }
         }
-        for (Enumeration e=attacks.elements(); e.hasMoreElements();) {
-            Object o = e.nextElement();
+        //now add the attacks in rear/arm arcs
+        for (EntityAction o:attacks) {
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(client.game);
@@ -1693,7 +1685,7 @@ public class FiringDisplay
         } else choices = client.game.getEnemyEntities(pos, ce() );
         
         // Convert the choices into a List of targets.
-        Vector targets = new Vector();
+        Vector<Targetable> targets = new Vector<Targetable>();
         while ( choices.hasMoreElements() ) {
             choice = (Targetable) choices.nextElement();
             if ( !ce().equals( choice ) ) {

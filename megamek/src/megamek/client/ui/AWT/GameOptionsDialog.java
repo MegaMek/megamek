@@ -40,7 +40,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
 
     private boolean editable = true;
 
-    private Vector optionComps = new Vector();
+    private Vector<DialogOptionComponent> optionComps = new Vector<DialogOptionComponent>();
 
     private int maxOptionWidth = 0;
     
@@ -143,7 +143,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     }
     
     public void send() {
-        Vector changed = new Vector();
+        Vector<IBasicOption> changed = new Vector<IBasicOption>();
         
         for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
             DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
@@ -163,7 +163,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     }
     
     public Vector<IBasicOption> getOptions() {
-        Vector<IBasicOption> output = new Vector();
+        Vector<IBasicOption> output = new Vector<IBasicOption>();
         
         for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
             DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();        
@@ -182,7 +182,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
 
     private void refreshOptions() {
         panOptions.removeAll();
-        optionComps = new Vector();
+        optionComps.clear();
         
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();

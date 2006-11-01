@@ -27,14 +27,14 @@ public class ArtilleryTracker implements Serializable {
      * Maps WeaponID's of artillery weapons to a Vector of ArtilleryModifiers, 
      * for all the different coords it's got mods to.
      */
-    private Hashtable weapons;
+    private Hashtable<Mounted,Vector<ArtilleryModifier>> weapons;
 
     /**
      * Creates new instance of the tracker
      *
      */
     public ArtilleryTracker() {
-        weapons=new Hashtable();
+        weapons=new Hashtable<Mounted,Vector<ArtilleryModifier>>();
     }
 
     /**
@@ -42,7 +42,7 @@ public class ArtilleryTracker implements Serializable {
      * @param mounted new weapon
      */
     public void addWeapon(Mounted mounted) {
-        weapons.put(mounted, new Vector());
+        weapons.put(mounted, new Vector<ArtilleryModifier>());
     }
 
     /**
@@ -52,7 +52,7 @@ public class ArtilleryTracker implements Serializable {
      * @param coords
      */
     public void setModifier(Mounted weapon, int modifier, Coords coords) {
-        Vector weaponMods = getWeaponModifiers(weapon);
+        Vector<ArtilleryModifier> weaponMods = getWeaponModifiers(weapon);
         ArtilleryModifier am = getModifierByCoords(weaponMods, coords);
         if(am != null) {
             am.setModifier(modifier);
@@ -69,7 +69,7 @@ public class ArtilleryTracker implements Serializable {
      * @return
      */
     public int getModifier(Mounted weapon, Coords coords) {
-        Vector weaponMods = getWeaponModifiers(weapon);
+        Vector<ArtilleryModifier> weaponMods = getWeaponModifiers(weapon);
         ArtilleryModifier am = getModifierByCoords(weaponMods, coords);
         if(am != null) {
             return am.getModifier();
@@ -84,10 +84,10 @@ public class ArtilleryTracker implements Serializable {
      * @param mounted weapon to get modifiers for
      * @return the <code>Vector</code> of the modifiers for the given weapon
      */
-    protected Vector getWeaponModifiers(Mounted mounted) {
-        Vector result = (Vector)weapons.get(mounted);
+    protected Vector<ArtilleryModifier> getWeaponModifiers(Mounted mounted) {
+        Vector<ArtilleryModifier> result = weapons.get(mounted);
         if(result ==null ) {
-            result = new Vector();
+            result = new Vector<ArtilleryModifier>();
             weapons.put(mounted, result);            
         }
         return result;

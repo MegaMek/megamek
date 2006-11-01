@@ -89,7 +89,7 @@ public class PhysicalDisplay
     private Targetable         target;        // target 
       
     // stuff we want to do
-    private Vector          attacks;  
+    private Vector<EntityAction>          attacks;  
     
     /**
      * Creates and lays out a new movement phase display 
@@ -102,7 +102,7 @@ public class PhysicalDisplay
         
         clientgui.getBoardView().addBoardViewListener(this);
     
-        attacks = new Vector();
+        attacks = new Vector<EntityAction>();
 
         setupStatusBar(Messages.getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
             
@@ -1082,10 +1082,10 @@ public class PhysicalDisplay
         Targetable choice = null;
 
         // Get the available choices.
-        Enumeration choices = client.game.getEntities( pos );
+        Enumeration<Entity> choices = client.game.getEntities( pos );
 
         // Convert the choices into a List of targets.
-        Vector targets = new Vector();
+        Vector<Targetable> targets = new Vector<Targetable>();
         while ( choices.hasMoreElements() ) {
             choice = (Targetable) choices.nextElement();
             if ( !ce().equals( choice ) ) {

@@ -212,7 +212,7 @@ public class Client {
      * Returns an <code>Enumeration</code> of the entities that match
      * the selection criteria.
      */
-    public Enumeration getSelectedEntities(EntitySelector selector) {
+    public Enumeration<Entity> getSelectedEntities(EntitySelector selector) {
         return game.getSelectedEntities(selector);
     }
 

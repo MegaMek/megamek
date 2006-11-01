@@ -32,7 +32,7 @@ public class EquipmentMode {
     /**
      * Hash of all modes
      */
-    protected static Hashtable modesHash = new Hashtable();
+    protected static Hashtable<String,EquipmentMode> modesHash = new Hashtable<String,EquipmentMode>();
 
     /**
      * Unique internal mode identifier. Used as the part of the key to look for

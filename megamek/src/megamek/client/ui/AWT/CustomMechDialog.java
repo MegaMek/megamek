@@ -59,7 +59,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.TreeSet;
 import java.util.Vector;
 
 /**
@@ -86,7 +86,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private Label labCallsign = new Label(Messages.getString("CustomMechDialog.labCallsign"), Label.CENTER); //$NON-NLS-1$
     private Label labUnitNum = new Label(Messages.getString("CustomMechDialog.labUnitNum"), Label.CENTER); //$NON-NLS-1$
     private Choice choUnitNum = new Choice();
-    private Vector entityUnitNum = new Vector();
+    private Vector<Entity> entityUnitNum = new Vector<Entity>();
     private Label labDeployment = new Label(Messages.getString("CustomMechDialog.labDeployment"), Label.RIGHT); //$NON-NLS-1$
     private Choice choDeployment = new Choice();
     private Label labAutoEject = new Label(Messages.getString("CustomMechDialog.labAutoEject"), Label.RIGHT); //$NON-NLS-1$
@@ -111,11 +111,11 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private Button butNext = new Button(Messages.getString("Next"));
     private Button butPrev = new Button(Messages.getString("Previous"));
     
-    private Vector m_vMunitions = new Vector();
+    private Vector<MunitionChoicePanel> m_vMunitions = new Vector<MunitionChoicePanel>();
     private Panel panMunitions = new Panel();
-    private Vector m_vMGs = new Vector();
+    private Vector<RapidfireMGPanel> m_vMGs = new Vector<RapidfireMGPanel>();
     private Panel panRapidfireMGs = new Panel();
-    private Vector m_vMines = new Vector();
+    private Vector<MineChoicePanel> m_vMines = new Vector<MineChoicePanel>();
     private Panel panMines = new Panel();
         
     private Entity entity;
@@ -125,7 +125,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
 
     private PilotOptions options;
     
-    private Vector optionComps = new Vector();
+    private Vector<DialogOptionComponent> optionComps = new Vector<DialogOptionComponent>();
     
     private Panel panOptions = new Panel();
     private ScrollPane scrOptions = new ScrollPane();
@@ -524,8 +524,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         int row = 0;
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType)m.getType();
-            Vector vTypes = new Vector();
-            Vector vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
+            Vector<AmmoType> vTypes = new Vector<AmmoType>();
+            Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
             if (vAllTypes == null) {
                 continue;
             }
@@ -911,7 +911,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     
     public void refreshOptions() {
         panOptions.removeAll();
-        optionComps = new Vector();
+        optionComps = new Vector<DialogOptionComponent>();
         
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -949,13 +949,13 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
 
         if (option.getName().equals("weapon_specialist")) { //$NON-NLS-1$
             optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
-            Hashtable uniqueWeapons = new Hashtable();
+            TreeSet<String> uniqueWeapons = new TreeSet<String>();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 Mounted m = entity.getWeaponList().get(i);
-                uniqueWeapons.put(m.getName(),new Boolean(true));
+                uniqueWeapons.add(m.getName());
             }
-            for (Enumeration e = uniqueWeapons.keys(); e.hasMoreElements(); ) {
-                optionComp.addValue((String)e.nextElement());
+            for (String name:uniqueWeapons) {
+                optionComp.addValue(name);
             }
             optionComp.setSelected(option.stringValue());
         }

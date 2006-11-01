@@ -221,9 +221,9 @@ import java.util.Vector;
      *          The returned <code>List</code> is independant from the under-
      *          lying data structure; modifying one does not affect the other.
      */
-    public final Vector getLoadedUnits() {
+    public final Vector<Entity> getLoadedUnits() {
         // Return a list of our carried troopers.
-        Vector units = new Vector(1);
+        Vector<Entity> units = new Vector<Entity>(1);
         if ( null != this.troopers ) {
             units.addElement( this.troopers );
         }

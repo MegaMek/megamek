@@ -74,7 +74,7 @@ public class TargetingPhaseDisplay
     private Targetable         target;        // target
 
     // shots we have so far.
-    private Vector attacks;
+    private Vector<EntityAction> attacks;
 
     // is the shift key held?
     private boolean            shiftheld;
@@ -96,7 +96,7 @@ public class TargetingPhaseDisplay
         shiftheld = false;
 
         // fire
-        attacks = new Vector();
+        attacks = new Vector<EntityAction>();
 
         setupStatusBar(Messages.getString("TargetingPhaseDisplay.waitingForTargetingPhase")); //$NON-NLS-1$
 
@@ -315,7 +315,7 @@ public class TargetingPhaseDisplay
                 ( clientgui.getFrame(), ce() );
             dialog.setVisible(true);
             attacks.removeAllElements();
-            Enumeration actions = dialog.getActions();
+            Enumeration<EntityAction> actions = dialog.getActions();
             while ( actions.hasMoreElements() ) {
                 attacks.addElement( actions.nextElement() );
             }
@@ -693,12 +693,9 @@ public class TargetingPhaseDisplay
     private void cacheVisibleTargets() {
         clearVisibleTargets();
         
-        Vector vec = client.game.getValidTargets( ce() );
-        Comparator sortComp = new Comparator() {
-            public int compare(java.lang.Object x, java.lang.Object y) {
-                Entity entX = (Entity)x;
-                Entity entY = (Entity)y;
-                
+        Vector<Entity> vec = client.game.getValidTargets( ce() );
+        Comparator<Entity> sortComp = new Comparator<Entity>() {
+            public int compare(Entity entX , Entity entY) {
                 int rangeToX = ce().getPosition().distance(entX.getPosition());
                 int rangeToY = ce().getPosition().distance(entY.getPosition());
                 
@@ -708,7 +705,7 @@ public class TargetingPhaseDisplay
             }
         };
         
-        TreeSet tree = new TreeSet(sortComp);
+        TreeSet<Entity> tree = new TreeSet<Entity>(sortComp);
         visibleTargets = new Entity[vec.size()];
         
         for ( int i = 0; i < vec.size(); i++ ) {

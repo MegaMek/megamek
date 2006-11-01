@@ -23,12 +23,12 @@ import megamek.common.preference.PreferenceManager;
 
 public class StringUtil {
 
-    public static Vector splitString(String s, String divider) {
+    public static Vector<String> splitString(String s, String divider) {
         if (s == null || s.equals("")) { //$NON-NLS-1$
-            return new Vector();
+            return new Vector<String>();
         }
 
-        Vector v = new Vector();
+        Vector<String> v = new Vector<String>();
         int oldIndex = 0;
         int newIndex = s.indexOf(divider);
 
@@ -47,11 +47,9 @@ public class StringUtil {
         return v;
     }
 
-    public static Comparator stringComparator() {
-        return new Comparator() {
-            public int compare(java.lang.Object o1, java.lang.Object o2) {
-                String s1 = ((String) o1).toLowerCase();
-                String s2 = ((String) o2).toLowerCase();
+    public static Comparator<String> stringComparator() {
+        return new Comparator<String>() {
+            public int compare(String s1, String s2) {
                 return s1.compareTo(s2);
             }
         };

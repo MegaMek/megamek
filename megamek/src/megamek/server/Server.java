@@ -7567,22 +7567,28 @@ public class Server implements Runnable {
             }
 
             if (jamCheck > 0 && wr.roll <= jamCheck) {
-              r = new Report(1210);
               // ultras and prototypes are destroyed by jamming
               if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA
                     || wtype.getAmmoType() == AmmoType.T_AC_ULTRA_THB) {
-                  r.messageId = 3160;
+                  r = new Report(3160);
+                  r.subject = subjectId;
+                  r.newlines = 0;
+                  addReport(r);
                   weapon.setJammed(true);
                   weapon.setHit(true);
                   //Checks for jams and explodes rapid fire AC's
               } else if (wtype.getAmmoType() == AmmoType.T_AC
                     || wtype.getAmmoType() == AmmoType.T_LAC ) {
                   if (wr.roll > 2) {
-                   r.messageId = 3161;
+                    r = new Report(3161);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    addReport(r);
                     weapon.setJammed(true);
                     weapon.setHit(true);
                   } else {
-                   r.messageId = 3162;
+                    r = new Report(3162);
+                    r.subject = subjectId;
                     weapon.setJammed(true);
                     weapon.setHit(true);  
                     int wlocation = weapon.getLocation ();
@@ -7601,19 +7607,21 @@ public class Server implements Runnable {
                     r.choose(false);
                     addReport(r);
                     addReport( damageEntity(ae, new HitData(wlocation), wtype.getDamage(), false, 0, true));
-                    return true;
                   }
               } else if (wtype.hasFlag(WeaponType.F_PROTOTYPE)) {
-                  r.messageId = 3165;
+                  r = new Report(3165);
+                  r.subject = subjectId;
+                  r.newlines = 0;
+                  addReport(r);
                   weapon.setJammed(true);
                   weapon.setHit(true);
               } else {
-                  r.messageId = 3170;
+                  r = new Report(3170);
+                  r.subject = subjectId;
+                  r.newlines = 0;
+                  addReport(r);
                   weapon.setJammed(true);
               }
-              r.subject = subjectId;
-              addReport(r);
-              return true;
             }
         }
 

@@ -1810,12 +1810,15 @@ public class BoardView1
     /**
      * Adds an attack to the sprite list.
      */
-    public void addAttack(AttackAction aa) {
+    public synchronized void addAttack(AttackAction aa) {
         // do not make a sprite unless we're aware of both entities
         // this is not a great solution but better than a crash
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
-        if (ae == null || t == null || t.getTargetType() == Targetable.TYPE_INARC_POD) {
+        if (ae == null || t == null 
+                || t.getTargetType() == Targetable.TYPE_INARC_POD 
+                || t.getPosition() == null
+                || ae.getPosition() == null) {
             return;
         }
 
@@ -1876,7 +1879,7 @@ public class BoardView1
     }
 
     /** Removes all attack sprites from a certain entity */
-    public void removeAttacksFor(int entityId) {
+    public synchronized void removeAttacksFor(int entityId) {
         // or rather, only keep sprites NOT for that entity
         Vector toKeep = new Vector(attackSprites.size());
         for (Iterator i = attackSprites.iterator(); i.hasNext();) {

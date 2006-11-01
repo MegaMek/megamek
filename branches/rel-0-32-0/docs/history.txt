@@ -1,6 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.32.2 (SVN)
++ Bug: bot died when only unarmed targets available
++ Bug: occasional exceptions observing bot v bot games
 
 v0.32.1 (2006-10-31, 21:08 GMT+9)
 + Bug: NPE when firing infantry rifle

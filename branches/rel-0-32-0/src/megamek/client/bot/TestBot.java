@@ -1249,7 +1249,7 @@ public class TestBot extends BotClient {
         int entity_num = first_entity;
         int best_entity = first_entity;
         int spin_mode = 0;
-        double max = java.lang.Double.MIN_VALUE;
+        double max = java.lang.Double.NEGATIVE_INFINITY;
         int[] results = null;
         ArrayList winner = null;
         int arc = 0;
@@ -1384,7 +1384,8 @@ public class TestBot extends BotClient {
             } else {
                 foes.add(centity);
                 foe_sum += new_value;
-                if (new_value > max_foe_bv) {
+                if (new_value > max_foe_bv
+                        || max_foe == null) {
                     max_foe_bv = new_value;
                     max_foe = centity;
                 }

@@ -144,7 +144,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
      * A <code>Vector</code> containing the <code>ActionListener</code>s
      * that have registered themselves with this menu bar.
      */
-    private final Vector actionListeners = new Vector();
+    private final Vector<ActionListener> actionListeners = new Vector<ActionListener>();
 
     /**
      * Create a MegaMek menu bar.
@@ -460,7 +460,7 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
      *          register itself.
      */
     public synchronized void addActionListener( ActionListener listener ) {
-        this.actionListeners.addElement( listener );
+        actionListeners.addElement( listener );
     }
 
     /**

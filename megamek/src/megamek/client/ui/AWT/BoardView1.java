@@ -117,8 +117,8 @@ public class BoardView1
     private Graphics boardGraph;
 
     // entity sprites
-    private Vector entitySprites = new Vector();
-    private Hashtable entitySpriteIds = new Hashtable();
+    private Vector<EntitySprite> entitySprites = new Vector<EntitySprite>();
+    private Hashtable<Integer,EntitySprite> entitySpriteIds = new Hashtable<Integer,EntitySprite>();
 
     // sprites for the three selection cursors
     private CursorSprite cursorSprite;
@@ -128,13 +128,13 @@ public class BoardView1
     private CursorSprite secondLOSSprite;
 
     // sprite for current movement
-    private Vector pathSprites = new Vector();
+    private Vector<StepSprite> pathSprites = new Vector<StepSprite>();
 
     // vector of sprites for all firing lines
-    private Vector attackSprites = new Vector();
+    private Vector<AttackSprite> attackSprites = new Vector<AttackSprite>();
 
     // vector of sprites for C3 network lines
-    private Vector C3Sprites = new Vector();
+    private Vector<C3Sprite> C3Sprites = new Vector<C3Sprite>();
 
     // tooltip stuff
     private Window tipWindow;
@@ -160,23 +160,23 @@ public class BoardView1
     // Initial scale factor for sprites and map
     public      int                     zoomIndex;
     private float               scale;
-    private ImageCache<Image,Image> scaledImageCache = new ImageCache();
+    private ImageCache<Image,Image> scaledImageCache = new ImageCache<Image,Image>();
         
     // Displayables (Chat box, etc.)
-    private Vector               displayables = new Vector();
+    private Vector<Displayable> displayables = new Vector<Displayable>();
 
     // Move units step by step
     private Vector                           movingUnits = new Vector();
     private long                             moveWait = 0;
 
     // moving entity sprites
-    private Vector movingEntitySprites = new Vector();
-    private Hashtable movingEntitySpriteIds = new Hashtable();
-    private Vector ghostEntitySprites = new Vector();
-    protected transient Vector boardListeners = new Vector();
+    private Vector<MovingEntitySprite> movingEntitySprites = new Vector<MovingEntitySprite>();
+    private Hashtable<Integer,MovingEntitySprite> movingEntitySpriteIds = new Hashtable<Integer,MovingEntitySprite>();
+    private Vector<GhostEntitySprite> ghostEntitySprites = new Vector<GhostEntitySprite>();
+    protected transient Vector<BoardViewListener> boardListeners = new Vector<BoardViewListener>();
 
     // wreck sprites
-    private Vector wreckSprites = new Vector();
+    private Vector<WreckSprite> wreckSprites = new Vector<WreckSprite>();
 
     private Coords rulerStart; // added by kenn
     private Coords rulerEnd; // added by kenn
@@ -302,8 +302,7 @@ public class BoardView1
         if (boardListeners == null) {
             return;
         }
-        for(Enumeration e = boardListeners.elements(); e.hasMoreElements();) {
-            BoardViewListener l = (BoardViewListener)e.nextElement();
+        for(BoardViewListener l: boardListeners) {
             switch(event.getType()) {
             case BoardViewEvent.BOARD_HEX_CLICKED :
             case BoardViewEvent.BOARD_HEX_DOUBLECLICKED :
@@ -582,9 +581,8 @@ public class BoardView1
      * Looks through a vector of buffered images and draws them if they're
      * onscreen.
      */
-    private synchronized void drawSprites(Vector spriteVector) {
-        for (int i = 0; i < spriteVector.size(); i++) {
-            final Sprite sprite = (Sprite)spriteVector.get(i);
+    private synchronized void drawSprites(Vector<? extends Sprite> spriteVector) {
+        for (Sprite sprite : spriteVector) {
             drawSprite(sprite);
         }
     }
@@ -783,8 +781,8 @@ public class BoardView1
         }
     }
     
-    private Vector getArtilleryAttacksAtLocation(Coords c) {
-        Vector v = new Vector();
+    private Vector<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {
+        Vector<ArtilleryAttackAction> v = new Vector<ArtilleryAttackAction>();
         for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
             ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
 
@@ -1576,12 +1574,12 @@ public class BoardView1
     public void redrawMovingEntity(Entity entity, Coords position, int facing) {
         Integer entityId = new Integer( entity.getId() );
         EntitySprite sprite = (EntitySprite) entitySpriteIds.get( entityId );
-        Vector newSprites;
-        Hashtable newSpriteIds;
+        Vector<EntitySprite> newSprites;
+        Hashtable<Integer,EntitySprite> newSpriteIds;
 
         if (sprite != null) {
-            newSprites = new Vector(entitySprites);
-            newSpriteIds = new Hashtable(entitySpriteIds);
+            newSprites = new Vector<EntitySprite>(entitySprites);
+            newSpriteIds = new Hashtable<Integer,EntitySprite>(entitySpriteIds);
 
             newSprites.removeElement(sprite);
 
@@ -1591,22 +1589,22 @@ public class BoardView1
 
         MovingEntitySprite mSprite =
             (MovingEntitySprite) movingEntitySpriteIds.get( entityId );
-        newSprites = new Vector(movingEntitySprites);
-        newSpriteIds = new Hashtable(movingEntitySpriteIds);
+        Vector<MovingEntitySprite> newMovingSprites = new Vector<MovingEntitySprite>(movingEntitySprites);
+        Hashtable<Integer,MovingEntitySprite> newMovingSpriteIds = new Hashtable<Integer,MovingEntitySprite>(movingEntitySpriteIds);
 
 
         if (mSprite != null) {
-            newSprites.removeElement(mSprite);
+            newMovingSprites.removeElement(mSprite);
         }
 
         if (entity.getPosition() != null) {
             mSprite = new MovingEntitySprite(entity, position, facing);
-            newSprites.addElement(mSprite);
-            newSpriteIds.put( entityId, mSprite );
+            newMovingSprites.addElement(mSprite);
+            newMovingSpriteIds.put( entityId, mSprite );
         }
 
-        movingEntitySprites = newSprites;
-        movingEntitySpriteIds = newSpriteIds;
+        movingEntitySprites = newMovingSprites;
+        movingEntitySpriteIds = newMovingSpriteIds;
     }
 
     public boolean isMovingUnits() {
@@ -1622,8 +1620,8 @@ public class BoardView1
     public void redrawEntity(Entity entity) {
         Integer entityId = new Integer( entity.getId() );
         EntitySprite sprite = (EntitySprite)entitySpriteIds.get( entityId );
-        Vector newSprites = new Vector(entitySprites);
-        Hashtable newSpriteIds = new Hashtable(entitySpriteIds);
+        Vector<EntitySprite> newSprites = new Vector<EntitySprite>(entitySprites);
+        Hashtable<Integer,EntitySprite> newSpriteIds = new Hashtable<Integer,EntitySprite>(entitySpriteIds);
 
 
         if (sprite != null) {
@@ -1663,9 +1661,9 @@ public class BoardView1
      * Clears all old entity sprites out of memory and sets up new ones.
      */
     private void redrawAllEntities() {
-        Vector newSprites = new Vector(game.getNoOfEntities());
-        Hashtable newSpriteIds = new Hashtable(game.getNoOfEntities());
-        Vector newWrecks = new Vector();
+        Vector<EntitySprite> newSprites = new Vector<EntitySprite>(game.getNoOfEntities());
+        Hashtable<Integer,EntitySprite> newSpriteIds = new Hashtable<Integer,EntitySprite>(game.getNoOfEntities());
+        Vector<WreckSprite> newWrecks = new Vector<WreckSprite>();
 
         Enumeration e = game.getWreckedEntities();
         while (e.hasMoreElements()) {
@@ -1765,10 +1763,9 @@ public class BoardView1
      * Clears current movement data from the screen
      */
     public void clearMovementData() {
-        Vector temp = pathSprites;
-        pathSprites = new Vector();
-        for (Iterator i = temp.iterator(); i.hasNext();) {
-            final Sprite sprite = (Sprite)i.next();
+        Vector<StepSprite> temp = pathSprites;
+        pathSprites = new Vector<StepSprite>();
+        for (Sprite sprite: temp) {
             repaintBounds(sprite.getBounds());
         }
     }
@@ -1820,12 +1817,15 @@ public class BoardView1
     /**
      * Adds an attack to the sprite list.
      */
-    public void addAttack(AttackAction aa) {
+    public synchronized void addAttack(AttackAction aa) {
         // do not make a sprite unless we're aware of both entities
         // this is not a great solution but better than a crash
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
-        if (ae == null || t == null || t.getTargetType() == Targetable.TYPE_INARC_POD) {
+        if (ae == null || t == null 
+                || t.getTargetType() == Targetable.TYPE_INARC_POD 
+                || t.getPosition() == null
+                || ae.getPosition() == null) {
             return;
         }
 
@@ -1886,16 +1886,13 @@ public class BoardView1
     }
 
     /** Removes all attack sprites from a certain entity */
-    public void removeAttacksFor(int entityId) {
-        // or rather, only keep sprites NOT for that entity
-        Vector toKeep = new Vector(attackSprites.size());
+    public synchronized void removeAttacksFor(int entityId) {
         for (Iterator i = attackSprites.iterator(); i.hasNext();) {
             AttackSprite sprite = (AttackSprite)i.next();
             if (sprite.getEntityId() != entityId) {
-                toKeep.addElement(sprite);
+                i.remove();
             }
         }
-        this.attackSprites = toKeep;
     }
 
     /**
@@ -2543,7 +2540,7 @@ public class BoardView1
 
         final Dimension size = getSize();
         
-        scaledImageCache = new ImageCache();
+        scaledImageCache = new ImageCache<Image,Image>();
 
         cursorSprite.prepare();
         highlightSprite.prepare();
@@ -3815,7 +3812,7 @@ public class BoardView1
      */
     private class AttackSprite extends Sprite
     {
-        private java.util.Vector attacks = new java.util.Vector();
+        private Vector<AttackAction> attacks = new Vector<AttackAction>();
         private Point a;
         private Point t;
         private double an;
@@ -3826,7 +3823,7 @@ public class BoardView1
         private int targetId;
         private String attackerDesc;
         private String targetDesc;
-        private Vector weaponDescs = new Vector();
+        private Vector<String> weaponDescs = new Vector<String>();
         private final Entity ae;
         private final Targetable target;
 
@@ -4390,9 +4387,9 @@ public class BoardView1
     }
 
     private void clearSprites() {
-        pathSprites = new Vector();
-        attackSprites = new Vector();
-        C3Sprites = new Vector();
+        pathSprites.clear();
+        attackSprites.clear();
+        C3Sprites.clear();
         
     }
 
@@ -4488,7 +4485,7 @@ public class BoardView1
     
     //This is expensive, so precalculate when entity changes
     public void updateEcmList() {
-        ArrayList<EcmBubble> list = new ArrayList();
+        ArrayList<EcmBubble> list = new ArrayList<EcmBubble>();
         for(Enumeration e = game.getEntities();e.hasMoreElements();) {
             Entity ent = (Entity)e.nextElement();
             if(ent.getPosition() == null || !ent.isDeployed() || ent.isOffBoard()) {
@@ -4500,7 +4497,7 @@ public class BoardView1
                 list.add(new EcmBubble(ent.getPosition(), range, tint));
             }
         }
-        Hashtable<Coords, Integer> table = new Hashtable();
+        Hashtable<Coords, Integer> table = new Hashtable<Coords, Integer>();
         for(EcmBubble b : list) {
             Integer col = new Integer(b.tint);
             for(int x=-b.range;x<=b.range;x++) {

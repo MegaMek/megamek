@@ -1022,7 +1022,7 @@ public class BattleArmor
     }
 
     public int getRandomTrooper() {
-        Vector activeTroops = new Vector();
+        Vector<Integer> activeTroops = new Vector<Integer>();
         for (int loop = 1; loop < this.locations(); loop++)
             if (isTrooperActive(loop))
                 activeTroops.add(loop);

@@ -460,11 +460,11 @@ public class DeploymentDisplay
         else if (ev.getActionCommand().equals(DEPLOY_LOAD)) {
 
             // What undeployed units can we load?
-            Vector choices = new Vector();
-            Enumeration entities = client.game.getEntities();
+            Vector<Entity> choices = new Vector<Entity>();
+            Enumeration<Entity> entities = client.game.getEntities();
             Entity other;
             while ( entities.hasMoreElements() ) {
-                other = (Entity) entities.nextElement();
+                other = entities.nextElement();
                 if ( other.isSelectableThisTurn()
                      && ce().canLoad(other) ) {
                     choices.addElement( other );

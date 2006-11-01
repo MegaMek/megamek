@@ -99,7 +99,7 @@ public class MechDisplay extends BufferedPanel {
     private ClientGUI clientgui;
 
     private Entity currentlyDisplaying = null;
-    private Vector eventListeners = new Vector();
+    private Vector<MechDisplayListener> eventListeners = new Vector<MechDisplayListener>();
 
     /**
      * Creates and lays out a new mech display.
@@ -431,7 +431,7 @@ public class MechDisplay extends BufferedPanel {
 
         // I need to keep a pointer to the weapon list of the
         // currently selected mech.
-        private Vector vAmmo;
+        private Vector<Mounted> vAmmo;
         private Entity entity;
         private ClientGUI client;
         private MechDisplay owner;
@@ -1033,7 +1033,7 @@ public class MechDisplay extends BufferedPanel {
                 } else {
                     m_chAmmo.setEnabled(false);
                 }
-                vAmmo = new Vector();
+                vAmmo = new Vector<Mounted>();
                 int nCur = -1;
                 int i = 0;
                 for (Mounted mountedAmmo : entity.getAmmo()) {

@@ -78,7 +78,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
@@ -143,7 +143,7 @@ public class ClientGUI
     /**
      * Map each phase to the name of the card for the main display area.
      */
-    private Hashtable mainNames = new Hashtable();
+    private HashMap<String,String> mainNames = new HashMap<String,String>();
 
     /**
      * The <code>Panel</code> containing the main display area.
@@ -158,7 +158,7 @@ public class ClientGUI
     /**
      * Map each phase to the name of the card for the secondary area.
      */
-    private Hashtable secondaryNames = new Hashtable();
+    private HashMap<String,String> secondaryNames = new HashMap<String,String>();
 
     /**
      * The <code>Panel</code> containing the secondary display area.
@@ -173,10 +173,10 @@ public class ClientGUI
     /**
      * Map phase component names to phase component objects.
      */
-    private Hashtable phaseComponents = new Hashtable();
+    private HashMap<String,Component> phaseComponents = new HashMap<String,Component>();
 
     //TODO: there's a better place for this
-    private Map bots = new TreeMap(StringUtil.stringComparator());
+    private Map<String,Client> bots = new TreeMap<String,Client>(StringUtil.stringComparator());
 
     /**
      * Current Selected entity
@@ -648,9 +648,7 @@ public class ClientGUI
     public void die() {
         //Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
-        Enumeration names = phaseComponents.keys();
-        while (names.hasMoreElements()) {
-            Component component = (Component) phaseComponents.get(names.nextElement());
+        for(Component component:phaseComponents.values()) {
             if (component instanceof ReportDisplay) {
                 if (reportHandled) {
                     continue;
@@ -795,7 +793,7 @@ public class ClientGUI
 
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "SelectArtyAutoHitHexDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
+                if (!mainNames.keySet().contains(main)) {
                     panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
@@ -805,7 +803,7 @@ public class ClientGUI
 
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeployMinefieldDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
+                if (!mainNames.keySet().contains(main)) {
                     panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
@@ -814,7 +812,7 @@ public class ClientGUI
                 component = new DeploymentDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
+                if (!mainNames.keySet().contains(main)) {
                     panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
@@ -824,7 +822,7 @@ public class ClientGUI
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "TargetingPhaseDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
+                if (!mainNames.keySet().contains(main)) {
                     panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
@@ -833,7 +831,7 @@ public class ClientGUI
                 component = new MovementDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "MovementDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
+                if (!mainNames.keySet().contains(main)) {
                     panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
@@ -843,7 +841,7 @@ public class ClientGUI
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "OffboardDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
+                if (!mainNames.keySet().contains(main)) {
                     panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
@@ -852,7 +850,7 @@ public class ClientGUI
                 component = new FiringDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "FiringDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
+                if (!mainNames.keySet().contains(main)) {
                     panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
@@ -861,7 +859,7 @@ public class ClientGUI
                 component = new PhysicalDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "PhysicalDisplay"; //$NON-NLS-1$
-                if (!mainNames.contains(main)) {
+                if (!mainNames.keySet().contains(main)) {
                     panMain.add(main, this.scroller);
                 }
                 panSecondary.add(secondary, component);
@@ -1494,10 +1492,10 @@ public class ClientGUI
             getBots().clear();
             
             // Make a list of the player's living units.
-            Vector living = client.game.getPlayerEntities(client.getLocalPlayer());
+            Vector<Entity> living = client.game.getPlayerEntities(client.getLocalPlayer());
             
             // Be sure to include all units that have retreated.
-            for (Enumeration iter = client.game.getRetreatedEntities(); iter.hasMoreElements();) {
+            for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter.hasMoreElements();) {
                 living.addElement(iter.nextElement());
             }
             
@@ -1546,7 +1544,7 @@ public class ClientGUI
         return client;
     }
 
-    public Map getBots() {
+    public Map<String,Client> getBots() {
         return bots;
     }
 

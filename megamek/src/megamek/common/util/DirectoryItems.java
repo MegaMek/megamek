@@ -44,12 +44,12 @@ public class DirectoryItems implements Categorized {
      * Please note that this map includes the root category,
      * if the root category contains any items. 
     */
-    private TreeMap categories = new TreeMap( StringUtil.stringComparator() );
+    private TreeMap<String,Categorized> categories = new TreeMap<String,Categorized>( StringUtil.stringComparator() );
 
     /**
      * A map of item names to the <code>ItemFile</code>s in the root category.
      */
-    private TreeMap items = new TreeMap( StringUtil.stringComparator() );
+    private TreeMap<String,ItemFile> items = new TreeMap<String,ItemFile>( StringUtil.stringComparator() );
 
     /**
      * The factory that will create <code>ItemFile</code>s for the
@@ -64,7 +64,7 @@ public class DirectoryItems implements Categorized {
      * @param   category - the <code>Categorized</code> files.
      */
     private void addCategory( Categorized category ) {
-        Enumeration names = category.getCategoryNames();
+        Enumeration<String> names = category.getCategoryNames();
         while ( names.hasMoreElements() ) {
             categories.put( names.nextElement(), category );
         }
@@ -193,7 +193,7 @@ public class DirectoryItems implements Categorized {
      * @return  an <code>Enumeration</code> of <code>String</code> names.
      *          This value will not be <code>null</code>, but it may be empty.
      */
-    public Enumeration getCategoryNames() {
+    public Enumeration<String> getCategoryNames() {
         return Collections.elements( categories.keySet() );
     }
 
@@ -205,14 +205,14 @@ public class DirectoryItems implements Categorized {
      * @return  an <code>Enumeration</code> of <code>String</code> names.
      *          This value will not be <code>null</code>, but it may be empty.
      */
-    public Enumeration getItemNames( String categoryName ) {
+    public Enumeration<String> getItemNames( String categoryName ) {
 
         // Get the category with the given name.
         Categorized category = (Categorized) categories.get( categoryName );
 
         // Return an empty Enumeration if we couldn't find the category.
         if ( null == category ) {
-            return new Vector().elements();
+            return new Vector<String>().elements();
         }
 
         // Is this a subcategory?

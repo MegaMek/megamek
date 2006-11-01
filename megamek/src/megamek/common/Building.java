@@ -37,7 +37,7 @@ public class Building implements Serializable {
     /**
      * The coordinates of every hex of this building.
      */
-    private Vector      coordinates     = new Vector();
+    private Vector<Coords>      coordinates     = new Vector<Coords>();
 
     /**
      * The construction type of the building.
@@ -77,7 +77,7 @@ public class Building implements Serializable {
         }
     }
 
-    private ArrayList demolitionCharges = new ArrayList();
+    private ArrayList<DemolitionCharge> demolitionCharges = new ArrayList<DemolitionCharge>();
 
     // Public and Protected constants, constructors, and methods.
 
@@ -248,7 +248,7 @@ public class Building implements Serializable {
      *          the given coordinates do not contain a building, or if the
      *          building covers multiple hexes with different CFs.
      */
-    public Building( int type, int id, String name, Vector coords ) {
+    public Building( int type, int id, String name, Vector<Coords> coords ) {
         this.type = type;
         this.id = id;
         this.name = name;
@@ -290,7 +290,7 @@ public class Building implements Serializable {
      *
      * @return  an <code>Enumeration</code> of the <code>Coord</code> objects.
      */
-    public Enumeration getCoords() {
+    public Enumeration<Coords> getCoords() {
         return this.coordinates.elements();
     }
 

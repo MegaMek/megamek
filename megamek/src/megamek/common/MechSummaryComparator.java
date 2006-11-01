@@ -16,7 +16,7 @@
  
  import java.util.Comparator;
  
- public class MechSummaryComparator implements Comparator
+ public class MechSummaryComparator implements Comparator<MechSummary>
  {
     public static final int T_CHASSIS = 0;
     public static final int T_MODEL = 1;
@@ -32,11 +32,8 @@
         m_nType = nType;
     }
     
-    public int compare(Object o1, Object o2)
-    {
-        MechSummary ms1 = (MechSummary)o1;
-        MechSummary ms2 = (MechSummary)o2;
-        
+    public int compare(MechSummary ms1, MechSummary ms2)
+    {        
         switch (m_nType) {
             case T_CHASSIS :
                 return ms1.getChassis().compareTo(ms2.getChassis());

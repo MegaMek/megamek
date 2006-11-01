@@ -105,7 +105,7 @@ public class BuildingEncoder {
         String attrStr = null;
         int attrVal = 0;
         Building retVal = null;
-        Vector coordVec = new Vector();
+        Vector<Coords> coordVec = new Vector<Coords>();
         Enumeration subnodes = null;
         ParsedXML subnode = null;
         Coords coords = null;

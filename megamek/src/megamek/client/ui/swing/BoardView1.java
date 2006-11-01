@@ -211,7 +211,7 @@ public final class BoardView1
     private ImageCache<Image,Image> scaledImageCache = new ImageCache();
         
     // Displayables (Chat box, etc.)
-    private final Vector displayables = new Vector();
+    private Vector<Displayable> displayables = new Vector<Displayable>();
     // Move units step by step
     private final Vector movingUnits = new Vector();
     private long moveWait = 0;
@@ -219,7 +219,7 @@ public final class BoardView1
     private ArrayList<Sprite> movingEntitySprites = new ArrayList<Sprite>();
     private HashMap<Integer, Sprite> movingEntitySpriteIds = new HashMap<Integer, Sprite>();
     private final ArrayList<Sprite> ghostEntitySprites = new ArrayList<Sprite>();
-    private final transient Vector boardListeners = new Vector();
+    protected transient Vector<BoardViewListener> boardListeners = new Vector<BoardViewListener>();
     // wreck sprites
     private ArrayList<Sprite> wreckSprites = new ArrayList<Sprite>();
     private Coords rulerStart; // added by kenn
@@ -335,8 +335,7 @@ public final class BoardView1
         if (boardListeners == null) {
             return;
         }
-        for (Enumeration e = boardListeners.elements(); e.hasMoreElements();) {
-            BoardViewListener l = (BoardViewListener) e.nextElement();
+        for(BoardViewListener l: boardListeners) {
             switch (event.getType()) {
                 case BoardViewEvent.BOARD_HEX_CLICKED:
                 case BoardViewEvent.BOARD_HEX_DOUBLECLICKED:
@@ -787,8 +786,8 @@ public final class BoardView1
         }
     }
 
-    private Vector getArtilleryAttacksAtLocation(Coords c) {
-        Vector v = new Vector();
+    private Vector<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {
+        Vector<ArtilleryAttackAction> v = new Vector<ArtilleryAttackAction>();
         for (Enumeration attacks = game.getArtilleryAttacks(); attacks.hasMoreElements();) {
             ArtilleryAttackAction a = (ArtilleryAttackAction) attacks.nextElement();
             if (a.getWR().waa.getTarget(game).getPosition().equals(c)) {
@@ -1702,7 +1701,10 @@ public final class BoardView1
         // this is not a great solution but better than a crash
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
-        if (ae == null || t == null || t.getTargetType() == Targetable.TYPE_INARC_POD) {
+        if (ae == null || t == null 
+                || t.getTargetType() == Targetable.TYPE_INARC_POD 
+                || t.getPosition() == null
+                || ae.getPosition() == null) {
             return;
         }
         for (final Iterator i = attackSprites.iterator(); i.hasNext();) {

@@ -168,9 +168,9 @@ public class AmmoType extends EquipmentType {
         "Vibrabomb-IV", "Smoke", "Narc-Capable", "Artemis-Capable",
         "Listen-Kill", "Anti-TSM", "Acid-Head" };
         */
-    private static Vector[] m_vaMunitions = new Vector[NUM_TYPES];
+    private static Vector<AmmoType>[] m_vaMunitions = new Vector[NUM_TYPES];
 
-    public static Vector getMunitionsFor(int nAmmoType) {
+    public static Vector<AmmoType> getMunitionsFor(int nAmmoType) {
         return m_vaMunitions[nAmmoType];
     }
 

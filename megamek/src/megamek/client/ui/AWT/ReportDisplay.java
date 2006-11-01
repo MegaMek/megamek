@@ -41,7 +41,7 @@ public class ReportDisplay
     
     // displays
     private TabPanel        tabs;
-    private Vector          vTextArea;
+    private Vector<TextArea>  vTextArea;
 
     // buttons
     private Button            readyB;
@@ -219,7 +219,7 @@ public class ReportDisplay
 
     public void resetTabs() {
         tabs.removeAll();
-        vTextArea = new Vector();
+        vTextArea = new Vector<TextArea>();
         /* HACK: Without this initial empty TextArea, the tabs will be
            blank (no TextArea at all) during the first initiative
            phase.  I think it has something to do with the layout

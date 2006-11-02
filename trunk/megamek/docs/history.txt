@@ -19,6 +19,7 @@ v0.33.2 (SVN)
 + Woods burn down house rule now damages woods 5 points per turn instead of clearing on 11+
 + Bug 1588924: Cannot Open Custom BA Panel with Java 1.4
 + Display "CREW DEAD" on carcasses
++ Don't count C3 Masters as TAG for "no more than 1 TAG per Mech" purposes.
 
 v0.33.1 (2006-10-31 22:40 GMT+9)
 + Fix filename case for IS Omni images, so they show up on filename case-

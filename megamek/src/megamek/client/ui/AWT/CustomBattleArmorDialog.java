@@ -695,12 +695,12 @@ public class CustomBattleArmorDialog
     }
 
     public void setVisible(boolean show) {
+        super.setVisible(show);
         if(show) {
             updatePlayerChoice();
             setLocation(computeDesiredLocation());
             m_BAView.setCaretPosition(0);
         }
-        super.setVisible(show);
     }
 
     public void actionPerformed(ActionEvent ae) {

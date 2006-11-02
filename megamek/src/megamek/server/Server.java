@@ -7184,7 +7184,7 @@ public class Server implements Runnable {
        return tryIgniteHex(c, entityId, bInferno, nTargetRoll, false);
    }
 
-    private void tryClearHex(Coords c, int nDamage, int entityId) {
+    public void tryClearHex(Coords c, int nDamage, int entityId) {
         IHex h = game.getBoard().getHex(c);
         if(h==null)
             return;

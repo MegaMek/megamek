@@ -21,6 +21,7 @@ import java.util.Vector;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.Entity;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -97,7 +98,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         Hashtable positionMap = game.getPositionMap();
 
         // Build vector to send for updated buildings at once.
-        Vector burningBldgs = new Vector();
+        Vector<Building> burningBldgs = new Vector<Building>();
 
         // If we're in L3 rules, process smoke FIRST, before any fires spread or smoke is produced.
         if (game.getOptions().booleanOption("maxtech_fire")) {
@@ -226,7 +227,8 @@ public class FireProcessor extends DynamicTerrainProcessor {
     }  // End the ResolveFire() method
 
     public void burnDownWoods(Coords coords) {
-        IHex hex = game.getBoard().getHex(coords);
+        server.tryClearHex(coords, 5, Entity.NONE);
+/*        IHex hex = game.getBoard().getHex(coords);
         int roll = Compute.d6(2);
         Report r;
         if(roll >= 11) {
@@ -279,7 +281,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 vPhaseReport.addElement(r);
             }
             server.sendChangedHex(coords);
-        }
+        }*/
     }
 
     /**
@@ -338,8 +340,6 @@ public class FireProcessor extends DynamicTerrainProcessor {
         int height = board.getHeight();
         int windDir = game.getWindDirection();
         int windStr = game.getWindStrength();
-        Vector SmokeToAdd = new Vector();
-
         class SmokeDrift { // hold the hex and level of the smoke cloud
             public Coords coords;
             public int size;
@@ -349,11 +349,13 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 size = s;
             }
 
-            public SmokeDrift(SmokeDrift sd) {
+            /*public SmokeDrift(SmokeDrift sd) {
                 sd.coords = coords;
                 sd.size = size;
-            }
+            }*/
         }
+
+        Vector<SmokeDrift> SmokeToAdd = new Vector<SmokeDrift>();
 
         // Cycle through all hexes, checking for smoke, IF the wind is higher than calm! Calm means no drift!
         if(windStr > 0) {

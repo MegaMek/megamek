@@ -628,7 +628,8 @@ public abstract class TestEntity implements TestEntityOption {
         int tagCount = 0;
         boolean illegal = false;
         for(Mounted m: getEntity().getWeaponList()) {
-            if(m.getType().hasFlag(WeaponType.F_TAG))
+            if(m.getType().hasFlag(WeaponType.F_TAG) &&
+                    !m.getType().hasFlag(WeaponType.F_C3M))
                 tagCount++;
         }
         if(tagCount > 1) {

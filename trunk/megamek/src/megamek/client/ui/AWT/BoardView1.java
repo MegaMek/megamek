@@ -166,7 +166,7 @@ public class BoardView1
     private Vector<Displayable> displayables = new Vector<Displayable>();
 
     // Move units step by step
-    private Vector                           movingUnits = new Vector();
+    private Vector<MovingUnit>               movingUnits = new Vector<MovingUnit>();
     private long                             moveWait = 0;
 
     // moving entity sprites
@@ -336,10 +336,8 @@ public class BoardView1
 
     private void addMovingUnit(Entity entity, Vector movePath) {
         if ( !movePath.isEmpty() ) {
-            Object[] o = new Object[2];
-            o[0] = entity;
-            o[1] = movePath;
-            movingUnits.addElement(o);
+            MovingUnit m = new MovingUnit(entity, movePath);
+            movingUnits.addElement(m);
 
             GhostEntitySprite ghostSprite = new GhostEntitySprite(entity);
             ghostEntitySprites.add(ghostSprite);
@@ -2183,23 +2181,20 @@ public class BoardView1
 
             if (moveWait > GUIPreferences.getInstance().getInt("AdvancedMoveStepDelay")) {
 
-                java.util.Vector spent = new java.util.Vector();
+                Vector<MovingUnit> spent = new Vector<MovingUnit>();
 
-                for (int i = 0; i < movingUnits.size(); i++) {
-                    Object[] move = (Object[]) movingUnits.elementAt(i);
-                    Entity e = (Entity) move[0];
-                    java.util.Vector movePath = (java.util.Vector) move[1];
+                for (MovingUnit move : movingUnits) {
                     movingSomething = true;
-                    Entity ge = game.getEntity(e.getId()); 
-                    if (movePath.size() > 0) {
+                    Entity ge = game.getEntity(move.entity.getId()); 
+                    if (move.path.size() > 0) {
                         UnitLocation loc =
-                            ( (UnitLocation) movePath.elementAt(0) );
+                            ( (UnitLocation) move.path.elementAt(0) );
                         if (ge != null) {
-                            redrawMovingEntity( e,
+                            redrawMovingEntity( move.entity,
                                                 loc.getCoords(),
                                                 loc.getFacing() );
                         }
-                        movePath.removeElementAt(0);
+                        move.path.removeElementAt(0);
                     } else {
                         if (ge != null) {
                             redrawEntity(ge);
@@ -2209,8 +2204,7 @@ public class BoardView1
 
                 }
 
-                for (int i = 0; i < spent.size(); i++) {
-                    Object[] move = (Object[]) spent.elementAt(i);
+                for (MovingUnit move : spent) {
                     movingUnits.removeElement(move);
                 }
                 moveWait = 0;
@@ -2576,6 +2570,15 @@ public class BoardView1
             font_minefield = FONT_9;
         }
     }
+    
+    private class MovingUnit {
+        public Entity entity;
+        public Vector path;
+        MovingUnit(Entity entity, Vector path) {
+            this.entity = entity;
+            this.path = path;
+        }
+    }
 
     /**
      * Displays a bit of text in a box.
@@ -2709,7 +2712,7 @@ public class BoardView1
          * Since most sprites being drawn correspond to something in the game,
          * this returns a little info for a tooltip.
          */
-        private String[] getTooltip() {
+        public String[] getTooltip() {
             return null;
         }
     }
@@ -3164,7 +3167,14 @@ public class BoardView1
             }
 
             // draw condition strings
-            if (!ge && entity.isImmobile()) {
+            if (entity.crew.isDead()) {
+                // draw "CREW DEAD"
+                graph.setColor(Color.darkGray);
+                graph.drawString(Messages.getString("BoardView1.CrewDead"), 18, 39); //$NON-NLS-1$
+                graph.setColor(Color.red);
+                graph.drawString(Messages.getString("BoardView1.CrewDead"), 17, 38); //$NON-NLS-1$
+            }
+            else if (!ge && entity.isImmobile()) {
                 if (entity.isProne()) {
                     // draw "IMMOBILE" and "PRONE"
                     graph.setColor(Color.darkGray);
@@ -3350,7 +3360,7 @@ public class BoardView1
                                         point.y + view.y - offset.y);
         }
 
-        private String[] getTooltip() {
+        public String[] getTooltip() {
             String[] tipStrings = new String[3];
             StringBuffer buffer;
 
@@ -4056,7 +4066,7 @@ public class BoardView1
             weaponDescs.addElement(Messages.getString("BoardView1.Searchlight"));
         }
 
-        private String[] getTooltip() {
+        public String[] getTooltip() {
             String[] tipStrings = new String[1 + weaponDescs.size()];
             int tip = 1;
             tipStrings[0] = attackerDesc + " "+Messages.getString("BoardView1.on")+" " + targetDesc; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

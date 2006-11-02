@@ -18,7 +18,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
-import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.swing.Messages;
 import megamek.client.ui.swing.util.ImageCache;
 import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
@@ -208,12 +208,12 @@ public final class BoardView1
     private boolean useLOSTool = true;
     private int zoomIndex;
     private float scale;
-    private ImageCache<Image,Image> scaledImageCache = new ImageCache();
+    private ImageCache<Image,Image> scaledImageCache = new ImageCache<Image,Image>();
         
     // Displayables (Chat box, etc.)
     private Vector<Displayable> displayables = new Vector<Displayable>();
     // Move units step by step
-    private final Vector movingUnits = new Vector();
+    private final Vector<MovingUnit> movingUnits = new Vector<MovingUnit>();
     private long moveWait = 0;
     // moving entity sprites
     private ArrayList<Sprite> movingEntitySprites = new ArrayList<Sprite>();
@@ -369,10 +369,8 @@ public final class BoardView1
 
     private void addMovingUnit(Entity entity, Vector movePath) {
         if (!movePath.isEmpty()) {
-            Object[] o = new Object[2];
-            o[0] = entity;
-            o[1] = movePath;
-            movingUnits.addElement(o);
+            MovingUnit m = new MovingUnit(entity, movePath);
+            movingUnits.addElement(m);
             GhostEntitySprite ghostSprite = new GhostEntitySprite(entity);
             ghostEntitySprites.add(ghostSprite);
 
@@ -2052,22 +2050,19 @@ public final class BoardView1
         if (movingUnits.size() > 0) {
             moveWait += idleTime;
             if (moveWait > GUIPreferences.getInstance().getInt("AdvancedMoveStepDelay")) {
-                Vector spent = new Vector();
-                for (int i = 0; i < movingUnits.size(); i++) {
-                    Object[] move = (Object[]) movingUnits.elementAt(i);
-                    Entity e = (Entity) move[0];
-                    Vector movePath = (Vector) move[1];
+                Vector<MovingUnit> spent = new Vector<MovingUnit>();
+                for (MovingUnit move:movingUnits) {
                     movingSomething = true;
-                    Entity ge = game.getEntity(e.getId());
-                    if (movePath.size() > 0) {
+                    Entity ge = game.getEntity(move.entity.getId());
+                    if (move.path.size() > 0) {
                         UnitLocation loc =
-                                ((UnitLocation) movePath.elementAt(0));
+                                ((UnitLocation) move.path.elementAt(0));
                         if (ge != null) {
-                            redrawMovingEntity(e,
+                            redrawMovingEntity(move.entity,
                                     loc.getCoords(),
                                     loc.getFacing());
                         }
-                        movePath.removeElementAt(0);
+                        move.path.removeElementAt(0);
                     } else {
                         if (ge != null) {
                             redrawEntity(ge);
@@ -2075,8 +2070,7 @@ public final class BoardView1
                         spent.addElement(move);
                     }
                 }
-                for (int i = 0; i < spent.size(); i++) {
-                    Object[] move = (Object[]) spent.elementAt(i);
+                for (MovingUnit move:spent) {
                     movingUnits.removeElement(move);
                 }
                 moveWait = 0;
@@ -2362,7 +2356,7 @@ public final class BoardView1
         GUIPreferences.getInstance().setMapZoomIndex(zoomIndex);
         hex_size = new Dimension((int) (HEX_W * scale), (int) (HEX_H * scale));
         final Dimension size = getSize();
-        scaledImageCache = new ImageCache();
+        scaledImageCache = new ImageCache<Image,Image>();
         cursorSprite.prepare();
         highlightSprite.prepare();
         selectedSprite.prepare();
@@ -2392,6 +2386,15 @@ public final class BoardView1
             font_elev = FONT_9;
             font_hexnum = FONT_9;
             font_minefield = FONT_9;
+        }
+    }
+
+    private class MovingUnit {
+        public Entity entity;
+        public Vector path;
+        MovingUnit(Entity entity, Vector path) {
+            this.entity = entity;
+            this.path = path;
         }
     }
 
@@ -2893,7 +2896,14 @@ public final class BoardView1
             }
 
             // draw condition strings
-            if (!ge && entity.isImmobile()) {
+            if (entity.crew.isDead()) {
+                // draw "CREW DEAD"
+                graph.setColor(Color.darkGray);
+                graph.drawString(Messages.getString("BoardView1.CrewDead"), 18, 39); //$NON-NLS-1$
+                graph.setColor(Color.red);
+                graph.drawString(Messages.getString("BoardView1.CrewDead"), 17, 38); //$NON-NLS-1$
+            }
+            else if (!ge && entity.isImmobile()) {
                 if (entity.isProne()) {
                     // draw "IMMOBILE" and "PRONE"
                     graph.setColor(Color.darkGray);
@@ -3500,7 +3510,7 @@ public final class BoardView1
      * each other.
      */
     private final class AttackSprite extends Sprite {
-        private final Vector attacks = new Vector();
+        private final Vector<AttackAction> attacks = new Vector<AttackAction>();
         private Point a;
         private Point t;
         private final double an;
@@ -3511,7 +3521,7 @@ public final class BoardView1
         private final int targetId;
         private final String attackerDesc;
         private final String targetDesc;
-        private final Vector weaponDescs = new Vector();
+        private final Vector<String> weaponDescs = new Vector<String>();
         private final Entity ae;
         private final Targetable target;
 

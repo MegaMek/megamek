@@ -21,6 +21,7 @@ v0.33.2 (SVN)
 + Display "CREW DEAD" on carcasses
 + Don't count C3 Masters as TAG for "no more than 1 TAG per Mech" purposes.
 + Bug 1589699: infantry with jumping MP can now be unloaded from a VTOL in flight
++ Anti-Mech skill of 8 (for an untrained unit) can now be set when customising a unit.
 
 v0.33.1 (2006-10-31 22:40 GMT+9)
 + Fix filename case for IS Omni images, so they show up on filename case-

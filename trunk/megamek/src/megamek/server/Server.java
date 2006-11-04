@@ -2870,6 +2870,18 @@ public class Server implements Runnable {
                 // non-flying unit onloaded from a flying onto a building
                 // -> sit on the roff
                 unit.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
+            } else {
+                while(elevation >= -hex.depth()) {
+                    if(unit.isElevationValid(elevation, hex)) {
+                        unit.setElevation(elevation);
+                        break;
+                    }
+                    elevation--;
+                    unit.moved = IEntityMovementType.MOVE_JUMP;
+                }
+                if(!unit.isElevationValid(elevation, hex)) {
+                    return false;
+                }
             }
         } else if (game.getBoard().getBuildingAt(pos) != null) {
             // non flying unit unloading units into a building

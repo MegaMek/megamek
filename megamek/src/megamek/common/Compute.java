@@ -1493,12 +1493,12 @@ public class Compute {
      * damage
      */
     public static WeaponAttackAction getHighestExpectedDamage(IGame g,
-            Vector vAttacks) {
+            Vector vAttacks, boolean assumeHit) {
         float fHighest = -1.0f;
         WeaponAttackAction waaHighest = null;
         for (int x = 0, n = vAttacks.size(); x < n; x++) {
             WeaponAttackAction waa = (WeaponAttackAction) vAttacks.elementAt(x);
-            float fDanger = getExpectedDamage(g, waa);
+            float fDanger = getExpectedDamage(g, waa, assumeHit);
             if (fDanger > fHighest) {
                 fHighest = fDanger;
                 waaHighest = waa;
@@ -1516,7 +1516,7 @@ public class Compute {
      * Determines the expected damage of a weapon attack, based on to-hit, salvo
      * sizes, etc.
      */
-    public static float getExpectedDamage(IGame g, WeaponAttackAction waa) {
+    public static float getExpectedDamage(IGame g, WeaponAttackAction waa, boolean assumeHit) {
         boolean use_table = false;
 
         AmmoType loaded_ammo = new AmmoType();
@@ -1537,19 +1537,23 @@ public class Compute {
             inf_attacker = (Infantry) g.getEntity(waa.getEntityId());
         }
 
-        float fDamage = 0.0f;
         WeaponType wt = (WeaponType) weapon.getType();
-
-        if (hitData.getValue() == ToHitData.IMPOSSIBLE
-                || hitData.getValue() == ToHitData.AUTOMATIC_FAIL) {
-            return 0.0f;
-        }
-
+        
+        float fDamage = 0.0f;
         float fChance = 0.0f;
-        if (hitData.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        if(assumeHit) {
             fChance = 1.0f;
         } else {
-            fChance = (float) oddsAbove(hitData.getValue()) / 100.0f;
+            if (hitData.getValue() == ToHitData.IMPOSSIBLE
+                    || hitData.getValue() == ToHitData.AUTOMATIC_FAIL) {
+                return 0.0f;
+            }
+    
+            if (hitData.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+                fChance = 1.0f;
+            } else {
+                fChance = (float) oddsAbove(hitData.getValue()) / 100.0f;
+            }
         }
 
         // Missiles, LBX cluster rounds, and ultra/rotary cannons (when spun up)
@@ -1858,7 +1862,7 @@ public class Compute {
                 || wtype.hasFlag(WeaponType.F_ONESHOT)
                 || wtype.hasFlag(WeaponType.F_INFANTRY)
                 || (wtype.getAmmoType() == AmmoType.T_NA)) {
-            return getExpectedDamage(cgame, atk);
+            return getExpectedDamage(cgame, atk, false);
         }
 
         // Get a list of ammo bins and the first valid bin
@@ -1911,7 +1915,7 @@ public class Compute {
 		// If multi_bin is false, then all bin types are the same; skip down
 		// to getting the expected damage
 		if (!multi_bin) {
-		    return getExpectedDamage(cgame, atk);
+		    return getExpectedDamage(cgame, atk, false);
 		}
 		if (multi_bin) {
 
@@ -1934,7 +1938,7 @@ public class Compute {
 		                    atk.setAmmoId(shooter.getEquipmentNum(abin));
 
 		                    // Get expected damage
-		                    ex_damage = getExpectedDamage(cgame, atk);
+		                    ex_damage = getExpectedDamage(cgame, atk, false);
 
 		                    // Calculate any modifiers due to ammo type
 		                    ammo_multiple = 1.0;

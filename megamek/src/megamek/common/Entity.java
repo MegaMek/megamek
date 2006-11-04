@@ -27,6 +27,7 @@ import megamek.common.util.StringUtil;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
 import java.util.Iterator;
@@ -3420,15 +3421,12 @@ public abstract class Entity extends TurnOrdered
      * Assign AMS systems to the most dangerous incoming missile attacks.
      * This should only be called once per turn, or AMS will get extra attacks
      */
-    public void assignAMS(Vector vAttacks) {
+    public void assignAMS(Vector<WeaponResult> vAttacks) {
 
+        HashSet<WeaponAttackAction> targets = new HashSet<WeaponAttackAction>();
         for(Mounted weapon : getWeaponList()) {
             if (weapon.getType().hasFlag(WeaponType.F_AMS)) {
                 if (!weapon.isReady() || weapon.isMissing()) {
-                    continue;
-                }
-                // don't try if it's turned off
-                if (weapon.curMode().equals("Off")) {
                     continue;
                 }
 
@@ -3449,17 +3447,18 @@ public abstract class Entity extends TurnOrdered
 
                 // make a new vector of only incoming attacks in arc
                 Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(vAttacks.size());
-                for (Enumeration i = vAttacks.elements(); i.hasMoreElements();) {
-                    WeaponAttackAction waa = (WeaponAttackAction)i.nextElement();
-                    if (Compute.isInArc(game, this.getId(), getEquipmentNum(weapon),
-                            game.getEntity(waa.getEntityId()))) {
-                        vAttacksInArc.addElement(waa);
+                for (WeaponResult wr:vAttacks) {
+                    if(!targets.contains(wr.waa) &&
+                            Compute.isInArc(game, this.getId(), getEquipmentNum(weapon),
+                            game.getEntity(wr.waa.getEntityId()))) {
+                        vAttacksInArc.addElement(wr.waa);
                     }
                 }
                 // find the most dangerous salvo by expected damage
-                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, vAttacksInArc);
+                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game, vAttacksInArc, true);
                 if (waa != null) {
                     waa.addCounterEquipment(weapon);
+                    targets.add(waa);
                 }
             }
         }

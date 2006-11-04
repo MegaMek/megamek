@@ -153,7 +153,7 @@ public class MovementDisplay
     /**
      * A local copy of the current entity's loaded units.
      */
-    private Vector loadedUnits = null;
+    private Vector<Entity> loadedUnits = null;
     public static final int GEAR_LAND = 0;
     public static final int GEAR_BACKUP = 1;
     public static final int GEAR_JUMP = 2;
@@ -709,7 +709,7 @@ public class MovementDisplay
             loadedUnits = ce.getLoadedUnits();
         } else {
             // The variable, loadedUnits, can not be null.
-            loadedUnits = new Vector();
+            loadedUnits = new Vector<Entity>();
         }
         updateLoadButtons();
         updateElevationButtons();
@@ -1265,7 +1265,8 @@ public class MovementDisplay
         boolean canUnloadHere = false;
         for (Enumeration e = loadedUnits.elements(); e.hasMoreElements();) {
             Entity en = (Entity) e.nextElement();
-            if (en.isElevationValid(unloadEl, hex)) {
+            if(en.isElevationValid(unloadEl, hex)
+                    || en.getJumpMP() > 0) {
                 canUnloadHere = true;
                 break;
             }
@@ -1703,7 +1704,7 @@ public class MovementDisplay
      * dismount at the start of the turn.
      */
     private void unloadStranded() {
-        Vector stranded = new Vector();
+        Vector<Entity> stranded = new Vector<Entity>();
         String[] names = null;
         Entity entity = null;
         Entity transport = null;
@@ -1714,7 +1715,7 @@ public class MovementDisplay
 
         // Collect the stranded entities into the vector.
         // TODO : get a better interface to "game" and "turn"
-        Enumeration entities = client.getSelectedEntities
+        Enumeration<Entity> entities = client.getSelectedEntities
                 (new EntitySelector() {
                     private final IGame game =
                             MovementDisplay.this.client.game;

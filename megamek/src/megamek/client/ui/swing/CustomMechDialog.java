@@ -23,6 +23,7 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.ui.AWT.Messages;
 import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.EquipmentType;
@@ -63,8 +64,8 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.TreeSet;
 import java.util.Vector;
 
 /**
@@ -90,7 +91,7 @@ public class CustomMechDialog
     private JLabel labCallsign = new JLabel(Messages.getString("CustomMechDialog.labCallsign"), JLabel.CENTER); //$NON-NLS-1$
     private JLabel labUnitNum = new JLabel(Messages.getString("CustomMechDialog.labUnitNum"), JLabel.CENTER); //$NON-NLS-1$
     private JComboBox choUnitNum = new JComboBox();
-    private ArrayList entityUnitNum = new ArrayList();
+    private ArrayList<Entity> entityUnitNum = new ArrayList<Entity>();
     private JLabel labDeployment = new JLabel(Messages.getString("CustomMechDialog.labDeployment"), JLabel.RIGHT); //$NON-NLS-1$
     private JComboBox choDeployment = new JComboBox();
     private JLabel labAutoEject = new JLabel(Messages.getString("CustomMechDialog.labAutoEject"), JLabel.RIGHT); //$NON-NLS-1$
@@ -115,11 +116,11 @@ public class CustomMechDialog
     private JButton butNext = new JButton(Messages.getString("Next"));
     private JButton butPrev = new JButton(Messages.getString("Previous"));
 
-    private ArrayList m_vMunitions = new ArrayList();
+    private ArrayList<MunitionChoicePanel> m_vMunitions = new ArrayList<MunitionChoicePanel>();
     private JPanel panMunitions = new JPanel();
-    private ArrayList m_vMGs = new ArrayList();
+    private ArrayList<RapidfireMGPanel> m_vMGs = new ArrayList<RapidfireMGPanel>();
     private JPanel panRapidfireMGs = new JPanel();
-    private ArrayList m_vMines = new ArrayList();
+    private ArrayList<MineChoicePanel> m_vMines = new ArrayList<MineChoicePanel>();
     private JPanel panMines = new JPanel();
 
     private Entity entity;
@@ -129,7 +130,7 @@ public class CustomMechDialog
 
     private PilotOptions options;
 
-    private ArrayList optionComps = new ArrayList();
+    private ArrayList<DialogOptionComponent> optionComps = new ArrayList<DialogOptionComponent>();
 
     private JPanel panOptions = new JPanel();
     private JScrollPane scrOptions;
@@ -381,7 +382,8 @@ public class CustomMechDialog
         }
 
         // Can't set up munitions on infantry.
-        if (!(entity instanceof Infantry)) {
+        if ( !(entity instanceof Infantry) 
+                || (entity instanceof BattleArmor) ) {
             setupMunitions();
             c.anchor = GridBagConstraints.CENTER;
             gridbag.setConstraints(panMunitions, c);
@@ -534,14 +536,14 @@ public class CustomMechDialog
         int row = 0;
         for (Mounted m : entity.getAmmo()) {
             AmmoType at = (AmmoType) m.getType();
-            ArrayList vTypes = new ArrayList();
-            Vector vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
+            ArrayList<AmmoType> vTypes = new ArrayList<AmmoType>();
+            Vector<AmmoType> vAllTypes = AmmoType.getMunitionsFor(at.getAmmoType());
             if (vAllTypes == null) {
                 continue;
             }
 
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
-                AmmoType atCheck = (AmmoType) vAllTypes.elementAt(x);
+                AmmoType atCheck = vAllTypes.elementAt(x);
                 boolean bTechMatch = TechConstants.isLegal(entity.getTechLevel(), atCheck.getTechLevel());
                                 
                 // allow all lvl2 IS units to use level 1 ammo
@@ -628,7 +630,8 @@ public class CustomMechDialog
                 // All other ammo types need to match on rack size and tech.
                 if (bTechMatch &&
                         atCheck.getRackSize() == at.getRackSize() &&
-                        !atCheck.hasFlag(AmmoType.F_BATTLEARMOR) &&
+                     atCheck.hasFlag(AmmoType.F_BATTLEARMOR)==at.hasFlag(AmmoType.F_BATTLEARMOR) &&
+                     atCheck.hasFlag(AmmoType.F_ENCUMBERING)==at.hasFlag(AmmoType.F_ENCUMBERING) &&
                         atCheck.getTonnage(entity) == at.getTonnage(entity)) {
                     vTypes.add(atCheck);
                 }
@@ -912,7 +915,7 @@ public class CustomMechDialog
 
     public void refreshOptions() {
         panOptions.removeAll();
-        optionComps = new ArrayList();
+        optionComps = new ArrayList<DialogOptionComponent>();
 
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -951,13 +954,13 @@ public class CustomMechDialog
 
         if ("weapon_specialist".equals(option.getName())) { //$NON-NLS-1$
             optionComp.addValue(Messages.getString("CustomMechDialog.None")); //$NON-NLS-1$
-            HashMap uniqueWeapons = new HashMap();
+            TreeSet<String> uniqueWeapons = new TreeSet<String>();
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 Mounted m = entity.getWeaponList().get(i);
-                uniqueWeapons.put(m.getName(), Boolean.valueOf(true));
+                uniqueWeapons.add(m.getName());
             }
-            for (final Object newVar : uniqueWeapons.keySet()) {
-                optionComp.addValue((String) newVar);
+            for (String name:uniqueWeapons) {
+                optionComp.addValue(name);
             }
             optionComp.setSelected(option.stringValue());
         }
@@ -1038,6 +1041,12 @@ public class CustomMechDialog
             }
             // c3i only links with c3i
             if (entity.hasC3i() != e.hasC3i()) {
+                continue;
+            }
+            //maximum depth of a c3 network is 2 levels.
+            Entity eCompanyMaster = e.getC3Master();
+            if ( eCompanyMaster != null && 
+                eCompanyMaster.getC3Master() != eCompanyMaster) {
                 continue;
             }
             int nodes = e.calculateFreeC3Nodes();
@@ -1157,7 +1166,7 @@ public class CustomMechDialog
             }
             
             // keep these reasonable, please
-            if (gunnery < 0 || gunnery > 7 || piloting < 0 || piloting > 7) {
+            if (gunnery < 0 || gunnery > 7 || piloting < 0 || piloting > 8) {
                 JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterSkillsBetween0_7"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }

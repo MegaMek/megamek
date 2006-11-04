@@ -212,26 +212,21 @@ public class Compute {
         return null;
     }
 
-    public static boolean isEnemyIn(IGame game, int entityId, Coords coords,
-            boolean isMech) {
-        return isEnemyIn(game, entityId, coords, isMech, game.getEntity(
-                entityId).getElevation());
-    }
-
     /**
      * Returns true if there is any unit that is an enemy of the specified unit
      * in the specified hex. This is only called for stacking purposes, and so
      * does not return true if the enemy unit is currenly making a DFA.
      */
-    public static boolean isEnemyIn(IGame game, int entityId, Coords coords,
-            boolean isMech, int enLowEl) {
-        Entity entity = game.getEntity(entityId);
+    public static boolean isEnemyIn(IGame game, Entity entity, Coords coords,
+            boolean onlyMechs, boolean ignoreInfantry, int enLowEl) {
         int enHighEl = enLowEl + entity.getHeight();
         for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = (Entity) i.nextElement();
             int inHexEnLowEl = inHex.getElevation();
             int inHexEnHighEl = inHexEnLowEl + inHex.getHeight();
-            if ((!isMech || inHex instanceof Mech) && inHex.isEnemyOf(entity)
+            if ((!onlyMechs || inHex instanceof Mech)
+                    && !(ignoreInfantry && inHex instanceof Infantry)
+                    && inHex.isEnemyOf(entity)
                     && !inHex.isMakingDfa() && (enLowEl <= inHexEnHighEl)
                     && (enHighEl >= inHexEnLowEl)) {
                 return true;

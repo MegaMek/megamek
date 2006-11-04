@@ -45,7 +45,6 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
-import java.util.Comparator;
 
 public class CommonSettingsDialog extends ClientDialog
         implements ActionListener, ItemListener, FocusListener, ListSelectionListener {
@@ -79,11 +78,13 @@ public class CommonSettingsDialog extends ClientDialog
     private JCheckBox stampFilenames;
     private JTextField stampFormat;
     private JCheckBox defaultAutoejectDisabled;
+    private JCheckBox useAverageSkills;
     private JCheckBox showUnitId;
     private JComboBox displayLocale;
     private JCheckBox chatloungeTabs;
 
     private JCheckBox showMapsheets;
+    private JCheckBox mouseWheelZoom;
 
     private JList keys;
     private int keysIndex = 0;
@@ -168,6 +169,10 @@ public class CommonSettingsDialog extends ClientDialog
         nagForMASC
                 = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForMASC")); //$NON-NLS-1$
         tempPanel.add(nagForMASC);
+        
+        mouseWheelZoom
+            = new JCheckBox( Messages.getString("CommonSettingsDialog.mouseWheelZoom") ); //$NON-NLS-1$
+        tempPanel.add( mouseWheelZoom );
 
         nagForPSR
                 = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForPSR")); //$NON-NLS-1$
@@ -231,6 +236,11 @@ public class CommonSettingsDialog extends ClientDialog
         defaultAutoejectDisabled.addItemListener(this);
         tempPanel.add(defaultAutoejectDisabled);
 
+        useAverageSkills
+            = new JCheckBox( Messages.getString("CommonSettingsDialog.useAverageSkills") ); //$NON-NLS-1$
+        useAverageSkills.addItemListener(this);
+        tempPanel.add( useAverageSkills );
+        
         showUnitId
                 = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
         showUnitId.addItemListener(this);
@@ -381,6 +391,7 @@ public class CommonSettingsDialog extends ClientDialog
         stampFormat.setText(cs.getStampFormat());
 
         defaultAutoejectDisabled.setSelected(cs.defaultAutoejectDisabled());
+        useAverageSkills.setSelected(cs.useAverageSkills());
         showUnitId.setSelected(cs.getShowUnitId());
 
         int index = 0;
@@ -448,6 +459,7 @@ public class CommonSettingsDialog extends ClientDialog
         gs.setAlwaysRightClickScroll(alwaysRightClickScroll.isSelected());
         gs.setAutoEdgeScroll(autoEdgeScroll.isSelected());
         gs.setScrollSensitivity(Integer.parseInt(scrollSensitivity.getText()));
+        gs.setMouseWheelZoom(mouseWheelZoom.isSelected());
 
         cs.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
 
@@ -460,6 +472,7 @@ public class CommonSettingsDialog extends ClientDialog
         cs.setStampFormat(stampFormat.getText());
 
         cs.setDefaultAutoejectDisabled(defaultAutoejectDisabled.isSelected());
+        cs.setUseAverageSkills(useAverageSkills.isSelected());
         cs.setShowUnitId(showUnitId.isSelected());
 
         cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
@@ -517,18 +530,7 @@ public class CommonSettingsDialog extends ClientDialog
         JPanel p = new JPanel();
 
         String[] s = GUIPreferences.getInstance().getAdvancedProperties();
-        //You would think that a simple "Arrays.sort(s)" would work below,
-        // but it does not.  Something funky is going on with the
-        // collections.jar classes - specifically spelling out the comparator
-        // seems to fix it.  This kludge can be removed when we drop Java
-        // 1.1 compatability.
-        Arrays.sort(s, new Comparator() {
-            public int compare(Object a, Object b) {
-                String sa = (String) a;
-                String sb = (String) b;
-                return sa.compareTo(sb);
-            }
-        });
+        Arrays.sort(s);
         for (int i = 0; i < s.length; i++) {
             s[i] = s[i].substring(s[i].indexOf("Advanced") + 8, s[i].length());
         }

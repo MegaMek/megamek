@@ -43,6 +43,7 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
         store.setDefault(UNIT_START_CHAR,'A');
         store.setDefault(GUI_NAME,"AWT");
+        store.setDefault(USE_AVERAGE_SKILLS,true);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
@@ -53,6 +54,10 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
 
     public boolean defaultAutoejectDisabled() {
         return store.getBoolean(DEFAULT_AUTOEJECT_DISABLED);
+    }
+
+    public boolean useAverageSkills() {
+        return store.getBoolean(USE_AVERAGE_SKILLS);
     }
 
     public String getLastConnectAddr() {
@@ -151,6 +156,10 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
 
     public void setDefaultAutoejectDisabled(boolean state) {
         store.setValue(DEFAULT_AUTOEJECT_DISABLED, state);
+    }
+
+    public void setUseAverageSkills(boolean state) {
+        store.setValue(USE_AVERAGE_SKILLS, state);
     }
 
     public void setKeepGameLog(boolean state) {

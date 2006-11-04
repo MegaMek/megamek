@@ -24,6 +24,7 @@ v0.33.2 (SVN)
 + Anti-Mech skill of 8 (for an untrained unit) can now be set when customising a unit.
 + Client option to use the average skills table when adding units.
   Default is on.  Note infantry are assumed to be anti-mech trained.
++ Mechs can now move through enemy infantry
 
 v0.33.1 (2006-10-31 22:40 GMT+9)
 + Fix filename case for IS Omni images, so they show up on filename case-

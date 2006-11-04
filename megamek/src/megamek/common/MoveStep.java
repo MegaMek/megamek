@@ -1566,14 +1566,15 @@ public class MoveStep implements Serializable {
              && type != MovePath.STEP_DFA ) {
             // can't move a mech into a hex with an enemy mech
             if (entity instanceof Mech
-                && Compute.isEnemyIn(game, entity.getId(),
-                                     dest, true)) {
+                && Compute.isEnemyIn(game, entity, dest, 
+                        true, true, getElevation())) {
                 return false;
             }
 
             // Can't move out of a hex with an enemy unit unless we started
             // there, BUT we're allowed to turn, unload, or go prone.
-            if ( Compute.isEnemyIn(game, entity.getId(), src, false, getElevation())
+            if ( Compute.isEnemyIn(game, entity, src, 
+                    false, entity instanceof Mech, getElevation())
                  && !src.equals(entity.getPosition())
                  && type != MovePath.STEP_TURN_LEFT
                  && type != MovePath.STEP_TURN_RIGHT

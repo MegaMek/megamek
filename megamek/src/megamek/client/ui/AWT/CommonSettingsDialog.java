@@ -62,6 +62,7 @@ public class CommonSettingsDialog extends ClientDialog
     private Checkbox    stampFilenames;
     private TextField   stampFormat;
     private Checkbox    defaultAutoejectDisabled;
+    private Checkbox    useAverageSkills;
     private Checkbox    showUnitId;
     private Choice      locale;
     private Checkbox    chatloungeTabs;
@@ -218,6 +219,11 @@ public class CommonSettingsDialog extends ClientDialog
         defaultAutoejectDisabled.addItemListener(this);
         tempPanel.add( defaultAutoejectDisabled );
 
+        useAverageSkills
+            = new Checkbox( Messages.getString("CommonSettingsDialog.useAverageSkills") ); //$NON-NLS-1$
+        useAverageSkills.addItemListener(this);
+        tempPanel.add( useAverageSkills );
+        
         showUnitId
             = new Checkbox ( Messages.getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
         showUnitId.addItemListener(this);
@@ -368,6 +374,7 @@ public class CommonSettingsDialog extends ClientDialog
             stampFormat.setText(cs.getStampFormat());
     
             defaultAutoejectDisabled.setState( cs.defaultAutoejectDisabled() );
+            useAverageSkills.setState(cs.useAverageSkills());
             showUnitId.setState( cs.getShowUnitId() );
     
             int index = 0;
@@ -449,6 +456,7 @@ public class CommonSettingsDialog extends ClientDialog
 
 
         cs.setDefaultAutoejectDisabled(defaultAutoejectDisabled.getState());
+        cs.setUseAverageSkills(useAverageSkills.getState());
         cs.setShowUnitId(showUnitId.getState());
 
         cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[locale.getSelectedIndex()]);

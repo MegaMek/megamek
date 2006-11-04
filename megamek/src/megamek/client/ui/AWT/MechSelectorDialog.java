@@ -16,9 +16,12 @@ package megamek.client.ui.AWT;
  
 import megamek.client.Client;
 import megamek.client.ui.AWT.widget.BufferedPanel;
+import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
 import megamek.common.EquipmentType;
+import megamek.common.IEntityMovementMode;
+import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
@@ -31,6 +34,8 @@ import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
@@ -793,6 +798,7 @@ public class MechSelectorDialog
                 if (c == null) {
                     c = m_client;
                 }
+                autoSetSkills(e);
                 e.setOwner(c.getLocalPlayer());
                 c.sendAddEntity(e);
             } catch (EntityLoadingException ex) {
@@ -953,5 +959,48 @@ public class MechSelectorDialog
         final boolean enable = m_mechList.getSelectedIndex() != -1;
         m_bPick.setEnabled(enable);
         m_bPickClose.setEnabled(enable);
+    }
+    
+    private void autoSetSkills(Entity e) {
+        IClientPreferences cs = PreferenceManager.getClientPreferences();
+        if(!cs.useAverageSkills())
+            return;
+        int piloting=5;
+        int gunnery=4;
+        if(e.isClan()) {
+            if(e instanceof Mech
+                    || e instanceof BattleArmor) {
+                gunnery = 3;
+                piloting = 4;
+            }
+            else if(e instanceof Tank) {
+                gunnery = 5;
+                piloting = 6;
+            }
+            else if(e instanceof Infantry) {
+                if(e.getMovementMode() == IEntityMovementMode.INF_LEG) {
+                    gunnery = 5;
+                    piloting = 5;
+                }
+                else {
+                    gunnery = 5;
+                    piloting = 6;
+                }
+            }
+        }
+        else if(e instanceof Infantry) {
+            //IS crews are 4/5 except infantry
+            if(e.getMovementMode() == IEntityMovementMode.INF_LEG
+                    || e instanceof BattleArmor) {
+                gunnery = 4;
+                piloting = 5;
+            }
+            else {
+                gunnery = 4;
+                piloting = 6;
+            }
+        }
+        e.getCrew().setGunnery(gunnery);
+        e.getCrew().setPiloting(piloting);
     }
 }

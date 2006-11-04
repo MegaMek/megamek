@@ -1367,7 +1367,8 @@ public class MovementDisplay
         boolean canUnloadHere = false;
         for (Enumeration e = loadedUnits.elements(); e.hasMoreElements(); ) {
             Entity en = (Entity)e.nextElement();
-            if(en.isElevationValid(unloadEl, hex)) {
+            if(en.isElevationValid(unloadEl, hex)
+                    || en.getJumpMP() > 0) {
                 canUnloadHere = true;
                 break;
             }

@@ -167,7 +167,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(5, 5, 5, 5);
             
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labName, c);
@@ -230,13 +231,15 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         if ( clientgui.getClient().game.getOptions().booleanOption("pilot_advantages") ) { //$NON-NLS-1$
             scrOptions.add(panOptions);
 
-            c.weightx = 1.0;    c.weighty = 1.0;
+            c.weightx = 1.0;
+            c.weighty = 1.0;
             c.fill = GridBagConstraints.BOTH;
             c.gridwidth = GridBagConstraints.REMAINDER;
             gridbag.setConstraints(scrOptions, c);
             tempPanel.add(scrOptions);
 
-            c.weightx = 1.0;    c.weighty = 0.0;
+            c.weightx = 1.0;
+            c.weighty = 0.0;
             gridbag.setConstraints(texDesc, c);
             tempPanel.add(texDesc);
         }
@@ -445,7 +448,9 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         this.add(scrAll);
 
         addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) { setVisible(false); }
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
         });
 
         pack();
@@ -630,7 +635,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             
             gbc.gridy = row++;
             // Protomechs need special choice panels.
-            MunitionChoicePanel mcp = null;
+            MunitionChoicePanel mcp;
             if ( entity instanceof Protomech ) {
                 mcp = new ProtomechMunitionChoicePanel(m, vTypes);
             } else {
@@ -920,7 +925,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(0, 0, 0, 0);
-        c.ipadx = 0;    c.ipady = 0;
+        c.ipadx = 0;
+        c.ipady = 0;
         
         for (Enumeration i = options.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = (IOptionGroup)i.nextElement();
@@ -1169,7 +1175,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             }
             
             // keep these reasonable, please
-            if (gunnery < 0 || gunnery > 7 || piloting < 0 || piloting > 7) {
+            if (gunnery < 0 || gunnery > 7 || piloting < 0 || piloting > 8) {
                 new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterSkillsBetween0_7")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }

@@ -3091,9 +3091,6 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 32;
         weapon.flags |= F_AUTO_TARGET | F_AMS;
-        String[] modes = { "On", "Off" };
-        weapon.setModes(modes);
-        weapon.setInstantModeSwitch(false);
         weapon.cost = 100000;
 
         return weapon;
@@ -3115,9 +3112,6 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 105;
         weapon.flags |= F_AUTO_TARGET | F_HEATASDICE | F_ENERGY| F_AMS;
-        String[] modes = { "On", "Off" };
-        weapon.setModes(modes);
-        weapon.setInstantModeSwitch(false);
         weapon.cost = 225000;
 
         return weapon;
@@ -3139,9 +3133,6 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 105;
         weapon.flags |= F_AUTO_TARGET | F_HEATASDICE | F_ENERGY | F_AMS;
-        String[] modes = { "On", "Off" };
-        weapon.setModes(modes);
-        weapon.setInstantModeSwitch(false);
         weapon.cost = 300000;
 
         return weapon;
@@ -5716,9 +5707,6 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 1;
         weapon.bv = 63;
         weapon.flags |= F_AUTO_TARGET | F_AMS;
-        String[] modes = { "On", "Off" };
-        weapon.setModes(modes);
-        weapon.setInstantModeSwitch(false);
         weapon.cost = 100000;
 
         return weapon;
@@ -5740,9 +5728,6 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 2;
         weapon.bv = 105;
         weapon.flags |= F_AUTO_TARGET | F_HEATASDICE | F_ENERGY | F_AMS;
-        String[] modes = { "On", "Off" };
-        weapon.setModes(modes);
-        weapon.setInstantModeSwitch(false);
         weapon.cost = 225000;
 
         return weapon;

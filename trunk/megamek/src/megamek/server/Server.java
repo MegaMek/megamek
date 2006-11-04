@@ -1843,7 +1843,6 @@ public class Server implements Runnable {
                 break;
             case IGame.PHASE_FIRING :
                 resolveAllButWeaponAttacks();
-                assignAMS();
                 resolveOnlyWeaponAttacks();
                 applyBuildingDamage();
                 checkFor20Damage();
@@ -6468,39 +6467,43 @@ public class Server implements Runnable {
     /**
      * Auto-target active AMS systems
      */
-    private void assignAMS() {
+    private void assignAMS(Vector<WeaponResult> results) {
 
         // sort all missile-based attacks by the target
-        Hashtable htAttacks = new Hashtable();
-        for (Enumeration i = game.getActions(); i.hasMoreElements(); ) {
-            Object o = i.nextElement();
-            if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction)o;
-                Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
+        Hashtable<Entity, Vector<WeaponResult>> htAttacks = new Hashtable<Entity, Vector<WeaponResult>>();
+        for (WeaponResult wr : results) {
+            WeaponAttackAction waa = wr.waa;
+            Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
 
-                // Only entities can have AMS.
-                if ( Targetable.TYPE_ENTITY != waa.getTargetType() ) {
-                    continue;
-                }
+            // Only entities can have AMS.
+            if ( Targetable.TYPE_ENTITY != waa.getTargetType() ) {
+                continue;
+            }
+            
+            // AMS is only used against attacks that hit (TW p129)
+            if(wr.roll < wr.toHit.getValue()) {
+                continue;
+            }
 
-                // Can only use AMS versus missles.
-                if (((WeaponType)weapon.getType()).getDamage() == WeaponType.DAMAGE_MISSILE) {
-                    Entity target = game.getEntity(waa.getTargetId());
-                    Vector v = (Vector)htAttacks.get(target);
-                    if (v == null) {
-                        v = new Vector();
-                        htAttacks.put(target, v);
-                    }
-                    v.addElement(waa);
+            // Can only use AMS versus missles.
+            if (((WeaponType)weapon.getType()).getDamage() == WeaponType.DAMAGE_MISSILE) {
+                Entity target = game.getEntity(waa.getTargetId());
+                Vector<WeaponResult> v = htAttacks.get(target);
+                if (v == null) {
+                    v = new Vector<WeaponResult>();
+                    htAttacks.put(target, v);
                 }
+                v.addElement(wr);
             }
         }
 
         // let each target assign its AMS
-        for (Enumeration i = htAttacks.keys(); i.hasMoreElements(); ) {
-            Entity e = (Entity)i.nextElement();
-            Vector vAttacks = (Vector)htAttacks.get(e);
+        for (Entity e:htAttacks.keySet()) {
+            Vector<WeaponResult> vAttacks = htAttacks.get(e);
             e.assignAMS(vAttacks);
+            for(WeaponResult wr : vAttacks) {
+                wr = resolveAmsFor(wr.waa, wr);
+            }
         }
     }
 
@@ -6692,7 +6695,7 @@ public class Server implements Runnable {
      * Called during the fire phase to resolve all (and only) weapon attacks
      */
     private void resolveOnlyWeaponAttacks() {
-        Vector results = new Vector(game.actionsSize());
+        Vector<WeaponResult> results = new Vector<WeaponResult>(game.actionsSize());
 
         // loop thru received attack actions, getting weapon results
         for (Enumeration i = game.getActions(); i.hasMoreElements();) {
@@ -6702,6 +6705,8 @@ public class Server implements Runnable {
                 results.addElement(preTreatWeaponAttack(waa));
             }
         }
+
+        assignAMS(results);
 
         // loop through weapon results and resolve
         int cen = Entity.NONE;
@@ -7015,11 +7020,6 @@ public class Server implements Runnable {
 
         // set the weapon as having fired
         weapon.setUsedThisRound(true);
-
-        // if not streak miss, resolve any AMS attacks on this attack
-        if (!streakMiss) {
-            wr = resolveAmsFor(waa, wr);
-        }
 
         return wr;
     }

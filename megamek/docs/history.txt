@@ -28,6 +28,8 @@ v0.33.2 (SVN)
 + Bug 1589704: AMS still fires on missile attacks that miss
 + AMS are no longer allowed to be switched off.
 + Data 1589921: added some more RS:PPU mechs
++ Changed a couple of RS:PPU 'Mechs to level 2
++ Changed light & heavy FF from level 3 to level 2
 
 v0.33.1 (2006-10-31 22:40 GMT+9)
 + Fix filename case for IS Omni images, so they show up on filename case-

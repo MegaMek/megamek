@@ -1432,7 +1432,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_LEVEL_2;
         
         return misc;
     }
@@ -1449,7 +1449,7 @@ public class MiscType extends EquipmentType {
         misc.spreadable = true;
         misc.flags |= F_FERRO_FIBROUS;
         misc.bv = 0;
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_LEVEL_2;
         
         return misc;
     }

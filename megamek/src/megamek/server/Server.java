@@ -5250,6 +5250,21 @@ public class Server implements Runnable {
         case Targetable.TYPE_ENTITY:
             Entity te = (Entity)t;
             if(te instanceof Mech) {
+                // Bug #1585497: Check for partial cover
+                int m=missiles;
+                for (int i=0; i<m; i++) {
+                    int roll=Compute.d6(2);
+                    LosEffects le=LosEffects.calculateLos(game, ae.getId(), t);
+                    if (te.removePartialCoverHits(roll, le.getTargetCover(),
+                            Compute.targetSideTable(ae, t))) { 
+                        missiles--;
+                    }
+                }
+                if (missiles!=m) {
+                    r = new Report(3403);
+                    r.add(m-missiles);
+                    addReport(r);
+                }
                 r = new Report(3400);
                 r.add(2*missiles);
                 r.subject = te.getId();

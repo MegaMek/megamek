@@ -1,4 +1,4 @@
-﻿VERSION HISTORY:
+VERSION HISTORY:
 ----------------
 v0.33.2 (SVN)
 + Cleanup of type safety in bot code
@@ -30,6 +30,7 @@ v0.33.2 (SVN)
 + Data 1589921: added some more RS:PPU mechs
 + Changed a couple of RS:PPU 'Mechs to level 2
 + Changed light & heavy FF from level 3 to level 2
++ Bug #1585497: Check for partial cover when hitting with infernos
 
 v0.33.1 (2006-10-31 22:40 GMT+9)
 + Fix filename case for IS Omni images, so they show up on filename case-

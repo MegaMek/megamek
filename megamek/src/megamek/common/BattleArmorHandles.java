@@ -35,21 +35,7 @@ import java.util.Vector;
     /**
      * The troopers being carried.
      */
-    private Entity troopers;
-
-    /**
-     * The set of front locations blocked by loaded troopers.
-     */
-    private static final int[] BLOCKED_LOCATIONS_FRONT = { Mech.LOC_CT,
-                                                           Mech.LOC_RT,
-                                                           Mech.LOC_LT };
-
-    /**
-     * The set of rear locations blocked by loaded troopers.
-     */
-    private static final int[] BLOCKED_LOCATIONS_REAR = { Mech.LOC_CT,
-                                                          Mech.LOC_RT,
-                                                          Mech.LOC_LT };
+    protected Entity troopers;
 
     /**
      * The set of front locations that load troopers externally.
@@ -75,21 +61,6 @@ import java.util.Vector;
     private static final String HAVE_VACANCY_STRING = "One battle armor squad";
 
     // Protected constructors and methods.
-
-    /**
-     * Get the locations blocked when a squad is loaded.
-     * <p/>
-     * Sub-classes are encouraged to override this method.
-     *
-     * @param   isRear - a <code>boolean</code> value stating if the given
-     *          location is rear facing; if <code>false</code>, the location
-     *          is front facing.
-     * @return  an array of <code>int</code> listing the blocked locations.
-     */
-    protected int[] getBlockedLocs( boolean isRear ) {
-        if ( isRear ) return BattleArmorHandles.BLOCKED_LOCATIONS_REAR;
-        return BattleArmorHandles.BLOCKED_LOCATIONS_FRONT;
-    }
 
     /**
      * Get the exterior locations that a loaded squad covers.
@@ -265,8 +236,6 @@ import java.util.Vector;
     /**
      * Determine if transported units prevent a weapon in the given location
      * from firing.
-     * <p>
-     * Sub-classes should override the <code>getBlockedLocs</code> method.
      *
      * @param   loc - the <code>int</code> location attempting to fire.
      * @param   isRear - a <code>boolean</code> value stating if the given
@@ -277,20 +246,28 @@ import java.util.Vector;
      *
      * @see     megamek.common.BattleArmorHandles#getBlockedLocs(boolean)
      */
-    public final boolean isWeaponBlockedAt( int loc, boolean isRear ) {
+    public boolean isWeaponBlockedAt( int loc, boolean isRear ) {
         // Assume that the weapon is not blocked.
         boolean result = false;
 
         // The weapon can only be blocked if we are carrying troopers.
         if ( null != this.troopers ) {
 
-            // See if that location is blocked.
-            // Stop after the first match.
-            int[] locs = this.getBlockedLocs( isRear );
-            for ( int loop = 0; !result && loop < locs.length; loop++ ) {
-                result = ( loc == locs[loop] );
+            // Is the relevant trooper alive?
+            int tloc = BattleArmor.LOC_SQUAD;
+            switch(loc) {
+            case Mech.LOC_CT:
+                tloc = isRear ? BattleArmor.LOC_CLAN_5 : BattleArmor.LOC_CLAN_6;
+                break;
+            case Mech.LOC_LT:
+                tloc = isRear ? BattleArmor.LOC_CLAN_4 : BattleArmor.LOC_CLAN_2;
+                break;
+            case Mech.LOC_RT:
+                tloc = isRear ? BattleArmor.LOC_CLAN_3 : BattleArmor.LOC_CLAN_1;
+                break;
             }
-
+            if(troopers.locations() > tloc && troopers.getInternal(tloc) > 0)
+                result = true;
         } // End carrying-troopers
 
         // Return our result.

@@ -33,6 +33,7 @@ v0.33.2 (SVN)
 + Bug #1585497: Check for partial cover when hitting with infernos
 + Bug 1593129: Clan BA blocking CT weapons
 + Bug: wrong attack arrows removed by ESC key
++ Changed some FileDialog instances to use OS independent paths
 
 v0.33.1 (2006-10-31 22:40 GMT+9)
 + Fix filename case for IS Omni images, so they show up on filename case-

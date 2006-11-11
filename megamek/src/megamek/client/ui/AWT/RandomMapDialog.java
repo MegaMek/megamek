@@ -303,7 +303,7 @@ public class RandomMapDialog
             }
         } else if (e.getSource().equals(butSave)) {
             FileDialog fd = new FileDialog(frame, Messages.getString("RandomMapDialog.FileSaveDialog"), FileDialog.SAVE); //$NON-NLS-1$
-            fd.setDirectory("./data/boards/");
+            fd.setDirectory("data" + File.separatorChar + "boards");
             fd.setFilenameFilter(new FilenameFilter() { public boolean accept(File f, String s) {return s.endsWith(".xml"); } });
             fd.setModal(true);
             fd.setVisible(true);

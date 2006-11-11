@@ -1886,7 +1886,7 @@ public class BoardView1
     public synchronized void removeAttacksFor(int entityId) {
         for (Iterator i = attackSprites.iterator(); i.hasNext();) {
             AttackSprite sprite = (AttackSprite)i.next();
-            if (sprite.getEntityId() != entityId) {
+            if (sprite.getEntityId() == entityId) {
                 i.remove();
             }
         }

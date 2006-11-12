@@ -1,5 +1,7 @@
 VERSION HISTORY:
 ----------------
+v0.33.3 (SVN)
+
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code
 + Patch 1587555: Bug Fix for Heat Seeking and ThunderBolts

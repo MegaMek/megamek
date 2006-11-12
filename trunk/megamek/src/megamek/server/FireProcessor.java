@@ -394,7 +394,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
             // Cycle through the vector and add the drifted smoke
             for (int sta = 0; sta < SmokeToAdd.size(); sta++ ) {
-                SmokeDrift drift = (SmokeDrift)SmokeToAdd.elementAt(sta);
+                SmokeDrift drift = SmokeToAdd.elementAt(sta);
                 Coords smokeCoords = drift.coords;
                 int smokeSize = drift.size;
                 IHex smokeHex = game.getBoard().getHex(smokeCoords);
@@ -406,7 +406,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
 
             // Cycle through the vector again and dissipate the smoke, then reporting it
             for (int dis = 0; dis < SmokeToAdd.size(); dis++ ) {
-                SmokeDrift drift = (SmokeDrift)SmokeToAdd.elementAt(dis);
+                SmokeDrift drift = SmokeToAdd.elementAt(dis);
                 Coords smokeCoords = drift.coords;
                 int smokeSize = drift.size;
                 IHex smokeHex = game.getBoard().getHex(smokeCoords);

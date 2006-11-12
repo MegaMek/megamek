@@ -1337,7 +1337,7 @@ public class MovementDisplay
             String question = Messages.getString("MovementDisplay.UnloadUnitDialog.message", new Object[]{//$NON-NLS-1$
                 ce.getShortName(), ce.getUnusedString()});
             for (int loop = 0; loop < names.length; loop++) {
-                names[loop] = ((Entity) loadedUnits.elementAt(loop)).getShortName();
+                names[loop] = loadedUnits.elementAt(loop).getShortName();
             }
             SingleChoiceDialog choiceDialog =
                     new SingleChoiceDialog(clientgui.frame,
@@ -1346,13 +1346,13 @@ public class MovementDisplay
                             names);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer()) {
-                choice = (Entity) loadedUnits.elementAt(choiceDialog.getChoice());
+                choice = loadedUnits.elementAt(choiceDialog.getChoice());
             }
         } // End have-choices
 
         // Only one choice.
         else {
-            choice = (Entity) loadedUnits.elementAt(0);
+            choice = loadedUnits.elementAt(0);
             loadedUnits.removeElementAt(0);
         }
 
@@ -1737,7 +1737,7 @@ public class MovementDisplay
         // Construct an array of stranded entity names
         names = new String[stranded.size()];
         for (int index = 0; index < names.length; index++) {
-            entity = (Entity) stranded.elementAt(index);
+            entity = stranded.elementAt(index);
             transport = client.getEntity(entity.getTransportId());
             String buffer;
             if (null == transport) {
@@ -1759,7 +1759,7 @@ public class MovementDisplay
         if (null != indexes) {
             ids = new int[indexes.length];
             for (int index = 0; index < indexes.length; index++) {
-                entity = (Entity) stranded.elementAt(index);
+                entity = stranded.elementAt(index);
                 ids[index] = entity.getId();
             }
         }

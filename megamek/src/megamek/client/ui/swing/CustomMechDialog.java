@@ -885,19 +885,19 @@ public class CustomMechDialog
 
     private void disableMunitionEditing() {
         for (int i = 0; i < m_vMunitions.size(); i++) {
-            ((MunitionChoicePanel) m_vMunitions.get(i)).setEnabled(false);
+            m_vMunitions.get(i).setEnabled(false);
         }
     }
 
     private void disableMGSetting() {
         for (int i = 0; i < m_vMGs.size(); i++) {
-            ((RapidfireMGPanel) m_vMGs.get(i)).setEnabled(false);
+            m_vMGs.get(i).setEnabled(false);
         }
     }
 
     private void disableMineSetting() {
         for (int i = 0; i < m_vMines.size(); i++) {
-            ((MineChoicePanel) m_vMines.get(i)).setEnabled(false);
+            m_vMines.get(i).setEnabled(false);
         }
     }
 
@@ -1232,8 +1232,7 @@ public class CustomMechDialog
             // entities and send an update packet for the other entity.
             if (!entityUnitNum.isEmpty() &&
                     choUnitNum.getSelectedIndex() > 0) {
-                Entity other = (Entity) entityUnitNum.get
-                        (choUnitNum.getSelectedIndex());
+                Entity other = entityUnitNum.get(choUnitNum.getSelectedIndex());
                 char temp = entity.getUnitNumber();
                 entity.setUnitNumber(other.getUnitNumber());
                 other.setUnitNumber(temp);

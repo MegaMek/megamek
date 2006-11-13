@@ -1,6 +1,7 @@
 VERSION HISTORY:
 ----------------
 v0.33.3 (SVN)
++ Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

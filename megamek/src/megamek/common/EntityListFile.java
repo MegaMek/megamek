@@ -379,9 +379,9 @@ public class EntityListFile {
 
             // Start writing this entity to the file.
             output.write("   <entity chassis=\"");
-            output.write(entity.getChassis());
+            output.write(entity.getChassis().replaceAll("\"", "&quot;"));
             output.write("\" model=\"");
-            output.write(entity.getModel());
+            output.write(entity.getModel().replaceAll("\"", "&quot;"));
             output.write("\" type=\"");
             output.write(entity.getMovementModeAsString());
             output.write("\">");
@@ -390,7 +390,7 @@ public class EntityListFile {
             // Add the crew this entity.
             final Pilot crew = entity.getCrew();
             output.write("      <pilot name=\"");
-            output.write(crew.getName());
+            output.write(crew.getName().replaceAll("\"", "&quot;"));
             output.write("\" gunnery=\"");
             output.write(String.valueOf(crew.getGunnery()));
             output.write("\" piloting=\"");

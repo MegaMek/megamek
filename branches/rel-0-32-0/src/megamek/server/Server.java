@@ -8828,6 +8828,24 @@ public class Server implements Runnable {
                             && entityTarget instanceof Tank) {
                         checkForVehicleFire((Tank)entityTarget, true);
                     } else {
+                        // Bug #1585497: Check for partial cover, but only for MT
+                        if (game.getOptions().booleanOption("maxtech_partial_cover") {
+                            int m=missiles;
+                            for (int i=0; i<m; i++) {
+                                int roll=Compute.d6(2);
+                                LosEffects le=LosEffects.calculateLos(game, ae.getId(), t);
+                                if (te.removePartialCoverHits(roll,
+                                    le.getTargetCover(),
+                                    Compute.targetSideTable(ae, t))) { 
+                                    hits--;
+                                }
+                            }
+                            if (hits!=m) {
+                                r = new Report(3403);
+                                r.add(m-hits);
+                                addReport(r);
+                            }
+                        }
                         entityTarget.infernos.add( InfernoTracker.STANDARD_ROUND,
                                 hits );
                         r = new Report(3205);

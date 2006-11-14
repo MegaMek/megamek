@@ -6,6 +6,7 @@ v0.32.2 (SVN)
 + Tweak build.xml to ask for version number when packaging a new release.
 + Bug 1588924: Cannot Open Custom BA Panel with Java 1.4
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"
++ Bug #1585497: Check for partial cover when hitting with infernos
 
 v0.32.1 (2006-10-31, 21:08 GMT+9)
 + Bug: NPE when firing infantry rifle

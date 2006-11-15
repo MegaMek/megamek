@@ -8829,7 +8829,7 @@ public class Server implements Runnable {
                         checkForVehicleFire((Tank)entityTarget, true);
                     } else {
                         // Bug #1585497: Check for partial cover, but only for MT
-                        if (game.getOptions().booleanOption("maxtech_partial_cover") {
+                        if (game.getOptions().booleanOption("maxtech_partial_cover")) {
                             int m=missiles;
                             for (int i=0; i<m; i++) {
                                 int roll=Compute.d6(2);

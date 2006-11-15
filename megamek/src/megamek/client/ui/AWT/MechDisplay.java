@@ -1891,6 +1891,11 @@ public class MechDisplay extends BufferedPanel {
                 narcList.add(Messages.getString("MechDisplay.InEnemyAngelECMField")); //$NON-NLS-1$
             }
 
+            // Active Stealth Armor? If yes, we're under ECM
+            if (en.isStealthActive()) {
+                narcList.add(Messages.getString("MechDisplay.UnderStealth")); //$NON-NLS-1$
+            }
+            
             // Show Turret Locked.
             if (en instanceof Tank &&
                     !((Tank) en).hasNoTurret() &&

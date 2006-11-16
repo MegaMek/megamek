@@ -311,14 +311,16 @@ public class Compute {
          * srcHex.contains(Terrain.BRIDGE) )
          */
         if (((prevStepIsOnPavement && movementType == IEntityMovementType.MOVE_RUN) 
-                || (srcHex.containsTerrain(Terrains.ICE)) && movementType != IEntityMovementType.MOVE_JUMP) 
+                || (srcHex.containsTerrain(Terrains.ICE)) 
+                && movementType != IEntityMovementType.MOVE_JUMP)
+                && entity.getMovementMode() != IEntityMovementMode.HOVER
+                && entity.getMovementMode() != IEntityMovementMode.WIGE
                 && isTurning && !isInfantry) {
             return true;
         }
 
         // If we entering or leaving a building, all non-infantry
         // need to make a piloting check to avoid damage.
-        // TODO: allow entities to occupy different levels of buildings.
         if ((srcElevation < srcHex.terrainLevel(Terrains.BLDG_ELEV) || destElevation < destHex
                 .terrainLevel(Terrains.BLDG_ELEV))
                 && !(entity instanceof Infantry)) {
@@ -326,7 +328,9 @@ public class Compute {
         }
 
         // check sideslips
-        if (entity instanceof VTOL) {
+        if (entity instanceof VTOL
+                || entity.getMovementMode() == IEntityMovementMode.HOVER
+                || entity.getMovementMode() == IEntityMovementMode.WIGE) {
             if (isTurning
                     && ((movementType == IEntityMovementType.MOVE_RUN) || (movementType == IEntityMovementType.MOVE_VTOL_RUN)))
                 return true;

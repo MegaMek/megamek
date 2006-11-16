@@ -56,32 +56,6 @@ public class VTOL extends Tank {
         return roll;
     }
 
-    public PilotingRollData checkSideSlip(int moveType, IHex prevHex,
-            int overallMoveType, MoveStep prevStep,
-            int prevFacing, int curFacing,
-            Coords lastPos, Coords curPos,
-            int distance) {
-        PilotingRollData roll = getBasePilotingRoll();
-
-        // TODO: add check for elevation of pavement, road,
-        //       or bridge matches entity elevation.
-        if (moveType != IEntityMovementType.MOVE_JUMP
-            && prevHex != null
-            && (overallMoveType == IEntityMovementType.MOVE_RUN
-                || overallMoveType == IEntityMovementType.MOVE_VTOL_RUN)
-            && prevFacing != curFacing
-            && !lastPos.equals(curPos))
-            {
-                roll.append(new PilotingRollData(getId(), 0, "VTOL flanking and turning"));
-             
-        } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: VTOL is not apparently sideslipping");
-        }
-
-        return roll;
-        
-    }
-
     /* (non-Javadoc)
      * @see megamek.common.Tank#calculateBattleValue(boolean)
      */

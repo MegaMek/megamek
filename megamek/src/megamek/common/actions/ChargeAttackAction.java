@@ -111,7 +111,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         }
 
         // mechs can only charge standing mechs
-        if (ae instanceof Mech) {
+        if (ae instanceof Mech && !skid) {
             if (te != null && !(te instanceof Mech)) {
                 return new ToHitData(ToHitData.IMPOSSIBLE, "Target is not a mech");
             }
@@ -208,7 +208,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         if (te.height() > 0
                 && te.getElevation() == -1
                 && targHex.terrainLevel(Terrains.WATER) == te.height()) {
-            toHit.addModifier(3, "target has partial cover");
+            toHit.addModifier(1, "target has partial cover");
         }
 
         // If it has a torso-mounted cockpit and two head sensor hits or three sensor hits...
@@ -225,6 +225,11 @@ public class ChargeAttackAction extends DisplacementAttackAction {
 
         // target immobile
         toHit.append(Compute.getImmobileMod(te));
+        
+        // skids have a penalty for unintentional charge
+        if(skid) {
+            toHit.addModifier(3, "unintentional charge");
+        }
 
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 

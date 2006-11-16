@@ -987,8 +987,10 @@ public class MovementDisplay
                 nagReport.append(Messages.getString("MovementDisplay.MagmaLiquidMoving"));
             }
             
-            if(entity instanceof VTOL) {
-                rollTarget = ((VTOL)entity).checkSideSlip(moveType,prevHex,overallMoveType,
+            if(entity instanceof VTOL
+                    || entity.getMovementMode() == IEntityMovementMode.HOVER
+                    || entity.getMovementMode() == IEntityMovementMode.WIGE) {
+                rollTarget = entity.checkSideSlip(moveType,prevHex,overallMoveType,
                                              prevStep,prevFacing,curFacing,
                                              lastPos,curPos,distance);
                 if(rollTarget.getValue() != TargetRoll.CHECK_FALSE) {

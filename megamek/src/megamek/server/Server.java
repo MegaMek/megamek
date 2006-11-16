@@ -3057,6 +3057,673 @@ public class Server implements Runnable {
     }
 
     /**
+     * makes a unit skid or sideslip on the board
+     * @param entity the unit which should skid
+     * @param start the coordinates of the hex the unit was in prior to skidding 
+     * @param elevation the elevation of the unit
+     * @param direction the direction of the skid
+     * @param distance the number of hexes skidded
+     * @param step the MoveStep which caused the skid
+     * @return true if the entity was removed from play
+     */
+    private boolean processSkid(Entity entity, Coords start, int elevation, int direction, int distance, MoveStep step) {
+        Coords nextPos = start;
+        Coords curPos = nextPos;
+        IHex curHex = game.getBoard().getHex(start);
+        Report r;
+        int skidDistance = 0; //actual distance moved
+        ArrayList<Entity> avoidedChargeUnits = new ArrayList<Entity>();
+        while(!entity.isDoomed() && distance > 0) {
+            nextPos = curPos.translated(direction);
+            // Is the next hex off the board?
+            if ( !game.getBoard().contains(nextPos) ) {
+
+                // Can the entity skid off the map?
+                if (game.getOptions().booleanOption("push_off_board")) {
+                    // Yup.  One dead entity.
+                    game.removeEntity(entity.getId(),
+                            IEntityRemovalConditions.REMOVE_PUSHED);
+                    send(createRemoveEntityPacket(entity.getId(),
+                            IEntityRemovalConditions.REMOVE_PUSHED));
+                    r = new Report(2030, Report.PUBLIC);
+                    r.addDesc(entity);
+                    addReport(r);
+
+                    for(Entity e:entity.getLoadedUnits()) {
+                        game.removeEntity(e.getId(),
+                                IEntityRemovalConditions.REMOVE_PUSHED);
+                        send(createRemoveEntityPacket(e.getId(),
+                                IEntityRemovalConditions.REMOVE_PUSHED));
+                    }
+                    Entity swarmer = game.getEntity(entity.getSwarmAttackerId());
+                    if(swarmer != null) {
+                        if(!swarmer.isDone()) {
+                            swarmer.setDone(true);
+                            game.removeTurnFor( swarmer );
+                            send( createTurnVectorPacket() );
+                        }
+                        game.removeEntity(swarmer.getId(),
+                                IEntityRemovalConditions.REMOVE_PUSHED);
+                        send(createRemoveEntityPacket(swarmer.getId(),
+                                IEntityRemovalConditions.REMOVE_PUSHED));
+                    }
+                    // The entity's movement is completed.
+                    return true;
+
+                }
+                // Nope.  Update the report.
+                r = new Report(2035);
+                r.subject = entity.getId();
+                r.indent();
+                addReport(r);
+                // Stay in the current hex and stop skidding.
+                break;
+            }
+
+            IHex nextHex = game.getBoard().getHex(nextPos);
+            distance -= nextHex.movementCost(entity.getMovementMode()) + 1;
+            // By default, the unit is going to fall to the floor of the next hex
+            int curAltitude = entity.getElevation() + curHex.getElevation();
+            int nextAltitude = nextHex.floor();
+            
+            // but VTOL keep altitude
+            if(entity.getMovementMode() == IEntityMovementMode.VTOL) {
+                nextAltitude = Math.max(nextAltitude,curAltitude);
+            } else {
+                
+                // Is there a building to "catch" the unit?
+                if(nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
+                    //unit will land on the roof, if at a higher level,
+                    //otherwise it will skid through the wall onto the same floor.
+                    nextAltitude = Math.min(curAltitude, 
+                            nextHex.getElevation() + 
+                            nextHex.terrainLevel(Terrains.BLDG_ELEV));
+                }
+                // Is there a bridge to "catch" the unit?
+                if(nextHex.containsTerrain(Terrains.BRIDGE)) {
+                    //unit will land on the bridge, if at a higher level,
+                    //and the bridge exits towards the current hex,
+                    //otherwise the bridge has no effect
+                    int exitDir = (direction + 3) % 6;
+                    exitDir = 1<<exitDir;
+                    if((nextHex.getTerrain(Terrains.BRIDGE).getExits() & exitDir) == exitDir) {
+                        nextAltitude = Math.min(curAltitude,Math.max(nextAltitude, 
+                                nextHex.getElevation() + 
+                                nextHex.terrainLevel(Terrains.BRIDGE_ELEV)));
+                    }
+                }
+                if(nextAltitude <= nextHex.surface() && curAltitude >= curHex.surface()) {
+                    // Hovercraft can "skid" over water.
+                    // all units can skid over ice.
+                    if ( entity instanceof Tank &&
+                         entity.getMovementMode() ==
+                         IEntityMovementMode.HOVER ) {
+                        if ( nextHex.containsTerrain(Terrains.WATER) ) {
+                            nextAltitude = nextHex.surface();
+                        }
+                    } else {
+                        if(nextHex.containsTerrain(Terrains.ICE)) {
+                            nextAltitude = nextHex.surface();
+                        }
+                    }
+                }
+            }
+            
+            //The elevation the skidding unit will occupy in next hex
+            int nextElevation = nextAltitude - nextHex.surface();
+
+            if ( curAltitude < nextAltitude ||
+                    (nextElevation == 0 && 
+                            (entity.getMovementMode() == IEntityMovementMode.WIGE ||
+                                    entity.getMovementMode() == IEntityMovementMode.VTOL))) {
+                //however WIGE can gain 1 level to avoid this
+                if(entity.getMovementMode() == IEntityMovementMode.WIGE
+                        && nextElevation == 0) {
+                    nextElevation = 1;
+                } else {
+                    r = new Report(2045);
+                    r.subject = entity.getId();
+                    r.indent();
+                    r.add(nextPos.getBoardNum(), true);
+                    addReport(r);
+
+                    if(entity.getMovementMode() == IEntityMovementMode.WIGE
+                            || entity.getMovementMode() == IEntityMovementMode.VTOL) {
+                        int hitSide=step.getFacing()-direction+6;
+                        hitSide %= 6;
+                        int table=0;
+                        switch(hitSide) {//quite hackish...I think it ought to work, though.
+                            case 0://can this happen?
+                                table=ToHitData.SIDE_FRONT;
+                                break;
+                            case 1:
+                            case 2:
+                                table=ToHitData.SIDE_LEFT;
+                                break;
+                            case 3:
+                                table=ToHitData.SIDE_REAR;
+                                break;
+                            case 4:
+                            case 5:
+                                table=ToHitData.SIDE_RIGHT;
+                                break;
+                        }
+                        curPos=nextPos;
+                        elevation=nextElevation;
+                        addReport(crashVTOL((VTOL) entity,true,distance,curPos,elevation,table));
+
+                        if(nextHex.containsTerrain(Terrains.WATER) && !nextHex.containsTerrain(Terrains.ICE)
+                            || nextHex.containsTerrain(Terrains.WOODS)
+                            || nextHex.containsTerrain(Terrains.JUNGLE)) {
+                            addReport(destroyEntity(entity,"could not land in crash site"));
+                        } else if(elevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)){
+                            addReport(destroyEntity(entity, "crashed into building"));
+                        } else {
+                            entity.setPosition(nextPos);
+                            entity.setElevation(0);
+                            doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
+                        }
+                        break; 
+
+                    } else {
+                        // skidding into higher terrain does weight/20
+                        // damage in 5pt clusters to front.
+                        int damage = ((int)entity.getWeight() + 19) / 20;
+                        while(damage > 0) {
+                            addReport(damageEntity(entity, 
+                                    entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 
+                                    Math.min(5,damage)));
+                            damage -= 5;
+                        }
+                    }    
+                    // Stay in the current hex and stop skidding.
+                    break;
+                }
+            }
+
+            // Have skidding units suffer falls (off a cliff).
+            else if ( curAltitude > nextAltitude + entity.getMaxElevationChange() ) {
+                //WIGE can avoid this too, if they have 2MP to spend
+                if(entity.getMovementMode() == IEntityMovementMode.WIGE
+                        && entity.getRunMP() - 2 >= entity.mpUsed) {
+                    entity.mpUsed += 2;
+                    nextAltitude = curAltitude;
+                } else {
+                    doEntityFallsInto( entity, curPos, nextPos,
+                                       entity.getBasePilotingRoll() );
+                    doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
+                    // Stay in the current hex and stop skidding.
+                    break;
+                }
+            }
+            
+            // Get any building in the hex.
+            Building bldg = null;
+            if(nextElevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)) {
+                //We will only run into the building if its at a higher level,
+                //otherwise we skid over the roof
+                bldg = game.getBoard().getBuildingAt(nextPos);
+            }
+            boolean bldgSuffered = false;
+            boolean stopTheSkid = false;
+            // Does the next hex contain an entities?
+            // ASSUMPTION: hurt EVERYONE in the hex.
+            Enumeration<Entity> targets = game.getEntities( nextPos );
+            if ( targets.hasMoreElements()) {
+                boolean skidChargeHit = false;
+                while ( targets.hasMoreElements() ) {
+                    Entity target = (Entity) targets.nextElement();
+                    
+                    if(target.getElevation() > nextElevation + entity.getHeight()
+                            || target.absHeight() < nextElevation) {
+                        //target is not in the way
+                        continue;
+                    }
+                    
+                    // Can the target avoid the skid?
+                    if(!target.isDone()) {
+                        if(target instanceof Infantry) {
+                            r = new Report(2420);
+                            r.subject = target.getId();
+                            r.addDesc(target);
+                            addReport(r);
+                            continue;
+                        }
+                        else if(target instanceof Protomech) {
+                            if(target != Compute.stackingViolation(game, entity, nextPos, null)) {
+                                r = new Report(2420);
+                                r.subject = target.getId();
+                                r.addDesc(target);
+                                addReport(r);
+                                continue;
+                            }
+                        } else {
+                            PilotingRollData psr = target.getBasePilotingRoll();
+                            psr.addModifier(0,"avoiding collision");
+                            int roll = Compute.d6(2);
+                            r = new Report(2425);
+                            r.subject = target.getId();
+                            r.addDesc(target);
+                            r.add(psr.getValue());
+                            r.add(psr.getDesc());
+                            r.add(roll);
+                            addReport(r);
+                            if(roll >= psr.getValue()) {
+                                game.removeTurnFor(target);
+                                avoidedChargeUnits.add(target);
+                                continue;
+                                //TODO: the charge should really be suspended and resumed after the target moved.
+                            }
+                        }
+                    }
+
+                    // Mechs and vehicles get charged,
+                    // but need to make a to-hit roll
+                    if ( target instanceof Mech ||
+                         target instanceof Tank ) {
+                        ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
+                        ToHitData toHit = caa.toHit(game, true);
+
+                        // roll
+                        int roll = Compute.d6(2);
+                        // Update report.
+                        r = new Report(2050);
+                        r.subject = entity.getId();
+                        r.indent();
+                        r.add(target.getShortName(), true);
+                        r.add(nextPos.getBoardNum(), true);
+                        r.newlines = 0;
+                        addReport(r);
+                        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+                            roll = -12;
+                            r = new Report(2055);
+                            r.subject = entity.getId();
+                            r.add(toHit.getDesc());
+                            r.newlines = 0;
+                            addReport(r);
+                        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+                            r = new Report(2060);
+                            r.subject = entity.getId();
+                            r.add(toHit.getDesc());
+                            r.newlines = 0;
+                            addReport(r);
+                            roll = Integer.MAX_VALUE;
+                        } else {
+                            // report the roll
+                            r = new Report(2065);
+                            r.subject = entity.getId();
+                            r.add(toHit.getValue());
+                            r.add(roll);
+                            r.newlines = 0;
+                            addReport(r);
+                        }
+
+                        // Resolve a charge against the target.
+                        // ASSUMPTION: buildings block damage for
+                        //             *EACH* entity charged.
+                        if (roll < toHit.getValue()) {
+                            r = new Report(2070);
+                            r.subject = entity.getId();
+                            addReport(r);
+                        } else {
+                            // Resolve the charge.
+                            resolveChargeDamage
+                                (entity, target, toHit, direction);
+                            // HACK: set the entity's location
+                            // to the original hex again, for the other targets
+                            if (targets.hasMoreElements()) {
+                                entity.setPosition(curPos);
+                            }
+                            bldgSuffered = true;
+                            skidChargeHit = true;
+                            // The skid ends here if the target lives.
+                            if ( !target.isDoomed() &&
+                                 !target.isDestroyed() &&
+                                 !game.isOutOfGame(target) ) {
+                                stopTheSkid = true;
+                            }
+                        }
+
+                        // if we don't do this here,
+                        // we can have a mech without a leg
+                        // standing on the field and moving
+                        // as if it still had his leg after
+                        // getting skid-charged.
+                        if (!target.isDone()) {
+                            resolvePilotingRolls(target);
+                            game.resetPSRs(target);
+                            target.applyDamage();
+                            addNewLines();
+                        }
+
+                    }
+
+                    // Resolve "move-through" damage on infantry.
+                    // Infantry inside of a building don't get a
+                    // move-through, but suffer "bleed through"
+                    // from the building.
+                    else if ( target instanceof Infantry &&
+                              bldg != null ) {
+                        // Update report.
+                        r = new Report(2075);
+                        r.subject = entity.getId();
+                        r.indent();
+                        r.add(target.getShortName(), true);
+                        r.add(nextPos.getBoardNum(), true);
+                        r.newlines = 0;
+                        addReport(r);
+
+                        // Infantry don't have different
+                        // tables for punches and kicks
+                        HitData hit = target.rollHitLocation( ToHitData.HIT_NORMAL, Compute.targetSideTable(entity, target) );
+
+                        // Damage equals tonnage, divided by 5.
+                        // ASSUMPTION: damage is applied in one hit.
+                        addReport(
+                          damageEntity(target, hit,
+                          Math.round(entity.getWeight()/5)));
+                        addNewLines();
+                    }
+
+                    // Has the target been destroyed?
+                    if ( target.isDoomed() ) {
+
+                        // Has the target taken a turn?
+                        if ( !target.isDone() ) {
+
+                            // Dead entities don't take turns.
+                            game.removeTurnFor(target);
+                            send(createTurnVectorPacket());
+
+                        } // End target-still-to-move
+
+                        // Clean out the entity.
+                        target.setDestroyed(true);
+                        game.moveToGraveyard(target.getId());
+                        send(createRemoveEntityPacket(target.getId()));
+                    }
+
+                    // Update the target's position,
+                    // unless it is off the game map.
+                    if ( !game.isOutOfGame(target) ) {
+                        entityUpdate( target.getId() );
+                    }
+
+                } // Check the next entity in the hex.
+
+                if (skidChargeHit) {
+                    // HACK: set the entities position to that
+                    // hex's coords, because we had to move the entity
+                    // back earlier for the other targets
+                    entity.setPosition(nextPos);
+                }
+                
+                for(Entity e:avoidedChargeUnits) {
+                    GameTurn newTurn = new GameTurn.SpecificEntityTurn(e.getOwner().getId(), e.getId());
+                    game.insertNextTurn(newTurn);
+                    send(createTurnVectorPacket());
+                }
+            }
+
+            // Handle the building in the hex.
+            if ( bldg != null ) {
+
+                // Report that the entity has entered the bldg.
+                r = new Report(2080);
+                r.subject = entity.getId();
+                r.indent();
+                r.add(bldg.getName());
+                r.add(nextPos.getBoardNum(), true);
+                addReport(r);
+
+                // If the building hasn't already suffered
+                // damage, then apply charge damage to the
+                // building and displace the entity inside.
+                // ASSUMPTION: you don't charge the building
+                //             if Tanks or Mechs were charged.
+                int chargeDamage = ChargeAttackAction.getDamageFor
+                    ( entity );
+                if ( !bldgSuffered ) {
+                    Report buildingReport = damageBuilding( bldg, chargeDamage );
+                    if (buildingReport != null) {
+                        buildingReport.indent(2);
+                        buildingReport.subject = entity.getId();
+                        addReport(buildingReport);
+                    }
+
+                    // Apply damage to the attacker.
+                    int toAttacker = ChargeAttackAction.getDamageTakenBy
+                        ( entity, bldg );
+                    HitData hit = entity.rollHitLocation( ToHitData.HIT_NORMAL,
+                                                          entity.sideTable(nextPos)
+                                                          );
+                    addReport(damageEntity( entity, hit, toAttacker ));
+                    addNewLines();
+
+                    entity.setPosition( nextPos );
+                    entity.setElevation(nextElevation);
+                    doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
+                    curPos = nextPos;
+                } // End buildings-suffer-too
+
+                // Any infantry in the building take damage
+                // equal to the building being charged.
+                // ASSUMPTION: infantry take no damage from the
+                //             building absorbing damage from
+                //             Tanks and Mechs being charged.
+                damageInfantryIn( bldg, chargeDamage );
+
+                // If a building still stands, then end the skid,
+                // and add it to the list of affected buildings.
+                if ( bldg.getCurrentCF() > 0 ) {
+                    stopTheSkid = true;
+                    addAffectedBldg( bldg, false );
+                } else {
+                    //otherwise it collapses immediately on our head
+                    checkForCollapse(bldg, game.getPositionMap());
+                }
+
+            } // End handle-building.
+
+            // Do we stay in the current hex and stop skidding?
+            if ( stopTheSkid ) {
+                break;
+            }
+            
+            // Update entity position and elevation
+            entity.setPosition(nextPos);
+            entity.setElevation(nextElevation);
+            doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
+            skidDistance++;
+            
+            //Check for collapse of any building the entity might be on
+            Building roof = game.getBoard().getBuildingAt(nextPos);
+            if(roof != null) {
+                if(checkForCollapse(roof, game.getPositionMap()))
+                    break; //stop skidding if the building collapsed
+            }
+            
+            // Can the skiding entity enter the next hex from this?
+            // N.B. can skid along roads.
+            if ( ( entity.isHexProhibited(curHex) ||
+                   entity.isHexProhibited(nextHex) ) &&
+                 !Compute.canMoveOnPavement(game, curPos, nextPos)
+                 ) {
+                // Update report.
+                r = new Report(2040);
+                r.subject = entity.getId();
+                r.indent();
+                r.add(nextPos.getBoardNum(), true);
+                addReport(r);
+
+                // If the prohibited terrain is water, entity is destroyed
+                if(nextHex.terrainLevel(Terrains.WATER) > 0
+                        && entity instanceof Tank
+                        && entity.getMovementMode() != IEntityMovementMode.HOVER
+                        && entity.getMovementMode() != IEntityMovementMode.WIGE) {
+                    addReport(destroyEntity(entity, "skidded into a watery grave", false, true));
+                }
+                
+                //otherwise, damage is weight/5 in 5pt clusters
+                int damage = ((int)entity.getWeight() + 4)/ 5;
+                while(damage > 0) {
+                    addReport(damageEntity(entity, 
+                            entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 
+                            Math.min(5,damage)));
+                    damage -= 5;
+                }
+                // and unit is immobile
+                if(entity instanceof Tank) {
+                    ((Tank)entity).immobilize();
+                }
+
+                // Stay in the current hex and stop skidding.
+                break;
+            }
+            
+            if(nextHex.terrainLevel(Terrains.WATER) > 0
+                    && entity.getMovementMode() != IEntityMovementMode.HOVER
+                    && entity.getMovementMode() != IEntityMovementMode.WIGE) {
+                //water ends the skid
+                break;
+            }
+            
+            //check for breaking magma crust
+            if(nextHex.terrainLevel(Terrains.MAGMA) == 1
+                    && nextElevation == 0) {
+                int roll = Compute.d6(1);
+                r = new Report(2395);
+                r.addDesc(entity);
+                r.add(roll);
+                r.subject = entity.getId();
+                addReport(r);
+                if(roll == 6) {
+                    nextHex.removeTerrain(Terrains.MAGMA);
+                    nextHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
+                    sendChangedHex(curPos);
+                    for(Enumeration e=game.getEntities(curPos);e.hasMoreElements();) {
+                        Entity en = (Entity)e.nextElement();
+                        if(en != entity)
+                            doMagmaDamage(en, false);
+                    }
+                }
+            }
+
+            //check for entering liquid magma
+            if(nextHex.terrainLevel(Terrains.MAGMA) == 2
+                    && nextElevation == 0) {
+                doMagmaDamage(entity, false);
+            }
+
+            // is the next hex a swamp?
+            PilotingRollData rollTarget = entity.checkSwampMove(step, nextHex,
+                                                  curPos, nextPos, Compute.canMoveOnPavement(game, curPos, nextPos));
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                if (0 < doSkillCheckWhileMoving(entity, curPos,
+                                       nextPos, rollTarget, false)){
+                    entity.setStuck(true);
+                    r = new Report(2081);
+                    r.subject = entity.getId();
+                    r.add(entity.getDisplayName(), true);
+                    // stay here and stop skidding, see bug 1115608
+                    break;
+                }
+            }
+
+            // Update the position and keep skidding.
+            curPos = nextPos;
+            curHex = nextHex;
+            r = new Report(2085);
+            r.subject = entity.getId();
+            r.indent();
+            r.add(curPos.getBoardNum(), true);
+            addReport(r);
+
+        } // Handle the next skid hex.
+
+        // If the skidding entity violates stacking,
+        // displace targets until it doesn't.
+        curPos = entity.getPosition();
+        Entity target = Compute.stackingViolation
+            (game, entity.getId(), curPos);
+        while (target != null) {
+            nextPos = Compute.getValidDisplacement
+                (game, target.getId(),
+                 target.getPosition(), direction);
+            // ASSUMPTION
+            // There should always be *somewhere* that
+            // the target can go... last skid hex if
+            // nothing else is available.
+            if ( null == nextPos ) {
+                // But I don't trust the assumption fully.
+                // Report the error and try to continue.
+                System.err.println( "The skid of " +
+                                    entity.getShortName() +
+                                    " should displace " +
+                                    target.getShortName() +
+                                    " in hex " +
+                                    curPos.getBoardNum() +
+                                    " but there is nowhere to go."
+                                    );
+                break;
+            }
+            // indent displacement
+            r = new Report(1210, Report.PUBLIC);
+            r.indent();
+            r.newlines = 0;
+            addReport(r);
+            doEntityDisplacement(target, curPos, nextPos, null);
+            doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
+            target = Compute.stackingViolation( game,
+                                                entity.getId(),
+                                                curPos );
+        }
+
+        // Mechs suffer damage for every hex skidded.
+        if ( entity instanceof Mech ) {
+            // Calculate one half falling damage times skid length.
+            int damage = skidDistance * (int) Math.ceil(Math.round(entity.getWeight() / 10.0) / 2.0);
+
+            // report skid damage
+            r = new Report(2090);
+            r.subject = entity.getId();
+            r.indent();
+            r.addDesc(entity);
+            r.add(damage);
+            addReport(r);
+
+            // standard damage loop
+            // All skid damage is to the front.
+            while (damage > 0) {
+                int cluster = Math.min(5, damage);
+                HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                addReport(
+                    damageEntity(entity, hit, cluster));
+                damage -= cluster;
+            }
+            addNewLines();
+        }
+
+        // Clean up the entity if it has been destroyed.
+        if ( entity.isDoomed() ) {
+            entity.setDestroyed(true);
+            game.moveToGraveyard(entity.getId());
+            send(createRemoveEntityPacket(entity.getId()));
+
+            // The entity's movement is completed.
+            return true;
+        }
+
+        // Let the player know the ordeal is over.
+        r = new Report(2095);
+        r.subject = entity.getId();
+        r.indent();
+        addReport(r);
+
+        return false;
+    }
+    
+    /**
      * Steps through an entity movement packet, executing it.
      */
     private void processMovement(Entity entity, MovePath md) {
@@ -3397,28 +4064,25 @@ public class Server implements Runnable {
                                           distance);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Have an entity-meaningful PSR message.
-                boolean psrPassed = true;
+                boolean psrFailed = true;
                 if ( entity instanceof Mech ) {
-                    psrPassed = doSkillCheckWhileMoving( entity, lastPos,
+                    psrFailed = (0 < doSkillCheckWhileMoving( entity, lastPos,
                                                           lastPos, rollTarget,
-                                                          true );
+                                                          true ));
                 } else {
-                    psrPassed = doSkillCheckWhileMoving( entity, lastPos,
+                    psrFailed = (0 < doSkillCheckWhileMoving( entity, lastPos,
                                                           lastPos, rollTarget,
-                                                          false );
+                                                          false ));
                 }
                 // Does the entity skid?
-                if ( !psrPassed ){
+                if ( psrFailed ){
+                    
+                    if(entity instanceof Tank) {
+                        addReport(vehicleMotiveDamage((Tank)entity, 0));
+                    }
 
                     curPos = lastPos;
-                    Coords nextPos = curPos;
-                    IHex    nextHex = null;
-                    int    skidDistance = 0;
-                    Enumeration targets = null;
-                    Entity target = null;
-                    int    curAltitude;
-                    int    nextAltitude;
-                    int    nextElevation;
+                    int skidDistance = (distance + 1) / 2;
                     int skidDirection = prevFacing;
 
                     // All charge damage is based upon
@@ -3432,547 +4096,9 @@ public class Server implements Runnable {
                     if(step.isThisStepBackwards()) {
                         skidDirection = (skidDirection + 3) % 6;
                     }
-                    nextPos = curPos.translated( skidDirection );
-                    nextHex = game.getBoard().getHex( nextPos );
-
-                    // Move the entity a number hexes from curPos in the
-                    // skidDirection direction equal to half the distance moved
-                    // this turn (rounded up), unless something intervenes.
-                    for ( skidDistance = 0;
-                          skidDistance < (int) Math.ceil(entity.delta_distance / 2.0);
-                          skidDistance++ ) {
-
-                        // Is the next hex off the board?
-                        if ( !game.getBoard().contains(nextPos) ) {
-
-                            // Can the entity skid off the map?
-                            if (game.getOptions().booleanOption("push_off_board")) {
-                                // Yup.  One dead entity.
-                                game.removeEntity(entity.getId(),
-                                        IEntityRemovalConditions.REMOVE_PUSHED);
-                                send(createRemoveEntityPacket(entity.getId(),
-                                        IEntityRemovalConditions.REMOVE_PUSHED));
-                                r = new Report(2030, Report.PUBLIC);
-                                r.addDesc(entity);
-                                addReport(r);
-
-                                // TODO: remove passengers and swarmers.
-
-                                // The entity's movement is completed.
-                                return;
-
-                            }
-                            // Nope.  Update the report.
-                            r = new Report(2035);
-                            r.subject = entity.getId();
-                            r.indent();
-                            addReport(r);
-                            // Stay in the current hex and stop skidding.
-                            break;
-                        }
-
-                        // Can the skiding entity enter the next hex from this?
-                        // N.B. can skid along roads.
-                        if ( ( entity.isHexProhibited(curHex) ||
-                               entity.isHexProhibited(nextHex) ) &&
-                             !Compute.canMoveOnPavement(game, curPos, nextPos)
-                             ) {
-                            // Update report.
-                            r = new Report(2040);
-                            r.subject = entity.getId();
-                            r.indent();
-                            r.add(nextPos.getBoardNum(), true);
-                            addReport(r);
-
-                            // N.B. the BMRr pg. 22 says that the unit
-                            // "crashes" into the terrain but it doesn't
-                            // mention any damage.
-
-                            // Stay in the current hex and stop skidding.
-                            break;
-                        }
-
-                        // By default, the unit is going to fall to the floor of the next hex
-                        curAltitude = entity.getElevation() + curHex.getElevation();
-                        nextAltitude = nextHex.floor();
-                        
-                        // Is there a building to "catch" the unit?
-                        if(nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
-                            //unit will land on the roof, if at a higher level,
-                            //otherwise it will skid through the wall onto the same floor.
-                            nextAltitude = Math.min(curAltitude, 
-                                    nextHex.getElevation() + 
-                                    nextHex.terrainLevel(Terrains.BLDG_ELEV));
-                        }
-                        // Is there a bridge to "catch" the unit?
-                        if(nextHex.containsTerrain(Terrains.BRIDGE)) {
-                            //unit will land on the bridge, if at a higher level,
-                            //and the bridge exits towards the current hex,
-                            //otherwise the bridge has no effect
-                            int exitDir = (skidDirection + 3) % 6;
-                            exitDir = 1<<exitDir;
-                            if((nextHex.getTerrain(Terrains.BRIDGE).getExits() & exitDir) == exitDir) {
-                                nextAltitude = Math.min(curAltitude,Math.max(nextAltitude, 
-                                        nextHex.getElevation() + 
-                                        nextHex.terrainLevel(Terrains.BRIDGE_ELEV)));
-                            }
-                        }
-                        if(nextAltitude <= nextHex.surface() && curAltitude >= curHex.surface()) {
-                            // Hovercraft can "skid" over water.
-                            // all units can skid over ice.
-                            if ( entity instanceof Tank &&
-                                 entity.getMovementMode() ==
-                                 IEntityMovementMode.HOVER ) {
-                                if ( nextHex.containsTerrain(Terrains.WATER) ) {
-                                    nextAltitude = nextHex.surface();
-                                }
-                            } else {
-                                if(nextHex.containsTerrain(Terrains.ICE)) {
-                                    nextAltitude = nextHex.surface();
-                                }
-                            }
-                        }
-
-                        // BMRr pg. 22 - Can't skid uphill,
-                        //      but can skid downhill.
-                        if ( curAltitude < nextAltitude ) {
-                            r = new Report(2045);
-                            r.subject = entity.getId();
-                            r.indent();
-                            r.add(nextPos.getBoardNum(), true);
-                            addReport(r);
-
-                            // Stay in the current hex and stop skidding.
-                            break;
-                        }
-
-                        // Have skidding units suffer falls (off a cliff).
-                        else if ( curAltitude > nextAltitude + 1 ) {
-                            doEntityFallsInto( entity, curPos, nextPos,
-                                               entity.getBasePilotingRoll() );
-                            doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
-                            // Stay in the current hex and stop skidding.
-                            break;
-                        }
-                        
-                        //The elevation the skidding unit will occupy in next hex
-                        nextElevation = nextAltitude - nextHex.surface();
-
-                        // Get any building in the hex.
-                        Building bldg = null;
-                        if(nextElevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)) {
-                            //We will only run into the building if its at a higher level,
-                            //otherwise we skid over the roof
-                            bldg = game.getBoard().getBuildingAt(nextPos);
-                        }
-                        boolean bldgSuffered = false;
-                        boolean stopTheSkid = false;
-                        // Does the next hex contain an entities?
-                        // ASSUMPTION: hurt EVERYONE in the hex.
-                        targets = game.getEntities( nextPos );
-                        if ( targets.hasMoreElements()) {
-                            boolean skidChargeHit = false;
-                            while ( targets.hasMoreElements() ) {
-                                target = (Entity) targets.nextElement();
-                                
-                                if(target.getElevation() > nextElevation + entity.getHeight()
-                                        || target.absHeight() < nextElevation) {
-                                    //target is not in the way
-                                    continue;
-                                }
-
-                                // TODO : allow ready targets to move out of way
-
-                                // Mechs and vehicles get charged,
-                                // but need to make a to-hit roll
-                                if ( target instanceof Mech ||
-                                     target instanceof Tank ) {
-                                    ChargeAttackAction caa = new ChargeAttackAction(entity.getId(), target.getTargetType(), target.getTargetId(), target.getPosition());
-                                    ToHitData toHit = caa.toHit(game, true);
-
-                                    // Calculate hit location.
-                                    if ( entity instanceof Tank
-                                         && (entity.getMovementMode() == IEntityMovementMode.HOVER
-                                         || entity.getMovementMode() == IEntityMovementMode.NAVAL
-                                         || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL)
-                                         && 0 < nextHex.terrainLevel(Terrains.WATER)
-                                         && target.getElevation() == -1
-                                         && !target.isProne()) {
-                                        //surface vessel striking a half-submerged mech
-                                        toHit.setHitTable(ToHitData.HIT_PUNCH);
-                                    } else if ( entity.getHeight() <
-                                                target.getHeight() ) {
-                                        toHit.setHitTable(ToHitData.HIT_KICK);
-                                    } else {
-                                        toHit.setHitTable(ToHitData.HIT_NORMAL);
-                                    }
-                                    toHit.setSideTable
-                                        (Compute.targetSideTable(entity, target));
-
-                                    // roll
-                                    int roll = Compute.d6(2);
-                                    // Update report.
-                                    r = new Report(2050);
-                                    r.subject = entity.getId();
-                                    r.indent();
-                                    r.add(target.getShortName(), true);
-                                    r.add(nextPos.getBoardNum(), true);
-                                    r.newlines = 0;
-                                    addReport(r);
-                                    if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
-                                        roll = -12;
-                                        r = new Report(2055);
-                                        r.subject = entity.getId();
-                                        r.add(toHit.getDesc());
-                                        r.newlines = 0;
-                                        addReport(r);
-                                    } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
-                                        r = new Report(2060);
-                                        r.subject = entity.getId();
-                                        r.add(toHit.getDesc());
-                                        r.newlines = 0;
-                                        addReport(r);
-                                        roll = Integer.MAX_VALUE;
-                                    } else {
-                                        // report the roll
-                                        r = new Report(2065);
-                                        r.subject = entity.getId();
-                                        r.add(toHit.getValue());
-                                        r.add(roll);
-                                        r.newlines = 0;
-                                        addReport(r);
-                                    }
-
-                                    // Resolve a charge against the target.
-                                    // ASSUMPTION: buildings block damage for
-                                    //             *EACH* entity charged.
-                                    if (roll < toHit.getValue()) {
-                                        r = new Report(2070);
-                                        r.subject = entity.getId();
-                                        addReport(r);
-                                    } else {
-                                        //TODO: this is the place where the target gets a chance to move away
-                                        // Resolve the charge.
-                                        resolveChargeDamage
-                                            (entity, target, toHit, skidDirection);
-                                        // HACK: set the entity's location
-                                        // to the original hex again, for the other targets
-                                        if (targets.hasMoreElements()) {
-                                            entity.setPosition(curPos);
-                                        }
-                                        bldgSuffered = true;
-                                        skidChargeHit = true;
-                                    }
-                                    // The skid ends here if the target lives.
-                                    if ( !target.isDoomed() &&
-                                         !target.isDestroyed() &&
-                                         !game.isOutOfGame(target) ) {
-                                        stopTheSkid = true;
-                                    }
-
-                                    // if we don't do this here,
-                                    // we can have a mech without a leg
-                                    // standing on the field and moving
-                                    // as if it still had his leg after
-                                    // getting skid-charged.
-                                    if (!target.isDone()) {
-                                        resolvePilotingRolls(target);
-                                        game.resetPSRs(target);
-                                        target.applyDamage();
-                                        addNewLines();
-                                    }
-
-                                }
-
-                                // Resolve "move-through" damage on infantry.
-                                // Infantry inside of a building don't get a
-                                // move-through, but suffer "bleed through"
-                                // from the building.
-                                else if ( target instanceof Infantry &&
-                                          bldg != null ) {
-                                    // Update report.
-                                    r = new Report(2075);
-                                    r.subject = entity.getId();
-                                    r.indent();
-                                    r.add(target.getShortName(), true);
-                                    r.add(nextPos.getBoardNum(), true);
-                                    r.newlines = 0;
-                                    addReport(r);
-
-                                    // Infantry don't have different
-                                    // tables for punches and kicks
-                                    HitData hit = target.rollHitLocation( ToHitData.HIT_NORMAL, Compute.targetSideTable(entity, target) );
-
-                                    // Damage equals tonnage, divided by 5.
-                                    // ASSUMPTION: damage is applied in one hit.
-                                    addReport(
-                                      damageEntity(target, hit,
-                                      Math.round(entity.getWeight()/5)));
-                                    addNewLines();
-                                }
-
-                                // Has the target been destroyed?
-                                if ( target.isDoomed() ) {
-
-                                    // Has the target taken a turn?
-                                    if ( !target.isDone() ) {
-
-                                        // Dead entities don't take turns.
-                                        game.removeTurnFor(target);
-                                        send(createTurnVectorPacket());
-
-                                    } // End target-still-to-move
-
-                                    // Clean out the entity.
-                                    target.setDestroyed(true);
-                                    game.moveToGraveyard(target.getId());
-                                    send(createRemoveEntityPacket(target.getId()));
-                                }
-
-                                // Update the target's position,
-                                // unless it is off the game map.
-                                if ( !game.isOutOfGame(target) ) {
-                                    entityUpdate( target.getId() );
-                                }
-
-                            } // Check the next entity in the hex.
-
-                            // if we missed all the entities in the hex,
-                            // move attacker to side hex
-                            if (!skidChargeHit) {
-                                Coords src = entity.getPosition();
-                                Coords dest = Compute.getMissedChargeDisplacement
-                                    (game, entity.getId(), src, skidDirection);
-                                doEntityDisplacement(entity, src, dest, null);
-                            } else {
-                                // HACK: otherwise, set the entities position to that
-                                // hex's coords, because we had to move the entity
-                                // back earlier for the other targets
-                                entity.setPosition(nextPos);
-                            }
-                        }
-
-                        // Handle the building in the hex.
-                        if ( bldg != null ) {
-
-                            // Report that the entity has entered the bldg.
-                            r = new Report(2080);
-                            r.subject = entity.getId();
-                            r.indent();
-                            r.add(bldg.getName());
-                            r.add(nextPos.getBoardNum(), true);
-                            addReport(r);
-
-                            // If the building hasn't already suffered
-                            // damage, then apply charge damage to the
-                            // building and displace the entity inside.
-                            // ASSUMPTION: you don't charge the building
-                            //             if Tanks or Mechs were charged.
-                            int chargeDamage = ChargeAttackAction.getDamageFor
-                                ( entity );
-                            if ( !bldgSuffered ) {
-                                Report buildingReport = damageBuilding( bldg, chargeDamage );
-                                if (buildingReport != null) {
-                                    buildingReport.indent(2);
-                                    buildingReport.subject = entity.getId();
-                                    addReport(buildingReport);
-                                }
-
-                                // Apply damage to the attacker.
-                                int toAttacker = ChargeAttackAction.getDamageTakenBy
-                                    ( entity, bldg );
-                                HitData hit = entity.rollHitLocation( ToHitData.HIT_NORMAL,
-                                                                      entity.sideTable(nextPos)
-                                                                      );
-                                addReport(
-                                                      damageEntity( entity, hit, toAttacker ));
-                                addNewLines();
-
-                                entity.setPosition( nextPos );
-                                doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
-                                curPos = nextPos;
-                            } // End buildings-suffer-too
-
-                            // Any infantry in the building take damage
-                            // equal to the building being charged.
-                            // ASSUMPTION: infantry take no damage from the
-                            //             building absorbing damage from
-                            //             Tanks and Mechs being charged.
-                            damageInfantryIn( bldg, chargeDamage );
-
-                            // If a building still stands, then end the skid,
-                            // and add it to the list of affected buildings.
-                            if ( bldg.getCurrentCF() > 0 ) {
-                                stopTheSkid = true;
-                                addAffectedBldg( bldg, false );
-                            }
-
-                        } // End handle-building.
-
-                        // Do we stay in the current hex and stop skidding?
-                        if ( stopTheSkid ) {
-                            break;
-                        }
-                        
-                        // Update entity position and elevation
-                        entity.setPosition(nextPos);
-                        entity.setElevation(nextElevation);
-                        doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
-                        
-                        //Check for collapse of any building the entity might be on
-                        Building roof = game.getBoard().getBuildingAt(nextPos);
-                        if(roof != null) {
-                            if(checkForCollapse(roof, game.getPositionMap()))
-                                break; //stop skidding if the building collapsed
-                        }
-                        
-                        // is the next hex a rubble hex?
-                        rollTarget = entity.checkRubbleMove(step, nextHex,
-                                                curPos, nextPos);
-                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                            doSkillCheckWhileMoving(entity, curPos, nextPos,
-                                                        rollTarget, true);
-                            if (entity.isProne()) {
-                                // if we fell, stop the skid (see bug 1115608)
-                                break;
-                            }
-                        }
-
-                        //check for breaking magma crust
-                        if(nextHex.terrainLevel(Terrains.MAGMA) == 1
-                                && nextElevation == 0) {
-                            int roll = Compute.d6(1);
-                            r = new Report(2395);
-                            r.addDesc(entity);
-                            r.add(roll);
-                            r.subject = entity.getId();
-                            addReport(r);
-                            if(roll == 6) {
-                                nextHex.removeTerrain(Terrains.MAGMA);
-                                nextHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
-                                sendChangedHex(curPos);
-                                for(Enumeration e=game.getEntities(curPos);e.hasMoreElements();) {
-                                    Entity en = (Entity)e.nextElement();
-                                    if(en != entity)
-                                        doMagmaDamage(en, false);
-                                }
-                            }
-                        }
-
-                        //check for entering liquid magma
-                        if(nextHex.terrainLevel(Terrains.MAGMA) == 2
-                                && nextElevation == 0) {
-                            doMagmaDamage(entity, false);
-                        }
-
-                        // is the next hex a swamp?
-                        rollTarget = entity.checkSwampMove(step, nextHex,
-                                                              curPos, nextPos, isPavementStep);
-                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                            if (!doSkillCheckWhileMoving(entity, curPos,
-                                                   nextPos, rollTarget, false)){
-                                entity.setStuck(true);
-                                r = new Report(2081);
-                                r.subject = entity.getId();
-                                r.add(entity.getDisplayName(), true);
-                                // stay here and stop skidding, see bug 1115608
-                                break;
-                            }
-                        }
-
-                        // Update the position and keep skidding.
-                        curPos = nextPos;
-                        curHex = nextHex;
-                        r = new Report(2085);
-                        r.subject = entity.getId();
-                        r.indent();
-                        r.add(curPos.getBoardNum(), true);
-                        addReport(r);
-
-                        // Get the next hex in the skid?
-                        nextPos = nextPos.translated( skidDirection );
-                        nextHex = game.getBoard().getHex( nextPos );
-
-                    } // Handle the next skid hex.
-
-                    // If the skidding entity violates stacking,
-                    // displace targets until it doesn't.
-                    curPos = entity.getPosition();
-                    target = Compute.stackingViolation
-                        (game, entity.getId(), curPos);
-                    while (target != null) {
-                        nextPos = Compute.getValidDisplacement
-                            (game, target.getId(),
-                             target.getPosition(), skidDirection);
-                        // ASSUMPTION
-                        // There should always be *somewhere* that
-                        // the target can go... last skid hex if
-                        // nothing else is available.
-                        if ( null == nextPos ) {
-                            // But I don't trust the assumption fully.
-                            // Report the error and try to continue.
-                            System.err.println( "The skid of " +
-                                                entity.getShortName() +
-                                                " should displace " +
-                                                target.getShortName() +
-                                                " in hex " +
-                                                curPos.getBoardNum() +
-                                                " but there is nowhere to go."
-                                                );
-                            break;
-                        }
-                        // indent displacement
-                        r = new Report(1210, Report.PUBLIC);
-                        r.indent();
-                        r.newlines = 0;
-                        addReport(r);
-                        doEntityDisplacement(target, curPos, nextPos, null);
-                        doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
-                        target = Compute.stackingViolation( game,
-                                                            entity.getId(),
-                                                            curPos );
-                    }
-
-                    // Mechs suffer damage for every hex skidded.
-                    if ( entity instanceof Mech ) {
-                        // Calculate one half falling damage times skid length.
-                        int damage = skidDistance * (int) Math.ceil(Math.round(entity.getWeight() / 10.0) / 2.0);
-
-                        // report skid damage
-                        r = new Report(2090);
-                        r.subject = entity.getId();
-                        r.indent();
-                        r.addDesc(entity);
-                        r.add(damage);
-                        addReport(r);
-
-                        // standard damage loop
-                        // All skid damage is to the front.
-                        while (damage > 0) {
-                            int cluster = Math.min(5, damage);
-                            HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                            addReport(
-                                damageEntity(entity, hit, cluster));
-                            damage -= cluster;
-                        }
-                        addNewLines();
-                    }
-
-                    // Clean up the entity if it has been destroyed.
-                    if ( entity.isDoomed() ) {
-                        entity.setDestroyed(true);
-                        game.moveToGraveyard(entity.getId());
-                        send(createRemoveEntityPacket(entity.getId()));
-
-                        // The entity's movement is completed.
+                    
+                    if(processSkid(entity, curPos, step.getElevation(), skidDirection, skidDistance, step))
                         return;
-                    }
-
-                    // Let the player know the ordeal is over.
-                    r = new Report(2095);
-                    r.subject = entity.getId();
-                    r.indent();
-                    addReport(r);
 
                     // set entity parameters
                     curFacing = entity.getFacing();
@@ -3997,98 +4123,45 @@ public class Server implements Runnable {
             } // End need-skid-psr
             
             // check sideslip
-            if(entity instanceof VTOL) {
-                rollTarget = ((VTOL)entity).checkSideSlip(moveType, prevHex, overallMoveType,
+            if(entity instanceof VTOL
+                    || entity.getMovementMode() == IEntityMovementMode.HOVER
+                    || entity.getMovementMode() == IEntityMovementMode.WIGE) {
+                rollTarget = entity.checkSideSlip(moveType, prevHex, overallMoveType,
                                           prevStep, prevFacing, curFacing,
                                           lastPos, curPos,
                                           distance);
                 if(rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                    if(!doSkillCheckWhileMoving(entity,lastPos,curPos,rollTarget, false)) {
-                        //report sideslip
-                        sideslipped = true;
-                        r = new Report(2100);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        addReport(r);
-                        Coords newPos = lastPos.translated(prevFacing);//does this work for opposing hex?
-                        // Is the next hex off the board?
-                        if ( !game.getBoard().contains(newPos) ) {
-                            // Can the entity skid off the map?
-                            if (game.getOptions().booleanOption("push_off_board")) {
-                                // Yup.  One dead entity.
-                                game.removeEntity(entity.getId(),
-                                        IEntityRemovalConditions.REMOVE_PUSHED);
-                                send(createRemoveEntityPacket(entity.getId(),
-                                        IEntityRemovalConditions.REMOVE_PUSHED));
-                                r = new Report(2030);
-                                r.subject = entity.getId();
-                                r.addDesc(entity);
-                                addReport(r);
-
-                                // TODO: remove passengers and swarmers.
-                                // The entity's movement is completed.
+                    int MoF = doSkillCheckWhileMoving(entity,lastPos,curPos,rollTarget, false); 
+                    if(MoF > 0) {
+                        //maximum distance is hexes moved / 2
+                        int sideslipDistance = Math.min(MoF, distance-1);
+                        if(sideslipDistance > 0) {
+                            int skidDirection = prevFacing;
+                            //report sideslip
+                            sideslipped = true;
+                            r = new Report(2100);
+                            r.subject = entity.getId();
+                            r.addDesc(entity);
+                            r.add(sideslipDistance);
+                            addReport(r);
+                            
+                            if(processSkid(entity, lastPos, step.getElevation(), skidDirection, sideslipDistance, step))
                                 return;
+                            
+                            if(!entity.isDestroyed() && !entity.isDoomed()) {
+                                fellDuringMovement= true; //No, but it should work...
                             }
-							// Nope.  Update the report.
-							r = new Report(2035);
-							r.subject = entity.getId();
-							addReport(r);
-                            // Stay in the current hex and stop skidding.
+                            
+                            if(entity.getElevation() == 0 && (entity.getMovementMode() == IEntityMovementMode.VTOL ||
+                                    entity.getMovementMode() == IEntityMovementMode.WIGE)) {
+                                turnOver = true;
+                            }
+                            // set entity parameters
+                            curFacing = entity.getFacing();
+                            curPos = entity.getPosition();
+                            entity.setSecondaryFacing( curFacing );
                             break;
                         }
-                        IHex hex = game.getBoard().getHex(newPos);
-                        int terrainLevel = hex.ceiling() - hex.surface();
-                        int newElevation=entity.calcElevation(game.getBoard().getHex(curPos), game.getBoard().getHex(newPos), curVTOLElevation, step.climbMode());
-                        if (newElevation<=terrainLevel) {
-                            r = new Report(2105);
-                            r.subject = entity.getId();
-                            r.add(newPos.getBoardNum(), true);
-                            addReport(r);
-
-                            int hitSide=curFacing-prevFacing+6;
-                            hitSide %= 6;
-                            int table=0;
-                            switch(hitSide) {//quite hackish...I think it ought to work, though.
-                                case 0://can this happen?
-                                    table=ToHitData.SIDE_FRONT;
-                                    break;
-                                case 1:
-                                case 2:
-                                    table=ToHitData.SIDE_LEFT;
-                                    break;
-                                case 3:
-                                    table=ToHitData.SIDE_REAR;
-                                    break;
-                                case 4:
-                                case 5:
-                                    table=ToHitData.SIDE_RIGHT;
-                                    break;
-                            }
-                            curPos=newPos;
-                            curVTOLElevation=newElevation;
-                            addReport(crashVTOL((VTOL) entity,true,distance,curPos,curVTOLElevation,table));
-                            turnOver = true;
-
-                            if(hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.ICE)
-                                || hex.containsTerrain(Terrains.WOODS)
-                                || hex.containsTerrain(Terrains.JUNGLE)) {
-                                addReport(destroyEntity(entity,"could not land in crash site"));
-                            } else if(newElevation < hex.terrainLevel(Terrains.BLDG_ELEV)){
-                                addReport(destroyEntity(entity, "crashed into building"));
-                            }
-                        } else {
-                            r = new Report(2110);
-                            r.subject = entity.getId();
-                            r.add(newPos.getBoardNum(), true);
-                            addReport(r);
-                            entity.setElevation(entity.calcElevation(game.getBoard().getHex(curPos),game.getBoard().getHex(newPos),curVTOLElevation,step.climbMode()));
-                            curPos=newPos;
-                        }
-
-                        if(!entity.isDestroyed() && !entity.isDoomed()) {
-                            fellDuringMovement= true; //No, but it should work...
-                        }
-                        break;
                     }
                 }
             }
@@ -4132,7 +4205,7 @@ public class Server implements Runnable {
             // check if we've moved into a swamp
             rollTarget = entity.checkSwampMove(step, curHex, lastPos, curPos, isPavementStep);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                if (!doSkillCheckWhileMoving(entity, lastPos, curPos, rollTarget,
+                if (0<doSkillCheckWhileMoving(entity, lastPos, curPos, rollTarget,
                                          false)){
                     entity.setStuck(true);
                     entity.setCanUnstickByJumping(true);
@@ -4722,7 +4795,7 @@ public class Server implements Runnable {
                 } else if (entity instanceof Infantry) {
                     PilotingRollData roll = entity.getBasePilotingRoll();
                     roll.addModifier(5, "infantry jumping into swamp");
-                    if (!doSkillCheckWhileMoving(entity, curPos, curPos, roll, false)) {
+                    if (0<doSkillCheckWhileMoving(entity, curPos, curPos, roll, false)) {
                         entity.setStuck(true);
                         r = new Report(2081);
                         r.add(entity.getDisplayName());
@@ -5825,8 +5898,11 @@ public class Server implements Runnable {
 		// Dislodged swarmers don't get turns.
 		int swarmerId = entity.getSwarmAttackerId();
 		final Entity swarmer = game.getEntity( swarmerId );
-		game.removeTurnFor( swarmer );
-		send( createTurnVectorPacket() );
+        if(!swarmer.isDone()) {
+            swarmer.setDone(true);
+            game.removeTurnFor( swarmer );
+            send( createTurnVectorPacket() );
+        }
 
 		// Update the report and cause a fall.
 		r.choose(true);
@@ -5847,14 +5923,13 @@ public class Server implements Runnable {
      *          this check.
      * @param   isFallRoll - a <code>boolean</code> flag that indicates that
      *          failure will result in a fall or not.  Falls will be processed.
-     * @return  <code>true</code> if the pilot passes the skill check.
+     * @return  Margin of Failure if the pilot fails the skill check, 0 if they pass.
      */
-    private boolean doSkillCheckWhileMoving( Entity entity,
+    private int doSkillCheckWhileMoving( Entity entity,
                                              Coords src,
                                              Coords dest,
                                              PilotingRollData roll,
                                              boolean isFallRoll ) {
-        boolean result = true;
         boolean fallsInPlace;
 
         // Start the info for this roll.
@@ -5900,12 +5975,12 @@ public class Server implements Runnable {
                 addReport(r);
                 entity.setPosition( fallsInPlace ? src : dest );
             }
-            result = false;
+            return roll.getValue() - diceRoll;
         } else {
             r.choose(true);
             addReport(r);
         }
-        return result;
+        return 0;
     }
 
 
@@ -13135,7 +13210,7 @@ public class Server implements Runnable {
      * @param damage amount of damage
      * @return
      */
-    public Vector damageEntity(Entity te, HitData hit, int damage) {
+    public Vector<Report> damageEntity(Entity te, HitData hit, int damage) {
         return damageEntity(te, hit, damage, false, 0, false, false);
     }
 
@@ -13146,7 +13221,7 @@ public class Server implements Runnable {
                             damageIS, false);
     }
 
-    private Vector damageEntity(Entity te, HitData hit, int damage,
+    private Vector<Report> damageEntity(Entity te, HitData hit, int damage,
                                boolean ammoExplosion, int bFrag,
                                boolean damageIS, boolean areaSatArty) {
         return damageEntity (te, hit, damage, ammoExplosion, bFrag, damageIS,
@@ -13174,7 +13249,7 @@ public class Server implements Runnable {
      *          is facing?
      * @return a <code>Vector</code> of <code>Report</code>s
      */
-    private Vector damageEntity(Entity te, HitData hit, int damage,
+    private Vector<Report> damageEntity(Entity te, HitData hit, int damage,
                                 boolean ammoExplosion, int bFrag,
                                 boolean damageIS, boolean areaSatArty,
                                 boolean throughFront) {
@@ -15458,8 +15533,8 @@ public class Server implements Runnable {
      *                       the VTOL falls
      * @return               a <code>Vector</code> of Reports.
      */
-    private Vector crashVTOL(VTOL en, boolean sideSlipCrash, int hexesMoved, Coords crashPos, int crashElevation,int impactSide) {
-        Vector vDesc = new Vector();
+    private Vector<Report> crashVTOL(VTOL en, boolean sideSlipCrash, int hexesMoved, Coords crashPos, int crashElevation,int impactSide) {
+        Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
         if(!sideSlipCrash) {
@@ -15487,7 +15562,7 @@ public class Server implements Runnable {
                 r = new Report(6265);
                 r.subject = en.getId();
                 vDesc.addElement(r);
-                return new Vector();
+                return new Vector<Report>();
             }
             //set elevation 1st to avoid multiple crashes
             en.setElevation(newElevation);
@@ -15636,8 +15711,8 @@ public class Server implements Runnable {
      * @param en  The <code>VTOL</code> to explode.
      * @return a <code>Vector</code> of reports
      */
-    private Vector explodeVTOL(VTOL en) {
-        Vector vDesc = new Vector();
+    private Vector<Report> explodeVTOL(VTOL en) {
+        Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
         if(en.getEngine().isFusion()) {
@@ -18482,7 +18557,7 @@ public class Server implements Runnable {
         PilotingRollData psr = entity.rollMovementInBuilding(bldg, distance, why);
 
         // Did the entity make the roll?
-        if ( !doSkillCheckWhileMoving( entity, lastPos,
+        if ( 0<doSkillCheckWhileMoving( entity, lastPos,
                                        curPos, psr, false ) ) {
 
             // Divide the building's current CF by 10, round up.

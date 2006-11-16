@@ -3838,6 +3838,8 @@ public abstract class Entity extends TurnOrdered
         // TODO: add check for elevation of pavement, road,
         //       or bridge matches entity elevation.
         if (moveType != IEntityMovementType.MOVE_JUMP
+            && movementMode != IEntityMovementMode.HOVER
+            && movementMode != IEntityMovementMode.WIGE
             && prevHex != null
             /* Bug 754610: Revert fix for bug 702735.
                && ( prevHex.contains(Terrain.PAVEMENT) ||
@@ -5878,5 +5880,26 @@ public abstract class Entity extends TurnOrdered
         if (getDependentLocation(loc) != Entity.LOC_NONE) {
             destroyLocation(getDependentLocation(loc));
         }
+    }
+
+    public PilotingRollData checkSideSlip(int moveType, IHex prevHex, int overallMoveType, MoveStep prevStep, int prevFacing, int curFacing, Coords lastPos, Coords curPos, int distance) {
+        PilotingRollData roll = getBasePilotingRoll();
+    
+        if (moveType != IEntityMovementType.MOVE_JUMP
+            && prevHex != null
+            && distance > 1
+            && (overallMoveType == IEntityMovementType.MOVE_RUN
+                || overallMoveType == IEntityMovementType.MOVE_VTOL_RUN)
+            && prevFacing != curFacing
+            && !lastPos.equals(curPos))
+            {
+                roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));
+             
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: VTOL is not apparently sideslipping");
+        }
+    
+        return roll;
+        
     }
 }

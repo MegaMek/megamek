@@ -1003,7 +1003,7 @@ public class AmmoType extends EquipmentType {
             AmmoType at = (AmmoType)et;
             int nType = at.getAmmoType();
             if (m_vaMunitions[nType] == null) {
-                m_vaMunitions[nType] = new Vector();
+                m_vaMunitions[nType] = new Vector<AmmoType>();
             }
 
             m_vaMunitions[nType].addElement(at);

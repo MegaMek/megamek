@@ -527,7 +527,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createImprovedJumpJet() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_LEVEL_2;
         misc.name = "Improved Jump Jet";
         misc.setInternalName(misc.name);
         misc.addLookupName("ImprovedJump Jet");

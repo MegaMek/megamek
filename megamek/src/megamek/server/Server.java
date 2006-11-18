@@ -9303,7 +9303,10 @@ public class Server implements Runnable {
                     addReport(r);
                     return !bMissed;
                 }
-
+                
+                if(bFragmentation || bFlechette) {
+                    nDamage *= 2;
+                }
 
                 //report that damge was "applied" to terrain
                 r = new Report(3385);

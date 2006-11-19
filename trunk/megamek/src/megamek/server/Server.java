@@ -2317,6 +2317,9 @@ public class Server implements Runnable {
         }
         IBoard newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(), mapSettings.getBoardHeight(),
                 mapSettings.getMapWidth(), mapSettings.getMapHeight(), sheetBoards);
+        if (game.getOptions().getOption("bridgeCF").intValue()>0) {
+            newBoard.setBridgeCF(game.getOptions().getOption("bridgeCF").intValue());
+        }
         game.setBoard(newBoard);
     }
 

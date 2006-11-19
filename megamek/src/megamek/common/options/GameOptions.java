@@ -63,6 +63,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(base,"exclusive_db_deployment", true); //$NON-NLS-1$
         addOption(base,"deep_deployment", false); //$NON-NLS-1$
         addOption(base,"restrict_game_commands", false); //$NON-NLS-1$
+        addOption(base,"bridgeCF", 0); //$NON-NLS-1$
         
         OptionGroup victory = addGroup("victory"); //$NON-NLS-1$
         addOption(victory,"check_victory", true); //$NON-NLS-1$

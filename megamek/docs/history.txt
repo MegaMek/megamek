@@ -1,4 +1,4 @@
-VERSION HISTORY:
+﻿VERSION HISTORY:
 ----------------
 v0.33.3 (SVN)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"
@@ -9,6 +9,7 @@ v0.33.3 (SVN)
 + Bug 1598976: 'Mech with Torso-Mounted Cockpit destroyed by head blown off critical.
 + Bug: fireproof armour not preventing inferno explosion
 + Bug 1591093: no units to move error when swarming infantry knocked off in accidental fall
++ Bug 1596917: CF of bridges fixed at 40. Doesn't work for scenarios yet.
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

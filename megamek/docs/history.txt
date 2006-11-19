@@ -6,6 +6,9 @@ v0.33.3 (SVN)
 + Updated rules for skids and sideslips
 + Bug 1598114: changed improved jumpjets to level 2
 + Bug 1598576: fragmentation/flechette ammo now does x2 damage to woods
++ Bug 1598976: 'Mech with Torso-Mounted Cockpit destroyed by head blown off critical.
++ Bug: fireproof armour not preventing inferno explosion
++ Bug 1591093: no units to move error when swarming infantry knocked off in accidental fall
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

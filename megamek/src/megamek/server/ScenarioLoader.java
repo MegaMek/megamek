@@ -564,7 +564,13 @@ public class ScenarioLoader
         
         System.out.println("Mapsheets are "+mapWidth+ " by " + mapHeight +" hexes.");
         System.out.println("Constructing " + nWidth + " by " + nHeight + " board.");
-        
+        int cf=0;
+        if (p.getProperty("BridgeCF")==null) {
+            System.out.println("No CF for bridges defined. Using map file defaults.");
+        } else {
+            cf=Integer.parseInt(p.getProperty("BridgeCF"));
+            System.out.println("Overriding map-defined bridge CFs with "+cf+".");
+        }
         // load available boards
         // basically copied from Server.java.  Should get moved somewhere neutral
         Vector vBoards = new Vector();
@@ -608,6 +614,9 @@ public class ScenarioLoader
                 }
                 ba[n] = new Board();
                 ba[n].load(sBoardFile);
+                if (cf>0) {
+                    ba[n].setBridgeCF(cf);
+                }
                 BoardUtilities.flip(ba[n], isRotated, isRotated );
             }
         }

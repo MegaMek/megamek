@@ -1152,4 +1152,11 @@ System.out.println("Setting basement elevation: "+elevation+":"+curHex);
         return infernos;
     }
 
+    public void setBridgeCF(int value) {
+        for (Enumeration ebldg=buildings.elements(); ebldg.hasMoreElements(); ) {
+            Building bldg=(Building)ebldg.nextElement();
+            bldg.setCurrentCF(value);
+        }
+    }
+
 }

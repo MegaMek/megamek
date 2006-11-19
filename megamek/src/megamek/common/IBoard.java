@@ -315,6 +315,13 @@ public interface IBoard {
     public abstract void setRoadsAutoExit(boolean value);
 
     /**
+     * Set the CF of bridges
+     *
+     * @param   value - The value to set the bridge CF to.
+     **/
+    public abstract void setBridgeCF(int value);
+    
+    /**
      * Loads this board from a filename in data/boards
      * @param filename filename to load from
      */

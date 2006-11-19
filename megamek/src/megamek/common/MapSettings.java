@@ -417,7 +417,15 @@ public class MapSettings implements Serializable {
         this.boardsAvailable = boardsAvailable;
     }
     
-
+    public void setBridgeCF(int cf) {
+        if (cf>0) {
+            // only set if greater zero. Check for option is done in server.
+            for (Enumeration eboards=boardsSelected.elements(); eboards.hasMoreElements(); ) {
+                Board board=(Board)eboards.nextElement();
+                board.setBridgeCF(cf);
+            }
+        }
+    }
     /**
        Checks, if the Mapgenerator parameters are all valid. If not 
        they are changed to valid values.

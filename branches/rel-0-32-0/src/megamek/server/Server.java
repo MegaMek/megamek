@@ -8830,13 +8830,13 @@ public class Server implements Runnable {
                     } else {
                         // Bug #1585497: Check for partial cover, but only for MT
                         if (game.getOptions().booleanOption("maxtech_partial_cover")) {
-                            int m=missiles;
+                            int m=hits;
+                            LosEffects le=LosEffects.calculateLos(game, ae.getId(), target);
                             for (int i=0; i<m; i++) {
                                 int roll=Compute.d6(2);
-                                LosEffects le=LosEffects.calculateLos(game, ae.getId(), t);
-                                if (te.removePartialCoverHits(roll,
+                                if (entityTarget.removePartialCoverHits(roll,
                                     le.getTargetCover(),
-                                    Compute.targetSideTable(ae, t))) { 
+                                    Compute.targetSideTable(ae, entityTarget))) { 
                                     hits--;
                                 }
                             }
@@ -15311,11 +15311,13 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     vDesc.addElement(r);
                     destroyLocation(en, loc);
-                    // Don't kill a pilot multiple times.
-                    if ( Pilot.DEATH > en.getCrew().getHits() ) {
-                        en.crew.setDoomed(true);
-                        Report.addNewline(vDesc);
-                        vDesc.addAll( destroyEntity(en, "pilot death", true));
+                    if(((Mech)en).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) {
+                        // Don't kill a pilot multiple times.
+                        if ( Pilot.DEATH > en.getCrew().getHits() ) {
+                            en.crew.setDoomed(true);
+                            Report.addNewline(vDesc);
+                            vDesc.addAll( destroyEntity(en, "pilot death", true));
+                        }
                     }
                     return vDesc;
                 } else {

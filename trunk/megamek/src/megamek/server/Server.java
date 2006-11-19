@@ -13904,7 +13904,7 @@ public class Server implements Runnable {
                                         infernos += at.getRackSize() * m.getShotsLeft();
                                     }
                                 }
-                                else if(BattleArmor.FIRE_PROTECTION.equals(m.getName())) {
+                                else if(BattleArmor.FIRE_PROTECTION.equals(m.getType().getInternalName())) {
                                     //immune to inferno explosion
                                     infernos = 0;
                                     break;
@@ -15781,11 +15781,11 @@ public class Server implements Runnable {
      * if rollNumber is false, a single hit is applied - needed for
      * MaxTech Heat Scale rule.
      */
-    private Vector criticalEntity(Entity en, int loc, int critMod, boolean rollNumber) {
+    private Vector<Report> criticalEntity(Entity en, int loc, int critMod, boolean rollNumber) {
         if(en instanceof Tank)
             return criticalTank((Tank)en,loc,critMod);
         CriticalSlot slot = null;
-        Vector vDesc = new Vector();
+        Vector<Report> vDesc = new Vector<Report>();
         Report r;
         Coords coords = en.getPosition();
         IHex hex = null;
@@ -15891,11 +15891,13 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     vDesc.addElement(r);
                     en.destroyLocation(loc);
-                    // Don't kill a pilot multiple times.
-                    if ( Pilot.DEATH > en.getCrew().getHits() ) {
-                        en.crew.setDoomed(true);
-                        Report.addNewline(vDesc);
-                        vDesc.addAll( destroyEntity(en, "pilot death", true));
+                    if(((Mech)en).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED) {
+                        // Don't kill a pilot multiple times.
+                        if ( Pilot.DEATH > en.getCrew().getHits() ) {
+                            en.crew.setDoomed(true);
+                            Report.addNewline(vDesc);
+                            vDesc.addAll( destroyEntity(en, "pilot death", true));
+                        }
                     }
                     return vDesc;
                 } else {
@@ -16061,8 +16063,8 @@ public class Server implements Runnable {
      * @param   harJel a <code>boolean</code> value indicating if the uselessness
      *          is the cause of a critically hit HarJel system
      */
-    private Vector breachLocation(Entity entity, int loc, IHex hex, boolean harJel) {
-        Vector vDesc = new Vector();
+    private Vector<Report> breachLocation(Entity entity, int loc, IHex hex, boolean harJel) {
+        Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
         if (entity.getInternal(loc) < 0 ||
@@ -16179,7 +16181,7 @@ public class Server implements Runnable {
      * @return  a <code>Vector</code> of <code>Report</code> objects
      *          that can be sent to the output log.
      */
-    private Vector destroyEntity(Entity entity, String reason) {
+    private Vector<Report> destroyEntity(Entity entity, String reason) {
         return destroyEntity( entity, reason, true );
     }
 
@@ -16196,7 +16198,7 @@ public class Server implements Runnable {
      * @return  a <code>Vector</code> of <code>Report</code> objects
      *          that can be sent to the output log.
      */
-    private Vector destroyEntity(Entity entity, String reason,
+    private Vector<Report> destroyEntity(Entity entity, String reason,
                                  boolean survivable) {
         // Generally, the entity can still be salvaged.
         return destroyEntity( entity, reason, survivable, true );
@@ -16762,7 +16764,7 @@ public class Server implements Runnable {
             entity.setSwarmAttackerId( Entity.NONE );
             swarmer.setSwarmTargetId( Entity.NONE );
             // Did the infantry fall into water?
-            if ( waterDepth > 0 ) {
+            if ( waterDepth > 0 && swarmer.getMovementMode() != IEntityMovementMode.INF_UMU) {
                 // Swarming infantry die.
                 swarmer.setPosition( fallPos );
                 r = new Report(2330);
@@ -16784,6 +16786,11 @@ public class Server implements Runnable {
             }
             swarmer.setPosition( fallPos );
             entityUpdate( swarmerId );
+            if(!swarmer.isDone()) {
+                swarmer.setDone(true);
+                game.removeTurnFor(swarmer);
+                send( createTurnVectorPacket() );
+            }
         } // End dislodge-infantry
 
         // clear all PSRs after a fall -- the Mek has already failed ONE and fallen, it'd be cruel to make it fail some more!
@@ -20076,8 +20083,8 @@ public class Server implements Runnable {
      *
      * @return a <code>Vector</code> of report objects for the gamelog.
      */
-    public Vector abandonEntity(Entity entity) {
-        Vector vDesc = new Vector();
+    public Vector<Report> abandonEntity(Entity entity) {
+        Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
         // An entity can only eject it's crew once.

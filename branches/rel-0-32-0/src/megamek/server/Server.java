@@ -16242,6 +16242,11 @@ public class Server implements Runnable {
             }
             swarmer.setPosition( fallPos );
             entityUpdate( swarmerId );
+            if(!swarmer.isDone()) {
+                swarmer.setDone(true);
+                game.removeTurnFor(swarmer);
+                send( createTurnVectorPacket() );
+            }
         } // End dislodge-infantry
 
         // clear all PSRs after a fall -- the Mek has already failed ONE and fallen, it'd be cruel to make it fail some more!

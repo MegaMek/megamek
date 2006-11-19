@@ -8,6 +8,7 @@ v0.32.2 (SVN)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"
 + Bug 1585497: Check for partial cover when hitting with infernos
 + Bug 1598976: 'Mech with Torso-Mounted Cockpit destroyed by head blown off critical.
++ Bug 1591093: no units to move error when swarming infantry knocked off in accidental fall
 
 v0.32.1 (2006-10-31, 21:08 GMT+9)
 + Bug: NPE when firing infantry rifle

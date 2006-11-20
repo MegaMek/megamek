@@ -4084,14 +4084,18 @@ public abstract class Entity extends TurnOrdered
                                          + desc + " " + bldg.getName()));
 
         // Modify the roll by the distance moved so far.
-        if (distance >= 3 && distance <= 4) {
-            roll.addModifier(1, "moved 3-4 hexes");
-        } else if (distance >= 5 && distance <= 6) {
-            roll.addModifier(2, "moved 5-6 hexes");
-        } else if (distance >= 7 && distance <= 9) {
-            roll.addModifier(3, "moved 7-9 hexes");
+        if (distance >= 25) {
+            roll.addModifier(6, "moved 25+ hexes");
+        } else if (distance >= 18) {
+            roll.addModifier(5, "moved 18-24 hexes");
         } else if (distance >= 10) {
             roll.addModifier(4, "moved 10+ hexes");
+        } else if (distance >= 7) {
+            roll.addModifier(3, "moved 7-9 hexes");
+        } else if (distance >= 5) {
+            roll.addModifier(2, "moved 5-6 hexes");
+        } else if (distance >= 3) {
+            roll.addModifier(1, "moved 3-4 hexes");
         }
 
         return roll;
@@ -4104,7 +4108,11 @@ public abstract class Entity extends TurnOrdered
     public int getMovementBeforeSkidPSRModifier( int distance ) {
         int mod = -1;
 
-        if ( distance > 10 ) // 11+ hexes
+        if ( distance > 24 ) // 11+ hexes
+            mod = 6;
+        else if ( distance > 17 ) // 11+ hexes
+            mod = 5;
+        else if ( distance > 10 ) // 11+ hexes
             mod = 4;
         else if ( distance > 7 ) // 8-10 hexes
             mod = 2;

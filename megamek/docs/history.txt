@@ -10,6 +10,10 @@ v0.33.3 (SVN)
 + Bug: fireproof armour not preventing inferno explosion
 + Bug 1591093: no units to move error when swarming infantry knocked off in accidental fall
 + Bug 1596917: CF of bridges fixed at 40. Doesn't work for scenarios yet.
++ Skidding Modifier Table expanded to speeds of up to 25 hexes in a turn
++ Building Movement Modifier Table expanded up to speeds of 25 hexes in a turn
++ Protomech physical attack renamed to Protomech frenzy attack (TW name)
++ Protomech inferno effects (from TW errata)
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

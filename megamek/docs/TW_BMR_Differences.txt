@@ -26,7 +26,7 @@ MOVEMENT
 
 x2) Infantry, Except Mechanized Infantry, use 1 less MP to enter Woods Hexes
 
-3) Hovercraft now Sideslip when Flanking, just like VTOLs.
+x3) Hovercraft now Sideslip when Flanking, just like VTOLs.
 
 4) The whole section describing WiGE Movement in detail.  WiGEs, as I descried earlier, move more or less like Hovercraft only they maintain one level above the underlying terrain.  They do not pay any MP to go up or down in elevation provided that they only go up or down one level in accordance with their operational altitude (1 level higher than the underlying terrain).  As stated earlier, if they do not move more than 5 hexes in a turn, they must land, and may move around on the ground as a Hovercraft with 1 MP.
 
@@ -34,24 +34,24 @@ x2) Infantry, Except Mechanized Infantry, use 1 less MP to enter Woods Hexes
    +5 Modifier for Destroyed Leg when rolling to avoid pilot damage from an auto fall
    +6 Modifier for Destroyed Gyro when rolling to avoid pilot damage from an auto fall
 
-6) Skidding Modifier Table expanded to speeds of up to 25 hexes in a turn
+x6) Skidding Modifier Table expanded to speeds of up to 25 hexes in a turn
 
-6) Building Movement Modifier Table expanded up to speeds of 25 hexes in a turn
+x6) Building Movement Modifier Table expanded up to speeds of 25 hexes in a turn
 
-7) Tracked & Wheeled Vehicles that skid must roll on the Motive Systems Damage Table
+x7) Tracked & Wheeled Vehicles that skid must roll on the Motive Systems Damage Table
 
-8 ) Hover Vehicles do not skid, but instead Sideslip on pavement, just as they would any other time they move
+x8 ) Hover Vehicles do not skid, but instead Sideslip on pavement, just as they would any other time they move
 at flank speed.
 
-9) Units now take damage (1 point for every 20 tons) for skidding into a hex of a higher elevation.
+x9) Units now take damage (1 point for every 20 tons) for skidding into a hex of a higher elevation.
 
-10) When skidding into terrain that costs more than 1 MP to enter (not counting elevation change) units now
+x10) When skidding into terrain that costs more than 1 MP to enter (not counting elevation change) units now
    subtract the full MP cost from the distance skidded, not just one hex.
 
-11) Units skidding into restricted terrain for their unit type now suffer 1 point of damage per 5 tons and
+x11) Units skidding into restricted terrain for their unit type now suffer 1 point of damage per 5 tons and
 become immobile unless the restricted terrain is water, in which case they are destroyed.
 
-12) Sideslipping units now sideslip a distance equal to the Margin of Failure of the Driving/Piloting skill roll to avoid the Sideslip, or one less than the distance moved prior to the Sideslip, whichever is lower.
+x12) Sideslipping units now sideslip a distance equal to the Margin of Failure of the Driving/Piloting skill roll to avoid the Sideslip, or one less than the distance moved prior to the Sideslip, whichever is lower.
 
 13) Clarifies that the +1 modifier per level fallen for avoiding Mechwarrior Damage during a fall is per level
 above one, not every level.
@@ -92,28 +92,28 @@ x13) Anti-Missile System improved significantly.  When activated, the AMS now in
 
 x14) A-Pods now do a minimum of 1 point of damage on discharge
 
-15) Narc Missile Beacon eliminates need for spotter for indirect LRM fire
+x15) Narc Missile Beacon eliminates need for spotter for indirect LRM fire
 
 x16) MASC Failure now results in an instant critical hit to each leg.  It no longer prevents movement for the rest of the game.
 
-17) Apparently standard Narc Missile Beacons can now use a Pod which has the same effect as the iNarc Homing Pod, and visa versa.  I am unsure whether or not this is simply a mistake which slipped through or if this was intentional and there is some difference in ammo cost or BV which is unaccounted for in this section.
+*errata removed this* 17) Apparently standard Narc Missile Beacons can now use a Pod which has the same effect as the iNarc Homing Pod, and visa versa.  I am unsure whether or not this is simply a mistake which slipped through or if this was intentional and there is some difference in ammo cost or BV which is unaccounted for in this section.
 
 18) A Significant amount of New Equipment is added, including
    B-Pods (improved A-Pods for attacking Battle Armor.  20 damage attack in 5 point clusters against Battle Armor or       1D6 damage against Conventional Infanty, forces swarming infantry off of the 'Mech, may be used as a       direct attack against infantry units in the same hex as the 'Mech with reduced damage effects)
-   Anti-Personnel Gauss Rifle (Clan Only, provides Burst Fire bonuses against Infantry)
-   Hyper Assault Gauss Rifle (HAG) 20, 30, & 40 (Clan Only, fires 1 damage point shots that group in 5 point clusters       like LRMs, gain a +2 bonus on the Cluster Hits Table at Short Range and suffer a -2 penalty at Long       Range)
+x   Anti-Personnel Gauss Rifle (Clan Only, provides Burst Fire bonuses against Infantry)
+x   Hyper Assault Gauss Rifle (HAG) 20, 30, & 40 (Clan Only, fires 1 damage point shots that group in 5 point clusters       like LRMs, gain a +2 bonus on the Cluster Hits Table at Short Range and suffer a -2 penalty at Long       Range)
    Machine Gun Array (Clan & IS.  Not so much a weapon as a new piece of equipment which allows Machine Guns of
       the same type; Light, Standard, or Heavy; to be fired in a group as a single Cluster Weapon, with each hit       impacting on the same location of the target if they hit.)
-   Multi-Missile Launcher 3, 5, 7, & 9 (IS Only.  Launchers which can fire LRMs or SRMs, or the Torpedo versions of       either)
+x   Multi-Missile Launcher 3, 5, 7, & 9 (IS Only.  Launchers which can fire LRMs or SRMs, or the Torpedo versions of       either)
    Retractable Blade (physical attack weapon which performs similarly to a sword, blocks use of the hand actuator       when extended)
-   Plasma Cannon (IS only. It's ammo does not explode, and it generates a large amount of heat like an energy          weapon.  It inflicts only 2D6 Heat Damage to 'Mechs and ASFs, or 3D6 Damage in 5 point clusters to non-      heat tracking units.  Infantry with Flame Resistant Armor take no damage.)
-   Plasma Rifle (Clan only.  It's ammo does not explode, and it generates a large amount of heat like an energy          weapon.  It inflicts 10 damage & 1D6 heat to 'Mechs & ASFs, or 10+2D6 Damage in 5 point clusters to       non-heat tracking units.  Infantry with Flame Resistant Armor take only half standard damage.)
-   Light & Heavy Machine Gun (Now available for the Inner Sphere)
-   Light AC/2 & AC/5 (As previously seen in MaximumTech)
+x   Plasma Cannon (IS only. It's ammo does not explode, and it generates a large amount of heat like an energy          weapon.  It inflicts only 2D6 Heat Damage to 'Mechs and ASFs, or 3D6 Damage in 5 point clusters to non-      heat tracking units.  Infantry with Flame Resistant Armor take no damage.)
+x   Plasma Rifle (Clan only.  It's ammo does not explode, and it generates a large amount of heat like an energy          weapon.  It inflicts 10 damage & 1D6 heat to 'Mechs & ASFs, or 10+2D6 Damage in 5 point clusters to       non-heat tracking units.  Infantry with Flame Resistant Armor take only half standard damage.)
+x   Light & Heavy Machine Gun (Now available for the Inner Sphere)
+x   Light AC/2 & AC/5 (As previously seen in MaximumTech)
 
 19) The following equipment from Combat Equipment, The Battletech Miniatures Rules, and the Solaris VII Mappack appear here: Backhoe, Light, Medium, & Heavy Bridgelayer, Bulldozer, Cargo Bay, Chainsaw, Combine, Dual Saw, Dumper, Extended Fuel Tanks/Cells, Heavy Duty Pile Driver, Lift Hoist, Mining Drill, Nail/Rivet Gun, Rock Cutter, Salvage Arm, Spot Welder, Tracks, Industrial TSM, Wrecking Ball
 
-20) The Following Special Ammunition types are Tournament Legal: Armor Piercing (Standard & Light AC), Artemis IV (LRM/SRM), Cluster (LB-X), ECM Pod (iNarc), Explosive Pod (Narc/iNarc), Flechette (Standard & Light AC), Fragmentation (LRM/SRM), Haywaire Pod (iNarc), Homing Pod (Narc/iNarc), Inferno (SRM), Narc Seeking Missiles (LRM/SRM), Nemesis Pod (iNarc), Precision (Standard & Light AC), Semi-Guided (LRM)
+x20) The Following Special Ammunition types are Tournament Legal: Armor Piercing (Standard & Light AC), Artemis IV (LRM/SRM), Cluster (LB-X), ECM Pod (iNarc), Explosive Pod (Narc/iNarc), Flechette (Standard & Light AC), Fragmentation (LRM/SRM), Haywaire Pod (iNarc), Homing Pod (Narc/iNarc), Inferno (SRM), Narc Seeking Missiles (LRM/SRM), Nemesis Pod (iNarc), Precision (Standard & Light AC), Semi-Guided (LRM)
 
 x21) The rules for Infernos have changed extensively.  They now effect their target as follows:
       Against Woods: 4 damage per missile
@@ -174,7 +174,7 @@ PROTOMECHS
 
 2) ProtoMechs do not use their standard near-miss hit location table when struck by area-effect attacks, collapsing buildings, falling, crashing Aerospace Fighters or skidding/sideslipping units.  They use the Special Hit Location Table without near misses instead
 
-3) The ProtoMech physical attack is now called a “Frenzy”
+x3) The ProtoMech physical attack is now called a “Frenzy”
 
 4) A new ProtoMech piece of equipment is added: the ProtoMech Myomer Booster (similar to MASC)
 
@@ -224,7 +224,7 @@ x6) Conventional Infantry ignore penalties to hit from Steath Systems, but not M
 
 x7) Machine Gun Infantry do an additional 1D6 damage against other conventional infantry
 
-8 ) New rules make certain weapons very effective for killing conventional infantry, and other practically useless.  Conventional Infantry still take double damage in open terrain.  Mechanized Infantry take double damage from all attackers except other Infantry, who inflict half-damage.
+x8 ) New rules make certain weapons very effective for killing conventional infantry, and other practically useless.  Conventional Infantry still take double damage in open terrain.  Mechanized Infantry take double damage from all attackers except other Infantry, who inflict half-damage.
 
 x9) Battle Armor weapons attacks, as with other multi-hit attacks, now are rolled on the Cluster Hit Table
 
@@ -260,7 +260,7 @@ x23) Shots fired at units which are being swarmed may strike the swarming infant
 
 25) Infantry now have a chance of surviving the destruction of the carrying unit.  Infantry carrying ECM equipment or other passive effect equipment have that equipment remain in effect while riding in a carrier.  Infantry riding inside a carrier may take damage from the vehicle's skid, sideslip, fall, collision or critical hit, however.
 
-26) Rules for using weapons while carrying Mechanized Battle Armor was changed from cannot fire any torso weapons while carrying to not being able to fire any weapons from a location which currently is carrying a Battle Armor, or no left, right, or rear side weapons for Omnivehicles.
+x26) Rules for using weapons while carrying Mechanized Battle Armor was changed from cannot fire any torso weapons while carrying to not being able to fire any weapons from a location which currently is carrying a Battle Armor, or no left, right, or rear side weapons for Omnivehicles.
 
 x27) -1 MP penalty for units carrying Mechanized Battle Armor using Magnetic Clamps
 

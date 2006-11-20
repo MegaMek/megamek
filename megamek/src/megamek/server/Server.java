@@ -5348,8 +5348,7 @@ public class Server implements Runnable {
                 addReport(r);
                 te.heatFromExternal += 2*missiles;
             }
-            else if(te instanceof Tank
-                    || te instanceof Protomech) {
+            else if(te instanceof Tank) {
                 if(game.getOptions().booleanOption("vehicle_fires")
                         && te instanceof Tank) {
                     checkForVehicleFire((Tank)te, true);
@@ -5365,6 +5364,39 @@ public class Server implements Runnable {
                         addReport(criticalEntity(te,hit.getLocation(),-2));
                     }
                 }
+            }
+            else if(te instanceof Protomech) {
+                te.heatFromExternal += missiles;
+                while(te.heatFromExternal >=3) {
+                    te.heatFromExternal -= 3;
+                    HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    if(hit.getLocation() == Protomech.LOC_NMISS) {
+                        r = new Report(6035);
+                        r.subject = te.getId();
+                        r.newlines = 0;
+                        addReport(r);
+                    } else {
+                        r = new Report(6690);
+                        r.subject = te.getId();
+                        r.newlines = 0;
+                        r.add(te.getLocationName(hit));
+                        addReport(r);
+                        te.destroyLocation(hit.getLocation());
+                        // Handle Protomech pilot damage
+                        // due to location destruction
+                        int hits = Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()] -
+                            ((Protomech)te).getPilotDamageTaken(hit.getLocation());
+                        if ( hits > 0 ) {
+                            addReport( damageCrew( te, hits ));
+                            ((Protomech)te).setPilotDamageTaken
+                                 (hit.getLocation(),
+                                  Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
+                        }
+                        if(te.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
+                            addReport(destroyEntity(te, "flaming inferno death", false, true));
+                        }
+                    }
+                }                
             }
             else if(te instanceof BattleArmor) {
                 for(Mounted equip:te.getMisc()) {

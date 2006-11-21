@@ -13669,7 +13669,8 @@ public class Server implements Runnable {
                 if((!(te instanceof Mech) || bTorso) 
                         && swarmer != Entity.NONE 
                         && (hit.getEffect() & HitData.EFFECT_CRITICAL) == 0
-                        && Compute.d6() >=5) {
+                        && Compute.d6() >=5
+                        && bFrag != 7) {
                     Entity swarm = game.getEntity(swarmer);
                     // Yup.  Roll up some hit data for that passenger.
                     r = new Report(6076);

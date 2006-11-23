@@ -297,7 +297,9 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         if (chargeStep == null || !target.getPosition().equals(chargeStep.getPosition())) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Could not reach target with movement");
         }
-
+        if (!md.getSecondLastStep().isLegalEndPos()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Violation of stacking limit in second last step");
+        }
         return toHit(game, target, chargeSrc, chargeEl, chargeStep.getMovementType(), false, md.contains(MovePath.STEP_GET_UP));
     }
 

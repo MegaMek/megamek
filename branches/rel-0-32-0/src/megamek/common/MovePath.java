@@ -356,6 +356,12 @@ public class MovePath implements Cloneable, Serializable {
     public MoveStep getLastStep() {
         return getStep(steps.size() - 1);
     }
+    public MoveStep getSecondLastStep() {
+        if (steps.size() > 1) {
+            return getStep(steps.size() - 2);
+        }
+        return getLastStep();
+    }
 
     /* Debug method */
     public void printAllSteps() {
@@ -526,7 +532,9 @@ public class MovePath implements Cloneable, Serializable {
         if (getLastStep() == null) {
             return true;
         }
-
+        if (getLastStep().getMovementType()==STEP_CHARGE) {
+            return getSecondLastStep().isLegal();
+        }
         return getLastStep().isLegal();
     }
 

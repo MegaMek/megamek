@@ -11,6 +11,7 @@ v0.32.2 (SVN)
 + Bug 1591093: no units to move error when swarming infantry knocked off in accidental fall
 + Body-mounted C3 Masters in Tanks should fire their TAG into the front arc,
   per the Ask the PM Forum.
++ Bug 954406: Charge declaration and stacking
 
 v0.32.1 (2006-10-31, 21:08 GMT+9)
 + Bug: NPE when firing infantry rifle

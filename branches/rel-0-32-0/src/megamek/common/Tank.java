@@ -313,23 +313,21 @@ public class Tank
      */
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
-        if (mounted.getLocation() == LOC_FRONT) {
-            return Compute.ARC_FORWARD;
-        }
-        else if (mounted.getLocation() == LOC_RIGHT) {
-            return Compute.ARC_RIGHTSIDE;
-        }
-        else if (mounted.getLocation() == LOC_LEFT) {
-            return Compute.ARC_LEFTSIDE;
-        }
-        else if (mounted.getLocation() == LOC_REAR) {
-            return Compute.ARC_REAR;
-        }
-        else if (mounted.getLocation() == LOC_TURRET) {
-            return Compute.ARC_FORWARD;
-        }
-        else {
-            return Compute.ARC_360;
+        switch (mounted.getLocation()) {
+            case LOC_FRONT:
+            case LOC_TURRET:
+            case LOC_BODY:
+                // Body mounted C3Ms fire into the front arc,
+                // per http://forums.classicbattletech.com/index.php/topic,9400.0.html
+                return Compute.ARC_FORWARD;
+            case LOC_RIGHT:
+                return Compute.ARC_RIGHTSIDE;
+            case LOC_LEFT:
+                return Compute.ARC_LEFTSIDE;
+            case LOC_REAR:
+                return Compute.ARC_REAR;
+            default:
+                return Compute.ARC_360;
         }
     }
 

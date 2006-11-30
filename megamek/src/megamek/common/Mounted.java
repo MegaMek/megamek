@@ -376,6 +376,19 @@ public class Mounted implements Serializable, RoundUpdated {
                 nShots = 6;
             }
         }
+        //sets number of shots for MG arrays
+        else if (wtype.hasFlag(WeaponType.F_MGA)) {
+            nShots = 0;
+            for(Mounted m:entity.getWeaponList()) {
+                if(m.getLocation() == this.getLocation() &&
+                        !m.isDestroyed() &&
+                        !m.isBreached() &&
+                        m.getType().hasFlag(WeaponType.F_MG) &&
+                        ((WeaponType)m.getType()).getRackSize() == ((WeaponType)getType()).getRackSize()) {
+                            nShots++;
+                        }
+            }
+        }
         return nShots;
     }
 

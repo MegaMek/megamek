@@ -93,4 +93,8 @@ public class MechWarrior extends Infantry {
         return 0;
     }
 
+    public void newRound(int number) {
+        super.newRound(number);
+        getCrew().setEjected(false);
+    }
 }

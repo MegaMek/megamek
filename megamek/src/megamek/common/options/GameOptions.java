@@ -167,16 +167,17 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"auto_abandon_unit", false); //$NON-NLS-1$
         addOption(ruleBreakers,"no_ignite_clear", false); //$NON-NLS-1$
         addOption(ruleBreakers,"falls_end_movement", false); //$NON-NLS-1$
+        addOption(ruleBreakers,"extreme_temperature_survival", false); //$NON-NLS-1$
     }
 
-    public Vector loadOptions() {
+    public Vector<IOption> loadOptions() {
         return loadOptions(new File(GAME_OPTIONS_FILE_NAME));
     }
     
-    public Vector loadOptions(File file) {
+    public Vector<IOption> loadOptions(File file) {
         ParsedXML root = null;
         InputStream is = null;
-        Vector changedOptions = new Vector();
+        Vector<IOption> changedOptions = new Vector<IOption>();
 
         try {
             is = new FileInputStream(file);

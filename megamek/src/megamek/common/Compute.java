@@ -2248,6 +2248,8 @@ public class Compute {
      *            the arc
      */
     public static boolean isInArc(Coords src, int facing, Coords dest, int arc) {
+        if(src == null || dest == null)
+            return true;
         // calculate firing angle
         int fa = src.degree(dest) - facing * 60;
         if (fa < 0) {

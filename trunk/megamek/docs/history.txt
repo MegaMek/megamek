@@ -18,6 +18,8 @@ v0.33.3 (SVN)
 + Body-mounted C3 Masters in Tanks should fire their TAG into the front arc,
   per the Ask the PM Forum.
 + Bug 954406: Charge declaration and stacking
++ Bug: VTOL should crash when sideslipping into woods at elevation 1
++ Optional house rule for pilot survival in extreme temperatures
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

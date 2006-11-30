@@ -3175,73 +3175,86 @@ public class Server implements Runnable {
             //The elevation the skidding unit will occupy in next hex
             int nextElevation = nextAltitude - nextHex.surface();
 
-            if ( curAltitude < nextAltitude ||
-                    (nextElevation == 0 && 
-                            (entity.getMovementMode() == IEntityMovementMode.WIGE ||
-                                    entity.getMovementMode() == IEntityMovementMode.VTOL))) {
-                //however WIGE can gain 1 level to avoid this
-                if(entity.getMovementMode() == IEntityMovementMode.WIGE
-                        && nextElevation == 0) {
-                    nextElevation = 1;
-                } else {
-                    r = new Report(2045);
-                    r.subject = entity.getId();
-                    r.indent();
-                    r.add(nextPos.getBoardNum(), true);
-                    addReport(r);
-
-                    if(entity.getMovementMode() == IEntityMovementMode.WIGE
-                            || entity.getMovementMode() == IEntityMovementMode.VTOL) {
-                        int hitSide=step.getFacing()-direction+6;
-                        hitSide %= 6;
-                        int table=0;
-                        switch(hitSide) {//quite hackish...I think it ought to work, though.
-                            case 0://can this happen?
-                                table=ToHitData.SIDE_FRONT;
-                                break;
-                            case 1:
-                            case 2:
-                                table=ToHitData.SIDE_LEFT;
-                                break;
-                            case 3:
-                                table=ToHitData.SIDE_REAR;
-                                break;
-                            case 4:
-                            case 5:
-                                table=ToHitData.SIDE_RIGHT;
-                                break;
-                        }
-                        curPos=nextPos;
-                        elevation=nextElevation;
-                        addReport(crashVTOL((VTOL) entity,true,distance,curPos,elevation,table));
-
-                        if(nextHex.containsTerrain(Terrains.WATER) && !nextHex.containsTerrain(Terrains.ICE)
-                            || nextHex.containsTerrain(Terrains.WOODS)
-                            || nextHex.containsTerrain(Terrains.JUNGLE)) {
-                            addReport(destroyEntity(entity,"could not land in crash site"));
-                        } else if(elevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)){
-                            addReport(destroyEntity(entity, "crashed into building"));
-                        } else {
-                            entity.setPosition(nextPos);
-                            entity.setElevation(0);
-                            doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
-                        }
-                        break; 
-
-                    } else {
-                        // skidding into higher terrain does weight/20
-                        // damage in 5pt clusters to front.
-                        int damage = ((int)entity.getWeight() + 19) / 20;
-                        while(damage > 0) {
-                            addReport(damageEntity(entity, 
-                                    entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 
-                                    Math.min(5,damage)));
-                            damage -= 5;
-                        }
-                    }    
-                    // Stay in the current hex and stop skidding.
-                    break;
+            boolean crashedIntoTerrain = curAltitude < nextAltitude;
+            if(entity.getMovementMode() == IEntityMovementMode.VTOL) {
+                if(nextElevation == 0 ||
+                   (nextElevation == 1 && (nextHex.containsTerrain(Terrains.WOODS) || nextHex.containsTerrain(Terrains.JUNGLE)))) {
+                    crashedIntoTerrain = true;
                 }
+            }
+
+            //however WIGE can gain 1 level to avoid crashing into the terrain
+            if(entity.getMovementMode() == IEntityMovementMode.WIGE) {
+                if(nextElevation == 0 &&
+                        !(nextHex.containsTerrain(Terrains.WOODS) || 
+                          nextHex.containsTerrain(Terrains.JUNGLE))) {
+                    nextElevation = 1;
+                    crashedIntoTerrain = false;
+                }
+                else if(nextElevation == 1 && (nextHex.containsTerrain(Terrains.WOODS) || nextHex.containsTerrain(Terrains.JUNGLE))) {
+                    nextElevation = 2;
+                    crashedIntoTerrain = false;
+                }
+            }
+            
+            if (crashedIntoTerrain) {
+                r = new Report(2045);
+                r.subject = entity.getId();
+                r.indent();
+                r.add(nextPos.getBoardNum(), true);
+                addReport(r);
+
+                if(entity.getMovementMode() == IEntityMovementMode.WIGE
+                        || entity.getMovementMode() == IEntityMovementMode.VTOL) {
+                    int hitSide=step.getFacing()-direction+6;
+                    hitSide %= 6;
+                    int table=0;
+                    switch(hitSide) {//quite hackish...I think it ought to work, though.
+                        case 0://can this happen?
+                            table=ToHitData.SIDE_FRONT;
+                            break;
+                        case 1:
+                        case 2:
+                            table=ToHitData.SIDE_LEFT;
+                            break;
+                        case 3:
+                            table=ToHitData.SIDE_REAR;
+                            break;
+                        case 4:
+                        case 5:
+                            table=ToHitData.SIDE_RIGHT;
+                            break;
+                    }
+                    curPos=nextPos;
+                    elevation=nextElevation;
+                    addReport(crashVTOL((VTOL) entity,true,distance,curPos,elevation,table));
+
+                    if(nextHex.containsTerrain(Terrains.WATER) && !nextHex.containsTerrain(Terrains.ICE)
+                        || nextHex.containsTerrain(Terrains.WOODS)
+                        || nextHex.containsTerrain(Terrains.JUNGLE)) {
+                        addReport(destroyEntity(entity,"could not land in crash site"));
+                    } else if(elevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)){
+                        addReport(destroyEntity(entity, "crashed into building"));
+                    } else {
+                        entity.setPosition(nextPos);
+                        entity.setElevation(0);
+                        doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
+                    }
+                    break; 
+
+                } else {
+                    // skidding into higher terrain does weight/20
+                    // damage in 5pt clusters to front.
+                    int damage = ((int)entity.getWeight() + 19) / 20;
+                    while(damage > 0) {
+                        addReport(damageEntity(entity, 
+                                entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 
+                                Math.min(5,damage)));
+                        damage -= 5;
+                    }
+                }    
+                // Stay in the current hex and stop skidding.
+                break;
             }
 
             // Have skidding units suffer falls (off a cliff).
@@ -12679,22 +12692,44 @@ public class Server implements Runnable {
      * player has an apc
      */
     private void resolveExtremeTempInfantryDeath() {
-        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity entity = (Entity)i.nextElement();
-            if ( null == entity.getPosition() ) {
-                continue;
-            }
-            IHex entityHex = game.getBoard().getHex(entity.getPosition());
-            if (entity instanceof Infantry
-                    && !(entity instanceof BattleArmor)
-                    && game.getTemperatureDifference() > 0
-                    && !entityHex.containsTerrain(Terrains.BUILDING)
-                    && entity.getTransportId() == Entity.NONE ) {
-                Report r = new Report(5090);
-                r.subject = entity.getId();
-                r.addDesc(entity);
-                addReport(r);
-                addReport(destroyEntity(entity, "heat/cold", false, false));
+        int heat = game.getTemperatureDifference();
+        if(heat > 0) {
+            for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                Entity entity = (Entity)i.nextElement();
+                if ( null == entity.getPosition() ) {
+                    continue;
+                }
+                IHex entityHex = game.getBoard().getHex(entity.getPosition());
+                if (entity instanceof Infantry
+                        && !(entity instanceof BattleArmor)
+                        && !entityHex.containsTerrain(Terrains.BUILDING)
+                        && entity.getTransportId() == Entity.NONE ) {
+                    if(game.getOptions().booleanOption("extreme_temperature_survival")) {
+                        Report r = new Report(5310);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.add(heat);
+                        int roll = Compute.d6();
+                        r.add(roll);
+                        addReport(r);
+                        if(roll <= heat) {
+                            if(entity instanceof MechWarrior) {
+                                addReport(damageCrew(entity, 1));
+                            }
+                            else {
+                                addReport(damageEntity(entity, entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), Compute.d6()+heat));
+                            }
+                            r = new Report(1210, Report.PUBLIC);
+                            addReport(r);
+                        }
+                    } else {
+                        Report r = new Report(5090);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        addReport(r);
+                        addReport(destroyEntity(entity, "heat/cold", false, false));
+                    }
+                }
             }
         }
     }
@@ -13104,11 +13139,13 @@ public class Server implements Runnable {
      * @param en     The <code>Entity</code> who's pilot gets damaged.
      * @param damage The <code>int</code> amount of damage.
      */
-    private Vector damageCrew(Entity en, int damage) {
-        Vector vDesc = new Vector();
+    private Vector<Report> damageCrew(Entity en, int damage) {
+        Vector<Report> vDesc = new Vector<Report>();
         Pilot crew = en.getCrew();
 
-        if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
+        if (!crew.isDead() && 
+                !crew.isEjected() && 
+                !crew.isDoomed()) {
             crew.setHits( crew.getHits() + damage );
             Report r = new Report(6025);
             r.subject = en.getId();
@@ -15556,7 +15593,7 @@ public class Server implements Runnable {
     private Vector crashVTOL(VTOL en,Coords crashPos,int curElevation) {
         return crashVTOL(en, false, 0,crashPos,curElevation,0);
     }
-    private Vector crashVTOL(VTOL en) {
+    private Vector<Report> crashVTOL(VTOL en) {
         return crashVTOL(en, false, 0 , en.getPosition(),en.getElevation(),0);
     }
 
@@ -19925,8 +19962,8 @@ public class Server implements Runnable {
      *                  ejection system
      * @return a <code>Vector</code> of report objects for the gamelog.
      */
-    public Vector ejectEntity(Entity entity, boolean autoEject) {
-        Vector vDesc = new Vector();
+    public Vector<Report> ejectEntity(Entity entity, boolean autoEject) {
+        Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
         // An entity can only eject it's crew once.
@@ -20017,12 +20054,7 @@ public class Server implements Runnable {
                 r.choose(false);
                 vDesc.addElement(r);
                 Report.addNewline(vDesc);
-                Vector v = damageCrew(pilot, 1);
-                if(v.size() > 0) {
-                    r = (Report)v.firstElement();
-                    r.indent(3);
-                    vDesc.addElement(r);
-                }
+                vDesc.addAll(damageCrew(pilot, 1));
             } else {
                 r.choose(true);
                 vDesc.addElement(r);
@@ -20095,6 +20127,28 @@ public class Server implements Runnable {
             } // Pilot safely ejects.
 
         } // End entity-is-Mek
+        else if (game.getBoard().contains(entity.getPosition())
+                && !game.getOptions().booleanOption("ejected_pilots_flee")) {
+            int crewSize = Math.max(1, (int)(14+entity.getWeight())/15);
+            MechWarrior pilot = new MechWarrior(entity);
+            pilot.setChassis("Vehicle Crew");
+            pilot.setDeployed(true);
+            pilot.setId(getFreeEntityId());
+            pilot.initializeInternal(crewSize, Infantry.LOC_INFANTRY);
+            game.addEntity(pilot.getId(), pilot);
+            send(createAddEntityPacket(pilot.getId()));
+            // make him not get a move this turn
+            pilot.setDone(true);
+            //place on board
+            
+            pilot.setPosition(entity.getPosition());
+            // Update the entity
+            entityUpdate(pilot.getId());
+            // check if the pilot lands in a minefield
+            doEntityDisplacementMinefieldCheck( pilot,
+                    entity.getPosition(),
+                    entity.getPosition() );
+        }
 
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected( true );
@@ -20168,6 +20222,29 @@ public class Server implements Runnable {
                 send(createRemoveEntityPacket(pilot.getId(), IEntityRemovalConditions.REMOVE_IN_RETREAT));
             }
         } // End entity-is-Mek
+        else if (game.getBoard().contains(entity.getPosition())
+                && !game.getOptions().booleanOption("ejected_pilots_flee")
+                && game.getOptions().booleanOption("vehicles_can_eject")) {
+            int crewSize = Math.max(1, (int)(14+entity.getWeight())/15);
+            MechWarrior pilot = new MechWarrior(entity);
+            pilot.setChassis("Vehicle Crew");
+            pilot.setDeployed(true);
+            pilot.setId(getFreeEntityId());
+            pilot.initializeInternal(crewSize, Infantry.LOC_INFANTRY);
+            game.addEntity(pilot.getId(), pilot);
+            send(createAddEntityPacket(pilot.getId()));
+            // make him not get a move this turn
+            pilot.setDone(true);
+            //place on board
+            
+            pilot.setPosition(entity.getPosition());
+            // Update the entity
+            entityUpdate(pilot.getId());
+            // check if the pilot lands in a minefield
+            doEntityDisplacementMinefieldCheck( pilot,
+                    entity.getPosition(),
+                    entity.getPosition() );
+        }
 
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected( true );

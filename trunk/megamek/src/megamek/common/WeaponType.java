@@ -61,6 +61,7 @@ public class WeaponType extends EquipmentType {
     public static final long     F_SINGLE_TARGET      = 0x080000000L; // Does less damage to PBI in maxtech rules
     public static final long     F_PULSE              = 0x100000000L; // pulse weapons
     public static final long     F_BURST_FIRE         = 0x200000000L; // full damage vs infantry
+    public static final long     F_MGA                = 0x400000000L; // machine gun array
 
     protected RangeType rangeL;
     protected int   heat;
@@ -384,6 +385,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLLBXAC10());
         EquipmentType.addType(createCLLBXAC20());
         EquipmentType.addType(createCLMG());
+        EquipmentType.addType(createCLMGA());
         EquipmentType.addType(createCLLightMG());
         EquipmentType.addType(createCLHeavyMG());
         EquipmentType.addType(createCLLRM5());
@@ -10480,6 +10482,34 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_DIRECT_FIRE | F_ENERGY | F_BURST_FIRE;
         weapon.bv = 337;
         weapon.cost = 480000;
+
+        return weapon;
+    }
+
+    private static WeaponType createCLMGA() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Machine Gun Array";
+        weapon.setInternalName("CLMGA");
+        weapon.addLookupName("Clan Machine Gun Array");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_MG;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.extremeRange = 4;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.bv = 5;
+        weapon.flags |= F_BALLISTIC | F_MGA | F_BURST_FIRE;
+        weapon.cost = 5000;
+        String[] modes = {"Linked","Off"};
+        weapon.setModes(modes);
+        weapon.instantModeSwitch = false;
 
         return weapon;
     }

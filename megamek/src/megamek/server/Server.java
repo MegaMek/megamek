@@ -1641,6 +1641,18 @@ public class Server implements Runnable {
                 break;
             case IGame.PHASE_INITIATIVE_REPORT :
                 autoSave();
+                //Show player BVs
+                Enumeration players = game.getPlayers();
+                while ( players.hasMoreElements() ) {
+                    Player player = (Player) players.nextElement();
+                    Report r = new Report();
+                    r.type = Report.PUBLIC;
+                    r.messageId = 7016;
+                    r.add(player.getName());
+                    r.add(player.getBV());
+                    r.add(player.getInitialBV());
+                    addReport(r);
+                }
             case IGame.PHASE_MOVEMENT_REPORT :
             case IGame.PHASE_OFFBOARD_REPORT :
             case IGame.PHASE_FIRING_REPORT :

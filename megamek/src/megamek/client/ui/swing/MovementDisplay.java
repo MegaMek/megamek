@@ -1229,6 +1229,13 @@ public class MovementDisplay
             setGoProneEnabled(false);
             setHullDownEnabled(false);
         }
+        // TW Rules change: Mechs missing both arms and one leg can't stand up
+        if (ce instanceof Mech) {
+            Mech mech=(Mech)ce;
+            if (mech.cannotStandUp()) {
+                setGetUpEnabled(false);
+            }
+        }
     }
 
     private void updateRACButton() {

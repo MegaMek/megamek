@@ -62,7 +62,19 @@ public class QuadMech extends Mech {
 		setCritical(LOC_LARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
 				ACTUATOR_FOOT));
 	}
-
+        
+        /*
+         * Returns true if the Mech cannot stand up any longer.
+         */
+        public boolean cannotStandUp() {
+            int i=0;
+            if (isLocationBad(LOC_LARM)) i++;
+            if (isLocationBad(LOC_RARM)) i++;
+            if (isLocationBad(LOC_LLEG)) i++;
+            if (isLocationBad(LOC_RLEG)) i++;
+            return i>=3;
+        }
+        
 	/**
 	 * Returns this entity's walking/cruising mp, factored for heat and leg
 	 * damage.

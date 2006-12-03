@@ -22,7 +22,7 @@ x4) An additional skill, The Anti-'Mech Skill, has been added for infantry, whic
 
 MOVEMENT
 
-1) A ‘Mech missing both arms and one leg may no longer attempt to stand
+x1) A ‘Mech missing both arms and one leg may no longer attempt to stand
 
 x2) Infantry, Except Mechanized Infantry, use 1 less MP to enter Woods Hexes
 

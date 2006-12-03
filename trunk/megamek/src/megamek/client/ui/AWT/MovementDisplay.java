@@ -39,6 +39,7 @@ import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
+import megamek.common.QuadMech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -646,7 +647,6 @@ public class MovementDisplay
             setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck());
             setHullDownEnabled(ce.canGoHullDown());
         }
-
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();
@@ -1326,6 +1326,14 @@ public class MovementDisplay
             setGoProneEnabled(false);
             setHullDownEnabled(false);
         }
+        // TW Rules change: Mechs missing both arms and one leg can't stand up
+        if (ce instanceof Mech) {
+            Mech mech=(Mech)ce;
+            if (mech.cannotStandUp()) {
+                setGetUpEnabled(false);
+            }
+        }
+
     }
     
     private void updateRACButton() {

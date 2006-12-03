@@ -20,6 +20,7 @@ v0.33.3 (SVN)
 + Bug 954406: Charge declaration and stacking
 + Bug: VTOL should crash when sideslipping into woods at elevation 1
 + Optional house rule for pilot survival in extreme temperatures
++ TW rules change: A ‘Mech missing both arms and one leg may no longer attempt to stand
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

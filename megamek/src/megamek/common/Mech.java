@@ -198,6 +198,11 @@ public abstract class Mech
         this.autoEject = !PreferenceManager.getClientPreferences().defaultAutoejectDisabled();
     }
 
+    public boolean cannotStandUp() {
+        return isLocationBad(LOC_RARM) && isLocationBad(LOC_LARM) && 
+               (isLocationBad(LOC_LLEG) || isLocationBad(LOC_RLEG));
+    }
+    
     public void setCowl (int armor) {
         hasCowl = true;
         cowlArmor = armor;

@@ -1748,6 +1748,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 229;
         weapon.cost = 300000;
+        weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
 
         return weapon;
     }
@@ -3270,6 +3271,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 412;
         weapon.cost = 300000;
+        weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
 
         return weapon;
     }
@@ -8133,6 +8135,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 0;
         weapon.bv = 0;
         weapon.flags |= F_PPC | F_BATTLEARMOR | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
+        weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
 
         return weapon;
     }
@@ -9716,6 +9719,7 @@ public class WeaponType extends EquipmentType {
         weapon.flags |= F_PPC | F_DIRECT_FIRE | F_ENERGY | F_SINGLE_TARGET;
         weapon.bv = 228;
         weapon.cost = 450000;
+        weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
 
         return weapon;
     }
@@ -9746,6 +9750,7 @@ public class WeaponType extends EquipmentType {
         //FIXME
         weapon.bv = 176;
         weapon.cost = 0;
+        weapon.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
 
         return weapon;
     }

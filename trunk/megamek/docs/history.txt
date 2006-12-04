@@ -22,6 +22,7 @@ v0.33.3 (SVN)
 + Optional house rule for pilot survival in extreme temperatures
 + TW rules change: A ‘Mech missing both arms and one leg may no longer attempt to stand
 + RFE 1606530: Current total BV's (& starting BV's)
++ Bug 1608682: heavy ppc inhibitor not working right
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

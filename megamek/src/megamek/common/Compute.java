@@ -602,7 +602,7 @@ public class Compute {
         // modifiy the ranges for PPCs when field inhibitors are turned off
         // TODO: See above, it should be coded elsewhere...
         //
-        if (wtype.getName().equals("Particle Cannon")) {
+        if (wtype.hasFlag(WeaponType.F_PPC)) {
             if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")) {
                 if (weapon.curMode().equals("Field Inhibitor OFF")) {
                     weaponRanges[0] = 0;

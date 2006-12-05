@@ -34,6 +34,7 @@ import megamek.common.TechConstants;
 import megamek.common.UnitType;
 import megamek.common.WeaponType;
 import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.PilotOptions;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.verifier.EntityVerifier;
@@ -972,6 +973,10 @@ public class MechSelectorDialog
                     || e instanceof BattleArmor) {
                 gunnery = 3;
                 piloting = 4;
+                if(m_client.game.getOptions().booleanOption("pilot_advantages")) {
+                    PilotOptions ops = e.getCrew().getOptions();
+                    ops.getOption("clan_pilot_training").setValue(true);
+                }
             }
             else if(e instanceof Tank) {
                 gunnery = 5;

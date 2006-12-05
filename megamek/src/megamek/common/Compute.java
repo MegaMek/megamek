@@ -1295,6 +1295,10 @@ public class Compute {
             toHit.addModifier(-1, "melee specialist");
         }
 
+        if (attacker.getCrew().getOptions().booleanOption("clan_pilot_training")) {
+            toHit.addModifier(1, "clan pilot training");
+        }
+
         // Mek targets that are dodging are harder to hit.
 
         if (target != null

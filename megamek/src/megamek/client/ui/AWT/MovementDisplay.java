@@ -39,7 +39,6 @@ import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.PilotingRollData;
 import megamek.common.Protomech;
-import megamek.common.QuadMech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;

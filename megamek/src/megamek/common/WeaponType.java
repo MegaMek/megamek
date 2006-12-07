@@ -9728,7 +9728,7 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "Snub Nosed Particle Projection Cannon";
+        weapon.name = "Snub-Nose PPC";
         weapon.setInternalName("ISSNPPC");
         weapon.addLookupName("ISSnubNosedPPC");
         weapon.heat = 10;
@@ -9809,7 +9809,7 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "Heavy Particle Projection Cannon";
+        weapon.name = "Heavy PPC";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("ISHeavyPPC");
         weapon.addLookupName("ISHPPC");
@@ -9841,7 +9841,7 @@ public class WeaponType extends EquipmentType {
         WeaponType weapon = new WeaponType();
 
         weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "Light Particle Projection Cannon";
+        weapon.name = "Light PPC";
         weapon.setInternalName(weapon.name);
         weapon.addLookupName("ISLightPPC");
         weapon.addLookupName("ISLPPC");

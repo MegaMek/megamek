@@ -24,6 +24,11 @@ v0.33.3 (SVN)
 + RFE 1606530: Current total BV's (& starting BV's)
 + Bug 1608682: heavy ppc inhibitor not working right
 + Maxtech clan physicals penalty (pilot option)
++ Patch 1607480: Rules Change for Shields & bug fix for Vibros
++ Patch 1607164: Bug Fix for IS Improved JJs
++ Patch 1606263: Name Patch for new PPC Types
++ Patch 1592376: Bug FIx for Follow The Leader
++ BUG 1609741: Done Button Locks up when player connects and reconnects
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

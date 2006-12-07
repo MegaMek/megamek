@@ -5024,6 +5024,11 @@ public abstract class Entity extends TurnOrdered
             getSwarmAttackerId()==NONE) {
             return false;
         }
+        
+        //Issue with Vibroblades only being turned on/off during Physical phase -- Torren
+        if ( hasVibroblades() )
+            return true;
+        
         if (!game.getOptions().booleanOption("skip_ineligable_physical")) {
             return true;
         }

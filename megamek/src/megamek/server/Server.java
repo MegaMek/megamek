@@ -1101,6 +1101,7 @@ public class Server implements Runnable {
             final Player player = (Player)i.nextElement();
             player.setDone(false);
         }
+        transmitAllPlayerDones();
     }
 
     /**
@@ -7498,9 +7499,17 @@ public class Server implements Runnable {
         Infantry platoon = null;
         final boolean isBattleArmorAttack = wtype.hasFlag(WeaponType.F_BATTLEARMOR);
         ToHitData toHit = wr.toHit;
-        boolean bDeadFire = usesAmmo && (atype.getAmmoType() == AmmoType.T_SRM || atype.getAmmoType() == AmmoType.T_LRM)&& atype.getMunitionType() == AmmoType.M_DEAD_FIRE;
-        boolean bFLT = usesAmmo && atype.getAmmoType() == AmmoType.T_LRM && atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER;
-        boolean bTandemCharge = usesAmmo && atype.getAmmoType() == AmmoType.T_SRM && atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE;
+        boolean bDeadFire = usesAmmo && 
+        	    ( atype.getAmmoType() == AmmoType.T_SRM 
+        	    || atype.getAmmoType() == AmmoType.T_LRM 
+        	    || atype.getAmmoType() == AmmoType.T_MML ) && atype.getMunitionType() == AmmoType.M_DEAD_FIRE;
+        boolean bFLT = usesAmmo && 
+        	    ( atype.getAmmoType() == AmmoType.T_LRM 
+        	    || atype.getAmmoType() == AmmoType.T_MML ) && atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER;
+        boolean bTandemCharge = usesAmmo && 
+        	    ( atype.getAmmoType() == AmmoType.T_SRM
+        	      || atype.getAmmoType() == AmmoType.T_MML )
+        	    && atype.getMunitionType() == AmmoType.M_TANDEM_CHARGE;
         boolean bInferno = usesAmmo && (atype.getAmmoType() == AmmoType.T_SRM 
                 || atype.getAmmoType() == AmmoType.T_MML
                 || atype.getAmmoType() == AmmoType.T_BA_INFERNO)
@@ -9663,12 +9672,33 @@ public class Server implements Runnable {
                         }
                         addReport(damageEntity(entityTarget, hit, nDamage, false, 6, false, false, throughFront));
                     } else if ( bTandemCharge ){
-                        
-                        if ( entityTarget.getArmor(hit.getLocation(),hit.isRear()) > 0 ){
-                                addReport(damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
-                                hit.setEffect(HitData.EFFECT_NO_CRITICALS);
-                                addNewLines();
-                                addReport(damageEntity(entityTarget, hit, nDamage, false, 0, true, false, throughFront));
+                    
+                    if ( entityTarget.hasActiveShield(hit.getLocation(), hit.isRear())
+                         || entityTarget.hasPassiveShield(hit.getLocation(), hit.isRear())
+                         || entityTarget.hasNoDefenseShield(hit.getLocation()) ) {
+                            addReport(damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
+                            if ( hit.getLocation() == Mech.LOC_RARM
+                                 || hit.getLocation() == Mech.LOC_RLEG
+                                 || hit.getLocation() == Mech.LOC_RT ) {
+                                 hit = new HitData(Mech.LOC_RARM);
+                            }else if ( hit.getLocation() == Mech.LOC_LARM
+                                       || hit.getLocation() == Mech.LOC_LLEG
+                                       || hit.getLocation() == Mech.LOC_LT ) {
+                                hit = new HitData(Mech.LOC_LARM);
+                            }else if ( entityTarget.hasActiveShield(Mech.LOC_LARM)
+                                    || entityTarget.hasPassiveShield(Mech.LOC_LARM)
+                                    || entityTarget.hasNoDefenseShield(Mech.LOC_LARM) ){
+                    		    hit = new HitData(Mech.LOC_LARM);
+                    		}else {
+                    		    hit = new HitData(Mech.LOC_RARM);
+                    		}
+                            hit.setEffect(HitData.EFFECT_NO_CRITICALS);
+                            addReport(damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
+                    	}else if ( entityTarget.getArmor(hit.getLocation(),hit.isRear()) > 0 ){
+                            addReport(damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
+                            hit.setEffect(HitData.EFFECT_NO_CRITICALS);
+                            addNewLines();
+                            addReport(damageEntity(entityTarget, hit, nDamage, false, 0, true, false, throughFront));
                         }else{
                             addReport(damageEntity(entityTarget, hit, nDamage, false, 0, true, false, throughFront));
                         } 
@@ -13586,19 +13616,24 @@ public class Server implements Runnable {
             //here goes the fun :)
             //Shields take damage first then cowls then armor whee
             //Shield does not protect from ammo explosions or falls.
-            if ( !ammoExplosion && !hit.isFallDamage() && !damageIS && te.hasShield() ){
+            if ( !ammoExplosion 
+                 && !hit.isFallDamage() 
+                 && !damageIS 
+                 && te.hasShield() 
+                 && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS) ){
                 Mech me = (Mech)te;
                 int damageNew = me.shieldAbsorptionDamage(damage,hit.getLocation(),hit.isRear());
                 //if a shield absorbed the damage then lets tell the world about it.
                 if ( damageNew != damage){
-                    int damageDiff = damage - damageNew;
+                    int absorb = damage - damageNew;
+                    te.damageThisPhase += absorb;
                     damage = damageNew;
 
                     r = new Report (3530);
                     r.subject = te_n;
                     r.indent(3);
                     r.newlines=0;
-                    r.add(damageDiff);
+                    r.add(absorb);
                     vDesc.addElement(r);
 
                     if ( damage <= 0 ){
@@ -13617,6 +13652,7 @@ public class Server implements Runnable {
                     !throughFront ) {
                     int damageNew = me.damageCowl(damage);
                     int damageDiff = damage-damageNew;
+                    me.damageThisPhase += damageDiff;
                     damage = damageNew;
 
                     r = new Report (3520);

@@ -9672,29 +9672,28 @@ public class Server implements Runnable {
                         }
                         addReport(damageEntity(entityTarget, hit, nDamage, false, 6, false, false, throughFront));
                     } else if ( bTandemCharge ){
-                    
-                    if ( entityTarget.hasActiveShield(hit.getLocation(), hit.isRear())
-                         || entityTarget.hasPassiveShield(hit.getLocation(), hit.isRear())
-                         || entityTarget.hasNoDefenseShield(hit.getLocation()) ) {
+                        if ( entityTarget.hasActiveShield(hit.getLocation(), hit.isRear())
+                             || entityTarget.hasPassiveShield(hit.getLocation(), hit.isRear())
+                             || entityTarget.hasNoDefenseShield(hit.getLocation()) ) {
                             addReport(damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
                             if ( hit.getLocation() == Mech.LOC_RARM
                                  || hit.getLocation() == Mech.LOC_RLEG
                                  || hit.getLocation() == Mech.LOC_RT ) {
-                                 hit = new HitData(Mech.LOC_RARM);
+                                hit = new HitData(Mech.LOC_RARM);
                             }else if ( hit.getLocation() == Mech.LOC_LARM
                                        || hit.getLocation() == Mech.LOC_LLEG
                                        || hit.getLocation() == Mech.LOC_LT ) {
                                 hit = new HitData(Mech.LOC_LARM);
                             }else if ( entityTarget.hasActiveShield(Mech.LOC_LARM)
-                                    || entityTarget.hasPassiveShield(Mech.LOC_LARM)
-                                    || entityTarget.hasNoDefenseShield(Mech.LOC_LARM) ){
-                    		    hit = new HitData(Mech.LOC_LARM);
-                    		}else {
-                    		    hit = new HitData(Mech.LOC_RARM);
-                    		}
+                                       || entityTarget.hasPassiveShield(Mech.LOC_LARM)
+                                       || entityTarget.hasNoDefenseShield(Mech.LOC_LARM) ){
+                        	    hit = new HitData(Mech.LOC_LARM);
+                        	}else {
+                        	    hit = new HitData(Mech.LOC_RARM);
+                            }
                             hit.setEffect(HitData.EFFECT_NO_CRITICALS);
                             addReport(damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
-                    	}else if ( entityTarget.getArmor(hit.getLocation(),hit.isRear()) > 0 ){
+                        }else if ( entityTarget.getArmor(hit.getLocation(),hit.isRear()) > 0 ){
                             addReport(damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
                             hit.setEffect(HitData.EFFECT_NO_CRITICALS);
                             addNewLines();

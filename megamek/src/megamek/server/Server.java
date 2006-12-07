@@ -3255,17 +3255,16 @@ public class Server implements Runnable {
                     }
                     break; 
 
-                } else {
-                    // skidding into higher terrain does weight/20
-                    // damage in 5pt clusters to front.
-                    int damage = ((int)entity.getWeight() + 19) / 20;
-                    while(damage > 0) {
-                        addReport(damageEntity(entity, 
-                                entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 
-                                Math.min(5,damage)));
-                        damage -= 5;
-                    }
-                }    
+                }
+                // skidding into higher terrain does weight/20
+                // damage in 5pt clusters to front.
+                int damage = ((int)entity.getWeight() + 19) / 20;
+                while(damage > 0) {
+                    addReport(damageEntity(entity, 
+                            entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT), 
+                            Math.min(5,damage)));
+                    damage -= 5;
+                }
                 // Stay in the current hex and stop skidding.
                 break;
             }
@@ -3301,7 +3300,7 @@ public class Server implements Runnable {
             if ( targets.hasMoreElements()) {
                 boolean skidChargeHit = false;
                 while ( targets.hasMoreElements() ) {
-                    Entity target = (Entity) targets.nextElement();
+                    Entity target = targets.nextElement();
                     
                     if(target.getElevation() > nextElevation + entity.getHeight()
                             || target.absHeight() < nextElevation) {
@@ -6037,10 +6036,9 @@ public class Server implements Runnable {
                 entity.setPosition( fallsInPlace ? src : dest );
             }
             return roll.getValue() - diceRoll;
-        } else {
-            r.choose(true);
-            addReport(r);
         }
+        r.choose(true);
+        addReport(r);
         return 0;
     }
 

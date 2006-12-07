@@ -28,7 +28,8 @@ v0.33.3 (SVN)
 + Patch 1607164: Bug Fix for IS Improved JJs
 + Patch 1606263: Name Patch for new PPC Types
 + Patch 1592376: Bug FIx for Follow The Leader
-+ BUG 1609741: Done Button Locks up when player connects and reconnects
++ Bug 1609741: Done Button Locks up when player connects and reconnects
++ Remove unnecessary casts and elses.
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

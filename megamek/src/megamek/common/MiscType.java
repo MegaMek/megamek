@@ -167,6 +167,7 @@ public class MiscType extends EquipmentType {
         // check for known formulas
         if (hasFlag(F_JUMP_JET)) {
             if ((getTechLevel() == TechConstants.T_IS_LEVEL_3)
+                    || (getTechLevel() == TechConstants.T_IS_LEVEL_2)
                     || (getTechLevel() == TechConstants.T_CLAN_LEVEL_3)) {
                 if (entity.getWeight() <= 55.0) {
                     return 1.0f;

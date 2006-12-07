@@ -206,7 +206,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
         boolean bHeatSeeking = atype != null && (atype.getAmmoType() == AmmoType.T_SRM
                 || atype.getAmmoType() == AmmoType.T_MML || atype.getAmmoType() == AmmoType.T_LRM) 
                 && atype.getMunitionType() == AmmoType.M_HEAT_SEEKING;
- 
+        boolean bFTL = atype != null 
+                       && (atype.getAmmoType() == AmmoType.T_MML 
+                           || atype.getAmmoType() == AmmoType.T_LRM) 
+                       && atype.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER;
+        
         if (te != null) {
             if (!isTargetECMAffected &&
                 te.isINarcedBy(ae.getOwner().getTeam()) &&
@@ -800,6 +804,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
         	else
         		toHit.addModifier(-3, "ammunition to-hit modifier");
         }
+        
+        if ( bFTL )
+            toHit.addModifier(2, "ammunition to-hit modifier");
         
         //Heavy infantry have +1 penalty
         if(ae instanceof Infantry && ae.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {

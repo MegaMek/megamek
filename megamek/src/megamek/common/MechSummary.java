@@ -46,7 +46,9 @@
     
     public static String determineUnitType(Entity e) {
         int mm = e.getMovementMode();
-        if (e instanceof Infantry) {
+        if (e instanceof BattleArmor) {
+            return "BattleArmor";
+        }else if (e instanceof Infantry) {
             return "Infantry";
         } else if (e instanceof VTOL) { //for now
             return "VTOL";

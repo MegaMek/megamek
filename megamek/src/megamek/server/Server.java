@@ -20995,10 +20995,10 @@ public class Server implements Runnable {
 
             // convention infantry take x2 damage from AE weapons 
             if(entity instanceof Infantry && !(entity instanceof BattleArmor))
+                hits *= 2;
 
             //Entity/ammo specific damage modifiers
             if(ammo != null) {
-                    hits *= 2;
                 if(ammo.getMunitionType() == AmmoType.M_CLUSTER) {
                     if(hex.containsTerrain(Terrains.FORTIFIED)
                             && entity instanceof Infantry

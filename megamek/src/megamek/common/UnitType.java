@@ -21,13 +21,14 @@ public class UnitType {
 
     public static final int MEK = 0;
     public static final int TANK = 1;
-    public static final int INFANTRY = 2;
-    public static final int PROTOMEK = 3;
-    public static final int VTOL = 4;
-    public static final int NAVAL = 5;
-    public static final int GUN_EMPLACEMENT = 6;
+    public static final int BATTLE_ARMOR = 2;
+    public static final int INFANTRY = 3;
+    public static final int PROTOMEK = 4;
+    public static final int VTOL = 5;
+    public static final int NAVAL = 6;
+    public static final int GUN_EMPLACEMENT = 7;
     
-    private static String[] names = {"Mek", "Tank", "Infantry", "ProtoMek", "VTOL", "Naval", "Gun Emplacement"};
+    private static String[] names = {"Mek", "Tank", "BattleArmor", "Infantry", "ProtoMek", "VTOL", "Naval", "Gun Emplacement"};
 
     public static final int SIZE = names.length;
 

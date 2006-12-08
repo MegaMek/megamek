@@ -51,7 +51,7 @@ public class MechSummaryCache {
 
     private boolean initialized = false;
     private boolean initializing = false;
-    private ArrayList listeners = new ArrayList();
+    private ArrayList<Listener> listeners = new ArrayList<Listener>();
 
     private StringBuffer loadReport = new StringBuffer();
     private final static String CONFIG_FILENAME = "data/mechfiles/UnitVerifierOptions.xml"; //should be a client option?
@@ -100,8 +100,8 @@ public class MechSummaryCache {
     }
 
     private MechSummary[] m_data;
-    private Map m_nameMap;
-    private Hashtable hFailedFiles;
+    private Map<String,MechSummary> m_nameMap;
+    private Hashtable<String,String> hFailedFiles;
     private int cacheCount;
     private int fileCount;
     private int zipCount;
@@ -111,7 +111,7 @@ public class MechSummaryCache {
     private static final File CACHE = new File(ROOT, "units.cache");
 
     private MechSummaryCache() {
-        m_nameMap = new HashMap();
+        m_nameMap = new HashMap<String,MechSummary>();
     }
 
     public MechSummary[] getAllMechs() {
@@ -142,11 +142,11 @@ public class MechSummaryCache {
     }
 
     private void loadMechData() {
-        Vector vMechs = new Vector();
-        Set sKnownFiles = new HashSet();
+        Vector<MechSummary> vMechs = new Vector<MechSummary>();
+        Set<String> sKnownFiles = new HashSet<String>();
         long lLastCheck = 0;
         entityVerifier = new EntityVerifier(new File(CONFIG_FILENAME));
-        hFailedFiles = new Hashtable();
+        hFailedFiles = new Hashtable<String,String>();
 
         EquipmentType.initializeTypes(); // load master equipment lists
 
@@ -344,7 +344,7 @@ public class MechSummaryCache {
 
     // Loading a complete mech object for each summary is a bear and should be 
     // changed, but it lets me use the existing parsers
-    private boolean loadMechsFromDirectory(Vector vMechs, Set sKnownFiles, long lLastCheck, File fDir) {
+    private boolean loadMechsFromDirectory(Vector<MechSummary> vMechs, Set<String> sKnownFiles, long lLastCheck, File fDir) {
         boolean bNeedsUpdate = false;
         loadReport.append("  Looking in ").append(fDir.getPath())
             .append("...\n");
@@ -435,7 +435,7 @@ public class MechSummaryCache {
         return bNeedsUpdate;
     }
 
-    private boolean loadMechsFromZipFile(Vector vMechs, Set sKnownFiles, long lLastCheck, File fZipFile) {
+    private boolean loadMechsFromZipFile(Vector<MechSummary> vMechs, Set<String> sKnownFiles, long lLastCheck, File fZipFile) {
         boolean bNeedsUpdate = false;
         ZipFile zFile;
         int thisZipFileCount = 0;

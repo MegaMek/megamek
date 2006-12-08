@@ -30,6 +30,8 @@ v0.33.3 (SVN)
 + Patch 1592376: Bug FIx for Follow The Leader
 + Bug 1609741: Done Button Locks up when player connects and reconnects
 + Remove unnecessary casts and elses.
++ split battle armor and conventional infantry in the unit selector
++ 1st revision of random army creator (not UI integrated yet)
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

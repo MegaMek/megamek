@@ -49,12 +49,12 @@ public class RandomArmyCreator {
         /**
          * Latest design year
          */
-        public int maxYear;
+        public int maxYear =9999;
 
         /**
          * Earliest design year
          */
-        public int minYear;
+        public int minYear =0;
 
         /**
          * A value from TechConstants, which will filter the units
@@ -191,6 +191,13 @@ public class RandomArmyCreator {
                 } else if (p.tech == TechConstants.T_IS_LEVEL_2) {
                     if (m.getType() != TechConstants.T_IS_LEVEL_1)
                         continue;
+                } else if (p.tech == TechConstants.T_LEVEL_2_ALL) {
+                    if (m.getType() != TechConstants.T_IS_LEVEL_1
+                            && m.getType() != TechConstants.T_IS_LEVEL_2
+                            && m.getType() != TechConstants.T_CLAN_LEVEL_2)
+                        continue;
+                } else {
+                    continue;
                 }
             }
             if ((m.getYear() < p.minYear || m.getYear() > p.maxYear)
@@ -221,26 +228,38 @@ public class RandomArmyCreator {
         Collections.<MechSummary> sort(allBA, bvComparator);
 
         //get the average BV for each unit class, to determine how to split up the total 
-        int mechWeight = countBV(allMechs) / allMechs.size();
-        int tankWeight = countBV(allTanks) / allTanks.size();
-        int infWeight = countBV(allInfantry) / allInfantry.size();
-        int baWeight = countBV(allBA) / allBA.size();
+        int mechWeight = countBV(allMechs) / Math.max(1, allMechs.size());
+        int tankWeight = countBV(allTanks) / Math.max(1, allTanks.size());
+        int infWeight = countBV(allInfantry) / Math.max(1, allInfantry.size());
+        int baWeight = countBV(allBA) / Math.max(1, allBA.size());
 
         int baBV = (p.ba * baWeight * p.maxBV)
         / ((p.mechs * mechWeight) + (p.tanks * tankWeight)
                 + (p.infantry * infWeight) + (p.ba * baWeight));
-        baBV = Math.max(baBV, p.ba * allBA.get(0).getBV());
-        baBV = Math.min(baBV, p.ba * allBA.get(allBA.size()-1).getBV());
+        if(p.ba > 0 && allBA.size() > 0) {
+            baBV = Math.max(baBV, p.ba * allBA.get(0).getBV());
+            baBV = Math.min(baBV, p.ba * allBA.get(allBA.size()-1).getBV());
+        } else {
+            baBV = 0;
+        }
         int mechBV = (p.mechs * mechWeight * p.maxBV)
                 / ((p.mechs * mechWeight) + (p.tanks * tankWeight)
                         + (p.infantry * infWeight) + (p.ba * baWeight));
-        mechBV = Math.max(mechBV, p.mechs * allMechs.get(0).getBV());
-        mechBV = Math.min(mechBV, p.mechs * allMechs.get(allMechs.size()-1).getBV());
+        if(p.mechs > 0 && allMechs.size() > 0) {
+            mechBV = Math.max(mechBV, p.mechs * allMechs.get(0).getBV());
+            mechBV = Math.min(mechBV, p.mechs * allMechs.get(allMechs.size()-1).getBV());
+        } else {
+            mechBV = 0;
+        }
         int tankBV = (p.tanks * tankWeight * p.maxBV)
                 / ((p.mechs * mechWeight) + (p.tanks * tankWeight)
                         + (p.infantry * infWeight) + (p.ba * baWeight));
-        tankBV = Math.max(tankBV, p.tanks * allTanks.get(0).getBV());
-        tankBV = Math.min(tankBV, p.tanks * allTanks.get(allTanks.size()-1).getBV());
+        if(p.tanks > 0 && allTanks.size() > 0) {
+            tankBV = Math.max(tankBV, p.tanks * allTanks.get(0).getBV());
+            tankBV = Math.min(tankBV, p.tanks * allTanks.get(allTanks.size()-1).getBV());
+        } else {
+            tankBV = 0;
+        }
 
         //add the units in roughly increasing BV order
         ArrayList<MechSummary> units = generateArmy(allBA, p.ba, baBV,

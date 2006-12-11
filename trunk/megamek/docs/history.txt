@@ -32,6 +32,8 @@ v0.33.3 (SVN)
 + Remove unnecessary casts and elses.
 + split battle armor and conventional infantry in the unit selector
 + 1st revision of random army creator (not UI integrated yet)
++ Bug 1610484: Dangling 'if' in Server.artilleryDamageHex
++ RFE 1603578: Random army generator
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code
@@ -67,7 +69,6 @@ v0.33.2 (2006-11-12 21:32 GMT+9)
 + Bug 1593129: Clan BA blocking CT weapons
 + Bug: wrong attack arrows removed by ESC key
 + Changed some FileDialog instances to use OS independent paths
-+ Bug 1610484: Dangling 'if' in Server.artilleryDamageHex
 
 v0.33.1 (2006-10-31 22:40 GMT+9)
 + Fix filename case for IS Omni images, so they show up on filename case-

@@ -5157,7 +5157,7 @@ public class WeaponType extends EquipmentType {
         weapon.name = "MML 5";
         weapon.setInternalName("ISMML5");
         weapon.addLookupName("IS MML-5");
-        weapon.heat = 2;
+        weapon.heat = 3;
         weapon.damage = DAMAGE_MISSILE;
         weapon.rackSize = 5;
         weapon.ammoType = AmmoType.T_MML;

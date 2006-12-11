@@ -37,6 +37,9 @@ v0.33.3 (SVN)
 + Bug 1612873: MML5 heat incorrect
 + Bug: Fixed missing random army dialog property
 + Bug: Added check to make sure allowed BV variance (random army generation) is always positive
++ Bug: Turret blown off critical hit now destroys the tank immediately
++ Crew stunned status shown on the minimap
++ Bug: Weapon destroyed critical hit now explodes weapons eg gauss
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

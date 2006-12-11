@@ -172,7 +172,7 @@ public class RandomArmyCreator {
     }
 
     public static ArrayList<MechSummary> generateArmy(Parameters p) {
-        int allowedVariance = p.maxBV - p.minBV;
+        int allowedVariance = java.lang.Math.abs(p.maxBV - p.minBV);
         MechSummary[] all = MechSummaryCache.getInstance().getAllMechs();
         ArrayList<MechSummary> allMechs = new ArrayList<MechSummary>();
         ArrayList<MechSummary> allTanks = new ArrayList<MechSummary>();

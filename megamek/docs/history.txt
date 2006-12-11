@@ -35,6 +35,7 @@ v0.33.3 (SVN)
 + Bug 1610484: Dangling 'if' in Server.artilleryDamageHex
 + RFE 1603578: Random army generator
 + Bug 1612873: MML5 heat incorrect
++ Bug: Fixed missing random army dialog property
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

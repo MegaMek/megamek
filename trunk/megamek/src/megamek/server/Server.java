@@ -15214,6 +15214,7 @@ public class Server implements Runnable {
                 r.subject = t.getId();
                 vDesc.add(r);
                 t.destroyLocation(Tank.LOC_TURRET);
+                vDesc.addAll(destroyEntity(t,"turret blown off", true, true));
                 break;
             case Tank.CRIT_TURRET_JAM:
                 //TODO: this should be clearable
@@ -15240,9 +15241,11 @@ public class Server implements Runnable {
                 }
                 Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
                 weapon.setHit(true);
-                weapon.setDestroyed(true);
                 r.add(weapon.getName());
                 vDesc.add(r);
+                //explosive weapons e.g. gauss now explode
+                vDesc.addAll(explodeEquipment(t, loc, weapon));
+                weapon.setDestroyed(true);
                 break;
                 }
             case Tank.CRIT_WEAPON_JAM:
@@ -16503,8 +16506,8 @@ public class Server implements Runnable {
         return explodeEquipment(en, loc, en.getEquipment(en.getCritical(loc, slot).getIndex()));
     }
 
-    private Vector explodeEquipment(Entity en, int loc, Mounted mounted) {
-        Vector vDesc = new Vector();
+    private Vector<Report> explodeEquipment(Entity en, int loc, Mounted mounted) {
+        Vector<Report> vDesc = new Vector<Report>();
         // is this already destroyed?
         if (mounted.isDestroyed()) {
             System.err.println("server: explodeEquipment called on destroyed"

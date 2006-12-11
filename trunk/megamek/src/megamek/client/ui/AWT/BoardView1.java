@@ -3154,11 +3154,14 @@ public class BoardView1
             // Determine if the entity has a locked turret,
             // and if it is a gun emplacement
             boolean turretLocked = false;
+            int crewStunned = 0;
             boolean ge = false;
             if (entity instanceof Tank) {
                 turretLocked =
                     !((Tank) entity).hasNoTurret() &&
                     !entity.canChangeSecondaryFacing();
+                crewStunned =
+                    ((Tank)entity).getStunnedTurns();
             } else if (entity instanceof GunEmplacement) {
                 turretLocked = 
                     ((GunEmplacement) entity).hasTurret() &&
@@ -3184,6 +3187,15 @@ public class BoardView1
                     graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
                     graph.setColor(Color.yellow);
                     graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 47); //$NON-NLS-1$
+                } else if (crewStunned > 0) {
+                    //draw IMMOBILE and STUNNED
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.STUNNED", new Object[]{crewStunned}), 22, 48); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
+                    graph.setColor(Color.yellow);
+                    graph.drawString(Messages.getString("BoardView1.STUNNED", new Object[]{crewStunned}), 21, 47); //$NON-NLS-1$
                 } else if (turretLocked) {
                     // draw "IMMOBILE" and "LOCKED"
                     graph.setColor(Color.darkGray);
@@ -3206,6 +3218,12 @@ public class BoardView1
                 graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 39); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
                 graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 38); //$NON-NLS-1$
+            } else if (crewStunned > 0) {
+                //draw STUNNED
+                graph.setColor(Color.darkGray);
+                graph.drawString(Messages.getString("BoardView1.STUNNED", new Object[]{crewStunned}), 22, 48); //$NON-NLS-1$
+                graph.setColor(Color.yellow);
+                graph.drawString(Messages.getString("BoardView1.STUNNED", new Object[]{crewStunned}), 21, 47); //$NON-NLS-1$
             } else if (turretLocked) {
                 // draw "LOCKED"
                 graph.setColor(Color.darkGray);

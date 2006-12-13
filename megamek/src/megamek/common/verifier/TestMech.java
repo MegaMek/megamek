@@ -231,7 +231,7 @@ public class TestMech extends TestEntity {
             if (m.getLocation()==Entity.LOC_NONE)
             {
                 if (m.getType() instanceof AmmoType &&
-                        m.getShotsLeft()==1)
+                        m.getShotsLeft()<=1)
                 {
                     continue;
                 }

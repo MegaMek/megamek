@@ -40,6 +40,8 @@ v0.33.3 (SVN)
 + Bug: Turret blown off critical hit now destroys the tank immediately
 + Crew stunned status shown on the minimap
 + Bug: Weapon destroyed critical hit now explodes weapons eg gauss
++ Bug: Don't crash when no .board file is available and "Random Map" is selected.
++ Remove unnecessary casts.
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

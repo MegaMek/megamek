@@ -42,6 +42,7 @@ v0.33.3 (SVN)
 + Bug: Weapon destroyed critical hit now explodes weapons eg gauss
 + Bug: Don't crash when no .board file is available and "Random Map" is selected.
 + Remove unnecessary casts.
++ One shot ammo with 0 shots left no longer illegal in verifier
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

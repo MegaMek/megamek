@@ -133,7 +133,7 @@ public class MechSummaryCache {
 
     public MechSummary getMech(String sRef) {
         block();
-        return (MechSummary) m_nameMap.get(sRef);
+        return m_nameMap.get(sRef);
     }
 
     public Hashtable getFailedFiles() {
@@ -272,7 +272,7 @@ public class MechSummaryCache {
         }
         synchronized (listeners) {
             for (int i = 0; i < listeners.size(); i++) {
-                ((Listener)listeners.get(i)).doneLoading();
+                listeners.get(i).doneLoading();
             }
         }
     }

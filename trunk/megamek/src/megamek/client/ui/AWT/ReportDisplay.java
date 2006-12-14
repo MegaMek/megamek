@@ -63,7 +63,7 @@ public class ReportDisplay
         // Create a tabbed panel to hold our reports.
         tabs = new TabPanel();
         //debugReport: add new client setting
-        Font tabPanelFont = new Font ("Helvetica",Font.BOLD, //$NON-NLS-1$
+        Font tabPanelFont = new Font ("Dialog",Font.BOLD, //$NON-NLS-1$
          GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
         tabs.setTabFont (tabPanelFont);
 

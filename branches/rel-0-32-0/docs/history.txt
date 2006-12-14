@@ -12,6 +12,7 @@ v0.32.2 (SVN)
 + Body-mounted C3 Masters in Tanks should fire their TAG into the front arc,
   per the Ask the PM Forum.
 + Bug 954406: Charge declaration and stacking
++ Bug: Megamek required "Helvetica" font
 
 v0.32.1 (2006-10-31, 21:08 GMT+9)
 + Bug: NPE when firing infantry rifle

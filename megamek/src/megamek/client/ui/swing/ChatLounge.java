@@ -177,7 +177,7 @@ public class ChatLounge
 
         // Create a tabbed panel to hold our components.
         panTabs = new JTabbedPane();
-        Font tabPanelFont = new Font("Helvetica", Font.BOLD, //$NON-NLS-1$
+        Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
                 GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
         panTabs.setFont(tabPanelFont);
         

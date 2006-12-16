@@ -7178,6 +7178,9 @@ public class Server implements Runnable {
               addReport(r);
               return true;
           }
+          // might have fallen off the unit due to other attacks
+          if(ae.getSwarmTargetId() == Entity.NONE)
+              return true;
           //swarming ended succesfully
           r = new Report(3110);
           r.subject = subjectId;
@@ -7185,7 +7188,8 @@ public class Server implements Runnable {
           // Only apply the "stop swarm 'attack'" to the swarmed Mek.
           if (ae.getSwarmTargetId() != target.getTargetId()) {
               Entity other = game.getEntity(ae.getSwarmTargetId());
-              other.setSwarmAttackerId(Entity.NONE);
+              if(other != null)
+                  other.setSwarmAttackerId(Entity.NONE);
           }
           else {
               entityTarget.setSwarmAttackerId(Entity.NONE);

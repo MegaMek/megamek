@@ -1044,6 +1044,8 @@ public class MoveStep implements Serializable {
             if(stepType != MovePath.STEP_TURN_LEFT
                 && stepType != MovePath.STEP_TURN_RIGHT
                 && stepType != MovePath.STEP_GET_UP
+                && stepType != MovePath.STEP_UNLOAD
+                && stepType != MovePath.STEP_LOAD
                 && (isProne() || isHullDown())) {
                     movementType = IEntityMovementType.MOVE_ILLEGAL;
                     return;

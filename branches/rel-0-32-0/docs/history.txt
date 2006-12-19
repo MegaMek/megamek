@@ -14,6 +14,7 @@ v0.32.2 (SVN)
 + Bug 954406: Charge declaration and stacking
 + Bug: Megamek required "Helvetica" font
 + Bug: NPE in stop swarm attack if the swarmed unit was destroyed earlier in the phase
++ Bug 1613504 Unloading BA from prone mech didn't work
 
 v0.32.1 (2006-10-31, 21:08 GMT+9)
 + Bug: NPE when firing infantry rifle

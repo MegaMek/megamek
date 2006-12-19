@@ -91,6 +91,10 @@ public class ThrashAttackAction extends AbstractAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in same hex");
         }
 
+        if (target.getElevation() != ae.getElevation()) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not at same elevation");
+        }
+
         // Check terrain.
         IHex hex = game.getBoard().getHex(ae.getPosition());
         if (hex.containsTerrain(Terrains.WOODS)

@@ -45,7 +45,8 @@ v0.33.3 (SVN)
 + One shot ammo with 0 shots left no longer illegal in verifier
 + Bug: Megamek required "Helvetica" font
 + Bug: NPE in stop swarm attack if the swarmed unit was destroyed earlier in the phase
-+ Bug 1613504 Unloading BA from prone mech didn't work
++ Bug 1613504: Unloading BA from prone mech didn't work
++ Bug 1610653: Flying BA can be thrashed
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

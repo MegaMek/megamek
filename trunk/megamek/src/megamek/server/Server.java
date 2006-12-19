@@ -4590,24 +4590,22 @@ public class Server implements Runnable {
                     entity.setProne(true);
                     // check to see if we washed off infernos
                     checkForWashedInfernos(entity, curPos);
+                } else {
+                    // Being swarmed
+                    entity.setPosition(curPos);
+                    if (doDislodgeSwarmerSkillCheck(entity, rollTarget, curPos)) {
+                        // Entity falls
+                        curFacing = entity.getFacing();
+                        curPos = entity.getPosition();
+                        fellDuringMovement = true;
+                        break;
+                    }
+                    // roll failed, go prone but don't dislodge swarmers
+                    entity.setProne(true);
+                    // check to see if we washed off infernos
+                    checkForWashedInfernos(entity, curPos);
                     break;
                 }
-				// Being swarmed
-				entity.setPosition(curPos);
-				if (doDislodgeSwarmerSkillCheck(entity,
-				                                rollTarget,
-				                                curPos)) {
-				    // Entity falls
-				    curFacing = entity.getFacing();
-				    curPos = entity.getPosition();
-				    fellDuringMovement = true;
-				    break;
-				}
-				// roll failed, go prone but don't dislodge swarmers
-				entity.setProne(true);
-				// check to see if we washed off infernos
-				checkForWashedInfernos(entity, curPos);
-				break;
             }
 
             //going hull down

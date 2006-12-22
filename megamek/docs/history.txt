@@ -47,6 +47,7 @@ v0.33.3 (SVN)
 + Bug: NPE in stop swarm attack if the swarmed unit was destroyed earlier in the phase
 + Bug 1613504: Unloading BA from prone mech didn't work
 + Bug 1610653: Flying BA can be thrashed
++ Bug 1598816: Description of Game Option "Friendly Fire"
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

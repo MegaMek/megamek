@@ -3585,6 +3585,7 @@ public class Compute {
         Coords coords = te.getPosition();
         Entity newTarget = null;
         Entity tempEntity = null;
+        Entity attacker = game.getEntity(aeId);
         // first, check the hex of the original target
         Enumeration entities = game.getEnemyEntities(coords, te);
         while (entities.hasMoreElements()) {
@@ -3614,7 +3615,8 @@ public class Compute {
             entities = game.getFriendlyEntities(tempcoords, te);
             if (entities.hasMoreElements()) {
                 tempEntity = (Entity) entities.nextElement();
-                if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
+                if (!tempEntity.getTargetedBySwarm(aeId, weaponId) &&
+                    !attacker.equals(tempEntity)) {
                     // we found a target
                     return tempEntity;
                 }

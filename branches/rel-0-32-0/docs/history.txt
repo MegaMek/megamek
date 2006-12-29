@@ -17,6 +17,7 @@ v0.32.2 (SVN)
 + Bug 1613504: Unloading BA from prone mech didn't work
 + Bug 1610653: Flying BA can be thrashed
 + Bug 1598816: Description of Game Option "Friendly Fire"
++ Bug 1623985: Swarm LRM attacks source
 
 v0.32.1 (2006-10-31, 21:08 GMT+9)
 + Bug: NPE when firing infantry rifle

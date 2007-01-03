@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.32.3 (SVN)
+
 v0.32.2 (2007-01-03,3 14:)
 + Bug: bot died when only unarmed targets available
 + Bug: occasional exceptions observing bot v bot games

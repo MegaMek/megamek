@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.3 (SVN)
+v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"
 + RFE 1582909: "Under the effect of ECM (Stealth On)"
 + Updated rules for skids and sideslips

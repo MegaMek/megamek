@@ -7243,7 +7243,10 @@ public class Server implements Runnable {
                             || !counter.getType().hasFlag(WeaponType.F_AMS)
                             || !counter.isReady()
                             || counter.isMissing()
-                            || ae.hasShield() && ae.hasActiveShield(counter.getLocation(), false)) {
+                            // no AMS when a shield in the AMS location
+                            || ae.hasShield() && ae.hasActiveShield(counter.getLocation(), false)
+                            // AMS only fires against attacks coming into the arc the ams is covering
+                            || !Compute.isInArc(game, te.getId(), te.getEquipmentNum(counter), ae)) {
                         continue;
                     }
     

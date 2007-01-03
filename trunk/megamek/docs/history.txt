@@ -50,6 +50,8 @@ v0.33.3 (SVN)
 + Bug 1598816: Description of Game Option "Friendly Fire"
 + Bug 1623985: Swarm LRM attacks source
 + Bug: Tank BV calculation was missing misc. offensive equipment.
++ TW Rules change: AMS now works only against attacks that come from the firing
+  arc the AMS is covering
 
 v0.33.2 (2006-11-12 21:32 GMT+9)
 + Cleanup of type safety in bot code

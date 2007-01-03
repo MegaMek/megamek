@@ -630,6 +630,24 @@ public class Tank
             ammoBV += atype.getBV(this);
         }
         weaponBV += ammoBV;
+        
+        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
+        double oEquipmentBV = 0;
+        for (Mounted mounted : getMisc()) {
+            MiscType mtype = (MiscType)mounted.getType();
+ 
+            // don't count destroyed equipment
+            if (mounted.isDestroyed())
+                continue;
+
+            if (mtype.hasFlag(MiscType.F_ECM)
+                    || mtype.hasFlag(MiscType.F_AP_POD) 
+                    || mtype.hasFlag(MiscType.F_TARGCOMP)) //targ counted with weapons 
+                continue;
+            oEquipmentBV += mtype.getBV(this);
+        }
+        
+        weaponBV += oEquipmentBV;
 
         // adjust further for speed factor
         double[] speedFactorTable = {0.44,0.54,0.65,0.77,0.88,1,1.12,1.24,1.37,
@@ -638,13 +656,6 @@ public class Tank
         double speedFactor = 3.74;
         if(getOriginalRunMP() < speedFactorTable.length)
             speedFactor = speedFactorTable[getOriginalRunMP()];
-        /* Vehicles don't use the same speed factor calc as 'Mechs!
-        double speedFactor = getOriginalRunMP() - 5;
-        speedFactor /= 10;
-        speedFactor++;
-        speedFactor = Math.pow(speedFactor, 1.2);
-        speedFactor = Math.round(speedFactor * 100) / 100.0;
-        */
 
         obv = weaponBV * speedFactor;
 

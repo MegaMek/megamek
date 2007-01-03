@@ -2081,15 +2081,6 @@ public abstract class Mech
             double heatPenalty = ((maximumHeat - getHeatCapacity()) * 5);
             dbv = Math.max(1, dbv - heatPenalty);
         }
-
-        /*
-        ** The way the BMRr handles Mek Stealth Armor has been superceded.
-        // Add in Mek Stealth Armor effects to the OFFENSIVE Battle Rating.
-        if ( bHasStealthArmor ) {
-            maximumHeat += 10;
-        }
-        */
-
         // adjust for target movement modifier
         int runMP = getOriginalRunMPwithoutMASC();
         // factor in masc or tsm
@@ -2235,14 +2226,7 @@ public abstract class Mech
         speedFactor++;
         speedFactor = Math.pow(speedFactor, 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
-
-        /*
-        ** The way the BMRr handles Mek Stealth Armor has been superceded.
-        // Adjust for Steath Armor on Mek.
-        if ( bHasStealthArmor ) {
-            speedFactor += 0.2;
-        }
-        */
+        
         obv = weaponBV * speedFactor;
 
         // we get extra bv from c3 networks. a valid network requires at least 2 members

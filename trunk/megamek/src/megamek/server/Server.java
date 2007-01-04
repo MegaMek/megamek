@@ -20181,7 +20181,8 @@ public class Server implements Runnable {
 
         } // End entity-is-Mek
         else if (game.getBoard().contains(entity.getPosition())
-                && !game.getOptions().booleanOption("ejected_pilots_flee")) {
+                && !game.getOptions().booleanOption("ejected_pilots_flee")
+                && entity instanceof Tank) {
             int crewSize = Math.max(1, (int)(14+entity.getWeight())/15);
             MechWarrior pilot = new MechWarrior(entity);
             pilot.setChassis("Vehicle Crew");
@@ -20277,7 +20278,8 @@ public class Server implements Runnable {
         } // End entity-is-Mek
         else if (game.getBoard().contains(entity.getPosition())
                 && !game.getOptions().booleanOption("ejected_pilots_flee")
-                && game.getOptions().booleanOption("vehicles_can_eject")) {
+                && game.getOptions().booleanOption("vehicles_can_eject")
+                && entity instanceof Tank) {
             int crewSize = Math.max(1, (int)(14+entity.getWeight())/15);
             MechWarrior pilot = new MechWarrior(entity);
             pilot.setChassis("Vehicle Crew");

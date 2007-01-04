@@ -2,6 +2,7 @@
 ----------------
 v0.33.4 (SVN)
 + Bug: tool tips not displaying in ice hexes
++ Bug 1624745: Vehicle crew created when Battle Armor destroyed
 
 v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"

@@ -1402,7 +1402,7 @@ public class BoardView1
             } 
                 
             if (mhex.containsTerrain(Terrains.ICE)) {
-                int tf = mhex.getTerrain(Terrains.WOODS).getTerrainFactor();
+                int tf = mhex.getTerrain(Terrains.ICE).getTerrainFactor();
                 strings[stringsIndex] = Messages.getString("BoardView1.TipIce",new Object[]{tf});
                 stringsIndex += 1;
             }

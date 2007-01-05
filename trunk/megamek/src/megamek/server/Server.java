@@ -19024,6 +19024,9 @@ public class Server implements Runnable {
                 final IHex curHex = game.getBoard().getHex( coords );
                 final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
                 final int numFloors = Math.max(bridgeEl, curHex.terrainLevel( Terrains.BLDG_ELEV ));
+                
+                // Now collapse the building in this hex, so entities fall to the ground
+                game.getBoard().collapseBuilding( coords );
 
                 // Sort in elevation order
                 Collections.sort(vector, new Comparator<Entity>() {

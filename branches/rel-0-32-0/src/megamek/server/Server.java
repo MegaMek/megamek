@@ -3829,6 +3829,16 @@ public class Server implements Runnable {
                                 r = new Report(2081);
                                 r.subject = entity.getId();
                                 r.add(entity.getDisplayName(), true);
+                                //check for accidental stacking violation
+                                Entity violation = Compute.stackingViolation(game, entity.getId(), curPos);
+                                if(violation != null) {
+                                    int direction=curPos.direction(nextPos);
+                                    // target gets displaced, because of low elevation
+                                    Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), curPos, direction);
+                                    doEntityDisplacement(violation, curPos, targetDest, new PilotingRollData(violation.getId(), 0, "domino effect"));
+                                    // Update the violating entity's postion on the client.
+                                    entityUpdate( violation.getId() );
+                                }
                                 // stay here and stop skidding, see bug 1115608
                                 break;
                             }
@@ -4094,6 +4104,16 @@ public class Server implements Runnable {
                     r.add(entity.getDisplayName());
                     r.subject = entity.getId();
                     addReport(r);
+                    //check for accidental stacking violation
+                    Entity violation = Compute.stackingViolation(game, entity.getId(), curPos);
+                    if(violation != null) {
+                        // target gets displaced, because of low elevation
+                        int direction = lastPos.direction(curPos);
+                        Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), curPos, direction);
+                        doEntityDisplacement(violation, curPos, targetDest, new PilotingRollData(violation.getId(), 0, "domino effect"));
+                        // Update the violating entity's postion on the client.
+                        entityUpdate( violation.getId() );
+                    }
                     break;
                 }
             }
@@ -5830,45 +5850,50 @@ public class Server implements Runnable {
             doEntityFallsInto(entity, src, dest, roll);
             return;
         }
-		//move the entity into the new location gently
-		entity.setPosition(dest);
-		entity.setElevation(entity.elevationOccupied(destHex) - destHex.surface());
-		Entity violation = Compute.stackingViolation(game, entity.getId(), dest);
-		if (violation == null) {
-		    // move and roll normally
-		    r = new Report(2235);
-		    r.indent();
-		    r.subject = entity.getId();
-		    r.addDesc(entity);
-		    r.add(dest.getBoardNum(), true);
-		    addReport(r);
-		} else {
-		    // domino effect: move & displace target
-		    r = new Report(2240);
-		    r.indent();
-		    r.subject = entity.getId();
-		    r.addDesc(entity);
-		    r.add(dest.getBoardNum(), true);
-		    r.addDesc(violation);
-		    addReport(r);
-		}
-		// trigger any special things for moving to the new hex
-		doEntityDisplacementMinefieldCheck(entity, src, dest);
-		doSetLocationsExposure(entity, destHex, false, entity.getElevation());
-		if (roll != null) {
-		    game.addPSR(roll);
-		}
-		// Update the entity's postion on the client.
-		entityUpdate( entity.getId() );
+        //unstick the entity if it was stuck in swamp
+        entity.setStuck(false);
+        // move the entity into the new location gently
+        entity.setPosition(dest);
+        entity.setElevation(entity.elevationOccupied(destHex)
+                - destHex.surface());
+        Entity violation = Compute
+                .stackingViolation(game, entity.getId(), dest);
+        if (violation == null) {
+            // move and roll normally
+            r = new Report(2235);
+            r.indent();
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(dest.getBoardNum(), true);
+            addReport(r);
+        } else {
+            // domino effect: move & displace target
+            r = new Report(2240);
+            r.indent();
+            r.subject = entity.getId();
+            r.addDesc(entity);
+            r.add(dest.getBoardNum(), true);
+            r.addDesc(violation);
+            addReport(r);
+        }
+        // trigger any special things for moving to the new hex
+        doEntityDisplacementMinefieldCheck(entity, src, dest);
+        doSetLocationsExposure(entity, destHex, false, entity.getElevation());
+        if (roll != null) {
+            game.addPSR(roll);
+        }
+        // Update the entity's postion on the client.
+        entityUpdate(entity.getId());
 
-		if(violation != null) {
-		    doEntityDisplacement(violation, dest, dest.translated(direction), new PilotingRollData(violation.getId(), 0, "domino effect"));
-		    // Update the violating entity's postion on the client,
-		    // if it didn't get displaced off the board.
-		    if ( !game.isOutOfGame(violation) ) {
-		        entityUpdate( violation.getId() );
-		    }
-		}
+        if (violation != null) {
+            doEntityDisplacement(violation, dest, dest.translated(direction),
+                    new PilotingRollData(violation.getId(), 0, "domino effect"));
+            // Update the violating entity's postion on the client,
+            // if it didn't get displaced off the board.
+            if (!game.isOutOfGame(violation)) {
+                entityUpdate(violation.getId());
+            }
+        }
     }
 
     private void doEntityDisplacementMinefieldCheck(Entity entity, Coords src, Coords dest) {

@@ -958,6 +958,55 @@ public class Board implements Serializable, IBoard {
     }
 
     /**
+     * The given building hex has collapsed.  Remove it from the board and
+     * replace it with rubble.
+     *
+     * @param   other - the <code>Building</code> that has collapsed.
+     */
+    public void collapseBuilding( Coords coords ) {
+        final IHex curHex = this.getHex( coords );
+        int elevation = curHex.getElevation();
+
+        // Remove the building from the building map.
+        this.bldgByCoords.remove( coords );
+        
+        // determine type of rubble
+        int type = curHex.terrainLevel(Terrains.BUILDING);
+        type = Math.max(type, curHex.terrainLevel(Terrains.BRIDGE));
+        type = Math.max(type, curHex.terrainLevel(Terrains.FUEL_TANK));
+
+        // Remove the building terrain.
+        curHex.removeTerrain(Terrains.BUILDING);
+        curHex.removeTerrain(Terrains.BLDG_CF);
+        curHex.removeTerrain(Terrains.BLDG_ELEV);
+        curHex.removeTerrain(Terrains.FUEL_TANK);
+        curHex.removeTerrain(Terrains.FUEL_TANK_CF);
+        curHex.removeTerrain(Terrains.FUEL_TANK_ELEV);
+        curHex.removeTerrain(Terrains.BRIDGE);
+        curHex.removeTerrain(Terrains.BRIDGE_CF);
+        curHex.removeTerrain(Terrains.BRIDGE_ELEV);
+
+        // Add rubble terrain that matches the building type.
+        if(type > 0) {
+            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.RUBBLE, type));
+        }
+
+        // Any basement reduces the hex's elevation.
+        if ( curHex.containsTerrain(Terrains.BLDG_BASEMENT)) {
+System.out.println("Setting basement elevation: "+elevation+":"+curHex);
+            elevation -= curHex.terrainLevel(Terrains.BLDG_BASEMENT);
+            curHex.removeTerrain(Terrains.BLDG_BASEMENT);
+            curHex.setElevation(elevation);
+        }
+
+        // Update the hex.
+        // TODO : Do I need to initialize it???
+        // ASSUMPTION: It's faster to update one at a time.
+        this.setHex( coords, curHex );
+   
+    }
+    
+    /**
      * The given building has collapsed.  Remove it from the board and
      * replace it with rubble.
      *
@@ -972,39 +1021,7 @@ public class Board implements Serializable, IBoard {
         Enumeration bldgCoords = bldg.getCoords();
         while ( bldgCoords.hasMoreElements() ) {
             final Coords coords = (Coords) bldgCoords.nextElement();
-            final IHex curHex = this.getHex( coords );
-            int elevation = curHex.getElevation();
-
-            // Remove the building from the building map.
-            this.bldgByCoords.remove( coords );
-
-            // Remove the building terrain.
-            curHex.removeTerrain(Terrains.BUILDING);
-            curHex.removeTerrain(Terrains.BLDG_CF);
-            curHex.removeTerrain(Terrains.BLDG_ELEV);
-            curHex.removeTerrain(Terrains.FUEL_TANK);
-            curHex.removeTerrain(Terrains.FUEL_TANK_CF);
-            curHex.removeTerrain(Terrains.FUEL_TANK_ELEV);
-            curHex.removeTerrain(Terrains.BRIDGE);
-            curHex.removeTerrain(Terrains.BRIDGE_CF);
-            curHex.removeTerrain(Terrains.BRIDGE_ELEV);
-
-            // Add rubble terrain that matches the building type.
-            curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.RUBBLE, bldg.getType()));
-
-            // Any basement reduces the hex's elevation.
-            if ( curHex.containsTerrain(Terrains.BLDG_BASEMENT)) {
-System.out.println("Setting basement elevation: "+elevation+":"+curHex);
-                elevation -= curHex.terrainLevel(Terrains.BLDG_BASEMENT);
-                curHex.removeTerrain(Terrains.BLDG_BASEMENT);
-                curHex.setElevation(elevation);
-            }
-
-            // Update the hex.
-            // TODO : Do I need to initialize it???
-            // ASSUMPTION: It's faster to update one at a time.
-            this.setHex( coords, curHex );
-
+            collapseBuilding(coords);
         } // Handle the next building hex.
 
     } // End public void collapseBuilding( Building )

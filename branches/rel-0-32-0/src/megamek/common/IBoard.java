@@ -290,6 +290,14 @@ public interface IBoard {
     public abstract void collapseBuilding(Building bldg);
     
     /**
+     * The given building hex has collapsed.  Remove it from the board and
+     * replace it with rubble.
+     *
+     * @param   other - the <code>Building</code> that has collapsed.
+     */
+    public abstract void collapseBuilding( Coords coords );
+    
+    /**
      * Update the construction factors on an array of buildings.
      *
      * @param   bldgs - the <code>Vector</code> of <code>Building</code>

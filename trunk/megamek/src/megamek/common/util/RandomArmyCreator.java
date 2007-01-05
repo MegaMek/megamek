@@ -210,6 +210,10 @@ public class RandomArmyCreator {
                             && m.getType() != TechConstants.T_IS_LEVEL_2
                             && m.getType() != TechConstants.T_CLAN_LEVEL_2)
                         continue;
+                } else if (p.tech == TechConstants.T_IS_LEVEL_2_ALL) {
+                    if (m.getType() != TechConstants.T_IS_LEVEL_1
+                            && m.getType() != TechConstants.T_IS_LEVEL_2)
+                        continue;
                 } else {
                     continue;
                 }
@@ -246,28 +250,24 @@ public class RandomArmyCreator {
         int tankWeight = countBV(allTanks) / Math.max(1, allTanks.size());
         int infWeight = countBV(allInfantry) / Math.max(1, allInfantry.size());
         int baWeight = countBV(allBA) / Math.max(1, allBA.size());
-
-        int baBV = (p.ba * baWeight * p.maxBV)
-        / ((p.mechs * mechWeight) + (p.tanks * tankWeight)
-                + (p.infantry * infWeight) + (p.ba * baWeight));
+        int helpWeight = Math.max(1, p.mechs * mechWeight + p.tanks*tankWeight + 
+                p.infantry*infWeight + p.tanks*tankWeight);
+        
+        int baBV = (p.ba * baWeight * p.maxBV) / helpWeight;
         if(p.ba > 0 && allBA.size() > 0) {
             baBV = Math.max(baBV, p.ba * allBA.get(0).getBV());
             baBV = Math.min(baBV, p.ba * allBA.get(allBA.size()-1).getBV());
         } else {
             baBV = 0;
         }
-        int mechBV = (p.mechs * mechWeight * p.maxBV)
-                / ((p.mechs * mechWeight) + (p.tanks * tankWeight)
-                        + (p.infantry * infWeight) + (p.ba * baWeight));
+        int mechBV = (p.mechs * mechWeight * p.maxBV) / helpWeight;
         if(p.mechs > 0 && allMechs.size() > 0) {
             mechBV = Math.max(mechBV, p.mechs * allMechs.get(0).getBV());
             mechBV = Math.min(mechBV, p.mechs * allMechs.get(allMechs.size()-1).getBV());
         } else {
             mechBV = 0;
         }
-        int tankBV = (p.tanks * tankWeight * p.maxBV)
-                / ((p.mechs * mechWeight) + (p.tanks * tankWeight)
-                        + (p.infantry * infWeight) + (p.ba * baWeight));
+        int tankBV = (p.tanks * tankWeight * p.maxBV) / helpWeight;
         if(p.tanks > 0 && allTanks.size() > 0) {
             tankBV = Math.max(tankBV, p.tanks * allTanks.get(0).getBV());
             tankBV = Math.min(tankBV, p.tanks * allTanks.get(allTanks.size()-1).getBV());

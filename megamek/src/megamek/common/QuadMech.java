@@ -133,11 +133,7 @@ public class QuadMech extends Mech {
 		wmp -= (heat / 5);
 		// TSM negates some heat
 		if (heat >= 9 && hasTSM()) {
-			if (heat == 9) {
-				wmp += 2;
-			} else {
-				wmp += 1;
-			}
+                    wmp += 2;
 		}
 		// gravity
 		if (gravity)

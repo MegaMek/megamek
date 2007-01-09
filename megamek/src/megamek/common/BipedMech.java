@@ -124,12 +124,7 @@ public class BipedMech extends Mech {
         
         // TSM negates some heat
         if (heat >= 9 && hasTSM()) {
-            if (heat == 9) {
-                wmp += 2;
-            }
-            else {
-                wmp += 1;
-            }
+            wmp += 2;
         }
         
         wmp = Math.max(wmp - getCargoMpReduction(), 0);

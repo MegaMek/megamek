@@ -4,9 +4,11 @@ v0.33.4 (SVN)
 + Bug: tool tips not displaying in ice hexes
 + Bug 1624745: Vehicle crew created when Battle Armor destroyed
 + Bug 1627200: Div by Zero Exception in Random Unit Generator
++ Bug 1631584: Bug in TSM
 + Bug 1211496: possible to have 2 mechs in same hex with swamps
 + Bug 1453975: stuck-in-swamp mech that gets displaced can't get unstuck
 + Bug 1609577: Problems after fall from a lvl 2 collapsing bridge
++ Bug 1631584: Bug in TSM
 
 v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"

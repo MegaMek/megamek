@@ -9,6 +9,7 @@ v0.33.4 (SVN)
 + Bug 1453975: stuck-in-swamp mech that gets displaced can't get unstuck
 + Bug 1609577: Problems after fall from a lvl 2 collapsing bridge
 + Bug 1631584: Bug in TSM
++ Bug 1635383: Pilot takes 2 damage from Tandem Charge missiles
 
 v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"

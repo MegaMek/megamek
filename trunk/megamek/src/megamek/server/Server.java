@@ -13404,7 +13404,7 @@ public class Server implements Runnable {
         //effect the pilot.
         //TC SRM's that hit the head do external and internal damage but its one hit and shouldn't cause
         //2 hits to the pilot.
-        boolean isHeadHit = te instanceof Mech && ((Mech) te).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED && hit.getLocation() == Mech.LOC_HEAD && hit.getSpecCritMod() != 99;
+        boolean isHeadHit = te instanceof Mech && ((Mech) te).getCockpitType() != Mech.COCKPIT_TORSO_MOUNTED && hit.getLocation() == Mech.LOC_HEAD && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS);
 
         // show Locations which have rerolled with Edge
         HitData undoneLocation = hit.getUndoneLocation();

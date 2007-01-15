@@ -1209,5 +1209,13 @@ public class Tank
             this.addTransporter( new BattleArmorHandlesTank() );
         }
     }
+    
+    
+    /**
+     * Tanks can't spot when stunned.
+     */
+    public boolean canSpot() {
+        return super.canSpot() && this.getStunnedTurns() == 0;
+    }
 
 }

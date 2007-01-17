@@ -2192,6 +2192,7 @@ public class Server implements Runnable {
             HashSet<Integer> doneTeams = new HashSet<Integer>();
             for(Enumeration e = game.getPlayers();e.hasMoreElements();) {
                 Player player = (Player)e.nextElement();
+                if(player.isObserver()) continue;
                 int fbv = 0;
                 int ebv = 0;
                 int eibv = 0;
@@ -2204,6 +2205,7 @@ public class Server implements Runnable {
                 
                 for(Enumeration f = game.getPlayers();f.hasMoreElements();) {
                     Player other = (Player)f.nextElement();
+                    if(other.isObserver()) continue;
                     if(other.isEnemyOf(player)) {
                         ebv += other.getBV();
                         eibv += other.getInitialBV();
@@ -2214,7 +2216,7 @@ public class Server implements Runnable {
                 
                 if(game.getOptions().booleanOption("use_bv_ratio")) {
                     if(ebv == 0 || (100*fbv)/ebv >= game.getOptions().intOption("bv_ratio_percent")) {
-                        Report r = new Report(7100);
+                        Report r = new Report(7100, Report.PUBLIC);
                         if(team == Player.TEAM_NONE) {
                             r.add(player.getName());
                             Integer vc=winPlayers.get(player.getId());
@@ -2233,7 +2235,7 @@ public class Server implements Runnable {
                 if(game.getOptions().booleanOption("use_bv_destroyed")) {
                     if((ebv * 100) / eibv <=
                         100 - game.getOptions().intOption("bv_destroyed_percent")) {
-                        Report r = new Report(7105);
+                        Report r = new Report(7105, Report.PUBLIC);
                         if(team == Player.TEAM_NONE) {
                             r.add(player.getName());
                             Integer vc=winPlayers.get(player.getId());
@@ -2261,7 +2263,7 @@ public class Server implements Runnable {
                 if(wonPlayer != Player.PLAYER_NONE)
                     draw = true;
                 wonPlayer = e.getKey();
-                Report r = new Report(7200);
+                Report r = new Report(7200, Report.PUBLIC);
                 r.add(game.getPlayer(wonPlayer).getName());
                 addReport(r);
             }
@@ -2271,7 +2273,7 @@ public class Server implements Runnable {
                 if(wonTeam != Player.TEAM_NONE || wonPlayer != Player.PLAYER_NONE)
                     draw = true;
                 wonTeam = e.getKey();
-                Report r = new Report(7200);
+                Report r = new Report(7200, Report.PUBLIC);
                 r.add("Team "+wonTeam);
                 addReport(r);
             }
@@ -16134,8 +16136,8 @@ public class Server implements Runnable {
      *          This value will be <code>null</code> if the check is the
      *          result of an attack, and non-null if it occurs during movement.
      */
-    private Vector breachCheck(Entity entity, int loc, IHex hex) {
-        Vector vDesc = new Vector();
+    private Vector<Report> breachCheck(Entity entity, int loc, IHex hex) {
+        Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
         // BattleArmor does not breach

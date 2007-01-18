@@ -13,6 +13,7 @@ v0.33.4 (SVN)
 + Bug: Tanks shouldn't be able to spot when stunned.
 + Bug: Victory conditions now explicitly ignore observers
   and fixed victory report error in double blind.
++ Added new mechs from RS3058U and 3 missing BA variants
 
 v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"

@@ -56,6 +56,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Panel;
+import java.awt.Scrollbar;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -167,9 +169,14 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         frame.getContentPane().setLayout(new BorderLayout());
 
         // Create a scroll bars to surround the board view.
-        JScrollPane scrollPane = new JScrollPane(bv);
-        bv.setScrollbars(scrollPane.getVerticalScrollBar(), scrollPane.getHorizontalScrollBar());
-        frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+        Panel scrollPane = new Panel();
+        scrollPane.setLayout (new BorderLayout());
+        Scrollbar vertical = new Scrollbar (Scrollbar.VERTICAL);
+        Scrollbar horizontal = new Scrollbar (Scrollbar.HORIZONTAL);
+        scrollPane.add (bv, BorderLayout.CENTER);
+        scrollPane.add (vertical, BorderLayout.EAST);
+        scrollPane.add (horizontal, BorderLayout.SOUTH);
+        frame.add(scrollPane, BorderLayout.CENTER);
 
         // Assign the scrollbars to the board viewer.
         frame.getContentPane().add(this, BorderLayout.EAST);

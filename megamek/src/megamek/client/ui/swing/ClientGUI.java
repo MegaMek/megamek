@@ -47,11 +47,8 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -64,8 +61,12 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.Panel;
 import java.awt.Point;
+import java.awt.PopupMenu;
 import java.awt.Rectangle;
+import java.awt.Scrollbar;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -106,12 +107,12 @@ public class ClientGUI
     // keep me
     private ChatterBox cb;
     public BoardView1 bv;
-    private JScrollPane scroller;
+    private Panel scroller;
     public JDialog mechW;
     public MechDisplay mechD;
     public JDialog minimapW;
     public MiniMap minimap;
-    private JPopupMenu popup = new JPopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
+    private PopupMenu popup = new PopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
     private UnitOverview uo;
     private Ruler ruler; // added by kenn
     protected JComponent curPanel;
@@ -308,8 +309,20 @@ public class ClientGUI
             bv = new BoardView1(client.game, frame, this);
 
             // Place the board viewer in a set of scrollbars.
-            scroller = new JScrollPane(bv);
-            bv.setScrollbars(scroller.getVerticalScrollBar(), scroller.getHorizontalScrollBar());
+            scroller = new Panel();
+            scroller.setLayout(new BorderLayout());
+            Scrollbar vertical = new Scrollbar(Scrollbar.VERTICAL);
+            Scrollbar horizontal = new Scrollbar(Scrollbar.HORIZONTAL);
+            scroller.add(bv, BorderLayout.CENTER);
+            // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
+            if (System.getProperty
+                    ("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
+                    ("false")) { //$NON-NLS-1$
+                // Assign the scrollbars to the board viewer.
+                scroller.add(vertical, BorderLayout.EAST);
+                scroller.add(horizontal, BorderLayout.SOUTH);
+                bv.setScrollbars(vertical, horizontal);
+            }
         } catch (IOException e) {
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
@@ -850,7 +863,7 @@ public class ClientGUI
         if (!bv.mayDrawPopup())
             return;
         fillPopup(bv.getCoordsAt(point));
-        if (popup.getSubElements().length > 0) {
+        if (popup.getItemCount() > 0) {
             popup.show(bv, point.x, point.y);
         }
     }
@@ -933,7 +946,7 @@ public class ClientGUI
                 }
             }
         }
-        if (popup.getSubElements().length > 0) {
+        if (popup.getItemCount() > 0) {
             popup.addSeparator();
         }
 
@@ -945,7 +958,7 @@ public class ClientGUI
 
         // add target options
         if (canTargetEntities()) {
-            if (popup.getSubElements().length > 0) {
+            if (popup.getItemCount() > 0) {
                 popup.addSeparator();
             }
             for (Enumeration i = client.game.getEntities(coords); i.hasMoreElements();) {
@@ -1229,7 +1242,7 @@ public class ClientGUI
     /**
      * A menu item that lives to view an entity.
      */
-    private class ViewMenuItem extends JMenuItem implements ActionListener {
+    private class ViewMenuItem extends MenuItem implements ActionListener {
         Entity entity;
 
         public ViewMenuItem(Entity entity) {
@@ -1251,7 +1264,7 @@ public class ClientGUI
      * this during movement, firing & physical phases.  (Deployment would
      * just be silly.)
      */
-    private class SelectMenuItem extends JMenuItem implements ActionListener {
+    private class SelectMenuItem extends MenuItem implements ActionListener {
         Entity entity;
 
         public SelectMenuItem(Entity entity) {
@@ -1275,7 +1288,7 @@ public class ClientGUI
      * A menu item that will target an entity, provided that it's sensible to
      * do so
      */
-    private class TargetMenuItem extends JMenuItem implements ActionListener {
+    private class TargetMenuItem extends MenuItem implements ActionListener {
         Targetable target;
 
         public TargetMenuItem(Targetable t) {

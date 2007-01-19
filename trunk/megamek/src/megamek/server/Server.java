@@ -13344,7 +13344,7 @@ public class Server implements Runnable {
         }
     }
 
-    private Vector damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
+    private Vector<Report> damageEntity(Entity te, HitData hit, int damage, boolean ammoExplosion) {
         return damageEntity(te, hit, damage, ammoExplosion, 0, false, false);
     }
 
@@ -15121,7 +15121,9 @@ public class Server implements Runnable {
                     if (!m.getType().isExplosive()) {
                         continue;
                     }
-                    int tmp = m.getShotsLeft() * ((AmmoType)m.getType()).getDamagePerShot();
+                    int tmp = m.getShotsLeft() 
+                    * ((AmmoType)m.getType()).getDamagePerShot() 
+                    * ((AmmoType)m.getType()).getRackSize();
                     damage += tmp;
                     r = new Report(6390);
                     r.subject = t.getId();
@@ -15141,7 +15143,7 @@ public class Server implements Runnable {
                 Vector<Entity> passengers = t.getLoadedUnits();
                 Entity target = passengers.get(Compute.randomInt(passengers.size()));
                 hit = target.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                vDesc.addAll(damageEntity(t, hit, 10)); //FIXME should be original weapon damage
+                vDesc.addAll(damageEntity(target, hit, 5)); //FIXME should be original weapon damage
                 break;
             case Tank.CRIT_COMMANDER:
                 r = new Report(6600);
@@ -15665,7 +15667,7 @@ public class Server implements Runnable {
     /**
      * Rolls one critical hit
      */
-    private Vector oneCriticalEntity(Entity en, int loc) {
+    private Vector<Report> oneCriticalEntity(Entity en, int loc) {
         return criticalEntity(en, loc, 0, false);
     }
 

@@ -30,7 +30,7 @@ import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 
-import javax.swing.JComponent;
+import java.awt.Component;
 import java.awt.Image;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -97,7 +97,7 @@ public class MechTileset {
         this.dir = dir;
     }
 
-    public Image imageFor(Entity entity, JComponent comp) {
+    public Image imageFor(Entity entity, Component comp) {
         MechEntry entry = entryFor(entity);
         if (entry.getImage() == null) {
             entry.loadImage(comp);
@@ -277,7 +277,7 @@ public class MechTileset {
             return image;
         }
 
-        public void loadImage(JComponent comp) {
+        public void loadImage(Component comp) {
             //            System.out.println("loading mech image...");
             image = comp.getToolkit().getImage(dir + imageFile);
         }

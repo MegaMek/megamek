@@ -27,7 +27,7 @@ import megamek.common.ITerrain;
 import megamek.common.Terrains;
 import megamek.common.util.StringUtil;
 
-import javax.swing.JComponent;
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.io.BufferedReader;
@@ -74,7 +74,7 @@ public class HexTileset {
      * Any terrain left is used to match a base image for the hex.  This time,
      * a match can be any value, and the first, best image is used.
      */
-    public synchronized Object[] assignMatch(IHex hex, JComponent comp) {
+    public synchronized Object[] assignMatch(IHex hex, Component comp) {
         IHex hexCopy = hex.duplicate();
         List supers = supersFor(hexCopy, comp);
         Image base = baseFor(hexCopy, comp);
@@ -84,7 +84,7 @@ public class HexTileset {
         return pair;
     }
 
-    public synchronized Image getBase(IHex hex, JComponent comp) {
+    public synchronized Image getBase(IHex hex, Component comp) {
         Image i = hexToImageCache.get(hex);
         if (i == null) {
             Object[] pair = assignMatch(hex, comp);
@@ -93,7 +93,7 @@ public class HexTileset {
         return i;
     }
 
-    public synchronized List<Image> getSupers(IHex hex, JComponent comp) {
+    public synchronized List<Image> getSupers(IHex hex, Component comp) {
         List<Image> l = hexToImageListCache.get(hex);
         if (l == null) {
             Object[] pair = assignMatch(hex, comp);
@@ -108,7 +108,7 @@ public class HexTileset {
      * elements from the tileset hex are removed from the hex.  Thus you want
      * to pass a copy of the original to this function.
      */
-    private List supersFor(IHex hex, JComponent comp) {
+    private List supersFor(IHex hex, Component comp) {
         ArrayList matches = new ArrayList();
         
         // find superimposed image matches
@@ -133,7 +133,7 @@ public class HexTileset {
      * Returns the best matching base image for this hex.  This works best if
      * any terrain with a "super" image is removed.
      */
-    private Image baseFor(IHex hex, JComponent comp) {
+    private Image baseFor(IHex hex, Component comp) {
         HexEntry bestMatch = null;
         double match = -1;
 
@@ -209,7 +209,7 @@ public class HexTileset {
     /**
      * Initializes all the images in this tileset and adds them to the tracker
      */
-    public void loadAllImages(JComponent comp, MediaTracker tracker) {
+    public void loadAllImages(Component comp, MediaTracker tracker) {
         for (Iterator i = bases.iterator(); i.hasNext();) {
             HexEntry entry = (HexEntry) i.next();
             if (entry.getImage() == null) {
@@ -247,7 +247,7 @@ public class HexTileset {
     /**
      * Loads the image for this hex.
      */
-    public void loadHexImage(IHex hex, JComponent comp, MediaTracker tracker) {
+    public void loadHexImage(IHex hex, Component comp, MediaTracker tracker) {
 
     }
 
@@ -379,7 +379,7 @@ public class HexTileset {
             return "data/images/hexes/" + imageFile; //$NON-NLS-1$
         }
 
-        public Image getImage(JComponent comp) {
+        public Image getImage(Component comp) {
             if (images == null) {
                 loadImage(comp);
             }
@@ -390,7 +390,7 @@ public class HexTileset {
 			return (Image) images.firstElement();
         }
 
-        public void loadImage(JComponent comp) {
+        public void loadImage(Component comp) {
             images = new Vector();
             for (int i = 0; i < filenames.size(); i++) {
                 String filename = (String) filenames.elementAt(i);

@@ -39,8 +39,9 @@ import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
+
+import java.awt.Component;
 import java.awt.Image;
 import java.awt.MediaTracker;
 import java.awt.image.FilteredImageSource;
@@ -64,7 +65,7 @@ import java.util.List;
  */
 public class TilesetManager implements IPreferenceChangeListener {
     // component to load images to
-    private JComponent comp;
+    private Component comp;
 
     // keep tracking of loading images
     private MediaTracker tracker;
@@ -101,7 +102,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     /**
      * Creates new TilesetManager
      */
-    public TilesetManager(JComponent comp) throws IOException {
+    public TilesetManager(Component comp) throws IOException {
         this.comp = comp;
         tracker = new MediaTracker(comp);
         try {
@@ -457,17 +458,17 @@ public class TilesetManager implements IPreferenceChangeListener {
         private Image camo;
         private Image[] facings = new Image[6];
         private Image[] wreckFacings = new Image[6];
-        private JComponent comp;
+        private Component comp;
 
         private static final int IMG_WIDTH = 84;
         private static final int IMG_HEIGHT = 72;
         private static final int IMG_SIZE = IMG_WIDTH * IMG_HEIGHT;
 
-        public EntityImage(Image base, int tint, Image camo, JComponent comp) {
+        public EntityImage(Image base, int tint, Image camo, Component comp) {
             this(base, null, tint, camo, comp);
         }
 
-        public EntityImage(Image base, Image wreck, int tint, Image camo, JComponent comp) {
+        public EntityImage(Image base, Image wreck, int tint, Image camo, Component comp) {
             this.base = base;
             this.tint = tint;
             this.camo = camo;

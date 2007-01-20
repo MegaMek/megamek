@@ -425,4 +425,8 @@ public class Engine implements Serializable
         }
     }
 
+    public int getEngineType() {
+        return engineType;
+    }
+
 } // End class Engine

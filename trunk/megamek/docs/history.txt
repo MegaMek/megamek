@@ -17,6 +17,7 @@ v0.33.4 (SVN)
 + Moved BoardView1 back to AWT so that at least it works...
 + Tank critical hits - ammo explosion damage wrong
 + Tank critical hits - cargo damage applied to tank
++ MtfConvert now also converts tanks to .blk format
 
 v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"

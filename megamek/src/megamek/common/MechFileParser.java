@@ -51,7 +51,7 @@ import java.util.zip.ZipFile;
 
 public class MechFileParser {
     private Entity m_entity = null;
-    private static Vector canonUnitNames = null;
+    private static Vector<String> canonUnitNames = null;
     private static final File ROOT = new File(PreferenceManager.getClientPreferences().getMechDirectory());
     private static final File OFFICIALUNITS = new File(ROOT, "OfficialUnitList.txt");
 
@@ -229,7 +229,7 @@ public class MechFileParser {
         ent.setCanon(false);//Guilty until proven innocent
         try {
             if (canonUnitNames==null) {
-                canonUnitNames=new Vector();
+                canonUnitNames=new Vector<String>();
                 //init the list.
                 BufferedReader br = null;
                 try {
@@ -257,7 +257,15 @@ public class MechFileParser {
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out.println("Files in a supported MegaMek file format can be specified on\nthe command line.  Multiple files may be processed at once.\nThe supported formats are:\n\t.mtf    The native MegaMek format that your file will be converted into\n\n\t.blk    Another native MegaMek format\n\t.hmp    Heavy Metal Pro (c)RCW Enterprises\n\t.mep    MechEngineer Pro (c)Howling Moon SoftWorks\n\t.xml    The Drawing Board (c)Blackstone Interactive\n\nNote: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.\n");
+            System.out.println("Files in a supported MegaMek file format can be specified on");
+            System.out.println("the command line.  Multiple files may be processed at once.");
+            System.out.println("The supported formats are:");
+            System.out.println("\t.mtf    The native MegaMek format that your file will be converted into");
+            System.out.println("\t.blk    Another native MegaMek format");
+            System.out.println("\t.hmp    Heavy Metal Pro (c)RCW Enterprises");
+            System.out.println("\t.mep    MechEngineer Pro (c)Howling Moon SoftWorks");
+            System.out.println("\t.xml    The Drawing Board (c)Blackstone Interactive");
+            System.out.println("Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
             MechFileParser.getResponse("Press <enter> to exit...");
             return;
         }
@@ -274,8 +282,14 @@ public class MechFileParser {
             BufferedWriter out = null;
             try {
                 MechFileParser mfp = new MechFileParser(file);
-                out = new BufferedWriter(new FileWriter(outFile));
-                out.write(((Mech)mfp.getEntity()).getMtf());
+                Entity e = mfp.getEntity();
+                if(e instanceof Mech) {
+                    out = new BufferedWriter(new FileWriter(outFile));
+                    out.write(((Mech)e).getMtf());
+                }
+                else if (e instanceof Tank) {
+                    BLKTankFile.encode(outFile.toString(), (Tank)e);
+                }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 MechFileParser.getResponse("Press <enter> to exit...");

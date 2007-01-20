@@ -273,22 +273,23 @@ public class MechFileParser {
             String filename = args[i];
             File file = new File(filename);
             String outFilename = filename.substring(0, filename.lastIndexOf("."));
-            outFilename += ".mtf";
-            File outFile = new File(outFilename);
-            if (outFile.exists()) {
-                if (!MechFileParser.getResponse("File already exists, overwrite? "))
-                    return;
-            }
             BufferedWriter out = null;
             try {
                 MechFileParser mfp = new MechFileParser(file);
                 Entity e = mfp.getEntity();
                 if(e instanceof Mech) {
+                    outFilename += ".mtf";
+                    File outFile = new File(outFilename);
+                    if (outFile.exists()) {
+                        if (!MechFileParser.getResponse("File already exists, overwrite? "))
+                            return;
+                    }
                     out = new BufferedWriter(new FileWriter(outFile));
                     out.write(((Mech)e).getMtf());
                 }
                 else if (e instanceof Tank) {
-                    BLKTankFile.encode(outFile.toString(), (Tank)e);
+                    outFilename += ".blk";
+                    BLKTankFile.encode(outFilename, (Tank)e);
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());

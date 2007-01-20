@@ -18,6 +18,7 @@ v0.33.4 (SVN)
 + Tank critical hits - ammo explosion damage wrong
 + Tank critical hits - cargo damage applied to tank
 + MtfConvert now also converts tanks to .blk format
++ 3058U vehicles
 
 v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"

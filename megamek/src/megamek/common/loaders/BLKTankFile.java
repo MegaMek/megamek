@@ -33,6 +33,7 @@ import megamek.common.Mounted;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
+import megamek.common.VTOL;
 import megamek.common.util.*;
 
 public class BLKTankFile extends BLKFile implements IMechLoader {    
@@ -180,6 +181,10 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
     public static void encode(String fileName, Tank t) {
         BuildingBlock blk = new BuildingBlock();
         blk.createNewBlock();
+        if(t instanceof VTOL)
+            blk.writeBlockData("UnitType", "VTOL");
+        else
+            blk.writeBlockData("UnitType", "Tank");
         blk.writeBlockData("blockversion", 1);
         blk.writeBlockData("Name", t.getChassis());
         blk.writeBlockData("Model", t.getModel());
@@ -254,7 +259,8 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         for(Mounted m:t.getEquipment()) {
             String name = m.getType().getInternalName();
             int loc = m.getLocation();
-            eq.get(loc).add(name);
+            if(loc != Entity.LOC_NONE)
+                eq.get(loc).add(name);
         }
         for(int i=0;i<t.locations();i++) {
             blk.writeBlockData(t.getLocationName(i)+" Equipment", eq.get(i));

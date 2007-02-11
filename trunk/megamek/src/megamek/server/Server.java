@@ -607,8 +607,10 @@ public class Server implements Runnable {
             System.out.println( who );
 
             sendServerChat( who );
+            
 
         } // Found the player
+
     }
 
     /**
@@ -1093,10 +1095,28 @@ public class Server implements Runnable {
     }
 
     /**
+     * are we currently in a reporting phase
+     * @return <code>true</code> if we are or <code>false</code> if not.
+     */
+    private boolean isReportingPhase() {
+        
+        if ( game.getPhase() == IGame.PHASE_FIRING_REPORT 
+                || game.getPhase() == IGame.PHASE_INITIATIVE_REPORT
+                || game.getPhase() == IGame.PHASE_MOVEMENT_REPORT
+                || game.getPhase() == IGame.PHASE_OFFBOARD_REPORT
+                || game.getPhase() == IGame.PHASE_PHYSICAL_REPORT )
+            return true;
+        
+        return false;
+    }
+    
+    /**
      * Called at the beginning of certain phases to make
      * every player not ready.
      */
     private void resetPlayersDone() {
+        if ( isReportingPhase() )
+            return;
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
             player.setDone(false);
@@ -1109,6 +1129,8 @@ public class Server implements Runnable {
      * every active player not ready.
      */
     private void resetActivePlayersDone() {
+        if ( isReportingPhase() )
+            return;
         for (Enumeration i = game.getPlayers(); i.hasMoreElements();) {
             final Player player = (Player)i.nextElement();
 

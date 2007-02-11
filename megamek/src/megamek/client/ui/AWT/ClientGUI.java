@@ -38,6 +38,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
+import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
@@ -1460,6 +1461,16 @@ public class ClientGUI
             cb.moveToEnd();
         }
 
+        public void gamePlayerConnected(GamePlayerConnectedEvent e) {
+            System.err.println("gamePlayerConnected");
+            System.err.flush();
+            if (curPanel instanceof ReportDisplay) {
+                ((ReportDisplay) curPanel).resetReadyButton();
+                System.err.println("resetReadyButton");
+                System.err.flush();
+            }
+        }
+        
         public void gameReport(GameReportEvent e) {
             // Normally the Report Display is updated when the panel is
             //  switched during a phase change.

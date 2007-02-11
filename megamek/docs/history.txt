@@ -19,6 +19,7 @@ v0.33.4 (SVN)
 + MtfConvert now also converts tanks to .blk format
 + Bug: Fuel tank elevation display was wrong
 + Added a crappy image for singlehex fuel tanks to make them look different to buildings
++ Bug 1609741: Done Button Locks up when player connects and reconnects -- Again.
 
 v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"

@@ -227,7 +227,21 @@ public class FireProcessor extends DynamicTerrainProcessor {
     }  // End the ResolveFire() method
 
     public void burnDownWoods(Coords coords) {
-        server.tryClearHex(coords, 5, Entity.NONE);
+        
+        /*TODO Replace this code once Tactical ops is released.
+         * 
+         * Players are now allowed to set how much damage woods will burn down per round
+         * Defaults to 5 CF like the original command.
+         * -- Torren
+         */
+        int burnDamage = 5;
+        try {
+            burnDamage = game.getOptions().intOption("woods_burn_down_amount");
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
+        server.tryClearHex(coords, burnDamage, Entity.NONE);
 /*        IHex hex = game.getBoard().getHex(coords);
         int roll = Compute.d6(2);
         Report r;

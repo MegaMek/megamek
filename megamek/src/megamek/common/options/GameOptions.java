@@ -150,6 +150,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"no_clan_physical", false); //$NON-NLS-1$
         addOption(ruleBreakers,"no_hover_charge", false); //$NON-NLS-1$
         addOption(ruleBreakers,"woods_burn_down", false); //$NON-NLS-1$
+        addOption(ruleBreakers,"woods_burn_down_amount", 5); //$NON-NLS-1$
         addOption(ruleBreakers,"vehicles_safe_from_infernos", false); //$NON-NLS-1$
         addOption(ruleBreakers,"protos_safe_from_infernos", false); //$NON-NLS-1$
         addOption(ruleBreakers,"lobby_ammo_dump", false); //$NON-NLS-1$

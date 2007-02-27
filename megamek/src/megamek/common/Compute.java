@@ -3341,7 +3341,7 @@ public class Compute {
         for(Iterator<Mounted> clubs = game.getEntity(entityId).getClubs().iterator();clubs.hasNext();) {
             Mounted club = clubs.next();
             if (null != club) {
-                if(ClubAttackAction.toHit(game, entityId, target, club)
+                if(ClubAttackAction.toHit(game, entityId, target, club, ToHitData.HIT_NORMAL)
                         .getValue() != ToHitData.IMPOSSIBLE)
                     return true;
             }

@@ -384,7 +384,7 @@ public final class PhysicalCalculator {
             } else {
                 location_table = ToHitData.HIT_NORMAL;
             }
-            odds = ClubAttackAction.toHit(game, from.getId(), to, club);
+            odds = ClubAttackAction.toHit(game, from.getId(), to, club, ToHitData.HIT_NORMAL);
             if (odds.getValue() != ToHitData.IMPOSSIBLE) {
                 damage = ClubAttackAction.getDamageFor(from, club);
                 dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;

@@ -17,14 +17,19 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.AWT.AimedShotDialog;
+import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.AWT.widget.IndexedCheckbox;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.GameTurn;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.Targetable;
@@ -59,6 +64,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -127,6 +134,8 @@ public class PhysicalDisplay
     // stuff we want to do
     private Vector attacks;
 
+    private AimedShotHandler ash = new AimedShotHandler();
+    
     /**
      * Creates and lays out a new movement phase display
      * for the specified client.
@@ -441,6 +450,8 @@ public class PhysicalDisplay
         disableButtons();
         client.sendAttackData(cen, attacks);
         attacks.removeAllElements();
+        // close aimed shot display, if any
+        ash.closeDialog();
     }
 
     /**
@@ -703,7 +714,7 @@ public class PhysicalDisplay
                 Mounted club = clubs.get(loop);
                 names[loop] = Messages.getString("PhysicalDisplay.ChooseClubDialog.line", new Object[]{
                     club.getName(),
-                    ClubAttackAction.toHit(client.game, cen, target, club).getValueAsString(),
+                    ClubAttackAction.toHit(client.game, cen, target, club, ash.getAimTable()).getValueAsString(),
                     ClubAttackAction.getDamageFor(ce(), club)
                 });
             }
@@ -727,7 +738,7 @@ public class PhysicalDisplay
     private void club() {
         Mounted club = chooseClub();
         if (null == club) return;
-        ToHitData toHit = ClubAttackAction.toHit(client.game, cen, target, club);
+        ToHitData toHit = ClubAttackAction.toHit(client.game, cen, target, club, ash.getAimTable());
         String title = Messages.getString("PhysicalDisplay.ClubDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
         String message = Messages.getString("PhysicalDisplay.ClubDialog.message", new Object[]{//$NON-NLS-1$
             toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())), toHit.getDesc(),
@@ -739,7 +750,7 @@ public class PhysicalDisplay
                 doSearchlight();
             }
 
-            attacks.addElement(new ClubAttackAction(cen, target.getTargetType(), target.getTargetId(), club));
+            attacks.addElement(new ClubAttackAction(cen, target.getTargetType(), target.getTargetId(), club, ash.getAimTable()));
             ready();
         }
     }
@@ -948,6 +959,7 @@ public class PhysicalDisplay
     void target(Targetable t) {
         this.target = t;
         updateTarget();
+        ash.showDialog();
     }
 
     /**
@@ -1013,15 +1025,30 @@ public class PhysicalDisplay
                 
                 // clubbing?
                 boolean canClub = false;
-                for (Iterator<Mounted> clubs = ce().getClubs().iterator(); clubs.hasNext();) {
+                boolean canAim = false;
+                for(Iterator<Mounted> clubs = ce().getClubs().iterator();clubs.hasNext();) {
                     Mounted club = clubs.next();
                     if (club != null) {
                         ToHitData clubToHit = ClubAttackAction.toHit
-                                (client.game, cen, target, club);
+                           (client.game, cen, target, club, ash.getAimTable());
                         canClub |= (clubToHit.getValue() != ToHitData.IMPOSSIBLE);
-                    }
+                        //assuming S7 vibroswords count as swords and maces count as hatchets
+                        if(club.getType().hasSubType(MiscType.S_SWORD)
+                                || club.getType().hasSubType(MiscType.S_HATCHET)
+                                || club.getType().hasSubType(MiscType.S_VIBRO_SMALL)
+                                || club.getType().hasSubType(MiscType.S_VIBRO_MEDIUM)
+                                || club.getType().hasSubType(MiscType.S_VIBRO_LARGE)
+                                || club.getType().hasSubType(MiscType.S_MACE)
+                                || club.getType().hasSubType(MiscType.S_MACE_THB)
+                                || club.getType().hasSubType(MiscType.S_LANCE)
+                                || club.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                                ) {
+                            canAim = true;
+                        }
+                    } 
                 }
                 setClubEnabled(canClub);
+                ash.setCanAim(canAim);
                 
                 // Thrash at infantry?
                 ToHitData thrash = new ThrashAttackAction(cen, target).toHit
@@ -1434,4 +1461,87 @@ public class PhysicalDisplay
         return butDone;
     }
 
+    private class AimedShotHandler implements ActionListener, ItemListener {
+        private int aimingAt = -1;
+
+        private int aimingMode = IAimingModes.AIM_MODE_NONE;
+
+        private boolean lockedLocation = false;
+
+        private AimedShotDialog asd;
+        
+        private boolean canAim;
+
+        public AimedShotHandler() {
+        }
+
+        public int getAimTable() {
+            switch (aimingAt) {
+            case 0:
+                return ToHitData.HIT_PUNCH;
+            case 1:
+                return ToHitData.HIT_KICK;
+            default:
+                return ToHitData.HIT_NORMAL;
+            }
+        }
+        
+        public void setCanAim(boolean v) {
+            canAim = v;
+        }
+
+        public void showDialog() {
+            if (asd != null) {
+                int oldAimingMode = aimingMode;
+                closeDialog();
+                aimingMode = oldAimingMode;
+            }
+
+            if (canAim) {
+
+                final int attackerElevation = ce().getElevation() + ce().getGame().getBoard().getHex(ce().getPosition()).getElevation();
+                final int targetElevation = target.getElevation() + ce().getGame().getBoard().getHex(target.getPosition()).getElevation();
+    
+                if (target instanceof Mech && ce() instanceof Mech
+                        && attackerElevation == targetElevation) {
+                    String[] options = { "punch", "kick" };
+                    boolean[] enabled = { true, true };
+    
+                    asd = new AimedShotDialog(
+                            clientgui.frame,
+                            Messages
+                                    .getString("PhysicalDisplay.AimedShotDialog.title"), //$NON-NLS-1$
+                            Messages
+                                    .getString("PhysicalDisplay.AimedShotDialog.message"), //$NON-NLS-1$
+                            options, enabled, aimingAt, lockedLocation, this, this);
+    
+                    asd.setVisible(true);
+                    updateTarget();
+                }
+            }
+        }
+
+        public void closeDialog() {
+            if (asd != null) {
+                aimingAt = Entity.LOC_NONE;
+                aimingMode = IAimingModes.AIM_MODE_NONE;
+                asd.setVisible(false);
+                asd = null;
+                updateTarget();
+            }
+        }
+
+        // ActionListener, listens to the button in the dialog.
+        public void actionPerformed(ActionEvent ev) {
+            closeDialog();
+        }
+
+        // ItemListener, listens to the radiobuttons in the dialog.
+        public void itemStateChanged(ItemEvent ev) {
+            IndexedCheckbox icb = (IndexedCheckbox) ev.getSource();
+            aimingAt = icb.getIndex();
+            updateTarget();
+        }
+
+    }
 }

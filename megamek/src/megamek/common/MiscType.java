@@ -89,6 +89,7 @@ public class MiscType extends EquipmentType {
     public static final int     S_CHAINSAW          = 0x00100000; // Miniatures Rulebook
     public static final int     S_ROCK_CUTTER       = 0x00200000; // Miniatures Rulebook; TODO
     public static final int     S_BUZZSAW           = 0x00400000; // Unbound;
+    public static final int     S_RETRACTABLE_BLADE = 0x00800000; // Total Warfare;
 
     public static final String  S_ACTIVE_SHIELD     = "Active";
     public static final String  S_PASSIVE_SHIELD    = "Passive";

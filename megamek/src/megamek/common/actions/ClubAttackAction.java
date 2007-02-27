@@ -32,16 +32,19 @@ import megamek.common.*;
 public class ClubAttackAction extends PhysicalAttackAction {
     
     private Mounted club;
+    private int aiming;
 
     /** Creates new ClubAttackAction */
-    public ClubAttackAction(int entityId, int targetId, Mounted club) {
+    public ClubAttackAction(int entityId, int targetId, Mounted club, int aimTable) {
         super(entityId, targetId);
         this.club = club;
+        this.aiming = aimTable;
     }
 
-    public ClubAttackAction(int entityId, int targetType, int targetId, Mounted club) {
+    public ClubAttackAction(int entityId, int targetType, int targetId, Mounted club, int aimTable) {
         super(entityId, targetType, targetId);
         this.club = club;
+        this.aiming = aimTable;
     }
     
     /**
@@ -118,14 +121,14 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
     public ToHitData toHit(IGame game) {
         return toHit(game, getEntityId(),
-                game.getTarget(getTargetType(), getTargetId()), getClub());
+                game.getTarget(getTargetType(), getTargetId()), getClub(), aiming);
     }
 
 
     /**
      * To-hit number for the specified club to hit
      */
-    public static ToHitData toHit(IGame game, int attackerId, Targetable target, Mounted club) {
+    public static ToHitData toHit(IGame game, int attackerId, Targetable target, Mounted club, int aimTable) {
         final Entity ae = game.getEntity(attackerId);
 
         // arguments legal?
@@ -335,10 +338,14 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // elevation
         if (attackerElevation == targetElevation) {
-            if (shield)
+            if (shield) {
                 toHit.setHitTable(ToHitData.HIT_PUNCH);
-            else
-                toHit.setHitTable(ToHitData.HIT_NORMAL);
+            } else {
+                toHit.setHitTable(aimTable);
+                if(aimTable != ToHitData.HIT_NORMAL) {
+                    toHit.addModifier(4, "called shot");
+                }
+            }
         } else if (attackerElevation < targetElevation) {
             if (target.getHeight() == 0) {
                 if (shield )

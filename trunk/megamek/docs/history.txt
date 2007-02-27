@@ -22,6 +22,9 @@ v0.33.4 (SVN)
 + Bug 1609741: Done Button Locks up when player connects and reconnects -- Again.
 + RFE: House rule added to allow players to set how much CF damage each burning
   hex takes each turn.
++ Hatchets and swords can now be aimed at punch or kick table for +4 to hit
+  (sword-like and hatchet-like S7 map pack weapons are included)
+  
 v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"
 + RFE 1582909: "Under the effect of ECM (Stealth On)"

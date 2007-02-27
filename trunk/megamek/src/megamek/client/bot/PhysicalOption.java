@@ -6,6 +6,7 @@ import megamek.common.Entity;
 import megamek.common.Mounted;
 import megamek.common.Targetable;
 import megamek.common.INarcPod;
+import megamek.common.ToHitData;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
@@ -74,7 +75,7 @@ public class PhysicalOption {
                 return new KickAttackAction(attacker.getId(), target.getId(), KickAttackAction.RIGHT);
             case USE_CLUB :
                 if (club != null) {
-                    return new ClubAttackAction(attacker.getId(), target.getId(), club);
+                    return new ClubAttackAction(attacker.getId(), target.getId(), club, ToHitData.HIT_NORMAL);
                 }
                 return null;
             case PUSH_ATTACK :

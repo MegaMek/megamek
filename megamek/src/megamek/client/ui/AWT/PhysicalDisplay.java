@@ -1432,6 +1432,10 @@ public class PhysicalDisplay
         }
 
         public void showDialog() {
+            
+            if ( ce() == null || target == null )
+                return;
+            
             if (asd != null) {
                 int oldAimingMode = aimingMode;
                 closeDialog();

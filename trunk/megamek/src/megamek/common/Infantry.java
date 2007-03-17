@@ -732,14 +732,6 @@ public class Infantry
         // Adjust for missing troopers
         dBV = dBV * getInternalRemainingPercent();
 
-        // Possibly adjust for TAG and Arrow IV.
-        if (getsTagBVPenalty()) {
-            dBV += 200;
-        }
-        if (getsHomingBVPenalty()) {
-            dBV += 200;
-        }
-
         // adjust for crew
         double pilotFactor = crew.getBVSkillMultiplier();
 

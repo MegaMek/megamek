@@ -459,14 +459,6 @@ public class GunEmplacement extends Entity
             assumeLinkedC3) {
                 xbv = Math.round(0.35 * weaponBV);
         }
-
-        // Possibly adjust for TAG and Arrow IV.
-        if (getsTagBVPenalty()) {
-            dbv += 200;
-        }
-        if (getsHomingBVPenalty()) {
-            dbv += 200;
-        }
         
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();

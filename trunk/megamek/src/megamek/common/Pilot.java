@@ -349,17 +349,20 @@ public class Pilot
      * Returns the BV multiplyer for this pilot's gunnery/piloting
      */
     public double getBVSkillMultiplier() {
-        double multiplier = 1.0;
+        double pilotingMod = 1.0;
+        double gunneryMod = 1.0;
 
         if (gunnery < 4) {
-            multiplier += 0.20 * (4 - gunnery);
+            gunneryMod += 0.30 * (4 - gunnery);
         } else {
-            multiplier += 0.10 * (4 - gunnery);
+            gunneryMod += 0.10 * (4 - gunnery);
         }
-        
-        multiplier += 0.05 * (5 - piloting);
-
-        return multiplier;
+        if (piloting < 5) {
+            pilotingMod += 0.15 * (5 - piloting);
+        } else {
+            pilotingMod += 0.05 * (5 - piloting);
+        }
+        return Math.round(gunneryMod * pilotingMod * 100) / 100.0;
     }
     
     public int modifyPhysicalDamagaForMeleeSpecialist() {

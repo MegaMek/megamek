@@ -347,28 +347,13 @@ public class Engine implements Serializable
     }
 
     public double getBVMultiplier() {
-        int centerCrits = getCenterTorsoCriticalSlots().length;
         int sideCrits = getSideTorsoCriticalSlots().length;
-        if(centerCrits > 6) {
-            //large engine of some kind
-            if(sideCrits >=6)
-                return 0.375; // IS large XXL
-            else if (sideCrits >=4)
-                return 0.5; // clan large XXL
-            else if (sideCrits >=2)
-                return 0.75; // large XL
-            else
-                return 1.125; // large
-        }
-		//normal sized or compact engine
-		if(sideCrits >=6)
-		    return 0.5; // IS XXL
-		else if (sideCrits >=3)
-		    return 0.75; // IS XL, clan XXL
+		if (sideCrits >=3)
+		    return 0.5; // IS XL, clan XXL
 		else if (sideCrits >0)
-		    return 1.125; // IS L, clan XL
+		    return 0.75; // IS L, clan XL
 		else
-		    return 1.5; //standard, compact, ice
+		    return 1; //standard, compact, ice, fuel cell, fission
     }
 
     public int getBaseCost() {

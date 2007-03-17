@@ -827,6 +827,7 @@ public class MiscType extends EquipmentType {
         misc.cost = 100000;
         misc.criticals = 1;
         misc.flags |= F_ARTEMIS;
+        misc.bv = 8;
 
         return misc;
     }
@@ -1013,7 +1014,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createBackhoe() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_3;
+        misc.techLevel = TechConstants.T_IS_LEVEL_2;
         misc.name = "Backhoe";
         misc.setInternalName(misc.name);
         misc.tonnage = 5;

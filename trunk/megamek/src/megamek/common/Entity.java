@@ -3042,7 +3042,7 @@ public abstract class Entity extends TurnOrdered
         if (hasC3i())  {
             nodes = 5;
             if (game != null) {
-                for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
                     final Entity e = (Entity)i.nextElement();
                     if (!equals(e) && onSameC3NetworkAs(e)) {
                         nodes--;
@@ -3053,7 +3053,7 @@ public abstract class Entity extends TurnOrdered
         } else if (hasC3M())  {
             nodes = 3;
             if (game != null) {
-                for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
+                for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
                     final Entity e = (Entity)i.nextElement();
                     if (e.hasC3() && !equals(e) ) {
                         final Entity m = e.getC3Master();
@@ -3572,7 +3572,7 @@ public abstract class Entity extends TurnOrdered
      *
      * This should be overwritten if necessary
      */
-    public int calculateBattleValue(boolean assumeLinkedC3){
+    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3){
         return calculateBattleValue();
     }
 
@@ -5553,76 +5553,6 @@ public abstract class Entity extends TurnOrdered
                 return true;
             }
         }
-        return false;
-    }
-
-    public boolean hasHomingRounds() {
-        for(Mounted m : getAmmo()) {
-            AmmoType equip = (AmmoType)(m.getType());
-            if (equip.getMunitionType() == AmmoType.M_HOMING) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean getsTagBVPenalty() {
-        // Check a couple of automatic failures first.
-        if (!hasTAG())
-            return false;
-        Player tmpP = getOwner();
-        if (tmpP == null)
-            return false;
-
-        // Okay, actually check for friendly homing rounds.
-        if (tmpP.getTeam() != Player.TEAM_NONE) {
-           for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-                Team m = (Team)e.nextElement();
-                if (m.getId() == tmpP.getTeam()) {
-                    if (m.hasHomingRounds(game)) {
-                        return true;
-                    }
-                    // A player can't be on two teams.
-                    // If we check his team and don't give the penalty, that's it.
-                    break;
-                }
-            }
-            return false;
-        }
-		if (tmpP.hasHomingRounds())
-		    return true;
-
-        // If all else fails, don't give the penalty.
-        return false;
-    }
-
-    public boolean getsHomingBVPenalty() {
-        // Check a couple of automatic failures first.
-        if (!hasHomingRounds())
-            return false;
-        Player tmpP = getOwner();
-        if (tmpP == null)
-            return false;
-
-        // Okay, actually check for friendly TAG.
-        if (tmpP.getTeam() != Player.TEAM_NONE) {
-           for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-                Team m = (Team)e.nextElement();
-                if (m.getId() == tmpP.getTeam()) {
-                    if (m.hasTAG(game)) {
-                        return true;
-                    }
-                    // A player can't be on two teams.
-                    // If we check his team and don't give the penalty, that's it.
-                    break;
-                }
-            }
-            return false;
-        }
-		if (tmpP.hasTAG())
-		    return true;
-
-        // If all else fails, don't give the penalty.
         return false;
     }
     

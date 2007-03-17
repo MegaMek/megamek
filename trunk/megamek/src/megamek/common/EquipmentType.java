@@ -50,6 +50,7 @@ public class EquipmentType {
     public static final int     T_ARMOR_PATCHWORK           = 7;
     public static final int     T_ARMOR_STEALTH             = 8;
     public static final int     T_ARMOR_FERRO_FIBROUS_PROTO = 9;
+    public static final int     T_ARMOR_COMMERCIAL          = 10;
 
     public static final int     T_STRUCTURE_UNKNOWN         = -1;
     public static final int     T_STRUCTURE_STANDARD        = 0;
@@ -57,6 +58,7 @@ public class EquipmentType {
     public static final int     T_STRUCTURE_ENDO_PROTOTYPE  = 2;
     public static final int     T_STRUCTURE_REINFORCED      = 3;
     public static final int     T_STRUCTURE_COMPOSITE       = 4;
+    public static final int     T_STRUCTURE_INDUSTRIAL      = 5;
 
     public static final String[] armorNames = {"Standard",
                                             "Ferro-Fibrous",

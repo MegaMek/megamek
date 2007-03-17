@@ -1032,7 +1032,7 @@ public class ChatLounge
                     else if (useCost) {
                         playerValue += entity.getCost();
                     } else { 
-                        playerValue += entity.getWeight();     
+                        playerValue += entity.getWeight();
                     }
                }
             }

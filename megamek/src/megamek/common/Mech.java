@@ -18,6 +18,11 @@ package megamek.common;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.loaders.MtfFile;
@@ -1895,7 +1900,7 @@ public abstract class Mech
      * Calculates the battle value of this mech
      */
     public int calculateBattleValue() {
-        return calculateBattleValue(false);
+        return calculateBattleValue(false, false);
     }
   
     /**
@@ -1904,37 +1909,29 @@ public abstract class Mech
      *  c3 will be added whether the mech is currently part of
      *  a network or not.
      */
-    public int calculateBattleValue(boolean assumeLinkedC3) {
+    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
-        // Try to find a Mek Stealth system.
-        boolean bHasStealthArmor = hasStealth();
-        boolean bHasEiSystem = (hasEiCockpit() && getCrew().getOptions().booleanOption("ei_implant"));
-
         // total armor points
-        double armorMultiplier = 2.0;
-        if (getArmorType() == EquipmentType.T_ARMOR_HARDENED) {
-            armorMultiplier = 4.0;
+        double armorMultiplier = 1.0;
+        if (getArmorType() == EquipmentType.T_ARMOR_COMMERCIAL) {
+            armorMultiplier = 0.5;
         }
-        dbv += getTotalArmor() * armorMultiplier;
+        dbv += getTotalArmor() * 2.5 * armorMultiplier;
 
         // total internal structure
         double internalMultiplier = 1.0;
-        if (getStructureType() == EquipmentType.T_STRUCTURE_REINFORCED)
-            internalMultiplier = 2.0;
-        if (getStructureType() == EquipmentType.T_STRUCTURE_COMPOSITE)
+        if (getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL)
             internalMultiplier = 0.5;
 
-        dbv += getTotalInternal() * internalMultiplier
-            * getEngine().getBVMultiplier();
+        dbv += getTotalInternal() * internalMultiplier * 1.5 * getEngine().getBVMultiplier();
 
-        // add weight
-        dbv += getWeight();
-
-        // Heavy-duty gyros add 30 DBV.
-        if (getGyroType() == GYRO_HEAVY_DUTY)
-            dbv += 30;
+        // add gyro
+        double gyroMultiplier = 0.5;
+        if (this.getGyroType() == GYRO_HEAVY_DUTY)
+            gyroMultiplier = 1.0;
+        dbv += getWeight() * gyroMultiplier;
 
         // add defensive equipment
         double dEquipmentBV = 0;
@@ -1948,18 +1945,18 @@ public abstract class Mech
             if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
                     || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
                     || (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM)
-                                            || etype.hasFlag(MiscType.F_AP_POD)))) {
+                                            || etype.hasFlag(MiscType.F_AP_POD)
+               // not yet coded:            || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
+                                            || etype.hasFlag(MiscType.F_BAP)
+                                            || etype.hasFlag(MiscType.F_B_POD)))) {
                 dEquipmentBV += etype.getBV(this);
             }
         }
         dbv += dEquipmentBV;
 
-        if(bHasEiSystem) {
-            dbv -= 25;
-        }
-
         // subtract for explosive ammo
         double ammoPenalty = 0;
+        int toSubtract = 15;
         for (Mounted mounted : getEquipment()){
             int loc = mounted.getLocation();
             EquipmentType etype = mounted.getType();
@@ -1999,32 +1996,62 @@ public abstract class Mech
                 }
             }
             
-            float tonnage = etype.getTonnage(this);
-            
-            // gauss rifles only count as one ton for this
-            if (etype instanceof WeaponType && etype.getName().indexOf("Gauss") != -1) {
-                tonnage = 1.0f;
+            // gauss rifles only subtract 1 point per slot
+            if (etype instanceof WeaponType && (etype.getName().indexOf("Gauss") != -1 || etype.getName().indexOf("HAG") != -1)) {
+                toSubtract = 1;
             }
              
             // RACs don't really count
             if (etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AC_ROTARY) {
-                tonnage = 0.0f;
+                toSubtract = 0;
             }
             // normal ACs only marked as explosive because they are when they just
             // fired incendiary ammo, therefore they don't count for explosive BV
             if (etype instanceof WeaponType 
                     && (((WeaponType)etype).getAmmoType() == AmmoType.T_AC
                        ||((WeaponType)etype).getAmmoType() == AmmoType.T_LAC)) {
-                tonnage = 0.0f;
+                toSubtract = 0;
             }
-           
-            ammoPenalty += 20.0 * tonnage;
+            // we subtract per critical slot
+            toSubtract *= etype.getCriticals(this);
+            ammoPenalty += toSubtract;
         }
         dbv = Math.max(1, dbv - ammoPenalty);
+        
+        // adjust for target movement modifier
+        int runMP = getOriginalRunMPwithoutMASC();
+        // factor in masc or tsm
+        if (hasMASC()) {
+            runMP = getWalkMP() * 2;
+        }
+        if (hasTSM()) {
+            runMP = (int)Math.ceil((getWalkMP() + 1) * 1.5);
+        }
+        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false).getValue();
+        int targetMovementModifier = Math.max(tmmRan, tmmJumped);
+        // Try to find a Mek Stealth system.
+        if (hasStealth())
+            targetMovementModifier += 2;
+        if (targetMovementModifier > 7)
+            targetMovementModifier = 7;
+        double[] tmmFactors = { 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7 };
+        double tmmFactor = tmmFactors[targetMovementModifier];
+        dbv *= tmmFactor;
+        
+        // calculate heat efficiency
+        int mechHeatEfficiency = 6 + this.getHeatCapacity();
+        if (getJumpMP() > 0) {
+            mechHeatEfficiency -= Math.max(3, getJumpMP());
+        } else {
+            mechHeatEfficiency -= 2;
+        }
+        
 
         // total up maximum heat generated
-        double maximumHeatFront = 0;
-        double maximumHeatRear = 0;
+        // and add up BVs for ammo-using weapon types for excessive ammo rule
+        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
+        double maximumHeat = 0;
         for (Mounted mounted : getWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             double weaponHeat = wtype.getHeat();
@@ -2035,9 +2062,10 @@ public abstract class Mech
             	continue;
             }
             
-            // Bug #1112073 says not to count RocketLaunchers.
-            if (wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER) {
-                continue;
+            // one shot weapons count 1/4
+            if (wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER
+                    || wtype.hasFlag(WeaponType.F_ONESHOT)) {
+                weaponHeat *= 0.25;
             }
 
             // double heat for ultras
@@ -2057,106 +2085,105 @@ public abstract class Mech
                     || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)){
                 weaponHeat *= 0.5;
             }
-            
-            if (mounted.isRearMounted()) {
-                maximumHeatRear += weaponHeat;
-            } else {
-                maximumHeatFront += weaponHeat;
+            maximumHeat += weaponHeat;
+            // add up BV of ammo-using weapons for each type of weapon,
+            // to compare with ammo BV later for excessive ammo BV rule
+            if (wtype.getAmmoType() != AmmoType.T_NA) {
+                String key = wtype.getAmmoType()+":"+wtype.getRackSize();
+                if (!weaponsForExcessiveAmmo.containsKey(key)) {
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
+                }
+                else {
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this)+weaponsForExcessiveAmmo.get(key));
+                }
             }
         }
-        double maximumHeat = Math.max(maximumHeatFront, maximumHeatRear);
-        if (getJumpMP() > 0) {
-            maximumHeat += Math.max(3, getJumpMP());
-        } else {
-            maximumHeat += 2;
-        }
-
-        // Add in Mek Stealth Armor effects.
-        if ( bHasStealthArmor ) {
-            maximumHeat += 10;
-        }
-
-        // adjust for heat efficiency
-        if (maximumHeat > getHeatCapacity()) {
-            double heatPenalty = ((maximumHeat - getHeatCapacity()) * 5);
-            dbv = Math.max(1, dbv - heatPenalty);
-        }
-        // adjust for target movement modifier
-        int runMP = getOriginalRunMPwithoutMASC();
-        // factor in masc or tsm
-        if (hasMASC()) {
-            runMP = getWalkMP() * 2;
-        }
-        if (hasTSM()) {
-            runMP = (int)Math.ceil((getWalkMP() + 1) * 1.5);
-        }
-        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
-        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false).getValue();
-        int targetMovementModidifer = Math.max(tmmRan, tmmJumped);
-        if (targetMovementModidifer > 5) {
-            targetMovementModidifer = 5;
-        }
-        double[] tmmFactors = { 1.0, 1.1, 1.2, 1.3, 1.4, 1.5 };
-        double tmmFactor = tmmFactors[targetMovementModidifer];
-        // Adjust for Steath Armor on Mek.
-        if ( bHasStealthArmor ) {
-            tmmFactor += 0.2;
-        }
-        dbv *= tmmFactor;
-        
+                
         double weaponBV = 0;
-
-        // figure out base weapon bv
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
-        for (Mounted mounted : getWeaponList()) {
-            WeaponType wtype = (WeaponType)mounted.getType();
-            double dBV = wtype.getBV(this);
-            
-            // don't count destroyed equipment
-            if (mounted.isDestroyed())
-                continue;
+        
+        if (maximumHeat <= mechHeatEfficiency) {
+            //count all weapons equal, adjusting for rear-firing and excessive ammo
+            for (Mounted mounted : getWeaponList()) {
+                WeaponType wtype = (WeaponType)mounted.getType();
+                double dBV = wtype.getBV(this);
+                
+                // don't count destroyed equipment
+                if (mounted.isDestroyed())
+                    continue;
 
-            // don't count AMS, it's defensive
-            if (wtype.hasFlag(WeaponType.F_AMS)) {
-                continue;
-            }
-            
-            // artemis bumps up the value
-            if (mounted.getLinkedBy() != null) {
-                Mounted mLinker = mounted.getLinkedBy();
-                if (mLinker.getType() instanceof MiscType && 
-                        mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
-                    dBV *= 1.2;
+                // don't count AMS, it's defensive
+                if (wtype.hasFlag(WeaponType.F_AMS)) {
+                    continue;
                 }
-            } 
-            
-            // and we'll add the tcomp here too
-            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                if(bHasEiSystem && hasTargComp) {
-                    dBV *= 1.25;
-                } else if(hasTargComp) {
-                    dBV *= 1.2;
-                } else if(bHasEiSystem) {
-                    dBV *= 1.05;
+                
+                // and we'll add the tcomp here too
+                if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
+                    if(hasTargComp)
+                        dBV *= 1.25;
+                }
+                
+                if (mounted.isRearMounted()) {
+                    weaponsBVRear += dBV;
+                } else {
+                    weaponsBVFront += dBV;
                 }
             }
-            
-            if (mounted.isRearMounted()) {
-                weaponsBVRear += dBV;
+            if (weaponsBVFront > weaponsBVRear) {
+                weaponBV += weaponsBVFront;
+                weaponBV += (weaponsBVRear * 0.5);
             } else {
-                weaponsBVFront += dBV;
+                weaponBV += weaponsBVRear;
+                weaponBV += (weaponsBVFront * 0.5);
             }
-        }
-        if (weaponsBVFront > weaponsBVRear) {
-            weaponBV += weaponsBVFront;
-            weaponBV += (weaponsBVRear * 0.5);
         } else {
-            weaponBV += weaponsBVRear;
-            weaponBV += (weaponsBVFront * 0.5);
+            // count weapons at full BV until heatefficiency is reached or passed with one weapon
+            int heatAdded = 0;
+            ArrayList<Mounted> weapons = this.getWeaponList();
+            Collections.sort(weapons, new WeaponComparator());
+            for (Mounted weapon : weapons) {
+                WeaponType wtype = (WeaponType)weapon.getType();
+                double dBV = wtype.getBV(this);
+                // don't count destroyed equipment
+                if (weapon.isDestroyed())
+                    continue;
+                // don't count AMS, it's defensive
+                if (wtype.hasFlag(WeaponType.F_AMS)) {
+                    continue;
+                }
+                // calc MG Array here:
+                if (wtype.hasFlag(WeaponType.F_MGA)) {
+                    double mgaBV = 0;
+                    for (Mounted possibleMG : this.getWeaponList()) {
+                        if (possibleMG.getType().hasFlag(WeaponType.F_MG) && possibleMG.getLocation() == weapon.getLocation()) {
+                            mgaBV += possibleMG.getType().getBV(this);
+                        }
+                    }
+                   dBV = mgaBV * 0.67;
+                }
+                // and we'll add the tcomp here too
+                if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
+                    dBV *= 1.25;
+                }
+                if (heatAdded >= mechHeatEfficiency && wtype.getHeat() > 0)
+                    dBV /= 2;
+                if (weapon.isRearMounted()) {
+                    weaponsBVRear += dBV;
+                } else {
+                    weaponsBVFront += dBV;
+                }
+                heatAdded += ((WeaponType)weapon.getType()).getHeat();
+            }
+            if (weaponsBVFront > weaponsBVRear) {
+                weaponBV += weaponsBVFront;
+                weaponBV += (weaponsBVRear * 0.5);
+            } else {
+                weaponBV += weaponsBVRear;
+                weaponBV += (weaponsBVFront * 0.5);
+            }            
         }
-
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
         double oEquipmentBV = 0;
         for (Mounted mounted : getMisc()) {
@@ -2167,7 +2194,10 @@ public abstract class Mech
                 continue;
 
             if (mtype.hasFlag(MiscType.F_ECM)
+                    || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_AP_POD) 
+                    || mtype.hasFlag(MiscType.F_B_POD)
+//not yet coded:    || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)) //targ counted with weapons 
                 continue;
             oEquipmentBV += mtype.getBV(this);
@@ -2187,6 +2217,10 @@ public abstract class Mech
 
         // add ammo bv
         double ammoBV = 0;
+        // extra BV for when we have semiguided LRMs and someone else has TAG on our team        
+        double tagBV = 0;
+        Map<String, Double> ammo = new HashMap<String, Double>();
+        ArrayList<String> keys = new ArrayList<String>(); 
         for (Mounted mounted : getAmmo()) {
             AmmoType atype = (AmmoType)mounted.getType();
 
@@ -2204,62 +2238,85 @@ public abstract class Mech
                 // assumption: ammo without a location is for a oneshot weapon
                 continue;
             }
-
-            ammoBV += atype.getBV(this);
+            // semiguided ammo might count double
+            if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+                Player tmpP = getOwner();
+                // Okay, actually check for friendly TAG.
+                if (tmpP.hasTAG())
+                    tagBV += atype.getBV(this);
+                else if (tmpP.getTeam() != Player.TEAM_NONE) {
+                   for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
+                        Team m = (Team)e.nextElement();
+                        if (m.getId() == tmpP.getTeam()) {
+                            if (m.hasTAG(game)) {
+                                tagBV += atype.getBV(this);
+                            }
+                            // A player can't be on two teams.
+                            // If we check his team and don't give the penalty, that's it.
+                            break;
+                        }
+                    }
+                }
+            }
+            String key = atype.getAmmoType()+":"+atype.getRackSize();
+            if (!keys.contains(key))
+                keys.add(key);
+            if (!ammo.containsKey(key)) {
+                ammo.put(key, atype.getBV(this));
+            }
+            else {
+                ammo.put(key, atype.getBV(this)+ammo.get(key));
+            }
+        }
+        // excessive ammo rule:
+        // only count BV for ammo for a weapontype until the BV of all weapons of that 
+        // type on the mech is reached
+        for (String key : keys) {
+            if (ammo.get(key) > weaponsForExcessiveAmmo.get(key))
+                ammoBV += weaponsForExcessiveAmmo.get(key);
+            else
+                ammoBV += ammo.get(key);
         }
         weaponBV += ammoBV;
-
-        // adjust for heat efficiency
-        if (maximumHeat > getHeatCapacity()) {
-            double x = (getHeatCapacity() * weaponBV) / maximumHeat;
-            double y = (weaponBV - x) / 2;
-            weaponBV = x + y;
-        }
+        
+        // add tonnage, adjusted for TSM
+        if (hasTSM())
+            weaponBV += getWeight() * 1.5;
+        else 
+            weaponBV += getWeight();        
 
         // adjust further for speed factor
-        double speedFactor = getOriginalRunMPwithoutMASC() + getOriginalJumpMP() - 5;
-        // +1 for MASC or TSM, you may not have both
-        if (hasMASC() || hasTSM()) {
-            speedFactor++;
-        }
-        speedFactor /= 10;
-        speedFactor++;
-        speedFactor = Math.pow(speedFactor, 1.2);
+        double speedFactor = Math.pow(1+(((double)runMP+((double)jumpMP/2)-5)/10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
         
         obv = weaponBV * speedFactor;
 
-        // we get extra bv from c3 networks. a valid network requires at least 2 members
+        // we get extra bv from some stuff
+        double xbv = 0.0;
+        //extra BV for semi-guided lrm when TAG in our team
+        xbv += tagBV;
+        // extra from c3 networks. a valid network requires at least 2 members
         // some hackery and magic numbers here.  could be better
         // also, each 'has' loops through all equipment.  inefficient to do it 3 times
-        double xbv = 0.0;
-        if ((hasC3MM() && calculateFreeC3MNodes() < 2) ||
+        if (((hasC3MM() && calculateFreeC3MNodes() < 2) ||
             (hasC3M() && calculateFreeC3Nodes() < 3) ||
             (hasC3S() && C3Master > NONE) ||
             (hasC3i() && calculateFreeC3Nodes() < 5) ||
-            assumeLinkedC3) {
-                xbv = Math.round(0.35 * weaponsBVFront + (0.5 * weaponsBVRear));
-        }
-
-        // Possibly adjust for TAG and Arrow IV.
-        if (getsTagBVPenalty()) {
-            dbv += 200;
-        }
-        if (getsHomingBVPenalty()) {
-            dbv += 200;
-        }
-
-        // and then factor in pilot
-        double pilotFactor = crew.getBVSkillMultiplier();
-        if (bHasEiSystem) {
-            pilotFactor += 0.05; //treat piloting as 1 level better
-        }
-        if (getCockpitType() == Mech.COCKPIT_SMALL) {
-            pilotFactor -= 0.05; // Small cockpits piloting treated as 1 level worse.
+            assumeLinkedC3) && !ignoreC3 && (game != null)) {
+            int totalForceBV = 0;
+            for (Entity e : game.getC3NetworkMembers(this)) {
+                if (!equals(e) && onSameC3NetworkAs(e)) {
+                    totalForceBV+=e.calculateBattleValue(false, true);
+                }
+            }
+            xbv = totalForceBV *= 0.05;
         }
 
         int finalBV = (int)Math.round(dbv + obv + xbv);
 
+        // and then factor in pilot
+        double pilotFactor = crew.getBVSkillMultiplier();
+        
         int retVal = (int)Math.round((finalBV) * pilotFactor);
         return retVal;
     }

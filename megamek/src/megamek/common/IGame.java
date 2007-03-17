@@ -452,7 +452,7 @@ public interface IGame {
      *          be empty, but it will not be <code>null</code>.
      * @see     #getC3SubNetworkMembers(Entity)
      */
-    public abstract Vector getC3NetworkMembers(Entity entity);
+    public abstract Vector<Entity> getC3NetworkMembers(Entity entity);
     
     /**
      * Returns a <code>Vector</code> containing the <code>Entity</code>s

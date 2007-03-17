@@ -811,14 +811,6 @@ public class Protomech extends Entity implements Serializable {
 
 		obv = weaponBV * speedFactor;
 
-		// Possibly adjust for TAG and Arrow IV.
-		if (getsTagBVPenalty()) {
-			dbv += 200;
-		}
-		if (getsHomingBVPenalty()) {
-			dbv += 200;
-		}
-
 		// and then factor in pilot
 		double pilotFactor = crew.getBVSkillMultiplier();
 

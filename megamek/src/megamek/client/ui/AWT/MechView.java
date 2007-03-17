@@ -85,7 +85,7 @@ public class MechView {
         sBasic.append("\n"); //$NON-NLS-1$
         if ( mech.hasC3M() || mech.hasC3S() || mech.hasC3i()) {
             sBasic.append( Messages.getString("MechView.Linkedc3bv")); //$NON-NLS-1$
-            sBasic.append( mech.calculateBattleValue(true) );
+            sBasic.append( mech.calculateBattleValue(true, false) );
         }
         if ( !isGunEmplacement ) {
             sBasic.append("\n"); //$NON-NLS-1$

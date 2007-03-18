@@ -16,6 +16,10 @@ package megamek.common;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
@@ -48,12 +52,6 @@ public class Protomech extends Entity implements Serializable {
 	// Pilot damage caused so far by crits to this location.
 	// Needed for location destruction pilot damage.
 	private int PilotDamageTaken[] = { 0, 0, 0, 0, 0, 0 };
-
-	/**
-	 * The battle value of this unit. This value should be set when the unit's
-	 * file is read.
-	 */
-	private int myBV = 0;
 
 	/*
 	 * * Not every Protomech has a main gun. * N.B. Regardless of the value set
@@ -706,119 +704,196 @@ public class Protomech extends Entity implements Serializable {
 	}
 
 	/**
-	 * Calculates the battle value of this pmech. UNIMPLEMENTED and UNCOMPLETE.
+	 * Calculates the battle value of this pmech.
 	 * 
 	 */
-	public int calculateBattleValue() {
+    public int calculateBattleValue() {
+        double dbv = 0; // defensive battle value
+        double obv = 0; // offensive bv
+        
+        // total armor points
+        dbv += getTotalArmor() * 2.5;
 
-		// Was our battle value set at construction?
-		if (myBV > 0) {
-			// Adjust BV for crew skills.
-			double pilotFactor = crew.getBVSkillMultiplier();
-			return (int) (pilotFactor * myBV);
-		}
+        // total internal structure        
+        dbv += getTotalInternal() * 1.5;
 
-		double dbv = 0; // defensive battle value
-		double obv = 0; // offensive bv
+        // add defensive equipment
+        double dEquipmentBV = 0;
+        for (Mounted mounted : getEquipment()){
+            EquipmentType etype = mounted.getType();
 
-		// total armor points
-		dbv += getTotalArmor();
+            // don't count destroyed equipment
+            if (mounted.isDestroyed())
+                continue;
 
-		// total internal structure
-		dbv += getTotalInternal() / 2;
+            if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
+                    || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
+                    || (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM)
+                                            || etype.hasFlag(MiscType.F_BAP)))) {
+                dEquipmentBV += etype.getBV(this);
+            }
+        }
+        dbv += dEquipmentBV;
 
-		// add defensive equipment
-		double dEquipmentBV = 0;
-		for (Mounted mounted : getEquipment()) {
-			EquipmentType etype = mounted.getType();
+        // adjust for target movement modifier
+        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false).getValue();
+        if (tmmRan > 7) {
+            tmmRan = 7;
+        }
+        double[] tmmFactors = { 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8 };
+        dbv *= tmmFactors[tmmRan];
+        
+        double weaponBV = 0;
 
-			// don't count destroyed equipment
-			if (mounted.isDestroyed())
-				continue;
+        // figure out base weapon bv
+        double weaponsBVFront = 0;
+        double weaponsBVRear = 0;
+        boolean hasTargComp = hasTargComp();
+        // and add up BVs for ammo-using weapon types for excessive ammo rule
+        Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
+        for (Mounted mounted : getWeaponList()) {
+            WeaponType wtype = (WeaponType)mounted.getType();
+            double dBV = wtype.getBV(this);
 
-			if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
-					|| (etype instanceof AmmoType && ((AmmoType) etype)
-							.getAmmoType() == AmmoType.T_AMS)
-					|| etype.hasFlag(MiscType.F_ECM)) {
-				dEquipmentBV += etype.getBV(this);
-			}
-		}
-		dbv += dEquipmentBV;
-		dbv += weight;
-		// adjust for target movement modifier
-		int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(),
-				false, false).getValue();
-		if (tmmRan > 5) {
-			tmmRan = 5;
-		}
-		double[] tmmFactors = { 1.0, 1.1, 1.2, 1.3, 1.4, 1.5 };
+            // don't count destroyed equipment
+            if (mounted.isDestroyed())
+                continue;
 
-		dbv *= (tmmFactors[tmmRan] + .1);
+            // don't count AMS, it's defensive
+            if (wtype.hasFlag(WeaponType.F_AMS)) {
+                continue;
+            }
+            
+            // artemis bumps up the value
+            if (mounted.getLinkedBy() != null) {
+                Mounted mLinker = mounted.getLinkedBy();
+                if (mLinker.getType() instanceof MiscType && 
+                        mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    dBV *= 1.2;
+                }
+            } 
+            
+            // and we'll add the tcomp here too
+            if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
+                dBV *= 1.25;
+            }
+            weaponBV += dBV;
+            // add up BV of ammo-using weapons for each type of weapon,
+            // to compare with ammo BV later for excessive ammo BV rule
+            if (wtype.getAmmoType() != AmmoType.T_NA) {
+                String key = wtype.getAmmoType()+":"+wtype.getRackSize();
+                if (!weaponsForExcessiveAmmo.containsKey(key)) {
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
+                }
+                else {
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this)+weaponsForExcessiveAmmo.get(key));
+                }
+            }
+        }
+        
+        // add ammo bv
+        double ammoBV = 0;
+        // extra BV for when we have semiguided LRMs and someone else has TAG on our team        
+        double tagBV = 0;
+        Map<String, Double> ammo = new HashMap<String, Double>();
+        ArrayList<String> keys = new ArrayList<String>(); 
+        for (Mounted mounted : getAmmo()) {
+            AmmoType atype = (AmmoType)mounted.getType();
 
-		double weaponBV = 0;
+            // don't count depleted ammo
+            if (mounted.getShotsLeft() == 0)
+                continue;
 
-		// figure out base weapon bv
-		double weaponsBVFront = 0;
-		double weaponsBVRear = 0;
-		for (Mounted mounted : getWeaponList()) {
-			WeaponType wtype = (WeaponType) mounted.getType();
-			double dBV = wtype.getBV(this);
+            // don't count AMS, it's defensive
+            if (atype.getAmmoType() == AmmoType.T_AMS) {
+                continue;
+            }
 
-			// don't count destroyed equipment
-			if (mounted.isDestroyed())
-				continue;
+            // don't count oneshot ammo, it's considered part of the launcher.
+            if (mounted.getLocation() == Entity.LOC_NONE) {
+                // assumption: ammo without a location is for a oneshot weapon
+                continue;
+            }
+            // semiguided ammo might count double
+            if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+                Player tmpP = getOwner();
+                // Okay, actually check for friendly TAG.
+                if (tmpP.hasTAG())
+                    tagBV += atype.getBV(this);
+                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+                   for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
+                        Team m = (Team)e.nextElement();
+                        if (m.getId() == tmpP.getTeam()) {
+                            if (m.hasTAG(game)) {
+                                tagBV += atype.getBV(this);
+                            }
+                            // A player can't be on two teams.
+                            // If we check his team and don't give the penalty, that's it.
+                            break;
+                        }
+                    }
+                }
+            }
+            // TODO: adjust for number of shots, protos don't carry full tons
+            String key = atype.getAmmoType()+":"+atype.getRackSize();
+            if (!keys.contains(key))
+                keys.add(key);
+            if (!ammo.containsKey(key)) {
+                ammo.put(key, atype.getBV(this));
+            }
+            else {
+                ammo.put(key, atype.getBV(this)+ammo.get(key));
+            }
+        }
+        // excessive ammo rule:
+        // only count BV for ammo for a weapontype until the BV of all weapons of that 
+        // type on the mech is reached
+        for (String key : keys) {
+            if (ammo.get(key) > weaponsForExcessiveAmmo.get(key))
+                ammoBV += weaponsForExcessiveAmmo.get(key);
+            else
+                ammoBV += ammo.get(key);
+        }
+        weaponBV += ammoBV;
+        
+        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
+        double oEquipmentBV = 0;
+        for (Mounted mounted : getMisc()) {
+            MiscType mtype = (MiscType)mounted.getType();
+ 
+            // don't count destroyed equipment
+            if (mounted.isDestroyed())
+                continue;
 
-			// don't count AMS, it's defensive
-			if (wtype.hasFlag(WeaponType.F_AMS)) {
-				continue;
-			}
+            if (mtype.hasFlag(MiscType.F_ECM)
+                    || mtype.hasFlag(MiscType.F_AP_POD)
+                    || mtype.hasFlag(MiscType.F_BAP)
+                    || mtype.hasFlag(MiscType.F_B_POD)
+                    || mtype.hasFlag(MiscType.F_TARGCOMP)) //targ counted with weapons 
+                continue;
+            oEquipmentBV += mtype.getBV(this);
+        }
+        
+        weaponBV += oEquipmentBV;
 
-			weaponsBVFront += dBV;
+        // adjust further for speed factor
+        double speedFactor = Math.pow(1+(((double)getOriginalRunMP()+((double)jumpMP/2)-5)/10), 1.2);
+        speedFactor = Math.round(speedFactor * 100) / 100.0;
+        
+        obv = weaponBV * speedFactor;
 
-		}
-		if (weaponsBVFront > weaponsBVRear) {
-			weaponBV += weaponsBVFront;
-			weaponBV += (weaponsBVRear * 0.5);
-		} else {
-			weaponBV += weaponsBVRear;
-			weaponBV += (weaponsBVFront * 0.5);
-		}
+        // we get extra bv from some stuff
+        double xbv = 0.0;
+        //extra BV for semi-guided lrm when TAG in our team
+        xbv += tagBV;
 
-		// add ammo bv
-		double ammoBV = 0;
-		for (Mounted mounted : getAmmo()) {
-			AmmoType atype = (AmmoType) mounted.getType();
+        int finalBV = (int)Math.round(dbv + obv + xbv);
 
-			// don't count depleted ammo
-			if (mounted.getShotsLeft() == 0)
-				continue;
-
-			// don't count AMS, it's defensive
-			if (atype.getAmmoType() == AmmoType.T_AMS) {
-				continue;
-			}
-
-			ammoBV += atype.getBV(this);
-		}
-		weaponBV += ammoBV;
-
-		// adjust further for speed factor
-		double speedFactor = getOriginalRunMP() - 5;
-		speedFactor /= 10;
-		speedFactor++;
-		speedFactor = Math.pow(speedFactor, 1.2);
-		speedFactor = Math.round(speedFactor * 100) / 100.0;
-
-		obv = weaponBV * speedFactor;
-
-		// and then factor in pilot
-		double pilotFactor = crew.getBVSkillMultiplier();
-
-		// return (int)Math.round((dbv + obv) * pilotFactor);
-		int finalBV = (int) Math.round(dbv + obv);
-
-		int retVal = (int) Math.round((finalBV) * pilotFactor);
-		return retVal;
+        // and then factor in pilot
+        double pilotFactor = crew.getBVSkillMultiplier();
+        
+        int retVal = (int)Math.round((finalBV) * pilotFactor);
+        return retVal;
 	}
 
 	public Vector victoryReport() {
@@ -883,17 +958,6 @@ public class Protomech extends Entity implements Serializable {
 			return "a near miss";
 		}
 		return super.getLocationAbbr(loc);
-	}
-
-	/**
-	 * Sets the battle value of this unit. Please note that the BV of all Battle
-	 * Armor units is dictated by the BMRr, page 155.
-	 * 
-	 * @param bv -
-	 *            the <code>int</code> battle value of this unit.
-	 */
-	public void setBattleValue(int bv) {
-		myBV = bv;
 	}
 
 	/*

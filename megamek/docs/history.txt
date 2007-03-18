@@ -26,7 +26,7 @@ v0.33.4 (SVN)
   (sword-like and hatchet-like S7 map pack weapons are included)
 + Bug: NPE when using aimed shots for swords and hatchet weapons.
   (Now checks to make sure ce() and target are !Null before continuing
-+ BV 2.0 for Mechs
++ BV 2.0 for Mechs and Tanks
   
 v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"

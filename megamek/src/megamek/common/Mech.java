@@ -2131,13 +2131,6 @@ public abstract class Mech
                     weaponsBVFront += dBV;
                 }
             }
-            if (weaponsBVFront > weaponsBVRear) {
-                weaponBV += weaponsBVFront;
-                weaponBV += (weaponsBVRear * 0.5);
-            } else {
-                weaponBV += weaponsBVRear;
-                weaponBV += (weaponsBVFront * 0.5);
-            }
         } else {
             // count weapons at full BV until heatefficiency is reached or passed with one weapon
             int heatAdded = 0;
@@ -2167,6 +2160,14 @@ public abstract class Mech
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
                     dBV *= 1.25;
                 }
+                // artemis bumps up the value
+                if (weapon.getLinkedBy() != null) {
+                    Mounted mLinker = weapon.getLinkedBy();
+                    if (mLinker.getType() instanceof MiscType && 
+                            mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                        dBV *= 1.2;
+                    }
+                } 
                 if (heatAdded >= mechHeatEfficiency && wtype.getHeat() > 0)
                     dBV /= 2;
                 if (weapon.isRearMounted()) {
@@ -2175,15 +2176,15 @@ public abstract class Mech
                     weaponsBVFront += dBV;
                 }
                 heatAdded += ((WeaponType)weapon.getType()).getHeat();
-            }
-            if (weaponsBVFront > weaponsBVRear) {
-                weaponBV += weaponsBVFront;
-                weaponBV += (weaponsBVRear * 0.5);
-            } else {
-                weaponBV += weaponsBVRear;
-                weaponBV += (weaponsBVFront * 0.5);
-            }            
+            }         
         }
+        if (weaponsBVFront > weaponsBVRear) {
+            weaponBV += weaponsBVFront;
+            weaponBV += (weaponsBVRear * 0.5);
+        } else {
+            weaponBV += weaponsBVRear;
+            weaponBV += (weaponsBVFront * 0.5);
+        }   
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
         double oEquipmentBV = 0;
         for (Mounted mounted : getMisc()) {
@@ -2244,7 +2245,7 @@ public abstract class Mech
                 // Okay, actually check for friendly TAG.
                 if (tmpP.hasTAG())
                     tagBV += atype.getBV(this);
-                else if (tmpP.getTeam() != Player.TEAM_NONE) {
+                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
                    for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
                         Team m = (Team)e.nextElement();
                         if (m.getId() == tmpP.getTeam()) {

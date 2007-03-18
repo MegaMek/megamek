@@ -355,13 +355,13 @@ public class GunEmplacement extends Entity
      * Calculates the battle value of this emplacement
      */
     public int calculateBattleValue() {
-        return calculateBattleValue(false);
+        return calculateBattleValue(false, false);
     }
 
     /**
      * Calculates the battle value of this emplacement
      */
-    public int calculateBattleValue(boolean assumeLinkedC3) {
+    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
         // using structures BV rules from MaxTech
 
         double dbv = 0; // defensive battle value

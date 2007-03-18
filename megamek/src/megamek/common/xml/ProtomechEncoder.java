@@ -120,27 +120,6 @@ public class ProtomechEncoder {
                 // No-op.
             }
 
-            // Did we find the BV node?
-            else if ( childName.equals( "bv" ) ) {
-
-                // Get the Proto's BV.
-                attrStr = child.getAttribute( "value" );
-                if ( null == attrStr ) {
-                    throw new IllegalStateException
-                        ( "Couldn't decode the BV for a Protomech unit." );
-                }
-
-                // Try to pull the number from the attribute string
-                try {
-                    attrVal = Integer.parseInt( attrStr );
-                }
-                catch ( NumberFormatException exp ) {
-                    throw new IllegalStateException
-                        ( "Couldn't get an integer from " + attrStr );
-                }
-                entity.setBattleValue( attrVal );
-            }
-
             // Did we find the main gun node?
             else if ( childName.equals( "hasMainGun" ) ) {
 

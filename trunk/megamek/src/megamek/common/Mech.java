@@ -2287,7 +2287,7 @@ public abstract class Mech
             weaponBV += getWeight();        
 
         // adjust further for speed factor
-        double speedFactor = Math.pow(1+(((double)runMP+((double)jumpMP/2)-5)/10), 1.2);
+        double speedFactor = Math.pow(1+(((double)runMP+(Math.round((double)jumpMP/2))-5)/10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
         
         obv = weaponBV * speedFactor;

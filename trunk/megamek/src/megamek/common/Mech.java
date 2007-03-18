@@ -2310,7 +2310,7 @@ public abstract class Mech
                     totalForceBV+=e.calculateBattleValue(false, true);
                 }
             }
-            xbv = totalForceBV *= 0.05;
+            xbv += totalForceBV *= 0.05;
         }
 
         int finalBV = (int)Math.round(dbv + obv + xbv);

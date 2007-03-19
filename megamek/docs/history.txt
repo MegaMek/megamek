@@ -28,6 +28,7 @@ v0.33.4 (SVN)
   (Now checks to make sure ce() and target are !Null before continuing
 + BV 2.0 for Mechs and Tanks and Protomechs
 + Update to BV 2.0 rules Rounding Jump MP/2 in Speed Factor Formula
++ Bug: NPE when calculating BV for excessive ammo on Coolant pods.
 
 v0.33.3 (2007-01-03, 14:20 GMT+1)
 + Bug 1582609: Cannot load MUL that includes the TMP-3M2 "Storm Tempest"

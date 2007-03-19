@@ -2273,10 +2273,16 @@ public abstract class Mech
         // only count BV for ammo for a weapontype until the BV of all weapons of that 
         // type on the mech is reached
         for (String key : keys) {
-            if (ammo.get(key) > weaponsForExcessiveAmmo.get(key))
-                ammoBV += weaponsForExcessiveAmmo.get(key);
-            else
+            try {
+                if (ammo.get(key) > weaponsForExcessiveAmmo.get(key))
+                    ammoBV += weaponsForExcessiveAmmo.get(key);
+                else
+                    ammoBV += ammo.get(key);
+            }catch (Exception ex) {
+                //Coolant pods
+                System.err.println("Error with ExcessiveAmmo for "+this.getModel()+" ammo "+key);
                 ammoBV += ammo.get(key);
+            }
         }
         weaponBV += ammoBV;
         

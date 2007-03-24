@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.4 (SVN)
+v0.33.4 (2007-03-24, 23:00 GMT+1)
 + Bug: tool tips not displaying in ice hexes
 + Bug 1624745: Vehicle crew created when Battle Armor destroyed
 + Bug 1627200: Div by Zero Exception in Random Unit Generator

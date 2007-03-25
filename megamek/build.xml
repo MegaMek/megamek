@@ -85,7 +85,7 @@
   <!-- square brackets) -->
   <!-- Example local.xml file: -->
   <!-- [project name="local"]                                    -->
-  <!--    [property name="tooldir" value="c:\Development"/]      -->
+  <!--    [property name="retroweaverdir" value="c:\Development\retroweaver"/]      -->
   <!-- [/project]                                                -->
   <target name="weave" depends="compile" >
      <echo message="Applying Retroweaver to class files..."/>

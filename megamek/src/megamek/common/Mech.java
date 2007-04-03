@@ -2490,7 +2490,7 @@ public abstract class Mech
 
         return vDesc;
     }
-  
+
     /**
      * Add in any piloting skill mods
      */
@@ -3409,20 +3409,20 @@ public abstract class Mech
         }
         return false;
     }
-    
+
     public void setGrappled(int id, boolean attacker) {
         grappled_id = id;
         isGrappleAttacker = attacker;
     }
-    
+
     public boolean isGrappleAttacker() {
         return isGrappleAttacker;
     }
-    
+
     public int getGrappled() {
         return grappled_id;
     }
-    
+
     public boolean isEligibleForMovement() {
         if(grappled_id != Entity.NONE) {
             return false;
@@ -3433,7 +3433,7 @@ public abstract class Mech
     public boolean isNuclearHardened() {
         return true;
     }
-    
+
     public void destroyLocation(int loc) {
         super.destroyLocation(loc);
         // if it's a leg, the entity falls

@@ -179,7 +179,7 @@ public class BipedMech extends Mech {
         initializeInternal(leg, LOC_RLEG);
         initializeInternal(leg, LOC_LLEG);
     }
-    
+
     /**
      * Add in any piloting skill mods
      */

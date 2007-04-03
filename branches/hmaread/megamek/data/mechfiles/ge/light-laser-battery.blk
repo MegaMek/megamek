@@ -1,0 +1,44 @@
+#building block data file
+<BlockVersion>
+1
+</BlockVersion>
+#Write the version number just in case...
+<Version>
+MAM0
+</Version>
+<UnitType>
+GunEmplacement
+</UnitType>
+<Name>
+Light Laser Battery
+</Name>
+<Model>
+Yoyodyne LLB-T2
+</Model>
+<Year>
+3025
+</Year>
+<Type>
+IS Level 1
+</Type>
+<ConstructionFactor>
+15
+</ConstructionFactor>
+<Height>
+1
+</Height>
+<Turret>
+15
+</Turret>
+<North Equipment>
+ISSmallLaser
+</North Equipment>
+<East Equipment>
+ISSmallLaser
+</East Equipment>
+<West Equipment>
+ISSmallLaser
+</West Equipment>
+<Turret Equipment>
+ISMediumLaser
+</Turret Equipment>

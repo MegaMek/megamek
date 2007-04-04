@@ -130,6 +130,7 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 import megamek.server.commands.DefeatCommand;
+import megamek.server.commands.ExportListCommand;
 import megamek.server.commands.FixElevationCommand;
 import megamek.server.commands.HelpCommand;
 import megamek.server.commands.KickCommand;
@@ -298,18 +299,19 @@ public class Server implements Runnable {
 
         // register commands
         registerCommand(new DefeatCommand(this));
+        registerCommand(new ExportListCommand(this));
+        registerCommand(new FixElevationCommand(this));
         registerCommand(new HelpCommand(this));
         registerCommand(new KickCommand(this));
+        registerCommand(new LocalSaveGameCommand(this));
+        registerCommand(new NukeCommand(this));
         registerCommand(new ResetCommand(this));
         registerCommand(new RollCommand(this));
         registerCommand(new SaveGameCommand(this));
+        registerCommand(new SeeAllCommand(this));
         registerCommand(new SkipCommand(this));
         registerCommand(new VictoryCommand(this));
         registerCommand(new WhoCommand(this));
-        registerCommand(new SeeAllCommand(this));
-        registerCommand(new LocalSaveGameCommand(this));
-        registerCommand(new FixElevationCommand(this));
-        registerCommand(new NukeCommand(this));
 
         //register terrain processors
         terrainProcessors.add(new FireProcessor(this));

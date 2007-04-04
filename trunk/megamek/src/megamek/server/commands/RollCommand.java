@@ -25,7 +25,7 @@ import megamek.server.*;
 
 /**
  *
- * @author  Ben
+ * @author Ben
  * @version 
  */
 public class RollCommand extends ServerCommand {

@@ -1707,3 +1707,4 @@ Tundra Wolf 3|MWDA|BattleMech|3132
 Zeus ZEU-X|MWDA|BattleMech|3132
 Zeus ZEU-X2|MWDA|BattleMech|3132
 Zeus ZEU-X3|MWDA|BattleMech|3132
+Preta Dominus|Word of Blake|BattleMech|3072

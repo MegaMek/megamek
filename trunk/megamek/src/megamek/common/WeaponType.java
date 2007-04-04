@@ -364,6 +364,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISMPod());
         EquipmentType.addType(createISLightMG());
         EquipmentType.addType(createISHeavyMG());
+        EquipmentType.addType(createISMGA());
         
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -857,6 +858,35 @@ public class WeaponType extends EquipmentType {
         weapon.bv = 6;
         weapon.flags |= F_BALLISTIC | F_MG | F_BURST_FIRE;
         weapon.cost = 7500;
+
+        return weapon;
+    }
+
+    private static WeaponType createISMGA() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "IS Machine Gun Array";
+        weapon.setInternalName("ISMGA");
+        weapon.heat = 0;
+        weapon.damage = DAMAGE_VARIABLE;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_MG;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 3;
+        weapon.extremeRange = 4;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.bv = 0; //we'll have to calculate this in calculateBV(),
+                       //because it depends on the number of MGs linked to
+                       //the MGA
+        weapon.flags |= F_BALLISTIC | F_MGA | F_BURST_FIRE;
+        weapon.cost = 5000;
+        String[] modes = {"Linked","Off"};
+        weapon.setModes(modes);
+        weapon.instantModeSwitch = false;
 
         return weapon;
     }

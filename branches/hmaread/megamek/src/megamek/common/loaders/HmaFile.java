@@ -48,6 +48,7 @@ public class HmaFile
     private String name;
     private String model;
 
+    private HMAChassisType chassisType;
     private HMAMovementType movementType;
     private int rulesLevel;
     private int year;
@@ -90,99 +91,159 @@ public class HmaFile
         try
         {
             DataInputStream dis = new DataInputStream(is);
-    
+
+            // First we skip the version number.
+            // It will normally be "V1.00".
             byte[] buffer = new byte[5];
             dis.read(buffer);
             String version = new String(buffer);
-    
-            // ??
+
+            // Immediately after that is the standard/custom/modified flag.
+            // Standard=1, Modified=2, Custom=4
+            //FIXME
             dis.skipBytes(2);
-    
+
+            // Next is the chassis type.
+            // 0 = conventional fighter
+            // 1 = AeroSpace fighter
+            // 2 = Aerodyne small craft
+            // 3 = Spheroid small craft
+            // 4 = Aerodyne DropShip
+            // 5 = Spheroid DropShip
+            // 6 = JumpShip
+            // 7 = WarShip
+            // 8 = Space Station
             int type = readUnsignedShort(dis);
-            movementType = HMAMovementType.getType( type );
-            if ( null == movementType ) {
-              throw new EntityLoadingException
-                    ( "Could not locate movement type for " + type + "." );
+            chassisType = HMAChassisType.getType(type);
+            if (null == chassisType) { 
+                throw new EntityLoadingException("Could not locate movement type for " + type + ".");
             }
-    
-            // ??
-            dis.skipBytes(12);
-    
+
+            // Fill out the movement type based on that.
+            if ((chassisType == HMAChassisType.CONVENTIONAL)
+                    || (chassisType == HMAChassisType.AEROSPACEFIGHTER)
+                    || (chassisType == HMAChassisType.AERODYNESMALLCRAFT)
+                    || (chassisType == HMAChassisType.AERODYNEDROPSHIP)) {
+                movementType = HMAMovementType.AERODYNE;
+            } else if ((chassisType == HMAChassisType.SPHEROIDSMALLCRAFT)
+                    || (chassisType == HMAChassisType.SPHEROIDDROPSHIP)) {
+                movementType = HMAMovementType.SPHEROID;
+            } else {
+                // It's a JumpShip, WarShip, or Space Station.
+                // This is beyond our scope right now.
+                movementType = HMAMovementType.SPACEONLY;
+            }
+
+            // 18 unknown bytes...
+            //FIXME
+            dis.skipBytes(18);
+
+            // Next is the unit name.
+            // Model is NOT present as a separate field in HMA files.
             buffer = new byte[readUnsignedShort(dis)];
             dis.read(buffer);
             name = new String(buffer);
-    
-            buffer = new byte[readUnsignedShort(dis)];
-            dis.read(buffer);
-            model = new String(buffer);
-    
-            //This next one appears to be wrong.  FIXME
+
+            // 3 unknown bytes...
+            dis.skipBytes(3);
+
+            // Next is the rules level.
             rulesLevel = readUnsignedShort(dis);
-    
+
+            // After that is the year of the fighter.
             year = readUnsignedShort(dis);
-    
-            // ??
-            dis.skipBytes(32);
-    
-            // The "bf2" buffer contains the word "omni" for OmniVehicles.
+
+            // Skip 40 bytes to get to the BF2 summary.
+            //FIXME
+            dis.skipBytes(40);
+
             int bf2Length = readUnsignedShort(dis);
-            byte[] bf2Buffer = new byte[ bf2Length ];
-            dis.read( bf2Buffer );
-            isOmni = containsOmni( bf2Buffer );
-    
-            techType = HMATechType.getType(readUnsignedShort(dis));
-    
-            if(techType.equals(HMATechType.MIXED)) {
-                //THESE ARE GUESSES.  Need example hmv files to verify.
-                baseTechType = HMATechType.getType(readUnsignedShort(dis));
-                engineTechType = HMATechType.getType(readUnsignedShort(dis));
-                targetingComputerTechType = HMATechType.getType(readUnsignedShort(dis));
-                armorTechType = HMATechType.getType(readUnsignedShort(dis));
-            } else if (techType.equals(HMATechType.CLAN)) {
-                engineTechType = HMATechType.CLAN;
-                baseTechType = HMATechType.CLAN;
-                targetingComputerTechType = HMATechType.CLAN;
-                armorTechType = HMATechType.CLAN;          
+            byte[] bf2Buffer = new byte[bf2Length];
+            dis.read(bf2Buffer);
+            isOmni = containsOmni(bf2Buffer);
+
+            // Engine rating is a little further down.  We need to skip some stuff.
+            // We may be skipping component tech bases?  I'm not going to stress.
+            //FIXME
+            dis.skipBytes(92);
+/*            
+            techType = HMVTechType.getType(readUnsignedShort(dis));
+            
+            if(techType.equals(HMVTechType.MIXED)) {
+                baseTechType = HMVTechType.getType(readUnsignedShort(dis));
+                engineTechType = HMVTechType.getType(readUnsignedShort(dis));
+                targetingComputerTechType = HMVTechType.getType(readUnsignedShort(dis));
+                armorTechType = HMVTechType.getType(readUnsignedShort(dis));
+            } else if (techType.equals(HMVTechType.CLAN)) {
+                engineTechType = HMVTechType.CLAN;
+                baseTechType = HMVTechType.CLAN;
+                targetingComputerTechType = HMVTechType.CLAN;
+                armorTechType = HMVTechType.CLAN;          
             } else {
-                engineTechType = HMATechType.INNER_SPHERE;
-                baseTechType = HMATechType.INNER_SPHERE;
-                targetingComputerTechType = HMATechType.INNER_SPHERE;
-                armorTechType = HMATechType.INNER_SPHERE;
+                engineTechType = HMVTechType.INNER_SPHERE;
+                baseTechType = HMVTechType.INNER_SPHERE;
+                targetingComputerTechType = HMVTechType.INNER_SPHERE;
+                armorTechType = HMVTechType.INNER_SPHERE;
             }
-    
-            // ??
-            dis.skipBytes(4);
-    
+*/
+
+            // Next two bytes are the engine rating.
+            // Straight hex-to-int conversion.
             engineRating = readUnsignedShort(dis);
+
+            // Next two bytes are the engine type.
+            // 0 = Turbine
+            // 1 = Fusion
             engineType = HMAEngineType.getType(readUnsignedShort(dis));
-    
+
+            // Next two bytes are the cruise MP.
+            // Straight hex-to-int conversion.
             cruiseMP = readUnsignedShort(dis);
-            jumpMP = readUnsignedShort(dis);
-    
-            heatSinks = readUnsignedShort(dis);
-            armorType = HMAArmorType.getType(readUnsignedShort(dis));
-    
-            roundedInternalStructure = readUnsignedShort(dis);
-    
-            // internal structure again ??
-            dis.skipBytes(2);
-    
+
+            // Six bytes to the front armor
+            //FIXME
+            //jumpMP = readUnsignedShort(dis);
+            //heatSinks = readUnsignedShort(dis);
+            //armorType = HMAArmorType.getType(readUnsignedShort(dis));
+            //roundedInternalStructure = readUnsignedShort(dis);
+
+            // Front armor
             frontArmor = readUnsignedShort(dis);
-    
-            // internal structure again ??
+
+            // Two open bytes between every armor location?
             dis.skipBytes(2);
-    
+
+            // Front side
+            //FIXME: is this left or right?
             leftArmor = readUnsignedShort(dis);
-    
-            // internal structure again ??
-            dis.skipBytes(2);
-    
-            rightArmor = readUnsignedShort(dis);
-    
-            // internal structure again ??
-            dis.skipBytes(2);
-    
+
+            // Two open bytes between every armor location?
+            // Not only that, but 8 open bytes?...
+            // The Aft Side armor (for WarShips and such) is in this block.
+            //FIXME
+            dis.skipBytes(10);
+
+            // Rear armor apparently comes before the other side.
             rearArmor = readUnsignedShort(dis);
+
+            // Two open bytes between every armor location?
+            dis.skipBytes(2);
+
+            // Front side
+            //FIXME: is this left or right?
+            rightArmor = readUnsignedShort(dis);
+
+            // Two open bytes between every armor location?
+            dis.skipBytes(2);
+
+            // 4 open bytes?  Again?
+            // And then the other Aft Side armor...
+            // And then two open bytes.
+            // WTF?!?
+            dis.skipBytes(4);
+            dis.skipBytes(2);
+            dis.skipBytes(2);
+
             // ??
             if (isOmni) {
                   // Skip 12 bytes for OmniVehicles
@@ -191,30 +252,30 @@ public class HmaFile
                   // Skip 14 bytes for non-OmniVehicles
                   dis.skipBytes(14);
             }
-    
+
             int weapons = readUnsignedShort(dis);
             for (int i = 1; i <= weapons; i++)
             {
                 int weaponCount = readUnsignedShort(dis);
                 int weaponType = readUnsignedShort(dis);
-    
+
                 // manufacturer name
                 dis.skipBytes(readUnsignedShort(dis));
-    
+
                 HMAWeaponLocation weaponLocation =
                   HMAWeaponLocation.getType(readUnsignedShort(dis));
-    
+
                 int weaponAmmo = readUnsignedShort(dis);
-    
+
                 EquipmentType equipmentType = getEquipmentType(weaponType, techType);
                 if (equipmentType != null)
                 {
                       addEquipmentType(equipmentType, weaponCount, weaponLocation);
-    
+
                       if (weaponAmmo > 0)
                       {
                         AmmoType ammoType = getAmmoType(weaponType, techType);
-    
+
                         if (ammoType != null)
                         {
                               // Need to play games for half ton MG ammo.
@@ -248,7 +309,7 @@ public class HmaFile
                                             " wants " + weaponAmmo + " shots." );
                                   }
                               }
-    
+
                               // Add as many copies of the AmmoType as needed.
                               addEquipmentType(ammoType,
                                                  weaponAmmo / ammoType.getShots(),
@@ -256,15 +317,15 @@ public class HmaFile
                         } // End found-ammoType
                       } // End have-rounds-of-ammo
                 } // End found-equipmentType
-    
+
                 // ??
                 dis.skipBytes(4);
             } // Handle the next piece of equipment
-    
+
             // Read the amount of troop/cargo bays.
             int bayCount = readUnsignedShort(dis);
             for ( int loop = 0; loop < bayCount; loop++ ) {
-    
+
               // Read the size of this bay.
               //dis.skipBytes(2);
               float baySize = readFloat(dis);        
@@ -274,7 +335,7 @@ public class HmaFile
         
               // Add the troopSpace of this bay to our running total.
               troopSpace += baySize;
-    
+
             } // Handle the next bay.
             
             dis.skipBytes(12);
@@ -292,7 +353,7 @@ public class HmaFile
               else
                     addEquipmentType(EquipmentType.get("ISTargeting Computer"), 1, HMAWeaponLocation.BODY);
             }
-    
+
             artemisType = readUnsignedShort(dis);
             // the artemis is a bit field: 1 = SRM artemis IV, 2 = LRM artemis IV, 
             // 4 = SRM artemis V, 8 = LRM artemis V
@@ -303,7 +364,7 @@ public class HmaFile
             int mastEq = VTOLoptions / 100;
             int rotorType = VTOLoptions % 100;
             dis.skipBytes(4);
-    
+
             int fluffSize = 0;
             fluff = "Overview:\n\r";
             buffer = new byte[readUnsignedShort(dis)];
@@ -316,25 +377,25 @@ public class HmaFile
             dis.read(buffer);
             fluff += new String(buffer);
             fluffSize += new String(buffer).length();
-    
+
             fluff += "\n\rBattle History:\n\r";
             buffer = new byte[readUnsignedShort(dis)];
             dis.read(buffer);
             fluff += new String(buffer);
             fluffSize += new String(buffer).length();
-    
+
             fluff += "\n\rVariants:\n\r";
             buffer = new byte[readUnsignedShort(dis)];
             dis.read(buffer);
             fluff += new String(buffer);
             fluffSize += new String(buffer).length();
-    
+
             fluff += "\n\rFamous Vehicles and Pilots:\n\r";
             buffer = new byte[readUnsignedShort(dis)];
             dis.read(buffer);
             fluff += new String(buffer);
             fluffSize += new String(buffer).length();
-    
+
             fluff += "\n\rDeployment:\n\r";
             buffer = new byte[readUnsignedShort(dis)];
             dis.read(buffer);
@@ -342,7 +403,7 @@ public class HmaFile
             fluffSize += new String(buffer).length();
             
             dis.skipBytes(readUnsignedShort(dis)); //notes
-    
+
             //just a catch all for small Fluffs anything well less then 10 characters, per section, isn't worth printing.
             if ( fluffSize <= 60 )
               fluff = null;
@@ -351,7 +412,7 @@ public class HmaFile
             if(supercharger > 0) {
               addEquipmentType(EquipmentType.get("Supercharger"), 1, HMAWeaponLocation.BODY);
             }
-    
+
             dis.close();
         }
         catch (IOException ex)
@@ -1010,7 +1071,7 @@ public class HmaFile
     mixedEquipment.put(new Long(0xFD), "CLATM6");
     mixedEquipment.put(new Long(0xFE), "CLATM9");
     mixedEquipment.put(new Long(0xFF), "CLATM12");
-    
+
     //but ammo *seems* to use the same numbers as the weapon it goes with
     Hashtable mixedAmmo = new Hashtable(isAmmo);
     AMMO.put(HMATechType.MIXED, mixedAmmo);
@@ -1050,7 +1111,7 @@ public class HmaFile
     mixedAmmo.put(new Long(0xE2), "CLSRTorpedo2 Ammo");
     mixedAmmo.put(new Long(0xE3), "CLSRTorpedo4 Ammo");
     mixedAmmo.put(new Long(0xE4), "CLSRTorpedo6 Ammo");
-    
+
   }
 
   private String getEquipmentName(long equipment, HMATechType techType)
@@ -1222,78 +1283,104 @@ abstract class HMAType
     }
 }
 
-class HMAEngineType
-  extends HMAType
+class HMAEngineType extends HMAType
 {
-  public static final Hashtable types = new Hashtable();
+    public static final Hashtable types = new Hashtable();
 
-  public static final HMAEngineType ICE = new HMAEngineType("I.C.E.", 0);
-  public static final HMAEngineType FUSION = new HMAEngineType("Fusion", 1);
-  public static final HMAEngineType XLFUSION = new HMAEngineType("XL Fusion", 2);
-  public static final HMAEngineType XXLFUSION = new HMAEngineType("XXL Fusion", 3);
-  public static final HMAEngineType LIGHTFUSION = new HMAEngineType("Light Fusion", 4);
+    public static final HMAEngineType ICE = new HMAEngineType("Turbine", 0);
+    public static final HMAEngineType FUSION = new HMAEngineType("Fusion", 1);
+    //public static final HMAEngineType XLFUSION = new HMAEngineType("XL Fusion", 2);
+    //public static final HMAEngineType XXLFUSION = new HMAEngineType("XXL Fusion", 3);
+    //public static final HMAEngineType LIGHTFUSION = new HMAEngineType("Light Fusion", 4);
 
-  private HMAEngineType(String name, int id)
-  {
-    super(name, id);
-    types.put(new Integer(id), this);
-  }
+    private HMAEngineType(String name, int id)
+    {
+        super(name, id);
+        types.put(new Integer(id), this);
+    }
 
-  public static HMAEngineType getType(int i)
-  {
-    return (HMAEngineType) types.get(new Integer(i));
-  }
+    public static HMAEngineType getType(int i)
+    {
+        return (HMAEngineType) types.get(new Integer(i));
+    }
 }
 
-class HMAArmorType
-  extends HMAType
+class HMAArmorType extends HMAType
 {
-  public static final Hashtable types = new Hashtable();
+    public static final Hashtable types = new Hashtable();
 
-  public static final HMAArmorType STANDARD = new HMAArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD), 0);
-  public static final HMAArmorType FERRO = new HMAArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS), 1);
-//  public static final HMAArmorType COMPACT = new HMAArmorType("Compact", 2);
-//  public static final HMAArmorType LASER = new HMAArmorType("Laser", 3);
+    public static final HMAArmorType STANDARD = new HMAArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD), 0);
+    public static final HMAArmorType FERRO = new HMAArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS), 1);
+    //public static final HMAArmorType COMPACT = new HMAArmorType("Compact", 2);
+    //public static final HMAArmorType LASER = new HMAArmorType("Laser", 3);
 
-  private HMAArmorType(String name, int id)
-  {
-    super(name, id);
-    types.put(new Integer(id), this);
-  }
+    private HMAArmorType(String name, int id)
+    {
+        super(name, id);
+        types.put(new Integer(id), this);
+    }
 
-  public static HMAArmorType getType(int i)
-  {
-    return (HMAArmorType) types.get(new Integer(i));
-  }
+    public static HMAArmorType getType(int i)
+    {
+        return (HMAArmorType) types.get(new Integer(i));
+    }
 }
 
-class HMATechType
-  extends HMAType
+class HMATechType extends HMAType
 {
-  public static final Hashtable types = new Hashtable();
+    public static final Hashtable types = new Hashtable();
 
-  public static final HMATechType INNER_SPHERE = new HMATechType("Inner Sphere", 0);
-  public static final HMATechType CLAN = new HMATechType("Clan", 1);
-  public static final HMATechType MIXED = new HMATechType("Mixed", 2);
+    public static final HMATechType INNER_SPHERE = new HMATechType("Inner Sphere", 0);
+    public static final HMATechType CLAN = new HMATechType("Clan", 1);
+    public static final HMATechType MIXED = new HMATechType("Mixed", 2);
 
-  private HMATechType(String name, int id)
-  {
-    super(name, id);
-    types.put(new Integer(id), this);
-  }
+    private HMATechType(String name, int id)
+    {
+        super(name, id);
+        types.put(new Integer(id), this);
+    }
 
-  public static HMATechType getType(int i)
-  {
-    return (HMATechType) types.get(new Integer(i));
-  }
+    public static HMATechType getType(int i)
+    {
+        return (HMATechType) types.get(new Integer(i));
+    }
+}
+
+class HMAChassisType extends HMAType
+{
+    public static final Hashtable types = new Hashtable();
+
+    public static final HMAChassisType CONVENTIONAL = new HMAChassisType("Conventional Fighter", 0);
+    public static final HMAChassisType AEROSPACEFIGHTER = new HMAChassisType("AeroSpace Fighter", 1);
+    public static final HMAChassisType AERODYNESMALLCRAFT = new HMAChassisType("Aerodyne Small Craft", 2);
+    public static final HMAChassisType SPHEROIDSMALLCRAFT = new HMAChassisType("Spheroid Small Craft", 3);
+    public static final HMAChassisType AERODYNEDROPSHIP = new HMAChassisType("Aerodyne DropShip", 4);
+    public static final HMAChassisType SPHEROIDDROPSHIP = new HMAChassisType("SpheroidDropShip", 5);
+    public static final HMAChassisType JUMPSHIP = new HMAChassisType("JumpShip", 6);
+    public static final HMAChassisType WARSHIP = new HMAChassisType("WarShip", 7);
+    public static final HMAChassisType SPACESTATION = new HMAChassisType("Space Station", 8);
+
+    private HMAChassisType(String name, int id)
+    {
+        super(name, id);
+        types.put(new Integer(id), this);
+    }
+
+    public static HMAChassisType getType(int i)
+    {
+        // Only pay attention to the movement type bits.
+        i &= 1016;
+        return (HMAChassisType) types.get(new Integer(i));
+    }
 }
 
 class HMAMovementType extends HMAType
 {
     public static final Hashtable types = new Hashtable();
 
-    public static final HMAMovementType AERODYNE = new HMAMovementType("Aerodyne", 8);
-    public static final HMAMovementType SPHEROID = new HMAMovementType("Spheroid", 16);
+    public static final HMAMovementType AERODYNE = new HMAMovementType("Aerodyne", 16);
+    public static final HMAMovementType SPHEROID = new HMAMovementType("Spheroid", 17);
+    public static final HMAMovementType SPACEONLY = new HMAMovementType("Space Only", 19);
 
     private HMAMovementType(String name, int id)
     {

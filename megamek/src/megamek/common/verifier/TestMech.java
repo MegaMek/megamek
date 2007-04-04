@@ -387,12 +387,17 @@ public class TestMech extends TestEntity {
             buff.append("Jump MP exceeds run MP\n");
             return false;
         }
+
+        // As long as it's improved jump jets, this simply isn't true any more.
+        // Or, at the very least, IJJs are as level 2 as any other piece of TW equipment.
+        /*
         if(mech.getOriginalJumpMP() > mech.getOriginalWalkMP()
                 && mech.getTechLevel() != TechConstants.T_CLAN_LEVEL_3
                 && mech.getTechLevel() != TechConstants.T_IS_LEVEL_3) {
             buff.append("Jump MP exceeds walk MP for level 2 construction");
             return false;
         }
+        */
         return true;
     }
     

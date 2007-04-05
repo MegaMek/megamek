@@ -1844,7 +1844,6 @@ public class Compute {
      */
 
     public static double getAmmoAdjDamage(IGame cgame, WeaponAttackAction atk) {
-
         boolean no_bin = true;
         boolean multi_bin = false;
 

@@ -350,7 +350,7 @@ public class Coords
     
         int[] directions = new int[3];
         int centerDirection = src.direction(dest);
-        if(split) {
+        if (split) {
             // HACK to make left appear before right in the sequence reliably
             centerDirection = (int)Math.round(src.radian(dest) + 0.0001 / HEXSIDE) % 6;
         }

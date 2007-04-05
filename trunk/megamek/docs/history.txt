@@ -9,6 +9,8 @@ v0.33.5-dev (SVN)
 + Bug 1686313: HAG/40 now splittable
 + Added Marauder IIC 4
 + Juggernaut image misnamed.
++ Fix BV 2.0 bug where one-shot weapons counted for their BV plus a full ton
+   of the respective none-one-shot weapon's ammo.
 
 v0.33.4 (2007-03-24, 23:00 GMT+1)
 + Bug: tool tips not displaying in ice hexes

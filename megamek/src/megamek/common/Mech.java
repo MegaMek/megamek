@@ -2274,15 +2274,17 @@ public abstract class Mech
         // Only count BV for ammo for a weapontype until the BV of all weapons of that 
         // type on the mech is reached.
         for (String key : keys) {
-            try {
+            if (weaponsForExcessiveAmmo.get(key) != null) {
                 if (ammo.get(key) > weaponsForExcessiveAmmo.get(key))
                     ammoBV += weaponsForExcessiveAmmo.get(key);
                 else
                     ammoBV += ammo.get(key);
-            } catch (Exception ex) {
-                //Coolant pods
-                System.err.println("Error with ExcessiveAmmo for "+this.getModel()+" ammo "+key);
-                ammoBV += ammo.get(key);
+            } else {
+                // Ammo with no matching weapons counts 0, unless it's a coolant pod
+                // because coolant pods have no matching weapon
+                if (key.equals(new Integer(AmmoType.T_COOLANT_POD).toString()+"1")) {
+                    ammoBV += ammo.get(key);
+                }
             }
         }
         weaponBV += ammoBV;

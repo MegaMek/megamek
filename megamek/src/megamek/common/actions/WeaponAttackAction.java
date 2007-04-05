@@ -182,12 +182,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
         boolean isIndirect = wtype.hasModes()
             && weapon.curMode().equals("Indirect");
-        boolean isInferno =
-            atype != null && (atype.getAmmoType() == AmmoType.T_SRM
-                    || atype.getAmmoType() == AmmoType.T_MML 
-                    || atype.getAmmoType() == AmmoType.T_BA_INFERNO) 
-                    && atype.getMunitionType() == AmmoType.M_INFERNO ||
-                isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO);
+        boolean isInferno = (atype != null)
+                    && ((atype.getAmmoType() == AmmoType.T_SRM)
+                        || (atype.getAmmoType() == AmmoType.T_MML)
+                        || (atype.getAmmoType() == AmmoType.T_BA_INFERNO))
+                    && (atype.getMunitionType() == AmmoType.M_INFERNO)
+                    || isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO));
         boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == IGame.PHASE_FIRING;
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY) && (game.getPhase() == IGame.PHASE_TARGETING || game.getPhase() == IGame.PHASE_OFFBOARD);//hack, otherwise when actually resolves shot labeled impossible.
         boolean isArtilleryFLAK = isArtilleryDirect &&
@@ -228,13 +228,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
         ToHitData toHit = null;
         String reason=null;
         
-        reason = toHitIsImpossible (game, ae, target, weapon, atype,
-                                    wtype, ttype, exchangeSwarmTarget,
-                                    usesAmmo, te, isTAG, isInferno, 
-                                    isAttackerInfantry, isIndirect,
-                                    attackerId, weaponId, isArtilleryIndirect,
-                                    ammo, isArtilleryFLAK, targetInBuilding,
-                                    isArtilleryDirect, isTargetECMAffected);
+        reason = toHitIsImpossible(game, ae, target, weapon, atype,
+                wtype, ttype, exchangeSwarmTarget,
+                usesAmmo, te, isTAG, isInferno, 
+                isAttackerInfantry, isIndirect,
+                attackerId, weaponId, isArtilleryIndirect,
+                ammo, isArtilleryFLAK, targetInBuilding,
+                isArtilleryDirect, isTargetECMAffected);
         if (reason!=null) {
             return new ToHitData(ToHitData.IMPOSSIBLE, reason);
         }
@@ -426,15 +426,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         //Engineer's fire extinguisher has fixed to hit number,
         //Note that coolant trucks make a regular attack.
-        if(wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
+        if (wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
             toHit = new ToHitData(8, "fire extinguisher");
-            if(target instanceof Entity && ((Entity)target).infernos.isStillBurning()
+            if (target instanceof Entity && ((Entity)target).infernos.isStillBurning()
                     || target instanceof Tank && ((Tank)target).isInfernoFire()) {
                 toHit.addModifier(2, "inferno fire");
             }
             if(Targetable.TYPE_HEX_EXTINGUISH == target.getTargetType()
-               && game.getBoard().isInfernoBurning(target.getPosition())) {
-                    toHit.addModifier(2, "inferno fire");
+                    && game.getBoard().isInfernoBurning(target.getPosition())) {
+                toHit.addModifier(2, "inferno fire");
             }
             return toHit;
         }
@@ -987,36 +987,39 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
     
     
-        if ( atype != null &&
-             ( atype.getAmmoType() == AmmoType.T_LRM || 
-               atype.getAmmoType() == AmmoType.T_MML) &&
-             ( atype.getMunitionType() == AmmoType.M_THUNDER ||
-               atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE ||
-               atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO ||
-               atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB||
-               atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED ) &&
-             target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
+        if (atype != null
+                && (atype.getAmmoType() == AmmoType.T_LRM
+                    || atype.getAmmoType() == AmmoType.T_MML)
+                && (atype.getMunitionType() == AmmoType.M_THUNDER
+                    || atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE
+                    || atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO
+                    || atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB
+                    || atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED)
+                && (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER)) {
             return "Weapon can only deliver minefields";
         }
-        if ( atype != null &&
-             (atype.getAmmoType() == AmmoType.T_LRM || atype.getAmmoType() == AmmoType.T_MML) &&
-             atype.getMunitionType() == AmmoType.M_FLARE &&
-             target.getTargetType() != Targetable.TYPE_FLARE_DELIVER) {
+        if (atype != null
+                && (atype.getAmmoType() == AmmoType.T_LRM
+                    || atype.getAmmoType() == AmmoType.T_MML)
+                && (atype.getMunitionType() == AmmoType.M_FLARE)
+                && (target.getTargetType() != Targetable.TYPE_FLARE_DELIVER)) {
             return "Weapon can only deliver flares";
         }
+
         // some weapons can only target infantry
-        if ( wtype.hasFlag(WeaponType.F_INFANTRY_ONLY) ) {
-            if (te != null && !(te instanceof Infantry) ||
-                target.getTargetType() != Targetable.TYPE_ENTITY) {
+        if (wtype.hasFlag(WeaponType.F_INFANTRY_ONLY)) {
+            if (te != null && !(te instanceof Infantry)
+                    || target.getTargetType() != Targetable.TYPE_ENTITY) {
                 return "Weapon can only be used against infantry";
             }
-        }    
+        }
+
         // make sure weapon can clear minefield
-        if (target instanceof MinefieldTarget &&
-            !AmmoType.canClearMinefield(atype)) {
+        if (target instanceof MinefieldTarget
+                && !AmmoType.canClearMinefield(atype)) {
             return "Weapon can't clear minefields";
         }
-        
+
         // Arty shots have to be with arty, non arty shots with non arty.
         if (wtype.hasFlag(WeaponType.F_ARTILLERY)) {
             //check artillery is targetted appropriately for its ammo
@@ -1037,37 +1040,37 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 return "Weapon can't make artillery attacks.";
             }
         }
-        
+
         // can't target yourself, unless those are swarm missiles that
         // continued to a new target
         if (ae.equals(te) && !exchangeSwarmTarget) {
             return "You can't target yourself";
         }
-    
+
         // weapon operational?
         if (weapon.isDestroyed() || weapon.isBreached()) {
             return "Weapon not operational.";
         }
-    
+
         // got ammo?
         // don't check if it's a swarm-missile-follow-on-attack, we used the ammo previously
         if ( usesAmmo && !exchangeSwarmTarget && (ammo == null || ammo.getShotsLeft() == 0 || ammo.isBreached()) ) {
             return "Weapon out of ammo.";
         }
-    
+
         // Are we dumping that ammo?
-        if ( usesAmmo && ammo.isDumping() ) {
+        if (usesAmmo && ammo.isDumping()) {
             ae.loadWeaponWithSameAmmo( weapon );
-            if ( ammo.getShotsLeft() == 0 || ammo.isDumping() ) {
+            if (ammo.getShotsLeft() == 0 || ammo.isDumping()) {
                 return "Dumping remaining ammo.";
             }
         }
-    
+
         // is the attacker even active?
         if (ae.isShutDown() || !ae.getCrew().isActive()) {
             return "Attacker is in no condition to fire weapons.";
         }
-    
+
         // sensors operational?
         int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
         if (ae instanceof Mech
@@ -1078,32 +1081,32 @@ public class WeaponAttackAction extends AbstractAttackAction {
         } else if (sensorHits > 1) {
             return "Attacker sensors destroyed.";
         }
-        
-        if(ae instanceof Tank) {
+
+        if (ae instanceof Tank) {
             sensorHits = ((Tank)ae).getSensorHits();
             if(sensorHits > 3)
                 return "Attacker sensors destroyed.";
             if(((Tank)ae).getStunnedTurns() > 0)
                 return "Crew stunned";
         }
-    
+
         // Is the weapon blocked by a passenger?
-        if ( ae.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted()) ) {
+        if (ae.isWeaponBlockedAt(weapon.getLocation(), weapon.isRearMounted())) {
             return "Weapon blocked by passenger.";
         }
-    
+
         // Can't target an entity conducting a swarm attack.
-        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
+        if (te != null && Entity.NONE != te.getSwarmTargetId()) {
             return "Target is swarming a Mek.";
         }
-        
+
         //"Cool" mode for vehicle flamer requires coolant system
         boolean vf_cool = false;
-        if(atype != null 
+        if (atype != null 
                 && wtype.hasFlag(WeaponType.F_FLAMER)
                 && weapon.curMode().equals("Cool")) {
             vf_cool = true;
-            if(!ae.hasWorkingMisc(MiscType.F_COOLANT_SYSTEM,-1)) {
+            if (!ae.hasWorkingMisc(MiscType.F_COOLANT_SYSTEM,-1)) {
                 return "Vehicle does not have a working coolant system";
             }
         }
@@ -1117,10 +1120,9 @@ public class WeaponAttackAction extends AbstractAttackAction {
             if(!hexTarget.containsTerrain(Terrains.FIRE)) {
                 return "Target is not on fire.";
             }
-        }
-        else if(wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
-            if(!((target instanceof Tank && ((Tank)target).isOnFire())
-                || (target instanceof Entity && ((Entity)target).infernos.getTurnsLeftToBurn() > 0))) {
+        } else if(wtype.hasFlag(WeaponType.F_EXTINGUISHER)) {
+            if (!((target instanceof Tank && ((Tank)target).isOnFire())
+                    || (target instanceof Entity && ((Entity)target).infernos.getTurnsLeftToBurn() > 0))) {
                 return "Target is not on fire.";
             }
         }
@@ -1128,25 +1130,26 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // can't target non-wood hexes for clearing (except thin ice)
         if (Targetable.TYPE_HEX_CLEAR == target.getTargetType()) {
             IHex hexTarget = game.getBoard().getHex(target.getPosition()); 
-            if(!hexTarget.containsTerrain(Terrains.WOODS) &&
-               !hexTarget.containsTerrain(Terrains.JUNGLE) &&
-               !(hexTarget.containsTerrain(Terrains.ICE) && hexTarget.containsTerrain(Terrains.WATER))) {
+            if (!hexTarget.containsTerrain(Terrains.WOODS)
+                    && !hexTarget.containsTerrain(Terrains.JUNGLE)
+                    && !(hexTarget.containsTerrain(Terrains.ICE)
+                    && hexTarget.containsTerrain(Terrains.WATER))) {
                 return "Target terrain cannot be cleared.";
             }
             // Infantry can't clear woods.
-            if ( isAttackerInfantry ) {
+            if (isAttackerInfantry) {
                 return "Infantry can not clear terrain.";
             }
         }
         // Infantry can't clear woods.
-        if ( isAttackerInfantry &&
-             Targetable.TYPE_HEX_CLEAR == target.getTargetType() ) {
+        if (isAttackerInfantry
+                && Targetable.TYPE_HEX_CLEAR == target.getTargetType()) {
             return "Infantry can not clear woods.";
         }
     
         // Some weapons can't cause fires, but Infernos always can.
-        if ( (vf_cool || wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)
-            && Targetable.TYPE_HEX_IGNITE == target.getTargetType() ) {
+        if ((vf_cool || wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)
+                && Targetable.TYPE_HEX_IGNITE == target.getTargetType()) {
             return "Weapon can not cause fires.";
         }
 
@@ -1163,26 +1166,27 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Can't target infantry with Inferno rounds (BMRr, pg. 141).
         //  Also, enforce options for keeping vehicles and protos safe
         //  if those options are checked.
-        if ( isInferno &&
-             (te instanceof Tank && game.getOptions().booleanOption("vehicles_safe_from_infernos")
-              || te instanceof Protomech && game.getOptions().booleanOption("protos_safe_from_infernos"))
-              ) {
+        if (isInferno
+                && ((te instanceof Tank
+                    && game.getOptions().booleanOption("vehicles_safe_from_infernos"))
+                || (te instanceof Protomech
+                    && game.getOptions().booleanOption("protos_safe_from_infernos")))) {
             return "Can not target that unit type with Inferno rounds.";
         }
-    
+
         // The TAG system cannot target infantry.
-        if( isTAG && te instanceof Infantry ) {
+        if (isTAG && (te instanceof Infantry)) {
             return "Can not target infantry with TAG.";
         }
 
         // Can't raise the heat of infantry or tanks.
-        if ( wtype.hasFlag(WeaponType.F_FLAMER) &&
-             wtype.hasModes() &&
-             weapon.curMode().equals("Heat") &&
-             !(te instanceof Mech) ) {
+        if (wtype.hasFlag(WeaponType.F_FLAMER)
+                && wtype.hasModes()
+                && weapon.curMode().equals("Heat")
+                && !(te instanceof Mech)) {
             return "Can only raise the heat level of Meks.";
         }
-    
+
         // Handle solo attack weapons.
         if ( wtype.hasFlag(WeaponType.F_SOLO_ATTACK) ) {
             for ( Enumeration i = game.getActions();
@@ -1236,28 +1240,30 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 && !game.getOptions().booleanOption("indirect_fire")) {
             return "Indirect fire option not enabled";
         }
+
         if (isIndirect && game.getOptions().booleanOption("indirect_fire") &&
             !game.getOptions().booleanOption("indirect_always_possible") &&
             LosEffects.calculateLos(game, attackerId, target).canSee()) {
             return "Indirect fire impossible with direct LOS";
         }
+
         if (isIndirect 
                 && usesAmmo 
                 && atype.getAmmoType() == AmmoType.T_MML 
                 && !atype.hasFlag(AmmoType.F_MML_LRM)) {
             return "only LRM ammo can be fired indirectly";
         }
-        
+
         // hull down vees can't fire front weapons
         if(ae instanceof Tank && ae.isHullDown() && weapon.getLocation() == Tank.LOC_FRONT) {
             return "Nearby terrain blocks front weapons.";
         }
-    
+
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target)) {
             return "Target not in arc.";
         }
-        
+
         // BA Micro bombs only when flying
         if (atype != null && atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
             if (ae.getElevation() == 0) {
@@ -1266,11 +1272,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 return "must target hex with bombs";
             }
         }
+
         if (target.getTargetType() == Targetable.TYPE_HEX_BOMB &&
             !(usesAmmo &&
               atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB)) {
             return "Weapon can't deliver bombs";
         }
+
         Entity spotter = null;
         if (isIndirect) {
             if(target instanceof Entity && 

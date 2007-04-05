@@ -5432,10 +5432,9 @@ public class Server implements Runnable {
                         addReport(criticalEntity(te,hit.getLocation(),-2));
                     }
                 }
-            }
-            else if(te instanceof Protomech) {
+            } else if (te instanceof Protomech) {
                 te.heatFromExternal += missiles;
-                while(te.heatFromExternal >=3) {
+                while (te.heatFromExternal >= 3) {
                     te.heatFromExternal -= 3;
                     HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     if(hit.getLocation() == Protomech.LOC_NMISS) {
@@ -5465,35 +5464,31 @@ public class Server implements Runnable {
                         }
                     }
                 }                
-            }
-            else if(te instanceof BattleArmor) {
-                for(Mounted equip:te.getMisc()) {
-                    if ( BattleArmor.FIRE_PROTECTION.equals
-                        (equip.getType().getInternalName()) ) {
-                       r = new Report(3395);
-                       r.indent(2);
-                       r.subject = te.getId();
-                       r.addDesc(te);
-                       addReport(r);
-                       return;
+            } else if (te instanceof BattleArmor) {
+                for (Mounted equip:te.getMisc()) {
+                    if (BattleArmor.FIRE_PROTECTION.equals(equip.getType().getInternalName())) {
+                        r = new Report(3395);
+                        r.indent(2);
+                        r.subject = te.getId();
+                        r.addDesc(te);
+                        addReport(r);
+                        return;
                     }
                 }
                 te.heatFromExternal += missiles;
-                while(te.heatFromExternal >=3) {
+                while (te.heatFromExternal >=3) {
                     te.heatFromExternal -= 3;
                     HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     hit.setEffect(HitData.EFFECT_CRITICAL);
                     addReport(damageEntity(te,hit,1));
                 }
-            }
-            else if(te instanceof Infantry) {
+            } else if (te instanceof Infantry) {
                 HitData hit = new HitData(Infantry.LOC_INFANTRY);
                 addReport(damageEntity(te,hit,3*missiles));
-            }
-            else {
+            } else {
                 //gun emplacements
                 int direction = Compute.targetSideTable(ae,te);
-                while(missiles-- > 0) {
+                while (missiles-- > 0) {
                     HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
                     addReport(damageEntity(te,hit,2));
                 }
@@ -12442,7 +12437,7 @@ public class Server implements Runnable {
                     entity.heatBuildup += vibroHeat;
                 }
             }
-            
+
             //Add heat from external sources to the heat buildup
             entity.heatBuildup += Math.min(15, entity.heatFromExternal);
             entity.heatFromExternal = 0;

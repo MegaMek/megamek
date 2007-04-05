@@ -10465,7 +10465,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 32;
         weapon.tonnage = 16.0f;
         weapon.criticals = 10;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_MISSILE_HITS;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_MISSILE_HITS | F_SPLITABLE;
         weapon.bv = 535;
         weapon.cost = 480000;
         weapon.explosive = true;

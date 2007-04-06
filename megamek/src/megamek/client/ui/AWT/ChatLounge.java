@@ -1045,7 +1045,7 @@ public class ChatLounge
             }
         }
     }
-    
+
     private void refreshCamos() {
         // Get the local player's selected camo.
         String curCat = client.getLocalPlayer().getCamoCategory();

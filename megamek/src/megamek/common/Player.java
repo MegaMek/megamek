@@ -342,4 +342,40 @@ public final class Player extends TurnOrdered
     public int getInitialBV() {
         return initialBV;
     }
+    
+    public float getForceSizeBVMod() {
+        float forceSizeBVMod = 1;
+        float ourUnitCount = game.getEntitiesOwnedBy(this);
+        float enemyUnitCount = 0;
+        if (this.getTeam() == TEAM_NONE) {
+            for (Enumeration e = game.getPlayers();e.hasMoreElements();) {
+                Player p = (Player)e.nextElement();
+                if (!p.equals(this)) {
+                    enemyUnitCount += game.getEntitiesOwnedBy(p);
+                }                
+            }
+        } else {
+            for (Enumeration e = game.getTeamForPlayer(this).getPlayers();e.hasMoreElements();) {
+                Player p = (Player)e.nextElement();
+                if (!p.equals(this)) {
+                    ourUnitCount += game.getEntitiesOwnedBy(p);
+                }                
+            }
+            for (Enumeration e = game.getTeams();e.hasMoreElements();) {
+                Team t = (Team)e.nextElement();
+                if (t.getId() != this.getTeam()) {
+                    for (Enumeration players = t.getPlayers(); e.hasMoreElements();) {
+                        Player p = (Player)e.nextElement();
+                        enemyUnitCount += game.getEntitiesOwnedBy(p);
+                    }
+                }
+            }
+        }
+        if (ourUnitCount <= enemyUnitCount || enemyUnitCount == 0 || ourUnitCount == 0) {
+            return 1;
+        }
+        System.out.println(ourUnitCount+" "+enemyUnitCount);
+        System.out.println((enemyUnitCount/ourUnitCount) + (ourUnitCount/enemyUnitCount) - 1);
+        return (enemyUnitCount/ourUnitCount) + (ourUnitCount/enemyUnitCount) - 1;
+    }
 }

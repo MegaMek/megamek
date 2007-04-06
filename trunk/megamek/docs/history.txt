@@ -11,6 +11,9 @@ v0.33.5-dev (SVN)
 + Juggernaut image misnamed.
 + Fix BV 2.0 bug where one-shot weapons counted for their BV plus a full ton
    of the respective none-one-shot weapon's ammo.
++ Added BV Force size modifier for BV shown in the chatlounge.
+   For games with more than 2 players, all units that are not in your team are counted
+   as the opposing force.
 
 v0.33.4 (2007-03-24, 23:00 GMT+1)
 + Bug: tool tips not displaying in ice hexes

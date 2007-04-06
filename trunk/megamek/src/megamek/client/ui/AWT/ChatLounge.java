@@ -1037,7 +1037,7 @@ public class ChatLounge
                }
             }
             if (useBv) {
-                lisBVs.add(player.getName() + Messages.getString("ChatLounge.BV") + (int) playerValue); //$NON-NLS-1$
+                lisBVs.add(player.getName() + Messages.getString("ChatLounge.BV") + (int) (playerValue*player.getForceSizeBVMod())); //$NON-NLS-1$
             } else if (useCost) {
                 lisBVs.add(player.getName() + Messages.getString("ChatLounge.Cost") + (int) playerValue);
             } else {

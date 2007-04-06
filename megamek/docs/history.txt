@@ -16,6 +16,8 @@ v0.33.5-dev (SVN)
    as the opposing force.
 + Bug 1695464: C3 Master not in equipment list of advanced search.
 + Bug: rear punches to quad mechs now do hit rear locations instead of front locations.
++ Added a couple more RS:PPU 'Mechs
++ Corrected RS:PPU 'Mechs to be level 2 rather than 3
 
 v0.33.4 (2007-03-24, 23:00 GMT+1)
 + Bug: tool tips not displaying in ice hexes

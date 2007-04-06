@@ -27,7 +27,6 @@ import megamek.common.EquipmentType;
 import megamek.common.WeaponType;
 import megamek.common.AmmoType;
 import megamek.common.MiscType;
-import megamek.common.TechConstants;
 import megamek.common.util.StringUtil;
 
 import java.util.Vector;

@@ -455,17 +455,24 @@ public class QuadMech extends Mech {
 			} else if (side == ToHitData.SIDE_REAR) {
 				switch (roll) {
                 case 1:
-                    return new HitData(Mech.LOC_LLEG);
+                    return new HitData(Mech.LOC_LLEG, true);
                 case 2:
-                    return new HitData(Mech.LOC_LT);
+                    return new HitData(Mech.LOC_LT, true);
                 case 3:
-                    return new HitData(Mech.LOC_CT);
+                    return new HitData(Mech.LOC_CT, true);
                 case 4:
-                    return new HitData(Mech.LOC_RT);
+                    return new HitData(Mech.LOC_RT, true);
                 case 5:
-                    return new HitData(Mech.LOC_RLEG);
+                    return new HitData(Mech.LOC_RLEG, true);
                 case 6:
-                    return new HitData(Mech.LOC_HEAD);
+                    if (crew.hasEdgeRemaining() 
+                            && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                        return result;
+                    } // if
+                    return new HitData(Mech.LOC_HEAD, true);
 				}
 			} else if (side == ToHitData.SIDE_LEFT) {
 				switch (roll) {
@@ -479,6 +486,13 @@ public class QuadMech extends Mech {
                 case 5:
                     return new HitData(Mech.LOC_LLEG);
                 case 6:
+                    if (crew.hasEdgeRemaining() 
+                            && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                        return result;
+                    } // if
                     return new HitData(Mech.LOC_HEAD);
 				}
 			} else if (side == ToHitData.SIDE_RIGHT) {
@@ -493,6 +507,13 @@ public class QuadMech extends Mech {
                 case 5:
                     return new HitData(Mech.LOC_RLEG);
                 case 6:
+                    if (crew.hasEdgeRemaining() 
+                            && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                        return result;
+                    } // if
                     return new HitData(Mech.LOC_HEAD);
 				}
 			}

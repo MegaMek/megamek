@@ -464,6 +464,12 @@ public class MechSelectorDialog
                 }
                 m_cWeapons1.addItem(et.getName());
                 m_cWeapons2.addItem(et.getName());
+                if (et.hasFlag(WeaponType.F_C3M)
+                    && (nType == TechConstants.T_LEVEL_2_ALL
+                        || nType == TechConstants.T_IS_LEVEL_2
+                        || nType == TechConstants.T_IS_LEVEL_2_ALL)) {
+                    m_cEquipment.addItem(et.getName());
+                }
             }
             if (et instanceof MiscType
                     && (et.getTechLevel() == nType

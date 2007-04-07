@@ -20,6 +20,7 @@ v0.33.5-dev (SVN)
 + Corrected RS:PPU 'Mechs to be level 2 rather than 3
 + Added House rule that Mechwarriors on the field only have 1 hex vis in double 
   blind games
++ Corrected internal structure points for meks<=20t (they missed 1 point in the legs)
 
 v0.33.4 (2007-03-24, 23:00 GMT+1)
 + Bug: tool tips not displaying in ice hexes

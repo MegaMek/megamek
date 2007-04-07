@@ -5,6 +5,7 @@ v0.32.3 (SVN)
 + Bug 1453975: stuck-in-swamp mech that gets displaced can't get unstuck
 + Bug 1609577: Problems after fall from a lvl 2 collapsing bridge
 + Corrected internal structure points for meks<=20t (they missed 1 point in the legs)
++ Reverted last change, developer was half-blind :|
 
 v0.32.2 (2007-01-03,3 14:)
 + Bug: bot died when only unarmed targets available

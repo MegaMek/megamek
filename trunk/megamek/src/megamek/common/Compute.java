@@ -2298,10 +2298,15 @@ public class Compute {
             }
         }
         if (game.getOptions().intOption("visibility") < 999) {
+            int visualRange = game.getOptions().intOption("visibility");
+            
+            if ( ae instanceof MechWarrior &&  game.getOptions().booleanOption("pilots_visual_range_one") )
+                visualRange = 1;
+            
             if (ae.getPosition() != null &&
                 target.getPosition() != null &&
                 ae.getPosition().distance(target.getPosition())
-                > game.getOptions().intOption("visibility")) {
+                > visualRange) {
                 return false;
             }
         }

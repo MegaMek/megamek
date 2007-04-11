@@ -22,7 +22,8 @@ v0.33.5-dev (SVN)
   blind games
 + Corrected internal structure points for meks<=20t (they missed 1 point in the legs)
 + Reverted last change, developer was half-blind :|
-+ Added Building type Wall(5) Units can stand on but not enter. 
++ Added Building type Wall(5) Units can stand on but not enter.
++ Fix C3 extra BV error.
 
 v0.33.4 (2007-03-24, 23:00 GMT+1)
 + Bug: tool tips not displaying in ice hexes

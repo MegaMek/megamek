@@ -744,6 +744,7 @@ public class Tank
             (hasC3i() && calculateFreeC3Nodes() < 5) ||
             assumeLinkedC3) && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
+            totalForceBV += this.calculateBattleValue(false, true);
             for (Entity e : game.getC3NetworkMembers(this)) {
                 if (!equals(e) && onSameC3NetworkAs(e)) {
                     totalForceBV+=e.calculateBattleValue(false, true);
@@ -758,6 +759,10 @@ public class Tank
         double pilotFactor = crew.getBVSkillMultiplier();
         
         int retVal = (int)Math.round((finalBV) * pilotFactor);
+        
+        // don't factor pilot in if we are just calculating BV for C3 extra BV
+        if (ignoreC3)
+        	return finalBV;
         return retVal;
     }
     

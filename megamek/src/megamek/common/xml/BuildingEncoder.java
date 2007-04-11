@@ -173,7 +173,7 @@ public class BuildingEncoder {
                 type = attrVal;
 
                 // Do we have a valid value?
-                if ( type < 0 || type > Building.HARDENED ) {
+                if ( type < 0 || type > Building.WALL ) {
                     throw new IllegalStateException
                         ( "Illegal value for type: " + attrStr );
                 }

@@ -18,6 +18,7 @@ import java.util.Vector;
 import java.util.Enumeration;
 
 import megamek.common.Board;
+import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Hex;

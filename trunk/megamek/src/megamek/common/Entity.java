@@ -784,6 +784,7 @@ public abstract class Entity extends TurnOrdered
                    || current.containsTerrain(Terrains.BUILDING)) {
                 int bldcur = Math.max(0, current.terrainLevel(Terrains.BLDG_ELEV));
                 int bldnex = Math.max(0, next.terrainLevel(Terrains.BLDG_ELEV));
+
                 if((assumedElevation == bldcur && climb && (this instanceof Mech))
                         || retVal > bldnex) {
                     retVal = bldnex;
@@ -4021,7 +4022,7 @@ public abstract class Entity extends TurnOrdered
         // ineligable because of movement type or unit type
         if(this instanceof Infantry || this instanceof Protomech)
             return 0;
-        
+
         int rv = 0;
         //check current hex for building
         if (step.getElevation()<curHex.terrainLevel(Terrains.BLDG_ELEV)) {
@@ -4041,7 +4042,15 @@ public abstract class Entity extends TurnOrdered
                 rv += 1;
             }
         }
-        
+
+        //check to see if its a wall
+        if ( rv > 1 ) {
+            Building bldgEntered = null;
+            bldgEntered = game.getBoard().getBuildingAt( curPos );
+            if ( bldgEntered.getType() == Building.WALL )
+                return 4;
+        }
+
         return rv;
     }
 
@@ -4076,6 +4085,10 @@ public abstract class Entity extends TurnOrdered
         case Building.HARDENED:
             mod = 5;
             desc = "Hardened";
+            break;
+        case Building.WALL:
+            mod = 12;
+            desc = "Wall";
             break;
         }
 

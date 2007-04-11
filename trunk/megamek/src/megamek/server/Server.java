@@ -6435,9 +6435,14 @@ public class Server implements Runnable {
                 || hex.containsTerrain(Terrains.BRIDGE)) {
             entity.setElevation(0);
         } else {
+            Building bld = game.getBoard().getBuildingAt(entity.getPosition());
+            
+            if ( bld != null && bld.getType() == Building.WALL ) {
+                entity.setElevation(hex.terrainLevel(Terrains.BLDG_ELEV));
+            } else
             // For anything else, assume they're on the floor.
             // entity elevation is relative to hex surface
-            entity.setElevation(hex.floor()-hex.surface());
+                entity.setElevation(hex.floor()-hex.surface());
         }
         entity.setDone(true);
         entity.setDeployed(true);
@@ -7090,6 +7095,11 @@ public class Server implements Runnable {
                 break;
             case Building.HARDENED:
                 if ( roll >= 5 ) {
+                    found = true;
+                }
+                break;
+            case Building.WALL:
+                if ( roll >= 13 ) {
                     found = true;
                 }
                 break;
@@ -19319,7 +19329,11 @@ public class Server implements Runnable {
                     addReport(vRep);
                     return null;
                 }
-				r.messageId = 3440;
+                
+                if ( bldg.getType() == Building.WALL)
+                    r.messageId = 3442;
+                else
+                    r.messageId = 3440;
             }
 
         }

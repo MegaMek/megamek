@@ -55,7 +55,7 @@ public class Terrains implements ITerrainFactory {
     public static final int FUEL_TANK_CF = 33;
     public static final int FUEL_TANK_ELEV = 34;
     public static final int FUEL_TANK_MAGN = 35;
-
+    
     private static final String[] names = {"none", "woods", "rough", "rubble",
             "water", "pavement", "road", "fire", "smoke", "swamp",
             "building", "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",

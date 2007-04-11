@@ -291,7 +291,19 @@ public class MoveStep implements Serializable {
                 setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BRIDGE_ELEV)));
             }
         } else {
-            setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation, climbMode()));
+            Building bld = game.getBoard().getBuildingAt(getPosition());
+            
+            if ( bld != null ) {
+                IHex hex = game.getBoard().getHex(getPosition());
+                int maxElevation = 2+entity.getElevation() + game.getBoard().getHex(entity.getPosition()).surface() - hex.surface();
+                
+                if ( bld.getType() == Building.WALL && maxElevation >= hex.terrainLevel(Terrains.BLDG_ELEV) )
+                    setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BLDG_ELEV)));
+                else
+                    setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation, climbMode()));
+            } else 
+                setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation, climbMode()));
+
         }
 
         calcMovementCostFor(game, prev.getPosition(), prev.getElevation());

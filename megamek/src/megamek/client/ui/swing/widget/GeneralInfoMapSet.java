@@ -346,6 +346,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
                             (Messages.getString
                             ("GeneralInfoMapSet.buildingTypeRHardened"));
                     break;
+                case Building.WALL:
+                    buildingTypeR.setString
+                            (Messages.getString
+                            (""));
+                    break;
                 default:
                     buildingTypeR.setString
                             (Messages.getString

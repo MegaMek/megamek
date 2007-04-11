@@ -152,6 +152,7 @@ public class Building implements Serializable {
     public static final int     MEDIUM  = 2;
     public static final int     HEAVY   = 3;
     public static final int     HARDENED= 4;
+    public static final int     WALL    = 5;
 
     /**
      * Construct a building for the given coordinates from the
@@ -220,6 +221,8 @@ public class Building implements Serializable {
         StringBuffer buffer = new StringBuffer();
         if (structureType == Terrains.FUEL_TANK) {
             buffer.append("Fuel Tank #");
+        } else if ( this.getType() == Building.WALL ) {
+            buffer.append("Wall #");
         } else if (structureType == Terrains.BUILDING) {
             buffer.append("Building #");
         } else if (structureType == Terrains.BRIDGE) {
@@ -398,6 +401,7 @@ public class Building implements Serializable {
             retval = 90;
             break;
         case Building.HARDENED :
+        case Building.WALL     :
             retval = 120;
             break;
         }
@@ -440,6 +444,7 @@ public class Building implements Serializable {
         case Building.MEDIUM  : buf.append( "Medium " ); break;
         case Building.HEAVY   : buf.append( "Heavy " ); break;
         case Building.HARDENED: buf.append( "Hardened " ); break;
+        case Building.WALL: buf.append( "Wall" ); break;
         }
 
         // Add the building's name.

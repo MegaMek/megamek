@@ -976,7 +976,8 @@ public class Game implements Serializable, IGame
             Entity entity = (Entity)i.nextElement();
             if ( entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_SALVAGEABLE ||
                  entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_EJECTED ||
-                 entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED ) {
+                 entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED ||
+                 entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_STACKPOLE ) {
                 wrecks.addElement(entity);
             }
         }
@@ -1010,7 +1011,8 @@ public class Game implements Serializable, IGame
 
         for (Enumeration i = vOutOfGame.elements(); i.hasMoreElements();) {
             Entity entity = (Entity)i.nextElement();
-            if (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED) {
+            if (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_DEVASTATED ||
+                    entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_STACKPOLE)  {
                 smithereens.addElement(entity);
             }
         }

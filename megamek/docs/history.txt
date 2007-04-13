@@ -24,7 +24,10 @@ v0.33.5-dev (SVN)
 + Reverted last change, developer was half-blind :|
 + Added Building type Wall(5) Units can stand on but not enter.
 + Fix C3 extra BV error.
-
++ Added IEntityRemoveCondition REMOVE_STACKPOLE for units that where completely destroyed
+  This is used by MekWars.
++ Bug: Hexes with collapsed walls not reverting to rubble.  
+  
 v0.33.4 (2007-03-24, 23:00 GMT+1)
 + Bug: tool tips not displaying in ice hexes
 + Bug 1624745: Vehicle crew created when Battle Armor destroyed

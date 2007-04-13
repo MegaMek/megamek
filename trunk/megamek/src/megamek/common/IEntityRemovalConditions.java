@@ -27,5 +27,6 @@ public interface IEntityRemovalConditions {
     public static final int REMOVE_EJECTED = 0x0210;
     public static final int REMOVE_DEVASTATED = 0x0400;
     public static final int REMOVE_NEVER_JOINED = 0x0800;
+    public static final int REMOVE_STACKPOLE = 0x1000;
 
 }

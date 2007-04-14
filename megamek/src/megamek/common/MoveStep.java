@@ -1464,8 +1464,8 @@ public class MoveStep implements Serializable {
 
         // Can't back up across an elevation change.
         if ( !(entity instanceof VTOL) && isThisStepBackwards()
-             && ( destAlt
-                  != srcAlt ) ) {
+             && ( (( destAlt != srcAlt ) && !game.getOptions().booleanOption("maxtech_walk_backwards")) ||
+                     (game.getOptions().booleanOption("maxtech_walk_backwards") && ( Math.abs(destAlt - srcAlt) > 1 )) ) ) {
             return false;
         }
 
@@ -1553,8 +1553,11 @@ public class MoveStep implements Serializable {
         if ((type == MovePath.STEP_BACKWARDS
             || type == MovePath.STEP_LATERAL_LEFT_BACKWARDS
             || type == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)
-            && destAlt != srcAlt && !(entity instanceof VTOL)) {
-            return false;
+            && destAlt != srcAlt && !(entity instanceof VTOL) ) {
+            if ( game.getOptions().booleanOption("maxtech_walk_backwards") && Math.abs(destAlt - srcAlt) > 1 )
+                return false;
+            if ( !game.getOptions().booleanOption("maxtech_walk_backwards") && destAlt != srcAlt )
+                return false;
         }
 
         // Can't run into water unless hovering, naval, first step, using a bridge, or fly.

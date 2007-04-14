@@ -1049,6 +1049,19 @@ public class MovementDisplay
                 nagReport.append(addNag(rollTarget));
             }
         }
+        
+        //TODO: May not need to check for amount of elevation change because it should already have been
+        //Checked.
+        if ((moveType == MovePath.STEP_BACKWARDS
+                || moveType == MovePath.STEP_LATERAL_LEFT_BACKWARDS
+                || moveType == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)
+                && prevHex.getElevation() != client.game.getBoard().getHex(curPos).getElevation() 
+                && !(entity instanceof VTOL)) {
+            nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
+            nagReport.append(addNag(entity.getBasePilotingRoll()));
+        }
+        
+
         return nagReport.toString();
     }
 

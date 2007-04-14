@@ -16,6 +16,7 @@
 package megamek.server;
 
 import megamek.MegaMek;
+import megamek.client.ui.AWT.Messages;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
@@ -4539,6 +4540,36 @@ public class Server implements Runnable {
                                         unloaded.getDisplayName() +
                                         " from " + entity.getDisplayName() +
                                         " into " + curPos.getBoardNum() );
+                }
+            }
+
+            if ((step.getType() == MovePath.STEP_BACKWARDS
+                    || step.getType() == MovePath.STEP_LATERAL_LEFT_BACKWARDS
+                    || step.getType() == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)
+                    && game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation() 
+                    && !(entity instanceof VTOL)) {
+                
+                PilotingRollData psr = entity.getBasePilotingRoll();
+                int roll = Compute.d6(2);
+                if ( entity instanceof Tank )
+                    r = new Report(2435);
+                else 
+                    r = new Report(2430);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                r.add(psr.getValue());
+                r.add(roll);
+                addReport(r);
+
+                if(roll < psr.getValue()) {
+                    if ( entity instanceof Mech) {
+                        if ( curHex.getElevation() < game.getBoard().getHex(lastPos).getElevation() )
+                            doEntityFallsInto(entity, lastPos, curPos, entity.getBasePilotingRoll(), false);
+                        else
+                            doEntityFallsInto(entity, curPos, lastPos, entity.getBasePilotingRoll(), false);
+                    } else if ( entity instanceof Tank) {
+                        curPos = lastPos;
+                    }
                 }
             }
 

@@ -1096,6 +1096,15 @@ public class MovementDisplay
                 }
             }
 
+            if ((step.getType() == MovePath.STEP_BACKWARDS
+                    || step.getType() == MovePath.STEP_LATERAL_LEFT_BACKWARDS
+                    || step.getType() == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)
+                    && client.game.getBoard().getHex(lastPos).getElevation() != curHex.getElevation() 
+                    && !(entity instanceof VTOL)) {
+                nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
+                nagReport.append(addNag(entity.getBasePilotingRoll()));
+            }
+            
             // update lastPos, prevStep, prevFacing & prevHex
             lastPos = new Coords(curPos);
             prevStep = step;
@@ -1106,7 +1115,7 @@ public class MovementDisplay
                 prevFacing = curFacing;
             }
             prevHex = curHex;
-            
+
             firstStep = false;
         }
         

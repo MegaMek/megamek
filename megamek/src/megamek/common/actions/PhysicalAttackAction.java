@@ -48,11 +48,6 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if(target == null)
             return "target is null";
 
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return "Attacker is spotting this turn";
-        }
-
         // check range
         if (ae.getPosition().distance(target.getPosition()) > 1 ) {
             return "Target not in range";

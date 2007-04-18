@@ -522,6 +522,8 @@ public class Compute {
                 ToHitData mods = los.losModifiers(game);
                 los.setTargetCover(LosEffects.COVER_NONE);
                 mods.append(getAttackerMovementModifier(game, other.getId()));
+                if (other.isAttackingThisTurn())
+                	mods.addModifier(1, "spotter is making an attack this turn");
                 // is this guy a better spotter?
                 if (spotter == null || mods.getValue() < bestMods.getValue()) {
                     spotter = other;

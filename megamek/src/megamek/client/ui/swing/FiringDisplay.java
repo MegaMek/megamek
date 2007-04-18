@@ -596,17 +596,10 @@ public class FiringDisplay
             }
         }
         // auto spot if we can and the option is set
-        if (attacks.isEmpty() &&
-                client.game.getOptions().booleanOption("auto_spot") && //$NON-NLS-1$
+        if (client.game.getOptions().booleanOption("auto_spot") && //$NON-NLS-1$
                 client.game.getPhase() == IGame.PHASE_FIRING) {
             if (!ce().isINarcedWith(INarcPod.HAYWIRE)) {
-                // if we might do physicals, ask for confirmation
-                if (ce().isEligibleForPhysical()) {
-                    doSpot();
-                    // else, spot without asking
-                } else {
-                    attacks.addElement(new SpotAction(cen));
-                }
+                attacks.addElement(new SpotAction(cen));
             }
         }
 
@@ -813,25 +806,20 @@ public class FiringDisplay
         if (ce() == null) {
             return;
         }
-
         if (ce().isINarcedWith(INarcPod.HAYWIRE)) {
             String title = Messages.getString("FiringDisplay.CantSpotDialog.title"); //$NON-NLS-1$
             String body = Messages.getString("FiringDisplay.CantSpotDialog.message"); //$NON-NLS-1$
             clientgui.doAlertDialog(title, body);
             return;
         }
-    
         // comfirm this action
         String title = Messages.getString("FiringDisplay.SpotForInderectDialog.title"); //$NON-NLS-1$
         String body = Messages.getString("FiringDisplay.SpotForInderectDialog.message"); //$NON-NLS-1$
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
-
-        attacks.removeAllElements();
         attacks.addElement(new SpotAction(cen));
 
-        ready();
     }
 
     /**

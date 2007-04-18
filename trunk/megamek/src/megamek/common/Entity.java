@@ -4707,6 +4707,9 @@ public abstract class Entity extends TurnOrdered
      * @return true, if the entity is active
      */
     public boolean canSpot() {
+        
+        if ( game.getOptions().booleanOption("pilots_cannot_spot") && this instanceof MechWarrior )
+            return false;
         return isActive() && !isOffBoard();
     }
 

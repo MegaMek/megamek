@@ -61,11 +61,6 @@ public class FindClubAction extends AbstractEntityAction {
             return false;
         }
 
-        // Can't find clubs while spotting.
-        if ( entity.isSpotting() ) {
-            return false;
-        }
-
         //Check game options
         if (game.getOptions().booleanOption("no_clan_physical") &&
             entity.isClan()) {

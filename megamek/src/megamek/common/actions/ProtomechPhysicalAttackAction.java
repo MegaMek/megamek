@@ -100,11 +100,6 @@ public class ProtomechPhysicalAttackAction
             return new ToHitData(ToHitData.IMPOSSIBLE, "Non-protos can't make proto-physicalattacks");
         }
 
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
-        }
-
         // Can't target a transported entity.
         if ( te != null && Entity.NONE != te.getTransportId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
@@ -188,6 +183,11 @@ public class ProtomechPhysicalAttackAction
         // target terrain
         toHit.append(Compute.getTargetTerrainModifier(game, te));
 
+        // attacker is spotting
+        if (ae.isSpotting()) {
+            toHit.addModifier(+1, "attacker is spotting");
+        }
+        
         // target prone
         if (te.isProne()) {
             toHit.addModifier(-2, "target prone and adjacent");

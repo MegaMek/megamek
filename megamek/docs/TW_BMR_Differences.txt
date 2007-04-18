@@ -71,7 +71,7 @@ x3) No penalty for taking partial cover in Depth 1 water (Depth 1 water now prov
 
 x4) Ammo Dumping rules expanded to cover vehicles & aerospace craft
 
-5) ‘Mechs may now spot for indirect attacks/use TAG and fire in the same turn, although spotting for indirect LRM fire typically incurs a +1 to hit penalty (no penalty for using TAG).
+x5) ‘Mechs may now spot for indirect attacks/use TAG and fire in the same turn, although spotting for indirect LRM fire typically incurs a +1 to hit penalty (no penalty for using TAG).
 
 x6) When clearing woods, woods now have a number of Terrain Factor points, much like the Construction Factor of buildings, which must be reduced or eliminated to clear them.
 

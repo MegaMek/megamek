@@ -84,11 +84,6 @@ public class PushAttackAction
             return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
         }
 
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
-        }
-
         //Can only push mechs
         if ( te !=null && !(te instanceof Mech) ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is not a mech");
@@ -216,6 +211,11 @@ public class PushAttackAction
         }
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
             toHit.addModifier(2, "Left Shoulder destroyed");
+        }
+
+        // attacker is spotting
+        if (ae.isSpotting()) {
+            toHit.addModifier(+1, "attacker is spotting");
         }
 
         // water partial cover?

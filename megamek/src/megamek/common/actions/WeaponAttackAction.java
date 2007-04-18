@@ -683,6 +683,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
             } else if(!narcSpotter){
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
             }
+            if (spotter.isAttackingThisTurn())
+            	toHit.addModifier(1, "spotter is making an attack this turn");
         }
     
         // attacker terrain

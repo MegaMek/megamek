@@ -15,9 +15,11 @@
 
 package megamek.common;
 
+import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.DisplacementAttackAction;
+import megamek.common.actions.EntityAction;
 import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameEntityChangeEvent;
@@ -4707,7 +4709,6 @@ public abstract class Entity extends TurnOrdered
      * @return true, if the entity is active
      */
     public boolean canSpot() {
-        
         if ( game.getOptions().booleanOption("pilots_cannot_spot") && this instanceof MechWarrior )
             return false;
         return isActive() && !isOffBoard();
@@ -4917,7 +4918,6 @@ public abstract class Entity extends TurnOrdered
             || isCharging()
             || isMakingDfa()
             || isFindingClub()
-            || isSpotting()
             || isOffBoard()) {
             return false;
         }
@@ -5009,6 +5009,16 @@ public abstract class Entity extends TurnOrdered
           }
         return false;//only things w/ tag are
     }
+    
+    public boolean isAttackingThisTurn() {
+    	Vector actions = game.getActionsVector();
+    	for (Enumeration e = actions.elements(); e.hasMoreElements();) {
+    		EntityAction ea = (EntityAction) e.nextElement();
+    		if (ea.getEntityId() == this.getId() && ea instanceof AbstractAttackAction)
+    			return true;
+    	}
+    	return false;
+    }
 
     /**
      * Check if the entity has any valid targets for physical attacks.
@@ -5027,7 +5037,6 @@ public abstract class Entity extends TurnOrdered
             || isCharging()
             || isMakingDfa()
             || isFindingClub()
-            || isSpotting()
             || isOffBoard()
             || isAssaultDropInProgress()) {
             return false;

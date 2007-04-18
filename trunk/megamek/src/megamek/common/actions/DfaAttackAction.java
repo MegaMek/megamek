@@ -96,11 +96,6 @@ public class DfaAttackAction extends DisplacementAttackAction {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
         }
 
-        // can't make physical attacks while spotting
-        if (ae.isSpotting()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is spotting this turn");
-        }
-
         // Can't target a entity conducting a swarm attack.
         if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
@@ -251,6 +246,11 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // piloting skill differential
         if (ae.getCrew().getPiloting() != te.getCrew().getPiloting()) {
             toHit.addModifier(ae.getCrew().getPiloting() - te.getCrew().getPiloting(), "piloting skill differential");
+        }        
+
+        // attacker is spotting
+        if (ae.isSpotting()) {
+            toHit.addModifier(+1, "attacker is spotting");
         }
 
         // target prone

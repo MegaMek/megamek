@@ -6,6 +6,8 @@ v0.33.6-dev (SVN)
 + Bug: NPE in multi player game where a player ejects and disconnects.
 + Found the Real cause of above bug. Caused when adding new Removal Cause. 
 + Fixed it this time for sure!
++ Bug: Meks could skid into wall hexes.
++ Bug: Meks that fell while on a wall fell to the bottom of the wall hex
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

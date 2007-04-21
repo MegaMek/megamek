@@ -2016,9 +2016,16 @@ public class Server implements Runnable {
 
         // okay, well next turn then!
         GameTurn nextTurn = game.changeToNextTurn();
-        send(createTurnIndexPacket());
 
         Player player = getPlayer( nextTurn.getPlayerNum() );
+        
+        if ( player == null || game.getEntitiesOwnedBy(player) == 0 ) {
+            endCurrentTurn(null);
+            return;
+        }
+            
+        send(createTurnIndexPacket());
+
         if ( null != player && player.isGhost() ) {
             sendGhostSkipMessage( player );
         }

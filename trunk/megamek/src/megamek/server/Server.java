@@ -18332,6 +18332,7 @@ public class Server implements Runnable {
              condition != IEntityRemovalConditions.REMOVE_EJECTED &&
              condition != IEntityRemovalConditions.REMOVE_CAPTURED &&
              condition != IEntityRemovalConditions.REMOVE_DEVASTATED &&
+             condition != IEntityRemovalConditions.REMOVE_STACKPOLE &&
              condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED ) {
             throw new IllegalArgumentException( "Unknown unit condition: " +
                                                 condition );

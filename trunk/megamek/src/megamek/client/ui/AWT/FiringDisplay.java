@@ -1044,7 +1044,7 @@ public class FiringDisplay
             if(client.isMyTurn()) {
                 beginMyTurn();
                 setStatusBarText(Messages.getString("FiringDisplay.its_your_turn")); //$NON-NLS-1$
-            } else if ( e != null && e.getPlayer() != null ){                
+            } else {                
                 setStatusBarText(Messages.getString("FiringDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
             }
         }

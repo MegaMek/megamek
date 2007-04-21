@@ -3233,6 +3233,13 @@ public class Server implements Runnable {
                 }
             }
 
+            if ( nextHex.containsTerrain(Terrains.BLDG_ELEV) ) {
+                Building bldg = game.getBoard().getBuildingAt(nextPos);
+                
+                if ( bldg.getType() == Building.WALL )
+                    crashedIntoTerrain = true;
+            }
+            
             //however WIGE can gain 1 level to avoid crashing into the terrain
             if(entity.getMovementMode() == IEntityMovementMode.WIGE) {
                 if(nextElevation == 0 &&
@@ -3248,7 +3255,21 @@ public class Server implements Runnable {
             }
             
             if (crashedIntoTerrain) {
-                r = new Report(2045);
+                
+                if ( nextHex.containsTerrain(Terrains.BLDG_ELEV) ) {
+                    Building bldg = game.getBoard().getBuildingAt(nextPos);
+                    
+                    //If you crash into a wall you want to stop in the hex before the wall not in the wall
+                    //Like a building.
+                    if ( bldg.getType() == Building.WALL ) {
+                        r = new Report(2047);
+                    }else
+                        r = new Report(2045);
+                    
+                }else
+                    r = new Report(2045);
+
+                
                 r.subject = entity.getId();
                 r.indent();
                 r.add(nextPos.getBoardNum(), true);
@@ -3275,7 +3296,6 @@ public class Server implements Runnable {
                             table=ToHitData.SIDE_RIGHT;
                             break;
                     }
-                    curPos=nextPos;
                     elevation=nextElevation;
                     addReport(crashVTOL((VTOL) entity,true,distance,curPos,elevation,table));
 
@@ -3284,12 +3304,22 @@ public class Server implements Runnable {
                         || nextHex.containsTerrain(Terrains.JUNGLE)) {
                         addReport(destroyEntity(entity,"could not land in crash site"));
                     } else if(elevation < nextHex.terrainLevel(Terrains.BLDG_ELEV)){
+                        Building bldg = game.getBoard().getBuildingAt(nextPos);
+                        
+                        //If you crash into a wall you want to stop in the hex before the wall not in the wall
+                        //Like a building.
+                        if ( bldg.getType() == Building.WALL ) {
+                            addReport(destroyEntity(entity, "crashed into a wall"));
+                            break;
+                        }
+                        
                         addReport(destroyEntity(entity, "crashed into building"));
                     } else {
                         entity.setPosition(nextPos);
                         entity.setElevation(0);
                         doEntityDisplacementMinefieldCheck(entity, curPos, nextPos);
                     }
+                    curPos=nextPos;
                     break; 
 
                 }
@@ -16871,6 +16901,13 @@ public class Server implements Runnable {
         else if (waterDepth > 0) {
             damageHeight = height - waterDepth;
             newElevation = -waterDepth;
+        } else if ( fallHex.containsTerrain(Terrains.BLDG_ELEV) ) {
+            Building bldg = game.getBoard().getBuildingAt(fallPos);
+            if ( bldg.getType() == Building.WALL )
+                newElevation = Math.max(fallHex.getElevation(), fallHex.terrainLevel(Terrains.BLDG_ELEV));
+            else
+                newElevation = 0;
+            waterDepth = 0;
         } else {
             waterDepth = 0; //because it will be used to set elevation
             newElevation = 0;

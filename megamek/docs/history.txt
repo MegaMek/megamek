@@ -3,6 +3,7 @@
 v0.33.6-dev (SVN)
 + Added House rule MW pilots cannot spot.
 + RFE 1701138: Spotting and firing
++ Bug: NPE in multi player game where a player ejects and disconnects.
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

@@ -10537,7 +10537,7 @@ public class WeaponType extends EquipmentType {
         weapon.mediumRange = 2;
         weapon.longRange = 3;
         weapon.extremeRange = 4;
-        weapon.tonnage = 0.5f;
+        weapon.tonnage = 0.25f;
         weapon.criticals = 1;
         weapon.bv = 0; //we'll have to calculate this in calculateBV(),
                        //because it depends on the number of MGs linked to

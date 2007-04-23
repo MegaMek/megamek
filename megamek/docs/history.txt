@@ -11,6 +11,7 @@ v0.33.6-dev (SVN)
 + Correct weight on Clan Machine Gun Array
 + Added the rest of the RS:PPU 'Mechs.
 + Corrected tech on CLIJJ
++ Patch #1705501: Bot ammo/color can be changed in chat lounge.
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

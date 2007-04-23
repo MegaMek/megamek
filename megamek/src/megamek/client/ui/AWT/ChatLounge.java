@@ -247,6 +247,7 @@ public class ChatLounge
             public void itemStateChanged(ItemEvent e) {
                 butRemoveBot.setEnabled(false);
                 Client c = getPlayerListSelected(lisPlayerInfo);
+                refreshCamos();
                 if (c == null) {
                     lisPlayerInfo.select(-1);
                     return;
@@ -280,7 +281,7 @@ public class ChatLounge
         butCamo.setActionCommand("camo"); //$NON-NLS-1$
         butCamo.addActionListener(this);
         camoDialog.addItemListener(
-            new CamoChoiceListener(camoDialog, butCamo, butOptions.getBackground(), player.getId(), client));
+            new CamoChoiceListener(camoDialog, butCamo, butOptions.getBackground(), this));
         refreshCamos();
 
         // If we have a camo pattern, use it.  Otherwise set a background.
@@ -1047,19 +1048,44 @@ public class ChatLounge
     }
 
     private void refreshCamos() {
-        // Get the local player's selected camo.
-        String curCat = client.getLocalPlayer().getCamoCategory();
-        String curItem = client.getLocalPlayer().getCamoFileName();
+        // Get the seleted player's selected camo.
+        Client c = getPlayerListSelected(lisPlayerInfo);
+        String curCat = c.getLocalPlayer().getCamoCategory();
+        String curItem = c.getLocalPlayer().getCamoFileName();
 
         // If the player has no camo selected, show his color.
         if (null == curItem) {
             curCat = Player.NO_CAMO;
-            curItem = Player.colorNames[client.getLocalPlayer().getColorIndex()];
+            curItem = Player.colorNames[c.getLocalPlayer().getColorIndex()];
         }
 
         // Now update the camo selection dialog.
         camoDialog.setCategory(curCat);
         camoDialog.setItemName(curItem);
+
+        // TODO argoCult Programing at its best. I have only a vague idea what the section below does, but I do know it needs cleanup.
+        // however it is working.
+        Image image = null;
+        Image[] array = (Image[]) camoDialog.getSelectedObjects();
+        if ( null != array ) image = array[0];
+        
+        if ( null == image ) {
+            for (int color = 0; color < Player.colorNames.length; color++){
+                if ( Player.colorNames[color].equals( curItem ) ) {
+                    butCamo.setLabel( Messages.getString("CamoChoiceListener.NoCammo") ); //$NON-NLS-1$
+                    butCamo.setBackground(PlayerColors.getColor(color));
+                    break;
+                }
+            }
+        }
+        // We need to copy the image to make it appear.
+        else {
+            butCamo.setLabel( "" ); //$NON-NLS-1$
+            butCamo.setBackground( butOptions.getBackground() ); //butOptions.getBackground() == default background. This needs to be cleaned up.
+        }
+
+        // Update the butCamo's image.
+        butCamo.setImage( image );
     }
 
     /**
@@ -1342,6 +1368,8 @@ public class ChatLounge
      * list box selected item.  Do not let this go into an infinite loop.  Do not
      * update the selected item (even indirectly, by sending player info) if 
      * it is already selected.
+     * 
+     * A Simple fix would be to ignore events while changing the state.
      */
     public void itemStateChanged(ItemEvent ev) {
 
@@ -1522,6 +1550,22 @@ public class ChatLounge
             return client;
         }
         String name = l.getSelectedItem().substring(0, Math.max(0,l.getSelectedItem().indexOf(" :"))); //$NON-NLS-1$
+        BotClient c = (BotClient)clientgui.getBots().get(name);
+        if (c == null && client.getName().equals(name)) {
+            return client;
+        }
+        return c;
+    }
+    
+    /**
+     * Allow others to see what player is currently selected. Nessecary for CameoChoieListener.
+     * @return
+     */
+    protected Client getPlayerListSelectedClient() {
+        if (lisPlayerInfo.getSelectedIndex() == -1) {
+            return client;
+        }
+        String name = lisPlayerInfo.getSelectedItem().substring(0, Math.max(0,lisPlayerInfo.getSelectedItem().indexOf(" :"))); //$NON-NLS-1$
         BotClient c = (BotClient)clientgui.getBots().get(name);
         if (c == null && client.getName().equals(name)) {
             return client;

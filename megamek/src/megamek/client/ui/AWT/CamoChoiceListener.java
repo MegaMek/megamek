@@ -53,13 +53,9 @@ public class CamoChoiceListener implements ItemListener {
      */
     private final Player localPlayer;
 
-    /** The player whose camo selection is being updated.
-     */
-    private final int playerId;
-
-    /** The sender of messages.  This value may be <code>null</code>.
-     */
-    private final Client client;
+    /** holds the chat lounge. This needs cleanup
+      */
+    private final ChatLounge chatLounge;
 
     /**
      * Create a new camo selection listener that alerts a server.
@@ -76,14 +72,12 @@ public class CamoChoiceListener implements ItemListener {
     public CamoChoiceListener( CamoChoiceDialog camoDialog,
                                ImageButton button,
                                Color background,
-                               int player,
-                               Client sender ) {
+                               ChatLounge chat) {
         dialog = camoDialog;
         butCamo = button;
         defaultBG = background;
         localPlayer = null;
-        playerId = player;
-        client = sender;
+        chatLounge = chat;
     }
 
     /**
@@ -104,8 +98,7 @@ public class CamoChoiceListener implements ItemListener {
         butCamo = button;
         defaultBG = background;
         localPlayer = player;
-        playerId = player.getId();
-        client = null;
+        chatLounge = null;
     }
 
     /**
@@ -118,8 +111,12 @@ public class CamoChoiceListener implements ItemListener {
     public void itemStateChanged( ItemEvent event ) {
 
         // Get the player that needs to be updated.
-        Player player = localPlayer;
-        if ( null == player ) player = client.getPlayer( playerId );
+        Player player;
+        if(chatLounge != null){
+            player = chatLounge.getPlayerListSelectedClient().getLocalPlayer();
+        } else {
+            player = localPlayer;
+        }
 
         // Get the camo image, category, and name that was selected.
         Image image = (Image) event.getItem();
@@ -154,6 +151,8 @@ public class CamoChoiceListener implements ItemListener {
         player.setCamoFileName( itemName );
 
         // Send a message to a server, if called for.
-        if ( null != client ) client.sendPlayerInfo();
+        if(chatLounge != null) {
+            chatLounge.getPlayerListSelectedClient().sendPlayerInfo();
+        }
     }
 }

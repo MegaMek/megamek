@@ -8,6 +8,9 @@ v0.33.6-dev (SVN)
 + Fixed it this time for sure!
 + Bug: Meks could skid into wall hexes.
 + Bug: Meks that fell while on a wall fell to the bottom of the wall hex
++ Correct weight on Clan Machine Gun Array
++ Added the rest of the RS:PPU 'Mechs.
++ Corrected tech on CLIJJ
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

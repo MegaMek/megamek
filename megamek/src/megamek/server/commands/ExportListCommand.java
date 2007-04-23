@@ -68,6 +68,7 @@ public class ExportListCommand extends ServerCommand {
             server.sendServerChat(server.getPlayer(connId).getName() + " has exported a unit list.");
         } catch (Exception e) {
             server.sendServerChat(connId, "/exportlist: execution failed");
+            server.sendServerChat(connId, e.toString());
         }
     }
 }

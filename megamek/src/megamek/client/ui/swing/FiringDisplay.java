@@ -1642,7 +1642,7 @@ public class FiringDisplay
                     break;
                 case (IAimingModes.AIM_MODE_TARG_COMP):
                     if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
-                            ||wtype.hasFlag(WeaponType.F_PULSE)) {
+                            || wtype.hasFlag(WeaponType.F_PULSE)) {
                         return false;
                     }
                     if(weapon.howManyShots() > 1) {

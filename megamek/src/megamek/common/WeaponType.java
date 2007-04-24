@@ -73,6 +73,7 @@ public class WeaponType extends EquipmentType {
     public static final long     F_PULSE              = 0x100000000L; // pulse weapons
     public static final long     F_BURST_FIRE         = 0x200000000L; // full damage vs infantry
     public static final long     F_MGA                = 0x400000000L; // machine gun array
+    public static final long     F_NO_AIM             = 0x800000000L; // machine gun array
 
     //protected RangeType rangeL;
     protected int   heat;
@@ -10605,7 +10606,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 32;
         weapon.tonnage = 10.0f;
         weapon.criticals = 6;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_MISSILE_HITS;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_MISSILE_HITS | F_NO_AIM;
         weapon.bv = 267;
         weapon.cost = 480000;
         weapon.explosive = true;
@@ -10631,7 +10632,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 32;
         weapon.tonnage = 13.0f;
         weapon.criticals = 8;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_MISSILE_HITS;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_MISSILE_HITS | F_NO_AIM;
         weapon.bv = 401;
         weapon.cost = 480000;
         weapon.explosive = true;
@@ -10657,7 +10658,7 @@ public class WeaponType extends EquipmentType {
         weapon.extremeRange = 32;
         weapon.tonnage = 16.0f;
         weapon.criticals = 10;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_MISSILE_HITS | F_SPLITABLE;
+        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_MISSILE_HITS | F_SPLITABLE | F_NO_AIM;
         weapon.bv = 535;
         weapon.cost = 480000;
         weapon.explosive = true;

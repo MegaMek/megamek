@@ -14,6 +14,7 @@ v0.33.6-dev (SVN)
 + Patch #1705501: Bot ammo/color can be changed in chat lounge.
 + Bug 1706879: Megamek thread problems when changing teams
 + Added save-to-XML functionality to weapons.
++ Per rules clarification/change, HAGs cannot make targetted shots with a TC.
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

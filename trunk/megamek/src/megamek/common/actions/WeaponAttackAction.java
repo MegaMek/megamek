@@ -816,8 +816,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
     
         // add targeting computer (except with LBX cluster ammo)
-        if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP &&
-            aimingAt != Mech.LOC_NONE) {
+        if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP
+                && aimingAt != Mech.LOC_NONE) {
             if(ae.hasActiveEiCockpit()) {
                 if(ae.hasTargComp()) {
                     toHit.addModifier(2, "aiming with targeting computer & EI system");
@@ -828,15 +828,16 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 toHit.addModifier(3, "aiming with targeting computer");
             }
         } else {
-            if (ae.hasTargComp() && wtype.hasFlag(WeaponType.F_DIRECT_FIRE) &&
-               (!usesAmmo || 
-                !((atype.getAmmoType() == AmmoType.T_AC_LBX
-                || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
-                && atype.getMunitionType() == AmmoType.M_CLUSTER))) {
+            if (ae.hasTargComp()
+                    && wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                    && (!usesAmmo
+                        || !((atype.getAmmoType() == AmmoType.T_AC_LBX
+                        || atype.getAmmoType() == AmmoType.T_AC_LBX_THB)
+                        && atype.getMunitionType() == AmmoType.M_CLUSTER))) {
                 toHit.addModifier(-1, "targeting computer");
             }
         }
-    
+
         // Change hit table for elevation differences inside building.
         if ( null != los.getThruBldg() && aElev != tElev ) {
     

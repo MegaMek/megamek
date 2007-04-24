@@ -355,17 +355,20 @@ public final class Player extends TurnOrdered
                 }                
             }
         } else {
-            for (Enumeration e = game.getTeamForPlayer(this).getPlayers();e.hasMoreElements();) {
-                Player p = (Player)e.nextElement();
-                if (!p.equals(this)) {
-                    ourUnitCount += game.getEntitiesOwnedBy(p);
-                }                
+            Team team = game.getTeamForPlayer(this);
+            if(team != null) { 
+                for (Enumeration e = team.getPlayers();e.hasMoreElements();) {
+                    Player p = (Player)e.nextElement();
+                    if (!p.equals(this)) {
+                        ourUnitCount += game.getEntitiesOwnedBy(p);
+                    }                
+                }
             }
             for (Enumeration e = game.getTeams();e.hasMoreElements();) {
                 Team t = (Team)e.nextElement();
                 if (t.getId() != this.getTeam()) {
-                    for (Enumeration players = t.getPlayers(); e.hasMoreElements();) {
-                        Player p = (Player)e.nextElement();
+                    for (Enumeration players = t.getPlayers(); players.hasMoreElements();) {
+                        Player p = (Player)players.nextElement();
                         enemyUnitCount += game.getEntitiesOwnedBy(p);
                     }
                 }

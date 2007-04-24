@@ -9411,7 +9411,7 @@ public class Server implements Runnable {
                     hits = 1;
                 }
             }
-            else if(wtype.hasFlag(WeaponType.F_PULSE)) {
+            else if (wtype.hasFlag(WeaponType.F_PULSE)) {
                 nDamPerHit = (((nDamPerHit) + 9) / 10) + 2;
             }
             else if(usesAmmo && 

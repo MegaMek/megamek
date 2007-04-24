@@ -1531,78 +1531,79 @@ public class FiringDisplay
     // Determines if a certain weapon may aimed at a specific
     // hit location.
     public boolean allowAimedShotWith(Mounted weapon) {
-      WeaponType wtype = (WeaponType)weapon.getType();
-      boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
-      boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
-        wtype.getAmmoType() != AmmoType.T_BA_MG &&
-        wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-      !isWeaponInfantry;
-      Mounted ammo = usesAmmo ? weapon.getLinked() : null;
-      AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
+        WeaponType wtype = (WeaponType)weapon.getType();
+        boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
+        boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA
+                && wtype.getAmmoType() != AmmoType.T_BA_MG
+                &&wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER
+                && !isWeaponInfantry;
+        Mounted ammo = usesAmmo ? weapon.getLinked() : null;
+        AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
 
-      // Leg and swarm attacks can't be aimed.
-      if (wtype.getInternalName() == Infantry.LEG_ATTACK ||
-          wtype.getInternalName() == Infantry.SWARM_MEK) {
-          return false;
-      }
-      switch (aimingMode) {
-        case (IAimingModes.AIM_MODE_NONE) :
-        return false;
-        case (IAimingModes.AIM_MODE_IMMOBILE) :
-        if (atype != null) {
-            switch (atype.getAmmoType()) {
-              case (AmmoType.T_SRM_STREAK) :
-              case (AmmoType.T_LRM_STREAK) :
-              case (AmmoType.T_LRM) :
-              case (AmmoType.T_LRM_TORPEDO) :
-              case (AmmoType.T_SRM) :
-              case (AmmoType.T_SRM_TORPEDO) :
-              case (AmmoType.T_MRM) :
-              case (AmmoType.T_NARC) :
-              case (AmmoType.T_AMS) :
-              case (AmmoType.T_ARROW_IV) :
-              case (AmmoType.T_LONG_TOM) :
-              case (AmmoType.T_SNIPER) :
-              case (AmmoType.T_THUMPER) :
-              case (AmmoType.T_SRM_ADVANCED) :
-              case (AmmoType.T_BA_INFERNO) :
-              case (AmmoType.T_LRM_TORPEDO_COMBO) :
-              case (AmmoType.T_ATM) :
-              case (AmmoType.T_MML) :
-              case (AmmoType.T_EXLRM) :
-              case (AmmoType.T_TBOLT5) :
-              case (AmmoType.T_TBOLT10) :
-              case (AmmoType.T_TBOLT15) :
-              case (AmmoType.T_TBOLT20) :
-              case AmmoType.T_PXLRM:
-              case AmmoType.T_HSRM:
-              case AmmoType.T_MRM_STREAK:
-                  return false;
-            }
-            if (((atype.getAmmoType() == AmmoType.T_AC_LBX)
-                    || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
-                    && (atype.getMunitionType() == AmmoType.M_CLUSTER))
+        // Leg and swarm attacks can't be aimed.
+        if (wtype.getInternalName() == Infantry.LEG_ATTACK
+                || wtype.getInternalName() == Infantry.SWARM_MEK) {
+            return false;
+        }
+        switch (aimingMode) {
+            case (IAimingModes.AIM_MODE_NONE) :
                 return false;
-          }
-          break;
-          case (IAimingModes.AIM_MODE_TARG_COMP) :
-          if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
-                  ||wtype.hasFlag(WeaponType.F_PULSE)) {
-            return false;
-          }
-          if(weapon.howManyShots() > 1) {
-              return false;
-          }
-          if ((atype != null)
-                && ((atype.getAmmoType() == AmmoType.T_AC_LBX)
-                || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
-                && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
-            return false;
-          }
-          break;
+            case (IAimingModes.AIM_MODE_IMMOBILE) :
+                if (atype != null) {
+                    switch (atype.getAmmoType()) {
+                        case (AmmoType.T_SRM_STREAK) :
+                        case (AmmoType.T_LRM_STREAK) :
+                        case (AmmoType.T_LRM) :
+                        case (AmmoType.T_LRM_TORPEDO) :
+                        case (AmmoType.T_SRM) :
+                        case (AmmoType.T_SRM_TORPEDO) :
+                        case (AmmoType.T_MRM) :
+                        case (AmmoType.T_NARC) :
+                        case (AmmoType.T_AMS) :
+                        case (AmmoType.T_ARROW_IV) :
+                        case (AmmoType.T_LONG_TOM) :
+                        case (AmmoType.T_SNIPER) :
+                        case (AmmoType.T_THUMPER) :
+                        case (AmmoType.T_SRM_ADVANCED) :
+                        case (AmmoType.T_BA_INFERNO) :
+                        case (AmmoType.T_LRM_TORPEDO_COMBO) :
+                        case (AmmoType.T_ATM) :
+                        case (AmmoType.T_MML) :
+                        case (AmmoType.T_EXLRM) :
+                        case (AmmoType.T_TBOLT5) :
+                        case (AmmoType.T_TBOLT10) :
+                        case (AmmoType.T_TBOLT15) :
+                        case (AmmoType.T_TBOLT20) :
+                        case AmmoType.T_PXLRM:
+                        case AmmoType.T_HSRM:
+                        case AmmoType.T_MRM_STREAK:
+                            return false;
+                }
+                if (((atype.getAmmoType() == AmmoType.T_AC_LBX)
+                        || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
+                        && (atype.getMunitionType() == AmmoType.M_CLUSTER))
+                    return false;
+                }
+                break;
+            case (IAimingModes.AIM_MODE_TARG_COMP):
+                if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                        || wtype.hasFlag(WeaponType.F_PULSE)) {
+                    return false;
+                }
+                if(weapon.howManyShots() > 1) {
+                    return false;
+                }
+                if ((wtype.hasFlag(WeaponType.F_NO_AIM))
+                        || ((atype != null)
+                        && ((atype.getAmmoType() == AmmoType.T_AC_LBX)
+                        || (atype.getAmmoType() == AmmoType.T_AC_LBX_THB))
+                        && (atype.getMunitionType() == AmmoType.M_CLUSTER))) {
+                    return false;
+                }
+                break;
         }
         return true;
-      }
+    }
 
     // ActionListener, listens to the button in the dialog.
     public void actionPerformed(ActionEvent ev) {

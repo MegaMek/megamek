@@ -2885,10 +2885,10 @@ public abstract class Entity extends TurnOrdered
         }
         return false;
     }
+
     /**
      * Returns whether this 'mech has a C3 Slave or not.
      */
-
     public boolean hasC3S() {
         if (isShutDown() || isOffBoard()) return false;
         for (Mounted m : getEquipment()){

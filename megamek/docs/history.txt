@@ -13,6 +13,7 @@ v0.33.6-dev (SVN)
 + Corrected tech on CLIJJ
 + Patch #1705501: Bot ammo/color can be changed in chat lounge.
 + Bug 1706879: Megamek thread problems when changing teams
++ Added save-to-XML functionality to weapons.
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

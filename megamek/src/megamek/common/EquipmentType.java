@@ -331,7 +331,7 @@ public class EquipmentType {
     }
 
     public static void initializeTypes() {
-        if(null==EquipmentType.allTypes) {
+        if (null==EquipmentType.allTypes) {
             EquipmentType.allTypes = new Vector<EquipmentType>();
             EquipmentType.lookupHash = new Hashtable<String,EquipmentType>();
             
@@ -343,14 +343,14 @@ public class EquipmentType {
     }
     
     public static Enumeration getAllTypes() {
-        if ( null == EquipmentType.allTypes ) {
+        if (null == EquipmentType.allTypes) {
             EquipmentType.initializeTypes();
         }
         return EquipmentType.allTypes.elements();
     }
     
     protected static void addType(EquipmentType type) {
-        if ( null == EquipmentType.allTypes ) {
+        if (null == EquipmentType.allTypes) {
             EquipmentType.initializeTypes();
         }
         EquipmentType.allTypes.addElement(type);

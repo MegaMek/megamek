@@ -12,8 +12,19 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
  *  for more details.
  */
-
 package megamek.common;
+
+import java.io.File;
+import java.text.NumberFormat;
+import java.util.Enumeration;
+
+import javax.xml.parsers.DocumentBuilder; 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.*;  
+import javax.xml.transform.dom.*;
+import javax.xml.transform.stream.*;
+
+import org.w3c.dom.*;
 
 /**
  * A type of mech or vehicle weapon.  There is only one instance of this
@@ -63,7 +74,7 @@ public class WeaponType extends EquipmentType {
     public static final long     F_BURST_FIRE         = 0x200000000L; // full damage vs infantry
     public static final long     F_MGA                = 0x400000000L; // machine gun array
 
-    protected RangeType rangeL;
+    //protected RangeType rangeL;
     protected int   heat;
     protected int   damage;
     private int     rackSize; // or AC size, or whatever
@@ -201,7 +212,7 @@ public class WeaponType extends EquipmentType {
      * Add all the types of weapons we can create to the list
      */
     public static void initializeTypes() {
-        // all tech level 1 weapons
+        // All tech level 1 weapons
         EquipmentType.addType(createFlamer());
         EquipmentType.addType(createVehicleFlamer());
         EquipmentType.addType(createSmallLaser());
@@ -228,7 +239,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createSRT4());
         EquipmentType.addType(createSRT6());
 
-        // Start of Infantry weapons (Level1)
+        // Start of Infantry weapons (Level 1)
         EquipmentType.addType(createInfRifle());
         EquipmentType.addType(createInfMG());
         EquipmentType.addType(createInfSRM());
@@ -237,7 +248,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createInfFlamer());
         EquipmentType.addType(createInfInfernoSRM());
 
-        // Start of Inner Sphere Level2 weapons
+        // Start of Inner Sphere Level 2 weapons
         EquipmentType.addType(createISERPPC());
         EquipmentType.addType(createISERLargeLaser());
         EquipmentType.addType(createISERMediumLaser());
@@ -314,7 +325,7 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISSmallXPulseLaser());
         EquipmentType.addType(createISLaserAMS());
         EquipmentType.addType(createISLaserAMSTHB());
-        
+
         EquipmentType.addType(createISGaussRiflePrototype());
         EquipmentType.addType(createISLBXAC10Prototype());
         EquipmentType.addType(createISUltraAC5Prototype());
@@ -350,10 +361,10 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISRAC20()); //MFUK
         EquipmentType.addType(createISLAC10()); //MFUK
         EquipmentType.addType(createISLAC20()); //MFUK
-        EquipmentType.addType(createISStreakMRM10());//guessed from fluff
-        EquipmentType.addType(createISStreakMRM20());//guessed from fluff
-        EquipmentType.addType(createISStreakMRM30());//guessed from fluff
-        EquipmentType.addType(createISStreakMRM40());//guessed from fluff
+        EquipmentType.addType(createISStreakMRM10()); //guessed from fluff
+        EquipmentType.addType(createISStreakMRM20()); //guessed from fluff
+        EquipmentType.addType(createISStreakMRM30()); //guessed from fluff
+        EquipmentType.addType(createISStreakMRM40()); //guessed from fluff
         EquipmentType.addType(createISHawkSRM2()); //guessed from fluff
         EquipmentType.addType(createISHawkSRM4()); //guessed from fluff
         EquipmentType.addType(createISHawkSRM6()); //guessed from fluff
@@ -471,60 +482,43 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLPROLRM2() );
         EquipmentType.addType(createCLPROLRM3() );
         EquipmentType.addType(createCLPROLRM4() );
-        //EquipmentType.addType(createCLPROLRM5() );
         EquipmentType.addType(createCLPROLRM6() );
         EquipmentType.addType(createCLPROLRM7() );
         EquipmentType.addType(createCLPROLRM8() );
         EquipmentType.addType(createCLPROLRM9() );
-        //EquipmentType.addType(createCLPROLRM10() );
         EquipmentType.addType(createCLPROLRM11() );
         EquipmentType.addType(createCLPROLRM12() );
         EquipmentType.addType(createCLPROLRM13() );
         EquipmentType.addType(createCLPROLRM14() );
-        //EquipmentType.addType(createCLPROLRM15() );
         EquipmentType.addType(createCLPROLRM16() );
         EquipmentType.addType(createCLPROLRM17() );
         EquipmentType.addType(createCLPROLRM18() );
         EquipmentType.addType(createCLPROLRM19() );
-        //EquipmentType.addType(createCLPROLRM20() );
         EquipmentType.addType(createCLPROLRT1() );
         EquipmentType.addType(createCLPROLRT2() );
         EquipmentType.addType(createCLPROLRT3() );
         EquipmentType.addType(createCLPROLRT4() );
-        //EquipmentType.addType(createCLPROLRT5() );
         EquipmentType.addType(createCLPROLRT6() );
         EquipmentType.addType(createCLPROLRT7() );
         EquipmentType.addType(createCLPROLRT8() );
         EquipmentType.addType(createCLPROLRT9() );
-        //EquipmentType.addType(createCLPROLRT10() );
         EquipmentType.addType(createCLPROLRT11() );
         EquipmentType.addType(createCLPROLRT12() );
         EquipmentType.addType(createCLPROLRT13() );
         EquipmentType.addType(createCLPROLRT14() );
-        //EquipmentType.addType(createCLPROLRT15() );
         EquipmentType.addType(createCLPROLRT16() );
         EquipmentType.addType(createCLPROLRT17() );
         EquipmentType.addType(createCLPROLRT18() );
         EquipmentType.addType(createCLPROLRT19() );
-        //EquipmentType.addType(createCLPROLRT20() );
         EquipmentType.addType(createCLPROSRM1() );
         EquipmentType.addType(createCLPROSRT1() );
         EquipmentType.addType(createCLPROStreakSRM1() );
-        //EquipmentType.addType(createCLPROSRM2() );
-        //EquipmentType.addType(createCLPROStreakSRM2() );
-        //EquipmentType.addType(createCLPROSRT2() );
         EquipmentType.addType(createCLPROSRM3() );
         EquipmentType.addType(createCLPROStreakSRM3() );
         EquipmentType.addType(createCLPROSRT3() );
-        //EquipmentType.addType(createCLPROSRM4() );
-        //EquipmentType.addType(createCLPROStreakSRM4() );
-        //EquipmentType.addType(createCLPROSRT4() );
         EquipmentType.addType(createCLPROSRM5() );
         EquipmentType.addType(createCLPROStreakSRM5() );
         EquipmentType.addType(createCLPROSRT5() );
-        //EquipmentType.addType(createCLPROSRM6() );
-        //EquipmentType.addType(createCLPROStreakSRM6() );
-        //EquipmentType.addType(createCLPROSRT6() );
 
         // Anti-Mek attacks are weapon-like in nature.
         EquipmentType.addType(createLegAttack() );
@@ -609,9 +603,207 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createLRM4());
         EquipmentType.addType(createBADavidGaussRifle());
 
-        // hack for C3 Master TAG
-        EquipmentType.addType( createC3M() );
+        // Hack for C3 Master TAG
+        EquipmentType.addType(createC3M());
 
+        // Write out the weapons to XML.  Mostly because we can.
+        //FIXME
+        //writeWeaponsToXML(EquipmentType.getAllTypes(), "c:\\temp\\weapons.xml");
+    }
+
+    /**
+     * FIXME: Document this.
+     */
+    private static void writeWeaponsToXML(Enumeration enm, String filePath) {
+        try {
+            NumberFormat nf = NumberFormat.getInstance();
+            nf.setMaximumFractionDigits(2);
+            Document document;
+            Element tmpE;
+            Element tmpE2;
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            document = builder.newDocument();
+            Element root = document.createElement("weapons");
+            document.appendChild(root);
+            while (enm.hasMoreElements()) {
+                EquipmentType tmpEqT = (EquipmentType)(enm.nextElement());
+                WeaponType tmpEq = (WeaponType)tmpEqT;
+                if (tmpEq instanceof WeaponType) {
+                    tmpE = document.createElement("weapon");
+
+                    tmpE2 = document.createElement("name");
+                    tmpE2.appendChild(document.createTextNode(tmpEq.name));
+                    tmpE.appendChild(tmpE2);
+
+                    if ((tmpEq.internalName != null) && (tmpEq.internalName.length() > 0)) {
+                        tmpE2 = document.createElement("internalName");
+                        tmpE2.appendChild(document.createTextNode(tmpEq.internalName));
+                        tmpE.appendChild(tmpE2);
+                    }
+
+                    {
+                        Enumeration<String> names = tmpEq.getNames();
+                        if (names.hasMoreElements()) {
+                            tmpE2 = document.createElement("lookupnames");
+                            while (names.hasMoreElements()) {
+                                String tmpLName = names.nextElement();
+                                if (!((tmpLName.equals(tmpEq.name)) || (tmpLName.equals(tmpEq.internalName)))) {
+                                    Element mEl = document.createElement("lookupname");
+                                    mEl.appendChild(document.createTextNode(tmpLName));
+                                    tmpE2.appendChild(mEl);
+                                }
+                            }
+                            tmpE.appendChild(tmpE2);
+                        }
+                    }
+
+                    tmpE2 = document.createElement("tonnage");
+                    tmpE2.appendChild(document.createTextNode(nf.format(tmpEq.tonnage)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("criticals");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.criticals)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("explosive");
+                    tmpE2.appendChild(document.createTextNode(Boolean.toString(tmpEq.explosive)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("hittable");
+                    tmpE2.appendChild(document.createTextNode(Boolean.toString(tmpEq.hittable)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("spreadable");
+                    tmpE2.appendChild(document.createTextNode(Boolean.toString(tmpEq.spreadable)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("toHitModifier");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.toHitModifier)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("techLevel");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.techLevel)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("flags");
+                    tmpE2.appendChild(document.createTextNode(Long.toString(tmpEq.flags)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("subType");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.subType)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("bv");
+                    tmpE2.appendChild(document.createTextNode(nf.format(tmpEq.bv)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("cost");
+                    tmpE2.appendChild(document.createTextNode(nf.format(tmpEq.cost)));
+                    tmpE.appendChild(tmpE2);
+
+                    if (tmpEq.hasModes()) {
+                        tmpE2 = document.createElement("modes");
+                        Enumeration modes = tmpEq.getModes();
+                        while (modes.hasMoreElements()) {
+                            Element mEl = document.createElement("mode");
+                            mEl.appendChild(document.createTextNode(((EquipmentMode)(modes.nextElement())).toString()));
+                        }
+                        tmpE.appendChild(tmpE2);
+                    }
+
+                    tmpE2 = document.createElement("instantModeSwitch");
+                    tmpE2.appendChild(document.createTextNode(Boolean.toString(tmpEq.instantModeSwitch)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("heat");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.heat)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("damage");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.damage)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("rackSize");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.rackSize)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("ammoType");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.ammoType)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("minimumRange");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.minimumRange)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("shortRange");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.shortRange)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("mediumRange");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.mediumRange)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("longRange");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.longRange)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("extremeRange");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.extremeRange)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("waterShortRange");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.waterShortRange)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("waterMediumRange");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.waterMediumRange)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("waterLongRange");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.waterLongRange)));
+                    tmpE.appendChild(tmpE2);
+
+                    tmpE2 = document.createElement("waterExtremeRange");
+                    tmpE2.appendChild(document.createTextNode(Integer.toString(tmpEq.waterExtremeRange)));
+                    tmpE.appendChild(tmpE2);
+
+                    root.appendChild(tmpE);
+                }
+            }
+
+            // Prepare the DOM document for writing
+            Source source = new DOMSource(document);
+    
+            // Prepare the output file
+            File file = new File(filePath);
+            Result result = new StreamResult(file);
+    
+            // Write the DOM document to the file
+            Transformer xformer = TransformerFactory.newInstance().newTransformer();
+            xformer.transform(source, result);
+        } catch (Exception e) {
+            //FIXME
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * FIXME: Document this.
+     */
+    private static void initializeTypesFromXML(String filename) {
+        try {
+            //FIXME: Load XML file based on name.
+            //FIXME: Convert XML file into XML structure.
+            // See: http://java.sun.com/developer/earlyAccess/xml/examples/index.html
+            //for ( : ) {
+            {
+                WeaponType tmpWeap = new WeaponType();
+                //EquipmentType.addType
+            }
+        } catch (Exception e) {
+            //FIXME
+        }
     }
 
     private static WeaponType createFlamer() {
@@ -10554,5 +10746,4 @@ public class WeaponType extends EquipmentType {
     public String toString() {
         return "WeaponType: " + name;
     }
-
 }

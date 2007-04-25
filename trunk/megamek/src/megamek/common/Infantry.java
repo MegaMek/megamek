@@ -991,4 +991,16 @@ public class Infantry
     public boolean isNuclearHardened() {
         return false;
     }
+    
+    /**
+     * This function is called when loading a unit into a transport.
+     * 
+     * This is overridden to ensure infantry are no longer considered dug in when they are being transported.
+     * @param transportID
+     */
+    public void setTransportID(int transportID) {
+        super.setTransportId(transportID);
+        
+        setDugIn(DUG_IN_NONE);
+    }
 } // End class Infantry

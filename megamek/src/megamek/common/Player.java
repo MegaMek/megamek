@@ -376,8 +376,6 @@ public final class Player extends TurnOrdered
         if (ourUnitCount <= enemyUnitCount || enemyUnitCount == 0 || ourUnitCount == 0) {
             return 1;
         }
-        System.out.println(ourUnitCount+" "+enemyUnitCount);
-        System.out.println((enemyUnitCount/ourUnitCount) + (ourUnitCount/enemyUnitCount) - 1);
         
         return (enemyUnitCount/ourUnitCount) + (ourUnitCount/enemyUnitCount) - 1;
     }

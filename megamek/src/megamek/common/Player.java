@@ -344,7 +344,6 @@ public final class Player extends TurnOrdered
     }
     
     public float getForceSizeBVMod() {
-        float forceSizeBVMod = 1;
         float ourUnitCount = game.getEntitiesOwnedBy(this);
         float enemyUnitCount = 0;
         if (this.getTeam() == TEAM_NONE) {
@@ -379,6 +378,7 @@ public final class Player extends TurnOrdered
         }
         System.out.println(ourUnitCount+" "+enemyUnitCount);
         System.out.println((enemyUnitCount/ourUnitCount) + (ourUnitCount/enemyUnitCount) - 1);
+        
         return (enemyUnitCount/ourUnitCount) + (ourUnitCount/enemyUnitCount) - 1;
     }
 }

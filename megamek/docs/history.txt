@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.33.6-dev (SVN)
++ Bug 1706265 fixed
 + Added House rule MW pilots cannot spot.
 + RFE 1701138: Spotting and firing
 + Bug: NPE in multi player game where a player ejects and disconnects.

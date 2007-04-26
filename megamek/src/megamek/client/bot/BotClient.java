@@ -131,6 +131,7 @@ public abstract class BotClient extends Client {
                     sendChat(Messages.getString("BotClient.HowAbout")); //$NON-NLS-1$
                     this.die();
                 }
+            //if the game is not double blind and I can't see anyone else on the board I should kill myself.
             if (!(game.getOptions().booleanOption("double_blind")) //$NON-NLS-1$
                     && game.getEntitiesOwnedBy(this.getLocalPlayer()) - game.getNoOfEntities() == 0) {
                 this.die();

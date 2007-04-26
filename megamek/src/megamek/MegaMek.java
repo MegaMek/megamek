@@ -97,6 +97,10 @@ public class MegaMek {
         }
     }
 
+    /**
+     * This function returns the memory used in the heap (heap memory - free memory).
+     * @return memory used in kB
+     */
     public static String getMemoryUsed() {
         long heap = Runtime.getRuntime().totalMemory();
         long free = Runtime.getRuntime().freeMemory();
@@ -104,6 +108,10 @@ public class MegaMek {
         return commafy.format(used) + " kB"; //$NON-NLS-1$
     }
     
+    /**
+     * This function redirets the standard error and output streans to the given File name.
+     * @param logFileName The file name to redirect to.
+     */
     private static void redirectOutput(String logFileName ) {
         try {
             System.out.println("Redirecting output to " + logFileName); //$NON-NLS-1$
@@ -121,6 +129,11 @@ public class MegaMek {
         }
     }
 
+    /**
+     * Starts a dedicated server with the arguments in args.
+     * See {@link megamek.server.DedicatedServer#start(String[])} for more information.
+     * @param args the arguments to the dedicated server.
+     */
     private static void startDedicatedServer(String[] args) {
         StringBuffer message = new StringBuffer("Starting Dedicated Server. "); //$NON-NLS-1$
         dumpArgs(message, args);
@@ -128,6 +141,11 @@ public class MegaMek {
         DedicatedServer.start(args);
     }
 
+    /**
+     * Attempts to start the GUI with the given name. If the GUI is unkown the progarm will exit.
+     * @param guiName The name of the GUI, ussualy AWT or swing
+     * @param args the agruments to be passed onto the GUI.
+     */
     private static void startGUI(String guiName, String[] args) {
         megamek.debug.Assert.assertTrue(guiName != null, "guiName must be non-null"); //$NON-NLS-1$
         megamek.debug.Assert.assertTrue(args != null, "args must be non-null");
@@ -143,6 +161,11 @@ public class MegaMek {
         }        
     }
 
+    /**
+     * Return the Interface to the GUI specified by the name in guiName.
+     * @param guiName the name of the GUI, will be passed on to {@link #getGUIClassName(String)}.
+     * @return An that can start a  GUI such as {@link megamek.client.ui.AWT.MegaMekGUI}.
+     */
     private static IMegaMekGUI getGui(String guiName) {
         megamek.debug.Assert.assertTrue(guiName != null, "guiName must be non-null"); //$NON-NLS-1$
         String guiClassName = getGUIClassName(guiName);
@@ -174,6 +197,12 @@ public class MegaMek {
         return null;
     }
 
+    /**
+     * This function appends 'agrs: []', to the buffer, with a space separated list of args[] elements
+     * between the brackets. 
+     * @param buffer the buffer to append the list to.
+     * @param args the array of strings to copy into a space seperated list.
+     */
     private static void dumpArgs(StringBuffer buffer, String[] args) {
         megamek.debug.Assert.assertTrue(buffer != null, "buffer must be non-null"); //$NON-NLS-1$
         megamek.debug.Assert.assertTrue(args != null, "args must be non-null"); //$NON-NLS-1$
@@ -185,16 +214,28 @@ public class MegaMek {
         buffer.append("]"); //$NON-NLS-1$
         
     }
+    
+    /**
+     * Prints the message to stdout and then exits with errorcode 1.
+     * @param message the message to be displayed.
+     */
     private static void displayMessageAndExit(String message) {
         displayMessage(message);
         System.exit(1);
     }
 
+    /**
+     * Prints the message and flushes the output stream. 
+     * @param message
+     */
     private static void displayMessage(String message) {
         System.out.println(message);
         System.out.flush();
     }
     
+    /**
+     * Prints some information about MegaMek. Used in logfiles to figure out the JVM and version of MegaMek.
+     */
     private static void showInfo() {
         // echo some useful stuff
         System.out.println("Starting MegaMek v" + VERSION + " ..."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -216,10 +257,17 @@ public class MegaMek {
         System.out.println();
     }
 
+    /**
+     * Returns the version of Megamek
+     * @return the version of Megamek as a string.
+     */
     public static String getVersion() {
         return VERSION;
     }
 
+    /**
+     * This class parses the options passed into to magamek from the command line.
+     */
     private static class CommandLineParser extends AbstractCommandLineParser {
 
         private String logFilename;

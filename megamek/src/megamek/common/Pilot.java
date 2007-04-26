@@ -349,6 +349,19 @@ public class Pilot
      * Returns the BV multiplyer for this pilot's gunnery/piloting
      */
     public double getBVSkillMultiplier() {
+       return getBVSkillMultiplier(gunnery, piloting);
+    }
+    
+    /**
+     * Returns the BV multiplyer for a pilots gunnery/piloting.
+     * This function is static to evaluate the BV of a unit, even
+     * when they have not yet been assinged a pilot.
+     * 
+     * @param gunnery the gunnery skill of the pilot
+     * @param piloting the piloting skill of the pilot
+     * @return a multiplier to the BV of whatever unit the pilot is piloting.
+     */
+    public static double getBVSkillMultiplier(int gunnery, int piloting) {
         double pilotingMod = 1.0;
         double gunneryMod = 1.0;
 

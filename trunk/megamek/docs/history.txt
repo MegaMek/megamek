@@ -17,6 +17,10 @@ v0.33.6-dev (SVN)
 + Bug 1706879: Megamek thread problems when changing teams
 + Added save-to-XML functionality to weapons.
 + Per rules clarification/change, HAGs cannot make targetted shots with a TC.
++ Patch #1707730: ER Pulse BV Correction
++ Bug: Victory conditions used the first player in the winners Map as the 
+  winner even if they didn't accomplish all the objectives. This only occurs
+  in games with more then one victory condition.
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

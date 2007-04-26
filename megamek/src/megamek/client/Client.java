@@ -49,6 +49,12 @@ import megamek.common.options.GameOptions;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
+// FIXME awnser the question in the documentation. 
+/**
+ * This class is instanciated for eah client and for eah bot running on that client.
+ * I believe that non-local clients are not also instanrtiated on the local server,
+ * but I am not sure.  
+ */
 public class Client {
 
     // we need these to communicate with the server

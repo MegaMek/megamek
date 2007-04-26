@@ -2320,7 +2320,7 @@ public class Server implements Runnable {
         }
         if(wonPlayer != Player.PLAYER_NONE) {
             //individual victory
-            game.setVictoryPlayerId(winPlayers.keys().nextElement());
+            game.setVictoryPlayerId(wonPlayer);
             game.setVictoryTeam(Player.TEAM_NONE);
             return true;
         }

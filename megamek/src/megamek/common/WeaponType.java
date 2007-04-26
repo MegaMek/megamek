@@ -4756,7 +4756,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 6.0f;
         weapon.criticals = 3;
         weapon.flags |= F_LASER | F_ENERGY | F_DIRECT_FIRE | F_PULSE;
-        weapon.bv = 0;
+        weapon.bv = 246;
         weapon.cost = 400000;
 
         return weapon;
@@ -4786,7 +4786,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 2.0f;
         weapon.criticals = 2;
         weapon.flags |= F_LASER | F_ENERGY | F_DIRECT_FIRE | F_PULSE;
-        weapon.bv = 0;
+        weapon.bv = 116;
         weapon.cost = 150000;
 
         return weapon;
@@ -4816,7 +4816,7 @@ public class WeaponType extends EquipmentType {
         weapon.tonnage = 1.5f;
         weapon.criticals = 1;
         weapon.flags |= F_LASER | F_ENERGY | F_DIRECT_FIRE | F_PULSE | F_BURST_FIRE;
-        weapon.bv = 0;
+        weapon.bv = 36;
         weapon.cost = 30000;
 
         return weapon;

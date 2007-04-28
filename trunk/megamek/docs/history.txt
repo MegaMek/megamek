@@ -21,6 +21,7 @@ v0.33.6-dev (SVN)
 + Bug: Victory conditions used the first player in the winners Map as the 
   winner even if they didn't accomplish all the objectives. This only occurs
   in games with more then one victory condition.
++ Bug: MML torpedos did not work under water.
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

@@ -309,7 +309,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             tempPanel.add(butOffBoardDistance);
         }
 
-        if (!(entity.hasTargComp()) && (clientgui.getClient().game.getOptions().booleanOption("allow_level_3_targsys")) && (entity instanceof Mech)) {
+        if (!(entity.hasTargComp()) && (clientgui.getClient().game.getOptions().booleanOption("allow_level_3_targsys")) && (entity instanceof Mech) && !entity.hasC3() && !entity.hasC3i()) {
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labTargSys, c);

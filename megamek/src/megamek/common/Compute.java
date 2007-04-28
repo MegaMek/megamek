@@ -594,11 +594,15 @@ public class Compute {
         }
         if (wtype.getAmmoType() == AmmoType.T_MML) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if (atype.hasFlag(AmmoType.F_MML_LRM)) {
-                weaponRanges = new int[] { 6, 7, 14, 21, 28 };
-            } else  {
-                weaponRanges = new int[] { 0, 3, 6, 9, 12 };
+            if ( atype.hasFlag(AmmoType.F_MML_LRM) 
+                    || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO ) {
+                wtype.setRanges( 7, 14, 21, 28 );
+                wtype.setMinimumRange(6);
+            } else {
+                wtype.setRanges( 3, 6, 9, 12 );
+                wtype.setMinimumRange(0);
             }
+            weaponRanges = wtype.getRanges();
         }
         //
         // modifiy the ranges for PPCs when field inhibitors are turned off
@@ -607,7 +611,7 @@ public class Compute {
         if (wtype.hasFlag(WeaponType.F_PPC)) {
             if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")) {
                 if (weapon.curMode().equals("Field Inhibitor OFF")) {
-                    weaponRanges[0] = 0;
+                    weaponRanges[RangeType.RANGE_MINIMUM] = 0;
                 }
             }
         }
@@ -676,6 +680,7 @@ public class Compute {
                     MPM = true;
                 }
             }
+            
             // HACK on ranges: for those without underwater range,
             // long == medium; iteration in rangeBracket() allows this
             if (weaponRanges[RangeType.RANGE_SHORT] == 0) {

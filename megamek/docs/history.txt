@@ -22,6 +22,7 @@ v0.33.6-dev (SVN)
   winner even if they didn't accomplish all the objectives. This only occurs
   in games with more then one victory condition.
 + Bug: MML torpedos did not work under water.
++ Bug: C3 and C3i where able to use level 3 targeting systems
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.File;
+import java.io.Serializable;
 
 import java.util.Hashtable;
 import java.util.Vector;
@@ -134,8 +135,8 @@ public class HmpFile
     private long[] headCriticals = new long[12];
     private long[] ctCriticals = new long[12];
 
-    private Hashtable spreadEquipment = new Hashtable();
-    private Vector vSplitWeapons = new Vector();
+    private Hashtable<EquipmentType, Mounted> spreadEquipment = new Hashtable<EquipmentType, Mounted>();
+    private Vector<Mounted> vSplitWeapons = new Vector<Mounted>();
 
     private int gyroType = Mech.GYRO_STANDARD;
     private int cockpitType = Mech.COCKPIT_STANDARD;
@@ -155,7 +156,7 @@ public class HmpFile
 
             byte[] buffer = new byte[5];
             dis.read(buffer);
-            String version = new String(buffer);
+            //String version = new String(buffer); //never used
 
             // this next one no longer seems accurate...
             DesignType designType = DesignType.getType(readUnsignedByte(dis));
@@ -661,7 +662,7 @@ public class HmpFile
                             boolean rearMounted = equipment instanceof WeaponType
                                     && isRearMounted(critical);
                             if (equipment.isSpreadable()) {
-                                Mounted m = (Mounted) spreadEquipment
+                                Mounted m = spreadEquipment
                                         .get(equipment);
                                 if (m != null) {
                                     CriticalSlot criticalSlot = new CriticalSlot(
@@ -688,7 +689,7 @@ public class HmpFile
                                 Mounted m = null;
                                 boolean bFound = false;
                                 for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
-                                    m = (Mounted) vSplitWeapons.elementAt(x);
+                                    m = vSplitWeapons.elementAt(x);
                                     int nLoc = m.getLocation();
                                     if ((nLoc == location || location == Mech
                                             .getInnerLocation(nLoc))
@@ -803,7 +804,7 @@ public class HmpFile
         return (critical & 0xFFFF0000) != 0;
     }
 
-    private static final Hashtable criticals = new Hashtable();
+    private static final Hashtable<Object, Serializable> criticals = new Hashtable<Object, Serializable>();
     static {
         // common criticals
         criticals.put(new Long(0x00), "-Empty-");
@@ -956,7 +957,7 @@ public class HmpFile
         criticals.put(new Long(0x2AC), "Thunderbolt-20 Ammo (THB)");
 
         // criticals for mechs with a base type of inner sphere
-        Hashtable isCriticals = new Hashtable();
+        Hashtable<Long, String> isCriticals = new Hashtable<Long, String>();
         criticals.put(TechType.INNER_SPHERE, isCriticals);
         isCriticals.put(new Long(0x0A), "ISDouble Heat Sink");
 
@@ -1284,7 +1285,7 @@ public class HmpFile
         isCriticals.put(new Long(0x02b3), "ISHeavyGauss Ammo");
 
         // criticals for mechs with a base type of clan
-        Hashtable clanCriticals = new Hashtable();
+        Hashtable<Long, String> clanCriticals = new Hashtable<Long, String>();
         criticals.put(TechType.CLAN, clanCriticals);
         clanCriticals.put(new Long(0x0A), "CLDouble Heat Sink");
 
@@ -2036,7 +2037,7 @@ abstract class HMPType {
 }
 
 class DesignType extends HMPType {
-    public static final Hashtable types = new Hashtable();
+    public static final Hashtable<Integer, DesignType> types = new Hashtable<Integer, DesignType>();
 
     public static final DesignType STANDARD = new DesignType("Standard", 1);
     public static final DesignType MODIFIED = new DesignType("Modified", 2);
@@ -2048,12 +2049,12 @@ class DesignType extends HMPType {
     }
 
     public static DesignType getType(int i) {
-        return (DesignType) types.get(new Integer(i));
+        return types.get(new Integer(i));
     }
 }
 
 class ArmorType extends HMPType {
-    public static final Hashtable types = new Hashtable();
+    public static final Hashtable<Integer, ArmorType> types = new Hashtable<Integer, ArmorType>();
 
     public static final ArmorType STANDARD = new ArmorType("Standard", 0);
     public static final ArmorType FERRO_FIBROUS = new ArmorType(
@@ -2074,12 +2075,12 @@ class ArmorType extends HMPType {
     }
 
     public static ArmorType getType(int i) {
-        return (ArmorType) types.get(new Integer(i));
+        return types.get(new Integer(i));
     }
 }
 
 class EngineType extends HMPType {
-    public static final Hashtable types = new Hashtable();
+    public static final Hashtable<Integer, EngineType> types = new Hashtable<Integer, EngineType>();
 
     public static final EngineType FUSION = new EngineType("Fusion", 0);
     public static final EngineType XL = new EngineType("XL", 1);
@@ -2094,12 +2095,12 @@ class EngineType extends HMPType {
     }
 
     public static EngineType getType(int i) {
-        return (EngineType) types.get(new Integer(i));
+        return types.get(new Integer(i));
     }
 }
 
 class HeatSinkType extends HMPType {
-    public static final Hashtable types = new Hashtable();
+    public static final Hashtable<Integer, HeatSinkType> types = new Hashtable<Integer, HeatSinkType>();
 
     public static final HeatSinkType SINGLE = new HeatSinkType("Single", 0);
     public static final HeatSinkType DOUBLE = new HeatSinkType("Double", 1);
@@ -2112,12 +2113,12 @@ class HeatSinkType extends HMPType {
     }
 
     public static HeatSinkType getType(int i) {
-        return (HeatSinkType) types.get(new Integer(i));
+        return types.get(new Integer(i));
     }
 }
 
 class ChassisType extends HMPType {
-    public static final Hashtable types = new Hashtable();
+    public static final Hashtable<Integer, ChassisType> types = new Hashtable<Integer, ChassisType>();
 
     public static final ChassisType BIPED = new ChassisType("Biped", 0);
     public static final ChassisType QUADRAPED = new ChassisType("Quadraped", 1);
@@ -2134,12 +2135,12 @@ class ChassisType extends HMPType {
     }
 
     public static ChassisType getType(int i) {
-        return (ChassisType) types.get(new Integer(i));
+        return types.get(new Integer(i));
     }
 }
 
 class InternalStructureType extends HMPType {
-    public static final Hashtable types = new Hashtable();
+    public static final Hashtable<Integer, InternalStructureType> types = new Hashtable<Integer, InternalStructureType>();
 
     public static final InternalStructureType STANDARD = new InternalStructureType(
             EquipmentType.getStructureTypeName(
@@ -2162,12 +2163,12 @@ class InternalStructureType extends HMPType {
     }
 
     public static InternalStructureType getType(int i) {
-        return (InternalStructureType) types.get(new Integer(i));
+        return types.get(new Integer(i));
     }
 }
 
 class TechType extends HMPType {
-    public static final Hashtable types = new Hashtable();
+    public static final Hashtable<Integer, TechType> types = new Hashtable<Integer, TechType>();
 
     public static final TechType INNER_SPHERE = new TechType("Inner Sphere", 0);
     public static final TechType CLAN = new TechType("Clan", 1);
@@ -2179,12 +2180,12 @@ class TechType extends HMPType {
     }
 
     public static TechType getType(int i) {
-        return (TechType) types.get(new Integer(i));
+        return types.get(new Integer(i));
     }
 }
 
 class MyomerType extends HMPType {
-    public static final Hashtable types = new Hashtable();
+    public static final Hashtable<Integer, MyomerType> types = new Hashtable<Integer, MyomerType>();
 
     public static final MyomerType STANDARD = new MyomerType("Standard", 0);
     public static final MyomerType TRIPLE_STRENGTH = new MyomerType(
@@ -2197,12 +2198,12 @@ class MyomerType extends HMPType {
     }
 
     public static MyomerType getType(int i) {
-        return (MyomerType) types.get(new Integer(i));
+        return types.get(new Integer(i));
     }
 }
 
 class WeaponLocation extends HMPType {
-    public static final Hashtable types = new Hashtable();
+    public static final Hashtable<Integer, WeaponLocation> types = new Hashtable<Integer, WeaponLocation>();
 
     public static final WeaponLocation LEFT_ARM = new WeaponLocation(
             "Left Arm", 1);
@@ -2238,7 +2239,7 @@ class WeaponLocation extends HMPType {
     }
 
     public static WeaponLocation getType(int i) {
-        return (WeaponLocation) types.get(new Integer(i));
+        return types.get(new Integer(i));
     }
 
 }

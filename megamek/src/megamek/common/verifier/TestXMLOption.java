@@ -66,7 +66,7 @@ public class TestXMLOption implements TestEntityOption
     private boolean showOverweighted = true;
     private float minUnderweight = 1.0f;
     private boolean showUnderweighted = false;
-    private Vector ignoreFailedEquip = new Vector();
+    private Vector<String> ignoreFailedEquip = new Vector<String>();
     private boolean skip = false;
     private boolean showCorrectArmor = true;
     private boolean showCorrectCritical = true;
@@ -143,7 +143,7 @@ public class TestXMLOption implements TestEntityOption
                 }
 
                 for(int i = 0; i < ignoreFailedEquip.size(); i++)
-                    ignoreFailedEquip.setElementAt(((String)ignoreFailedEquip.elementAt(i)).trim(), i);
+                    ignoreFailedEquip.setElementAt(ignoreFailedEquip.elementAt(i).trim(), i);
             }
             else if (child.getName().equals(SKIP))
                 skip = getContentAsBoolean(child);

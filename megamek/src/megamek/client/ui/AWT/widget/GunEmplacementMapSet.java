@@ -34,7 +34,7 @@ public class GunEmplacementMapSet implements DisplayMapSet{
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[5];
     private PMSimpleLabel[] labels = new PMSimpleLabel[5];
     private PMValueLabel[] vLabels = new PMValueLabel[5];
-    private Vector bgDrawers = new Vector();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
   
     private static final String IMAGE_DIR = "data/images/widgets";
@@ -68,7 +68,7 @@ public class GunEmplacementMapSet implements DisplayMapSet{
         return content;
     }
     
-    public Vector getBackgroundDrawers(){
+    public Vector<BackGroundDrawer> getBackgroundDrawers(){
         return bgDrawers;
     }
     

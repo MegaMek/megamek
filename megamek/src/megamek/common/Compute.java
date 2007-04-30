@@ -622,7 +622,6 @@ public class Compute {
             weaponRanges[RangeType.RANGE_MINIMUM] = 0;
         
         // is water involved?
-        IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
         int targTop = 0;
         int targBottom = 0;
@@ -1373,8 +1372,8 @@ public class Compute {
      * Modifier to attacks due to attacker terrain
      */
     public static ToHitData getAttackerTerrainModifier(IGame game, int entityId) {
-        final Entity attacker = game.getEntity(entityId);
-        final IHex hex = game.getBoard().getHex(attacker.getPosition());
+        /*final Entity attacker = game.getEntity(entityId);
+        final IHex hex = game.getBoard().getHex(attacker.getPosition());*/
         ToHitData toHit = new ToHitData();
 
         return toHit;
@@ -2440,7 +2439,7 @@ public class Compute {
      * @param ae
      * @param a
      * @param b
-     * @return count that shows the number of friendly Angle ECCM fields you are in.
+     * @return count that shows the number of friendly Angel ECCM fields you are in.
      */
     public static int getFriendlyECCMFields(Entity ae, Coords a, Coords b) {
         if (a == null || b == null)
@@ -2523,7 +2522,7 @@ public class Compute {
      * @param ae
      * @param a
      * @param b
-     * @return count that shows the number of friendly Angle ECCM fields you are in.
+     * @return count that shows the number of friendly Angel ECCM fields you are in.
      * 
      */
     public static int getFriendlyAngelECCMFields(Entity ae, Coords a, Coords b) {

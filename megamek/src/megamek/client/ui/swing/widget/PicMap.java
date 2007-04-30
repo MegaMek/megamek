@@ -50,7 +50,7 @@ import java.util.Vector;
  */
 public abstract class PicMap extends JComponent {
     //Vector of Background Drawers
-    private Vector bgDrawers = new Vector();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     // Group of other areas which does not implement PMHotArea or PMLAbel
     private PMAreasGroup otherAreas = new PMAreasGroup();
     // Hot areas
@@ -115,9 +115,9 @@ public abstract class PicMap extends JComponent {
             areascount++;
         } else if (e instanceof PMAreasGroup) {
             PMAreasGroup ag = (PMAreasGroup) e;
-            Enumeration iter = ag.elements();
+            Enumeration<PMElement> iter = ag.elements();
             while (iter.hasMoreElements()) {
-                addElement((PMElement) iter.nextElement());
+                addElement(iter.nextElement());
             }
         } else {
             otherAreas.addArea(e);
@@ -242,9 +242,9 @@ public abstract class PicMap extends JComponent {
         int w = Math.max(getSize().width, minWidth);
         int h = Math.max(getSize().height, minHeight);
         //Background painting
-        Enumeration iter = bgDrawers.elements();
+        Enumeration<BackGroundDrawer> iter = bgDrawers.elements();
         while (iter.hasMoreElements()) {
-            BackGroundDrawer bgd = (BackGroundDrawer) iter.nextElement();
+            BackGroundDrawer bgd = iter.nextElement();
             bgd.drawInto(g, w, h);
         }
         Shape oldClip = g.getClip();

@@ -67,7 +67,7 @@ public class ProtomechMapSet implements DisplayMapSet {
     //Content group which will be sent to PicMap component
     private PMAreasGroup content = new PMAreasGroup();
     //Set of Backgrpund drawers which will be sent to PicMap component
-    private Vector bgDrawers = new Vector();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
 
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
 
@@ -129,7 +129,7 @@ public class ProtomechMapSet implements DisplayMapSet {
         return content;
     }
 
-    public Vector getBackgroundDrawers() {
+    public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 
@@ -141,8 +141,7 @@ public class ProtomechMapSet implements DisplayMapSet {
      */
     public void setEntity(Entity entity) {
         Protomech proto = (Protomech) entity;
-        int armor = 0;
-        int internal = 0;
+
         int loc = proto.locations();
         if (loc != Protomech.NUM_PMECH_LOCATIONS) {
             armorLabels[5].setVisible(false);
@@ -154,8 +153,8 @@ public class ProtomechMapSet implements DisplayMapSet {
             sectionLabels[5].setVisible(true);
         }
         for (int i = 0; i < loc; i++) {
-            armor = proto.getArmor(i);
-            internal = proto.getInternal(i);
+            //armor = proto.getArmor(i);
+            //internal = proto.getInternal(i);
             armorLabels[i].setValue(proto.getArmorString(i));
             internalLabels[i].setValue(proto.getInternalString(i));
             sectionLabels[i].setValue(proto.getLocationAbbr(i));

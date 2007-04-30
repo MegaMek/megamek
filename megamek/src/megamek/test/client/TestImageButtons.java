@@ -166,7 +166,7 @@ public class TestImageButtons {
     }
 
     public static void main( String[] args ) {
-        TestImageButtons frame = new TestImageButtons();
+        new TestImageButtons();
     }
 
 }

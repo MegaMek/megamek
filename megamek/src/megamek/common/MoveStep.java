@@ -55,6 +55,7 @@ public class MoveStep implements Serializable {
     private int movementType;
 
     private boolean isProne;
+    private boolean isFlying;
     private boolean isHullDown;
     private boolean climbMode;
 
@@ -453,6 +454,12 @@ public class MoveStep implements Serializable {
                 //Counts as flank move but you can only use cruise MP
                 setMp(entity.getRunMP() - entity.getWalkMP());
                 break;
+            case MovePath.STEP_TAKEOFF:
+                setMp(2);
+                break;
+            case MovePath.STEP_LAND:
+                setMp(2);
+                break;
             default :
                 setMp(0);
         }
@@ -513,6 +520,7 @@ public class MoveStep implements Serializable {
         this.onlyPavement = prev.onlyPavement;
         this.thisStepBackwards = prev.thisStepBackwards;
         this.isProne = prev.isProne;
+        this.isFlying = prev.isFlying;
         this.isHullDown = prev.isHullDown;
         this.climbMode = prev.climbMode;
         this.isRunProhibited = prev.isRunProhibited;
@@ -532,6 +540,7 @@ public class MoveStep implements Serializable {
         this.mpUsed = entity.mpUsed;
         this.distance = entity.delta_distance;
         this.isProne = entity.isProne();
+        this.isFlying = entity.isFlying();
         isHullDown = entity.isHullDown();
         climbMode = entity.climbMode();
         
@@ -649,6 +658,14 @@ public class MoveStep implements Serializable {
      */
     public boolean isProne() {
         return isProne;
+    }
+    
+    /**
+     * Returns true if the entity is flying on this step.
+     * @return
+     */
+    public boolean isFlying() {
+        return isFlying;
     }
 
     public boolean isHullDown() {
@@ -853,6 +870,14 @@ public class MoveStep implements Serializable {
     public void setProne(boolean b) {
         isProne = b;
     }
+    
+    /**
+     * Sets whether the entity is flying or not.
+     * @param b is this entity flying?
+     */
+    public void setFlying(boolean b) {
+        isFlying = b;
+    }
 
     public void setHullDown(boolean b) {
         isHullDown = b;
@@ -933,7 +958,13 @@ public class MoveStep implements Serializable {
     }
 
 
-    void compileIllegal(final IGame game, final Entity entity,
+    /**
+     * This function checks that a step is legal. And adjust the movement type.
+     * @param game
+     * @param entity
+     * @param prev
+     */
+    private void compileIllegal(final IGame game, final Entity entity,
                         final MoveStep prev) {
         final int stepType = getType();
         final boolean isInfantry = entity instanceof Infantry;
@@ -1317,6 +1348,22 @@ public class MoveStep implements Serializable {
         } else if (stepType == MovePath.STEP_HULL_DOWN) {
             setProne(false);
             setHullDown(true);
+        }
+        
+        //update flying state
+        if (stepType == MovePath.STEP_TAKEOFF) {
+            movementType = IEntityMovementType.MOVE_FLYING;
+            // taking off while prone allowed? I would guess not.
+            if(!isFirstStep() || isFlying || isProne) { //can't takeoff while flying.
+                movementType = IEntityMovementType.MOVE_ILLEGAL;
+            }
+        } else if (stepType == MovePath.STEP_LAND) { //this must be the last step.
+            if(!isFlying || getElevation() == 0) { //must be flying, how else would we land?
+                movementType = IEntityMovementType.MOVE_ILLEGAL;
+            } else {
+                movementType = IEntityMovementType.MOVE_FLYING;
+                danger = true; //langing requiers a roll. (at -4)
+            }
         }
     }
 
@@ -1704,6 +1751,7 @@ public class MoveStep implements Serializable {
             this.mpUsed == other.mpUsed &&
             this.movementType == other.movementType &&
             this.isProne == other.isProne &&
+            this.isFlying == other.isFlying &&
             this.isHullDown == other.isHullDown &&
             this.danger == other.danger &&
             this.pastDanger == other.pastDanger &&

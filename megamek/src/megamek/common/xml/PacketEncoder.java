@@ -34,17 +34,6 @@ import java.util.zip.GZIPOutputStream;
  * @author      James Damour <suvarov454@users.sourceforge.net>
  */
 public class PacketEncoder {
-
-    /**
-     * Dummy tag to start an un-zipped data element stream.
-     */
-    private static final String START = "<dummy>";
-
-    /**
-     * Dummy tag to end an un-zipped data element stream.
-     */
-    private static final String END = "</dummy>";
-
     /**
      * Helper function to encode the packet's data.
      *

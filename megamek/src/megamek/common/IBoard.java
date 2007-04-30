@@ -84,7 +84,7 @@ public interface IBoard {
      */
     public abstract IHex getHexInDir(Coords c, int dir);
 
-    public abstract Enumeration getHexesAtDistance(Coords coords, int distance);
+    public abstract Enumeration<Coords> getHexesAtDistance(Coords coords, int distance);
     
     /**
      * Gets the hex in the specified direction from the specified starting
@@ -223,14 +223,14 @@ public interface IBoard {
      * @return  an <code>Enumeration</code> of <code>Coords</code> that
      *          have infernos still burning.
      */
-    public abstract Enumeration getInfernoBurningCoords();
+    public abstract Enumeration<Coords> getInfernoBurningCoords();
     
     /**
      * returns a hash of the inferno trackers
      * 
      * @return an <code>Hashtable</code of <code>InfernoTrackers</code> on the board.
      */
-    public abstract Hashtable getInfernos();
+    public abstract Hashtable<Coords, InfernoTracker> getInfernos();
     
     /**
      * 
@@ -261,7 +261,7 @@ public interface IBoard {
      *
      * @return  an <code>Enumeration</code> of <code>Building</code>s.
      */
-    public abstract Enumeration getBuildings();
+    public abstract Enumeration<Building> getBuildings();
     
     /**
      * Get the building at the given coordinates.

@@ -23,12 +23,11 @@ import java.util.*;
 
 public class AdvancedLabel extends Component {
 
-    private Vector stringVector = new Vector();
+    private Vector<String> stringVector = new Vector<String>();
     private Color[] colorArray;
 
     private int lineHeight;
     private int maxLineWidth;
-    private int ascent;
     private int descent;
 
     private boolean sized = false;
@@ -51,7 +50,7 @@ public class AdvancedLabel extends Component {
         for (int i = 0; i < stringVector.size(); i++) {
             if (colorArray != null)
                 g.setColor(colorArray[i]);
-            g.drawString((String) stringVector.elementAt(i), leftMargin, lineHeight * (i + 1));
+            g.drawString(stringVector.elementAt(i), leftMargin, lineHeight * (i + 1));
         }
     }
 
@@ -70,9 +69,9 @@ public class AdvancedLabel extends Component {
         FontMetrics fm = getFontMetrics(getFont());
         lineHeight = fm.getHeight();
         for (int i = 0; i < stringVector.size(); i++) {
-            maxLineWidth = Math.max(maxLineWidth, fm.stringWidth((String) stringVector.elementAt(i)));
+            maxLineWidth = Math.max(maxLineWidth, fm.stringWidth(stringVector.elementAt(i)));
         }
-        ascent = fm.getAscent();
+        //ascent = fm.getAscent(); //ascent is never used so I removed it.
         descent = fm.getDescent();
         sized = true;
     }

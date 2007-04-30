@@ -24,7 +24,7 @@ import java.util.*;
 
 
 public class PMAreasGroup  implements PMElement{
-    private Vector gr = new Vector();
+    private Vector<PMElement> gr = new Vector<PMElement>();
 
     /**
      * Adds area to group
@@ -54,13 +54,13 @@ public class PMAreasGroup  implements PMElement{
      */
     
     public  PMElement elementAt(int i){
-        return (PMElement) gr.elementAt(i);
+        return gr.elementAt(i);
     }
     
      /**
      * Returns enumeration of all elements in group.
      */   
-    public Enumeration elements(){
+    public Enumeration<PMElement> elements(){
         return gr.elements();
     }
            
@@ -68,9 +68,9 @@ public class PMAreasGroup  implements PMElement{
      * Translates all elements in group by x, y.
      */  
     public void translate(int x, int y){
-        Enumeration iter = gr.elements();
+        Enumeration<PMElement> iter = gr.elements();
         while(iter.hasMoreElements()){
-            PMElement pme = (PMElement) iter.nextElement();
+            PMElement pme = iter.nextElement();
             if (pme != null) pme.translate(x,y);
         }
     }
@@ -90,9 +90,9 @@ public class PMAreasGroup  implements PMElement{
     public Rectangle getBounds(){
         Rectangle bounds = null;
         boolean empty = true;
-        Enumeration iter = gr.elements();
+        Enumeration<PMElement> iter = gr.elements();
         while(iter.hasMoreElements()){
-            PMElement pme = (PMElement) iter.nextElement();
+            PMElement pme = iter.nextElement();
             if ((pme != null) && (pme.getBounds() != null)){
                 if(empty){
                     bounds = pme.getBounds();
@@ -110,9 +110,9 @@ public class PMAreasGroup  implements PMElement{
      */
     
     public void drawInto(Graphics g){
-        Enumeration iter = gr.elements();
+        Enumeration<PMElement> iter = gr.elements();
         while(iter.hasMoreElements()){
-            PMElement pme = (PMElement) iter.nextElement();
+            PMElement pme = iter.nextElement();
             if(pme != null) pme.drawInto(g);
         }
     }
@@ -122,9 +122,9 @@ public class PMAreasGroup  implements PMElement{
      */ 
     
     public void setVisible(boolean v){
-        Enumeration iter = gr.elements();
+        Enumeration<PMElement> iter = gr.elements();
         while(iter.hasMoreElements()){
-            PMElement pme = (PMElement) iter.nextElement();
+            PMElement pme = iter.nextElement();
             pme.setVisible(v);
         }
     }

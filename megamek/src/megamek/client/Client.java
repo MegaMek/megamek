@@ -26,6 +26,7 @@ import java.util.Hashtable;
 
 import megamek.client.bot.BotClient;
 import megamek.common.*;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.DodgeAction;
@@ -191,7 +192,7 @@ public class Client {
     /**
      * Return an enumeration of the players in the game
      */
-    public Enumeration getPlayers() {
+    public Enumeration<Player> getPlayers() {
         return game.getPlayers();
     }
 
@@ -260,7 +261,7 @@ public class Client {
     /**
      * Returns an emumeration of the entities in game.entities
      */
-    public Enumeration getEntities() {
+    public Enumeration<Entity> getEntities() {
         return game.getEntities();
     }
 
@@ -582,7 +583,7 @@ public class Client {
      * Loads the turn list from the data in the packet
      */
     protected void receiveTurns(Packet packet) {
-        game.setTurnVector((Vector) packet.getObject(0));
+        game.setTurnVector((Vector<GameTurn>) packet.getObject(0));
     }
 
     /**
@@ -597,8 +598,8 @@ public class Client {
      * Loads the entities from the data in the net command.
      */
     protected void receiveEntities(Packet c) {
-        Vector newEntities = (Vector) c.getObject(0);
-        Vector newOutOfGame = (Vector) c.getObject(1);
+        Vector<Entity> newEntities = (Vector<Entity>) c.getObject(0);
+        Vector<Entity> newOutOfGame = (Vector<Entity>) c.getObject(1);
 
         // Replace the entities in the game.
         game.setEntitiesVector(newEntities);
@@ -645,11 +646,11 @@ public class Client {
     }
 
     protected void receiveDeployMinefields(Packet packet) {
-        game.addMinefields((Vector) packet.getObject(0));
+        game.addMinefields((Vector<Minefield>) packet.getObject(0));
     }
 
     protected void receiveSendingMinefields(Packet packet) {
-        game.setMinefields((Vector) packet.getObject(0));
+        game.setMinefields((Vector<Minefield>) packet.getObject(0));
     }
 
     protected void receiveRevealMinefield(Packet packet) {
@@ -892,7 +893,7 @@ public class Client {
                     if (log != null)
                         log.append(phaseReport);
                 }
-                game.addReports((Vector) c.getObject(0));
+                game.addReports((Vector<Report>) c.getObject(0));
                 roundReport = receiveReport(game.getReports(game.getRoundCount()));
                 if (c.getCommand() ==
                     Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS) {
@@ -903,14 +904,14 @@ public class Client {
                 game.processGameEvent(new GameReportEvent(this, receiveReport((Vector) c.getObject(0))));
                 break;
             case Packet.COMMAND_SENDING_REPORTS_ALL :
-                Vector allReports = (Vector) c.getObject(0);
+                Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c.getObject(0);
                 game.setAllReports(allReports);
                 if (keepGameLog()) {
                     //Re-write gamelog.txt from scratch
                     initGameLog();
                     if (log != null) {
                         for (int i = 0; i < allReports.size(); i++) {
-                            log.append(receiveReport((Vector)allReports.elementAt(i)));
+                            log.append(receiveReport(allReports.elementAt(i)));
                         }
                     }
                 }
@@ -940,11 +941,11 @@ public class Client {
                 saveEntityStatus(sEntityStatus);
                 break;
             case Packet.COMMAND_SENDING_ARTILLERYATTACKS :
-                Vector v = (Vector)c.getObject(0);
+                Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>)c.getObject(0);
                 game.setArtilleryVector(v);
                 break;
             case Packet.COMMAND_SENDING_FLARES :
-                Vector v2 = (Vector)c.getObject(0);
+                Vector<Flare> v2 = (Vector<Flare>)c.getObject(0);
                 game.setFlares(v2);
                 break;
             case Packet.COMMAND_SEND_SAVEGAME:

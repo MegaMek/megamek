@@ -694,7 +694,7 @@ public class CustomMechDialog
     }
 
     class MunitionChoicePanel extends JPanel {
-        private ArrayList m_vTypes;
+        private ArrayList<AmmoType> m_vTypes;
         private JComboBox m_choice;
         private Mounted m_mounted;
 
@@ -703,14 +703,14 @@ public class CustomMechDialog
         JLabel labHotLoad= new JLabel(Messages.getString("CustomMechDialog.switchToHotLoading")); //$NON-NLS-1$
         JCheckBox chHotLoad = new JCheckBox();
 
-        MunitionChoicePanel(Mounted m, ArrayList vTypes) {
+        MunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
             m_vTypes = vTypes;
             m_mounted = m;
             AmmoType curType = (AmmoType) m.getType();
             m_choice = new JComboBox();
-            Iterator e = m_vTypes.iterator();
+            Iterator<AmmoType> e = m_vTypes.iterator();
             for (int x = 0; e.hasNext(); x++) {
-                AmmoType at = (AmmoType) e.next();
+                AmmoType at = e.next();
                 m_choice.addItem(at.getName());
                 if (at.getMunitionType() == curType.getMunitionType()) {
                     m_choice.setSelectedIndex(x);
@@ -780,7 +780,7 @@ public class CustomMechDialog
 
         public void applyChoice() {
             int n = m_choice.getSelectedIndex();
-            AmmoType at = (AmmoType) m_vTypes.get(n);
+            AmmoType at = m_vTypes.get(n);
             m_mounted.changeAmmoType(at);
             if (chDump.isSelected()) {
                 m_mounted.setShotsLeft(0);
@@ -824,7 +824,7 @@ public class CustomMechDialog
         private final float m_origShotsLeft;
         private final AmmoType m_origAmmo;
 
-        ProtomechMunitionChoicePanel(Mounted m, ArrayList vTypes) {
+        ProtomechMunitionChoicePanel(Mounted m, ArrayList<AmmoType> vTypes) {
             super(m, vTypes);
             m_origAmmo = (AmmoType) m.getType();
             m_origShotsLeft = m.getShotsLeft();

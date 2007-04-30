@@ -65,7 +65,7 @@ public class CityBuilder {
      * @param buildingTemplate
      * @return
      */
-    public Vector generateCity(boolean genericRoad){
+    public Vector<BuildingTemplate> generateCity(boolean genericRoad){
         
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
@@ -87,12 +87,12 @@ public class CityBuilder {
         else if ( cityType.equalsIgnoreCase("TOWN"))
             return buildTown(width,height,roads,mapSettings.getTownSize());
         else
-            return new Vector();
+            return new Vector<BuildingTemplate>();
         
         return placeBuildings(0);
     }
 
-    public Vector placeBuildings(int radius) {
+    public Vector<BuildingTemplate> placeBuildings(int radius) {
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
         Vector<BuildingTemplate> buildingList = new Vector<BuildingTemplate>();
@@ -187,7 +187,7 @@ public class CityBuilder {
         }
     }
     
-    private Vector buildTown(int maxX, int maxY, int roads, int size) {
+    private Vector<BuildingTemplate> buildTown(int maxX, int maxY, int roads, int size) {
         buildHubCity(maxX,maxY,roads * size / 100);
         return placeBuildings(Math.min(maxX,maxY) * size / 200);
     }

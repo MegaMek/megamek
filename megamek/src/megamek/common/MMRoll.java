@@ -44,7 +44,7 @@ public class MMRoll extends Roll {
     /**
      * Sometimes we have more than two virtual dice.
      */
-    private Vector all = null;
+    private Vector<Integer> all = null;
 
     /**
      * Most tolls use standard six sided dice.
@@ -100,7 +100,7 @@ public class MMRoll extends Roll {
         } else {
             // Allocate the result Vector, if needed.
             if (null == all) {
-                all = new Vector();
+                all = new Vector<Integer>();
                 // Add the first virtual die's roll.
                 all.addElement (new Integer(this.total - this.second));
                 // Add the second virtual die's roll.
@@ -137,7 +137,7 @@ public class MMRoll extends Roll {
 
         // Handle more than two dice.
         if (null != all) {
-            Enumeration iter = all.elements();
+            Enumeration<Integer> iter = all.elements();
             buffer.append (" (");
             buffer.append (iter.nextElement().toString());
             while (iter.hasMoreElements()) {
@@ -182,7 +182,7 @@ public class MMRoll extends Roll {
 
         // Handle more than two dice.
         if (null != all) {
-            Enumeration iter = all.elements();
+            Enumeration<Integer> iter = all.elements();
             buffer.append (", rolls: ");
             buffer.append (iter.nextElement().toString());
             while (iter.hasMoreElements()) {

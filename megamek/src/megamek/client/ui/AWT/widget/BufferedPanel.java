@@ -28,7 +28,7 @@ import java.util.Enumeration;
 public class BufferedPanel extends Panel implements ComponentListener {
 
      //Vector of Background Drawers
-     private Vector bgDrawers = new Vector();
+     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
      private Dimension preferredSize = new Dimension();
 
      public BufferedPanel(){
@@ -95,9 +95,9 @@ public class BufferedPanel extends Panel implements ComponentListener {
         // Clear the panel as needed 
         clearGraphics(offG);
         //Draw background
-        Enumeration iter = bgDrawers.elements();
+        Enumeration<BackGroundDrawer> iter = bgDrawers.elements();
         while(iter.hasMoreElements()){
-            BackGroundDrawer bgd = (BackGroundDrawer) iter.nextElement();
+            BackGroundDrawer bgd = iter.nextElement();
             bgd.drawInto(offG, getSize().width, getSize().height);
         }
         // Let the parent panel repaint the components inside.

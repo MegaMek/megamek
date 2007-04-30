@@ -72,7 +72,7 @@ public class SearchlightAttackAction
      * illuminate an entity and all entities that are between us and the hex
      */
     public Vector resolveAction (IGame game) {
-        Vector reports = new Vector();
+        Vector<Report> reports = new Vector<Report>();
         Report r;
         if(!isPossible(game)) {
             r = new Report(3445);

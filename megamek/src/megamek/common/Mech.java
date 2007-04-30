@@ -344,7 +344,14 @@ public abstract class Mech
         return MASC_FAILURE[nMASCLevel] + 1;
     }
 
-    public boolean checkForMASCFailure(MovePath md, Vector vDesc, Vector vCriticals) {
+    /**
+     * This function cheks for masc failure.
+     * @param md the movement path.
+     * @param vDesc the description off the masc failure. used as output.
+     * @param vCriticals ontains tuple of intiger and critical slot. used as output.
+     * @return true iff there was a masc failure.
+     */
+    public boolean checkForMASCFailure(MovePath md, Vector<Report> vDesc, Vector vCriticals) {
         if (md.hasActiveMASC()) {
             Report r;
             boolean bFailure = false;
@@ -570,6 +577,28 @@ public abstract class Mech
         }
         
         return false;
+    }
+    
+    /**
+     * This function returns true iff the system is in perfect condition.
+     * @param system the system to check
+     * @return false if the system is damaged.
+     */
+    public boolean isSystemIntact(int system) {
+        for(int loc = 0; loc < locations(); loc ++) {
+            int numCrits = getNumberOfCriticals(loc);
+            for (int i = 0; i < numCrits; i++) {
+                CriticalSlot ccs = getCritical(loc, i);
+    
+                if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM && ccs.getIndex() == system) {
+                    if (ccs.isDamaged() || ccs.isBreached()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        
+        return true;
     }
     
     /**
@@ -2468,7 +2497,7 @@ public abstract class Mech
     protected abstract double getLegActuatorCost();
 
     public Vector victoryReport() {
-        Vector vDesc = new Vector();
+        Vector<Report> vDesc = new Vector<Report>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;

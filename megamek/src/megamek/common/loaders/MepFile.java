@@ -73,7 +73,7 @@ public class MepFile implements IMechLoader {
     
     String[] critData;
 
-    Hashtable hSharedEquip = new Hashtable();
+    Hashtable<EquipmentType, Mounted> hSharedEquip = new Hashtable<EquipmentType, Mounted>();
 
     public MepFile(InputStream is) throws EntityLoadingException {
         try {
@@ -280,7 +280,7 @@ public class MepFile implements IMechLoader {
                     try {
                         if (etype.isSpreadable()) {
                             // do we already have one of these?  Key on Type
-                            Mounted m = (Mounted)hSharedEquip.get(etype);
+                            Mounted m = hSharedEquip.get(etype);
                             if (m != null) {
                                 // use the existing one
                                 mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, mech.getEquipmentNum(m), etype.isHittable()));

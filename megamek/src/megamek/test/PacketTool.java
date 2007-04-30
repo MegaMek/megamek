@@ -67,12 +67,6 @@ public class PacketTool extends Frame implements Runnable {
     private Label boardName = null;
 
     /**
-     * The name of the most-recently-created board file.
-     * May be <code>null</code>.
-     */
-    private String fileName = null;
-
-    /**
      * The button that sends the loaded board.
      */
     private Button butSend = null;

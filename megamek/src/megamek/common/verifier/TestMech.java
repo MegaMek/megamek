@@ -31,6 +31,7 @@ import megamek.common.util.StringUtil;
 
 import java.util.Vector;
 import java.util.Enumeration;
+import java.io.Serializable;
 import java.lang.StringBuffer;
 
 public class TestMech extends TestEntity {
@@ -165,7 +166,7 @@ public class TestMech extends TestEntity {
     }
 
     public boolean criticalSlotsAllocated(Entity entity, Mounted mounted,
-            Vector allocation)
+            Vector<Serializable> allocation)
     {
         int eNum = entity.getEquipmentNum(mounted);
         int location = mounted.getLocation();
@@ -223,7 +224,7 @@ public class TestMech extends TestEntity {
     }
 
     public void checkCriticalSlotsForEquipment(Entity entity,
-            Vector unallocated, Vector allocation, Vector heatSinks)
+            Vector<Mounted> unallocated, Vector<Serializable> allocation, Vector<Integer> heatSinks)
     {
         int countInternalHeatSinks = 0;
         for (Mounted m : entity.getEquipment()) {
@@ -265,9 +266,9 @@ public class TestMech extends TestEntity {
 
     public void checkCriticals()
     {
-        Vector unallocated = new Vector();
-        Vector allocation = new Vector();
-        Vector heatSinks = new Vector();
+        Vector<Mounted> unallocated = new Vector<Mounted>();
+        Vector<Serializable> allocation = new Vector<Serializable>();
+        Vector<Integer> heatSinks = new Vector<Integer>();
         checkCriticalSlotsForEquipment(mech, unallocated, allocation, 
                 heatSinks);
     }
@@ -275,18 +276,18 @@ public class TestMech extends TestEntity {
 
     public boolean correctCriticals(StringBuffer buff)
     {
-        Vector unallocated = new Vector();
-        Vector allocation = new Vector();
-        Vector heatSinks = new Vector();
+        Vector<Mounted> unallocated = new Vector<Mounted>();
+        Vector<Serializable> allocation = new Vector<Serializable>();
+        Vector<Integer> heatSinks = new Vector<Integer>();
         checkCriticalSlotsForEquipment(mech, unallocated, allocation, 
                 heatSinks);
         boolean correct = true;
         if (!unallocated.isEmpty())
         {
             buff.append("Unallocated Equipment:\n");
-            for(Enumeration e = unallocated.elements(); e.hasMoreElements(); )
+            for(Enumeration<Mounted> e = unallocated.elements(); e.hasMoreElements(); )
             {
-                Mounted m = (Mounted) e.nextElement();
+                Mounted m = e.nextElement();
                 buff.append(m.getType().getInternalName())
                     .append("\n");
             }
@@ -295,7 +296,7 @@ public class TestMech extends TestEntity {
         if (!allocation.isEmpty())
         {
             buff.append("Allocated Equipment:\n");
-            for(Enumeration e = allocation.elements(); e.hasMoreElements(); )
+            for(Enumeration<Serializable> e = allocation.elements(); e.hasMoreElements(); )
             {
                 Mounted m = (Mounted) e.nextElement();
                 int needCrits = ((Integer) e.nextElement()).intValue();
@@ -309,7 +310,7 @@ public class TestMech extends TestEntity {
         }
         if (!heatSinks.isEmpty())
         {
-            int sinks = ((Integer) heatSinks.elements().nextElement())
+            int sinks = heatSinks.elements().nextElement()
                 .intValue();
             buff.append(sinks).append(" of ")
                 .append(engine.integralHeatSinkCapacity())

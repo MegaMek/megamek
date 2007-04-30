@@ -23,6 +23,10 @@ import java.io.Serializable;
 
 import megamek.common.verifier.TestEntity;
 
+/**
+ * This class represents an engine, such as those driving mechs.
+ *
+ */
 public class Engine implements Serializable
 {
     public final static float[] ENGINE_RATINGS = { 0.0f, 0.25f,
@@ -60,6 +64,15 @@ public class Engine implements Serializable
     private int engineFlags;
     public StringBuffer problem = new StringBuffer("Illegal engine: ");
 
+    /**
+     * The constructor takes the rating of the engine, the type of engine and any flags.
+     * Engine ratings are divided by the weight of the mech to get they walk MP.
+     * 
+     * @param engineRating the rating of the engine
+     * @param engineType the type of the engine, either combustion or a type of fusion engine.
+     * @param engineFlags Wether the engine is a tank engine, a clan engine, or large engine,
+     *  or any combination of those.
+     */
     public Engine(int engineRating, int engineType, int engineFlags)
     {
         this.engineValid = true;
@@ -76,13 +89,24 @@ public class Engine implements Serializable
         }
     }
 
-    private boolean hasFlag(int flag)
+    /**
+     * returns true if the engine has the flag set, false otherwise
+     * 
+     * @param flag the flag to check for.
+     * @return true iff the flag is set.
+     */
+    public boolean hasFlag(int flag)
     {
         if ((this.engineFlags & flag) !=0)
             return true;
         return false;
     }
 
+    /**
+     * Sanity checks the engine, no negative ratings, and similar checks.
+     * 
+     * @return true if the engine is useable.
+     */
     private boolean isValidEngine()
     {
         if (hasFlag(~(CLAN_ENGINE|TANK_ENGINE|LARGE_ENGINE)))
@@ -132,6 +156,12 @@ public class Engine implements Serializable
         return true;
     }
 
+    /**
+     * Parses a string to find the engine type.
+     * 
+     * @param type the string to parse
+     * @return the type of the engine.
+     */
     public static int getEngineTypeByString(String type) {
         if (type.toLowerCase().indexOf("xxl") != -1)
             return XXL_ENGINE;
@@ -149,6 +179,10 @@ public class Engine implements Serializable
             return NORMAL_ENGINE;
     }
 
+    /**
+     * returns true if and only if this engine is a fusion engine
+     * @return true if it is not an internal combustion engine.
+     */
     public boolean isFusion()
     {
         if (engineType==COMBUSTION_ENGINE)
@@ -156,11 +190,21 @@ public class Engine implements Serializable
         return true;
     }
 
+    /**
+     * Returns the weight of the enginein tons, 
+     * rounded to the next highest half ton.
+     * @return the weight of the engine.
+     */
     public float getWeightEngine()
     {
         return getWeightEngine(TestEntity.CEIL_HALFTON);
     }
 
+    /**
+     * Returns the weight of the engine, rounded by roundWeight.
+     * @param roundWeight One of the rounding factors given in {@link megamek.common.verifier.TestEntity}.
+     * @return the weight of the engine in tons.
+     */
     public float getWeightEngine(float roundWeight)
     {
         float weight = ENGINE_RATINGS[(int)Math.ceil(engineRating/5)];
@@ -191,6 +235,10 @@ public class Engine implements Serializable
         return TestEntity.ceilMaxHalf(weight, roundWeight);
     }
 
+    /**
+     * Returns the minimum number of heat sinks that must be included in a mech with this type of engine.
+     * @return The minimum number of heat sinks in a desing.
+     */
     public int getCountEngineHeatSinks()
     {
         if (!isFusion())
@@ -198,6 +246,10 @@ public class Engine implements Serializable
         return 10;
     }
 
+    /**
+     * Returns the number of heat sinks which can be built into the engine and therefore don't require a critical slot.
+     * @return the maximum number of heat sinks built into the engine.
+     */
     public int integralHeatSinkCapacity()
     {
         if (!isFusion())
@@ -205,6 +257,11 @@ public class Engine implements Serializable
         return engineRating / 25;
     }
 
+    /**
+     * Get the name of this engine, this is the localized name used in displays.
+     * The name of an Engine is based on it's type.
+     * @return the engine name.
+     */
     public String getShortEngineName()
     {
         switch (engineType)
@@ -231,8 +288,12 @@ public class Engine implements Serializable
         }
     }
 
-    //Don't localize the marked strings below since they are used in mech
-    //file parsing.
+    /**
+     * This returns a non-localized name of the engine, it's mnostly used to generate
+     * files.
+     */
+     //Don't localize the marked strings below since they are used in mech
+     //file parsing.
     public String getEngineName()
     {
         StringBuffer sb = new StringBuffer();
@@ -269,11 +330,19 @@ public class Engine implements Serializable
         return sb.toString();
     }
 
+    /**
+     * Returns the rating of the engine.
+     * @return
+     */
     public int getRating()
     {
         return engineRating;
     }
 
+    /**
+     * returns the slots taken up by the engine in the center torso.
+     * @return
+     */
     public int[] getCenterTorsoCriticalSlots() {
         if (this.engineType == COMPACT_ENGINE) {
             int[] slots = {0, 1, 2};
@@ -287,6 +356,10 @@ public class Engine implements Serializable
         }
     }
 
+    /**
+     * Returns the engine criticals in the side torsos.
+     * @return
+     */
     public int[] getSideTorsoCriticalSlots() {
         if (this.engineType == LIGHT_ENGINE
             || (this.engineType == XL_ENGINE
@@ -309,6 +382,10 @@ public class Engine implements Serializable
         }
     }
 
+    /**
+     * Return the heat generated while the mech is standing still.
+     * @return
+     */
     public int getStandingHeat() {
         switch (engineType) {
             case XXL_ENGINE:

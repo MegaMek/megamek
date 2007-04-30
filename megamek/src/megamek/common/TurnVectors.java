@@ -25,18 +25,18 @@ import java.util.Vector;
 public class TurnVectors implements Enumeration {
     private final int numEven;
     private final int numNormal;
-    private final Vector even_turns;
-    private final Vector normal_turns;
+    private final Vector<TurnOrdered> even_turns;
+    private final Vector<TurnOrdered> normal_turns;
 
-    private Enumeration turnEnum = null;
-    private Enumeration evenEnum = null;
+    private Enumeration<TurnOrdered> turnEnum = null;
+    private Enumeration<TurnOrdered> evenEnum = null;
     private final int min;
 
     /**
      * Helper function to access the <code>Enumeration</code> through
      * our recorded markers.
      */
-    private synchronized Enumeration getTurnEnum() {
+    private synchronized Enumeration<TurnOrdered> getTurnEnum() {
         if ( null == turnEnum ) {
             // Only walk through "normal" turns.
             turnEnum = normal_turns.elements();
@@ -48,7 +48,7 @@ public class TurnVectors implements Enumeration {
      * Helper function to access the <code>Enumeration</code> through
      * our recorded markers for "even" turns.
      */
-    private synchronized Enumeration getEvenEnum() {
+    private synchronized Enumeration<TurnOrdered> getEvenEnum() {
         if ( null == evenEnum ) {
             evenEnum = even_turns.elements();
         }
@@ -71,8 +71,8 @@ public class TurnVectors implements Enumeration {
     {
         this.numEven = evenCount;
         this.numNormal = normalCount;
-    this.normal_turns = new Vector( normalCount );
-    this.even_turns  = new Vector( evenCount );
+    this.normal_turns = new Vector<TurnOrdered>( normalCount );
+    this.even_turns  = new Vector<TurnOrdered>( evenCount );
         this.min = min;
     }
 

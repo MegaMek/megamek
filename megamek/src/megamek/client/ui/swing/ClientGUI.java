@@ -137,7 +137,7 @@ public class ClientGUI
     /**
      * Map each phase to the name of the card for the main display area.
      */
-    private HashMap mainNames = new HashMap();
+    private HashMap<String, String> mainNames = new HashMap<String, String>();
     /**
      * The <code>JPanel</code> containing the main display area.
      */
@@ -149,7 +149,7 @@ public class ClientGUI
     /**
      * Map each phase to the name of the card for the secondary area.
      */
-    private HashMap secondaryNames = new HashMap();
+    private HashMap<String, String> secondaryNames = new HashMap<String, String>();
     /**
      * The <code>JPanel</code> containing the secondary display area.
      */
@@ -161,9 +161,9 @@ public class ClientGUI
     /**
      * Map phase component names to phase component objects.
      */
-    private HashMap phaseComponents = new HashMap();
+    private HashMap<String, JComponent> phaseComponents = new HashMap<String, JComponent>();
     //TODO: there's a better place for this
-    private Map bots = new TreeMap(StringUtil.stringComparator());
+    private Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
     /**
      * Current Selected entity
      */
@@ -608,9 +608,9 @@ public class ClientGUI
     private void die() {
         //Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
-        Iterator names = phaseComponents.keySet().iterator();
+        Iterator<String> names = phaseComponents.keySet().iterator();
         while (names.hasNext()) {
-            JComponent component = (JComponent) phaseComponents.get(names.next());
+            JComponent component = phaseComponents.get(names.next());
             if (component instanceof ReportDisplay) {
                 if (reportHandled) {
                     continue;
@@ -689,7 +689,7 @@ public class ClientGUI
 
         // Get the new panel.
         String name = String.valueOf(phase);
-        curPanel = (JComponent) phaseComponents.get(name);
+        curPanel = phaseComponents.get(name);
         if (curPanel == null) {
             curPanel = initializePanel(phase);
         }
@@ -833,7 +833,7 @@ public class ClientGUI
             case IGame.PHASE_END_REPORT:
             case IGame.PHASE_VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
-                component = (JComponent) phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
+                component = phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
                 if (component == null) {
                     // no ReportDisplay to reuse -- get a new one
                     component = initializePanel(IGame.PHASE_INITIATIVE_REPORT);
@@ -1158,7 +1158,7 @@ public class ClientGUI
      *                 to be saved to a file.  If this value is <code>null</code>
      *                 or empty, the "Save As" dialog will not be displayed.
      */
-    protected void saveListFile(Vector unitList) {
+    protected void saveListFile(Vector<Entity> unitList) {
         // Handle empty lists.
         if (unitList == null || unitList.isEmpty()) {
             return;
@@ -1440,10 +1440,10 @@ public class ClientGUI
             getBots().clear();
             
             // Make a list of the player's living units.
-            Vector living = client.game.getPlayerEntities(client.getLocalPlayer());
+            Vector<Entity> living = client.game.getPlayerEntities(client.getLocalPlayer());
             
             // Be sure to include all units that have retreated.
-            for (Enumeration iter = client.game.getRetreatedEntities(); iter.hasMoreElements();) {
+            for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter.hasMoreElements();) {
                 living.addElement(iter.nextElement());
             }
             
@@ -1489,7 +1489,7 @@ public class ClientGUI
         return client;
     }
 
-    public Map getBots() {
+    public Map<String, Client> getBots() {
         return bots;
     }
 

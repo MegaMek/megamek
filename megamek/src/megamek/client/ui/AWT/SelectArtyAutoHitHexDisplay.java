@@ -16,6 +16,7 @@ package megamek.client.ui.AWT;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Serializable;
 import java.util.*;
 
 import megamek.client.Client;
@@ -49,7 +50,7 @@ public class SelectArtyAutoHitHexDisplay
     private Button            butDone;
 
     private Player            p;
-    private Vector            artyAutoHitHexes = new Vector();
+    private Vector<Serializable>            artyAutoHitHexes = new Vector<Serializable>();
 
     /**
      * Creates and lays out a new deployment phase display 

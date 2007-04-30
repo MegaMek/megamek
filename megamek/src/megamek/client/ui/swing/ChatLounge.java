@@ -827,19 +827,17 @@ public class ChatLounge
         categories.  Finally, a players units will be sorted by the
         order they were "added" to the list.
         */
-        LinkedList sortedEntities = new LinkedList();
-        for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
-            Entity entity = (Entity) i.nextElement();
+        LinkedList<Entity> sortedEntities = new LinkedList<Entity>();
+        for (Enumeration<Entity> i = client.getEntities(); i.hasMoreElements();) {
+            Entity entity = i.nextElement();
             sortedEntities.add(entity);
         }
-        Collections.sort(sortedEntities, new Comparator() {
-            public int compare(Object aa, Object bb) {
-                Entity a = (Entity) aa;
-                Entity b = (Entity) bb;
-                Player p_a = a.getOwner();
-                Player p_b = b.getOwner();
-                int t_a = p_a.getTeam();
-                int t_b = p_b.getTeam();
+        Collections.sort(sortedEntities, new Comparator<Entity>() {
+            public int compare(final Entity a, final Entity b) {
+                final Player p_a = a.getOwner();
+                final Player p_b = b.getOwner();
+                final int t_a = p_a.getTeam();
+                final int t_b = p_b.getTeam();
                 if (p_a.equals(client.getLocalPlayer()) &&
                         !p_b.equals(client.getLocalPlayer())) {
                     return -1;
@@ -862,8 +860,8 @@ public class ChatLounge
             }
         });
 
-        for (Iterator i = sortedEntities.iterator(); i.hasNext();) {
-            Entity entity = (Entity) i.next();
+        for (Iterator<Entity> i = sortedEntities.iterator(); i.hasNext();) {
+            Entity entity = i.next();
 
             // Remember if the local player has units.
             if (!localUnits && entity.getOwner().equals(client.getLocalPlayer())) {

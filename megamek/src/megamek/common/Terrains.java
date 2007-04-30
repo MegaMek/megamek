@@ -65,7 +65,7 @@ public class Terrains implements ITerrainFactory {
     
     public static final int SIZE = names.length;
 
-    private static Hashtable hash;
+    private static Hashtable<String, Integer> hash;
     
     private static ITerrainFactory factory;
 
@@ -89,9 +89,9 @@ public class Terrains implements ITerrainFactory {
         return factory;
     }
     
-    protected static Hashtable getHash() {
+    protected static Hashtable<String, Integer> getHash() {
         if (hash == null) {
-            hash=new Hashtable(SIZE);
+            hash=new Hashtable<String, Integer>(SIZE);
             for(int i=0; i<names.length; i++) {
                 hash.put(names[i], new Integer(i));
             }            

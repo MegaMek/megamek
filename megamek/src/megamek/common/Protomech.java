@@ -746,8 +746,6 @@ public class Protomech extends Entity implements Serializable {
         double weaponBV = 0;
 
         // figure out base weapon bv
-        double weaponsBVFront = 0;
-        double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
         // and add up BVs for ammo-using weapon types for excessive ammo rule
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
@@ -899,8 +897,8 @@ public class Protomech extends Entity implements Serializable {
         return retVal;
 	}
 
-	public Vector victoryReport() {
-		Vector vDesc = new Vector();
+	public Vector<Report> victoryReport() {
+		Vector<Report> vDesc = new Vector<Report>();
 
 		Report r = new Report(7025);
 		r.type = Report.PUBLIC;

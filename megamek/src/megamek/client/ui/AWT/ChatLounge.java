@@ -852,8 +852,8 @@ public class ChatLounge
                 }
             } );
 
-        for (Iterator i = sortedEntities.iterator(); i.hasNext();) {
-            Entity entity = (Entity) i.next();
+        for (Iterator<Entity> i = sortedEntities.iterator(); i.hasNext();) {
+            Entity entity = i.next();
 
             // Remember if the local player has units.
             if (!localUnits && entity.getOwner().equals(client.getLocalPlayer())) {

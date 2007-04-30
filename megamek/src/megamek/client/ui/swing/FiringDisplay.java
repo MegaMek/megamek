@@ -39,11 +39,13 @@ import megamek.common.QuadMech;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.actions.AbstractEntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.SpotAction;
 import megamek.common.actions.TorsoTwistAction;
+import megamek.common.actions.TriggerAPPodAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -131,7 +133,7 @@ public class FiringDisplay
     private boolean showTargetChoice = true;
 
     // shots we have so far.
-    private Vector attacks;
+    private Vector<AbstractEntityAction> attacks;
 
     // is the shift key held?
     private boolean shiftheld;
@@ -156,7 +158,7 @@ public class FiringDisplay
         shiftheld = false;
     
         // fire
-        attacks = new Vector();
+        attacks = new Vector<AbstractEntityAction>();
 
         setupStatusBar(Messages.getString("FiringDisplay.waitingForFiringPhase")); //$NON-NLS-1$
 
@@ -411,7 +413,7 @@ public class FiringDisplay
                     (clientgui.getFrame(), ce());
             dialog.setVisible(true);
             attacks.removeAllElements();
-            Enumeration actions = dialog.getActions();
+            Enumeration<TriggerAPPodAction> actions = dialog.getActions();
             while (actions.hasMoreElements()) {
                 attacks.addElement(actions.nextElement());
             }
@@ -506,12 +508,9 @@ public class FiringDisplay
     private void cacheVisibleTargets() {
         clearVisibleTargets();
 
-        Vector vec = client.game.getValidTargets(ce());
-        Comparator sortComp = new Comparator() {
-            public int compare(Object x, Object y) {
-                Entity entX = (Entity) x;
-                Entity entY = (Entity) y;
-
+        Vector<Entity> vec = client.game.getValidTargets(ce());
+        Comparator<Entity> sortComp = new Comparator<Entity>() {
+            public int compare(Entity entX, Entity entY) {
                 int rangeToX = ce().getPosition().distance(entX.getPosition());
                 int rangeToY = ce().getPosition().distance(entY.getPosition());
 
@@ -521,14 +520,16 @@ public class FiringDisplay
             }
         };
 
-        TreeSet tree = new TreeSet(sortComp);
+        //put the vetor in the TreeSet first to sort it.
+        TreeSet<Entity> tree = new TreeSet<Entity>(sortComp);
         visibleTargets = new Entity[vec.size()];
 
         for (int i = 0; i < vec.size(); i++) {
             tree.add(vec.elementAt(i));
         }
 
-        Iterator it = tree.iterator();
+        //not go through the sorted Set to cache the targets.
+        Iterator<Entity> it = tree.iterator();
         int count = 0;
         while (it.hasNext()) {
             visibleTargets[count++] = (Entity) it.next();
@@ -611,9 +612,9 @@ public class FiringDisplay
         
         // For bug 1002223
         // Re-compute the to-hit numbers by adding in correct order.
-        Vector newAttacks = new Vector();
-        for (Enumeration e = attacks.elements(); e.hasMoreElements();) {
-            Object o = e.nextElement();
+        Vector<AbstractEntityAction> newAttacks = new Vector<AbstractEntityAction>();
+        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e.hasMoreElements();) {
+            AbstractEntityAction o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(client.game);
@@ -630,7 +631,7 @@ public class FiringDisplay
                 newAttacks.addElement(o);
             }
         }
-        for (Enumeration e = attacks.elements(); e.hasMoreElements();) {
+        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e.hasMoreElements();) {
             Object o = e.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
@@ -832,7 +833,7 @@ public class FiringDisplay
         }
         
         // remove attacks, set weapons available again
-        Enumeration i = attacks.elements();
+        Enumeration<AbstractEntityAction> i = attacks.elements();
         while (i.hasMoreElements()) {
             Object o = i.nextElement();
             if (o instanceof WeaponAttackAction) {
@@ -1731,7 +1732,7 @@ public class FiringDisplay
             choices = client.game.getEnemyEntities(pos, ce());
         
         // Convert the choices into a List of targets.
-        Vector targets = new Vector();
+        Vector<Targetable> targets = new Vector<Targetable>();
         while (choices.hasMoreElements()) {
             choice = (Targetable) choices.nextElement();
             if (!ce().equals(choice)) {
@@ -1749,7 +1750,7 @@ public class FiringDisplay
         if (targets.size() == 1) {
 
             // Return  that choice.
-            choice = (Targetable) targets.elementAt(0);
+            choice = targets.elementAt(0);
 
         }
 
@@ -1757,7 +1758,7 @@ public class FiringDisplay
         else if (targets.size() > 1) {
             String[] names = new String[targets.size()];
             for (int loop = 0; loop < names.length; loop++) {
-                names[loop] = ((Targetable) targets.elementAt(loop))
+                names[loop] = targets.elementAt(loop)
                         .getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
@@ -1767,7 +1768,7 @@ public class FiringDisplay
                             names);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer()) {
-                choice = (Targetable) targets.elementAt
+                choice = targets.elementAt
                         (choiceDialog.getChoice());
             }
         } // End have-choices

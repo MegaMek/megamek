@@ -98,7 +98,6 @@ public class TankEncoder {
         Tank entity = null;
         String attrStr;
         int attrVal;
-        int loc;
 
         // Did we get a null node?
         if ( null == node ) {

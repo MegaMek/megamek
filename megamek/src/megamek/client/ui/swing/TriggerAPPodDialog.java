@@ -208,8 +208,8 @@ public class TriggerAPPodDialog
      * @return the <code>Enumeration</code> of <code>TriggerAPPodAction</code>
      *         objects that match the user's selections.
      */
-    public Enumeration getActions() {
-        Vector temp = new Vector();
+    public Enumeration<TriggerAPPodAction> getActions() {
+        Vector<TriggerAPPodAction> temp = new Vector<TriggerAPPodAction>();
 
         // Walk through the list of AP Pod trackers.
         for (TriggerPodTracker pod : trackers) {

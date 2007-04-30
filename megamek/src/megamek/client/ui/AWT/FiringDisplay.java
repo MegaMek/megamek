@@ -488,10 +488,10 @@ public class FiringDisplay
         visibleTargets = new Entity[vec.size()];
         tree.addAll(vec);
         
-        Iterator it = tree.iterator();
+        Iterator<Entity> it = tree.iterator();
         int count = 0;
         while ( it.hasNext() ) {
-          visibleTargets[count++] = (Entity)it.next();
+          visibleTargets[count++] = it.next();
         }
 
         setNextTargetEnabled(visibleTargets.length > 0);

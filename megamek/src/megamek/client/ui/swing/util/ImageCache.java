@@ -31,15 +31,15 @@ public class ImageCache<K,V> {
     public static int MAX_SIZE = 500;
     private int maxSize;
     private Hashtable<K,V> cache;
-    private LinkedList<K> lru = new LinkedList();
+    private LinkedList<K> lru = new LinkedList<K>();
 
     public ImageCache() {
-        cache = new Hashtable(MAX_SIZE * 5 / 4, .75f);
+        cache = new Hashtable<K, V>(MAX_SIZE * 5 / 4, .75f);
         maxSize = MAX_SIZE;
     }
 
     public ImageCache(int max) {
-        cache = new Hashtable(max * 5 / 4, .75f);
+        cache = new Hashtable<K, V>(max * 5 / 4, .75f);
         maxSize = max;
     }
 

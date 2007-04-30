@@ -23,7 +23,7 @@ import megamek.common.Entity;
  */
 public class GameEntityNewEvent extends GameEvent {
 
-    protected Vector entities; 
+    protected Vector<Entity> entities; 
 
     /**
      * 
@@ -32,7 +32,7 @@ public class GameEntityNewEvent extends GameEvent {
      */
     public GameEntityNewEvent(Object source, Entity entity) {
         super(source,GAME_ENTITY_NEW);
-        entities = new Vector();
+        entities = new Vector<Entity>();
         entities.addElement(entity);
     }
 
@@ -41,12 +41,12 @@ public class GameEntityNewEvent extends GameEvent {
      * @param source
      * @param entities
      */
-    public GameEntityNewEvent(Object source, Vector entities) {
+    public GameEntityNewEvent(Object source, Vector<Entity> entities) {
         super(source,GAME_ENTITY_NEW);
         this.entities = entities;
     }
     
-    public Vector GetEntities(){
+    public Vector<Entity> GetEntities(){
         return entities;
     }
 }

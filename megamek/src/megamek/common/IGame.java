@@ -116,7 +116,7 @@ public interface IGame {
      * @param coords
      * @return the <code>Vector</code> of minefields at specified coord
      */
-    public abstract Vector getMinefields(Coords coords);
+    public abstract Vector<Minefield> getMinefields(Coords coords);
 
     /**
      * Get the number of the minefields at specified coords 
@@ -131,7 +131,7 @@ public interface IGame {
      * @return  an <code>Enumeration</code> of the <code>Coords</code>
      *          containing minefilds.  This will not be <code>null</code>.
      */
-    public abstract Enumeration getMinedCoords();
+    public abstract Enumeration<Coords> getMinedCoords();
     
     /**
      * Addds the specified minefield
@@ -143,13 +143,13 @@ public interface IGame {
      * Adds a number of minefields
      * @param minefields the <code>Vector</code> of the minefields to add
      */
-    public abstract void addMinefields(Vector minefields);
+    public abstract void addMinefields(Vector<Minefield> minefields);
     
     /**
      * Sets the minefields to the given <code>Vector</code> of the minefields
      * @param minefields
      */
-    public abstract void setMinefields(Vector minefields);
+    public abstract void setMinefields(Vector<Minefield> minefields);
 
     /**
      * Removes the specified minefield
@@ -167,7 +167,7 @@ public interface IGame {
      * 
      * @return the <code>Vector</code> of the vibrabombs
      */
-    public abstract Vector getVibrabombs();
+    public abstract Vector<Minefield> getVibrabombs();
     
     /**
      * Addds the specified vibrabomb
@@ -243,12 +243,12 @@ public interface IGame {
     /**
      * Return an enumeration of player in the game
      */
-    public abstract Enumeration getPlayers();
+    public abstract Enumeration<Player> getPlayers();
     
     /**
      * Return the players vector
      */
-    public abstract Vector getPlayersVector();
+    public abstract Vector<Player> getPlayersVector();
     
     /**
      * Return the current number of active players in the game.
@@ -340,7 +340,7 @@ public interface IGame {
     /**
      * Returns an Enumeration of the current turn list
      */
-    public abstract Enumeration getTurns();
+    public abstract Enumeration<GameTurn> getTurns();
     
     /**
      * Returns the current turn index
@@ -355,12 +355,12 @@ public interface IGame {
     /**
      * Returns the current turn vector
      */
-    public abstract Vector getTurnVector();
+    public abstract Vector<GameTurn> getTurnVector();
     
     /**
      * Sets the current turn vector
      */
-    public abstract void setTurnVector(Vector turnVector);
+    public abstract void setTurnVector(Vector<GameTurn> turnVector);
     
     public abstract int getPhase();
     
@@ -435,7 +435,7 @@ public interface IGame {
      * @throws  <code>IllegalArgumentException</code> if the new list is
      *          <code>null</code>.
      */
-    public abstract void setOutOfGameEntitiesVector(Vector vOutOfGame);
+    public abstract void setOutOfGameEntitiesVector(Vector<Entity> vOutOfGame);
     
     /**
      * Returns a <code>Vector</code> containing the <code>Entity</code>s
@@ -471,7 +471,7 @@ public interface IGame {
      *          be empty, but it will not be <code>null</code>.
      * @see     #getC3NetworkMembers(Entity)
      */
-    public abstract Vector getC3SubNetworkMembers(Entity entity);
+    public abstract Vector<Entity> getC3SubNetworkMembers(Entity entity);
     
     /**
      * Returns a <code>Hashtable</code> that maps the <code>Coords</code>
@@ -483,7 +483,7 @@ public interface IGame {
      *          positions or each unit in the game to a <code>Vector</code>
      *          of <code>Entity</code>s at that position.
      */
-    public abstract Hashtable getPositionMap();
+    public abstract Hashtable<Coords, Vector<Entity>> getPositionMap();
     
     /**
      * Returns an enumeration of salvagable entities.
@@ -589,7 +589,7 @@ public interface IGame {
      * @return  an <code>Enumeration</code> of <code>Entity</code>s at the
      *          given coordinates who are enemies of the given unit.
      */
-    public abstract Enumeration getEnemyEntities(final Coords c, final Entity currentEntity);
+    public abstract Enumeration<Entity> getEnemyEntities(final Coords c, final Entity currentEntity);
     
     /**
      * Returns an <code>Enumeration</code> of friendly active
@@ -600,7 +600,7 @@ public interface IGame {
      * @return  an <code>Enumeration</code> of <code>Entity</code>s at the
      *          given coordinates who are friends of the given unit.
      */
-    public abstract Enumeration getFriendlyEntities(final Coords c, final Entity currentEntity);
+    public abstract Enumeration<Entity> getFriendlyEntities(final Coords c, final Entity currentEntity);
     
     /**
      * Moves an entity into the graveyard so it stops getting sent
@@ -758,18 +758,18 @@ public interface IGame {
     
     public abstract void removeArtilleryAttack(ArtilleryAttackAction aaa);
     
-    public abstract Vector getArtilleryVector();
+    public abstract Vector<ArtilleryAttackAction> getArtilleryVector();
     
     public abstract Enumeration getArtilleryAttacks();
     
     public abstract int getArtillerySize();
     
-    public abstract void setArtilleryVector(Vector v);
+    public abstract void setArtilleryVector(Vector<ArtilleryAttackAction> v);
     
     /** 
      * Returns an Enumeration of actions scheduled for this phase. 
      */
-    public abstract Enumeration getActions();
+    public abstract Enumeration<EntityAction> getActions();
     
     /**
      * Resets the actions list.
@@ -793,7 +793,7 @@ public interface IGame {
      * Returns the actions vector.  Do not use to modify the actions;
      * I will be angry. >:[  Used for sending all actions to the client.
      */
-    public abstract Vector getActionsVector();
+    public abstract Vector<EntityAction> getActionsVector();
     
     public abstract void addInitiativeRerollRequest(Team t);
 
@@ -810,7 +810,7 @@ public interface IGame {
      * Returns an Enumeration of displacement attacks scheduled for the end
      * of the physical phase.
      */
-    public abstract Enumeration getCharges();
+    public abstract Enumeration<AttackAction> getCharges();
     
     /**
      * Resets the pending charges list.
@@ -821,7 +821,7 @@ public interface IGame {
      * Returns the charges vector.  Do not modify. >:[ Used for sending all
      * charges to the client.
      */
-    public abstract Vector getChargesVector();
+    public abstract Vector<AttackAction> getChargesVector();
     
     /**
      * Adds a pending lay minefield action to the list for this phase.
@@ -831,7 +831,7 @@ public interface IGame {
     /**
      * Returns an Enumeration of LayMinefieldActions
      */
-    public Enumeration getLayMinefieldActions();
+    public Enumeration<LayMinefieldAction> getLayMinefieldActions();
 
     /** Resets the pending LayMinefieldActions list. */
     public void resetLayMinefieldActions();
@@ -839,7 +839,7 @@ public interface IGame {
     /** Returns the LayMinefieldActions vector. 
      *  Do not modify. >:[ Used for sending these actions to the client.
      */
-    public Vector getLayMinefieldActionsVector();
+    public Vector<LayMinefieldAction> getLayMinefieldActionsVector();
     
     /**
      * Adds a pending PSR to the list for this phase.
@@ -849,7 +849,7 @@ public interface IGame {
     /**
      * Returns an Enumeration of pending PSRs.
      */
-    public abstract Enumeration getPSRs();
+    public abstract Enumeration<PilotingRollData> getPSRs();
     
     /**
      * Adds a pending extreme Gravity PSR to the list for this phase.
@@ -859,7 +859,7 @@ public interface IGame {
     /**
      * Returns an Enumeration of pending extreme GravityPSRs.
      */
-    public abstract Enumeration getExtremeGravityPSRs();
+    public abstract Enumeration<PilotingRollData> getExtremeGravityPSRs();
     
     /**
      * Resets the PSR list for a given entity.
@@ -910,24 +910,24 @@ public interface IGame {
      * Adds the given reports vector to the GameReport collection.
      * @param v Vector of reports
      */
-    public abstract void addReports(Vector v);
+    public abstract void addReports(Vector<Report> v);
 
     /**
      * Returns a vector of reports for the given round.
      * @param r Round number
      */
-    public abstract Vector getReports(int r);
+    public abstract Vector<Report> getReports(int r);
 
     /**
      * Returns a vector of all the reports.
      */
-    public abstract Vector getAllReports();
+    public abstract Vector<Vector<Report>> getAllReports();
 
     /**
      * Used to populate previous game reports, e.g. after a client connects
      *  to an existing game.
      */
-    public void setAllReports(Vector v);
+    public void setAllReports(Vector<Vector<Report>> v);
 
     /**
      * Clears out all the current reports, paving the way for a new game.
@@ -1009,7 +1009,7 @@ public interface IGame {
      *          selector accepts.  This value will not be <code>null</code>
      *          but it may be empty.
      */
-    public abstract Enumeration getSelectedOutOfGameEntities(EntitySelector selector);
+    public abstract Enumeration<Entity> getSelectedOutOfGameEntities(EntitySelector selector);
     
     /**
      * Count all out-of-game<code>Entity</code>s that pass the given selection
@@ -1044,7 +1044,7 @@ public interface IGame {
      *         attached and are located between attacker and target and are
      *         friendly with the attacker.
      */
-    public abstract Enumeration getNemesisTargets(Entity attacker, Coords target);
+    public abstract Enumeration<Entity> getNemesisTargets(Entity attacker, Coords target);
 
     /**
      * Returns the previous entity from the master list of entities.  Will
@@ -1069,7 +1069,7 @@ public interface IGame {
     /**
      * Returns this turn's tag information
      */
-    public abstract Vector getTagInfo();
+    public abstract Vector<TagInfo> getTagInfo();
 
     /**
      * add the results of one tag attack
@@ -1096,12 +1096,12 @@ public interface IGame {
     /** 
      * Get a list of flares
      */
-    public abstract Vector getFlares();
+    public abstract Vector<Flare> getFlares();
 
     /**
      * Set the list of flares
      */
-    public abstract void setFlares(Vector flares);
+    public abstract void setFlares(Vector<Flare> flares);
 
     /**
      * Add a new flare
@@ -1118,7 +1118,7 @@ public interface IGame {
      * Artillery flares drift with wind.
      * (called at end of turn)
      */
-    public abstract Vector ageFlares();
+    public abstract Vector<Report> ageFlares();
 
     public abstract boolean gameTimerIsExpired();
 }

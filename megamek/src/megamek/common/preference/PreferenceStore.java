@@ -26,7 +26,7 @@ class PreferenceStore implements IPreferenceStore {
     protected Properties properties;
     protected Properties defaultProperties;
     
-    protected Vector listeners = new Vector();
+    protected Vector<IPreferenceChangeListener> listeners = new Vector<IPreferenceChangeListener>();
     
     public PreferenceStore() {
         defaultProperties = new Properties();
@@ -276,14 +276,14 @@ class PreferenceStore implements IPreferenceStore {
         if (listeners.size() > 0 && (oldValue == null || !oldValue.equals(newValue))) {
             final PreferenceChangeEvent pe = new PreferenceChangeEvent(this, name, oldValue, newValue);
             for (int i = 0; i < listeners.size(); ++i) {
-                IPreferenceChangeListener l = (IPreferenceChangeListener) listeners.elementAt(i);
+                IPreferenceChangeListener l = listeners.elementAt(i);
                 l.preferenceChange(pe);
             }
         }
     }
 
     public String[] getAdvancedProperties() {
-        Vector v = new Vector();
+        Vector<String> v = new Vector<String>();
         String s;
         for (Enumeration e = properties.propertyNames(); e.hasMoreElements(); ) {
             s = (String)e.nextElement();
@@ -293,7 +293,7 @@ class PreferenceStore implements IPreferenceStore {
         }
         String props[] = new String[v.size()];
         for (int i = 0; i < v.size(); i++) {
-            props[i] = (String)v.elementAt(i);
+            props[i] = v.elementAt(i);
         }
         return props;
     }

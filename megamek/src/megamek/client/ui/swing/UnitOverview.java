@@ -51,7 +51,6 @@ public class UnitOverview implements Displayable {
     private static final int DIST_SIDE = 5;
     private static final int ICON_WIDTH = 56;
     private static final int ICON_HEIGHT = 48;
-    private static final int BUTTON_WIDTH = 56;
     private static final int BUTTON_HEIGHT = 11;
     private static final int BUTTON_PADDING = 2;
     private static final int PADDING = 5;

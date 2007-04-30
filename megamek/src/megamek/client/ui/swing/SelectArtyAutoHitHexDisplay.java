@@ -38,6 +38,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.io.Serializable;
 import java.util.Vector;
 
 public class SelectArtyAutoHitHexDisplay
@@ -60,7 +61,7 @@ public class SelectArtyAutoHitHexDisplay
     private JButton butDone;
 
     private Player p;
-    private Vector artyAutoHitHexes = new Vector();
+    private Vector<Serializable> artyAutoHitHexes = new Vector<Serializable>();
 
     /**
      * Creates and lays out a new deployment phase display

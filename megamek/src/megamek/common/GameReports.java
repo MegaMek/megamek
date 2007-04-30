@@ -27,52 +27,52 @@ import java.io.Serializable;
  */
 public class GameReports implements Serializable {
 
-    private Vector reports;
+    private Vector<Vector<Report>> reports;
 
     GameReports() {
-        reports = new Vector();
+        reports = new Vector<Vector<Report>>();
     }
 
-    public void add(int round, Vector v) {
+    public void add(int round, Vector<Report> v) {
         if (round == 0) {
             //Combine round 0 (deployment) with round one's reports.
             round = 1;
         }
         if (round > reports.size()) {
             //First reports for the round.
-            reports.addElement(v.clone());
+            reports.addElement((Vector<Report>) v.clone());
         } else {
             //Already have some reports for this round, so we'll append these
             // new ones.
-            ((Vector)reports.elementAt(round - 1)).addAll((Vector)v.clone());
+            reports.elementAt(round - 1).addAll((Vector<Report>)v.clone());
         }
     }
 
     //Get a single round's reports.
-    public Vector get(int round) {
+    public Vector<Report> get(int round) {
         if (round == 0) {
             //Round 0 (deployment) reports are lumped in with round one.
             round = 1;
         }
         if (round <= reports.size()) {
-            return (Vector)reports.elementAt(round - 1);
+            return reports.elementAt(round - 1);
         }
 		System.err.println("ERROR: GameReports.get() was asked for reports of a round which it does not posses.");
 		return null;
     }
 
     //Get all the reports.
-    public Vector get() {
+    public Vector<Vector<Report>> get() {
         return reports;
     }
 
     //Set the reports vector from outside all at once.
-    public void set(Vector v) {
+    public void set(Vector<Vector<Report>> v) {
         reports = v;
     }
 
     public void clear() {
-        reports = new Vector();
+        reports = new Vector<Vector<Report>>();
     }
 
 }

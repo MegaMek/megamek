@@ -741,8 +741,8 @@ public class Infantry
         return retVal;
     } // End public int calculateBattleValue()
 
-    public Vector victoryReport() {
-        Vector vDesc = new Vector();
+    public Vector<Report> victoryReport() {
+        Vector<Report> vDesc = new Vector<Report>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;

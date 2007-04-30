@@ -814,12 +814,12 @@ public class Board implements Serializable, IBoard {
      * @return  an <code>Enumeration</code> of <code>Coords</code> that
      *          have infernos still burning.
      */
-    public Enumeration getInfernoBurningCoords() {
+    public Enumeration<Coords> getInfernoBurningCoords() {
         // Only include *burning* inferno trackers.
         Vector<Coords> burning = new Vector<Coords>();
-        Enumeration iter = this.infernos.keys();
+        Enumeration<Coords> iter = this.infernos.keys();
         while ( iter.hasMoreElements() ) {
-            final Coords coords = (Coords) iter.nextElement();
+            final Coords coords = iter.nextElement();
             if ( this.isInfernoBurning(coords) ) {
                 burning.addElement( coords );
             }
@@ -878,7 +878,7 @@ public class Board implements Serializable, IBoard {
      *
      * @return  an <code>Enumeration</code> of <code>Building</code>s.
      */
-    public Enumeration getBuildings() {
+    public Enumeration<Building> getBuildings() {
         return this.buildings.elements();
     }
 
@@ -1093,9 +1093,9 @@ System.out.println("Setting basement elevation: "+elevation+":"+curHex);
         bldgByCoords = new Hashtable<Coords,Building>();
 
         // Walk through the vector of buildings.
-        Enumeration loop = buildings.elements();
+        Enumeration<Building> loop = buildings.elements();
         while ( loop.hasMoreElements() ) {
-            final Building bldg = (Building) loop.nextElement();
+            final Building bldg = loop.nextElement();
 
             // Each building identifies the hexes it covers.
             Enumeration<Coords> iter = bldg.getCoords();
@@ -1147,8 +1147,8 @@ System.out.println("Setting basement elevation: "+elevation+":"+curHex);
         if (boardListeners == null) {
             return;
         }
-        for(Enumeration e = boardListeners.elements(); e.hasMoreElements();) {
-            BoardListener l = (BoardListener)e.nextElement();
+        for(Enumeration<BoardListener> e = boardListeners.elements(); e.hasMoreElements();) {
+            BoardListener l = e.nextElement();
             switch(event.getType()) {
             case BoardEvent.BOARD_CHANGED_HEX :
                 l.boardChangedHex(event);
@@ -1160,7 +1160,7 @@ System.out.println("Setting basement elevation: "+elevation+":"+curHex);
         }
     }
     
-    protected Vector getListeners() {
+    protected Vector<BoardListener> getListeners() {
         if (boardListeners == null) {
             boardListeners = new Vector<BoardListener>();
         }
@@ -1168,13 +1168,13 @@ System.out.println("Setting basement elevation: "+elevation+":"+curHex);
     }
 
     //Is there any way I can get around using this?
-    public Hashtable getInfernos() {
+    public Hashtable<Coords, InfernoTracker> getInfernos() {
         return infernos;
     }
 
     public void setBridgeCF(int value) {
-        for (Enumeration ebldg=buildings.elements(); ebldg.hasMoreElements(); ) {
-            Building bldg=(Building)ebldg.nextElement();
+        for (Enumeration<Building> ebldg=buildings.elements(); ebldg.hasMoreElements(); ) {
+            Building bldg=ebldg.nextElement();
             bldg.setCurrentCF(value);
         }
     }

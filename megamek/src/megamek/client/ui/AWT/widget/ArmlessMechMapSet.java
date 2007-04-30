@@ -47,7 +47,7 @@ public class ArmlessMechMapSet implements DisplayMapSet{
     //Heat control area
     private PMPicPolygonalArea heatHotArea;
     //Set of Background Drawers
-    private Vector    bgDrawers = new Vector();
+    private Vector<BackGroundDrawer>    bgDrawers = new Vector<BackGroundDrawer>();
     //Main areas group that keeps everything in itself and is passed to PicMap component
     private PMAreasGroup content = new PMAreasGroup();
     //Reference to Component class (need to manage images and fonts)
@@ -142,7 +142,7 @@ public class ArmlessMechMapSet implements DisplayMapSet{
         return content;
     }
     
-    public Vector getBackgroundDrawers(){
+    public Vector<BackGroundDrawer> getBackgroundDrawers(){
         return bgDrawers;
     }
     

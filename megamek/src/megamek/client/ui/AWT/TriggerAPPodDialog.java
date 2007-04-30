@@ -193,9 +193,9 @@ public class TriggerAPPodDialog
         Vector<EntityAction> temp = new Vector<EntityAction>();
 
         // Walk through the list of AP Pod trackers.
-        Enumeration pods = trackers.elements();
+        Enumeration<TriggerPodTracker> pods = trackers.elements();
         while ( pods.hasMoreElements() ) {
-            TriggerPodTracker pod = (TriggerPodTracker) pods.nextElement();
+            TriggerPodTracker pod = pods.nextElement();
 
             // Should we create an action for this pod?
             if ( pod.isTriggered() ) {

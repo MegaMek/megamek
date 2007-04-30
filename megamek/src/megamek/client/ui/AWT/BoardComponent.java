@@ -33,11 +33,8 @@ public class BoardComponent extends Panel {
     private Scrollbar scrHorizontal = new Scrollbar(Scrollbar.HORIZONTAL);
     private Panel panBlank = new Panel();
     
-    private BoardView1 bv;
-
     /** Creates new BoardComponent */
     public BoardComponent(BoardView1 bv) {
-        this.bv = bv;
          
         // layout
         GridBagLayout gridbag = new GridBagLayout();

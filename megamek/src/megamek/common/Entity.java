@@ -887,22 +887,22 @@ public abstract class Entity extends TurnOrdered
         int altitude = assumedElevation + hex.surface();
         int maxAlt = hex.surface();
         switch(getMovementMode()) {
-        case IEntityMovementMode.INF_JUMP:
-        case IEntityMovementMode.INF_LEG:
-        case IEntityMovementMode.INF_MOTORIZED:
-            maxAlt += Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
-            break;
-        case IEntityMovementMode.VTOL:
-            maxAlt = hex.surface() + 50;
-            break;
-        case IEntityMovementMode.SUBMARINE:
-        case IEntityMovementMode.INF_UMU:
-        case IEntityMovementMode.BIPED_SWIM:
-        case IEntityMovementMode.QUAD_SWIM:
-            maxAlt = hex.surface();
-            break;
-        default:
-            return false;
+            case IEntityMovementMode.INF_JUMP:
+            case IEntityMovementMode.INF_LEG:
+            case IEntityMovementMode.INF_MOTORIZED:
+                maxAlt += Math.max(0, hex.terrainLevel(Terrains.BLDG_ELEV));
+                break;
+            case IEntityMovementMode.VTOL:
+                maxAlt = hex.surface() + 50;
+                break;
+            case IEntityMovementMode.SUBMARINE:
+            case IEntityMovementMode.INF_UMU:
+            case IEntityMovementMode.BIPED_SWIM:
+            case IEntityMovementMode.QUAD_SWIM:
+                maxAlt = hex.surface();
+                break;
+            default:
+                return false;
         }
         return (altitude < maxAlt);
     }
@@ -1179,7 +1179,7 @@ public abstract class Entity extends TurnOrdered
     
     
     public int getWalkMP( boolean gravity ) {
-        int mp = this.walkMP;
+        int mp = getOriginalWalkMP();
         int minus;
         if (game != null && game.getOptions().booleanOption("maxtech_heat")) {
             if (heat<30) {
@@ -1277,7 +1277,7 @@ public abstract class Entity extends TurnOrdered
      * factored for gravity.
      */
     public int getJumpMP() {
-        return applyGravityEffectsOnMP(jumpMP);
+        return applyGravityEffectsOnMP(getOriginalJumpMP());
     }
 
     public int getJumpType() {
@@ -5868,6 +5868,13 @@ public abstract class Entity extends TurnOrdered
         }
     
         return roll;
-        
+    }
+    
+    /**
+     * returns true if the entity is flying.
+     * @return false, should be overriden by subclasses.
+     */
+    public boolean isFlying() {
+        return false;
     }
 }

@@ -43,7 +43,6 @@ public class BattleArmorEncoder {
     public static void encode( Entity entity, Writer out )
         throws IOException
     {
-        Enumeration iter; // used when marching through a list of sub-elements
         BattleArmor squad = (BattleArmor) entity;
         int value;
 

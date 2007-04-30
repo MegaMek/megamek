@@ -19,7 +19,7 @@ import java.util.*;
 
 public class OptionGroup implements IBasicOptionGroup, Serializable {
     
-    private Vector optionNames = new Vector();
+    private Vector<String> optionNames = new Vector<String>();
     
     private String name;
     private String key;
@@ -54,7 +54,7 @@ public class OptionGroup implements IBasicOptionGroup, Serializable {
       return key;
     }
         
-    public Enumeration getOptionNames() {
+    public Enumeration<String> getOptionNames() {
         return optionNames.elements();
     }
     

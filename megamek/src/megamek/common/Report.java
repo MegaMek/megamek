@@ -77,7 +77,7 @@ public class Report implements Serializable {
     public int newlines = 1;
 
     /** The data values to fill in the report with. */
-    private Vector tagData = new Vector();
+    private Vector<String> tagData = new Vector<String>();
 
     /** How this report is handled when double-blind play is in effect.
         See constants below for more details. */
@@ -108,13 +108,13 @@ public class Report implements Serializable {
     /** This hash table will store the tagData Vector indexes that are
         supposed to be obscured before sending to clients.  This only
         applies when the report type is "obscured". */
-    private Hashtable obscuredIndexes = new Hashtable();
+    private Hashtable<Integer, Boolean> obscuredIndexes = new Hashtable<Integer, Boolean>();
 
     /** Vector to store the player names of those who received an
         obscured version of this report.  Used to reconstruct
         individual client's reports from the master copy stored by the
         server. */
-    private Vector obscuredRecipients = new Vector();
+    private Vector<String> obscuredRecipients = new Vector<String>();
 
     /** Keep track of what data we have already substituted for tags. */
     private transient int tagCounter = 0;
@@ -165,11 +165,11 @@ public class Report implements Serializable {
         this.messageId = r.messageId;
         this.indentation = r.indentation;
         this.newlines = r.newlines;
-        this.tagData = (Vector)r.tagData.clone();
+        this.tagData = (Vector<String>)r.tagData.clone();
         this.type = r.type;
         this.subject = r.subject;
-        this.obscuredIndexes = (Hashtable)r.obscuredIndexes.clone();
-        this.obscuredRecipients = (Vector)r.obscuredRecipients.clone();
+        this.obscuredIndexes = (Hashtable<Integer, Boolean>)r.obscuredIndexes.clone();
+        this.obscuredRecipients = (Vector<String>)r.obscuredRecipients.clone();
         this.tagCounter = r.tagCounter;
     }
 
@@ -336,7 +336,7 @@ public class Report implements Serializable {
 
     private String getTag(int index) {
         try {
-            String value = (String)this.tagData.elementAt(index);
+            String value = this.tagData.elementAt(index);
             if (value == null) {
                 return Report.OBSCURED_STRING;
             }
@@ -480,7 +480,7 @@ public class Report implements Serializable {
      */
     public boolean isObscuredRecipient(String playerName) {
         for (int i = 0; i < this.obscuredRecipients.size(); i++) {
-            String s = (String)this.obscuredRecipients.elementAt(i);
+            String s = this.obscuredRecipients.elementAt(i);
             if (s.equals(playerName)) {
                 return true;
             }

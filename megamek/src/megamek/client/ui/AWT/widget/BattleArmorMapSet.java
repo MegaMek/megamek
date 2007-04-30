@@ -50,7 +50,7 @@ public class BattleArmorMapSet implements DisplayMapSet{
     //Content group which will be sent to PicMap component
     private PMAreasGroup content = new PMAreasGroup();
     //Set of Backgrpund drawers which will be sent to PicMap component
-    private Vector    bgDrawers = new Vector();
+    private Vector<BackGroundDrawer>    bgDrawers = new Vector<BackGroundDrawer>();
     
     private int stepY = 53;
     
@@ -93,7 +93,7 @@ public class BattleArmorMapSet implements DisplayMapSet{
         return content;
     }
     
-    public Vector getBackgroundDrawers(){
+    public Vector<BackGroundDrawer> getBackgroundDrawers(){
         return bgDrawers;
     }
     

@@ -26,7 +26,7 @@ import java.io.*;
 */
 public final class Team extends TurnOrdered implements Serializable
 {
-    private Vector players = new Vector();
+    private Vector<Player> players = new Vector<Player>();
     private int id;
 
     public Team(int newID) {

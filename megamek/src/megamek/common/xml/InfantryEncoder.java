@@ -43,7 +43,6 @@ public class InfantryEncoder {
     public static void encode( Entity entity, Writer out )
         throws IOException
     {
-        Enumeration iter; // used when marching through a list of sub-elements
         Infantry inf = (Infantry) entity;
         int value;
 

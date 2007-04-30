@@ -48,8 +48,8 @@ import java.util.Vector;
  */
 public class HexTileset {
 
-    private ArrayList bases = new ArrayList();
-    private ArrayList supers = new ArrayList();
+    private ArrayList<HexEntry> bases = new ArrayList<HexEntry>();
+    private ArrayList<HexEntry> supers = new ArrayList<HexEntry>();
     private ImageCache<IHex,Image> hexToImageCache = new ImageCache<IHex,Image>();
     private ImageCache<IHex,List<Image>> hexToImageListCache = new ImageCache<IHex,List<Image>>();
 
@@ -76,7 +76,7 @@ public class HexTileset {
      */
     public synchronized Object[] assignMatch(IHex hex, Component comp) {
         IHex hexCopy = hex.duplicate();
-        List supers = supersFor(hexCopy, comp);
+        List<Image> supers = supersFor(hexCopy, comp);
         Image base = baseFor(hexCopy, comp);
         Object[] pair = new Object[]{base, supers};
         hexToImageCache.put(hex, base);
@@ -108,12 +108,12 @@ public class HexTileset {
      * elements from the tileset hex are removed from the hex.  Thus you want
      * to pass a copy of the original to this function.
      */
-    private List supersFor(IHex hex, Component comp) {
-        ArrayList matches = new ArrayList();
+    private List<Image> supersFor(IHex hex, Component comp) {
+        ArrayList<Image> matches = new ArrayList<Image>();
         
         // find superimposed image matches
-        for (Iterator i = supers.iterator(); i.hasNext();) {
-            HexEntry entry = (HexEntry) i.next();
+        for (Iterator<HexEntry> i = supers.iterator(); i.hasNext();) {
+            HexEntry entry = i.next();
             if (superMatch(hex, entry.getHex()) >= 1.0) {
                 matches.add(entry.getImage(comp));
                 // remove involved terrain from consideration
@@ -138,10 +138,10 @@ public class HexTileset {
         double match = -1;
 
         // match a base image to the hex
-        Iterator iter = bases.iterator();
+        Iterator<HexEntry> iter = bases.iterator();
 
         while (iter.hasNext()) {
-            HexEntry entry = (HexEntry) iter.next();
+            HexEntry entry = iter.next();
             double thisMatch = baseMatch(hex, entry.getHex());
             // stop if perfect match
             if (thisMatch == 1.0) {
@@ -210,15 +210,15 @@ public class HexTileset {
      * Initializes all the images in this tileset and adds them to the tracker
      */
     public void loadAllImages(Component comp, MediaTracker tracker) {
-        for (Iterator i = bases.iterator(); i.hasNext();) {
-            HexEntry entry = (HexEntry) i.next();
+        for (Iterator<HexEntry> i = bases.iterator(); i.hasNext();) {
+            HexEntry entry = i.next();
             if (entry.getImage() == null) {
                 entry.loadImage(comp);
             }
             tracker.addImage(entry.getImage(), 1);
         }
-        for (Iterator i = supers.iterator(); i.hasNext();) {
-            HexEntry entry = (HexEntry) i.next();
+        for (Iterator<HexEntry> i = supers.iterator(); i.hasNext();) {
+            HexEntry entry = i.next();
             if (entry.getImage() == null) {
                 entry.loadImage(comp);
             }
@@ -238,8 +238,8 @@ public class HexTileset {
         tracker.addImage(base, 1);        
         // add superImgs
         if (superImgs != null) {
-            for (Iterator i = superImgs.iterator(); i.hasNext();) {
-                tracker.addImage((Image) i.next(), 1);
+            for (Iterator<Image> i = superImgs.iterator(); i.hasNext();) {
+                tracker.addImage(i.next(), 1);
             }
         }
     }
@@ -252,8 +252,8 @@ public class HexTileset {
     }
 
     public synchronized void reset() {
-        hexToImageCache = new ImageCache();
-        hexToImageListCache = new ImageCache();
+        hexToImageCache = new ImageCache<IHex, Image>();
+        hexToImageListCache = new ImageCache<IHex, List<Image>>();
     }
 
     /**
@@ -356,7 +356,7 @@ public class HexTileset {
         private IHex hex;
         private String imageFile;
         private Image image;
-        private Vector images;
+        private Vector<Image> images;
         private Vector filenames;
         private Random r;
 
@@ -385,13 +385,13 @@ public class HexTileset {
             }
             if (images.size() > 1) {
                 int rand = (int) (r.nextDouble() * images.size());
-                return (Image) images.elementAt(rand);
+                return images.elementAt(rand);
             }
-			return (Image) images.firstElement();
+			return images.firstElement();
         }
 
         public void loadImage(Component comp) {
-            images = new Vector();
+            images = new Vector<Image>();
             for (int i = 0; i < filenames.size(); i++) {
                 String filename = (String) filenames.elementAt(i);
                 images.addElement(comp.getToolkit().getImage("data/images/hexes/" + filename)); //$NON-NLS-1$

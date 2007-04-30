@@ -1285,8 +1285,8 @@ public class MovementDisplay
         int unloadEl = cmd.getFinalElevation();
         IHex hex = ce.getGame().getBoard().getHex(cmd.getFinalCoords());
         boolean canUnloadHere = false;
-        for (Enumeration e = loadedUnits.elements(); e.hasMoreElements();) {
-            Entity en = (Entity) e.nextElement();
+        for (Enumeration<Entity> e = loadedUnits.elements(); e.hasMoreElements();) {
+            Entity en = e.nextElement();
             if(en.isElevationValid(unloadEl, hex)
                     || en.getJumpMP() > 0) {
                 canUnloadHere = true;

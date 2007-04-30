@@ -106,6 +106,9 @@ public class MovementDisplay
     public static final String    MOVE_DIG_IN = "moveDigIn"; //$NON-NLS-1$
     public static final String    MOVE_FORTIFY = "moveFortify"; //$NON-NLS-1$
     public static final String    MOVE_SHAKE_OFF = "moveShakeOff"; //$NON-NLS-1$
+    public static final String    MOVE_MODE_MECH = "moveModeMech"; //$NON-NLS-1$
+    public static final String    MOVE_MODE_AIRMECH = "moveModeAirmech"; //$NON-NLS-1$
+    public static final String    MOVE_MODE_AIRCRAFT = "moveModeAircraft"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -1383,8 +1386,8 @@ public class MovementDisplay
         int unloadEl = cmd.getFinalElevation();
         IHex hex = ce.getGame().getBoard().getHex(cmd.getFinalCoords());
         boolean canUnloadHere = false;
-        for (Enumeration e = loadedUnits.elements(); e.hasMoreElements(); ) {
-            Entity en = (Entity)e.nextElement();
+        for (Enumeration<Entity> e = loadedUnits.elements(); e.hasMoreElements(); ) {
+            Entity en = e.nextElement();
             if(en.isElevationValid(unloadEl, hex)
                     || en.getJumpMP() > 0) {
                 canUnloadHere = true;

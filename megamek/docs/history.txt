@@ -1,6 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.33.6-dev (SVN)
++ added some javadoc documentation. This is a work in progress.
++ Made pilot BV fetchable as a static function in case someone wants to implement requrest #1636523
 + Fixed a null pointer exception.
 + Bug 1706265 fixed
 + Added House rule MW pilots cannot spot.
@@ -23,6 +25,8 @@ v0.33.6-dev (SVN)
   in games with more then one victory condition.
 + Bug: MML torpedos did not work under water.
 + Bug: C3 and C3i where able to use level 3 targeting systems
++ Begingins of a LAM implementation.
++ Significant reduction in compiler warnings through refactoring.
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

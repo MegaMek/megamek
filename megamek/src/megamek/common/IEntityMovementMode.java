@@ -38,4 +38,6 @@ public interface IEntityMovementMode {
     public static final int AERODYNE = 16;
     public static final int SPHEROID = 17;
     public static final int INF_UMU = 18;
+    public static final int AIRMECH = 19;
+    public static final int AREOSPACE = 20; //this might be a synonym for AERODYNE.
 }

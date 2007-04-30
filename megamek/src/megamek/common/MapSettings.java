@@ -21,6 +21,8 @@ import gd.xml.tiny.TinyParser;
 import java.util.*;
 import java.io.*;
 
+import megamek.common.util.BuildingTemplate;
+
 /**
  *
  * MapSettings.java
@@ -51,7 +53,7 @@ public class MapSettings implements Serializable {
     private Vector boardsAvailable = new Vector();
 
     //new vector to store all of the mapsetting buildings in.
-    private Vector boardBuildings = new Vector();
+    private Vector<BuildingTemplate> boardBuildings = new Vector<BuildingTemplate>();
     
      /** Parameters for the Map Generator 
          Parameters refer to a default map siz 16 x 17, with other size
@@ -365,11 +367,11 @@ public class MapSettings implements Serializable {
         }
     }
     
-    public Vector getBoardBuildings(){
+    public Vector<BuildingTemplate> getBoardBuildings(){
         return boardBuildings;
     }
     
-    public void setBoardBuildings(Vector buildings) {
+    public void setBoardBuildings(Vector<BuildingTemplate> buildings) {
         this.boardBuildings = buildings;
     }
 

@@ -115,8 +115,8 @@ public class HexTileset {
         ArrayList<Image> matches = new ArrayList<Image>();
         
         // find superimposed image matches
-        for (Iterator i = supers.iterator(); i.hasNext();) {
-            HexEntry entry = (HexEntry)i.next();
+        for (Iterator<HexEntry> i = supers.iterator(); i.hasNext();) {
+            HexEntry entry = i.next();
             if (superMatch(hex, entry.getHex()) >= 1.0) {
                 matches.add(entry.getImage(comp));
                 // remove involved terrain from consideration
@@ -141,10 +141,10 @@ public class HexTileset {
         double match = -1;
 
         // match a base image to the hex
-        Iterator iter = bases.iterator();
+        Iterator<HexEntry> iter = bases.iterator();
 
         while ( iter.hasNext() ) {
-            HexEntry entry = (HexEntry) iter.next();
+            HexEntry entry = iter.next();
             double thisMatch = baseMatch(hex, entry.getHex());
             // stop if perfect match
             if (thisMatch == 1.0) {
@@ -213,15 +213,15 @@ public class HexTileset {
      * Initializes all the images in this tileset and adds them to the tracker
      */
     public void loadAllImages(Component comp, MediaTracker tracker) {
-        for (Iterator i = bases.iterator(); i.hasNext();) {
-            HexEntry entry = (HexEntry)i.next();
+        for (Iterator<HexEntry> i = bases.iterator(); i.hasNext();) {
+            HexEntry entry = i.next();
             if (entry.getImage() == null) {
                 entry.loadImage(comp);
             }
             tracker.addImage(entry.getImage(), 1);
         }
-        for (Iterator i = supers.iterator(); i.hasNext();) {
-            HexEntry entry = (HexEntry)i.next();
+        for (Iterator<HexEntry> i = supers.iterator(); i.hasNext();) {
+            HexEntry entry = i.next();
             if (entry.getImage() == null) {
                 entry.loadImage(comp);
             }
@@ -241,8 +241,8 @@ public class HexTileset {
         tracker.addImage(base, 1);        
         // add superImgs
         if (superImgs != null) {
-            for (Iterator i = superImgs.iterator(); i.hasNext();) {
-                tracker.addImage((Image)i.next(), 1);
+            for (Iterator<Image> i = superImgs.iterator(); i.hasNext();) {
+                tracker.addImage(i.next(), 1);
             }
         }
     }

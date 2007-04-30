@@ -14,7 +14,6 @@
 
 package megamek.common.actions;
 
-import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.MiscType;
@@ -54,11 +53,9 @@ public class LayExplosivesAttackAction extends AbstractAttackAction
      */
     public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
-        int targetId = Entity.NONE;
         if ((target.getTargetType() != Targetable.TYPE_BUILDING) || (target.getTargetType() != Targetable.TYPE_FUEL_TANK)) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can only target buildings");
         }
-        final Building b = game.getBoard().getBuildingAt(ae.getPosition());
         if (ae == null)
             return new ToHitData(ToHitData.IMPOSSIBLE, "You can't attack from a null entity!");
 //        if(b == null || b.getId() != target.getTargetId())

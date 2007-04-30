@@ -120,9 +120,9 @@ public class GunEmplacement extends Entity
         return getPosition().equals(coords);
     }
 
-    public Enumeration getCoords() {
+    public Enumeration<Coords> getCoords() {
         // XXX yuck!
-        Vector coords = new Vector(1);
+        Vector<Coords> coords = new Vector<Coords>(1);
         coords.add(getPosition());
         return coords.elements();
     }
@@ -477,8 +477,8 @@ public class GunEmplacement extends Entity
         return prd;
     }
 
-    public Vector victoryReport() {
-        Vector vDesc = new Vector();
+    public Vector<Report> victoryReport() {
+        Vector<Report> vDesc = new Vector<Report>();
 
         Report r = new Report(7025);
         r.type = Report.PUBLIC;

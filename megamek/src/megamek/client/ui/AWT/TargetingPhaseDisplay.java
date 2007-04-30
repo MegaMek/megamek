@@ -712,10 +712,10 @@ public class TargetingPhaseDisplay
             tree.add(vec.elementAt(i));
         }
         
-        Iterator it = tree.iterator();
+        Iterator<Entity> it = tree.iterator();
         int count = 0;
         while ( it.hasNext() ) {
-            visibleTargets[count++] = (Entity)it.next();
+            visibleTargets[count++] = it.next();
         }
         
         setNextTargetEnabled(visibleTargets.length > 0);

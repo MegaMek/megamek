@@ -48,7 +48,6 @@ public class GameEncoder {
     {
         Enumeration iter; // used when marching through a list of sub-elements
         Coords coords;
-        int loop;
 
         // First, validate our input.
         if ( null == game ) {

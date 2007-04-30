@@ -85,8 +85,8 @@ public class MechTileset {
     private MechEntry default_proto;
     private MechEntry default_gun_emplacement;
 
-    private HashMap exact = new HashMap();
-    private HashMap chassis = new HashMap();
+    private HashMap<String, MechEntry> exact = new HashMap<String, MechEntry>();
+    private HashMap<String, MechEntry> chassis = new HashMap<String, MechEntry>();
 
     private String dir;
 
@@ -111,12 +111,12 @@ public class MechTileset {
     private MechEntry entryFor(Entity entity) {
         // first, check for exact matches
         if (exact.containsKey(entity.getShortNameRaw().toUpperCase())) {
-            return (MechEntry) exact.get(entity.getShortNameRaw().toUpperCase());
+            return exact.get(entity.getShortNameRaw().toUpperCase());
         }
         
         // next, chassis matches
         if (chassis.containsKey(entity.getChassis().toUpperCase())) {
-            return (MechEntry) chassis.get(entity.getChassis().toUpperCase());
+            return chassis.get(entity.getChassis().toUpperCase());
         }
         
         // last, the generic model
@@ -234,24 +234,24 @@ public class MechTileset {
         }
         r.close();
 
-        default_light = (MechEntry) exact.get(LIGHT_STRING.toUpperCase());
-        default_medium = (MechEntry) exact.get(MEDIUM_STRING.toUpperCase());
-        default_heavy = (MechEntry) exact.get(HEAVY_STRING.toUpperCase());
-        default_assault = (MechEntry) exact.get(ASSAULT_STRING.toUpperCase());
-        default_quad = (MechEntry) exact.get(QUAD_STRING.toUpperCase());
-        default_tracked = (MechEntry) exact.get(TRACKED_STRING.toUpperCase());
-        default_tracked_heavy = (MechEntry) exact.get(TRACKED_HEAVY_STRING.toUpperCase());
-        default_tracked_assault = (MechEntry) exact.get(TRACKED_ASSAULT_STRING.toUpperCase());
-        default_wheeled = (MechEntry) exact.get(WHEELED_STRING.toUpperCase());
-        default_wheeled_heavy = (MechEntry) exact.get(WHEELED_HEAVY_STRING.toUpperCase());
-        default_hover = (MechEntry) exact.get(HOVER_STRING.toUpperCase());
-        default_naval = (MechEntry) exact.get(NAVAL_STRING.toUpperCase());
-        default_hydrofoil = (MechEntry) exact.get(HYDROFOIL_STRING.toUpperCase());
-        default_vtol = (MechEntry) exact.get(VTOL_STRING.toUpperCase());
-        default_inf = (MechEntry) exact.get(INF_STRING.toUpperCase());
-        default_ba = (MechEntry) exact.get(BA_STRING.toUpperCase());
-        default_proto = (MechEntry) exact.get(PROTO_STRING.toUpperCase());
-        default_gun_emplacement = (MechEntry) exact.get(GUN_EMPLACEMENT_STRING.toUpperCase());
+        default_light = exact.get(LIGHT_STRING.toUpperCase());
+        default_medium = exact.get(MEDIUM_STRING.toUpperCase());
+        default_heavy = exact.get(HEAVY_STRING.toUpperCase());
+        default_assault = exact.get(ASSAULT_STRING.toUpperCase());
+        default_quad = exact.get(QUAD_STRING.toUpperCase());
+        default_tracked = exact.get(TRACKED_STRING.toUpperCase());
+        default_tracked_heavy = exact.get(TRACKED_HEAVY_STRING.toUpperCase());
+        default_tracked_assault = exact.get(TRACKED_ASSAULT_STRING.toUpperCase());
+        default_wheeled = exact.get(WHEELED_STRING.toUpperCase());
+        default_wheeled_heavy = exact.get(WHEELED_HEAVY_STRING.toUpperCase());
+        default_hover = exact.get(HOVER_STRING.toUpperCase());
+        default_naval = exact.get(NAVAL_STRING.toUpperCase());
+        default_hydrofoil = exact.get(HYDROFOIL_STRING.toUpperCase());
+        default_vtol = exact.get(VTOL_STRING.toUpperCase());
+        default_inf = exact.get(INF_STRING.toUpperCase());
+        default_ba = exact.get(BA_STRING.toUpperCase());
+        default_proto = exact.get(PROTO_STRING.toUpperCase());
+        default_gun_emplacement = exact.get(GUN_EMPLACEMENT_STRING.toUpperCase());
     }
 
     /**

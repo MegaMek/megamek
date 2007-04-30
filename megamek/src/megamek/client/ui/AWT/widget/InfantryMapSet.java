@@ -40,7 +40,7 @@ public class InfantryMapSet implements DisplayMapSet{
     //Label
     private PMValueLabel label;
     //Set of Backgrownd drawers
-    private Vector    bgDrawers = new Vector();
+    private Vector<BackGroundDrawer>    bgDrawers = new Vector<BackGroundDrawer>();
 
     
     private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorMediumFontSize")); //$NON-NLS-1$
@@ -56,7 +56,7 @@ public class InfantryMapSet implements DisplayMapSet{
         return content;
     }
     
-    public Vector getBackgroundDrawers(){
+    public Vector<BackGroundDrawer> getBackgroundDrawers(){
         return bgDrawers;
     }
     

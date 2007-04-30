@@ -580,6 +580,8 @@ public class BoardView1
      * onscreen.
      */
     private synchronized void drawSprites(Vector<? extends Sprite> spriteVector) {
+//      FIXME Exception in thread "AWT-EventQueue-0" java.util.ConcurrentModificationException
+        //vector is not concurncy safe.
         for (Sprite sprite : spriteVector) {
             drawSprite(sprite);
         }
@@ -1315,16 +1317,16 @@ public class BoardView1
         }
 
         // check if it's on any entities
-        for (Iterator i = entitySprites.iterator(); i.hasNext();) {
-            final EntitySprite eSprite = (EntitySprite)i.next();
+        for (Iterator<EntitySprite> i = entitySprites.iterator(); i.hasNext();) {
+            final EntitySprite eSprite = i.next();
             if (eSprite.isInside(point)) {
                 stringsSize += 3;
             }
         }
 
         // check if it's on any attacks
-        for (Iterator i = attackSprites.iterator(); i.hasNext();) {
-            final AttackSprite aSprite = (AttackSprite)i.next();
+        for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
+            final AttackSprite aSprite = i.next();
             if (aSprite.isInside(point)) {
                 stringsSize += 1 + aSprite.weaponDescs.size();
             }
@@ -1491,8 +1493,8 @@ public class BoardView1
             }
         }
         // check if it's on any entities
-        for (Iterator i = entitySprites.iterator(); i.hasNext();) {
-            final EntitySprite eSprite = (EntitySprite)i.next();
+        for (Iterator<EntitySprite> i = entitySprites.iterator(); i.hasNext();) {
+            final EntitySprite eSprite = i.next();
             if (eSprite.isInside(point)) {
                 final String[] entityStrings = eSprite.getTooltip();
                 System.arraycopy(entityStrings, 0, strings, stringsIndex, entityStrings.length);
@@ -1501,8 +1503,8 @@ public class BoardView1
         }
 
         // check if it's on any attacks
-        for (Iterator i = attackSprites.iterator(); i.hasNext();) {
-            final AttackSprite aSprite = (AttackSprite)i.next();
+        for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
+            final AttackSprite aSprite = i.next();
             if (aSprite.isInside(point)) {
                 final String[] attackStrings = aSprite.getTooltip();
                 System.arraycopy(attackStrings, 0, strings, stringsIndex, attackStrings.length);
@@ -1647,8 +1649,8 @@ public class BoardView1
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
 
-        for (java.util.Enumeration i = C3Sprites.elements(); i.hasMoreElements();) {
-            final C3Sprite c3sprite = (C3Sprite)i.nextElement();
+        for (java.util.Enumeration<C3Sprite> i = C3Sprites.elements(); i.hasMoreElements();) {
+            final C3Sprite c3sprite = i.nextElement();
             if (c3sprite.entityId == entity.getId())
                 C3Sprites.removeElement(c3sprite);
             else if(c3sprite.masterId == entity.getId()) {
@@ -1736,7 +1738,7 @@ public class BoardView1
      * new one, we do that.
      */
     public void drawMovementData(Entity entity, MovePath md) {
-        Vector temp = pathSprites;
+        Vector<StepSprite> temp = pathSprites;
         MoveStep previousStep = null;
 
         clearMovementData();
@@ -1745,8 +1747,8 @@ public class BoardView1
             final MoveStep step = (MoveStep)i.nextElement();
             // check old movement path for reusable step sprites
             boolean found = false;
-            for (Iterator j = temp.iterator(); j.hasNext();) {
-                final StepSprite sprite = (StepSprite)j.next();
+            for (Iterator<StepSprite> j = temp.iterator(); j.hasNext();) {
+                final StepSprite sprite = j.next();
                 if (sprite.getStep().canReuseSprite(step)) {
                     pathSprites.addElement(sprite);
                     found = true;
@@ -1761,7 +1763,7 @@ public class BoardView1
                     //Mark the previous elevation change sprite hidden
                     // so that we can draw a new one in it's place without
                     // having overlap.
-                    ((Sprite)pathSprites.elementAt(pathSprites.size() -1 )).hidden = true;
+                    pathSprites.elementAt(pathSprites.size() -1 ).hidden = true;
                 }
                 pathSprites.addElement(new StepSprite(step));
             }
@@ -1839,8 +1841,8 @@ public class BoardView1
             return;
         }
 
-        for (final Iterator i = attackSprites.iterator(); i.hasNext();) {
-            final AttackSprite sprite = (AttackSprite)i.next();
+        for (final Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
+            final AttackSprite sprite = i.next();
 
             // can we just add this attack to an existing one?
             if (sprite.getEntityId() == aa.getEntityId()
@@ -1897,8 +1899,8 @@ public class BoardView1
 
     /** Removes all attack sprites from a certain entity */
     public synchronized void removeAttacksFor(int entityId) {
-        for (Iterator i = attackSprites.iterator(); i.hasNext();) {
-            AttackSprite sprite = (AttackSprite)i.next();
+        for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
+            AttackSprite sprite = i.next();
             if (sprite.getEntityId() == entityId) {
                 i.remove();
             }
@@ -3970,8 +3972,8 @@ public class BoardView1
         /** Cheking if attack is mutual and changing target arrow to half-arrow
          */
         private boolean isMutualAttack(){
-            for (final Iterator i = attackSprites.iterator(); i.hasNext();) {
-                final AttackSprite sprite = (AttackSprite)i.next();
+            for (final Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
+                final AttackSprite sprite = i.next();
                 if (sprite.getEntityId() == this.targetId && sprite.getTargetId() == this.entityId) {
                     sprite.rebuildToHalvedPolygon();
                     return true;
@@ -4101,8 +4103,8 @@ public class BoardView1
             String[] tipStrings = new String[1 + weaponDescs.size()];
             int tip = 1;
             tipStrings[0] = attackerDesc + " "+Messages.getString("BoardView1.on")+" " + targetDesc; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            for (Iterator i = weaponDescs.iterator(); i.hasNext();) {
-                tipStrings[tip++] = (String)i.next();
+            for (Iterator<String> i = weaponDescs.iterator(); i.hasNext();) {
+                tipStrings[tip++] = i.next();
             }
             return tipStrings;
         }

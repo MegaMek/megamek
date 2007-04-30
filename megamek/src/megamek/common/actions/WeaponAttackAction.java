@@ -33,6 +33,7 @@ import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
+import megamek.common.LandAirMech;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.MechWarrior;
@@ -63,7 +64,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
-    private transient ArrayList vCounterEquipment;
+    private transient ArrayList<Mounted> vCounterEquipment;
     
     // default to attacking an entity
     public WeaponAttackAction(int entityId, int targetId, int weaponId) {
@@ -92,7 +93,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         return aimMode;
     }
     
-    public ArrayList getCounterEquipment() {
+    public ArrayList<Mounted> getCounterEquipment() {
         return vCounterEquipment;
     }
     
@@ -114,7 +115,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     
     public void addCounterEquipment(Mounted m) {
         if (vCounterEquipment == null) {
-            vCounterEquipment = new ArrayList();
+            vCounterEquipment = new ArrayList<Mounted>();
         }
         vCounterEquipment.add(m);
     }
@@ -523,7 +524,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                         || atype.getAmmoType() == AmmoType.T_SRM)
                 && atype.getMunitionType() == AmmoType.M_LISTEN_KILL
                 && !(te != null && te.isClan())) {
-            toHit.addModifier(-1, "Listen-Kill ammo");            
+            toHit.addModifier(-1, "Listen-Kill ammo");
         }
 
         // determine some more variables
@@ -532,6 +533,28 @@ public class WeaponAttackAction extends AbstractAttackAction {
         int distance = Compute.effectiveDistance(game, ae, target);
     
         toHit.append(nightModifiers(game, target, atype, ae));
+        
+        //handle LAM speial rules
+        
+        // a temporary variable so I don't need to keep casting.
+        LandAirMech lam;
+        if(ae instanceof LandAirMech) {
+            lam = (LandAirMech) ae;
+            if(lam.isInMode(LandAirMech.MODE_AIRMECH)) {
+                toHit.addModifier(2, "Attacker is a Flying Airmek");
+            }
+        }
+        if(target instanceof LandAirMech) {
+            lam = (LandAirMech) target;
+            if(lam.isInMode(LandAirMech.MODE_AIRMECH) && lam.isFlying()) {
+                if(ae.isFlying()) {
+                    toHit.addModifier(-1, "Target is a flying Airmek"); //and we are too.
+                } else {
+                    toHit.addModifier(4, "Target is a flying Airmek");//and we are on the ground
+                }
+            }
+        }
+        
     
         // Handle direct artillery attacks.
         if (isArtilleryDirect) {

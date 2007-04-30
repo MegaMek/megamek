@@ -23,7 +23,6 @@ import java.util.Vector;
 
 import gd.xml.tiny.ParsedXML;
 import megamek.common.*;
-import megamek.common.util.StringUtil;
 
 /**
  * Objects of this class can encode a <code>Board</code> object as XML
@@ -145,7 +144,6 @@ public class BoardEncoder {
         int width = 0;
         IHex[] hexes = null;
         Coords coords = null;
-        boolean roadsAutoExit = false;
         Enumeration subnodes = null;
         ParsedXML subnode = null;
 
@@ -229,8 +227,8 @@ public class BoardEncoder {
                 }
 
                 // Read the "roadsAutoExit" attribute.
-                roadsAutoExit = StringUtil.parseBoolean
-                    ( child.getAttribute("roadsAutoExit") );
+                // unused, and therefore removed.
+                //roadsAutoExit = StringUtil.parseBoolean( child.getAttribute("roadsAutoExit") );
 
                 // Create an array to hold all the boardData.
                 hexes = new IHex[height * width];

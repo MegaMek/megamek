@@ -72,8 +72,8 @@ public class MtfFile implements IMechLoader {
 
     String[][] critData;
 
-    Hashtable hSharedEquip = new Hashtable();
-    Vector vSplitWeapons = new Vector();
+    Hashtable<EquipmentType, Mounted> hSharedEquip = new Hashtable<EquipmentType, Mounted>();
+    Vector<Mounted> vSplitWeapons = new Vector<Mounted>();
 
     public static final int locationOrder[] = { Mech.LOC_LARM, Mech.LOC_RARM,
                                                 Mech.LOC_LT, Mech.LOC_RT,
@@ -347,7 +347,6 @@ public class MtfFile implements IMechLoader {
             String critName = critData[loc][i];
             critName.trim();
             boolean rearMounted = false;
-            boolean split = false;
 
             if (critName.equalsIgnoreCase("Fusion Engine")
                     || critName.equalsIgnoreCase("Engine")) {
@@ -372,7 +371,6 @@ public class MtfFile implements IMechLoader {
                 critName = critName.substring(0, critName.length() - 3).trim();
             }
             if (critName.endsWith("(Split)")) {
-                split = true;
                 critName = critName.substring(0, critName.length() - 7).trim();
             }
             if (critName.equalsIgnoreCase("Armored Cowl")) {
@@ -384,7 +382,7 @@ public class MtfFile implements IMechLoader {
                 if (etype != null) {
                     if (etype.isSpreadable()) {
                         // do we already have one of these?  Key on Type
-                        Mounted m = (Mounted)hSharedEquip.get(etype);
+                        Mounted m = hSharedEquip.get(etype);
                         if (m != null) {
                             // use the existing one
                             mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
@@ -400,7 +398,7 @@ public class MtfFile implements IMechLoader {
                         Mounted m = null;
                         boolean bFound = false;
                         for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
-                            m = (Mounted)vSplitWeapons.elementAt(x);
+                            m = vSplitWeapons.elementAt(x);
                             int nLoc = m.getLocation();
                             if ((nLoc == loc || loc == Mech.getInnerLocation(nLoc))
                                         && m.getType() == etype) {

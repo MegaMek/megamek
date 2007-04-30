@@ -687,7 +687,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     }
     
     class MunitionChoicePanel extends Panel {
-        private Vector m_vTypes;
+        private Vector<AmmoType> m_vTypes;
         private Choice m_choice;
         private Mounted m_mounted;
         
@@ -696,14 +696,14 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         protected Label labHotLoad= new Label(Messages.getString("CustomMechDialog.switchToHotLoading")); //$NON-NLS-1$
         protected Checkbox chHotLoad = new Checkbox();
                 
-        public MunitionChoicePanel(Mounted m, Vector vTypes) {
+        public MunitionChoicePanel(Mounted m, Vector<AmmoType> vTypes) {
             m_vTypes = vTypes;
             m_mounted = m;
             AmmoType curType = (AmmoType)m.getType();
             m_choice = new Choice();
-            Enumeration e = m_vTypes.elements();
+            Enumeration<AmmoType> e = m_vTypes.elements();
             for (int x = 0; e.hasMoreElements(); x++) {
-                AmmoType at = (AmmoType)e.nextElement();
+                AmmoType at = e.nextElement();
                 m_choice.add(at.getName());
                 if (at.getMunitionType() == curType.getMunitionType()) {
                     m_choice.select(x);
@@ -773,7 +773,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
 
         public void applyChoice() {
             int n = m_choice.getSelectedIndex();
-            AmmoType at = (AmmoType)m_vTypes.elementAt(n);
+            AmmoType at = m_vTypes.elementAt(n);
             m_mounted.changeAmmoType(at);
             if (chDump.getState()) {
                 m_mounted.setShotsLeft(0);
@@ -816,7 +816,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         private final float m_origShotsLeft;
         private final AmmoType m_origAmmo;
 
-        public ProtomechMunitionChoicePanel(Mounted m, Vector vTypes) {
+        public ProtomechMunitionChoicePanel(Mounted m, Vector<AmmoType> vTypes) {
             super( m, vTypes );
             m_origAmmo = (AmmoType) m.getType();
             m_origShotsLeft = m.getShotsLeft();
@@ -895,8 +895,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
 
     public void setOptions() {
         IOption option;
-        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
+        for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+            DialogOptionComponent comp = i.nextElement();
             option = comp.getOption();
             if ( (comp.getValue() == Messages.getString("CustomMechDialog.None")) ) { //NON-NLS-$1
                 entity.getCrew().getOptions().getOption(option.getName()).setValue("None"); //NON-NLS-$1
@@ -906,8 +906,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     
     public void resetOptions() {
         IOption option;
-        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
+        for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+            DialogOptionComponent comp = i.nextElement();
             option = comp.getOption();
             option.setValue(false);
             entity.getCrew().getOptions().getOption(option.getName()).setValue(comp.getValue());
@@ -1257,16 +1257,16 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             entity.setDeployRound(choDeployment.getSelectedIndex());
 
             // update munitions selections
-            for (Enumeration e = m_vMunitions.elements(); e.hasMoreElements(); ) {
-                ((MunitionChoicePanel)e.nextElement()).applyChoice();
+            for (Enumeration<MunitionChoicePanel> e = m_vMunitions.elements(); e.hasMoreElements(); ) {
+                e.nextElement().applyChoice();
             }
             // update MG rapid fire settings
-            for (Enumeration e = m_vMGs.elements(); e.hasMoreElements(); ) {
-                ((RapidfireMGPanel)e.nextElement()).applyChoice();
+            for (Enumeration<RapidfireMGPanel> e = m_vMGs.elements(); e.hasMoreElements(); ) {
+                e.nextElement().applyChoice();
             }
             // update mines setting
-            for (Enumeration e = m_vMines.elements(); e.hasMoreElements(); ) {
-                ((MineChoicePanel)e.nextElement()).applyChoice();
+            for (Enumeration<MineChoicePanel> e = m_vMines.elements(); e.hasMoreElements(); ) {
+                e.nextElement().applyChoice();
             }
             // update searchlight setting
             entity.setSpotlight(chSearchlight.getState());

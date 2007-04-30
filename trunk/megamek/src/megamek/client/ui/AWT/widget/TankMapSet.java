@@ -34,7 +34,7 @@ public class TankMapSet implements DisplayMapSet{
   private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[12];
     private PMSimpleLabel[] labels = new PMSimpleLabel[12];
     private PMValueLabel[] vLabels = new PMValueLabel[12];
-    private Vector  bgDrawers = new Vector();
+    private Vector<BackGroundDrawer>  bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
   
   private static final int INT_STR_OFFSET = 6;
@@ -102,7 +102,7 @@ public class TankMapSet implements DisplayMapSet{
         return content;
     }
     
-    public Vector getBackgroundDrawers(){
+    public Vector<BackGroundDrawer> getBackgroundDrawers(){
         return bgDrawers;
     }
     

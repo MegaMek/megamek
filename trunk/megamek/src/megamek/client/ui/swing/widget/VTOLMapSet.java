@@ -40,7 +40,7 @@ public class VTOLMapSet implements DisplayMapSet {
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[16];
     private PMSimpleLabel[] labels = new PMSimpleLabel[22];
     private PMValueLabel[] vLabels = new PMValueLabel[16];
-    private Vector bgDrawers = new Vector();
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
 
     private static final int INT_STR_OFFSET = 8;
@@ -119,7 +119,7 @@ public class VTOLMapSet implements DisplayMapSet {
         return content;
     }
 
-    public Vector getBackgroundDrawers() {
+    public Vector<BackGroundDrawer> getBackgroundDrawers() {
         return bgDrawers;
     }
 

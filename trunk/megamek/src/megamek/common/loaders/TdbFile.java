@@ -142,8 +142,8 @@ public class TdbFile implements IMechLoader {
     private String cockpitType = "Standard";
     private boolean clanTC = false;
 
-    private Hashtable hSharedEquip = new Hashtable();
-    private Vector vSplitWeapons = new Vector();
+    private Hashtable<EquipmentType, Mounted> hSharedEquip = new Hashtable<EquipmentType, Mounted>();
+    private Vector<Mounted> vSplitWeapons = new Vector<Mounted>();
 
     /** Creates new TdbFile */
     public TdbFile(InputStream is) throws EntityLoadingException {
@@ -650,7 +650,7 @@ public class TdbFile implements IMechLoader {
                 if (etype != null) {
                     if (etype.isSpreadable()) {
                         // do we already have one of these?  Key on Type
-                        Mounted m = (Mounted)hSharedEquip.get(etype);
+                        Mounted m = hSharedEquip.get(etype);
                         if (m != null) {
                             // use the existing one
                             mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
@@ -666,7 +666,7 @@ public class TdbFile implements IMechLoader {
                         Mounted m = null;
                         boolean bFound = false;
                         for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
-                            m = (Mounted)vSplitWeapons.elementAt(x);
+                            m = vSplitWeapons.elementAt(x);
                             int nLoc = m.getLocation();
                             if ((nLoc == loc || loc == Mech.getInnerLocation(nLoc))
                                 && m.getType() == etype) {

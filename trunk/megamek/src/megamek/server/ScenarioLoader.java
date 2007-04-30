@@ -28,13 +28,13 @@ public class ScenarioLoader
 {
     private File m_scenFile;
     // copied from ChatLounge.java
-    private Vector m_vDamagePlans = new Vector(); 
+    private Vector<DamagePlan> m_vDamagePlans = new Vector<DamagePlan>(); 
     
     //Used to store Crit Hits
-    private Vector m_vCritHitPlans = new Vector();
+    private Vector<CritHitPlan> m_vCritHitPlans = new Vector<CritHitPlan>();
 
     //Used to set ammo Spec Ammounts
-    private Vector m_vSetAmmoTo = new Vector();
+    private Vector<SetAmmoPlan> m_vSetAmmoTo = new Vector<SetAmmoPlan>();
 
     
     public ScenarioLoader(File f)
@@ -48,7 +48,7 @@ public class ScenarioLoader
      */
     public void applyDamage(Server s) {
         for (int x = 0, n = m_vDamagePlans.size(); x < n; x++) {
-            DamagePlan dp = (DamagePlan)m_vDamagePlans.elementAt(x);
+            DamagePlan dp = m_vDamagePlans.elementAt(x);
             System.out.println( "Applying damage to " +
                                 dp.entity.getShortName() );
             for (int y = 0; y < dp.nBlocks; y++) {
@@ -62,7 +62,7 @@ public class ScenarioLoader
             for ( int dpspot = 0, dpcount = dp.specificDammage.size();
                   dpspot < dpcount; dpspot++ ) {
                 //Get the SpecDam
-                SpecDam sd = ((SpecDam)dp.specificDammage.elementAt(dpspot));
+                SpecDam sd = dp.specificDammage.elementAt(dpspot);
             
                 if (dp.entity.locations() <= sd.loc)    //Make sure the the location is valid 
                     System.out.println("\tInvalid Location Specified " + sd.loc);
@@ -116,12 +116,12 @@ public class ScenarioLoader
         
         //Loop throught Crit Hits
         for (int chSpot = 0, chCount = m_vCritHitPlans.size(); chSpot < chCount; chSpot++) {
-            CritHitPlan chp = (CritHitPlan)m_vCritHitPlans.elementAt(chSpot);
+            CritHitPlan chp = m_vCritHitPlans.elementAt(chSpot);
             System.out.print("Applying Critical Hits to " + chp.entity.getShortName());
 
             for (int chpspot = 0, chpcount = chp.critHits.size();chpspot < chpcount; chpspot++) {
                  //Get the ScritHit
-                CritHit ch = ((CritHit)chp.critHits.elementAt(chpspot));
+                CritHit ch = chp.critHits.elementAt(chpspot);
                     
                 // Apply a critical hit to the indicated slot.
                 if (chp.entity.locations() <= ch.loc)
@@ -190,12 +190,12 @@ public class ScenarioLoader
         
         //Loop throught Set Ammo To
         for (int saSpot = 0, saCount = m_vSetAmmoTo.size(); saSpot < saCount; saSpot++) {
-            SetAmmoPlan sap = (SetAmmoPlan)m_vSetAmmoTo.elementAt(saSpot);
+            SetAmmoPlan sap = m_vSetAmmoTo.elementAt(saSpot);
             System.out.println("Applying Ammo Adjustment to " + sap.entity.getShortName());
 
             for (int sapSpot = 0, sapCount = sap.ammoSetTo.size();sapSpot < sapCount; sapSpot++) {
                  //Get the ScritHit
-                SetAmmoTo sa = ((SetAmmoTo)sap.ammoSetTo.elementAt(sapSpot));
+                SetAmmoTo sa = sap.ammoSetTo.elementAt(sapSpot);
                 
                 //Only can be done against Mechs
                 if (sap.entity instanceof Mech ) { 
@@ -275,7 +275,7 @@ public class ScenarioLoader
     {
         String sFaction = player.getName();
         
-        Vector vEntities = new Vector();
+        Vector<Entity> vEntities = new Vector<Entity>();
         for (int i = 1; true; i++) {
             String s = p.getProperty("Unit_" + sFaction + "_" + i);
             if (s == null) {
@@ -573,7 +573,7 @@ public class ScenarioLoader
         }
         // load available boards
         // basically copied from Server.java.  Should get moved somewhere neutral
-        Vector vBoards = new Vector();
+        Vector<String> vBoards = new Vector<String>();
         File boardDir = new File("data/boards");
 
         String[] fileList = boardDir.list();
@@ -603,7 +603,7 @@ public class ScenarioLoader
 
                 String sBoardFile;
                 if (sBoard.equals("RANDOM")) {
-                    sBoardFile = (String)(vBoards.elementAt(Compute.randomInt(vBoards.size()))) + ".board";
+                    sBoardFile = (vBoards.elementAt(Compute.randomInt(vBoards.size()))) + ".board";
                 }
                 else {
                     sBoardFile = sBoard + ".board";
@@ -686,7 +686,7 @@ public class ScenarioLoader
      */
     class CritHitPlan {
         public Entity entity;
-        Vector critHits = new Vector();
+        Vector<CritHit> critHits = new Vector<CritHit>();
 
         public CritHitPlan(Entity e) {
           entity = e;
@@ -732,7 +732,7 @@ public class ScenarioLoader
      */
     class SetAmmoPlan {
         public Entity entity;
-        Vector ammoSetTo = new Vector();
+        Vector<SetAmmoTo> ammoSetTo = new Vector<SetAmmoTo>();
 
         public SetAmmoPlan(Entity e) {
           entity = e;
@@ -788,7 +788,7 @@ public class ScenarioLoader
     class DamagePlan {
         public Entity entity;
         public int nBlocks;
-        Vector specificDammage = new Vector();
+        Vector<SpecDam> specificDammage = new Vector<SpecDam>();
         Vector ammoSetTo = new Vector();
         public  DamagePlan(Entity e, int n) {
           entity = e;

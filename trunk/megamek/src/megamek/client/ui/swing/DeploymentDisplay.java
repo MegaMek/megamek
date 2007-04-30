@@ -435,7 +435,7 @@ public class DeploymentDisplay
             turnMode = true;
         } else if (ev.getActionCommand().equals(DEPLOY_LOAD)) {
             // What undeployed units can we load?
-            Vector choices = new Vector();
+            Vector<Entity> choices = new Vector<Entity>();
             Enumeration entities = client.game.getEntities();
             Entity other;
             while (entities.hasMoreElements()) {
@@ -450,7 +450,7 @@ public class DeploymentDisplay
             if (choices.size() > 0) {
                 String[] names = new String[choices.size()];
                 for (int loop = 0; loop < names.length; loop++) {
-                    names[loop] = ((Entity) choices.elementAt(loop)).getShortName();
+                    names[loop] = choices.elementAt(loop).getShortName();
                 }
                 SingleChoiceDialog choiceDialog =
                         new SingleChoiceDialog(clientgui.frame,
@@ -459,7 +459,7 @@ public class DeploymentDisplay
                                 names);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer()) {
-                    other = (Entity) choices.elementAt(choiceDialog.getChoice());
+                    other = choices.elementAt(choiceDialog.getChoice());
                     // Please note, the Server may never get this load order.
                     ce().load(other);
                     other.setTransportId(cen);

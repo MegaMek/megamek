@@ -67,7 +67,7 @@ public class MiniMap extends Canvas  {
     private boolean      minimized = false;
     private int          heightBufer;
     private int          unitSize = 6;//variable which define size of triangle for unit representation
-    private Vector       roadHexIndexes = new Vector();
+    private Vector<int[]>       roadHexIndexes = new Vector<int[]>();
     private int          zoom = GUIPreferences.getInstance().getMinimapZoom();
     private int[]        hexSide = {3,5,6,8,10,12};
     private int[]        hexSideByCos30 = {3,4,5,7,9,10};
@@ -755,8 +755,8 @@ public class MiniMap extends Canvas  {
         int [] yPoints = new int[4];
         Color oldColor = g.getColor();
         g.setColor(m_terrainColors[Terrains.ROAD]);
-        for (Enumeration iter = roadHexIndexes.elements(); iter.hasMoreElements(); ){
-            int[] hex = (int[])iter.nextElement();
+        for (Enumeration<int[]> iter = roadHexIndexes.elements(); iter.hasMoreElements(); ){
+            int[] hex = iter.nextElement();
             x = hex[0];
             y = hex[1];
             baseX = x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + hexSide[zoom];

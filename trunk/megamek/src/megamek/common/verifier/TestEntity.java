@@ -743,11 +743,9 @@ class Structure {
 
 	private int structureType;
 
-	private int structureFlags;
-
 	public Structure(int structureType, int structureFlags) {
 		this.structureType = structureType;
-		this.structureFlags = structureFlags;
+		//this.structureFlags = structureFlags;
 	}
 
 	public float getWeightStructure(float weight, float roundWeight) {

@@ -14,6 +14,7 @@
 
 package megamek.common.util;
 
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
 import java.io.File;
@@ -55,7 +56,7 @@ public class ZippedItems implements Categorized {
      * Please note that this map includes the root category,
      * if the root category contains any items. 
     */
-    private TreeMap categories = new TreeMap( StringUtil.stringComparator() );
+    private TreeMap<String, Map<String, Object>> categories = new TreeMap<String, Map<String, Object>>( StringUtil.stringComparator() );
 
     /**
      * The factory that will create <code>ItemFile</code>s for the
@@ -116,7 +117,7 @@ public class ZippedItems implements Categorized {
         String catName = null;
         String name = null;
         int index;
-        TreeMap category = null;
+        Map<String, Object> category = null;
 
         // Validate input.
         if ( null == zipFile ) {
@@ -147,8 +148,8 @@ public class ZippedItems implements Categorized {
 
         // We'll need a Vector to hold the ZipEntries and a TreeMap
         // to map the directory names to the category names.
-        Vector zipEntries = new Vector();
-        TreeMap names = new TreeMap( StringUtil.stringComparator() );
+        Vector<ZipEntry> zipEntries = new Vector<ZipEntry>();
+        TreeMap<String, String> names = new TreeMap<String, String>( StringUtil.stringComparator() );
 
         // Walk through the contents of the ZIP file.
         entries = contents.entries();
@@ -170,7 +171,7 @@ public class ZippedItems implements Categorized {
 
                 // Add the category to the map.
                 categories.put( catName,
-                                new TreeMap(StringUtil.stringComparator()) );
+                                new TreeMap<String, Object>(StringUtil.stringComparator()) );
 
                 // Map the directory name to the category name
                 names.put( name, catName );
@@ -202,7 +203,7 @@ public class ZippedItems implements Categorized {
         } // Handle the next ZipEntry.
 
         // Add a category for the base directory of the ZIP file.
-        categories.put( rootName, new TreeMap(StringUtil.stringComparator()) );
+        categories.put( rootName, new TreeMap<String, Object>(StringUtil.stringComparator()) );
         names.put( rootName, rootName );
 
         // Walk through the ZipEntries and assign them to categories.
@@ -237,7 +238,7 @@ public class ZippedItems implements Categorized {
             }
 
             // Add the entry to the global map.
-            category = (TreeMap) categories.get( catName );
+            category = categories.get( catName );
             category.put( name, factory.getItemFile(entry, contents) );
 
         } // Handle the next ZipEntry
@@ -250,7 +251,7 @@ public class ZippedItems implements Categorized {
             catName = (String) entries.nextElement();
 
             // Get the named category.
-            category = (TreeMap) categories.get( catName );
+            category = categories.get( catName );
 
             // If the category is empty, remove it.
             if ( category.isEmpty() ) {
@@ -267,7 +268,7 @@ public class ZippedItems implements Categorized {
      * @return  an <code>Enumeration</code> of <code>String</code> names.
      *          This value will not be <code>null</code>, but it may be empty.
      */
-    public Enumeration getCategoryNames() {
+    public Enumeration<String> getCategoryNames() {
         return Collections.elements( categories.keySet() );
     }
 
@@ -279,10 +280,10 @@ public class ZippedItems implements Categorized {
      * @return  an <code>Enumeration</code> of <code>String</code> names.
      *          This value will not be <code>null</code>, but it may be empty.
      */
-    public Enumeration getItemNames( String categoryName ) {
+    public Enumeration<String> getItemNames( String categoryName ) {
 
         // Get the map with the given category name.
-        TreeMap items = (TreeMap) categories.get( categoryName );
+        Map<String, Object> items = categories.get( categoryName );
 
         // Return the names of this category's items.
         return Collections.elements( items.keySet() );
@@ -302,7 +303,7 @@ public class ZippedItems implements Categorized {
         throws Exception {
 
         // Get the map with the given category name.
-        TreeMap items = (TreeMap) categories.get( categoryName );
+        Map<String, Object> items = categories.get( categoryName );
 
         // Make sure the category contains an item by that name.
         if ( !items.containsKey( itemName ) ) {

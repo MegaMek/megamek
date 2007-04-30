@@ -4,8 +4,6 @@ import java.awt.*;
 
 public class MechSlotLabel extends PicMap {
     
-    //Color Of background
-    private Color bgColor;
     //Margins - used to draw 3D box
     private static final int MARGIN_WIDTH = 2;
     
@@ -20,7 +18,7 @@ public class MechSlotLabel extends PicMap {
         addElement(l);
         l.moveTo(pa.getBounds().width + 5, (pa.getBounds().height - l.getBounds().height)/2 + l.getSize().height - l.getDescent());
         setContentMargins(MARGIN_WIDTH, MARGIN_WIDTH, MARGIN_WIDTH, MARGIN_WIDTH);
-        this.bgColor = bgColor;
+        this.setBackground(bgColor);
         addBgDrawer(bgd);
         drawBGImage();
     }

@@ -722,6 +722,7 @@ public class EntityEncoder {
      * @throws  IllegalStateException if the node does not
      *          contain a valid <code>Entity</code>.
      */
+    @SuppressWarnings("unused") //supressing unused warnings.
     private static Entity decodeEntityData( ParsedXML node, IGame game ) {
         String attrStr = null;
         int attrVal = 0;
@@ -867,8 +868,7 @@ public class EntityEncoder {
         String attrStr = null;
         int attrVal = 0;
         Entity entity = null;
-        Coords coords = null;
-        Vector locations = new Vector();
+        Vector<ParsedXML> locations = new Vector<ParsedXML>();
         ParsedXML pilotNode = null;
         ParsedXML equipNode = null;
         Enumeration children = null;

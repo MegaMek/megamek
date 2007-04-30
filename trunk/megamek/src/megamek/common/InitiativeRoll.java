@@ -32,9 +32,9 @@ import java.io.*;
  */
 public class InitiativeRoll implements Comparable, Serializable {
     
-    private Vector rolls = new Vector();
-    private Vector originalRolls = new Vector();
-    private Vector wasRollReplaced = new Vector(); //booleans
+    private Vector<Integer> rolls = new Vector<Integer>();
+    private Vector<Integer> originalRolls = new Vector<Integer>();
+    private Vector<Boolean> wasRollReplaced = new Vector<Boolean>(); //booleans
 
     /** Creates new InitaitiveRoll */
     public InitiativeRoll() {

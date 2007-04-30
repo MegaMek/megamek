@@ -76,7 +76,7 @@ public class DeployMinefieldDisplay
     private boolean deployV = false;
 
     private Player p;
-    private Vector deployedMinefields = new Vector();
+    private Vector<Minefield> deployedMinefields = new Vector<Minefield>();
 
     /**
      * Creates and lays out a new deployment phase display

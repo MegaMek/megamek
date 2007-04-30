@@ -1212,7 +1212,7 @@ public class ClientGUI
      *                 to be saved to a file.  If this value is <code>null</code>
      *                 or empty, the "Save As" dialog will not be displayed.
      */
-    protected void saveListFile(Vector unitList) {
+    protected void saveListFile(Vector<Entity> unitList) {
 
         // Handle empty lists.
         if (null == unitList || unitList.isEmpty()) {

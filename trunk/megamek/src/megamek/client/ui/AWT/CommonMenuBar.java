@@ -115,6 +115,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     private MenuItem moveGetUp = null;
     private MenuItem moveRaise = null;
     private MenuItem moveLower = null;
+    private MenuItem moveLAMmechMode = null;
+    private MenuItem moveLAMairmechMode = null;
+    private MenuItem moveLAMaircraftMode = null;
 
     private MenuItem fireFire           = null;
     private MenuItem fireSkip           = null;
@@ -351,6 +354,10 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         moveClear = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveClear"), MovementDisplay.MOVE_CLEAR); //$NON-NLS-1$
         moveHullDown = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveHullDown"), MovementDisplay.MOVE_CLEAR); //$NON-NLS-1$
         moveLayMine = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLayMine"), MovementDisplay.MOVE_LAY_MINE); //$NON-NLS-1$
+        submenu.addSeparator();
+        moveLAMmechMode = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLAMmechMode"), MovementDisplay.MOVE_MODE_MECH); //$NON-NLS-1$
+        moveLAMairmechMode = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLAMairmechMode"), MovementDisplay.MOVE_MODE_AIRMECH); //$NON-NLS-1$
+        moveLAMaircraftMode = createMenuItem(submenu, Messages.getString("CommonMenuBar.moveLAMaircraftMode"), MovementDisplay.MOVE_MODE_AIRCRAFT); //$NON-NLS-1$
 
         menu.addSeparator();
         menu.add( submenu );
@@ -441,9 +448,9 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
      */
     public void actionPerformed( ActionEvent event ) {
         // Pass the action on to each of our listeners.
-        Enumeration iter = this.actionListeners.elements();
+        Enumeration<ActionListener> iter = this.actionListeners.elements();
         while ( iter.hasMoreElements() ) {
-            ActionListener listener = (ActionListener) iter.nextElement();
+            ActionListener listener = iter.nextElement();
             listener.actionPerformed( event );
         }
     }
@@ -762,6 +769,15 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
     }
     public synchronized void setMoveLowerEnabled(boolean enabled) {
         moveLower.setEnabled(enabled);
+    }
+    public synchronized void setMoveLAMmechModeEnabled(boolean enabled) {
+        moveLAMmechMode.setEnabled(enabled);
+    }
+    public synchronized void setMoveLAMairmechModeEnabled(boolean enabled) {
+        moveLAMairmechMode.setEnabled(enabled);
+    }
+    public synchronized void setMoveLAMaircraftModeEnabled(boolean enabled) {
+        moveLAMaircraftMode.setEnabled(enabled);
     }
 
     // Manages deploy menu items...

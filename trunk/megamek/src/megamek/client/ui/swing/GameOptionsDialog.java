@@ -57,7 +57,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
 
     private boolean editable = true;
 
-    private Vector optionComps = new Vector();
+    private Vector<DialogOptionComponent> optionComps = new Vector<DialogOptionComponent>();
 
     private int maxOptionWidth;
 
@@ -164,10 +164,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     }
 
     private void send() {
-        Vector changed = new Vector();
+        Vector<IBasicOption> changed = new Vector<IBasicOption>();
 
-        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-            DialogOptionComponent comp = (DialogOptionComponent) i.nextElement();
+        for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+            DialogOptionComponent comp = i.nextElement();
 
             if (comp.hasChanged()) {
                 changed.addElement(comp.changedOption());
@@ -184,10 +184,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     }
     
     public Vector<IBasicOption> getOptions() {
-        Vector<IBasicOption> output = new Vector();
+        Vector<IBasicOption> output = new Vector<IBasicOption>();
         
-        for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();        
+        for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+            DialogOptionComponent comp = i.nextElement();        
             IBasicOption option = comp.changedOption();        
             output.addElement(option);
         }
@@ -195,15 +195,15 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     }
 
     private void resetToDefaults() {
-        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-            DialogOptionComponent comp = (DialogOptionComponent) i.nextElement();
+        for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+            DialogOptionComponent comp = i.nextElement();
             comp.resetToDefault();
         }
     }
 
     private void refreshOptions() {
         panOptions.removeAll();
-        optionComps = new Vector();
+        optionComps = new Vector<DialogOptionComponent>();
 
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -318,8 +318,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     //  state of the checkbox.
     public void optionClicked(DialogOptionComponent comp, IOption option, boolean state) {
         if ("inf_move_even".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-                DialogOptionComponent comp_i = (DialogOptionComponent) i.nextElement();
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if ("inf_deploy_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                     comp_i.setSelected(false);
@@ -333,8 +333,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
         if ("inf_move_multi".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-                DialogOptionComponent comp_i = (DialogOptionComponent) i.nextElement();
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if ("inf_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
@@ -344,8 +344,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
         if ("inf_move_later".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-                DialogOptionComponent comp_i = (DialogOptionComponent) i.nextElement();
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if ("inf_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
@@ -355,8 +355,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
         if ("protos_move_even".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-                DialogOptionComponent comp_i = (DialogOptionComponent) i.nextElement();
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if ("protos_deploy_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                     comp_i.setSelected(false);
@@ -370,8 +370,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
         if ("protos_move_multi".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-                DialogOptionComponent comp_i = (DialogOptionComponent) i.nextElement();
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if ("protos_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
@@ -381,8 +381,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
         if ("protos_move_later".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-                DialogOptionComponent comp_i = (DialogOptionComponent) i.nextElement();
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if ("protos_move_even".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
@@ -392,8 +392,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
         if (option.getName().equals("individual_initiative")) { //$NON-NLS-1$
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+            for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("protos_deploy_even")) { //$NON-NLS-1$
                     comp_i.setEditable(false);
                     comp_i.setSelected(false);
@@ -429,8 +429,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
         if ("vacuum".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-                DialogOptionComponent comp_i = (DialogOptionComponent) i.nextElement();
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if ("fire".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                     comp_i.setSelected(false);
@@ -438,8 +438,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
             }
         }
         if ("double_blind".equals(option.getName())) { //$NON-NLS-1$
-            for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-                DialogOptionComponent comp_i = (DialogOptionComponent) i.nextElement();
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if ("visibility".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                 }
@@ -508,9 +508,9 @@ public class GameOptionsDialog extends JDialog implements ActionListener, Dialog
     public void setEditable(boolean editable) {
 
         // Set enabled state of all of the option components in the dialog.
-        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
+        for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
             DialogOptionComponent comp =
-                    (DialogOptionComponent) i.nextElement();
+                    i.nextElement();
             comp.setEditable(editable);
         }
 

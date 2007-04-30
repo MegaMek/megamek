@@ -47,7 +47,7 @@ public class XMLStreamParser implements XMLResponder {
     /**
      * The entities parsed from the input stream.
      */
-    private Vector              entities = new Vector();
+    private Vector<Entity>              entities = new Vector<Entity>();
 
     /**
      * The parser for this object.
@@ -236,7 +236,7 @@ public class XMLStreamParser implements XMLResponder {
      *          parsed from the stream.  This <code>Vector</code> may
      *          be empty, but it will never be <code>null</code>.
      */
-    public Vector getEntities() {
+    public Vector<Entity> getEntities() {
         // ASSUMPTION : it is safe to return a modifiable reference to the
         //              vector.  If assumption is wrong, clone the vector.
         return this.entities;
@@ -763,7 +763,7 @@ public class XMLStreamParser implements XMLResponder {
                 // Look for the element's attributes.
                 String index = (String) attr.get( INDEX );
                 String type = (String) attr.get( TYPE );
-                String rear = (String) attr.get( IS_REAR );
+                //String rear = (String) attr.get( IS_REAR ); // is never read.
                 String shots = (String) attr.get( SHOTS );
                 String hit = (String) attr.get( IS_HIT );
                 String destroyed = (String) attr.get( IS_DESTROYED );

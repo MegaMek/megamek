@@ -145,8 +145,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     public void send() {
         Vector<IBasicOption> changed = new Vector<IBasicOption>();
         
-        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
+        for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+            DialogOptionComponent comp = i.nextElement();
             
             if (comp.hasChanged()) {
                 changed.addElement(comp.changedOption());
@@ -165,8 +165,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     public Vector<IBasicOption> getOptions() {
         Vector<IBasicOption> output = new Vector<IBasicOption>();
         
-        for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();        
+        for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+            DialogOptionComponent comp = i.nextElement();        
             IBasicOption option = comp.changedOption();        
             output.addElement(option);
         }
@@ -174,8 +174,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     }
 
     public void resetToDefaults() {
-        for (Enumeration i = optionComps.elements(); i.hasMoreElements();) {
-            DialogOptionComponent comp = (DialogOptionComponent)i.nextElement();
+        for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+            DialogOptionComponent comp = i.nextElement();
             comp.resetToDefault();
         }
     }
@@ -301,8 +301,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     //  state of the checkbox.
     public void optionClicked(DialogOptionComponent comp, IOption option, boolean state) {
         if (option.getName().equals("inf_move_even")) { //$NON-NLS-1$
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+            for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("inf_deploy_even")) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                     comp_i.setState(false);
@@ -316,8 +316,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             }
         }
         if (option.getName().equals("inf_move_multi")) { //$NON-NLS-1$
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+            for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("inf_move_even")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
@@ -327,8 +327,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             }
         }
         if (option.getName().equals("inf_move_later")) { //$NON-NLS-1$
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+            for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("inf_move_even")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
@@ -338,8 +338,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             }
         }
         if (option.getName().equals("protos_move_even")) { //$NON-NLS-1$
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+            for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("protos_deploy_even")) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                     comp_i.setState(false);
@@ -353,8 +353,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             }
         }
         if (option.getName().equals("protos_move_multi")) { //$NON-NLS-1$
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+            for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("protos_move_even")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
@@ -364,8 +364,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             }
         }
         if (option.getName().equals("protos_move_later")) { //$NON-NLS-1$
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+            for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("protos_move_even")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                 }
@@ -375,8 +375,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             }
         }
         if (option.getName().equals("individual_initiative")) { //$NON-NLS-1$
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+            for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("protos_deploy_even")) { //$NON-NLS-1$
                     comp_i.setEditable(false);
                     comp_i.setState(false);
@@ -412,8 +412,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             }
         }
         if (option.getName().equals("vacuum")) { //$NON-NLS-1$
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+            for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("fire")) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                     comp_i.setState(false);
@@ -421,8 +421,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
             }
         }
         if (option.getName().equals("double_blind")) { //$NON-NLS-1$
-            for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
-                DialogOptionComponent comp_i = (DialogOptionComponent)i.nextElement();
+            for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
+                DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("visibility")) { //$NON-NLS-1$
                     comp_i.setEditable(state);
                 }
@@ -492,9 +492,9 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
     public void setEditable( boolean editable ) {
 
         // Set enabled state of all of the option components in the dialog.
-        for ( Enumeration i = optionComps.elements(); i.hasMoreElements(); ) {
+        for ( Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements(); ) {
             DialogOptionComponent comp = 
-                (DialogOptionComponent) i.nextElement();
+                i.nextElement();
             comp.setEditable( editable );
         }
 

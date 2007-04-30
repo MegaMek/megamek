@@ -502,5 +502,13 @@ public class VTOL extends Tank {
             prd.addModifier(3, "flight stabiliser damaged");
         return prd;
     }
+    
+    /**
+     * returns true if the entity is flying. Returns true while the VTOL is not imobile.
+     * @return true, it's assumed VTOL's never land voluntarily.
+     */
+    public boolean isFlying() {
+        return !isImmobile();
+    }
 
 }

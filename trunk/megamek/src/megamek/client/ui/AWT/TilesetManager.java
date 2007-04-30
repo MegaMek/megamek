@@ -64,8 +64,8 @@ public class TilesetManager implements IPreferenceChangeListener {
     // mech images
     private MechTileset mechTileset = new MechTileset("data/images/units/"); //$NON-NLS-1$
     private MechTileset wreckTileset = new MechTileset("data/images/units/wrecks/"); //$NON-NLS-1$
-    private ArrayList mechImageList = new ArrayList();
-    private HashMap mechImages = new HashMap();
+    private ArrayList<EntityImage> mechImageList = new ArrayList<EntityImage>();
+    private HashMap<Integer, EntityImage> mechImages = new HashMap<Integer, EntityImage>();
     
     // hex images
     private HexTileset hexTileset = new HexTileset();
@@ -114,12 +114,12 @@ public class TilesetManager implements IPreferenceChangeListener {
     }
     
     public Image iconFor(Entity entity) {
-        EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+        EntityImage entityImage = mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
             // probably double_blind.  Try to load on the fly
             System.out.println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
-            entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+            entityImage = mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
                 System.out.println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
@@ -129,12 +129,12 @@ public class TilesetManager implements IPreferenceChangeListener {
     }
 
     public Image wreckMarkerFor(Entity entity) {
-        EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+        EntityImage entityImage = mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
             // probably double_blind.  Try to load on the fly
             System.out.println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
-            entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+            entityImage = mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
                 System.out.println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
@@ -155,12 +155,12 @@ public class TilesetManager implements IPreferenceChangeListener {
     }
 
     public Image imageFor(Entity entity, int facing) {
-        EntityImage entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+        EntityImage entityImage = mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
             // probably double_blind.  Try to load on the fly
             System.out.println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
-            entityImage = (EntityImage)mechImages.get(new Integer(entity.getId()));
+            entityImage = mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
                 System.out.println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
@@ -397,8 +397,8 @@ public class TilesetManager implements IPreferenceChangeListener {
         EntityImage entityImage = null;
 
         // check if we have a duplicate image already loaded
-        for (Iterator j = mechImageList.iterator(); j.hasNext();) {
-            EntityImage onList = (EntityImage)j.next();
+        for (Iterator<EntityImage> j = mechImageList.iterator(); j.hasNext();) {
+            EntityImage onList = j.next();
             if (onList.getBase() == base && onList.tint == tint) {
                 entityImage = onList;
                 break;

@@ -44,14 +44,14 @@ public class PreferenceManager {
     public static final String NAME_ATTRIBUTE = "name";
     public static final String VALUE_ATTRIBUTE = "value";
 
-    protected Hashtable stores;
+    protected Hashtable<String, IPreferenceStore> stores;
     protected ClientPreferences clientPreferences;
     protected PreferenceStore clientPreferenceStore;
     
     protected static PreferenceManager instance = new PreferenceManager();
 
     protected PreferenceManager() {
-        stores = new Hashtable();
+        stores = new Hashtable<String, IPreferenceStore>();
         clientPreferenceStore = new PreferenceStore();
         load();
         clientPreferences = new ClientPreferences(clientPreferenceStore);
@@ -66,7 +66,7 @@ public class PreferenceManager {
     }
     
     public IPreferenceStore getPreferenceStore(String name) {        
-        IPreferenceStore result = (IPreferenceStore)stores.get(name); 
+        IPreferenceStore result = stores.get(name); 
         if (result == null) {
             result = new PreferenceStore();
             stores.put(name,result);
@@ -75,7 +75,7 @@ public class PreferenceManager {
     }
 
     protected void load() {
-        stores = new Hashtable();
+        stores = new Hashtable<String, IPreferenceStore>();
         clientPreferenceStore = new PreferenceStore();
         String cfgName = System.getProperty(CFG_FILE_OPTION_NAME, DEFAULT_CFG_FILE_NAME);
         load(cfgName);
@@ -151,8 +151,8 @@ public class PreferenceManager {
             saveStore(output, CLIENT_SETTINGS_STORE_NAME, clientPreferenceStore);
 
             //save all other stores
-            for(Enumeration e = stores.keys();e.hasMoreElements();) {
-                String name = (String)e.nextElement();
+            for(Enumeration<String> e = stores.keys();e.hasMoreElements();) {
+                String name = e.nextElement();
                 PreferenceStore store = (PreferenceStore)stores.get(name);
                 saveStore(output, name, store);
             }

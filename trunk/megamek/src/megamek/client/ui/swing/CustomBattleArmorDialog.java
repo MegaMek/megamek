@@ -137,12 +137,12 @@ public class CustomBattleArmorDialog
     private int stateManipulatorTypeLeft = 0;
     private int stateManipulatorTypeRight = 0;
     private int stateConflictFlags = 0;
-    private ArrayList leftArmEquipment = null;
-    private ArrayList rightArmEquipment = null;
-    private ArrayList torsoEquipment = null;
+    private ArrayList<BattleArmorEquipment> leftArmEquipment = null;
+    private ArrayList<BattleArmorEquipment> rightArmEquipment = null;
+    private ArrayList<BattleArmorEquipment> torsoEquipment = null;
 
-    private static ArrayList equipmentTypes = null;
-    private static ArrayList equipmentNames = null;
+    private static ArrayList<BattleArmorEquipment> equipmentTypes = null;
+    private static ArrayList<String> equipmentNames = null;
 
     private static final int TECH_BASE_IS = 0;
     private static final int TECH_BASE_CLAN = 1;
@@ -608,25 +608,25 @@ public class CustomBattleArmorDialog
 
         m_chLeftArmCurrentEquipment.removeAll();
         if (leftArmEquipment != null) {
-            Iterator tmpEE = leftArmEquipment.iterator();
+            Iterator<BattleArmorEquipment> tmpEE = leftArmEquipment.iterator();
             while (tmpEE.hasNext()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpEE.next());
+                BattleArmorEquipment tmpBAE = (tmpEE.next());
                 m_chLeftArmCurrentEquipment.addItem(tmpBAE.name);
             }
         }
         m_chRightArmCurrentEquipment.removeAll();
         if (rightArmEquipment != null) {
-            Iterator tmpEE = rightArmEquipment.iterator();
+            Iterator<BattleArmorEquipment> tmpEE = rightArmEquipment.iterator();
             while (tmpEE.hasNext()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpEE.next());
+                BattleArmorEquipment tmpBAE = (tmpEE.next());
                 m_chRightArmCurrentEquipment.addItem(tmpBAE.name);
             }
         }
         m_chTorsoCurrentEquipment.removeAll();
         if (torsoEquipment != null) {
-            Iterator tmpEE = torsoEquipment.iterator();
+            Iterator<BattleArmorEquipment> tmpEE = torsoEquipment.iterator();
             while (tmpEE.hasNext()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpEE.next());
+                BattleArmorEquipment tmpBAE = (tmpEE.next());
                 m_chTorsoCurrentEquipment.addItem(tmpBAE.name);
             }
         }
@@ -734,9 +734,9 @@ public class CustomBattleArmorDialog
             resetState();
             return;
         } else if (ae.getSource().equals(m_buttonAddTorso)) {
-            BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (equipmentTypes.get(equipmentNames.indexOf(m_chTorsoEquipment.getSelectedItem())));
+            BattleArmorEquipment tmpBAE = (equipmentTypes.get(equipmentNames.indexOf(m_chTorsoEquipment.getSelectedItem())));
             if (torsoEquipment == null)
-                torsoEquipment = new ArrayList();
+                torsoEquipment = new ArrayList<BattleArmorEquipment>();
             torsoEquipment.add(tmpBAE);
             stateConflictFlags |= tmpBAE.conflictFlag;
 
@@ -749,9 +749,9 @@ public class CustomBattleArmorDialog
             // Nothing else in actionPerformed will matter, so lets move on!
             return;
         } else if (ae.getSource().equals(m_buttonAddRightArm)) {
-            BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (equipmentTypes.get(equipmentNames.indexOf(m_chRightArmEquipment.getSelectedItem())));
+            BattleArmorEquipment tmpBAE = (equipmentTypes.get(equipmentNames.indexOf(m_chRightArmEquipment.getSelectedItem())));
             if (rightArmEquipment == null)
-                rightArmEquipment = new ArrayList();
+                rightArmEquipment = new ArrayList<BattleArmorEquipment>();
             rightArmEquipment.add(tmpBAE);
             stateConflictFlags |= tmpBAE.conflictFlag;
 
@@ -764,9 +764,9 @@ public class CustomBattleArmorDialog
             // Nothing else in actionPerformed will matter, so lets move on!
             return;
         } else if (ae.getSource().equals(m_buttonAddLeftArm)) {
-            BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (equipmentTypes.get(equipmentNames.indexOf(m_chLeftArmEquipment.getSelectedItem())));
+            BattleArmorEquipment tmpBAE = (equipmentTypes.get(equipmentNames.indexOf(m_chLeftArmEquipment.getSelectedItem())));
             if (leftArmEquipment == null)
-                leftArmEquipment = new ArrayList();
+                leftArmEquipment = new ArrayList<BattleArmorEquipment>();
             leftArmEquipment.add(tmpBAE);
             stateConflictFlags |= tmpBAE.conflictFlag;
 
@@ -781,9 +781,9 @@ public class CustomBattleArmorDialog
         } else if (ae.getSource().equals(m_buttonRemoveTorso)) {
             if (torsoEquipment != null) {
                 String removeItem = (String) m_chTorsoCurrentEquipment.getSelectedItem();
-                Iterator tmpE = torsoEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = torsoEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     if (tmpBAE.name.equals(removeItem)) {
                         torsoEquipment.remove(tmpBAE);
                         break;
@@ -804,9 +804,9 @@ public class CustomBattleArmorDialog
         } else if (ae.getSource().equals(m_buttonRemoveRightArm)) {
             if (rightArmEquipment != null) {
                 String removeItem = (String) m_chRightArmCurrentEquipment.getSelectedItem();
-                Iterator tmpE = rightArmEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = rightArmEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     if (tmpBAE.name.equals(removeItem)) {
                         rightArmEquipment.remove(tmpBAE);
                         break;
@@ -827,9 +827,9 @@ public class CustomBattleArmorDialog
         } else if (ae.getSource().equals(m_buttonRemoveLeftArm)) {
             if (leftArmEquipment != null) {
                 String removeItem = (String) m_chLeftArmCurrentEquipment.getSelectedItem();
-                Iterator tmpE = leftArmEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = leftArmEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     if (tmpBAE.name.equals(removeItem)) {
                         leftArmEquipment.remove(tmpBAE);
                         break;
@@ -1171,25 +1171,25 @@ public class CustomBattleArmorDialog
         retVal.append("\n\n");
         // Print the rest of the equipment on this thing!
         if (torsoEquipment != null) {
-            Iterator tmpE = torsoEquipment.iterator();
+            Iterator<BattleArmorEquipment> tmpE = torsoEquipment.iterator();
             while (tmpE.hasNext()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                BattleArmorEquipment tmpBAE = (tmpE.next());
                 retVal.append(tmpBAE.getDescription());
                 retVal.append("\n");
             }
         }
         if (rightArmEquipment != null) {
-            Iterator tmpE = rightArmEquipment.iterator();
+            Iterator<BattleArmorEquipment> tmpE = rightArmEquipment.iterator();
             while (tmpE.hasNext()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                BattleArmorEquipment tmpBAE = (tmpE.next());
                 retVal.append(tmpBAE.getDescription());
                 retVal.append("\n");
             }
         }
         if (leftArmEquipment != null) {
-            Iterator tmpE = leftArmEquipment.iterator();
+            Iterator<BattleArmorEquipment> tmpE = leftArmEquipment.iterator();
             while (tmpE.hasNext()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                BattleArmorEquipment tmpBAE = (tmpE.next());
                 retVal.append(tmpBAE.getDescription());
                 retVal.append("\n");
             }
@@ -1233,23 +1233,23 @@ public class CustomBattleArmorDialog
         // Add in the weight of all the unit's other equipment.
         stateCurrentWeight += getManipulatorWeight();
         if (leftArmEquipment != null) {
-            Iterator tmpE = leftArmEquipment.iterator();
+            Iterator<BattleArmorEquipment> tmpE = leftArmEquipment.iterator();
             while (tmpE.hasNext()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                BattleArmorEquipment tmpBAE = (tmpE.next());
                 stateCurrentWeight += tmpBAE.weight;
             }
         }
         if (rightArmEquipment != null) {
-            Iterator tmpE = rightArmEquipment.iterator();
+            Iterator<BattleArmorEquipment> tmpE = rightArmEquipment.iterator();
             while (tmpE.hasNext()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                BattleArmorEquipment tmpBAE = (tmpE.next());
                 stateCurrentWeight += tmpBAE.weight;
             }
         }
         if (torsoEquipment != null) {
-            Iterator tmpE = torsoEquipment.iterator();
+            Iterator<BattleArmorEquipment> tmpE = torsoEquipment.iterator();
             while (tmpE.hasNext()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                BattleArmorEquipment tmpBAE = (tmpE.next());
                 stateCurrentWeight += tmpBAE.weight;
             }
         }
@@ -1321,9 +1321,9 @@ public class CustomBattleArmorDialog
             // Quads only have one location!
             if (torsoEquipment != null) {
                 int totalSlots = 0;
-                Iterator tmpE = torsoEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = torsoEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     totalSlots += tmpBAE.slots;
                 }
                 if (totalSlots > (QUAD_MAX_SLOTS[stateWeightClass] - ARMOR_TYPE_SLOTS[stateArmorType])) {
@@ -1336,9 +1336,9 @@ public class CustomBattleArmorDialog
             int totalFreeSlots = (2 * ARM_MAX_SLOTS[stateWeightClass]) + TORSO_MAX_SLOTS[stateWeightClass];
             if (leftArmEquipment != null) {
                 int totalSlots = 0;
-                Iterator tmpE = leftArmEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = leftArmEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     totalSlots += tmpBAE.slots;
                 }
                 if (totalSlots > ARM_MAX_SLOTS[stateWeightClass]) {
@@ -1349,9 +1349,9 @@ public class CustomBattleArmorDialog
             }
             if (rightArmEquipment != null) {
                 int totalSlots = 0;
-                Iterator tmpE = rightArmEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = rightArmEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     totalSlots += tmpBAE.slots;
                 }
                 if (totalSlots > ARM_MAX_SLOTS[stateWeightClass]) {
@@ -1362,9 +1362,9 @@ public class CustomBattleArmorDialog
             }
             if (torsoEquipment != null) {
                 int totalSlots = 0;
-                Iterator tmpE = torsoEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = torsoEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     totalSlots += tmpBAE.slots;
                 }
                 if (totalSlots > TORSO_MAX_SLOTS[stateWeightClass]) {
@@ -1390,9 +1390,9 @@ public class CustomBattleArmorDialog
             // Quads only have one location!
             if (torsoEquipment != null) {
                 int totalWeapons = 0;
-                Iterator tmpE = torsoEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = torsoEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON)
                             || (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON_AP))
                         totalWeapons++;
@@ -1406,9 +1406,9 @@ public class CustomBattleArmorDialog
             if (torsoEquipment != null) {
                 int totalAPWeapons = 0;
                 int totalAMWeapons = 0;
-                Iterator tmpE = torsoEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = torsoEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
                         totalAMWeapons++;
                     } else if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON_AP) {
@@ -1427,9 +1427,9 @@ public class CustomBattleArmorDialog
             if (rightArmEquipment != null) {
                 int totalWeapons = 0;
                 int totalAMWeapons = 0;
-                Iterator tmpE = rightArmEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = rightArmEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
                         totalWeapons++;
                         totalAMWeapons++;
@@ -1448,9 +1448,9 @@ public class CustomBattleArmorDialog
             if (leftArmEquipment != null) {
                 int totalWeapons = 0;
                 int totalAMWeapons = 0;
-                Iterator tmpE = leftArmEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = leftArmEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     if (tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) {
                         totalWeapons++;
                         totalAMWeapons++;
@@ -1807,9 +1807,9 @@ public class CustomBattleArmorDialog
             // Equipment and stuff needs to be set!
             // Now all other equipment.
             if (leftArmEquipment != null) {
-                Iterator tmpE = leftArmEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = leftArmEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) || (tmpBAE.internalType == EQUIPMENT_TYPE_AMMO)) {
                         retVal.addEquipment(EquipmentType.get(tmpBAE.weaponTypeName), BattleArmor.LOC_SQUAD);
                     } else if (tmpBAE.internalType == EQUIPMENT_TYPE_OTHER) {
@@ -1819,9 +1819,9 @@ public class CustomBattleArmorDialog
                 }
             }
             if (rightArmEquipment != null) {
-                Iterator tmpE = rightArmEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = rightArmEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) || (tmpBAE.internalType == EQUIPMENT_TYPE_AMMO)) {
                         retVal.addEquipment(EquipmentType.get(tmpBAE.weaponTypeName), BattleArmor.LOC_SQUAD);
                     } else if (tmpBAE.internalType == EQUIPMENT_TYPE_OTHER) {
@@ -1831,9 +1831,9 @@ public class CustomBattleArmorDialog
                 }
             }
             if (torsoEquipment != null) {
-                Iterator tmpE = torsoEquipment.iterator();
+                Iterator<BattleArmorEquipment> tmpE = torsoEquipment.iterator();
                 while (tmpE.hasNext()) {
-                    BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                    BattleArmorEquipment tmpBAE = (tmpE.next());
                     if ((tmpBAE.internalType == EQUIPMENT_TYPE_WEAPON) || (tmpBAE.internalType == EQUIPMENT_TYPE_AMMO)) {
                         retVal.addEquipment(EquipmentType.get(tmpBAE.weaponTypeName), BattleArmor.LOC_SQUAD);
                     } else if (tmpBAE.internalType == EQUIPMENT_TYPE_OTHER) {
@@ -1856,9 +1856,9 @@ public class CustomBattleArmorDialog
         // Add any jump MP bonus for equipment...
         // like partial wing or jump booster.
         if (torsoEquipment != null) {
-            Iterator tmpE = torsoEquipment.iterator();
+            Iterator<BattleArmorEquipment> tmpE = torsoEquipment.iterator();
             while (tmpE.hasNext()) {
-                BattleArmorEquipment tmpBAE = (BattleArmorEquipment) (tmpE.next());
+                BattleArmorEquipment tmpBAE = (tmpE.next());
                 if (tmpBAE.hasConflictFlag(F_CONFLICT_JUMP_GEAR)) {
                     retVal++;
                 }
@@ -1998,8 +1998,8 @@ public class CustomBattleArmorDialog
         }
 
         void initialize() {
-            equipmentTypes = new ArrayList();
-            equipmentNames = new ArrayList();
+            equipmentTypes = new ArrayList<BattleArmorEquipment>();
+            equipmentNames = new ArrayList<String>();
 
             // Weapons
             new BattleArmorEquipment("Support Machine Gun", "BA-Machine Gun", 100, EQUIPMENT_TYPE_WEAPON, 1, TECH_BASE_BOTH, LOCATION_ALLOWED_ANY);

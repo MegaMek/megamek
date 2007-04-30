@@ -18,7 +18,6 @@ import java.util.Vector;
 import java.util.Enumeration;
 
 import megamek.common.Board;
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Hex;
@@ -289,13 +288,13 @@ public class BoardUtilities {
         }
 
         // add buildings 
-        Vector buildings = mapSettings.getBoardBuildings();
+        Vector<BuildingTemplate> buildings = mapSettings.getBoardBuildings();
         CityBuilder cityBuilder = new CityBuilder(mapSettings, result);
         if(buildings.size() == 0) {
             buildings = cityBuilder.generateCity(roadNeeded);
         }
         for(int i=0; i<buildings.size();i++) {
-            placeBuilding(result, (BuildingTemplate)(buildings.elementAt(i)));
+            placeBuilding(result, (buildings.elementAt(i)));
         }
         return result;
     }
@@ -307,8 +306,8 @@ public class BoardUtilities {
         ITerrainFactory tf = Terrains.getTerrainFactory();
         Vector<IHex> hexes = new Vector<IHex>();
         int level=0;
-        for(Enumeration i=building.getCoords();i.hasMoreElements();) {
-            Coords c = (Coords)i.nextElement();
+        for(Enumeration<Coords> i=building.getCoords();i.hasMoreElements();) {
+            Coords c = i.nextElement();
             IHex hex = board.getHex(c);
             //work out exits...
             int exits = 0;
@@ -339,7 +338,7 @@ public class BoardUtilities {
      * @param probHeavy The probability that a wood is a heavy wood (in %).
      * @param maxWoods Maximum Number of Woods placed.
      */
-    protected static void placeSomeTerrain(IBoard board, int terrainType, int probMore,int minHexes, int maxHexes, HashMap reverseHex, boolean exclusive) {
+    protected static void placeSomeTerrain(IBoard board, int terrainType, int probMore,int minHexes, int maxHexes, HashMap<IHex, Point> reverseHex, boolean exclusive) {
         Point p = new Point(Compute.randomInt(board.getWidth()),Compute.randomInt(board.getHeight()));
         int count = minHexes;
         if ((maxHexes - minHexes) > 0) {
@@ -362,10 +361,10 @@ public class BoardUtilities {
                 return;
             }
             int which = Compute.randomInt(unUsed.size());
-            Iterator iter = unUsed.iterator();
+            Iterator<IHex> iter = unUsed.iterator();
             for (int n = 0; n < (which - 1); n++)
                 iter.next();
-            field = (IHex)iter.next();
+            field = iter.next();
             if (exclusive) {
                 field.removeAllTerrains();
             }
@@ -380,16 +379,16 @@ public class BoardUtilities {
             /* if next to an Water Hex is an lower lvl lower the hex.
              First we search for lowest Hex next to the lake */
             int min = Integer.MAX_VALUE;
-            Iterator iter = unUsed.iterator();
+            Iterator<IHex> iter = unUsed.iterator();
             while (iter.hasNext()) {
-                field = (IHex)iter.next();
+                field = iter.next();
                 if (field.getElevation() < min) {
                     min = field.getElevation();
                 }
             }
             iter = alreadyUsed.iterator();
             while (iter.hasNext()) {
-                field = (IHex)iter.next();
+                field = iter.next();
                 field.setElevation(min);
             }
             
@@ -407,19 +406,19 @@ public class BoardUtilities {
      * @param searchFrom The Hex where to start
      */
     private static void findAllUnused(IBoard board, int terrainType, HashSet<IHex> alreadyUsed,
-            HashSet<IHex> unUsed, IHex searchFrom, HashMap reverseHex) {
+            HashSet<IHex> unUsed, IHex searchFrom, HashMap<IHex, Point> reverseHex) {
         IHex field;
         HashSet<IHex> notYetUsed = new HashSet<IHex>();
         
         notYetUsed.add(searchFrom);
         do {
-            Iterator iter = notYetUsed.iterator();
-            field = (IHex)iter.next();
+            Iterator<IHex> iter = notYetUsed.iterator();
+            field = iter.next();
             if (field == null) {
                 continue;
             }
             for (int dir = 0; dir < 6; dir++) {
-                Point loc = (Point) reverseHex.get(field);
+                Point loc = reverseHex.get(field);
                 IHex newHex = board.getHexInDir(loc.x, loc.y, dir);
                 if ((newHex != null) && 
                         (!alreadyUsed.contains(newHex)) &&
@@ -516,7 +515,7 @@ public class BoardUtilities {
      * no more a river). The river goes from one border to another.
      * Nor Params, no results.
      */
-    public static void addRiver(IBoard board, HashMap reverseHex) {
+    public static void addRiver(IBoard board, HashMap<IHex, Point> reverseHex) {
         int minElevation = Integer.MAX_VALUE;
         HashSet<IHex> riverHexes = new HashSet<IHex>();
         IHex field;
@@ -562,7 +561,7 @@ public class BoardUtilities {
             field.removeAllTerrains();
             field.addTerrain(f.createTerrain(Terrains.WATER, 1));
             riverHexes.add(field);
-            p = (Point)reverseHex.get(field);
+            p = reverseHex.get(field);
             /* then maybe the left and right neighbours */
             riverHexes.addAll(extendRiverToSide(board, p, Compute.randomInt(3), 
                     nextLeft, reverseHex));
@@ -583,15 +582,15 @@ public class BoardUtilities {
         } while (field != null); 
         
         /* search the elevation for the river */
-        HashSet tmpRiverHexes = (HashSet)riverHexes.clone();
+        HashSet<IHex> tmpRiverHexes = (HashSet<IHex>)riverHexes.clone();
         while (!tmpRiverHexes.isEmpty()) {
-            Iterator iter = tmpRiverHexes.iterator();
-            field = (IHex)iter.next();
+            Iterator<IHex> iter = tmpRiverHexes.iterator();
+            field = iter.next();
             if (field.getElevation() < minElevation) {
                 minElevation = field.getElevation();
             }
             tmpRiverHexes.remove(field);
-            Point thisHex = (Point)reverseHex.get(field);
+            Point thisHex = reverseHex.get(field);
             /* and now the six neighbours */
             for (int i = 0; i < 6; i++) {
                 field = board.getHexInDir(thisHex.x, thisHex.y, i);
@@ -603,9 +602,9 @@ public class BoardUtilities {
         }
         
         /* now adjust the elevation to same height */
-        Iterator iter = riverHexes.iterator();
+        Iterator<IHex> iter = riverHexes.iterator();
         while (iter.hasNext()) {
-            field = (IHex)iter.next();
+            field = iter.next();
             field.setElevation(minElevation);
         }
         
@@ -623,7 +622,7 @@ public class BoardUtilities {
      * extended. 
      * @return Hashset with the hexes from the side.
      */
-    private static HashSet<IHex> extendRiverToSide(IBoard board, Point hexloc, int width, int direction, HashMap reverseHex) {
+    private static HashSet<IHex> extendRiverToSide(IBoard board, Point hexloc, int width, int direction, HashMap<IHex, Point> reverseHex) {
         Point current = new Point(hexloc);
         HashSet<IHex> result = new HashSet<IHex>();
         IHex hex;
@@ -633,7 +632,7 @@ public class BoardUtilities {
             hex.removeAllTerrains();
             hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WATER, 1));
             result.add(hex);        
-            current = (Point)reverseHex.get(hex);
+            current = reverseHex.get(hex);
             hex = board.getHexInDir(current.x, current.y, direction);
         }        
         return result;

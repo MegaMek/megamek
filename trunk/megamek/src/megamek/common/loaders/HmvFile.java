@@ -56,7 +56,6 @@ public class HmvFile
   private HMVTechType engineTechType;
   private HMVTechType baseTechType;
   private HMVTechType targetingComputerTechType;
-  private HMVTechType armorTechType;
 
   private int engineRating;
   private HMVEngineType engineType;
@@ -64,7 +63,6 @@ public class HmvFile
   private int cruiseMP;
   private int jumpMP;
 
-  private int heatSinks;
   private HMVArmorType armorType;
 
   private int roundedInternalStructure;
@@ -77,13 +75,13 @@ public class HmvFile
   
   private int artemisType;
 
-  private Hashtable equipment = new Hashtable();
+  private Hashtable<HMVWeaponLocation, Hashtable<EquipmentType, Integer>> equipment = new Hashtable<HMVWeaponLocation, Hashtable<EquipmentType, Integer>>();
 
   private float troopSpace = 0;
   
   private String fluff;
   
-  private List<String> failedEquipment = new ArrayList();
+  private List<String> failedEquipment = new ArrayList<String>();
   
   private boolean hasTurret = false;
 
@@ -96,7 +94,9 @@ public class HmvFile
 
       byte[] buffer = new byte[5];
       dis.read(buffer);
-      String version = new String(buffer);
+      
+      //version is never used.
+      // String version = new String(buffer);
 
       // ??
       dis.skipBytes(2);
@@ -140,17 +140,17 @@ public class HmvFile
           baseTechType = HMVTechType.getType(readUnsignedShort(dis));
           engineTechType = HMVTechType.getType(readUnsignedShort(dis));
           targetingComputerTechType = HMVTechType.getType(readUnsignedShort(dis));
-          armorTechType = HMVTechType.getType(readUnsignedShort(dis));
+          //armorTechType = HMVTechType.getType(readUnsignedShort(dis));
       } else if (techType.equals(HMVTechType.CLAN)) {
           engineTechType = HMVTechType.CLAN;
           baseTechType = HMVTechType.CLAN;
           targetingComputerTechType = HMVTechType.CLAN;
-          armorTechType = HMVTechType.CLAN;          
+          //armorTechType = HMVTechType.CLAN;          
       } else {
           engineTechType = HMVTechType.INNER_SPHERE;
           baseTechType = HMVTechType.INNER_SPHERE;
           targetingComputerTechType = HMVTechType.INNER_SPHERE;
-          armorTechType = HMVTechType.INNER_SPHERE;
+          //armorTechType = HMVTechType.INNER_SPHERE;
       }
 
       // ??
@@ -162,7 +162,7 @@ public class HmvFile
       cruiseMP = readUnsignedShort(dis);
       jumpMP = readUnsignedShort(dis);
 
-      heatSinks = readUnsignedShort(dis);
+      //heatSinks = readUnsignedShort(dis);
       armorType = HMVArmorType.getType(readUnsignedShort(dis));
 
       roundedInternalStructure = readUnsignedShort(dis);
@@ -323,7 +323,8 @@ public class HmvFile
       //Yuck, a decimal field: 10 = main/tail, 20 = dual, 30 = coax rotors
       //100 = beagle/clan AP, 200 = bloodhound/light AP, 300 = c3 slave mast mount
       int mastEq = VTOLoptions / 100;
-      int rotorType = VTOLoptions % 100;
+      //int rotorType = VTOLoptions % 100; //rorottype is never read
+      // TODO read rotottype from a file.
       //Mast mounted equipment is not supported - put it in the rotor and hope for the best
       if(mastEq == 1) {
           if(baseTechType.equals(HMVTechType.CLAN))
@@ -564,13 +565,13 @@ public class HmvFile
   private void addEquipmentType(EquipmentType equipmentType, int weaponCount,
                                 HMVWeaponLocation weaponLocation)
   {
-    Hashtable equipmentAtLocation = (Hashtable) equipment.get(weaponLocation);
+    Hashtable<EquipmentType, Integer> equipmentAtLocation = equipment.get(weaponLocation);
     if (equipmentAtLocation == null)
     {
-      equipmentAtLocation = new Hashtable();
+      equipmentAtLocation = new Hashtable<EquipmentType, Integer>();
       equipment.put(weaponLocation, equipmentAtLocation);
     }
-    Integer prevCount = (Integer) equipmentAtLocation.get( equipmentType );
+    Integer prevCount = equipmentAtLocation.get( equipmentType );
     if ( null != prevCount ) {
         weaponCount += prevCount.intValue();
     }
@@ -581,7 +582,7 @@ public class HmvFile
                             int location)
     throws Exception
   {
-    Hashtable equipmentAtLocation = (Hashtable) equipment.get(weaponLocation);
+    Hashtable equipmentAtLocation = equipment.get(weaponLocation);
     if (equipmentAtLocation != null)
     {
       for (Enumeration e = equipmentAtLocation.keys(); e.hasMoreElements();)
@@ -640,14 +641,14 @@ public class HmvFile
       }
   }
 
-  private static final Hashtable EQUIPMENT = new Hashtable();
-  private static final Hashtable AMMO = new Hashtable();
+  private static final Hashtable<HMVTechType, Hashtable<Long, String>> EQUIPMENT = new Hashtable<HMVTechType, Hashtable<Long, String>>();
+  private static final Hashtable<HMVTechType, Hashtable<Long, String>> AMMO = new Hashtable<HMVTechType, Hashtable<Long, String>>();
   static
   {
     // inner sphere equipment
     // note all weapons should be matched by an ammo entry with the same index
     //
-    Hashtable isEquipment = new Hashtable();
+    Hashtable<Long, String> isEquipment = new Hashtable<Long, String>();
     EQUIPMENT.put(HMVTechType.INNER_SPHERE, isEquipment);
     isEquipment.put(new Long(0x0A), "ISDouble Heat Sink");
     isEquipment.put(new Long(0x0B), "Jump Jet");
@@ -781,7 +782,7 @@ public class HmvFile
     isEquipment.put(new Long(0x12C), "ISRocketLauncher15");
     isEquipment.put(new Long(0x12D), "ISRocketLauncher20");
 
-    Hashtable isAmmo = new Hashtable();
+    Hashtable<Long, String> isAmmo = new Hashtable<Long, String>();
     AMMO.put(HMVTechType.INNER_SPHERE, isAmmo);
     isAmmo.put(new Long(0x3E), "ISAC2 Ammo");
     isAmmo.put(new Long(0x3F), "ISAC5 Ammo");
@@ -850,7 +851,7 @@ public class HmvFile
 
     // clan criticals
     //
-    Hashtable clanEquipment = new Hashtable();
+    Hashtable<Long, String> clanEquipment = new Hashtable<Long, String>();
     EQUIPMENT.put(HMVTechType.CLAN, clanEquipment);
     clanEquipment.put(new Long(0x0A), "CLDouble Heat Sink");
     clanEquipment.put(new Long(0x0B), "Jump Jet");
@@ -946,7 +947,7 @@ public class HmvFile
     clanEquipment.put(new Long(0xFE), "CLATM9");
     clanEquipment.put(new Long(0xFF), "CLATM12");
 
-    Hashtable clAmmo = new Hashtable();
+    Hashtable<Long, String> clAmmo = new Hashtable<Long, String>();
     AMMO.put(HMVTechType.CLAN, clAmmo);
     clAmmo.put(new Long(0x40), "CLAMS Ammo");
     clAmmo.put(new Long(0x41), "CLGauss Ammo");
@@ -997,7 +998,7 @@ public class HmvFile
     clAmmo.put(new Long(0xFF), "CLATM12 Ammo");
 
     //mixed *seems* to be the same as IS-base for HMP files
-    Hashtable mixedEquipment = new Hashtable(isEquipment);
+    Hashtable<Long, String> mixedEquipment = new Hashtable<Long, String>(isEquipment);
     EQUIPMENT.put(HMVTechType.MIXED, mixedEquipment);
     mixedEquipment.put(new Long(0x58), "CLERMicroLaser");
     mixedEquipment.put(new Long(0x5E), "CLLightMG");
@@ -1075,7 +1076,7 @@ public class HmvFile
     mixedEquipment.put(new Long(0xFF), "CLATM12");
     
     //but ammo *seems* to use the same numbers as the weapon it goes with
-    Hashtable mixedAmmo = new Hashtable(isAmmo);
+    Hashtable<Long, String> mixedAmmo = new Hashtable<Long, String>(isAmmo);
     AMMO.put(HMVTechType.MIXED, mixedAmmo);
     mixedAmmo.put(new Long(0x5E), "CLLightMG Ammo");
     mixedAmmo.put(new Long(0x5F), "CLHeavyMG Ammo");
@@ -1129,10 +1130,15 @@ public class HmvFile
     }
     final long value = equipment.longValue();
 
-    String equipName = (String) EQUIPMENT.get(equipment);
+    String equipName = null;
+    try {
+        equipName = EQUIPMENT.get(techType).get(equipment);
+    } catch(NullPointerException e) {
+        //is handeled by the if below.
+    }
     if (equipName == null)
     {
-      Hashtable techEquipment = (Hashtable) EQUIPMENT.get(techType);
+      Hashtable techEquipment = EQUIPMENT.get(techType);
       if (techEquipment != null)
       {
         equipName = (String) techEquipment.get(equipment);
@@ -1190,10 +1196,15 @@ public class HmvFile
     }
     final long value = ammo.longValue();
 
-    String ammoName = (String) AMMO.get(equipment);
+    String ammoName = null;
+    try {
+        ammoName = AMMO.get(techType).get(equipment);
+    } catch(NullPointerException e) {
+        //is handeled by the if below.
+    }
     if (ammoName == null)
     {
-      Hashtable techAmmo = (Hashtable) AMMO.get(techType);
+      Hashtable techAmmo = AMMO.get(techType);
       if (techAmmo != null)
       {
         ammoName = (String) techAmmo.get(ammo);
@@ -1288,7 +1299,7 @@ abstract class HMVType
 class HMVEngineType
   extends HMVType
 {
-  public static final Hashtable types = new Hashtable();
+  public static final Hashtable<Integer, HMVEngineType> types = new Hashtable<Integer, HMVEngineType>();
 
   public static final HMVEngineType ICE = new HMVEngineType("I.C.E.", 0);
   public static final HMVEngineType FUSION = new HMVEngineType("Fusion", 1);
@@ -1304,14 +1315,14 @@ class HMVEngineType
 
   public static HMVEngineType getType(int i)
   {
-    return (HMVEngineType) types.get(new Integer(i));
+    return types.get(new Integer(i));
   }
 }
 
 class HMVArmorType
   extends HMVType
 {
-  public static final Hashtable types = new Hashtable();
+  public static final Hashtable<Integer, HMVArmorType> types = new Hashtable<Integer, HMVArmorType>();
 
   public static final HMVArmorType STANDARD = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_STANDARD), 0);
   public static final HMVArmorType FERRO = new HMVArmorType(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_FERRO_FIBROUS), 1);
@@ -1326,14 +1337,14 @@ class HMVArmorType
 
   public static HMVArmorType getType(int i)
   {
-    return (HMVArmorType) types.get(new Integer(i));
+    return types.get(new Integer(i));
   }
 }
 
 class HMVTechType
   extends HMVType
 {
-  public static final Hashtable types = new Hashtable();
+  public static final Hashtable<Integer, HMVTechType> types = new Hashtable<Integer, HMVTechType>();
 
   public static final HMVTechType INNER_SPHERE = new HMVTechType("Inner Sphere", 0);
   public static final HMVTechType CLAN = new HMVTechType("Clan", 1);
@@ -1347,14 +1358,14 @@ class HMVTechType
 
   public static HMVTechType getType(int i)
   {
-    return (HMVTechType) types.get(new Integer(i));
+    return types.get(new Integer(i));
   }
 }
 
 class HMVMovementType
   extends HMVType
 {
-  public static final Hashtable types = new Hashtable();
+  public static final Hashtable<Integer, HMVMovementType> types = new Hashtable<Integer, HMVMovementType>();
 
   public static final HMVMovementType TRACKED =
     new HMVMovementType("Tracked", 8);
@@ -1381,7 +1392,7 @@ class HMVMovementType
   {
       // Only pay attention to the movement type bits.
       i &= 1016;
-      return (HMVMovementType) types.get(new Integer(i));
+      return types.get(new Integer(i));
   }
 
 }
@@ -1389,7 +1400,7 @@ class HMVMovementType
 class HMVWeaponLocation
   extends HMVType
 {
-  public static final Hashtable types = new Hashtable();
+  public static final Hashtable<Integer, HMVWeaponLocation> types = new Hashtable<Integer, HMVWeaponLocation>();
 
   public static final HMVWeaponLocation TURRET =
     new HMVWeaponLocation("Turret", 0);
@@ -1412,6 +1423,6 @@ class HMVWeaponLocation
 
   public static HMVWeaponLocation getType(int i)
   {
-    return (HMVWeaponLocation) types.get(new Integer(i));
+    return types.get(new Integer(i));
   }
 }

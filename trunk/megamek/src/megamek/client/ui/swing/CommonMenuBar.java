@@ -134,7 +134,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
      * A <code>Vector</code> containing the <code>ActionListener</code>s
      * that have registered themselves with this menu bar.
      */
-    private final Vector actionListeners = new Vector();
+    private final Vector<ActionListener> actionListeners = new Vector<ActionListener>();
 
     /**
      * Create a MegaMek menu bar.
@@ -424,9 +424,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
      */
     public void actionPerformed(ActionEvent event) {
         // Pass the action on to each of our listeners.
-        Enumeration iter = actionListeners.elements();
+        Enumeration<ActionListener> iter = actionListeners.elements();
         while (iter.hasMoreElements()) {
-            ActionListener listener = (ActionListener) iter.nextElement();
+            ActionListener listener = iter.nextElement();
             listener.actionPerformed(event);
         }
     }

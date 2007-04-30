@@ -34,6 +34,7 @@ import megamek.common.Mounted;
 import megamek.common.QuadMech;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.actions.AbstractEntityAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -132,7 +133,7 @@ public class PhysicalDisplay
     private Targetable target;        // target
 
     // stuff we want to do
-    private Vector attacks;
+    private Vector<AbstractEntityAction> attacks;
 
     private AimedShotHandler ash = new AimedShotHandler();
     
@@ -147,7 +148,7 @@ public class PhysicalDisplay
 
         clientgui.getBoardView().addBoardViewListener(this);
 
-        attacks = new Vector();
+        attacks = new Vector<AbstractEntityAction>();
 
         setupStatusBar(Messages.getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
 
@@ -1150,7 +1151,7 @@ public class PhysicalDisplay
         Enumeration choices = client.game.getEntities(pos);
 
         // Convert the choices into a List of targets.
-        Vector targets = new Vector();
+        Vector<Targetable> targets = new Vector<Targetable>();
         while (choices.hasMoreElements()) {
             choice = (Targetable) choices.nextElement();
             if (!ce().equals(choice)) {
@@ -1178,7 +1179,7 @@ public class PhysicalDisplay
         if (targets.size() == 1) {
 
             // Return  that choice.
-            choice = (Targetable) targets.elementAt(0);
+            choice = targets.elementAt(0);
 
         }
 
@@ -1186,7 +1187,7 @@ public class PhysicalDisplay
         else if (targets.size() > 1) {
             String[] names = new String[targets.size()];
             for (int loop = 0; loop < names.length; loop++) {
-                names[loop] = ((Targetable) targets.elementAt(loop))
+                names[loop] = targets.elementAt(loop)
                         .getDisplayName();
             }
             SingleChoiceDialog choiceDialog =
@@ -1196,7 +1197,7 @@ public class PhysicalDisplay
                             names);
             choiceDialog.setVisible(true);
             if (choiceDialog.getAnswer() == true) {
-                choice = (Targetable) targets.elementAt
+                choice = targets.elementAt
                         (choiceDialog.getChoice());
             }
         } // End have-choices

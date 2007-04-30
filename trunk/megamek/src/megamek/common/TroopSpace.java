@@ -28,7 +28,7 @@ public final class TroopSpace implements Transporter {
     /**
      * The troops being carried.
      */
-    /* package */ Vector troops = new Vector();
+    /* package */ Vector<Entity> troops = new Vector<Entity>();
 
     /**
      * The total amount of space available for troops.
@@ -155,9 +155,9 @@ public final class TroopSpace implements Transporter {
      *          The returned <code>List</code> is independant from the under-
      *          lying data structure; modifying one does not affect the other.
      */
-    public Vector getLoadedUnits() {
+    public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
-        return (Vector)this.troops.clone();
+        return (Vector<Entity>)this.troops.clone();
     }
 
     /**

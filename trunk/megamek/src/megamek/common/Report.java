@@ -250,17 +250,6 @@ public class Report implements Serializable {
     }
 
     /**
-     * Not currently used.  May be removed in the future.
-     */
-    private void choose(boolean data, boolean obscure) {
-        if (obscure) {
-            this.obscuredIndexes.put(new Integer(this.tagData.size()), new Boolean(true));
-        }
-
-        this.tagData.addElement(String.valueOf(data));
-    }
-
-    /**
      * Shortcut method for adding entity name and owner data at the
      * same time.  Assumes that the entity name should be obscured,
      * but the owner should not.

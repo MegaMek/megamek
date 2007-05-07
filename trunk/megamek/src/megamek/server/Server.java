@@ -16,7 +16,6 @@
 package megamek.server;
 
 import megamek.MegaMek;
-import megamek.client.ui.AWT.Messages;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
@@ -14541,17 +14540,6 @@ public class Server implements Runnable {
         int[] myDamages = {engineRating, (engineRating / 10), (engineRating / 20), (engineRating / 40)};
         doExplosion(myDamages, true, position, false, vDesc, vUnits);
     }
-    
-    private Coords getEntityActualPosition(Entity e) {
-        Coords rv = e.getPosition();
-        if(rv == null) {
-            Entity transport = game.getEntity(e.getTransportId());
-            if(transport != null) {
-                rv = transport.getPosition();
-            }
-        }
-        return rv;
-    }
 
     /**
      * General function to cause explosions in areas.
@@ -15752,11 +15740,8 @@ public class Server implements Runnable {
     }
 
     /**
-     * Rolls and resolves critical hits with no die roll modifiers.
+     * Rolls and resolves critical hits with a die roll modifier.
      */
-    private Vector criticalEntity(Entity en, int loc) {
-        return criticalEntity(en, loc, 0, true);
-    }
 
     private Vector<Report> criticalEntity(Entity en, int loc, int critMod) {
         return criticalEntity(en, loc, critMod, true);
@@ -15767,10 +15752,6 @@ public class Server implements Runnable {
      */
     private Vector<Report> oneCriticalEntity(Entity en, int loc) {
         return criticalEntity(en, loc, 0, false);
-    }
-
-    private Vector crashVTOL(VTOL en,Coords crashPos,int curElevation) {
-        return crashVTOL(en, false, 0,crashPos,curElevation,0);
     }
     
     private Vector<Report> crashVTOL(VTOL en) {
@@ -20694,9 +20675,10 @@ public class Server implements Runnable {
         }
     }
 
+    /*
+    //See note above where knownDeadEntities variable is declared
     private void deadEntitiesCleanup() {
-        //See note above where knownDeadEntities variable is declared
-        /*
+        
         Entity en = null;
         for(Enumeration k = game.getGraveyardEntities(); k.hasMoreElements(); en = (Entity) k.nextElement()) {
             if (en != null) {
@@ -20705,8 +20687,8 @@ public class Server implements Runnable {
                 }
             }
         }
-        */
     }
+    */
 
     private void resolveIceBroken(Coords c) {
         game.getBoard().getHex(c).removeTerrain(Terrains.ICE);

@@ -27,6 +27,7 @@ v0.33.6-dev (SVN)
 + Bug: C3 and C3i where able to use level 3 targeting systems
 + Begingins of a LAM implementation.
 + Significant reduction in compiler warnings through refactoring.
++ Removed some unused functions
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

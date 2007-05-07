@@ -51,6 +51,7 @@ Lot of people have contributed to the MegaMek project.
      Jeff Wang <swang30@users.sourceforge.net>
      Jason Tighe <torren@users.sourceforge.net>
      Klaus Mittag <khm19_de@users.sourceforge.net>
+     Dirk Walter <dirkwalter@users.sourceforge.net>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

@@ -4835,7 +4835,7 @@ public abstract class Entity extends TurnOrdered
         return getCrew().getOptions().booleanOption("maneuvering_ace");
     }
     
-    public Enumeration getKills() {
+    public Enumeration<Entity> getKills() {
         final int killer = this.id;
         return game.getSelectedOutOfGameEntities
             ( new EntitySelector() {

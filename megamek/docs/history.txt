@@ -41,6 +41,7 @@ v0.33.6-dev (SVN)
   images
 + Data 1579068: some new Mek Images
 + Data 1577478: Most 3055U L3 Solaris Mechfiles
++ Added Generic <Entity> to Entity.getKills(), was causing Warnings in MW --Torren
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

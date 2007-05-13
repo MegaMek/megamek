@@ -1084,7 +1084,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC;
         ammo.shots = 5;
-        ammo.bv = 20;
+        ammo.bv = 22;
         ammo.cost = 10000;
 
         return ammo;
@@ -1635,7 +1635,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 5;
-        ammo.bv = 27;
+        ammo.bv = 30;
         ammo.cost = 20000;
 
         return ammo;
@@ -1723,7 +1723,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.munitionType = M_CLUSTER;
         ammo.shots = 5;
-        ammo.bv = 27;
+        ammo.bv = 30;
         ammo.cost = 34000;
 
         return ammo;
@@ -1900,7 +1900,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 10;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 10;
-        ammo.bv = 29;
+        ammo.bv = 26;
         ammo.cost = 12000;
 
         return ammo;
@@ -1918,7 +1918,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 5;
-        ammo.bv = 32;
+        ammo.bv = 35;
         ammo.cost = 20000;
 
         return ammo;
@@ -2059,7 +2059,7 @@ public class AmmoType extends EquipmentType {
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_GAUSS;
         ammo.shots = 8;
-        ammo.bv = 37;
+        ammo.bv = 40;
         ammo.cost = 20000;
 
         return ammo;
@@ -2420,7 +2420,7 @@ public class AmmoType extends EquipmentType {
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_GAUSS;
         ammo.shots = 8;
-        ammo.bv = 33;
+        ammo.bv = 40;
         ammo.cost = 20000;
 
         return ammo;
@@ -2496,7 +2496,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.shots = 5;
-        ammo.bv = 33;
+        ammo.bv = 30;
         ammo.cost = 20000;
 
         return ammo;
@@ -2739,7 +2739,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 45;
-        ammo.bv = 6;
+        ammo.bv = 8;
         ammo.cost = 1000;
 
         return ammo;
@@ -2793,7 +2793,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_AC_ULTRA;
         ammo.shots = 5;
-        ammo.bv = 35;
+        ammo.bv = 42;
         ammo.cost = 20000;
 
         return ammo;
@@ -3893,7 +3893,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2; // only used for ammo crits
         ammo.ammoType = AmmoType.T_AMS;
         ammo.shots = 24;
-        ammo.bv = 21;
+        ammo.bv = 22;
         ammo.cost = 2000;
 
         return ammo;
@@ -3944,7 +3944,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 40;
-        ammo.bv = 14;
+        ammo.bv = 4;
         ammo.cost = 75000;
         ammo.flags |= F_HOTLOAD | F_MML_LRM;
         ammo.setModes(new String[] {"", "HotLoad"});
@@ -3964,7 +3964,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 33;
-        ammo.bv = 14;
+        ammo.bv = 4;
         ammo.cost = 75000;
 
         return ammo;
@@ -3983,7 +3983,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.munitionType = M_EXTENDED_RANGE;
         ammo.shots = 24;
-        ammo.bv = 14;
+        ammo.bv = 6;
         ammo.cost = 75000;
         ammo.flags |= F_HOTLOAD | F_MML_LRM;
         ammo.setModes(new String[] {"", "HotLoad"});
@@ -4003,7 +4003,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 20;
-        ammo.bv = 14;
+        ammo.bv = 6;
         ammo.cost = 75000;
 
         return ammo;
@@ -4022,7 +4022,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.munitionType = M_EXTENDED_RANGE;
         ammo.shots = 17;
-        ammo.bv = 14;
+        ammo.bv = 8;
         ammo.cost = 75000;
         ammo.flags |= F_HOTLOAD | F_MML_LRM;
         ammo.setModes(new String[] {"", "HotLoad"});
@@ -4042,7 +4042,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 14;
-        ammo.bv = 14;
+        ammo.bv = 8;
         ammo.cost = 75000;
 
         return ammo;
@@ -4061,7 +4061,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MML;
         ammo.munitionType = M_EXTENDED_RANGE;
         ammo.shots = 13;
-        ammo.bv = 14;
+        ammo.bv = 11;
         ammo.cost = 75000;
         ammo.flags |= F_HOTLOAD | F_MML_LRM;
         ammo.setModes(new String[] {"", "HotLoad"});
@@ -4081,7 +4081,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_MML;
         ammo.shots = 11;
-        ammo.bv = 14;
+        ammo.bv = 11;
         ammo.cost = 75000;
 
         return ammo;
@@ -5900,7 +5900,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_HAG;
         ammo.shots = 6;
-        ammo.bv = 27;
+        ammo.bv = 33;
         ammo.cost = 30000;
         ammo.explosive = false;
 
@@ -5919,7 +5919,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 30;
         ammo.ammoType = AmmoType.T_HAG;
         ammo.shots = 4;
-        ammo.bv = 27;
+        ammo.bv = 50;
         ammo.cost = 30000;
         ammo.explosive = false;
 
@@ -5938,7 +5938,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 40;
         ammo.ammoType = AmmoType.T_HAG;
         ammo.shots = 3;
-        ammo.bv = 27;
+        ammo.bv = 67;
         ammo.cost = 30000;
         ammo.explosive = false;
 
@@ -5974,7 +5974,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 1;
         ammo.ammoType = AmmoType.T_PLASMA;
         ammo.shots = 10;
-        ammo.bv = 27;
+        ammo.bv = 26;
         ammo.cost = 30000;
         ammo.explosive = false;
 

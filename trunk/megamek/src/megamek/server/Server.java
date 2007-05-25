@@ -4635,7 +4635,7 @@ public class Server implements Runnable {
                     if ( bldgExited == null) {
                         collapsed = passBuildingWall( entity, bldgEntered,
                                                       lastPos, curPos,
-                                                      distance, "entering" );
+                                                      distance, "entering", step.isThisStepBackwards());
                         addAffectedBldg( bldgEntered, collapsed );
                     }
 
@@ -4644,7 +4644,7 @@ public class Server implements Runnable {
                     else if ( bldgExited.equals( bldgEntered ) ) {
                         collapsed = passBuildingWall( entity, bldgEntered,
                                                       lastPos, curPos,
-                                                      distance, "moving in" );
+                                                      distance, "moving in", step.isThisStepBackwards());
                         addAffectedBldg( bldgEntered, collapsed );
                     }
 
@@ -4652,11 +4652,11 @@ public class Server implements Runnable {
                     else if ( bldgExited != null && bldgEntered != null ) {
                         collapsed = passBuildingWall( entity, bldgExited,
                                                       lastPos, curPos,
-                                                      distance, "exiting" );
+                                                      distance, "exiting", step.isThisStepBackwards() );
                         addAffectedBldg( bldgExited, collapsed );
                         collapsed = passBuildingWall( entity, bldgEntered,
                                                       lastPos, curPos,
-                                                      distance, "entering" );
+                                                      distance, "entering", step.isThisStepBackwards() );
                         addAffectedBldg( bldgEntered, collapsed );
                     }
 
@@ -4664,7 +4664,7 @@ public class Server implements Runnable {
                     else if (bldgExited != null){
                         collapsed = passBuildingWall( entity, bldgExited,
                                                       lastPos, curPos,
-                                                      distance, "exiting" );
+                                                      distance, "exiting", step.isThisStepBackwards() );
                         addAffectedBldg( bldgExited, collapsed );
                     }
                 }
@@ -18833,7 +18833,9 @@ public class Server implements Runnable {
      *          entering
      * @param   distance - the <code>int</code> number of hexes the entity
      *          has moved already this phase.
-     * @param   why - the <code>String</code> explanatin for this action.
+     * @param   why - the <code>String</code> explanation for this action.
+     * @param   backwards - the <code>boolean</code> indicating if the entity is
+     *          entering the hex backwards
      * @return  <code>true</code> if the building collapses due to overloading.
      */
     private boolean passBuildingWall( Entity entity,
@@ -18841,7 +18843,8 @@ public class Server implements Runnable {
                                       Coords lastPos,
                                       Coords curPos,
                                       int distance,
-                                      String why ) {
+                                      String why,
+                                      boolean backwards) {
 
         Report r;
 
@@ -18863,9 +18866,13 @@ public class Server implements Runnable {
                 r.indent(2);
                 addReport(r);
             } else {
-                // BMRr, pg. 50: The attack direction for this damage is the front.
+                // TW, pg. 268: if unit moves forward, damage from front,
+            	// if backwards, damage from rear.
+            	int side = ToHitData.SIDE_FRONT;
+            	if (backwards)
+            		side = ToHitData.SIDE_REAR;
                 HitData hit = entity.rollHitLocation( ToHitData.HIT_NORMAL,
-                                                      ToHitData.SIDE_FRONT );
+                                                      side );
                 addReport( damageEntity(entity, hit, damage));
             }
         }

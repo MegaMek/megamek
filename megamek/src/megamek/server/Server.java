@@ -3966,9 +3966,8 @@ public class Server implements Runnable {
         PilotingRollData rollTarget;
         // cache this here, otherwise changing MP in the turn causes
         // errorneous gravity PSRs
-        int cachedGravityLimit = IEntityMovementType.MOVE_JUMP == moveType?
-            entity.getOriginalJumpMP() : entity.getRunMP(false);
-
+        int cachedGravityLimit = -1;
+        
         // Compile the move
         md.compile(game, entity);
 
@@ -4082,6 +4081,9 @@ public class Server implements Runnable {
             distance = step.getDistance();
             mpUsed = step.getMpUsed();
 
+            if ( cachedGravityLimit < 0 )
+                cachedGravityLimit = IEntityMovementType.MOVE_JUMP == moveType ?
+                        entity.getOriginalJumpMP() : entity.getRunMP(false);
             // check for charge
             if (step.getType() == MovePath.STEP_CHARGE) {
                 if (entity.canCharge()) {
@@ -20113,6 +20115,8 @@ public class Server implements Runnable {
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(step));
                     }
                 } else if (step.getMovementType() == IEntityMovementType.MOVE_JUMP) {
+                    System.err.println("gravity move check jump: "+step.getMpUsed()+"/"+cachedMaxMPExpenditure);
+                    System.err.flush();
                     if (step.getMpUsed() > cachedMaxMPExpenditure) {
                         // We jumped too far, let's make PSR to see if we get damage
                         game.addExtremeGravityPSR(entity.checkMovedTooFast(step));

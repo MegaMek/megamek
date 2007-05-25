@@ -44,6 +44,7 @@ v0.33.6-dev (SVN)
 + Added Generic <Entity> to Entity.getKills(), was causing Warnings in MW --Torren
 + Fixed various ammo and weapon BVs per the table in TechManual
 + Bug: No PSR roll when Jumping in Low Gravity.
++ Bug 1725205: Damage applied to wrong facing on failed entry into buildin
 
 v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fixed Pouncer Prime name in MTF

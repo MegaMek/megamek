@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.6-dev (SVN)
+v0.33.6 (2007-05-26, 20:00 GMT +2)
 + added some javadoc documentation. This is a work in progress.
 + Made pilot BV fetchable as a static function in case someone wants to implement requrest #1636523
 + Fixed a null pointer exception.

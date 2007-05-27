@@ -275,6 +275,11 @@ public abstract class Entity extends TurnOrdered
     protected int lastTarget = Entity.NONE;
     
     /**
+     * the entity id of our current spot-target
+     */
+    private int spotTargetId = Entity.NONE;
+    
+    /**
      * Generates a new, blank, entity.
      */
     public Entity() {
@@ -3320,6 +3325,7 @@ public abstract class Entity extends TurnOrdered
         setDisplacementAttack(null);
         setFindingClub(false);
         setSpotting(false);
+        spotTargetId = Entity.NONE;
         setClearingMinefield(false);
         setUnjammingRAC(false);
         crew.setKoThisRound(false);
@@ -5876,5 +5882,13 @@ public abstract class Entity extends TurnOrdered
      */
     public boolean isFlying() {
         return false;
+    }
+    
+    public void setSpotTargetId(int targetId) {
+        spotTargetId = targetId;
+    }
+    
+    public int getSpotTargetId() {
+        return spotTargetId;
     }
 }

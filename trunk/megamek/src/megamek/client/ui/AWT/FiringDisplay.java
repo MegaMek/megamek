@@ -340,8 +340,6 @@ public class FiringDisplay
             setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
 
             setFindClubEnabled(FindClubAction.canMechFindClub(client.game, en));
-            setSpotEnabled(ce().canSpot()
-              && client.game.getOptions().booleanOption("indirect_fire")); //$NON-NLS-1$
             setFlipArmsEnabled(ce().canFlipArms());
             updateSearchlight();
         } else {
@@ -553,13 +551,6 @@ public class FiringDisplay
             }
             if ( !response.getAnswer() ) {
                 return;
-            }
-        }
-        // auto spot if we can and the option is set
-        if (client.game.getOptions().booleanOption("auto_spot") && //$NON-NLS-1$
-                client.game.getPhase() == IGame.PHASE_FIRING) {
-            if (!ce().isINarcedWith( INarcPod.HAYWIRE)) {
-                attacks.addElement(new SpotAction(cen));
             }
         }
 
@@ -781,7 +772,7 @@ public class FiringDisplay
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
-        attacks.addElement(new SpotAction(cen));
+        attacks.addElement(new SpotAction(cen, target.getTargetId()));
     }
 
     /**
@@ -873,6 +864,12 @@ public class FiringDisplay
         // make sure we're showing the current entity in the mech display
         if (ce() != null && !ce().equals(clientgui.mechD.getCurrentEntity())) {
             clientgui.mechD.displayEntity(ce());
+        }
+        
+        // allow spotting 
+        if (ce() != null && ce().canSpot() &&
+                client.game.getOptions().booleanOption("indirect_fire")) { //$NON-NLS-1$)
+            setSpotEnabled(true);                    
         }
         
         // update target panel

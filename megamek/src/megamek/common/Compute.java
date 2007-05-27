@@ -514,7 +514,7 @@ public class Compute {
 
         for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
             Entity other = (Entity) i.nextElement();
-            if ( (other.isSpotting() || taggedBy == other.getId() )
+            if ( ((other.isSpotting() && other.getSpotTargetId() == target.getTargetId()) || taggedBy == other.getId() )
                  && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
                 LosEffects los = LosEffects.calculateLos(game, other.getId(),

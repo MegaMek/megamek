@@ -6707,6 +6707,7 @@ public class Server implements Runnable {
                 entity.dodging = true;
             } else if (ea instanceof SpotAction) {
                 entity.setSpotting(true);
+                entity.setSpotTargetId(((SpotAction)ea).getTargetId());
             } else {
                 // add to the normal attack list.
                 game.addAction(ea);

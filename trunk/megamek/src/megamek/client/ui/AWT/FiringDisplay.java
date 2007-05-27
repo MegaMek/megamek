@@ -867,7 +867,7 @@ public class FiringDisplay
         }
         
         // allow spotting 
-        if (ce() != null && ce().canSpot() &&
+        if (ce() != null && ce().canSpot() && target != null &&
                 client.game.getOptions().booleanOption("indirect_fire")) { //$NON-NLS-1$)
             setSpotEnabled(true);                    
         }

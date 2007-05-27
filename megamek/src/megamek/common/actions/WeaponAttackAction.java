@@ -337,6 +337,11 @@ public class WeaponAttackAction extends AbstractAttackAction {
             ae.setElevation(-1);
         }
         
+        // if we're spotting for indirect fire, add +1
+        if (ae.isSpotting()) {
+            toHit.addModifier( +1, "attacker is spotting for indirect LRM fire");
+        }
+        
         // Leg attacks, Swarm attacks, and
         // Mine Launchers don't use gunnery.
         if ( Infantry.LEG_ATTACK.equals( wtype.getInternalName() ) ) {

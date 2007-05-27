@@ -17,7 +17,15 @@ package megamek.common.actions;
 public class SpotAction
     extends AbstractEntityAction
 {
-    public SpotAction(int entityId) {
+    
+    private int targetId;
+    
+    public SpotAction(int entityId, int targetId) {
         super(entityId);
+        this.targetId = targetId;
+    }
+
+    public int getTargetId() {
+        return targetId;
     }
 }

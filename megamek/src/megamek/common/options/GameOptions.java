@@ -171,6 +171,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(ruleBreakers,"extreme_temperature_survival", false); //$NON-NLS-1$
         addOption(ruleBreakers,"pilots_visual_range_one", false); //$NON-NLS-1$
         addOption(ruleBreakers,"pilots_cannot_spot", false); //$NON-NLS-1$
+        addOption(ruleBreakers,"no_force_size_mod", false); //$NON-NLS-1$
     }
 
     public Vector<IOption> loadOptions() {

@@ -344,6 +344,8 @@ public final class Player extends TurnOrdered
     }
     
     public float getForceSizeBVMod() {
+    	if (game.getOptions().booleanOption("no_force_size_mod"))
+    		return 1;
     	Enumeration entities = game.getEntities();
     	float ourUnitCount = 0;
     	while (entities.hasMoreElements()) {

@@ -2274,21 +2274,24 @@ public abstract class Mech
             // semiguided ammo might count double
             if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
                 Player tmpP = getOwner();
-                // Okay, actually check for friendly TAG.
-                if (tmpP.hasTAG())
-                    tagBV += atype.getBV(this);
-                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-                   for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-                        Team m = (Team)e.nextElement();
-                        if (m.getId() == tmpP.getTeam()) {
-                            if (m.hasTAG(game)) {
-                                tagBV += atype.getBV(this);
-                            }
-                            // A player can't be on two teams.
-                            // If we check his team and don't give the penalty, that's it.
-                            break;
-                        }
-                    }
+                
+                if ( tmpP != null ){
+	                // Okay, actually check for friendly TAG.
+	                if (tmpP.hasTAG())
+	                    tagBV += atype.getBV(this);
+	                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+	                   for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
+	                        Team m = (Team)e.nextElement();
+	                        if (m.getId() == tmpP.getTeam()) {
+	                            if (m.hasTAG(game)) {
+	                                tagBV += atype.getBV(this);
+	                            }
+	                            // A player can't be on two teams.
+	                            // If we check his team and don't give the penalty, that's it.
+	                            break;
+	                        }
+	                    }
+	                }
                 }
             }
             String key = atype.getAmmoType()+":"+atype.getRackSize();

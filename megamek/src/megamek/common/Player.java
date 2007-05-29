@@ -329,10 +329,10 @@ public final class Player extends TurnOrdered
         while ( survivors.hasMoreElements() ) {
             Entity entity = (Entity) survivors.nextElement();
             if ( entity.getOwner() == this &&
-                    !entity.isCarcass())
+                    !entity.isDestroyed())
                 bv += entity.calculateBattleValue();
         }
-        return bv;
+        return (int)(bv * this.getForceSizeBVMod());
     }
     
     public void setInitialBV() {
@@ -344,7 +344,14 @@ public final class Player extends TurnOrdered
     }
     
     public float getForceSizeBVMod() {
-        float ourUnitCount = game.getEntitiesOwnedBy(this);
+    	Enumeration entities = game.getEntities();
+    	float ourUnitCount = 0;
+    	while (entities.hasMoreElements()) {
+    		Entity entity = (Entity) entities.nextElement();
+    		if (entity.getOwner().equals(this) && !entity.isDestroyed()) {
+    			ourUnitCount++;
+    		}    			
+    	}
         float enemyUnitCount = 0;
         if (this.getTeam() == TEAM_NONE) {
             for (Enumeration e = game.getPlayers();e.hasMoreElements();) {

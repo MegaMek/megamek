@@ -5603,7 +5603,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLMagshotGRAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_3;
         ammo.name = "Magshot GR Ammo";
         ammo.setInternalName("CLMagshotGR Ammo");
         ammo.addLookupName("Clan Magshot GR Ammo");
@@ -5620,7 +5620,7 @@ public class AmmoType extends EquipmentType {
     private static AmmoType createCLAPGaussRifleAmmo() {
         AmmoType ammo = new AmmoType();
 
-        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
         ammo.name = "AP Gauss Rifle Ammo";
         ammo.setInternalName("CLAPGaussRifle Ammo");
         ammo.addLookupName("Clan AP Gauss Rifle Ammo");

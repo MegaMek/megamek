@@ -377,6 +377,8 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createISLightMG());
         EquipmentType.addType(createISHeavyMG());
         EquipmentType.addType(createISMGA());
+        EquipmentType.addType(createISLMGA());
+        EquipmentType.addType(createISHMGA());
         
         // Start of Clan Level2 weapons
         EquipmentType.addType(createCLERPPC());
@@ -400,7 +402,9 @@ public class WeaponType extends EquipmentType {
         EquipmentType.addType(createCLMG());
         EquipmentType.addType(createCLMGA());
         EquipmentType.addType(createCLLightMG());
+        EquipmentType.addType(createCLLMGA());
         EquipmentType.addType(createCLHeavyMG());
+        EquipmentType.addType(createCLHMGA());
         EquipmentType.addType(createCLLRM5());
         EquipmentType.addType(createCLLRM10());
         EquipmentType.addType(createCLLRM15());
@@ -1062,13 +1066,71 @@ public class WeaponType extends EquipmentType {
         weapon.name = "IS Machine Gun Array";
         weapon.setInternalName("ISMGA");
         weapon.heat = 0;
-        weapon.damage = DAMAGE_VARIABLE;
+        weapon.damage = 2;
         weapon.rackSize = 2;
         weapon.ammoType = AmmoType.T_MG;
         weapon.minimumRange = WEAPON_NA;
         weapon.shortRange = 1;
         weapon.mediumRange = 2;
         weapon.longRange = 3;
+        weapon.extremeRange = 4;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.bv = 0; //we'll have to calculate this in calculateBV(),
+                       //because it depends on the number of MGs linked to
+                       //the MGA
+        weapon.flags |= F_BALLISTIC | F_MGA | F_BURST_FIRE;
+        weapon.cost = 5000;
+        String[] modes = {"Linked","Off"};
+        weapon.setModes(modes);
+        weapon.instantModeSwitch = false;
+
+        return weapon;
+    }
+
+    private static WeaponType createISLMGA() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "IS Light Machine Gun Array";
+        weapon.setInternalName("ISLMGA");
+        weapon.heat = 0;
+        weapon.damage = 1;
+        weapon.rackSize = 1;
+        weapon.ammoType = AmmoType.T_MG_LIGHT;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 4;
+        weapon.tonnage = 0.5f;
+        weapon.criticals = 1;
+        weapon.bv = 0; //we'll have to calculate this in calculateBV(),
+                       //because it depends on the number of MGs linked to
+                       //the MGA
+        weapon.flags |= F_BALLISTIC | F_MGA | F_BURST_FIRE;
+        weapon.cost = 5000;
+        String[] modes = {"Linked","Off"};
+        weapon.setModes(modes);
+        weapon.instantModeSwitch = false;
+
+        return weapon;
+    }
+
+    private static WeaponType createISHMGA() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
+        weapon.name = "IS Heavy Machine Gun Array";
+        weapon.setInternalName("ISHMGA");
+        weapon.heat = 0;
+        weapon.damage = 3;
+        weapon.rackSize = 3;
+        weapon.ammoType = AmmoType.T_MG_HEAVY;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 2;
         weapon.extremeRange = 4;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
@@ -10722,7 +10784,7 @@ public class WeaponType extends EquipmentType {
         weapon.setInternalName("CLMGA");
         weapon.addLookupName("Clan Machine Gun Array");
         weapon.heat = 0;
-        weapon.damage = DAMAGE_VARIABLE;
+        weapon.damage = 2;
         weapon.rackSize = 2;
         weapon.ammoType = AmmoType.T_MG;
         weapon.minimumRange = WEAPON_NA;
@@ -10730,6 +10792,66 @@ public class WeaponType extends EquipmentType {
         weapon.mediumRange = 2;
         weapon.longRange = 3;
         weapon.extremeRange = 4;
+        weapon.tonnage = 0.25f;
+        weapon.criticals = 1;
+        weapon.bv = 0; //we'll have to calculate this in calculateBV(),
+                       //because it depends on the number of MGs linked to
+                       //the MGA
+        weapon.flags |= F_BALLISTIC | F_MGA | F_BURST_FIRE;
+        weapon.cost = 5000;
+        String[] modes = {"Linked","Off"};
+        weapon.setModes(modes);
+        weapon.instantModeSwitch = false;
+
+        return weapon;
+    }
+
+    private static WeaponType createCLLMGA() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Light Machine Gun Array";
+        weapon.setInternalName("CLLMGA");
+        weapon.addLookupName("Clan Light Machine Gun Array");
+        weapon.heat = 0;
+        weapon.damage = 1;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_MG_LIGHT;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 2;
+        weapon.mediumRange = 4;
+        weapon.longRange = 6;
+        weapon.extremeRange = 8;
+        weapon.tonnage = 0.25f;
+        weapon.criticals = 1;
+        weapon.bv = 0; //we'll have to calculate this in calculateBV(),
+                       //because it depends on the number of MGs linked to
+                       //the MGA
+        weapon.flags |= F_BALLISTIC | F_MGA | F_BURST_FIRE;
+        weapon.cost = 5000;
+        String[] modes = {"Linked","Off"};
+        weapon.setModes(modes);
+        weapon.instantModeSwitch = false;
+
+        return weapon;
+    }
+
+    private static WeaponType createCLHMGA() {
+        WeaponType weapon = new WeaponType();
+
+        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        weapon.name = "Heavy Machine Gun Array";
+        weapon.setInternalName("CLHMGA");
+        weapon.addLookupName("Clan Heavy Machine Gun Array");
+        weapon.heat = 0;
+        weapon.damage = 3;
+        weapon.rackSize = 2;
+        weapon.ammoType = AmmoType.T_MG_HEAVY;
+        weapon.minimumRange = WEAPON_NA;
+        weapon.shortRange = 1;
+        weapon.mediumRange = 2;
+        weapon.longRange = 2;
+        weapon.extremeRange = 2;
         weapon.tonnage = 0.25f;
         weapon.criticals = 1;
         weapon.bv = 0; //we'll have to calculate this in calculateBV(),

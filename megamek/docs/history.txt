@@ -9,6 +9,7 @@ v0.33.7-dev (SVN)
 + Bug 1727244: Lobby Battle Value != In-Game Battle Value
 + RFE 1726259: Option disable force size BV multiplier
 + Cleaned up batchall.de.zip: removed no longer needed units
++ MG arrays now work, LCT-5T mechfile updated
 
 v0.33.6 (2007-05-26, 20:00 GMT +2)
 + added some javadoc documentation. This is a work in progress.

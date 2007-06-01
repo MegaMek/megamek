@@ -9447,6 +9447,7 @@ public class Server implements Runnable {
             addReport(r);
         }
 
+        HitData hit = null;
         // for each cluster of hits, do a chunk of damage
         while (hits > 0) {
             int nDamage;
@@ -9626,11 +9627,14 @@ public class Server implements Runnable {
                 entityTarget.heatFromExternal += nDamage;
                 hits = 0;
             } else if (entityTarget != null) {
-                 HitData hit = entityTarget.rollHitLocation
+                if(!wtype.hasFlag(WeaponType.F_MGA)
+                        || hit == null) { 
+                 hit = entityTarget.rollHitLocation
                      ( toHit.getHitTable(),
                        toHit.getSideTable(),
                        wr.waa.getAimedLocation(),
                        wr.waa.getAimingMode() );
+                }
 
                 if (wtype.hasFlag(WeaponType.F_PLASMA_MFUK)
                         && entityTarget instanceof Mech) {

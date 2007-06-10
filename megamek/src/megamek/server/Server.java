@@ -142,8 +142,10 @@ import megamek.server.commands.SaveGameCommand;
 import megamek.server.commands.SeeAllCommand;
 import megamek.server.commands.ServerCommand;
 import megamek.server.commands.SkipCommand;
+import megamek.server.commands.TeamCommand;
 import megamek.server.commands.VictoryCommand;
 import megamek.server.commands.WhoCommand;
+
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -311,6 +313,7 @@ public class Server implements Runnable {
         registerCommand(new SkipCommand(this));
         registerCommand(new VictoryCommand(this));
         registerCommand(new WhoCommand(this));
+        registerCommand(new TeamCommand(this));
 
         //register terrain processors
         terrainProcessors.add(new FireProcessor(this));

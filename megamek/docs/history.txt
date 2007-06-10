@@ -10,6 +10,7 @@ v0.33.7-dev (SVN)
 + RFE 1726259: Option disable force size BV multiplier
 + Cleaned up batchall.de.zip: removed no longer needed units
 + MG arrays now work, LCT-5T mechfile updated
++ Added TeamCommand allowing players on the same team to speak to each other in game
 
 v0.33.6 (2007-05-26, 20:00 GMT +2)
 + added some javadoc documentation. This is a work in progress.

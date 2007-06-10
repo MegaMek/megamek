@@ -2309,6 +2309,9 @@ public class Compute {
             if ( ae instanceof MechWarrior &&  game.getOptions().booleanOption("pilots_visual_range_one") )
                 visualRange = 1;
             
+            if ( ae.hasBAP() )
+                visualRange = Math.max(ae.getBAPRange(), visualRange );
+            
             if (ae.getPosition() != null &&
                 target.getPosition() != null &&
                 ae.getPosition().distance(target.getPosition())

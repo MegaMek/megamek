@@ -18399,7 +18399,7 @@ public class Server implements Runnable {
     /**
      * Transmits a chat message to all players
      */
-    private void sendChat(int connId, String origin, String message) {
+    public void sendChat(int connId, String origin, String message) {
         send(connId, new Packet(Packet.COMMAND_CHAT, origin + ": " + message));
     }
 

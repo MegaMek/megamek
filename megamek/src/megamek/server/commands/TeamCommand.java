@@ -34,7 +34,7 @@ public class TeamCommand extends ServerCommand {
 
     /** Creates new WhoCommand */
     public TeamCommand(Server server) {
-        super(server, "team", "Allows players on the same team to chat with eachother in the game.");
+        super(server, "t", "Allows players on the same team to chat with each other in the game.");
     }
     
     public void run(int connId, String[] args) {
@@ -45,12 +45,12 @@ public class TeamCommand extends ServerCommand {
 
             if ( team < 1 || team > 8) {
                 server.sendServerChat(connId, "You are not on a team!");
+                return;
             }
                 
-            StringBuilder message = new StringBuilder("Team Chat[");
+            StringBuilder message = new StringBuilder();
 
-            message.append(server.getPlayer(connId).getName());
-            message.append("]");
+            String origin = "Team Chat["+server.getPlayer(connId).getName()+"]";
             
             for ( int pos = 1; pos < args.length;pos++) {
                 message.append(" ");
@@ -61,7 +61,7 @@ public class TeamCommand extends ServerCommand {
                 Connection conn = (Connection)i.nextElement();
                 
                 if ( server.getPlayer(conn.getId()).getTeam() == team )
-                    server.sendServerChat(conn.getId(), message.toString());
+                    server.sendChat(conn.getId(),origin, message.toString());
             }
         }
     }    

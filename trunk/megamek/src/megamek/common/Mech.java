@@ -2208,7 +2208,7 @@ public abstract class Mech
                     weaponsBVFront += dBV;
                 }
                 heatAdded += ((WeaponType)weapon.getType()).getHeat();
-            }         
+            }
         }
         if (weaponsBVFront > weaponsBVRear) {
             weaponBV += weaponsBVFront;

@@ -14,6 +14,7 @@ v0.33.7-dev (SVN)
 + Bug: Visibility limiting BAP range.
 + changed TeamCommand command from /team to /t make it easier to type. 
 + Made Server.sendChat method public so TeamCommand could access it.
++ Started adding code for PPC Capacitors.
 
 v0.33.6 (2007-05-26, 20:00 GMT +2)
 + added some javadoc documentation. This is a work in progress.

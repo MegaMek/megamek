@@ -14,7 +14,9 @@
  */
 package megamek.common;
 
-import java.io.File;
+//TODO add XML support back in.
+
+/*import java.io.File;
 import java.text.NumberFormat;
 import java.util.Enumeration;
 
@@ -25,7 +27,7 @@ import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 
 import org.w3c.dom.*;
-
+*/
 /**
  * A type of mech or vehicle weapon.  There is only one instance of this
  * weapon for all weapons of this type.
@@ -618,7 +620,7 @@ public class WeaponType extends EquipmentType {
 
     /**
      * FIXME: Document this.
-     */
+     
     private static void writeWeaponsToXML(Enumeration enm, String filePath) {
         try {
             NumberFormat nf = NumberFormat.getInstance();
@@ -791,11 +793,11 @@ public class WeaponType extends EquipmentType {
             //FIXME
             e.printStackTrace();
         }
-    }
+    }*/
 
     /**
      * FIXME: Document this.
-     */
+     
     private static void initializeTypesFromXML(String filename) {
         try {
             //FIXME: Load XML file based on name.
@@ -809,7 +811,7 @@ public class WeaponType extends EquipmentType {
         } catch (Exception e) {
             //FIXME
         }
-    }
+    }*/
 
     private static WeaponType createFlamer() {
         WeaponType weapon = new WeaponType();

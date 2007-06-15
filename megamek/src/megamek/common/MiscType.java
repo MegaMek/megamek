@@ -28,42 +28,43 @@ package megamek.common;
  */
 public class MiscType extends EquipmentType {
     // equipment flags (okay, like every type of equipment has its own flag)
-    public static final long     F_HEAT_SINK         = 0x000000001L;
-    public static final long     F_DOUBLE_HEAT_SINK  = 0x000000002L;
-    public static final long     F_JUMP_JET          = 0x000000004L;
-    public static final long     F_CASE              = 0x000000008L;
-    public static final long     F_MASC              = 0x000000010L;
-    public static final long     F_TSM               = 0x000000020L;
-    public static final long     F_LASER_HEAT_SINK   = 0x000000040L;
-    public static final long     F_C3S               = 0x000000080L;
-    public static final long     F_C3I               = 0x000000100L;
-    public static final long     F_ARTEMIS           = 0x000000200L;
-    public static final long     F_ECM               = 0x000000400L;
-    public static final long     F_TARGCOMP          = 0x000000800L;
-    public static final long     F_ANGEL_ECM         = 0x000001000L;
-    public static final long     F_BAP               = 0x000002000L;
-    public static final long     F_BOARDING_CLAW     = 0x000004000L;
-    public static final long     F_VACUUM_PROTECTION = 0x000008000L;
-    public static final long     F_ASSAULT_CLAW      = 0x000010000L;
-    public static final long     F_FIRE_RESISTANT    = 0x000020000L;
-    public static final long     F_STEALTH           = 0x000040000L;
-    public static final long     F_MINE              = 0x000080000L;
-    public static final long     F_TOOLS             = 0x000100000L;
-    public static final long     F_MAGNETIC_CLAMP    = 0x000200000L;
-    public static final long     F_PARAFOIL          = 0x000400000L;
-    public static final long     F_FERRO_FIBROUS     = 0x000800000L;
-    public static final long     F_ENDO_STEEL        = 0x001000000L;
-    public static final long     F_AP_POD            = 0x002000000L;
-    public static final long     F_SEARCHLIGHT       = 0x004000000L;
-    public static final long     F_CLUB              = 0x008000000L;
-    public static final long     F_HAND_WEAPON       = 0x010000000L;
-    public static final long     F_COWL              = 0x020000000L;
-    public static final long     F_JUMP_BOOSTER      = 0x040000000L;
-    public static final long     F_HARJEL            = 0x080000000L;
-    public static final long     F_UMU               = 0x100000000L;
-    public static final long     F_COOLANT_SYSTEM    = 0x200000000L;
-    public static final long     F_SPIKES            = 0x400000000L;
-    public static final long     F_B_POD            = 0x800000000L;
+    public static final long     F_HEAT_SINK         = 0x0000000001L;
+    public static final long     F_DOUBLE_HEAT_SINK  = 0x0000000002L;
+    public static final long     F_JUMP_JET          = 0x0000000004L;
+    public static final long     F_CASE              = 0x0000000008L;
+    public static final long     F_MASC              = 0x0000000010L;
+    public static final long     F_TSM               = 0x0000000020L;
+    public static final long     F_LASER_HEAT_SINK   = 0x0000000040L;
+    public static final long     F_C3S               = 0x0000000080L;
+    public static final long     F_C3I               = 0x0000000100L;
+    public static final long     F_ARTEMIS           = 0x0000000200L;
+    public static final long     F_ECM               = 0x0000000400L;
+    public static final long     F_TARGCOMP          = 0x0000000800L;
+    public static final long     F_ANGEL_ECM         = 0x0000001000L;
+    public static final long     F_BAP               = 0x0000002000L;
+    public static final long     F_BOARDING_CLAW     = 0x0000004000L;
+    public static final long     F_VACUUM_PROTECTION = 0x0000008000L;
+    public static final long     F_ASSAULT_CLAW      = 0x0000010000L;
+    public static final long     F_FIRE_RESISTANT    = 0x0000020000L;
+    public static final long     F_STEALTH           = 0x0000040000L;
+    public static final long     F_MINE              = 0x0000080000L;
+    public static final long     F_TOOLS             = 0x0000100000L;
+    public static final long     F_MAGNETIC_CLAMP    = 0x0000200000L;
+    public static final long     F_PARAFOIL          = 0x0000400000L;
+    public static final long     F_FERRO_FIBROUS     = 0x0000800000L;
+    public static final long     F_ENDO_STEEL        = 0x0001000000L;
+    public static final long     F_AP_POD            = 0x0002000000L;
+    public static final long     F_SEARCHLIGHT       = 0x0004000000L;
+    public static final long     F_CLUB              = 0x0008000000L;
+    public static final long     F_HAND_WEAPON       = 0x0010000000L;
+    public static final long     F_COWL              = 0x0020000000L;
+    public static final long     F_JUMP_BOOSTER      = 0x0040000000L;
+    public static final long     F_HARJEL            = 0x0080000000L;
+    public static final long     F_UMU               = 0x0100000000L;
+    public static final long     F_COOLANT_SYSTEM    = 0x0200000000L;
+    public static final long     F_SPIKES            = 0x0400000000L;
+    public static final long     F_B_POD             = 0x0800000000L;
+    public static final long     F_PPC_CAPACITOR     = 0x1000000000L;
 
     // Secondary Flags for Physical Weapons
     public static final int     S_CLUB              = 0x00000001; // BMR
@@ -416,6 +417,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISBPod());
         EquipmentType.addType(createCLAPPod());
         EquipmentType.addType(createSword());
+        EquipmentType.addType(createISPPCCapacitor());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
@@ -2430,6 +2432,23 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createISPPCCapacitor() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.name = "PPC Capacitor";
+        misc.setInternalName("ISPPCCapacitor");
+        misc.tonnage = 1.0f;
+        misc.criticals = 1;
+        misc.cost = 150000;
+        misc.setModes(new String[] {"Off", "Charge"});
+        misc.flags |= F_PPC_CAPACITOR;
+        misc.setInstantModeSwitch(false);
+        
+        return misc;
+    }
+
+
     public static String getTargetSysName(int targSysType) {
         if ((targSysType < 0) || (targSysType >= targSysNames.length))
             return null;
@@ -2443,4 +2462,5 @@ public class MiscType extends EquipmentType {
         }
         return -1;
     }
+    
 }

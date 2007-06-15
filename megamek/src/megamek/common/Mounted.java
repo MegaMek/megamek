@@ -480,6 +480,18 @@ public class Mounted implements Serializable, RoundUpdated {
     }
     
 
+    public boolean hasChargedCapacitor(){
+    	if ( getLinkedBy() != null 
+    			&& getLinkedBy().getType() instanceof MiscType){
+    		MiscType cap = (MiscType)getLinkedBy().getType();
+    		
+    		if ( cap.hasFlag(MiscType.F_PPC_CAPACITOR) 
+    				&& getLinkedBy().curMode().equals("Charge") )
+    			return true;
+    	}
+    	return false;
+    }
+    
     public int getLocation() {
         return location;
     }
@@ -598,6 +610,18 @@ public class Mounted implements Serializable, RoundUpdated {
                     damagePerShot++;
                 
                 int damage = wtype.getRackSize() * damagePerShot;
+                return damage;
+            }else if ( wtype.hasFlag(WeaponType.F_PPC) 
+            		&& this.getLinkedBy() != null 
+            		&& this.getLinkedBy().getType() instanceof MiscType
+            		&& ((MiscType)this.getLinkedBy().getType()).hasFlag(MiscType.F_PPC_CAPACITOR)
+            		&& this.curMode().equals("Charge") ){
+                int damage = wtype.getRackSize();
+                if( damage ==WeaponType.DAMAGE_VARIABLE)
+                	damage = 15;
+                else
+                	damage += 5;
+                
                 return damage;
             }
         }

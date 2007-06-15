@@ -218,7 +218,36 @@ public class MechFileParser {
                     throw new EntityLoadingException("Unable to find an ECM Suite.  Mechs with Stealth Armor must also be equipped with an ECM Suite.");
                 }
             } // End link-Stealth
-            
+             // Link PPC Capacitor to PPC it its location.
+            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && m.getLinked() == null) {
+
+                    // link up to a weapon in the same location
+                    for (Mounted mWeapon : ent.getWeaponList()) {
+                        WeaponType wtype = (WeaponType)mWeapon.getType();
+
+                        // Only PPCS are Valid
+                        if (!wtype.hasFlag(WeaponType.F_PPC)) {
+                            continue;
+                        }
+
+                        // already linked?
+                        if (mWeapon.getLinkedBy() != null) {
+                            continue;
+                        }
+
+                        // check location
+                        if (mWeapon.getLocation() == m.getLocation()) {
+                            m.setLinked(mWeapon);
+                            break;
+                        }
+                    }
+
+                    if (m.getLinked() == null) {
+                        // huh.  this shouldn't happen
+                        throw new EntityLoadingException("Unable to match Capacitor to PPC");
+                    }
+                } // End link-PPC Capacitor
+
             if(ent instanceof Mech && m.getType().hasFlag(MiscType.F_CASE)) {
                 ((Mech)ent).setAutoEject(false);
             }

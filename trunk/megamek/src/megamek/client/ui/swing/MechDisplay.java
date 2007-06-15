@@ -1402,6 +1402,16 @@ public class MechDisplay extends JPanel {
                             return;
                         }
 
+                        //Can only charge a capacitor if the weapon has not been fired.
+                        if ( m.getType() instanceof MiscType 
+                        		&& m.getLinked() != null
+                        		&& ((MiscType)m.getType()).hasFlag(MiscType.F_PPC_CAPACITOR)
+                        		&& m.getLinked().isUsedThisRound()
+                        		&& nMode == 1){
+                            clientgui.systemMessage(Messages.getString("MechDisplay.CapacitorCharging", null));//$NON-NLS-1$
+                            return;
+                        }
+
                         m.setMode(nMode);
                         // send the event to the server
                         clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);

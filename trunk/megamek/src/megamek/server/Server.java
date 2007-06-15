@@ -7683,6 +7683,8 @@ public class Server implements Runnable {
         boolean bGlancing = false; // For Glancing Hits Rule
         int swarmMissilesNowLeft = 0;
         int hits = 1, glancingMissileMod = 0;
+        boolean usingCapacitors = weapon.hasChargedCapacitor();
+
         if (!bInferno) {
         // also check for inferno infantry
         bInferno = isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO);
@@ -8000,6 +8002,37 @@ public class Server implements Runnable {
             }
         }
 
+        if (usingCapacitors ){
+
+            // On a 2 while using a Capacitor the PPC takes a crit and dies.
+        	if ( wr.roll == 2){
+	            r = new Report(3178);
+	            r.subject = ae.getId();
+	            r.indent();
+	            addReport(r);
+	            // Oops, we ruined our day...
+	            int wlocation = weapon.getLocation();
+	            weapon.setDestroyed (true);
+	            for (int i=0; i<ae.getNumberOfCriticals(wlocation); i++) {
+	                CriticalSlot slot1 = ae.getCritical (wlocation, i);
+	                if (slot1 == null || slot1.getType() != CriticalSlot.TYPE_SYSTEM) {
+	                    continue;
+	                }
+	                //Only one Crit needs to be damaged.
+	                Mounted mounted = ae.getEquipment(slot1.getIndex());
+	                if (mounted.equals(weapon)) {
+	                    slot1.setDestroyed(true);
+	                    break;
+	                }
+	            }
+        	}
+            //Ok checked for weapons fire we have a Capacitor
+            //Lets do all that fun stuff
+	        //Add heat and set the capacitor back to off.
+            weapon.getLinkedBy().setMode(0);
+            ae.heatBuildup += 5;
+        }
+        
         // do we hit?
         boolean bMissed = wr.roll < toHit.getValue();
       
@@ -9053,7 +9086,8 @@ public class Server implements Runnable {
             if(nDamPerHit==WeaponType.DAMAGE_VARIABLE) {
                 nDamPerHit = wtype.getRackSize();
                 if(wtype.hasFlag(WeaponType.F_PPC)) {
-                    //snub nose variable damage
+                	if ( usingCapacitors )
+                		nDamPerHit += 5;
                     if(nRange > wtype.getMediumRange()) {
                         nDamPerHit /= 2;
                     }
@@ -9061,7 +9095,9 @@ public class Server implements Runnable {
                         nDamPerHit = ((nDamPerHit * 3) + 3)/4;
                     }
                 }
-            }
+            }else if ( usingCapacitors )
+            	nDamPerHit += 5;
+            
             if (game.getOptions().booleanOption("maxtech_altdmg")) {
                 if (nRange<=1) {
                     nDamPerHit++;
@@ -12526,6 +12562,21 @@ public class Server implements Runnable {
                 }
             }
 
+        	int capHeat = 0;
+            for (Mounted m : entity.getEquipment()) {
+            	if ( m.hasChargedCapacitor() 
+            			&& !m.isUsedThisRound() ){
+            			capHeat += 5;
+            	}
+            }
+        	if( capHeat > 0){
+                r = new Report(5019);
+                r.subject = entity.getId();
+                r.add(capHeat);
+                addReport(r);
+                entity.heatBuildup += capHeat;
+        	}
+            
             //Add heat from external sources to the heat buildup
             entity.heatBuildup += Math.min(15, entity.heatFromExternal);
             entity.heatFromExternal = 0;
@@ -15720,7 +15771,7 @@ public class Server implements Runnable {
             // Handle equipment explosions.
             // Equipment explosions are secondary effects and
             // do not occur when loading from a scenario.
-            if ( (secondaryEffects && eqType.isExplosive() || mounted.isHotLoaded()) && !hitBefore ) {
+            if ( (secondaryEffects && eqType.isExplosive() || mounted.isHotLoaded() || mounted.hasChargedCapacitor()) && !hitBefore ) {
                 vDesc.addAll(explodeEquipment(en, loc, mounted));
             }
 
@@ -17862,7 +17913,18 @@ public class Server implements Runnable {
             m.setPendingDump(mode == -1);
         }
         else {
-            m.setMode(mode);
+        	
+        	System.err.println("Mode Change: "+m.getDesc()+" "+m.getLinked().isUsedThisRound()+" Current Phase: "+this.game.getPhase());
+        	System.err.flush();
+        	if ( m.getType() instanceof MiscType 
+     		&& m.getLinked() != null
+     		&& ((MiscType)m.getType()).hasFlag(MiscType.F_PPC_CAPACITOR)
+     		&& m.getLinked().isUsedThisRound()
+     		&& mode == 1 ){
+        		m.setMode(0);
+        	}
+        	else
+        		m.setMode(mode);
         }
     }
 

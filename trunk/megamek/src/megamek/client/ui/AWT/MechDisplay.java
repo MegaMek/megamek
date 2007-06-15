@@ -54,6 +54,7 @@ import megamek.common.Mounted;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
+import megamek.common.Report;
 import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
@@ -815,6 +816,15 @@ public class MechDisplay extends BufferedPanel {
                 currentHeatBuildup += 10; // active stealth heat
             }
 
+            for (Mounted m : entity.getEquipment()) {
+            	int capHeat = 0;
+            	if ( m.hasChargedCapacitor())
+            			capHeat += 5;
+            	if( capHeat > 0){
+            		currentHeatBuildup += capHeat;
+            	}
+            }
+
             // update weapon list
             weaponList.removeAll();
             m_chAmmo.removeAll();
@@ -955,7 +965,10 @@ public class MechDisplay extends BufferedPanel {
             WeaponType wtype = (WeaponType) mounted.getType();
             // update weapon display
             wNameR.setText(mounted.getDesc());
-            wHeatR.setText(wtype.getHeat() + ""); //$NON-NLS-1$
+            if ( mounted.hasChargedCapacitor() )
+            	wHeatR.setText((wtype.getHeat()+5) + ""); //$NON-NLS-1$
+            else
+            	wHeatR.setText(wtype.getHeat() + ""); //$NON-NLS-1$
             if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
                 wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
             } else if (wtype.getDamage() == WeaponType.DAMAGE_VARIABLE) {
@@ -969,7 +982,11 @@ public class MechDisplay extends BufferedPanel {
                         .append(Integer.toString(wtype.getRackSize() / 2));
                 wDamR.setText(damage.toString());
             } else {
-                wDamR.setText(Integer.toString(wtype.getDamage()));
+            	if ( mounted.hasChargedCapacitor()){
+            		wDamR.setText(Integer.toString(wtype.getDamage()+5));
+            	}
+            	else
+            		wDamR.setText(Integer.toString(wtype.getDamage()));
             }
 
             // update range
@@ -1482,6 +1499,15 @@ public class MechDisplay extends BufferedPanel {
                             return;
                         }
 
+                        //Can only charge a capacitor if the weapon has not been fired.
+                        if ( m.getType() instanceof MiscType 
+                        		&& m.getLinked() != null
+                        		&& ((MiscType)m.getType()).hasFlag(MiscType.F_PPC_CAPACITOR)
+                        		&& m.getLinked().isUsedThisRound()
+                        		&& nMode == 1){
+                            clientgui.systemMessage(Messages.getString("MechDisplay.CapacitorCharging", null));//$NON-NLS-1$
+                            return;
+                        }
                         m.setMode(nMode);
                         // send the event to the server
                         clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);

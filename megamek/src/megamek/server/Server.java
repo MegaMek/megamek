@@ -8029,8 +8029,12 @@ public class Server implements Runnable {
             //Ok checked for weapons fire we have a Capacitor
             //Lets do all that fun stuff
 	        //Add heat and set the capacitor back to off.
-            weapon.getLinkedBy().setMode(0);
+            weapon.getLinkedBy().setMode("Off");
             ae.heatBuildup += 5;
+        }//We fired a PPC with a capacitor lets make sure the capacitor stays off
+        else if ( wtype.hasFlag(WeaponType.F_PPC) 
+                && weapon.getLinkedBy() != null ) {
+            weapon.getLinkedBy().setMode("Off");
         }
         
         // do we hit?
@@ -17912,20 +17916,8 @@ public class Server implements Runnable {
             && !m.getType().hasInstantModeSwitch() && mode <= 0) {
             m.setPendingDump(mode == -1);
         }
-        else {
-        	
-        	System.err.println("Mode Change: "+m.getDesc()+" "+m.getLinked().isUsedThisRound()+" Current Phase: "+this.game.getPhase());
-        	System.err.flush();
-        	if ( m.getType() instanceof MiscType 
-     		&& m.getLinked() != null
-     		&& ((MiscType)m.getType()).hasFlag(MiscType.F_PPC_CAPACITOR)
-     		&& m.getLinked().isUsedThisRound()
-     		&& mode == 1 ){
-        		m.setMode(0);
-        	}
-        	else
-        		m.setMode(mode);
-        }
+        else 
+            m.setMode(mode);
     }
 
     private void receiveEntitySystemModeChange(Packet c, int connIndex) {

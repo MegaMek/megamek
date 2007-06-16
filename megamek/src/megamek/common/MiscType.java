@@ -2444,6 +2444,7 @@ public class MiscType extends EquipmentType {
         misc.setModes(new String[] {"Off", "Charge"});
         misc.flags |= F_PPC_CAPACITOR;
         misc.setInstantModeSwitch(false);
+        misc.explosive = true;
         
         return misc;
     }

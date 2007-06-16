@@ -12569,7 +12569,7 @@ public class Server implements Runnable {
         	int capHeat = 0;
             for (Mounted m : entity.getEquipment()) {
             	if ( m.hasChargedCapacitor() 
-            			&& !m.isUsedThisRound() ){
+            			&& !m.isUsedThisRound()){
             			capHeat += 5;
             	}
             }

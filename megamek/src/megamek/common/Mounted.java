@@ -482,7 +482,8 @@ public class Mounted implements Serializable, RoundUpdated {
 
     public boolean hasChargedCapacitor(){
     	if ( getLinkedBy() != null 
-    			&& getLinkedBy().getType() instanceof MiscType){
+    			&& getLinkedBy().getType() instanceof MiscType
+                && !getLinkedBy().isDestroyed()){
     		MiscType cap = (MiscType)getLinkedBy().getType();
     		
     		if ( cap.hasFlag(MiscType.F_PPC_CAPACITOR) 
@@ -612,18 +613,21 @@ public class Mounted implements Serializable, RoundUpdated {
                 int damage = wtype.getRackSize() * damagePerShot;
                 return damage;
             }else if ( wtype.hasFlag(WeaponType.F_PPC) 
-            		&& this.getLinkedBy() != null 
-            		&& this.getLinkedBy().getType() instanceof MiscType
-            		&& ((MiscType)this.getLinkedBy().getType()).hasFlag(MiscType.F_PPC_CAPACITOR)
-            		&& this.curMode().equals("Charge") ){
-                int damage = wtype.getRackSize();
-                if( damage ==WeaponType.DAMAGE_VARIABLE)
-                	damage = 15;
-                else
-                	damage += 5;
+            		&& hasChargedCapacitor()){
                 
-                return damage;
+                if ( isFired() )
+                    return 0;
+                return 15;
             }
+        }else if (type instanceof MiscType) {
+            MiscType mtype = (MiscType)type;
+            if ( mtype.hasFlag(MiscType.F_PPC_CAPACITOR) ) {
+                if ( curMode().equals("Charge") 
+                        && linked != null 
+                        && !linked.isFired() )
+                    return 15;
+            }
+            return 0;
         }
         // um, otherwise, I'm not sure
         System.err.println("mounted: unable to determine explosion damage for "

@@ -527,7 +527,19 @@ public abstract class TestEntity implements TestEntityOption {
 				EquipmentType.T_STRUCTURE_ENDO_PROTOTYPE).equals(
 				mt.getInternalName())) {
 			return 16;
-		}
+		}else if (EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_REACTIVE).equals(
+                        mt.getInternalName())) {
+            if (isClanArmor())
+                return 7;
+            return 14;
+        }else if (EquipmentType.getArmorTypeName(
+                EquipmentType.T_ARMOR_REFLECTIVE).equals(
+                        mt.getInternalName())) {
+            if (isClanArmor())
+                return 5;
+            return 10;
+        }  
 		return mt.getCriticals(getEntity());
 	}
 

@@ -65,6 +65,8 @@ public class MiscType extends EquipmentType {
     public static final long     F_SPIKES            = 0x0400000000L;
     public static final long     F_B_POD             = 0x0800000000L;
     public static final long     F_PPC_CAPACITOR     = 0x1000000000L;
+    public static final long     F_REFLECTIVE        = 0x2000000000L;
+    public static final long     F_REACTIVE          = 0x4000000000L;
 
     // Secondary Flags for Physical Weapons
     public static final int     S_CLUB              = 0x00000001; // BMR
@@ -479,6 +481,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCoolantSystem());
         EquipmentType.addType(createHeavyArmor());
         EquipmentType.addType(createSpikes());
+        EquipmentType.addType(createReactive());
+        EquipmentType.addType(createReflective());
         
         // Start BattleArmor equipment
         EquipmentType.addType(createBABoardingClaw());
@@ -2449,6 +2453,40 @@ public class MiscType extends EquipmentType {
         return misc;
     }
 
+    public static MiscType createReflective() {
+        MiscType misc = new MiscType();
+        
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REFLECTIVE));
+        misc.addLookupName("Reflective Armor");
+        misc.addLookupName("Reflective");
+        misc.tonnage = 0;
+        misc.criticals = 1;
+        misc.hittable = false;
+        misc.spreadable = true;
+        misc.flags |= F_REFLECTIVE;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    
+    public static MiscType createReactive() {
+        MiscType misc = new MiscType();
+        
+        misc.name = EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE);
+        misc.setInternalName(EquipmentType.getArmorTypeName(EquipmentType.T_ARMOR_REACTIVE));
+        misc.addLookupName("Reactive Armor");
+        misc.addLookupName("Reactive");
+        misc.tonnage = 0;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.spreadable = true;
+        misc.flags |= F_REACTIVE;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    
 
     public static String getTargetSysName(int targSysType) {
         if ((targSysType < 0) || (targSysType >= targSysNames.length))

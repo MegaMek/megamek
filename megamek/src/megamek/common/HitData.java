@@ -27,6 +27,12 @@ public class HitData
     public static final int EFFECT_GUN_EMPLACEMENT_CREW =    0x0010;
     public static final int EFFECT_NO_CRITICALS =            0x0020;
     
+    public static final int DAMAGE_NONE = -1;
+    public static final int DAMAGE_PHYSICAL = -2;
+    public static final int DAMAGE_ENERGY = -3;
+    public static final int DAMAGE_MISSLE = -4;
+    public static final int DAMAGE_BALLISTIC = -5;
+    
     private int location;
     private boolean rear;
     private int effect;
@@ -39,6 +45,7 @@ public class HitData
     // in case of usage of Edge it is document what the previous location was
     private HitData undoneLocation = null;
     private boolean fallDamage = false; //did the damage come from a fall?
+    private int damageType = HitData.DAMAGE_NONE;
     
     
     public HitData(int location) {
@@ -59,17 +66,29 @@ public class HitData
     
     public HitData(int location, boolean rear, int effect, boolean hitAimedLocation, int specCrit) 
     {
-        this(location, rear, effect, hitAimedLocation, specCrit, true);
+        this(location, rear, effect, hitAimedLocation, specCrit, true, HitData.DAMAGE_NONE);
         
     }
     
-    public HitData (int location, boolean rear, int effect, boolean hitAimedLocation, int specCrit, boolean fromWhere) {
+    public HitData (int location, boolean rear, int effect, boolean hitAimedLocation, int specCrit, boolean fromWhere, int damageType) {
         this.location = location;
         this.rear = rear;
         this.effect = effect;
         this.hitAimedLocation = hitAimedLocation;
         this.specCritMod = specCrit;
         this.fromFront = fromWhere;
+        this.damageType = damageType;
+        
+    }
+    
+    public HitData (int location, boolean rear, int effect, boolean hitAimedLocation, int specCrit, boolean fromWhere, long damageType) {
+        this.location = location;
+        this.rear = rear;
+        this.effect = effect;
+        this.hitAimedLocation = hitAimedLocation;
+        this.specCritMod = specCrit;
+        this.fromFront = fromWhere;
+        this.setDamageType(damageType);
     }
     
     public void setFromFront (boolean dir) {
@@ -146,10 +165,33 @@ public class HitData
     
     public void makeFallDamage(boolean fall){
         this.fallDamage = fall;
+        this.damageType = HitData.DAMAGE_PHYSICAL;
     }
     
     public boolean isFallDamage(){
         return fallDamage;
     }
     
+    public boolean hasDamageTypeFlag(long damage, long flag) {
+        return (damage & flag) != 0;
+    }
+
+    public int getDamageType() {
+        return damageType;
+    }
+    
+    public void setDamageType(long damageType) {
+        if ( hasDamageTypeFlag(damageType, WeaponType.F_ENERGY) )
+            this.damageType = HitData.DAMAGE_ENERGY;
+        else if ( hasDamageTypeFlag(damageType,WeaponType.F_BALLISTIC) )
+            this.damageType = HitData.DAMAGE_BALLISTIC;
+        else if ( hasDamageTypeFlag(damageType,WeaponType.F_MISSILE) )
+            this.damageType = HitData.DAMAGE_MISSLE;
+        else
+            this.damageType = HitData.DAMAGE_NONE;
+    }
+    
+    public void setDamageType(int type) {
+        this.damageType = type;
+    }
 }

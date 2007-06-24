@@ -3484,4 +3484,16 @@ public abstract class Mech
             game.addPSR(new PilotingRollData(getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }
     }
+    
+    public boolean hasCASEII(int location) {
+        
+        for ( Mounted mount : this.getEquipment() ) {
+            if ( mount.getLocation() == location
+                    && mount.getType() instanceof MiscType 
+                    && ((MiscType)mount.getType()).hasFlag(MiscType.F_CASEII) )
+                return true;
+        }
+        
+        return false;
+    }
 }

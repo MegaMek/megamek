@@ -67,6 +67,7 @@ public class MiscType extends EquipmentType {
     public static final long     F_PPC_CAPACITOR     = 0x1000000000L;
     public static final long     F_REFLECTIVE        = 0x2000000000L;
     public static final long     F_REACTIVE          = 0x4000000000L;
+    public static final long     F_CASEII            = 0x8000000000L;
 
     // Secondary Flags for Physical Weapons
     public static final int     S_CLUB              = 0x00000001; // BMR
@@ -396,6 +397,8 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLDoubleHeatSink());
         EquipmentType.addType(createISCASE());
         EquipmentType.addType(createCLCASE());
+        EquipmentType.addType(createISCASEII());
+        EquipmentType.addType(createCLCASEII());
         EquipmentType.addType(createISMASC());
         EquipmentType.addType(createCLMASC());
         EquipmentType.addType(createTSM());
@@ -683,6 +686,40 @@ public class MiscType extends EquipmentType {
         misc.hittable = false;
         misc.flags |= F_CASE;
         misc.cost=50000;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    
+    public static MiscType createISCASEII() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.name = "CASE II";
+        misc.setInternalName("ISCASEII");
+        misc.addLookupName("IS CASE II");
+        misc.tonnage = 1.0f;
+        misc.criticals = 1;
+        misc.hittable = false;
+        misc.flags |= F_CASEII;
+        misc.cost=175000;
+        misc.bv = 0;
+        
+        return misc;
+    }
+    
+    public static MiscType createCLCASEII() {
+        MiscType misc = new MiscType();
+
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.name = "CASE II";
+        misc.setInternalName("CLCASEII");
+        misc.addLookupName("Clan CASE II");
+        misc.tonnage = 0.5f;
+        misc.criticals = 1;
+        misc.hittable = false;
+        misc.flags |= F_CASEII;
+        misc.cost=175000;
         misc.bv = 0;
         
         return misc;
@@ -2461,7 +2498,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Reflective Armor");
         misc.addLookupName("Reflective");
         misc.tonnage = 0;
-        misc.criticals = 1;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = false;
         misc.spreadable = true;
         misc.flags |= F_REFLECTIVE;
@@ -2478,7 +2515,7 @@ public class MiscType extends EquipmentType {
         misc.addLookupName("Reactive Armor");
         misc.addLookupName("Reactive");
         misc.tonnage = 0;
-        misc.criticals = 1;
+        misc.criticals = CRITICALS_VARIABLE;
         misc.hittable = true;
         misc.spreadable = true;
         misc.flags |= F_REACTIVE;

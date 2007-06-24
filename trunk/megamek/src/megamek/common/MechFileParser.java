@@ -248,7 +248,8 @@ public class MechFileParser {
                     }
                 } // End link-PPC Capacitor
 
-            if(ent instanceof Mech && m.getType().hasFlag(MiscType.F_CASE)) {
+            if(ent instanceof Mech 
+                    && ( m.getType().hasFlag(MiscType.F_CASE) || m.getType().hasFlag(MiscType.F_CASEII)) ) {
                 ((Mech)ent).setAutoEject(false);
             }
 

@@ -14152,6 +14152,31 @@ public class Server implements Runnable {
                         crits++;
                     }
 
+                    //Check for CASE II right away. if so reduce damage to 1 and let it hit the IS.
+                    //Also remove as much of the rear armor as allowed by the damage. If arm/leg/head
+                    //Then they lose all their armor if its less then the explosion damage.
+                    if (ammoExplosion && te.hasCASEII(hit.getLocation())) {
+                        // Remaining damage prevented by CASE II
+                        r = new Report(6126);
+                        r.subject = te_n;
+                        r.add(damage);
+                        r.indent(3);
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+
+                        //1 point of damage goes to IS
+                        damage--;
+                        boolean rearArmor = te.hasRearArmor(hit.getLocation());
+                        if ( damage > te.getArmor(hit.getLocation(),rearArmor) )
+                            te.setArmor(IArmorState.ARMOR_DESTROYED,hit.getLocation(),rearArmor);
+                        else
+                            te.setArmor(te.getArmor(hit.getLocation(),rearArmor)-damage,hit.getLocation(),rearArmor);
+                            
+                        te.damageThisPhase += damage;
+                            
+                        //Mek takes 1 point of IS damage
+                        damage = 1;
+                    } 
                     // Now we need to consider alternate structure types!
                     int tmpDamageHold = -1;
                     if (te instanceof Mech && ((Mech) te).hasCompositeStructure()) {
@@ -14410,7 +14435,7 @@ public class Server implements Runnable {
 
                         // The target takes no more damage from the explosion.
                         damage = 0;
-                    } else if (damage > 0) {
+                    }else if (damage > 0) {
                         // remaining damage transfers
                         r = new Report(6130);
                         r.subject = te_n;
@@ -15307,6 +15332,17 @@ public class Server implements Runnable {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
+        
+        if ( en.hasCASEII(loc) ) {
+            int roll = Compute.d6(2);
+            r = new Report(6127);
+            r.subject = en.getId();
+            r.add(roll);
+            vDesc.add(r);
+            if ( roll >= 8 )
+                return vDesc;
+        }
+        
         // Handle hits on "critical slots" of tanks.
         if( en instanceof Tank ) {
             Tank t = (Tank)en;

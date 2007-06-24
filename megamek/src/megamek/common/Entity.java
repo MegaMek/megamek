@@ -2905,6 +2905,23 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * Only Meks can have CASE II so all other entites return false.
+     * @return
+     */
+    public boolean hasCASEII() {
+        return false;
+    }
+    
+    /**
+     * Only Meks have CASE II so all other entites return false.
+     * @param location
+     * @return
+     */
+    public boolean hasCASEII(int location) {
+        return false;
+    }
+    
     public boolean hasC3M() {
         if (isShutDown() || isOffBoard()) return false;
         for (Mounted m : getEquipment()){

@@ -165,7 +165,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             if (te.height() > 0
                     && te.getElevation() == -1
                     && targHex.terrainLevel(Terrains.WATER) == te.height()) {
-                toHit.addModifier(3, "target has partial cover");
+                toHit.addModifier(1, "target has partial cover");
             }
             
             //Pilot skills

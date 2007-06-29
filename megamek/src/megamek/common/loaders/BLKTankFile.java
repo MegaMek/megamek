@@ -220,19 +220,19 @@ public class BLKTankFile extends BLKFile implements IMechLoader {
         blk.writeBlockData("motion_type", t.getMovementModeAsString());
         if(t.getTroopCarryingSpace() > 0)
             blk.writeBlockData("transporters", "TroopSpace: " + t.getTroopCarryingSpace());
-        int engineCode = BLKTankFile.FUSION;
+        int engineCode = BLKFile.FUSION;
         switch(t.getEngine().getEngineType()) {
         case Engine.COMBUSTION_ENGINE:
-            engineCode = BLKTankFile.ICE;
+            engineCode = BLKFile.ICE;
             break;
         case Engine.LIGHT_ENGINE:
-            engineCode = BLKTankFile.LIGHT;
+            engineCode = BLKFile.LIGHT;
             break;
         case Engine.XL_ENGINE:
-            engineCode = BLKTankFile.XL;
+            engineCode = BLKFile.XL;
             break;
         case Engine.XXL_ENGINE:
-            engineCode = BLKTankFile.XXL;
+            engineCode = BLKFile.XXL;
             break;
         }
         blk.writeBlockData("engine_type", engineCode);

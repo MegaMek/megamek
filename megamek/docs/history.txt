@@ -20,6 +20,7 @@ v0.33.7-dev (SVN)
 + Added Reactive Armor
 + Added Reflective Armor
 + Added CASE II
++ Bug 1745050: Water partial cover vs. physical attacks, should be +1, not +3
 
 v0.33.6 (2007-05-26, 20:00 GMT +2)
 + added some javadoc documentation. This is a work in progress.

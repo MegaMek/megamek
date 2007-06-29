@@ -628,7 +628,6 @@ public class AmmoType extends EquipmentType {
 //        EquipmentType.addType( createFenrirSRM4Ammo() );
         EquipmentType.addType( createBACompactNarcAmmo() );
         EquipmentType.addType( createBAMineLauncherAmmo() );
-        EquipmentType.addType( createBALRM5Ammo() );
 //        EquipmentType.addType( createPhalanxSRM4Ammo() );
 //        EquipmentType.addType( createGrenadierSRM4Ammo() );
 //        EquipmentType.addType( createBAInfernoSRMAmmo() );
@@ -4549,24 +4548,6 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
-    private static AmmoType createBALRM5Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
-        ammo.name = "LRM 5 Ammo";
-        ammo.setInternalName("BA Ammo LRM-5");
-        ammo.addLookupName("BALRM5 Ammo");
-        ammo.addLookupName("BA LRM 5 Ammo");
-        ammo.damagePerShot = 1;
-        ammo.rackSize = 5;
-        ammo.ammoType = AmmoType.T_LRM;
-        ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 6;
-        ammo.bv = 0;
-
-        return ammo;
-    }
-
     //Proto Ammos
     private static AmmoType createCLPROHeavyMGAmmo() {
         // Need special processing to allow non-standard ammo loads.
@@ -4806,7 +4787,6 @@ public class AmmoType extends EquipmentType {
         ammo.techLevel = TechConstants.T_IS_LEVEL_1;
         ammo.name = "BA LRM 5 Ammo";
         ammo.setInternalName("IS BA Ammo LRM-5");
-        ammo.addLookupName("BAISLRM5 Ammo");
         ammo.addLookupName("BAISLRM5 Ammo");
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;

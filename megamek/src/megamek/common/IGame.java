@@ -225,7 +225,7 @@ public interface IGame {
     /**
      * Return the immutable vector of teams
      */
-    public abstract Vector getTeamsVector();
+    public abstract Vector<Team> getTeamsVector();
 
     /**
      * Return a players team

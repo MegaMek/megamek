@@ -9396,46 +9396,6 @@ public class Server implements Runnable {
             hits = nDamPerHit * hits;
             nDamPerHit = 1;
         }
-
-        if(wtype.getAmmoType() == AmmoType.T_PLASMA) {
-            if(entityTarget instanceof Mech) {
-                int heatRoll = Compute.d6(wtype.getRackSize());
-                nDamPerHit = atype.getDamagePerShot();
-                if (!bSalvo) {
-                    //hits
-                    r = new Report(3390);
-                    r.subject = subjectId;
-                    r.newlines = 0;
-                    addReport(r);
-                }
-                r = new Report(3400);
-                r.subject = subjectId;
-                r.indent(2);
-                r.add(heatRoll);
-                r.choose(true);
-                r.newlines = 0;
-                addReport(r);
-                entityTarget.heatFromExternal += heatRoll;
-            } else {
-                int heatRoll = Compute.d6(wtype.getRackSize() + 1);
-                nDamPerHit = 1;
-                hits = atype.getDamagePerShot() + heatRoll;
-                bSalvo = true;
-                nCluster = 5;
-                r = new Report(3575);
-                r.subject = subjectId;
-                r.newlines = 0;
-                r.add(hits);
-                addReport(r);
-                for (Mounted mount:entityTarget.getMisc()) {
-                    EquipmentType equip = mount.getType();
-                    if ( BattleArmor.FIRE_PROTECTION.equals
-                         (equip.getInternalName()) ) {
-                        hits /= 2;
-                    }
-                }
-            }
-        }
         
         //modify damage for non infantry attacks vs infantry
         else if(!(ae instanceof Infantry) 
@@ -9780,9 +9740,8 @@ public class Server implements Runnable {
 
                     // Report the result
                     addReport( specialDamageReport);*/
-                }
-                else if(toHit.getHitTable() == ToHitData.HIT_PARTIAL_COVER &&
-                  entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), toHit.getSideTable())) {
+                } else if(toHit.getHitTable() == ToHitData.HIT_PARTIAL_COVER &&
+                      entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), toHit.getSideTable())) {
                     r = new Report(3460);
                     r.subject = entityTarget.getId();
                     r.indent(2);
@@ -9790,8 +9749,7 @@ public class Server implements Runnable {
                     r.add(entityTarget.getLocationAbbr(hit));
                     r.newlines = 0;
                     addReport(r);
-                }
-                else {
+                } else {
                     // Resolve damage normally.
                     nDamage = nDamPerHit * Math.min(nCluster, hits);
 
@@ -9858,7 +9816,7 @@ public class Server implements Runnable {
                             hit.makeGlancingBlow();
                         }
                         addReport(damageEntity(entityTarget, hit, nDamage, false, 6, false, false, throughFront));
-                    } else if ( bTandemCharge ){
+                    } else if (bTandemCharge) {
                         if ( entityTarget.hasActiveShield(hit.getLocation(), hit.isRear())
                              || entityTarget.hasPassiveShield(hit.getLocation(), hit.isRear())
                              || entityTarget.hasNoDefenseShield(hit.getLocation()) ) {
@@ -9867,28 +9825,72 @@ public class Server implements Runnable {
                                  || hit.getLocation() == Mech.LOC_RLEG
                                  || hit.getLocation() == Mech.LOC_RT ) {
                                 hit = new HitData(Mech.LOC_RARM);
-                            }else if ( hit.getLocation() == Mech.LOC_LARM
+                            } else if ( hit.getLocation() == Mech.LOC_LARM
                                        || hit.getLocation() == Mech.LOC_LLEG
                                        || hit.getLocation() == Mech.LOC_LT ) {
                                 hit = new HitData(Mech.LOC_LARM);
-                            }else if ( entityTarget.hasActiveShield(Mech.LOC_LARM)
+                            } else if ( entityTarget.hasActiveShield(Mech.LOC_LARM)
                                        || entityTarget.hasPassiveShield(Mech.LOC_LARM)
                                        || entityTarget.hasNoDefenseShield(Mech.LOC_LARM) ){
                         	    hit = new HitData(Mech.LOC_LARM);
-                        	}else {
+                        	} else {
                         	    hit = new HitData(Mech.LOC_RARM);
                             }
                             hit.setEffect(HitData.EFFECT_NO_CRITICALS);
                             addReport(damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
-                        }else if ( entityTarget.getArmor(hit.getLocation(),hit.isRear()) > 0 ){
+                        } else if (entityTarget.getArmor(hit.getLocation(),hit.isRear()) > 0) {
                             addReport(damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
                             hit.setEffect(HitData.EFFECT_NO_CRITICALS);
                             addNewLines();
                             addReport(damageEntity(entityTarget, hit, nDamage, false, 0, true, false, throughFront));
-                        }else{
+                        } else {
                             addReport(damageEntity(entityTarget, hit, nDamage, false, 0, true, false, throughFront));
-                        } 
-                    }else {
+                        }
+                    } else if (wtype.getAmmoType() == AmmoType.T_PLASMA) {
+                        if (entityTarget instanceof Mech) {
+                            int heatRoll = Compute.d6(wtype.getRackSize());
+                            nDamPerHit = atype.getDamagePerShot();
+                            if (!bSalvo) {
+                                //hits
+                                r = new Report(3390);
+                                r.subject = subjectId;
+                                r.newlines = 0;
+                                addReport(r);
+                            }
+                            r = new Report(3400);
+                            r.subject = subjectId;
+                            r.indent(2);
+                            r.add(heatRoll);
+                            r.choose(true);
+                            r.newlines = 0;
+                            addReport(r);
+                            entityTarget.heatFromExternal += heatRoll;
+                        } else {
+                            int heatRoll = Compute.d6(wtype.getRackSize() + 1);
+                            nDamPerHit = 1;
+                            hits = atype.getDamagePerShot() + heatRoll;
+                            bSalvo = true;
+                            nCluster = 5;
+                            r = new Report(3575);
+                            r.subject = subjectId;
+                            r.newlines = 0;
+                            r.add(hits);
+                            addReport(r);
+                            for (Mounted mount:entityTarget.getMisc()) {
+                                EquipmentType equip = mount.getType();
+                                if ( BattleArmor.FIRE_PROTECTION.equals
+                                     (equip.getInternalName()) ) {
+                                    hits /= 2;
+                                }
+                            }
+                        }
+                        if (bGlancing) {
+                            hit.makeGlancingBlow();
+                        }
+                        hit.setDamageType(wtype.getFlags());
+                        addReport(
+                            damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
+                    } else {
                         if (usesAmmo
                                 && (atype.getAmmoType() == AmmoType.T_AC
                                         || atype.getAmmoType() == AmmoType.T_LAC)

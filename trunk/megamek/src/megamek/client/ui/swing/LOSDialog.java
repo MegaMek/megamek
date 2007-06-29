@@ -14,12 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -29,6 +23,14 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
 // Allows the player to select the type of entity in the hexes used
 // by the LOS tool.
@@ -59,7 +61,7 @@ public class LOSDialog
 
         GridBagConstraints c = new GridBagConstraints();
 
-        JLabel labMessage = new JLabel(Messages.getString("LOSDialog.inFirstHex"), JLabel.LEFT); //$NON-NLS-1$
+        JLabel labMessage = new JLabel(Messages.getString("LOSDialog.inFirstHex"), SwingConstants.LEFT); //$NON-NLS-1$
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 0;
@@ -84,7 +86,7 @@ public class LOSDialog
         radioGroup1.add(checkboxes1[1]);
         getContentPane().add(checkboxes1[1]);
 
-        labMessage = new JLabel(Messages.getString("LOSDialog.InSecondHex"), JLabel.LEFT); //$NON-NLS-1$
+        labMessage = new JLabel(Messages.getString("LOSDialog.InSecondHex"), SwingConstants.LEFT); //$NON-NLS-1$
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 0;

@@ -112,10 +112,4 @@ public class PMPicArea implements PMHotArea{
     public void onMouseDown(MouseEvent e){}
     
     public void onMouseUp(MouseEvent e){}
-    
-    private void dispatchEvent(String s){
-        if (actionListener != null) {
-            actionListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, s));
-        }
-    }
 }

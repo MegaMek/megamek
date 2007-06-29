@@ -17,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -28,26 +29,25 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.GameTurn;
+import megamek.common.IEntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
-import megamek.common.MiscType;
 import megamek.common.Minefield;
-import megamek.common.MovePath;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
-import megamek.common.IEntityMovementMode;
+import megamek.common.MovePath;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
 import megamek.common.WeaponType;
+import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameTurnChangeEvent;
-
-import java.util.ArrayList;
 
 public abstract class BotClient extends Client {
     
@@ -634,12 +634,12 @@ public abstract class BotClient extends Client {
         Entity attacker = g.getEntity(waa.getEntityId());
         Mounted weapon = attacker.getEquipment(waa.getWeaponId());
         ToHitData hitData = waa.toHit(g);
-        if (hitData.getValue() == ToHitData.IMPOSSIBLE || hitData.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        if (hitData.getValue() == TargetRoll.IMPOSSIBLE || hitData.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             return 0.0f;
         }
         
         float fChance = 0.0f;
-        if (hitData.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        if (hitData.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             fChance = 1.0f;
         }
         else {

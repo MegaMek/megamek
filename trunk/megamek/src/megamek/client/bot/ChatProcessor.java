@@ -30,15 +30,14 @@ public class ChatProcessor {
             String name = st.nextToken().trim();
             //who is the message from?
             Enumeration e = tb.game.getPlayers();
-            boolean found = false;
             Player p = null;
-            while (e.hasMoreElements() && !found) {
+            while (e.hasMoreElements()) {
                 p = (Player) e.nextElement();
                 if (name.equalsIgnoreCase(p.getName())) {
-                    found = true;
+                    break;
                 }
             }
-            if (!found) {
+            if (p == null) {
                 return;
             }
             try {

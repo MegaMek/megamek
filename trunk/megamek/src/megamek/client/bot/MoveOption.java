@@ -320,8 +320,8 @@ public class MoveOption extends MovePath implements Cloneable {
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         if (attHex.containsTerrain(Terrains.WATER) && attHex.surface() > attEl) {
-            toHita.addModifier(ToHitData.IMPOSSIBLE, "Attacker in depth 2+ water");
-            toHitd.addModifier(ToHitData.IMPOSSIBLE, "Defender in depth 2+ water");
+            toHita.addModifier(TargetRoll.IMPOSSIBLE, "Attacker in depth 2+ water");
+            toHitd.addModifier(TargetRoll.IMPOSSIBLE, "Defender in depth 2+ water");
         } else if (attHex.surface() == attEl && ae.height() > 0) {
             apc = true;
         }
@@ -330,8 +330,8 @@ public class MoveOption extends MovePath implements Cloneable {
             if (targHex.surface() == targEl && te.height() > 0) {
                 pc = true;
             } else if (targHex.surface() > targEl) {
-                toHita.addModifier(ToHitData.IMPOSSIBLE, "Attacker in depth 2+ water");
-                toHitd.addModifier(ToHitData.IMPOSSIBLE, "Defender in depth 2+ water");
+                toHita.addModifier(TargetRoll.IMPOSSIBLE, "Attacker in depth 2+ water");
+                toHitd.addModifier(TargetRoll.IMPOSSIBLE, "Defender in depth 2+ water");
             }
         }
 

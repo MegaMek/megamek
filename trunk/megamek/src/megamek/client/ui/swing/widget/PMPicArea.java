@@ -20,7 +20,6 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
@@ -115,11 +114,5 @@ public class PMPicArea implements PMHotArea {
     }
 
     public void onMouseUp(MouseEvent e) {
-    }
-
-    private void dispatchEvent(String s) {
-        if (actionListener != null) {
-            actionListener.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, s));
-        }
     }
 }

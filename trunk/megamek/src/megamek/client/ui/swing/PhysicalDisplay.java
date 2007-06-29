@@ -14,6 +14,25 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -25,13 +44,14 @@ import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.GameTurn;
 import megamek.common.IAimingModes;
 import megamek.common.IGame;
-import megamek.common.GameTurn;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.QuadMech;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.AbstractEntityAction;
@@ -39,8 +59,8 @@ import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.DodgeAction;
-import megamek.common.actions.JumpJetAttackAction;
 import megamek.common.actions.GrappleAttackAction;
+import megamek.common.actions.JumpJetAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.LayExplosivesAttackAction;
 import megamek.common.actions.ProtomechPhysicalAttackAction;
@@ -54,25 +74,6 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Vector;
 
 public class PhysicalDisplay
         extends StatusBarPhaseDisplay
@@ -486,8 +487,8 @@ public class PhysicalDisplay
                 doSearchlight();
             }
 
-            if (leftArm.getValue() != ToHitData.IMPOSSIBLE
-                    && rightArm.getValue() != ToHitData.IMPOSSIBLE) {
+            if (leftArm.getValue() != TargetRoll.IMPOSSIBLE
+                    && rightArm.getValue() != TargetRoll.IMPOSSIBLE) {
                 attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.BOTH));
             } else if (leftArm.getValue() < rightArm.getValue()) {
                 attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.LEFT));
@@ -532,10 +533,7 @@ public class PhysicalDisplay
         ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHT);
         ToHitData rightRearLeg = null;
         ToHitData leftRearLeg = null;
-        if (client.game.getEntity(cen) instanceof QuadMech) {
-            rightRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHTMULE);
-            leftRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFTMULE);
-        }
+
         ToHitData attackLeg;
         int attackSide = KickAttackAction.LEFT;
         int value = leftLeg.getValue();
@@ -547,6 +545,8 @@ public class PhysicalDisplay
             attackLeg = rightLeg;
         }
         if (client.game.getEntity(cen) instanceof QuadMech) {
+            rightRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHTMULE);
+            leftRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFTMULE);
             if (value > rightRearLeg.getValue()) {
                 value = rightRearLeg.getValue();
                 attackSide = KickAttackAction.RIGHTMULE;
@@ -796,8 +796,8 @@ public class PhysicalDisplay
                 (client.game, cen, target, BrushOffAttackAction.LEFT);
         ToHitData toHitRight = BrushOffAttackAction.toHit
                 (client.game, cen, target, BrushOffAttackAction.RIGHT);
-        boolean canHitLeft = (ToHitData.IMPOSSIBLE != toHitLeft.getValue());
-        boolean canHitRight = (ToHitData.IMPOSSIBLE != toHitRight.getValue());
+        boolean canHitLeft = (TargetRoll.IMPOSSIBLE != toHitLeft.getValue());
+        boolean canHitRight = (TargetRoll.IMPOSSIBLE != toHitRight.getValue());
         int damageLeft = 0;
         int damageRight = 0;
         String title = null;
@@ -853,9 +853,9 @@ public class PhysicalDisplay
         // Allow the player to cancel or choose which arm(s) to use.
         if (canHitLeft && canHitRight) {
             choices = new String[3];
-            choices[0] = left.toString();
-            choices[1] = right.toString();
-            choices[2] = both.toString();
+            choices[0] = left;
+            choices[1] = right;
+            choices[2] = both;
             dlg = new SingleChoiceDialog
                     (clientgui.frame, title, warn.toString(), choices);
             dlg.setVisible(true);
@@ -884,7 +884,7 @@ public class PhysicalDisplay
         // If only the left arm is available, confirm that choice.
         else if (canHitLeft) {
             choices = new String[1];
-            choices[0] = left.toString();
+            choices[0] = left;
             dlg = new SingleChoiceDialog
                     (clientgui.frame, title, warn.toString(), choices);
             dlg.setVisible(true);
@@ -901,7 +901,7 @@ public class PhysicalDisplay
         // If only the right arm is available, confirm that choice.
         else if (canHitRight) {
             choices = new String[1];
-            choices[0] = right.toString();
+            choices[0] = right;
             dlg = new SingleChoiceDialog
                     (clientgui.frame, title, warn.toString(), choices);
             dlg.setVisible(true);
@@ -975,8 +975,8 @@ public class PhysicalDisplay
                         (client.game, cen, target, PunchAttackAction.LEFT);
                 final ToHitData rightArm = PunchAttackAction.toHit
                         (client.game, cen, target, PunchAttackAction.RIGHT);
-                boolean canPunch = leftArm.getValue() != ToHitData.IMPOSSIBLE
-                        || rightArm.getValue() != ToHitData.IMPOSSIBLE;
+                boolean canPunch = leftArm.getValue() != TargetRoll.IMPOSSIBLE
+                        || rightArm.getValue() != TargetRoll.IMPOSSIBLE;
                 setPunchEnabled(canPunch);
                 
                 // kick?
@@ -984,34 +984,34 @@ public class PhysicalDisplay
                         (client.game, cen, target, KickAttackAction.LEFT);
                 ToHitData rightLeg = KickAttackAction.toHit
                         (client.game, cen, target, KickAttackAction.RIGHT);
-                boolean canKick = leftLeg.getValue() != ToHitData.IMPOSSIBLE
-                        || rightLeg.getValue() != ToHitData.IMPOSSIBLE;
+                boolean canKick = leftLeg.getValue() != TargetRoll.IMPOSSIBLE
+                        || rightLeg.getValue() != TargetRoll.IMPOSSIBLE;
                 ToHitData rightRearLeg = KickAttackAction.toHit
                         (client.game, cen, target, KickAttackAction.RIGHTMULE);
                 ToHitData leftRearLeg = KickAttackAction.toHit
                         (client.game, cen, target, KickAttackAction.LEFTMULE);
-                canKick |= (leftRearLeg.getValue() != ToHitData.IMPOSSIBLE)
-                        || (rightRearLeg.getValue() != ToHitData.IMPOSSIBLE);
+                canKick |= (leftRearLeg.getValue() != TargetRoll.IMPOSSIBLE)
+                        || (rightRearLeg.getValue() != TargetRoll.IMPOSSIBLE);
 
                 setKickEnabled(canKick);
                 
                 // how about push?
                 ToHitData push = PushAttackAction.toHit
                         (client.game, cen, target);
-                setPushEnabled(push.getValue() != ToHitData.IMPOSSIBLE);
+                setPushEnabled(push.getValue() != TargetRoll.IMPOSSIBLE);
                 
                 // how about trip?
                 ToHitData trip = TripAttackAction.toHit
                    (client.game, cen, target);
-                setTripEnabled(trip.getValue() != ToHitData.IMPOSSIBLE);
+                setTripEnabled(trip.getValue() != TargetRoll.IMPOSSIBLE);
                 
                 // how about grapple?
                 ToHitData grap = GrappleAttackAction.toHit
                    (client.game, cen, target);
                 ToHitData bgrap = BreakGrappleAttackAction.toHit
                 (client.game, cen, target);
-                setGrappleEnabled(grap.getValue() != ToHitData.IMPOSSIBLE
-                        || bgrap.getValue() != ToHitData.IMPOSSIBLE);
+                setGrappleEnabled(grap.getValue() != TargetRoll.IMPOSSIBLE
+                        || bgrap.getValue() != TargetRoll.IMPOSSIBLE);
                 
                 // how about JJ?
                 ToHitData jjl = JumpJetAttackAction.toHit
@@ -1020,9 +1020,9 @@ public class PhysicalDisplay
                 (client.game, cen, target, JumpJetAttackAction.RIGHT);
                 ToHitData jjb = JumpJetAttackAction.toHit
                 (client.game, cen, target, JumpJetAttackAction.BOTH);
-                setJumpJetEnabled(!(jjl.getValue() == ToHitData.IMPOSSIBLE
-                            && jjr.getValue() == ToHitData.IMPOSSIBLE
-                            && jjb.getValue() == ToHitData.IMPOSSIBLE));
+                setJumpJetEnabled(!(jjl.getValue() == TargetRoll.IMPOSSIBLE
+                            && jjr.getValue() == TargetRoll.IMPOSSIBLE
+                            && jjb.getValue() == TargetRoll.IMPOSSIBLE));
                 
                 // clubbing?
                 boolean canClub = false;
@@ -1032,7 +1032,7 @@ public class PhysicalDisplay
                     if (club != null) {
                         ToHitData clubToHit = ClubAttackAction.toHit
                            (client.game, cen, target, club, ash.getAimTable());
-                        canClub |= (clubToHit.getValue() != ToHitData.IMPOSSIBLE);
+                        canClub |= (clubToHit.getValue() != TargetRoll.IMPOSSIBLE);
                         //assuming S7 vibroswords count as swords and maces count as hatchets
                         if(club.getType().hasSubType(MiscType.S_SWORD)
                                 || club.getType().hasSubType(MiscType.S_HATCHET)
@@ -1054,24 +1054,24 @@ public class PhysicalDisplay
                 // Thrash at infantry?
                 ToHitData thrash = new ThrashAttackAction(cen, target).toHit
                         (client.game);
-                setThrashEnabled(thrash.getValue() != ToHitData.IMPOSSIBLE);
+                setThrashEnabled(thrash.getValue() != TargetRoll.IMPOSSIBLE);
                 
                 // make a Protomech physical attack?
                 ToHitData proto = ProtomechPhysicalAttackAction.toHit
                         (client.game, cen, target);
-                setProtoEnabled(proto.getValue() != ToHitData.IMPOSSIBLE);
+                setProtoEnabled(proto.getValue() != TargetRoll.IMPOSSIBLE);
 
                 ToHitData explo = LayExplosivesAttackAction.toHit
                         (client.game, cen, target);
-                setExplosivesEnabled(explo.getValue() != ToHitData.IMPOSSIBLE);
+                setExplosivesEnabled(explo.getValue() != TargetRoll.IMPOSSIBLE);
             }
             // Brush off swarming infantry or iNarcPods?
             ToHitData brushRight = BrushOffAttackAction.toHit
                     (client.game, cen, target, BrushOffAttackAction.RIGHT);
             ToHitData brushLeft = BrushOffAttackAction.toHit
                     (client.game, cen, target, BrushOffAttackAction.LEFT);
-            boolean canBrush = (brushRight.getValue() != ToHitData.IMPOSSIBLE ||
-                    brushLeft.getValue() != ToHitData.IMPOSSIBLE);
+            boolean canBrush = (brushRight.getValue() != TargetRoll.IMPOSSIBLE ||
+                    brushLeft.getValue() != TargetRoll.IMPOSSIBLE);
             setBrushOffEnabled(canBrush);
         } else {
             setPunchEnabled(false);
@@ -1110,7 +1110,7 @@ public class PhysicalDisplay
             return;
         }
         if (client.isMyTurn()
-                && (b.getModifiers() & MouseEvent.BUTTON1_MASK) != 0) {
+                && (b.getModifiers() & InputEvent.BUTTON1_MASK) != 0) {
             if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
                 if (!b.getCoords().equals(clientgui.getBoardView().getLastCursor())) {
                     clientgui.getBoardView().cursor(b.getCoords());

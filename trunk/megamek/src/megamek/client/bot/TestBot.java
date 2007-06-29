@@ -15,6 +15,14 @@
 
 package megamek.client.bot;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.TreeSet;
+import java.util.Vector;
+
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
@@ -31,6 +39,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.Protomech;
+import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
@@ -40,14 +49,6 @@ import megamek.common.actions.DfaAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GamePlayerChatEvent;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeSet;
-import java.util.Vector;
 
 public class TestBot extends BotClient {
 
@@ -205,55 +206,53 @@ public class TestBot extends BotClient {
         
         // If this unit has a jammed RAC, and it has only walked,
         // add an unjam action
-        if (min != null) {
-            if (min.getLastStep() != null) {
-                if (min.getCEntity().entity.canUnjamRAC()) {
-                    if ((min.getLastStep().getMovementType() == IEntityMovementType.MOVE_WALK) ||
-                            (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) ||
-                            (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
-                        // Cycle through all available weapons, only unjam if the jam(med)
-                        // RACs count for a significant portion of possible damage
-                        int rac_damage = 0;
-                        int other_damage = 0;
-                        int clearance_range = 0;
-                        for (Mounted equip :min.getCEntity().entity.getWeaponList()) {
-                            WeaponType test_weapon = new WeaponType();
+        if (min.getLastStep() != null) {
+            if (min.getCEntity().entity.canUnjamRAC()) {
+                if ((min.getLastStep().getMovementType() == IEntityMovementType.MOVE_WALK) ||
+                        (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) ||
+                        (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
+                    // Cycle through all available weapons, only unjam if the jam(med)
+                    // RACs count for a significant portion of possible damage
+                    int rac_damage = 0;
+                    int other_damage = 0;
+                    int clearance_range = 0;
+                    for (Mounted equip :min.getCEntity().entity.getWeaponList()) {
+                        WeaponType test_weapon = new WeaponType();
 
-                            test_weapon = (WeaponType) equip.getType();
-                            if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY) &&
-                                    (equip.isJammed() == true)) {
-                                rac_damage = rac_damage + 4 * (test_weapon.getDamage());
-                            } else {
-                                if (equip.canFire()) {
-                                    other_damage += test_weapon.getDamage();
-                                    if (test_weapon.getMediumRange() > clearance_range) {
-                                        clearance_range = test_weapon.getMediumRange();
-                                    }
+                        test_weapon = (WeaponType) equip.getType();
+                        if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY) &&
+                                (equip.isJammed() == true)) {
+                            rac_damage = rac_damage + 4 * (test_weapon.getDamage());
+                        } else {
+                            if (equip.canFire()) {
+                                other_damage += test_weapon.getDamage();
+                                if (test_weapon.getMediumRange() > clearance_range) {
+                                    clearance_range = test_weapon.getMediumRange();
                                 }
                             }
                         }
-                        // Even if the jammed RAC doesn't make up a significant portion
-                        // of the units damage, its still better to have it functional
-                        // If nothing is "close" then unjam anyways
-                        int check_range = 100;
-                        for (Enumeration unit_selection = game.getEntities();
-                             unit_selection.hasMoreElements();) {
-                            Entity enemy = (Entity) unit_selection.nextElement();
-                            if ((min.getCEntity().entity.getPosition() != null) &&
-                                    (enemy.getPosition() != null) &&
-                                    (enemy.isEnemyOf(min.getCEntity().entity))) {
-                                if (enemy.isVisibleToEnemy()) {
-                                    if (min.getCEntity().entity.getPosition().distance
-                                            (enemy.getPosition()) < check_range) {
-                                        check_range = min.getCEntity().entity.getPosition().
-                                                distance(enemy.getPosition());
-                                    }
+                    }
+                    // Even if the jammed RAC doesn't make up a significant portion
+                    // of the units damage, its still better to have it functional
+                    // If nothing is "close" then unjam anyways
+                    int check_range = 100;
+                    for (Enumeration unit_selection = game.getEntities();
+                         unit_selection.hasMoreElements();) {
+                        Entity enemy = (Entity) unit_selection.nextElement();
+                        if ((min.getCEntity().entity.getPosition() != null) &&
+                                (enemy.getPosition() != null) &&
+                                (enemy.isEnemyOf(min.getCEntity().entity))) {
+                            if (enemy.isVisibleToEnemy()) {
+                                if (min.getCEntity().entity.getPosition().distance
+                                        (enemy.getPosition()) < check_range) {
+                                    check_range = min.getCEntity().entity.getPosition().
+                                            distance(enemy.getPosition());
                                 }
                             }
                         }
-                        if ((rac_damage >= other_damage) || (check_range < clearance_range)) {
-                            min.addStep(MovePath.STEP_UNJAM_RAC);
-                        }
+                    }
+                    if ((rac_damage >= other_damage) || (check_range < clearance_range)) {
+                        min.addStep(MovePath.STEP_UNJAM_RAC);
                     }
                 }
             }
@@ -355,8 +354,8 @@ public class TestBot extends BotClient {
 
                 CEntity enemy = centities.get(en);
                 int[] modifiers = option.getModifiers(enemy.getEntity());
-                if (modifiers[MoveOption.DEFENCE_MOD] == ToHitData.IMPOSSIBLE
-                        && modifiers[MoveOption.ATTACK_MOD] == ToHitData.IMPOSSIBLE) {
+                if (modifiers[MoveOption.DEFENCE_MOD] == TargetRoll.IMPOSSIBLE
+                        && modifiers[MoveOption.ATTACK_MOD] == TargetRoll.IMPOSSIBLE) {
                     continue;
                 }
                 int enemy_hit_arc =
@@ -367,7 +366,7 @@ public class TestBot extends BotClient {
                         CEntity.getThreatHitArc(option.getFinalCoords(),
                                 option.getFinalFacing(),
                                 enemy.current.getFinalCoords());
-                if (!enemy.getEntity().isImmobile() && modifiers[MoveOption.DEFENCE_MOD] != ToHitData.IMPOSSIBLE) {
+                if (!enemy.getEntity().isImmobile() && modifiers[MoveOption.DEFENCE_MOD] != TargetRoll.IMPOSSIBLE) {
                     self.engaged = true;
                     int mod = modifiers[MoveOption.DEFENCE_MOD];
                     double max = option.getMaxModifiedDamage(enemy.current, mod, modifiers[MoveOption.DEFENCE_PC]);
@@ -399,7 +398,7 @@ public class TestBot extends BotClient {
                  * target
                  */
                 if (!option.isPhysical) {
-                    if (modifiers[MoveOption.ATTACK_MOD] != ToHitData.IMPOSSIBLE) {
+                    if (modifiers[MoveOption.ATTACK_MOD] != TargetRoll.IMPOSSIBLE) {
                         self.engaged = true;
                         double max =
                                 enemy.current.getMaxModifiedDamage(option, modifiers[0], modifiers[MoveOption.ATTACK_PC]);
@@ -713,7 +712,7 @@ public class TestBot extends BotClient {
                             enemy_hit_arc = Compute.ARC_FORWARD;
                         }
                         int[] modifiers = option.getModifiers(enemy_option.getEntity());
-                        if (modifiers[1] != ToHitData.IMPOSSIBLE) {
+                        if (modifiers[1] != TargetRoll.IMPOSSIBLE) {
                             self.engaged = true;
                             if (!enemy_option.isJumping()) {
                                 max_threat =
@@ -729,7 +728,7 @@ public class TestBot extends BotClient {
                             }
                             max_threat = self.getThreatUtility(max_threat, self_hit_arc);
                         }
-                        if (modifiers[0] != ToHitData.IMPOSSIBLE) {
+                        if (modifiers[0] != TargetRoll.IMPOSSIBLE) {
                             self.engaged = true;
                             max_damage =
                                     enemy_option.getMaxModifiedDamage(option,
@@ -917,7 +916,7 @@ public class TestBot extends BotClient {
 //            long exit = System.currentTimeMillis();
 //            if (exit != entry)
 //                System.out.println("Weapon attack toHit took "+(exit-entry));
-            if (th.getValue() != ToHitData.IMPOSSIBLE && !(th.getValue() >= 13)) {
+            if (th.getValue() != TargetRoll.IMPOSSIBLE && !(th.getValue() >= 13)) {
                 double expectedDmg;
 
                 wep_test = new WeaponAttackAction(from, e.getId(), weaponID);
@@ -1641,55 +1640,53 @@ public class TestBot extends BotClient {
 
         // If this unit has a jammed RAC, and it has only walked,
         // add an unjam action
-        if (min != null) {
-            if (min.getLastStep() != null) {
-                if (min.getCEntity().entity.canUnjamRAC()) {
-                    if ((min.getLastStep().getMovementType() == IEntityMovementType.MOVE_WALK) ||
-                            (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) ||
-                            (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
-                        // Cycle through all available weapons, only unjam if the jam(med)
-                        // RACs count for a significant portion of possible damage
-                        int rac_damage = 0;
-                        int other_damage = 0;
-                        int clearance_range = 0;
-                        for (Mounted equip :min.getCEntity().entity.getWeaponList()) {
-                            WeaponType test_weapon = new WeaponType();
+        if (min.getLastStep() != null) {
+            if (min.getCEntity().entity.canUnjamRAC()) {
+                if ((min.getLastStep().getMovementType() == IEntityMovementType.MOVE_WALK) ||
+                        (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_VTOL_WALK) ||
+                        (min.getLastStep().getMovementType() == IEntityMovementType.MOVE_NONE)) {
+                    // Cycle through all available weapons, only unjam if the jam(med)
+                    // RACs count for a significant portion of possible damage
+                    int rac_damage = 0;
+                    int other_damage = 0;
+                    int clearance_range = 0;
+                    for (Mounted equip :min.getCEntity().entity.getWeaponList()) {
+                        WeaponType test_weapon = new WeaponType();
 
-                            test_weapon = (WeaponType) equip.getType();
-                            if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY) &&
-                                    (equip.isJammed() == true)) {
-                                rac_damage = rac_damage + 4 * (test_weapon.getDamage());
-                            } else {
-                                if (equip.canFire()) {
-                                    other_damage += test_weapon.getDamage();
-                                    if (test_weapon.getMediumRange() > clearance_range) {
-                                        clearance_range = test_weapon.getMediumRange();
-                                    }
+                        test_weapon = (WeaponType) equip.getType();
+                        if ((test_weapon.getAmmoType() == AmmoType.T_AC_ROTARY) &&
+                                (equip.isJammed() == true)) {
+                            rac_damage = rac_damage + 4 * (test_weapon.getDamage());
+                        } else {
+                            if (equip.canFire()) {
+                                other_damage += test_weapon.getDamage();
+                                if (test_weapon.getMediumRange() > clearance_range) {
+                                    clearance_range = test_weapon.getMediumRange();
                                 }
                             }
                         }
-                        // Even if the jammed RAC doesn't make up a significant portion
-                        // of the units damage, its still better to have it functional
-                        // If nothing is "close" then unjam anyways
-                        int check_range = 100;
-                        for (Enumeration unit_selection = game.getEntities();
-                             unit_selection.hasMoreElements();) {
-                            Entity enemy = (Entity) unit_selection.nextElement();
-                            if ((min.getCEntity().entity.getPosition() != null) &&
-                                    (enemy.getPosition() != null) &&
-                                    (enemy.isEnemyOf(min.getCEntity().entity))) {
-                                if (enemy.isVisibleToEnemy()) {
-                                    if (min.getCEntity().entity.getPosition().distance
-                                            (enemy.getPosition()) < check_range) {
-                                        check_range = min.getCEntity().entity.getPosition().
-                                                distance(enemy.getPosition());
-                                    }
+                    }
+                    // Even if the jammed RAC doesn't make up a significant portion
+                    // of the units damage, its still better to have it functional
+                    // If nothing is "close" then unjam anyways
+                    int check_range = 100;
+                    for (Enumeration unit_selection = game.getEntities();
+                         unit_selection.hasMoreElements();) {
+                        Entity enemy = (Entity) unit_selection.nextElement();
+                        if ((min.getCEntity().entity.getPosition() != null) &&
+                                (enemy.getPosition() != null) &&
+                                (enemy.isEnemyOf(min.getCEntity().entity))) {
+                            if (enemy.isVisibleToEnemy()) {
+                                if (min.getCEntity().entity.getPosition().distance
+                                        (enemy.getPosition()) < check_range) {
+                                    check_range = min.getCEntity().entity.getPosition().
+                                            distance(enemy.getPosition());
                                 }
                             }
                         }
-                        if ((rac_damage >= other_damage) || (check_range < clearance_range)) {
-                            min.addStep(MovePath.STEP_UNJAM_RAC);
-                        }
+                    }
+                    if ((rac_damage >= other_damage) || (check_range < clearance_range)) {
+                        min.addStep(MovePath.STEP_UNJAM_RAC);
                     }
                 }
             }
@@ -1720,7 +1717,7 @@ public class TestBot extends BotClient {
                     Compute.randomInt(game.getBoard().getHeight()));
 
             if (game.containsMinefield(coords)) {
-                Minefield mf = (Minefield) game.getMinefields(coords).get(0);
+                Minefield mf = game.getMinefields(coords).get(0);
                 if (mf.getPlayerId() == getLocalPlayer().getId()) {
                     i--;
                     continue;
@@ -2069,7 +2066,7 @@ public class TestBot extends BotClient {
                             fitness[arr_index] += 2 * getAimModifier(test_target, Mech.LOC_CT);
                             break;
                         case 2 : // Destroying a side torso could be a soft kill or cripple
-                            fitness[arr_index] += 1.5 * getAimModifier(test_target, Mech.LOC_LT);;
+                            fitness[arr_index] += 1.5 * getAimModifier(test_target, Mech.LOC_LT);
                             break;
                         case 3 : 
                             fitness[arr_index] += 1.5 * getAimModifier(test_target, Mech.LOC_RT);
@@ -2104,6 +2101,7 @@ public class TestBot extends BotClient {
                             break;
                         case 2 : // case 1 is CT, which was initialized as default
                             best_loc_head = Mech.LOC_LT;
+                            break;
                         case 3 :
                             best_loc_head = Mech.LOC_RT;
                             break;
@@ -2135,6 +2133,7 @@ public class TestBot extends BotClient {
                     switch (arr_index) {
                         case 2 : // case 1 is CT, which was set as default
                             best_loc = Mech.LOC_LT;
+                            break;
                         case 3 :
                             best_loc = Mech.LOC_RT;
                             break;
@@ -2175,7 +2174,7 @@ public class TestBot extends BotClient {
                             aimed_attack.setAimedLocation(best_loc);
                         } else {
                             aimed_attack.setAimingMode(IAimingModes.AIM_MODE_NONE);
-                            aimed_attack.setAimedLocation(Mech.LOC_NONE);
+                            aimed_attack.setAimedLocation(Entity.LOC_NONE);
                         }
                         
                     }

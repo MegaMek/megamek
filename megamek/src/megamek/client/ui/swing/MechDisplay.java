@@ -44,6 +44,7 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.CardLayout;
@@ -445,7 +446,7 @@ public class MechDisplay extends JPanel {
 
             //adding Ammo choice + label
 
-            wAmmo = new JLabel(Messages.getString("MechDisplay.Ammo"), JLabel.LEFT); //$NON-NLS-1$
+            wAmmo = new JLabel(Messages.getString("MechDisplay.Ammo"), SwingConstants.LEFT); //$NON-NLS-1$
             wAmmo.setOpaque(true);
             m_chAmmo = new JComboBox();
             m_chAmmo.addItemListener(this);
@@ -470,9 +471,9 @@ public class MechDisplay extends JPanel {
 
             //Adding Heat Buildup
 
-            currentHeatBuildupL = new JLabel(Messages.getString("MechDisplay.HeatBuildup"), JLabel.RIGHT); //$NON-NLS-1$
+            currentHeatBuildupL = new JLabel(Messages.getString("MechDisplay.HeatBuildup"), SwingConstants.RIGHT); //$NON-NLS-1$
             currentHeatBuildupL.setOpaque(false);
-            currentHeatBuildupR = new JLabel("--", JLabel.LEFT); //$NON-NLS-1$
+            currentHeatBuildupR = new JLabel("--", SwingConstants.LEFT); //$NON-NLS-1$
             currentHeatBuildupR.setOpaque(false);
 
             c.insets = new Insets(2, 9, 2, 1);
@@ -494,17 +495,17 @@ public class MechDisplay extends JPanel {
 
 
             //Adding weapon display labels
-            wNameL = new JLabel(Messages.getString("MechDisplay.Name"), JLabel.CENTER); //$NON-NLS-1$
+            wNameL = new JLabel(Messages.getString("MechDisplay.Name"), SwingConstants.CENTER); //$NON-NLS-1$
             wNameL.setOpaque(true);
-            wHeatL = new JLabel(Messages.getString("MechDisplay.Heat"), JLabel.CENTER); //$NON-NLS-1$
+            wHeatL = new JLabel(Messages.getString("MechDisplay.Heat"), SwingConstants.CENTER); //$NON-NLS-1$
             wHeatL.setOpaque(true);
-            wDamL = new JLabel(Messages.getString("MechDisplay.Damage"), JLabel.CENTER); //$NON-NLS-1$
+            wDamL = new JLabel(Messages.getString("MechDisplay.Damage"), SwingConstants.CENTER); //$NON-NLS-1$
             wDamL.setOpaque(true);
-            wNameR = new JLabel("", JLabel.CENTER); //$NON-NLS-1$
+            wNameR = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
             wNameR.setOpaque(false);
-            wHeatR = new JLabel("--", JLabel.CENTER); //$NON-NLS-1$
+            wHeatR = new JLabel("--", SwingConstants.CENTER); //$NON-NLS-1$
             wHeatR.setOpaque(false);
-            wDamR = new JLabel("--", JLabel.CENTER); //$NON-NLS-1$
+            wDamR = new JLabel("--", SwingConstants.CENTER); //$NON-NLS-1$
             wDamR.setOpaque(false);
 
             c.anchor = GridBagConstraints.CENTER;
@@ -548,25 +549,25 @@ public class MechDisplay extends JPanel {
 
 
             // Adding range labels
-            wMinL = new JLabel(Messages.getString("MechDisplay.Min"), JLabel.CENTER); //$NON-NLS-1$
+            wMinL = new JLabel(Messages.getString("MechDisplay.Min"), SwingConstants.CENTER); //$NON-NLS-1$
             wMinL.setOpaque(true);
-            wShortL = new JLabel(Messages.getString("MechDisplay.Short"), JLabel.CENTER); //$NON-NLS-1$
+            wShortL = new JLabel(Messages.getString("MechDisplay.Short"), SwingConstants.CENTER); //$NON-NLS-1$
             wShortL.setOpaque(true);
-            wMedL = new JLabel(Messages.getString("MechDisplay.Med"), JLabel.CENTER); //$NON-NLS-1$
+            wMedL = new JLabel(Messages.getString("MechDisplay.Med"), SwingConstants.CENTER); //$NON-NLS-1$
             wMedL.setOpaque(true);
-            wLongL = new JLabel(Messages.getString("MechDisplay.Long"), JLabel.CENTER); //$NON-NLS-1$
+            wLongL = new JLabel(Messages.getString("MechDisplay.Long"), SwingConstants.CENTER); //$NON-NLS-1$
             wLongL.setOpaque(true);
-            wExtL = new JLabel(Messages.getString("MechDisplay.Ext"), JLabel.CENTER); //$NON-NLS-1$
+            wExtL = new JLabel(Messages.getString("MechDisplay.Ext"), SwingConstants.CENTER); //$NON-NLS-1$
             wExtL.setOpaque(true);
-            wMinR = new JLabel("---", JLabel.CENTER); //$NON-NLS-1$
+            wMinR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wMinR.setOpaque(true);
-            wShortR = new JLabel("---", JLabel.CENTER); //$NON-NLS-1$
+            wShortR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wShortR.setOpaque(true);
-            wMedR = new JLabel("---", JLabel.CENTER); //$NON-NLS-1$
+            wMedR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wMedR.setOpaque(true);
-            wLongR = new JLabel("---", JLabel.CENTER); //$NON-NLS-1$
+            wLongR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wLongR.setOpaque(true);
-            wExtR = new JLabel("---", JLabel.CENTER); //$NON-NLS-1$
+            wExtR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wExtR.setOpaque(true);
 
             c.weightx = 1.0;
@@ -636,18 +637,18 @@ public class MechDisplay extends JPanel {
 
 
             // target panel
-            wTargetL = new JLabel(Messages.getString("MechDisplay.Target"), JLabel.CENTER); //$NON-NLS-1$
+            wTargetL = new JLabel(Messages.getString("MechDisplay.Target"), SwingConstants.CENTER); //$NON-NLS-1$
             wTargetL.setOpaque(true);
-            wRangeL = new JLabel(Messages.getString("MechDisplay.Range"), JLabel.CENTER); //$NON-NLS-1$
+            wRangeL = new JLabel(Messages.getString("MechDisplay.Range"), SwingConstants.CENTER); //$NON-NLS-1$
             wRangeL.setOpaque(true);
-            wToHitL = new JLabel(Messages.getString("MechDisplay.ToHit"), JLabel.CENTER); //$NON-NLS-1$
+            wToHitL = new JLabel(Messages.getString("MechDisplay.ToHit"), SwingConstants.CENTER); //$NON-NLS-1$
             wToHitL.setOpaque(true);
 
-            wTargetR = new JLabel("---", JLabel.CENTER); //$NON-NLS-1$
+            wTargetR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wTargetR.setOpaque(true);
-            wRangeR = new JLabel("---", JLabel.CENTER); //$NON-NLS-1$
+            wRangeR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wRangeR.setOpaque(true);
-            wToHitR = new JLabel("---", JLabel.CENTER); //$NON-NLS-1$
+            wToHitR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
             wToHitR.setOpaque(true);
 
             c.weightx = 0.0;
@@ -1204,9 +1205,9 @@ public class MechDisplay extends JPanel {
         private Entity en;
 
         SystemPanel() {
-            locLabel = new JLabel(Messages.getString("MechDisplay.Location"), JLabel.CENTER); //$NON-NLS-1$
+            locLabel = new JLabel(Messages.getString("MechDisplay.Location"), SwingConstants.CENTER); //$NON-NLS-1$
             locLabel.setOpaque(true);
-            slotLabel = new JLabel(Messages.getString("MechDisplay.Slot"), JLabel.CENTER); //$NON-NLS-1$
+            slotLabel = new JLabel(Messages.getString("MechDisplay.Slot"), SwingConstants.CENTER); //$NON-NLS-1$
             slotLabel.setOpaque(true);
 
             locList = new JList(new DefaultListModel());
@@ -1225,7 +1226,7 @@ public class MechDisplay extends JPanel {
             m_bDumpAmmo.setActionCommand("dump"); //$NON-NLS-1$
             m_bDumpAmmo.addActionListener(this);
 
-            modeLabel = new JLabel(Messages.getString("MechDisplay.modeLabel"), JLabel.RIGHT); //$NON-NLS-1$
+            modeLabel = new JLabel(Messages.getString("MechDisplay.modeLabel"), SwingConstants.RIGHT); //$NON-NLS-1$
             modeLabel.setOpaque(true);
             //modeLabel.setEnabled(false);
 
@@ -1625,7 +1626,7 @@ public class MechDisplay extends JPanel {
             prompt = null;
 
             narcLabel = new JLabel
-                    (Messages.getString("MechDisplay.AffectedBy"), JLabel.CENTER); //$NON-NLS-1$
+                    (Messages.getString("MechDisplay.AffectedBy"), SwingConstants.CENTER); //$NON-NLS-1$
             narcLabel.setOpaque(false);
 
             narcList = new JList(new DefaultListModel());
@@ -1634,21 +1635,21 @@ public class MechDisplay extends JPanel {
             //unusedL = new JLabel( "Unused Space:", JLabel.CENTER );
 
             unusedL = new JLabel
-                    (Messages.getString("MechDisplay.UnusedSpace"), JLabel.CENTER); //$NON-NLS-1$
+                    (Messages.getString("MechDisplay.UnusedSpace"), SwingConstants.CENTER); //$NON-NLS-1$
             unusedL.setOpaque(false);
             unusedR = new JTextArea("", 2, 25); //$NON-NLS-1$
             unusedR.setEditable(false);
             unusedR.setOpaque(false);
 
             carrysL = new JLabel
-                    (Messages.getString("MechDisplay.Carryng"), JLabel.CENTER); //$NON-NLS-1$
+                    (Messages.getString("MechDisplay.Carryng"), SwingConstants.CENTER); //$NON-NLS-1$
             carrysL.setOpaque(false);
             carrysR = new JTextArea("", 4, 25); //$NON-NLS-1$
             carrysR.setEditable(false);
             carrysR.setOpaque(false);
 
             sinksL = new JLabel
-                    (Messages.getString("MechDisplay.activeSinksLabel"), JLabel.CENTER);
+                    (Messages.getString("MechDisplay.activeSinksLabel"), SwingConstants.CENTER);
             sinksL.setOpaque(false);
             sinksR = new JTextArea("", 2, 25);
             sinksR.setEditable(false);
@@ -1659,13 +1660,13 @@ public class MechDisplay extends JPanel {
             sinks2B.addActionListener(this);
 
             heatL = new JLabel
-                    (Messages.getString("MechDisplay.HeatEffects"), JLabel.CENTER); //$NON-NLS-1$
+                    (Messages.getString("MechDisplay.HeatEffects"), SwingConstants.CENTER); //$NON-NLS-1$
             heatL.setOpaque(false);
             heatR = new JTextArea("", 4, 25); //$NON-NLS-1$
             heatR.setEditable(false);
             heatR.setOpaque(false);
 
-            targSysL = new JLabel((Messages.getString("MechDisplay.TargSysLabel")).concat(" "), JLabel.CENTER);
+            targSysL = new JLabel((Messages.getString("MechDisplay.TargSysLabel")).concat(" "), SwingConstants.CENTER);
             targSysL.setOpaque(false);
 
             // layout choice panel

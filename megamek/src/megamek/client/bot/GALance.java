@@ -69,13 +69,11 @@ public class GALance extends GA {
         Object[] move_array = possible.toArray();
         for (int e = 0; e < enemy_array.length; e++) { // for each enemy
             CEntity enemy = tb.centities.get((Entity) enemy_array[e]);
-            MoveOption max = null;
-            for (int m = 0; m < move_array.length; m++) {
-                if (max == null || ((MoveOption) move_array[m]).getThreat(enemy) > max.getThreat(enemy)) {
+            MoveOption max = (MoveOption) move_array[0];
+            for (int m = 1; m < move_array.length; m++) {
+                if (((MoveOption) move_array[m]).getThreat(enemy) > max.getThreat(enemy)) {
                     max = (MoveOption) move_array[m];
                 }
-            }
-            for (int m = 1; m < move_array.length; m++) {
                 MoveOption next = (MoveOption) move_array[m];
                 if (next.getThreat(enemy) > 0) {
                     if (next.getThreat(enemy) < .25 * max.getThreat(enemy)) {
@@ -129,7 +127,6 @@ public class GALance extends GA {
                         if (distance > target_distance) {
                             distance_mod += Math.pow(distance - target_distance, 2);
                         } else if (distance <= 3) {
-                            boolean swarm = false;
                             CEntity target = null;
                             for (int e = 0; e < enemy_array.length; e++) {
                                 CEntity cen = tb.centities.get((Entity) this.enemy_array[e]);
@@ -143,12 +140,11 @@ public class GALance extends GA {
                                                 && cen.current.getFinalCoords().distance(other.getFinalCoords()) <= 3
                                                 && cen.current.getFinalProne())
                                             && !(next.inDanger || next.getFinalProne()))) {
-                                        swarm = true;
                                         target = cen;
                                     }
                                 }
                             }
-                            if (swarm) {
+                            if (target != null) {
                                 if (target.entity.isProne()) {
                                     distance_mod -= target.bv / 100;
                                 }

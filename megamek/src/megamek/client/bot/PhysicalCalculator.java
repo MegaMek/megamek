@@ -14,6 +14,8 @@
 
 package megamek.client.bot;
 
+import java.util.Enumeration;
+
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -26,6 +28,7 @@ import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.Tank;
+import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.actions.BrushOffAttackAction;
@@ -33,8 +36,6 @@ import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
-
-import java.util.Enumeration;
 
 public final class PhysicalCalculator {
     private PhysicalCalculator() {
@@ -100,7 +101,7 @@ public final class PhysicalCalculator {
                 
                 odds = BrushOffAttackAction.toHit(game, entity.getId(),
                         game.getEntity(entity.getSwarmAttackerId()), BrushOffAttackAction.LEFT);
-                if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+                if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
 
                     l_dmg = BrushOffAttackAction.getDamageFor(entity, BrushOffAttackAction.LEFT);
                     l_dmg *= 1.0 - Compute.oddsAbove(odds.getValue()) / 100.0;
@@ -116,7 +117,7 @@ public final class PhysicalCalculator {
                 // Check for right arm punch damage to self
                 odds = BrushOffAttackAction.toHit(game, entity.getId(),
                         game.getEntity(entity.getSwarmAttackerId()), BrushOffAttackAction.RIGHT);
-                if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+                if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
 
                     // If chance of breaching armor is minimal set brush left
                     
@@ -195,7 +196,7 @@ public final class PhysicalCalculator {
                     // Check for left arm punch damage to self
                     odds = BrushOffAttackAction.toHit(game, entity.getId(),
                             best_pod, BrushOffAttackAction.LEFT);
-                    if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+                    if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
 
                         l_dmg = BrushOffAttackAction.getDamageFor(entity,
                                 BrushOffAttackAction.LEFT);
@@ -213,7 +214,7 @@ public final class PhysicalCalculator {
                     // Check for right arm punch damage to self
                     odds = BrushOffAttackAction.toHit(game, entity.getId(),
                             best_pod, BrushOffAttackAction.RIGHT);
-                    if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+                    if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
 
                         // If chance of breaching armor is minimal set brush left
                         
@@ -308,7 +309,7 @@ public final class PhysicalCalculator {
         }
 
         ToHitData odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.LEFT);
-        if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+        if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT);
             bestDmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
             // Adjust damage for targets armor
@@ -317,7 +318,7 @@ public final class PhysicalCalculator {
         }
 
         odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.RIGHT);
-        if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+        if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.RIGHT);
             dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
             // Adjust damage for targets armor
@@ -331,7 +332,7 @@ public final class PhysicalCalculator {
         // Check for a double punch
         odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.LEFT);
         ToHitData odds_a = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.RIGHT);
-        if (odds.getValue() != ToHitData.IMPOSSIBLE && odds_a.getValue() != ToHitData.IMPOSSIBLE) {
+        if (odds.getValue() != TargetRoll.IMPOSSIBLE && odds_a.getValue() != TargetRoll.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT);
             dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
             double dmg_a = Compute.oddsAbove(odds_a.getValue()) / 100.0 * damage;
@@ -385,7 +386,7 @@ public final class PhysicalCalculator {
                 location_table = ToHitData.HIT_NORMAL;
             }
             odds = ClubAttackAction.toHit(game, from.getId(), to, club, ToHitData.HIT_NORMAL);
-            if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+            if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
                 damage = ClubAttackAction.getDamageFor(from, club);
                 dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
                 // Adjust damage for targets armor
@@ -401,7 +402,7 @@ public final class PhysicalCalculator {
         }
         // Check for a push attack
         odds = PushAttackAction.toHit(game, from.getId(), to);
-        if (odds.getValue() != ToHitData.IMPOSSIBLE) {
+        if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
             int elev_diff;
             double breach;
             boolean water_landing = false;
@@ -506,7 +507,7 @@ public final class PhysicalCalculator {
         double coll_damage = 0.0;
         int damage;
         ToHitData odds = KickAttackAction.toHit(game, from.getId(), to, action);
-        if (odds.getValue() == ToHitData.IMPOSSIBLE) {
+        if (odds.getValue() == TargetRoll.IMPOSSIBLE) {
             return 0.0;
         }
         // Calculate collateral damage, due to possible target fall

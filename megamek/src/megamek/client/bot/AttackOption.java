@@ -11,7 +11,7 @@ import megamek.common.WeaponType;
 
 public class AttackOption extends ToHitData {
     
-    public static class Sorter implements Comparator<AttackOption> {
+    static class Sorter implements Comparator<AttackOption> {
         CEntity primary = null;
     
         public Sorter(CEntity primary_target) {
@@ -61,14 +61,13 @@ public class AttackOption extends ToHitData {
     public AttackOption(CEntity target, Mounted weapon, double value, ToHitData toHit, int sec_mod) {
         this.target = target;
         this.weapon = weapon;
-        if (weapon != null){
+        this.toHit = toHit;
+        this.value = value;
+
+        if (target != null && weapon != null) {
             if (weapon.getType().getModesCount() > 0){
                 this.use_mode = weapon.curMode().getName();
             }
-        }
-        this.toHit = toHit;
-        this.value = value;
-        if (target != null) {
             WeaponType w = (WeaponType) weapon.getType();
             
             // As a primary attack.  Damage is already odds-adjusted.

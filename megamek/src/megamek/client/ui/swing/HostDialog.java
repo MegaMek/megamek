@@ -1,21 +1,23 @@
 package megamek.client.ui.swing;
 
-import megamek.common.preference.PreferenceManager;
-import megamek.common.preference.IClientPreferences;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.JCheckBox;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ActionEvent;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import javax.swing.SwingConstants;
+
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.PreferenceManager;
 
 /**
  * here's a quick class for the host new game diaglogue box
@@ -43,9 +45,9 @@ public class HostDialog extends JDialog implements ActionListener {
 
     public HostDialog(JFrame frame) {
         super(frame, Messages.getString("MegaMek.HostDialog.title"), true); //$NON-NLS-1$
-        yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), JLabel.RIGHT); //$NON-NLS-1$
-        serverPassL = new JLabel(Messages.getString("MegaMek.serverPassL"), JLabel.RIGHT); //$NON-NLS-1$
-        portL = new JLabel(Messages.getString("MegaMek.portL"), JLabel.RIGHT); //$NON-NLS-1$
+        yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), SwingConstants.RIGHT); //$NON-NLS-1$
+        serverPassL = new JLabel(Messages.getString("MegaMek.serverPassL"), SwingConstants.RIGHT); //$NON-NLS-1$
+        portL = new JLabel(Messages.getString("MegaMek.portL"), SwingConstants.RIGHT); //$NON-NLS-1$
         yourNameF = new JTextField(PreferenceManager.getClientPreferences().getLastPlayerName(), 16);
         yourNameF.addActionListener(this);
         serverPassF = new JTextField(PreferenceManager.getClientPreferences().getLastServerPass(), 16);
@@ -54,12 +56,12 @@ public class HostDialog extends JDialog implements ActionListener {
         portF.addActionListener(this);
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         metaserver = cs.getMetaServerName();
-        metaserverL = new JLabel(Messages.getString("MegaMek.metaserverL"), JLabel.RIGHT); //$NON-NLS-1$
+        metaserverL = new JLabel(Messages.getString("MegaMek.metaserverL"), SwingConstants.RIGHT); //$NON-NLS-1$
         metaserverF = new JTextField(metaserver);
         metaserverL.setEnabled(register);
         metaserverF.setEnabled(register);
         int goalNumber = cs.getGoalPlayers();
-        goalL = new JLabel(Messages.getString("MegaMek.goalL"), JLabel.RIGHT); //$NON-NLS-1$
+        goalL = new JLabel(Messages.getString("MegaMek.goalL"), SwingConstants.RIGHT); //$NON-NLS-1$
         goalF = new JTextField(Integer.toString(goalNumber), 2);
         goalL.setEnabled(register);
         goalF.setEnabled(register);

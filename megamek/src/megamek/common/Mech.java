@@ -2117,7 +2117,7 @@ public abstract class Mech
             maximumHeat += weaponHeat;
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
-            if (!(wtype.hasFlag(WeaponType.F_ENERGY)
+            if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA))
                         || wtype.hasFlag(WeaponType.F_ONESHOT)
                         || wtype.hasFlag(WeaponType.F_INFANTRY)
                         || wtype.getAmmoType() == AmmoType.T_NA)) {

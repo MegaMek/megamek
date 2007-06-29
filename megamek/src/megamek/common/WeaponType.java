@@ -6014,7 +6014,7 @@ public class WeaponType extends EquipmentType {
         weapon.heat = 2;
         weapon.rackSize = 2;
         weapon.damage = 2; // # of d6 of missiles affected
-        weapon.ammoType = AmmoType.T_AMS;
+        weapon.ammoType = AmmoType.T_NA;
         weapon.tonnage = 1.5f;
         weapon.criticals = 2;
         weapon.bv = 105;

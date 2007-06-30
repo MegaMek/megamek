@@ -26,8 +26,19 @@ import java.util.Properties;
 import java.util.Vector;
 
 import megamek.client.ui.IMegaMekGUI;
+import megamek.client.ui.AWT.MechView;
+import megamek.common.Entity;
+import megamek.common.Mech;
+import megamek.common.MechFileParser;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.Tank;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.AbstractCommandLineParser;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestTank;
 import megamek.server.DedicatedServer;
 
 /**
@@ -44,7 +55,7 @@ public class MegaMek {
 
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
 
-    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek [-log <logfile>] [(-gui <guiname>)|(-dedicated)] [<args>]";
+    private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek [-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)] [<args>]";
 
     private static final String UNKNOWN_GUI_MESSAGE = "Unknown GUI:";
 
@@ -280,6 +291,7 @@ public class MegaMek {
         private static final String OPTION_GUI = "gui"; //$NON-NLS-1$
         private static final String OPTION_LOG = "log"; //$NON-NLS-1$
         private static final String OPTION_EQUIPMENT_DB = "eqdb"; //$NON-NLS-1$
+        private static final String OPTION_UNIT_VALIDATOR = "validate"; //$NON-NLS-1$
 
         public CommandLineParser(String[] args) {
             super(args);
@@ -332,6 +344,12 @@ public class MegaMek {
                 processEquipmentDb();
             }
 
+            if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_UNIT_VALIDATOR)) {
+                nextToken();
+                processUnitValidator();
+            }
+
+
             if (getToken() == TOK_OPTION && getTokenValue().equals(OPTION_DEDICATED)) {
                 nextToken();
                 dedicatedServer = true;
@@ -372,6 +390,55 @@ public class MegaMek {
             } else {
                 error("file name expected"); //$NON-NLS-1$                
             }
+        }
+
+        private void processUnitValidator() throws ParseException {
+            String filename;
+            if (getToken() == TOK_LITERAL) {
+                filename = getTokenValue();
+                nextToken();
+                MechSummary ms = MechSummaryCache.getInstance().getMech(filename);
+                if ( ms == null ) {
+                    MechSummary[] units = MechSummaryCache.getInstance().getAllMechs();
+                    //System.err.println("units: "+units.length);
+                    for ( MechSummary unit :  units) {
+                        //System.err.println(unit.getSourceFile().getName());
+                        if ( unit.getSourceFile().getName().equalsIgnoreCase(filename) ) {
+                            ms = unit;
+                            break;
+                        }
+                    }
+                }
+                
+                if ( ms == null )
+                    System.err.println(filename+" not found try using \"chassie model\" for input.");
+                else
+                    try {
+                        Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                        System.err.println("Validating Entity: "+entity.getShortNameRaw());
+                        EntityVerifier entityVerifier = new EntityVerifier(new File("data/mechfiles/UnitVerifierOptions.xml"));
+                        MechView mechView = new MechView(entity);
+                        StringBuffer sb = new StringBuffer(mechView.getMechReadout());
+                        if(entity instanceof Mech || entity instanceof Tank) {
+                            TestEntity testEntity = null;
+                            if (entity instanceof Mech)
+                                testEntity = new TestMech((Mech)entity, entityVerifier.mechOption, null);
+                            if (entity instanceof Tank)
+                                testEntity = new TestTank((Tank)entity, entityVerifier.tankOption, null);
+                            testEntity.correctEntity(sb, true);
+                        }
+                        System.err.println(sb.toString());
+    
+                        //new EntityVerifier(new File("data/mechfiles/UnitVerifierOptions.xml")).checkEntity(entity, ms.getSourceFile().toString(), true);
+                    }catch(Exception ex) {
+                        //ex.printStackTrace();
+                        error("\"chassie model\" expected as input"); //$NON-NLS-1$
+                    }
+
+            } else {
+                error("\"chassie model\" expected as input"); //$NON-NLS-1$                
+            }
+            System.exit(0);
         }
 
         private void processRestOfInput() {

@@ -25,6 +25,7 @@ v0.33.7-dev (SVN)
 + Bug 1736000: Bugs with the Plasma Rifle
 + slight (very slight) improvement in bot speed, cleaned up some code in the 
   ui while looking at ways to finish the swing conversion
++ Added validate command line option to validate files in data/mechfiles quickly
 
 v0.33.6 (2007-05-26, 20:00 GMT +2)
 + added some javadoc documentation. This is a work in progress.

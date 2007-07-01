@@ -8954,6 +8954,10 @@ public class Server implements Runnable {
                 sSalvoType = " acid-head missile(s) ";
             }
 
+            if ( wtype.getAmmoType() == AmmoType.T_SBGAUSS ) {
+                sSalvoType = " projectiles(s) ";
+            }
+
             //Dead-Fire Missles do an extra pont of damage and hit in clusters of 1
             //i.e. LRM's do 2 points per missle and SRM's do 3 points per missle.
             if (bDeadFire) {

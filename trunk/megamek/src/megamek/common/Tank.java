@@ -568,11 +568,8 @@ public class Tank
 
         // adjust for target movement modifier
         int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false).getValue();
-        if (tmmRan > 7) {
-            tmmRan = 7;
-        }
-        double[] tmmFactors = { 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7 };
-        dbv *= tmmFactors[tmmRan];
+        double tmmFactor = 1+(tmmRan/10);
+        dbv *= tmmFactor;
         
         double weaponBV = 0;
 

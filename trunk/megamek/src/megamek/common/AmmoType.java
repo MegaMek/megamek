@@ -179,6 +179,7 @@ public class AmmoType extends EquipmentType {
     private int ammoType;
     private long munitionType;
     protected int shots;
+    private double kgPerShot = -1;
     
     
     public AmmoType() {
@@ -2440,6 +2441,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 6;
         ammo.cost = 2000;
+        ammo.kgPerShot = 20;
 
         return ammo;
     }
@@ -2459,6 +2461,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 12;
         ammo.cost = 9000;
+        ammo.kgPerShot = 50;
 
         return ammo;
     }
@@ -2622,6 +2625,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 100;
         ammo.bv = 1;
         ammo.cost = 1000;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -2642,6 +2646,7 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
         ammo.cost = 500;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -2662,6 +2667,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 1000;
+        ammo.kgPerShot = 5;
 
         return ammo;
     }
@@ -2683,6 +2689,7 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
         ammo.cost = 500;
+        ammo.kgPerShot = 5;
 
         return ammo;
     }
@@ -2702,6 +2709,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 200;
         ammo.bv = 1;
         ammo.cost = 500;
+        ammo.kgPerShot = 5;
 
         return ammo;
     }
@@ -2722,6 +2730,7 @@ public class AmmoType extends EquipmentType {
         ammo.tonnage = 0.5f;
         ammo.bv = 0.5f;
         ammo.cost = 250;
+        ammo.kgPerShot = 5;
 
         return ammo;
     }
@@ -2740,6 +2749,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 45;
         ammo.bv = 8;
         ammo.cost = 1000;
+        ammo.kgPerShot = 20;
 
         return ammo;
     }
@@ -2758,6 +2768,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 20;
         ammo.bv = 15;
         ammo.cost = 9000;
+        ammo.kgPerShot = 50;
 
         return ammo;
     }
@@ -2885,6 +2896,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 2;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -2902,6 +2914,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 3;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -2919,6 +2932,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 5;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -2936,6 +2950,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 6;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -2955,6 +2970,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 7;
         ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
 
         return ammo;
     }
@@ -2972,6 +2988,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 9;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -2989,6 +3006,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 12;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3006,6 +3024,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 12;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3023,6 +3042,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 12;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3042,6 +3062,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 14;
         ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
 
         return ammo;
     }
@@ -3059,6 +3080,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 18;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3076,6 +3098,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 18;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3093,6 +3116,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 20;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3110,6 +3134,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 21;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3129,6 +3154,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 21;
         ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
 
         return ammo;
     }
@@ -3146,6 +3172,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 27;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3163,6 +3190,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 27;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3180,6 +3208,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 27;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3197,6 +3226,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
         ammo.bv = 28;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3216,6 +3246,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 27;
         ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
 
         return ammo;
     }
@@ -3233,6 +3264,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 2;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3251,6 +3283,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.bv = 3;
         ammo.cost = 27000;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3268,6 +3301,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 4;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3286,6 +3320,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 25;
         ammo.bv = 5;
         ammo.cost = 27000;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3303,6 +3338,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
         ammo.bv = 5;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3321,6 +3357,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 7;
         ammo.cost = 27000;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3338,6 +3375,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 2;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3355,6 +3393,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 3;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3372,6 +3411,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 5;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3389,6 +3429,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 6;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3407,6 +3448,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 7;
         ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
 
         return ammo;
     }
@@ -3424,6 +3466,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 9;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3441,6 +3484,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 12;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3458,6 +3502,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 12;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3475,6 +3520,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 12;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3493,6 +3539,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 12;
         ammo.bv = 14;
         ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
 
         return ammo;
     }
@@ -3510,6 +3557,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 18;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3527,6 +3575,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 18;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3544,6 +3593,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 20;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3561,6 +3611,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 21;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3579,6 +3630,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 8;
         ammo.bv = 21;
         ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
 
         return ammo;
     }
@@ -3596,6 +3648,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 27;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3613,6 +3666,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 27;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3630,6 +3684,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 27;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3647,6 +3702,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
         ammo.bv = 28;
+        ammo.kgPerShot = 8.33;
         return ammo;
 
     }
@@ -3665,6 +3721,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 27;
         ammo.cost = 30000;
+        ammo.kgPerShot = 8.33;
 
         return ammo;
     }
@@ -3790,6 +3847,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 3;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3808,6 +3866,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 50;
         ammo.bv = 5;
         ammo.cost = 54000;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3824,6 +3883,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 8;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3842,6 +3902,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 25;
         ammo.bv = 10;
         ammo.cost = 54000;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3858,6 +3919,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
         ammo.bv = 13;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3876,6 +3938,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 15;
         ammo.bv = 15;
         ammo.cost = 54000;
+        ammo.kgPerShot = 10;
 
         return ammo;
     }
@@ -3894,6 +3957,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 24;
         ammo.bv = 22;
         ammo.cost = 2000;
+        ammo.kgPerShot = 40;
 
         return ammo;
     }
@@ -3911,6 +3975,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 0;
         ammo.cost = 6000;
+        ammo.kgPerShot = 150;
 
         return ammo;
     }
@@ -3927,6 +3992,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 6;
         ammo.bv = 0;
         ammo.cost = 1500;
+        ammo.kgPerShot = 150;
 
         return ammo;
     }
@@ -5612,6 +5678,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 40;
         ammo.bv = 3;
         ammo.cost = 1000;
+        ammo.kgPerShot = 40;
         return ammo;
     }
 
@@ -6300,4 +6367,17 @@ public class AmmoType extends EquipmentType {
             return munition;
         }
     } // End private class MunitionMutator
+    
+    /**
+     * get bv for protomech loads
+     */
+    public double getProtoBV() {
+        if (getAmmoType() == AmmoType.T_SRM ||
+            getAmmoType() == AmmoType.T_SRM_STREAK ||
+            getAmmoType() == AmmoType.T_LRM ||
+            getAmmoType() == AmmoType.T_SRM_TORPEDO ||
+            getAmmoType() == AmmoType.T_LRM_TORPEDO)
+            return kgPerShot * rackSize * shots / 1000 * bv;
+        else return kgPerShot * shots / 1000 * bv;
+    }
 }

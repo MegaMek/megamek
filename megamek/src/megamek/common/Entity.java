@@ -4113,7 +4113,7 @@ public abstract class Entity extends TurnOrdered
             break;
         case Building.WALL:
             mod = 12;
-            desc = "Wall";
+            desc = "";
             break;
         }
 

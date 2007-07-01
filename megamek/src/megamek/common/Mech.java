@@ -2062,10 +2062,7 @@ public abstract class Mech
         // Try to find a Mek Stealth system.
         if (hasStealth())
             targetMovementModifier += 2;
-        if (targetMovementModifier > 7)
-            targetMovementModifier = 7;
-        double[] tmmFactors = { 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7 };
-        double tmmFactor = tmmFactors[targetMovementModifier];
+        double tmmFactor = 1+(targetMovementModifier/10);
         dbv *= tmmFactor;
         
         // calculate heat efficiency

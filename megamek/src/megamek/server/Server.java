@@ -16458,6 +16458,10 @@ public class Server implements Runnable {
                 r.add(entity.getLocationAbbr(loc));
                 r.add(breachroll);
                 r.newlines = 0;
+                if (breachroll >= 10)
+                    r.choose(false);
+                else
+                    r.choose(true);
                 vDesc.addElement(r);
             }
             // Breach by damage or lack of armor.

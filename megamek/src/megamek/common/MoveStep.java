@@ -29,6 +29,10 @@ import java.util.Enumeration;
  * A single step in the entity's movment.
  */
 public class MoveStep implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6075640793056182285L;
     private int type = 0;
     private int targetId = Entity.NONE;
     private int targetType = Targetable.TYPE_ENTITY;
@@ -296,10 +300,21 @@ public class MoveStep implements Serializable {
             
             if ( bld != null ) {
                 IHex hex = game.getBoard().getHex(getPosition());
-                int maxElevation = 2+entity.getElevation() + game.getBoard().getHex(entity.getPosition()).surface() - hex.surface();
+                int maxElevation = entity.getElevation() + game.getBoard().getHex(entity.getPosition()).surface() - hex.surface();
                 
-                if ( bld.getType() == Building.WALL && maxElevation >= hex.terrainLevel(Terrains.BLDG_ELEV) )
-                    setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BLDG_ELEV)));
+                //Meks can climb up level 2 walls or less while everything
+                //can only climb up one level
+                if ( entity instanceof Mech )
+                    maxElevation += 2;
+                else
+                    maxElevation++;
+                
+                if ( bld.getType() == Building.WALL  )
+                    if ( maxElevation >= hex.terrainLevel(Terrains.BLDG_ELEV) )
+                        setElevation(Math.max(getElevation(), hex.terrainLevel(Terrains.BLDG_ELEV)));
+                    else {//if the wall is taller then the unit then they cannot climb it or enter it
+                        return;
+                    }
                 else
                     setElevation(entity.calcElevation(game.getBoard().getHex(prev.getPosition()),game.getBoard().getHex(getPosition()),elevation, climbMode()));
             } else 
@@ -1506,6 +1521,16 @@ public class MoveStep implements Serializable {
             return false;
         }
 
+        Building bld = game.getBoard().getBuildingAt(dest);
+        
+        if ( bld != null ) {
+            IHex hex = game.getBoard().getHex(getPosition());
+            int maxElevation = 2+entity.getElevation() + game.getBoard().getHex(entity.getPosition()).surface() - hex.surface();
+
+            if ( bld.getType() == Building.WALL && maxElevation < hex.terrainLevel(Terrains.BLDG_ELEV) )
+                    return false;
+        }
+        
         final int srcAlt = srcEl + srcHex.getElevation();
         final int destAlt = elevation + destHex.getElevation();
 

@@ -28,6 +28,7 @@ v0.33.7-dev (SVN)
 + Added validate command line option to validate files in data/mechfiles quickly
 + Bug: Unit could enter walls that where taller then them as if they where buildings.
 + Improved breach reporting
++ Fix ammo BV for protos, dbv multiplyer now correct for super fast units
 
 v0.33.6 (2007-05-26, 20:00 GMT +2)
 + added some javadoc documentation. This is a work in progress.

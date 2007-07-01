@@ -737,11 +737,8 @@ public class Protomech extends Entity implements Serializable {
 
         // adjust for target movement modifier
         int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false).getValue();
-        if (tmmRan > 7) {
-            tmmRan = 7;
-        }
-        double[] tmmFactors = { 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8 };
-        dbv *= tmmFactors[tmmRan];
+        double tmmFactor = 1+(tmmRan/10)+0.1;
+        dbv *= tmmFactor;
         
         double weaponBV = 0;
 
@@ -835,15 +832,14 @@ public class Protomech extends Entity implements Serializable {
                     }
                 }
             }
-            // TODO: adjust for number of shots, protos don't carry full tons
             String key = atype.getAmmoType()+":"+atype.getRackSize();
             if (!keys.contains(key))
                 keys.add(key);
             if (!ammo.containsKey(key)) {
-                ammo.put(key, atype.getBV(this));
+                ammo.put(key, atype.getProtoBV());
             }
             else {
-                ammo.put(key, atype.getBV(this)+ammo.get(key));
+                ammo.put(key, atype.getProtoBV()+ammo.get(key));
             }
         }
         // excessive ammo rule:

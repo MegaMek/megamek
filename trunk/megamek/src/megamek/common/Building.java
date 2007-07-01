@@ -444,7 +444,7 @@ public class Building implements Serializable {
         case Building.MEDIUM  : buf.append( "Medium " ); break;
         case Building.HEAVY   : buf.append( "Heavy " ); break;
         case Building.HARDENED: buf.append( "Hardened " ); break;
-        case Building.WALL: buf.append( "Wall" ); break;
+        case Building.WALL    : buf.append( "" ); break;
         }
 
         // Add the building's name.

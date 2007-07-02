@@ -412,7 +412,7 @@ public class Client {
      * @param   nFacing - the <code>int</code> direction the entity should face
      */
     public void deploy(int id, Coords c, int nFacing) {
-        this.deploy(id, c, nFacing, new Vector(),false);
+        this.deploy(id, c, nFacing, new Vector<Entity>(),false);
     }
 
     /**
@@ -424,7 +424,7 @@ public class Client {
      * @param   loadedUnits - a <code>List</code> of units that start the game
      *          being transported byt the deployed entity.
      */
-    public void deploy(int id, Coords c, int nFacing, Vector loadedUnits) {
+    public void deploy(int id, Coords c, int nFacing, Vector<Entity> loadedUnits) {
         deploy(id,c,nFacing,loadedUnits,false);
     }
     
@@ -439,7 +439,7 @@ public class Client {
      *          being transported byt the deployed entity.
      * @param   assaultDrop - true if deployment is an assault drop
      */
-    public void deploy(int id, Coords c, int nFacing, Vector loadedUnits, boolean assaultDrop) {
+    public void deploy(int id, Coords c, int nFacing, Vector<Entity> loadedUnits, boolean assaultDrop) {
         int packetCount = 5 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
@@ -449,9 +449,9 @@ public class Client {
         data[index++] = new Integer(loadedUnits.size());
         data[index++] = new Boolean(assaultDrop);
 
-        Enumeration iter = loadedUnits.elements();
+        Enumeration<Entity> iter = loadedUnits.elements();
         while (iter.hasMoreElements()) {
-            data[index++] = new Integer(((Entity) iter.nextElement()).getId());
+            data[index++] = new Integer((iter.nextElement()).getId());
         }
 
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY, data));
@@ -536,14 +536,14 @@ public class Client {
     /**
      * Sends an "deploy minefields" packet
      */
-    public void sendDeployMinefields(Vector minefields) {
+    public void sendDeployMinefields(Vector<Minefield> minefields) {
         send(new Packet(Packet.COMMAND_DEPLOY_MINEFIELDS, minefields));
     }
 
     /**
      * Sends a "set Artillery Autohit Hexes" packet
      */
-    public void sendArtyAutoHitHexes(Vector hexes) {
+    public void sendArtyAutoHitHexes(Vector<Coords> hexes) {
         send(new Packet(Packet.COMMAND_SET_ARTYAUTOHITHEXES, hexes));
     }
     
@@ -673,11 +673,11 @@ public class Client {
      * Loads entity firing data from the data in the net command
      */
     protected void receiveAttack(Packet c) {
-        Vector vector = (Vector) c.getObject(0);
+        Vector<EntityAction> vector = (Vector<EntityAction>) c.getObject(0);
         int charge = c.getIntValue(1);
         boolean addAction = true;
-        for (Enumeration i = vector.elements(); i.hasMoreElements();) {
-            EntityAction ea = (EntityAction) i.nextElement();
+        for (Enumeration<EntityAction> i = vector.elements(); i.hasMoreElements();) {
+            EntityAction ea = i.nextElement();
             int entityId = ea.getEntityId();
             if (ea instanceof TorsoTwistAction && game.hasEntity(entityId)) {
                 TorsoTwistAction tta = (TorsoTwistAction) ea;
@@ -714,7 +714,7 @@ public class Client {
     }
 
     //Should be private?
-    public String receiveReport(Vector v) {
+    public String receiveReport(Vector<Report> v) {
         boolean doubleBlind = false;
         
         if (v == null) {
@@ -723,7 +723,7 @@ public class Client {
 
         StringBuffer report = new StringBuffer();
         for (int i = 0; i < v.size(); i++) {
-            report.append(((Report)v.elementAt(i)).getText());
+            report.append((v.elementAt(i)).getText());
         }
 
         /*

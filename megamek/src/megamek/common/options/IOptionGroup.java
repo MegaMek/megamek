@@ -39,5 +39,5 @@ public interface IOptionGroup extends IBasicOptionGroup {
      * 
      * @see IOptions#getGroups()
      */
-    public abstract Enumeration getOptions();
+    public abstract Enumeration<IOption> getOptions();
 }

@@ -114,6 +114,7 @@ import megamek.common.actions.TriggerAPPodAction;
 import megamek.common.actions.UnjamAction;
 import megamek.common.actions.UnloadStrandedAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.containers.PlayerIDandList;
 import megamek.common.net.Connection;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
@@ -1020,8 +1021,8 @@ public class Server implements Runnable {
     private void resetEntityPhase(int phase) {
         // first, mark doomed entities as destroyed and flag them
         Vector<Entity> toRemove = new Vector<Entity>(0, 10);
-        for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
-            final Entity entity = (Entity)e.nextElement();
+        for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
+            final Entity entity = e.nextElement();
 
             if (entity.crew.isDoomed()) {
                 entity.crew.setDoomed(false);
@@ -1074,8 +1075,8 @@ public class Server implements Runnable {
         }
 
         // do some housekeeping on all the remaining
-        for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
-            final Entity entity = (Entity)e.nextElement();
+        for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
+            final Entity entity = e.nextElement();
 
             entity.applyDamage();
 
@@ -1199,11 +1200,11 @@ public class Server implements Runnable {
         }
 
         //List the survivors
-        Enumeration survivors = game.getEntities();
+        Enumeration<Entity> survivors = game.getEntities();
         if ( survivors.hasMoreElements() ) {
             addReport(new Report(7020, Report.PUBLIC));
             while ( survivors.hasMoreElements() ) {
-                Entity entity = (Entity) survivors.nextElement();
+                Entity entity = survivors.nextElement();
 
                 if ( !entity.isDeployed() )
                   continue;
@@ -1212,12 +1213,12 @@ public class Server implements Runnable {
             }
         }
         //List units that never deployed
-        Enumeration undeployed = game.getEntities();
+        Enumeration<Entity> undeployed = game.getEntities();
         if ( undeployed.hasMoreElements() ) {
             boolean wroteHeader = false;
 
             while ( undeployed.hasMoreElements() ) {
-                Entity entity = (Entity) undeployed.nextElement();
+                Entity entity = undeployed.nextElement();
 
                 if ( entity.isDeployed() )
                   continue;
@@ -1231,30 +1232,30 @@ public class Server implements Runnable {
             }
         }
         //List units that retreated
-        Enumeration retreat = game.getRetreatedEntities();
+        Enumeration<Entity> retreat = game.getRetreatedEntities();
         if ( retreat.hasMoreElements() ) {
             addReport(new Report(7080, Report.PUBLIC));
             while ( retreat.hasMoreElements() ) {
-                Entity entity = (Entity) retreat.nextElement();
+                Entity entity = retreat.nextElement();
                 addReport( entity.victoryReport());
             }
         }
         //List destroyed units
-        Enumeration graveyard = game.getGraveyardEntities();
+        Enumeration<Entity> graveyard = game.getGraveyardEntities();
         if ( graveyard.hasMoreElements() ) {
             addReport(new Report(7085, Report.PUBLIC));
             while ( graveyard.hasMoreElements() ) {
-                Entity entity = (Entity) graveyard.nextElement();
+                Entity entity = graveyard.nextElement();
                 addReport( entity.victoryReport());
             }
         }
         //List devastated units (not salvagable)
-        Enumeration devastated = game.getDevastatedEntities();
+        Enumeration<Entity> devastated = game.getDevastatedEntities();
         if ( devastated.hasMoreElements() ) {
             addReport(new Report(7090, Report.PUBLIC));
 
             while ( devastated.hasMoreElements() ) {
-                Entity entity = (Entity) devastated.nextElement();
+                Entity entity = devastated.nextElement();
                 addReport( entity.victoryReport());
             }
         }
@@ -1268,17 +1269,17 @@ public class Server implements Runnable {
     private String getDetailedVictoryReport() {
         StringBuffer sb = new StringBuffer();
 
-        Vector vAllUnits = new Vector();
-        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+        Vector<Entity> vAllUnits = new Vector<Entity>();
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             vAllUnits.addElement(i.nextElement());
         }
 
-        for ( Enumeration i = game.getRetreatedEntities();
+        for ( Enumeration<Entity> i = game.getRetreatedEntities();
               i.hasMoreElements(); ) {
             vAllUnits.addElement(i.nextElement());
         }
 
-        for ( Enumeration i = game.getGraveyardEntities();
+        for ( Enumeration<Entity> i = game.getGraveyardEntities();
               i.hasMoreElements(); ) {
             vAllUnits.addElement(i.nextElement());
         }
@@ -1294,21 +1295,21 @@ public class Server implements Runnable {
 
             // Record the player's alive, retreated, or salvageable units.
             for (int x = 0; x < vAllUnits.size(); x++) {
-                Entity e = (Entity)vAllUnits.elementAt(x);
+                Entity e = vAllUnits.elementAt(x);
                 if (e.getOwner() == p) {
                     sb.append(UnitStatusFormatter.format(e));
                 }
             }
 
             // Record the player's devastated units.
-            Enumeration devastated = game.getDevastatedEntities();
+            Enumeration<Entity> devastated = game.getDevastatedEntities();
             if ( devastated.hasMoreElements() ) {
                 sb.append("=============================================================");
                 sb.append( CommonConstants.NL );
                 sb.append("The following utterly destroyed units are not available for salvage:");
                 sb.append( CommonConstants.NL );
                 while ( devastated.hasMoreElements() ) {
-                    Entity e = (Entity) devastated.nextElement();
+                    Entity e = devastated.nextElement();
                     if (e.getOwner() == p) {
                         sb.append( e.getShortName() )
                             .append( ", Pilot: " )
@@ -1344,9 +1345,9 @@ public class Server implements Runnable {
             game.setVictoryTeam(victor.getTeam());
         }
 
-        Vector players = game.getPlayersVector();
+        Vector<Player> players = game.getPlayersVector();
         for (int i = 0; i < players.size(); i++) {
-            Player player = (Player) players.elementAt(i);
+            Player player = players.elementAt(i);
             player.setAdmitsDefeat(false);
         }
     }
@@ -1438,7 +1439,7 @@ public class Server implements Runnable {
 
         // Unless overridden by the "protos_move_multi" option, all Protomechs
         // in a unit declare fire, and they don't mix with infantry.
-        if ( protosMoved && !protosMoveMulti && isGeneralMoveTurn) {
+        if ( protosMoved && !protosMoveMulti && isGeneralMoveTurn && entityUsed != null) {
 
             // What's the unit number and ID of the entity used?
             final char movingUnit = entityUsed.getUnitNumber();
@@ -2120,13 +2121,13 @@ public class Server implements Runnable {
         if (game.isForceVictory()) {
             int victoryPlayerId = game.getVictoryPlayerId();
             int victoryTeam = game.getVictoryTeam();
-            Vector players = game.getPlayersVector();
+            Vector<Player> players = game.getPlayersVector();
             boolean forceVictory = true;
 
             // Individual victory.
             if (victoryPlayerId != Player.PLAYER_NONE) {
                 for (int i = 0; i < players.size(); i++) {
-                    Player player = (Player) players.elementAt(i);
+                    Player player = players.elementAt(i);
 
                     if (player.getId() != victoryPlayerId && !player.isObserver()) {
                         if (!player.admitsDefeat()) {
@@ -2139,7 +2140,7 @@ public class Server implements Runnable {
             // Team victory.
             if (victoryTeam != Player.TEAM_NONE) {
                 for (int i = 0; i < players.size(); i++) {
-                    Player player = (Player) players.elementAt(i);
+                    Player player = players.elementAt(i);
 
                     if (player.getTeam() != victoryTeam && !player.isObserver()) {
                         if (!player.admitsDefeat()) {
@@ -2155,7 +2156,7 @@ public class Server implements Runnable {
             }
 
             for (int i = 0; i < players.size(); i++) {
-                Player player = (Player) players.elementAt(i);
+                Player player = players.elementAt(i);
                 player.setAdmitsDefeat(false);
             }
 
@@ -2202,7 +2203,7 @@ public class Server implements Runnable {
             return true;
         }
         else if ( playersAlive == 1 ) {
-            if (lastPlayer.getTeam() == Player.TEAM_NONE) {
+            if (lastPlayer != null && lastPlayer.getTeam() == Player.TEAM_NONE) {
                 // individual victory
                 game.setVictoryPlayerId(lastPlayer.getId());
                 game.setVictoryTeam(Player.TEAM_NONE);
@@ -2406,7 +2407,7 @@ public class Server implements Runnable {
             ( game.getEntitiesVector(), game );
 
         // See if there are any loaded units stranded on immobile transports.
-        Enumeration strandedUnits = game.getSelectedEntities
+        Enumeration<Entity> strandedUnits = game.getSelectedEntities
             ( new EntitySelector() {
                     public boolean accept( Entity entity ) {
                         if ( Server.this.game.isEntityStranded(entity) )
@@ -2515,8 +2516,8 @@ public class Server implements Runnable {
         // Go through all entities, and update the turn categories of the
         // entity's player.  The teams get their totals from their players.
         // N.B. protomechs declare weapons fire based on their point.
-        for (Enumeration loop = game.getEntities(); loop.hasMoreElements();) {
-            final Entity entity = (Entity)loop.nextElement();
+        for (Enumeration<Entity> loop = game.getEntities(); loop.hasMoreElements();) {
+            final Entity entity = loop.nextElement();
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
                 if ( entity instanceof Infantry ) {
@@ -2543,8 +2544,8 @@ public class Server implements Runnable {
         Hashtable<Team, TurnVectors> allTeamTurns = new Hashtable<Team, TurnVectors>( nTeams );
         Hashtable<Team, int[]> evenTrackers = new Hashtable<Team, int[]>( nTeams );
         int numTeamsMoving = 0;
-        for (Enumeration loop = game.getTeams(); loop.hasMoreElements(); ) {
-            final Team team = (Team) loop.nextElement();
+        for (Enumeration<Team> loop = game.getTeams(); loop.hasMoreElements(); ) {
+            final Team team = loop.nextElement();
             allTeamTurns.put( team, team.determineTeamOrder(game) );
 
             // Track both the number of times we've checked the team for
@@ -2564,7 +2565,7 @@ public class Server implements Runnable {
             ( game.getTeamsVector(), game );
 
         // See if there are any loaded units stranded on immobile transports.
-        Enumeration strandedUnits = game.getSelectedEntities
+        Enumeration<Entity> strandedUnits = game.getSelectedEntities
             ( new EntitySelector() {
                     public boolean accept( Entity entity ) {
                         if ( Server.this.game.isEntityStranded(entity) )
@@ -4296,8 +4297,8 @@ public class Server implements Runnable {
                     curHex.removeTerrain(Terrains.MAGMA);
                     curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
                     sendChangedHex(curPos);
-                    for(Enumeration e=game.getEntities(curPos);e.hasMoreElements();) {
-                        Entity en = (Entity)e.nextElement();
+                    for(Enumeration<Entity> e=game.getEntities(curPos);e.hasMoreElements();) {
+                        Entity en = e.nextElement();
                         if(en != entity)
                             doMagmaDamage(en, false);
                     }
@@ -4392,9 +4393,9 @@ public class Server implements Runnable {
                 || overallMoveType == IEntityMovementType.MOVE_JUMP && !i.hasMoreElements()) {
                 checkVibrabombs(entity, curPos, false, lastPos, curPos);
                 if (game.containsMinefield(curPos)) {
-                    Enumeration minefields = game.getMinefields(curPos).elements();
+                    Enumeration<Minefield> minefields = game.getMinefields(curPos).elements();
                     while (minefields.hasMoreElements()) {
-                        Minefield mf = (Minefield) minefields.nextElement();
+                        Minefield mf = minefields.nextElement();
 
                         boolean isOnGround = !i.hasMoreElements();
                         isOnGround |= step.getMovementType() != IEntityMovementType.MOVE_JUMP;
@@ -4422,9 +4423,9 @@ public class Server implements Runnable {
                 isInfantry) {
                 if (game.containsMinefield(curPos)) {
                     Player owner = entity.getOwner();
-                    Enumeration minefields = game.getMinefields(curPos).elements();
+                    Enumeration<Minefield> minefields = game.getMinefields(curPos).elements();
                     while (minefields.hasMoreElements()) {
-                        Minefield mf = (Minefield) minefields.nextElement();
+                        Minefield mf = minefields.nextElement();
                         if (!owner.containsMinefield(mf)) {
                             r = new Report(2120);
                             r.subject = entity.getId();
@@ -4458,7 +4459,7 @@ public class Server implements Runnable {
                 }
 
                 // Do we need to remove a game turn for the swarmer
-                if (!swarmerDone &&
+                if (!swarmerDone && swarmer != null &&
                     ( swarmer.isDoomed() || swarmer.isDestroyed() )) {
                     // We have to diddle with the swarmer's
                     // status to get its turn removed.
@@ -4531,11 +4532,11 @@ public class Server implements Runnable {
 
                 // Find the unit being loaded.
                 Entity loaded = null;
-                Enumeration entities = game.getEntities( curPos );
+                Enumeration<Entity> entities = game.getEntities( curPos );
                 while ( entities.hasMoreElements() ) {
 
                     // Is the other unit friendly and not the current entity?
-                    loaded = (Entity)entities.nextElement();
+                    loaded = entities.nextElement();
                     if ( !entity.isEnemyOf(loaded) &&
                          !entity.equals(loaded) ) {
 
@@ -4644,7 +4645,7 @@ public class Server implements Runnable {
                         addAffectedBldg( bldgEntered, collapsed );
                     }
 
-                    // If we're moving withing the same building, just handle
+                    // If we're moving within the same building, just handle
                     // the "within".
                     else if ( bldgExited.equals( bldgEntered ) ) {
                         collapsed = passBuildingWall( entity, bldgEntered,
@@ -4654,7 +4655,7 @@ public class Server implements Runnable {
                     }
 
                     // If we have different buildings, roll for each.
-                    else if ( bldgExited != null && bldgEntered != null ) {
+                    else if ( bldgEntered != null ) {
                         collapsed = passBuildingWall( entity, bldgExited,
                                                       lastPos, curPos,
                                                       distance, "exiting", step.isThisStepBackwards() );
@@ -4666,7 +4667,7 @@ public class Server implements Runnable {
                     }
 
                     // Otherwise, just handle the "exited".
-                    else if (bldgExited != null){
+                    else {
                         collapsed = passBuildingWall( entity, bldgExited,
                                                       lastPos, curPos,
                                                       distance, "exiting", step.isThisStepBackwards() );
@@ -4914,8 +4915,8 @@ public class Server implements Runnable {
                     curHex.removeTerrain(Terrains.MAGMA);
                     curHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.MAGMA, 2));
                     sendChangedHex(curPos);
-                    for(Enumeration e=game.getEntities(curPos);e.hasMoreElements();) {
-                        Entity en = (Entity)e.nextElement();
+                    for(Enumeration<Entity> e=game.getEntities(curPos);e.hasMoreElements();) {
+                        Entity en = e.nextElement();
                         if(en != entity)
                             doMagmaDamage(en, false);
                     }
@@ -5119,10 +5120,10 @@ public class Server implements Runnable {
             // Only if this is on the board...
             if ( game.getBoard().contains(mfCoord) ) {
                 Minefield minefield = null;
-                Enumeration minefields = game.getMinefields(mfCoord).elements();
+                Enumeration<Minefield> minefields = game.getMinefields(mfCoord).elements();
                 // Check if there already are Thunder minefields in the hex.
                 while (minefields.hasMoreElements()) {
-                    Minefield mf = (Minefield) minefields.nextElement();
+                    Minefield mf = minefields.nextElement();
                     if (mf.getType() == Minefield.TYPE_THUNDER) {
                         minefield = mf;
                         break;
@@ -5167,10 +5168,10 @@ public class Server implements Runnable {
     private void deliverThunderMinefield( Coords coords, int playerId,
                                           int damage ) {
         Minefield minefield = null;
-        Enumeration minefields = game.getMinefields(coords).elements();
+        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
         // Check if there already are Thunder minefields in the hex.
         while (minefields.hasMoreElements()) {
-            Minefield mf = (Minefield) minefields.nextElement();
+            Minefield mf = minefields.nextElement();
             if (mf.getType() == Minefield.TYPE_THUNDER) {
                 minefield = mf;
                 break;
@@ -5202,10 +5203,10 @@ public class Server implements Runnable {
      */
     private void deliverThunderInfernoMinefield(Coords coords, int playerId, int damage) {
         Minefield minefield = null;
-        Enumeration minefields = game.getMinefields(coords).elements();
+        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
         // Check if there already are Thunder minefields in the hex.
         while (minefields.hasMoreElements()) {
-            Minefield mf = (Minefield) minefields.nextElement();
+            Minefield mf = minefields.nextElement();
             if (mf.getType() == Minefield.TYPE_THUNDER_INFERNO) {
                 minefield = mf;
                 break;
@@ -5236,10 +5237,10 @@ public class Server implements Runnable {
         // Only if this is on the board...
         if ( game.getBoard().contains(coords) ) {
             Minefield minefield = null;
-            Enumeration minefields = game.getMinefields(coords).elements();
+            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
             // Check if there already are Thunder minefields in the hex.
             while (minefields.hasMoreElements()) {
-                Minefield mf = (Minefield) minefields.nextElement();
+                Minefield mf = minefields.nextElement();
                 if (mf.getType() == Minefield.TYPE_THUNDER) {
                     minefield = mf;
                     break;
@@ -5260,10 +5261,10 @@ public class Server implements Runnable {
      */
     private void deliverThunderActiveMinefield(Coords coords, int playerId, int damage) {
         Minefield minefield = null;
-        Enumeration minefields = game.getMinefields(coords).elements();
+        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
         // Check if there already are Thunder minefields in the hex.
         while (minefields.hasMoreElements()) {
-            Minefield mf = (Minefield) minefields.nextElement();
+            Minefield mf = minefields.nextElement();
             if (mf.getType() == Minefield.TYPE_THUNDER_ACTIVE) {
                 minefield = mf;
                 break;
@@ -5292,10 +5293,10 @@ public class Server implements Runnable {
      */
     private void deliverThunderVibraMinefield(Coords coords, int playerId, int damage, int sensitivity) {
         Minefield minefield = null;
-        Enumeration minefields = game.getMinefields(coords).elements();
+        Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
         // Check if there already are Thunder minefields in the hex.
         while (minefields.hasMoreElements()) {
-            Minefield mf = (Minefield) minefields.nextElement();
+            Minefield mf = minefields.nextElement();
             if (mf.getType() == Minefield.TYPE_THUNDER_VIBRABOMB) {
                 minefield = mf;
                 break;
@@ -6527,17 +6528,16 @@ public class Server implements Runnable {
     }
 
     private void receiveArtyAutoHitHexes(Packet packet, int connId) {
-        Vector artyAutoHitHexes = (Vector) packet.getObject(0);
+    	PlayerIDandList<Coords> artyAutoHitHexes = (PlayerIDandList<Coords>) packet.getObject(0);
 
-        Integer playerId = (Integer)artyAutoHitHexes.firstElement();
-        artyAutoHitHexes.removeElementAt(0);
+        int playerId = artyAutoHitHexes.getPlayerID();
 
         // is this the right phase?
         if (game.getPhase() != IGame.PHASE_SET_ARTYAUTOHITHEXES) {
             System.err.println("error: server got set artyautohithexespacket in wrong phase");
             return;
         }
-        game.getPlayer(playerId.intValue()).setArtyAutoHitHexes(artyAutoHitHexes);
+        game.getPlayer(playerId).setArtyAutoHitHexes(artyAutoHitHexes);
         endCurrentTurn(null);
     }
 
@@ -6791,8 +6791,8 @@ public class Server implements Runnable {
             //Phase report header
             addReport(new Report(3000, Report.PUBLIC));
             Report r;
-            for (Enumeration e = game.getLayMinefieldActions(); e.hasMoreElements();) {
-                LayMinefieldAction lma = (LayMinefieldAction)e.nextElement();
+            for (Enumeration<LayMinefieldAction> e = game.getLayMinefieldActions(); e.hasMoreElements();) {
+                LayMinefieldAction lma = e.nextElement();
                 Entity ent = game.getEntity(lma.getEntityId());
                 Mounted mine = ent.getEquipment(lma.getMineId());
                 if (!mine.isMissing()) {
@@ -6826,8 +6826,8 @@ public class Server implements Runnable {
         Vector<Entity> clearAttempts = new Vector<Entity>();
         Vector<TriggerAPPodAction> triggerPodActions = new Vector<TriggerAPPodAction>();
         // loop thru actions and handle everything we expect except attacks
-        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
-            EntityAction ea = (EntityAction)i.nextElement();
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+            EntityAction ea = i.nextElement();
             Entity entity = game.getEntity(ea.getEntityId());
             if (ea instanceof TorsoTwistAction) {
                 TorsoTwistAction tta = (TorsoTwistAction)ea;
@@ -6865,8 +6865,7 @@ public class Server implements Runnable {
             }
             else if (ea instanceof SearchlightAttackAction) {
                 SearchlightAttackAction saa = (SearchlightAttackAction)ea;
-                addReport(
-                                      saa.resolveAction(game));
+                addReport(saa.resolveAction(game));
             }
         }
 
@@ -6937,9 +6936,9 @@ public class Server implements Runnable {
                 }
             }
             if (accident) {
-                Enumeration minefields = game.getMinefields(pos).elements();
+                Enumeration<Minefield> minefields = game.getMinefields(pos).elements();
                 while (minefields.hasMoreElements()) {
-                    Minefield mf = (Minefield) minefields.nextElement();
+                    Minefield mf = minefields.nextElement();
                     switch (mf.getType()) {
                         case Minefield.TYPE_CONVENTIONAL :
                         case Minefield.TYPE_THUNDER :
@@ -6973,10 +6972,10 @@ public class Server implements Runnable {
         Vector<WeaponResult> results = new Vector<WeaponResult>(game.actionsSize());
 
         // loop thru received attack actions, getting weapon results
-        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
-            Object o = i.nextElement();
-            if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction)o;
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+        	EntityAction ea = i.nextElement();
+            if (ea instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction) ea;
                 results.addElement(preTreatWeaponAttack(waa));
             }
         }
@@ -7362,11 +7361,11 @@ public class Server implements Runnable {
         final Entity te = game.getEntity(waa.getTargetId());
 
         // any AMS attacks by the target?
-        ArrayList vCounters = waa.getCounterEquipment();
+        ArrayList<Mounted> vCounters = waa.getCounterEquipment();
         if (null != vCounters) {
             // resolve AMS counter-fire (only 1 AMS may engage each missile salvo)
             for (int x = 0; x < vCounters.size(); x++) {
-                Mounted counter = (Mounted)vCounters.get(x);
+                Mounted counter = vCounters.get(x);
                 if(counter.getType().hasFlag(WeaponType.F_AMS)
                         && !wr.amsEngaged) {
     
@@ -19812,8 +19811,8 @@ public class Server implements Runnable {
      * @param entityID int
      */
     private void clearArtillerySpotters(int entityID,int weaponID)  {
-        for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
-            ArtilleryAttackAction aaa = (ArtilleryAttackAction) i.nextElement();
+        for (Enumeration<ArtilleryAttackAction> i = game.getArtilleryAttacks(); i.hasMoreElements();) {
+            ArtilleryAttackAction aaa = i.nextElement();
             if ( aaa.getWR().waa.getEntityId()==entityID &&
                  aaa.getWR().waa.getWeaponId()==weaponID ) {
                 aaa.setSpotterIds(null);
@@ -19846,9 +19845,9 @@ public class Server implements Runnable {
         for(int pass=0;pass<2;pass++) {
             int bestDistance = Integer.MAX_VALUE;
             int bestIndex = -1;
-            Vector v = game.getTagInfo();
+            Vector<TagInfo> v = game.getTagInfo();
             for(int i=0;i<v.size();i++) {
-                info = (TagInfo)v.elementAt(i);
+                info = v.elementAt(i);
                 tagger = game.getEntity(info.attackerId);
                 if(info.shots < info.priority && !ae.isEnemyOf(tagger)) {
                     System.err.println("Checking TAG "+i+" with priority "+info.priority);
@@ -19865,7 +19864,7 @@ public class Server implements Runnable {
                 }
             }
             if(bestIndex != -1) {
-                info = (TagInfo)v.elementAt(bestIndex);
+                info = v.elementAt(bestIndex);
                 entityTarget = game.getEntity(info.targetId);
                 tagger = game.getEntity(info.attackerId);
                 System.err.println("attacker: " + ae.getDisplayName());
@@ -19882,12 +19881,12 @@ public class Server implements Runnable {
         }
 
         if(entityTarget == null || info == null) {
-            wr.toHit = new ToHitData(ToHitData.IMPOSSIBLE, "no targets tagged on map sheet");
+            wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "no targets tagged on map sheet");
         }
         else if(info.missed) {
             wr.waa.setTargetId(entityTarget.getId());
             wr.waa.setTargetType(Targetable.TYPE_ENTITY);
-            wr.toHit = new ToHitData(ToHitData.IMPOSSIBLE, "tag missed the target");
+            wr.toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "tag missed the target");
         } else {
             //update for hit table resolution
             wr.artyAttackerCoords = tagger.getPosition();
@@ -19907,9 +19906,8 @@ public class Server implements Runnable {
         Vector<ArtilleryAttackAction> nukes = new Vector<ArtilleryAttackAction>(game.getArtillerySize());
 
         // loop thru received attack actions, getting weapon results
-        for (Enumeration i = game.getArtilleryAttacks(); i.hasMoreElements();) {
-            ArtilleryAttackAction aaa =
-                (ArtilleryAttackAction) i.nextElement();
+        for (Enumeration<ArtilleryAttackAction> i = game.getArtilleryAttacks(); i.hasMoreElements();) {
+            ArtilleryAttackAction aaa = i.nextElement();
 
             if ((aaa instanceof NukeAttackAction) && (aaa.turnsTilHit <= 0)) {
                 // It's not REALLY an artillery attack; it's a generic nuke attack.
@@ -19917,12 +19915,12 @@ public class Server implements Runnable {
             } else if (aaa.turnsTilHit <= 0) { // Does the attack land this turn?
                 WeaponResult wr = aaa.getWR();
                 //HACK, for correct hit table resolution.
-                wr.artyAttackerCoords=aaa.getCoords();
-                final Vector spottersBefore=aaa.getSpotterIds();
-                final Targetable target = wr.waa.getTarget(game);
-                final Coords targetPos = target.getPosition();
-                final int playerId = aaa.getPlayerId();
-                Entity bestSpotter=null;
+                wr.artyAttackerCoords 		= aaa.getCoords();
+                final Vector<Integer> spottersBefore = aaa.getSpotterIds();
+                final Targetable target 	= wr.waa.getTarget(game);
+                final Coords targetPos 		= target.getPosition();
+                final int playerId 			= aaa.getPlayerId();
+                Entity bestSpotter			= null;
 
                 Entity ae = game.getEntity(wr.waa.getEntityId());
                 if (ae == null) {
@@ -19937,7 +19935,7 @@ public class Server implements Runnable {
                     if ( null != spottersBefore ) {
 
                         //fetch possible spotters now
-                        Enumeration spottersAfter=
+                        Enumeration<Entity> spottersAfter =
                             game.getSelectedEntities( new EntitySelector() {
                                     public int player = playerId;
                                     public Targetable targ = target;
@@ -19958,7 +19956,7 @@ public class Server implements Runnable {
 
                         // Out of any valid spotters, pick the best.
                         while ( spottersAfter.hasMoreElements() ) {
-                            Entity ent = (Entity) spottersAfter.nextElement();
+                            Entity ent = spottersAfter.nextElement();
                             if ( bestSpotter == null || ent.crew.getGunnery() <
                                  bestSpotter.crew.getGunnery() ){
                                 bestSpotter = ent;
@@ -19986,14 +19984,14 @@ public class Server implements Runnable {
                         if(wr.roll >= wr.toHit.getValue()) {
                             artyAttacker.aTracker.setModifier
                                 ( weapon,
-                                  ToHitData.AUTOMATIC_SUCCESS,
+                                  TargetRoll.AUTOMATIC_SUCCESS,
                                   targetPos );
                         }
                         // If the shot missed, but was adjusted by a
                         // spotter, future shots are more likely to hit.
                         else if (null != bestSpotter) {
                             int curmod = artyAttacker.aTracker.getModifier( weapon, targetPos );
-                            if(curmod != ToHitData.AUTOMATIC_SUCCESS) {
+                            if(curmod != TargetRoll.AUTOMATIC_SUCCESS) {
                                 artyAttacker.aTracker.setModifier
                                     ( weapon,
                                       curmod - 1,
@@ -20054,16 +20052,16 @@ public class Server implements Runnable {
     private void enqueueIndirectArtilleryAttacks() {
         resolveAllButWeaponAttacks();
         ArtilleryAttackAction aaa;
-        for (Enumeration i = game.getActions();i.hasMoreElements();) {
-            EntityAction ea = (EntityAction) i.nextElement();
+        for (Enumeration<EntityAction> i = game.getActions();i.hasMoreElements();) {
+            EntityAction ea = i.nextElement();
             final Entity firingEntity = game.getEntity(ea.getEntityId());
             if (ea instanceof WeaponAttackAction) {
                 final WeaponAttackAction waa = (WeaponAttackAction) ea;
                 WeaponResult wr = preTreatWeaponAttack(waa);
                 boolean firingAtNewHex = false;
-                for (Enumeration j = game.getArtilleryAttacks();
+                for (Enumeration<ArtilleryAttackAction> j = game.getArtilleryAttacks();
                      !firingAtNewHex && j.hasMoreElements();) {
-                    ArtilleryAttackAction oaaa = (ArtilleryAttackAction) j.nextElement();
+                    ArtilleryAttackAction oaaa = j.nextElement();
                     if ( oaaa.getWR().waa.getEntityId() == wr.waa.getEntityId() &&
                          !oaaa.getWR().waa.getTarget(game).getPosition().equals(wr.waa.getTarget(game).getPosition())) {
                         firingAtNewHex = true;
@@ -20073,7 +20071,7 @@ public class Server implements Runnable {
                     clearArtillerySpotters( firingEntity.getId(),
                                             waa.getWeaponId() );
                 }
-                Enumeration spotters = game.getSelectedEntities(new EntitySelector() {
+                Enumeration<Entity> spotters = game.getSelectedEntities(new EntitySelector() {
                     public int player = firingEntity.getOwnerId();
                     public Targetable target = waa.getTarget(game);
                     public boolean accept(Entity entity) {
@@ -20085,8 +20083,7 @@ public class Server implements Runnable {
 
                 Vector<Integer> spotterIds = new Vector<Integer>();
                 while ( spotters.hasMoreElements() ) {
-                    Integer id = new Integer
-                        ( ((Entity) spotters.nextElement() ).getId() );
+                    Integer id = new Integer( spotters.nextElement().getId() );
                     spotterIds.addElement( id );
                 }
                 aaa = new ArtilleryAttackAction( wr, game,

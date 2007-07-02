@@ -81,25 +81,21 @@ public interface IOption extends IBasicOption, IOptionInfo {
     
     /**
      * Return the value as the <code>boolean</code> 
-     * @return
      */
     public abstract boolean booleanValue();
 
     /**
      * Return the value as the <code>int</code> 
-     * @return
      */
     public abstract int intValue();
 
     /**
      * Return the value as the <code>float</code> 
-     * @return
      */
     public abstract float floatValue();
     
     /**
      * Return the value as the <code>String</code> 
-     * @return
      */
     public abstract String stringValue();
     

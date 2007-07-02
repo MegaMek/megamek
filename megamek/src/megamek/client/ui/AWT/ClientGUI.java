@@ -989,8 +989,8 @@ public class ClientGUI
 
         // add select options
         if (canSelectEntities()) {
-            for (Enumeration i = client.game.getEntities(coords); i.hasMoreElements();) {
-                final Entity entity = (Entity) i.nextElement();
+            for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+                final Entity entity = i.nextElement();
                 if (client.game.getTurn().isValidEntity(entity, client.game)) {
                     popup.add(new SelectMenuItem(entity));
                 }
@@ -1002,8 +1002,8 @@ public class ClientGUI
         }
 
         // add view options
-        for (Enumeration i = client.game.getEntities(coords); i.hasMoreElements();) {
-            final Entity entity = (Entity) i.nextElement();
+        for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+            final Entity entity = i.nextElement();
             popup.add(new ViewMenuItem(entity));
         }
 
@@ -1012,8 +1012,8 @@ public class ClientGUI
             if (popup.getItemCount() > 0) {
                 popup.addSeparator();
             }
-            for (Enumeration i = client.game.getEntities(coords); i.hasMoreElements();) {
-                final Entity entity = (Entity) i.nextElement();
+            for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+                final Entity entity = i.nextElement();
                 popup.add(new TargetMenuItem(entity));
             }
             // Can target weapons at the hex if it contains woods or building.
@@ -1185,11 +1185,11 @@ public class ClientGUI
         if (null != unitFile) {
             try {
                 // Read the units from the file.
-                Vector loadedUnits = EntityListFile.loadFrom(new File(unitPath, unitFile));
+                Vector<Entity> loadedUnits = EntityListFile.loadFrom(new File(unitPath, unitFile));
 
                 // Add the units from the file.
-                for (Enumeration iter = loadedUnits.elements(); iter.hasMoreElements();) {
-                    final Entity entity = (Entity) iter.nextElement();
+                for (Enumeration<Entity> iter = loadedUnits.elements(); iter.hasMoreElements();) {
+                    final Entity entity = iter.nextElement();
                     entity.setOwner(client.getLocalPlayer());
                     client.sendAddEntity(entity);
                 }

@@ -1431,8 +1431,8 @@ public class MechDisplay extends BufferedPanel {
                         modeLabel.setEnabled(true);
                         m_chMode.setEnabled(true);
                         m_chMode.removeAll();
-                        for (Enumeration e = m.getType().getModes(); e.hasMoreElements();) {
-                            EquipmentMode em = (EquipmentMode) e.nextElement();
+                        for (Enumeration<EquipmentMode> e = m.getType().getModes(); e.hasMoreElements();) {
+                            EquipmentMode em = e.nextElement();
                             m_chMode.add(em.getDisplayableName());
                         }
                         m_chMode.select(m.curMode().getDisplayableName());
@@ -1856,9 +1856,9 @@ public class MechDisplay extends BufferedPanel {
             // Walk through the list of teams.  There
             // can't be more teams than players.
             StringBuffer buff = null;
-            Enumeration loop = clientgui.getClient().game.getPlayers();
+            Enumeration<Player> loop = clientgui.getClient().game.getPlayers();
             while (loop.hasMoreElements()) {
-                Player player = (Player) loop.nextElement();
+                Player player = loop.nextElement();
                 int team = player.getTeam();
                 if (en.isNarcedBy(team) &&
                         !player.isObserver()) {

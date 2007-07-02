@@ -212,10 +212,9 @@ public class MechDisplay extends JPanel {
         MovementPanel() {
             gi = new GeneralInfoMapSet(this);
             addElement(gi.getContentGroup());
-            Vector v = gi.getBackgroundDrawers();
-            Enumeration iter = v.elements();
+            Enumeration<BackGroundDrawer> iter = gi.getBackgroundDrawers().elements();
             while (iter.hasMoreElements()) {
-                addBgDrawer((BackGroundDrawer) iter.nextElement());
+                addBgDrawer(iter.nextElement());
             }
             onResize();
         }
@@ -231,7 +230,7 @@ public class MechDisplay extends JPanel {
             int dx = Math.round(((w - r.width) / 2));
             if (dx < minLeftMargin) dx = minLeftMargin;
             int dy = minTopMargin;
-            if (r != null) setContentMargins(dx, dy, dx, dy);
+            setContentMargins(dx, dy, dx, dy);
         }
 
         /**

@@ -4427,7 +4427,7 @@ public class BoardView1
         }
 
         public void gameEntityChange(GameEntityChangeEvent e) {
-            Vector mp = e.getMovePath();
+            Vector<UnitLocation> mp = e.getMovePath();
             updateEcmList();
             if (mp != null && mp.size() > 0 && GUIPreferences.getInstance().getShowMoveStep()) {
                 addMovingUnit(e.getEntity(), mp);

@@ -49,8 +49,9 @@ import java.util.HashMap;
  * another mech moves.
  */
 public class MoveOption extends MovePath implements Cloneable {
+	private static final long serialVersionUID = -4517093562444861980L;
 
-    public static class WeightedComparator implements Comparator<MoveOption> {
+	public static class WeightedComparator implements Comparator<MoveOption> {
 
         private double utility_weight;
         private double damage_weight;
@@ -70,8 +71,9 @@ public class MoveOption extends MovePath implements Cloneable {
     }
 
     public static class Table extends HashMap<MovePath.Key, MoveOption> {
+		private static final long serialVersionUID = 5926883297848807149L;
 
-        public void put(MoveOption es) {
+		public void put(MoveOption es) {
             this.put(es.getKey(), es);
         }
 
@@ -137,7 +139,7 @@ public class MoveOption extends MovePath implements Cloneable {
 
     public MoveOption(MoveOption base) {
         this(base.game, base.centity);
-        steps = (Vector) base.steps.clone();
+        steps = (Vector<MoveStep>) base.steps.clone();
         this.threat = base.threat;
         this.damage = base.damage;
         this.movement_threat = base.movement_threat;
@@ -245,10 +247,10 @@ public class MoveOption extends MovePath implements Cloneable {
                  && getEntity().getSwarmAttackerId()==Entity.NONE)) { //$NON-NLS-1$
             return false;
         }
-        Enumeration e = game.getEntities(last.getPosition());
+        Enumeration<Entity> e = game.getEntities(last.getPosition());
         //TODO: this just takes the first target
         while (e.hasMoreElements()) {
-            Entity en = (Entity) e.nextElement();
+            Entity en = e.nextElement();
             if (!en.isSelectableThisTurn() && en.isEnemyOf(this.entity)) {
                 this.isPhysical = true;
                 this.removeLastStep();
@@ -416,8 +418,8 @@ public class MoveOption extends MovePath implements Cloneable {
         // If the move has a chance of making MASC fail...
         if (hasActiveMASC()) {
             int mascTN = 0;
-            for (final Enumeration i = getSteps(); i.hasMoreElements();) {
-                MoveStep step = (MoveStep) i.nextElement();
+            for (final Enumeration<MoveStep> i = getSteps(); i.hasMoreElements();) {
+                MoveStep step = i.nextElement();
                 if (step.isUsingMASC() && step.getTargetNumberMASC() > mascTN) {
                     mascTN = step.getTargetNumberMASC();
                 }

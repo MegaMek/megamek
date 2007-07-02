@@ -19,8 +19,8 @@ import java.util.Vector;
 
 
 public class Option implements IOption, Serializable {
-
-    private String name;
+	private static final long serialVersionUID = 8310472250031962888L;
+	private String name;
     private int type;
     private Object defaultValue;
     private Object value;

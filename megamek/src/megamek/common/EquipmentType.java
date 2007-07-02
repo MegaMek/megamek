@@ -140,7 +140,7 @@ public class EquipmentType {
     /**
      * what modes can this equipment be in?
      */
-    protected Vector modes = null;
+    protected Vector<EquipmentMode> modes = null;
     
     /**
      * can modes be switched instantly, or at end of turn?
@@ -254,15 +254,16 @@ public class EquipmentType {
      * @return <code>Enumeration</code> of the <code>EquipmentMode</code> 
      * that this type of equipment can be in
      */
-    public Enumeration getModes() {
+    public Enumeration<EquipmentMode> getModes() {
         if (modes != null) {
             return modes.elements();
         }
-		return new Enumeration() {
+        
+		return new Enumeration<EquipmentMode>() {
 		    public boolean hasMoreElements() {
 		        return false;
 		    }
-		    public Object nextElement() {
+		    public EquipmentMode nextElement() {
 		        return null;
 		    }
 		    
@@ -277,11 +278,15 @@ public class EquipmentType {
     protected void setModes(String[] modes) {
         megamek.debug.Assert.assertTrue(modes != null && modes.length >= 0, 
                 "List of modes must not be null or empty");
-        Vector<EquipmentMode> newModes = new Vector<EquipmentMode>(modes.length);
-        for (int i = 0 ,l = modes.length; i < l; i++) {
-            newModes.addElement(EquipmentMode.getMode(modes[i]));
+        if(modes != null) {
+	        Vector<EquipmentMode> newModes = new Vector<EquipmentMode>(modes.length);
+	        for (int i = 0 ,l = modes.length; i < l; i++) {
+	            newModes.addElement(EquipmentMode.getMode(modes[i]));
+	        }
+	        this.modes = newModes;
+        } else {
+        	this.modes = new Vector<EquipmentMode>(0);
         }
-        this.modes = newModes;
     }
 
     /**
@@ -297,7 +302,7 @@ public class EquipmentType {
      */
     public EquipmentMode getMode(int modeNum) {
         megamek.debug.Assert.assertTrue(modes != null && modeNum >= 0 && modeNum < modes.size());
-        return (EquipmentMode)modes.elementAt(modeNum);
+        return modes.elementAt(modeNum);
     }
     
     public void setInstantModeSwitch(boolean b) {
@@ -342,7 +347,7 @@ public class EquipmentType {
         }
     }
     
-    public static Enumeration getAllTypes() {
+    public static Enumeration<EquipmentType> getAllTypes() {
         if (null == EquipmentType.allTypes) {
             EquipmentType.initializeTypes();
         }
@@ -433,8 +438,11 @@ public class EquipmentType {
             if(this.hasFlag(MiscType.F_MASC)) {
                 if (hasSubType(MiscType.S_SUPERCHARGER)) {
                     Engine e = entity.getEngine();
-                    if(e == null) cost = 0;
-                    cost = e.getRating() * 10000;
+                    if(e == null) {
+                    	cost = 0;
+                    } else {
+                    	cost = e.getRating() * 10000;
+                    }
                 } else {
                     int mascTonnage=0;
                     if (this.getInternalName().equals("ISMASC")) {
@@ -493,8 +501,8 @@ public class EquipmentType {
             w.newLine();
             w.write("Type,Tech,Rules,Name,Aliases");
             w.newLine();
-            for(Enumeration e=EquipmentType.getAllTypes();e.hasMoreElements();) {
-                EquipmentType type = (EquipmentType)e.nextElement();
+            for(Enumeration<EquipmentType> e=EquipmentType.getAllTypes();e.hasMoreElements();) {
+                EquipmentType type = e.nextElement();
                 if(type instanceof AmmoType) {
                     w.write("A,");
                 }

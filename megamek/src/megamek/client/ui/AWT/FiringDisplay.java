@@ -785,11 +785,11 @@ public class FiringDisplay
         }
         
         // remove attacks, set weapons available again
-        Enumeration i = attacks.elements();
+        Enumeration<EntityAction> i = attacks.elements();
         while ( i.hasMoreElements() ) {
-            Object o = i.nextElement();
-            if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction)o;
+        	EntityAction ea = i.nextElement();
+            if (ea instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction) ea;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
             }
         }
@@ -901,10 +901,10 @@ public class FiringDisplay
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages.getString("FiringDisplay.autoFiringWeapon")); //$NON-NLS-1$
                 setFireEnabled(false);
-            } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(false);
-            } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+            } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(true);
             } else {
@@ -979,7 +979,7 @@ public class FiringDisplay
         }
 
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
         // control pressed means a line of sight check.
@@ -988,8 +988,8 @@ public class FiringDisplay
             return;
         }
         // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & MouseEvent.SHIFT_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
+        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
         }
         
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {

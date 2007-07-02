@@ -36,7 +36,8 @@ import megamek.common.util.BoardUtilities;
 public class BoardSelectionDialog 
     extends Dialog implements ActionListener, ItemListener, KeyListener, IMapSettingsObserver
 {
-    private ClientGUI client;
+	private static final long serialVersionUID = 1498160432750299823L;
+	private ClientGUI client;
     private MapSettings mapSettings;
     
     private RandomMapDialog randomMapDialog;

@@ -28,6 +28,7 @@ import megamek.common.AmmoType;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.GameTurn;
 import megamek.common.IEntityMovementMode;
 import megamek.common.IGame;
@@ -87,13 +88,13 @@ public abstract class BotClient extends Client {
     protected abstract void calculateDeployment();
     protected abstract PhysicalOption calculatePhysicalTurn();
     protected abstract MovePath continueMovementFor(Entity entity);
-    protected abstract Vector calculateMinefieldDeployment();
-    protected abstract Vector calculateArtyAutoHitHexes();
+    protected abstract Vector<Minefield> calculateMinefieldDeployment();
+    protected abstract Vector<Coords> calculateArtyAutoHitHexes();
     
     public ArrayList<Entity> getEntitiesOwned() {
         ArrayList<Entity> result = new ArrayList<Entity>();
-        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity entity = (Entity) i.nextElement();
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity entity = i.nextElement();
             if (entity.getOwner().equals(this.getLocalPlayer()) 
                 && entity.getPosition() != null && !entity.isOffBoard()) {
                 result.add(entity);
@@ -104,8 +105,8 @@ public abstract class BotClient extends Client {
     
     public ArrayList<Entity> getEnemyEntities() {
         ArrayList<Entity> result = new ArrayList<Entity>();
-        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity entity = (Entity) i.nextElement();
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity entity = i.nextElement();
             if (entity.getOwner().isEnemyOf(this.getLocalPlayer()) 
                 && entity.getPosition() != null && !entity.isOffBoard()) {
                 result.add(entity);
@@ -196,15 +197,15 @@ public abstract class BotClient extends Client {
             } else if (game.getPhase() == IGame.PHASE_DEPLOYMENT) {
                 calculateDeployment();
             } else if (game.getPhase() == IGame.PHASE_DEPLOY_MINEFIELDS) {
-                Vector mines = calculateMinefieldDeployment();
+                Vector<Minefield> mines = calculateMinefieldDeployment();
                 for (int i = 0; i < mines.size(); i++) {
-                    game.addMinefield((Minefield)mines.get(i));
+                    game.addMinefield(mines.get(i));
                 }
                 sendDeployMinefields(mines);
                 sendPlayerInfo();
             } else if (game.getPhase() == IGame.PHASE_SET_ARTYAUTOHITHEXES) {
                 // For now, declare no autohit hexes.
-                Vector autoHitHexes = calculateArtyAutoHitHexes();
+                Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
                 sendArtyAutoHitHexes(autoHitHexes);
             } else if (game.getPhase() == IGame.PHASE_TARGETING ||
                        game.getPhase() == IGame.PHASE_OFFBOARD) {
@@ -235,8 +236,8 @@ public abstract class BotClient extends Client {
             mech_count = 0;
             conv_fcount = 0;
             conv_ecount = 0;
-            for (Enumeration stacked_ents = game.getEntities(c[x]); stacked_ents.hasMoreElements();){
-                Entity test_ent = (Entity) stacked_ents.nextElement();
+            for (Enumeration<Entity> stacked_ents = game.getEntities(c[x]); stacked_ents.hasMoreElements();){
+                Entity test_ent = stacked_ents.nextElement();
                 if (test_ent instanceof Mech) {
                     mech_count++;
                 } else {
@@ -316,7 +317,7 @@ public abstract class BotClient extends Client {
 
         Entity test_ent, deployed_ent;
 
-        Vector valid_attackers;
+        Vector<Entity> valid_attackers;
 
         deployed_ent = getEntity(game.getFirstDeployableEntityNum());
 
@@ -458,8 +459,8 @@ public abstract class BotClient extends Client {
             total_damage = 0.0;
             deployed_ent.setPosition(valid_array[valid_arr_index]);
             valid_attackers = game.getValidTargets(deployed_ent);
-            for (Enumeration i = valid_attackers.elements(); i.hasMoreElements();){
-                test_ent = (Entity)i.nextElement();
+            for (Enumeration<Entity> i = valid_attackers.elements(); i.hasMoreElements();){
+                test_ent = i.nextElement();
                 if (test_ent.isDeployed() == true && !test_ent.isOffBoard()){
                     for(Mounted mounted : test_ent.getWeaponList()) {
                         test_attack = new WeaponAttackAction(test_ent.getId(), deployed_ent.getId(), test_ent.getEquipmentNum(mounted));
@@ -479,8 +480,8 @@ public abstract class BotClient extends Client {
             total_damage = 0.0;
             for(Mounted mounted : deployed_ent.getWeaponList()) {
                 max_damage = 0.0;
-                for (Enumeration j = valid_attackers.elements(); j.hasMoreElements();){
-                    test_ent = (Entity)j.nextElement();
+                for (Enumeration<Entity> j = valid_attackers.elements(); j.hasMoreElements();){
+                    test_ent = j.nextElement();
                     if (test_ent.isDeployed() == true && !test_ent.isOffBoard()){
                         test_attack = new WeaponAttackAction(deployed_ent.getId(), test_ent.getId(),
                                 deployed_ent.getEquipmentNum(mounted));
@@ -527,9 +528,9 @@ public abstract class BotClient extends Client {
                     valid_array[valid_arr_index].fitness += 4;
                 }
                 highest_hex = valid_array[valid_arr_index];
-                Enumeration ent_list = game.getEntities(highest_hex);
+                Enumeration<Entity> ent_list = game.getEntities(highest_hex);
                 while (ent_list.hasMoreElements()) {
-                    test_ent = (Entity) ent_list.nextElement();
+                    test_ent = ent_list.nextElement();
                     if (deployed_ent.getOwner() == test_ent.getOwner()
                             && !deployed_ent.equals(test_ent)) {
                         if (test_ent instanceof Infantry){
@@ -542,9 +543,9 @@ public abstract class BotClient extends Client {
                     for (int x = 0; x < 6; x++) {
                         highest_hex = valid_array[valid_arr_index];
                         highest_hex = highest_hex.translated(x);
-                        Enumeration adj_ents = game.getEntities(highest_hex);
+                        Enumeration<Entity> adj_ents = game.getEntities(highest_hex);
                         while (adj_ents.hasMoreElements()) {
-                            test_ent = (Entity) adj_ents.nextElement();
+                            test_ent = adj_ents.nextElement();
                             if (deployed_ent.getOwner() == test_ent.getOwner()
                                     && !deployed_ent.equals(test_ent)) {
                                 if (test_ent instanceof Infantry){
@@ -667,13 +668,13 @@ public abstract class BotClient extends Client {
                 fHits = expectedHitsByRackSize[wt.getRackSize()];
             }
             // adjust for previous AMS
-            ArrayList vCounters = waa.getCounterEquipment();
+            ArrayList<Mounted> vCounters = waa.getCounterEquipment();
             if (vCounters != null) {
                 for (int x = 0; x < vCounters.size(); x++) {
-                    Mounted counter = (Mounted)vCounters.get(x);
-                    if (counter.getType() instanceof WeaponType &&
-                            counter.getType().hasFlag(WeaponType.F_AMS)) {
-                        float fAMS = 3.5f * ((WeaponType)counter.getType()).getDamage();
+                    EquipmentType type = vCounters.get(x).getType();
+                    if (type instanceof WeaponType &&
+                            type.hasFlag(WeaponType.F_AMS)) {
+                        float fAMS = 3.5f * ((WeaponType) type).getDamage();
                         fHits = Math.max(0.0f, fHits - fAMS);
                     }
                 }
@@ -701,11 +702,10 @@ public abstract class BotClient extends Client {
 
         int total_bv, known_bv, known_range, known_count, trigger_range;
         int new_stealth = 1;
-        Enumeration all_units;
         Entity test_ent;
 
-        for (Enumeration i=game.getEntities(); i.hasMoreElements();){
-            Entity check_ent = (Entity) i.nextElement();
+        for (Enumeration<Entity> i=game.getEntities(); i.hasMoreElements();){
+            Entity check_ent = i.nextElement();
             if ((check_ent.getOwnerId() == this.local_pn) && (check_ent instanceof Mech)){
                 if (((Mech)check_ent).hasStealth()){
                     for ( Mounted mEquip: check_ent.getMisc()) {
@@ -730,8 +730,8 @@ public abstract class BotClient extends Client {
                                 known_count = 0;
                                 trigger_range = 5;
 
-                                for (all_units = game.getEntities(); all_units.hasMoreElements();){
-                                    test_ent = (Entity) all_units.nextElement();
+                                for (Enumeration<Entity> all_units = game.getEntities(); all_units.hasMoreElements();){
+                                    test_ent = all_units.nextElement();
                                     if (check_ent.isEnemyOf(test_ent)) {
                                         total_bv += test_ent.calculateBattleValue();
                                         if (test_ent.isVisibleToEnemy()){

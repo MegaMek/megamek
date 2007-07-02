@@ -29,10 +29,10 @@ public class ChatProcessor {
         }
             String name = st.nextToken().trim();
             //who is the message from?
-            Enumeration e = tb.game.getPlayers();
+            Enumeration<Player> e = tb.game.getPlayers();
             Player p = null;
             while (e.hasMoreElements()) {
-                p = (Player) e.nextElement();
+                p = e.nextElement();
                 if (name.equalsIgnoreCase(p.getName())) {
                     break;
                 }
@@ -52,18 +52,18 @@ public class ChatProcessor {
                                 understood = true;
                             }
                             if (command.equalsIgnoreCase("calm down")) { //$NON-NLS-1$
-                                Iterator i = tb.getEntitiesOwned().iterator();
+                                Iterator<Entity> i = tb.getEntitiesOwned().iterator();
                                 while (i.hasNext()) {
-                                    CEntity cen = tb.centities.get((Entity) i.next());
+                                    CEntity cen = tb.centities.get(i.next());
                                     if (cen.strategy.attack > 1) {
                                         cen.strategy.attack = 1;
                                     }
                                 }
                                 understood = true;
                             } else if (command.equalsIgnoreCase("be aggressive")) { //$NON-NLS-1$
-                                Iterator i = tb.getEntitiesOwned().iterator();
+                                Iterator<Entity> i = tb.getEntitiesOwned().iterator();
                                 while (i.hasNext()) {
-                                    CEntity cen = tb.centities.get((Entity) i.next());
+                                    CEntity cen = tb.centities.get(i.next());
                                     cen.strategy.attack = Math.min(cen.strategy.attack * 1.2, 1.5);
                                 }
                                 understood = true;

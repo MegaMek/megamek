@@ -334,7 +334,7 @@ public class BoardView1
         }
     }
 
-    private void addMovingUnit(Entity entity, Vector movePath) {
+    private void addMovingUnit(Entity entity, Vector<UnitLocation> movePath) {
         if ( !movePath.isEmpty() ) {
             MovingUnit m = new MovingUnit(entity, movePath);
             movingUnits.addElement(m);
@@ -343,7 +343,7 @@ public class BoardView1
             ghostEntitySprites.add(ghostSprite);
 
             // Center on the starting hex of the moving unit.
-            UnitLocation loc = ( (UnitLocation) movePath.elementAt(0) );
+            UnitLocation loc = ( movePath.elementAt(0) );
             centerOnHex( loc.getCoords() );
         }
     }
@@ -783,8 +783,8 @@ public class BoardView1
     
     private Vector<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {
         Vector<ArtilleryAttackAction> v = new Vector<ArtilleryAttackAction>();
-        for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
-            ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
+        for(Enumeration<ArtilleryAttackAction> attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
+            ArtilleryAttackAction a = attacks.nextElement();
 
             if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
                 v.addElement(a);
@@ -1677,9 +1677,9 @@ public class BoardView1
         Hashtable<Integer,EntitySprite> newSpriteIds = new Hashtable<Integer,EntitySprite>(game.getNoOfEntities());
         Vector<WreckSprite> newWrecks = new Vector<WreckSprite>();
 
-        Enumeration e = game.getWreckedEntities();
+        Enumeration<Entity> e = game.getWreckedEntities();
         while (e.hasMoreElements()) {
-            Entity entity = (Entity) e.nextElement();
+            Entity entity = e.nextElement();
             if (!(entity instanceof Infantry) && (entity.getPosition() != null)) {
                 WreckSprite ws = new WreckSprite(entity);
                 newWrecks.addElement(ws);
@@ -1687,8 +1687,8 @@ public class BoardView1
         }
 
         clearC3Networks();
-        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            final Entity entity = (Entity)i.nextElement();
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            final Entity entity = i.nextElement();
             if (entity.getPosition() == null) continue;
 
             EntitySprite sprite = new EntitySprite(entity);
@@ -1743,8 +1743,8 @@ public class BoardView1
 
         clearMovementData();
 
-        for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = (MoveStep)i.nextElement();
+        for (Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
             // check old movement path for reusable step sprites
             boolean found = false;
             for (Iterator<StepSprite> j = temp.iterator(); j.hasNext();) {
@@ -1806,8 +1806,8 @@ public class BoardView1
         if (e.getPosition() == null) return;
 
         if(e.hasC3i()) {
-            for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-                final Entity fe = (Entity)i.nextElement();
+            for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+                final Entity fe = i.nextElement();
                 if (fe.getPosition() == null) return;
                 if ( e.onSameC3NetworkAs(fe)) {
                     C3Sprites.addElement(new C3Sprite(e, fe));
@@ -1912,16 +1912,16 @@ public class BoardView1
      */
     public void refreshAttacks() {
         clearAllAttacks();
-        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
-            EntityAction ea = (EntityAction)i.nextElement();
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+            EntityAction ea = i.nextElement();
             if (ea instanceof AttackAction) {
                 addAttack((AttackAction)ea);
             }
         }
-        for (Enumeration i = game.getCharges(); i.hasMoreElements();) {
-               EntityAction ea = (EntityAction)i.nextElement();
+        for (Enumeration<AttackAction> i = game.getCharges(); i.hasMoreElements();) {
+               AttackAction ea = i.nextElement();
             if (ea instanceof PhysicalAttackAction) {
-                addAttack((AttackAction)ea);
+                addAttack(ea);
             }
         }
     }
@@ -4372,7 +4372,7 @@ public class BoardView1
         }
 
         public void gameEntityChange(GameEntityChangeEvent e) {
-            Vector mp = e.getMovePath();
+            Vector<UnitLocation> mp = e.getMovePath();
             updateEcmList();
             if (mp != null && mp.size() > 0 && GUIPreferences.getInstance().getShowMoveStep()) {
                 addMovingUnit(e.getEntity(), mp);
@@ -4516,8 +4516,10 @@ public class BoardView1
     }
 
     private class EcmBubble extends Coords {
-        int range;
+		private static final long serialVersionUID = -1605350790342525964L;
+		int range;
         int tint;
+        
         public EcmBubble(Coords c, int range, int tint) {
             super(c);
             this.range = range;
@@ -4528,8 +4530,8 @@ public class BoardView1
     //This is expensive, so precalculate when entity changes
     public void updateEcmList() {
         ArrayList<EcmBubble> list = new ArrayList<EcmBubble>();
-        for(Enumeration e = game.getEntities();e.hasMoreElements();) {
-            Entity ent = (Entity)e.nextElement();
+        for(Enumeration<Entity> e = game.getEntities();e.hasMoreElements();) {
+            Entity ent = e.nextElement();
             if(ent.getPosition() == null || !ent.isDeployed() || ent.isOffBoard()) {
                 continue;
             }

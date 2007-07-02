@@ -101,8 +101,8 @@ public abstract class AbstractAttackAction
                 illuminated = te.isIlluminated();
                 //hack for unresolved actions so client shows right BTH
                 if(!illuminated) {
-                    for(Enumeration actions=game.getActions();actions.hasMoreElements();) {
-                        Object a = actions.nextElement();
+                    for(Enumeration<EntityAction> actions=game.getActions();actions.hasMoreElements();) {
+                    	EntityAction a = actions.nextElement();
                         if(a instanceof SearchlightAttackAction) {
                             SearchlightAttackAction saa = (SearchlightAttackAction)a;
                             if(saa.willIlluminate(game, te)) {
@@ -157,8 +157,8 @@ public abstract class AbstractAttackAction
                     //Unfortunately, we can't just check weapons fired by the target
                     //because isUsedThisRound() is not valid if the attacker declared first.
                     //therefore, enumerate WeaponAttackActions...
-                    for(Enumeration actions=game.getActions();actions.hasMoreElements();) {
-                        Object a = actions.nextElement();
+                    for(Enumeration<EntityAction> actions=game.getActions();actions.hasMoreElements();) {
+                    	EntityAction a = actions.nextElement();
                         if(a instanceof WeaponAttackAction) {
                             WeaponAttackAction waa = (WeaponAttackAction)a;
                             if(waa.getEntityId() == te.getId()) {

@@ -820,8 +820,8 @@ public class ChatLounge
         order they were "added" to the list.
         */
         ArrayList<Entity> sortedEntities = new ArrayList<Entity>();
-        for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
-            Entity entity = (Entity) i.nextElement();
+        for (Enumeration<Entity> i = client.getEntities(); i.hasMoreElements();) {
+            Entity entity = i.nextElement();
             sortedEntities.add(entity);
         }
         Collections.sort( sortedEntities, new Comparator<Entity>() {
@@ -1427,8 +1427,8 @@ public class ChatLounge
                     clientgui.doAlertDialog("Starting Position not allowed","In Double Blind play, you cannot choose 'Any' as starting position.");
                     return;
                 }
-                for (Enumeration e = client.game.getPlayers();e.hasMoreElements();) {
-                    Player player = (Player)e.nextElement();
+                for (Enumeration<Player> e = client.game.getPlayers();e.hasMoreElements();) {
+                    Player player = e.nextElement();
                     if (player.getStartingPos() == 0) {
                         continue;
                     }
@@ -1446,8 +1446,8 @@ public class ChatLounge
             boolean done = !client.getLocalPlayer().isDone();
             client.sendDone(done);
             refreshDoneButton(done);
-            for (Iterator i = clientgui.getBots().values().iterator(); i.hasNext();) {
-                ((Client)i.next()).sendDone(done);
+            for (Iterator<Client> i = clientgui.getBots().values().iterator(); i.hasNext();) {
+                i.next().sendDone(done);
             }
         } else if (ev.getSource() == butLoad) {
             loadMech();
@@ -1469,12 +1469,12 @@ public class ChatLounge
             }
         } else if (ev.getSource() == butDeleteAll) {
             // Build a Vector of this player's entities.
-            Vector currentUnits = client.game.getPlayerEntities(client.getLocalPlayer());
+            Vector<Entity> currentUnits = client.game.getPlayerEntities(client.getLocalPlayer());
 
             // Walk through the vector, deleting the entities.
-            Enumeration entities = currentUnits.elements();
+            Enumeration<Entity> entities = currentUnits.elements();
             while (entities.hasMoreElements()) {
-                final Entity entity = (Entity) entities.nextElement();
+                final Entity entity = entities.nextElement();
                 client.sendDeleteEntity(entity.getId());
             }
         } else if (ev.getSource() == butChangeBoard || ev.getSource() == lisBoardsSelected) {
@@ -1585,7 +1585,7 @@ public class ChatLounge
     /**
      * Specify if the listener should be distracted.
      *
-     * @param   distract <code>true</code> if the listener should ignore events
+     * @param   distracted <code>true</code> if the listener should ignore events
      *          <code>false</code> if the listener should pay attention again.
      *          Events that occured while the listener was distracted NOT
      *          going to be processed.

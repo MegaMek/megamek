@@ -640,9 +640,9 @@ public class ScenarioLoader
         String key;
         StringBuffer value;
         Properties fixed = new Properties();
-        Enumeration keyIt = props.keys();
+        Enumeration<Object> keyIt = props.keys();
         while (keyIt.hasMoreElements()) {
-            key = (String) keyIt.nextElement();
+            key = keyIt.nextElement().toString();
             value = new StringBuffer( props.getProperty(key) );
             for (loop = value.length() - 1; loop >= 0; loop--) {
                 if(!Character.isWhitespace( value.charAt( loop ) ))
@@ -780,7 +780,7 @@ public class ScenarioLoader
     
     /*
      * 
-     * This class is used to store the dammage plan for a entity
+     * This class is used to store the damage plan for a entity
      * it is loaded from the scenario file.  It contains a vector 
      * of SpecDam.
      * 
@@ -789,7 +789,8 @@ public class ScenarioLoader
         public Entity entity;
         public int nBlocks;
         Vector<SpecDam> specificDammage = new Vector<SpecDam>();
-        Vector ammoSetTo = new Vector();
+        Vector<SetAmmoTo> ammoSetTo = new Vector<SetAmmoTo>();
+        
         public  DamagePlan(Entity e, int n) {
           entity = e;
           nBlocks = n;

@@ -149,7 +149,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         else {
 
             // Translate the "root camo" category name.
-            Enumeration camoNames;
+            Enumeration<String> camoNames;
             if (Player.ROOT_CAMO.equals(category)) {
                 camoNames = camos.getItemNames(""); //$NON-NLS-1$
             } else {
@@ -243,7 +243,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         frame = parent;
 
         // Declare local variables.
-        Enumeration names;
+        Enumeration<String> names;
         String name;
 
         // Parse the camo directory.
@@ -283,7 +283,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
             }
             names = camos.getCategoryNames();
             while (names.hasMoreElements()) {
-                name = (String) names.nextElement();
+                name = names.nextElement();
                 if (!"".equals(name)) { //$NON-NLS-1$
                     categories.addItem(name);
                 }

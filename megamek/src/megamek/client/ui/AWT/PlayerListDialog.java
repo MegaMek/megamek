@@ -62,8 +62,8 @@ public class PlayerListDialog
      */
     public static void refreshPlayerList(List playerList, Client client) {
         playerList.removeAll();
-        for(Enumeration e = client.getPlayers(); e.hasMoreElements();) {
-            final Player player = (Player)e.nextElement();
+        for(Enumeration<Player> e = client.getPlayers(); e.hasMoreElements();) {
+            final Player player = e.nextElement();
             StringBuffer playerDisplay = new StringBuffer(player.getName());
             if (player.isGhost()) {
                 playerDisplay.append(" ["); //$NON-NLS-1$

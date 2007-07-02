@@ -931,8 +931,8 @@ public class PhysicalDisplay
                    (client.game, cen, target, PunchAttackAction.LEFT);
                 final ToHitData rightArm = PunchAttackAction.toHit
                    (client.game, cen, target, PunchAttackAction.RIGHT);
-                boolean canPunch = leftArm.getValue() != ToHitData.IMPOSSIBLE 
-                               || rightArm.getValue() != ToHitData.IMPOSSIBLE;
+                boolean canPunch = leftArm.getValue() != TargetRoll.IMPOSSIBLE 
+                               || rightArm.getValue() != TargetRoll.IMPOSSIBLE;
                 setPunchEnabled(canPunch);
                 
                 // kick?
@@ -940,34 +940,34 @@ public class PhysicalDisplay
                    (client.game, cen, target, KickAttackAction.LEFT);
                 ToHitData rightLeg = KickAttackAction.toHit
                    (client.game, cen, target, KickAttackAction.RIGHT);
-                boolean canKick = leftLeg.getValue() != ToHitData.IMPOSSIBLE 
-                              || rightLeg.getValue() != ToHitData.IMPOSSIBLE;
+                boolean canKick = leftLeg.getValue() != TargetRoll.IMPOSSIBLE 
+                              || rightLeg.getValue() != TargetRoll.IMPOSSIBLE;
                 ToHitData rightRearLeg = KickAttackAction.toHit
                    (client.game, cen, target, KickAttackAction.RIGHTMULE);
                 ToHitData leftRearLeg = KickAttackAction.toHit
                    (client.game, cen, target, KickAttackAction.LEFTMULE);
-                canKick |= (leftRearLeg.getValue() != ToHitData.IMPOSSIBLE)
-                        || (rightRearLeg.getValue() != ToHitData.IMPOSSIBLE);
+                canKick |= (leftRearLeg.getValue() != TargetRoll.IMPOSSIBLE)
+                        || (rightRearLeg.getValue() != TargetRoll.IMPOSSIBLE);
 
                 setKickEnabled(canKick);
                 
                 // how about push?
                 ToHitData push = PushAttackAction.toHit
                    (client.game, cen, target);
-                setPushEnabled(push.getValue() != ToHitData.IMPOSSIBLE);
+                setPushEnabled(push.getValue() != TargetRoll.IMPOSSIBLE);
                 
                 // how about trip?
                 ToHitData trip = TripAttackAction.toHit
                    (client.game, cen, target);
-                setTripEnabled(trip.getValue() != ToHitData.IMPOSSIBLE);
+                setTripEnabled(trip.getValue() != TargetRoll.IMPOSSIBLE);
                 
                 // how about grapple?
                 ToHitData grap = GrappleAttackAction.toHit
                    (client.game, cen, target);
                 ToHitData bgrap = BreakGrappleAttackAction.toHit
                 (client.game, cen, target);
-                setGrappleEnabled(grap.getValue() != ToHitData.IMPOSSIBLE
-                        || bgrap.getValue() != ToHitData.IMPOSSIBLE);
+                setGrappleEnabled(grap.getValue() != TargetRoll.IMPOSSIBLE
+                        || bgrap.getValue() != TargetRoll.IMPOSSIBLE);
                 
                 // how about JJ?
                 ToHitData jjl = JumpJetAttackAction.toHit
@@ -976,9 +976,9 @@ public class PhysicalDisplay
                 (client.game, cen, target, JumpJetAttackAction.RIGHT);
                 ToHitData jjb = JumpJetAttackAction.toHit
                 (client.game, cen, target, JumpJetAttackAction.BOTH);
-                setJumpJetEnabled(!(jjl.getValue() == ToHitData.IMPOSSIBLE
-                            && jjr.getValue() == ToHitData.IMPOSSIBLE
-                            && jjb.getValue() == ToHitData.IMPOSSIBLE));
+                setJumpJetEnabled(!(jjl.getValue() == TargetRoll.IMPOSSIBLE
+                            && jjr.getValue() == TargetRoll.IMPOSSIBLE
+                            && jjb.getValue() == TargetRoll.IMPOSSIBLE));
                 
                 // clubbing?
                 boolean canClub = false;
@@ -988,7 +988,7 @@ public class PhysicalDisplay
                     if (club != null) {
                         ToHitData clubToHit = ClubAttackAction.toHit
                            (client.game, cen, target, club, ash.getAimTable());
-                        canClub |= (clubToHit.getValue() != ToHitData.IMPOSSIBLE);
+                        canClub |= (clubToHit.getValue() != TargetRoll.IMPOSSIBLE);
                         //assuming S7 vibroswords count as swords and maces count as hatchets
                         if(club.getType().hasSubType(MiscType.S_SWORD)
                                 || club.getType().hasSubType(MiscType.S_HATCHET)
@@ -1010,24 +1010,24 @@ public class PhysicalDisplay
                 // Thrash at infantry?
                 ToHitData thrash = new ThrashAttackAction(cen, target).toHit
                    (client.game);
-                setThrashEnabled( thrash.getValue() != ToHitData.IMPOSSIBLE );
+                setThrashEnabled( thrash.getValue() != TargetRoll.IMPOSSIBLE );
                 
                 // make a Protomech physical attack?
                 ToHitData proto = ProtomechPhysicalAttackAction.toHit
                    ( client.game, cen, target);
-                setProtoEnabled(proto.getValue() != ToHitData.IMPOSSIBLE);
+                setProtoEnabled(proto.getValue() != TargetRoll.IMPOSSIBLE);
 
                 ToHitData explo = LayExplosivesAttackAction.toHit
                    ( client.game, cen, target);
-                setExplosivesEnabled(explo.getValue() != ToHitData.IMPOSSIBLE);
+                setExplosivesEnabled(explo.getValue() != TargetRoll.IMPOSSIBLE);
             }
             // Brush off swarming infantry or iNarcPods?
             ToHitData brushRight = BrushOffAttackAction.toHit
                 ( client.game, cen, target, BrushOffAttackAction.RIGHT );
             ToHitData brushLeft = BrushOffAttackAction.toHit
                 ( client.game, cen, target, BrushOffAttackAction.LEFT );
-            boolean canBrush = (brushRight.getValue() != ToHitData.IMPOSSIBLE||
-                                brushLeft.getValue() != ToHitData.IMPOSSIBLE);
+            boolean canBrush = (brushRight.getValue() != TargetRoll.IMPOSSIBLE||
+                                brushLeft.getValue() != TargetRoll.IMPOSSIBLE);
             setBrushOffEnabled( canBrush );
         } else {
             setPunchEnabled(false);
@@ -1066,7 +1066,7 @@ public class PhysicalDisplay
             return;
         }
         if (client.isMyTurn()
-            && (b.getModifiers() & MouseEvent.BUTTON1_MASK) != 0) {
+            && (b.getModifiers() & InputEvent.BUTTON1_MASK) != 0) {
             if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
                 if (!b.getCoords().equals(clientgui.getBoardView().getLastCursor())) {
                     clientgui.getBoardView().cursor(b.getCoords());
@@ -1123,9 +1123,9 @@ public class PhysicalDisplay
         // Is the attacker targeting its own hex?
         if (ce().getPosition().equals( pos )) {
             // Add any iNarc pods attached to the entity.
-            Enumeration pods = ce().getINarcPodsAttached();
+            Enumeration<INarcPod> pods = ce().getINarcPodsAttached();
             while ( pods.hasMoreElements() ) {
-                choice = (Targetable) pods.nextElement();
+                choice = pods.nextElement();
                 targets.addElement( choice );
             }
         }

@@ -26,7 +26,7 @@ public interface IBasicOptionGroup {
     /**
      * Returns the 'internal'(NON-NLS) name of the group, which is
      * the only ID that is unique in the parent container 
-     * @see getDisplayableName()
+     * @see megamek.common.options.IOptionGroup#getDisplayableName()
      * @return group name
      */
     public abstract String getName();
@@ -43,6 +43,6 @@ public interface IBasicOptionGroup {
      * @return the <code>Enumeration</code> of the names of the options 
      * that in this group
      */
-    public abstract Enumeration getOptionNames();
+    public abstract Enumeration<String> getOptionNames();
 
 }

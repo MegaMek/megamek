@@ -908,8 +908,8 @@ public class MovementDisplay
         firstStep = true;
         /* Bug 754610: Revert fix for bug 702735. */
         MoveStep prevStep = null;
-        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = (MoveStep)i.nextElement();
+        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
             boolean isPavementStep = step.isPavementStep();
             
             // stop for illegal movement

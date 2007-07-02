@@ -17,6 +17,7 @@ package megamek.common.actions;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mech;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 
@@ -33,7 +34,13 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction
     public BreakGrappleAttackAction(int entityId, int targetType, int targetId) {
         super(entityId, targetType, targetId);
     }
-       
+    
+    /**
+     * Generates the to hit data for this action.
+     * @param game the game.
+     * @return the to hit data object for this action.
+     * @see #toHit(IGame, int, Targetable) 
+     */
     public ToHitData toHit(IGame game) {
         return toHit(game, getEntityId(),
                 game.getTarget(getTargetType(), getTargetId()));
@@ -46,26 +53,26 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction
                                       Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null)
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't attack from a null entity!");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
 
         if(!game.getOptions().booleanOption("maxtech_new_physicals"))
-            return new ToHitData(ToHitData.IMPOSSIBLE, "no MaxTech physicals");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "no MaxTech physicals");
         
         String impossible = toHitIsImpossible(game, ae, target);
         if(impossible != null
                 && !impossible.equals("Locked in Grapple")) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "impossible");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
         ToHitData toHit;
 
         // non-mechs can't grapple or be grappled
         if (!(ae instanceof Mech)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Only mechs should be grappled");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs should be grappled");
         }
         
         if (((Mech)ae).getGrappled() != target.getTargetId()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Not grappled");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Not grappled");
         }
         
         //Set the base BTH
@@ -75,7 +82,7 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction
         toHit = new ToHitData(base, "base");
         
         if(((Mech)ae).isGrappleAttacker()) {
-            toHit.addModifier(ToHitData.AUTOMATIC_SUCCESS, "original attacker");
+            toHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "original attacker");
             return toHit;
         }
         

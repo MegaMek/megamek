@@ -343,7 +343,7 @@ public class EntityListFile {
      *             to be stored in a file.
      * @throws IOException is thrown on any error.
      */
-    public static void saveTo(File file, Vector list)
+    public static void saveTo(File file, Vector<Entity> list)
             throws IOException {
 
         /*
@@ -373,9 +373,9 @@ public class EntityListFile {
         output.write(CommonConstants.NL);
 
         // Walk through the list of entities.
-        Enumeration items = list.elements();
+        Enumeration<Entity> items = list.elements();
         while (items.hasMoreElements()) {
-            final Entity entity = (Entity) items.nextElement();
+            final Entity entity = items.nextElement();
 
             // Start writing this entity to the file.
             output.write("   <entity chassis=\"");
@@ -473,7 +473,7 @@ public class EntityListFile {
      *         it will not be <code>null</code>.
      * @throws IOException is thrown on any error.
      */
-    public static Vector loadFrom(File file)
+    public static Vector<Entity> loadFrom(File file)
             throws IOException {
 
         // Create an empty parser.

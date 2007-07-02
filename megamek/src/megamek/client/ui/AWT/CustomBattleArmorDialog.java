@@ -1941,7 +1941,7 @@ public class CustomBattleArmorDialog
         return false;
     }
 
-    protected class BattleArmorEquipment implements Comparable {
+    protected class BattleArmorEquipment implements Comparable<BattleArmorEquipment> {
         // WeaponType/EquipmentType fields
         String name;
         String weaponTypeName;
@@ -2142,8 +2142,8 @@ createBASRM6Ammo()
             return retVal.toString();
         }
 
-        public int compareTo(Object o) {
-            return name.compareTo(((BattleArmorEquipment)o).name);
+        public int compareTo(BattleArmorEquipment o) {
+            return name.compareTo(o.name);
         }
 
         public boolean hasConflictFlag(int testFlags) {

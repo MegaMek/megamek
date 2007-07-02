@@ -34,6 +34,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.BorderLayout;
@@ -66,48 +67,48 @@ public class CustomBattleArmorDialog
     private JPanel m_pLeft = new JPanel();
 
     private JPanel m_pParams = new JPanel();
-    private JLabel m_labelBAName = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelBAName"), JLabel.RIGHT);
+    private JLabel m_labelBAName = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelBAName"), SwingConstants.RIGHT);
     private JTextField m_tfBAName = new JTextField();
-    private JLabel m_labelMenPerSquad = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelMenPerSquad"), JLabel.RIGHT);
+    private JLabel m_labelMenPerSquad = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelMenPerSquad"), SwingConstants.RIGHT);
     private JComboBox m_chMenPerSquad = new JComboBox();
-    private JLabel m_labelTechBase = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelTechBase"), JLabel.RIGHT);
+    private JLabel m_labelTechBase = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelTechBase"), SwingConstants.RIGHT);
     private JComboBox m_chTechBase = new JComboBox();
-    private JLabel m_labelChassisType = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelChassisType"), JLabel.RIGHT);
+    private JLabel m_labelChassisType = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelChassisType"), SwingConstants.RIGHT);
     private JComboBox m_chChassisType = new JComboBox();
-    private JLabel m_labelWeightClass = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelWeightClass"), JLabel.RIGHT);
+    private JLabel m_labelWeightClass = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelWeightClass"), SwingConstants.RIGHT);
     private JComboBox m_chWeightClass = new JComboBox();
-    private JLabel m_labelGroundMP = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelGroundMP"), JLabel.RIGHT);
+    private JLabel m_labelGroundMP = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelGroundMP"), SwingConstants.RIGHT);
     private JComboBox m_chGroundMP = new JComboBox();
     private ButtonGroup m_cbgJumpType = new ButtonGroup();
     private JRadioButton m_cbJumpQuery = new JRadioButton(Messages.getString("CustomBattleArmorDialog.m_jumpQuery"), true);
     private JRadioButton m_cbVTOLQuery = new JRadioButton(Messages.getString("CustomBattleArmorDialog.m_VTOLQuery"), false);
     private JRadioButton m_cbUMUQuery = new JRadioButton(Messages.getString("CustomBattleArmorDialog.m_UMUQuery"), false);
-    private JLabel m_labelJumpValue = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelJumpValue"), JLabel.RIGHT);
+    private JLabel m_labelJumpValue = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelJumpValue"), SwingConstants.RIGHT);
     private JComboBox m_chJumpValue = new JComboBox();
-    private JLabel m_labelArmorType = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelArmorType"), JLabel.RIGHT);
+    private JLabel m_labelArmorType = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelArmorType"), SwingConstants.RIGHT);
     private JComboBox m_chArmorType = new JComboBox();
-    private JLabel m_labelArmorValue = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelArmorValue"), JLabel.RIGHT);
+    private JLabel m_labelArmorValue = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelArmorValue"), SwingConstants.RIGHT);
     private JComboBox m_chArmorValue = new JComboBox();
-    private JLabel m_labelLeftManipulator = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelLeftManipulator"), JLabel.RIGHT);
+    private JLabel m_labelLeftManipulator = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelLeftManipulator"), SwingConstants.RIGHT);
     private JComboBox m_chLeftManipulator = new JComboBox();
-    private JLabel m_labelRightManipulator = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelRightManipulator"), JLabel.RIGHT);
+    private JLabel m_labelRightManipulator = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelRightManipulator"), SwingConstants.RIGHT);
     private JComboBox m_chRightManipulator = new JComboBox();
-    private JLabel m_labelTorsoEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelTorsoEquipment"), JLabel.RIGHT);
+    private JLabel m_labelTorsoEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelTorsoEquipment"), SwingConstants.RIGHT);
     private JComboBox m_chTorsoEquipment = new JComboBox();
     private JButton m_buttonAddTorso = new JButton(Messages.getString("CustomBattleArmorDialog.m_buttonAdd"));
-    private JLabel m_labelRightArmEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelRightArmEquipment"), JLabel.RIGHT);
+    private JLabel m_labelRightArmEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelRightArmEquipment"), SwingConstants.RIGHT);
     private JComboBox m_chRightArmEquipment = new JComboBox();
     private JButton m_buttonAddRightArm = new JButton(Messages.getString("CustomBattleArmorDialog.m_buttonAdd"));
-    private JLabel m_labelLeftArmEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelLeftArmEquipment"), JLabel.RIGHT);
+    private JLabel m_labelLeftArmEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelLeftArmEquipment"), SwingConstants.RIGHT);
     private JComboBox m_chLeftArmEquipment = new JComboBox();
     private JButton m_buttonAddLeftArm = new JButton(Messages.getString("CustomBattleArmorDialog.m_buttonAdd"));
-    private JLabel m_labelTorsoCurrentEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelCurrentTorsoEquipment"), JLabel.RIGHT);
+    private JLabel m_labelTorsoCurrentEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelCurrentTorsoEquipment"), SwingConstants.RIGHT);
     private JComboBox m_chTorsoCurrentEquipment = new JComboBox();
     private JButton m_buttonRemoveTorso = new JButton(Messages.getString("CustomBattleArmorDialog.m_buttonRemove"));
-    private JLabel m_labelRightArmCurrentEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelCurrentRightArmEquipment"), JLabel.RIGHT);
+    private JLabel m_labelRightArmCurrentEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelCurrentRightArmEquipment"), SwingConstants.RIGHT);
     private JComboBox m_chRightArmCurrentEquipment = new JComboBox();
     private JButton m_buttonRemoveRightArm = new JButton(Messages.getString("CustomBattleArmorDialog.m_buttonRemove"));
-    private JLabel m_labelLeftArmCurrentEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelCurrentLeftArmEquipment"), JLabel.RIGHT);
+    private JLabel m_labelLeftArmCurrentEquipment = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelCurrentLeftArmEquipment"), SwingConstants.RIGHT);
     private JComboBox m_chLeftArmCurrentEquipment = new JComboBox();
     private JButton m_buttonRemoveLeftArm = new JButton(Messages.getString("CustomBattleArmorDialog.m_buttonRemove"));
 
@@ -116,7 +117,7 @@ public class CustomBattleArmorDialog
     private JButton m_bPickClose = new JButton(Messages.getString("CustomBattleArmorDialog.m_bPickClose"));
     private JButton m_bCancel = new JButton(Messages.getString("CustomBattleArmorDialog.m_bClose"));
     private JButton m_buttonReset = new JButton(Messages.getString("CustomBattleArmorDialog.m_buttonReset"));
-    private JLabel m_labelPlayer = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelPlayer"), JLabel.RIGHT);
+    private JLabel m_labelPlayer = new JLabel(Messages.getString("CustomBattleArmorDialog.m_labelPlayer"), SwingConstants.RIGHT);
     private JComboBox m_chPlayer = new JComboBox();
 
     private JTextArea m_BAView = new JTextArea("", 18, 25);
@@ -466,8 +467,8 @@ public class CustomBattleArmorDialog
         m_chPlayer.removeAll();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(m_clientgui.getClient().getName());
-        for (Iterator i = m_clientgui.getBots().values().iterator(); i.hasNext();) {
-            m_chPlayer.addItem(((Client) i.next()).getName());
+        for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i.hasNext();) {
+            m_chPlayer.addItem(i.next().getName());
         }
         if (m_chPlayer.getItemCount() == 1) {
             m_chPlayer.setEnabled(false);
@@ -858,7 +859,7 @@ public class CustomBattleArmorDialog
                 Client c = null;
                 if (m_chPlayer.getSelectedIndex() > 0) {
                     String name = (String) m_chPlayer.getSelectedItem();
-                    c = (Client) m_clientgui.getBots().get(name);
+                    c = m_clientgui.getBots().get(name);
                 }
                 if (c == null) {
                     c = m_client;
@@ -1947,7 +1948,7 @@ public class CustomBattleArmorDialog
         previewBA();
     }
 
-    class BattleArmorEquipment implements Comparable {
+    class BattleArmorEquipment implements Comparable<BattleArmorEquipment> {
         // WeaponType/EquipmentType fields
         String name;
         String weaponTypeName;
@@ -2144,8 +2145,8 @@ createBASRM6Ammo()
             return retVal.toString();
         }
 
-        public int compareTo(Object o) {
-            return name.compareTo(((BattleArmorEquipment) o).name);
+        public int compareTo(BattleArmorEquipment o) {
+            return name.compareTo(o.name);
         }
 
         public boolean hasConflictFlag(int testFlags) {

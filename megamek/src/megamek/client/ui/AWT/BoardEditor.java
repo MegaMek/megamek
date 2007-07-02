@@ -69,19 +69,31 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
 
+/**
+ * The BoardEditor class is a 
+ *
+ */
 public class BoardEditor extends Container implements ItemListener,
         ActionListener, TextListener, IMapSettingsObserver {
 
-    private Frame frame = new Frame();
+    /**
+	 * Serialization ID.
+	 */
+	private static final long serialVersionUID = -8281854232284355981L;
 
-    private Game game = new Game();
+	private final Frame frame = new Frame();
+
+    private final Game game = new Game();
     private IBoard board = game.getBoard();
     private BoardView1 bv;
-    private CommonMenuBar menuBar = new CommonMenuBar();
+    private final CommonMenuBar menuBar = new CommonMenuBar();
     private CommonAboutDialog about = null;
     private CommonHelpDialog help = null;
     private CommonSettingsDialog setdlg = null;
 
+    /**
+     * The current working hex.
+     */
     private IHex curHex = new Hex();
 
     private String curpath, curfile, curfileImage;
@@ -131,21 +143,22 @@ public class BoardEditor extends Container implements ItemListener,
     private Coords lastClicked;
     
     private MapSettings mapSettings = new MapSettings();
+    
     /**
      * Creates and lays out a new Board Editor frame.
      */
     public BoardEditor() {
         try {
             bv = new BoardView1(game, frame);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             new AlertDialog(frame,Messages.getString("BoardEditor.FatalError"), Messages.getString("BoardEditor.CouldntInitialize")+e); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
         }
 
         bv.addBoardViewListener(new BoardViewListenerAdapter(){
 
-            public void hexMoused(BoardViewEvent b) {
-                Coords c = b.getCoords();
+            public void hexMoused(final BoardViewEvent b) {
+                final Coords c = b.getCoords();
                 if(c.equals(lastClicked))
                     return;
                 lastClicked = c;
@@ -175,9 +188,9 @@ public class BoardEditor extends Container implements ItemListener,
         frame.setVisible(true);
 
         if (true==GUIPreferences.getInstance().getNagForMapEdReadme()) {
-            String title = Messages.getString("BoardEditor.readme.title"); //$NON-NLS-1$
-            String body = Messages.getString("BoardEditor.readme.message"); //$NON-NLS-1$
-            ConfirmDialog confirm = new ConfirmDialog(frame,title,body,true);
+            final String title = Messages.getString("BoardEditor.readme.title"); //$NON-NLS-1$
+            final String body = Messages.getString("BoardEditor.readme.message"); //$NON-NLS-1$
+            final ConfirmDialog confirm = new ConfirmDialog(frame,title,body,true);
             confirm.setVisible(true);
 
             if ( !confirm.getShowAgain() ) {
@@ -198,10 +211,10 @@ public class BoardEditor extends Container implements ItemListener,
         frame.setLayout(new BorderLayout());
 
         // Create a scroll bars to surround the board view.
-        Panel scrollPane = new Panel();
+        final Panel scrollPane = new Panel();
         scrollPane.setLayout (new BorderLayout());
-        Scrollbar vertical = new Scrollbar (Scrollbar.VERTICAL);
-        Scrollbar horizontal = new Scrollbar (Scrollbar.HORIZONTAL);
+        final Scrollbar vertical = new Scrollbar (Scrollbar.VERTICAL);
+        final Scrollbar horizontal = new Scrollbar (Scrollbar.HORIZONTAL);
         scrollPane.add (bv, BorderLayout.CENTER);
         scrollPane.add (vertical, BorderLayout.EAST);
         scrollPane.add (horizontal, BorderLayout.SOUTH);
@@ -231,7 +244,7 @@ public class BoardEditor extends Container implements ItemListener,
 
         // when frame is closing, just hide it
         frame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
+                public void windowClosing(final WindowEvent e) {
                     frame.setVisible(false);
                     setMapVisible(false);
                 }
@@ -329,8 +342,8 @@ public class BoardEditor extends Container implements ItemListener,
         
         blankL = new Label("", Label.CENTER); //$NON-NLS-1$
         
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
+        final GridBagLayout gridbag = new GridBagLayout();
+        final GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
         
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -368,7 +381,7 @@ public class BoardEditor extends Container implements ItemListener,
         minimapW.setLocation(GUIPreferences.getInstance().getMinimapPosX(), GUIPreferences.getInstance().getMinimapPosY());
         try {
             minimap = new MiniMap(minimapW, game, bv);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             new AlertDialog(frame,Messages.getString("BoardEditor.FatalError"), Messages.getString("BoardEditor.CouldNotInitialiseMinimap")+e); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
         }
@@ -377,7 +390,7 @@ public class BoardEditor extends Container implements ItemListener,
         setMapVisible(true);
     }
     
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(final Component comp, final GridBagLayout gridbag, final GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
     }
@@ -385,18 +398,20 @@ public class BoardEditor extends Container implements ItemListener,
     /**
      * Apply the current Hex to the Board at the specified
      * location.
+     * @param c the location.
      */
-    public void paintHex(Coords c) {
+    public void paintHex(final Coords c) {
         board.setHex(c, curHex.duplicate());
     }
     
     /**
      * Apply the current Hex to the Board at the specified
      * location.
+     * @param c the location in {@link megamek.common.Coords , Coords }. 
      */
-    public void resurfaceHex(Coords c) {
+    public void resurfaceHex(final Coords c) {
         if(board.contains(c)) {
-            IHex newHex = curHex.duplicate();
+            final IHex newHex = curHex.duplicate();
             newHex.setElevation(board.getHex(c).getElevation());
             board.setHex(c, newHex);
         }
@@ -405,11 +420,12 @@ public class BoardEditor extends Container implements ItemListener,
     /**
      * Apply the current Hex to the Board at the specified
      * location.
+     * @param c the location in {@link megamek.common.Coords , Coords }.
      */
-    public void addToHex(Coords c) {
+    public void addToHex(final Coords c) {
         if(board.contains(c)) {
-            IHex newHex = curHex.duplicate();
-            IHex oldHex = board.getHex(c);
+            final IHex newHex = curHex.duplicate();
+            final IHex oldHex = board.getHex(c);
             newHex.setElevation(oldHex.getElevation());
             for(int i=0;i<Terrains.SIZE;i++) {
                 if(!newHex.containsTerrain(i)
@@ -424,9 +440,9 @@ public class BoardEditor extends Container implements ItemListener,
     /**
      * Sets the current hex
      * 
-     * @param hex            hex to set.
+     * @param hex hex to set.
      */
-    public void setCurrentHex(IHex hex) {
+    public void setCurrentHex(final IHex hex) {
         curHex = hex.duplicate();
         
         texElev.setText(Integer.toString(curHex.getElevation()));
@@ -443,9 +459,12 @@ public class BoardEditor extends Container implements ItemListener,
         repaintWorkingHex();
     }
     
+    /**
+     * Repaints the current working hex.
+     */
     private void repaintWorkingHex() {
         if (curHex != null) {
-            TilesetManager tm = bv.getTilesetManager();
+            final TilesetManager tm = bv.getTilesetManager();
             tm.clearHex(curHex);
         }
         canHex.repaint();
@@ -458,7 +477,7 @@ public class BoardEditor extends Container implements ItemListener,
     public void refreshTerrainList() {
         lisTerrain.removeAll();
         for (int i = 0; i < Terrains.SIZE; i++) {
-            ITerrain terrain = curHex.getTerrain(i);
+            final ITerrain terrain = curHex.getTerrain(i);
             if (terrain != null) {
                 lisTerrain.add(terrain.toString());
             }
@@ -470,10 +489,10 @@ public class BoardEditor extends Container implements ItemListener,
      * terrain input fields
      */
     private ITerrain enteredTerrain() {
-        int type = Terrains.getType(choTerrainType.getSelectedItem());
-        int level = Integer.parseInt(texTerrainLevel.getText());
-        boolean exitsSpecified = cheTerrExitSpecified.getState();
-        int exits = Integer.parseInt(texTerrExits.getText());
+        final int type = Terrains.getType(choTerrainType.getSelectedItem());
+        final int level = Integer.parseInt(texTerrainLevel.getText());
+        final boolean exitsSpecified = cheTerrExitSpecified.getState();
+        final int exits = Integer.parseInt(texTerrExits.getText());
         return Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
     }
     
@@ -481,7 +500,7 @@ public class BoardEditor extends Container implements ItemListener,
      * Add or set the terrain to the list based on the fields.
      */
     private void addSetTerrain() {
-        ITerrain toAdd = enteredTerrain();
+        final ITerrain toAdd = enteredTerrain();
         curHex.addTerrain(toAdd);
         refreshTerrainList();
         repaintWorkingHex();
@@ -512,12 +531,12 @@ public class BoardEditor extends Container implements ItemListener,
      */
     public void boardNewXX() {
         // display new board dialog
-        BoardNewDialog bnd = new BoardNewDialog(frame, lisTerrain.getItems(), lisTerrain.getSelectedIndex());
+        final BoardNewDialog bnd = new BoardNewDialog(frame, lisTerrain.getItems(), lisTerrain.getSelectedIndex());
         bnd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         bnd.setVisible(true);
         
         if(bnd.getX() > 0 || bnd.getY() > 0) {
-            IHex[] newHexes = new IHex[ bnd.getX() * bnd.getY() ]; 
+            final IHex[] newHexes = new IHex[ bnd.getX() * bnd.getY() ]; 
             for(int i = 0; i < newHexes.length; i++) { 
                 newHexes[i] = new Hex(); 
             }
@@ -530,7 +549,7 @@ public class BoardEditor extends Container implements ItemListener,
     }
     
     public void boardNew() {
-        RandomMapDialog rmd = new RandomMapDialog(frame, this, mapSettings);
+        final RandomMapDialog rmd = new RandomMapDialog(frame, this, mapSettings);
         rmd.setVisible(true);
         
         board = BoardUtilities.generateRandom(mapSettings);
@@ -541,12 +560,20 @@ public class BoardEditor extends Container implements ItemListener,
         menuBar.setBoard( true );
     }
     
-    public void updateMapSettings(MapSettings newSettings) {
+    /**
+     * Updates the map settings.
+     * @param newSettings the new settings.
+     */
+    public void updateMapSettings(final MapSettings newSettings) {
         mapSettings = newSettings;
     }
     
+    /**
+     * Selects and loads a file into the BoardEditor.
+     * Called when the user selects load file.
+     */
     public void boardLoad() {
-        FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.loadBoard"), FileDialog.LOAD); //$NON-NLS-1$
+        final FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.loadBoard"), FileDialog.LOAD); //$NON-NLS-1$
         fd.setDirectory("data" + File.separator + "boards"); //$NON-NLS-1$ //$NON-NLS-2$
         fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fd.setVisible(true);
@@ -559,14 +586,14 @@ public class BoardEditor extends Container implements ItemListener,
         curfile = fd.getFile();
         // load!
         try {
-            InputStream is = new FileInputStream(new File(curpath, curfile));
+            final InputStream is = new FileInputStream(new File(curpath, curfile));
             // tell the board to load!
             board.load(is);
             // okay, done!
             is.close();
             menuBar.setBoard( true );
-        } catch(IOException ex) {
-            System.err.println("error opening file to save!"); //$NON-NLS-1$
+        } catch(final IOException ex) {
+            System.err.println("error opening file to load!"); //$NON-NLS-1$
             System.err.println(ex);
         }
         
@@ -589,12 +616,12 @@ public class BoardEditor extends Container implements ItemListener,
         }
         // save!
         try {
-            OutputStream os = new FileOutputStream(new File(curpath, curfile));
+            final OutputStream os = new FileOutputStream(new File(curpath, curfile));
             // tell the board to save!
             board.save(os);
             // okay, done!
             os.close();
-        } catch(IOException ex) {
+        } catch(final IOException ex) {
             System.err.println("error opening file to save!"); //$NON-NLS-1$
             System.err.println(ex);
         }
@@ -608,7 +635,7 @@ public class BoardEditor extends Container implements ItemListener,
             boardSaveAsImage();
             return;
         }
-        Dialog waitD = new Dialog(this.frame, Messages.getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
+        final Dialog waitD = new Dialog(this.frame, Messages.getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
         waitD.add(new Label(Messages.getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
         waitD.setSize(250,130);
         // move to middle of screen
@@ -619,14 +646,14 @@ public class BoardEditor extends Container implements ItemListener,
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
-        int filter = 0; //0 - no filter; 1 - sub; 2 - up
-        int compressionLevel = 9; // 0 to 9 with 0 being no compression
-        PngEncoder png =  new PngEncoder( bv.getEntireBoardImage(),
+        final int filter = 0; //0 - no filter; 1 - sub; 2 - up
+        final int compressionLevel = 9; // 0 to 9 with 0 being no compression
+        final PngEncoder png =  new PngEncoder( bv.getEntireBoardImage(),
                                           PngEncoder.NO_ALPHA,
                                           filter,
                                           compressionLevel);
         try {
-            FileOutputStream outfile = new FileOutputStream( curfileImage );
+            final FileOutputStream outfile = new FileOutputStream( curfileImage );
             byte[] pngbytes;
             pngbytes = png.pngEncode();
             if (pngbytes == null) {
@@ -637,7 +664,7 @@ public class BoardEditor extends Container implements ItemListener,
             }
             outfile.flush();
             outfile.close();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             e.printStackTrace();
         }
         waitD.setVisible(false);
@@ -649,7 +676,7 @@ public class BoardEditor extends Container implements ItemListener,
      * saves the board to the file.
      */
     public void boardSaveAs() {
-        FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.saveBoardAs"), FileDialog.SAVE); //$NON-NLS-1$
+        final FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.saveBoardAs"), FileDialog.SAVE); //$NON-NLS-1$
         fd.setDirectory("data" + File.separator + "boards"); //$NON-NLS-1$ //$NON-NLS-2$
         fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
         fd.setVisible(true);
@@ -677,13 +704,13 @@ public class BoardEditor extends Container implements ItemListener,
      * for printing boards.
      */
     public void boardSaveAsImage() {
-        FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.saveAsImage"), FileDialog.SAVE); //$NON-NLS-1$
+        final FileDialog fd = new FileDialog(frame, Messages.getString("BoardEditor.saveAsImage"), FileDialog.SAVE); //$NON-NLS-1$
         //        fd.setDirectory("data" + File.separator + "boards");
         fd.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
 
         // Add a filter for PNG files
         fd.setFilenameFilter(new FilenameFilter() {
-                public boolean accept(File dir, String name) {
+                public boolean accept(final File dir, final String name) {
                     return (null != name && name.endsWith(".png")); //$NON-NLS-1$
                 }
             });
@@ -696,7 +723,7 @@ public class BoardEditor extends Container implements ItemListener,
         if (null != curfile && curfile.length() > 0) {
             fileName = curfile.toUpperCase();
             if (fileName.endsWith(".BOARD")) { //$NON-NLS-1$
-                int length = fileName.length();
+                final int length = fileName.length();
                 fileName = fileName.substring (0, length-6);
             }
             fileName = fileName.toLowerCase() + ".png"; //$NON-NLS-1$
@@ -726,12 +753,16 @@ public class BoardEditor extends Container implements ItemListener,
     //
     // ItemListener
     //
-    public void itemStateChanged(ItemEvent ie) {
+    /**
+     * @see java.awt.event.ItemListener
+     * @param ie the ItemEvent
+     */
+    public void itemStateChanged(final ItemEvent ie) {
         if (ie.getSource() == lisTerrain) {
             refreshTerrainFromList();
         }
         else if ( ie.getSource() == cheRoadsAutoExit ) {
-            // Set the new value for the option, and refrest the board.
+            // Set the new value for the option, and refresh the board.
             board.setRoadsAutoExit(cheRoadsAutoExit.getState());
             bv.updateBoard();
             repaintWorkingHex();
@@ -741,12 +772,16 @@ public class BoardEditor extends Container implements ItemListener,
     //
     // TextListener
     //
-    public void textValueChanged(TextEvent te) {
+    /**
+     * @see java.awt.event.TextListener
+     * @param te the TextEvent
+     */
+    public void textValueChanged(final TextEvent te) {
         if (te.getSource() == texElev) {
             int value;
             try {
                 value = Integer.parseInt(texElev.getText());
-            } catch (NumberFormatException ex) {
+            } catch (final NumberFormatException ex) {
                 return;
             }
             if (value != curHex.getElevation()) {
@@ -778,7 +813,7 @@ public class BoardEditor extends Container implements ItemListener,
     private void showHelp() {
         // Do we need to create the "help" dialog?
         if ( this.help == null ) {
-            File helpfile = new File( "docs", "editor-readme.txt" ); //$NON-NLS-1$
+            final File helpfile = new File( "docs", "editor-readme.txt" ); //$NON-NLS-1$
             this.help = new CommonHelpDialog( this.frame, helpfile );
         }
 
@@ -802,7 +837,7 @@ public class BoardEditor extends Container implements ItemListener,
     //
     // ActionListener
     //
-    public void actionPerformed(ActionEvent ae) {
+    public void actionPerformed(final ActionEvent ae) {
         if (ae.getActionCommand().equalsIgnoreCase("fileBoardNew")) { //$NON-NLS-1$
             boardNew();
         } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardOpen")) { //$NON-NLS-1$
@@ -814,7 +849,7 @@ public class BoardEditor extends Container implements ItemListener,
         } else if (ae.getActionCommand().equalsIgnoreCase("fileBoardSaveAsImage")) { //$NON-NLS-1$
             boardSaveAsImage();
         } else if (ae.getSource() == butDelTerrain && lisTerrain.getSelectedItem() != null) {
-            ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(lisTerrain.getSelectedItem());
+            final ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(lisTerrain.getSelectedItem());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
             repaintWorkingHex();
@@ -829,7 +864,7 @@ public class BoardEditor extends Container implements ItemListener,
             texElev.setText(Integer.toString(curHex.getElevation()));
             repaintWorkingHex();
         } else if (ae.getSource() == butTerrExits) {
-            ExitsDialog ed = new ExitsDialog(frame);
+            final ExitsDialog ed = new ExitsDialog(frame);
             cheTerrExitSpecified.setState(true);
             ed.setExits(Integer.parseInt(texTerrExits.getText()));
             ed.setVisible(true);
@@ -855,22 +890,25 @@ public class BoardEditor extends Container implements ItemListener,
      * component form
      */
     private class HexCanvas extends Canvas {
-        public HexCanvas() {
+
+		private static final long serialVersionUID = 537547390238897105L;
+
+		public HexCanvas() {
             super();
             setSize(72, 72);
         }
         
-        public void paint(Graphics g) {
+        public void paint(final Graphics g) {
             update(g);
         }
         
-        public void update(Graphics g) {
+        public void update(final Graphics g) {
             if(curHex != null) {
-                TilesetManager tm = bv.getTilesetManager();
+                final TilesetManager tm = bv.getTilesetManager();
                 g.drawImage(tm.baseFor(curHex), 0, 0, this);
                 if (tm.supersFor(curHex) != null) {
-                    for (Iterator i = tm.supersFor(curHex).iterator(); i.hasNext();) {
-                        g.drawImage((Image)i.next(), 0, 0, this);
+                    for (final Iterator<Image> i = tm.supersFor(curHex).iterator(); i.hasNext();) {
+                        g.drawImage(i.next(), 0, 0, this);
                         g.drawString(Messages.getString("BoardEditor.SUPER"), 0, 10); //$NON-NLS-1$
                     }
                 }
@@ -895,7 +933,11 @@ public class BoardEditor extends Container implements ItemListener,
         setMapVisible(!minimapW.isVisible());
     }    
 
-    public void setMapVisible(boolean visible) {
+    /**
+     * Sets if the map is visible or not.
+     * @param visible true if the map should be visible, false if not.
+     */
+    public void setMapVisible(final boolean visible) {
         minimapW.setVisible(visible);
     }
 }

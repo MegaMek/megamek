@@ -35,6 +35,6 @@ public interface IOptionsInfo {
      * Returns the <code>Enumeration</code> of the <code>IBasicOptionGroup</code>
      * @return the <code>Enumeration</code> of the <code>IBasicOptionGroup</code>
      */
-    public abstract Enumeration getGroups();
+    public abstract Enumeration<IBasicOptionGroup> getGroups();
     
 }

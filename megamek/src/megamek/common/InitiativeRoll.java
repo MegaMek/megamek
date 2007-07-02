@@ -30,9 +30,10 @@ import java.io.*;
  * @author  Ben
  * @version 
  */
-public class InitiativeRoll implements Comparable, Serializable {
+public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable {
     
-    private Vector<Integer> rolls = new Vector<Integer>();
+	private static final long serialVersionUID = -1850190415242027657L;
+	private Vector<Integer> rolls = new Vector<Integer>();
     private Vector<Integer> originalRolls = new Vector<Integer>();
     private Vector<Boolean> wasRollReplaced = new Vector<Boolean>(); //booleans
 
@@ -69,20 +70,14 @@ public class InitiativeRoll implements Comparable, Serializable {
     }
     
     public int getRoll(int index) {
-        return ((Integer)rolls.elementAt(index)).intValue();
+        return rolls.elementAt(index).intValue();
     }
     
     
     /**
      * Two initiative rolls are equal if they match, roll by roll
      */
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        } else if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-        InitiativeRoll other = (InitiativeRoll)object;
+    public boolean equals(InitiativeRoll other) {
         if (size() != other.size()) {
             return false;
         }
@@ -94,11 +89,7 @@ public class InitiativeRoll implements Comparable, Serializable {
         return true;
     }
     
-    public int compareTo(Object object) {
-        if (getClass() != object.getClass()) {
-            throw new IllegalArgumentException("InitiativeRoll must be compared to InitiativeRoll");
-        }
-        InitiativeRoll other = (InitiativeRoll)object;
+    public int compareTo(InitiativeRoll other) {
         int minSize = Math.min(size(), other.size());
         int compare = 0;
         for (int i = 0; i < minSize; i++) {
@@ -115,10 +106,10 @@ public class InitiativeRoll implements Comparable, Serializable {
 
         boolean tacticalGenius = false;
         for (int i = 0; i < rolls.size(); i++) {
-            Integer r = (Integer)rolls.elementAt(i);
-            Integer o = (Integer)originalRolls.elementAt(i);
+            Integer r = rolls.elementAt(i);
+            Integer o = originalRolls.elementAt(i);
 
-            if (((Boolean)wasRollReplaced.elementAt(i)).booleanValue()) {
+            if (wasRollReplaced.elementAt(i).booleanValue()) {
                 buff.append(o.toString()).append("(").append(r.toString()).append(")");
                 tacticalGenius = true;
             } else {

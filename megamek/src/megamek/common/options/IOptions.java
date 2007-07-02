@@ -26,14 +26,14 @@ public interface IOptions {
      * in this options container.
      * @return  <code>Enumeration</code> of the <code>IOptionGroup</code>
      */
-    public abstract Enumeration getGroups();
+    public abstract Enumeration<IOptionGroup> getGroups();
     
     /**
      * Returns the <code>Enumeration</code> of the options 
      * in this options container. The order of options is not specified.
      * @return <code>Enumeration</code> of the <code>IOption</code>
      */
-    public abstract Enumeration getOptions();
+    public abstract Enumeration<IOption> getOptions();
 
     /**
      * Returns the option by name or <code>null</code> if there is no such

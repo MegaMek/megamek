@@ -15,7 +15,7 @@
 package megamek.client.bot.ga;
 
 
-public class Chromosome implements Comparable {
+public class Chromosome implements Comparable<Chromosome> {
     public double fitness; //absolute fitness value
     public int[] genes;
 
@@ -31,8 +31,8 @@ public class Chromosome implements Comparable {
         System.arraycopy(chromosome.genes, 0, genes, 0, genes.length);
     }
     
-    public int compareTo(Object o) {
-        double delta = fitness - ((Chromosome)o).fitness;
+    public int compareTo(Chromosome o) {
+        double delta = fitness - o.fitness;
         return delta>0?1:delta<0?-1:0;
     }
 

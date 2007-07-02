@@ -165,11 +165,11 @@ public final class PhysicalCalculator {
                 INarcPod test_pod;
                 INarcPod best_pod;
                 pod_ranking = 0.0;
-                Enumeration pod_list = entity.getINarcPodsAttached();
-                best_pod = (INarcPod) pod_list.nextElement();
+                Enumeration<INarcPod> pod_list = entity.getINarcPodsAttached();
+                best_pod = pod_list.nextElement();
                 for (pod_list = entity.getINarcPodsAttached(); pod_list.hasMoreElements();) {
                     test_ranking = 1.0;
-                    test_pod = (INarcPod) pod_list.nextElement();
+                    test_pod = pod_list.nextElement();
                     // If pod is homing and attacker has no ECM
                     if (test_pod.getType() == INarcPod.HOMING && !entity.hasActiveECM()) {
                         // Pod is +1
@@ -252,8 +252,8 @@ public final class PhysicalCalculator {
             }
         }
 
-        for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
-            Entity target = (Entity) e.nextElement();
+        for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
+            Entity target = e.nextElement();
 
             if (target.equals(entity))
                 continue;

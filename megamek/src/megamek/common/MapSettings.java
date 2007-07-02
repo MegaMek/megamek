@@ -29,11 +29,10 @@ import megamek.common.util.BuildingTemplate;
  *
  * Created on March 27, 2002, 1:07 PM
  * @author  Ben
- * @version 
  */
 public class MapSettings implements Serializable {
-    
-    public static final String BOARD_RANDOM = "[RANDOM]";
+	private static final long serialVersionUID = 6838624193286089780L;
+	public static final String BOARD_RANDOM = "[RANDOM]";
     public static final String BOARD_SURPRISE = "[SURPRISE]";
     public static final String BOARD_GENERATED = "[GENERATED]";    
     
@@ -49,8 +48,9 @@ public class MapSettings implements Serializable {
     private int mapWidth = 1;
     private int mapHeight = 1;
     
-    private Vector boardsSelected = new Vector();
-    private Vector boardsAvailable = new Vector();
+    // FIXME these vectors get both Board and Strings assinged to them. most likely a bug, at the very least obfuscated code.
+    private Vector boardsSelected = new Vector<Board>();
+    private Vector boardsAvailable = new Vector<Board>();
 
     //new vector to store all of the mapsetting buildings in.
     private Vector<BuildingTemplate> boardBuildings = new Vector<BuildingTemplate>();

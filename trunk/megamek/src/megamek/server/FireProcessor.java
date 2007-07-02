@@ -95,7 +95,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         Report r;
 
         // Get the position map of all entities in the game.
-        Hashtable positionMap = game.getPositionMap();
+        Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
 
         // Build vector to send for updated buildings at once.
         Vector<Building> burningBldgs = new Vector<Building>();
@@ -108,9 +108,9 @@ public class FireProcessor extends DynamicTerrainProcessor {
         // Cycle through all buildings, checking for fire.
         // ASSUMPTION: buildings don't lose 2 CF on the turn a fire starts.
         // ASSUMPTION: multi-hex buildings lose 2 CF max, regardless of # fires
-        Enumeration buildings = game.getBoard().getBuildings();
+        Enumeration<Building> buildings = game.getBoard().getBuildings();
         while ( buildings.hasMoreElements() ) {
-            Building bldg = (Building) buildings.nextElement();
+            Building bldg = buildings.nextElement();
             if ( bldg.isBurning() ) {
                 int cf = Math.max(bldg.getCurrentCF() - 2, 0);
                 bldg.setCurrentCF( cf );

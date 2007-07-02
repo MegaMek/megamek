@@ -41,14 +41,12 @@ public interface IOptionInfo {
     public abstract String getDescription();
 
     /**
-     * 
-     * @return
+     * returns the length of the textfield (how many characters).
      */
     public abstract int getTextFieldLength();
 
     /**
-     * 
-     * @return
+     * returns on which side of the text field the label is.
      */
     public abstract boolean isLabelBeforeTextField();
     

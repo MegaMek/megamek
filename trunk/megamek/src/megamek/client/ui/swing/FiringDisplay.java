@@ -1720,7 +1720,7 @@ public class FiringDisplay
         boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire"); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
-        Enumeration choices;
+        Enumeration<Entity> choices;
         
         // Get the available choices, depending on friendly fire
         if (friendlyFire) {
@@ -1731,7 +1731,7 @@ public class FiringDisplay
         // Convert the choices into a List of targets.
         Vector<Targetable> targets = new Vector<Targetable>();
         while (choices.hasMoreElements()) {
-            choice = (Targetable) choices.nextElement();
+            choice = choices.nextElement();
             if (!ce().equals(choice)) {
                 targets.addElement(choice);
             }

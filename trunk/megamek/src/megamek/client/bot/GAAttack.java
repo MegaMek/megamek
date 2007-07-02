@@ -30,17 +30,17 @@ import java.util.Iterator;
  */
 public class GAAttack extends GA {
 
-    protected ArrayList attack;
+    protected ArrayList<ArrayList<AttackOption>> attack;
     protected CEntity attacker;
     protected IGame game;
     protected CEntity.Table targets;
     protected ArrayList<Entity> target_array = null;
-    protected ArrayList valid_target_indexes = null;
+    protected ArrayList<Integer> valid_target_indexes = null;
     protected boolean overheat_eligible = false;
     protected int firing_arc = 0;
     double[] damages = null;
 
-    public GAAttack(TestBot tb, CEntity attacker, ArrayList attack, int population, int generations, boolean isEnemy) {
+    public GAAttack(TestBot tb, CEntity attacker, ArrayList<ArrayList<AttackOption>> attack, int population, int generations, boolean isEnemy) {
         super(attack.size() + 1, population, .7, .05, generations, .4);
         this.attack = attack;
         this.attacker = attacker;
@@ -87,11 +87,11 @@ public class GAAttack extends GA {
         //TODO should account for high heat?
         int heat_total = 0;
         if (chromArrayList.genes[chromosomeDim - 1] >= this.target_array.size()) {
-            chromArrayList.genes[chromosomeDim - 1] = ((Integer) this.valid_target_indexes.get(0)).intValue();
+            chromArrayList.genes[chromosomeDim - 1] = this.valid_target_indexes.get(0).intValue();
         }
         Entity target = this.target_array.get(chromArrayList.genes[chromosomeDim - 1]);
         for (int iGene = 0; iGene < chromosomeDim - 1; iGene++) {
-            AttackOption a = (AttackOption) (((ArrayList) (attack.get(iGene))).get(chromArrayList.genes[iGene]));
+            AttackOption a = attack.get(iGene).get(chromArrayList.genes[iGene]);
             if (a.target != null) { //if not the no fire option
                 targets.put(a.target);
                 double mod = 1;
@@ -142,11 +142,11 @@ public class GAAttack extends GA {
         } catch (Exception e) {
             System.out.println(chromosomeDim + " " + chromArrayList.genes.length); //$NON-NLS-1$
             System.out.println(this.target_array.size());
-            target = this.target_array.get(((Integer) this.valid_target_indexes.get(0)).intValue());
+            target = this.target_array.get(this.valid_target_indexes.get(0).intValue());
         }
         for (int iGene = 0; iGene < chromosomeDim - 1; iGene++) {
             final int[] genes = chromArrayList.genes;
-            AttackOption a = (AttackOption) (((ArrayList) (attack.get(iGene))).get(genes[iGene]));
+            AttackOption a = attack.get(iGene).get(genes[iGene]);
             if (a.target != null) { //if not the no fire option
                 targets.put(a.target);
                 double mod = 1;
@@ -175,9 +175,9 @@ public class GAAttack extends GA {
             }
         }
         double total_utility = 0;
-        Iterator j = targets.values().iterator();
+        Iterator<CEntity> j = targets.values().iterator();
         while (j.hasNext()) {
-            CEntity enemy = (CEntity) j.next();
+            CEntity enemy = j.next();
             total_utility+=getThreadUtility(enemy);
             enemy.resetPossibleDamage();
         }
@@ -279,7 +279,7 @@ public class GAAttack extends GA {
         if (r1 % 2 == 1) {
             c1.genes[r1]--;
             if (c1.genes[r1] < 0 && attack.size() > r1) {
-                c1.genes[r1] = ((ArrayList) this.attack.get(r1)).size() - 1;
+                c1.genes[r1] = this.attack.get(r1).size() - 1;
             } else {
                 c1.genes[r1] = 0; // TODO : what is a good value here?
             }
@@ -288,7 +288,7 @@ public class GAAttack extends GA {
         //else try to move all to one target
         for (int i = 0;(i < c1.genes.length - 1) && !done; i++) {
             int iGene = (i + r1) % (c1.genes.length - 1);
-            AttackOption a = (AttackOption) ((ArrayList) (attack.get(iGene))).get(c1.genes[iGene]);
+            AttackOption a = attack.get(iGene).get(c1.genes[iGene]);
             if (a.target != null) {
                 target = a.target;
                 done = true;
@@ -296,18 +296,18 @@ public class GAAttack extends GA {
         }
         if (target == null) { //then not shooting, so shoot something
             if (attack.size() > r1 && r1 > 1) {
-                c1.genes[r1] = Compute.randomInt(((ArrayList) (attack.get(r1))).size() - 1);
+                c1.genes[r1] = Compute.randomInt( attack.get(r1).size() - 1);
             } else {
                 // TODO : Is this the correct action to take?
-                c1.genes[r1] = Compute.randomInt(((ArrayList) (attack.get(0))).size() - 1);
+                c1.genes[r1] = Compute.randomInt( attack.get(0).size() - 1);
             }
-            AttackOption a = (AttackOption) ((ArrayList) (attack.get(r1))).get(c1.genes[r1]);
+            AttackOption a = attack.get(r1).get(c1.genes[r1]);
             if (a.target != null) {
                 c1.genes[c1.genes.length - 1] = a.target.enemy_num;
             }
         } else { //let's switch as many attacks as we can to this guy
             for (int i = 0;(i < (c1.genes.length - 1)) && (i < attack.size()); i++) {
-                Object[] weapon = ((ArrayList) (attack.get(i))).toArray();
+                Object[] weapon = attack.get(i).toArray();
                 if (c1.genes[i] != weapon.length - 1) {
                     done = false;
                     for (int w = 0;(w < weapon.length - 1) && !done; w++) {
@@ -330,22 +330,22 @@ public class GAAttack extends GA {
         }
 
         //use first weapon target as primary, not smart but good enough...
-        AttackOption a = (AttackOption) ((ArrayList) (attack.get(0))).get(0);
+        AttackOption a = attack.get(0).get(0);
         (this.chromosomes[0]).genes[chromosomeDim - 1] = a.target.enemy_num;
 
         for (int i = 1; i < populationDim; i++) {
             Chromosome cv = this.chromosomes[i];
             for (int iGene = 0; iGene < chromosomeDim - 1; iGene++) {
-                cv.genes[iGene] = Compute.randomInt(((ArrayList) (attack.get(iGene))).size());
+                cv.genes[iGene] = Compute.randomInt(attack.get(iGene).size());
                 if (i <= this.attack.size()) {
                     if (iGene + 1 == i)
                         cv.genes[iGene] = 0; //fire
                     else
-                        cv.genes[iGene] = ((ArrayList) (attack.get(iGene))).size() - 1;
+                        cv.genes[iGene] = attack.get(iGene).size() - 1;
                 }
             }
             cv.genes[chromosomeDim - 1] =
-                ((Integer) this.valid_target_indexes.get(Compute.randomInt(this.valid_target_indexes.size())))
+                this.valid_target_indexes.get(Compute.randomInt(this.valid_target_indexes.size()))
                     .intValue();
             this.chromosomes[i].fitness = getFitness(i);
         }
@@ -359,7 +359,7 @@ public class GAAttack extends GA {
         this.firing_arc = firing_arc;
     }
 
-    public ArrayList getAttack() {
+    public ArrayList<ArrayList<AttackOption>> getAttack() {
         return attack;
     }
 

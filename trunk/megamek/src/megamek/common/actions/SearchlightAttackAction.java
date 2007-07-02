@@ -54,8 +54,8 @@ public class SearchlightAttackAction
             return false;
         if(!Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD))
             return false;
-        for(Enumeration actions = game.getActions();actions.hasMoreElements();) {
-            Object action = actions.nextElement();
+        for(Enumeration<EntityAction> actions = game.getActions();actions.hasMoreElements();) {
+        	EntityAction action = actions.nextElement();
             if(action instanceof SearchlightAttackAction) {
                 SearchlightAttackAction act = (SearchlightAttackAction)action;
                 if(act == exempt)
@@ -71,7 +71,7 @@ public class SearchlightAttackAction
     /**
      * illuminate an entity and all entities that are between us and the hex
      */
-    public Vector resolveAction (IGame game) {
+    public Vector<Report> resolveAction (IGame game) {
         Vector<Report> reports = new Vector<Report>();
         Report r;
         if(!isPossible(game)) {
@@ -98,8 +98,8 @@ public class SearchlightAttackAction
 
         ArrayList<Coords> in = Coords.intervening(apos, tpos); //nb includes attacker & target
         for (Coords c : in) {
-            for (Enumeration e = game.getEntities(c);e.hasMoreElements();) {
-                Entity en = (Entity)e.nextElement();
+            for (Enumeration<Entity> e = game.getEntities(c);e.hasMoreElements();) {
+                Entity en = e.nextElement();
                 LosEffects los = LosEffects.calculateLos(game,getEntityId(),en);
                 if(los.canSee()) {
                     en.setIlluminated(true);
@@ -125,8 +125,8 @@ public class SearchlightAttackAction
 
         ArrayList<Coords> in = Coords.intervening(apos, tpos); //nb includes attacker & target
         for (Coords c : in) {
-            for (Enumeration e = game.getEntities(c);e.hasMoreElements();) {
-                Entity en = (Entity)e.nextElement();
+            for (Enumeration<Entity> e = game.getEntities(c);e.hasMoreElements();) {
+                Entity en = e.nextElement();
                 LosEffects los = LosEffects.calculateLos(game,getEntityId(),en);
                 if(los.canSee() && en.equals(who))
                     return true;

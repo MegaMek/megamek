@@ -20,6 +20,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.Player;
+import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -35,17 +36,18 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.io.Serializable;
-import java.util.Vector;
 
 public class SelectArtyAutoHitHexDisplay
         extends StatusBarPhaseDisplay
         implements BoardViewListener, ActionListener, DoneButtoned,
         KeyListener, GameListener, Distractable {
-    // Distraction implementation.
+
+	private static final long serialVersionUID = -4948184589134809323L;
+
+	// Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
     // parent game
@@ -61,7 +63,7 @@ public class SelectArtyAutoHitHexDisplay
     private JButton butDone;
 
     private Player p;
-    private Vector<Serializable> artyAutoHitHexes = new Vector<Serializable>();
+    private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
 
     /**
      * Creates and lays out a new deployment phase display
@@ -78,7 +80,7 @@ public class SelectArtyAutoHitHexDisplay
 
         p = client.getLocalPlayer();
 
-        artyAutoHitHexes.insertElementAt(new Integer(p.getId()), 0);
+        artyAutoHitHexes.setPlayerID(p.getId());
 
         butA = new JButton(Messages.getString("SelectArtyAutoHitHexDisplay.artilleryAutohithexes")); //$NON-NLS-1$
         butA.addActionListener(this);
@@ -185,7 +187,7 @@ public class SelectArtyAutoHitHexDisplay
         }
         
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
         
@@ -214,7 +216,11 @@ public class SelectArtyAutoHitHexDisplay
         }
     }
 
-    public void gamePhaseChange(GamePhaseChangeEvent e) {
+    /**
+     * called when the game changes phase.
+     * @param e ignored parameter
+     */
+    public void gamePhaseChange(final GamePhaseChangeEvent e) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;

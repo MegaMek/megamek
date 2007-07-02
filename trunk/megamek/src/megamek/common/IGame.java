@@ -184,7 +184,7 @@ public interface IGame {
     /**
      * Checks if the game contains the specified Vibrabomb
      * @param mf the Vibrabomb to ceck
-     * @return
+     * @return true iff the minefield contains a vibrabomb.
      */
     public abstract boolean containsVibrabomb(Minefield mf);
     
@@ -215,7 +215,7 @@ public interface IGame {
     /**
      * Return an enumeration of teams in the game
      */
-    public abstract Enumeration getTeams();
+    public abstract Enumeration<Team> getTeams();
 
     /**
      * Return the current number of teams in the game.
@@ -432,7 +432,7 @@ public interface IGame {
      *
      * @param   vOutOfGame - the new <code>Vector</code> of dead or fled units.
      *          This value should <em>not</em> be <code>null</code>.
-     * @throws  <code>IllegalArgumentException</code> if the new list is
+     * @throw  <code>IllegalArgumentException</code> if the new list is
      *          <code>null</code>.
      */
     public abstract void setOutOfGameEntitiesVector(Vector<Entity> vOutOfGame);
@@ -524,7 +524,7 @@ public interface IGame {
     
     public abstract void setEntity(int id, Entity entity);
 
-    public void setEntity(int id, Entity entity, Vector movePath);
+    public void setEntity(int id, Entity entity, Vector<UnitLocation> movePath);
     
     /**
      * @return int containing an unused entity id
@@ -760,7 +760,7 @@ public interface IGame {
     
     public abstract Vector<ArtilleryAttackAction> getArtilleryVector();
     
-    public abstract Enumeration getArtilleryAttacks();
+    public abstract Enumeration<ArtilleryAttackAction> getArtilleryAttacks();
     
     public abstract int getArtillerySize();
     

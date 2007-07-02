@@ -23,6 +23,7 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.common.*;
+import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -50,7 +51,7 @@ public class SelectArtyAutoHitHexDisplay
     private Button            butDone;
 
     private Player            p;
-    private Vector<Serializable>            artyAutoHitHexes = new Vector<Serializable>();
+    private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
 
     /**
      * Creates and lays out a new deployment phase display 
@@ -67,7 +68,7 @@ public class SelectArtyAutoHitHexDisplay
 
         p = client.getLocalPlayer();
         
-        artyAutoHitHexes.insertElementAt(new Integer(p.getId()), 0);
+        artyAutoHitHexes.setPlayerID(p.getId());
         
         butA = new Button(Messages.getString("SelectArtyAutoHitHexDisplay.artilleryAutohithexes")); //$NON-NLS-1$
         butA.addActionListener(this);
@@ -201,6 +202,11 @@ public class SelectArtyAutoHitHexDisplay
         }
     }
 
+    /**
+     * This function is called when the phase of the game changes,
+     * such as mine laying phase or deployment phase. I think.
+     * @param e Unused parameter.
+     */
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         // Are we ignoring events?
         if ( this.isIgnoringEvents() ) {

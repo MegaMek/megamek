@@ -119,7 +119,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         else {
 
             // Translate the "root camo" category name.
-            Enumeration camoNames;
+            Enumeration<String> camoNames;
             if ( Player.ROOT_CAMO.equals( category ) ) {
                 camoNames = camos.getItemNames( "" ); //$NON-NLS-1$
             } else {
@@ -128,7 +128,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
 
             // Get the camo names for this category.
             while ( camoNames.hasMoreElements() ) {
-                items.add( (String) camoNames.nextElement() );
+                items.add( camoNames.nextElement() );
             }
         }
 
@@ -216,7 +216,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         frame = parent;
 
         // Declare local variables.
-        Enumeration names;
+        Enumeration<String> names;
         String name;
 
         // Parse the camo directory.
@@ -254,7 +254,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             }
             names = camos.getCategoryNames();
             while ( names.hasMoreElements() ) {
-                name = (String) names.nextElement();
+                name = names.nextElement();
                 if ( !name.equals("") ) { //$NON-NLS-1$
                     categories.addItem( name );
                 }

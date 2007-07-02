@@ -27,10 +27,17 @@ import megamek.common.ITerrainFactory;
 import megamek.common.Report;
 import megamek.common.Terrains;
 
+/**
+ * This class allows for dynamic Geysers to be added to maps which will go off every few turns.
+ */
 public class GeyserProcessor extends DynamicTerrainProcessor {
     
     private Vector<GeyserInfo> geysers = null;
 
+    /**
+     * Create a new GeyseProcessor for the given server.
+     * @param server the server for which this runs.
+     */
     public GeyserProcessor(Server server) {
         super(server);
     }

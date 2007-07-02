@@ -24,11 +24,11 @@ import java.util.ArrayList;
 
 public class GALance extends GA {
 
-    protected ArrayList moves;
+    protected ArrayList<MoveOption[]> moves;
     protected TestBot tb;
     protected Object[] enemy_array;
 
-    public GALance(TestBot tb, ArrayList moves, int population, int generations) {
+    public GALance(TestBot tb, ArrayList<MoveOption[]> moves, int population, int generations) {
         super(moves.size(), population, .7, .05, generations, .5);
         System.gc();
         System.out.println("Generated move lance with population="+population+" and generations="+generations);
@@ -46,13 +46,13 @@ public class GALance extends GA {
             for (int i = 1; i < populationDim; i++) {
                 for (int iGene = 0; iGene < chromosomeDim; iGene++) {
                     (this.chromosomes[i]).genes[iGene] =
-                        Compute.randomInt(((MoveOption[]) (moves.get(iGene))).length);
+                        Compute.randomInt(moves.get(iGene).length);
                 }
                 this.chromosomes[i].fitness = getFitness(i);
             }
         } catch (Exception e) {
             System.out.println("Error occured with " + populationDim + " pop " + chromosomeDim + " chromDim"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            Iterator i = moves.iterator();
+            Iterator<MoveOption[]> i = moves.iterator();
             while (i.hasNext()) {
                 System.out.println(i.next());
             }
@@ -64,7 +64,7 @@ public class GALance extends GA {
         Chromosome chrom = this.chromosomes[iChromIndex];
         ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
         for (int iGene = 0; iGene < chromosomeDim; iGene++) {
-            possible.add(new MoveOption(((MoveOption[]) this.moves.get(iGene))[chrom.genes[iGene]]));
+            possible.add(new MoveOption(this.moves.get(iGene)[chrom.genes[iGene]]));
         }
         Object[] move_array = possible.toArray();
         for (int e = 0; e < enemy_array.length; e++) { // for each enemy
@@ -101,8 +101,8 @@ public class GALance extends GA {
         double result = 0;
         for (int m = 0; m < move_array.length; m++) {
             MoveOption next = (MoveOption) move_array[m];
-            if (((MoveOption[]) moves.get(m)).length > 1) {
-                MoveOption min = ((MoveOption[]) moves.get(m))[0];
+            if (moves.get(m).length > 1) {
+                MoveOption min = moves.get(m)[0];
                 if (min.damage > 2 * next.damage && min.getUtility() < .5 * next.getUtility()) {
                     result += next.getCEntity().bv; //it is being endangered
                                                     // in the future
@@ -218,7 +218,7 @@ public class GALance extends GA {
         Chromosome r = this.chromosomes[best];
         ArrayList<MoveOption> possible = new ArrayList<MoveOption>();
         for (int iGene = 0; iGene < chromosomeDim; iGene++) {
-            possible.add(new MoveOption(((MoveOption[]) this.moves.get(iGene))[r.genes[iGene]]));
+            possible.add(new MoveOption(this.moves.get(iGene)[r.genes[iGene]]));
         }
         Object[] move_array = possible.toArray();
         MoveOption result = null;
@@ -240,13 +240,13 @@ public class GALance extends GA {
         }
         int r1 = (c1.genes.length > 2) ? Compute.randomInt(c1.genes.length - 1) : 0;
         if (r1 % 2 == 1) {
-            c1.genes[r1] = Compute.randomInt(((MoveOption[]) this.moves.get(r1)).length);
+            c1.genes[r1] = Compute.randomInt(this.moves.get(r1).length);
             return;
         }
         for (int i = 1; i < c1.genes.length; i++) {
             int iGene = (i + r1 - 1) % (c1.genes.length - 1);
-            if (((MoveOption[]) this.moves.get(iGene)).length > 1) {
-                c1.genes[iGene] = Compute.randomInt(((MoveOption[]) this.moves.get(iGene)).length);
+            if (this.moves.get(iGene).length > 1) {
+                c1.genes[iGene] = Compute.randomInt(this.moves.get(iGene).length);
                 return;
             }
         }

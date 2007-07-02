@@ -17,6 +17,7 @@ package megamek.common.event;
 import java.util.Vector;
 
 import megamek.common.Entity;
+import megamek.common.UnitLocation;
 
 /**
  * Instances of this class are sent game entity is changed 
@@ -24,15 +25,15 @@ import megamek.common.Entity;
  * @see GameListener
  */
 public class GameEntityChangeEvent extends GameEntityEvent {
-
-    protected Vector movePath;
+	private static final long serialVersionUID = -7241101183271789555L;
+	protected Vector<UnitLocation> movePath;
     
     /**
      * Constructs new GameEntityChangeEvent
      * @param source
      * @param entity
      */
-    public GameEntityChangeEvent(Object source, Entity entity) {
+    public GameEntityChangeEvent(final Object source, final Entity entity) {
         this(source, entity, null);
     }
     
@@ -42,7 +43,7 @@ public class GameEntityChangeEvent extends GameEntityEvent {
      * @param entity
      * @param movePath
      */
-    public GameEntityChangeEvent(Object source, Entity entity, Vector movePath) {
+    public GameEntityChangeEvent(final Object source, final Entity entity, final Vector<UnitLocation> movePath) {
         super(source, entity, GAME_ENTITY_CHANGE);
         this.movePath = movePath;
     }
@@ -50,7 +51,7 @@ public class GameEntityChangeEvent extends GameEntityEvent {
     /**
      * @return the movePath.
      */
-    public Vector getMovePath() {
+    public Vector<UnitLocation> getMovePath() {
         return movePath;
     }
 }

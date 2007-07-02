@@ -85,7 +85,10 @@ public class TilesetManager implements IPreferenceChangeListener {
     public static final int ARTILLERY_ADJUSTED = 1;
     public static final int ARTILLERY_INCOMING = 2;
 
-    /** Creates new TilesetManager */
+    /** 
+     * Creates new TilesetManager 
+     * @param comp  
+     */
     public TilesetManager(Component comp) throws java.io.IOException {
         this.comp = comp;
         this.tracker = new MediaTracker(comp);
@@ -172,6 +175,8 @@ public class TilesetManager implements IPreferenceChangeListener {
     
     /**
      * Return the base image for the hex
+     * @param hex the hex to get the base image for.
+     * @return the base image for the hex.
      */
     public Image baseFor(IHex hex) {    
         return hexTileset.getBase(hex, comp);
@@ -179,8 +184,10 @@ public class TilesetManager implements IPreferenceChangeListener {
     
     /**
      * Return a list of superimposed images for the hex
+     * @param hex the hex to get the superimposed images for.
+     * @return the list of images superimposed on this hex.
      */
-    public List supersFor(IHex hex) {
+    public List<Image> supersFor(IHex hex) {
         return hexTileset.getSupers(hex, comp);
     }
     
@@ -242,14 +249,14 @@ public class TilesetManager implements IPreferenceChangeListener {
     }
     
     /**
-     * @returns true if we're in the process of loading some images
+     * @return true if we're in the process of loading some images
      */
     public boolean isStarted() {
         return started;
     }
     
     /**
-     * @returns true if we're done loading images
+     * @return true if we're done loading images
      */
     public synchronized boolean isLoaded() {
         if (!loaded) {
@@ -260,6 +267,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     
     /**
      * Load all the images we'll need for the game and place them in the tracker
+     * @param game the game to load for.
      */
     public void loadNeededImages(IGame game) {
         loaded = false;
@@ -273,8 +281,8 @@ public class TilesetManager implements IPreferenceChangeListener {
         }
         
         // load all mech images
-        for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            loadImage((Entity)i.nextElement());
+        for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            loadImage(i.nextElement());
         }
         
         // load minefield sign

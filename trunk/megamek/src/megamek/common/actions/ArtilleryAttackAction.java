@@ -26,7 +26,7 @@ implements Serializable
 {
     private WeaponResult wr;
     public int turnsTilHit;
-    private Vector spotterIds; // IDs of possible spotters, won't know until it lands.
+    private Vector<Integer> spotterIds; // IDs of possible spotters, won't know until it lands.
     protected int playerId;
     private Coords firingCoords; //Coords of firing entity, needed for resolving attack direction.
 
@@ -39,7 +39,7 @@ implements Serializable
     }
 
     public ArtilleryAttackAction(WeaponResult wr, IGame game,
-                                 int playerId, Vector spotterIds,Coords coords) {
+                                 int playerId, Vector<Integer> spotterIds,Coords coords) {
         this.wr = wr;
         this.playerId = playerId;
         this.spotterIds = spotterIds;
@@ -73,7 +73,7 @@ implements Serializable
         return wr;
     }
 
-    public Vector getSpotterIds() {
+    public Vector<Integer> getSpotterIds() {
         return spotterIds;
     }
 
@@ -81,8 +81,8 @@ implements Serializable
         return playerId;
     }
 
-    public void setSpotterIds(Vector spotterIds) {
-        this.spotterIds=spotterIds;
+    public void setSpotterIds(Vector<Integer> spotterIds) {
+        this.spotterIds = spotterIds;
     }
 
     public void setCoords(Coords coords) {

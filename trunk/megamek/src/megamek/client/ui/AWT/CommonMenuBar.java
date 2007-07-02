@@ -27,7 +27,9 @@ import megamek.common.*;
  */
 public class CommonMenuBar extends MenuBar implements ActionListener, KeyListener
 {
-    /**
+	private static final long serialVersionUID = 4348769145034437972L;
+
+	/**
      * The <code>Game</code> current selected.
      * This value may be <code>null</code>.
      */
@@ -883,8 +885,8 @@ public class CommonMenuBar extends MenuBar implements ActionListener, KeyListene
         // handle pseudo--menu-shortcuts; the shortcut key changes by platform
         if ((ev.getKeyCode() & ev.getComponent().getToolkit().getMenuShortcutKeyMask()) != 0) {
             // for every menu accelerator...
-            for (Enumeration shortcuts = shortcuts(); shortcuts.hasMoreElements() ;) {
-                MenuShortcut shortcut = (MenuShortcut) shortcuts.nextElement();
+            for (Enumeration<MenuShortcut> shortcuts = shortcuts(); shortcuts.hasMoreElements() ;) {
+                MenuShortcut shortcut = shortcuts.nextElement();
 
                 // is this keyPress the same as a menu accelerator?
                 if ((shortcut.getKey() == ev.getKeyCode()) && (shortcut.usesShiftModifier() == ev.isShiftDown()) ) {

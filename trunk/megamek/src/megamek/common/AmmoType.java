@@ -231,10 +231,10 @@ public class AmmoType extends EquipmentType {
     // Returns the first usable ammo type for the given oneshot launcher
     public static AmmoType getOneshotAmmo(Mounted mounted) {
         WeaponType wt = (WeaponType)mounted.getType();
-        Vector Vammo = AmmoType.getMunitionsFor(wt.getAmmoType());
+        Vector<AmmoType> Vammo = AmmoType.getMunitionsFor(wt.getAmmoType());
         AmmoType at = null;
         for (int i = 0; i < Vammo.size(); i++) {
-            at = (AmmoType)Vammo.elementAt(i);
+            at = Vammo.elementAt(i);
             if ((at.getRackSize() == wt.getRackSize()) && (TechConstants.isLegal(mounted.getType().getTechLevel(),at.getTechLevel()))) {
                 return at;
             }
@@ -995,8 +995,8 @@ public class AmmoType extends EquipmentType {
         createMunitions(clanArtyAmmos, munitions);
 
         // cache types that share a launcher for loadout purposes
-        for (Enumeration e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
-            EquipmentType et = (EquipmentType)e.nextElement();
+        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements(); ) {
+            EquipmentType et = e.nextElement();
             if (! (et instanceof AmmoType)) {
                 continue;
             }

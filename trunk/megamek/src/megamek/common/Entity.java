@@ -73,6 +73,9 @@ public abstract class Entity extends TurnOrdered
     protected transient Player  owner;
     protected int               ownerId;
 
+    /**
+     * The pilot of the entity. Even infantry has a 'pilot'.
+     */
     public Pilot                crew = new Pilot();
 
     protected boolean           shutDown = false;
@@ -148,9 +151,24 @@ public abstract class Entity extends TurnOrdered
     protected int               armorTechLevel = TechConstants.T_TECH_UNKNOWN;
     protected int               structureType = EquipmentType.T_STRUCTURE_UNKNOWN;
 
+    /**
+     * A list of all mounted equipment. (Weapons, ammo, and misc)
+     */
     protected ArrayList<Mounted>            equipmentList = new ArrayList<Mounted>();
+    
+    /**
+     * A list of all mounted weapons.
+     */
     protected ArrayList<Mounted>            weaponList = new ArrayList<Mounted>();
+    
+    /**
+     * A list of all mounted ammo.
+     */
     protected ArrayList<Mounted>            ammoList = new ArrayList<Mounted>();
+    
+    /**
+     * A list of all remaining equipment.
+     */
     protected ArrayList<Mounted>            miscList = new ArrayList<Mounted>();
     
     protected Vector<INarcPod>            pendingINarcPods = new Vector<INarcPod>();
@@ -164,8 +182,16 @@ public abstract class Entity extends TurnOrdered
     protected long              m_lNarcedBy = 0;
     protected long              m_lPendingNarc = 0;
 
+    /**
+     * This matrix stores critical slots in the format [location][slot #].
+     * What locations entities have and how many slots there are in each
+     * is determined by the subclasses of Entity such as Mech.
+     */
     protected CriticalSlot[][]  crits; // [loc][slot]
 
+    /**
+     * Stores the current movement mode.
+     */
     protected int               movementMode  = IEntityMovementMode.NONE;
 
     protected boolean           isHidden = false;
@@ -258,15 +284,27 @@ public abstract class Entity extends TurnOrdered
     protected int elevation = 0;
     
     /** 
-     * 2 vectors holding entity and weapon ids,
+     * 2 vectors holding entity and weapon ids.
      * to see who hit us this round with a swarm volley from what
-     * launcher
+     * launcher.
+     * 
+     * This vector holds the Entity ids.
+     *  
+     * @see megamek.common.Entity#hitBySwarmsWeapon
      */
-    
     private Vector<Integer> hitBySwarmsEntity = new Vector<Integer>();
+    
+    /**
+     * A vector that stores from which launcher we where hit by a swarm weapon
+     * this round. This vector holds the weapon ID's.
+     * @see megamek.common.Entity#hitBySwarmsEntity
+     */
     private Vector<Integer> hitBySwarmsWeapon = new Vector<Integer>();
     
     //Whether this unit is canon;
+    /**
+     * True if and only if this is a cannon (published) unit.
+     */
     private boolean canon;
     
     private int assaultDropInProgress = 0;
@@ -305,26 +343,55 @@ public abstract class Entity extends TurnOrdered
         }
     }
 
+    /**
+     * Returns the ID number of this Entity.
+     * @return ID Number.
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Sets the ID number of this Entity, which will also
+     * set the display name and short name to null. 
+     * @param id the new ID.
+     */
     public void setId(int id) {
         this.id = id;
         displayName = null;
         shortName = null;
     }
 
+    /**
+     * this returns the external ID.
+     * @return the ID settable by external sources (such as mm.net)
+     * @see megamek.common.Entity#externalId
+     */
     public int getExternalId() {
         return externalId;
     }
 
+    /**
+     * This sets the external ID.
+     * @param externalId the new external ID for this Entity.
+     * @see megamek.common.Entity#externalId
+     */
     public void setExternalId(int externalId) {
         this.externalId = externalId;
     }
 
+    /**
+     * This returns the game this Entity belongs to.
+     * @return the game.
+     */
     public IGame getGame() { return game; }
     
+    /**
+     * This sets the game the entity belongs to.
+     * It also restores the entity and checks that the game is in a consistent state.
+     * This function takes care of the units transported by this entity. 
+     * @param game the game.
+     */
     public void setGame(IGame game) {
         this.game = game;
         this.restore();
@@ -344,11 +411,10 @@ public abstract class Entity extends TurnOrdered
         }
 
         // Also set game for each entity "loaded" in this entity.
-        Vector v = this.getLoadedUnits();
-        Enumeration iter = v.elements();
+        Enumeration<Entity> iter = this.getLoadedUnits().elements();
         while (iter.hasMoreElements())
         {
-           ((Entity)iter.nextElement()).setGame(game);
+           iter.nextElement().setGame(game);
         }
     }
 
@@ -359,6 +425,10 @@ public abstract class Entity extends TurnOrdered
         return model;
     }
 
+    /**
+     * Sets the unit code for this Entity.
+     * @param model The unit code.
+     */
     public void setModel(String model) {
         this.model = model;
     }
@@ -370,6 +440,10 @@ public abstract class Entity extends TurnOrdered
         return chassis;
     }
 
+    /**
+     * sets the chassis name for this entity.
+     * @param chassis The chassis name.
+     */
     public void setChassis(String chassis) {
         this.chassis = chassis;
     }
@@ -382,11 +456,14 @@ public abstract class Entity extends TurnOrdered
         return fluff;
     }
 
+    /**
+     * sets the fluff text for this entity.
+     * @param fluff The fluff text.
+     */
     public void setFluff(String fluff) {
         this.fluff = fluff;
     }
 
-    
     /**
      * Returns the unit tech for this entity.
      */
@@ -394,10 +471,19 @@ public abstract class Entity extends TurnOrdered
         return techLevel;
     }
 
+    /**
+     * Sets the tech level for this Entity.
+     * @param techLevel The tech level, it must be one of the {@link megamek.common.TechConstants TechConstants }.
+     */
     public void setTechLevel(int techLevel) {
         this.techLevel = techLevel;
     }
 
+    /**
+     * Checks if this is a clan unit. It is determined by tech level.
+     * @return true if this unit is a clan unit.
+     * @see megamek.common.Entity#setTechLevel(int)
+     */
     public boolean isClan() {
         return ( techLevel == TechConstants.T_CLAN_LEVEL_2 ||
                  techLevel == TechConstants.T_CLAN_LEVEL_3 );
@@ -673,8 +759,8 @@ public abstract class Entity extends TurnOrdered
      * entity is a target of.
      */
     public DisplacementAttackAction findTargetedDisplacement() {
-        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity other = (Entity)i.nextElement();
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity other = i.nextElement();
             if (other.hasDisplacementAttack()
             && other.getDisplacementAttack().getTargetId() == id) {
                 return other.getDisplacementAttack();
@@ -1179,7 +1265,7 @@ public abstract class Entity extends TurnOrdered
      * Returns this entity's walking/cruising mp, factored
      * for heat and possibly gravity.
      * 
-     * @param gravity: Should the movement be factored for gravity
+     * @param gravity Should the movement be factored for gravity
      */
     
     
@@ -1291,6 +1377,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * For non-'Mechs, this is really boring, but...
+     * @param movedMP the number of movement points spent
      */
     public int getJumpHeat(int movedMP) {
         return 0;
@@ -1469,6 +1556,8 @@ public abstract class Entity extends TurnOrdered
     /**
      * Returns the original amount of armor in the location specified,
      * or ARMOR_NA, or ARMOR_DESTROYED.
+     * @param loc the location to check.
+     * @param rear if true inspect the rear armor, else check the front.
      */
     public int getOArmor(int loc, boolean rear) {
         return orig_armor[loc];
@@ -1490,6 +1579,9 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Sets the amount of armor in the location specified.
+     * @param val the value of the armor (eg how many armor points)
+     * @param loc the location of the armor
+     * @param rear true iff the armor is rear mounted. 
      */
     public void setArmor(int val, int loc, boolean rear) {
         armor[loc] = val;
@@ -1676,6 +1768,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Returns true is the location is a leg
+     * @param loc the location to check.
      */
     public boolean locationIsLeg(int loc) {
         return false;
@@ -1838,7 +1931,7 @@ public abstract class Entity extends TurnOrdered
      * Returns an enumeration which contains the name of each
      * piece of equipment that failed to load. 
      */
-    public Enumeration getFailedEquipment() {
+    public Enumeration<String> getFailedEquipment() {
         return failedEquipmentList.elements();
     }
 
@@ -2907,7 +3000,7 @@ public abstract class Entity extends TurnOrdered
 
     /**
      * Only Meks can have CASE II so all other entites return false.
-     * @return
+     * @return true iff the mech has CASE II.
      */
     public boolean hasCASEII() {
         return false;
@@ -2916,12 +3009,16 @@ public abstract class Entity extends TurnOrdered
     /**
      * Only Meks have CASE II so all other entites return false.
      * @param location
-     * @return
+     * @return true iff the mech has CASE II at this location.
      */
     public boolean hasCASEII(int location) {
         return false;
     }
     
+    /**
+     *  Checks if the entity has a C3 Master.
+     * @return true if it has a working C3M computer and has a master.
+     */
     public boolean hasC3M() {
         if (isShutDown() || isOffBoard()) return false;
         for (Mounted m : getEquipment()){
@@ -2948,17 +3045,17 @@ public abstract class Entity extends TurnOrdered
 
         // Do we need to determine that there's no company command master?
         if ( C3CompanyMasterIndex == LOC_DESTROYED ) {
-            Iterator e = getEquipment().iterator();
+            Iterator<Mounted> e = getEquipment().iterator();
             while ( C3CompanyMasterIndex == LOC_DESTROYED &&
                     e.hasNext() ) {
-                Mounted m = (Mounted)e.next();
+                Mounted m = e.next();
                 if ( m.getType() instanceof WeaponType &&
                      m.getType().hasFlag(WeaponType.F_C3M) &&
                      !m.isDestroyed() && !m.isBreached() ) {
                     // Now look for the company command master.
                     while ( C3CompanyMasterIndex == LOC_DESTROYED &&
                             e.hasNext() ) {
-                        m = (Mounted)e.next();
+                        m = e.next();
                         if ( m.getType() instanceof WeaponType &&
                              m.getType().hasFlag(WeaponType.F_C3M) &&
                              !m.isDestroyed() && !m.isBreached() ) {
@@ -2982,8 +3079,12 @@ public abstract class Entity extends TurnOrdered
         return false;
     }
 
+    /**
+     * Checks if it has any type of C3 computer.
+     * @return true iff it has a C3 computer.
+     */
     public boolean hasC3() {
-      return hasC3S() | hasC3M() | hasC3MM();
+      return hasC3S() || hasC3M() || hasC3MM();
     }
 
     public boolean hasC3i() {
@@ -3028,8 +3129,8 @@ public abstract class Entity extends TurnOrdered
         if ( hasC3MM() ) {
             nodes = 2;
             if (game != null) {
-                for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-                    final Entity e = (Entity)i.nextElement();
+                for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+                    final Entity e = i.nextElement();
                     if (e.hasC3M() && e != this ) {
                         final Entity m = e.getC3Master();
                         if (equals(m)) nodes--;
@@ -3040,8 +3141,8 @@ public abstract class Entity extends TurnOrdered
         } else if ( hasC3M() && this.C3MasterIs(this) )  {
             nodes = 3;
             if (game != null) {
-                for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-                    final Entity e = (Entity)i.nextElement();
+                for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+                    final Entity e = i.nextElement();
                     if (e.hasC3() && e != this ) {
                         final Entity m = e.getC3Master();
                         if (equals(m)) nodes--;
@@ -3067,8 +3168,8 @@ public abstract class Entity extends TurnOrdered
         if (hasC3i())  {
             nodes = 5;
             if (game != null) {
-                for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-                    final Entity e = (Entity)i.nextElement();
+                for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+                    final Entity e = i.nextElement();
                     if (!equals(e) && onSameC3NetworkAs(e)) {
                         nodes--;
                         if(nodes <= 0) return 0;
@@ -3078,8 +3179,8 @@ public abstract class Entity extends TurnOrdered
         } else if (hasC3M())  {
             nodes = 3;
             if (game != null) {
-                for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-                    final Entity e = (Entity)i.nextElement();
+                for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+                    final Entity e = i.nextElement();
                     if (e.hasC3() && !equals(e) ) {
                         final Entity m = e.getC3Master();
                         if (equals(m)) {
@@ -3205,7 +3306,7 @@ public abstract class Entity extends TurnOrdered
      * <p>Please note, that when an <code>Entity</code> is it's own C3 Master,
      * then it is a company commander.
      * <p>Also note that when <code>null</code> is the master for this
-     * <code>Entity</code>, then it is an independant master.
+     * <code>Entity</code>, then it is an independent master.
      *
      * @param   e - the <code>Entity</code> that may be this unit's C3 Master.
      * @return  a <code>boolean</code> that is <code>true</code> when the
@@ -3214,7 +3315,11 @@ public abstract class Entity extends TurnOrdered
      *          returns <code>false</code>.
      */
     public boolean C3MasterIs(Entity e) {
-        if (e == null && C3Master == NONE) return true;
+        if (e == null) {
+        	if(C3Master == NONE) return true;
+        	
+        	return false; //if this entity has a C3Master then null is not it's master. 
+        }
         return (e.id == C3Master);
     }
     
@@ -3238,8 +3343,8 @@ public abstract class Entity extends TurnOrdered
     public void setC3Master(int entityId) {
         if ((id == entityId) != (id == C3Master)) {
             // this just changed from a company-level to lance-level (or vice versa); have to disconnect all slaved units to maintain integrity.
-            for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-                final Entity e = (Entity)i.nextElement();
+            for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+                final Entity e = i.nextElement();
                 if(e.C3MasterIs(this) && !equals(e)) {
                    e.setC3Master(NONE);
                 }
@@ -3253,8 +3358,8 @@ public abstract class Entity extends TurnOrdered
         } else if (hasC3() || hasC3i()) {
             C3NetIdString = game.getEntity(entityId).getC3NetId();
         }
-        for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            final Entity e = (Entity)i.nextElement();
+        for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            final Entity e = i.nextElement();
             if (e.C3MasterIs(this) && !equals(e)) {
                 e.C3NetIdString = C3NetIdString;
             }
@@ -3520,11 +3625,11 @@ public abstract class Entity extends TurnOrdered
     /**
      * Have we been iNarced with a homing pod from that team?
      * @param nTeamID The id of the team that we are wondering about.
-     * @return
+     * @return true if the Entity is narced by that team.
      */
     public boolean isINarcedBy(int nTeamID) {
-        for (Enumeration e = iNarcPods.elements();e.hasMoreElements(); ) {
-            INarcPod pod = (INarcPod)e.nextElement();
+        for (Enumeration<INarcPod> e = iNarcPods.elements();e.hasMoreElements(); ) {
+            INarcPod pod = e.nextElement();
             if (pod.getTeam() == nTeamID && pod.getType() == INarcPod.HOMING)
                 return true;
         }
@@ -3537,8 +3642,8 @@ public abstract class Entity extends TurnOrdered
      * @return <code>true</code> if we have.
      */
     public boolean isINarcedWith( long type ) {
-        for (Enumeration e = iNarcPods.elements();e.hasMoreElements(); ) {
-            INarcPod pod = (INarcPod)e.nextElement();
+        for (Enumeration<INarcPod> e = iNarcPods.elements();e.hasMoreElements(); ) {
+            INarcPod pod = e.nextElement();
             if (pod.getType() == type)
                 return true;
         }
@@ -3554,7 +3659,7 @@ public abstract class Entity extends TurnOrdered
     
     /**
      * Do we have any iNarc Pods attached?
-     * @return
+     * @return true iff one or more iNarcPods are attached.
      */
     public boolean hasINarcPodsAttached() {
         if (iNarcPods.size() > 0 ) {
@@ -3569,7 +3674,7 @@ public abstract class Entity extends TurnOrdered
      *
      * @return  an <code>Enumeration</code> of <code>INarcPod</code>s.
      */
-    public Enumeration getINarcPodsAttached() {
+    public Enumeration<INarcPod> getINarcPodsAttached() {
         return iNarcPods.elements();
     }
 
@@ -3597,6 +3702,9 @@ public abstract class Entity extends TurnOrdered
      *  a network or not.
      *
      * This should be overwritten if necessary
+     * 
+     * @param assumeLinkedC3 if the calculation should assume that the mech is linked.
+     * @param ignoreC3 if the contribution of the C3 computer should be ignored when calculating BV.
      */
     public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3){
         return calculateBattleValue();
@@ -3606,7 +3714,7 @@ public abstract class Entity extends TurnOrdered
      * Generates a vector containing reports on all useful information about
      * this entity.
      */
-    public abstract Vector victoryReport();
+    public abstract Vector<Report> victoryReport();
 
     /**
      * Two entities are equal if their ids are equal
@@ -3628,6 +3736,9 @@ public abstract class Entity extends TurnOrdered
         return movementMode;
       }
 
+      /**
+       * Get the movement mode of the entity as a String.
+       */
     public String getMovementModeAsString() {
         switch (getMovementMode()) {
         case IEntityMovementMode.NONE:
@@ -3701,35 +3812,35 @@ public abstract class Entity extends TurnOrdered
              || getCrew().getHits() >= 6 ) {
             //Following line switched from impossible to automatic failure
             //-- bug fix for dead units taking PSRs
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, "Pilot dead");
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, "Pilot dead");
         }
         // pilot awake?
         else if (!getCrew().isActive()) {
-            return new PilotingRollData(entityId, PilotingRollData.IMPOSSIBLE, "Pilot unconscious");
+            return new PilotingRollData(entityId, TargetRoll.IMPOSSIBLE, "Pilot unconscious");
         }
         // gyro operational?
         if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1
                 && getGyroType() != Mech.GYRO_HEAVY_DUTY) {
-                return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
+                return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, 3, "Gyro destroyed");
         }
         
         //Takes 3+ hits to kill an HD Gyro.
         if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 2
                 && getGyroType() == Mech.GYRO_HEAVY_DUTY) {
-                return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Gyro destroyed");
+                return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, 3, "Gyro destroyed");
         }
         
         // both legs present?
         if ( this instanceof BipedMech ) {
           if ( ((BipedMech)this).countBadLegs() == 2 )
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, "Both legs destroyed");
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, 10, "Both legs destroyed");
         } else if ( this instanceof QuadMech ) {
           if ( ((QuadMech)this).countBadLegs() >= 3 )
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 10, ((Mech)this).countBadLegs() + " legs destroyed");
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, 10, ((Mech)this).countBadLegs() + " legs destroyed");
         }
         // entity shut down?
         if (isShutDown()) {
-            return new PilotingRollData(entityId, PilotingRollData.AUTOMATIC_FAIL, 3, "Reactor shut down");
+            return new PilotingRollData(entityId, TargetRoll.AUTOMATIC_FAIL, 3, "Reactor shut down");
         }
 
         // okay, let's figure out the stuff then
@@ -4186,7 +4297,7 @@ public abstract class Entity extends TurnOrdered
      */
     public static String encodeTransporters( Entity entity ) {
         StringBuffer buffer = new StringBuffer();
-        Enumeration iter = entity.transports.elements();
+        Enumeration<Transporter> iter = entity.transports.elements();
         boolean isFirst = true;
         while ( iter.hasMoreElements() ) {
 
@@ -4198,7 +4309,7 @@ public abstract class Entity extends TurnOrdered
             }
 
             // Add the next Transporter's class name.
-            Transporter transporter = (Transporter) iter.nextElement();
+            Transporter transporter = iter.nextElement();
             buffer.append( transporter.getClass().getName() );
 
             // If this is a TroopSpace transporter, get it's capacity.
@@ -4228,11 +4339,11 @@ public abstract class Entity extends TurnOrdered
         throws IllegalStateException {
 
         // Split the string on the commas, and add transporters to the Entity.
-        Enumeration iter = StringUtil.splitString( transporters,
+        Enumeration<String> iter = StringUtil.splitString( transporters,
                                                    "," ).elements();
         while ( iter.hasMoreElements() ) {
             try {
-                String name = (String) iter.nextElement();
+                String name = iter.nextElement();
                 Class transporter = Class.forName( name );
                 Object object = null;
                 if ( TroopSpace.class.getName().equals( name ) ) {
@@ -4293,9 +4404,9 @@ public abstract class Entity extends TurnOrdered
         if (!unit.isEnemyOf(this)) {
             // Walk through this entity's transport components;
             // if one of them can load the unit, we can.
-            Enumeration iter = this.transports.elements();
+            Enumeration<Transporter> iter = this.transports.elements();
             while ( iter.hasMoreElements() ) {
-                Transporter next = (Transporter)iter.nextElement();
+                Transporter next = iter.nextElement();
                 if ( next.canLoad( unit ) && unit.getElevation() == getElevation() ) {
                     return true;
                 }
@@ -4316,9 +4427,9 @@ public abstract class Entity extends TurnOrdered
         // Walk through this entity's transport components;
         // find the one that can load the unit.
         // Stop looking after the first match.
-        Enumeration iter = this.transports.elements();
+        Enumeration<Transporter> iter = this.transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
+            Transporter next = iter.nextElement();
             if ( next.canLoad(unit) && unit.getElevation() == getElevation()) {
                 next.load( unit );
                 return;
@@ -4370,9 +4481,9 @@ public abstract class Entity extends TurnOrdered
         // Walk through this entity's transport components;
         // try to remove the unit from each in turn.
         // Stop after the first match.
-        Enumeration iter = this.transports.elements();
+        Enumeration<Transporter> iter = this.transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
+            Transporter next = iter.nextElement();
             if ( next.unload( unit ) ) {
                 return true;
             }
@@ -4392,9 +4503,9 @@ public abstract class Entity extends TurnOrdered
 
         // Walk through this entity's transport components;
         // add all of their string to ours.
-        Enumeration iter = this.transports.elements();
+        Enumeration<Transporter> iter = this.transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
+            Transporter next = iter.nextElement();
             result.append( next.getUnusedString() );
             // Add a newline character between strings.
             if ( iter.hasMoreElements() ) {
@@ -5096,9 +5207,9 @@ public abstract class Entity extends TurnOrdered
         }
 
         // Try to find a valid entity target.
-        Enumeration e = game.getEntities();
+        Enumeration<Entity> e = game.getEntities();
         while ( !canHit && e.hasMoreElements() ) {
-            Entity target = (Entity)e.nextElement();
+            Entity target = e.nextElement();
 
             // don't shoot at friendlies unless you are into that sort of thing
             // and do not shoot yourself even then
@@ -5121,14 +5232,14 @@ public abstract class Entity extends TurnOrdered
         }
 
         // If there are no valid Entity targets, check for add valid buildings.
-        Enumeration bldgs = game.getBoard().getBuildings();
+        Enumeration<Building> bldgs = game.getBoard().getBuildings();
         while ( !canHit && bldgs.hasMoreElements() ) {
-            final Building bldg = (Building) bldgs.nextElement();
+            final Building bldg = bldgs.nextElement();
 
             // Walk through the hexes of the building.
-            Enumeration hexes = bldg.getCoords();
+            Enumeration<Coords> hexes = bldg.getCoords();
             while ( !canHit && hexes.hasMoreElements() ) {
-                final Coords coords = (Coords) hexes.nextElement();
+                final Coords coords = hexes.nextElement();
 
                 // No physical attack works at distances > 1.
                 if ( getPosition().distance(coords) > 1 ) {
@@ -5164,9 +5275,9 @@ public abstract class Entity extends TurnOrdered
     public int getTroopCarryingSpace()
     {
         int space = 0;
-        for(Enumeration e = transports.elements(); e.hasMoreElements(); )
+        for(Enumeration<Transporter> e = transports.elements(); e.hasMoreElements(); )
             {
-                Transporter t = (Transporter) e.nextElement();
+                Transporter t = e.nextElement();
                 if (t instanceof TroopSpace)
                 space += ((TroopSpace) t).totalSpace;
             }
@@ -5174,8 +5285,8 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean hasBattleArmorHandles() {
-        for(Enumeration e = transports.elements(); e.hasMoreElements(); ) {
-            Transporter t = (Transporter) e.nextElement();
+        for(Enumeration<Transporter> e = transports.elements(); e.hasMoreElements(); ) {
+            Transporter t = e.nextElement();
             if (t instanceof BattleArmorHandles)
                 return true;
         }
@@ -5308,7 +5419,7 @@ public abstract class Entity extends TurnOrdered
             break;
         }
     }
-    public Vector getPickedUpMechWarriors() {
+    public Vector<Integer> getPickedUpMechWarriors() {
         return pickedUpMechWarriors;
     }
 
@@ -5374,8 +5485,8 @@ public abstract class Entity extends TurnOrdered
             this.illuminated = true;
             ArrayList<Coords> in = Coords.intervening(this.getPosition(), target.getPosition());
             for (Coords c : in) {
-                for (Enumeration e = game.getEntities(c);e.hasMoreElements();) {
-                    Entity en = (Entity)e.nextElement();
+                for (Enumeration<Entity> e = game.getEntities(c);e.hasMoreElements();) {
+                    Entity en = e.nextElement();
                     en.setIlluminated(true);
                 }
             }
@@ -5388,7 +5499,7 @@ public abstract class Entity extends TurnOrdered
         return stuckInSwamp;
     }
     /**
-     * Set wether this Enity is stuck in a swamp or not
+     * Set weather this Entity is stuck in a swamp or not
      * @param arg the <code>boolean</code> value to assign
      */
     public void setStuck(boolean arg) {
@@ -5429,9 +5540,9 @@ public abstract class Entity extends TurnOrdered
         
         setDoomed(true);
         
-        Enumeration iter = getPickedUpMechWarriors().elements();
+        Enumeration<Integer> iter = getPickedUpMechWarriors().elements();
         while (iter.hasMoreElements() ) {
-            Integer mechWarriorId = (Integer)iter.nextElement();
+            Integer mechWarriorId = iter.nextElement();
             Entity mw = game.getEntity(mechWarriorId.intValue());
             mw.setDestroyed(true);
             game.removeEntity( mw.getId(), condition );
@@ -5812,6 +5923,10 @@ public abstract class Entity extends TurnOrdered
         _isEMId = inVal;
     }
 
+    /**
+     * Checks if the unit is hardened agaist nuclear strikes.
+     * @return true if this is a hardened unit.
+     */
     public abstract boolean isNuclearHardened();
 
     public void setHidden(boolean inVal) {
@@ -5829,12 +5944,18 @@ public abstract class Entity extends TurnOrdered
         return carcass;
     }
 
+    /**
+     * Sets if this unit is a carcass.
+     * @param carcass true if this unit should be a carcass, false otherwise.
+     * @see megamek.common.Entity#isCarcass 
+     */
     public void setCarcass(boolean carcass) {
         this.carcass = carcass;
     }
     
     /**
      * Marks all equipment in a location on this entity as destroyed.
+     * @param loc The location that is destroyed.
      */
     public void destroyLocation(int loc) {
         // if it's already marked as destroyed, don't bother
@@ -5895,7 +6016,7 @@ public abstract class Entity extends TurnOrdered
     
     /**
      * returns true if the entity is flying.
-     * @return false, should be overriden by subclasses.
+     * @return false, should be overridden by subclasses.
      */
     public boolean isFlying() {
         return false;

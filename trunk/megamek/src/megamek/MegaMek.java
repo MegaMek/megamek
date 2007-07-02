@@ -43,7 +43,7 @@ import megamek.server.DedicatedServer;
 
 /**
  * @author mev
- *
+ * This is the class where the execution of the megamek game starts.
  */
 public class MegaMek {
 
@@ -120,7 +120,7 @@ public class MegaMek {
     }
     
     /**
-     * This function redirets the standard error and output streans to the given File name.
+     * This function redirects the standard error and output streams to the given File name.
      * @param logFileName The file name to redirect to.
      */
     private static void redirectOutput(String logFileName ) {
@@ -177,7 +177,8 @@ public class MegaMek {
      * @param guiName the name of the GUI, will be passed on to {@link #getGUIClassName(String)}.
      * @return An that can start a  GUI such as {@link megamek.client.ui.AWT.MegaMekGUI}.
      */
-    private static IMegaMekGUI getGui(String guiName) {
+    @SuppressWarnings("unchecked")
+	private static IMegaMekGUI getGui(String guiName) {
         megamek.debug.Assert.assertTrue(guiName != null, "guiName must be non-null"); //$NON-NLS-1$
         String guiClassName = getGUIClassName(guiName);
         if (guiClassName != null) {
@@ -203,7 +204,8 @@ public class MegaMek {
             try {
                 p.load(is);            
                 return p.getProperty(key);
-            } catch (IOException e) {};
+            } catch (IOException e) {
+            }
         }
         return null;
     }
@@ -217,12 +219,16 @@ public class MegaMek {
     private static void dumpArgs(StringBuffer buffer, String[] args) {
         megamek.debug.Assert.assertTrue(buffer != null, "buffer must be non-null"); //$NON-NLS-1$
         megamek.debug.Assert.assertTrue(args != null, "args must be non-null"); //$NON-NLS-1$
-        buffer.append("args: ["); //$NON-NLS-1$
-        for(int i = 0, e = args.length; i < e; i++) {
-            if (i!=0) buffer.append(' ');
-            buffer.append(args[i]);
+        if(buffer != null) {
+	        buffer.append("args: ["); //$NON-NLS-1$
+	        if(args != null) {
+		        for(int i = 0, e = args.length; i < e; i++) {
+		            if (i!=0) buffer.append(' ');
+		            buffer.append(args[i]);
+		        }
+		    }
+	        buffer.append("]"); //$NON-NLS-1$
         }
-        buffer.append("]"); //$NON-NLS-1$
         
     }
     
@@ -299,7 +305,7 @@ public class MegaMek {
         
         /**
          * Returns <code>true</code> if the dedicated server option was found
-         * @return
+         * @return true iff this is a dedicated server. 
          */
         public boolean dedicatedServer() {
             return dedicatedServer;
@@ -425,7 +431,10 @@ public class MegaMek {
                                 testEntity = new TestMech((Mech)entity, entityVerifier.mechOption, null);
                             if (entity instanceof Tank)
                                 testEntity = new TestTank((Tank)entity, entityVerifier.tankOption, null);
-                            testEntity.correctEntity(sb, true);
+                            
+                            if(testEntity != null) {
+                            	testEntity.correctEntity(sb, true);
+                            }
                         }
                         System.err.println(sb.toString());
     

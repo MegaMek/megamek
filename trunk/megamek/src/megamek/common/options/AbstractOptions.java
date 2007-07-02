@@ -23,7 +23,7 @@ import java.util.*;
  */
 public abstract class AbstractOptions implements IOptions, Serializable {
     
-    private Hashtable<String,Option> optionsHash = new Hashtable<String,Option>();
+    private Hashtable<String,IOption> optionsHash = new Hashtable<String,IOption>();
     
     protected AbstractOptions() {
         initialize();
@@ -32,14 +32,14 @@ public abstract class AbstractOptions implements IOptions, Serializable {
 
     protected abstract void initialize();
     
-    public Enumeration getGroups() {
+    public Enumeration<IOptionGroup> getGroups() {
         return new GroupsEnumeration();
     }
     
     /* (non-Javadoc)
      * @see megamek.common.IOptions#getOptions()
      */
-    public Enumeration getOptions() {
+    public Enumeration<IOption> getOptions() {
         return optionsHash.elements();
     }    
     
@@ -106,9 +106,9 @@ public abstract class AbstractOptions implements IOptions, Serializable {
         getOptionsInfoImp().addOptionInfo(group, name);
     }
 
-    protected class GroupsEnumeration implements Enumeration {
+    protected class GroupsEnumeration implements Enumeration<IOptionGroup> {
 
-        private Enumeration groups;
+        private Enumeration<IBasicOptionGroup> groups;
 
         GroupsEnumeration() {
             groups = getOptionsInfo().getGroups();
@@ -124,8 +124,8 @@ public abstract class AbstractOptions implements IOptions, Serializable {
         /* (non-Javadoc)
          * @see java.util.Enumeration#nextElement()
          */
-        public Object nextElement() {
-            return new GroupProxy((IBasicOptionGroup)groups.nextElement());
+        public IOptionGroup nextElement() {
+            return new GroupProxy(groups.nextElement());
         }
 
         protected class GroupProxy implements IOptionGroup {
@@ -148,17 +148,17 @@ public abstract class AbstractOptions implements IOptions, Serializable {
                 return getOptionsInfoImp().getGroupDisplayableName(group.getName());
             }
 
-            public Enumeration getOptionNames() {
+            public Enumeration<String> getOptionNames() {
                 return group.getOptionNames();
             }
 
-            public Enumeration getOptions() {
+            public Enumeration<IOption> getOptions() {
                 return new OptionsEnumeration();
             }
 
-            protected class OptionsEnumeration implements Enumeration {
+            protected class OptionsEnumeration implements Enumeration<IOption> {
 
-                private Enumeration optionNames;
+                private Enumeration<String> optionNames;
 
                 OptionsEnumeration() {
                     this.optionNames = group.getOptionNames();
@@ -174,8 +174,8 @@ public abstract class AbstractOptions implements IOptions, Serializable {
                 /* (non-Javadoc)
                  * @see java.util.Enumeration#nextElement()
                  */
-                public Object nextElement() {
-                    return getOption((String)optionNames.nextElement());
+                public IOption nextElement() {
+                    return getOption(optionNames.nextElement());
                 }        
                 
             }

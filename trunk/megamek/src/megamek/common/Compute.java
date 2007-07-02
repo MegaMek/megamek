@@ -24,6 +24,7 @@ import megamek.common.Coords;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.EntityAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.JumpJetAttackAction;
 import megamek.common.actions.KickAttackAction;
@@ -155,8 +156,8 @@ public class Compute {
         int thisHighStackingLevel = thisLowStackingLevel + entering.height();
 
         // Walk through the entities in the given hex.
-        for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
-            final Entity inHex = (Entity) i.nextElement();
+        for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
+            final Entity inHex = i.nextElement();
 
             int lowStackinglevel = inHex.getElevation();
             int highStackingLevel = lowStackinglevel + inHex.height();
@@ -220,8 +221,8 @@ public class Compute {
     public static boolean isEnemyIn(IGame game, Entity entity, Coords coords,
             boolean onlyMechs, boolean ignoreInfantry, int enLowEl) {
         int enHighEl = enLowEl + entity.getHeight();
-        for (Enumeration i = game.getEntities(coords); i.hasMoreElements();) {
-            final Entity inHex = (Entity) i.nextElement();
+        for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
+            final Entity inHex = i.nextElement();
             int inHexEnLowEl = inHex.getElevation();
             int inHexEnHighEl = inHexEnLowEl + inHex.getHeight();
             if ((!onlyMechs || inHex instanceof Mech)
@@ -510,10 +511,10 @@ public class Compute {
         if (target instanceof Entity) {
             taggedBy = ((Entity)target).getTaggedBy();
         }
-        ToHitData bestMods = new ToHitData(ToHitData.IMPOSSIBLE, "");
+        ToHitData bestMods = new ToHitData(TargetRoll.IMPOSSIBLE, "");
 
-        for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity other = (Entity) i.nextElement();
+        for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity other = i.nextElement();
             if ( ((other.isSpotting() && other.getSpotTargetId() == target.getTargetId()) || taggedBy == other.getId() )
                  && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
@@ -683,12 +684,12 @@ public class Compute {
             // HACK on ranges: for those without underwater range,
             // long == medium; iteration in rangeBracket() allows this
             if (weaponRanges[RangeType.RANGE_SHORT] == 0) {
-                return new ToHitData(ToHitData.IMPOSSIBLE,
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Weapon cannot fire underwater.");
             }
             if (!targetUnderwater && !targetInPartialWater && !MPM) {
                 // target on land or over water
-                return new ToHitData(ToHitData.IMPOSSIBLE,
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Weapon underwater, but not target.");
             }
             // special case: mechs can only fire upper body weapons at surface
@@ -697,16 +698,16 @@ public class Compute {
                     && UnitType.determineUnitTypeCode(te) == UnitType.NAVAL
                     && ae instanceof Mech && ae.height() > 0
                     && ae.getElevation() == -1) {
-                return new ToHitData(ToHitData.IMPOSSIBLE,
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Partially submerged mech cannot fire leg weapons at surface naval vessels.");
             }
         } else if (targetUnderwater) {
-            return new ToHitData(ToHitData.IMPOSSIBLE,
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target underwater, but not weapon.");
         } else if (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO
                 || wtype.getAmmoType() == AmmoType.T_SRM_TORPEDO) {
             // Torpedos only fire underwater.
-            return new ToHitData(ToHitData.IMPOSSIBLE,
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Weapon can only fire underwater.");
         }
 
@@ -717,12 +718,12 @@ public class Compute {
 
         // short circuit if at zero range or out of range
         if (range == RangeType.RANGE_OUT) {
-            return new ToHitData(ToHitData.AUTOMATIC_FAIL,
+            return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
                     "Target out of range");
         }
         if (distance == 0 && !isAttackerInfantry
-                && !(ae instanceof Mech && ((Mech)ae).getGrappled() == target.getTargetId())) {
-            return new ToHitData(ToHitData.AUTOMATIC_FAIL,
+                && !(ae instanceof Mech && target != null && ((Mech)ae).getGrappled() == target.getTargetId())) {
+            return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
                     "Only infantry shoot at zero range");
         }
 
@@ -734,7 +735,7 @@ public class Compute {
         if (isIndirect && game.getOptions().booleanOption("indirect_fire")
                 && !game.getOptions().booleanOption("indirect_always_possible")
                 && LosEffects.calculateLos(game, ae.getId(), target).canSee()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE,
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Indirect fire impossible with direct LOS");
         }
 
@@ -770,7 +771,7 @@ public class Compute {
                         && (2 == ((Protomech) ae)
                                 .getCritsHit(Protomech.LOC_HEAD))) {
                     mods
-                            .addModifier(ToHitData.IMPOSSIBLE,
+                            .addModifier(TargetRoll.IMPOSSIBLE,
                                     "No long range attacks with destroyed head sensors.");
                 } else {
                     mods.addModifier(ae.getLongRangeModifier(), "long range"
@@ -782,7 +783,7 @@ public class Compute {
                         && (2 == ((Protomech) ae)
                                 .getCritsHit(Protomech.LOC_HEAD))) {
                     mods
-                            .addModifier(ToHitData.IMPOSSIBLE,
+                            .addModifier(TargetRoll.IMPOSSIBLE,
                                     "No extreme range attacks with destroyed head sensors.");
                 } else {
                     mods.addModifier(ae.getExtremeRangeModifier(),
@@ -873,8 +874,8 @@ public class Compute {
         Entity c3spotter = attacker;
         int c3range = attacker.getPosition().distance(target.getPosition());
 
-        for (java.util.Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity friend = (Entity) i.nextElement();
+        for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity friend = i.nextElement();
 
             // TODO : can units being transported be used for C3 spotting?
             if (attacker.equals(friend) || !friend.isActive()
@@ -912,7 +913,7 @@ public class Compute {
                 // No legs destroyed: no penalty and can fire all weapons
                 return null; // no modifier
             } else if (legsDead >= 3) {
-                return new ToHitData(ToHitData.IMPOSSIBLE,
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Prone with three or more legs destroyed.");
             }
             // we have one or two dead legs...
@@ -920,7 +921,7 @@ public class Compute {
             // Need an intact front leg
             if (attacker.isLocationBad(Mech.LOC_RARM)
                     && attacker.isLocationBad(Mech.LOC_LARM)) {
-                return new ToHitData(ToHitData.IMPOSSIBLE,
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Prone with both front legs destroyed.");
             }
 
@@ -931,14 +932,14 @@ public class Compute {
                         : Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
                 if (isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE,
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
                             "Prone and firing from other front leg already.");
                 }
             }
             // can't fire rear leg weapons
             if (weapon.getLocation() == Mech.LOC_LLEG
                     || weapon.getLocation() == Mech.LOC_RLEG) {
-                return new ToHitData(ToHitData.IMPOSSIBLE,
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Can't fire rear leg-mounted weapons while prone with destroyed legs.");
             }
             mods.addModifier(2, "attacker prone");
@@ -951,7 +952,7 @@ public class Compute {
                     // Can fire with only one arm
                     if (attacker.isLocationBad(Mech.LOC_RARM)
                             && attacker.isLocationBad(Mech.LOC_LARM)) {
-                        return new ToHitData(ToHitData.IMPOSSIBLE,
+                        return new ToHitData(TargetRoll.IMPOSSIBLE,
                                 "Prone with both arms destroyed.");
                     }
 
@@ -959,7 +960,7 @@ public class Compute {
                             : Mech.LOC_RARM;
                 } else {
                     // must have an arm intact
-                    return new ToHitData(ToHitData.IMPOSSIBLE,
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
                             "Prone with one or both arms destroyed.");
                 }
             }
@@ -968,7 +969,7 @@ public class Compute {
             if (weapon.getLocation() == Mech.LOC_RARM
                     || weapon.getLocation() == Mech.LOC_LARM) {
                 if (l3ProneFiringArm == weapon.getLocation()) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE,
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
                             "Prone and propping up with this arm.");
                 }
 
@@ -976,14 +977,14 @@ public class Compute {
                         : Mech.LOC_RARM;
                 // check previous attacks for weapons fire from the other arm
                 if (isFiringFromArmAlready(game, weaponId, attacker, otherArm)) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE,
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
                             "Prone and firing from other arm already.");
                 }
             }
             // can't fire leg weapons
             if (weapon.getLocation() == Mech.LOC_LLEG
                     || weapon.getLocation() == Mech.LOC_RLEG) {
-                return new ToHitData(ToHitData.IMPOSSIBLE,
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
                         "Can't fire leg-mounted weapons while prone.");
             }
             mods.addModifier(2, "attacker prone");
@@ -1004,12 +1005,12 @@ public class Compute {
     private static boolean isFiringFromArmAlready(IGame game, int weaponId,
             final Entity attacker, int armLoc) {
         int torsoLoc = Mech.getInnerLocation(armLoc);
-        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
-            Object o = i.nextElement();
-            if (!(o instanceof WeaponAttackAction)) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+        	EntityAction ea = i.nextElement();
+            if (!(ea instanceof WeaponAttackAction)) {
                 continue;
             }
-            WeaponAttackAction prevAttack = (WeaponAttackAction) o;
+            WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
             // stop when we get to this weaponattack (does this always work?)
             if (prevAttack.getEntityId() == attacker.getId()
                     && prevAttack.getWeaponId() == weaponId) {
@@ -1727,12 +1728,12 @@ public class Compute {
 
             // adjust for previous AMS
             if (wt.getDamage() == WeaponType.DAMAGE_MISSILE) {
-                ArrayList vCounters = waa.getCounterEquipment();
+                ArrayList<Mounted> vCounters = waa.getCounterEquipment();
                 if (vCounters != null) {
                     for (int x = 0; x < vCounters.size(); x++) {
-                        Mounted counter = (Mounted) vCounters.get(x);
-                        if (counter.getType() instanceof WeaponType
-                                && counter.getType().hasFlag(WeaponType.F_AMS)) {
+                        EquipmentType type = vCounters.get(x).getType();
+                        if (type instanceof WeaponType
+                                && type.hasFlag(WeaponType.F_AMS)) {
                             fHits *= 0.6;
                         }
                     }
@@ -2488,10 +2489,10 @@ public class Compute {
         // losDivided()
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration ranges = vECMRanges.elements();
-        for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = (Coords) e.nextElement();
-            int range = ((Integer) ranges.nextElement()).intValue();
+        Enumeration<Integer> ranges = vECMRanges.elements();
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+            Coords c = e.nextElement();
+            int range = ranges.nextElement().intValue();
             int nLastDist = -1;
 
             // loop through intervening hexes and see if any of them are within
@@ -2544,8 +2545,8 @@ public class Compute {
         // Only grab enemies with active ECM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = (Entity) e.nextElement();
+        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
+            Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             if (!ent.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null
                     && !ent.equals(ae)) {
@@ -2575,10 +2576,10 @@ public class Compute {
         // losDivided()
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration ranges = vECMRanges.elements();
-        for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = (Coords) e.nextElement();
-            int range = ((Integer) ranges.nextElement()).intValue();
+        Enumeration<Integer> ranges = vECMRanges.elements();
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+            Coords c = e.nextElement();
+            int range = ranges.nextElement().intValue();
             int nLastDist = -1;
 
             // loop through intervening hexes and see if any of them are within
@@ -2636,8 +2637,8 @@ public class Compute {
         // Only grab enemies with active ECM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = (Entity) e.nextElement();
+        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
+            Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && entPos != null) {
                 // TODO : only use the best ECM range in a given Coords.
@@ -2665,10 +2666,10 @@ public class Compute {
         // losDivided()
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration ranges = vECMRanges.elements();
-        for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = (Coords) e.nextElement();
-            int range = ((Integer) ranges.nextElement()).intValue();
+        Enumeration<Integer> ranges = vECMRanges.elements();
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+            Coords c = e.nextElement();
+            int range = ranges.nextElement().intValue();
             int nLastDist = -1;
 
             // loop through intervening hexes and see if any of them are within
@@ -2800,8 +2801,8 @@ public class Compute {
         // Only grab enemies with active ECM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = (Entity) e.nextElement();
+        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
+            Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             if (ent.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
                 // TODO : only use the best ECM range in a given Coords.
@@ -2810,10 +2811,9 @@ public class Compute {
             }
 
             // Check the ECM effects of the entity's passengers.
-            Vector passengers = ent.getLoadedUnits();
-            Enumeration iter = passengers.elements();
+            Enumeration<Entity> iter = ent.getLoadedUnits().elements();
             while (iter.hasMoreElements()) {
-                Entity other = (Entity) iter.nextElement();
+                Entity other = iter.nextElement();
                 if (other.isEnemyOf(ae) && other.hasActiveECCM()
                         && entPos != null) {
                     // TODO : only use the best ECM range in a given Coords.
@@ -2832,10 +2832,10 @@ public class Compute {
         // losDivided()
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration ranges = vECMRanges.elements();
-        for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = (Coords) e.nextElement();
-            int range = ((Integer) ranges.nextElement()).intValue();
+        Enumeration<Integer> ranges = vECMRanges.elements();
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+            Coords c = e.nextElement();
+            int range = ranges.nextElement().intValue();
             int nLastDist = -1;
 
             // loop through intervening hexes and see if any of them are within
@@ -2883,8 +2883,8 @@ public class Compute {
         // Only grab enemies with active ECCM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = (Entity) e.nextElement();
+        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
+            Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             if (ent.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
                 // TODO : only use the best ECM range in a given Coords.
@@ -2893,10 +2893,9 @@ public class Compute {
             }
 
             // Check the ECCM effects of the entity's passengers.
-            Vector passengers = ent.getLoadedUnits();
-            Enumeration iter = passengers.elements();
+            Enumeration<Entity> iter = ent.getLoadedUnits().elements();
             while (iter.hasMoreElements()) {
-                Entity other = (Entity) iter.nextElement();
+                Entity other = iter.nextElement();
                 if (other.isEnemyOf(ae) && other.hasActiveAngelECCM()
                         && entPos != null) {
                     // TODO : only use the best ECM range in a given Coords.
@@ -2915,10 +2914,10 @@ public class Compute {
         // losDivided()
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration ranges = vECMRanges.elements();
-        for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = (Coords) e.nextElement();
-            int range = ((Integer) ranges.nextElement()).intValue();
+        Enumeration<Integer> ranges = vECMRanges.elements();
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+            Coords c = e.nextElement();
+            int range = ranges.nextElement().intValue();
             int nLastDist = -1;
 
             // loop through intervening hexes and see if any of them are within
@@ -2972,8 +2971,8 @@ public class Compute {
         // Only grab enemies with active ECM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = (Entity) e.nextElement();
+        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
+            Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             if (!ent.isEnemyOf(ae) && ent.hasActiveECM() && entPos != null
                     && !ent.equals(ae)) {
@@ -2983,10 +2982,9 @@ public class Compute {
             }
 
             // Check the ECM effects of the entity's passengers.
-            Vector passengers = ent.getLoadedUnits();
-            Enumeration iter = passengers.elements();
+            Enumeration<Entity> iter = ent.getLoadedUnits().elements();
             while (iter.hasMoreElements()) {
-                Entity other = (Entity) iter.nextElement();
+                Entity other = iter.nextElement();
                 if (!other.isEnemyOf(ae) && other.hasActiveECM()
                         && entPos != null && !other.equals(ae)) {
                     // TODO : only use the best ECM range in a given Coords.
@@ -3005,10 +3003,10 @@ public class Compute {
         // losDivided()
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration ranges = vECMRanges.elements();
-        for (Enumeration e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = (Coords) e.nextElement();
-            int range = ((Integer) ranges.nextElement()).intValue();
+        Enumeration<Integer> ranges = vECMRanges.elements();
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+            Coords c = e.nextElement();
+            int range = ranges.nextElement().intValue();
             int nLastDist = -1;
 
             // loop through intervening hexes and see if any of them are within

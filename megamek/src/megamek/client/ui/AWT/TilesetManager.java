@@ -385,11 +385,8 @@ public class TilesetManager implements IPreferenceChangeListener {
     public synchronized void loadImage(Entity entity)
     {
         Image base = mechTileset.imageFor(entity, comp);
-        Image wreck = null;
-        if ( !(entity instanceof Infantry) &&
-             !(entity instanceof Protomech)) {
-            wreck = wreckTileset.imageFor(entity, comp);
-        }
+        Image wreck = wreckTileset.imageFor(entity, comp);
+
         Player player = entity.getOwner();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
 
@@ -511,7 +508,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     
           try {
               pgMech.grabPixels();
-          } catch (InterruptedException e) {
+          } catch (Exception e) {
               System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
               return image;
           }

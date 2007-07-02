@@ -182,7 +182,7 @@ public class Report implements Serializable {
      * @param data the int to be substituted
      */
     public void add(int data) {
-        add(data, false);
+        add(data, true);
     }
 
     /**

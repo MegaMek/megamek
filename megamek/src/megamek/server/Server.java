@@ -17830,6 +17830,7 @@ public class Server implements Runnable {
      * @return a new Report, which has possibly been obscured
      */
     private Report filterReport(Report r, Player p, boolean omitCheck) {
+        
         if (r.subject == Entity.NONE && r.type != Report.PUBLIC) {
             //Reports that don't have a subject should be public.
             System.err.println("Error: Attempting to filter a Report object that is not public yet has no subject.\n\t\tmessageId: " + r.messageId);
@@ -17846,10 +17847,12 @@ public class Server implements Runnable {
             if ( entity.isOffBoard() )
                 return r;
         }
+
         if (!omitCheck && (entity == null || owner == null)) {
             System.err.println("Error: Attempting to filter a Report object that is not public but has a subject (" + entity + ") with owner (" + owner + ").\n\tmessageId: " + r.messageId);
             return r;
         }
+
         Report copy = new Report(r);
         for (int j = 0; j < copy.dataCount(); j++) {
             if (omitCheck || !canSee(p, entity)) {
@@ -17857,8 +17860,9 @@ public class Server implements Runnable {
                     copy.hideData(j);
                     //Mark the original report to indicate which players
                     // received an obscured version of it.
-                    if (p != null)
+                    if (p != null) {
                         r.addObscuredRecipient(p.getName());
+                    }
                 }
                 //simulate hiding the report for *true* double-blind play
                 //***DEBUG*** TESTING ONLY

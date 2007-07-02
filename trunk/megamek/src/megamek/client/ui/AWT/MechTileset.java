@@ -92,7 +92,6 @@ public class MechTileset {
             entry = default_light;
         }
         
-        if ( entry == null )
         if (entry.getImage() == null) {
             entry.loadImage(comp);
         }

@@ -32,6 +32,7 @@ v0.33.7-dev (SVN)
 + Bug: if missing entry in mechset.txt or wreckset.txt map does not load. Will now default
   to light mech image and print an error message to STDERR
 + Bug: Silver Bullet Gauss says Missiles instead of projectiles. in fireing phase
++ added more fixes to db messages
 
 v0.33.6 (2007-05-26, 20:00 GMT +2)
 + added some javadoc documentation. This is a work in progress.

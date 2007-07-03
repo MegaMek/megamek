@@ -40,6 +40,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
@@ -120,6 +121,8 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
     private MiniMap minimap;
     private MapSettings mapSettings = new MapSettings();
 
+    private Coords lastClicked;
+    
     /**
      * Creates and lays out a new Board Editor frame.
      */
@@ -132,14 +135,24 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         }
         bv.addBoardViewListener(new BoardViewListenerAdapter() {
             public void hexMoused(BoardViewEvent b) {
-                bv.cursor(b.getCoords());
-                if ((b.getModifiers() & InputEvent.ALT_MASK) != 0) {
+                Coords c = b.getCoords();
+                if(c.equals(lastClicked))
+                    return;
+                lastClicked = c;
+                bv.cursor(c);
+                if((b.getModifiers() & InputEvent.ALT_MASK) != 0) {
                     setCurrentHex(board.getHex(b.getCoords()));
                 }
-                if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-                    if (!board.getHex(b.getCoords()).equals(curHex)) {
+                else if((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+                    if(!board.getHex(b.getCoords()).equals(curHex)) {
                         paintHex(b.getCoords());
                     }
+                }
+                else if((b.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
+                    addToHex(b.getCoords());
+                }
+                else if((b.getModifiers() & InputEvent.BUTTON1_MASK) != 0){
+                    resurfaceHex(b.getCoords());
                 }
             }
         });
@@ -206,7 +219,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
      */
     private void setupEditorPanel() {
         canHex = new HexCanvas();
-        labElev = new JLabel(Messages.getString("BoardEditor.labElev"), JLabel.RIGHT); //$NON-NLS-1$
+        labElev = new JLabel(Messages.getString("BoardEditor.labElev"), SwingConstants.RIGHT); //$NON-NLS-1$
         texElev = new JTextField("0", 1); //$NON-NLS-1$
         texElev.addActionListener(this);
         texElev.getDocument().addDocumentListener(this);
@@ -214,7 +227,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         butElevUp.addActionListener(this);
         butElevDown = new JButton(Messages.getString("BoardEditor.butElevDown")); //$NON-NLS-1$
         butElevDown.addActionListener(this);
-        labTerrain = new JLabel(Messages.getString("BoardEditor.labTerrain"), JLabel.LEFT); //$NON-NLS-1$
+        labTerrain = new JLabel(Messages.getString("BoardEditor.labTerrain"), SwingConstants.LEFT); //$NON-NLS-1$
         lisTerrain = new JList(new DefaultListModel());
         lisTerrain.addListSelectionListener(this);
         lisTerrain.setVisibleRowCount(6);
@@ -225,6 +238,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         for (int i = 1; i < Terrains.SIZE; i++) {
             terrainArray[i - 1] = Terrains.getName(i);
         }
+        texTerrainLevel = new JTextField("0", 1); //$NON-NLS-1$
         choTerrainType = new JComboBox(terrainArray);
         texTerrainLevel = new JTextField("0", 1); //$NON-NLS-1$
         butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
@@ -247,10 +261,10 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         cheRoadsAutoExit = new JCheckBox(Messages.getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
         cheRoadsAutoExit.addItemListener(this);
         panRoads.add(cheRoadsAutoExit);
-        labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), JLabel.LEFT); //$NON-NLS-1$
+        labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT); //$NON-NLS-1$
         texTheme = new JTextField("", 15); //$NON-NLS-1$
         texTheme.getDocument().addDocumentListener(this);
-        labBoard = new JLabel(Messages.getString("BoardEditor.labBoard"), JLabel.LEFT); //$NON-NLS-1$
+        labBoard = new JLabel(Messages.getString("BoardEditor.labBoard"), SwingConstants.LEFT); //$NON-NLS-1$
         butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew")); //$NON-NLS-1$
         butBoardNew.setActionCommand("fileBoardNew"); //$NON-NLS-1$
         butBoardNew.addActionListener(this);
@@ -273,7 +287,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         panButtons.add(butBoardSave);
         panButtons.add(butBoardSaveAs);
         panButtons.add(butBoardSaveAsImage);
-        blankL = new JLabel("", JLabel.CENTER); //$NON-NLS-1$
+        blankL = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
@@ -333,6 +347,37 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
     }
 
     /**
+     * Apply the current Hex to the Board at the specified
+     * location.
+     */
+    public void resurfaceHex(Coords c) {
+        if(board.contains(c)) {
+            IHex newHex = curHex.duplicate();
+            newHex.setElevation(board.getHex(c).getElevation());
+            board.setHex(c, newHex);
+        }
+    }
+
+    /**
+     * Apply the current Hex to the Board at the specified
+     * location.
+     */
+    public void addToHex(Coords c) {
+        if(board.contains(c)) {
+            IHex newHex = curHex.duplicate();
+            IHex oldHex = board.getHex(c);
+            newHex.setElevation(oldHex.getElevation());
+            for(int i=0;i<Terrains.SIZE;i++) {
+                if(!newHex.containsTerrain(i)
+                        && oldHex.containsTerrain(i)) {
+                    newHex.addTerrain(oldHex.getTerrain(i));
+                }
+            }
+            board.setHex(c, newHex);
+        }
+    }
+
+    /**
      * Sets the current hex
      *
      * @param hex hex to set.
@@ -356,7 +401,8 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
             tm.clearHex(curHex);
         }
         canHex.repaint();
-    }
+        lastClicked = null;
+   }
 
     /**
      * Refreshes the terrain list to match the current hex

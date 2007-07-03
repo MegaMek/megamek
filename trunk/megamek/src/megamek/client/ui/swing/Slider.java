@@ -14,18 +14,20 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * A simple prompt.
@@ -45,7 +47,8 @@ public class Slider extends JDialog implements ActionListener, ChangeListener {
         super(parent, title, true);
         super.setResizable(false);
 
-        value = new JSlider(JSlider.HORIZONTAL, defaultValue, min, max + 1);
+        value = new JSlider(SwingConstants.HORIZONTAL, min, max, defaultValue);
+        value.addChangeListener(this);
 
         getContentPane().setLayout(new BorderLayout());
         JPanel qp = new JPanel();
@@ -94,5 +97,6 @@ public class Slider extends JDialog implements ActionListener, ChangeListener {
 
     public void stateChanged(ChangeEvent event) {
         curText.setText(String.valueOf(value.getValue()));
+        repaint();
     }
 }

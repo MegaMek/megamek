@@ -20,6 +20,31 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.TreeSet;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
 import megamek.client.Client;
 import megamek.client.ui.AWT.Messages;
 import megamek.common.AmmoType;
@@ -44,30 +69,6 @@ import megamek.common.options.IOptionGroup;
 import megamek.common.options.PilotOptions;
 import megamek.common.preference.PreferenceManager;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.TreeSet;
-import java.util.Vector;
-
 /**
  * A dialog that a player can use to customize his mech before battle.
  * Currently, changing pilots, setting up C3 networks, changing ammunition,
@@ -79,35 +80,35 @@ import java.util.Vector;
 public class CustomMechDialog
         extends ClientDialog implements ActionListener, DialogOptionListener {
 
-    private JLabel labName = new JLabel(Messages.getString("CustomMechDialog.labName"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labName = new JLabel(Messages.getString("CustomMechDialog.labName"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JTextField fldName = new JTextField(20);
-    private JLabel labGunnery = new JLabel(Messages.getString("CustomMechDialog.labGunnery"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labGunnery = new JLabel(Messages.getString("CustomMechDialog.labGunnery"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JTextField fldGunnery = new JTextField(3);
-    private JLabel labPiloting = new JLabel(Messages.getString("CustomMechDialog.labPiloting"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labPiloting = new JLabel(Messages.getString("CustomMechDialog.labPiloting"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JTextField fldPiloting = new JTextField(3);
-    private JLabel labC3 = new JLabel(Messages.getString("CustomMechDialog.labC3"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labC3 = new JLabel(Messages.getString("CustomMechDialog.labC3"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox choC3 = new JComboBox();
     private int[] entityCorrespondance;
-    private JLabel labCallsign = new JLabel(Messages.getString("CustomMechDialog.labCallsign"), JLabel.CENTER); //$NON-NLS-1$
-    private JLabel labUnitNum = new JLabel(Messages.getString("CustomMechDialog.labUnitNum"), JLabel.CENTER); //$NON-NLS-1$
+    private JLabel labCallsign = new JLabel(Messages.getString("CustomMechDialog.labCallsign"), SwingConstants.CENTER); //$NON-NLS-1$
+    private JLabel labUnitNum = new JLabel(Messages.getString("CustomMechDialog.labUnitNum"), SwingConstants.CENTER); //$NON-NLS-1$
     private JComboBox choUnitNum = new JComboBox();
     private ArrayList<Entity> entityUnitNum = new ArrayList<Entity>();
-    private JLabel labDeployment = new JLabel(Messages.getString("CustomMechDialog.labDeployment"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labDeployment = new JLabel(Messages.getString("CustomMechDialog.labDeployment"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox choDeployment = new JComboBox();
-    private JLabel labAutoEject = new JLabel(Messages.getString("CustomMechDialog.labAutoEject"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labAutoEject = new JLabel(Messages.getString("CustomMechDialog.labAutoEject"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JCheckBox chAutoEject = new JCheckBox();
-    private JLabel labSearchlight = new JLabel(Messages.getString("CustomMechDialog.labSearchlight"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labSearchlight = new JLabel(Messages.getString("CustomMechDialog.labSearchlight"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JCheckBox chSearchlight = new JCheckBox();
 
-    private JLabel labOffBoard = new JLabel(Messages.getString("CustomMechDialog.labOffBoard"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labOffBoard = new JLabel(Messages.getString("CustomMechDialog.labOffBoard"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JCheckBox chOffBoard = new JCheckBox();
-    private JLabel labOffBoardDirection = new JLabel(Messages.getString("CustomMechDialog.labOffBoardDirection"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labOffBoardDirection = new JLabel(Messages.getString("CustomMechDialog.labOffBoardDirection"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox choOffBoardDirection = new JComboBox();
-    private JLabel labOffBoardDistance = new JLabel(Messages.getString("CustomMechDialog.labOffBoardDistance"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labOffBoardDistance = new JLabel(Messages.getString("CustomMechDialog.labOffBoardDistance"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JTextField fldOffBoardDistance = new JTextField(4);
     private JButton butOffBoardDistance = new JButton("0");
 
-    private JLabel labTargSys = new JLabel(Messages.getString("CustomMechDialog.labTargSys"), JLabel.RIGHT);
+    private JLabel labTargSys = new JLabel(Messages.getString("CustomMechDialog.labTargSys"), SwingConstants.RIGHT);
     private JComboBox choTargSys = new JComboBox();
 
     private JPanel panButtons = new JPanel();

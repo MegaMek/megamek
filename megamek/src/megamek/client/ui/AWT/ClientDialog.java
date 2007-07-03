@@ -31,7 +31,7 @@ public class ClientDialog extends Dialog {
     /**
      * @param owner -
      *            the <code>Frame</code> that owns this dialog.
-     * @param string -
+     * @param title -
      *            the title of this Dialog window
      */
     public ClientDialog(Frame owner, String title) {

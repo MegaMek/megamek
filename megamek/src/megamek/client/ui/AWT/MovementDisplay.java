@@ -31,6 +31,7 @@ import megamek.common.IEntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
+import megamek.common.LandAirMech;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
@@ -65,7 +66,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
@@ -590,9 +590,9 @@ public class MovementDisplay
      */
     private void updateButtons() {
         final Entity ce = ce();
-        boolean isMech      = (ce instanceof Mech);
-        boolean isInfantry  = (ce instanceof Infantry);
-        boolean isProtomech = (ce instanceof Protomech);
+        final boolean isMech      = (ce instanceof Mech);
+        final boolean isInfantry  = (ce instanceof Infantry);
+        final boolean isProtomech = (ce instanceof Protomech);
         // ^-- I suppose these should really be methods, a-la Entity.canCharge(), Entity.canDFA()...
         
         setWalkEnabled(!ce.isImmobile() && ce.getWalkMP() > 0 && !ce.isStuck());
@@ -618,6 +618,8 @@ public class MovementDisplay
                 || ce.getMovementMode() == IEntityMovementMode.SUBMARINE
                 || ce.getMovementMode() == IEntityMovementMode.INF_UMU
                 || ce.getMovementMode() == IEntityMovementMode.VTOL
+                || ce.getMovementMode() == IEntityMovementMode.AIRMECH
+                || ce.getMovementMode() == IEntityMovementMode.AREOSPACE
                 || ce.getMovementMode() == IEntityMovementMode.BIPED_SWIM
                 || ce.getMovementMode() == IEntityMovementMode.QUAD_SWIM) {
             butClimbMode.setEnabled(false);
@@ -625,7 +627,7 @@ public class MovementDisplay
             butClimbMode.setEnabled(true);
         }
 
-        if(ce instanceof Infantry) {
+        if(isInfantry) {
             butDigIn.setEnabled(true);
             butFortify.setEnabled(true);
         } else {
@@ -680,6 +682,27 @@ public class MovementDisplay
                     && ce.isActive());
         }
         setupButtonPanel();
+        
+        //handle land air mech transformations
+        updateTransformationButtons(ce);
+    }
+
+    /**
+     * This funtcion is called to update the transformation buttons.
+     * @param ce the current entity
+     */
+    private void updateTransformationButtons(Entity ce) {
+        if(ce instanceof LandAirMech) {
+            final LandAirMech lam = (LandAirMech) ce;
+            
+            setLAMmechModeEnabled(lam.canConvertToMech());
+            setLAMairmechModeEnabled(lam.canConvertToAirmech());
+            setLAMaircraftModeEnabled(lam.canConvertToAircraft());
+        } else {
+            setLAMmechModeEnabled(false);
+            setLAMairmechModeEnabled(false);
+            setLAMaircraftModeEnabled(false);
+        }
     }
 
     /**
@@ -776,13 +799,8 @@ public class MovementDisplay
         updateSearchlightButton();
         updateElevationButtons();
 
-        // We may not have an entity selected yet (race condition).
-        if ( ce != null ) {
-            loadedUnits = ce.getLoadedUnits();
-        } else {
-            // The variable, loadedUnits, can not be null.
-            loadedUnits = new Vector<Entity>();
-        }
+        loadedUnits = ce.getLoadedUnits();
+        
         updateLoadButtons();
         updateElevationButtons();
     }
@@ -797,7 +815,7 @@ public class MovementDisplay
 
             // Set the button's label to "Done"
             // if the entire move is impossible.
-            MovePath possible = (MovePath) cmd.clone();
+            MovePath possible = cmd.clone();
             possible.clipToPossible();
             if (possible.length() == 0) {
                 butDone.setLabel( Messages.getString("MovementDisplay.Done") ); //$NON-NLS-1$
@@ -823,45 +841,43 @@ public class MovementDisplay
             }
         }
 
-        if ( md != null ) {
-            if (md.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) { //pop up are you sure dialog
-                Mech m = (Mech)ce();
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame,Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                        Messages.getString("MovementDisplay.ConfirmMoveRoll", new Object[]{new Integer(m.getMASCTarget())}), //$NON-NLS-1$
-                        true);
-                nag.setVisible(true);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        GUIPreferences.getInstance().setNagForMASC(false);
-                    }
-                } else {
-                    return;
+        if (md.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) { //pop up are you sure dialog
+            Mech m = (Mech)ce();
+            ConfirmDialog nag = new ConfirmDialog(clientgui.frame,Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString("MovementDisplay.ConfirmMoveRoll", new Object[]{new Integer(m.getMASCTarget())}), //$NON-NLS-1$
+                    true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForMASC(false);
                 }
+            } else {
+                return;
             }
+        }
 
-            String check = doPSRCheck(md);
-            if (check.length() > 0 && GUIPreferences.getInstance().getNagForPSR()) {
-                ConfirmDialog nag = 
-                    new ConfirmDialog(clientgui.frame,
-                                      Messages.getString("MovementDisplay.areYouSure"),  //$NON-NLS-1$
-                                      Messages.getString("MovementDisplay.ConfirmPilotingRoll")+ //$NON-NLS-1$
-                                      check, true);
-                nag.setVisible(true);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        GUIPreferences.getInstance().setNagForPSR(false);
-                    }
-                } else {
-                    return;
+        String check = doPSRCheck(md);
+        if (check.length() > 0 && GUIPreferences.getInstance().getNagForPSR()) {
+            ConfirmDialog nag = 
+                new ConfirmDialog(clientgui.frame,
+                                  Messages.getString("MovementDisplay.areYouSure"),  //$NON-NLS-1$
+                                  Messages.getString("MovementDisplay.ConfirmPilotingRoll")+ //$NON-NLS-1$
+                                  check, true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForPSR(false);
                 }
+            } else {
+                return;
             }
         }
 
         disableButtons();
         clientgui.bv.clearMovementData();
-        if ( ce().hasUMU() ){
+        if ( ce().hasUMU() || ce() instanceof LandAirMech){
             client.sendUpdateEntity(ce());
         }
         client.moveEntity(cen, md);
@@ -1189,7 +1205,7 @@ public class MovementDisplay
         }
 
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
         // control pressed means a line of sight check.
@@ -1198,8 +1214,8 @@ public class MovementDisplay
             return;
         }
         // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & MouseEvent.SHIFT_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
+        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
@@ -1224,7 +1240,7 @@ public class MovementDisplay
 
                 // Set the button's label to "Done"
                 // if the entire move is impossible.
-                MovePath possible = (MovePath) cmd.clone();
+                MovePath possible = cmd.clone();
                 possible.clipToPossible();
                 if (possible.length() == 0) {
                     butDone.setLabel( Messages.getString("MovementDisplay.Done") ); //$NON-NLS-1$
@@ -1243,7 +1259,7 @@ public class MovementDisplay
 
                 // check if it's a valid charge
                 ToHitData toHit = new ChargeAttackAction(cen, target.getTargetType(), target.getTargetId(), target.getPosition()).toHit(client.game, cmd);
-                if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
+                if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
 
                     // Determine how much damage the charger will take.
                     int toAttacker = 0;
@@ -1290,7 +1306,7 @@ public class MovementDisplay
                                                     cen,
                                                     target,
                                                     cmd);
-                if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
+                if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
                     if ( clientgui.doYesNoDialog
                          ( Messages.getString("MovementDisplay.DFADialog.title", new Object[]{target.getDisplayName()}), //$NON-NLS-1$
@@ -1410,11 +1426,11 @@ public class MovementDisplay
         } else {
             // Check the other entities in the current hex for friendly units.
             Entity other = null;
-            Enumeration entities = client.game.getEntities(ce.getPosition());
+            Enumeration<Entity> entities = client.game.getEntities(ce.getPosition());
             boolean isGood = false;
             while (entities.hasMoreElements()) {
                 // Is the other unit friendly and not the current entity?
-                other = (Entity)entities.nextElement();
+                other = entities.nextElement();
                 if (!ce.getOwner().isEnemyOf(other.getOwner())
                         && !ce.equals(other)) {
                     // Yup. If the current entity has at least 1 MP, if it can
@@ -1651,13 +1667,24 @@ public class MovementDisplay
             }
             gear = MovementDisplay.GEAR_LAND;
         } else if (ev.getActionCommand().equals(MOVE_JUMP)) {
-            if (gear != MovementDisplay.GEAR_JUMP) {
-                clearAllMoves();
+            if(ce instanceof LandAirMech && ((LandAirMech) ce).isInMode(LandAirMech.MODE_AIRMECH)) {
+                
+                if(cmd.isFlying()) {
+                    cmd.addStep(MovePath.STEP_LAND);
+                    gear = MovementDisplay.GEAR_JUMP;
+                } else {
+                    cmd.addStep(MovePath.STEP_TAKEOFF);
+                    gear = MovementDisplay.GEAR_JUMP;
+                }
+            } else {
+                if (gear != MovementDisplay.GEAR_JUMP) {
+                    clearAllMoves();
+                }
+                if (!cmd.isJumping()) {
+                    cmd.addStep(MovePath.STEP_START_JUMP);
+                }
+                gear = MovementDisplay.GEAR_JUMP;
             }
-            if (!cmd.isJumping()) {
-                cmd.addStep(MovePath.STEP_START_JUMP);
-            }
-            gear = MovementDisplay.GEAR_JUMP;
         } else if (ev.getActionCommand().equals(MOVE_SWIM)) {
             if (gear != MovementDisplay.GEAR_SWIM) {
                 clearAllMoves();
@@ -1827,6 +1854,33 @@ public class MovementDisplay
             cmd.addStep(MovePath.STEP_SHAKE_OFF_SWARMERS);
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
+        } else if(ev.getActionCommand().equals(MOVE_MODE_MECH)) {
+            clearAllMoves();
+            if(ce instanceof LandAirMech) {
+                final LandAirMech lam = (LandAirMech) client.getEntity(ce.getId());
+                
+                lam.convertToMode(LandAirMech.MODE_MECH);
+                updateTransformationButtons(lam);
+                clientgui.mechD.displayEntity(lam);
+            }
+        } else if(ev.getActionCommand().equals(MOVE_MODE_AIRMECH)) {
+            clearAllMoves();
+            if(ce instanceof LandAirMech) {
+                final LandAirMech lam = (LandAirMech) client.getEntity(ce.getId());
+                
+                lam.convertToMode(LandAirMech.MODE_AIRMECH);
+                updateTransformationButtons(lam);
+                clientgui.mechD.displayEntity(lam);
+            }
+        } else if(ev.getActionCommand().equals(MOVE_MODE_AIRCRAFT)) {
+            clearAllMoves();
+            if(ce instanceof LandAirMech) {
+                final LandAirMech lam = (LandAirMech) client.getEntity(ce.getId());
+                
+                lam.convertToMode(LandAirMech.MODE_AIRCRAFT);
+                updateTransformationButtons(lam);
+                clientgui.mechD.displayEntity(lam);
+            }
         }
 
         updateProneButtons();
@@ -2103,6 +2157,18 @@ public class MovementDisplay
     private void setLowerEnabled(boolean enabled) {
         butLower.setEnabled(enabled);
         clientgui.getMenuBar().setMoveLowerEnabled(enabled);
+    }
+    
+    private void setLAMmechModeEnabled(boolean enabled) {
+        clientgui.getMenuBar().setMoveLAMmechModeEnabled(enabled);
+    }
+    
+    private void setLAMairmechModeEnabled(boolean enabled) {
+        clientgui.getMenuBar().setMoveLAMairmechModeEnabled(enabled);
+    }
+    
+    private void setLAMaircraftModeEnabled(boolean enabled) {
+        clientgui.getMenuBar().setMoveLAMaircraftModeEnabled(enabled);
     }
 
     

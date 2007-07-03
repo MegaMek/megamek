@@ -64,6 +64,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.AbstractEntityAction;
+import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.SearchlightAttackAction;
@@ -76,6 +77,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
+
 
 public class FiringDisplay
         extends StatusBarPhaseDisplay
@@ -611,7 +613,7 @@ public class FiringDisplay
         
         // For bug 1002223
         // Re-compute the to-hit numbers by adding in correct order.
-        Vector<AbstractEntityAction> newAttacks = new Vector<AbstractEntityAction>();
+        Vector<EntityAction> newAttacks = new Vector<EntityAction>();
         for (Enumeration<AbstractEntityAction> e = attacks.elements(); e.hasMoreElements();) {
             AbstractEntityAction o = e.nextElement();
             if (o instanceof WeaponAttackAction) {

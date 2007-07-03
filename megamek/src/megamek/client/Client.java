@@ -47,13 +47,14 @@ import megamek.common.net.DisconnectedEvent;
 import megamek.common.net.Packet;
 import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
+import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
 // FIXME awnser the question in the documentation. 
 /**
- * This class is instanciated for eah client and for eah bot running on that client.
- * I believe that non-local clients are not also instanrtiated on the local server,
+ * This class is instanciated for each client and for each bot running on that client.
+ * I believe that non-local clients are not also instantiated on the local server,
  * but I am not sure.  
  */
 public class Client {
@@ -460,7 +461,7 @@ public class Client {
     /**
      * Send a weapon fire command to the server.
      */
-    public void sendAttackData(int aen, Vector attacks) {
+    public void sendAttackData(int aen, Vector<EntityAction> attacks) {
         Object[] data = new Object[2];
 
         data[0] = new Integer(aen);
@@ -472,7 +473,7 @@ public class Client {
     /**
      * Send the game options to the server
      */
-    public void sendGameOptions(String password, Vector options) {
+    public void sendGameOptions(String password, Vector<IBasicOption> options) {
         final Object[] data = new Object[2];
         data[0] = password;
         data[1] = options;
@@ -614,7 +615,7 @@ public class Client {
     protected void receiveEntityUpdate(Packet c) {
         int eindex = c.getIntValue(0);
         Entity entity = (Entity) c.getObject(1);
-        Vector movePath = (Vector) c.getObject(2);        
+        Vector<UnitLocation> movePath = (Vector<UnitLocation>) c.getObject(2);        
         // Replace this entity in the game.
         game.setEntity(eindex, entity, movePath);
     }
@@ -662,11 +663,11 @@ public class Client {
     }
 
     protected void receiveBuildingUpdateCF(Packet packet) {
-        game.getBoard().updateBuildingCF((Vector) packet.getObject(0));
+        game.getBoard().updateBuildingCF((Vector<Building>) packet.getObject(0));
     }
 
     protected void receiveBuildingCollapse(Packet packet) {
-        game.getBoard().collapseBuilding((Vector) packet.getObject(0));
+        game.getBoard().collapseBuilding((Vector<Building>) packet.getObject(0));
     }
 
     /**
@@ -794,6 +795,7 @@ public class Client {
         connection.send(packet);
     }
 
+    @SuppressWarnings("unchecked")
     protected void handlePacket(Packet c) {
         if (c == null) {
             System.out.println("client: got null packet"); //$NON-NLS-1$

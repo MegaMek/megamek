@@ -609,11 +609,8 @@ public class ChatLounge
         butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
 
         Font font = new Font("sanserif", Font.BOLD, 18); //$NON-NLS-1$
-        if (null == font) {
-            System.err.println("Couldn't find the new font for the 'Add a Unit' button."); //$NON-NLS-1$
-        } else {
-            butLoad.setFont(font);
-        }
+        butLoad.setFont(font);
+
         butLoad.setActionCommand("load_mech"); //$NON-NLS-1$
         butLoad.addActionListener(this);
         butArmy.addActionListener(this);
@@ -964,8 +961,8 @@ public class ChatLounge
      */
     private void refreshPlayerInfo() {
         lisPlayerInfo.removeAll();
-        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player) i.nextElement();
+        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
+            final Player player = i.nextElement();
             if (player != null) {
                 StringBuffer pi = new StringBuffer();
                 pi.append(player.getName()).append(" : "); //$NON-NLS-1$
@@ -989,8 +986,8 @@ public class ChatLounge
      */
     private void refreshMinefield() {
         lisMinefield.removeAll();
-        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player) i.nextElement();
+        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
+            final Player player = i.nextElement();
             if (player != null) {
                 StringBuffer pi = new StringBuffer();
                 pi.append(player.getName()).append(" : "); //$NON-NLS-1$
@@ -1019,14 +1016,14 @@ public class ChatLounge
         final boolean useCost = chkCost.getState();
         
         lisBVs.removeAll();
-        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player) i.nextElement();
+        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
+            final Player player = i.nextElement();
             if (player == null) {
                 continue;
             }
             float playerValue = 0;
-            for (Enumeration j = client.getEntities(); j.hasMoreElements();) {
-                Entity entity = (Entity) j.nextElement();
+            for (Enumeration<Entity> j = client.getEntities(); j.hasMoreElements();) {
+                Entity entity = j.nextElement();
                 if (entity.getOwner().equals(player)) {  
                     if (useBv) 
                         playerValue += entity.calculateBattleValue();        
@@ -1093,8 +1090,8 @@ public class ChatLounge
      */
     private void refreshStarts() {
         lisStarts.removeAll();
-        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            Player player = (Player) i.nextElement();
+        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
+            Player player = i.nextElement();
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$

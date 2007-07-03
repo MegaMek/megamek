@@ -6065,17 +6065,17 @@ public class AmmoType extends EquipmentType {
     }
 
     private void addToEnd(AmmoType base, String modifier) {
-        Enumeration n = base.getNames();
+        Enumeration<String> n = base.getNames();
         while (n.hasMoreElements()) {
-            String s = (String)n.nextElement();
+            String s = n.nextElement();
             addLookupName(s + modifier);
         }
     }
 
     private void addBeforeString(AmmoType base, String keyWord, String modifier) {
-        Enumeration n = base.getNames();
+        Enumeration<String> n = base.getNames();
         while (n.hasMoreElements()) {
-            String s = (String)n.nextElement();
+            String s = n.nextElement();
             StringBuffer sb = new StringBuffer(s);
             sb.insert(s.lastIndexOf(keyWord), modifier);
             addLookupName(sb.toString());
@@ -6106,7 +6106,7 @@ public class AmmoType extends EquipmentType {
          *
          * @param   munitionName - the <code>String</code> name of this
          *          munition type.
-         * @param   weightRation - the <code>int</code> ratio of a round
+         * @param   weightRatio - the <code>int</code> ratio of a round
          *          of this munition to a round of the standard type.
          * @param   munitionType - the <code>int</code> munition flag(s)
          *          of this type.
@@ -6127,7 +6127,7 @@ public class AmmoType extends EquipmentType {
          *
          * @param   munitionName - the <code>String</code> name of this
          *          munition type.
-         * @param   weightRation - the <code>int</code> ratio of a round
+         * @param   weightRatio - the <code>int</code> ratio of a round
          *          of this munition to a round of the standard type.
          * @param   munitionType - the <code>int</code> munition flag(s)
          *          of this type.

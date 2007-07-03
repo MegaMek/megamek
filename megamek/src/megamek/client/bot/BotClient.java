@@ -44,6 +44,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.actions.EntityAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePlayerChatEvent;
@@ -192,7 +193,7 @@ public abstract class BotClient extends Client {
                 }
                 else {
                     // Send a "no attack" to clear the game turn, if any.
-                    sendAttackData( getLocalPlayer().getId(), new Vector(0) );
+                    sendAttackData( getLocalPlayer().getId(), new Vector<EntityAction>(0) );
                 }
             } else if (game.getPhase() == IGame.PHASE_DEPLOYMENT) {
                 calculateDeployment();
@@ -211,7 +212,7 @@ public abstract class BotClient extends Client {
                        game.getPhase() == IGame.PHASE_OFFBOARD) {
                 // Send a "no attack" to clear the game turn, if any.
                 // TODO: Fix for real arty stuff
-                sendAttackData( game.getFirstEntityNum(), new Vector(0) );
+                sendAttackData( game.getFirstEntityNum(), new Vector<EntityAction>(0) );
                 sendDone(true);
             }
         } catch (Throwable t) {

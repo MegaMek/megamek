@@ -351,7 +351,7 @@ public class CustomMechDialog
 
             // Get the Protomechs of this entity's player
             // that *aren't* in the entity's unit.
-            Enumeration otherUnitEntities = client.game.getSelectedEntities
+            Enumeration<Entity> otherUnitEntities = client.game.getSelectedEntities
                     (new EntitySelector() {
                         private final int ownerId =
                                 CustomMechDialog.this.entity.getOwnerId();
@@ -928,13 +928,13 @@ public class CustomMechDialog
         c.ipadx = 0;
         c.ipady = 0;
 
-        for (Enumeration i = options.getGroups(); i.hasMoreElements();) {
-            IOptionGroup group = (IOptionGroup) i.nextElement();
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
 
             addGroup(group, gridbag, c);
 
-            for (Enumeration j = group.getOptions(); j.hasMoreElements();) {
-                IOption option = (IOption) j.nextElement();
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+                IOption option = j.nextElement();
 
                 addOption(option, gridbag, c, editable);
             }
@@ -1034,8 +1034,8 @@ public class CustomMechDialog
             entityCorrespondance[listIndex++] = -1;
 
         }
-        for (Enumeration i = client.getEntities(); i.hasMoreElements();) {
-            final Entity e = (Entity) i.nextElement();
+        for (Enumeration<Entity> i = client.getEntities(); i.hasMoreElements();) {
+            final Entity e = i.nextElement();
             // ignore enemies or self
             if (entity.isEnemyOf(e) || entity.equals(e)) {
                 continue;
@@ -1101,7 +1101,7 @@ public class CustomMechDialog
      * @param others the <code>Enumeration</code> containing entities in
      *               other units.
      */
-    private void refreshUnitNum(Enumeration others) {
+    private void refreshUnitNum(Enumeration<Entity> others) {
         // Clear the list of old values
         choUnitNum.removeAll();
         entityUnitNum.clear();
@@ -1113,7 +1113,7 @@ public class CustomMechDialog
         // Walk through the other entities.
         while (others.hasMoreElements()) {
             // Track the position of the next other entity.
-            final Entity other = (Entity) others.nextElement();
+            final Entity other = others.nextElement();
             entityUnitNum.add(other);
 
             // Show the other entity's name and callsign.

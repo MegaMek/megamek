@@ -772,7 +772,7 @@ public class CEntity {
             
             // Get the first movement option, while stripping it from the arraylist
             MoveOption min = possible.remove(0);
-            Iterator adjacent = min.getNextMoves(true, true).iterator();
+            Iterator<MovePath> adjacent = min.getNextMoves(true, true).iterator();
             while (adjacent.hasNext()) {
                 MoveOption next = (MoveOption) adjacent.next();
                 if (next.changeToPhysical() && next.isMoveLegal()) {
@@ -805,9 +805,9 @@ public class CEntity {
                 }
             }
         }
-        //Final check for illeagal and extra weighting for heat
-        for (Iterator i = discovered.values().iterator(); i.hasNext();) {
-            MoveOption next = (MoveOption) i.next();
+        //Final check for illegal and extra weighting for heat
+        for (Iterator<MoveOption> i = discovered.values().iterator(); i.hasNext();) {
+            MoveOption next = i.next();
             next.clipToPossible();
             if (!next.isMoveLegal()) {
                 i.remove();

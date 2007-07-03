@@ -454,10 +454,12 @@ public abstract class Connection {
                 } else {
                     in = bis;
                 }
-                packet = pm.unmarshall(in);
-                if (packet != null) {
-                    debugLastFewCommandsReceived.push(packet.getCommand());
-                    processConnectionEvent(new PacketReceivedEvent(Connection.this, packet));
+                if(pm != null) {
+                    packet = pm.unmarshall(in);
+                    if (packet != null) {
+                        debugLastFewCommandsReceived.push(packet.getCommand());
+                        processConnectionEvent(new PacketReceivedEvent(Connection.this, packet));
+                    }
                 }
                 
             }
@@ -561,8 +563,8 @@ public abstract class Connection {
      * @param event the game event.
      */
     protected void processConnectionEvent(ConnectionEvent event) {
-        for (Enumeration e = connectionListeners.elements(); e.hasMoreElements();) {
-            ConnectionListener l = (ConnectionListener) e.nextElement();
+        for (Enumeration<ConnectionListener> e = connectionListeners.elements(); e.hasMoreElements();) {
+            ConnectionListener l = e.nextElement();
             switch (event.getType()) {
             case ConnectionEvent.CONNECTED:
                 l.connected((ConnectedEvent)event);
@@ -636,5 +638,5 @@ public abstract class Connection {
          * @return <code>true</code> if data is compressed
          */
         public abstract boolean isCompressed();
-    };
+    }
 }

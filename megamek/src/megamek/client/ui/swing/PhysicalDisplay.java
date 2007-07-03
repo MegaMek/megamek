@@ -47,6 +47,7 @@ import megamek.common.Entity;
 import megamek.common.GameTurn;
 import megamek.common.IAimingModes;
 import megamek.common.IGame;
+import megamek.common.INarcPod;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -54,11 +55,11 @@ import megamek.common.QuadMech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.actions.AbstractEntityAction;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
 import megamek.common.actions.DodgeAction;
+import megamek.common.actions.EntityAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.actions.JumpJetAttackAction;
 import megamek.common.actions.KickAttackAction;
@@ -134,7 +135,7 @@ public class PhysicalDisplay
     private Targetable target;        // target
 
     // stuff we want to do
-    private Vector<AbstractEntityAction> attacks;
+    private Vector<EntityAction> attacks;
 
     private AimedShotHandler ash = new AimedShotHandler();
     
@@ -149,7 +150,7 @@ public class PhysicalDisplay
 
         clientgui.getBoardView().addBoardViewListener(this);
 
-        attacks = new Vector<AbstractEntityAction>();
+        attacks = new Vector<EntityAction>();
 
         setupStatusBar(Messages.getString("PhysicalDisplay.waitingForPhysicalAttackPhase")); //$NON-NLS-1$
 
@@ -1148,12 +1149,12 @@ public class PhysicalDisplay
         Targetable choice = null;
 
         // Get the available choices.
-        Enumeration choices = client.game.getEntities(pos);
+        Enumeration<Entity> choices = client.game.getEntities(pos);
 
         // Convert the choices into a List of targets.
         Vector<Targetable> targets = new Vector<Targetable>();
         while (choices.hasMoreElements()) {
-            choice = (Targetable) choices.nextElement();
+            choice = choices.nextElement();
             if (!ce().equals(choice)) {
                 targets.addElement(choice);
             }
@@ -1168,9 +1169,9 @@ public class PhysicalDisplay
         // Is the attacker targeting its own hex?
         if (ce().getPosition().equals(pos)) {
             // Add any iNarc pods attached to the entity.
-            Enumeration pods = ce().getINarcPodsAttached();
+            Enumeration<INarcPod> pods = ce().getINarcPodsAttached();
             while (pods.hasMoreElements()) {
-                choice = (Targetable) pods.nextElement();
+                choice = pods.nextElement();
                 targets.addElement(choice);
             }
         }

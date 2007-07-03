@@ -52,7 +52,7 @@ public class LandAirMech extends BipedMech {
             return super.getElevation();
         }
         
-        return elevation; //TODO use Enteties elevation code instead.
+        return elevation; //TODO use Entities elevation code instead.
     }
     
     /**
@@ -68,7 +68,7 @@ public class LandAirMech extends BipedMech {
             //Arbitarty upper limit of +50 for AirMeks, same as VTOL's,
             maxAlt += 50;
         } else if(mode == MODE_AIRCRAFT) {
-            //areospace fighters don't have an uper limit...
+            //areospace fighters don't have an upper limit...
             return true;
         }
         
@@ -117,50 +117,117 @@ public class LandAirMech extends BipedMech {
     }
     
     /**
-     * Tries to onvert the mech to the given mode, following all the restrictions.
+     * Returns true if the mech can transform into mech mode, false otherwise.
+     * @return true iff the mech can go in that mode.
+     */
+    public boolean canConvertToMech() {
+        if(!isDeployed()) {
+            return true;
+        }
+        if(startMode == MODE_AIRMECH
+                && landed 
+                && isSystemIntact(Mech.ACTUATOR_LOWER_LEG) 
+                && isSystemIntact(Mech.ACTUATOR_UPPER_LEG) 
+                && isSystemIntact(Mech.ACTUATOR_HIP) 
+                && isSystemIntact(Mech.SYSTEM_GYRO)) {
+            return true;
+        }
+        
+        if(startMode == MODE_MECH && mode != startMode) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Returns true if the mech can transform into airmek mode, false otherwise.
+     * @return true iff the mech can go in that mode.
+     */
+    public boolean canConvertToAirmech() {
+        if(!isDeployed()) {
+            return true;
+        }
+        if(startMode == MODE_MECH
+                && isSystemIntact(Mech.ACTUATOR_LOWER_LEG) 
+                && isSystemIntact(Mech.ACTUATOR_UPPER_LEG)
+                && isSystemIntact(Mech.ACTUATOR_HIP) 
+                && isSystemIntact(Mech.SYSTEM_GYRO)) {
+                return true;
+        } else if(startMode == MODE_AIRCRAFT 
+                && isSystemIntact(Mech.ACTUATOR_LOWER_LEG) 
+                && isSystemIntact(Mech.ACTUATOR_UPPER_LEG)) {
+            return true;
+        }
+        
+        if(startMode == MODE_AIRMECH  && mode != startMode) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Returns true if the mech can transform into fighter mode, false otherwise.
+     * @return true iff the mech can go in that mode.
+     */
+    public boolean canConvertToAircraft() {
+        if(!isDeployed()) {
+            return true;
+        }
+        if(!landed 
+                && startMode == MODE_AIRMECH
+                && isSystemIntact(Mech.ACTUATOR_LOWER_LEG) 
+                && isSystemIntact(Mech.ACTUATOR_UPPER_LEG)
+                && isSystemIntact(Mech.ACTUATOR_SHOULDER) 
+                && isSystemIntact(Mech.ACTUATOR_UPPER_ARM)) {
+            return true;
+        }
+        
+        if(startMode == MODE_AIRCRAFT  && mode != startMode) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * Returns true if the mech can transform into the given mode, false otherwise.
+     * @return true iff the mech can go in that mode.
+     */
+    public boolean canConvertToMode(int mode) {
+        switch(mode) {
+            case MODE_MECH: return canConvertToMech();
+            case MODE_AIRMECH: return canConvertToAirmech();
+            case MODE_AIRCRAFT: return canConvertToAircraft();
+        }
+        throw new IllegalArgumentException("Not a valid mode.");
+    }
+    
+    /**
+     * Tries to convert the mech to the given mode, following all the restrictions.
      * @param newMode
      */
     public void convertToMode(int newMode) {
-        if(!isDeployed()) { //during deplyment we can change our mode at will.
+        if(!isDeployed()) { //during deployment we can change our mode at will.
             mode = newMode;
             startMode = mode;
             return;
         }
 
-        // check the upper and lower leg accurators. if damaged no conversion alowed.
-        if(isSystemIntact(Mech.ACTUATOR_LOWER_LEG) && isSystemIntact(Mech.ACTUATOR_UPPER_LEG)) {
+        if(startMode == newMode) {
+            mode = startMode;
+        } else if(canConvertToMode(newMode)) {
             switch(newMode) {
-                case MODE_MECH:
-                    if(startMode == MODE_AIRMECH) {
-                        // check Gyro and hips if damaged forbid.
-                        if(isSystemIntact(Mech.ACTUATOR_HIP) && isSystemIntact(Mech.SYSTEM_GYRO)) {
-                            mode = MODE_CONVERT_AIRMECH_TO_MECH;   
-                        }
-                    } else if(startMode == MODE_AIRCRAFT) {
-                        // not legal, leave in case of later house rules.
-                        //mode = MODE_CONVERT_AIRCRAFT_TO_MECH;
-                    }
-                    break;
+                case MODE_MECH: mode = MODE_CONVERT_AIRMECH_TO_MECH; break;
                 case MODE_AIRMECH:
                     if(startMode == MODE_MECH) {
-                        if(isSystemIntact(Mech.ACTUATOR_HIP) && isSystemIntact(Mech.SYSTEM_GYRO)) {
-                            mode = MODE_CONVERT_MECH_TO_AIRMECH;
-                        }
+                        mode = MODE_CONVERT_MECH_TO_AIRMECH;
                     } else if(startMode == MODE_AIRCRAFT) {
                         mode = MODE_CONVERT_AIRCRAFT_TO_AIRMECH;
                     }
                     break;
-                case MODE_AIRCRAFT:
-                    if(!landed) { //can't switch to plane while on the ground
-                        if(startMode == MODE_MECH) {
-                            //not legal. leave in case of later house rules.
-                        } else if(startMode == MODE_AIRMECH) {
-                            if(isSystemIntact(Mech.ACTUATOR_SHOULDER) && isSystemIntact(Mech.ACTUATOR_UPPER_ARM)) {
-                                mode = MODE_CONVERT_AIRMECH_TO_AIRCRAFT;
-                            }
-                        }
-                    }
-                    break;
+                case MODE_AIRCRAFT: mode = MODE_CONVERT_AIRMECH_TO_AIRCRAFT; break;
             }
         }
     }
@@ -226,7 +293,7 @@ public class LandAirMech extends BipedMech {
     }
     
     /**
-     * How much heat is gained from jumping, airmehs don't gain jumping heat.
+     * How much heat is gained from jumping, airmechs don't gain jumping heat.
      */
     public int getJumpHeat(int movedMP) {
         if(mode == MODE_MECH || mode == MODE_CONVERT_MECH_TO_AIRMECH) {
@@ -254,10 +321,13 @@ public class LandAirMech extends BipedMech {
         switch(mode) {            
             case MODE_AIRMECH :
             case MODE_CONVERT_AIRMECH_TO_AIRCRAFT :
-                base =  (int)Math.ceil((double)base / 3.0);
+                base =  (int)Math.ceil(base / 3.0);
                 break;
             case MODE_CONVERT_AIRMECH_TO_MECH:
-                base =  (int)Math.ceil((double)base / 6.0);
+                base =  (int)Math.ceil(base / 6.0);
+                break;
+            case MODE_CONVERT_MECH_TO_AIRMECH :
+                base =  (int)Math.ceil(base / 2.0);
                 break;
         }
         return base;

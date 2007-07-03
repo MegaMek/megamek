@@ -393,10 +393,9 @@ public class MechDisplay extends JPanel {
             }
             ams.setEntity(en);
             addElement(ams.getContentGroup());
-            Vector v = ams.getBackgroundDrawers();
-            Enumeration iter = v.elements();
+            Enumeration<BackGroundDrawer> iter = ams.getBackgroundDrawers().elements();
             while (iter.hasMoreElements()) {
-                addBgDrawer((BackGroundDrawer) iter.nextElement());
+                addBgDrawer(iter.nextElement());
             }
             onResize();
             update();
@@ -1725,8 +1724,8 @@ public class MechDisplay extends JPanel {
                         return;
                     }
                     m_chMode.removeAll();
-                    for (Enumeration e = m.getType().getModes(); e.hasMoreElements();) {
-                        EquipmentMode em = (EquipmentMode) e.nextElement();
+                    for (Enumeration<EquipmentMode> e = m.getType().getModes(); e.hasMoreElements();) {
+                        EquipmentMode em = e.nextElement();
                         m_chMode.addItem(em.getDisplayableName());
                     }
                     m_chMode.setSelectedItem(m.curMode().getDisplayableName());
@@ -1984,9 +1983,9 @@ public class MechDisplay extends JPanel {
             // Walk through the list of teams.  There
             // can't be more teams than players.
             StringBuffer buff;
-            Enumeration loop = clientgui.getClient().game.getPlayers();
+            Enumeration<Player> loop = clientgui.getClient().game.getPlayers();
             while (loop.hasMoreElements()) {
-                Player player = (Player) loop.nextElement();
+                Player player = loop.nextElement();
                 int team = player.getTeam();
                 if (en.isNarcedBy(team) &&
                         !player.isObserver()) {
@@ -2084,11 +2083,11 @@ public class MechDisplay extends JPanel {
             String unused = en.getUnusedString();
             if ("".equals(unused)) unused = Messages.getString("MechDisplay.None"); //$NON-NLS-1$ //$NON-NLS-2$
             unusedR.setText(unused);
-            Enumeration iter = en.getLoadedUnits().elements();
+            Enumeration<Entity> iter = en.getLoadedUnits().elements();
             carrysR.setText(null);
             //boolean hasText = false;
             while (iter.hasMoreElements()) {
-                carrysR.append(((Entity) iter.nextElement()).getShortName());
+                carrysR.append(iter.nextElement().getShortName());
                 carrysR.append("\n"); //$NON-NLS-1$
             }
 

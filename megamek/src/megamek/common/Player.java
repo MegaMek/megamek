@@ -60,7 +60,7 @@ public final class Player extends TurnOrdered
     private int num_mf_vibra = 0;
     
     // hexes that are automatically hit by artillery
-    private Vector artyAutoHitHexes = new Vector();
+    private Vector<Coords> artyAutoHitHexes = new Vector<Coords>();
     
     private int initialBV;
 
@@ -82,9 +82,9 @@ public final class Player extends TurnOrdered
     
     private boolean admitsDefeat = false;
     
-    private Vector turnReports = new Vector();
+    private Vector<Report> turnReports = new Vector<Report>();
         
-    public Vector getMinefields() {
+    public Vector<Minefield> getMinefields() {
         return visibleMinefields;
     }
     
@@ -183,7 +183,7 @@ public final class Player extends TurnOrdered
         return team;
     }
 
-    public Vector getTurnReport(){
+    public Vector<Report> getTurnReport(){
         return turnReports;
     }
     
@@ -290,16 +290,16 @@ public final class Player extends TurnOrdered
         return admitsDefeat;
     }
     
-    public void setArtyAutoHitHexes(Vector artyAutoHitHexes) {
+    public void setArtyAutoHitHexes(Vector<Coords> artyAutoHitHexes) {
         this.artyAutoHitHexes = artyAutoHitHexes;
     }
     
-    public Vector getArtyAutoHitHexes() {
+    public Vector<Coords> getArtyAutoHitHexes() {
         return artyAutoHitHexes;
     }
 
     public boolean hasTAG() {
-        for (Enumeration e = game.getSelectedEntities(new EntitySelector() {
+        for (Enumeration<Entity> e = game.getSelectedEntities(new EntitySelector() {
                     private final int ownerId = getId();
                         public boolean accept( Entity entity ) {
                             if (entity.getOwner() == null)
@@ -310,7 +310,7 @@ public final class Player extends TurnOrdered
                         }
                     }
                 ); e.hasMoreElements(); ) {
-            Entity m = (Entity)e.nextElement();
+            Entity m = e.nextElement();
             if (m.hasTAG()) {
                 return true;
             }
@@ -323,11 +323,11 @@ public final class Player extends TurnOrdered
      * @return The combined Battle Value of all the player's current assets.
      */
     public int getBV() {
-        Enumeration survivors = game.getEntities();
+        Enumeration<Entity> survivors = game.getEntities();
         int bv = 0;
 
         while ( survivors.hasMoreElements() ) {
-            Entity entity = (Entity) survivors.nextElement();
+            Entity entity = survivors.nextElement();
             if ( entity.getOwner() == this &&
                     !entity.isDestroyed())
                 bv += entity.calculateBattleValue();
@@ -346,18 +346,18 @@ public final class Player extends TurnOrdered
     public float getForceSizeBVMod() {
     	if (game.getOptions().booleanOption("no_force_size_mod"))
     		return 1;
-    	Enumeration entities = game.getEntities();
+    	Enumeration<Entity> entities = game.getEntities();
     	float ourUnitCount = 0;
     	while (entities.hasMoreElements()) {
-    		Entity entity = (Entity) entities.nextElement();
+    		final Entity entity = entities.nextElement();
     		if (entity.getOwner().equals(this) && !entity.isDestroyed()) {
     			ourUnitCount++;
     		}    			
     	}
         float enemyUnitCount = 0;
         if (this.getTeam() == TEAM_NONE) {
-            for (Enumeration e = game.getPlayers();e.hasMoreElements();) {
-                Player p = (Player)e.nextElement();
+            for (Enumeration<Player> e = game.getPlayers();e.hasMoreElements();) {
+                Player p = e.nextElement();
                 if (!p.equals(this)) {
                     enemyUnitCount += game.getEntitiesOwnedBy(p);
                 }                
@@ -365,18 +365,18 @@ public final class Player extends TurnOrdered
         } else {
             Team team = game.getTeamForPlayer(this);
             if(team != null) { 
-                for (Enumeration e = team.getPlayers();e.hasMoreElements();) {
-                    Player p = (Player)e.nextElement();
+                for (Enumeration<Player> e = team.getPlayers();e.hasMoreElements();) {
+                    Player p = e.nextElement();
                     if (!p.equals(this)) {
                         ourUnitCount += game.getEntitiesOwnedBy(p);
                     }                
                 }
             }
-            for (Enumeration e = game.getTeams();e.hasMoreElements();) {
-                Team t = (Team)e.nextElement();
+            for (Enumeration<Team> e = game.getTeams();e.hasMoreElements();) {
+                Team t = e.nextElement();
                 if (t.getId() != this.getTeam()) {
-                    for (Enumeration players = t.getPlayers(); players.hasMoreElements();) {
-                        Player p = (Player)players.nextElement();
+                    for (Enumeration<Player> players = t.getPlayers(); players.hasMoreElements();) {
+                        Player p = players.nextElement();
                         enemyUnitCount += game.getEntitiesOwnedBy(p);
                     }
                 }

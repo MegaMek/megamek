@@ -173,7 +173,7 @@ public class Protomech extends Entity implements Serializable {
 	 * Protos don't take piloting skill rolls.
 	 */
 	public PilotingRollData getBasePilotingRoll() {
-		return new PilotingRollData(this.getId(), PilotingRollData.CHECK_FALSE,
+		return new PilotingRollData(this.getId(), TargetRoll.CHECK_FALSE,
 				"Protomeks never take PSRs.");
 	}
 
@@ -819,8 +819,8 @@ public class Protomech extends Entity implements Serializable {
                 if (tmpP.hasTAG())
                     tagBV += atype.getBV(this);
                 else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-                   for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-                        Team m = (Team)e.nextElement();
+                   for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements(); ) {
+                        Team m = e.nextElement();
                         if (m.getId() == tmpP.getTeam()) {
                             if (m.hasTAG(game)) {
                                 tagBV += atype.getBV(this);

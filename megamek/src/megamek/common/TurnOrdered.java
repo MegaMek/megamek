@@ -95,8 +95,8 @@ public abstract class TurnOrdered implements Serializable
 
     public static void rollInitiative(Vector<? extends TurnOrdered> v) {
         // Clear all rolls
-        for (Enumeration i = v.elements(); i.hasMoreElements();) {
-            final TurnOrdered item = (TurnOrdered)i.nextElement();
+        for (Enumeration<? extends TurnOrdered> i = v.elements(); i.hasMoreElements();) {
+            final TurnOrdered item = i.nextElement();
             item.clearInitiative();
         }
 
@@ -141,14 +141,14 @@ public abstract class TurnOrdered implements Serializable
      * when a specific teams initiative should be re-rolled.
      */ 
     public static void rollInitAndResolveTies(Vector<? extends TurnOrdered> v, Vector<? extends TurnOrdered> rerollRequests) {
-        for (Enumeration i = v.elements(); i.hasMoreElements();) {
-            final TurnOrdered item = (TurnOrdered)i.nextElement();
+        for (Enumeration<? extends TurnOrdered> i = v.elements(); i.hasMoreElements();) {
+            final TurnOrdered item = i.nextElement();
             if (rerollRequests == null) { //normal init roll
                 item.getInitiative().addRoll(); // add a roll for all teams
             } else {
                 //Resolve Tactical Genius (lvl 3) pilot ability
-                for (Enumeration j = rerollRequests.elements(); j.hasMoreElements();) {
-                    final TurnOrdered rerollItem = (TurnOrdered)j.nextElement();
+                for (Enumeration<? extends TurnOrdered> j = rerollRequests.elements(); j.hasMoreElements();) {
+                    final TurnOrdered rerollItem = j.nextElement();
                     if (item == rerollItem) { // this is the team re-rolling
                         item.getInitiative().replaceRoll();
                         break; // each team only needs one reroll
@@ -159,12 +159,12 @@ public abstract class TurnOrdered implements Serializable
 
         // check for ties
         Vector<TurnOrdered> ties = new Vector<TurnOrdered>();
-        for (Enumeration i = v.elements(); i.hasMoreElements();) {
-            final TurnOrdered item = (TurnOrdered)i.nextElement();
+        for (Enumeration<? extends TurnOrdered> i = v.elements(); i.hasMoreElements();) {
+            final TurnOrdered item = i.nextElement();
             ties.removeAllElements();
             ties.addElement(item);
-            for (Enumeration j = v.elements(); j.hasMoreElements();) {
-                final TurnOrdered other = (TurnOrdered)j.nextElement();
+            for (Enumeration<? extends TurnOrdered> j = v.elements(); j.hasMoreElements();) {
+                final TurnOrdered other = j.nextElement();
                 if (item != other && item.getInitiative().equals(other.getInitiative())) {
                     ties.addElement(other);
                 }
@@ -200,9 +200,9 @@ public abstract class TurnOrdered implements Serializable
         });
 
         // Walk through the ordered items.
-        for ( Iterator i = plist.iterator();
+        for ( Iterator<TurnOrdered> i = plist.iterator();
               i.hasNext(); orderedItems++ ) {
-            final TurnOrdered item = (TurnOrdered)i.next();
+            final TurnOrdered item = i.next();
             order[orderedItems] = item;
         
             // Track even turns separately from the normal turns.

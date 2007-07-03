@@ -22,7 +22,7 @@ import java.util.Vector;
  * A handy utility class for collecting <code>Vectors</code> of
  * <code>TurnOrdered</code> markers and then walking through them.
  */
-public class TurnVectors implements Enumeration {
+public class TurnVectors implements Enumeration<TurnOrdered> {
     private final int numEven;
     private final int numNormal;
     private final Vector<TurnOrdered> even_turns;
@@ -62,8 +62,6 @@ public class TurnVectors implements Enumeration {
      *          <code>TurnOrdered</code> object markers for normal turns
      * @param   evenCount the <code>int</code> count of markers
      *          for turns that occur after all normal turns.
-     * @param   order the array of <code>TurnOrdered</code> objects, sorted
-     *          in order of appearance.
      * @param   min the smallest <code>int</code> number of times one of the
      *          <code>TurnOrdered</code> objects appears in the normal list.
      */    
@@ -99,7 +97,7 @@ public class TurnVectors implements Enumeration {
      * after all normal turns.
      *
      * @param   marker the <code>TurnOrdered</code> marker for a even turn.
-     * @exception <code>IllegalStateException</code> if as many markers
+     * @exception IllegalStateException if as many markers
      *          have been added for even turns as indicated at construction.
      */
     public void addEven( TurnOrdered marker ) {
@@ -114,7 +112,7 @@ public class TurnVectors implements Enumeration {
      * Add a <code>TurnOrdered</code> marker for a "normal" turn.
      *
      * @param   marker the <code>TurnOrdered</code> marker for a "normal" turn.
-     * @exception <code>IllegalStateException</code> if as many markers
+     * @exception IllegalStateException if as many markers
      *          have been added for normal turns as indicated at construction.
      */
     public void addNormal( TurnOrdered marker ) {
@@ -140,7 +138,7 @@ public class TurnVectors implements Enumeration {
      * @return  the <code>TurnOrdered</code> marker; all "even" markers
      *          will be returned after all "normal" markers.
      */
-    public Object nextElement() {
+    public TurnOrdered nextElement() {
         return this.getTurnEnum().nextElement();
     }
 
@@ -158,7 +156,7 @@ public class TurnVectors implements Enumeration {
      *
      * @return  the "even" <code>TurnOrdered</code> marker.
      */
-    public Object nextEvenElement() {
+    public TurnOrdered nextEvenElement() {
         return this.getEvenEnum().nextElement();
     }
 
@@ -166,7 +164,7 @@ public class TurnVectors implements Enumeration {
      * Return the smallest number of times one of the <code>TurnOrdered</code>
      * objects is present in the list of "normal" turns.
      *
-     * @param   the <code>int</code> number of times.
+     * @return the <code>int</code> number of times.
      */
     public int getMin() {
         return this.min;

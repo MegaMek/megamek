@@ -673,7 +673,7 @@ public class MovementDisplay
     }
 
     /**
-     * Clears out the curently selected movement data and
+     * Clears out the currently selected movement data and
      * resets it.
      */
     private void clearAllMoves() {
@@ -703,13 +703,8 @@ public class MovementDisplay
         updateSearchlightButton();
         updateElevationButtons();
 
-        // We may not have an entity selected yet (race condition).
-        if (ce != null) {
-            loadedUnits = ce.getLoadedUnits();
-        } else {
-            // The variable, loadedUnits, can not be null.
-            loadedUnits = new Vector<Entity>();
-        }
+        loadedUnits = ce.getLoadedUnits();
+        
         updateLoadButtons();
         updateElevationButtons();
     }
@@ -781,7 +776,7 @@ public class MovementDisplay
                 return;
             }
         }
-        
+
         disableButtons();
         clientgui.bv.clearMovementData();
         if (ce().hasUMU()) {
@@ -827,8 +822,8 @@ public class MovementDisplay
         firstStep = true;
         /* Bug 754610: Revert fix for bug 702735. */
         MoveStep prevStep = null;
-        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = (MoveStep) i.nextElement();
+        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
             boolean isPavementStep = step.isPavementStep();
             
             // stop for illegal movement
@@ -1054,6 +1049,7 @@ public class MovementDisplay
         if ((moveType == MovePath.STEP_BACKWARDS
                 || moveType == MovePath.STEP_LATERAL_LEFT_BACKWARDS
                 || moveType == MovePath.STEP_LATERAL_RIGHT_BACKWARDS)
+                && prevHex != null
                 && prevHex.getElevation() != client.game.getBoard().getHex(curPos).getElevation() 
                 && !(entity instanceof VTOL)) {
             nagReport.append(Messages.getString("MovementDisplay.BackWardsElevationChange"));
@@ -1308,11 +1304,11 @@ public class MovementDisplay
         } else {
             // Check the other entities in the current hex for friendly units.
             Entity other = null;
-            Enumeration entities = client.game.getEntities(ce.getPosition());
+            Enumeration<Entity> entities = client.game.getEntities(ce.getPosition());
             boolean isGood = false;
             while (entities.hasMoreElements()) {
                 // Is the other unit friendly and not the current entity?
-                other = (Entity) entities.nextElement();
+                other = entities.nextElement();
                 if (ce.getOwner().equals(other.getOwner())
                         && !ce.equals(other)) {
                     // Yup. If the current entity has at least 1 MP, if it can
@@ -1394,12 +1390,12 @@ public class MovementDisplay
         Targetable choice = null;
 
         // Get the available choices.
-        Enumeration choices = client.game.getEntities(pos);
+        Enumeration<Entity> choices = client.game.getEntities(pos);
 
         // Convert the choices into a List of targets.
         ArrayList<Targetable> targets = new ArrayList<Targetable>();
         while (choices.hasMoreElements()) {
-            choice = (Targetable) choices.nextElement();
+            choice = choices.nextElement();
             if (!ce.equals(choice)) {
                 targets.add(choice);
             }
@@ -1640,10 +1636,10 @@ public class MovementDisplay
             // Find the other friendly unit in our hex, add it
             // to our local list of loaded units, and then stop.
             Entity other = null;
-            Enumeration entities =
+            Enumeration<Entity> entities =
                     client.game.getEntities(ce.getPosition());
             while (entities.hasMoreElements()) {
-                other = (Entity) entities.nextElement();
+                other = entities.nextElement();
                 if (ce.getOwner().equals(other.getOwner()) &&
                         !ce.equals(other)) {
                     loadedUnits.addElement(other);

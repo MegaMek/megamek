@@ -37,7 +37,7 @@ public final class Team extends TurnOrdered implements Serializable
         return players.size();
     }
 
-    public Enumeration getPlayers() {
+    public Enumeration<Player> getPlayers() {
         return players.elements();
     }
 
@@ -84,8 +84,8 @@ public final class Team extends TurnOrdered implements Serializable
     public int getEvenTurns() {
         // Sum the even turns of all Players in this Team.
         int sum = 0;
-        for (Enumeration loop = players.elements(); loop.hasMoreElements(); ) {
-            sum += ( (Player) loop.nextElement() ).getEvenTurns();
+        for (Enumeration<Player> loop = players.elements(); loop.hasMoreElements(); ) {
+            sum += loop.nextElement().getEvenTurns();
         }
         return sum;
     }
@@ -93,8 +93,8 @@ public final class Team extends TurnOrdered implements Serializable
     public int getOtherTurns() {
         // Sum the other turns of all Players in this Team.
         int sum = 0;
-        for (Enumeration loop = players.elements(); loop.hasMoreElements(); ) {
-            sum += ( (Player) loop.nextElement() ).getOtherTurns();
+        for (Enumeration<Player> loop = players.elements(); loop.hasMoreElements(); ) {
+            sum += loop.nextElement().getOtherTurns();
         }
         return sum;
     }
@@ -102,8 +102,8 @@ public final class Team extends TurnOrdered implements Serializable
     public int getMultiTurns(IGame game) {
         // Sum the multi turns of all Players in this Team.
         int sum = 0;
-        for (Enumeration loop = players.elements(); loop.hasMoreElements(); ) {
-            sum += ( (Player) loop.nextElement() ).getMultiTurns(game);
+        for (Enumeration<Player> loop = players.elements(); loop.hasMoreElements(); ) {
+            sum += loop.nextElement().getMultiTurns(game);
         }
         return sum;
     }
@@ -124,8 +124,8 @@ public final class Team extends TurnOrdered implements Serializable
              other.getSize() != this.getSize() ) {
             return false;
         }
-        Enumeration thisPlayers = this.getPlayers();
-        Enumeration otherPlayers = other.getPlayers();
+        Enumeration<Player> thisPlayers = this.getPlayers();
+        Enumeration<Player> otherPlayers = other.getPlayers();
         while ( thisPlayers.hasMoreElements() ) {
             if ( !thisPlayers.nextElement().equals(otherPlayers.nextElement()) ) {
                 return false;
@@ -136,8 +136,8 @@ public final class Team extends TurnOrdered implements Serializable
     }
 
     public boolean hasTAG(IGame game) {
-       for (Enumeration e = game.getPlayers(); e.hasMoreElements(); ) {
-            Player m = (Player)e.nextElement();
+       for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements(); ) {
+            Player m = e.nextElement();
             if (getId() == m.getTeam()) {
                 if (m.hasTAG()) {
                     return true;

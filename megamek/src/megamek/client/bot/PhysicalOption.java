@@ -8,6 +8,7 @@ import megamek.common.Targetable;
 import megamek.common.INarcPod;
 import megamek.common.ToHitData;
 import megamek.common.actions.AbstractAttackAction;
+import megamek.common.actions.EntityAction;
 import megamek.common.actions.KickAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
@@ -110,9 +111,9 @@ public class PhysicalOption {
         return null;
     }
 
-    public Vector<AbstractAttackAction> getVector() {
+    public Vector<EntityAction> getVector() {
         AbstractAttackAction aaa = toAction();
-        Vector<AbstractAttackAction> v = new Vector<AbstractAttackAction>();
+        Vector<EntityAction> v = new Vector<EntityAction>();
         if (aaa != null) {
             v.addElement(aaa);
         }

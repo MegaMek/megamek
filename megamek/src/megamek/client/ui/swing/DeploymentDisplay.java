@@ -40,7 +40,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -364,7 +363,7 @@ public class DeploymentDisplay
         }
         
         // ignore buttons other than 1
-        if (!client.isMyTurn() || ce() == null || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || ce() == null || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
 
@@ -375,7 +374,7 @@ public class DeploymentDisplay
         }
 
         // check for shifty goodness
-        boolean shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
+        boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
         
         // check for a deployment
         Coords moveto = b.getCoords();
@@ -422,9 +421,9 @@ public class DeploymentDisplay
             ce().setPosition(null);
             clientgui.bv.redrawEntity(ce());
             // Unload any loaded units.
-            Enumeration iter = ce().getLoadedUnits().elements();
+            Enumeration<Entity> iter = ce().getLoadedUnits().elements();
             while (iter.hasMoreElements()) {
-                Entity other = (Entity) iter.nextElement();
+                Entity other = iter.nextElement();
                 // Please note, the Server never got this unit's load orders.
                 ce().unload(other);
                 other.setTransportId(Entity.NONE);
@@ -436,10 +435,10 @@ public class DeploymentDisplay
         } else if (ev.getActionCommand().equals(DEPLOY_LOAD)) {
             // What undeployed units can we load?
             Vector<Entity> choices = new Vector<Entity>();
-            Enumeration entities = client.game.getEntities();
+            Enumeration<Entity> entities = client.game.getEntities();
             Entity other;
             while (entities.hasMoreElements()) {
-                other = (Entity) entities.nextElement();
+                other = entities.nextElement();
                 if (other.isSelectableThisTurn()
                         && ce().canLoad(other)) {
                     choices.addElement(other);
@@ -474,12 +473,12 @@ public class DeploymentDisplay
         } // End load-unit
         else if (ev.getActionCommand().equals(DEPLOY_UNLOAD)) {
             // Do we have anyone to unload?
-            Vector choices = ce().getLoadedUnits();
+            Vector<Entity> choices = ce().getLoadedUnits();
             if (choices.size() > 0) {
                 Entity other = null;
                 String[] names = new String[choices.size()];
                 for (int loop = 0; loop < names.length; loop++) {
-                    names[loop] = ((Entity) choices.elementAt(loop)).getShortName();
+                    names[loop] = choices.elementAt(loop).getShortName();
                 }
                 SingleChoiceDialog choiceDialog =
                         new SingleChoiceDialog(clientgui.frame,
@@ -488,7 +487,7 @@ public class DeploymentDisplay
                                 names);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer()) {
-                    other = (Entity) choices.elementAt(choiceDialog.getChoice());
+                    other = choices.elementAt(choiceDialog.getChoice());
                     // Please note, the Server never got this load order.
                     if (ce().unload(other)) {
                         other.setTransportId(Entity.NONE);
@@ -551,9 +550,9 @@ public class DeploymentDisplay
                     ce().setPosition(null);
                     clientgui.bv.redrawEntity(ce());
                     // Unload any loaded units.
-                    Enumeration iter = ce().getLoadedUnits().elements();
+                    Enumeration<Entity> iter = ce().getLoadedUnits().elements();
                     while (iter.hasMoreElements()) {
-                        Entity other = (Entity) iter.nextElement();
+                        Entity other = iter.nextElement();
                         // Please note, the Server never got this unit's load orders.
                         ce().unload(other);
                         other.setTransportId(Entity.NONE);

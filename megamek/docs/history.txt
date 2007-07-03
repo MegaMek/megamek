@@ -34,6 +34,7 @@ v0.33.7-dev (SVN)
 + Bug: Silver Bullet Gauss says Missiles instead of projectiles. in fireing phase
 + added more fixes to db messages
 + Code cleanup (more javadoc, more generics, few small bug fixes, etc)
++ Partially working AirMechs.
 + Bug: Fuel tank explosion causing NPE
 
 v0.33.6 (2007-05-26, 20:00 GMT +2)

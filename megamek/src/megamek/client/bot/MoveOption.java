@@ -154,7 +154,7 @@ public class MoveOption extends MovePath implements Cloneable {
         this.prone = base.prone;
     }
 
-    public Object clone() {
+    public MoveOption clone() {
         return new MoveOption(this);
     }
 

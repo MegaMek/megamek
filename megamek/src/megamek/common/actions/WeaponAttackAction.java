@@ -42,6 +42,7 @@ import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.RangeType;
 import megamek.common.Tank;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
@@ -55,7 +56,7 @@ import megamek.common.MiscType;
 public class WeaponAttackAction extends AbstractAttackAction {
     private int weaponId;
     private int ammoId = -1;
-    private int aimedLocation = Mech.LOC_NONE;
+    private int aimedLocation = Entity.LOC_NONE;
     private int aimMode = IAimingModes.AIM_MODE_NONE;
     private int otherAttackInfo = -1;   // 
     private boolean nemesisConfused;
@@ -237,7 +238,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 ammo, isArtilleryFLAK, targetInBuilding,
                 isArtilleryDirect, isTargetECMAffected);
         if (reason!=null) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, reason);
+            return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
         }
         long munition = AmmoType.M_STANDARD;
         if (atype != null) {
@@ -267,6 +268,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         if (isIndirect) {
             if(target instanceof Entity && 
                     !isTargetECMAffected &&
+                    te != null && atype != null && 
                     usesAmmo &&
                     atype.getMunitionType() == AmmoType.M_NARC_CAPABLE &&
                     (te.isNarcedBy(ae.getOwner().getTeam()))) {
@@ -286,6 +288,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         boolean MPMelevationHack = false;
         if(usesAmmo && wtype.getAmmoType() == AmmoType.T_LRM
+                && atype != null
                 && atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE
                 && ae.getElevation() == -1
                 && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
@@ -316,7 +319,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                             || atype.getAmmoType() == AmmoType.T_MML)
                             && munition == AmmoType.M_TORPEDO))
                     && (los.getMinimumWaterDepth() < 1)) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Torpedos must follow water their entire LOS");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Torpedos must follow water their entire LOS");
             }
         } else {
             los = LosEffects.calculateLos(game, spotter.getId(), target);
@@ -341,7 +344,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         // Mine Launchers don't use gunnery.
         if ( Infantry.LEG_ATTACK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getLegAttackBaseToHit( ae, te );
-            if(toHit.getValue() == ToHitData.IMPOSSIBLE)
+            if(toHit.getValue() == TargetRoll.IMPOSSIBLE)
                 return toHit;
     
             // If the attacker has Assault claws, give a -1 modifier.
@@ -356,7 +359,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
         } else if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
             toHit = Compute.getSwarmMekBaseToHit( ae, te );
-            if(toHit.getValue() == ToHitData.IMPOSSIBLE)
+            if(toHit.getValue() == TargetRoll.IMPOSSIBLE)
                 return toHit;
             
             if(te instanceof Tank) {
@@ -399,7 +402,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
         } else if ( Infantry.STOP_SWARM.equals( wtype.getInternalName() ) ) {
             // Can't stop if we're not swarming, otherwise automatic.
-            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+            return new ToHitData( TargetRoll.AUTOMATIC_SUCCESS,
                                       "End swarm attack." );
         }
         else if ( BattleArmor.MINE_LAUNCHER.equals(wtype.getInternalName()) ) {
@@ -411,10 +414,10 @@ public class WeaponAttackAction extends AbstractAttackAction {
         else if ( te != null && ae.getSwarmTargetId() == te.getId() ) {
             // Only certain weapons can be used in a swarm attack.
             if(wtype.hasFlag(WeaponType.F_MISSILE)) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Missile weapons can't be used in swarm attack");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Missile weapons can't be used in swarm attack");
             }
             int side = te instanceof Tank?ToHitData.SIDE_RANDOM:ToHitData.SIDE_FRONT;
-            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+            return new ToHitData( TargetRoll.AUTOMATIC_SUCCESS,
                                       "Attack during swarm.",
                                       ToHitData.HIT_SWARM,
                                       side );
@@ -590,7 +593,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition()) && !isArtilleryFLAK) {
-                return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
             }
             return toHit;
         }
@@ -600,12 +603,12 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
 
             if (game.getEntity(attackerId).getOwner().getArtyAutoHitHexes().contains(target.getPosition())) {
-                return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Artillery firing at designated artillery target.");
             }
             toHit.addModifier(7, "indirect artillery modifier");
             int adjust = ae.aTracker.getModifier(weapon,target.getPosition());
-            if (adjust==ToHitData.AUTOMATIC_SUCCESS) {
-                return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "Artillery firing at target that's been hit before.");
+            if (adjust==TargetRoll.AUTOMATIC_SUCCESS) {
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Artillery firing at target that's been hit before.");
             } else if (adjust!=0) {
                 toHit.addModifier(adjust, "adjusted fire");
             }
@@ -621,7 +624,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                     || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
                     || target instanceof GunEmplacement)) {
-            return new ToHitData(ToHitData.AUTOMATIC_SUCCESS,
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                                   "Targeting adjacent building.");
         }
     
@@ -632,7 +635,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                     || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
                     || target instanceof GunEmplacement)) {
-            return new ToHitData(ToHitData.AUTOMATIC_SUCCESS,
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
                     "Targeting building from inside (are you SURE this is a good idea?).");
         }
     
@@ -937,7 +940,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit.append(Compute.getTargetMovementModifier(game, oldTarget.getId()));
             toHit.append(Compute.getTargetTerrainModifier(game, game.getEntity(oldTarget.getId())));
             distance = Compute.effectiveDistance(game, ae, oldTarget);
-            if (oldTarget != null && oldTarget.isProne()) {
+            if (oldTarget.isProne()) {
                 // easier when point-blank
                 if (distance <= 1) {
                     proneMod = new ToHitData(-2, "target prone and adjacent");
@@ -948,6 +951,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             }
             toHit.append(proneMod);
             if (!isECMAffected
+                    && atype != null 
                     && !oldTarget.isEnemyOf(ae)
                     && !(oldTarget.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
                     && atype.getMunitionType() == AmmoType.M_SWARM_I) {
@@ -1239,13 +1243,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
 
         // Handle solo attack weapons.
         if ( wtype.hasFlag(WeaponType.F_SOLO_ATTACK) ) {
-            for ( Enumeration i = game.getActions();
+            for ( Enumeration<EntityAction> i = game.getActions();
                   i.hasMoreElements(); ) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
+                EntityAction ea = i.nextElement();
+                if (!(ea instanceof WeaponAttackAction)) {
                     continue;
                 }
-                WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
                 if (prevAttack.getEntityId() == attackerId) {
     
                     // If the attacker fires another weapon, this attack fails.
@@ -1269,13 +1273,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     return "Can't fire field guns in same turn as moving";
             }
             //check for mixing infantry and field gun attacks
-            for ( Enumeration i = game.getActions();
+            for ( Enumeration<EntityAction> i = game.getActions();
                   i.hasMoreElements(); ) {
-                Object o = i.nextElement();
-                if (!(o instanceof WeaponAttackAction)) {
+                EntityAction ea = i.nextElement();
+                if (!(ea instanceof WeaponAttackAction)) {
                     continue;
                 }
-                WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                final WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
                 if (prevAttack.getEntityId() == attackerId) {
                     Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
                     if( prevWeapon.getType().hasFlag(WeaponType.F_INFANTRY) != wtype.hasFlag(WeaponType.F_INFANTRY) ) {
@@ -1393,7 +1397,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
         }
     
         // if LOS is blocked, block the shot
-        if (losMods.getValue() == ToHitData.IMPOSSIBLE && !isArtilleryIndirect) {
+        if (losMods.getValue() == TargetRoll.IMPOSSIBLE && !isArtilleryIndirect) {
             return losMods.getDesc();
         }
     
@@ -1424,7 +1428,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit = Compute.getLegAttackBaseToHit( ae, te );
     
             // Return if the attack is impossible.
-            if ( ToHitData.IMPOSSIBLE == toHit.getValue() ) {
+            if ( TargetRoll.IMPOSSIBLE == toHit.getValue() ) {
                 return toHit.getDesc();
             }
         }
@@ -1432,7 +1436,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             toHit = Compute.getSwarmMekBaseToHit( ae, te );
     
             // Return if the attack is impossible.
-            if ( ToHitData.IMPOSSIBLE == toHit.getValue() ) {
+            if ( TargetRoll.IMPOSSIBLE == toHit.getValue() ) {
                 return toHit.getDesc();
             }
         }
@@ -1479,7 +1483,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             if (boardRange>wtype.getLongRange()) {
                 return "Indirect artillery attack out of range";
             }
-            if (distance<=17  && !(losMods.getValue()==ToHitData.IMPOSSIBLE)) {
+            if (distance<=17  && !(losMods.getValue()==TargetRoll.IMPOSSIBLE)) {
                 return "Cannot fire indirectly at range <=17 hexes unless no LOS.";
             }
             if (isHoming) {

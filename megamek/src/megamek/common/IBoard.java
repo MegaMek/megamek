@@ -279,13 +279,13 @@ public interface IBoard {
      * @param   bldgs - the <code>Vector</code> of <code>Building</code>
      *          objects to be collapsed.
      */
-    public abstract void collapseBuilding(Vector bldgs);
+    public abstract void collapseBuilding(Vector<Building> bldgs);
     
     /**
      * The given building has collapsed.  Remove it from the board and
      * replace it with rubble.
      *
-     * @param   other - the <code>Building</code> that has collapsed.
+     * @param   bldg - the <code>Building</code> that has collapsed.
      */
     public abstract void collapseBuilding(Building bldg);
     
@@ -293,7 +293,7 @@ public interface IBoard {
      * The given building hex has collapsed.  Remove it from the board and
      * replace it with rubble.
      *
-     * @param   other - the <code>Building</code> that has collapsed.
+     * @param   coords - the <code>Building</code> that has collapsed.
      */
     public abstract void collapseBuilding( Coords coords );
     
@@ -303,7 +303,7 @@ public interface IBoard {
      * @param   bldgs - the <code>Vector</code> of <code>Building</code>
      *          objects to be updated.
      */
-    public abstract void updateBuildingCF(Vector bldgs);
+    public abstract void updateBuildingCF(Vector<Building> bldgs);
 
     /**
      * Get the current value of the "road auto-exit" option.

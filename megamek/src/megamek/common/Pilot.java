@@ -168,14 +168,14 @@ public class Pilot
     }
 
     public void clearAdvantages() {
-      for (Enumeration i = options.getGroups(); i.hasMoreElements();) {
-          IOptionGroup group = (IOptionGroup)i.nextElement();
+      for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+          IOptionGroup group = i.nextElement();
           
           if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
             continue;
             
-          for (Enumeration j = group.getOptions(); j.hasMoreElements();) {
-              IOption option = (IOption)j.nextElement();
+          for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+              IOption option = j.nextElement();
               
               option.clearValue();
           }
@@ -186,14 +186,14 @@ public class Pilot
     public int countAdvantages() {
       int count = 0;
       
-      for (Enumeration i = options.getGroups(); i.hasMoreElements();) {
-          IOptionGroup group = (IOptionGroup)i.nextElement();
+      for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+          IOptionGroup group = i.nextElement();
           
           if ( !group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
             continue;
             
-          for (Enumeration j = group.getOptions(); j.hasMoreElements();) {
-              IOption option = (IOption)j.nextElement();
+          for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+              IOption option = j.nextElement();
               
               if ( option.booleanValue() )
                 count++;
@@ -206,16 +206,16 @@ public class Pilot
     /**
         Returns the LVL3 Rules "Pilot Advantages" this pilot has
     */
-    public Enumeration getAdvantages() {
-        for (Enumeration i = options.getGroups(); i.hasMoreElements();) {
-            IOptionGroup group = (IOptionGroup)i.nextElement();
+    public Enumeration<IOption> getAdvantages() {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
 
             if ( group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
                 return group.getOptions();
         }
 
         // no pilot advantages -- return an empty Enumeration
-        return new java.util.Vector().elements();
+        return new Vector<IOption>().elements();
     }
 
     /**
@@ -229,8 +229,8 @@ public class Pilot
         sep = "";
       }
       
-    for (Enumeration j = getAdvantages(); j.hasMoreElements();) {
-        IOption option = (IOption)j.nextElement();
+    for (Enumeration<IOption> j = getAdvantages(); j.hasMoreElements();) {
+        IOption option = j.nextElement();
 
         if ( option.booleanValue() ) {
             if ( adv.length() > 0 ) {

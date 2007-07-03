@@ -14,6 +14,28 @@
 
 package megamek.client.ui.AWT;
 
+import java.awt.Button;
+import java.awt.CardLayout;
+import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.List;
+import java.awt.Rectangle;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
+
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.AWT.widget.ArmlessMechMapSet;
@@ -54,33 +76,10 @@ import megamek.common.Mounted;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
-import megamek.common.Report;
 import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
 import megamek.common.WeaponType;
-
-import java.awt.Button;
-import java.awt.CardLayout;
-import java.awt.Choice;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.List;
-import java.awt.Rectangle;
-import java.awt.TextArea;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Vector;
 
 /**
  * Displays the info for a mech.  This is also a sort
@@ -263,7 +262,7 @@ public class MechDisplay extends BufferedPanel {
             int dx = Math.round((w - r.width) / 2);
             if (dx < minLeftMargin) dx = minLeftMargin;
             int dy = minTopMargin;
-            if (r != null) setContentMargins(dx, dy, dx, dy);
+            setContentMargins(dx, dy, dx, dy);
         }
 
         /**
@@ -1214,8 +1213,6 @@ public class MechDisplay extends BufferedPanel {
 
         public Choice m_chMode;
         public Button m_bDumpAmmo;
-        //public Label modeLabel;
-        private ClientGUI clientgui;
 
         private final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
 
@@ -1226,7 +1223,6 @@ public class MechDisplay extends BufferedPanel {
 
             FontMetrics fm = getFontMetrics(FONT_VALUE);
 
-            this.clientgui = clientgui;
             locLabel = new TransparentLabel(Messages.getString("MechDisplay.Location"), fm, Color.white, TransparentLabel.CENTER); //$NON-NLS-1$
             slotLabel = new TransparentLabel(Messages.getString("MechDisplay.Slot"), fm, Color.white, TransparentLabel.CENTER); //$NON-NLS-1$
 
@@ -1652,7 +1648,6 @@ public class MechDisplay extends BufferedPanel {
         public java.awt.List narcList;
         private int myMechId;
     
-//    private Prompt prompt;
         private Slider prompt;
 
         private int sinks;
@@ -1660,12 +1655,9 @@ public class MechDisplay extends BufferedPanel {
 
         private final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayLargeFontSize")); //$NON-NLS-1$
 
-        private ClientGUI clientgui;
-
         public ExtraPanel(ClientGUI clientgui) {
             super();
 
-            this.clientgui = clientgui;
             prompt = null;
 
             FontMetrics fm = getFontMetrics(FONT_VALUE);

@@ -14,40 +14,8 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.event.MechDisplayEvent;
-import megamek.client.event.MechDisplayListener;
-import megamek.client.ui.AWT.Messages;
-import megamek.client.ui.swing.widget.ArmlessMechMapSet;
-import megamek.client.ui.swing.widget.BackGroundDrawer;
-import megamek.client.ui.swing.widget.BattleArmorMapSet;
-import megamek.client.ui.swing.widget.BufferedPanel;
-import megamek.client.ui.swing.widget.DisplayMapSet;
-import megamek.client.ui.swing.widget.GeneralInfoMapSet;
-import megamek.client.ui.swing.widget.GunEmplacementMapSet;
-import megamek.client.ui.swing.widget.InfantryMapSet;
-import megamek.client.ui.swing.widget.MechMapSet;
-import megamek.client.ui.swing.widget.MechPanelTabStrip;
-import megamek.client.ui.swing.widget.PMUtil;
-import megamek.client.ui.swing.widget.PicMap;
-import megamek.client.ui.swing.widget.ProtomechMapSet;
-import megamek.client.ui.swing.widget.QuadMapSet;
-import megamek.client.ui.swing.widget.TankMapSet;
-import megamek.client.ui.swing.widget.VTOLMapSet;
-import megamek.common.*;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
@@ -60,6 +28,64 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import megamek.client.event.MechDisplayEvent;
+import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.swing.widget.ArmlessMechMapSet;
+import megamek.client.ui.swing.widget.BackGroundDrawer;
+import megamek.client.ui.swing.widget.BattleArmorMapSet;
+import megamek.client.ui.swing.widget.DisplayMapSet;
+import megamek.client.ui.swing.widget.GeneralInfoMapSet;
+import megamek.client.ui.swing.widget.GunEmplacementMapSet;
+import megamek.client.ui.swing.widget.InfantryMapSet;
+import megamek.client.ui.swing.widget.MechMapSet;
+import megamek.client.ui.swing.widget.MechPanelTabStrip;
+import megamek.client.ui.swing.widget.PMUtil;
+import megamek.client.ui.swing.widget.PicMap;
+import megamek.client.ui.swing.widget.ProtomechMapSet;
+import megamek.client.ui.swing.widget.QuadMapSet;
+import megamek.client.ui.swing.widget.TankMapSet;
+import megamek.client.ui.swing.widget.VTOLMapSet;
+import megamek.common.AmmoType;
+import megamek.common.ArmlessMech;
+import megamek.common.BattleArmor;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EquipmentMode;
+import megamek.common.EquipmentType;
+import megamek.common.GunEmplacement;
+import megamek.common.IGame;
+import megamek.common.IHex;
+import megamek.common.ILocationExposureStatus;
+import megamek.common.INarcPod;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.Player;
+import megamek.common.Protomech;
+import megamek.common.QuadMech;
+import megamek.common.Tank;
+import megamek.common.Terrains;
+import megamek.common.VTOL;
+import megamek.common.WeaponType;
 
 /**
  * Displays the info for a mech.  This is also a sort
@@ -381,7 +407,7 @@ public class MechDisplay extends JPanel {
      * This class contains the all the gizmos for firing the
      * mech's weapons.
      */
-    public class WeaponPanel extends BufferedPanel
+    public class WeaponPanel extends PicMap
             implements ItemListener, ListSelectionListener {
         private static final String IMAGE_DIR = "data/images/widgets";
 
@@ -422,8 +448,13 @@ public class MechDisplay extends JPanel {
         private ArrayList<Mounted> vAmmo;
         private Entity entity;
 
+        private int minTopMargin = 8;
+        private int minLeftMargin = 8;
+
         WeaponPanel() {
-            super(new GridBagLayout());
+        	
+            GridBagLayout gridBagLayout = new GridBagLayout();
+			setLayout(gridBagLayout);
 
             // weapon list
             weaponList = new JList(new DefaultListModel());
@@ -436,17 +467,17 @@ public class MechDisplay extends JPanel {
             c.fill = GridBagConstraints.BOTH;
             c.insets = new Insets(15, 9, 1, 9);
             c.weightx = 0.0;
-            c.weighty = 1.0;
             c.gridx = 0;
             c.gridy = 0;
             c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout) getLayout()).setConstraints(weaponList, c);
+            gridBagLayout.setConstraints(weaponList, c);
             add(weaponList);
 
             //adding Ammo choice + label
 
             wAmmo = new JLabel(Messages.getString("MechDisplay.Ammo"), SwingConstants.LEFT); //$NON-NLS-1$
-            wAmmo.setOpaque(true);
+            wAmmo.setOpaque(false);
+            wAmmo.setForeground(Color.WHITE);
             m_chAmmo = new JComboBox();
             m_chAmmo.addItemListener(this);
 
@@ -457,7 +488,7 @@ public class MechDisplay extends JPanel {
             c.fill = GridBagConstraints.NONE;
             c.gridx = 0;
             c.gridy = 1;
-            ((GridBagLayout) getLayout()).setConstraints(wAmmo, c);
+            gridBagLayout.setConstraints(wAmmo, c);
             add(wAmmo);
 
             c.insets = new Insets(1, 1, 1, 9);
@@ -465,15 +496,17 @@ public class MechDisplay extends JPanel {
             c.gridx = 1;
             c.gridy = 1;
             c.fill = GridBagConstraints.HORIZONTAL;
-            ((GridBagLayout) getLayout()).setConstraints(m_chAmmo, c);
+            gridBagLayout.setConstraints(m_chAmmo, c);
             add(m_chAmmo);
 
             //Adding Heat Buildup
 
             currentHeatBuildupL = new JLabel(Messages.getString("MechDisplay.HeatBuildup"), SwingConstants.RIGHT); //$NON-NLS-1$
             currentHeatBuildupL.setOpaque(false);
+            currentHeatBuildupL.setForeground(Color.WHITE);
             currentHeatBuildupR = new JLabel("--", SwingConstants.LEFT); //$NON-NLS-1$
             currentHeatBuildupR.setOpaque(false);
+            currentHeatBuildupR.setForeground(Color.WHITE);
 
             c.insets = new Insets(2, 9, 2, 1);
             c.gridwidth = 2;
@@ -481,7 +514,7 @@ public class MechDisplay extends JPanel {
             c.gridy = 2;
             c.fill = GridBagConstraints.NONE;
             c.anchor = GridBagConstraints.EAST;
-            ((GridBagLayout) getLayout()).setConstraints(currentHeatBuildupL, c);
+            gridBagLayout.setConstraints(currentHeatBuildupL, c);
             add(currentHeatBuildupL);
 
             c.insets = new Insets(2, 1, 2, 9);
@@ -489,23 +522,29 @@ public class MechDisplay extends JPanel {
             c.gridx = 2;
             c.anchor = GridBagConstraints.WEST;
             //c.fill = GridBagConstraints.HORIZONTAL;
-            ((GridBagLayout) getLayout()).setConstraints(currentHeatBuildupR, c);
+            gridBagLayout.setConstraints(currentHeatBuildupR, c);
             add(currentHeatBuildupR);
 
 
             //Adding weapon display labels
             wNameL = new JLabel(Messages.getString("MechDisplay.Name"), SwingConstants.CENTER); //$NON-NLS-1$
-            wNameL.setOpaque(true);
+            wNameL.setOpaque(false);
+            wNameL.setForeground(Color.WHITE);
             wHeatL = new JLabel(Messages.getString("MechDisplay.Heat"), SwingConstants.CENTER); //$NON-NLS-1$
-            wHeatL.setOpaque(true);
+            wHeatL.setOpaque(false);
+            wHeatL.setForeground(Color.WHITE);
             wDamL = new JLabel(Messages.getString("MechDisplay.Damage"), SwingConstants.CENTER); //$NON-NLS-1$
-            wDamL.setOpaque(true);
+            wDamL.setOpaque(false);
+            wDamL.setForeground(Color.WHITE);
             wNameR = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
             wNameR.setOpaque(false);
+            wNameR.setForeground(Color.WHITE);
             wHeatR = new JLabel("--", SwingConstants.CENTER); //$NON-NLS-1$
             wHeatR.setOpaque(false);
+            wHeatR.setForeground(Color.WHITE);
             wDamR = new JLabel("--", SwingConstants.CENTER); //$NON-NLS-1$
             wDamR.setOpaque(false);
+            wDamR.setForeground(Color.WHITE);
 
             c.anchor = GridBagConstraints.CENTER;
             c.fill = GridBagConstraints.BOTH;
@@ -513,93 +552,103 @@ public class MechDisplay extends JPanel {
             c.gridwidth = 2;
             c.gridx = 0;
             c.gridy = 3;
-            ((GridBagLayout) getLayout()).setConstraints(wNameL, c);
+            gridBagLayout.setConstraints(wNameL, c);
             add(wNameL);
 
             c.insets = new Insets(2, 1, 1, 1);
             c.gridwidth = 1;
             c.gridx = 2;
-            ((GridBagLayout) getLayout()).setConstraints(wHeatL, c);
+            gridBagLayout.setConstraints(wHeatL, c);
             add(wHeatL);
 
             c.insets = new Insets(2, 1, 1, 9);
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.gridx = 3;
-            ((GridBagLayout) getLayout()).setConstraints(wDamL, c);
+            gridBagLayout.setConstraints(wDamL, c);
             add(wDamL);
 
             c.insets = new Insets(1, 9, 2, 1);
             c.gridwidth = 2;
             c.gridx = 0;
             c.gridy = 4;
-            ((GridBagLayout) getLayout()).setConstraints(wNameR, c);
+            gridBagLayout.setConstraints(wNameR, c);
             add(wNameR);
 
             c.gridwidth = 1;
             c.gridx = 2;
-            ((GridBagLayout) getLayout()).setConstraints(wHeatR, c);
+            gridBagLayout.setConstraints(wHeatR, c);
             add(wHeatR);
 
             c.insets = new Insets(1, 1, 2, 9);
             c.gridx = 3;
             c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout) getLayout()).setConstraints(wDamR, c);
+            gridBagLayout.setConstraints(wDamR, c);
             add(wDamR);
 
 
             // Adding range labels
             wMinL = new JLabel(Messages.getString("MechDisplay.Min"), SwingConstants.CENTER); //$NON-NLS-1$
-            wMinL.setOpaque(true);
+            wMinL.setOpaque(false);
+            wMinL.setForeground(Color.WHITE);
             wShortL = new JLabel(Messages.getString("MechDisplay.Short"), SwingConstants.CENTER); //$NON-NLS-1$
-            wShortL.setOpaque(true);
+            wShortL.setOpaque(false);
+            wShortL.setForeground(Color.WHITE);
             wMedL = new JLabel(Messages.getString("MechDisplay.Med"), SwingConstants.CENTER); //$NON-NLS-1$
-            wMedL.setOpaque(true);
+            wMedL.setOpaque(false);
+            wMedL.setForeground(Color.WHITE);
             wLongL = new JLabel(Messages.getString("MechDisplay.Long"), SwingConstants.CENTER); //$NON-NLS-1$
-            wLongL.setOpaque(true);
+            wLongL.setOpaque(false);
+            wLongL.setForeground(Color.WHITE);
             wExtL = new JLabel(Messages.getString("MechDisplay.Ext"), SwingConstants.CENTER); //$NON-NLS-1$
-            wExtL.setOpaque(true);
+            wExtL.setOpaque(false);
+            wExtL.setForeground(Color.WHITE);
             wMinR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
-            wMinR.setOpaque(true);
+            wMinR.setOpaque(false);
+            wMinR.setForeground(Color.WHITE);
             wShortR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
-            wShortR.setOpaque(true);
+            wShortR.setOpaque(false);
+            wShortR.setForeground(Color.WHITE);
             wMedR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
-            wMedR.setOpaque(true);
+            wMedR.setOpaque(false);
+            wMedR.setForeground(Color.WHITE);
             wLongR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
-            wLongR.setOpaque(true);
+            wLongR.setOpaque(false);
+            wLongR.setForeground(Color.WHITE);
             wExtR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
-            wExtR.setOpaque(true);
+            wExtR.setOpaque(false);
+            wExtR.setForeground(Color.WHITE);
 
             c.weightx = 1.0;
             c.insets = new Insets(2, 9, 1, 1);
             c.gridx = 0;
             c.gridy = 5;
             c.gridwidth = 1;
-            ((GridBagLayout) getLayout()).setConstraints(wMinL, c);
+            gridBagLayout.setConstraints(wMinL, c);
             add(wMinL);
 
             c.insets = new Insets(2, 1, 1, 1);
             c.gridx = 1;
             c.gridy = 5;
-            ((GridBagLayout) getLayout()).setConstraints(wShortL, c);
+            gridBagLayout.setConstraints(wShortL, c);
             add(wShortL);
 
             c.gridx = 2;
             c.gridy = 5;
-            ((GridBagLayout) getLayout()).setConstraints(wMedL, c);
+            gridBagLayout.setConstraints(wMedL, c);
             add(wMedL);
         
 //         c.insets = new Insets(2, 1, 1, 9);
             c.gridx = 3;
             c.gridy = 5;
 //  c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout) getLayout()).setConstraints(wLongL, c);
+            gridBagLayout.setConstraints(wLongL, c);
             add(wLongL);
 
             c.insets = new Insets(2, 1, 1, 9);
             c.gridx = 4;
             c.gridy = 5;
             c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout) getLayout()).setConstraints(wExtL, c);
+            gridBagLayout.setConstraints(wExtL, c);
             add(wExtL);
             //----------------
 
@@ -607,90 +656,96 @@ public class MechDisplay extends JPanel {
             c.gridx = 0;
             c.gridy = 6;
             c.gridwidth = 1;
-            ((GridBagLayout) getLayout()).setConstraints(wMinR, c);
+            gridBagLayout.setConstraints(wMinR, c);
             add(wMinR);
 
             c.insets = new Insets(1, 1, 2, 1);
             c.gridx = 1;
             c.gridy = 6;
-            ((GridBagLayout) getLayout()).setConstraints(wShortR, c);
+            gridBagLayout.setConstraints(wShortR, c);
             add(wShortR);
 
             c.gridx = 2;
             c.gridy = 6;
-            ((GridBagLayout) getLayout()).setConstraints(wMedR, c);
+            gridBagLayout.setConstraints(wMedR, c);
             add(wMedR);
 
 //         c.insets = new Insets(1, 1, 2, 9);
             c.gridx = 3;
             c.gridy = 6;
 //  c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout) getLayout()).setConstraints(wLongR, c);
+            gridBagLayout.setConstraints(wLongR, c);
             add(wLongR);
 
             c.insets = new Insets(1, 1, 2, 9);
             c.gridx = 4;
             c.gridy = 6;
-            ((GridBagLayout) getLayout()).setConstraints(wExtR, c);
+            gridBagLayout.setConstraints(wExtR, c);
             add(wExtR);
 
 
             // target panel
             wTargetL = new JLabel(Messages.getString("MechDisplay.Target"), SwingConstants.CENTER); //$NON-NLS-1$
-            wTargetL.setOpaque(true);
+            wTargetL.setOpaque(false);
+            wTargetL.setForeground(Color.WHITE);
             wRangeL = new JLabel(Messages.getString("MechDisplay.Range"), SwingConstants.CENTER); //$NON-NLS-1$
-            wRangeL.setOpaque(true);
+            wRangeL.setOpaque(false);
+            wRangeL.setForeground(Color.WHITE);
             wToHitL = new JLabel(Messages.getString("MechDisplay.ToHit"), SwingConstants.CENTER); //$NON-NLS-1$
-            wToHitL.setOpaque(true);
+            wToHitL.setOpaque(false);
+            wToHitL.setForeground(Color.WHITE);
 
             wTargetR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
-            wTargetR.setOpaque(true);
+            wTargetR.setOpaque(false);
+            wTargetR.setForeground(Color.WHITE);
             wRangeR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
-            wRangeR.setOpaque(true);
+            wRangeR.setOpaque(false);
+            wRangeR.setForeground(Color.WHITE);
             wToHitR = new JLabel("---", SwingConstants.CENTER); //$NON-NLS-1$
-            wToHitR.setOpaque(true);
+            wToHitR.setOpaque(false);
+            wToHitR.setForeground(Color.WHITE);
 
             c.weightx = 0.0;
             c.insets = new Insets(2, 9, 1, 1);
             c.gridx = 0;
             c.gridy = 7;
             c.gridwidth = 1;
-            ((GridBagLayout) getLayout()).setConstraints(wTargetL, c);
+            gridBagLayout.setConstraints(wTargetL, c);
             add(wTargetL);
 
             c.insets = new Insets(2, 1, 1, 9);
             c.gridx = 1;
             c.gridy = 7;
             c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout) getLayout()).setConstraints(wTargetR, c);
+            gridBagLayout.setConstraints(wTargetR, c);
             add(wTargetR);
 
             c.insets = new Insets(1, 9, 1, 1);
             c.gridx = 0;
             c.gridy = 8;
             c.gridwidth = 1;
-            ((GridBagLayout) getLayout()).setConstraints(wRangeL, c);
+            gridBagLayout.setConstraints(wRangeL, c);
             add(wRangeL);
 
             c.insets = new Insets(1, 1, 1, 9);
             c.gridx = 1;
             c.gridy = 8;
             c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout) getLayout()).setConstraints(wRangeR, c);
+            gridBagLayout.setConstraints(wRangeR, c);
             add(wRangeR);
 
             c.insets = new Insets(1, 9, 1, 1);
             c.gridx = 0;
             c.gridy = 9;
             c.gridwidth = 1;
-            ((GridBagLayout) getLayout()).setConstraints(wToHitL, c);
+            gridBagLayout.setConstraints(wToHitL, c);
             add(wToHitL);
 
             c.insets = new Insets(1, 1, 1, 9);
             c.gridx = 1;
             c.gridy = 9;
             c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout) getLayout()).setConstraints(wToHitR, c);
+            gridBagLayout.setConstraints(wToHitR, c);
             add(wToHitR);
 
             // to-hit text
@@ -701,13 +756,23 @@ public class MechDisplay extends JPanel {
             c.gridx = 0;
             c.gridy = 10;
             c.gridwidth = GridBagConstraints.REMAINDER;
-            ((GridBagLayout) getLayout()).setConstraints(toHitText, c);
+            gridBagLayout.setConstraints(toHitText, c);
             add(toHitText);
 
             setBackGround();
-
+            onResize();
         }
 
+        public void onResize() {
+            int w = getSize().width;
+            Rectangle r = getContentBounds();
+            if (r==null) return;
+            int dx = Math.round(((w - r.width) / 2));
+            if (dx < minLeftMargin) dx = minLeftMargin;
+            int dy = minTopMargin;
+            setContentMargins(dx, dy, dx, dy);
+        }
+        
         private void setBackGround() {
             Image tile = getToolkit().getImage(IMAGE_DIR + "/tile.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
@@ -905,6 +970,7 @@ public class MechDisplay extends JPanel {
                 wExtL.setVisible(false);
                 wExtR.setVisible(false);
             }
+            onResize();
         }
 
         /**
@@ -1064,6 +1130,7 @@ public class MechDisplay extends JPanel {
 
             //send event to other parts of the UI which care
             processMechDisplayEvent(new MechDisplayEvent(this, entity, mounted));
+            onResize();
         }
 
         private String formatAmmo(Mounted m) {
@@ -1132,6 +1199,7 @@ public class MechDisplay extends JPanel {
             if(mAmmo.isHotLoaded())
                 wMinR.setText("---");
 
+            onResize();
         } // End private void updateRangeDisplayForAmmo( AmmoType )
 
         //
@@ -1176,19 +1244,21 @@ public class MechDisplay extends JPanel {
                         entity.getEquipmentNum(mWeap),
                         entity.getEquipmentNum(mAmmo));
             }
+            onResize();
         }
 
         public void valueChanged(ListSelectionEvent event) {
             if (event.getSource().equals(weaponList)) {
                 displaySelected();
             }
+            onResize();
         }
     }
 
     /**
      * This class shows the critical hits and systems for a mech
      */
-    private class SystemPanel extends BufferedPanel
+    private class SystemPanel extends PicMap
             implements ItemListener, ActionListener, ListSelectionListener {
         private static final String IMAGE_DIR = "data/images/widgets";
 
@@ -1203,16 +1273,23 @@ public class MechDisplay extends JPanel {
 
         private Entity en;
 
+        private int minTopMargin = 8;
+        private int minLeftMargin = 8;
+
         SystemPanel() {
             locLabel = new JLabel(Messages.getString("MechDisplay.Location"), SwingConstants.CENTER); //$NON-NLS-1$
-            locLabel.setOpaque(true);
+            locLabel.setOpaque(false);
+            locLabel.setForeground(Color.WHITE);
             slotLabel = new JLabel(Messages.getString("MechDisplay.Slot"), SwingConstants.CENTER); //$NON-NLS-1$
-            slotLabel.setOpaque(true);
+            slotLabel.setOpaque(false);
+            slotLabel.setForeground(Color.WHITE);
 
             locList = new JList(new DefaultListModel());
+            locList.setOpaque(false);
             locList.addListSelectionListener(this);
 
             slotList = new JList(new DefaultListModel());
+            slotList.setOpaque(false);
             slotList.addListSelectionListener(this);
 
             m_chMode = new JComboBox();
@@ -1226,7 +1303,8 @@ public class MechDisplay extends JPanel {
             m_bDumpAmmo.addActionListener(this);
 
             modeLabel = new JLabel(Messages.getString("MechDisplay.modeLabel"), SwingConstants.RIGHT); //$NON-NLS-1$
-            modeLabel.setOpaque(true);
+            modeLabel.setOpaque(false);
+            modeLabel.setForeground(Color.WHITE);
             //modeLabel.setEnabled(false);
 
 
@@ -1300,8 +1378,19 @@ public class MechDisplay extends JPanel {
             add(m_bDumpAmmo);
 
             setBackGround();
+            onResize();
         }
 
+        public void onResize() {
+            int w = getSize().width;
+            Rectangle r = getContentBounds();
+            if (r==null) return;
+            int dx = Math.round(((w - r.width) / 2));
+            if (dx < minLeftMargin) dx = minLeftMargin;
+            int dy = minTopMargin;
+            setContentMargins(dx, dy, dx, dy);
+        }
+        
         private CriticalSlot getSelectedCritical() {
             int loc = locList.getSelectedIndex();
             int slot = slotList.getSelectedIndex();
@@ -1375,13 +1464,80 @@ public class MechDisplay extends JPanel {
                 }
                 ((DefaultListModel) slotList.getModel()).addElement(sb.toString());
             }
+            onResize();
         }
 
         //
         // ItemListener
         //
         public void itemStateChanged(ItemEvent ev) {
-            if (ev.getItemSelectable().equals(m_chMode)) {
+            if (ev.getItemSelectable() == locList) {
+                m_chMode.removeAll();
+                m_chMode.setEnabled(false);
+                displaySlots();
+            } else if (ev.getItemSelectable() == slotList) {
+                m_bDumpAmmo.setEnabled(false);
+                m_chMode.setEnabled(false);
+                Mounted m = getSelectedEquipment();
+
+                boolean bOwner = (clientgui.getClient().getLocalPlayer() == en.getOwner());
+                if (m != null && bOwner && m.getType() instanceof AmmoType
+                        && !(m.getType().hasInstantModeSwitch())
+                        && IGame.PHASE_DEPLOYMENT != clientgui.getClient().game.getPhase()
+                        && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive()) {
+                    m_bDumpAmmo.setEnabled(true);
+                    if ( clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload") 
+                            && en instanceof Tank && m.getType().hasFlag(AmmoType.F_HOTLOAD) ){
+                        m_bDumpAmmo.setEnabled(false);
+                        m_chMode.setEnabled(true);
+                        m_chMode.removeAll();
+                        for (Enumeration<EquipmentMode> e = m.getType().getModes(); e.hasMoreElements();) {
+                            EquipmentMode em = e.nextElement();
+                            m_chMode.addItem(em.getDisplayableName());
+                        }
+                        m_chMode.setSelectedItem(m.curMode().getDisplayableName());
+                    }
+                } else if (m != null && bOwner && m.getType().hasModes()) {
+                    if (!m.isDestroyed() && en.isActive()) {
+                        m_chMode.setEnabled(true);
+                    }
+                    if (!m.isDestroyed() && m.getType().hasFlag(MiscType.F_STEALTH)) {
+                        m_chMode.setEnabled(true);
+                    }//if the maxtech eccm option is not set then the ECM should not show anything.
+                    if (m.getType().hasFlag(MiscType.F_ECM)
+                            && !clientgui.getClient().game.getOptions().booleanOption("maxtech_eccm")) {
+                        m_chMode.removeAll();
+                        return;
+                    }
+                    //disables AC mode switching from system tab if maxtech_rapid_ac is not turned on
+                    if (  m.getType()instanceof WeaponType
+                           && (((WeaponType)m.getType()).getAmmoType() == AmmoType.T_AC || ((WeaponType)m.getType()).getAmmoType() == AmmoType.T_LAC )
+                            && !clientgui.getClient().game.getOptions().booleanOption("maxtech_rapid_ac") ) {
+                        m_chMode.removeAll();
+                        return;
+                    }
+                    m_chMode.removeAll();
+                    for (Enumeration e = m.getType().getModes(); e.hasMoreElements();) {
+                        EquipmentMode em = (EquipmentMode) e.nextElement();
+                        m_chMode.addItem(em.getDisplayableName());
+                    }
+                    m_chMode.setSelectedItem(m.curMode().getDisplayableName());
+                } else {
+                    CriticalSlot cs = getSelectedCritical();
+                    if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM) {
+                        if (cs.getIndex() == Mech.SYSTEM_COCKPIT
+                                && en.hasEiCockpit()
+                                && en instanceof Mech) {
+                            m_chMode.removeAll();
+                            m_chMode.setEnabled(true);
+                            m_chMode.addItem("EI Off");
+                            m_chMode.addItem("EI On");
+                            m_chMode.addItem("Aimed shot");
+                            m_chMode.setSelectedItem(((Mech) en).getCockpitStatusNextRound());
+                        }
+                    }
+                }
+            } else if (ev.getItemSelectable() == m_chMode) {
                 Mounted m = getSelectedEquipment();
                 CriticalSlot cs = getSelectedCritical();
                 if (m != null && m.getType().hasModes()) {
@@ -1411,7 +1567,6 @@ public class MechDisplay extends JPanel {
                             clientgui.systemMessage(Messages.getString("MechDisplay.CapacitorCharging", null));//$NON-NLS-1$
                             return;
                         }
-
                         m.setMode(nMode);
                         // send the event to the server
                         clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), nMode);
@@ -1420,7 +1575,7 @@ public class MechDisplay extends JPanel {
                         if (m.getType().hasInstantModeSwitch()) {
                             clientgui.systemMessage(Messages.getString("MechDisplay.switched", new Object[]{m.getName(), m.curMode().getDisplayableName()}));//$NON-NLS-1$
                         } else {
-                            if (clientgui.getClient().game.getPhase() == IGame.PHASE_DEPLOYMENT) {
+                            if (IGame.PHASE_DEPLOYMENT == clientgui.getClient().game.getPhase()) {
                                 clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtStart", new Object[]{m.getName(), m.pendingMode().getDisplayableName()}));//$NON-NLS-1$
                             } else {
                                 clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd", new Object[]{m.getName(), m.pendingMode().getDisplayableName()}));//$NON-NLS-1$
@@ -1445,6 +1600,7 @@ public class MechDisplay extends JPanel {
                     }
                 }
             }
+            onResize();
         }
 
         // ActionListener
@@ -1477,6 +1633,7 @@ public class MechDisplay extends JPanel {
                     clientgui.getClient().sendModeChange(en.getId(), en.getEquipmentNum(m), bDumping ? -1 : 0);
                 }
             }
+            onResize();
         }
 
         private void setBackGround() {
@@ -1547,7 +1704,6 @@ public class MechDisplay extends JPanel {
             } else if (event.getSource().equals(slotList)) {
                 m_bDumpAmmo.setEnabled(false);
                 m_chMode.setEnabled(false);
-                modeLabel.setEnabled(false);
                 Mounted m = getSelectedEquipment();
 
                 boolean bOwner = clientgui.getClient().getLocalPlayer().equals(en.getOwner());
@@ -1568,7 +1724,6 @@ public class MechDisplay extends JPanel {
                         m_chMode.removeAll();
                         return;
                     }
-                    modeLabel.setEnabled(true);
                     m_chMode.removeAll();
                     for (Enumeration e = m.getType().getModes(); e.hasMoreElements();) {
                         EquipmentMode em = (EquipmentMode) e.nextElement();
@@ -1591,14 +1746,15 @@ public class MechDisplay extends JPanel {
                     }
                 }
             }
+            onResize();
         }
     }
 
     /**
      * This class shows information about a unit that doesn't belong elsewhere.
      */
-    private class ExtraPanel extends BufferedPanel
-            implements ItemListener, ActionListener {
+    private class ExtraPanel extends PicMap
+            implements ActionListener {
 
         private static final String IMAGE_DIR = "data/images/widgets";
 
@@ -1621,38 +1777,48 @@ public class MechDisplay extends JPanel {
         private int sinks;
         private boolean dontChange;
 
+        private int minTopMargin = 8;
+        private int minLeftMargin = 8;
+
         ExtraPanel() {
             prompt = null;
 
             narcLabel = new JLabel
                     (Messages.getString("MechDisplay.AffectedBy"), SwingConstants.CENTER); //$NON-NLS-1$
             narcLabel.setOpaque(false);
+            narcLabel.setForeground(Color.WHITE);
 
             narcList = new JList(new DefaultListModel());
-
+            
             // transport stuff
             //unusedL = new JLabel( "Unused Space:", JLabel.CENTER );
 
             unusedL = new JLabel
                     (Messages.getString("MechDisplay.UnusedSpace"), SwingConstants.CENTER); //$NON-NLS-1$
             unusedL.setOpaque(false);
+            unusedL.setForeground(Color.WHITE);
             unusedR = new JTextArea("", 2, 25); //$NON-NLS-1$
             unusedR.setEditable(false);
             unusedR.setOpaque(false);
+            unusedR.setForeground(Color.WHITE);
 
             carrysL = new JLabel
                     (Messages.getString("MechDisplay.Carryng"), SwingConstants.CENTER); //$NON-NLS-1$
             carrysL.setOpaque(false);
+            carrysL.setForeground(Color.WHITE);
             carrysR = new JTextArea("", 4, 25); //$NON-NLS-1$
             carrysR.setEditable(false);
             carrysR.setOpaque(false);
+            carrysR.setForeground(Color.WHITE);
 
             sinksL = new JLabel
                     (Messages.getString("MechDisplay.activeSinksLabel"), SwingConstants.CENTER);
             sinksL.setOpaque(false);
-            sinksR = new JTextArea("", 2, 25);
+            sinksL.setForeground(Color.WHITE);
+            sinksR = new JTextArea("", 1, 25);
             sinksR.setEditable(false);
             sinksR.setOpaque(false);
+            sinksR.setForeground(Color.WHITE);
 
             sinks2B = new JButton(Messages.getString("MechDisplay.configureActiveSinksLabel"));
             sinks2B.setActionCommand("changeSinks");
@@ -1661,11 +1827,14 @@ public class MechDisplay extends JPanel {
             heatL = new JLabel
                     (Messages.getString("MechDisplay.HeatEffects"), SwingConstants.CENTER); //$NON-NLS-1$
             heatL.setOpaque(false);
+            heatL.setForeground(Color.WHITE);
             heatR = new JTextArea("", 4, 25); //$NON-NLS-1$
             heatR.setEditable(false);
             heatR.setOpaque(false);
+            heatR.setForeground(Color.WHITE);
 
             targSysL = new JLabel((Messages.getString("MechDisplay.TargSysLabel")).concat(" "), SwingConstants.CENTER);
+            targSysL.setForeground(Color.WHITE);
             targSysL.setOpaque(false);
 
             // layout choice panel
@@ -1680,63 +1849,63 @@ public class MechDisplay extends JPanel {
             c.insets = new Insets(15, 9, 1, 9);
             c.gridwidth = GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.CENTER;
-            c.weightx = 1.0;
+            c.weighty = 1.0;
 
-            c.weighty = 0.0;
             gridbag.setConstraints(narcLabel, c);
             add(narcLabel);
 
             c.insets = new Insets(1, 9, 1, 9);
-            c.weighty = 1.0;
-            gridbag.setConstraints(narcList, c);
-            add(new JScrollPane(narcList));
+            JScrollPane scrollPane = new JScrollPane(narcList);
+            scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+            gridbag.setConstraints(scrollPane, c);
+			add(scrollPane);
 
-            c.weighty = 0.0;
             gridbag.setConstraints(unusedL, c);
             add(unusedL);
 
-            c.weighty = 1.0;
             gridbag.setConstraints(unusedR, c);
             add(unusedR);
 
-            c.weighty = 0.0;
             gridbag.setConstraints(carrysL, c);
             add(carrysL);
 
-            c.insets = new Insets(1, 9, 1, 9);
-            c.weighty = 1.0;
             gridbag.setConstraints(carrysR, c);
             add(carrysR);
 
-            c.weighty = 0.0;
             gridbag.setConstraints(sinksL, c);
             add(sinksL);
 
-            c.insets = new Insets(1, 9, 1, 9);
-            c.weighty = 1.0;
             gridbag.setConstraints(sinksR, c);
             add(sinksR);
 
-            c.weighty = 0.0;
             gridbag.setConstraints(sinks2B, c);
             add(sinks2B);
 
-            c.weighty = 0.0;
             gridbag.setConstraints(heatL, c);
             add(heatL);
 
             c.insets = new Insets(1, 9, 18, 9);
-            c.weighty = 1.0;
             gridbag.setConstraints(heatR, c);
             add(heatR);
 
+            c.insets = new Insets(1, 9, 1, 9);
             gridbag.setConstraints(targSysL, c);
             add(targSysL);
 
             setBackGround();
-
+            onResize();
         }
 
+        public void onResize() {
+            int w = getSize().width;
+            Rectangle r = getContentBounds();
+            if (r==null) return;
+            int dx = Math.round(((w - r.width) / 2));
+            if (dx < minLeftMargin) dx = minLeftMargin;
+            int dy = minTopMargin;
+            setContentMargins(dx, dy, dx, dy);
+        }
+        
         private void setBackGround() {
             Image tile = getToolkit().getImage(IMAGE_DIR + "/tile.gif"); //$NON-NLS-1$
             PMUtil.setImage(tile, this);
@@ -1907,6 +2076,10 @@ public class MechDisplay extends JPanel {
                 }
             }
 
+            if (narcList.getModel().getSize() == 0) {
+            	((DefaultListModel) narcList.getModel()).addElement(" ");
+            }
+            
             // transport values
             String unused = en.getUnusedString();
             if ("".equals(unused)) unused = Messages.getString("MechDisplay.None"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1962,10 +2135,8 @@ public class MechDisplay extends JPanel {
             }
 
             targSysL.setText((Messages.getString("MechDisplay.TargSysLabel")).concat(" ").concat(MiscType.getTargetSysName(en.getTargSysType())));
+            onResize();
         } // End public void displayMech( Entity )
-
-        public void itemStateChanged(ItemEvent ev) {
-        }
 
         public void actionPerformed(ActionEvent ae) {
             if ("changeSinks".equals(ae.getActionCommand()) && !dontChange) { //$NON-NLS-1$

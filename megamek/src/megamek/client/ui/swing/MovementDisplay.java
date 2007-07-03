@@ -14,6 +14,23 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -52,24 +69,6 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Vector;
 
 public class MovementDisplay
         extends StatusBarPhaseDisplay
@@ -532,7 +531,7 @@ public class MovementDisplay
         // ^-- I suppose these should really be methods, a-la Entity.canCharge(), Entity.canDFA()...
         
         setWalkEnabled(!ce.isImmobile() && ce.getWalkMP() > 0 && !ce.isStuck());
-        setJumpEnabled(!ce.isImmobile() && ce.getJumpMP() > 0 && !ce.isStuck());
+        setJumpEnabled(!ce.isImmobile() && ce.getJumpMP() > 0 && !(ce.isStuck() && !ce.canUnstickByJumping()));
         setSwimEnabled(!ce.isImmobile() && ce.hasUMU() && client.game.getBoard().getHex(ce.getPosition()).containsTerrain(Terrains.WATER));
         setBackUpEnabled(butWalk.isEnabled());
         setChargeEnabled(ce.canCharge());
@@ -749,40 +748,40 @@ public class MovementDisplay
                 return;
             }
         }
-        if (md != null) {
-            if (md.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) { //pop up are you sure dialog
-                Mech m = (Mech) ce();
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                        Messages.getString("MovementDisplay.ConfirmMoveRoll", new Object[]{new Integer(m.getMASCTarget())}), //$NON-NLS-1$
-                        true);
-                nag.setVisible(true);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        GUIPreferences.getInstance().setNagForMASC(false);
-                    }
-                } else {
-                    return;
+
+        if (md.hasActiveMASC() && GUIPreferences.getInstance().getNagForMASC()) { //pop up are you sure dialog
+            Mech m = (Mech) ce();
+            ConfirmDialog nag = new ConfirmDialog(clientgui.frame, Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                    Messages.getString("MovementDisplay.ConfirmMoveRoll", new Object[]{new Integer(m.getMASCTarget())}), //$NON-NLS-1$
+                    true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForMASC(false);
                 }
-            }
-            String check = doPSRCheck(md);
-            if (check.length() > 0 && GUIPreferences.getInstance().getNagForPSR()) {
-                ConfirmDialog nag =
-                        new ConfirmDialog(clientgui.frame,
-                                Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
-                                Messages.getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$
-                        check, true);
-                nag.setVisible(true);
-                if (nag.getAnswer()) {
-                    // do they want to be bothered again?
-                    if (!nag.getShowAgain()) {
-                        GUIPreferences.getInstance().setNagForPSR(false);
-                    }
-                } else {
-                    return;
-                }
+            } else {
+                return;
             }
         }
+        String check = doPSRCheck(md);
+        if (check.length() > 0 && GUIPreferences.getInstance().getNagForPSR()) {
+            ConfirmDialog nag =
+                    new ConfirmDialog(clientgui.frame,
+                            Messages.getString("MovementDisplay.areYouSure"), //$NON-NLS-1$
+                            Messages.getString("MovementDisplay.ConfirmPilotingRoll") + //$NON-NLS-1$
+                    check, true);
+            nag.setVisible(true);
+            if (nag.getAnswer()) {
+                // do they want to be bothered again?
+                if (!nag.getShowAgain()) {
+                    GUIPreferences.getInstance().setNagForPSR(false);
+                }
+            } else {
+                return;
+            }
+        }
+        
         disableButtons();
         clientgui.bv.clearMovementData();
         if (ce().hasUMU()) {
@@ -1104,7 +1103,7 @@ public class MovementDisplay
         }
 
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
         // control pressed means a line of sight check.
@@ -1113,8 +1112,8 @@ public class MovementDisplay
             return;
         }
         // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & MouseEvent.SHIFT_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
+        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
         }
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {
             if (!b.getCoords().equals(clientgui.getBoardView().getLastCursor()) || shiftheld || gear == MovementDisplay.GEAR_TURN) {
@@ -1153,7 +1152,7 @@ public class MovementDisplay
 
                 // check if it's a valid charge
                 ToHitData toHit = new ChargeAttackAction(cen, target.getTargetType(), target.getTargetId(), target.getPosition()).toHit(client.game, cmd);
-                if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
+                if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // Determine how much damage the charger will take.
                     int toAttacker = 0;
                     if (target.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -1199,7 +1198,7 @@ public class MovementDisplay
                         cen,
                         target,
                         cmd);
-                if (toHit.getValue() != ToHitData.IMPOSSIBLE) {
+                if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                     // if yes, ask them if they want to DFA
                     if (clientgui.doYesNoDialog
                             (Messages.getString("MovementDisplay.DFADialog.title", new Object[]{target.getDisplayName()}), //$NON-NLS-1$

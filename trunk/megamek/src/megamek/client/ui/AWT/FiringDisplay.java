@@ -1627,7 +1627,7 @@ public class FiringDisplay
     /**
      * Specify if the listener should be distracted.
      *
-     * @param   distract <code>true</code> if the listener should ignore events
+     * @param   distracted <code>true</code> if the listener should ignore events
      *          <code>false</code> if the listener should pay attention again.
      *          Events that occured while the listener was distracted NOT
      *          going to be processed.
@@ -1665,7 +1665,7 @@ public class FiringDisplay
         boolean friendlyFire = client.game.getOptions().booleanOption("friendly_fire"); //$NON-NLS-1$
         // Assume that we have *no* choice.
         Targetable choice = null;
-        Enumeration choices = null;
+        Enumeration<Entity> choices = null;
         
         // Get the available choices, depending on friendly fire
         if (friendlyFire) {
@@ -1675,7 +1675,7 @@ public class FiringDisplay
         // Convert the choices into a List of targets.
         Vector<Targetable> targets = new Vector<Targetable>();
         while ( choices.hasMoreElements() ) {
-            choice = (Targetable) choices.nextElement();
+            choice = choices.nextElement();
             if ( !ce().equals( choice ) ) {
                 targets.addElement( choice );
             }

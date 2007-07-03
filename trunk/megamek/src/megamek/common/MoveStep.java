@@ -201,6 +201,10 @@ public class MoveStep implements Serializable {
                 return "CM+";
             case MovePath.STEP_CLIMB_MODE_OFF:
                 return "CM-";
+            case MovePath.STEP_TAKEOFF:
+                return "Takeoff";
+            case MovePath.STEP_LAND:
+                return "Landing";
             default :
                 return "???";
         }
@@ -948,10 +952,17 @@ public class MoveStep implements Serializable {
         thisStepBackwards = b;
     }
 
+    /**
+     * Returns the mp used for just this step.
+     */
     public int getMp() {
         return mp;
     }
 
+    /**
+     * sets the mp for this step.
+     * @param i the mp for this step.
+     */
     public void setMp(int i) {
         mp = i;
     }
@@ -1164,10 +1175,7 @@ public class MoveStep implements Serializable {
         if((stepType==MovePath.STEP_TURN_LEFT
                 || stepType==MovePath.STEP_TURN_RIGHT)
                 && getMp() == 0) {
-            if(prev == null)
-                movementType = IEntityMovementType.MOVE_WALK;
-            else
-                movementType = prev.movementType;
+            movementType = prev.movementType;
         }
         if(movementType==IEntityMovementType.MOVE_WALK
                 && prev.movementType == IEntityMovementType.MOVE_RUN) {
@@ -1304,7 +1312,7 @@ public class MoveStep implements Serializable {
         }
 
         // If the previous step is always illegal, then so is this one
-        if ( prev != null && IEntityMovementType.MOVE_ILLEGAL == prev.movementType ) {
+        if ( IEntityMovementType.MOVE_ILLEGAL == prev.movementType ) {
             movementType = IEntityMovementType.MOVE_ILLEGAL;
         }
 
@@ -1313,10 +1321,7 @@ public class MoveStep implements Serializable {
             return;
         }
 
-        int prevEl = getElevation();
-        if (prev != null) {
-            prevEl = prev.getElevation();
-        }
+        int prevEl = prev.getElevation();
         danger
             |= Compute.isPilotingSkillNeeded(
                 game,
@@ -1556,11 +1561,11 @@ public class MoveStep implements Serializable {
 
             // Find the unit being loaded.
             Entity other = null;
-            Enumeration entities = game.getEntities(src);
+            Enumeration<Entity> entities = game.getEntities(src);
             while (entities.hasMoreElements()) {
 
                 // Is the other unit friendly and not the current entity?
-                other = (Entity) entities.nextElement();
+                other = entities.nextElement();
                 if (!entity.getOwner().isEnemyOf(other.getOwner())
                     && !entity.equals(other)) {
 

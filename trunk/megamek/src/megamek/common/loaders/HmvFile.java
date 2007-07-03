@@ -582,13 +582,13 @@ public class HmvFile
                             int location)
     throws Exception
   {
-    Hashtable equipmentAtLocation = equipment.get(weaponLocation);
+    Hashtable<EquipmentType, Integer> equipmentAtLocation = equipment.get(weaponLocation);
     if (equipmentAtLocation != null)
     {
-      for (Enumeration e = equipmentAtLocation.keys(); e.hasMoreElements();)
+      for (Enumeration<EquipmentType> e = equipmentAtLocation.keys(); e.hasMoreElements();)
       {
-        EquipmentType equipmentType = (EquipmentType) e.nextElement();
-        Integer count = (Integer) equipmentAtLocation.get(equipmentType);
+        EquipmentType equipmentType = e.nextElement();
+        Integer count = equipmentAtLocation.get(equipmentType);
 
         for (int i = 0; i < count.intValue(); i++)
         {
@@ -1138,10 +1138,10 @@ public class HmvFile
     }
     if (equipName == null)
     {
-      Hashtable techEquipment = EQUIPMENT.get(techType);
+      Hashtable<Long, String> techEquipment = EQUIPMENT.get(techType);
       if (techEquipment != null)
       {
-        equipName = (String) techEquipment.get(equipment);
+        equipName = techEquipment.get(equipment);
       }
     }
 
@@ -1204,10 +1204,10 @@ public class HmvFile
     }
     if (ammoName == null)
     {
-      Hashtable techAmmo = AMMO.get(techType);
+      Hashtable<Long, String> techAmmo = AMMO.get(techType);
       if (techAmmo != null)
       {
-        ammoName = (String) techAmmo.get(ammo);
+        ammoName = techAmmo.get(ammo);
       }
     }
 

@@ -43,9 +43,9 @@ import megamek.common.TargetRoll;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
-import megamek.common.actions.AbstractEntityAction;
 import megamek.common.actions.ChargeAttackAction;
 import megamek.common.actions.DfaAttackAction;
+import megamek.common.actions.EntityAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
@@ -1272,7 +1272,7 @@ public class TestBot extends BotClient {
             entity_num = game.getNextEntityNum(entity_num);
         } while (entity_num != first_entity && entity_num != -1);
 
-        Vector<AbstractEntityAction> av = new Vector<AbstractEntityAction>();
+        Vector<EntityAction> av = new Vector<EntityAction>();
         //maximum already selected (or default)
         Entity en = game.getEntity(best_entity);
         if (results != null) {
@@ -1743,7 +1743,7 @@ public class TestBot extends BotClient {
     // Calculate the best location to aim at on a target Mech.  Attack options must match
     // 1:1 with WeaponAttackActions in Vector.
     
-    private void getAimPoint(TreeSet<AttackOption> attack_tree, Vector<AbstractEntityAction> atk_action_list){
+    private void getAimPoint(TreeSet<AttackOption> attack_tree, Vector<EntityAction> atk_action_list){
         
         if (attack_tree == null || atk_action_list == null){
             return;
@@ -1790,7 +1790,7 @@ public class TestBot extends BotClient {
         // For each attack action
         
         target_id_list = new Vector<Integer>();
-        for (AbstractEntityAction aea:atk_action_list){
+        for (EntityAction aea:atk_action_list){
 
             if(aea instanceof WeaponAttackAction) {
                 // Get the attacker
@@ -2160,7 +2160,7 @@ public class TestBot extends BotClient {
             
             // For all weapon attack actions
             
-            for (Iterator<AbstractEntityAction> j = atk_action_list.iterator(); j.hasNext();){
+            for (Iterator<EntityAction> j = atk_action_list.iterator(); j.hasNext();){
                 aimed_attack = (WeaponAttackAction) j.next();
             
                 // If the target of the action is the current target

@@ -29,6 +29,7 @@ import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.LandAirMech;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.Mounted;
@@ -200,6 +201,8 @@ public class MtfFile implements IMechLoader {
             }
             if (chassisConfig.indexOf("Quad") != -1) {
                 mech = new QuadMech(iGyroType, iCockpitType);
+            } else if (chassisConfig.indexOf("LAM") != -1) {
+                mech = new LandAirMech(iGyroType, iCockpitType);
             } else {
                 mech = new BipedMech(iGyroType, iCockpitType);
             }
@@ -406,7 +409,7 @@ public class MtfFile implements IMechLoader {
                                 break;
                             }
                         }
-                        if (bFound) {
+                        if (bFound && m != null) {
                             m.setFoundCrits(m.getFoundCrits() + 1);
                             if (m.getFoundCrits() >= etype.getCriticals(mech)) {
                                 vSplitWeapons.removeElement(m);

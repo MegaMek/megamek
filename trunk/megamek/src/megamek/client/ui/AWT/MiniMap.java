@@ -373,16 +373,16 @@ public class MiniMap extends Canvas  {
 
             // draw declared fire
             if (IGame.PHASE_FIRING==m_game.getPhase() || IGame.PHASE_PHYSICAL==m_game.getPhase()) {
-                for (Enumeration iter = m_game.getActions(); iter.hasMoreElements(); ) {
-                    Object action = iter.nextElement();
+                for (Enumeration<EntityAction> iter = m_game.getActions(); iter.hasMoreElements(); ) {
+                    EntityAction action = iter.nextElement();
                     if (action instanceof AttackAction) {
                         paintAttack(g,(AttackAction) action);
                     }
                 }
             }
 
-            for (Enumeration iter = m_game.getEntities(); iter.hasMoreElements(); ) {
-                Entity e = (Entity)iter.nextElement();
+            for (Enumeration<Entity> iter = m_game.getEntities(); iter.hasMoreElements(); ) {
+                Entity e = iter.nextElement();
                 if (e.getPosition() == null) continue;
                 paintUnit(g, e, true);
             }
@@ -598,8 +598,8 @@ public class MiniMap extends Canvas  {
 
 
         // if this is mutual fire, draw a half-and-half line
-        for (Enumeration iter = m_game.getActions(); iter.hasMoreElements(); ) {
-            Object action = iter.nextElement();
+        for (Enumeration<EntityAction> iter = m_game.getActions(); iter.hasMoreElements(); ) {
+            EntityAction action = iter.nextElement();
             if (action instanceof AttackAction) {
                 AttackAction otherAttack = (AttackAction) action;
                 if (attack.getEntityId() == otherAttack.getTargetId()

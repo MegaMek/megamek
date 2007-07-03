@@ -129,7 +129,6 @@ public class Report implements Serializable {
     /** Default constructor, note that using this means the
         <code>messageId</code> field must be explicitly set. */
     public Report() {
-        ;
     }
 
     /**
@@ -161,6 +160,7 @@ public class Report implements Serializable {
      *
      * @param r the report to be copied
      */
+    @SuppressWarnings("unchecked")
     public Report(Report r) {
         this.messageId = r.messageId;
         this.indentation = r.indentation;
@@ -440,8 +440,8 @@ public class Report implements Serializable {
      *
      * @param v a Vector of Report objects
      */
-    public static void addNewline(Vector v) {
-        ((Report) v.elementAt(v.size() - 1)).newlines++;
+    public static void addNewline(Vector<Report> v) {
+        v.elementAt(v.size() - 1).newlines++;
     }
 
     /**
@@ -511,14 +511,14 @@ public class Report implements Serializable {
         return sb;
     }
 
-    public static void indentAll(Vector vDesc, int amount) {
+    public static void indentAll(Vector<Report> vDesc, int amount) {
         // Just avoid an error condition.
         if (vDesc == null)
             return;
 
-        Enumeration x = vDesc.elements();
+        Enumeration<Report> x = vDesc.elements();
         while (x.hasMoreElements()) {
-            Report r = (Report)x.nextElement();
+            Report r = x.nextElement();
             r.indent(amount);
         }
     }

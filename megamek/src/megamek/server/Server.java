@@ -7594,6 +7594,11 @@ public class Server implements Runnable {
         }
         Targetable target = game.getTarget(wr.waa.getTargetType(),
                                          wr.waa.getTargetId());
+        
+        //Target is null do nothing.
+        if ( target == null )
+        	return true;
+        
         Report r;
         boolean throughFront;
         if (target instanceof Mech) {

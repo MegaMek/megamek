@@ -7596,8 +7596,9 @@ public class Server implements Runnable {
                                          wr.waa.getTargetId());
         
         //Target is null do nothing.
-        if ( target == null )
+        if ( target == null ) {
         	return true;
+        }
         
         Report r;
         boolean throughFront;

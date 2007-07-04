@@ -1229,16 +1229,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return "MG Array is disabled";
         }
         else if(wtype.hasFlag(WeaponType.F_MG)) {
-            for(Mounted m:ae.getWeaponList()) {
-                if(m.getLocation() == weapon.getLocation()
-                        && m.getType().hasFlag(WeaponType.F_MGA)
-                        && !(m.isDestroyed() || m.isBreached())
-                        && m.getType().hasModes()
-                        && m.curMode().equals("Linked")
-                        &&((WeaponType)m.getType()).getDamage() == wtype.getDamage()) {
-                    return "Machine gun is slaved to array equipment";
-                }
-            }
+            if ( ae.hasLinkedMGA(weapon) )
+                return "Machine gun is slaved to array equipment";
         }
 
         // Handle solo attack weapons.

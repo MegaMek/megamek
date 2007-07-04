@@ -2018,8 +2018,14 @@ public abstract class Entity extends TurnOrdered
                    && game.getPhase()==IGame.PHASE_FIRING) {
                     continue;
                 }
+                if( mounted.getType().hasFlag(WeaponType.F_MG) ) {
+                    if ( hasLinkedMGA(mounted) )
+                        continue;
+                }
+                
                 return getEquipmentNum(mounted);
             }
+            
             if (getEquipmentNum(mounted) == start) {
                 past = true;
                 continue;
@@ -6028,5 +6034,19 @@ public abstract class Entity extends TurnOrdered
     
     public int getSpotTargetId() {
         return spotTargetId;
+    }
+    
+    public boolean hasLinkedMGA(Mounted mounted) {
+        for(Mounted m: getWeaponList()) {
+            if(m.getLocation() == mounted.getLocation()
+                    && m.getType().hasFlag(WeaponType.F_MGA)
+                    && !(m.isDestroyed() || m.isBreached())
+                    && m.getType().hasModes()
+                    && m.curMode().equals("Linked")
+                    &&((WeaponType)m.getType()).getDamage() == ((WeaponType)mounted.getType()).getDamage()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

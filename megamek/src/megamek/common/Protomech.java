@@ -846,7 +846,7 @@ public class Protomech extends Entity implements Serializable {
         // only count BV for ammo for a weapontype until the BV of all weapons of that 
         // type on the mech is reached
         for (String key : keys) {
-            if (ammo.get(key) > weaponsForExcessiveAmmo.get(key))
+            if ( weaponsForExcessiveAmmo.containsKey(key) && ammo.get(key) > weaponsForExcessiveAmmo.get(key))
                 ammoBV += weaponsForExcessiveAmmo.get(key);
             else
                 ammoBV += ammo.get(key);

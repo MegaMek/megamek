@@ -14705,7 +14705,15 @@ public class Server implements Runnable {
      */
     public void doExplosion(int damage, int degredation, boolean autoDestroyInSameHex, Coords position, boolean allowShelter, Vector<Report> vDesc, Vector<Integer> vUnits)
     {
+    	
+    	if( degredation < 1)
+    		return;
+    	
         int[] myDamages = new int[damage/degredation];
+        
+        if ( myDamages.length < 1)
+        	return;
+        
         myDamages[0] = damage;
         for (int x=1; x<myDamages.length; x++)
             myDamages[x] = myDamages[x-1]-degredation;

@@ -39,6 +39,7 @@ v0.33.7-dev (SVN)
 + RFE: Skip all MG's when linked to an MGA
 + Bug: NPE when getting proto BV.
 + Bug: doExplosion() could have a 0 length myDamages array.
++ RFE: do not rotate rectangular Maps.
 
 v0.33.6 (2007-05-26, 20:00 GMT +2)
 + added some javadoc documentation. This is a work in progress.

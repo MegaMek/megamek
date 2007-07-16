@@ -2051,10 +2051,10 @@ public abstract class Mech
         int runMP = getOriginalRunMPwithoutMASC();
         // factor in masc or tsm
         if (hasMASC()) {
-            runMP = getWalkMP() * 2;
+            runMP = getOriginalWalkMP() * 2;
         }
         if (hasTSM()) {
-            runMP = (int)Math.ceil((getWalkMP() + 1) * 1.5);
+            runMP = (int)Math.ceil((getOriginalWalkMP() + 1) * 1.5);
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false).getValue();
@@ -2328,7 +2328,18 @@ public abstract class Mech
             weaponBV += getWeight();        
 
         // adjust further for speed factor
-        double speedFactor = Math.pow(1+(((double)runMP+(Math.round((double)jumpMP/2))-5)/10), 1.2);
+        // this is a bit weird, because the formula gives
+        // a different result than the table, because MASC/TSM
+        // is handled differently (page 315, TM, compare
+        // http://forums.classicbattletech.com/index.php/topic,20468.0.html
+        double speedFactor;
+        long speedFactorTableLookup = getOriginalRunMPwithoutMASC()+Math.round((double)this.getJumpMP()/2);
+        if (hasMASC() || hasTSM())
+            speedFactorTableLookup++;
+        if (speedFactorTableLookup > 25) 
+            speedFactor = Math.pow(1+(((double)runMP+(Math.round((double)getJumpMP()/2))-5)/10), 1.2);
+        else
+            speedFactor = Math.pow(1+((speedFactorTableLookup-5)/10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
         
         obv = weaponBV * speedFactor;

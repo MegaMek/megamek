@@ -42,6 +42,7 @@ v0.33.7-dev (SVN)
 + RFE: do not rotate rectangular Maps.
 + Bug 1747502: NPE: Mek designed with TAG/C3M and semi-guided missiles
 + Bug 1732189: Fixed two read errors committed into HMVFile during unused variable cleanup.
++ Different speed factor calculation, depending on speed, as per the rules question forum
 
 v0.33.6 (2007-05-26, 20:00 GMT +2)
 + added some javadoc documentation. This is a work in progress.

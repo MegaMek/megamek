@@ -567,7 +567,7 @@ public class Tank
         dbv *= typeModifier;
 
         // adjust for target movement modifier
-        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false).getValue();
+        double tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false).getValue();
         double tmmFactor = 1+(tmmRan/10);
         dbv *= tmmFactor;
         

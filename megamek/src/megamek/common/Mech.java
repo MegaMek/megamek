@@ -2058,7 +2058,7 @@ public abstract class Mech
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false).getValue();
-        int targetMovementModifier = Math.max(tmmRan, tmmJumped);
+        double targetMovementModifier = Math.max(tmmRan, tmmJumped);
         // Try to find a Mek Stealth system.
         if (hasStealth())
             targetMovementModifier += 2;

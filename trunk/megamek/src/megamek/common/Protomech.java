@@ -736,7 +736,7 @@ public class Protomech extends Entity implements Serializable {
         dbv += dEquipmentBV;
 
         // adjust for target movement modifier
-        int tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false).getValue();
+        double tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false).getValue();
         double tmmFactor = 1+(tmmRan/10)+0.1;
         dbv *= tmmFactor;
         

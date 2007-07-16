@@ -140,6 +140,9 @@ public class HmvFile
           baseTechType = HMVTechType.getType(readUnsignedShort(dis));
           engineTechType = HMVTechType.getType(readUnsignedShort(dis));
           targetingComputerTechType = HMVTechType.getType(readUnsignedShort(dis));
+
+          // Even if we aren't using the armorTechType, we need to read past its location.
+          readUnsignedShort(dis);
           //armorTechType = HMVTechType.getType(readUnsignedShort(dis));
       } else if (techType.equals(HMVTechType.CLAN)) {
           engineTechType = HMVTechType.CLAN;
@@ -162,6 +165,8 @@ public class HmvFile
       cruiseMP = readUnsignedShort(dis);
       jumpMP = readUnsignedShort(dis);
 
+        // Even if we aren't using this, we need to read past its location.
+      readUnsignedShort(dis);
       //heatSinks = readUnsignedShort(dis);
       armorType = HMVArmorType.getType(readUnsignedShort(dis));
 

@@ -139,6 +139,11 @@
            <include name="**/megamek-*.zip"/>
         </fileset>
     </delete>
+	<delete>
+	  <fileset dir="${datadir}/mechfiles">
+		  <include name="units.cache"/>
+	  </fileset>
+	</delete>
   </target>
 
   <target depends="clean, compile, jar" name="all"/>

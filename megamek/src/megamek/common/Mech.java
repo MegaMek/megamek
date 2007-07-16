@@ -2333,7 +2333,7 @@ public abstract class Mech
         // is handled differently (page 315, TM, compare
         // http://forums.classicbattletech.com/index.php/topic,20468.0.html
         double speedFactor;
-        long speedFactorTableLookup = getOriginalRunMPwithoutMASC()+Math.round((double)this.getJumpMP()/2);
+        double speedFactorTableLookup = getOriginalRunMPwithoutMASC()+Math.round((double)this.getJumpMP()/2);
         if (hasMASC() || hasTSM())
             speedFactorTableLookup++;
         if (speedFactorTableLookup > 25) 

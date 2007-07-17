@@ -124,6 +124,7 @@ public class ClientGUI
     private CustomBattleArmorDialog customBADialog;
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
+    private RandomArmyDialog randomArmyDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
      */
@@ -203,7 +204,7 @@ public class ClientGUI
                 System.err.println("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename()); //$NON-NLS-1$
                 return;
             }
-            bingClip = Applet.newAudioClip(file.toURL());
+            bingClip = Applet.newAudioClip(file.toURI().toURL());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -422,8 +423,9 @@ public class ClientGUI
         client.changePhase(IGame.PHASE_UNKNOWN);
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         customBADialog = new CustomBattleArmorDialog(this);
+        randomArmyDialog = new RandomArmyDialog(this);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
-        new Thread(customBADialog, "Custom Battle Armor Dialog").start();
+        new Thread(customBADialog, "Custom Battle Armor Dialog").start();   
     }
 
     /**
@@ -996,7 +998,7 @@ public class ClientGUI
                     popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_BOMB)));
                     popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_ARTILLERY)));
                 }
-                if (client.game.getOptions().booleanOption("fire")
+                if (h != null && client.game.getOptions().booleanOption("fire")
                         && h.containsTerrain(Terrains.FIRE)) {
                     popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_EXTINGUISH)));
                 }
@@ -1505,5 +1507,9 @@ public class ClientGUI
      */
     public void setSelectedEntityNum(int selectedEntityNum) {
         this.selectedEntityNum = selectedEntityNum;
+    }
+
+    public RandomArmyDialog getRandomArmyDialog() {
+        return randomArmyDialog;
     }
 }

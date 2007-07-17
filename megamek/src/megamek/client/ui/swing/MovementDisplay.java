@@ -718,7 +718,7 @@ public class MovementDisplay
 
             // Set the button's label to "Done"
             // if the entire move is impossible.
-            MovePath possible = (MovePath) cmd.clone();
+            MovePath possible = cmd.clone();
             possible.clipToPossible();
             if (possible.length() == 0) {
                 butDone.setText(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$
@@ -1130,7 +1130,7 @@ public class MovementDisplay
 
                 // Set the button's label to "Done"
                 // if the entire move is impossible.
-                MovePath possible = (MovePath) cmd.clone();
+                MovePath possible = cmd.clone();
                 possible.clipToPossible();
                 if (possible.length() == 0) {
                     butDone.setText(Messages.getString("MovementDisplay.Done")); //$NON-NLS-1$

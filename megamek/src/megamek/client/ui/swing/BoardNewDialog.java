@@ -1,15 +1,17 @@
 package megamek.client.ui.swing;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import javax.swing.SwingConstants;
 
 /**
  * a quick class for the new map diaglogue box
@@ -28,8 +30,8 @@ public class BoardNewDialog extends JDialog implements ActionListener {
         super(frame, Messages.getString("BoardEditor.SetDimentions"), true); //$NON-NLS-1$
         xvalue = 0;
         yvalue = 0;
-        labWidth = new JLabel(Messages.getString("BoardEditor.labWidth"), JLabel.RIGHT); //$NON-NLS-1$
-        labHeight = new JLabel(Messages.getString("BoardEditor.labHeight"), JLabel.RIGHT); //$NON-NLS-1$
+        labWidth = new JLabel(Messages.getString("BoardEditor.labWidth"), SwingConstants.RIGHT); //$NON-NLS-1$
+        labHeight = new JLabel(Messages.getString("BoardEditor.labHeight"), SwingConstants.RIGHT); //$NON-NLS-1$
         texWidth = new JTextField("16", 2); //$NON-NLS-1$
         texHeight = new JTextField("17", 2); //$NON-NLS-1$
         butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$

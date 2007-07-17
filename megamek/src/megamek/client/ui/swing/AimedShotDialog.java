@@ -14,18 +14,20 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.widget.IndexedCheckbox;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemListener;
+import javax.swing.SwingConstants;
+
+import megamek.client.ui.swing.widget.IndexedCheckbox;
 
 public class AimedShotDialog
         extends JDialog {
@@ -50,7 +52,7 @@ public class AimedShotDialog
 
         GridBagConstraints c = new GridBagConstraints();
 
-        JLabel labMessage = new JLabel(message, JLabel.LEFT);
+        JLabel labMessage = new JLabel(message, SwingConstants.LEFT);
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 0;

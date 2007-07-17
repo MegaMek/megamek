@@ -14,6 +14,21 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -26,20 +41,6 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.util.Vector;
 
 public class DeployMinefieldDisplay
         extends StatusBarPhaseDisplay
@@ -217,7 +218,7 @@ public class DeployMinefieldDisplay
         }
 
         if (client.game.containsMinefield(coords)) {
-            Minefield mf = (Minefield) client.game.getMinefields(coords).elementAt(0);
+            Minefield mf = client.game.getMinefields(coords).elementAt(0);
             if (mf.getPlayerId() == client.getLocalPlayer().getId()) {
                 butDone.setEnabled(false);
                 client.game.removeMinefield(mf);
@@ -305,7 +306,7 @@ public class DeployMinefieldDisplay
         }
         
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
         

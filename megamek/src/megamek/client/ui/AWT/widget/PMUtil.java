@@ -12,14 +12,11 @@
  *  for more details.
  */
 
-
-
-
-
 package megamek.client.ui.AWT.widget;
 
-import java.awt.*;
-
+import java.awt.Component;
+import java.awt.Image;
+import java.awt.MediaTracker;
 
 /**
  * Set of usefull function. 
@@ -48,18 +45,4 @@ public final class PMUtil {
         
         return b;
     }
-    
-    /**
-     * Returns Window class that contains given component
-     */
-    
-    public static Window getParentWindow(Component c){
-        Container container = c.getParent();
-        while (!(container instanceof Window) || (container == null)){
-            container = container.getParent(); 
-        }
-        return (Window) container;
-    }
-    
-    
 }

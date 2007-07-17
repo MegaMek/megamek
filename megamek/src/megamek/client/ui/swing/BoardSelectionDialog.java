@@ -20,11 +20,17 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.AWT.Messages;
-import megamek.common.Board;
-import megamek.common.IBoard;
-import megamek.common.MapSettings;
-import megamek.common.util.BoardUtilities;
+import java.awt.BorderLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.IOException;
+import java.util.Enumeration;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -37,19 +43,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.IOException;
-import java.util.Enumeration;
+
+import megamek.client.ui.AWT.Messages;
+import megamek.common.Board;
+import megamek.common.IBoard;
+import megamek.common.MapSettings;
+import megamek.common.util.BoardUtilities;
 
 /**
  * @author Ben
@@ -63,13 +65,13 @@ public class BoardSelectionDialog
 
     private JPanel panMapSize = new JPanel();
 
-    private JLabel labBoardSize = new JLabel(Messages.getString("BoardSelectionDialog.BoardSize"), JLabel.RIGHT); //$NON-NLS-1$
-    private JLabel labBoardDivider = new JLabel("x", JLabel.CENTER); //$NON-NLS-1$
+    private JLabel labBoardSize = new JLabel(Messages.getString("BoardSelectionDialog.BoardSize"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JLabel labBoardDivider = new JLabel("x", SwingConstants.CENTER); //$NON-NLS-1$
     private JTextField texBoardWidth = new JTextField(2);
     private JTextField texBoardHeight = new JTextField(2);
 
-    private JLabel labMapSize = new JLabel(Messages.getString("BoardSelectionDialog.MapSize"), JLabel.RIGHT); //$NON-NLS-1$
-    private JLabel labMapDivider = new JLabel("x", JLabel.CENTER); //$NON-NLS-1$
+    private JLabel labMapSize = new JLabel(Messages.getString("BoardSelectionDialog.MapSize"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JLabel labMapDivider = new JLabel("x", SwingConstants.CENTER); //$NON-NLS-1$
     private JTextField texMapWidth = new JTextField(2);
     private JTextField texMapHeight = new JTextField(2);
 
@@ -77,21 +79,21 @@ public class BoardSelectionDialog
     private JPanel panMapButtons = new JPanel();
 
     private JPanel panBoardsSelected = new JPanel();
-    private JLabel labBoardsSelected = new JLabel(Messages.getString("BoardSelectionDialog.MapsSelected"), JLabel.CENTER); //$NON-NLS-1$
+    private JLabel labBoardsSelected = new JLabel(Messages.getString("BoardSelectionDialog.MapsSelected"), SwingConstants.CENTER); //$NON-NLS-1$
     private JList lisBoardsSelected = new JList(new DefaultListModel());
     private JCheckBox chkSelectAll = new JCheckBox(Messages.getString("BoardSelectionDialog.SelectAll")); //$NON-NLS-1$
 
     private JButton butChange = new JButton("<<"); //$NON-NLS-1$
 
     private JPanel panBoardsAvailable = new JPanel();
-    private JLabel labBoardsAvailable = new JLabel(Messages.getString("BoardSelectionDialog.mapsAvailable"), JLabel.CENTER); //$NON-NLS-1$
+    private JLabel labBoardsAvailable = new JLabel(Messages.getString("BoardSelectionDialog.mapsAvailable"), SwingConstants.CENTER); //$NON-NLS-1$
     private JList lisBoardsAvailable = new JList(new DefaultListModel());
     private JCheckBox chkRotateBoard = new JCheckBox(Messages.getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
 
     private JPanel panButtons = new JPanel();
     private JButton butUpdate = new JButton(Messages.getString("BoardSelectionDialog.UpdateSize")); //$NON-NLS-1$
     private JButton butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
-    private JLabel labButtonSpace = new JLabel("", JLabel.CENTER); //$NON-NLS-1$
+    private JLabel labButtonSpace = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
     private JButton butPreview = new JButton(Messages.getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$

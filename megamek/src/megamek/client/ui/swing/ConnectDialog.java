@@ -1,17 +1,19 @@
 package megamek.client.ui.swing;
 
-import megamek.common.preference.PreferenceManager;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
+import javax.swing.SwingConstants;
+
+import megamek.common.preference.PreferenceManager;
 
 /**
  * here's a quick class for the connect to game diaglogue box
@@ -31,9 +33,9 @@ public class ConnectDialog extends JDialog implements ActionListener {
 
     public ConnectDialog(JFrame frame) {
         super(frame, Messages.getString("MegaMek.ConnectDialog.title"), true); //$NON-NLS-1$
-        yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), JLabel.RIGHT); //$NON-NLS-1$
-        serverAddrL = new JLabel(Messages.getString("MegaMek.serverAddrL"), JLabel.RIGHT); //$NON-NLS-1$
-        portL = new JLabel(Messages.getString("MegaMek.portL"), JLabel.RIGHT); //$NON-NLS-1$
+        yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), SwingConstants.RIGHT); //$NON-NLS-1$
+        serverAddrL = new JLabel(Messages.getString("MegaMek.serverAddrL"), SwingConstants.RIGHT); //$NON-NLS-1$
+        portL = new JLabel(Messages.getString("MegaMek.portL"), SwingConstants.RIGHT); //$NON-NLS-1$
         yourNameF = new JTextField(PreferenceManager.getClientPreferences().getLastPlayerName(), 16);
         yourNameF.addActionListener(this);
         serverAddrF = new JTextField(PreferenceManager.getClientPreferences().getLastConnectAddr(), 16);

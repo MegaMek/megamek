@@ -886,7 +886,7 @@ public class BoardView1
                 if (!board.contains(c)){ continue; }
                 if (!game.containsMinefield(c)){ continue; }
                 
-                Minefield mf = (Minefield) game.getMinefields(c).elementAt(0);
+                Minefield mf = game.getMinefields(c).elementAt(0);
                 
                 Image tmpImage = getScaledImage( tileManager.getMinefieldSign());
                 backGraph.drawImage(

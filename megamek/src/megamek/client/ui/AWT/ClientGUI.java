@@ -219,7 +219,7 @@ public class ClientGUI
                 System.err.println("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename()); //$NON-NLS-1$
                 return;
             }
-            bingClip = Applet.newAudioClip(file.toURL());
+            bingClip = Applet.newAudioClip(file.toURI().toURL());
         } catch (Exception ex) {
             ex.printStackTrace();
         }

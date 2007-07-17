@@ -14,15 +14,17 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-
-import javax.swing.JLabel;
-import javax.swing.JPanel;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+
+import megamek.client.Client;
 
 public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay implements ActionListener {
 
@@ -36,7 +38,7 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
     protected void setupStatusBar(String defStatus) {
         panStatus = new JPanel();
 
-        labStatus = new JLabel(defStatus, JLabel.CENTER);
+        labStatus = new JLabel(defStatus, SwingConstants.CENTER);
 
         // layout
         GridBagLayout gridbag = new GridBagLayout();

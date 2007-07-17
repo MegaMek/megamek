@@ -14,20 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.widget.SimpleLine;
-import megamek.common.MapSettings;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -42,6 +28,22 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.filechooser.FileFilter;
+
+import megamek.client.ui.swing.widget.SimpleLine;
+import megamek.common.MapSettings;
 
 public class RandomMapDialog
         extends JDialog implements ActionListener, FocusListener {
@@ -596,7 +598,7 @@ public class RandomMapDialog
         gridbag = new GridBagLayout();
         panOptions.setLayout(gridbag);
 
-        labBoardSize = new JLabel(Messages.getString("RandomMapDialog.BoardSize"), JLabel.LEFT); //$NON-NLS-1$
+        labBoardSize = new JLabel(Messages.getString("RandomMapDialog.BoardSize"), SwingConstants.LEFT); //$NON-NLS-1$
         texBoardWidth = new JTextField(2);
         texBoardWidth.addFocusListener(this);
         texBoardHeight = new JTextField(2);
@@ -604,72 +606,72 @@ public class RandomMapDialog
         slBoardSize = new SimpleLine(NORMAL_LINE_WIDTH);
 
         // Normal setting components...
-        labElevation = new JLabel(Messages.getString("RandomMapDialog.labElevation"), JLabel.LEFT); //$NON-NLS-1$
+        labElevation = new JLabel(Messages.getString("RandomMapDialog.labElevation"), SwingConstants.LEFT); //$NON-NLS-1$
         choElevation = new JComboBox();
         fillChoice(choElevation);
         slElevation = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labCliffs = new JLabel(Messages.getString("RandomMapDialog.labCliffs"), JLabel.LEFT); //$NON-NLS-1$
+        labCliffs = new JLabel(Messages.getString("RandomMapDialog.labCliffs"), SwingConstants.LEFT); //$NON-NLS-1$
         choCliffs = new JComboBox();
         fillChoice(choCliffs);
         slCliffs = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labWoods = new JLabel(Messages.getString("RandomMapDialog.labWoods"), JLabel.LEFT); //$NON-NLS-1$
+        labWoods = new JLabel(Messages.getString("RandomMapDialog.labWoods"), SwingConstants.LEFT); //$NON-NLS-1$
         choWoods = new JComboBox();
         fillChoice(choWoods);
         slWoods = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labLakes = new JLabel(Messages.getString("RandomMapDialog.labLakes"), JLabel.LEFT); //$NON-NLS-1$
+        labLakes = new JLabel(Messages.getString("RandomMapDialog.labLakes"), SwingConstants.LEFT); //$NON-NLS-1$
         choLakes = new JComboBox();
         fillChoice(choLakes);
         slLakes = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labRough = new JLabel(Messages.getString("RandomMapDialog.labRough"), JLabel.LEFT); //$NON-NLS-1$
+        labRough = new JLabel(Messages.getString("RandomMapDialog.labRough"), SwingConstants.LEFT); //$NON-NLS-1$
         choRough = new JComboBox();
         fillChoice(choRough);
         slRough = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labSwamp = new JLabel(Messages.getString("RandomMapDialog.labSwamp"), JLabel.LEFT); //$NON-NLS-1$
+        labSwamp = new JLabel(Messages.getString("RandomMapDialog.labSwamp"), SwingConstants.LEFT); //$NON-NLS-1$
         choSwamp = new JComboBox();
         fillChoice(choSwamp);
         slSwamp = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labPavement = new JLabel(Messages.getString("RandomMapDialog.labPavement"), JLabel.LEFT);
+        labPavement = new JLabel(Messages.getString("RandomMapDialog.labPavement"), SwingConstants.LEFT);
         choPavement = new JComboBox();
         fillChoice(choPavement);
         slPavement = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labRubble = new JLabel(Messages.getString("RandomMapDialog.labRubble"), JLabel.LEFT);
+        labRubble = new JLabel(Messages.getString("RandomMapDialog.labRubble"), SwingConstants.LEFT);
         choRubble = new JComboBox();
         fillChoice(choRubble);
         slRubble = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labFortified = new JLabel(Messages.getString("RandomMapDialog.labFortified"), JLabel.LEFT);
+        labFortified = new JLabel(Messages.getString("RandomMapDialog.labFortified"), SwingConstants.LEFT);
         choFortified = new JComboBox();
         fillChoice(choFortified);
         slFortified = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labIce = new JLabel(Messages.getString("RandomMapDialog.labIce"), JLabel.LEFT);
+        labIce = new JLabel(Messages.getString("RandomMapDialog.labIce"), SwingConstants.LEFT);
         choIce = new JComboBox();
         fillChoice(choIce);
         slIce = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labCraters = new JLabel(Messages.getString("RandomMapDialog.labCraters"), JLabel.LEFT);
+        labCraters = new JLabel(Messages.getString("RandomMapDialog.labCraters"), SwingConstants.LEFT);
         choCraters = new JComboBox();
         fillChoice(choCraters);
         slCraters = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labRivers = new JLabel(Messages.getString("RandomMapDialog.labRivers"), JLabel.LEFT); //$NON-NLS-1$
+        labRivers = new JLabel(Messages.getString("RandomMapDialog.labRivers"), SwingConstants.LEFT); //$NON-NLS-1$
         choRivers = new JComboBox();
         fillChoice(choRivers);
         slRivers = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labRoads = new JLabel(Messages.getString("RandomMapDialog.labRoads"), JLabel.LEFT); //$NON-NLS-1$
+        labRoads = new JLabel(Messages.getString("RandomMapDialog.labRoads"), SwingConstants.LEFT); //$NON-NLS-1$
         choRoads = new JComboBox();
         fillChoice(choRoads);
         slRoads = new SimpleLine(NORMAL_LINE_WIDTH);
 
-        labCity = new JLabel(Messages.getString("RandomMapDialog.labCity"), JLabel.LEFT); //$NON-NLS-1$
+        labCity = new JLabel(Messages.getString("RandomMapDialog.labCity"), SwingConstants.LEFT); //$NON-NLS-1$
         choCity = new JComboBox();
         choCity.addItem(NONE);
         choCity.addItem("HUB");
@@ -677,34 +679,34 @@ public class RandomMapDialog
         choCity.addItem("METRO");
         choCity.addItem("TOWN");
         slCity = new SimpleLine(NORMAL_LINE_WIDTH);
-        labMountain = new JLabel(Messages.getString("RandomMapDialog.labMountain"), JLabel.LEFT); //$NON-NLS-1$
+        labMountain = new JLabel(Messages.getString("RandomMapDialog.labMountain"), SwingConstants.LEFT); //$NON-NLS-1$
         choMountain = new JComboBox();
         fillChoice(choMountain);
         slMountain = new SimpleLine(NORMAL_LINE_WIDTH);
 
         // Advanced setting components...
-        labTheme = new JLabel(Messages.getString("RandomMapDialog.labTheme"), JLabel.LEFT);
+        labTheme = new JLabel(Messages.getString("RandomMapDialog.labTheme"), SwingConstants.LEFT);
         texTheme = new JTextField(20);
         /** how much hills there should be, Range 0..99 */
-        labHilliness = new JLabel(Messages.getString("RandomMapDialog.labHilliness"), JLabel.LEFT); //$NON-NLS-1$
+        labHilliness = new JLabel(Messages.getString("RandomMapDialog.labHilliness"), SwingConstants.LEFT); //$NON-NLS-1$
         texHilliness = new JTextField(2);
         texHilliness.addFocusListener(this);
         /** Maximum level of the map */
-        labRange = new JLabel(Messages.getString("RandomMapDialog.labRange"), JLabel.LEFT); //$NON-NLS-1$
+        labRange = new JLabel(Messages.getString("RandomMapDialog.labRange"), SwingConstants.LEFT); //$NON-NLS-1$
         texRange = new JTextField(2);
         texRange.addFocusListener(this);
-        labProbInvert = new JLabel(Messages.getString("RandomMapDialog.labProbInvert"), JLabel.LEFT); //$NON-NLS-1$
+        labProbInvert = new JLabel(Messages.getString("RandomMapDialog.labProbInvert"), SwingConstants.LEFT); //$NON-NLS-1$
         texProbInvert = new JTextField(2);
         texProbInvert.addFocusListener(this);
-        labCliffsAd = new JLabel(Messages.getString("RandomMapDialog.labCliffs"), JLabel.LEFT); //$NON-NLS-1$
+        labCliffsAd = new JLabel(Messages.getString("RandomMapDialog.labCliffs"), SwingConstants.LEFT); //$NON-NLS-1$
         texCliffs = new JTextField(2);
         texCliffs.addFocusListener(this);
 
         //mountain
-        labMountainHeight = new JLabel(Messages.getString("RandomMapDialog.labMountainHeight"), JLabel.LEFT); //$NON-NLS-1$
-        labMountainWidth = new JLabel(Messages.getString("RandomMapDialog.labMountainWidth"), JLabel.LEFT); //$NON-NLS-1$
-        labMountainPeaks = new JLabel(Messages.getString("RandomMapDialog.labMountainPeaks"), JLabel.LEFT); //$NON-NLS-1$
-        labMountainStyle = new JLabel(Messages.getString("RandomMapDialog.labMountainStyle"), JLabel.LEFT); //$NON-NLS-1$
+        labMountainHeight = new JLabel(Messages.getString("RandomMapDialog.labMountainHeight"), SwingConstants.LEFT); //$NON-NLS-1$
+        labMountainWidth = new JLabel(Messages.getString("RandomMapDialog.labMountainWidth"), SwingConstants.LEFT); //$NON-NLS-1$
+        labMountainPeaks = new JLabel(Messages.getString("RandomMapDialog.labMountainPeaks"), SwingConstants.LEFT); //$NON-NLS-1$
+        labMountainStyle = new JLabel(Messages.getString("RandomMapDialog.labMountainStyle"), SwingConstants.LEFT); //$NON-NLS-1$
         texMountainPeaks = new JTextField(2);
         texMountainPeaks.addFocusListener(this);
         texMountainHeightMin = new JTextField(2);
@@ -719,145 +721,145 @@ public class RandomMapDialog
         texMountainStyle.addFocusListener(this);
         
         /** how much Lakes at least */
-        labWaterSpots = new JLabel(Messages.getString("RandomMapDialog.labWaterSpots"), JLabel.LEFT); //$NON-NLS-1$
+        labWaterSpots = new JLabel(Messages.getString("RandomMapDialog.labWaterSpots"), SwingConstants.LEFT); //$NON-NLS-1$
         texMinWaterSpots = new JTextField(2);
         texMinWaterSpots.addFocusListener(this);
         /** how much Lakes at most */
         texMaxWaterSpots = new JTextField(2);
         texMaxWaterSpots.addFocusListener(this);
         /** minimum size of a lake */
-        labWaterSize = new JLabel(Messages.getString("RandomMapDialog.labWaterSize"), JLabel.LEFT); //$NON-NLS-1$
+        labWaterSize = new JLabel(Messages.getString("RandomMapDialog.labWaterSize"), SwingConstants.LEFT); //$NON-NLS-1$
         texMinWaterSize = new JTextField(2);
         texMinWaterSize.addFocusListener(this);
         /** maximum Size of a lake */
         texMaxWaterSize = new JTextField(2);
         texMaxWaterSize.addFocusListener(this);
         /** probability for water deeper than lvl1, Range 0..100 */
-        labProbDeep = new JLabel(Messages.getString("RandomMapDialog.labProbDeep"), JLabel.LEFT); //$NON-NLS-1$
+        labProbDeep = new JLabel(Messages.getString("RandomMapDialog.labProbDeep"), SwingConstants.LEFT); //$NON-NLS-1$
         texProbDeep = new JTextField(2);
         texProbDeep.addFocusListener(this);
 
         /** how much forests at least */
-        labForestSpots = new JLabel(Messages.getString("RandomMapDialog.labForestSpots"), JLabel.LEFT); //$NON-NLS-1$
+        labForestSpots = new JLabel(Messages.getString("RandomMapDialog.labForestSpots"), SwingConstants.LEFT); //$NON-NLS-1$
         texMinForestSpots = new JTextField(2);
         texMinForestSpots.addFocusListener(this);
         /** how much forests at most */
         texMaxForestSpots = new JTextField(2);
         texMaxForestSpots.addFocusListener(this);
         /** minimum size of a forest */
-        labForestSize = new JLabel(Messages.getString("RandomMapDialog.labForestSize"), JLabel.LEFT); //$NON-NLS-1$
+        labForestSize = new JLabel(Messages.getString("RandomMapDialog.labForestSize"), SwingConstants.LEFT); //$NON-NLS-1$
         texMinForestSize = new JTextField(2);
         texMinForestSize.addFocusListener(this);
         /** maximum Size of a forest */
         texMaxForestSize = new JTextField(2);
         texMaxForestSize.addFocusListener(this);
         /** probability for heavy wood, Range 0..100 */
-        labProbHeavy = new JLabel(Messages.getString("RandomMapDialog.labProbHeavy"), JLabel.LEFT); //$NON-NLS-1$
+        labProbHeavy = new JLabel(Messages.getString("RandomMapDialog.labProbHeavy"), SwingConstants.LEFT); //$NON-NLS-1$
         texProbHeavy = new JTextField(2);
         texProbHeavy.addFocusListener(this);
 
         /** rough */
-        labRoughSpots = new JLabel(Messages.getString("RandomMapDialog.labRoughSpots"), JLabel.LEFT); //$NON-NLS-1$
+        labRoughSpots = new JLabel(Messages.getString("RandomMapDialog.labRoughSpots"), SwingConstants.LEFT); //$NON-NLS-1$
         texMinRoughSpots = new JTextField(2);
         texMinRoughSpots.addFocusListener(this);
         texMaxRoughSpots = new JTextField(2);
         texMaxRoughSpots.addFocusListener(this);
-        labRoughSize = new JLabel(Messages.getString("RandomMapDialog.labRoughSize"), JLabel.LEFT); //$NON-NLS-1$
+        labRoughSize = new JLabel(Messages.getString("RandomMapDialog.labRoughSize"), SwingConstants.LEFT); //$NON-NLS-1$
         texMinRoughSize = new JTextField(2);
         texMinRoughSize.addFocusListener(this);
         texMaxRoughSize = new JTextField(2);
         texMaxRoughSize.addFocusListener(this);
 
         /** swamp */
-        labSwampSpots = new JLabel(Messages.getString("RandomMapDialog.labSwampSpots"), JLabel.LEFT); //$NON-NLS-1$
+        labSwampSpots = new JLabel(Messages.getString("RandomMapDialog.labSwampSpots"), SwingConstants.LEFT); //$NON-NLS-1$
         texMinSwampSpots = new JTextField(2);
         texMinSwampSpots.addFocusListener(this);
         texMaxSwampSpots = new JTextField(2);
         texMaxSwampSpots.addFocusListener(this);
-        labSwampSize = new JLabel(Messages.getString("RandomMapDialog.labSwampSize"), JLabel.LEFT); //$NON-NLS-1$
+        labSwampSize = new JLabel(Messages.getString("RandomMapDialog.labSwampSize"), SwingConstants.LEFT); //$NON-NLS-1$
         texMinSwampSize = new JTextField(2);
         texMinSwampSize.addFocusListener(this);
         texMaxSwampSize = new JTextField(2);
         texMaxSwampSize.addFocusListener(this);
 
         /** pavement */
-        labPavementSpots = new JLabel(Messages.getString("RandomMapDialog.labPavementSpots"), JLabel.LEFT);
+        labPavementSpots = new JLabel(Messages.getString("RandomMapDialog.labPavementSpots"), SwingConstants.LEFT);
         texMinPavementSpots = new JTextField(2);
         texMinPavementSpots.addFocusListener(this);
         texMaxPavementSpots = new JTextField(2);
         texMaxPavementSpots.addFocusListener(this);
-        labPavementSize = new JLabel(Messages.getString("RandomMapDialog.labPavementSize"), JLabel.LEFT);
+        labPavementSize = new JLabel(Messages.getString("RandomMapDialog.labPavementSize"), SwingConstants.LEFT);
         texMinPavementSize = new JTextField(2);
         texMinPavementSize.addFocusListener(this);
         texMaxPavementSize = new JTextField(2);
         texMaxPavementSize.addFocusListener(this);
 
         /** Rubble */
-        labRubbleSpots = new JLabel(Messages.getString("RandomMapDialog.labRubbleSpots"), JLabel.LEFT);
+        labRubbleSpots = new JLabel(Messages.getString("RandomMapDialog.labRubbleSpots"), SwingConstants.LEFT);
         texMinRubbleSpots = new JTextField(2);
         texMinRubbleSpots.addFocusListener(this);
         texMaxRubbleSpots = new JTextField(2);
         texMaxRubbleSpots.addFocusListener(this);
-        labRubbleSize = new JLabel(Messages.getString("RandomMapDialog.labRubbleSize"), JLabel.LEFT);
+        labRubbleSize = new JLabel(Messages.getString("RandomMapDialog.labRubbleSize"), SwingConstants.LEFT);
         texMinRubbleSize = new JTextField(2);
         texMinRubbleSize.addFocusListener(this);
         texMaxRubbleSize = new JTextField(2);
         texMaxRubbleSize.addFocusListener(this);
 
         /** Fortified */
-        labFortifiedSpots = new JLabel(Messages.getString("RandomMapDialog.labFortifiedSpots"), JLabel.LEFT);
+        labFortifiedSpots = new JLabel(Messages.getString("RandomMapDialog.labFortifiedSpots"), SwingConstants.LEFT);
         texMinFortifiedSpots = new JTextField(2);
         texMinFortifiedSpots.addFocusListener(this);
         texMaxFortifiedSpots = new JTextField(2);
         texMaxFortifiedSpots.addFocusListener(this);
-        labFortifiedSize = new JLabel(Messages.getString("RandomMapDialog.labFortifiedSize"), JLabel.LEFT);
+        labFortifiedSize = new JLabel(Messages.getString("RandomMapDialog.labFortifiedSize"), SwingConstants.LEFT);
         texMinFortifiedSize = new JTextField(2);
         texMinFortifiedSize.addFocusListener(this);
         texMaxFortifiedSize = new JTextField(2);
         texMaxFortifiedSize.addFocusListener(this);
 
         /** ice */
-        labIceSpots = new JLabel(Messages.getString("RandomMapDialog.labIceSpots"), JLabel.LEFT);
+        labIceSpots = new JLabel(Messages.getString("RandomMapDialog.labIceSpots"), SwingConstants.LEFT);
         texMinIceSpots = new JTextField(2);
         texMinIceSpots.addFocusListener(this);
         texMaxIceSpots = new JTextField(2);
         texMaxIceSpots.addFocusListener(this);
-        labIceSize = new JLabel(Messages.getString("RandomMapDialog.labIceSize"), JLabel.LEFT);
+        labIceSize = new JLabel(Messages.getString("RandomMapDialog.labIceSize"), SwingConstants.LEFT);
         texMinIceSize = new JTextField(2);
         texMinIceSize.addFocusListener(this);
         texMaxIceSize = new JTextField(2);
         texMaxIceSize.addFocusListener(this);
 
         /** probability for a road, range 0..100 */
-        labProbRoad = new JLabel(Messages.getString("RandomMapDialog.labProbRoad"), JLabel.LEFT); //$NON-NLS-1$
+        labProbRoad = new JLabel(Messages.getString("RandomMapDialog.labProbRoad"), SwingConstants.LEFT); //$NON-NLS-1$
         texProbRoad = new JTextField(2);
         texProbRoad.addFocusListener(this);
         /** probability for a river, range 0..100 */
-        labProbRiver = new JLabel(Messages.getString("RandomMapDialog.labProbRiver"), JLabel.LEFT); //$NON-NLS-1$
+        labProbRiver = new JLabel(Messages.getString("RandomMapDialog.labProbRiver"), SwingConstants.LEFT); //$NON-NLS-1$
         texProbRiver = new JTextField(2);
         texProbRiver.addFocusListener(this);
 
         /* Craters */
-        labProbCrater = new JLabel(Messages.getString("RandomMapDialog.labProbCrater"), JLabel.LEFT); //$NON-NLS-1$
+        labProbCrater = new JLabel(Messages.getString("RandomMapDialog.labProbCrater"), SwingConstants.LEFT); //$NON-NLS-1$
         texProbCrater = new JTextField(2);
         texProbCrater.addFocusListener(this);
-        labRadius = new JLabel(Messages.getString("RandomMapDialog.labRadius"), JLabel.LEFT); //$NON-NLS-1$
+        labRadius = new JLabel(Messages.getString("RandomMapDialog.labRadius"), SwingConstants.LEFT); //$NON-NLS-1$
         texMinRadius = new JTextField(2);
         texMinRadius.addFocusListener(this);
         texMaxRadius = new JTextField(2);
         texMaxRadius.addFocusListener(this);
-        labMaxCraters = new JLabel(Messages.getString("RandomMapDialog.labMaxCraters"), JLabel.LEFT); //$NON-NLS-1$
+        labMaxCraters = new JLabel(Messages.getString("RandomMapDialog.labMaxCraters"), SwingConstants.LEFT); //$NON-NLS-1$
         texMaxCraters = new JTextField(2);
         texMaxCraters.addFocusListener(this);
         texMinCraters = new JTextField(2);
         texMinCraters.addFocusListener(this);
 
         /* FX */
-        labProbDrought = new JLabel(Messages.getString("RandomMapDialog.labProbDrought"), JLabel.LEFT);
-        labProbFire = new JLabel(Messages.getString("RandomMapDialog.labProbFire"), JLabel.LEFT);
-        labProbFreeze = new JLabel(Messages.getString("RandomMapDialog.labProbFreeze"), JLabel.LEFT);
-        labProbFlood = new JLabel(Messages.getString("RandomMapDialog.labProbFlood"), JLabel.LEFT);
-        labFxMod = new JLabel(Messages.getString("RandomMapDialog.labFxMod"), JLabel.LEFT);
+        labProbDrought = new JLabel(Messages.getString("RandomMapDialog.labProbDrought"), SwingConstants.LEFT);
+        labProbFire = new JLabel(Messages.getString("RandomMapDialog.labProbFire"), SwingConstants.LEFT);
+        labProbFreeze = new JLabel(Messages.getString("RandomMapDialog.labProbFreeze"), SwingConstants.LEFT);
+        labProbFlood = new JLabel(Messages.getString("RandomMapDialog.labProbFlood"), SwingConstants.LEFT);
+        labFxMod = new JLabel(Messages.getString("RandomMapDialog.labFxMod"), SwingConstants.LEFT);
         texProbDrought = new JTextField(2);
         texProbFire = new JTextField(2);
         texProbFreeze = new JTextField(2);
@@ -865,11 +867,11 @@ public class RandomMapDialog
         texFxMod = new JTextField(2);
 
         /* Buildings */
-        labCityBlocks = new JLabel(Messages.getString("RandomMapDialog.labCityBlocks"), JLabel.LEFT);
-        labCityCF = new JLabel(Messages.getString("RandomMapDialog.labCityCF"), JLabel.LEFT);
-        labCityFloors = new JLabel(Messages.getString("RandomMapDialog.labCityFloors"), JLabel.LEFT);
-        labCityDensity = new JLabel(Messages.getString("RandomMapDialog.labCityDensity"), JLabel.LEFT);
-        labTownSize = new JLabel(Messages.getString("RandomMapDialog.labTownSize"), JLabel.LEFT);
+        labCityBlocks = new JLabel(Messages.getString("RandomMapDialog.labCityBlocks"), SwingConstants.LEFT);
+        labCityCF = new JLabel(Messages.getString("RandomMapDialog.labCityCF"), SwingConstants.LEFT);
+        labCityFloors = new JLabel(Messages.getString("RandomMapDialog.labCityFloors"), SwingConstants.LEFT);
+        labCityDensity = new JLabel(Messages.getString("RandomMapDialog.labCityDensity"), SwingConstants.LEFT);
+        labTownSize = new JLabel(Messages.getString("RandomMapDialog.labTownSize"), SwingConstants.LEFT);
         texCityBlocks = new JTextField(2);
         texCityMinCF = new JTextField(2);
         texCityMaxCF = new JTextField(2);
@@ -878,11 +880,11 @@ public class RandomMapDialog
         texCityDensity = new JTextField(2);
         texTownSize = new JTextField(2);
 
-        labInvertNegative = new JLabel(Messages.getString("RandomMapDialog.labInvertNegative"), JLabel.LEFT); //$NON-NLS-1$
+        labInvertNegative = new JLabel(Messages.getString("RandomMapDialog.labInvertNegative"), SwingConstants.LEFT); //$NON-NLS-1$
         texInvertNegative = new JTextField(1);
 
         /** Algorithm */
-        labAlgorithmToUse = new JLabel(Messages.getString("RandomMapDialog.labAlgorithmToUse"), JLabel.LEFT); //$NON-NLS-1$
+        labAlgorithmToUse = new JLabel(Messages.getString("RandomMapDialog.labAlgorithmToUse"), SwingConstants.LEFT); //$NON-NLS-1$
         texAlgorithmToUse = new JTextField(2);
 
         slElevationAd = new SimpleLine(ADVANCED_LINE_WIDTH);
@@ -972,7 +974,7 @@ public class RandomMapDialog
         gridbag.setConstraints(text, c);
         panOptions.add(text);
 
-        JLabel l = new JLabel(separator, JLabel.CENTER);
+        JLabel l = new JLabel(separator, SwingConstants.CENTER);
         gridbag.setConstraints(l, c);
         panOptions.add(l);
 

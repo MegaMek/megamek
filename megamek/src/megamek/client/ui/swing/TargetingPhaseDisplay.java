@@ -14,6 +14,29 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.TreeSet;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -24,8 +47,8 @@ import megamek.common.Entity;
 import megamek.common.GameTurn;
 import megamek.common.HexTarget;
 import megamek.common.IGame;
-import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
@@ -40,29 +63,6 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
-
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.TreeSet;
-import java.util.Vector;
 
 /*Targeting Phase Display.  Breaks naming convention because
 TargetingDisplay is too easy to confuse with something else*/
@@ -641,7 +641,7 @@ public class TargetingPhaseDisplay
         if (target != null && weaponId != -1) {
             ToHitData toHit;
 
-            toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, 0);
+            toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Entity.LOC_NONE, 0);
             clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
 
             clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
@@ -652,10 +652,10 @@ public class TargetingPhaseDisplay
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.autoFiringWeapon")); //$NON-NLS-1$
                 setFireEnabled(false);
-            } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(false);
-            } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+            } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(true);
             } else {
@@ -809,7 +809,7 @@ public class TargetingPhaseDisplay
         }
 
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
         // control pressed means a line of sight check.
@@ -818,8 +818,8 @@ public class TargetingPhaseDisplay
             return;
         }
         // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & MouseEvent.SHIFT_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
+        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {

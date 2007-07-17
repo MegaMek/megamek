@@ -49,8 +49,8 @@ public class MapSettings implements Serializable {
     private int mapHeight = 1;
     
     // FIXME these vectors get both Board and Strings assinged to them. most likely a bug, at the very least obfuscated code.
-    private Vector boardsSelected = new Vector<Board>();
-    private Vector boardsAvailable = new Vector<Board>();
+    private Vector<String> boardsSelected = new Vector<String>();
+    private Vector<String> boardsAvailable = new Vector<String>();
 
     //new vector to store all of the mapsetting buildings in.
     private Vector<BuildingTemplate> boardBuildings = new Vector<BuildingTemplate>();
@@ -217,14 +217,15 @@ public class MapSettings implements Serializable {
     }
     
     /** Creates new MapSettings that is a duplicate of another */
-    public MapSettings(MapSettings other) {
+    @SuppressWarnings("unchecked")
+	public MapSettings(MapSettings other) {
         this.boardWidth = other.getBoardWidth();
         this.boardHeight = other.getBoardHeight();
         this.mapWidth = other.getMapWidth();
         this.mapHeight = other.getMapHeight();
         
-        this.boardsSelected = (Vector)other.getBoardsSelectedVector().clone();
-        this.boardsAvailable = (Vector)other.getBoardsAvailableVector().clone();
+        this.boardsSelected = (Vector<String>)other.getBoardsSelectedVector().clone();
+        this.boardsAvailable = (Vector<String>)other.getBoardsAvailableVector().clone();
 
         this.invertNegativeTerrain = other.getInvertNegativeTerrain();
         this.mountainHeightMin = other.getMountainHeightMin();
@@ -344,15 +345,15 @@ public class MapSettings implements Serializable {
         boardsSelected.setSize(mapWidth * mapHeight);
     }
     
-    public Enumeration getBoardsSelected() {
+    public Enumeration<String> getBoardsSelected() {
         return boardsSelected.elements();
     }
 
-    public Vector getBoardsSelectedVector() {
+    public Vector<String> getBoardsSelectedVector() {
         return boardsSelected;
     }
     
-    public void setBoardsSelectedVector(Vector boardsSelected) {
+    public void setBoardsSelectedVector(Vector<String> boardsSelected) {
         this.boardsSelected = boardsSelected;
     }
     
@@ -412,15 +413,15 @@ public class MapSettings implements Serializable {
         }
     }
     
-    public Enumeration getBoardsAvailable() {
+    public Enumeration<String> getBoardsAvailable() {
         return boardsAvailable.elements();
     }
 
-    public Vector getBoardsAvailableVector() {
+    public Vector<String> getBoardsAvailableVector() {
         return boardsAvailable;
     }
     
-    public void setBoardsAvailableVector(Vector boardsAvailable) {
+    public void setBoardsAvailableVector(Vector<String> boardsAvailable) {
         this.boardsAvailable = boardsAvailable;
     }
     

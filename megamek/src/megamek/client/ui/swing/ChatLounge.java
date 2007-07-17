@@ -15,6 +15,46 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Vector;
+
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
@@ -38,44 +78,6 @@ import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
-
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Vector;
 
 public class ChatLounge
         extends AbstractPhaseDisplay
@@ -126,6 +128,7 @@ public class ChatLounge
     private JButton butDeleteAll;
 
     private JButton butLoad;
+    private JButton butArmy;
     private JButton butLoadCustomBA;
     private JButton butDelete;
     private JButton butCustom;
@@ -164,6 +167,7 @@ public class ChatLounge
     private MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         public void doneLoading() {
             butLoad.setEnabled(true);
+            butArmy.setEnabled(true);
             butLoadCustomBA.setEnabled(true);
         }
     };
@@ -222,7 +226,7 @@ public class ChatLounge
 
         setupMainPanel();
 
-        labStatus = new JLabel("", JLabel.CENTER); //$NON-NLS-1$
+        labStatus = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
 
         // layout main thing
         GridBagLayout gridbag = new GridBagLayout();
@@ -282,8 +286,8 @@ public class ChatLounge
         butRemoveBot.setActionCommand("remove_bot"); //$NON-NLS-1$
         butRemoveBot.addActionListener(this);
 
-        labTeam = new JLabel(Messages.getString("ChatLounge.labTeam"), JLabel.RIGHT); //$NON-NLS-1$
-        labCamo = new JLabel(Messages.getString("ChatLounge.labCamo"), JLabel.RIGHT); //$NON-NLS-1$
+        labTeam = new JLabel(Messages.getString("ChatLounge.labTeam"), SwingConstants.RIGHT); //$NON-NLS-1$
+        labCamo = new JLabel(Messages.getString("ChatLounge.labCamo"), SwingConstants.RIGHT); //$NON-NLS-1$
 
         choTeam = new JComboBox();
         choTeam.addItemListener(this);
@@ -373,9 +377,9 @@ public class ChatLounge
 
         lisMinefield = new JList(new DefaultListModel());
 
-        labConventional = new JLabel(Messages.getString("ChatLounge.labConventional"), JLabel.RIGHT); //$NON-NLS-1$
-        labCommandDetonated = new JLabel(Messages.getString("ChatLounge.labCommandDetonated"), JLabel.RIGHT); //$NON-NLS-1$
-        labVibrabomb = new JLabel(Messages.getString("ChatLounge.labVibrabomb"), JLabel.RIGHT); //$NON-NLS-1$
+        labConventional = new JLabel(Messages.getString("ChatLounge.labConventional"), SwingConstants.RIGHT); //$NON-NLS-1$
+        labCommandDetonated = new JLabel(Messages.getString("ChatLounge.labCommandDetonated"), SwingConstants.RIGHT); //$NON-NLS-1$
+        labVibrabomb = new JLabel(Messages.getString("ChatLounge.labVibrabomb"), SwingConstants.RIGHT); //$NON-NLS-1$
 
         fldConventional = new JTextField(1);
         fldCommandDetonated = new JTextField(1);
@@ -468,8 +472,8 @@ public class ChatLounge
      * Sets up the board settings panel
      */
     private void setupBoardSettings() {
-        labBoardSize = new JLabel(Messages.getString("ChatLounge.labBoardSize"), JLabel.CENTER); //$NON-NLS-1$
-        labMapSize = new JLabel(Messages.getString("ChatLounge.labMapSize"), JLabel.CENTER); //$NON-NLS-1$
+        labBoardSize = new JLabel(Messages.getString("ChatLounge.labBoardSize"), SwingConstants.CENTER); //$NON-NLS-1$
+        labMapSize = new JLabel(Messages.getString("ChatLounge.labMapSize"), SwingConstants.CENTER); //$NON-NLS-1$
 
         lisBoardsSelected = new JList(new DefaultListModel());
         lisBoardsSelected.addListSelectionListener(this);
@@ -611,21 +615,20 @@ public class ChatLounge
         butSaveList.setEnabled(false);
 
         butLoad = new JButton(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
+        butArmy = new JButton(Messages.getString("ChatLounge.butArmy")); //$NON-NLS-1$
         butLoadCustomBA = new JButton(Messages.getString("ChatLounge.butLoadCustomBA"));
 
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
         butLoad.setEnabled(mechSummaryCache.isInitialized());
+        butArmy.setEnabled(mechSummaryCache.isInitialized());
         butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
 
-        Font font = new Font("sanserif", Font.BOLD, 18); //$NON-NLS-1$
-        if (font == null) {
-            System.err.println("Couldn't find the new font for the 'Add a Unit' button."); //$NON-NLS-1$
-        } else {
-            butLoad.setFont(font);
-        }
+        Font font = new Font(Font.SANS_SERIF, Font.BOLD, 18); //$NON-NLS-1$
+        butLoad.setFont(font);
         butLoad.setActionCommand("load_mech"); //$NON-NLS-1$
         butLoad.addActionListener(this);
+        butArmy.addActionListener(this);
         butLoadCustomBA.setActionCommand("load_custom_ba"); //$NON-NLS-1$
         butLoadCustomBA.addActionListener(this);
 
@@ -672,11 +675,10 @@ public class ChatLounge
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = 1;
-        c.gridheight = 2;
+        c.gridheight = 1;
         gridbag.setConstraints(butLoad, c);
         panEntities.add(butLoad);
 
-        c.gridheight = 1;
         gridbag.setConstraints(butCustom, c);
         panEntities.add(butCustom);
 
@@ -694,6 +696,10 @@ public class ChatLounge
 
         c.gridwidth = 1;
         c.gridy = GridBagConstraints.RELATIVE;
+
+        gridbag.setConstraints(butArmy, c);
+        panEntities.add(butArmy);
+
         gridbag.setConstraints(butLoadCustomBA, c);
         panEntities.add(butLoadCustomBA);
 
@@ -718,7 +724,7 @@ public class ChatLounge
      * Sets up the battle values panel
      */
     private void setupBVs() {
-        labBVs = new JLabel(Messages.getString("ChatLounge.labBVs.BV"), JLabel.CENTER); //$NON-NLS-1$
+        labBVs = new JLabel(Messages.getString("ChatLounge.labBVs.BV"), SwingConstants.CENTER); //$NON-NLS-1$
 
         lisBVs = new JList(new DefaultListModel());
 
@@ -772,7 +778,7 @@ public class ChatLounge
      * Sets up the starting positions panel
      */
     private void setupStarts() {
-        labStarts = new JLabel(Messages.getString("ChatLounge.labStarts"), JLabel.CENTER); //$NON-NLS-1$
+        labStarts = new JLabel(Messages.getString("ChatLounge.labStarts"), SwingConstants.CENTER); //$NON-NLS-1$
 
         lisStarts = new JList(new DefaultListModel());
 
@@ -1184,7 +1190,7 @@ public class ChatLounge
         boolean editable = clientgui.getBots().get(entity.getOwner().getName()) != null;
         Client c;
         if (editable) {
-            c = (Client) clientgui.getBots().get(entity.getOwner().getName());
+            c = clientgui.getBots().get(entity.getOwner().getName());
         } else {
             editable |= entity.getOwnerId() == client.getLocalPlayer().getId();
             c = client;
@@ -1271,6 +1277,10 @@ public class ChatLounge
 
     private void loadCustomBA() {
         clientgui.getCustomBADialog().setVisible(true);
+    }
+
+    private void loadArmy() {
+        clientgui.getRandomArmyDialog().setVisible(true);
     }
 
     private void viewGroup() {
@@ -1412,6 +1422,8 @@ public class ChatLounge
             }
         } else if (ev.getSource().equals(butLoad)) {
             loadMech();
+        } else if (ev.getSource().equals(butArmy)) {
+            loadArmy();
         } else if (ev.getSource().equals(butLoadCustomBA)) {
             loadCustomBA();
         } else if (ev.getSource().equals(butCustom) || ev.getSource().equals(lisEntities)) {
@@ -1419,7 +1431,7 @@ public class ChatLounge
         } else if (ev.getSource().equals(butDelete)) {
             // delete mech
             Entity e = client.getEntity(entityCorrespondance[lisEntities.getSelectedIndex()]);
-            Client c = (Client) clientgui.getBots().get(e.getOwner().getName());
+            Client c = clientgui.getBots().get(e.getOwner().getName());
             if (c == null) {
                 c = client;
             }

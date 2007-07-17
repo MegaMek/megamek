@@ -624,7 +624,7 @@ public class ChatLounge
         butArmy.setEnabled(mechSummaryCache.isInitialized());
         butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
 
-        Font font = new Font(Font.SANS_SERIF, Font.BOLD, 18); //$NON-NLS-1$
+        Font font = new Font("Sans Serif", Font.BOLD, 18); //$NON-NLS-1$
         butLoad.setFont(font);
         butLoad.setActionCommand("load_mech"); //$NON-NLS-1$
         butLoad.addActionListener(this);

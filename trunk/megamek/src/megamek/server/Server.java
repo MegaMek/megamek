@@ -2356,9 +2356,9 @@ public class Server implements Runnable {
             sheetBoards[i] = new Board();
             String name = (String)mapSettings.getBoardsSelectedVector().elementAt(i);
             boolean isRotated = false;
-            //Do not rotate Rectangular boards only square boards rotate well.
             if ( name.startsWith( Board.BOARD_REQUEST_ROTATION ) ) {
-                if ( mapSettings.getMapHeight() == mapSettings.getMapWidth() )
+                //Do not rotate Boards with an odd Hight
+                if ( mapSettings.getMapWidth() % 2 == 0 )
                     isRotated = true;
                 name = name.substring( Board.BOARD_REQUEST_ROTATION.length() );
             }

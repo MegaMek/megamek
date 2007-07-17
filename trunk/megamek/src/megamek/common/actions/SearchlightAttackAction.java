@@ -50,7 +50,7 @@ public class SearchlightAttackAction
 
     public static boolean isPossible(IGame game, int attackerId, Targetable target, SearchlightAttackAction exempt) {
         final Entity attacker = game.getEntity(attackerId);
-        if(attacker == null || !attacker.isUsingSpotlight()) 
+        if(attacker == null || !attacker.isUsingSpotlight() || target == null) 
             return false;
         if(!Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD))
             return false;

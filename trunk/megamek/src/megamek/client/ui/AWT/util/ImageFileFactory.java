@@ -68,7 +68,7 @@ public class ImageFileFactory implements ItemFileFactory {
      * @throws  <code>IllegalArgumentException</code> if the <code>file</code>
      *          is <code>null</code>.
      */
-    public ItemFile getItemFile( File file ) throws IllegalArgumentException {
+    public ItemFile getItemFile(final File file ) throws IllegalArgumentException {
 
         // Validate the input.
         if ( null == file ) {
@@ -77,15 +77,14 @@ public class ImageFileFactory implements ItemFileFactory {
         }
 
         // Construct an anonymous class that gets an Image for the file.
-        final File entry = file;
         return new ItemFile() {
 
-                private File file = entry; // copy the file entry
+                private File itemFile = file; // copy the file entry
                 private Image image = null; // cache the Image
                 public Object getItem() throws Exception {
                     // Cache the image on first use.
                     if ( null == image ) {
-                        String name = file.getAbsolutePath();
+                        String name = itemFile.getAbsolutePath();
                         image = Toolkit.getDefaultToolkit().getImage( name );
                     }
                     // Return a copy of the image.
@@ -109,7 +108,7 @@ public class ImageFileFactory implements ItemFileFactory {
      *          <code>zipEntry</code> or the <code>zipFile</code> is
      *          <code>null</code>.
      */
-    public ItemFile getItemFile( ZipEntry zipEntry, ZipFile zipFile )
+    public ItemFile getItemFile(final ZipEntry zipEntry,final ZipFile zipFile )
         throws IllegalArgumentException {
 
         // Validate the input.
@@ -123,12 +122,9 @@ public class ImageFileFactory implements ItemFileFactory {
         }
 
         // Construct an anonymous class that gets an Image for the file.
-        final ZipEntry entry = zipEntry;
-        final ZipFile source = zipFile;
         return new ItemFile() {
 
-                private ZipEntry item = entry; // copy the ZipEntry
-                private ZipFile zipFile = source; // copy the ZipFile
+                private ZipEntry itemEntry = zipEntry; // copy the ZipEntry
                 private Image image = null; // cache the Image
                 public Object getItem() throws Exception {
 
@@ -137,28 +133,28 @@ public class ImageFileFactory implements ItemFileFactory {
 
                         // Get ready to read from the item.
                         InputStream in = new BufferedInputStream
-                            ( zipFile.getInputStream( item ),
-                              (int) item.getSize() );
+                            ( zipFile.getInputStream( itemEntry ),
+                              (int) itemEntry.getSize() );
 
                         // Make a buffer big enough to hold the item,
                         // read from the ZIP file, and write it to temp.
-                        byte[] buffer = new byte[ (int) item.getSize() ];
+                        byte[] buffer = new byte[ (int) itemEntry.getSize() ];
                         in.read( buffer );
 
                         // Check the last 10 bytes.  I've been having
                         // some problems with incomplete image files,
                         // and I want to detect it early and give advice
                         // to players for dealing with the problem.
-                        int index = (int) item.getSize() - 10;
-                        while ( item.getSize() > index ) {
+                        int index = (int) itemEntry.getSize() - 10;
+                        while ( itemEntry.getSize() > index ) {
                             if ( 0 != buffer[index] ) {
                                 break;
                             }
                             index++;
                         }
-                        if ( item.getSize() <= index ) {
+                        if ( itemEntry.getSize() <= index ) {
                             throw new IOException
-                                ( "Error reading " + item.getName() + //$NON-NLS-1$
+                                ( "Error reading " + itemEntry.getName() + //$NON-NLS-1$
                                   "\nYou may want to unzip " + //$NON-NLS-1$
                                   zipFile.getName() );
                         }

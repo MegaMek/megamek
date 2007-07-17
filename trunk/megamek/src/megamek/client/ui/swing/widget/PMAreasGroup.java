@@ -90,14 +90,12 @@ public class PMAreasGroup implements PMElement {
      */
     public Rectangle getBounds() {
         Rectangle bounds = null;
-        boolean empty = true;
         Enumeration<PMElement> iter = gr.elements();
         while (iter.hasMoreElements()) {
             PMElement pme = iter.nextElement();
             if ((pme != null) && (pme.getBounds() != null)) {
-                if (empty) {
+                if (bounds == null) {
                     bounds = pme.getBounds();
-                    empty = false;
                 } else {
                     bounds = bounds.union(pme.getBounds());
                 }

@@ -14,6 +14,44 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
 import megamek.client.Client;
 import megamek.client.ui.AWT.MechView;
 import megamek.common.BattleArmor;
@@ -41,41 +79,6 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Iterator;
-
 /* 
  * Allows a user to sort through a list of MechSummaries and select one
  */
@@ -97,13 +100,13 @@ public class MechSelectorDialog
     private StringBuffer m_sbSearch = new StringBuffer();
     private long m_nLastSearch = 0;
 
-    private JLabel m_labelWeightClass = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel m_labelWeightClass = new JLabel(Messages.getString("MechSelectorDialog.m_labelWeightClass"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox m_chWeightClass = new JComboBox();
-    private JLabel m_labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel m_labelType = new JLabel(Messages.getString("MechSelectorDialog.m_labelType"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox m_chType = new JComboBox();
-    private JLabel m_labelUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel m_labelUnitType = new JLabel(Messages.getString("MechSelectorDialog.m_labelUnitType"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox m_chUnitType = new JComboBox();
-    private JLabel m_labelSort = new JLabel(Messages.getString("MechSelectorDialog.m_labelSort"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel m_labelSort = new JLabel(Messages.getString("MechSelectorDialog.m_labelSort"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox m_chSort = new JComboBox();
     private JPanel m_pParams = new JPanel();
     private JPanel m_pListOptions = new JPanel();
@@ -154,7 +157,7 @@ public class MechSelectorDialog
     private JPanel m_pUpper = new JPanel();
     JLabel m_pPreview = new JLabel();
 
-    private JLabel m_labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel m_labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox m_chPlayer = new JComboBox();
 
     private boolean includeMaxTech;
@@ -221,7 +224,7 @@ public class MechSelectorDialog
         m_pLeft.add(m_pUpper, BorderLayout.NORTH);
         m_mechList.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         m_mechList.addKeyListener(this);
-        m_pLeft.add(new JScrollPane(m_mechList, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
+        m_pLeft.add(new JScrollPane(m_mechList, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
         m_pLeft.add(m_pButtons, BorderLayout.SOUTH);
 
         getContentPane().setLayout(new BorderLayout());
@@ -807,7 +810,7 @@ public class MechSelectorDialog
                 Client c = null;
                 if (m_chPlayer.getSelectedIndex() > 0) {
                     String name = (String) m_chPlayer.getSelectedItem();
-                    c = (Client) m_clientgui.getBots().get(name);
+                    c = m_clientgui.getBots().get(name);
                 }
                 if (c == null) {
                     c = m_client;
@@ -884,7 +887,7 @@ public class MechSelectorDialog
             TestEntity testEntity = null;
             if (entity instanceof Mech)
                 testEntity = new TestMech((Mech)entity, entityVerifier.mechOption, null);
-            if (entity instanceof Tank)
+            else //entity instanceof Tank 
                 testEntity = new TestTank((Tank)entity, entityVerifier.tankOption, null);
             if (!testEntity.correctEntity(sb, !m_clientgui.getClient().game.getOptions().booleanOption("is_eq_limits"))) {
                 m_mechView.setText(sb.toString());

@@ -43,7 +43,6 @@ public class VTOLMapSet implements DisplayMapSet {
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
 
-    private static final int INT_STR_OFFSET = 8;
     //Polygons for all areas
     private Polygon frontArmor = new Polygon(new int[]{30, 60, 90, 120},
             new int[]{30, 0, 0, 30},

@@ -35,6 +35,7 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GameMapQueryEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.GamePlayerConnectedEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
@@ -1407,6 +1408,16 @@ public class ClientGUI
             validate();
             doLayout();
             cb.moveToEnd();
+        }
+
+        public void gamePlayerConnected(GamePlayerConnectedEvent e) {
+            System.err.println("gamePlayerConnected");
+            System.err.flush();
+            if (curPanel instanceof ReportDisplay) {
+                ((ReportDisplay) curPanel).resetReadyButton();
+                System.err.println("resetReadyButton");
+                System.err.flush();
+            }
         }
 
         public void gameReport(GameReportEvent e) {

@@ -99,6 +99,13 @@ public class MechTileset {
 
     public Image imageFor(Entity entity, Component comp) {
         MechEntry entry = entryFor(entity);
+        
+        if ( entry == null ) {
+            System.err.println("Entry is null make sure that their is a default entry for "+entity.getShortNameRaw()+" in both mechset.txt and wreckset.txt.  Default to "+LIGHT_STRING);
+            System.err.flush();
+            entry = default_light;
+        }
+        
         if (entry.getImage() == null) {
             entry.loadImage(comp);
         }

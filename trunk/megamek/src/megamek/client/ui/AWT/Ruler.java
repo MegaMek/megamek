@@ -14,17 +14,28 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.AWTEvent;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.common.Coords;
 import megamek.common.LosEffects;
-
-import java.awt.event.MouseEvent;
-import java.awt.event.ActionEvent;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 
 /**
@@ -319,7 +330,7 @@ public class Ruler extends Dialog implements BoardViewListener {
       } else {
           thd = LosEffects.calculateLos(client.game, buildAttackInfo(end, start, h2, h1)).losModifiers(client.game);
       }
-      if (thd.getValue() != ToHitData.IMPOSSIBLE) {
+      if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
           toHit1 = thd.getValue() + " = "; //$NON-NLS-1$
       }
       toHit1 += thd.getDesc();
@@ -329,7 +340,7 @@ public class Ruler extends Dialog implements BoardViewListener {
         } else {
           thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers(client.game);
         }
-      if (thd.getValue() != ToHitData.IMPOSSIBLE) {
+      if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
           toHit2 = thd.getValue() + " = "; //$NON-NLS-1$
       }
       toHit2 += thd.getDesc();
@@ -378,7 +389,7 @@ public class Ruler extends Dialog implements BoardViewListener {
    }
 
    public void hexMoused(BoardViewEvent b) {
-      if ((b.getModifiers() & MouseEvent.ALT_MASK) != 0) {
+      if ((b.getModifiers() & InputEvent.ALT_MASK) != 0) {
          if (b.getType() == BoardViewEvent.BOARD_HEX_CLICKED) {
             addPoint(b.getCoords());
          }

@@ -298,7 +298,7 @@ public class ChatLounge
         butCamo.setPreferredSize(new Dimension(84, 72));
         butCamo.setActionCommand("camo"); //$NON-NLS-1$
         butCamo.addActionListener(this);
-        camoDialog.addItemListener(new CamoChoiceListener(camoDialog, butCamo, butOptions.getBackground(), player.getId(), client));
+        camoDialog.addItemListener(new CamoChoiceListener(camoDialog, butCamo, butOptions.getBackground(), this));
         refreshCamos();
 
         // If we have a camo pattern, use it.  Otherwise set a background.
@@ -1062,19 +1062,44 @@ public class ChatLounge
     }
 
     private void refreshCamos() {
-        // Get the local player's selected camo.
-        String curCat = client.getLocalPlayer().getCamoCategory();
-        String curItem = client.getLocalPlayer().getCamoFileName();
+        // Get the seleted player's selected camo.
+        Client c = getPlayerListSelected(lisPlayerInfo);
+        String curCat = c.getLocalPlayer().getCamoCategory();
+        String curItem = c.getLocalPlayer().getCamoFileName();
 
         // If the player has no camo selected, show his color.
-        if (curItem == null) {
+        if (null == curItem) {
             curCat = Player.NO_CAMO;
-            curItem = Player.colorNames[client.getLocalPlayer().getColorIndex()];
+            curItem = Player.colorNames[c.getLocalPlayer().getColorIndex()];
         }
 
         // Now update the camo selection dialog.
         camoDialog.setCategory(curCat);
         camoDialog.setItemName(curItem);
+
+        // TODO argoCult Programing at its best. I have only a vague idea what the section below does, but I do know it needs cleanup.
+        // however it is working.
+        Image image = null;
+        Image[] array = (Image[]) camoDialog.getSelectedObjects();
+        if ( null != array ) image = array[0];
+        
+        if ( null == image ) {
+            for (int color = 0; color < Player.colorNames.length; color++){
+                if ( Player.colorNames[color].equals( curItem ) ) {
+                    butCamo.setText( Messages.getString("CamoChoiceListener.NoCammo") ); //$NON-NLS-1$
+                    butCamo.setBackground(PlayerColors.getColor(color));
+                    break;
+                }
+            }
+        }
+        // We need to copy the image to make it appear.
+        else {
+            butCamo.setText( "" ); //$NON-NLS-1$
+            butCamo.setBackground( butOptions.getBackground() ); //butOptions.getBackground() == default background. This needs to be cleaned up.
+        }
+
+        // Update the butCamo's image.
+        butCamo.setIcon( new ImageIcon(image));
     }
 
     /**
@@ -1528,6 +1553,22 @@ public class ChatLounge
         }
         return c;
     }
+    
+    /**
+     * Allow others to see what player is currently selected. Nessecary for CameoChoieListener.
+     * @return
+     */
+    protected Client getPlayerListSelectedClient() {
+        if (lisPlayerInfo.getSelectedIndex() == -1) {
+            return client;
+        }
+        String name = ((String)lisPlayerInfo.getSelectedValue()).substring(0, Math.max(0,((String)lisPlayerInfo.getSelectedValue()).indexOf(" :"))); //$NON-NLS-1$
+        BotClient c = (BotClient)clientgui.getBots().get(name);
+        if (c == null && client.getName().equals(name)) {
+            return client;
+        }
+        return c;
+    }
 
     /**
      * Determine if the listener is currently distracted.
@@ -1610,9 +1651,10 @@ public class ChatLounge
                 butMechReadout.setEnabled(selected);
             }
             butDelete.setEnabled(selected);
-        } else if (event.getSource() == lisPlayerInfo) {
+        } else if (event.getSource().equals(lisPlayerInfo)) {
             butRemoveBot.setEnabled(false);
             Client c = getPlayerListSelected(lisPlayerInfo);
+            refreshCamos();
             if (c == null) {
                 lisPlayerInfo.setSelectedIndex(-1);
                 return;

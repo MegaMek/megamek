@@ -15,6 +15,32 @@
 
 package megamek.server;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.Vector;
+
 import megamek.MegaMek;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -108,9 +134,9 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.SpotAction;
 import megamek.common.actions.ThrashAttackAction;
-import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.TriggerAPPodAction;
+import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.UnjamAction;
 import megamek.common.actions.UnloadStrandedAction;
 import megamek.common.actions.WeaponAttackAction;
@@ -146,32 +172,6 @@ import megamek.server.commands.SkipCommand;
 import megamek.server.commands.TeamCommand;
 import megamek.server.commands.VictoryCommand;
 import megamek.server.commands.WhoCommand;
-
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.StringTokenizer;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Vector;
 
 /**
  * @author Ben Mazur
@@ -3433,14 +3433,14 @@ public class Server implements Runnable {
                         r.add(nextPos.getBoardNum(), true);
                         r.newlines = 0;
                         addReport(r);
-                        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+                        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                             roll = -12;
                             r = new Report(2055);
                             r.subject = entity.getId();
                             r.add(toHit.getDesc());
                             r.newlines = 0;
                             addReport(r);
-                        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+                        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
                             r = new Report(2060);
                             r.subject = entity.getId();
                             r.add(toHit.getDesc());
@@ -3962,7 +3962,7 @@ public class Server implements Runnable {
         int distance = entity.delta_distance;
         int mpUsed = entity.mpUsed;
         int moveType = entity.moved;
-        int overallMoveType = entity.moved;;
+        int overallMoveType = entity.moved;
         boolean firstStep;
         boolean wasProne;
         boolean fellDuringMovement = false;
@@ -4019,20 +4019,13 @@ public class Server implements Runnable {
 
             // check for MASC failure on first step
             if (firstStep && entity instanceof Mech) {
-                Vector crits = new Vector();
+                HashMap<Integer, CriticalSlot> crits = new HashMap<Integer, CriticalSlot>();
                 Vector<Report> vReport = new Vector<Report>();
                 if (((Mech)entity).checkForMASCFailure(md, vReport, crits)) {
                     addReport(vReport);
-                    CriticalSlot cs = null;
-                    int loc = Entity.LOC_NONE;
-                    for(Enumeration e = crits.elements();e.hasMoreElements();) {
-                        Object o = e.nextElement();
-                        if(o instanceof Integer)
-                            loc = (Integer) o;
-                        else if (o instanceof CriticalSlot) {
-                            cs = (CriticalSlot) o;
-                            addReport(applyCriticalHit(entity, loc, cs, true));
-                        }
+                    for(Integer loc : crits.keySet()){
+                    	CriticalSlot cs = crits.get(loc);
+                        addReport(applyCriticalHit(entity, loc, cs, true));
                     }
                     //do any PSR immediately
                     resolvePilotingRolls(entity);
@@ -6298,7 +6291,7 @@ public class Server implements Runnable {
             // ok, we missed, let's fall into a valid other hex and not cause an AFFA while doing so
             Coords targetDest = Compute.getValidDisplacement(game, entity.getId(), dest, direction);
             if (targetDest != null) {
-                doEntityFallsInto(entity, src, targetDest, new PilotingRollData(entity.getId(), PilotingRollData.IMPOSSIBLE, "pushed off a cliff"), false);
+                doEntityFallsInto(entity, src, targetDest, new PilotingRollData(entity.getId(), TargetRoll.IMPOSSIBLE, "pushed off a cliff"), false);
                 // Update the entity's postion on the client.
                 entityUpdate( entity.getId() );
             } else {
@@ -7214,7 +7207,7 @@ public class Server implements Runnable {
         // add the club
         try {
             if (clubType != null) {
-                entity.addEquipment(clubType, Mech.LOC_NONE);
+                entity.addEquipment(clubType, Entity.LOC_NONE);
             }
         } catch (LocationFullException ex) {
             // unlikely...
@@ -7749,7 +7742,7 @@ public class Server implements Runnable {
         // Swarming infantry can stop during any weapons phase after start.
         if (Infantry.STOP_SWARM.equals(wtype.getInternalName())) {
           // ... but only as their *only* attack action.
-          if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+          if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
               r = new Report(3105);
               r.subject = subjectId;
               r.add(toHit.getDesc());
@@ -7818,21 +7811,21 @@ public class Server implements Runnable {
           r.newlines = 0;
           addReport(r);
         }
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
           r = new Report(3135);
           r.subject = subjectId;
           r.add(toHit.getDesc());
           addReport(r);
           return false;
         }
-        else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
           r = new Report(3140);
           r.newlines = 0;
           r.subject = subjectId;
           r.add(toHit.getDesc());
           addReport(r);
         }
-        else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
           r = new Report(3145);
           r.newlines = 0;
           r.subject = subjectId;
@@ -10134,13 +10127,13 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
 
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4015);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
             return;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(4020);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -10322,14 +10315,14 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
 
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4060);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
             game.addPSR(new PilotingRollData(ae.getId(), 0, "missed a kick"));
             return;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(4065);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -10537,13 +10530,13 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
 
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4075);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
             return;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(4080);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -10701,13 +10694,13 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
 
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4075);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
             return;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(4080);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -10864,7 +10857,7 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
 
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4090);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -10978,7 +10971,7 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
 
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4115);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -10987,7 +10980,7 @@ public class Server implements Runnable {
         }
 
         // Thrash attack may hit automatically
-        if ( toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS ) {
+        if ( toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS ) {
             r = new Report(4120);
             r.subject = ae.getId();
             r.newlines = 0;
@@ -11131,7 +11124,7 @@ public class Server implements Runnable {
             r = new Report(4035);
             r.subject = ae.getId();
             addReport(r);
-            ToHitData newToHit = new ToHitData(ToHitData.AUTOMATIC_SUCCESS,"hit with own flail/wrecking ball");
+            ToHitData newToHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,"hit with own flail/wrecking ball");
             pr.damage /=2;
             newToHit.setHitTable(ToHitData.HIT_NORMAL);
             newToHit.setSideTable(ToHitData.SIDE_FRONT);
@@ -11172,7 +11165,7 @@ public class Server implements Runnable {
             }
         }
 
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4075);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -11184,7 +11177,7 @@ public class Server implements Runnable {
                 game.addPSR(new PilotingRollData(ae.getId(), 2, "missed a mace attack"));
             }
             return;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(4080);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -11321,7 +11314,7 @@ public class Server implements Runnable {
         if ( te != null 
                 && ((MiscType)caa.getClub().getType()).hasSubType(MiscType.S_LANCE)
                 && te.getArmor(hit) > 0
-                && te.getArmorType() != MiscType.T_ARMOR_HARDENED) {
+                && te.getArmorType() != EquipmentType.T_ARMOR_HARDENED) {
                 roll = Compute.d6(2);
                 //Pierce checking report
                 r = new Report(4021);
@@ -11384,7 +11377,7 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
 
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4160);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -11525,7 +11518,7 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
 
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4285);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -11582,7 +11575,7 @@ public class Server implements Runnable {
 
         if(te.getGrappled() != Entity.NONE ||
                 ae.getGrappled() != Entity.NONE) {
-            toHit.addModifier(ToHitData.IMPOSSIBLE, "Already Grappled");
+            toHit.addModifier(TargetRoll.IMPOSSIBLE, "Already Grappled");
         }
 
         if (lastEntityId != paa.getEntityId()) {
@@ -11600,7 +11593,7 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
 
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4300);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -11668,7 +11661,7 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
 
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(4310);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -11676,7 +11669,7 @@ public class Server implements Runnable {
             return;
         }
 
-        if(toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        if(toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(4320);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -11791,13 +11784,13 @@ public class Server implements Runnable {
         if(ae.isGrappleAttacker()) {
             //move self to least dangerous hex
             PilotingRollData psr = ae.getBasePilotingRoll();
-            psr.addModifier(PilotingRollData.AUTOMATIC_SUCCESS, "break grapple");
+            psr.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "break grapple");
             doEntityDisplacement(ae, ae.getPosition(), hexes[best], psr);
             ae.setFacing(hexes[best].direction(te.getPosition()));
         } else {
             //move enemy to most dangerous hex
             PilotingRollData psr = te.getBasePilotingRoll();
-            psr.addModifier(PilotingRollData.AUTOMATIC_SUCCESS, "break grapple");
+            psr.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "break grapple");
             doEntityDisplacement(te, te.getPosition(), hexes[worst], psr);
             te.setFacing(hexes[worst].direction(ae.getPosition()));
         }
@@ -11909,13 +11902,13 @@ public class Server implements Runnable {
         }
 
         // if the attacker's prone, fudge the roll
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             roll = -12;
             r = new Report(4220);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             roll = Integer.MAX_VALUE;
             r = new Report(4225);
             r.subject = ae.getId();
@@ -12262,13 +12255,13 @@ public class Server implements Runnable {
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
-        } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             roll = -12;
             r = new Report(4255);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
             addReport(r);
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(4260);
             r.subject = ae.getId();
             r.add(toHit.getDesc());
@@ -13336,7 +13329,7 @@ public class Server implements Runnable {
             return;
         }
         // is our base roll impossible?
-        if (base.getValue() == PilotingRollData.AUTOMATIC_FAIL || base.getValue() == PilotingRollData.IMPOSSIBLE) {
+        if (base.getValue() == TargetRoll.AUTOMATIC_FAIL || base.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(2275);
             r.subject = entity.getId();
             r.addDesc(entity);
@@ -15801,7 +15794,7 @@ public class Server implements Runnable {
                                                Mech.SYSTEM_GYRO, loc) > 1) {
                                     // gyro destroyed
                             game.addPSR( new PilotingRollData
-                                (en.getId(), PilotingRollData.AUTOMATIC_FAIL,
+                                (en.getId(), TargetRoll.AUTOMATIC_FAIL,
                                  3, "gyro destroyed") );
                         } else {
                                     // first gyro hit
@@ -15813,7 +15806,7 @@ public class Server implements Runnable {
                         if ( gyroHits > 2) {
 
                             // gyro destroyed
-                            game.addPSR( new PilotingRollData (en.getId(), PilotingRollData.AUTOMATIC_FAIL,
+                            game.addPSR( new PilotingRollData (en.getId(), TargetRoll.AUTOMATIC_FAIL,
                               3, "gyro destroyed") );
                         } else if ( gyroHits == 1 ){
                             //first gyro hit
@@ -16147,7 +16140,7 @@ public class Server implements Runnable {
                     hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
                 } else {
                     game.getBoard().addInfernoTo(pos, InfernoTracker.STANDARD_ROUND, 1);
-                    ((InfernoTracker)game.getBoard().getInfernos().get(pos)).setTurnsLeftToBurn(game.getBoard().getInfernoBurnTurns(pos)-2);  //massive hack
+                    game.getBoard().getInfernos().get(pos).setTurnsLeftToBurn(game.getBoard().getInfernoBurnTurns(pos)-2);  //massive hack
                     hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.FIRE, 1));
                     sendChangedHex(pos);
                 }
@@ -17219,7 +17212,7 @@ public class Server implements Runnable {
 
         entity.addPilotingModifierForTerrain(roll, fallPos);
 
-        if (roll.getValue() == PilotingRollData.IMPOSSIBLE) {
+        if (roll.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(2320);
             r.subject = entity.getId();
             r.addDesc(entity);

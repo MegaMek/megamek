@@ -537,7 +537,7 @@ public class Compute {
     }
 
     public static ToHitData getImmobileMod(Targetable target) {
-        return getImmobileMod(target, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE);
+        return getImmobileMod(target, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
     }
 
     public static ToHitData getImmobileMod(Targetable target, int aimingAt,
@@ -1060,7 +1060,7 @@ public class Compute {
                     hits += ((Protomech) attacker)
                             .getCritsHit(Protomech.LOC_RARM);
                     if (4 == hits) {
-                        mods.addModifier(ToHitData.IMPOSSIBLE,
+                        mods.addModifier(TargetRoll.IMPOSSIBLE,
                                 "Cannot fire main gun with no arms.");
                     } else if (hits > 0) {
                         mods.addModifier(hits, hits + " arm critical(s)");
@@ -1169,7 +1169,7 @@ public class Compute {
                 // not anything else (BMRr, pg. 147)
                 if (pte instanceof Mech && ((Entity) pte).isStealthActive()
                         && pte != target && !isSwarm) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE,
+                    return new ToHitData(TargetRoll.IMPOSSIBLE,
                             "When targeting a stealthed Mech, can not attack secondary targets");
                 }
                 if (isInArc(attacker.getPosition(), attacker
@@ -1192,13 +1192,13 @@ public class Compute {
 
         // Infantry can't attack secondary targets, but BA can (TW, page 109).
         if (attacker instanceof Infantry && !(attacker instanceof BattleArmor)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE,
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Can't have multiple targets.");
         }
 
         // Stealthed Mechs can't be secondary targets (BMRr, pg. 147)
         if ((target instanceof Mech) && ((Entity) target).isStealthActive()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE,
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Can't target Mech with active stealth armor as secondary target");
         }
 
@@ -1559,12 +1559,12 @@ public class Compute {
         if(assumeHit) {
             fChance = 1.0f;
         } else {
-            if (hitData.getValue() == ToHitData.IMPOSSIBLE
-                    || hitData.getValue() == ToHitData.AUTOMATIC_FAIL) {
+            if (hitData.getValue() == TargetRoll.IMPOSSIBLE
+                    || hitData.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 return 0.0f;
             }
     
-            if (hitData.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+            if (hitData.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
                 fChance = 1.0f;
             } else {
                 fChance = (float) oddsAbove(hitData.getValue()) / 100.0f;
@@ -2179,8 +2179,8 @@ public class Compute {
 
         // If weapon can't hit target, exit the function with the weapon on
         // single shot
-        if ((threshold == ToHitData.IMPOSSIBLE)
-                || (threshold == ToHitData.AUTOMATIC_FAIL)) {
+        if ((threshold == TargetRoll.IMPOSSIBLE)
+                || (threshold == TargetRoll.AUTOMATIC_FAIL)) {
             return final_spin;
         }
 
@@ -3137,7 +3137,7 @@ public class Compute {
     public static ToHitData getLegAttackBaseToHit(Entity attacker,
             Entity defender) {
         int men = 0;
-        int base = ToHitData.IMPOSSIBLE;
+        int base = TargetRoll.IMPOSSIBLE;
         StringBuffer reason = new StringBuffer();
 
         // Can only attack a Mek's legs.
@@ -3218,7 +3218,7 @@ public class Compute {
     public static ToHitData getSwarmMekBaseToHit(Entity attacker,
             Entity defender) {
         int men = 0;
-        int base = ToHitData.IMPOSSIBLE;
+        int base = TargetRoll.IMPOSSIBLE;
         StringBuffer reason = new StringBuffer();
 
         // Can only swarm a Mek.
@@ -3296,73 +3296,73 @@ public class Compute {
             Targetable target) {
 
         if(PunchAttackAction.toHit(game, entityId, target,
-                PunchAttackAction.LEFT).getValue() != ToHitData.IMPOSSIBLE)
+                PunchAttackAction.LEFT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
         if(PunchAttackAction.toHit(game, entityId, target,
-                PunchAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE)
+                PunchAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
         if(KickAttackAction.toHit(game, entityId, target,
-                KickAttackAction.LEFT).getValue() != ToHitData.IMPOSSIBLE)
+                KickAttackAction.LEFT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
         if(KickAttackAction.toHit(game, entityId, target,
-                KickAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE)
+                KickAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
         if (game.getEntity(entityId) instanceof QuadMech
                 && (KickAttackAction.toHit(game, entityId, target,
-                    KickAttackAction.LEFTMULE).getValue() != ToHitData.IMPOSSIBLE
+                    KickAttackAction.LEFTMULE).getValue() != TargetRoll.IMPOSSIBLE
                     || KickAttackAction.toHit(game, entityId, target,
-                       KickAttackAction.RIGHTMULE).getValue() != ToHitData.IMPOSSIBLE))
+                       KickAttackAction.RIGHTMULE).getValue() != TargetRoll.IMPOSSIBLE))
                        return true;
 
         if(BrushOffAttackAction.toHit(game, entityId, target,
-                BrushOffAttackAction.LEFT).getValue() != ToHitData.IMPOSSIBLE)
+                BrushOffAttackAction.LEFT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
         if(BrushOffAttackAction.toHit(game, entityId, target,
-                BrushOffAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE)
+                BrushOffAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
         if(new ThrashAttackAction(entityId, target).toHit(game)
-                .getValue() != ToHitData.IMPOSSIBLE)
+                .getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
         if(ProtomechPhysicalAttackAction.toHit(game, entityId, target)
-                .getValue() != ToHitData.IMPOSSIBLE)
+                .getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(PushAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
+        if(PushAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(LayExplosivesAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
+        if(LayExplosivesAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
         
-        if(TripAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
+        if(TripAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(GrappleAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
+        if(GrappleAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(BreakGrappleAttackAction.toHit(game, entityId, target).getValue() != ToHitData.IMPOSSIBLE)
+        if(BreakGrappleAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
         for(Iterator<Mounted> clubs = game.getEntity(entityId).getClubs().iterator();clubs.hasNext();) {
             Mounted club = clubs.next();
             if (null != club) {
                 if(ClubAttackAction.toHit(game, entityId, target, club, ToHitData.HIT_NORMAL)
-                        .getValue() != ToHitData.IMPOSSIBLE)
+                        .getValue() != TargetRoll.IMPOSSIBLE)
                     return true;
             }
         }
 
-        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.BOTH).getValue() != ToHitData.IMPOSSIBLE)
+        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.BOTH).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
-        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.LEFT).getValue() != ToHitData.IMPOSSIBLE)
+        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.LEFT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
-        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.RIGHT).getValue() != ToHitData.IMPOSSIBLE)
+        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
         return false;

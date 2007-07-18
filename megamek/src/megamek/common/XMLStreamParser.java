@@ -108,7 +108,7 @@ public class XMLStreamParser implements XMLResponder {
         }
 
         // Mark dependent locations as destroyed.
-        if (en.getDependentLocation(loc) != Mech.LOC_NONE) {
+        if (en.getDependentLocation(loc) != Entity.LOC_NONE) {
             destroyLocation(en, en.getDependentLocation(loc));
         }
     }

@@ -18,11 +18,12 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
-import megamek.common.Entity;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 
@@ -92,7 +93,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             }
 
             // can't physically attack mechs making dfa attacks
-            if ( te != null && te.isMakingDfa() ) {
+            if (te.isMakingDfa() ) {
                 return "Target is making a DFA attack";
             }
 
@@ -131,7 +132,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
-                toHit = new ToHitData(ToHitData.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
                 return;
             } else if (sensorHits == 2) {
                 toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");

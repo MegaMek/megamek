@@ -24,6 +24,7 @@ import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Tank;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 
@@ -109,11 +110,11 @@ public class KickAttackAction extends PhysicalAttackAction
                                       Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null)
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't attack from a null entity!");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
 
         String impossible = toHitIsImpossible(game, ae, target);
         if(impossible != null) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "impossible");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
@@ -151,25 +152,25 @@ public class KickAttackAction extends PhysicalAttackAction
 
         // non-mechs can't kick
         if (!(ae instanceof Mech)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't kick");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't kick");
         }
 
         // check if both legs are present & working
         if (ae.isLocationBad(kickLegs[0])
             || ae.isLocationBad(kickLegs[1])) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Leg missing");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
         }
 
         // check if both hips are operational
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_HIP, kickLegs[0])
             || !ae.hasWorkingSystem(Mech.ACTUATOR_HIP, kickLegs[1])) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Hip destroyed");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Hip destroyed");
         }
 
         // check if attacker has fired leg-mounted weapons
         for (Mounted mounted : ae.getWeaponList()) {
             if (mounted.isUsedThisRound() && mounted.getLocation() == legLoc) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from leg this turn");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapons fired from leg this turn");
             }
         }
 
@@ -177,13 +178,13 @@ public class KickAttackAction extends PhysicalAttackAction
         final int range = ae.getPosition().distance(target.getPosition());
         if ( target instanceof Infantry && 1 == range ) {
             // As per Randall in the post, http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=626894&page=1&view=collapsed&sb=5&o=0&fpart=
-            return new ToHitData(ToHitData.IMPOSSIBLE,
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
                                  "Can only stomp Infantry in same hex");
         }
 
         // check elevation
         if (attackerElevation < targetElevation || attackerElevation > targetHeight) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
         }
 
         // check facing
@@ -191,7 +192,7 @@ public class KickAttackAction extends PhysicalAttackAction
         if (0 != range && mule != 1 &&
             !Compute.isInArc(ae.getPosition(), ae.getFacing(),
                      target.getPosition(), Compute.ARC_FORWARD)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
         // check facing, part 2: Mule kick
@@ -202,19 +203,19 @@ public class KickAttackAction extends PhysicalAttackAction
                      target.getPosition(), Compute.ARC_LEFTSIDE) &&
             !Compute.isInArc(ae.getPosition(), ae.getFacing(),
                      target.getPosition(), Compute.ARC_RIGHTSIDE)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
         // can't kick while prone
         if (ae.isProne()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
         // Attacks against adjacent buildings automatically hit.
         if (target.getTargetType() == Targetable.TYPE_BUILDING
                 || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                 || target instanceof GunEmplacement) {
-            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+            return new ToHitData( TargetRoll.AUTOMATIC_SUCCESS,
                                   "Targeting adjacent building." );
         }
 

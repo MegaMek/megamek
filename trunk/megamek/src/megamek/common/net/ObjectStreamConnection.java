@@ -116,6 +116,6 @@ class ObjectStreamConnection extends Connection {
         public boolean isCompressed() {
             return compressed;
         }
-    };    
+    }    
 
 }

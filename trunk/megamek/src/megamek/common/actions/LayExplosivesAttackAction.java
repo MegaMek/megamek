@@ -16,9 +16,10 @@ package megamek.common.actions;
 
 import megamek.common.Entity;
 import megamek.common.IGame;
-import megamek.common.MiscType;
 import megamek.common.Infantry;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 
@@ -54,17 +55,17 @@ public class LayExplosivesAttackAction extends AbstractAttackAction
     public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         if ((target.getTargetType() != Targetable.TYPE_BUILDING) || (target.getTargetType() != Targetable.TYPE_FUEL_TANK)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can only target buildings");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can only target buildings");
         }
         if (ae == null)
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't attack from a null entity!");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
 //        if(b == null || b.getId() != target.getTargetId())
-//            return new ToHitData(ToHitData.IMPOSSIBLE, "Target out of range");
+//            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target out of range");
         if(!(ae instanceof Infantry))
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is not infantry");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not infantry");
         Infantry inf = (Infantry) ae;
         if(inf.turnsLayingExplosives > 0)
-            return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "STOP: Expected Damage: "+getDamageFor(ae));
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "STOP: Expected Damage: "+getDamageFor(ae));
         boolean ok = false;
         for (Mounted m : ae.getMisc()) {
             if(m.getType().hasFlag(MiscType.F_TOOLS) && m.getType().hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
@@ -73,7 +74,7 @@ public class LayExplosivesAttackAction extends AbstractAttackAction
             }
         }
         if(!ok)
-            return new ToHitData(ToHitData.IMPOSSIBLE, "No explosives carried");
-        return new ToHitData(ToHitData.AUTOMATIC_SUCCESS, "START: Can't move or fire while laying explosives");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No explosives carried");
+        return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "START: Can't move or fire while laying explosives");
     }
 }

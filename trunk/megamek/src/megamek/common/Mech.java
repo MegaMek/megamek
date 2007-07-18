@@ -351,7 +351,7 @@ public abstract class Mech
      * @param vCriticals ontains tuple of intiger and critical slot. used as output.
      * @return true iff there was a masc failure.
      */
-    public boolean checkForMASCFailure(MovePath md, Vector<Report> vDesc, Vector vCriticals) {
+    public boolean checkForMASCFailure(MovePath md, Vector<Report> vDesc, HashMap<Integer,CriticalSlot> vCriticals) {
         if (md.hasActiveMASC()) {
             Report r;
             boolean bFailure = false;
@@ -423,8 +423,7 @@ public abstract class Mech
                         for(int i=0;i<12 && hits > 0;i++) {
                             CriticalSlot cs = getCritical(LOC_CT, i);
                             if(cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == SYSTEM_ENGINE) {
-                                vCriticals.add(new Integer(LOC_CT));
-                                vCriticals.add(cs);
+                                vCriticals.put(new Integer(LOC_CT),cs);
                                 //vDesc.addAll(server.applyCriticalHit(this, LOC_CT, cs, true));
                                 hits--;
                             }
@@ -440,8 +439,7 @@ public abstract class Mech
                                     slot = getCritical(loc, slotIndex);
                                 } while(slot != null && !slot.isHittable());
                                 
-                                vCriticals.add(new Integer(loc));
-                                vCriticals.add(slot);
+                                vCriticals.put(new Integer(loc),slot);
                                 
                             }
                         }
@@ -912,7 +910,7 @@ public abstract class Mech
         
         for (int i = 0; i < toAllocate; i++) {
             try {
-                addEquipment(new Mounted(this, sinkType), Mech.LOC_NONE, false);
+                addEquipment(new Mounted(this, sinkType), Entity.LOC_NONE, false);
             } catch (LocationFullException ex) {
                 // um, that's impossible.
             }
@@ -3489,7 +3487,7 @@ public abstract class Mech
         super.destroyLocation(loc);
         // if it's a leg, the entity falls
         if (locationIsLeg(loc)) {
-            game.addPSR(new PilotingRollData(getId(), PilotingRollData.AUTOMATIC_FAIL, 5, "leg destroyed"));
+            game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }
     }
     

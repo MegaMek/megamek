@@ -21,6 +21,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 
@@ -50,14 +51,14 @@ public class TripAttackAction extends PhysicalAttackAction
                                       Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null)
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't attack from a null entity!");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
 
         if(!game.getOptions().booleanOption("maxtech_new_physicals"))
-            return new ToHitData(ToHitData.IMPOSSIBLE, "no MaxTech physicals");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "no MaxTech physicals");
         
         String impossible = toHitIsImpossible(game, ae, target);
         if(impossible != null) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "impossible");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
@@ -70,7 +71,7 @@ public class TripAttackAction extends PhysicalAttackAction
 
         // non-mechs can't trip or be tripped
         if (!(ae instanceof BipedMech) || !(target instanceof Mech)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Only biped mechs can trip other mechs");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only biped mechs can trip other mechs");
         }
 
         // described as a leg hook / clothesline,
@@ -78,34 +79,34 @@ public class TripAttackAction extends PhysicalAttackAction
         // and 2 legs present
         if (ae.isLocationBad(Mech.LOC_LLEG)
             || ae.isLocationBad(Mech.LOC_RLEG)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Leg missing");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
         }
 
         // check range
         final int range = ae.getPosition().distance(target.getPosition());
         if(range > 1) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target out of range");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target out of range");
         }
 
         int limb1 = Entity.LOC_NONE;
         int limb2 = Entity.LOC_NONE;
         // check elevation (target equal or 1 higher - ankle grab)
         if (attackerHeight < targetElevation || attackerElevation > targetElevation) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
         } 
 
         // check facing
         if (!Compute.isInArc(ae.getPosition(), ae.getFacing(),
                      target.getPosition(), Compute.ARC_FORWARD)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
         // can't trip while prone
         if (ae.isProne()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
         if(((Entity)target).isProne()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is prone");
         }
 
         // check if attacker has fired leg-mounted weapons
@@ -135,7 +136,7 @@ public class TripAttackAction extends PhysicalAttackAction
         //to ankle grab, need both arms
         if(attackerElevation < targetElevation) { 
             if(usedWeapons[Mech.LOC_RARM] || usedWeapons[Mech.LOC_LARM]) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "both arms unusable");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "both arms unusable");
             }
             limb1 = Mech.LOC_LARM;
             limb2 = Mech.LOC_RARM;
@@ -143,13 +144,13 @@ public class TripAttackAction extends PhysicalAttackAction
             //normal attack uses one leg and one arm
             if(usedWeapons[Mech.LOC_RLEG]) {
                 if(usedWeapons[Mech.LOC_LLEG]) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "both legs unusable");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE, "both legs unusable");
                 }
                 limb1 = Mech.LOC_LLEG;
             }
             if(usedWeapons[Mech.LOC_RARM]) {
                 if(usedWeapons[Mech.LOC_LARM]) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "both arms unusable");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE, "both arms unusable");
                 }
                 limb2 = Mech.LOC_LARM;
             }
@@ -217,7 +218,7 @@ public class TripAttackAction extends PhysicalAttackAction
                 toHit.addModifier(1, "Hand actuator destroyed");
             }
         }
-        else toHit.addModifier(ToHitData.IMPOSSIBLE, "not limb");
+        else toHit.addModifier(TargetRoll.IMPOSSIBLE, "not limb");
         return toHit;
     }
 }

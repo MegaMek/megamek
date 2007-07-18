@@ -21,6 +21,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 
@@ -50,15 +51,15 @@ public class GrappleAttackAction extends PhysicalAttackAction
                                       Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null)
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't attack from a null entity!");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
 
         if(!game.getOptions().booleanOption("maxtech_new_physicals"))
-            return new ToHitData(ToHitData.IMPOSSIBLE, "no MaxTech physicals");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "no MaxTech physicals");
         
         String impossible = toHitIsImpossible(game, ae, target);
         if(impossible != null
                 && !impossible.equals("Locked in Grapple")) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "impossible");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
@@ -71,7 +72,7 @@ public class GrappleAttackAction extends PhysicalAttackAction
 
         // non-mechs can't grapple or be grappled
         if (!(ae instanceof BipedMech) || !(target instanceof Mech)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Only biped mechs can trip other mechs");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only biped mechs can trip other mechs");
         }
 
         final boolean counter = ((Mech)ae).getGrappled() != Entity.NONE
@@ -80,44 +81,44 @@ public class GrappleAttackAction extends PhysicalAttackAction
         // requires 2 good arms
         if (ae.isLocationBad(Mech.LOC_LARM)
             || ae.isLocationBad(Mech.LOC_RARM)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
 
         if(!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
                 || !ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder missing/destroyed");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder missing/destroyed");
         }
 
         // check range
         final int range = ae.getPosition().distance(target.getPosition());
         if(range != 1 && !counter) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in range");
         } 
 
         // check elevation (attacker must be able to enter target hex)
         if (Math.abs(attackerElevation - targetElevation) > ae.getMaxElevationChange()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
         } 
 
         // check facing
         if (!counter && !Compute.isInArc(ae.getPosition(), ae.getFacing(),
                      target.getPosition(), Compute.ARC_FORWARD)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
         // can't grapple while prone
         if (ae.isProne()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
         if(((Entity)target).isProne()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is prone");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is prone");
         }
         
         // check if attacker has fired any weapons
         if(!counter) {
             for (Mounted mounted : ae.getWeaponList()) {
                 if (mounted.isUsedThisRound()) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Fired weapons");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Fired weapons");
                 }
             }
         }
@@ -129,7 +130,7 @@ public class GrappleAttackAction extends PhysicalAttackAction
                 || deGr != Entity.NONE)
                 && atGr != target.getTargetId()
                 && ((Mech)target).isGrappleAttacker()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Already grappled");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Already grappled");
         }
 
         //Set the base BTH

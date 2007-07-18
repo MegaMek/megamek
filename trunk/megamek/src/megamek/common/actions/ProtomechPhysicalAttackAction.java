@@ -22,6 +22,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Protomech;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
@@ -78,7 +79,7 @@ public class ProtomechPhysicalAttackAction
         final IHex attHex = game.getBoard().getHex(ae.getPosition());
         final IHex targHex = game.getBoard().getHex(target.getPosition());
         if(attHex == null || targHex == null) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "off board");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "off board");
         }
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int targetHeight = target.absHeight() + targHex.getElevation();
@@ -92,43 +93,43 @@ public class ProtomechPhysicalAttackAction
 
         // can't target yourself
         if (ae.equals(te)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't target yourself");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't target yourself");
         }
 
         // non-protos can't make protomech-physicalattacks
         if (!(ae instanceof Protomech)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Non-protos can't make proto-physicalattacks");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-protos can't make proto-physicalattacks");
         }
 
         // Can't target a transported entity.
         if ( te != null && Entity.NONE != te.getTransportId() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is a passenger.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
         if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is swarming a Mek.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
         // check range
         final int range = ae.getPosition().distance(target.getPosition());
         if ( range > 1 ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in range");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in range");
         }
 
         // check elevation
         if (attackerElevation < targetElevation || attackerElevation > targetHeight) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
         }
 
         // can't physically attack mechs making dfa attacks
         if ( te != null && te.isMakingDfa() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is making a DFA attack");
         }
         
         //can only target targets in adjacent hexes, not in same hex
         if (range == 0) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in adjacent hex");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in adjacent hex");
         }
         
         // check facing
@@ -136,17 +137,17 @@ public class ProtomechPhysicalAttackAction
         if (0 != range &&
             !Compute.isInArc(ae.getPosition(), ae.getFacing(),
                      target.getPosition(), Compute.ARC_FORWARD)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
         // Can't target units in buildings (from the outside).
         if ( 0 != range && targetInBuilding ) {
             if ( !Compute.isInBuilding(game, ae) ) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside building" );
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is inside building" );
             }
             else if ( !game.getBoard().getBuildingAt( ae.getPosition() )
                       .equals( bldg ) ) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Target is inside differnt building" );
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is inside differnt building" );
             }
         }
 
@@ -154,7 +155,7 @@ public class ProtomechPhysicalAttackAction
         if (target.getTargetType() == Targetable.TYPE_BUILDING
                 || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                 || target instanceof GunEmplacement) {
-            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+            return new ToHitData( TargetRoll.AUTOMATIC_SUCCESS,
                                   "Targeting adjacent building." );
         }
 
@@ -162,7 +163,7 @@ public class ProtomechPhysicalAttackAction
         if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
              target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
              target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
-            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
+            return new ToHitData( TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
         //Set the base BTH

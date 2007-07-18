@@ -138,7 +138,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     }
 
     public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId) {
-        return WeaponAttackAction.toHit(game, attackerId, target, weaponId, Mech.LOC_NONE, IAimingModes.AIM_MODE_NONE, false, false, null);
+        return WeaponAttackAction.toHit(game, attackerId, target, weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE, false, false, null);
       }
     
     public static ToHitData toHit(IGame game, int attackerId, Targetable target, int weaponId, int aimingAt, int aimingMode) {
@@ -156,7 +156,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             // Quick check, is the new target out of range for the weapon?
             if(RangeType.rangeBracket(ae.getPosition().distance(target.getPosition()), wtype.getRanges(),
                     game.getOptions().booleanOption("maxtech_range")) == RangeType.RANGE_OUT) {
-                return new ToHitData(ToHitData.AUTOMATIC_FAIL, "swarm target out of range");
+                return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "swarm target out of range");
             }
             // this is a swarm attack against a new target
             // first, exchange old and new targets to get all mods
@@ -848,7 +848,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     
         // add targeting computer (except with LBX cluster ammo)
         if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP
-                && aimingAt != Mech.LOC_NONE) {
+                && aimingAt != Entity.LOC_NONE) {
             if(ae.hasActiveEiCockpit()) {
                 if(ae.hasTargComp()) {
                     toHit.addModifier(2, "aiming with targeting computer & EI system");

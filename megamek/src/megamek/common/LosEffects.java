@@ -356,23 +356,23 @@ public class LosEffects {
     public ToHitData losModifiers(IGame game, int eistatus) {
         ToHitData modifiers = new ToHitData();
         if (blocked) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by terrain.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by terrain.");
         }
         
         if (infProtected) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Infantry protected by building.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Infantry protected by building.");
         }
         
         if (ultraWoods >= 1 || lightWoods + (heavyWoods * 2) > 2) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by woods.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by woods.");
         }
 
         if (lightSmoke + (heavySmoke * 2) > 2) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by smoke.");
         }
 
         if (lightSmoke + (heavySmoke * 2) + lightWoods + (heavyWoods * 2) > 2) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by smoke and woods.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by smoke and woods.");
         }
         
         if (lightWoods > 0) {
@@ -520,7 +520,7 @@ public class LosEffects {
         }
 
         // if blocked already, return that
-        if (los.losModifiers(game).getValue() == ToHitData.IMPOSSIBLE) {
+        if (los.losModifiers(game).getValue() == TargetRoll.IMPOSSIBLE) {
             return los;
         }
 

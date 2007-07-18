@@ -23,6 +23,7 @@ import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Mech;
 import megamek.common.Tank;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 
@@ -68,12 +69,13 @@ public class PunchAttackAction
     public static ToHitData toHit(IGame game, int attackerId,
                                        Targetable target, int arm) {
         final Entity ae = game.getEntity(attackerId);
-        if (ae == null)
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't attack from a null entity!");
         
+        if (ae == null || target == null) {
+            throw new IllegalArgumentException("Attacker or target not valid");
+        }
         String impossible = toHitIsImpossible(game, ae, target);
         if(impossible != null) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "impossible");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
         
         IHex attHex = game.getBoard().getHex(ae.getPosition());
@@ -92,48 +94,45 @@ public class PunchAttackAction
         if (arm != PunchAttackAction.RIGHT && arm != PunchAttackAction.LEFT) {
             throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
         }
-        if (ae == null || target == null) {
-            throw new IllegalArgumentException("Attacker or target not valid");
-        }
 
         // non-mechs can't punch
         if (!(ae instanceof Mech)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't punch");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't punch");
         }
 
         //Quads can't punch
         if ( ae.entityIsQuad() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
         }
 
         //Can't punch with flipped arms
         if (ae.getArmsFlipped()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Arms are flipped to the rear. Can not punch.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Arms are flipped to the rear. Can not punch.");
         }
 
         // check if arm is present
         if (ae.isLocationBad(armLoc)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
 
         // check if shoulder is functional
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder destroyed");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder destroyed");
         }
 
         // check if attacker has fired arm-mounted weapons
         if (ae.weaponFiredFrom(armLoc)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapons fired from arm this turn");
         }
 
         // check elevation
         if (attackerHeight < targetElevation || attackerHeight > targetHeight) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
         }
 
         //Cannot punch with an arm that has an active shield on it.
         if ( ae.hasActiveShield(armLoc) ){
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Cannot punch with shield in active mode");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Cannot punch with shield in active mode");
         }
         
         //Set the base BTH
@@ -153,21 +152,21 @@ public class PunchAttackAction
                  ae.getPosition().distance( target.getPosition() ) == 0 ) {
                 toHit.addModifier( 2, "attacker is prone" );
             } else {
-                return new ToHitData(ToHitData.IMPOSSIBLE,"Attacker is prone");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,"Attacker is prone");
             }
         }
 
         // Check facing if the Mek is not prone.
         else if ( !Compute.isInArc(ae.getPosition(), ae.getSecondaryFacing(),
                            target.getPosition(), armArc) ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target not in arc");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 
         // Attacks against adjacent buildings automatically hit.
         if (target.getTargetType() == Targetable.TYPE_BUILDING
                 || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                 || target instanceof GunEmplacement) {
-            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+            return new ToHitData( TargetRoll.AUTOMATIC_SUCCESS,
                                   "Targeting adjacent building." );
         }
 

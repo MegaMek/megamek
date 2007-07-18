@@ -23,6 +23,7 @@ import megamek.common.ILocationExposureStatus;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 
@@ -103,14 +104,14 @@ public class JumpJetAttackAction extends PhysicalAttackAction
                                       Targetable target, int leg) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null)
-            return new ToHitData(ToHitData.IMPOSSIBLE, "You can't attack from a null entity!");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
 
         if(!game.getOptions().booleanOption("maxtech_new_physicals"))
-            return new ToHitData(ToHitData.IMPOSSIBLE, "no MaxTech physicals");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "no MaxTech physicals");
 
         String impossible = toHitIsImpossible(game, ae, target);
         if(impossible != null) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "impossible");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
         IHex attHex = game.getBoard().getHex(ae.getPosition());
@@ -138,17 +139,17 @@ public class JumpJetAttackAction extends PhysicalAttackAction
 
         // non-mechs can't kick
         if (!(ae instanceof Mech)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Non-mechs can't kick");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't kick");
         }
         
         if(leg == BOTH && !ae.isProne()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Only prone mechs can attack with both legs");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only prone mechs can attack with both legs");
         }
 
         // check if legs are present & working
         if ((ae.isLocationBad(kickLegs[0]) && (leg == BOTH || leg == LEFT))
             || (ae.isLocationBad(kickLegs[1]) && (leg == BOTH || leg == RIGHT))) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Leg missing");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Leg missing");
         }
         
         // check if attacker even has jump jets!
@@ -163,7 +164,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction
                 break;
             }
             if(!hasJJ) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Jump jets missing or destroyed");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Jump jets missing or destroyed");
             }
         }
 
@@ -173,7 +174,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction
                 int loc = mounted.getLocation();
                 if(((leg == BOTH || leg == LEFT) && loc == kickLegs[0]) 
                         || ((leg == BOTH || leg == RIGHT) && loc == kickLegs[1])) {
-                    return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from leg this turn");
+                    return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapons fired from leg this turn");
                 }
             }
         }
@@ -181,26 +182,26 @@ public class JumpJetAttackAction extends PhysicalAttackAction
         // check range
         final int range = ae.getPosition().distance(target.getPosition());
         if ( 1 != range ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE,
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
                                  "Enemy must be at range 1");
         }
 
         // check elevation
         if (!ae.isProne() && attackerHeight - targetHeight != 1) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
         }
         if (ae.isProne() && (attackerHeight > targetHeight || attackerHeight < targetElevation)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target elevation not in range");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
         }
 
         // check facing
         if(!ae.isProne()) {
             if (!target.getPosition().equals(ae.getPosition().translated(ae.getFacing()))) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Target not directly ahead of feet");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not directly ahead of feet");
             }
         } else {
             if (!target.getPosition().equals(ae.getPosition().translated(( 3 + ae.getFacing()) % 6 ))) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Target not directly behind of feet");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not directly behind of feet");
             }
         }
 
@@ -208,7 +209,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction
         if (target.getTargetType() == Targetable.TYPE_BUILDING
                 || target.getTargetType() == Targetable.TYPE_FUEL_TANK
                 || target instanceof GunEmplacement) {
-            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+            return new ToHitData( TargetRoll.AUTOMATIC_SUCCESS,
                                   "Targeting adjacent building." );
         }
 

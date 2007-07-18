@@ -123,5 +123,5 @@ class DataStreamConnection extends Connection {
         public boolean isCompressed() {
             return compressed;
         }
-    };    
+    }    
 }

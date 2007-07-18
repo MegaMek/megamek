@@ -23,6 +23,7 @@ import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 
@@ -94,6 +95,9 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         final Entity ae = game.getEntity(attackerId);
         int targetId = Entity.NONE;
         Entity te = null;
+        if (ae == null || target == null) {
+            throw new IllegalArgumentException("Attacker or target not valid");
+        }
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
             te = (Entity) target;
             targetId = target.getTargetId();
@@ -104,7 +108,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
 
         // non-mechs can't BrushOff
         if (!(ae instanceof Mech)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE,
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
                                  "Only mechs can brush off swarming infantry or iNarc Pods");
         }
 
@@ -113,49 +117,46 @@ public class BrushOffAttackAction extends AbstractAttackAction {
              arm != BrushOffAttackAction.LEFT ) {
             throw new IllegalArgumentException("Arm must be LEFT or RIGHT");
         }
-        if (ae == null || target == null) {
-            throw new IllegalArgumentException("Attacker or target not valid");
-        }
         if ( ( targetId != ae.getSwarmAttackerId() ||
                 te == null || !(te instanceof Infantry) ) &&
                 target.getTargetType() != Targetable.TYPE_INARC_POD ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE,
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
             "Can only brush off swarming infantry or iNarc Pods" );
         }
 
         // Quads can't brush off.
         if ( ae.entityIsQuad() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is a quad");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
         }
 
         // Can't brush off with flipped arms
         if (ae.getArmsFlipped()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Arms are flipped to the rear. Can not punch.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Arms are flipped to the rear. Can not punch.");
         }
 
         // check if arm is present
         if (ae.isLocationBad(armLoc)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Arm missing");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
 
         // check if shoulder is functional
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, armLoc)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Shoulder destroyed");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Shoulder destroyed");
         }
 
         // check if attacker has fired arm-mounted weapons
         if (ae.weaponFiredFrom(armLoc)) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Weapons fired from arm this turn");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapons fired from arm this turn");
         }
 
         // can't physically attack mechs making dfa attacks
         if ( te != null && te.isMakingDfa() ) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Target is making a DFA attack");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is making a DFA attack");
         }
 
         // Can't brush off while prone.
         if (ae.isProne()) {
-            return new ToHitData(ToHitData.IMPOSSIBLE, "Attacker is prone");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
         // Can't target woods or a building with a brush off attack.
@@ -165,7 +166,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
                 || target.getTargetType() == Targetable.TYPE_FUEL_TANK_IGNITE
                 || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
                 || target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
-            return new ToHitData( ToHitData.IMPOSSIBLE, "Invalid attack");
+            return new ToHitData( TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
         // okay, modifiers...
@@ -189,7 +190,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
             int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
             int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
-                return new ToHitData(ToHitData.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
                 toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }

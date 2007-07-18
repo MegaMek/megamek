@@ -6378,6 +6378,6 @@ public class AmmoType extends EquipmentType {
             getAmmoType() == AmmoType.T_SRM_TORPEDO ||
             getAmmoType() == AmmoType.T_LRM_TORPEDO)
             return kgPerShot * rackSize * shots / 1000 * bv;
-        else return kgPerShot * shots / 1000 * bv;
+        return kgPerShot * shots / 1000 * bv;
     }
 }

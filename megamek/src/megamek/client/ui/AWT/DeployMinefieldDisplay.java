@@ -201,7 +201,7 @@ public class DeployMinefieldDisplay
         }
         
         if (client.game.containsMinefield(coords)) {
-            Minefield mf = (Minefield) client.game.getMinefields(coords).elementAt(0);
+            Minefield mf = client.game.getMinefields(coords).elementAt(0);
             if (mf.getPlayerId() == client.getLocalPlayer().getId()) {
                 butDone.setEnabled(false);
                 client.game.removeMinefield(mf);
@@ -290,7 +290,7 @@ public class DeployMinefieldDisplay
         }
         
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
         

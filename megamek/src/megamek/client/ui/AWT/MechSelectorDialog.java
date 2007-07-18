@@ -897,7 +897,7 @@ public class MechSelectorDialog
             TestEntity testEntity = null;
             if (entity instanceof Mech)
                 testEntity = new TestMech((Mech)entity, entityVerifier.mechOption, null);
-            if (entity instanceof Tank)
+            else // entity instanceof Tank
                 testEntity = new TestTank((Tank)entity, entityVerifier.tankOption, null);
             if (!testEntity.correctEntity(sb, !m_clientgui.getClient().game.getOptions().booleanOption("is_eq_limits"))) {
                 m_mechView.setText(sb.toString());

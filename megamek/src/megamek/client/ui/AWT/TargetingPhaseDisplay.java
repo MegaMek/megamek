@@ -613,7 +613,7 @@ public class TargetingPhaseDisplay
         if (target != null && weaponId != -1) {
             ToHitData toHit;
 
-              toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Mech.LOC_NONE, 0);
+              toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Entity.LOC_NONE, 0);
               clientgui.mechD.wPan.wTargetR.setText(target.getDisplayName());
 
             clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
@@ -624,10 +624,10 @@ public class TargetingPhaseDisplay
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages.getString("TargetingPhaseDisplay.autoFiringWeapon")); //$NON-NLS-1$
                 setFireEnabled(false);
-            } else if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+            } else if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(false);
-            } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+            } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 clientgui.mechD.wPan.wToHitR.setText(toHit.getValueAsString());
                 setFireEnabled(true);
             } else {
@@ -775,7 +775,7 @@ public class TargetingPhaseDisplay
         }
 
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
     // control pressed means a line of sight check.
@@ -784,8 +784,8 @@ public class TargetingPhaseDisplay
       return;
     }
         // check for shifty goodness
-        if (shiftheld != ((b.getModifiers() & MouseEvent.SHIFT_MASK) != 0)) {
-            shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
+        if (shiftheld != ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0)) {
+            shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
         }
 
         if (b.getType() == BoardViewEvent.BOARD_HEX_DRAGGED) {

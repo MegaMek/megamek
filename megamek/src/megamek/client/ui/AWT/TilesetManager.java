@@ -126,6 +126,7 @@ public class TilesetManager implements IPreferenceChangeListener {
             if (entityImage == null) {
                 // now it's a real problem
                 System.out.println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                return null;
             }            
         }
         return entityImage.getIcon();
@@ -167,6 +168,7 @@ public class TilesetManager implements IPreferenceChangeListener {
             if (entityImage == null) {
                 // now it's a real problem
                 System.out.println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                return null;
             }            
         }
         // get image rotated for facing
@@ -447,7 +449,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         private Image camo;
         private Image[] facings = new Image[6];
         private Image[] wreckFacings = new Image[6];
-        private Component comp;
+        private Component parent;
         
         private static final int IMG_WIDTH = 84;        
         private static final int IMG_HEIGHT = 72;
@@ -461,7 +463,7 @@ public class TilesetManager implements IPreferenceChangeListener {
             this.base = base;
             this.tint = tint;
             this.camo = camo;
-            this.comp = comp;
+            this.parent = comp;
             this.wreck = wreck;
         }
 
@@ -471,14 +473,14 @@ public class TilesetManager implements IPreferenceChangeListener {
             icon = base.getScaledInstance(56, 48, Image.SCALE_SMOOTH);
             for (int i = 0; i < 6; i++) {
                 ImageProducer rotSource = new FilteredImageSource(base.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
-                facings[i] = comp.createImage(rotSource);
+                facings[i] = parent.createImage(rotSource);
             }
 
             if (wreck != null) {
                 wreck = applyColor(wreck);
                 for (int i = 0; i < 6; i++) {
                     ImageProducer rotSource = new FilteredImageSource(wreck.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
-                    wreckFacings[i] = comp.createImage(rotSource);
+                    wreckFacings[i] = parent.createImage(rotSource);
                 }
             }
         }
@@ -559,7 +561,7 @@ public class TilesetManager implements IPreferenceChangeListener {
             }
           }
         
-          image = comp.createImage(new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH));
+          image = parent.createImage(new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH));
           return image;
         }
     }

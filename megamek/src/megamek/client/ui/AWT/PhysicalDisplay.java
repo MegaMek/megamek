@@ -14,16 +14,60 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Button;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.AWT.widget.IndexedCheckbox;
-import megamek.common.*;
-import megamek.common.actions.*;
+import megamek.common.Building;
+import megamek.common.BuildingTarget;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.GameTurn;
+import megamek.common.IAimingModes;
+import megamek.common.IGame;
+import megamek.common.INarcPod;
+import megamek.common.Mech;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.QuadMech;
+import megamek.common.TargetRoll;
+import megamek.common.Targetable;
+import megamek.common.ToHitData;
+import megamek.common.actions.BreakGrappleAttackAction;
+import megamek.common.actions.BrushOffAttackAction;
+import megamek.common.actions.ClubAttackAction;
+import megamek.common.actions.DodgeAction;
+import megamek.common.actions.EntityAction;
+import megamek.common.actions.GrappleAttackAction;
+import megamek.common.actions.JumpJetAttackAction;
+import megamek.common.actions.KickAttackAction;
+import megamek.common.actions.LayExplosivesAttackAction;
+import megamek.common.actions.ProtomechPhysicalAttackAction;
+import megamek.common.actions.PunchAttackAction;
+import megamek.common.actions.PushAttackAction;
+import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.ThrashAttackAction;
+import megamek.common.actions.TripAttackAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
@@ -441,8 +485,8 @@ public class PhysicalDisplay
                 doSearchlight();
             }
 
-            if (leftArm.getValue() != ToHitData.IMPOSSIBLE 
-                    && rightArm.getValue() != ToHitData.IMPOSSIBLE) {
+            if (leftArm.getValue() != TargetRoll.IMPOSSIBLE 
+                    && rightArm.getValue() != TargetRoll.IMPOSSIBLE) {
                 attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.BOTH));
             } else if (leftArm.getValue() < rightArm.getValue()) {
                 attacks.addElement(new PunchAttackAction(cen, target.getTargetType(), target.getTargetId(), PunchAttackAction.LEFT));
@@ -487,10 +531,7 @@ public class PhysicalDisplay
         ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHT);
         ToHitData rightRearLeg = null;
         ToHitData leftRearLeg = null;
-        if (client.game.getEntity(cen) instanceof QuadMech) {
-            rightRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHTMULE);
-            leftRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFTMULE);
-        }
+
         ToHitData attackLeg;
         int attackSide=KickAttackAction.LEFT;
         int value = leftLeg.getValue();
@@ -502,6 +543,8 @@ public class PhysicalDisplay
             attackLeg = rightLeg;
         }
         if (client.game.getEntity(cen) instanceof QuadMech) {
+            rightRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.RIGHTMULE);
+            leftRearLeg = KickAttackAction.toHit(client.game, cen, target, KickAttackAction.LEFTMULE);
             if (value>rightRearLeg.getValue()) {
                 value = rightRearLeg.getValue();
                 attackSide = KickAttackAction.RIGHTMULE;
@@ -751,8 +794,8 @@ public class PhysicalDisplay
             ( client.game, cen, target, BrushOffAttackAction.LEFT );
         ToHitData toHitRight = BrushOffAttackAction.toHit
             ( client.game, cen, target, BrushOffAttackAction.RIGHT );
-        boolean canHitLeft  = (ToHitData.IMPOSSIBLE != toHitLeft.getValue());
-        boolean canHitRight = (ToHitData.IMPOSSIBLE != toHitRight.getValue());
+        boolean canHitLeft  = (TargetRoll.IMPOSSIBLE != toHitLeft.getValue());
+        boolean canHitRight = (TargetRoll.IMPOSSIBLE != toHitRight.getValue());
         int damageLeft = 0;
         int damageRight = 0;
         String  title = null;
@@ -809,9 +852,9 @@ public class PhysicalDisplay
         // Allow the player to cancel or choose which arm(s) to use.
         if ( canHitLeft && canHitRight ) {
             choices = new String[3];
-            choices[0] = left.toString();
-            choices[1] = right.toString();
-            choices[2] = both.toString();
+            choices[0] = left;
+            choices[1] = right;
+            choices[2] = both;
             dlg = new SingleChoiceDialog
                 ( clientgui.frame, title, warn.toString(), choices );
             dlg.setVisible(true);
@@ -840,7 +883,7 @@ public class PhysicalDisplay
         // If only the left arm is available, confirm that choice.
         else if ( canHitLeft ) {
             choices = new String[1];
-            choices[0] = left.toString();
+            choices[0] = left;
             dlg = new SingleChoiceDialog
                 ( clientgui.frame, title, warn.toString(), choices );
             dlg.setVisible(true);
@@ -857,7 +900,7 @@ public class PhysicalDisplay
         // If only the right arm is available, confirm that choice.
         else if ( canHitRight ) {
             choices = new String[1];
-            choices[0] = right.toString();
+            choices[0] = right;
             dlg = new SingleChoiceDialog
                 ( clientgui.frame, title, warn.toString(), choices );
             dlg.setVisible(true);

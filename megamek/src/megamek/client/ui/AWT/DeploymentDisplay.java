@@ -380,7 +380,7 @@ public class DeploymentDisplay
         }
         
         // ignore buttons other than 1
-        if (!client.isMyTurn() || ce() == null || (b.getModifiers() & MouseEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || ce() == null || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
 
@@ -391,7 +391,7 @@ public class DeploymentDisplay
         }
 
         // check for shifty goodness
-        boolean shiftheld = (b.getModifiers() & MouseEvent.SHIFT_MASK) != 0;
+        boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
         
         // check for a deployment
         Coords moveto = b.getCoords(); 

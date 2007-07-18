@@ -27,7 +27,6 @@ import megamek.common.Entity;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
-import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.Player;
@@ -404,11 +403,8 @@ public class TilesetManager implements IPreferenceChangeListener {
      */
     public synchronized void loadImage(Entity entity) {
         Image base = mechTileset.imageFor(entity, comp);
-        Image wreck = null;
-        if (!(entity instanceof Infantry) &&
-                !(entity instanceof Protomech)) {
-            wreck = wreckTileset.imageFor(entity, comp);
-        }
+        Image wreck = wreckTileset.imageFor(entity, comp);
+
         Player player = entity.getOwner();
         int tint = PlayerColors.getColorRGB(player.getColorIndex());
 

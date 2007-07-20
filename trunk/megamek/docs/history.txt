@@ -4,6 +4,7 @@ v0.33.9-dev (SVN)
 + NPE in SearchlightAttackAction.java
 + Changed Font.SANS_SERIF to "Sans Serif" in ChatLounge.java
 + Syncrhonized Swing and AWT side.  Swing BoardView1 still needs work.
++ Bug 1753425: Correct cost of MRM40(OS)
 
 v0.33.8 (2007-07-16, 21:00 GMT +2)
 + Bug 1726461: Indirect Fire +1 for spotter missing

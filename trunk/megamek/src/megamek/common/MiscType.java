@@ -2486,7 +2486,7 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_PPC_CAPACITOR;
         misc.setInstantModeSwitch(false);
         misc.explosive = true;
-        
+
         return misc;
     }
 

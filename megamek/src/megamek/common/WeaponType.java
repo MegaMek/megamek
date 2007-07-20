@@ -3359,7 +3359,7 @@ public class WeaponType extends EquipmentType {
         weapon.criticals = 7;
         weapon.bv = 49;
         weapon.flags |= F_MISSILE | F_ONESHOT;
-        weapon.cost = 250000;
+        weapon.cost = 350000;
 
         return weapon;
     }

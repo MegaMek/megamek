@@ -956,7 +956,7 @@ public class HmpFile
         criticals.put(new Long(0x2AB), "Thunderbolt-15 Ammo (THB)");
         criticals.put(new Long(0x2AC), "Thunderbolt-20 Ammo (THB)");
 
-        // criticals for mechs with a base type of inner sphere
+        // Criticals for mechs with a base type of Inner Sphere.
         Hashtable<Long, String> isCriticals = new Hashtable<Long, String>();
         criticals.put(TechType.INNER_SPHERE, isCriticals);
         isCriticals.put(new Long(0x0A), "ISDouble Heat Sink");

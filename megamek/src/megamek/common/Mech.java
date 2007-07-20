@@ -2270,7 +2270,7 @@ public abstract class Mech
             if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
                 Player tmpP = getOwner();
                 
-                if ( tmpP != null ){
+                if (tmpP != null) {
 	                // Okay, actually check for friendly TAG.
 	                if (tmpP.hasTAG())
 	                    tagBV += atype.getBV(this);

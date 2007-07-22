@@ -376,14 +376,10 @@ public class Pilot
             gunneryMod += 0.2 * (4 - gunnery);
             break;
         case 5:
-            gunneryMod -= 0.1;
-            break;
         case 6:
-            gunneryMod -= 0.15;
-            break;
         case 7:
-            gunneryMod -= 0.2;
-            break;
+        case 8:
+            gunneryMod += 0.05 * (3 - gunnery);
         }
         switch (piloting) {
         case 0:
@@ -396,10 +392,10 @@ public class Pilot
             pilotingMod += 0.15;
             break;
         case 5:
-            break;
         case 6:
         case 7:
-            pilotingMod -= 0.5 * (5 - piloting);
+        case 8:
+            pilotingMod += 0.05 * (5 - piloting);
             break;
         }
         return Math.round(gunneryMod * pilotingMod * 100) / 100.0;

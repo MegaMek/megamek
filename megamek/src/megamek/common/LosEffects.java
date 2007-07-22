@@ -525,6 +525,9 @@ public class LosEffects {
         }
 
         // go through divided line segments
+        LosEffects leftTotal = null;
+        LosEffects rightTotal = null;
+        
         for (int i = 1; i < in.size() - 2; i += 3) {
             // get effects of each side
             LosEffects left = losForCoords( game, ai, in.get(i), los.getThruBldg());
@@ -563,14 +566,8 @@ public class LosEffects {
                 }
             }
     
-            // which is better?
-            int lVal = left.losModifiers(game).getValue();
-            int rVal = right.losModifiers(game).getValue();
-            if (lVal > rVal || (lVal == rVal && left.isAttackerCover())) {
-                los = left;
-            } else {
-                los = right;
-            }
+            
+            
             if (game.getOptions().booleanOption("maxtech_partial_cover")) {
                 int cover = (left.targetCover & (COVER_LEFT | COVER_LOWLEFT)) |
                             (right.targetCover & (COVER_RIGHT | COVER_LOWRIGHT));
@@ -585,6 +582,22 @@ public class LosEffects {
                     los.attackerCover = cover;
                 }
             }
+            if(leftTotal == null)
+            	leftTotal = left;
+            else
+            	leftTotal.add(left);
+            if(rightTotal == null)
+            	rightTotal = right;
+            else
+            	rightTotal.add(right);
+        }
+     // which is better?
+        int lVal = leftTotal.losModifiers(game).getValue();
+        int rVal = rightTotal.losModifiers(game).getValue();
+        if (lVal > rVal || (lVal == rVal && leftTotal.isAttackerCover())) {
+            los = leftTotal;
+        } else {
+            los = rightTotal;
         }
         return los;
     }

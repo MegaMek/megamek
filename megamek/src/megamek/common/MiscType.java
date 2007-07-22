@@ -397,8 +397,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLDoubleHeatSink());
         EquipmentType.addType(createISCASE());
         EquipmentType.addType(createCLCASE());
-        EquipmentType.addType(createISCASEII());
-        EquipmentType.addType(createCLCASEII());
         EquipmentType.addType(createISMASC());
         EquipmentType.addType(createCLMASC());
         EquipmentType.addType(createTSM());
@@ -486,6 +484,9 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createSpikes());
         EquipmentType.addType(createReactive());
         EquipmentType.addType(createReflective());
+        EquipmentType.addType(createISCASEII());
+        EquipmentType.addType(createCLCASEII());
+
         
         // Start BattleArmor equipment
         EquipmentType.addType(createBABoardingClaw());
@@ -694,7 +695,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createISCASEII() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_IS_LEVEL_2;
+        misc.techLevel = TechConstants.T_IS_LEVEL_3;
         misc.name = "CASE II";
         misc.setInternalName("ISCASEII");
         misc.addLookupName("IS CASE II");
@@ -711,7 +712,7 @@ public class MiscType extends EquipmentType {
     public static MiscType createCLCASEII() {
         MiscType misc = new MiscType();
 
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_3;
         misc.name = "CASE II";
         misc.setInternalName("CLCASEII");
         misc.addLookupName("Clan CASE II");

@@ -1167,8 +1167,8 @@ public class CustomMechDialog
             }
             
             // keep these reasonable, please
-            if (gunnery < 0 || gunnery > 7 || piloting < 0 || piloting > 8) {
-                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterSkillsBetween0_7"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            if (gunnery < 0 || gunnery > 8 || piloting < 0 || piloting > 8) {
+                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterSkillsBetween0_8"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             if (chOffBoard.isSelected()) {

@@ -6270,7 +6270,9 @@ public class AmmoType extends EquipmentType {
 
             // Reduce base number of shots to reflect the munition's weight.
             munition.shots = base.shots / this.weight;
-            
+
+            // copy base ammoType
+            munition.ammoType = base.ammoType;
             // check for cost
             //TODO: ammo for weapons using artemis should cost double
             double cost = base.cost;

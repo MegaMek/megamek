@@ -1175,8 +1175,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             }
             
             // keep these reasonable, please
-            if (gunnery < 0 || gunnery > 7 || piloting < 0 || piloting > 8) {
-                new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterSkillsBetween0_7")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+            if (gunnery < 0 || gunnery > 8 || piloting < 0 || piloting > 8) {
+                new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterSkillsBetween0_8")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
             if (chOffBoard.getState()){

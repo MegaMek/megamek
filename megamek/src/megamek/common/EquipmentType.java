@@ -327,7 +327,6 @@ public class EquipmentType {
         if (null == EquipmentType.lookupHash) {
             EquipmentType.initializeTypes();
         }
-
         return EquipmentType.lookupHash.get(key);
     }
 

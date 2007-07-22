@@ -365,15 +365,42 @@ public class Pilot
         double pilotingMod = 1.0;
         double gunneryMod = 1.0;
 
-        if (gunnery < 4) {
-            gunneryMod += 0.30 * (4 - gunnery);
-        } else {
-            gunneryMod += 0.10 * (4 - gunnery);
+        switch (gunnery) {
+        case 0:
+            gunneryMod += 0.82;
+            break;
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+            gunneryMod += 0.2 * (4 - gunnery);
+            break;
+        case 5:
+            gunneryMod -= 0.1;
+            break;
+        case 6:
+            gunneryMod -= 0.15;
+            break;
+        case 7:
+            gunneryMod -= 0.2;
+            break;
         }
-        if (piloting < 5) {
-            pilotingMod += 0.15 * (5 - piloting);
-        } else {
-            pilotingMod += 0.05 * (5 - piloting);
+        switch (piloting) {
+        case 0:
+        case 1:
+        case 2:
+        case 3:
+            pilotingMod += 0.1 * (6 - piloting);
+            break;
+        case 4:
+            pilotingMod += 0.15;
+            break;
+        case 5:
+            break;
+        case 6:
+        case 7:
+            pilotingMod -= 0.5 * (5 - piloting);
+            break;
         }
         return Math.round(gunneryMod * pilotingMod * 100) / 100.0;
     }

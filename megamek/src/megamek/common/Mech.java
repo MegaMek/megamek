@@ -2505,7 +2505,7 @@ public abstract class Mech
 
     protected abstract double getLegActuatorCost();
 
-    public Vector victoryReport() {
+    public Vector<Report> victoryReport() {
         Vector<Report> vDesc = new Vector<Report>();
 
         Report r = new Report(7025);

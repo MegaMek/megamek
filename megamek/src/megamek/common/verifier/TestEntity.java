@@ -740,7 +740,7 @@ class Armor {
 		float pointsPerTon = 16.0f;
 		if (armorType == EquipmentType.T_ARMOR_HARDENED)
 			pointsPerTon = 8.0f;
-		float armorWeight = Math.round(points) / pointsPerTon;
+		float armorWeight = points / pointsPerTon;
 		return TestEntity.ceilMaxHalf(armorWeight, roundWeight);
 	}
 

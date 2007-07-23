@@ -272,14 +272,6 @@ public class BipedMech extends Mech {
     protected double getLegActuatorCost() {
         return weight * 150 * 2 + weight * 80 * 2 + weight * 120 * 2;
     }
-
-    public double getArmorWeight() {
-        //this roundabout method is actually necessary to avoid rounding weirdness.  Yeah, it's dumb.
-        double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
-        double weight=0.0;
-        for(;((int)Math.round(weight*armorPerTon))<getTotalOArmor();weight+=.5) {}
-        return weight;
-    }
    
     /**
      * Check to see if a Biped mech has a claw in one of its arms

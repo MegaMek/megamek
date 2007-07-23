@@ -5706,9 +5706,12 @@ public abstract class Entity extends TurnOrdered
     public double getArmorWeight() {
         //this roundabout method is actually necessary to avoid rounding weirdness.  Yeah, it's dumb.
         double armorPerTon = 16.0*EquipmentType.getArmorPointMultiplier(armorType,techLevel);
-        double weight=0.0;
-        for(;((int)Math.round(weight*armorPerTon))<getTotalOArmor();weight+=.5) {}
-        return weight;
+        if (armorType == EquipmentType.T_ARMOR_HARDENED)
+            armorPerTon = 8.0;
+        double points = getTotalOArmor();
+        double armorWeight = points / armorPerTon;
+        armorWeight = Math.ceil(armorWeight * 2.0) / 2.0; 
+        return armorWeight;
     }
 
     public boolean hasTAG() {

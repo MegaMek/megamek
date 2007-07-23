@@ -23,7 +23,7 @@
     1.0
     </minUnderweight>
     <ignoreFailedEquipment>
-    Reactive, ISCASEII, Claw (THB), CC Sensors, Command Console, Dual Cockpit
+    Reactive, Claw (THB), CC Sensors, Command Console, Dual Cockpit
     </ignoreFailedEquipment>
     <skip>
     false

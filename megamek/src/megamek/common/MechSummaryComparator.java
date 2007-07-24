@@ -24,6 +24,7 @@
     public static final int T_BV = 3;
     public static final int T_YEAR = 4;
     public static final int T_COST = 5;
+    public static final int T_LEVEL = 6;
     
     private int m_nType;
     
@@ -47,6 +48,8 @@
                 return numCompare(ms1.getYear(), ms2.getYear());
             case T_COST :
                 return numCompare(ms1.getCost(), ms2.getCost());
+            case T_LEVEL :
+                return ms1.getLevel().compareTo(ms2.getLevel());
             default :
                 return 0;
         }

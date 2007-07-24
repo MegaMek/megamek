@@ -15,6 +15,7 @@ v0.33.9-dev (SVN)
     This makes lots of existing mechs illegal, because they have one point of
     armor too much. We need to recheck our units against TRO3050U (or better,
     the forthcoming RS:3050U).
++ Allow sorting the MechSelectorDialog by Level
 
 v0.33.8 (2007-07-16, 21:00 GMT +2)
 + Bug 1726461: Indirect Fire +1 for spotter missing

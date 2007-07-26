@@ -369,11 +369,11 @@ public class MtfFile implements IMechLoader {
                 continue;
             }
 
-            if (critName.endsWith("(R)")) {
+            if (critName.toUpperCase().endsWith("(R)")) {
                 rearMounted = true;
                 critName = critName.substring(0, critName.length() - 3).trim();
             }
-            if (critName.endsWith("(Split)")) {
+            if (critName.toLowerCase().endsWith("(split)")) {
                 critName = critName.substring(0, critName.length() - 7).trim();
             }
             if (critName.equalsIgnoreCase("Armored Cowl")) {

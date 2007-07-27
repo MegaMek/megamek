@@ -17,6 +17,7 @@ v0.33.9-dev (SVN)
     the forthcoming RS:3050U).
 + Allow sorting the MechSelectorDialog by Level
 + Bug MtfFile.java was case specific for Split and R weapons.
++ Prevent NPE when spotting and no target selected
 
 v0.33.8 (2007-07-16, 21:00 GMT +2)
 + Bug 1726461: Indirect Fire +1 for spotter missing

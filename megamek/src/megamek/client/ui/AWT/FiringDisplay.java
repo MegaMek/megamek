@@ -755,7 +755,7 @@ public class FiringDisplay
      * The entity spends the rest of its turn spotting
      */
     private void doSpot() {
-        if (ce() == null) {
+        if (ce() == null || target == null) {
             return;
         }
         

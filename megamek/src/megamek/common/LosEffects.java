@@ -524,6 +524,10 @@ public class LosEffects {
             return los;
         }
 
+        //Not enough intervining hexes so just return what we have.
+        if ( in.size() < 4 )
+        	return los;
+        
         // go through divided line segments
         LosEffects leftTotal = null;
         LosEffects rightTotal = null;
@@ -591,6 +595,8 @@ public class LosEffects {
             else
             	rightTotal.add(right);
         }
+        
+        
      // which is better?
         int lVal = leftTotal.losModifiers(game).getValue();
         int rVal = rightTotal.losModifiers(game).getValue();

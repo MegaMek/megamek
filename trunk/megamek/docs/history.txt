@@ -18,6 +18,9 @@ v0.33.9-dev (SVN)
 + Allow sorting the MechSelectorDialog by Level
 + Bug MtfFile.java was case specific for Split and R weapons.
 + Prevent NPE when spotting and no target selected
++ Bug 1762455: Unable to fire if previous mek uses SL
++ Bug 1757632: Plasma Cannon Damage for clearing incorrect
++ Bug 1756810: Plasma Rifle damage incorrect
 
 v0.33.8 (2007-07-16, 21:00 GMT +2)
 + Bug 1726461: Indirect Fire +1 for spotter missing

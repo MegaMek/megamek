@@ -7687,6 +7687,8 @@ public class Server implements Runnable {
         int swarmMissilesNowLeft = 0;
         int hits = 1, glancingMissileMod = 0;
         boolean usingCapacitors = weapon.hasChargedCapacitor();
+        //TW Plasma
+        boolean bPlasma = usesAmmo && atype.getAmmoType() == AmmoType.T_PLASMA;
 
         if (!bInferno) {
         // also check for inferno infantry
@@ -9107,7 +9109,14 @@ public class Server implements Runnable {
                     else if(nRange > wtype.getShortRange()) {
                         nDamPerHit = ((nDamPerHit * 3) + 3)/4;
                     }
-                }
+                } else if (bPlasma) {
+                    if (entityTarget instanceof Mech) {
+                        nDamPerHit = atype.getDamagePerShot();
+                    } else {
+                        int heatRoll = Compute.d6(wtype.getRackSize() + 1);
+                        nDamPerHit = atype.getDamagePerShot() + heatRoll;
+                    }
+                } 
             }else if ( usingCapacitors )
             	nDamPerHit += 5;
             
@@ -9214,6 +9223,11 @@ public class Server implements Runnable {
 
                     // Only report if damage was done to the building.
                     int toBldg = hits * nDamPerHit;
+                    if ( bPlasma ){
+    	                int heatRoll = Compute.d6(wtype.getRackSize() + 1);
+    	                toBldg = (atype.getDamagePerShot() + heatRoll)*2;
+                    }
+
                     if (bFragmentation)
                         toBldg = 0; // Buildings aren't damaged by frags, ever.
                     if ( toBldg > 0 ) {
@@ -9302,6 +9316,8 @@ public class Server implements Runnable {
             if ( nDamPerHit <= bldgAbsorbs ) {
                 int toBldg = nDamPerHit * hits;
                 int curCF = bldg.getCurrentCF();
+                if ( bPlasma )
+                	toBldg *= 2;
                 curCF = Math.min( curCF, toBldg );
                 bldg.setCurrentCF( curCF );
                 if ( bSalvo ) {
@@ -9347,6 +9363,8 @@ public class Server implements Runnable {
             // If a building absorbed partial damage, report it now
             // instead of later and then clear the variable.
             if ( bldgAbsorbs > 0 ) {
+            	if (bPlasma)
+            		bldgAbsorbs *= 2;
                 Report buildingReport = damageBuilding( bldg, bldgAbsorbs );
                 if (buildingReport != null) {
                     buildingReport.indent(2);
@@ -9452,6 +9470,7 @@ public class Server implements Runnable {
             }
         }
 
+        
         // Make sure the player knows when his attack causes no damage.
         if ( hits == 0 ) {
             r = new Report(3365);
@@ -9520,6 +9539,11 @@ public class Server implements Runnable {
                     nDamage *= 2;
                 }
 
+                if ( bPlasma ){
+	                int heatRoll = Compute.d6(wtype.getRackSize() + 1);
+	                nDamPerHit = 1;
+	                nDamage = (atype.getDamagePerShot() + heatRoll)*2;
+                }
                 //report that damge was "applied" to terrain
                 r = new Report(3385);
                 r.indent();
@@ -9560,6 +9584,11 @@ public class Server implements Runnable {
                     nDamage = 0;
                     addReport(new Report(3565));
                 }
+                if ( bPlasma ){
+	                int heatRoll = Compute.d6(wtype.getRackSize() + 1);
+	                nDamage = (atype.getDamagePerShot() + heatRoll)*2;
+                }
+
                 Report buildingReport = damageBuilding( bldg, nDamage );
                 if (buildingReport != null) {
                     buildingReport.indent(2);
@@ -9850,10 +9879,10 @@ public class Server implements Runnable {
                         } else {
                             addReport(damageEntity(entityTarget, hit, nDamage, false, 0, true, false, throughFront));
                         }
-                    } else if (wtype.getAmmoType() == AmmoType.T_PLASMA) {
+                    } else if (bPlasma) {
                         if (entityTarget instanceof Mech) {
                             int heatRoll = Compute.d6(wtype.getRackSize());
-                            nDamPerHit = atype.getDamagePerShot();
+                            nDamage = nDamPerHit = atype.getDamagePerShot();
                             if (!bSalvo) {
                                 //hits
                                 r = new Report(3390);
@@ -9872,7 +9901,7 @@ public class Server implements Runnable {
                         } else {
                             int heatRoll = Compute.d6(wtype.getRackSize() + 1);
                             nDamPerHit = 1;
-                            hits = atype.getDamagePerShot() + heatRoll;
+                            nDamage = atype.getDamagePerShot() + heatRoll;
                             bSalvo = true;
                             nCluster = 5;
                             r = new Report(3575);
@@ -9890,6 +9919,7 @@ public class Server implements Runnable {
                         }
                         if (bGlancing) {
                             hit.makeGlancingBlow();
+                            nDamage = (int)Math.floor(nDamage/2.0);
                         }
                         hit.setDamageType(wtype.getFlags());
                         addReport(

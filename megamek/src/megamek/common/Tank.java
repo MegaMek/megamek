@@ -28,7 +28,11 @@ public class Tank
     extends Entity
     implements Serializable
 {
-    private boolean m_bHasNoTurret = false;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -857210851169206264L;
+	private boolean m_bHasNoTurret = false;
     private boolean m_bTurretLocked = false;
     private int m_nTurretOffset = 0;
     private int m_nStunnedTurns = 0;
@@ -694,6 +698,9 @@ public class Tank
         // only count BV for ammo for a weapontype until the BV of all weapons of that 
         // type on the mech is reached
         for (String key : keys) {
+        	//They dont exist in either hash then dont bother adding nulls.
+        	if ( !ammo.containsKey(key) || !weaponsForExcessiveAmmo.containsKey(key) )
+        		continue;
             if (ammo.get(key) > weaponsForExcessiveAmmo.get(key))
                 ammoBV += weaponsForExcessiveAmmo.get(key);
             else

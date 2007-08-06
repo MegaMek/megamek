@@ -22,7 +22,13 @@ import megamek.common.*;
 public class PushAttackAction
     extends DisplacementAttackAction
 {
-    public PushAttackAction(int entityId, int targetId, Coords targetPos) {
+    /**
+	 * Static Serial.
+	 */
+	private static final long serialVersionUID = 6878038939232914083L;
+
+
+	public PushAttackAction(int entityId, int targetId, Coords targetPos) {
         super(entityId, targetId, targetPos);
     }
 
@@ -43,11 +49,13 @@ public class PushAttackAction
                                       int attackerId,
                                       Targetable target) {
         final Entity ae = game.getEntity(attackerId);
+        /* Completely forgot to look at TE since TE can be a Non Entity.
+         * --Torren
         // arguments legal?
         if (ae == null || target == null) {
             throw new IllegalArgumentException("Attacker or target not valid");
         }
-
+*/
         int targetId = Entity.NONE;
         Entity te = null;
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
@@ -55,6 +63,11 @@ public class PushAttackAction
             targetId = target.getTargetId();
         }
 
+        if (ae == null)
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
+        if (te == null)
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't target a null entity!");
+  
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(te.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getElevation();

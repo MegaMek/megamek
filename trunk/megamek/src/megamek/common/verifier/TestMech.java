@@ -383,7 +383,10 @@ public class TestMech extends TestEntity {
     }
 
     public boolean correctMovement(StringBuffer buff) {
-        if(mech.getOriginalJumpMP() > mech.getOriginalRunMPwithoutMASC()) {
+    	//Mechanical Jump Boosts can be greater then Running as long as
+    	// the unit can handle the weight.
+        if(mech.getOriginalJumpMP() > mech.getOriginalRunMPwithoutMASC()
+        		&& !mech.hasJumpBoosters()) {
             buff.append("Jump MP exceeds run MP\n");
             return false;
         }

@@ -642,6 +642,22 @@ public abstract class Mech
         return false;
     }
 
+    public boolean hasJumpBoosters() {
+    	boolean jumpBoosters = false;
+        for (Mounted mEquip : getMisc()) {
+            MiscType mtype = (MiscType) mEquip.getType();
+            if (mtype.hasFlag(MiscType.F_JUMP_BOOSTER) ) {
+            	
+            	//one crit destroyed they all all screwed
+            	// --Torren
+            	if ( mEquip.isBreached() || mEquip.isDestroyed() || mEquip.isMissing() )
+            		return false;
+                jumpBoosters = true;
+            }
+        }
+        return jumpBoosters;
+    }
+
     public Mounted getMASC() {
         for (Mounted m : getMisc()) {
             MiscType mtype = (MiscType)m.getType();

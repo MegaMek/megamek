@@ -9115,6 +9115,20 @@ public class Server implements Runnable {
                     } else {
                         int heatRoll = Compute.d6(wtype.getRackSize() + 1);
                         nDamPerHit = atype.getDamagePerShot() + heatRoll;
+                        bSalvo = true;
+                        nCluster = 5;
+                        r = new Report(3575);
+                        r.subject = subjectId;
+                        r.newlines = 0;
+                        r.add(hits);
+                        addReport(r);
+                        for (Mounted mount:entityTarget.getMisc()) {
+                            EquipmentType equip = mount.getType();
+                            if ( BattleArmor.FIRE_PROTECTION.equals
+                                 (equip.getInternalName()) ) {
+                                hits /= 2;
+                            }
+                        }
                     }
                 } 
             }else if ( usingCapacitors )
@@ -9790,6 +9804,9 @@ public class Server implements Runnable {
                     if ( bldgAbsorbs > 0 ) {
                         int toBldg = Math.min( bldgAbsorbs, nDamage );
                         nDamage -= toBldg;
+                        //for now Plasma weapons do damage to the building and thats if the meks
+                        //Inside are safe since its so damn convoluted.
+                        bPlasma = false;
                         addNewLines();
                         Report buildingReport = damageBuilding( bldg, toBldg );
                         if (buildingReport != null) {
@@ -9800,7 +9817,7 @@ public class Server implements Runnable {
                     }
 
                     // A building may absorb the entire shot.
-                    if ( nDamage == 0 ) {
+                    if ( nDamage == 0 && !bPlasma) {
                         r = new Report(3415);
                         r.subject = subjectId;
                         r.indent(2);
@@ -9882,14 +9899,14 @@ public class Server implements Runnable {
                     } else if (bPlasma) {
                         if (entityTarget instanceof Mech) {
                             int heatRoll = Compute.d6(wtype.getRackSize());
-                            nDamage = nDamPerHit = atype.getDamagePerShot();
+                            /*nDamage = nDamPerHit = atype.getDamagePerShot();
                             if (!bSalvo) {
                                 //hits
                                 r = new Report(3390);
                                 r.subject = subjectId;
                                 r.newlines = 0;
                                 addReport(r);
-                            }
+                            }*/
                             r = new Report(3400);
                             r.subject = subjectId;
                             r.indent(2);
@@ -9897,33 +9914,10 @@ public class Server implements Runnable {
                             r.choose(true);
                             r.newlines = 0;
                             addReport(r);
+                            if ( bGlancing )
+                            	heatRoll /= 2;
                             entityTarget.heatFromExternal += heatRoll;
-                        } else {
-                            int heatRoll = Compute.d6(wtype.getRackSize() + 1);
-                            nDamPerHit = 1;
-                            nDamage = atype.getDamagePerShot() + heatRoll;
-                            bSalvo = true;
-                            nCluster = 5;
-                            r = new Report(3575);
-                            r.subject = subjectId;
-                            r.newlines = 0;
-                            r.add(hits);
-                            addReport(r);
-                            for (Mounted mount:entityTarget.getMisc()) {
-                                EquipmentType equip = mount.getType();
-                                if ( BattleArmor.FIRE_PROTECTION.equals
-                                     (equip.getInternalName()) ) {
-                                    hits /= 2;
-                                }
-                            }
                         }
-                        if (bGlancing) {
-                            hit.makeGlancingBlow();
-                            nDamage = (int)Math.floor(nDamage/2.0);
-                        }
-                        hit.setDamageType(wtype.getFlags());
-                        addReport(
-                            damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
                     } else {
                         if (usesAmmo
                                 && (atype.getAmmoType() == AmmoType.T_AC

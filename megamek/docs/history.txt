@@ -28,6 +28,7 @@ v0.33.9-dev (SVN)
 	ToHitData.IMPOSSIBLE. This caused a players to be disconnected Meks
 	where near buildings.
 + Jump Boosters causing an invalid unit erorr when Jump was greater then run
++ Bug: Plasma Cannons not delievering heat on a glancing blow.
 	
 v0.33.8 (2007-07-16, 21:00 GMT +2)
 + Bug 1726461: Indirect Fire +1 for spotter missing

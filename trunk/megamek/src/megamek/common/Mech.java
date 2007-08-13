@@ -437,7 +437,7 @@ public abstract class Mech
                                 do {
                                     int slotIndex = Compute.randomInt( getNumberOfCriticals(loc) );
                                     slot = getCritical(loc, slotIndex);
-                                } while(slot != null && !slot.isHittable());
+                                } while(slot == null || !slot.isHittable());
                                 
                                 vCriticals.put(new Integer(loc),slot);
                                 

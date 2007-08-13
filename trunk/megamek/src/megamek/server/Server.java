@@ -4040,7 +4040,8 @@ public class Server implements Runnable {
                     md.clear();
                     fellDuringMovement = true; // so they get a new turn
                     break;
-                }
+                } else
+                    addReport(vReport);
             }
 
             // check piloting skill for getting up

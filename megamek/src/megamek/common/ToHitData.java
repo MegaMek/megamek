@@ -98,38 +98,38 @@ public class ToHitData extends TargetRoll
                 || this.hitTable != HIT_NORMAL ) {
             String tdesc = new String();
             switch ( this.sideTable ) {
-            case SIDE_RANDOM :
-                tdesc += "Random Side ";
-                break;
-            case SIDE_RIGHT :
-                tdesc += "Right Side ";
-                break;
-            case SIDE_LEFT :
-                tdesc += "Left Side ";
-                break;
-            case SIDE_REAR :
-                tdesc += "Rear ";
-                break;
+                case SIDE_RANDOM :
+                    tdesc += "Random Side ";
+                    break;
+                case SIDE_RIGHT :
+                    tdesc += "Right Side ";
+                    break;
+                case SIDE_LEFT :
+                    tdesc += "Left Side ";
+                    break;
+                case SIDE_REAR :
+                    tdesc += "Rear ";
+                    break;
             }
             switch ( this.hitTable ) {
-            case HIT_PUNCH :
-                tdesc += "Punch ";
-                break;
-            case HIT_KICK :
-                tdesc += "Kick ";
-                break;
-            case HIT_SWARM :
-                tdesc += "Swarm ";
-                break;
-            case HIT_ABOVE :
-                tdesc += "Above ";
-                break;
-            case HIT_BELOW :
-                tdesc += "Below ";
-                break;
-            case HIT_PARTIAL_COVER:
-                tdesc += "Partial cover ";
-                break;
+                case HIT_PUNCH :
+                    tdesc += "Punch ";
+                    break;
+                case HIT_KICK :
+                    tdesc += "Kick ";
+                    break;
+                case HIT_SWARM :
+                    tdesc += "Swarm ";
+                    break;
+                case HIT_ABOVE :
+                    tdesc += "Above ";
+                    break;
+                case HIT_BELOW :
+                    tdesc += "Below ";
+                    break;
+                case HIT_PARTIAL_COVER:
+                    tdesc += "Partial cover ";
+                    break;
             }
             return " (using " + tdesc + "table)";
         }

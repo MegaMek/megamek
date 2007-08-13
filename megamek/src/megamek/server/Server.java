@@ -165,9 +165,13 @@ import megamek.server.commands.LocalSaveGameCommand;
 import megamek.server.commands.NukeCommand;
 import megamek.server.commands.ResetCommand;
 import megamek.server.commands.RollCommand;
+import megamek.server.commands.RulerCommand;
 import megamek.server.commands.SaveGameCommand;
 import megamek.server.commands.SeeAllCommand;
 import megamek.server.commands.ServerCommand;
+import megamek.server.commands.ShowEntityCommand;
+import megamek.server.commands.ShowTileCommand;
+import megamek.server.commands.ShowValidTargetsCommand;
 import megamek.server.commands.SkipCommand;
 import megamek.server.commands.TeamCommand;
 import megamek.server.commands.VictoryCommand;
@@ -315,6 +319,10 @@ public class Server implements Runnable {
         registerCommand(new VictoryCommand(this));
         registerCommand(new WhoCommand(this));
         registerCommand(new TeamCommand(this));
+        registerCommand(new ShowTileCommand(this));
+        registerCommand(new ShowEntityCommand(this));
+        registerCommand(new RulerCommand(this));
+        registerCommand(new ShowValidTargetsCommand(this));
 
         //register terrain processors
         terrainProcessors.add(new FireProcessor(this));
@@ -2774,14 +2782,12 @@ public class Server implements Runnable {
             // if a player has any "even" moving units.
             r = new Report(1020, Report.PUBLIC);
 
-            boolean firstTurn = true;
             boolean hasEven = false;
             for (Enumeration<GameTurn> i = game.getTurns(); i.hasMoreElements();) {
                 GameTurn turn = i.nextElement();
                 Player player = getPlayer( turn.getPlayerNum() );
                 if ( null != player ) {
                     r.add(player.getName());
-                    firstTurn = false;
                     if (player.getEvenTurns() > 0)
                         hasEven = true;
                 }

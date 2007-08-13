@@ -4857,6 +4857,41 @@ public abstract class Entity extends TurnOrdered
     public String toString() {
         return "Entity [" + getDisplayName() + ", " + getId() + "]";
     }
+    
+    /**
+     * This returns a textual description of the entity for visualy impaired users.
+     */
+    public String statusToString() {
+        //should include additional information like imobile.
+        String str = "Entity [" + getDisplayName() + ", " + getId() + "]: Location: ("
+            + (getPosition().x+1) + ", " + (getPosition().y+1) + ") Owner: " + owner.getName()
+            + " Armor: " + getTotalArmor() + "/" + getTotalOArmor() 
+            + " Internal Structure: " + getTotalInternal() + "/" + getTotalOInternal();
+        
+        if(!isActive()) {
+            str += " Inactive";
+        }
+        if(isImmobile()) {
+            str += " Immobile";
+        }
+        if(isProne()) {
+            str += " Prone";
+        }
+        if(isDone()) {
+            str += " Done";
+        }
+        
+        return str;
+    }
+    
+    /**
+     * This returns a textual description of a specific location of the entity for visualy impaired users.
+     * @param loc the location
+     * @return a string descibing the status of the location.
+     */
+    public String statusToString(int loc) {
+        return "";
+    }
 
     /**
      * The round the unit will be deployed. We will deploy at the end of a

@@ -13483,7 +13483,7 @@ public class Server implements Runnable {
         final int totalHits = e.getCrew().getHits();
         final int rollsNeeded = e.getCrew().getRollsNeeded();
         e.crew.setRollsNeeded(0);
-        if (!e.isTargetable() || !e.getCrew().isActive() || rollsNeeded == 0) {
+        if (e instanceof MechWarrior || !e.isTargetable() || !e.getCrew().isActive() || rollsNeeded == 0) {
             return false;
         }
         for (int hit = totalHits - rollsNeeded + 1; hit <= totalHits; hit++) {

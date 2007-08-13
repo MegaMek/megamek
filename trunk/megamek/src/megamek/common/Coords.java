@@ -106,6 +106,30 @@ public class Coords
         return new Coords(newx, newy);
     }
     
+    public final Coords translated(String dir) {
+        int intDir = 0;
+        
+        try {
+            intDir = Integer.parseInt(dir);
+        } catch (NumberFormatException nfe) {
+            if(dir.equalsIgnoreCase("N")) {
+                intDir = 0;
+            } else if(dir.equalsIgnoreCase("NE")) {
+                intDir = 1;
+            } else if(dir.equalsIgnoreCase("SE")) {
+                intDir = 2;
+            } else if(dir.equalsIgnoreCase("S")) {
+                intDir = 3;
+            } else if(dir.equalsIgnoreCase("SW")) {
+                intDir = 4;
+            } else if(dir.equalsIgnoreCase("NW")) {
+                intDir = 5;
+            }
+        }
+        
+        return translated(intDir);
+    }
+    
     /**
      * Returns the x parameter of the coordinates in the direction
      */

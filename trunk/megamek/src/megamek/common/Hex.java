@@ -323,4 +323,35 @@ public class Hex implements IHex, Serializable {
         }
         return rv;
     }
+    
+    public String toString() {
+        String temp;
+        temp = "Elevation: " + getElevation();
+        temp = temp + "  Features: ";
+        for(ITerrain terrain : terrains) {
+            if(terrain != null) {
+                switch(terrain.getType()) {
+                    case Terrains.WOODS:
+                        if(terrain.getLevel() == 2) {
+                            temp = temp + "Heavy Woods"; 
+                        } else if (terrain.getLevel() == 1) {
+                            temp = temp + "Light Woods"; 
+                        } else {
+                            temp = temp + "??? Woods";
+                        }
+                        break;
+                    case Terrains.WATER: temp = temp + "Water, depth: " + terrain.getLevel(); break;
+                    case Terrains.ROAD: temp = temp + "Road"; break;
+                    case Terrains.ROUGH: temp = temp + "Rough"; break;
+                    case Terrains.RUBBLE: temp = temp + "Rubble"; break;
+                    case Terrains.SWAMP: temp = temp + "Swamp"; break;
+                    case Terrains.ARMS: temp = temp + "Arm"; break;
+                    case Terrains.LEGS: temp = temp + "Leg"; break;
+                    default : temp = temp + Terrains.getName(terrain.getType()) + "(" + terrain.getLevel() + ", " + terrain.getTerrainFactor() + ")";
+                }
+                temp = temp + "; ";
+            }
+        }
+        return temp;
+    }
 }

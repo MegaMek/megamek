@@ -69,10 +69,20 @@ public class Terrains implements ITerrainFactory {
     
     private static ITerrainFactory factory;
 
+    /**
+     * 
+     * @param type
+     * @return
+     */
     public static String getName(int type) {
         return names[type];
     }
 
+    /**
+     * This function converts the name of a terrain into the constant.
+     * @param name the name of the terain (from the names list.
+     * @return an integer coresponding to the terain, or 0 if no match (terrain none)
+     */
     public static int getType(String name) {
         Object o = getHash().get(name);
         if (o instanceof Integer) {

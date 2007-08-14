@@ -77,7 +77,7 @@ public class MoveCommand extends ServerCommand {
     }
     
     /**
-     * There should probably be a entral version of this function rather than one for each user interface.
+     * There should probably be a central version of this function rather than one for each user interface.
      * @param entity
      * @param md
      * @return

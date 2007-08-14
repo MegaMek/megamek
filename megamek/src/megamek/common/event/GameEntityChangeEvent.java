@@ -54,4 +54,8 @@ public class GameEntityChangeEvent extends GameEntityEvent {
     public Vector<UnitLocation> getMovePath() {
         return movePath;
     }
+    
+    public String toString() {
+        return getEntity().toString() + " moved to " + movePath.lastElement().getCoords().toFriendlyString();
+    }
 }

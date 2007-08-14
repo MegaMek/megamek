@@ -41,4 +41,42 @@ public abstract class ClientCommand {
      * Run this command with the arguments supplied
      */
     public abstract String run(String[] args);
+    
+    //Utility functions
+    public static int getDirection(String arg) {
+        int face = 0;
+        
+        if(arg.equalsIgnoreCase("N")) {
+            face = 0;
+        } else if(arg.equalsIgnoreCase("NE")) {
+            face = 1;
+        } else if(arg.equalsIgnoreCase("SE")) {
+            face = 2;
+        } else if(arg.equalsIgnoreCase("S")) {
+            face = 3;
+        } else if(arg.equalsIgnoreCase("SW")) {
+            face = 4;
+        } else if(arg.equalsIgnoreCase("NW")) {
+            face = 5;
+        } else {
+            try {
+                face = Integer.parseInt(arg);
+            } catch(NumberFormatException nfe) {
+            }
+        }
+        
+        return face;
+    }
+    
+    public static String getDirection(int arg) {
+        switch(arg) {
+            case 0: return "N";
+            case 1: return "NE";
+            case 2: return "SE";
+            case 3: return "S";
+            case 4: return "SW";
+            case 5: return "NW";
+            default: return "Unk";
+        }
+    }
 }

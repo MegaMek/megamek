@@ -14,6 +14,7 @@
 
 package megamek.common.event;
 
+import java.util.NoSuchElementException;
 import java.util.Vector;
 
 import megamek.common.Entity;
@@ -56,6 +57,15 @@ public class GameEntityChangeEvent extends GameEntityEvent {
     }
     
     public String toString() {
-        return getEntity().toString() + " moved to " + movePath.lastElement().getCoords().toFriendlyString();
+        try {
+            return getEntity().toString() + " moved to " + movePath.lastElement().getCoords().toFriendlyString();
+        } catch(NoSuchElementException nsee) {
+            if(getEntity() != null) {
+                return getEntity().toString() + " probably deployed.";
+            }
+        } catch(NullPointerException npe) {
+        }
+        
+        return "Something happened.";
     }
 }

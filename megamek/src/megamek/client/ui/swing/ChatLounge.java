@@ -1099,7 +1099,10 @@ public class ChatLounge
         }
 
         // Update the butCamo's image.
-        butCamo.setIcon( new ImageIcon(image));
+        //FIXME: game was crashing. this null check fixes it, but it's clear the code above was supposed to prevent this.
+        if(image != null) {
+            butCamo.setIcon( new ImageIcon(image));
+        }
     }
 
     /**

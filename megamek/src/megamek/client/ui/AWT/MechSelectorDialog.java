@@ -219,12 +219,12 @@ public class MechSelectorDialog
         m_mechList.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         m_mechList.addKeyListener(this);
         m_pLeft.add(m_mechList, BorderLayout.CENTER);
-        m_pLeft.add(m_pButtons, BorderLayout.SOUTH);
 
         setLayout(new BorderLayout());
         add(m_pLeft, BorderLayout.WEST);
         m_mechView.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         add(m_mechView, BorderLayout.CENTER);
+        add(m_pButtons, BorderLayout.SOUTH);
 
         //clearMechPreview();
         

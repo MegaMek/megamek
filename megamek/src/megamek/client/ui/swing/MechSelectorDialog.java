@@ -225,7 +225,6 @@ public class MechSelectorDialog
         m_mechList.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
         m_mechList.addKeyListener(this);
         m_pLeft.add(new JScrollPane(m_mechList, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED), BorderLayout.CENTER);
-        m_pLeft.add(m_pButtons, BorderLayout.SOUTH);
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(m_pLeft, BorderLayout.CENTER);
@@ -233,6 +232,7 @@ public class MechSelectorDialog
         m_mechView.setEditable(false);
         m_mechView.setOpaque(false);
         getContentPane().add(m_mechView, BorderLayout.EAST);
+        getContentPane().add(m_pButtons, BorderLayout.SOUTH);
 
         //clearMechPreview();
         
@@ -369,11 +369,7 @@ public class MechSelectorDialog
         for (Iterator i = m_clientgui.getBots().values().iterator(); i.hasNext();) {
             m_chPlayer.addItem(((Client) i.next()).getName());
         }
-        if (m_chPlayer.getItemCount() == 1) {
-            m_chPlayer.setEnabled(false);
-        } else {
-            m_chPlayer.setSelectedItem(lastChoice);
-        }
+        m_chPlayer.setSelectedItem(lastChoice);
     }
 
     public void run() {

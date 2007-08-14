@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 
 import megamek.client.Client;
 import megamek.client.commands.ClientCommand;
+import megamek.client.ui.IClientCommandHandler;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
@@ -37,6 +38,7 @@ import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Enumeration;
 import java.util.Hashtable;
 
 /**
@@ -44,7 +46,7 @@ import java.util.Hashtable;
  * buffer.  Although it is not an AWT component, it keeps
  * one that it will gladly supply.
  */
-public class ChatterBox implements KeyListener {
+public class ChatterBox implements KeyListener, IClientCommandHandler {
     private static final String CLIENT_COMMAND = "#";
     private Client client;
     private Hashtable<String, ClientCommand> commandsHash = new Hashtable<String, ClientCommand>();
@@ -206,6 +208,13 @@ public class ChatterBox implements KeyListener {
      */
     public ClientCommand getCommand(String name) {
         return commandsHash.get(name);
+    }
+
+    /* (non-Javadoc)
+     * @see megamek.client.ui.IClientCommandHandler#getAllCommandNames()
+     */
+    public Enumeration<String> getAllCommandNames() {
+        return commandsHash.keys();
     }
 
 }

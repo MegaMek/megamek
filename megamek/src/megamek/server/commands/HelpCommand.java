@@ -57,8 +57,8 @@ public class HelpCommand extends ServerCommand {
     private String commandList() {
             StringBuffer commandList = new StringBuffer();
 
-            for (Enumeration i = server.getAllCommandNames(); i.hasMoreElements();) {
-                ServerCommand command = server.getCommand((String)i.nextElement());
+            for (Enumeration<String> i = server.getAllCommandNames(); i.hasMoreElements();) {
+                ServerCommand command = server.getCommand(i.nextElement());
                 if (commandList.length() > 0) {
                     commandList.append(", ");
                 }
@@ -66,7 +66,5 @@ public class HelpCommand extends ServerCommand {
             }
 
             return commandList.toString();
-    }
-    
-    
+    }    
 }

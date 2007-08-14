@@ -39,6 +39,7 @@ v0.33.9-dev (SVN)
 	cameo image is still behaving very odd.
 + Begun making client commands in the swing GUI. Client commands start with a #.
 + Help command for client commands added.
++ More client commands and slight improvements to chatting using the swing GUI.
 	
 v0.33.8 (2007-07-16, 21:00 GMT +2)
 + Bug 1726461: Indirect Fire +1 for spotter missing

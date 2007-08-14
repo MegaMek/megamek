@@ -4863,8 +4863,11 @@ public abstract class Entity extends TurnOrdered
      */
     public String statusToString() {
         //should include additional information like imobile.
-        String str = "Entity [" + getDisplayName() + ", " + getId() + "]: Location: ("
-            + (getPosition().x+1) + ", " + (getPosition().y+1) + ") Owner: " + owner.getName()
+        String str = "Entity [" + getDisplayName() + ", " + getId() + "]: ";
+        if(getPosition() != null) {
+            str = str + "Location: (" + (getPosition().x+1) + ", " + (getPosition().y+1) + ") ";
+        }
+        str = str + "Owner: " + owner.getName()
             + " Armor: " + getTotalArmor() + "/" + getTotalOArmor() 
             + " Internal Structure: " + getTotalInternal() + "/" + getTotalOInternal();
         
@@ -4890,7 +4893,31 @@ public abstract class Entity extends TurnOrdered
      * @return a string descibing the status of the location.
      */
     public String statusToString(int loc) {
-        return "";
+        if(loc == LOC_NONE) {
+            return "No location given.";
+        }
+        
+        return getLocationName(loc) + " (" + getLocationAbbr(loc) 
+            + "): Armor: " + getArmorString(loc) + "/" + getOArmor(loc) 
+            + " Structure: " + getInternalString(loc) + "/" + getOInternal(loc);
+    }
+    
+    /**
+     * @param string a string defining the location
+     * @return the status of the given location.
+     */
+    public String statusToString(String str) {
+        int loc = LOC_NONE;
+        loc = getLocationFromAbbr(str);
+        
+        if(loc == LOC_NONE) {
+            try {
+                loc = Integer.parseInt(str);
+            } catch (NumberFormatException nfe) {
+            }
+        }
+        
+        return statusToString(loc);
     }
 
     /**

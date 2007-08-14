@@ -49,4 +49,8 @@ public class GameEntityNewEvent extends GameEvent {
     public Vector<Entity> GetEntities(){
         return entities;
     }
+    
+    public int getNumberOfEntities(){
+        return entities.size();
+    }
 }

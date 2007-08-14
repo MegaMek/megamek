@@ -44,10 +44,15 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         store.setDefault(UNIT_START_CHAR,'A');
         store.setDefault(GUI_NAME,"AWT");
         store.setDefault(USE_AVERAGE_SKILLS,true);
+        store.setDefault(PRINT_ENTITY_CHANGE, false);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
 
+    public boolean getPrintEntityChange() {
+        return store.getBoolean(PRINT_ENTITY_CHANGE);
+    }
+    
     public String[] getAdvancedProperties() {
         return store.getAdvancedProperties();
     }
@@ -209,6 +214,10 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
 
     public void setGameLogFilename(String name) {
         store.setValue(GAMELOG_FILENAME, name);        
+    }
+    
+    public void setPrintEntityChange(boolean print) {
+        store.setValue(PRINT_ENTITY_CHANGE, print);
     }
 
     //public void setGameLogMaxSize(int i) {

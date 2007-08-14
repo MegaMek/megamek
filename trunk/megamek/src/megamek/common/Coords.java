@@ -456,4 +456,12 @@ public class Coords
         }
         return nextHex(current, new IdealHex(current), new IdealHex(destination), directions);
     }
+
+    /**
+     * this makes the coordinates 1 based instead of 0 based to match the tiles diaplayed on the grid.
+     * @return
+     */
+    public String toFriendlyString() {
+        return "(" + (x+1) + ", " + (y+1) + ")";
+    }
 }

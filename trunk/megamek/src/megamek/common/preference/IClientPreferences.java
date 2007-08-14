@@ -50,6 +50,9 @@ public interface IClientPreferences extends IPreferenceStore {
     public static final String METASERVER_NAME = "MetaServerName";
     public static final String GOAL_PLAYERS = "GoalPlayers";
     public static final String GUI_NAME = "GUIName";
+    public static final String PRINT_ENTITY_CHANGE = "PrintEntityChange";
+    
+    boolean getPrintEntityChange();
     
     boolean defaultAutoejectDisabled();
     

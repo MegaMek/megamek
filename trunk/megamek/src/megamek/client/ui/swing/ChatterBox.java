@@ -15,6 +15,8 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
+import megamek.client.commands.ClientCommand;
+import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameListenerAdapter;
@@ -22,6 +24,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameTurnChangeEvent;
+import megamek.common.preference.PreferenceManager;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -34,6 +37,7 @@ import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Hashtable;
 
 /**
  * ChatterBox keeps track of a player list and a (chat) message
@@ -41,7 +45,9 @@ import java.awt.event.KeyListener;
  * one that it will gladly supply.
  */
 public class ChatterBox implements KeyListener {
+    private static final String CLIENT_COMMAND = "#";
     private Client client;
+    private Hashtable<String, ClientCommand> commandsHash = new Hashtable<String, ClientCommand>();
 
     private JPanel chatPanel;
     private JTextArea chatArea;
@@ -71,10 +77,19 @@ public class ChatterBox implements KeyListener {
 
             public void gameEntityNew(GameEntityNewEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
+                if(PreferenceManager.getClientPreferences().getPrintEntityChange()) {
+                    systemMessage(e.getNumberOfEntities() + " Entities added.");
+                }
             }
 
             public void gameEntityRemove(GameEntityRemoveEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
+            }
+            
+            public void gameEntityChange(GameEntityChangeEvent e) {
+                if(PreferenceManager.getClientPreferences().getPrintEntityChange()) {
+                    systemMessage(e.toString());
+                }
             }
         });
 
@@ -141,8 +156,35 @@ public class ChatterBox implements KeyListener {
     //
     public void keyPressed(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
-            client.sendChat(inputField.getText());
+            //use # to start client ommands for now, migrate to / later.
+            if(!inputField.getText().startsWith(CLIENT_COMMAND)) {
+                client.sendChat(inputField.getText());
+            } else {
+                runCommand(inputField.getText());
+            }
             inputField.setText(""); //$NON-NLS-1$
+        }
+    }
+
+    /**
+     * 
+     * @param text a client command with CLIENT_COMMAND prepended.
+     */
+    public void runCommand(String cmd) {
+        cmd = cmd.substring(CLIENT_COMMAND.length());
+        
+        runCommand(cmd.split("\\s+"));
+    }
+    
+    /**
+     * Runs the command
+     * @param args the command and it's arguments with the CLIENT_COMMAND already removed, and the string tokenized.
+     */
+    public void runCommand(String[] args) {
+        if(args != null && args.length > 0 && commandsHash.containsKey(args[0])) {
+            systemMessage(commandsHash.get(args[0]).run(args));
+        } else {
+            systemMessage("Unknown Client Command.");
         }
     }
 
@@ -150,6 +192,20 @@ public class ChatterBox implements KeyListener {
     }
 
     public void keyTyped(KeyEvent ev) {
+    }
+    
+    /**
+     * Registers a new command in the client command table
+     */
+    public void registerCommand(ClientCommand command) {
+        commandsHash.put(command.getName(), command);
+    }
+
+    /**
+     * Returns the command associated with the specified name
+     */
+    public ClientCommand getCommand(String name) {
+        return commandsHash.get(name);
     }
 
 }

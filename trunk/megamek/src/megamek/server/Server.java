@@ -18797,11 +18797,8 @@ public class Server implements Runnable {
         String[] args;
         String commandName;
         // all tokens are read as strings; if they're numbers, string-ize 'em.
-        StringTokenizer st = new StringTokenizer(commandString);
-        args = new String[st.countTokens()];
-        for (int i = 0; i < args.length; i++) {
-            args[i] = st.nextToken();
-        }
+        //replaced the tokenizer with the split function.
+        args = commandString.split("\\s+");
 
         // figure out which command this is
         commandName = args[0].substring(1);

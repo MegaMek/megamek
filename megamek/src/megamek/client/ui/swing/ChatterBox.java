@@ -16,6 +16,11 @@ package megamek.client.ui.swing;
 
 import megamek.client.Client;
 import megamek.client.commands.ClientCommand;
+import megamek.client.commands.DeployCommand;
+import megamek.client.commands.HelpCommand;
+import megamek.client.commands.MoveCommand;
+import megamek.client.commands.RulerCommand;
+import megamek.client.commands.ShowEntityCommand;
 import megamek.client.ui.IClientCommandHandler;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
@@ -40,6 +45,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.LinkedList;
 
 /**
  * ChatterBox keeps track of a player list and a (chat) message
@@ -48,6 +54,7 @@ import java.util.Hashtable;
  */
 public class ChatterBox implements KeyListener, IClientCommandHandler {
     private static final String CLIENT_COMMAND = "#";
+    private static final int MAX_HISTORY = 10;
     private Client client;
     private Hashtable<String, ClientCommand> commandsHash = new Hashtable<String, ClientCommand>();
 
@@ -56,6 +63,9 @@ public class ChatterBox implements KeyListener, IClientCommandHandler {
     private JList playerList;
     private JTextField inputField;
     private JButton butDone;
+    
+    private LinkedList<String> history;
+    private int historyBookmark = -1;
 
     public ChatterBox(ClientGUI clientgui) {
         client = clientgui.getClient();
@@ -63,6 +73,7 @@ public class ChatterBox implements KeyListener, IClientCommandHandler {
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 chatArea.append('\n' + e.getMessage()); //$NON-NLS-1$
                 PlayerListDialog.refreshPlayerList(playerList, client);
+                moveToEnd();
             }
 
             public void gamePlayerChange(GamePlayerChangeEvent e) {
@@ -94,6 +105,7 @@ public class ChatterBox implements KeyListener, IClientCommandHandler {
                 }
             }
         });
+        history = new LinkedList<String>();
 
         chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40); //$NON-NLS-1$
         chatArea.setEditable(false);
@@ -113,6 +125,11 @@ public class ChatterBox implements KeyListener, IClientCommandHandler {
         chatPanel.add(subPanel, BorderLayout.CENTER);
         chatPanel.add(butDone, BorderLayout.EAST);
 
+        registerCommand(new DeployCommand(client));
+        registerCommand(new HelpCommand(client, this));
+        registerCommand(new MoveCommand(client));
+        registerCommand(new RulerCommand(client));
+        registerCommand(new ShowEntityCommand(client));
     }
 
     /**
@@ -140,6 +157,7 @@ public class ChatterBox implements KeyListener, IClientCommandHandler {
      */
     public void systemMessage(String message) {
         chatArea.append("\nMegaMek: " + message); //$NON-NLS-1$
+        moveToEnd();
     }
 
     /**
@@ -158,14 +176,45 @@ public class ChatterBox implements KeyListener, IClientCommandHandler {
     //
     public void keyPressed(KeyEvent ev) {
         if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
-            //use # to start client ommands for now, migrate to / later.
+            history.addFirst(inputField.getText());
+            historyBookmark = -1;
+            
             if(!inputField.getText().startsWith(CLIENT_COMMAND)) {
                 client.sendChat(inputField.getText());
             } else {
                 runCommand(inputField.getText());
             }
             inputField.setText(""); //$NON-NLS-1$
+            
+            if(history.size() > MAX_HISTORY) {
+                history.removeLast();
+            }
+        } else if (ev.getKeyCode() == KeyEvent.VK_UP) {
+            historyBookmark++;
+            fetchHistory();
+        } else if (ev.getKeyCode() == KeyEvent.VK_DOWN) {
+            historyBookmark--;
+            fetchHistory();
         }
+        moveToEnd();
+    }
+
+    /**
+     * 
+     */
+    private void fetchHistory() {
+        try {
+            inputField.setText(history.get(historyBookmark));
+        } catch(IndexOutOfBoundsException ioobe) {
+            inputField.setText(""); //$NON-NLS-1$
+            historyBookmark = -1;
+        }
+    }
+
+    public void keyReleased(KeyEvent ev) {
+    }
+
+    public void keyTyped(KeyEvent ev) {
     }
 
     /**
@@ -188,12 +237,6 @@ public class ChatterBox implements KeyListener, IClientCommandHandler {
         } else {
             systemMessage("Unknown Client Command.");
         }
-    }
-
-    public void keyReleased(KeyEvent ev) {
-    }
-
-    public void keyTyped(KeyEvent ev) {
     }
     
     /**

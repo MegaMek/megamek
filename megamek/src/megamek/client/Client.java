@@ -25,6 +25,8 @@ import java.util.Vector;
 import java.util.Hashtable;
 
 import megamek.client.bot.BotClient;
+import megamek.client.commands.*;
+import megamek.client.ui.IClientCommandHandler;
 import megamek.common.*;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -57,12 +59,16 @@ import megamek.common.util.StringUtil;
  * I believe that non-local clients are not also instantiated on the local server,
  * but I am not sure.  
  */
-public class Client {
-
+public class Client implements IClientCommandHandler {
+    public static final String CLIENT_COMMAND = "#";
+    
     // we need these to communicate with the server
     private String name;
     
     private Connection connection; 
+    
+    //the hash table of client commands
+    private Hashtable<String, ClientCommand> commandsHash = new Hashtable<String, ClientCommand>();
     
     // some info about us and the server
     private boolean connected = false;
@@ -116,6 +122,13 @@ public class Client {
         this.name = name;
         this.host = host;
         this.port = port;
+        
+        registerCommand(new HelpCommand(this));
+        registerCommand(new MoveCommand(this));
+        registerCommand(new RulerCommand(this));
+        registerCommand(new ShowEntityCommand(this));
+        registerCommand(new FireCommand(this));
+        registerCommand(new DeployCommand(this));
     }
 
     /**
@@ -1064,5 +1077,48 @@ public class Client {
                 duplicateNameHash.remove(entity.getShortNameRaw());
             }
         }
+    }
+    
+    /**
+     * 
+     * @param text a client command with CLIENT_COMMAND prepended.
+     */
+    public String runCommand(String cmd) {
+        cmd = cmd.substring(CLIENT_COMMAND.length());
+        
+        return runCommand(cmd.split("\\s+"));
+    }
+    
+    /**
+     * Runs the command
+     * @param args the command and it's arguments with the CLIENT_COMMAND already removed, and the string tokenized.
+     */
+    public String runCommand(String[] args) {
+        if(args != null && args.length > 0 && commandsHash.containsKey(args[0])) {
+            return commandsHash.get(args[0]).run(args);
+        } else {
+            return "Unknown Client Command.";
+        }
+    }
+    
+    /**
+     * Registers a new command in the client command table
+     */
+    public void registerCommand(ClientCommand command) {
+        commandsHash.put(command.getName(), command);
+    }
+
+    /**
+     * Returns the command associated with the specified name
+     */
+    public ClientCommand getCommand(String name) {
+        return commandsHash.get(name);
+    }
+
+    /* (non-Javadoc)
+     * @see megamek.client.ui.IClientCommandHandler#getAllCommandNames()
+     */
+    public Enumeration<String> getAllCommandNames() {
+        return commandsHash.keys();
     }
 }

@@ -23,6 +23,7 @@ import java.awt.TextArea;
 import java.awt.TextField;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.LinkedList;
 
 import megamek.client.Client;
 import megamek.common.event.GameEntityNewEvent;
@@ -39,6 +40,7 @@ import megamek.common.event.GameTurnChangeEvent;
  * one that it will gladly supply.
  */
 public class ChatterBox implements KeyListener {
+    private static final int MAX_HISTORY = 10;
     public Client client;
     
     public String[]            chatBuffer;
@@ -49,6 +51,9 @@ public class ChatterBox implements KeyListener {
     private List                playerList;
     private TextField           inputField;
     private Button              butDone;
+    
+    private LinkedList<String> history;
+    private int historyBookmark = -1;
 
     public ChatterBox(ClientGUI clientgui) {
         this.client = clientgui.getClient();
@@ -56,6 +61,7 @@ public class ChatterBox implements KeyListener {
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 chatArea.append("\n" + e.getMessage()); //$NON-NLS-1$
                 PlayerListDialog.refreshPlayerList(playerList, client);
+                moveToEnd();
             }
             public void gamePlayerChange(GamePlayerChangeEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
@@ -73,6 +79,8 @@ public class ChatterBox implements KeyListener {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
         });
+        
+        history = new LinkedList<String>();
         
         chatArea = new TextArea(" \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
         chatArea.setEditable(false);
@@ -118,6 +126,7 @@ public class ChatterBox implements KeyListener {
      */
     public void systemMessage( String message ) {
         chatArea.append("\nMegaMek: " + message); //$NON-NLS-1$
+        moveToEnd();
     }
 
     /**
@@ -135,14 +144,40 @@ public class ChatterBox implements KeyListener {
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        if(ev.getKeyCode() == KeyEvent.VK_ENTER) {
-            client.sendChat(inputField.getText());
+        if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
+            history.addFirst(inputField.getText());
+            historyBookmark = -1;
+            
+            if(!inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
+                client.sendChat(inputField.getText());
+            } else {
+                systemMessage(client.runCommand(inputField.getText()));
+            }
             inputField.setText(""); //$NON-NLS-1$
+            
+            if(history.size() > MAX_HISTORY) {
+                history.removeLast();
+            }
+        } else if (ev.getKeyCode() == KeyEvent.VK_UP) {
+            historyBookmark++;
+            fetchHistory();
+        } else if (ev.getKeyCode() == KeyEvent.VK_DOWN) {
+            historyBookmark--;
+            fetchHistory();
         }
+        moveToEnd();
     }
     public void keyReleased(KeyEvent ev) {
     }
     public void keyTyped(KeyEvent ev) {
     }
-
+    
+    private void fetchHistory() {
+        try {
+            inputField.setText(history.get(historyBookmark));
+        } catch(IndexOutOfBoundsException ioobe) {
+            inputField.setText(""); //$NON-NLS-1$
+            historyBookmark = -1;
+        }
+    }
 }

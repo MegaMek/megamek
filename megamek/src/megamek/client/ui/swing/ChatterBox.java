@@ -15,13 +15,6 @@
 package megamek.client.ui.swing;
 
 import megamek.client.Client;
-import megamek.client.commands.ClientCommand;
-import megamek.client.commands.DeployCommand;
-import megamek.client.commands.HelpCommand;
-import megamek.client.commands.MoveCommand;
-import megamek.client.commands.RulerCommand;
-import megamek.client.commands.ShowEntityCommand;
-import megamek.client.ui.IClientCommandHandler;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
@@ -43,8 +36,6 @@ import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.LinkedList;
 
 /**
@@ -52,11 +43,9 @@ import java.util.LinkedList;
  * buffer.  Although it is not an AWT component, it keeps
  * one that it will gladly supply.
  */
-public class ChatterBox implements KeyListener, IClientCommandHandler {
-    private static final String CLIENT_COMMAND = "#";
+public class ChatterBox implements KeyListener {
     private static final int MAX_HISTORY = 10;
     private Client client;
-    private Hashtable<String, ClientCommand> commandsHash = new Hashtable<String, ClientCommand>();
 
     private JPanel chatPanel;
     private JTextArea chatArea;
@@ -124,12 +113,6 @@ public class ChatterBox implements KeyListener, IClientCommandHandler {
         subPanel.add(inputField, BorderLayout.SOUTH);
         chatPanel.add(subPanel, BorderLayout.CENTER);
         chatPanel.add(butDone, BorderLayout.EAST);
-
-        registerCommand(new DeployCommand(client));
-        registerCommand(new HelpCommand(client, this));
-        registerCommand(new MoveCommand(client));
-        registerCommand(new RulerCommand(client));
-        registerCommand(new ShowEntityCommand(client));
     }
 
     /**
@@ -179,10 +162,10 @@ public class ChatterBox implements KeyListener, IClientCommandHandler {
             history.addFirst(inputField.getText());
             historyBookmark = -1;
             
-            if(!inputField.getText().startsWith(CLIENT_COMMAND)) {
+            if(!inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
                 client.sendChat(inputField.getText());
             } else {
-                runCommand(inputField.getText());
+                systemMessage(client.runCommand(inputField.getText()));
             }
             inputField.setText(""); //$NON-NLS-1$
             
@@ -215,49 +198,6 @@ public class ChatterBox implements KeyListener, IClientCommandHandler {
     }
 
     public void keyTyped(KeyEvent ev) {
-    }
-
-    /**
-     * 
-     * @param text a client command with CLIENT_COMMAND prepended.
-     */
-    public void runCommand(String cmd) {
-        cmd = cmd.substring(CLIENT_COMMAND.length());
-        
-        runCommand(cmd.split("\\s+"));
-    }
-    
-    /**
-     * Runs the command
-     * @param args the command and it's arguments with the CLIENT_COMMAND already removed, and the string tokenized.
-     */
-    public void runCommand(String[] args) {
-        if(args != null && args.length > 0 && commandsHash.containsKey(args[0])) {
-            systemMessage(commandsHash.get(args[0]).run(args));
-        } else {
-            systemMessage("Unknown Client Command.");
-        }
-    }
-    
-    /**
-     * Registers a new command in the client command table
-     */
-    public void registerCommand(ClientCommand command) {
-        commandsHash.put(command.getName(), command);
-    }
-
-    /**
-     * Returns the command associated with the specified name
-     */
-    public ClientCommand getCommand(String name) {
-        return commandsHash.get(name);
-    }
-
-    /* (non-Javadoc)
-     * @see megamek.client.ui.IClientCommandHandler#getAllCommandNames()
-     */
-    public Enumeration<String> getAllCommandNames() {
-        return commandsHash.keys();
     }
 
 }

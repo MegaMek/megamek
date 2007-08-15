@@ -43,6 +43,7 @@ public class MoveCommand extends ClientCommand {
                 return "Move aborted, all movement data cleared.";
             } else if(args[1].equalsIgnoreCase("COMMIT")) {
                 moveTo(cmd);
+                return "Move sent.";
             } else if(args[1].equalsIgnoreCase("SELECT")) {
                 try {
                     clearAllMoves();

@@ -17,9 +17,9 @@ public class HelpCommand extends ClientCommand {
     private IClientCommandHandler cmdHandler;
     
     /** Creates new HelpCommand */
-    public HelpCommand(Client client, IClientCommandHandler cmdHandler) {
+    public HelpCommand(Client client) {
         super(client, "help", "Lists all of the commands available, or gives help on a specific command.  Usage: #help [command]");
-        this.cmdHandler = cmdHandler;
+        cmdHandler = client;
     }
     
     public String run(String[] args) {

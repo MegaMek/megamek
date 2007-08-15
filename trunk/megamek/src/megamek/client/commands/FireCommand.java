@@ -28,8 +28,7 @@ import megamek.common.actions.WeaponAttackAction;
  *
  */
 public class FireCommand extends ClientCommand {
-
-    private Entity entity;
+    private int cen = Entity.NONE;
 
     private Vector<AbstractEntityAction> attacks;
     
@@ -39,7 +38,7 @@ public class FireCommand extends ClientCommand {
      * @param helpText
      */
     public FireCommand(Client client) {
-        super(client, "fire", "used to shoot.");
+        super(client, "fire", "used to shoot. See #fire HELP for more details.");
         attacks = new Vector<AbstractEntityAction>();
     }
 
@@ -55,14 +54,22 @@ public class FireCommand extends ClientCommand {
             } else if(args[1].equalsIgnoreCase("SELECT")) {
                 try {
                     clearAttacks();
-                    int id = Integer.parseInt(args[2]);
-                    entity = client.getEntity(id);
+                    cen = Integer.parseInt(args[2]);
                     
-                    return "Entity " + entity.toString() + " selected for firing.";
+                    return "Entity " + ce().toString() + " selected for firing.";
                 } catch(Exception e) {
                     return "Not an entity ID or valid number." + e.toString();
                 }
-            } else if(entity != null) {
+            } else if(args[1].equalsIgnoreCase("HELP")) {
+                return "Available commands:\n" + 
+                    "#move ABORT = aborts planed fireing and deselect unit." +
+                    "#move SELECT unitID = Selects thhe unit named unit ID for fireing. This is a prerequisite for all commands listed after this." +
+                    "#move COMMIT = executs the current fireing plan." +
+                    "#move LIST unitID = List targeting information for all weapons at the specified target. This is currently the only way to get weapon IDs." +
+                    "#move TWIST = used for torso twisitng, not implemented yet." +
+                    "#move TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified target. Any number of weapons may be specified." +
+                    "#move TARGET unitID ALL = fires all remaining weapons at the specified target.";
+            } else if(ce() != null) {
                 if(args[1].equalsIgnoreCase("COMMIT")) {
                     commit();
                     return "Attacks send to the server";
@@ -72,9 +79,9 @@ public class FireCommand extends ClientCommand {
                         try {
                             Targetable target = client.getEntity(Integer.parseInt(args[2]));
                             if(args.length == 4 && args[3].equalsIgnoreCase("ALL")) {
-                                for(Mounted weapon : entity.getWeaponList()) {
+                                for(Mounted weapon : ce().getWeaponList()) {
                                     if(weapon.canFire() && !weapon.isFired()) {
-                                        fire(entity.getEquipmentNum(weapon), target);
+                                        fire(ce().getEquipmentNum(weapon), target);
                                     }
                                 }
                                 return "Fireing all remaining weapons at " + target.toString() + ".";
@@ -92,10 +99,10 @@ public class FireCommand extends ClientCommand {
                         try {
                             Targetable target = client.getEntity(Integer.parseInt(args[2]));
                             if(target != null) {
-                                String str = " Weapons for " + entity + " at " + target.toString() + ":\n";
+                                String str = " Weapons for " + ce() + " at " + target.toString() + ":\n";
                                 
-                                for(Mounted weapon : entity.getWeaponList()) {
-                                    str += "(" + entity.getEquipmentNum(weapon) + ") " + weapon.getName() + " = " + calculateToHit(entity.getEquipmentNum(weapon), target) + "\n";
+                                for(Mounted weapon : ce().getWeaponList()) {
+                                    str += "(" + ce().getEquipmentNum(weapon) + ") " + weapon.getName() + " = " + calculateToHit(ce().getEquipmentNum(weapon), target) + "\n";
                                 }
                                 
                                 return str;
@@ -109,7 +116,7 @@ public class FireCommand extends ClientCommand {
                     }
                 }
             } else {
-                return "No entity selected, first select an entity to shoot from.";
+                return "No ce() selected, first select an ce() to shoot from.";
             }
         }
         clearAttacks();
@@ -120,8 +127,8 @@ public class FireCommand extends ClientCommand {
      * Removes all current fire
      */
     private void clearAttacks() {
-        // We may not have an entity selected yet
-        if (entity == null) {
+        // We may not have an ce() selected yet
+        if (ce() == null) {
             return;
         }
         
@@ -131,26 +138,26 @@ public class FireCommand extends ClientCommand {
             Object o = i.nextElement();
             if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
-                entity.getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+                ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
             }
         }
         attacks.removeAllElements();
         
         // remove temporary attacks from game & board
-        client.game.removeActionsFor(entity.getId());
+        client.game.removeActionsFor(cen);
         
         // restore any other movement to default
-        entity.setSecondaryFacing(entity.getFacing());
-        entity.setArmsFlipped(false);
-        entity = null;
+        ce().setSecondaryFacing(ce().getFacing());
+        ce().setArmsFlipped(false);
+        cen = Entity.NONE;
     }
     
     private void fire(int weaponNum, Targetable target) {
         // get the selected weaponnum
-        Mounted mounted = entity.getEquipment(weaponNum);
+        Mounted mounted = ce().getEquipment(weaponNum);
         
         // validate
-        if (entity == null || target == null || mounted == null
+        if (ce() == null || target == null || mounted == null
                 || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid"); //$NON-NLS-1$
         }
@@ -160,14 +167,14 @@ public class FireCommand extends ClientCommand {
             doSearchlight(target);
         }
 
-        WeaponAttackAction waa = new WeaponAttackAction(entity.getId(), target.getTargetType(),
+        WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(),
                 target.getTargetId(), weaponNum);
 
         if (mounted.getLinked() != null &&
                 ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
             Mounted ammoMount = mounted.getLinked();
             AmmoType ammoType = (AmmoType) ammoMount.getType();
-            waa.setAmmoId(entity.getEquipmentNum(ammoMount));
+            waa.setAmmoId(ce().getEquipmentNum(ammoMount));
             if (((ammoType.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB)
                     && (ammoType.getAmmoType() == AmmoType.T_LRM
                             || ammoType.getAmmoType() == AmmoType.T_MML))
@@ -192,15 +199,15 @@ public class FireCommand extends ClientCommand {
     
     private void doSearchlight(Targetable target) {
         // validate
-        if (entity == null || target == null) {
+        if (ce() == null || target == null) {
             throw new IllegalArgumentException("current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
-        if (!SearchlightAttackAction.isPossible(client.game, entity.getId(), target, null))
+        if (!SearchlightAttackAction.isPossible(client.game, cen, target, null))
             return;
 
         //create and queue a searchlight action
-        SearchlightAttackAction saa = new SearchlightAttackAction(entity.getId(), target.getTargetType(), target.getTargetId());
+        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target.getTargetType(), target.getTargetId());
         attacks.addElement(saa);
 
         // and add it into the game, temporarily
@@ -210,14 +217,14 @@ public class FireCommand extends ClientCommand {
     private String calculateToHit(int weaponId, Targetable target) {
         ToHitData toHit;
         String str = "No Data";
-        if (target != null && weaponId != -1 && entity != null) {
+        if (target != null && weaponId != -1 && ce() != null) {
             str = "";
-            toHit = WeaponAttackAction.toHit(client.game, entity.getId(), target, weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
+            toHit = WeaponAttackAction.toHit(client.game, cen, target, weaponId, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
             //str += "Target: " + target.toString();
             
-            str += " Range: " + entity.getPosition().distance(target.getPosition());
+            str += " Range: " + ce().getPosition().distance(target.getPosition());
             
-            Mounted m = entity.getEquipment(weaponId);
+            Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 str += " Can't shoot: " + Messages.getString("FiringDisplay.alreadyFired");
             } else if (m.getType().hasFlag(WeaponType.F_AUTO_TARGET)) {
@@ -235,7 +242,7 @@ public class FireCommand extends ClientCommand {
     }
     
     /**
-     * Called when the current entity is done firing.  Send out our attack
+     * Called when the current ce() is done firing.  Send out our attack
      * queue to the server.
      */
     private void commit() {
@@ -278,10 +285,16 @@ public class FireCommand extends ClientCommand {
         }
         
         // send out attacks
-        client.sendAttackData(entity.getId(), newAttacks);
+        client.sendAttackData(cen, newAttacks);
         
         // clear queue
         attacks.removeAllElements();
     }
 
+    /**
+     * Returns the current Entity.
+     */
+    public Entity ce() {
+        return client.game.getEntity(cen);
+    }
 }

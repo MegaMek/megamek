@@ -129,6 +129,7 @@ public class Client implements IClientCommandHandler {
         registerCommand(new ShowEntityCommand(this));
         registerCommand(new FireCommand(this));
         registerCommand(new DeployCommand(this));
+        registerCommand(new ShowTileCommand(this));
     }
 
     /**

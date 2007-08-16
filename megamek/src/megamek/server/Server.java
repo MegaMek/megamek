@@ -9118,7 +9118,7 @@ public class Server implements Runnable {
                     else if(nRange > wtype.getShortRange()) {
                         nDamPerHit = ((nDamPerHit * 3) + 3)/4;
                     }
-                } else if (bPlasma) {
+                } else if (bPlasma && entityTarget != null ) {
                     if (entityTarget instanceof Mech) {
                         nDamPerHit = atype.getDamagePerShot();
                     } else {
@@ -9131,13 +9131,14 @@ public class Server implements Runnable {
                         r.newlines = 0;
                         r.add(hits);
                         addReport(r);
-                        for (Mounted mount:entityTarget.getMisc()) {
-                            EquipmentType equip = mount.getType();
-                            if ( BattleArmor.FIRE_PROTECTION.equals
-                                 (equip.getInternalName()) ) {
-                                hits /= 2;
-                            }
-                        }
+                        if ( entityTarget != null )
+	                        for (Mounted mount:entityTarget.getMisc()) {
+	                            EquipmentType equip = mount.getType();
+	                            if ( BattleArmor.FIRE_PROTECTION.equals
+	                                 (equip.getInternalName()) ) {
+	                                hits /= 2;
+	                            }
+	                        }
                     }
                 } 
             }else if ( usingCapacitors )

@@ -156,6 +156,7 @@ import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
+import megamek.server.commands.AddBotCommand;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.ExportListCommand;
 import megamek.server.commands.FixElevationCommand;
@@ -323,6 +324,7 @@ public class Server implements Runnable {
         registerCommand(new ShowEntityCommand(this));
         registerCommand(new RulerCommand(this));
         registerCommand(new ShowValidTargetsCommand(this));
+        registerCommand(new AddBotCommand(this));
 
         //register terrain processors
         terrainProcessors.add(new FireProcessor(this));
@@ -21654,6 +21656,25 @@ public class Server implements Runnable {
             failCount++;
         }
 
+    }
+
+    /**
+     * @return
+     */
+    public String getHost() {
+        try {
+            return InetAddress.getLocalHost().getHostName();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+    
+    /**
+     * @return
+     */
+    public int getPort() {
+        return serverSocket.getLocalPort();
     }
 
 }

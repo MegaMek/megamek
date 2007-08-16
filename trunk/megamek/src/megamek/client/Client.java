@@ -130,6 +130,7 @@ public class Client implements IClientCommandHandler {
         registerCommand(new FireCommand(this));
         registerCommand(new DeployCommand(this));
         registerCommand(new ShowTileCommand(this));
+        registerCommand(new AddBotCommand(this));
     }
 
     /**

@@ -1175,7 +1175,13 @@ System.out.println("Setting basement elevation: "+elevation+":"+curHex);
     public void setBridgeCF(int value) {
         for (Enumeration<Building> ebldg=buildings.elements(); ebldg.hasMoreElements(); ) {
             Building bldg=ebldg.nextElement();
-            bldg.setCurrentCF(value);
+            for (Enumeration<Coords> coords = bldg.getCoords(); coords.hasMoreElements(); ) {
+            	Coords c=coords.nextElement();
+            	IHex h=getHex(c);
+            	if(h.containsTerrain(Terrains.BRIDGE)) {
+                    bldg.setCurrentCF(value);
+            	}
+            }
         }
     }
 

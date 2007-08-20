@@ -369,8 +369,13 @@ public class VTOL extends Tank {
                         }
                     }
                 case 8:
-                    if(!isStabiliserHit(loc))
-                        return CRIT_STABILIZER;
+                    if(!isStabiliserHit(loc)) {
+                        for(Mounted m:getWeaponList()) {
+                            if(m.getLocation() == loc) {
+                                return CRIT_STABILIZER;
+                            }
+                        }
+                    }
                 case 9:
                     if(getSensorHits() < 4)
                         return CRIT_SENSOR;
@@ -406,8 +411,13 @@ public class VTOL extends Tank {
                         }
                     }
                 case 8:
-                    if(!isStabiliserHit(loc))
-                        return CRIT_STABILIZER;
+                    if(!isStabiliserHit(loc)) {
+                        for(Mounted m:getWeaponList()) {
+                            if(m.getLocation() == loc) {
+                                return CRIT_STABILIZER;
+                            }
+                        }
+                    }
                 case 9:
                     for(Mounted m:getWeaponList()) {
                         if(m.getLocation() == loc
@@ -460,8 +470,13 @@ public class VTOL extends Tank {
                     if(getLoadedUnits().size() > 0)
                         return CRIT_CARGO;
                 case 8:
-                    if(!isStabiliserHit(loc))
-                        return CRIT_STABILIZER;
+                    if(!isStabiliserHit(loc)) {
+                        for(Mounted m:getWeaponList()) {
+                            if(m.getLocation() == loc) {
+                                return CRIT_STABILIZER;
+                            }
+                        }
+                    }
                 case 9:
                     for(Mounted m:getWeaponList()) {
                         if(m.getLocation() == loc

@@ -1129,8 +1129,13 @@ public class Tank
                         }
                     }
                 case 8:
-                    if(!isStabiliserHit(loc))
-                        return CRIT_STABILIZER;
+                    if(!isStabiliserHit(loc)) {
+                        for(Mounted m:getWeaponList()) {
+                            if(m.getLocation() == loc) {
+                                return CRIT_STABILIZER;
+                            }
+                        }
+                    }
                 case 9:
                     if(getSensorHits() < 4)
                         return CRIT_SENSOR;
@@ -1165,8 +1170,13 @@ public class Tank
                     if(getLoadedUnits().size() > 0)
                         return CRIT_CARGO;
                 case 8:
-                    if(!isStabiliserHit(loc))
-                        return CRIT_STABILIZER;
+                    if(!isStabiliserHit(loc)) {
+                        for(Mounted m:getWeaponList()) {
+                            if(m.getLocation() == loc) {
+                                return CRIT_STABILIZER;
+                            }
+                        }
+                    }
                 case 9:
                     for(Mounted m:getWeaponList()) {
                         if(m.getLocation() == loc
@@ -1195,8 +1205,13 @@ public class Tank
             else if(loc == LOC_TURRET) {
                 switch(roll) {
                 case 6:
-                    if(!isStabiliserHit(loc))
-                        return CRIT_STABILIZER;
+                    if(!isStabiliserHit(loc)) {
+                        for(Mounted m:getWeaponList()) {
+                            if(m.getLocation() == loc) {
+                                return CRIT_STABILIZER;
+                            }
+                        }
+                    }
                 case 7:
                     if(!isTurretLocked())
                         return CRIT_TURRET_JAM;
@@ -1251,8 +1266,13 @@ public class Tank
                         return CRIT_CREW_STUNNED;
                     }
                 case 9:
-                    if(!isStabiliserHit(loc))
-                        return CRIT_STABILIZER;
+                    if(!isStabiliserHit(loc)) {
+                        for(Mounted m:getWeaponList()) {
+                            if(m.getLocation() == loc) {
+                                return CRIT_STABILIZER;
+                            }
+                        }
+                    }
                 case 10:
                     for(Mounted m:getWeaponList()) {
                         if(m.getLocation() == loc

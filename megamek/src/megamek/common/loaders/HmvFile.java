@@ -695,11 +695,12 @@ public class HmvFile
     isEquipment.put(new Long(0x50), "ISLAC2");
     isEquipment.put(new Long(0x51), "ISLAC5");
     isEquipment.put(new Long(0x52), "ISHeavyFlamer");
+    isEquipment.put(new Long(0x53), "ISPPCCapacitor");
     isEquipment.put(new Long(0x54), "ISUltraAC2");
     isEquipment.put(new Long(0x55), "ISUltraAC5");
     isEquipment.put(new Long(0x56), "ISUltraAC10");
     isEquipment.put(new Long(0x57), "ISUltraAC20");
-    isEquipment.put(new Long(0x59), "PPC Capacitor");
+    isEquipment.put(new Long(0x59), "ISPPCCapacitor");
     isEquipment.put(new Long(0x5A), "ISERMediumLaser");
     isEquipment.put(new Long(0x5B), "ISERSmallLaser");
     isEquipment.put(new Long(0x5C), "ISAntiPersonnelPod");

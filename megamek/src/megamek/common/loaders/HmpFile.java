@@ -1006,13 +1006,13 @@ public class HmpFile
         isCriticals.put(new Long(0x50), "ISLAC2");
         isCriticals.put(new Long(0x51), "ISLAC5");
         isCriticals.put(new Long(0x52), "ISHeavyFlamer");
-        isCriticals.put(new Long(0x53), "ERPPC Capacitor");
+        isCriticals.put(new Long(0x53), "ISPPCCapacitor"); //HMP uses this code for ERPPC
         isCriticals.put(new Long(0x54), "ISUltraAC2");
         isCriticals.put(new Long(0x55), "ISUltraAC5");
         isCriticals.put(new Long(0x56), "ISUltraAC10");
         isCriticals.put(new Long(0x57), "ISUltraAC20");
         isCriticals.put(new Long(0x58), "CLERMicroLaser");
-        isCriticals.put(new Long(0x59), "PPC Capacitor");
+        isCriticals.put(new Long(0x59), "ISPPCCapacitor"); //HMP uses this code for standard PPC
         isCriticals.put(new Long(0x5A), "ISERMediumLaser");
         isCriticals.put(new Long(0x5B), "ISERSmallLaser");
         isCriticals.put(new Long(0x5C), "ISAntiPersonnelPod");
@@ -1410,13 +1410,13 @@ public class HmpFile
         clanCriticals.put(new Long(0xA0), "ISLAC2");
         clanCriticals.put(new Long(0xA1), "ISLAC5");
 
-        clanCriticals.put(new Long(0xA3), "ERPPC Capacitor");
+        clanCriticals.put(new Long(0xA3), "ISPPCCapacitor"); //HMP uses this code for ERPPC
         clanCriticals.put(new Long(0xA4), "ISUltraAC2");
         clanCriticals.put(new Long(0xA5), "ISUltraAC5");
         clanCriticals.put(new Long(0xA6), "ISUltraAC10");
         clanCriticals.put(new Long(0xA7), "ISUltraAC20");
         clanCriticals.put(new Long(0xA8), "CLMicroPulseLaser");
-        clanCriticals.put(new Long(0xA9), "PPC Capacitor");
+        clanCriticals.put(new Long(0xA9), "ISPPCCapacitor"); //HMP uses this code for PPC
 
         clanCriticals.put(new Long(0xAA), "ISERMediumLaser");
         clanCriticals.put(new Long(0xAB), "ISERSmallLaser");

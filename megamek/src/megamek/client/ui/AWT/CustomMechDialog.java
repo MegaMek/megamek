@@ -93,6 +93,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private Checkbox chAutoEject = new Checkbox();
     private Label labSearchlight = new Label(Messages.getString("CustomMechDialog.labSearchlight"), Label.RIGHT); //$NON-NLS-1$
     private Checkbox chSearchlight = new Checkbox();
+    private Label labCommander = new Label(Messages.getString("CustomMechDialog.labCommander"), Label.RIGHT); //$NON-NLS-1$
+    private Checkbox chCommander = new Checkbox();
     
     private Label labOffBoard = new Label(Messages.getString("CustomMechDialog.labOffBoard"), Label.RIGHT); //$NON-NLS-1$
     private Checkbox chOffBoard = new Checkbox();
@@ -406,6 +408,20 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             chSearchlight.setState(entity.hasSpotlight());        
         }
 
+        // Set up commanders for commander killed victory condition
+        if (clientgui.getClient().game.getOptions().booleanOption("commander_killed")) { //$NON-NLS-1$
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labCommander, c);
+            tempPanel.add(labCommander);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(chCommander, c);
+            tempPanel.add(chCommander);
+            chCommander.setState(entity.isCommander());        
+        }
+
         // Set up mines
         setupMines();
         c.anchor = GridBagConstraints.CENTER;
@@ -434,6 +450,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             choDeployment.setEnabled(false);
             chAutoEject.setEnabled(false);
             chSearchlight.setEnabled(false);
+            chCommander.setEnabled(false);
             choTargSys.setEnabled(false);
             disableMunitionEditing();
             disableMGSetting();
@@ -1271,6 +1288,10 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             // update searchlight setting
             entity.setSpotlight(chSearchlight.getState());
             entity.setSpotlightState(chSearchlight.getState());
+            
+            //update commander status
+            entity.setCommander(chCommander.getState());
+            
             setOptions();
             
             okay = true;

@@ -329,7 +329,7 @@ public class MechDisplay extends BufferedPanel {
         }
 
         /**
-         * updates fields for the specified mech
+         * updates fields for the specified entity
          */
         public void displayMech(Entity en) {
             // Look out for a race condition.

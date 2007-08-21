@@ -80,6 +80,11 @@ Unit_PlayerB_2_Advantages=dodge_maneuver
 Unit_PlayerA_2_AutoEject=false
 Unit_PlayerB_2_AutoEject=true
 
+#set which units should be commanders (for commander killed VC)
+Unit_PlayerA_1_Commander=true
+Unit_PlayerB_1_Commander=true
+Unit_PlayerC_1_Commander=true
+
 # To initially damage units, you can use a unit armor property, which specifies
 # armor and internal values.  Values above the unit's nominal value for that
 # location will be ignored.  

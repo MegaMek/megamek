@@ -290,6 +290,12 @@ public interface IGame {
     public abstract int getLiveDeployedEntitiesOwnedBy(Player player);
     
     /**
+     * Returns the number of non-destroyed deployed entities owned
+     * by the player.  Ignore offboard units and captured Mek pilots.
+     */
+    public abstract int getLiveCommandersOwnedBy(Player player);
+    
+    /**
      * Returns true if the player has a valid unit with the Tactical Genius
      *  pilot special ability.
      */

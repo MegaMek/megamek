@@ -347,6 +347,12 @@ public class ScenarioLoader
 			      parseAutoEject(e, s);
 			  }
 			  
+            //Check for commander
+              s = p.getProperty("Unit_" + sFaction + "_" + i + "_Commander");
+              if ( null != s) {
+                  parseCommander(e, s);
+              }
+              
 			//Check for deployment
 			  s = p.getProperty("Unit_" + sFaction + "_" + i + "_DeploymentRound");
 			  if ( null != s ) {
@@ -449,6 +455,10 @@ public class ScenarioLoader
             Mech mech = (Mech)entity;
             mech.setAutoEject(Boolean.valueOf(eject).booleanValue());
         }
+    }
+    
+    private void parseCommander(Entity entity, String eject) {
+        entity.setCommander(Boolean.valueOf(eject).booleanValue());
     }
     
     private int findIndex(String[] sa, String s)

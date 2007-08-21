@@ -3043,7 +3043,8 @@ public class BoardView1
             if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
                 shortName = shortName.concat(" (FL: ").concat(Integer.toString(entity.getElevation())).concat(")");
             }
-            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+            int face = entity.isCommander()?Font.ITALIC:Font.PLAIN;
+            Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55,
                                         getFontMetrics(font).stringWidth(shortName) + 1,
                                         getFontMetrics(font).getAscent());
@@ -3096,7 +3097,8 @@ public class BoardView1
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
                 shortName+=(Messages.getString("BoardView1.ID")+entity.getId()); //$NON-NLS-1$
             }
-            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+            int face = entity.isCommander()?Font.ITALIC:Font.PLAIN;
+            Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
             Rectangle tempRect =
                 new Rectangle(47, 55,
                               getFontMetrics(font).stringWidth(shortName) + 1,

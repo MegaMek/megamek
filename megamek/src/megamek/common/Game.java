@@ -480,6 +480,25 @@ public class Game implements Serializable, IGame
     }
 
     /**
+     * Returns the number of non-destroyed deployed entities owned
+     * by the player.  Ignore offboard units and captured Mek pilots.
+     */
+    public int getLiveCommandersOwnedBy(Player player) {
+        int count = 0;
+        for (Enumeration<Entity> i = entities.elements(); i.hasMoreElements();) {
+            Entity entity = i.nextElement();
+            if ( entity.getOwner().equals(player)
+                 && !entity.isDestroyed()
+                 && entity.isCommander()
+                 && !entity.isOffBoard()
+                 && !entity.isCaptured() ) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
      * Returns true if the player has a valid unit with the Tactical Genius
      *  pilot special ability.
      */

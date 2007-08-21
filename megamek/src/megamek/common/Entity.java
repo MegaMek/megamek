@@ -317,6 +317,8 @@ public abstract class Entity extends TurnOrdered
      */
     private int spotTargetId = Entity.NONE;
     
+    private boolean isCommander = false;
+    
     /**
      * Generates a new, blank, entity.
      */
@@ -6099,6 +6101,14 @@ public abstract class Entity extends TurnOrdered
     
     public int getSpotTargetId() {
         return spotTargetId;
+    }
+    
+    public void setCommander (boolean arg) {
+        this.isCommander = arg;
+    }
+    
+    public boolean isCommander () {
+        return this.isCommander;
     }
     
     public boolean hasLinkedMGA(Mounted mounted) {

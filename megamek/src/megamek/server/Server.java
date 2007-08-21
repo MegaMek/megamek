@@ -2301,6 +2301,71 @@ public class Server implements Runnable {
             }
         }
         
+        // Commander killed victory condition
+        if (game.getOptions().booleanOption("commander_killed")) {
+            // check all players/teams for aliveness
+            playersAlive = 0;
+            lastPlayer = null;
+            oneTeamAlive = false;
+            lastTeam = Player.TEAM_NONE;
+            unteamedAlive = false;
+            for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
+                Player player = e.nextElement();
+                int team = player.getTeam();
+                if (game.getLiveCommandersOwnedBy(player) <= 0) {
+                    continue;
+                }
+                // we found a live one!
+                playersAlive++;
+                lastPlayer = player;
+                // check team
+                if (team == Player.TEAM_NONE) {
+                    unteamedAlive = true;
+                } else if (lastTeam == Player.TEAM_NONE) {
+                    // possibly only one team alive
+                    oneTeamAlive = true;
+                    lastTeam = team;
+                } else if (team != lastTeam) {
+                    // more than one team alive
+                    oneTeamAlive = false;
+                    lastTeam = team;
+                }
+            }
+
+            // check if there's one player alive
+            if (playersAlive < 1) {
+                for (Player p : game.getPlayersVector()) {
+                    Integer vc = winPlayers.get(p.getId());
+                    if (vc == null)
+                        vc = new Integer(0);
+                    winPlayers.put(p.getId(), vc + 1);
+                }
+                for (Team t : game.getTeamsVector()) {
+                    Integer vc = winTeams.get(t.getId());
+                    if (vc == null)
+                        vc = new Integer(0);
+                    winTeams.put(t.getId(), vc + 1);
+                }
+            } else if (playersAlive == 1) {
+                if (lastPlayer != null
+                        && lastPlayer.getTeam() == Player.TEAM_NONE) {
+                    // individual victory
+                    Integer vc = winPlayers.get(lastPlayer.getId());
+                    if (vc == null)
+                        vc = new Integer(0);
+                    winPlayers.put(lastPlayer.getId(), vc + 1);
+                }
+            }
+
+            // did we only find one live team?
+            if (oneTeamAlive && !unteamedAlive) {
+                Integer vc = winTeams.get(lastTeam);
+                if (vc == null)
+                    vc = new Integer(0);
+                winTeams.put(lastTeam, vc + 1);
+            }
+        }
+        
         //Any winners?
         int wonPlayer = Player.PLAYER_NONE;
         int wonTeam = Player.TEAM_NONE;

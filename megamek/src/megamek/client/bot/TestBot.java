@@ -1383,6 +1383,8 @@ public class TestBot extends BotClient {
             } else {
                 foes.add(centity);
                 foe_sum += new_value;
+                if(entity.isCommander())
+                    new_value *= 3; //make bots like to attack commanders
                 if (new_value > max_foe_bv
                         || max_foe == null) {
                     max_foe_bv = new_value;

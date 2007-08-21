@@ -176,7 +176,7 @@ public class VTOLMapSet implements DisplayMapSet {
         areas[3] = new PMSimplePolygonArea(rightArmor2);
         areas[4] = new PMSimplePolygonArea(leftArmor1);
         areas[5] = new PMSimplePolygonArea(leftArmor2);
-        areas[6] = new PMSimplePolygonArea(rearArmor);
+        areas[6] = new PMSimplePolygonArea(rearIS);
         areas[7] = new PMSimplePolygonArea(rotorArmor1);
         areas[8] = new PMSimplePolygonArea(rotorArmor2);
         areas[9] = new PMSimplePolygonArea(frontIS);
@@ -184,7 +184,7 @@ public class VTOLMapSet implements DisplayMapSet {
         areas[11] = new PMSimplePolygonArea(rightIS2);
         areas[12] = new PMSimplePolygonArea(leftIS1);
         areas[13] = new PMSimplePolygonArea(leftIS2);
-        areas[14] = new PMSimplePolygonArea(rearIS);
+        areas[14] = new PMSimplePolygonArea(rearArmor);
         areas[15] = new PMSimplePolygonArea(rotorIS);
     }
   
@@ -218,10 +218,10 @@ public class VTOLMapSet implements DisplayMapSet {
         //front 
         fm = comp.getFontMetrics(FONT_VALUE);   
         vLabels[1] = WidgetUtils.createValueLabel(101, 22, "", fm); //$NON-NLS-1$ Front
-        vLabels[2] = WidgetUtils.createValueLabel(44, 65, "", fm); //$NON-NLS-1$ LS
-        vLabels[3] = WidgetUtils.createValueLabel(44, 115, "", fm); //$NON-NLS-1$ LS
-        vLabels[4] = WidgetUtils.createValueLabel(105, 65, "", fm); //$NON-NLS-1$ RS
-        vLabels[5] = WidgetUtils.createValueLabel(105, 115, "", fm); //$NON-NLS-1$ RS
+        vLabels[2] = WidgetUtils.createValueLabel(105, 65, "", fm); //$NON-NLS-1$ RS
+        vLabels[3] = WidgetUtils.createValueLabel(105, 115, "", fm); //$NON-NLS-1$ RS
+        vLabels[4] = WidgetUtils.createValueLabel(44, 65, "", fm); //$NON-NLS-1$ LS
+        vLabels[5] = WidgetUtils.createValueLabel(44, 115, "", fm); //$NON-NLS-1$ LS
         vLabels[6] = WidgetUtils.createValueLabel(76, 207, "", fm); //$NON-NLS-1$ Rear
         vLabels[7] = WidgetUtils.createValueLabel(38, 83, "", fm); //$NON-NLS-1$ Rotor
         vLabels[8] = WidgetUtils.createValueLabel(143, 83, "", fm); //$NON-NLS-1$ Rotor

@@ -827,6 +827,9 @@ public class Server implements Runnable {
             if(p.isGhost()) {
                 ghosts.add(p);
             }
+            else
+                // non-ghosts set their starting positions to any
+                p.setStartingPos(0);
         }
         for(Player p:ghosts) {
             game.removePlayer(p.getId());
@@ -13398,7 +13401,7 @@ public class Server implements Runnable {
                 //mech is floating in water....
                 if (entity.hasUMU())
                     return;
-                game.addPSR(new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "lost bouyancy"));
+                game.addPSR(new PilotingRollData(entity.getId(), TargetRoll.AUTOMATIC_FAIL, "lost buoyancy"));
             }
         }
 

@@ -1104,7 +1104,7 @@ public class WeaponType extends EquipmentType {
         weapon.shortRange = 2;
         weapon.mediumRange = 4;
         weapon.longRange = 6;
-        weapon.extremeRange = 4;
+        weapon.extremeRange = 8;
         weapon.tonnage = 0.5f;
         weapon.criticals = 1;
         weapon.bv = 0; //we'll have to calculate this in calculateBV(),

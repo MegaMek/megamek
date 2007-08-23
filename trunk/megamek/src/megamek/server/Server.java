@@ -5013,8 +5013,12 @@ public class Server implements Runnable {
                     r.subject = entity.getId();
                     addReport(r);
                 } else if (entity instanceof Infantry) {
-                    PilotingRollData roll = entity.getBasePilotingRoll();
-                    roll.addModifier(5, "infantry jumping into swamp");
+                    PilotingRollData roll = new PilotingRollData(entity.getId(), 5, "entering boggy terrain");
+                    if (curHex.containsTerrain(Terrains.MAGMA) ||
+                        curHex.containsTerrain(Terrains.MUD) ||
+                        curHex.containsTerrain(Terrains.SNOW) ||
+                        curHex.containsTerrain(Terrains.TUNDRA))
+                        roll.append(new PilotingRollData(entity.getId(), -1, "avoid bogging down"));
                     if (0<doSkillCheckWhileMoving(entity, curPos, curPos, roll, false)) {
                         entity.setStuck(true);
                         r = new Report(2081);

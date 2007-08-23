@@ -2031,7 +2031,7 @@ public class Server implements Runnable {
 
         Player player = getPlayer( nextTurn.getPlayerNum() );
         
-        if ( player == null || game.getEntitiesOwnedBy(player) == 0 ) {
+        if ( player != null && game.getEntitiesOwnedBy(player) == 0 ) {
             endCurrentTurn(null);
             return;
         }

@@ -2654,7 +2654,7 @@ public abstract class Mech
         if ( !isStealthActive() ) {
             result = new TargetRoll( 0, "stealth not active"  );
         }
-        else if (ae instanceof Infantry) {
+        else if (ae instanceof Infantry && !(ae instanceof BattleArmor)) {
             result = new TargetRoll( 0, "infantry ignore stealth"  );
         }
 

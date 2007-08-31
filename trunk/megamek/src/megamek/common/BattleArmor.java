@@ -783,7 +783,7 @@ public class BattleArmor
             7: "Fire Resistant",
             8: "Mimetic"
             */
-            if (armorType == 3 && !(ae instanceof Infantry)) {
+            if (armorType == 3 && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
                 // Basic Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -803,7 +803,7 @@ public class BattleArmor
                         throw new IllegalArgumentException
                             ("Unknown range constant: " + range);
                 }
-            } else if (armorType == 4 && !(ae instanceof Infantry)) {
+            } else if (armorType == 4 && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
                 // Prototype Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -823,7 +823,7 @@ public class BattleArmor
                         throw new IllegalArgumentException
                             ("Unknown range constant: " + range);
                 }
-            } else if (armorType == 5 && !(ae instanceof Infantry)) {
+            } else if (armorType == 5 && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
                 // Standard Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -844,7 +844,7 @@ public class BattleArmor
                         throw new IllegalArgumentException
                             ("Unknown range constant: " + range);
                 }
-            } else if (armorType == 6 && !(ae instanceof Infantry)) {
+            } else if (armorType == 6 && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
                 // Improved Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -884,7 +884,7 @@ public class BattleArmor
             }
     
             // Stealthy units alreay have their to-hit mods defined.
-            if (isStealthy && !(ae instanceof Infantry)) {
+            if (isStealthy && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
                     case RangeType.RANGE_SHORT:

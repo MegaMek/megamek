@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.33.10-dev (SVN)
+
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java
 + Changed Font.SANS_SERIF to "Sans Serif" in ChatLounge.java

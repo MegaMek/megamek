@@ -271,6 +271,9 @@ public abstract class TestEntity implements TestEntityOption {
 		} else if (mt.hasFlag(MiscType.F_CLUB)
 				&& mt.hasSubType(MiscType.S_SWORD)) {
 			return ceilMaxHalf(getWeight() / 20.0f, getWeightCeilingWeapons());
+        } else if (mt.hasFlag(MiscType.F_CLUB)
+                        && mt.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+                    return ceilMaxHalf(0.5f + getWeight() / 20.0f, getWeightCeilingWeapons());
 		} else if (mt.hasFlag(MiscType.F_CLUB)
 				&& mt.hasSubType(MiscType.S_MACE)) {
 			return ceilMaxHalf(getWeight() / 10.0f, getWeightCeilingWeapons());
@@ -465,6 +468,9 @@ public abstract class TestEntity implements TestEntityOption {
 				&& mt.hasSubType(MiscType.S_MACE)) {
 			return (int) Math.ceil(getWeight() / 10.0);
 		} else if (mt.hasFlag(MiscType.F_CLUB)
+                && mt.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+            return 1+(int)Math.ceil(getWeight() / 20.0);
+        }else if (mt.hasFlag(MiscType.F_CLUB)
 				&& mt.hasSubType(MiscType.S_PILE_DRIVER)) {
 			return 8;
 		} else if (mt.hasFlag(MiscType.F_CLUB)

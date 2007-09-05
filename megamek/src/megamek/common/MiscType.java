@@ -430,6 +430,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLAPPod());
         EquipmentType.addType(createSword());
         EquipmentType.addType(createISPPCCapacitor());
+        EquipmentType.addType(createRetractableBlade());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());

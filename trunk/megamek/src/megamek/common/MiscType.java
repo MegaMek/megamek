@@ -1043,6 +1043,8 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_CLUB;
         misc.subType |= S_RETRACTABLE_BLADE;
         misc.bv = BV_VARIABLE;
+        String[] modes = { /*"retracted",*/ "extended"};
+        misc.setModes(modes);
         
         return misc;
     }

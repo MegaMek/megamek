@@ -210,6 +210,9 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_CLUB)
                 && hasSubType(S_MACE)) {
             return (float)(Math.ceil(entity.getWeight() / 10.0));
+        } else if (hasFlag(F_CLUB)
+                && hasSubType(S_RETRACTABLE_BLADE)) {
+            return 0.5f+(float)Math.ceil(entity.getWeight() / 20.0);
         } else if (hasFlag(F_MASC)) {
             if (hasSubType(S_SUPERCHARGER)) {
                 Engine e = entity.getEngine();
@@ -294,6 +297,9 @@ public class MiscType extends EquipmentType {
         }else if (hasFlag(F_CLUB)
                 && hasSubType(S_MACE)) {
             return (int)Math.ceil(entity.getWeight() / 10.0);
+        }else if (hasFlag(F_CLUB)
+                && hasSubType(S_RETRACTABLE_BLADE)) {
+            return 1+(int)Math.ceil(entity.getWeight() / 20.0);
         } else if (hasFlag(F_MASC)) {
             if (entity.isClan()) {
                 return Math.round(entity.getWeight() / 25.0f);
@@ -352,6 +358,9 @@ public class MiscType extends EquipmentType {
         } else if (hasFlag(F_CLUB)
                 && hasSubType(S_SWORD)) {
             return (Math.ceil(entity.getWeight() / 10.0) + 1.0) * 1.725;
+        } else if (hasFlag(F_CLUB)
+                && hasSubType(S_RETRACTABLE_BLADE)) {
+            return Math.ceil(entity.getWeight() / 10.0) * 1.725; 
         } else if (hasFlag(F_TARGCOMP)) {
             // 20% of direct_fire weaponry BV (half for rear-facing)
             double fFrontBV = 0.0, fRearBV = 0.0;
@@ -1017,6 +1026,22 @@ public class MiscType extends EquipmentType {
         misc.cost = COST_VARIABLE;
         misc.flags |= F_CLUB;
         misc.subType |= S_SWORD;
+        misc.bv = BV_VARIABLE;
+        
+        return misc;
+    }
+    
+    public static MiscType createRetractableBlade() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Retractable Blade";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = CRITICALS_VARIABLE;
+        misc.cost = COST_VARIABLE;
+        misc.flags |= F_CLUB;
+        misc.subType |= S_RETRACTABLE_BLADE;
         misc.bv = BV_VARIABLE;
         
         return misc;

@@ -474,6 +474,10 @@ public class EquipmentType {
                     && this.hasSubType(MiscType.S_SWORD)) {
                 int swordTons=(int) Math.ceil(entity.getWeight() / 15.0);
                 cost=swordTons*10000;
+            } else if (this.hasFlag(MiscType.F_CLUB)
+                    && this.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+                int bladeTons=(int) Math.ceil(0.5f+Math.ceil(entity.getWeight() / 20.0));
+                cost=(1+bladeTons)*10000;
             }
         } else {
             if(cost==0) {

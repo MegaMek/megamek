@@ -1,6 +1,9 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.33.10-dev (SVN)
++ Implemented Retractable Blades. TODO: make them actually retractable (should be able
+    to retract or extend at end of movement, no pushing/punching or carrying stuff when
+    extended, no physical attack when retracted.
 
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

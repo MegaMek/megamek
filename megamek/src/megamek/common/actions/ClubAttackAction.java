@@ -57,6 +57,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
             nDamage = (int)(Math.ceil(entity.getWeight() / 10.0) + 1.0);
         } else if (mType.hasSubType(MiscType.S_MACE_THB)) {
             nDamage *= 2;
+        } else if (mType.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
+            nDamage = (int)Math.ceil(entity.getWeight() / 10.0);
         } else if (mType.hasSubType(MiscType.S_MACE)) {
             nDamage = (int)Math.floor(entity.getWeight() / 4.0);
         } else if (mType.hasSubType(MiscType.S_PILE_DRIVER)) {

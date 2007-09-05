@@ -62,6 +62,24 @@ public class PunchAttackAction
                 game.getTarget(getTargetType(), getTargetId() ),
                 getArm());
     }
+    
+    /**
+     * punches are impossible when physical attacks are impossible, or
+     * a retractable blade is extended
+     * @param game
+     * @param ae
+     * @param target
+     * @return
+     */
+    protected static String toHitIsImpossible(IGame game, Entity ae, Targetable target) {
+        String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
+        String extendedBladeImpossible = null;
+        if (ae instanceof Mech && ((Mech)ae).hasExtendedRetractableBlade())
+            extendedBladeImpossible = "Extended retractable blade";
+        if (physicalImpossible != null)
+            return physicalImpossible;
+        return extendedBladeImpossible;
+    }
 
     /**
      * To-hit number for the specified arm to punch

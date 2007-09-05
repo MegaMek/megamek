@@ -684,6 +684,18 @@ public abstract class Mech
         return false;
     }
     
+    public boolean hasExtendedRetractableBlade() {
+        for (Mounted m : getEquipment()){
+            if (!m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType &&
+                m.getType().hasFlag(MiscType.F_CLUB) &&
+                m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                && m.curMode().equals("extended")) {
+                return true;
+            }
+        }
+        return false;        
+    }
+    
     /**
      * Same
      */

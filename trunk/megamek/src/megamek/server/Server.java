@@ -4013,7 +4013,7 @@ public class Server implements Runnable {
                 r.add(entity.getCrew().getName());
                 r.addDesc(entity);
                 addReport(r);
-            } else if (entity instanceof Tank && !entity.getCrew().isDoomed() && !entity.getCrew().isDead() ) {
+            } else if (entity instanceof Tank && !entity.isCarcass() ) {
                 r = new Report(2025);
                 r.subject = entity.getId();
                 r.addDesc(entity);
@@ -20507,7 +20507,7 @@ public class Server implements Runnable {
             return vDesc;
 
         // If the crew are already dead, don't bother
-        if(entity.getCrew().isDead() || entity.getCrew().isDoomed())
+        if(entity.isCarcass())
             return vDesc;
 
         // Mek pilots may get hurt during ejection,

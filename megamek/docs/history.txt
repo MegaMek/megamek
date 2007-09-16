@@ -6,6 +6,7 @@ v0.33.10-dev (SVN)
     extended, no physical attack when retracted.
 + Mechs with extended retractable blades can't push or punch (no way to retract the blade
     currently)
++ Bug 1787586: Plasma rifles not causing damage (0.33.9)
 
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

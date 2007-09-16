@@ -36,7 +36,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -9981,14 +9980,11 @@ public class Server implements Runnable {
                     } else if (bPlasma) {
                         if (entityTarget instanceof Mech) {
                             int heatRoll = Compute.d6(wtype.getRackSize());
-                            /*nDamage = nDamPerHit = atype.getDamagePerShot();
-                            if (!bSalvo) {
-                                //hits
-                                r = new Report(3390);
-                                r.subject = subjectId;
-                                r.newlines = 0;
-                                addReport(r);
-                            }*/
+                            nDamage = nDamPerHit = atype.getDamagePerShot();
+                            if ( nDamage > 0 ) {
+                                //IS Plasma Rifle
+                                addReport(damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
+                            }
                             r = new Report(3400);
                             r.subject = subjectId;
                             r.indent(2);

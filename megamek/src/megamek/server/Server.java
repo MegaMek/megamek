@@ -4013,7 +4013,7 @@ public class Server implements Runnable {
                 r.add(entity.getCrew().getName());
                 r.addDesc(entity);
                 addReport(r);
-            } else if (entity instanceof Tank) {
+            } else if (entity instanceof Tank && !entity.getCrew().isDoomed() && !entity.getCrew().isDead() ) {
                 r = new Report(2025);
                 r.subject = entity.getId();
                 r.addDesc(entity);

@@ -183,7 +183,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
     public Vector<IOption> loadOptions(File file) {
         ParsedXML root = null;
         InputStream is = null;
-        Vector<IOption> changedOptions = new Vector<IOption>();
+        Vector<IOption> changedOptions = new Vector<IOption>(1,1);
 
         try {
             is = new FileInputStream(file);

@@ -7771,8 +7771,8 @@ public class Server implements Runnable {
         boolean bPlasma = usesAmmo && atype.getAmmoType() == AmmoType.T_PLASMA;
 
         if (!bInferno) {
-        // also check for inferno infantry
-        bInferno = isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO);
+	        // also check for inferno infantry
+	        bInferno = isWeaponInfantry && wtype.hasFlag(WeaponType.F_INFERNO);
         }
         final boolean targetInBuilding =
           Compute.isInBuilding(game, entityTarget);
@@ -9581,7 +9581,10 @@ public class Server implements Runnable {
             // If the attack was with inferno rounds then
             // do heat and fire instead of damage.
             if ( bInferno ) {
-                deliverInfernoMissiles(ae, target, hits);
+            	//Infantry Infernos only hit with half as many missles.
+            	if ( isWeaponInfantry )
+            		hits /=2;
+                deliverInfernoMissiles(ae, target, Math.max(1, hits));
                 return !bMissed;
             } // End is-inferno
 

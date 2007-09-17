@@ -9,6 +9,7 @@ v0.33.10-dev (SVN)
 + Bug 1787586: Plasma rifles not causing damage (0.33.9)
 + Bug: Abandon Crew Message being reported on Tanks with dead crews.
 + Bug: Inferno Infantry hitting with twice the number of missles they should be.
++ Retractable Blade now fully Extend and Retract.
 
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

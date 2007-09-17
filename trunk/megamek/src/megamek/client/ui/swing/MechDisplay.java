@@ -1556,6 +1556,13 @@ public class MechDisplay extends JPanel {
                             return;
                         }
 
+                        if (m.getType() instanceof MiscType
+                                && ((MiscType) m.getType()).hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                                && clientgui.getClient().game.getPhase() != IGame.PHASE_MOVEMENT) {
+                            clientgui.systemMessage(Messages.getString("MechDisplay.RetractableBladeModePhase", null));//$NON-NLS-1$
+                            return;
+                        }
+                        
                         //Can only charge a capacitor if the weapon has not been fired.
                         if ( m.getType() instanceof MiscType 
                         		&& m.getLinked() != null

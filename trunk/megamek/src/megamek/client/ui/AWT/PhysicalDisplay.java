@@ -80,7 +80,12 @@ public class PhysicalDisplay
                KeyListener, BoardViewListener, Distractable
 {
 
-    // Distraction implementation.
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -3621285458197917442L;
+
+	// Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
     public static final String PHYSICAL_PUNCH = "punch"; //$NON-NLS-1$

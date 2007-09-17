@@ -31,7 +31,11 @@ import megamek.common.*;
  */
 public class ClubAttackAction extends PhysicalAttackAction {
     
-    private Mounted club;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8744665286254604559L;
+	private Mounted club;
     private int aiming;
 
     /** Creates new ClubAttackAction */
@@ -159,6 +163,11 @@ public class ClubAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
         }
 
+        if ( ((MiscType)club.getType()).hasSubType(MiscType.S_RETRACTABLE_BLADE) 
+        		&& !((Mech)ae).hasExtendedRetractableBlade() ){
+        	return new ToHitData(TargetRoll.IMPOSSIBLE, "Blade is Retracted.");
+        }
+        
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getElevation();

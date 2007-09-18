@@ -281,7 +281,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
 
         // Various versions of physical weapons have different base bonuses and penalties.
         if (((MiscType)club.getType()).hasSubType(MiscType.S_SWORD)
-                || ((MiscType)club.getType()).isVibroblade()) {
+                || ((MiscType)club.getType()).isVibroblade()
+                || ((MiscType)club.getType()).hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
             base -= 1;
         } else if ((((MiscType)club.getType()).hasSubType(MiscType.S_DUAL_SAW))
                 || (((MiscType)club.getType()).hasSubType(MiscType.S_CHAINSAW))

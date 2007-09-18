@@ -10,6 +10,7 @@ v0.33.10-dev (SVN)
 + Bug: Abandon Crew Message being reported on Tanks with dead crews.
 + Bug: Inferno Infantry hitting with twice the number of missles they should be.
 + Retractable Blade now fully Extend and Retract.
++ Bug: Retractable Blade was not getting full -2 bth mod.
 
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

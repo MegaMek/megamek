@@ -12,6 +12,7 @@ v0.33.10-dev (SVN)
 + Retractable Blade now fully Extend and Retract.
 + Bug: Retractable Blade was not getting full -2 bth mod.
 + Bug 1753636: CASE II still somewhat buggy
++ Minimap not correctly initialized with Java 1.6
 
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

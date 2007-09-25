@@ -148,7 +148,7 @@ public class MiniMap extends Canvas {
             setSize(size);
         }
         setLocation(GUIPreferences.getInstance().getMinimapPosX(), GUIPreferences.getInstance().getMinimapPosY());
-
+        d.pack();
     }
 
     public MiniMap(JDialog d, ClientGUI c, BoardView1 bview) throws IOException {

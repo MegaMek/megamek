@@ -18495,17 +18495,29 @@ public class Server implements Runnable {
 	 * Scans the boards directory for map boards of the appropriate size and
 	 * returns them.
 	 */
-	private Vector<String> scanForBoardsInDir(File dir, String addPath, int w,
-			int h) {
+	private Vector<String> scanForBoardsInDir(String addPath, String basePath,
+			int w, int h, boolean subdirs) {
+		File dir = new File(addPath);
 		String fileList[] = dir.list();
 		Vector<String> tempList = new Vector<String>();
 		for (int i = 0; i < fileList.length; i++) {
+			System.out.println(addPath.concat("/").concat(fileList[i]));
+			File x = new File(addPath.concat("/").concat(fileList[i]));
+			if (x.isDirectory() && subdirs) {
+				tempList.addAll(scanForBoardsInDir(addPath.concat("/")
+						.concat(fileList[i]), basePath.concat("/")
+						.concat(fileList[i]), w, h, subdirs));
+				continue;
+			}
+			if (fileList[i].indexOf(".svn") != -1) {
+				continue; // Ignore Subversion directories
+			}
 			if (fileList[i].indexOf(".board") == -1) {
 				continue;
 			}
 			if (Board
-					.boardIsSize(addPath.concat("/").concat(fileList[i]), w, h)) {
-				tempList.addElement(addPath.concat("/").concat(
+					.boardIsSize(basePath.concat("/").concat(fileList[i]), w, h)) {
+				tempList.addElement(basePath.concat("/").concat(
 						fileList[i].substring(0, fileList[i]
 								.lastIndexOf(".board"))));
 			}
@@ -18530,25 +18542,10 @@ public class Server implements Runnable {
 		}
 
 		// scan files
-		String[] fileList = boardDir.list();
 		Vector<String> tempList = new Vector<String>();
 		Comparator<String> sortComp = StringUtil.stringComparator();
-		for (int i = 0; i < fileList.length; i++) {
-			File x = new File("data/boards/".concat(fileList[i]));
-			if (x.isDirectory() && subdirs) {
-				tempList.addAll(scanForBoardsInDir(x, fileList[i], boardWidth,
-						boardHeight));
-				continue;
-			}
-			if (fileList[i].indexOf(".board") == -1) {
-				continue;
-			}
-			if (Board.boardIsSize(fileList[i], boardWidth, boardHeight)) {
-				tempList.addElement(fileList[i].substring(0, fileList[i]
-						.lastIndexOf(".board")));
-			}
-		}
-
+		tempList=scanForBoardsInDir("data/boards", "", boardWidth,
+				boardHeight, subdirs);
 		// if there are any boards, add these:
 		if (tempList.size() > 0) {
 			boards.addElement(MapSettings.BOARD_RANDOM);

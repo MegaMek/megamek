@@ -5889,7 +5889,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_MPOD;
         ammo.munitionType = M_CLUSTER;
-        ammo.shots = 15;
+        ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 0;
 
@@ -5908,7 +5908,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_MPOD;
         ammo.munitionType = M_CLUSTER;
-        ammo.shots = 15;
+        ammo.shots = 1;
         ammo.bv = 0;
         ammo.cost = 0;
 

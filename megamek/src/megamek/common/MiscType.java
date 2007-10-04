@@ -428,6 +428,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createISAPPod());
         EquipmentType.addType(createISBPod());
         EquipmentType.addType(createCLAPPod());
+        EquipmentType.addType(createCLBPod());
         EquipmentType.addType(createSword());
         EquipmentType.addType(createISPPCCapacitor());
         EquipmentType.addType(createRetractableBlade());
@@ -1772,6 +1773,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         
         misc.name = "Light Active Probe";
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
         misc.setInternalName("CLLightActiveProbe");
         misc.addLookupName("CL Light Active Probe");
         misc.addLookupName("Light Active Probe");
@@ -1791,6 +1793,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         
         misc.name = "IS AP Pod";
+        misc.techLevel = TechConstants.T_IS_LEVEL_1;
         misc.setInternalName("ISAntiPersonnelPod");
         misc.addLookupName("ISAPod");
         misc.addLookupName("IS A-Pod");
@@ -1809,9 +1812,29 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         
         misc.name = "IS B Pod";
+        misc.techLevel = TechConstants.T_IS_LEVEL_1;
         misc.setInternalName("ISBattleArmorPersonnelPod");
         misc.addLookupName("ISBPod");
         misc.addLookupName("IS B-Pod");
+        misc.tonnage = 1.0f;
+        misc.criticals = 1;
+        misc.hittable = true;
+        misc.cost = 0;
+        misc.spreadable = false;
+        misc.flags |= F_B_POD;
+        misc.bv = 0;
+        
+        return misc;
+    }
+
+    public static MiscType createCLBPod() {
+        MiscType misc = new MiscType();
+        
+        misc.name = "CL B Pod";
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        misc.setInternalName("CLBattleArmorPersonnelPod");
+        misc.addLookupName("CLBPod");
+        misc.addLookupName("Clan B-Pod");
         misc.tonnage = 1.0f;
         misc.criticals = 1;
         misc.hittable = true;
@@ -1827,6 +1850,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
         
         misc.name = "CL AP Pod";
+        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
         misc.setInternalName("CLAntiPersonnelPod");
         misc.addLookupName("Clan A-Pod");
         misc.tonnage = 0.5f;

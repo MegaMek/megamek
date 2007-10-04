@@ -14,6 +14,8 @@ v0.33.10-dev (SVN)
 + Bug 1753636: CASE II still somewhat buggy
 + Minimap not correctly initialized with Java 1.6
 + RFE 1767865: Mapselection from folder tree - for real
++ Added Tech level to ISAPPOD and CLAPPOD MiscType Object's
++ Added Clan BPOD MiscType object.
 
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

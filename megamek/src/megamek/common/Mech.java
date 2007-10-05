@@ -2041,18 +2041,18 @@ public abstract class Mech
                 if (getEngine().getSideTorsoCriticalSlots().length <= 2) {
                     // without XL or XXL, only count torsos if not CASEed,
                     // and arms if arm & torso not CASEed
-                    if ((loc == LOC_RT || loc == LOC_LT) && locationHasCase(loc)) {
+                    if ((loc == LOC_RT || loc == LOC_LT) && (locationHasCase(loc) || hasCASEII(loc))) {
                         continue;
-                    } else if (loc == LOC_LARM && (locationHasCase(loc) || locationHasCase(LOC_LT))) {
+                    } else if (loc == LOC_LARM && (locationHasCase(loc) || locationHasCase(LOC_LT) || hasCASEII(loc) || hasCASEII(LOC_LT))) {
                         continue;
-                    } else if (loc == LOC_RARM && (locationHasCase(loc) || locationHasCase(LOC_RT))) {
+                    } else if (loc == LOC_RARM && (locationHasCase(loc) || locationHasCase(LOC_RT)) || hasCASEII(loc) || hasCASEII(LOC_RT)) {
                         continue;
                     }
                 }
             }
             
             // gauss rifles only subtract 1 point per slot
-            if (etype instanceof WeaponType && (etype.getName().indexOf("Gauss") != -1 || etype.getName().indexOf("HAG") != -1)) {
+            if (etype instanceof WeaponType && (etype.getName().indexOf("Gauss") != -1 || etype.getName().indexOf("HAG") != -1 || etype.getName().toLowerCase().indexOf("magshot") != -1)) {
                 toSubtract = 1;
             }
              

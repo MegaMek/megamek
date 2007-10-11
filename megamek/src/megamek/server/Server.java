@@ -7957,6 +7957,7 @@ public class Server implements Runnable {
 				h.removeTerrain(Terrains.WOODS);
 				h.addTerrain(Terrains.getTerrainFactory().createTerrain(
 						Terrains.WOODS, 1));
+				woods = h.getTerrain(Terrains.WOODS);
 				// heavy converted to light
 				r = new Report(3085);
 				r.subject = entityId;
@@ -7965,13 +7966,13 @@ public class Server implements Runnable {
 				h.removeTerrain(Terrains.WOODS);
 				h.addTerrain(Terrains.getTerrainFactory().createTerrain(
 						Terrains.WOODS, 2));
+				woods = h.getTerrain(Terrains.WOODS);
 				// ultra heavy converted to heavy
 				r = new Report(3082);
 				r.subject = entityId;
 				addReport(r);
-			} else {
-				woods.setTerrainFactor(tf);
-			}
+			} 
+			woods.setTerrainFactor(tf);
 		}
 		if (jungle != null) {
 			int tf = jungle.getTerrainFactor() - nDamage;
@@ -7988,6 +7989,7 @@ public class Server implements Runnable {
 				h.removeTerrain(Terrains.JUNGLE);
 				h.addTerrain(Terrains.getTerrainFactory().createTerrain(
 						Terrains.JUNGLE, 1));
+				jungle = h.getTerrain(Terrains.JUNGLE);
 				// heavy converted to light
 				r = new Report(3086);
 				r.subject = entityId;
@@ -7996,13 +7998,13 @@ public class Server implements Runnable {
 				h.removeTerrain(Terrains.JUNGLE);
 				h.addTerrain(Terrains.getTerrainFactory().createTerrain(
 						Terrains.JUNGLE, 2));
+				jungle = h.getTerrain(Terrains.JUNGLE);
 				// ultra heavy converted to heavy
 				r = new Report(3083);
 				r.subject = entityId;
 				addReport(r);
-			} else {
-				jungle.setTerrainFactor(tf);
 			}
+			jungle.setTerrainFactor(tf);
 		}
 		if (ice != null) {
 			int tf = ice.getTerrainFactor() - nDamage;

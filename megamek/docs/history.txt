@@ -18,7 +18,9 @@ v0.33.10-dev (SVN)
 + Added Clan BPOD MiscType object.
 + CASEII and Magshot not being calculated with BV 2.0
 + Bug: Clear Hexes from heavy to light would reset TF
-
++ Enhancement Request from Mekwars forum: Draw markers on minimap for pre-designated
+  artillery auto-hit hexes.
+  
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java
 + Changed Font.SANS_SERIF to "Sans Serif" in ChatLounge.java

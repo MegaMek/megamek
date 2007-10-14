@@ -386,6 +386,12 @@ public class MiniMap extends Canvas  {
                 if (e.getPosition() == null) continue;
                 paintUnit(g, e, true);
             }
+            
+            if (m_client.getArtilleryAutoHit()!=null) {
+            	for (int i=0; i<m_client.getArtilleryAutoHit().size(); i++) {
+            		drawAutoHit(g, m_client.getArtilleryAutoHit().get(i));
+            	}
+            }
         }
 
         drawBtn(g);
@@ -393,6 +399,23 @@ public class MiniMap extends Canvas  {
         repaint();
     }
 
+    /**
+     * Draws a red crosshair for artillery autohit hexes (predesignated only).
+     */
+    private void drawAutoHit(Graphics g, Coords hex) {
+        int baseX = hex.x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + hexSide[zoom];
+        int baseY = (2*hex.y + 1 + hex.x%2)* hexSideByCos30[zoom] + topMargin;
+        Color alt=g.getColor();
+        g.setColor(Color.RED);
+        g.drawOval(baseX-(unitSize-1), baseY-(unitSize-1), 
+        		   2*unitSize-2, 2*unitSize-2);
+        g.drawLine(baseX-unitSize-1, baseY, baseX-unitSize+3, baseY);
+        g.drawLine(baseX+unitSize+1, baseY, baseX+unitSize-3, baseY);
+        g.drawLine(baseX, baseY-unitSize-1, baseX, baseY-unitSize+3);
+        g.drawLine(baseX, baseY+unitSize+1, baseX, baseY+unitSize-3);
+        g.setColor(alt);
+    }
+    
     /**
      * Draws green Button in the bottom to close and open mini map. Height of button is fixed to 14pix.
      */

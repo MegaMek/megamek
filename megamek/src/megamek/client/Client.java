@@ -90,6 +90,8 @@ public class Client implements IClientCommandHandler {
     // we might want to keep a game log...
     private GameLog log;
     
+    private Vector<Coords> artilleryAutoHitHexes=null;
+    
     private boolean disconnectFlag = false;
 
     private Hashtable<String,Integer> duplicateNameHash = new Hashtable<String,Integer>();
@@ -192,6 +194,13 @@ public class Client implements IClientCommandHandler {
         }
     }
 
+    /**
+     * Get hexes designated for automatic artillery hits.
+     */
+    public Vector<Coords> getArtilleryAutoHit() {
+    	return artilleryAutoHitHexes;
+    }
+    
     private void initGameLog() {
         //log = new GameLog(
         //  PreferenceManager.getClientPreferences().getGameLogFilename(),
@@ -560,6 +569,7 @@ public class Client implements IClientCommandHandler {
      * Sends a "set Artillery Autohit Hexes" packet
      */
     public void sendArtyAutoHitHexes(Vector<Coords> hexes) {
+    	artilleryAutoHitHexes=hexes; // save for minimap use
         send(new Packet(Packet.COMMAND_SET_ARTYAUTOHITHEXES, hexes));
     }
     

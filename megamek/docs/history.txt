@@ -27,6 +27,8 @@ v0.33.10-dev (SVN)
 + Bug: Quad mule kicks should only be allowed to the rear arc, not the side arcs
 + Bug 1806055: C3 Master and Advanced Search
 + Bug: After reset, starting position got set to any, but UI still showed old starting position
++ Bug: when changing a game option that possibly changed BV (like force-size mod),
+   BV displayed in the chatlounge didn't change
   
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

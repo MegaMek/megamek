@@ -198,11 +198,7 @@ public class KickAttackAction extends PhysicalAttackAction
         // check facing, part 2: Mule kick
         if (0 != range && mule == 1 &&
             !Compute.isInArc(ae.getPosition(), ae.getFacing(),
-                     target.getPosition(), Compute.ARC_REAR) &&
-            !Compute.isInArc(ae.getPosition(), ae.getFacing(),
-                     target.getPosition(), Compute.ARC_LEFTSIDE) &&
-            !Compute.isInArc(ae.getPosition(), ae.getFacing(),
-                     target.getPosition(), Compute.ARC_RIGHTSIDE)) {
+                     target.getPosition(), Compute.ARC_REAR)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in arc");
         }
 

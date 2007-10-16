@@ -23,6 +23,8 @@ v0.33.10-dev (SVN)
 + Patch 1714216: BV checking command
 + Patch 1694672: Board/map size configuration
 + Patch 1804518, Bug 1788089, Bug 1813331: Heat and min range incorrect for HAG 30 and 40
++ Bug 1801922: Cannot charge after starting Movement Phase prone
++ Bug: Quad mule kicks should only be allowed to the rear arc, not the side arcs
   
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

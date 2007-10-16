@@ -156,6 +156,7 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 import megamek.server.commands.AddBotCommand;
+import megamek.server.commands.CheckBVCommand;
 import megamek.server.commands.DefeatCommand;
 import megamek.server.commands.ExportListCommand;
 import megamek.server.commands.FixElevationCommand;
@@ -334,6 +335,7 @@ public class Server implements Runnable {
 		registerCommand(new RulerCommand(this));
 		registerCommand(new ShowValidTargetsCommand(this));
 		registerCommand(new AddBotCommand(this));
+        registerCommand(new CheckBVCommand(this));
 
 		// register terrain processors
 		terrainProcessors.add(new FireProcessor(this));

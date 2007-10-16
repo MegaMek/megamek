@@ -126,11 +126,6 @@ public class ChargeAttackAction extends DisplacementAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target must be within 1 elevation level");
         }
 
-        // can't charge while prone, unless it's a skid charge
-        if (ae.isProne() && !gotUp && !skid) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
-        }
-
         // can't attack mech making a different displacement attack
         if (te != null && te.hasDisplacementAttack()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is already making a charge/DFA attack");

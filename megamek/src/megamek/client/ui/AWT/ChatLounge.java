@@ -1358,6 +1358,7 @@ public class ChatLounge
         refreshGameSettings();
         refreshBoardSettings();
         refreshEntities();
+        refreshBVs();
     }
 
     /*

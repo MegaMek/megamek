@@ -20,6 +20,9 @@ v0.33.10-dev (SVN)
 + Bug: Clear Hexes from heavy to light would reset TF
 + Enhancement Request from Mekwars forum: Draw markers on minimap for pre-designated
   artillery auto-hit hexes.
++ Patch 1714216: BV checking command
++ Patch 1694672: Board/map size configuration
++ Patch 1804518, Bug 1788089, Bug 1813331: Heat and min range incorrect for HAG 30 and 40
   
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

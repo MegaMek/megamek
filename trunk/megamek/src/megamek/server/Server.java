@@ -836,9 +836,11 @@ public class Server implements Runnable {
 			Player p = players.nextElement();
 			if (p.isGhost()) {
 				ghosts.add(p);
-			} else
+			} else {
 				// non-ghosts set their starting positions to any
 				p.setStartingPos(0);
+                send(createPlayerUpdatePacket(p.getId()));
+            }
 		}
 		for (Player p : ghosts) {
 			game.removePlayer(p.getId());
@@ -18505,7 +18507,6 @@ public class Server implements Runnable {
 		String fileList[] = dir.list();
 		Vector<String> tempList = new Vector<String>();
 		for (int i = 0; i < fileList.length; i++) {
-			System.out.println(addPath.concat("/").concat(fileList[i]));
 			File x = new File(addPath.concat("/").concat(fileList[i]));
 			if (x.isDirectory() && subdirs) {
 				tempList.addAll(scanForBoardsInDir(addPath.concat("/")

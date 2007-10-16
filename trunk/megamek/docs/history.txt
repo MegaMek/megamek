@@ -26,6 +26,7 @@ v0.33.10-dev (SVN)
 + Bug 1801922: Cannot charge after starting Movement Phase prone
 + Bug: Quad mule kicks should only be allowed to the rear arc, not the side arcs
 + Bug 1806055: C3 Master and Advanced Search
++ Bug: After reset, starting position got set to any, but UI still showed old starting position
   
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

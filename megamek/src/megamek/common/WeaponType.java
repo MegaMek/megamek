@@ -10663,7 +10663,7 @@ public class WeaponType extends EquipmentType {
         weapon.damage = DAMAGE_VARIABLE;
         weapon.rackSize = 20;
         weapon.ammoType = AmmoType.T_HAG;
-        weapon.minimumRange = WEAPON_NA;
+        weapon.minimumRange = 2;
         weapon.shortRange = 8;
         weapon.mediumRange = 16;
         weapon.longRange = 24;
@@ -10685,11 +10685,11 @@ public class WeaponType extends EquipmentType {
         weapon.name = "HAG/30";
         weapon.setInternalName("CLHAG30");
         weapon.addLookupName("Clan HAG/30");
-        weapon.heat = 4;
+        weapon.heat = 6;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.rackSize = 30;
         weapon.ammoType = AmmoType.T_HAG;
-        weapon.minimumRange = WEAPON_NA;
+        weapon.minimumRange = 2;
         weapon.shortRange = 8;
         weapon.mediumRange = 16;
         weapon.longRange = 24;
@@ -10711,11 +10711,11 @@ public class WeaponType extends EquipmentType {
         weapon.name = "HAG/40";
         weapon.setInternalName("CLHAG40");
         weapon.addLookupName("Clan HAG/40");
-        weapon.heat = 4;
+        weapon.heat = 8;
         weapon.damage = DAMAGE_VARIABLE;
         weapon.rackSize = 40;
         weapon.ammoType = AmmoType.T_HAG;
-        weapon.minimumRange = WEAPON_NA;
+        weapon.minimumRange = 2;
         weapon.shortRange = 8;
         weapon.mediumRange = 16;
         weapon.longRange = 24;

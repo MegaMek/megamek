@@ -51,6 +51,10 @@ public interface IClientPreferences extends IPreferenceStore {
     public static final String GOAL_PLAYERS = "GoalPlayers";
     public static final String GUI_NAME = "GUIName";
     public static final String PRINT_ENTITY_CHANGE = "PrintEntityChange";
+    public static final String BOARD_WIDTH = "BoardWidth";
+    public static final String BOARD_HEIGHT = "BoardHeight";
+    public static final String MAP_WIDTH = "MapWidth";
+    public static final String MAP_HEIGHT = "MapHeight";
     
     boolean getPrintEntityChange();
     
@@ -151,5 +155,13 @@ public interface IClientPreferences extends IPreferenceStore {
     String getGUIName();
 
     void setGUIName(String guiName);
+    
+    int getBoardWidth();
+    
+    int getBoardHeight();
+    
+    int getMapWidth();
+    
+    int getMapHeight();
 
 }

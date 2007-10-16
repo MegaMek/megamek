@@ -45,6 +45,10 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         store.setDefault(GUI_NAME,"AWT");
         store.setDefault(USE_AVERAGE_SKILLS,true);
         store.setDefault(PRINT_ENTITY_CHANGE, false);
+        store.setDefault(BOARD_WIDTH, 16);
+        store.setDefault(BOARD_HEIGHT, 17);
+        store.setDefault(MAP_WIDTH, 1);
+        store.setDefault(MAP_HEIGHT, 1);
         setLocale(store.getString(LOCALE));
         setMekHitLocLog();
     }
@@ -293,6 +297,22 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
                 mekHitLocLog = null;
             }
         }
+    }
+
+    public int getBoardWidth() {
+        return store.getInt(BOARD_WIDTH);
+    }
+
+    public int getBoardHeight() {
+        return store.getInt(BOARD_HEIGHT);
+    }
+
+    public int getMapWidth() {
+        return store.getInt(MAP_WIDTH);
+    }
+
+    public int getMapHeight() {
+        return store.getInt(MAP_HEIGHT);
     }
 
 }

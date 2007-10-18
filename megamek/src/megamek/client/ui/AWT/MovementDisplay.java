@@ -953,7 +953,7 @@ public class MovementDisplay
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
                                           prevStep, prevFacing, curFacing,
                                           lastPos, curPos, isInfantry,
-                                          distance);
+                                          distance-1);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Have an entity-meaningful PSR message.
                 nagReport.append(addNag(rollTarget));

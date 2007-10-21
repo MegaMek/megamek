@@ -30,6 +30,7 @@ v0.33.10-dev (SVN)
 + Bug: when changing a game option that possibly changed BV (like force-size mod),
    BV displayed in the chatlounge didn't change
 + Skidding Bug: Hex just entered counted for distance.
++ Bug 1751666: Made the option apply only to 'Mechs as per suggestion of initial submitter.
 
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

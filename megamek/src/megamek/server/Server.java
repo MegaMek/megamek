@@ -5310,15 +5310,13 @@ public class Server implements Runnable {
 		doSetLocationsExposure(entity, game.getBoard().getHex(curPos), false,
 				entity.getElevation());
 
-		// should we give another turn to the entity to keep moving?
-		if (!game.getOptions().booleanOption("falls_end_movement") // Not if
-				// this
-				// option is
-				// set
+        // Check the falls_end_movement option to see if it should be able to move on.
+		if (!(game.getOptions().booleanOption("falls_end_movement") && entity instanceof Mech)
 				&& fellDuringMovement
 				&& !turnOver
 				&& entity.mpUsed < entity.getRunMP()
-				&& entity.isSelectableThisTurn() && !entity.isDoomed()) {
+				&& entity.isSelectableThisTurn()
+				&& !entity.isDoomed()) {
 			entity.applyDamage();
 			entity.setDone(false);
 			GameTurn newTurn = new GameTurn.SpecificEntityTurn(entity

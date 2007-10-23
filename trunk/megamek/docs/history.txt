@@ -31,6 +31,7 @@ v0.33.10-dev (SVN)
    BV displayed in the chatlounge didn't change
 + Skidding Bug: Hex just entered counted for distance.
 + Bug 1751666: Made the option apply only to 'Mechs as per suggestion of initial submitter.
++ Enhancement: Show both base BV as well as BV modified by force modifier for each player.
 
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java

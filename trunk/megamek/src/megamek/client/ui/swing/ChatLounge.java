@@ -1052,7 +1052,7 @@ public class ChatLounge
                 }
             }
             if (useBv) {
-                ((DefaultListModel) lisBVs.getModel()).addElement(player.getName() + Messages.getString("ChatLounge.BV") + (int) (playerValue*player.getForceSizeBVMod())); //$NON-NLS-1$
+                ((DefaultListModel) lisBVs.getModel()).addElement(player.getName() + Messages.getString("ChatLounge.BV") + (int) (playerValue) + " (FM: " + (int) (playerValue*player.getForceSizeBVMod()) + ")"); //$NON-NLS-1$
             } else if (useCost) {
                 ((DefaultListModel) lisBVs.getModel()).addElement(player.getName() + Messages.getString("ChatLounge.Cost") + (int) playerValue); //$NON-NLS-1$
             } else {

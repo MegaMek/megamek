@@ -70,7 +70,15 @@
             <fileset dir="${libdir}" includes="*.jar"/>
          </classpath>
     </javac>
-
+    <!-- generate current equipment.txt -->
+    <java classname="megamek.MegaMek" fork="true">
+        <arg line="-eqdb docs/equipment.txt"/>
+		<classpath>
+           <pathelement path="${basedir}"/>
+           <pathelement path="${builddir}"/>
+           <fileset dir="${libdir}" includes="*.jar"/>
+		</classpath>		
+	</java>
     <!-- Ensure that the log directory exists. -->
     <mkdir dir="${logdir}"/>
     <touch file="${timestampfile}"/>

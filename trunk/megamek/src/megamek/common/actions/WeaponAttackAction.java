@@ -711,11 +711,15 @@ public class WeaponAttackAction extends AbstractAttackAction {
                 atype.getMunitionType() == AmmoType.M_SEMIGUIDED &&
                 te.getTaggedBy() != -1) {
                 toHit.addModifier(-1 , "semiguided ignores spotter movement & indirect fire penalties");
-            } else if(!narcSpotter){
+            } else if (!narcSpotter){
                 toHit.append(Compute.getSpotterMovementModifier(game, spotter.getId()));
+                if (spotter.isAttackingThisTurn())
+                    toHit.addModifier(1, "spotter is making an attack this turn");
+            } else {
+                if (spotter.isAttackingThisTurn())
+                    toHit.addModifier(1, "spotter is making an attack this turn");
             }
-            if (spotter.isAttackingThisTurn())
-            	toHit.addModifier(1, "spotter is making an attack this turn");
+            
         }
     
         // attacker terrain

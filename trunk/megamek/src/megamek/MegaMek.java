@@ -98,7 +98,7 @@ public class MegaMek {
                 if (interfaceName == null) {
                     interfaceName = PreferenceManager.getClientPreferences().getGUIName();
                 }
-                startGUI(interfaceName, restArgs);                
+                startGUI(interfaceName, restArgs);
             }
             
         } catch (CommandLineParser.ParseException e){
@@ -396,6 +396,7 @@ public class MegaMek {
             } else {
                 error("file name expected"); //$NON-NLS-1$                
             }
+            System.exit(0);
         }
 
         private void processUnitValidator() throws ParseException {

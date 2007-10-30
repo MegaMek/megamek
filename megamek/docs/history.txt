@@ -2,6 +2,7 @@
 ----------------
 v0.33.11-dev (SVN)
 + Bug 1748167: Spot-and-fire penalty being applied to TAG/Semi-Guided
++ Updated equipment.txt
 
 v0.33.10 (2007-10-28, 16:13 GMT+1)
 + Implemented Retractable Blades. TODO: make them actually retractable (should be able

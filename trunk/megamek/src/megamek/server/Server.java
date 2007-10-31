@@ -6929,10 +6929,11 @@ public class Server implements Runnable {
 			// For now, assume they're on the surface.
 			// entity elevation is relative to hex surface
 			entity.setElevation(0);
-		} else if (hex.containsTerrain(Terrains.ICE)
-				|| hex.containsTerrain(Terrains.BRIDGE)) {
+		} else if (hex.containsTerrain(Terrains.ICE)) {				
 			entity.setElevation(0);
-		} else {
+		} else if (hex.containsTerrain(Terrains.BRIDGE)) {
+            entity.setElevation(hex.terrainLevel(Terrains.BRIDGE_ELEV));
+        } else {
 			Building bld = game.getBoard().getBuildingAt(entity.getPosition());
 
 			if (bld != null && bld.getType() == Building.WALL) {
@@ -18036,7 +18037,7 @@ public class Server implements Runnable {
 		}
 
 		int waterDepth = fallHex.terrainLevel(Terrains.WATER);
-		int bridgeHeight = fallHex.terrainLevel(Terrains.BRIDGE)
+		int bridgeHeight = fallHex.terrainLevel(Terrains.BRIDGE_ELEV)
 				+ fallHex.depth();
 		int damageHeight = height;
 		int newElevation;
@@ -18044,7 +18045,7 @@ public class Server implements Runnable {
 		if (height >= bridgeHeight && bridgeHeight >= 0) {
 			damageHeight -= bridgeHeight;
 			waterDepth = 0;
-			newElevation = fallHex.terrainLevel(Terrains.BRIDGE);
+			newElevation = fallHex.terrainLevel(Terrains.BRIDGE_ELEV);
 		} else if (fallHex.containsTerrain(Terrains.ICE)
 				&& height >= fallHex.depth()) {
 			damageHeight -= fallHex.depth();

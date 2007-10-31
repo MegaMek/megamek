@@ -420,7 +420,7 @@ public class MiniMap extends Canvas {
             }
         }
 
-        if (m_client.getArtilleryAutoHit()!=null) {
+        if (m_client != null && m_client.getArtilleryAutoHit()!=null) {
         	for (int i=0; i<m_client.getArtilleryAutoHit().size(); i++) {
         		drawAutoHit(g, m_client.getArtilleryAutoHit().get(i));
         	}

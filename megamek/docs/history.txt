@@ -11,6 +11,7 @@ v0.33.11-dev (SVN)
 + Bug 1806296: Vehicle critical hits problem
 + Bug 1806550: A-Pods can fire multiple times
 + Data 1787475: Tallassia Mapset with original Mapnames
++ Data 1801670: 3050U IS Mechfiles
 
 v0.33.10 (2007-10-28, 16:13 GMT+1)
 + Implemented Retractable Blades. TODO: make them actually retractable (should be able

@@ -650,7 +650,7 @@ public class Mounted implements Serializable, RoundUpdated {
     public boolean canFire() {
     
         // Equipment operational?
-        if ( !isReady() || isBreached() || isMissing() ) {
+        if ( !isReady() || isBreached() || isMissing() || isFired()) {
             return false;
         }
     

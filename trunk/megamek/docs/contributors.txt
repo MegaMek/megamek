@@ -1,4 +1,4 @@
-Lot of people have contributed to the MegaMek project.
+﻿Lot of people have contributed to the MegaMek project.
 
   Original author and present maintainer:
      Ben Mazur <bmazur@sev.org>
@@ -63,6 +63,7 @@ Lot of people have contributed to the MegaMek project.
      shockmilk <shockmilk@users.sourceforge.net>
      Jan Ferdinand Rehse
      Thomas "DarkViper" Wehner
+     Kolja "Flashhawk" Geldmacher
      Endreffy Janos <endrosz@freemail.hu>
 
   German Readme:

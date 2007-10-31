@@ -19,6 +19,7 @@
 
 package megamek.common.verifier;
 
+import megamek.common.AmmoType;
 import megamek.common.EquipmentType;
 import megamek.common.Entity;
 import megamek.common.IEntityMovementMode;
@@ -112,7 +113,8 @@ public class TestTank extends TestEntity
             for (Mounted m : tank.getWeaponList()) {
                 WeaponType wt = (WeaponType) m.getType();
                 if (wt.hasFlag(WeaponType.F_LASER) ||
-                        wt.hasFlag(WeaponType.F_PPC))
+                        wt.hasFlag(WeaponType.F_PPC) ||
+                        (wt.hasFlag(WeaponType.F_FLAMER) && wt.getAmmoType() == AmmoType.T_NA))
                     weight += wt.getTonnage(tank);
             }
             return ceil(weight / 10f, getWeightCeilingPowerAmp());

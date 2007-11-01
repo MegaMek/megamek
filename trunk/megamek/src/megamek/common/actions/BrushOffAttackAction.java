@@ -96,7 +96,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
         int targetId = Entity.NONE;
         Entity te = null;
         if (ae == null || target == null) {
-            throw new IllegalArgumentException("Attacker or target not valid");
+        	return new ToHitData(TargetRoll.IMPOSSIBLE,"Attacker or target not valid");
         }
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
             te = (Entity) target;

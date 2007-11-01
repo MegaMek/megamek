@@ -106,12 +106,21 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
     }
 
     public Object getValue() {
+    	String text = "";
         switch (option.getType()) {
             case IOption.BOOLEAN:
                 return Boolean.valueOf(checkbox.isSelected());
             case IOption.INTEGER:
+            	text = textField.getText();
+            	if (text.trim().equals("")) {
+            		text = "0";
+            	}
                 return Integer.valueOf(textField.getText());
             case IOption.FLOAT:
+            	text = textField.getText();
+            	if (text.trim().equals("")) {
+            		text = "0";
+            	}
                 return Float.valueOf(textField.getText());
             case IOption.STRING:
                 return textField.getText();

@@ -101,13 +101,22 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
     }
     
     public Object getValue() {
+    	String text = "";
         switch(option.getType()) {
             case IOption.BOOLEAN :
                 return new Boolean(checkbox.getState());
             case IOption.INTEGER :
-                return Integer.valueOf(textField.getText());
+            	text = textField.getText();
+            	if (text.trim().equals("")) {
+            		text = "0";
+            	}
+                return Integer.valueOf(text);
             case IOption.FLOAT :
-                return Float.valueOf(textField.getText());
+            	text = textField.getText();
+            	if (text.trim().equals("")) {
+            		text = "0";
+            	}
+                return Float.valueOf(text);
             case IOption.STRING :
                 return textField.getText();
             case IOption.CHOICE :

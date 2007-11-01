@@ -14,6 +14,7 @@ v0.33.11-dev (SVN)
 + Data 1801670: 3050U IS Mechfiles
 + Data 1794069: Missing Mechfiles
 + Data 1789446: Celestial Invictus Omnis
++ Bug 1714093: NPE in BrushOffAttackAction in certain situations, removed most Vectors from BoardView1
 
 v0.33.10 (2007-10-28, 16:13 GMT+1)
 + Implemented Retractable Blades. TODO: make them actually retractable (should be able

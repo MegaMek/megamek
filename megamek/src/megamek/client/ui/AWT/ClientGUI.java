@@ -323,7 +323,7 @@ public class ClientGUI
         try {
             client.game.addGameListener(gameListener);
             // Create the board viewer.
-            bv = new BoardView1(client.game, frame, this);
+            bv = new BoardView1(client.game, frame);
 
             // Place the board viewer in a set of scrollbars.
             scroller = new Panel();

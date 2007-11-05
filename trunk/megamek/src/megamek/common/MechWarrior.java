@@ -20,11 +20,16 @@ package megamek.common;
 
 public class MechWarrior extends Infantry {
     
+    private static final long serialVersionUID = 6227549671448329770L;
     private int originalRideId;
     private int originalRideExternalId;
     private int pickedUpById = Entity.NONE;
     private int pickedUpByExternalId = Entity.NONE;
 
+    /**
+     * Create a new MechWarrior
+     * @param originalRide the <code>Entity</code> that was this MW's original ride
+     */
     public MechWarrior(Entity originalRide) {
         super();
         setCrew(originalRide.getCrew());
@@ -54,40 +59,65 @@ public class MechWarrior extends Infantry {
         }
     }
 
+    /* (non-Javadoc)
+     * @see megamek.common.Entity#isSelectableThisTurn()
+     */
     public boolean isSelectableThisTurn() {
         return (pickedUpById == Entity.NONE)
             && super.isSelectableThisTurn();
     }
 
+    /**
+     * @return the <code>int</code> id of this MW's original ride
+     */
     public int getOriginalRideId() {
         return originalRideId;
     }
+    /**
+     * set the <code>int</code> id of this MW's original ride
+     */
     public void setOriginalRideId(int originalRideId) {
         this.originalRideId = originalRideId;
     }
+    /**
+     * @return the <code>int</code> external id of this MW's original ride
+     */
     public int getOriginalRideExternalId() {
         return originalRideExternalId;
     }
+    /**
+     * set the <code>int</code> external id of this MW's original ride
+     */
     public void setOriginalRideExternalId(int originalRideExternalId) {
         this.originalRideExternalId = originalRideExternalId;
     }
+    /**
+     * @return the <code>int</code> external id of the unit that picked up this MW
+     */
     public int getPickedUpByExternalId() {
         return pickedUpByExternalId;
     }
+    /**
+     * set the <code>int</code> external id of the unit that picked up this MW
+     */
     public void setPickedUpByExternalId(int pickedUpByExternalId) {
         this.pickedUpByExternalId = pickedUpByExternalId;
     }
+    /**
+     * @return the <code>int</code> id of the unit that picked up this MW
+     */
     public int getPickedUpById() {
         return pickedUpById;
     }
+    /**
+     * set the <code>int</code> id of the unit that picked up this MW
+     */
     public void setPickedUpById(int pickedUpById) {
         this.pickedUpById = pickedUpById;
     }
 
-    /**
-     * Mek pilots have no inherent battle value.
-     * <p/>
-     * Overrides <code>Infantry#calculateBattleValue()</code>.
+    /* (non-Javadoc)
+     * @see megamek.common.Infantry#calculateBattleValue()
      */
     public int calculateBattleValue() {
         return 0;

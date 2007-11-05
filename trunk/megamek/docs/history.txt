@@ -17,6 +17,8 @@ v0.33.11-dev (SVN)
 + Bug 1714093: NPE in BrushOffAttackAction in certain situations, removed most Vectors from BoardView1
 + Bug 1678555: Illegal Number Format when an anticipated Game option input is empty, defaults to 0 now
 + Added the Celestial Dominus variants and some pics for them
++ Bug 1824240: Pilot has been picked up with 2 different units
++ Minor refactoring, yay Javadoc!
 
 v0.33.10 (2007-10-28, 16:13 GMT+1)
 + Implemented Retractable Blades. TODO: make them actually retractable (should be able

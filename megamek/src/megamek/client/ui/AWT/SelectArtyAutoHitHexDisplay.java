@@ -45,6 +45,8 @@ public class SelectArtyAutoHitHexDisplay
     implements BoardViewListener,  ActionListener, DoneButtoned,
                KeyListener, GameListener, Distractable
 {
+    private static final long serialVersionUID = -6733665205235744376L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

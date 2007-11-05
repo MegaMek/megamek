@@ -3437,6 +3437,10 @@ public abstract class Entity extends TurnOrdered
         }
     }
 
+    /**
+     * Start a new round
+     * @param roundNumber the <code>int</code> number of the new round
+     */
     public void newRound(int roundNumber) {
         unloadedThisTurn = false;
         done = false;

@@ -19,6 +19,7 @@ v0.33.11-dev (SVN)
 + Added the Celestial Dominus variants and some pics for them
 + Bug 1824240: Pilot has been picked up with 2 different units
 + Minor refactoring, yay Javadoc!
++ Fix BV bug for Mechs, explose equipment did not subtract correctly in most cases
 
 v0.33.10 (2007-10-28, 16:13 GMT+1)
 + Implemented Retractable Blades. TODO: make them actually retractable (should be able

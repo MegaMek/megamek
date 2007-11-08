@@ -2011,9 +2011,9 @@ public abstract class Mech
 
         // subtract for explosive ammo
         double ammoPenalty = 0;
-        int toSubtract = 15;
         for (Mounted mounted : getEquipment()){
             int loc = mounted.getLocation();
+            int toSubtract = 15;
             EquipmentType etype = mounted.getType();
 
             // only count explosive ammo

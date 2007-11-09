@@ -874,7 +874,7 @@ public class FiringDisplay
         
         // update target panel
         final int weaponId = clientgui.mechD.wPan.getSelectedWeaponNum();
-        if (target != null && weaponId != -1 && ce() != null) {
+        if (target != null && target.getPosition() != null && weaponId != -1 && ce() != null) {
             ToHitData toHit;
             if (ash.inAimingMode()) {
             Mounted weapon = ce().getEquipment(weaponId);

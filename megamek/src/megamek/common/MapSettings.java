@@ -383,8 +383,9 @@ public class MapSettings implements Serializable {
      * Replaces the specified type of board with random boards
      */
     public void replaceBoardWithRandom(String board) {
+        if (board == null) return;
         for (int i = 0; i < boardsSelected.size(); i++) {
-            if (boardsSelected.elementAt(i).equals(board)) {
+            if (board.equals(boardsSelected.elementAt(i))) {
                 int rindex;
                 //if we have no boards, set rindex to 0, so the generated board
                 //gets selected

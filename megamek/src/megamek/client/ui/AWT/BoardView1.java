@@ -1706,9 +1706,12 @@ public class BoardView1
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
 
-        for (C3Sprite c3sprite: C3Sprites) {
-            if (c3sprite.entityId == entity.getId())
+        for (int i = 0; i < C3Sprites.size(); i++) {
+            C3Sprite c3sprite = C3Sprites.get(i);
+            if (c3sprite.entityId == entity.getId()) {
                 C3Sprites.remove(c3sprite);
+                i--;
+            }
             else if(c3sprite.masterId == entity.getId()) {
                 // Only redraw client-to-master; otherwise
                 // we leave stray lines when we move.
@@ -1716,7 +1719,7 @@ public class BoardView1
                     C3Sprites.add(new C3Sprite(game.getEntity(c3sprite.entityId), game.getEntity(c3sprite.masterId)));
                 }
                 C3Sprites.remove(c3sprite);
-
+                i--;
             }
         }
 

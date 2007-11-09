@@ -127,6 +127,8 @@ public class BoardView1
     extends Canvas
     implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, AdjustmentListener, MechDisplayListener, IPreferenceChangeListener
 {
+
+    private static final long serialVersionUID = -5582195884759007416L;
     private static final int        TRANSPARENT = 0xFFFF00FF;
 
     // the dimensions of megamek's hex images

@@ -20,9 +20,9 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.*;
+import javax.swing.SwingUtilities;
+
 
 import megamek.client.bot.BotClient;
 import megamek.client.commands.*;
@@ -133,6 +133,28 @@ public class Client implements IClientCommandHandler {
         registerCommand(new DeployCommand(this));
         registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
+        
+        
+        /*  this should be moved to UI implementations so 
+            that they are responsible for figuring out who
+            should call update for connection*/
+        Timer t=new Timer(true);
+        final Runnable packetUpdate=new Runnable() {
+            public void run()
+            {                    
+                if(connection!=null)
+                    connection.update();
+            }
+        };
+        final TimerTask packetUpdate2=new TimerTask() {
+            public void run() {
+                try {
+                    SwingUtilities.invokeAndWait(packetUpdate);
+                } catch(Exception ie) {
+                }
+            }
+        };
+        t.schedule(packetUpdate2,500,150);        
     }
 
     /**

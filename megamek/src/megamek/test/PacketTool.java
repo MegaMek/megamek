@@ -17,9 +17,10 @@ package megamek.test;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.*;
 import java.net.Socket;
 import java.net.ServerSocket;
-
+import javax.swing.SwingUtilities;
 import megamek.common.Board;
 import megamek.common.net.Connection;
 import megamek.common.net.ConnectionFactory;
@@ -186,6 +187,27 @@ public class PacketTool extends Frame implements Runnable {
         try {
             port = Integer.parseInt( hostPort.getText() );
             conn = ConnectionFactory.getInstance().createServerConnection(new Socket(host, port), 1 );
+            Timer t=new Timer(true);
+            final Runnable packetUpdate=new Runnable()
+                {
+                    public void run()
+                    {                    
+                        Connection connection=PacketTool.this.conn;
+                        if(connection!=null)
+                            connection.update();
+                    }
+                };
+            final TimerTask packetUpdate2=new TimerTask()
+                {
+                    public void run()
+                    {
+                        try{
+                        SwingUtilities.invokeAndWait(packetUpdate);
+                        }catch(Exception ie){}
+                    }
+                };
+            t.schedule(packetUpdate2,500,150);        
+            
             //conn = new XmlConnection( this, new Socket(host, port), 1 );            
             System.out.println( "Connected to peer." );
             conn.addConnectionListener(connectionListener);

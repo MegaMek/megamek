@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -286,6 +287,7 @@ public class Server implements Runnable {
 		this.password = password.length() > 0 ? password : null;
 		// initialize server socket
 		serverSocket = new ServerSocket(port);
+        serverSocket.setSoTimeout(50);
 
 		motd = createMotd();
 
@@ -20169,6 +20171,7 @@ public class Server implements Runnable {
 	public void run() {
 		Thread currentThread = Thread.currentThread();
 		System.out.println("s: listening for clients...");
+        HashSet<Connection> toUpdate=new HashSet<Connection>();
 		while (connector == currentThread) {
 			try {
 				Socket s = serverSocket.accept();
@@ -20186,9 +20189,18 @@ public class Server implements Runnable {
 				greeting(id);
 				ConnectionWatchdog w = new ConnectionWatchdog(this, id);
 				timer.schedule(w, 1000, 500);
-			} catch (IOException ex) {
+			} catch(InterruptedIOException iioe){
+                //ignore , just SOTimeout blowing..
+            }catch (IOException ex) {
 
 			}
+            /*  update all connections*/
+            toUpdate.clear();
+            toUpdate.addAll(connections);
+            toUpdate.addAll(connectionsPending);
+            Iterator<Connection> it=toUpdate.iterator();            
+            while(it.hasNext())
+                it.next().update();
 		}
 	}
 
@@ -23047,6 +23059,7 @@ public class Server implements Runnable {
 				server.getPendingConnection(id).close();
 				cancel();
 				System.err.println("Growl");
+                System.err.println("\n\n\n\n\n");
 				return;
 			}
 			server.greeting(id);

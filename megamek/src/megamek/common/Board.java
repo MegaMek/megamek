@@ -39,6 +39,8 @@ import java.util.Hashtable;
 
 public class Board implements Serializable, IBoard {
 
+    private static final long serialVersionUID = -5744058872091016636L;
+
     public static final String  BOARD_REQUEST_ROTATION  = "rotate:";
 
     public static final int     BOARD_MAX_WIDTH         = Coords.MAX_BOARD_WIDTH;
@@ -240,7 +242,6 @@ public class Board implements Serializable, IBoard {
         } else {
             bldgByCoords.clear();
         }
-        System.out.println("started initializing"+new Date());
         // Walk through the hexes, creating buildings.
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -327,7 +328,6 @@ public class Board implements Serializable, IBoard {
                 } // End hex-has-bridge                    
             }
         }
-        System.out.println("hexes initializing"+new Date());
         // Initialize all exits.
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -336,7 +336,6 @@ public class Board implements Serializable, IBoard {
         }
         // good time to ensure hex cache
         IdealHex.ensureCacheSize(width + 1, height + 1);
-        System.out.println("ended initializing"+new Date());
 
     } // End private void initializeAll()
     
@@ -556,7 +555,6 @@ public class Board implements Serializable, IBoard {
     public void load(InputStream is) {
         int nw = 0, nh = 0, di = 0;
         IHex[] nd = new IHex[0];
-        System.out.println("loading board"+new Date());
         try {
             Reader r = new BufferedReader(new InputStreamReader(is));
             StreamTokenizer st = new StreamTokenizer(r);
@@ -631,7 +629,6 @@ public class Board implements Serializable, IBoard {
         } else {
             System.err.println("board data invalid");
         }
-        System.out.println("done loading board"+new Date());
 
     }
     
@@ -1001,7 +998,6 @@ public class Board implements Serializable, IBoard {
 
         // Any basement reduces the hex's elevation.
         if ( curHex.containsTerrain(Terrains.BLDG_BASEMENT)) {
-System.out.println("Setting basement elevation: "+elevation+":"+curHex);
             elevation -= curHex.terrainLevel(Terrains.BLDG_BASEMENT);
             curHex.removeTerrain(Terrains.BLDG_BASEMENT);
             curHex.setElevation(elevation);

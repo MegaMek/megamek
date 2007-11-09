@@ -46,6 +46,7 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
 import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -69,9 +70,23 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.Enumeration;
 import java.util.Vector;
+import javax.swing.JPanel;
+import java.util.Date;
 
 /**
  * Displays all the mapsheets in a scaled-down size.
+ *
+ *
+ *  TBD refactorings:
+ *  -make a real public API for this with interfaces
+ *      -decouple rest of the application
+ *  -use JPanel instead of canvas
+ *  -move the buttons from graphics to real Swing buttons
+ *  -clean up listenercode..
+ *  -initializecolors is fugly
+ *      -uses exception to return from method?
+ *      -uses break-to-label
+ *      -uses while-true
  */
 public class MiniMap extends Canvas {
 
@@ -116,6 +131,10 @@ public class MiniMap extends Canvas {
     private Client m_client;
 
     private ClientGUI clientgui;
+    
+    private boolean dirtyMap=true;
+    private boolean[][] dirty;
+    private Image terrainBuffer;
 
     /**
      * Creates and lays out a new mech display.
@@ -157,6 +176,7 @@ public class MiniMap extends Canvas {
 
         // this may come in useful later...
         m_client = c.getClient();
+        assert(m_client!=null);
     }
 
     public synchronized void update(Graphics g) {
@@ -166,6 +186,7 @@ public class MiniMap extends Canvas {
     public void paint(Graphics g) {
         if (m_mapImage != null) {
             g.drawImage(m_mapImage, 0, 0, this);
+            //drawBox(g); this would be a nice place to draw a visible-area box
         }
     }
 
@@ -283,7 +304,12 @@ public class MiniMap extends Canvas {
 
         cr.close();
     }
-
+    private void clean(){
+        dirtyMap=false;
+        for (int i=0;i<dirty.length;i++)
+        for (int j=0;j<dirty[i].length;j++)
+            dirty[i][j]=false;
+    }
     private void initializeMap() {
 
         // sanity check (cfg file could be hosed)
@@ -301,6 +327,10 @@ public class MiniMap extends Canvas {
         leftMargin = margin;
         requiredWidth = m_game.getBoard().getWidth() * (currentHexSide + currentHexSideBySin30) + currentHexSideBySin30 + 2 * margin;
         requiredHeight = (2 * m_game.getBoard().getHeight() + 1) * currentHexSideByCos30 + 2 * margin + buttonHeight;
+        
+        dirty=new boolean[m_game.getBoard().getWidth()/10+1][m_game.getBoard().getHeight()/10+1];
+        dirtyMap=true;
+        
         //ensure its on screen
         Rectangle virtualBounds = new Rectangle();
         GraphicsEnvironment ge = GraphicsEnvironment.
@@ -344,13 +374,55 @@ public class MiniMap extends Canvas {
         m_dialog.pack();
         //m_dialog.setVisible(true);
         m_mapImage = createImage(getSize().width, getSize().height);
+        
+        terrainBuffer= createImage(getSize().width,getSize().height);
+        Graphics gg=terrainBuffer.getGraphics();
+        gg.setColor(BACKGROUND);
+        gg.fillRect(0, 0, getSize().width, getSize().height);
+        
         if (getSize().width > requiredWidth) leftMargin = ((getSize().width - requiredWidth) / 2) + margin;
         if (getSize().height > requiredHeight) topMargin = ((getSize().height - requiredHeight) / 2) + margin;
         drawMap();
     }
+    protected long lastDrawMapReq=0;
+    protected long lastDrawStarted=0;
+    protected Runnable drawMapable=new Runnable() {
+        protected final int redrawDelay=500;
+        public void run() {
+            try {
+                if ((System.currentTimeMillis()-MiniMap.this.lastDrawMapReq)>redrawDelay) {
+                    drawMapOrig();
+                } else {
+                    try {
+                        Thread.sleep(50);
+                    } catch(InterruptedException ie){
+                    }
+                    SwingUtilities.invokeLater(drawMapable);
+                }
+            } catch (Throwable t){
+                t.printStackTrace();
+            }
+        }
+    };
+    
+    /**
+     *  this replaces the original drawmap to speed up updates
+     *  this can be called any time necessary
+     */
+    public synchronized void drawMap() {        
+        lastDrawMapReq=System.currentTimeMillis();        
+        SwingUtilities.invokeLater(drawMapable);
+    }
 
-    // draw everything
-    public synchronized void drawMap() {
+    /**
+     *  update the backbuffer and repaint..
+     *  should not require a synchronized but i left it there anyways
+     */
+    protected synchronized void drawMapOrig() {
+        if(lastDrawStarted>lastDrawMapReq)  
+            return;
+        lastDrawStarted=System.currentTimeMillis();
+        System.out.println("drawign map to backbuffer "+new Date());
         if (m_mapImage == null) {
             return;
         }
@@ -360,19 +432,25 @@ public class MiniMap extends Canvas {
 
         Graphics g = m_mapImage.getGraphics();
         Color oldColor = g.getColor();
-        g.setColor(BACKGROUND);
-        g.fillRect(0, 0, getSize().width, getSize().height);
+        //g.setColor(BACKGROUND);
+        //g.fillRect(0, 0, getSize().width, getSize().height);
         g.setColor(oldColor);
         if (!minimized) {
             roadHexIndexes.removeAllElements();
+            Graphics gg=terrainBuffer.getGraphics();            
             for (int j = 0; j < m_game.getBoard().getWidth(); j++) {
                 for (int k = 0; k < m_game.getBoard().getHeight(); k++) {
                     IHex h = m_game.getBoard().getHex(j, k);
-                    g.setColor(terrainColor(h, j, k));
-                    paintCoord(g, j, k, true);
+                    if(dirtyMap||dirty[j/10][k/10]) {
+                        gg.setColor(terrainColor(h, j, k));
+                        paintCoord(gg, j, k, true);
+                    }
+                    addRoadElements(h,j,k);
                 }
             }
-
+            //draw backbuffer
+            g.drawImage(terrainBuffer,0,0,this);
+            
             if (firstLOS != null) paintSingleCoordBorder(g, firstLOS.x, firstLOS.y, Color.red);
             if (secondLOS != null) paintSingleCoordBorder(g, secondLOS.x, secondLOS.y, Color.red);
 
@@ -418,6 +496,7 @@ public class MiniMap extends Canvas {
                 if (e.getPosition() == null) continue;
                 paintUnit(g, e, true);
             }
+            clean();
         }
 
         if (m_client != null && m_client.getArtilleryAutoHit()!=null) {
@@ -897,7 +976,19 @@ public class MiniMap extends Canvas {
         }
         g.setColor(oldColor);
     }
-
+    /**
+     *  check if hex contains roadelements and if it does, add
+     *  to roadHexIndexes
+     */
+    private void addRoadElements(IHex x,int boardX,int boardY) {
+        final int[] roadTypes = new int[]{Terrains.ROAD,Terrains.BRIDGE};
+        for(int j:roadTypes) {
+            if(x.getTerrain(j)!=null&&m_terrainColors[j]!=null) {
+                int[] roadHex = {boardX, boardY, x.getTerrain(j).getExits()};
+                roadHexIndexes.addElement(roadHex);                
+            }
+        }
+    }
     private Color terrainColor(IHex x, int boardX, int boardY) {
         Color terrColor = m_terrainColors[0];
         if (x.getElevation() < 0) {
@@ -905,13 +996,10 @@ public class MiniMap extends Canvas {
             terrColor = SINKHOLE;
         }
 
-        int level = 0;
         int terrain = 0;
         for (int j = m_terrainColors.length - 1; j >= 0; j--) {
             if (x.getTerrain(j) != null && m_terrainColors[j] != null) {
                 if (j == Terrains.ROAD || j == Terrains.BRIDGE) {
-                    int[] roadHex = {boardX, boardY, x.getTerrain(j).getExits()};
-                    roadHexIndexes.addElement(roadHex);
                     continue;
                 }
                 terrColor = m_terrainColors[j];
@@ -927,6 +1015,7 @@ public class MiniMap extends Canvas {
                 break;
             }
         }
+        int level = 0;
 
         int r, g, b;
         switch (terrain) {
@@ -1021,21 +1110,26 @@ public class MiniMap extends Canvas {
 
         return new Coords(gridX, gridY);
     }
-
+    protected void zoomIn() {
+        if (zoom == 0) return;
+        zoom--;
+        initializeMap();    
+    }
+    protected void zoomOut() {
+        if (zoom == (hexSide.length - 1)) return;
+        zoom++;
+        initializeMap();    
+    }
     private void processMouseClick(int x, int y, MouseEvent me) {
         if (y > (getSize().height - 14)) {
 
             if (x < 14) {
-                if (zoom == 0) return;
-                zoom--;
-                initializeMap();
+                zoomIn();
             } else if (x < 28 && zoom > 2) {
                 heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
                 initializeMap();
             } else if (x > (getSize().width - 14)) {
-                if (zoom == (hexSide.length - 1)) return;
-                zoom++;
-                initializeMap();
+                zoomOut();
             } else {
                 if (minimized) {
                     //m_dialog.setResizable(true);
@@ -1072,7 +1166,23 @@ public class MiniMap extends Canvas {
         public void boardNewBoard(BoardEvent b) {
             initializeMap();
         }
-
+        public void boardChangedHex(BoardEvent b) {
+            if(dirty==null)
+            {
+                dirtyMap=true;
+            } else{  
+                /*  this must be tolerant since it might be called 
+                    without  notifying us of the boardsize first*/
+                int x=b.getCoords().x;
+                int y=b.getCoords().y;
+                if(x>=dirty.length||y>=dirty[x].length) {
+                    dirtyMap=true;                    
+                    return;
+                }
+                dirty[x/10][y/10]=true;
+            }
+            
+        }
     };
 
     protected GameListener gameListener = new GameListenerAdapter() {

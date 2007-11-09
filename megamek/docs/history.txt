@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.11-dev (SVN)
+v0.33.11 (2007-11-09, 15:26 GMT+2)
 + Bug 1748167: Spot-and-fire penalty being applied to TAG/Semi-Guided
 + Updated equipment.txt
 + Automatically generate equipment.txt whenever ant is used to compile MM.
@@ -25,6 +25,7 @@ v0.33.11-dev (SVN)
 + Bug 1587654: NPE resolving nuclear effects on offboard units
 + Patch 1827968: swing minimap and network improvements
 + More Celestial images
++ Updated build.xml to allow automatically built client releases
 
 v0.33.10 (2007-10-28, 16:13 GMT+1)
 + Implemented Retractable Blades. TODO: make them actually retractable (should be able

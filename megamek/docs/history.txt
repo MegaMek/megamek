@@ -24,6 +24,7 @@ v0.33.11-dev (SVN)
 + Sometimes our target loses it's position, causing the display thread to throw an NPE
 + Bug 1587654: NPE resolving nuclear effects on offboard units
 + Patch 1827968: swing minimap and network improvements
++ More Celestial images
 
 v0.33.10 (2007-10-28, 16:13 GMT+1)
 + Implemented Retractable Blades. TODO: make them actually retractable (should be able

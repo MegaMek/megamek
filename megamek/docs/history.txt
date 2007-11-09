@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.33.12-dev (SVN)
+
 v0.33.11 (2007-11-09, 15:26 GMT+2)
 + Bug 1748167: Spot-and-fire penalty being applied to TAG/Semi-Guided
 + Updated equipment.txt

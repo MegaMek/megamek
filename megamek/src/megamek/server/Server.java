@@ -15993,9 +15993,9 @@ public class Server implements Runnable {
 		while (entitiesInCrater.hasMoreElements()) {
 			Entity entity = (Entity) entitiesInCrater.nextElement();
 
-			// loaded units don't have a position,
+			// loaded units and off board units don't have a position,
 			// so we don't count 'em here
-			if (entity.getTransportId() != Entity.NONE)
+			if (entity.getTransportId() != Entity.NONE || entity.getPosition() == null)
 				continue;
 
 			// If it's too far away for this...
@@ -16142,12 +16142,17 @@ public class Server implements Runnable {
 		while (entitiesInSecondaryRange.hasMoreElements()) {
 			Entity entity = (Entity) entitiesInSecondaryRange.nextElement();
 
-			// If it's too far away for this...
-			if (position.distance(entity.getPosition()) > secondaryRadius)
-				continue;
+            // loaded units and off board units don't have a position,
+            // so we don't count 'em here
+            if (entity.getTransportId() != Entity.NONE || entity.getPosition() == null)
+                continue;
 
-			// If it's already destroyed...
-			if ((entity.isDoomed()) || (entity.isDestroyed()))
+            // If it's already destroyed...
+            if ((entity.isDoomed()) || (entity.isDestroyed()))
+                continue;
+            
+            // If it's too far away for this...
+			if (position.distance(entity.getPosition()) > secondaryRadius)
 				continue;
 
 			// Actually do secondary effects against it.

@@ -22,6 +22,7 @@ v0.33.11-dev (SVN)
 + Fix BV bug for Mechs, explose equipment did not subtract correctly in most cases
 + Bug 1600957: Selected boards could be null (our placeholder for "surprise") which caused an NPE in some cases
 + Sometimes our target loses it's position, causing the display thread to throw an NPE
++ Bug 1587654: NPE resolving nuclear effects on offboard units
 
 v0.33.10 (2007-10-28, 16:13 GMT+1)
 + Implemented Retractable Blades. TODO: make them actually retractable (should be able

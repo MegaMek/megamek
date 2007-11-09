@@ -41,7 +41,6 @@ public class ConnectionFactory {
      * @return new client (client-server) connection
      */
     public Connection createClientConnection(String host, int port, int id) {
-        //return new ObjectStreamConnection(host, port, id);
         return new DataStreamConnection(host, port, id);
     }
 
@@ -52,7 +51,6 @@ public class ConnectionFactory {
      * @return new Server coinnection
      */
     public Connection createServerConnection(Socket socket, int id) {
-        //return new ObjectStreamConnection(socket, id);        
-        return new DataStreamConnection(socket, id);        
+        return new DataStreamConnection(socket, id);
     }
 }

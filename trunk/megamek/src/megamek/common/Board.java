@@ -30,6 +30,7 @@ import java.io.StreamTokenizer;
 import java.io.Writer;
 import java.util.Enumeration;
 import java.util.Vector;
+import java.util.Date;
 
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
@@ -239,7 +240,7 @@ public class Board implements Serializable, IBoard {
         } else {
             bldgByCoords.clear();
         }
-
+        System.out.println("started initializing"+new Date());
         // Walk through the hexes, creating buildings.
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -326,7 +327,7 @@ public class Board implements Serializable, IBoard {
                 } // End hex-has-bridge                    
             }
         }
-
+        System.out.println("hexes initializing"+new Date());
         // Initialize all exits.
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
@@ -335,6 +336,7 @@ public class Board implements Serializable, IBoard {
         }
         // good time to ensure hex cache
         IdealHex.ensureCacheSize(width + 1, height + 1);
+        System.out.println("ended initializing"+new Date());
 
     } // End private void initializeAll()
     
@@ -554,7 +556,7 @@ public class Board implements Serializable, IBoard {
     public void load(InputStream is) {
         int nw = 0, nh = 0, di = 0;
         IHex[] nd = new IHex[0];
-        
+        System.out.println("loading board"+new Date());
         try {
             Reader r = new BufferedReader(new InputStreamReader(is));
             StreamTokenizer st = new StreamTokenizer(r);
@@ -614,6 +616,7 @@ public class Board implements Serializable, IBoard {
             System.err.println("i/o error reading board");
             System.err.println(ex);
         }
+        System.out.println("loading board,loaded, processing"+new Date());
         
         // fill nulls with blank hexes
         for (int i = 0; i < nd.length; i++) {
@@ -628,6 +631,8 @@ public class Board implements Serializable, IBoard {
         } else {
             System.err.println("board data invalid");
         }
+        System.out.println("done loading board"+new Date());
+
     }
     
     private int indexFor(String hexNum, int width, int row) {

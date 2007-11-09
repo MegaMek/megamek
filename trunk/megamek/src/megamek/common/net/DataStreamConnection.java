@@ -16,6 +16,7 @@ package megamek.common.net;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -24,7 +25,7 @@ import java.net.Socket;
  * to send/receive data.    
  *
  */
-class DataStreamConnection extends Connection {
+class DataStreamConnection extends AbstractConnection {
 
     /**
      * Input stream
@@ -58,9 +59,11 @@ class DataStreamConnection extends Connection {
     protected INetworkPacket readNetworkPacket() throws Exception {
         NetworkPacket packet = null;
         if (in == null) {
-            in = new DataInputStream(getInputStream());
+            in = new DataInputStream(
+                new BufferedInputStream(getInputStream()));
         }
-
+        if(in.available()<5) //if less than header fields, dont read it
+            return null;
         boolean zipped = in.readBoolean();
         int encoding = in.readInt();
         int len = in.readInt();
@@ -72,7 +75,8 @@ class DataStreamConnection extends Connection {
 
     protected void sendNetworkPacket(byte[] data, boolean zipped) throws Exception {
         if (out == null) {
-            out = new DataOutputStream(getOutputStream());
+            out = new DataOutputStream(
+                        new BufferedOutputStream(getOutputStream()));
             out.flush();
         }
 

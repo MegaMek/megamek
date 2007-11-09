@@ -1,7 +1,10 @@
 ﻿Lot of people have contributed to the MegaMek project.
 
-  Original author and present maintainer:
+  Original author:
      Ben Mazur <bmazur@sev.org>
+     
+  Current maintainer:
+     Sebastian Brocks <beerockxs@users.sourceforge.net>
 
   AI Coding:
      Steven Hawkins <skh_mail@yahoo.com>

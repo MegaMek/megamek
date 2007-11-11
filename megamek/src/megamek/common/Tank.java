@@ -105,7 +105,6 @@ public class Tank
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
         if (gravity) j = applyGravityEffectsOnMP(j);
-        else j = getOriginalWalkMP();
         if (game != null) {
             i = game.getTemperatureDifference();
             return Math.max(j - i, 0);

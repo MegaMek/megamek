@@ -27,7 +27,7 @@ import megamek.common.util.CircularIntegerBuffer;
 /**
  * Generic bidirectional connection between client and server
  */
-public abstract class AbstractConnection implements Connection {
+public abstract class AbstractConnection implements IConnection {
 
     /*
      * mev wrote:
@@ -69,18 +69,6 @@ public abstract class AbstractConnection implements Connection {
      * The connection ID
      */
     private int id;
-
-    /**
-     * Receiver thread
-     */
-    private Thread receiver;
-
-    /**
-     * Sender thread 
-     */
-    private Thread sender;
-    
-    private Thread singleThread;
 
     /**
      * Bytes send during the connection lifecycle
@@ -194,7 +182,6 @@ public abstract class AbstractConnection implements Connection {
                 }
             }               
             open = true;
-            initThreads();
         }
         return true;
     }
@@ -207,8 +194,6 @@ public abstract class AbstractConnection implements Connection {
             System.err.print(getConnectionTypeAbbrevation());
             sendQueue.reportContents();
             sendQueue.finish();
-            receiver = null;
-            sender = null;
             try {
                 if (socket != null) {
                     socket.close();
@@ -485,27 +470,6 @@ public abstract class AbstractConnection implements Connection {
      */
     protected void processPacket(SendPacket packet) throws Exception {
         sendNow(packet);
-    }
-    /**
-     * Initializes the sender and receiver threads
-     */
-    private void initThreads() {
-        /*
-            replace these threads first with a single thread 
-            that does the update by calling a single method
-        */
-        Runnable singleRunnable=new Runnable() {
-            public void run() {
-                while (singleThread==Thread.currentThread()) {
-                    try {
-                        Thread.sleep(update());
-                    } catch(InterruptedException ie){
-                    }
-                }
-            }
-        };
-        //singleThread=new Thread(singleRunnable);
-        //singleThread.start();            
     }
     
     /**

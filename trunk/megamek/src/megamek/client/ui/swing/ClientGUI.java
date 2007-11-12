@@ -347,7 +347,7 @@ public class ClientGUI
         uo = new UnitOverview(this);
         bv.addDisplayable(uo);
         bv.addMouseListener(this);
-        bv.addKeyListener(this);
+        bv.addKeyListener(this);        
         bv.add(popup);
         Dimension screenSize = frame.getToolkit().getScreenSize();
         int x;
@@ -632,11 +632,6 @@ public class ClientGUI
             error.printStackTrace();
         }
         client.die();
-
-        //TODO Is there a better solution?
-        //This is required because the BoardView creates the redraw thread 
-        //that must be stopped explicitly 
-        bv.die();
         
         //TODO Is there a better solution?
         //This is required because the ChatLounge adds the listener to the

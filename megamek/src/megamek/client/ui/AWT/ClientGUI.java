@@ -673,11 +673,6 @@ public class ClientGUI
         }
 
         client.die();        
-
-        //TODO Is there a better solution?
-        //This is required because the BoardView creates the redraw thread 
-        //that must be stopped explicitly 
-        bv.die();
         
         //TODO Is there a better solution?
         //This is required because the ChatLounge adds the listener to the

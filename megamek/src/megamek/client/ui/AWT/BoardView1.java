@@ -48,11 +48,8 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
+import javax.swing.SwingUtilities;
+import java.util.*;
 
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -63,6 +60,7 @@ import megamek.client.ui.AWT.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.AWT.util.KeyAlphaFilter;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.util.StraightArrowPolygon;
+import megamek.client.TimerSingleton;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -265,7 +263,6 @@ public class BoardView1
     private Coords selected;
     private Coords firstLOS;
     
-    private RedrawWorker redrawWorker = new RedrawWorker();
 
     //selected entity and weapon for artillery display
     private Entity selectedEntity = null;
@@ -288,7 +285,8 @@ public class BoardView1
 
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
-        redrawWorker.start();
+        scheduleRedraw();
+
         addKeyListener(this);
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -326,7 +324,18 @@ public class BoardView1
         
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
     }
-    
+    protected void scheduleRedraw() {
+        final RedrawWorker redrawWorker = new RedrawWorker();
+        final TimerTask redraw=new TimerTask() {
+            public void run() {
+                try {
+                    SwingUtilities.invokeAndWait(redrawWorker);
+                } catch(Exception ie) {
+                }
+            }
+        };
+        TimerSingleton.getInstance().schedule(redraw,20,20);            
+    }
     public void preferenceChange(PreferenceChangeEvent e) {
         if(e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
@@ -1705,7 +1714,7 @@ public class BoardView1
 
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
-
+        
         for (int i = 0; i < C3Sprites.size(); i++) {
             C3Sprite c3sprite = C3Sprites.get(i);
             if (c3sprite.entityId == entity.getId()) {
@@ -4404,12 +4413,6 @@ public class BoardView1
         }
     }
 
-    //TODO Is there a better solution?
-    //This is required because the BoardView creates the redraw thread 
-    //that must be stopped explicitly     
-    public void die() {
-        redrawWorker.stop();
-    }
 
     private GameListener gameListener = new GameListenerAdapter(){
         
@@ -4502,41 +4505,20 @@ public class BoardView1
         redrawAllEntities();
     }
     
-    /*
-     * It's not quite polished solution, but on other hand it's better then nothing.
+    /**
+     *  the old redrawworker converted to a runnable which is called
+     *  now and then from the event thread
      */
     protected class RedrawWorker implements Runnable {
 
-        private boolean finished = false;
-
-        public void start() {
-            Thread thread = new Thread(this, "BoardView RedrawWorker Thread"); //$NON-NLS-1$
-            thread.start();
-            
-        }
-        
-        public void stop() {
-            finished = true;
-        }
-
-        public void run() {
-            long lastTime = System.currentTimeMillis();
-            long currentTime = System.currentTimeMillis();
-            while (!finished) {
-                try {
-                    Thread.sleep(20);
-                } catch(InterruptedException ex) {
-                    // duh?
-                }
-                if (finished) {
-                    break;
-                }
-                if (!isShowing()) {
-                    currentTime = System.currentTimeMillis();
-                    lastTime = currentTime;
-                    continue;
-                }
-                currentTime = System.currentTimeMillis();
+        protected long lastTime=System.currentTimeMillis();
+        protected long currentTime=System.currentTimeMillis();
+        /**
+         *  somebody please document wth this is doing..- itmo
+         */
+        public void run()  {
+            currentTime = System.currentTimeMillis();
+            if(isShowing()) {
                 boolean redraw = false;
                 for (int i = 0; i < displayables.size(); i++) {
                     Displayable disp = displayables.get(i);
@@ -4556,8 +4538,8 @@ public class BoardView1
                 if (redraw) {
                     repaint();
                 }
-                lastTime = currentTime;
             }
+            lastTime = currentTime;
         }
     }
 

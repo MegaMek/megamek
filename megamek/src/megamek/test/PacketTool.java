@@ -22,7 +22,7 @@ import java.net.Socket;
 import java.net.ServerSocket;
 import javax.swing.SwingUtilities;
 import megamek.common.Board;
-import megamek.common.net.Connection;
+import megamek.common.net.IConnection;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
@@ -75,7 +75,7 @@ public class PacketTool extends Frame implements Runnable {
     /**
      * The connection to the other peer.
      */
-    private Connection conn = null;
+    private IConnection conn = null;
 
     /**
      * Display a window for testing the transmission of boards.
@@ -192,7 +192,7 @@ public class PacketTool extends Frame implements Runnable {
                 {
                     public void run()
                     {                    
-                        Connection connection=PacketTool.this.conn;
+                        IConnection connection=PacketTool.this.conn;
                         if(connection!=null)
                             connection.update();
                     }
@@ -421,7 +421,7 @@ public class PacketTool extends Frame implements Runnable {
      *
      * @param   conn - the <code>Connection</code> that has terminated.
      */ 
-    public synchronized void disconnected( Connection conn ) {
+    public synchronized void disconnected( IConnection conn ) {
         // write something in the log
         System.out.println("s: connection " + conn.getId() + " disconnected");
         

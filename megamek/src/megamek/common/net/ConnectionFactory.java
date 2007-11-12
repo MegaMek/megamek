@@ -40,7 +40,7 @@ public class ConnectionFactory {
      * @param id connection ID
      * @return new client (client-server) connection
      */
-    public Connection createClientConnection(String host, int port, int id) {
+    public IConnection createClientConnection(String host, int port, int id) {
         return new DataStreamConnection(host, port, id);
     }
 
@@ -50,7 +50,7 @@ public class ConnectionFactory {
      * @param id connection ID
      * @return new Server coinnection
      */
-    public Connection createServerConnection(Socket socket, int id) {
+    public IConnection createServerConnection(Socket socket, int id) {
         return new DataStreamConnection(socket, id);
     }
 }

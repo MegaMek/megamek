@@ -14,22 +14,12 @@
 
 package megamek.common.net;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
-
-import megamek.common.net.marshall.PacketMarshaller;
-import megamek.common.net.marshall.PacketMarshallerFactory;
-import megamek.common.util.CircularIntegerBuffer;
-
 /**
  * interface for connections between client and server
  *  refactored from the original Connection class which was moved to
  *  AbstractConnection
  */
-public interface Connection {
+public interface IConnection {
     /**
      * Opens the connection
      * @return <code>true</code> on success, <code>false</code> otherwise

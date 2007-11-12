@@ -42,7 +42,7 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.net.Connection;
+import megamek.common.net.IConnection;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
@@ -65,7 +65,7 @@ public class Client implements IClientCommandHandler {
     // we need these to communicate with the server
     private String name;
     
-    private Connection connection; 
+    private IConnection connection; 
     
     //the hash table of client commands
     private Hashtable<String, ClientCommand> commandsHash = new Hashtable<String, ClientCommand>();
@@ -134,11 +134,13 @@ public class Client implements IClientCommandHandler {
         registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
         
-        
+        TimerSingleton ts=TimerSingleton.getInstance();        
         /*  this should be moved to UI implementations so 
             that they are responsible for figuring out who
-            should call update for connection*/
-        Timer t=new Timer(true);
+            should call update for connection..
+            so if somebody does a text-only implementation
+            which doesnt support AWT event queue, we dont
+            depend on it*/
         final Runnable packetUpdate=new Runnable() {
             public void run()
             {                    
@@ -154,7 +156,7 @@ public class Client implements IClientCommandHandler {
                 }
             }
         };
-        t.schedule(packetUpdate2,500,150);        
+        ts.schedule(packetUpdate2,500,150);        
     }
 
     /**

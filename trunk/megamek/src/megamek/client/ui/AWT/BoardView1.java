@@ -1734,7 +1734,7 @@ public class BoardView1
 
         if(entity.hasC3() || entity.hasC3i()) addC3Link(entity);
 
-        repaint(100);
+        scheduleRedraw();
     }
 
     /**
@@ -1770,7 +1770,7 @@ public class BoardView1
         entitySpriteIds = newSpriteIds;
         wreckSprites = newWrecks;
 
-        repaint(100);
+        scheduleRedraw();
     }
 
     /**

@@ -5,6 +5,7 @@ v0.33.12-dev (SVN)
 + Tanks movement not getting adjusted for carried cargo
    when not in extreme gravity
 + Patch 1830140: AWT/swing redrawworker improvement
++ Bug 1831073: B-Pods should explode upon crit
 
 v0.33.11 (2007-11-09, 15:26 GMT+2)
 + Bug 1748167: Spot-and-fire penalty being applied to TAG/Semi-Guided

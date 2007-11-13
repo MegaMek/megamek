@@ -20198,9 +20198,14 @@ public class Server implements Runnable {
             toUpdate.clear();
             toUpdate.addAll(connections);
             toUpdate.addAll(connectionsPending);
+            /*  process stuff*/
             Iterator<IConnection> it=toUpdate.iterator();            
             while(it.hasNext())
                 it.next().update();
+            /*  then make sure stuff is sent away*/
+            it=toUpdate.iterator();
+            while(it.hasNext())
+                it.next().flush();
 		}
 	}
 

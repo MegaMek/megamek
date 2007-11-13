@@ -407,7 +407,8 @@ public abstract class AbstractConnection implements IConnection {
     }
     /**
      *  checks if there is anything to send or receive and
-     *  sends or receives that stuff. Should not block
+     *  sends or receives that stuff. Should not block and will
+     *  not flush the actual socket, just the packet sendqueue
      *
      *  should not block for too long at a time, instead should
      *  return 0 and hope to be called soon again
@@ -416,15 +417,7 @@ public abstract class AbstractConnection implements IConnection {
      *          must return >=0 always
      */
     public synchronized long update() {
-        SendPacket packet=null;
-        try {
-            while ((packet=sendQueue.getPacket())!=null) {
-                processPacket(packet);
-            }
-        }catch (Exception e) {
-            reportSendException(e, packet);
-            close();
-        }        
+        flush();
         INetworkPacket np;
         try {
             while ((np=readNetworkPacket())!=null) {
@@ -436,6 +429,23 @@ public abstract class AbstractConnection implements IConnection {
             close();
         }                   
         return 50;
+    }
+    /**
+     *  this is the method that should be overridden
+     */
+    public synchronized void flush() {
+        doFlush();
+    }
+    protected synchronized void doFlush() {
+        SendPacket packet=null;
+        try {
+            while ((packet=sendQueue.getPacket())!=null) {
+                processPacket(packet);
+            }
+        } catch (Exception e) {
+            reportSendException(e, packet);
+            close();
+        }                
     }
     /**
      *  process a received packet

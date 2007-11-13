@@ -62,7 +62,11 @@ public interface IConnection {
      *          to call this method. Must return >=0
      */
     public long update();
-
+    /**
+     *  sibling of the update() method. will not read anything, will 
+     *  just flush the pending packets from the queue
+     */
+    public void flush();
     /**
      * Adds a packet to the send queue to be send on a seperate thread.
      */

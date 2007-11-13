@@ -55,38 +55,72 @@ class DataStreamConnection extends AbstractConnection {
     public DataStreamConnection(String host, int port, int id) {
         super(host, port, id);
     }
-
+    /**
+     *  store data for packet reception statemachine
+     */
+    protected boolean zipped=false;
+    protected int encoding=-1;
+    protected int len=0;    
+    protected PacketReadState state=PacketReadState.Header;
     protected INetworkPacket readNetworkPacket() throws Exception {
         NetworkPacket packet = null;
         if (in == null) {
             in = new DataInputStream(
                 new BufferedInputStream(getInputStream()));
+            state=PacketReadState.Header;
         }
-        if(in.available()<5) //if less than header fields, dont read it
-            return null;
-        boolean zipped = in.readBoolean();
-        int encoding = in.readInt();
-        int len = in.readInt();
-        byte[] data = new byte[len];
-        in.readFully(data);
-        packet = new NetworkPacket(zipped, encoding, data);
-        return packet;
+        
+        switch(state) {
+            case Header:
+                if(in.available()<9)
+                    return null;
+                zipped=in.readBoolean();
+                encoding=in.readInt();
+                len=in.readInt();
+                state=PacketReadState.Data;
+                //drop through on purpose
+            case Data: 
+                if(in.available()<len) 
+                    return null;
+                byte[] data=new byte[len];
+                in.readFully(data); 
+                packet=new NetworkPacket(zipped,encoding,data);
+                state=PacketReadState.Header;
+                return packet;
+            default:
+                assert(false);
+        }
+        assert(false);
+        return null;
     }
 
     protected void sendNetworkPacket(byte[] data, boolean zipped) throws Exception {
         if (out == null) {
             out = new DataOutputStream(
                         new BufferedOutputStream(getOutputStream()));
-            out.flush();
+            //out.flush(); thsi should be unnecessary?
         }
 
         out.writeBoolean(zipped);
         out.writeInt(marshallingType);
         out.writeInt(data.length);
         out.write(data);
-        out.flush();
+        //out.flush(); avoid flushing before all packets are sent
+    }    
+    /**
+     *  override flush to flush the datastream after flushing
+     *  packetqueue
+     */
+    public synchronized void flush() {
+        super.flush();
+        try{
+            if(out!=null)
+                out.flush();            
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+            //ignore since we cant do shit about it
+        }
     }
-
     private static class NetworkPacket  implements INetworkPacket {
         
         /**
@@ -128,4 +162,9 @@ class DataStreamConnection extends AbstractConnection {
             return compressed;
         }
     }    
+}
+enum PacketReadState
+{
+    Header, //next will be header data
+    Data;
 }

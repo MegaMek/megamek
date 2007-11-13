@@ -1839,6 +1839,7 @@ public class MiscType extends EquipmentType {
         misc.criticals = 1;
         misc.hittable = true;
         misc.cost = 0;
+        misc.explosive = true;
         misc.spreadable = false;
         misc.flags |= F_B_POD;
         misc.bv = 0;

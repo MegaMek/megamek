@@ -6,6 +6,12 @@ v0.33.12-dev (SVN)
    when not in extreme gravity
 + Patch 1830140: AWT/swing redrawworker improvement
 + Bug 1831073: B-Pods should explode upon crit
++ Major change to Swing GUI.  Four major issues remain:
+  a) the initial board paint won't display until a redraw is forced.
+  b) keyboard scroll and right click scroll have been disabled.
+  c) zooming does not work.
+  d) LOS Ruler has been disabled.
++ Synchronized AWT and Swing GUIs to current date (11/15/07)
 
 v0.33.11 (2007-11-09, 15:26 GMT+2)
 + Bug 1748167: Spot-and-fire penalty being applied to TAG/Semi-Guided

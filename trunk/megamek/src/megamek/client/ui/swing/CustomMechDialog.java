@@ -99,6 +99,8 @@ public class CustomMechDialog
     private JCheckBox chAutoEject = new JCheckBox();
     private JLabel labSearchlight = new JLabel(Messages.getString("CustomMechDialog.labSearchlight"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JCheckBox chSearchlight = new JCheckBox();
+    private JLabel labCommander = new JLabel(Messages.getString("CustomMechDialog.labCommander"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JCheckBox chCommander = new JCheckBox();
 
     private JLabel labOffBoard = new JLabel(Messages.getString("CustomMechDialog.labOffBoard"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JCheckBox chOffBoard = new JCheckBox();
@@ -413,6 +415,20 @@ public class CustomMechDialog
             tempPanel.add(chSearchlight);
             chSearchlight.setSelected(entity.hasSpotlight());
         }
+        
+        // Set up commanders for commander killed victory condition
+        if (clientgui.getClient().game.getOptions().booleanOption("commander_killed")) { //$NON-NLS-1$
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labCommander, c);
+            tempPanel.add(labCommander);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(chCommander, c);
+            tempPanel.add(chCommander);
+            chCommander.setSelected(entity.isCommander());        
+        }
 
         // Set up mines
         setupMines();
@@ -443,6 +459,7 @@ public class CustomMechDialog
             chAutoEject.setEnabled(false);
             chSearchlight.setEnabled(false);
             choTargSys.setEnabled(false);
+            chCommander.setEnabled(false);
             disableMunitionEditing();
             disableMGSetting();
             disableMineSetting();

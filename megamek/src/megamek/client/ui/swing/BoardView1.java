@@ -1,24 +1,48 @@
 package megamek.client.ui.swing;
-/*
- * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
-import megamek.client.ui.swing.util.ImageCache;
-import megamek.client.ui.swing.util.ImprovedAveragingScaleFilter;
+
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Rectangle;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageObserver;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TimerTask;
+import java.util.Vector;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.Scrollable;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+
+import megamek.client.TimerSingleton;
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListener;
+import megamek.client.event.MechDisplayEvent;
+import megamek.client.event.MechDisplayListener;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -40,56 +64,8 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
-import megamek.common.Terrains;
 import megamek.common.UnitLocation;
-import megamek.common.WeaponResult;
 import megamek.common.WeaponType;
-import megamek.client.ui.swing.Messages;
-
-import java.awt.Adjustable;
-import java.awt.AlphaComposite;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Frame;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.Point;
-import java.awt.Polygon;
-import java.awt.Rectangle;
-import java.awt.Scrollbar;
-import java.awt.SystemColor;
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageFilter;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
-import javax.swing.SwingUtilities;
-
-import java.util.*;
-
-import javax.swing.JOptionPane;
-
-import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListener;
-import megamek.client.event.MechDisplayEvent;
-import megamek.client.event.MechDisplayListener;
-import megamek.client.TimerSingleton;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ChargeAttackAction;
@@ -105,26 +81,40 @@ import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
-import megamek.common.event.GameEntityRemoveEvent;
-import megamek.common.event.GameNewActionEvent;
-import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameBoardChangeEvent;
+import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
+import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
+/*
+ * MegaMek -
+ * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
+ *
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView1
-    extends Canvas
-    implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, AdjustmentListener, MechDisplayListener, IPreferenceChangeListener
+    extends JPanel
+    implements IBoardView, Scrollable, BoardListener, MouseListener, KeyListener, MechDisplayListener, IPreferenceChangeListener
 {
 
     private static final long serialVersionUID = -5582195884759007416L;
@@ -135,64 +125,28 @@ public class BoardView1
     private static final int        HEX_H = 72;
     private static final int        HEX_WC = HEX_W - HEX_W/4;
     
-    // The list of valid zoom factors.  Other values cause map aliasing,
-    // I can't be bothered figuring out why.  - Ben
-    private static final float[] ZOOM_FACTORS =
-            {   0.30f, 0.41f, 0.50f,
-                0.60f, 0.68f, 0.79f,
-                0.90f, 1.00f
-                //1.09f, 1.17f
-            };
-    
-    // the index of zoom factor 1.00f
-    private static final int BASE_ZOOM_INDEX = 7;
-
     // line width of the c3 network lines
     private static final int C3_LINE_WIDTH = 1;
 
-    private static Font FONT_7 = new Font("SansSerif", Font.PLAIN, 7); //$NON-NLS-1$
-    private static Font FONT_8 = new Font("SansSerif", Font.PLAIN, 8); //$NON-NLS-1$
-    private static Font FONT_9 = new Font("SansSerif", Font.PLAIN, 9); //$NON-NLS-1$
     private static Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
     private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12); //$NON-NLS-1$
 
     private Dimension       hex_size = null;
     
     private Font       font_hexnum          = FONT_10;
-    private Font       font_elev        = FONT_9;
     private Font       font_minefield   = FONT_12;
 
     private IGame game;
-    private Frame frame;
+    private JFrame frame;
 
-    private Point       mousePos = new Point();
-    private Rectangle   view = new Rectangle();
-    private Point       offset = new Point();
     private Dimension boardSize;
 
     // scrolly stuff:
-    private Scrollbar vScrollbar = null;
-    private Scrollbar hScrollbar = null;
-    private boolean isScrolling = false;
-    private Point scroll = new Point();
-    private boolean initCtlScroll;
-    private boolean ctlKeyHeld = false;
-    private int previousMouseX;
-    private int previousMouseY;
-
-    // back buffer to draw to
-    private Image backImage;
-    private Dimension backSize;
-    private Graphics backGraph;
-
-    // buffer for all the hexes you can possibly see
-    private Image boardImage;
-    private Rectangle boardRect;
-    private Graphics boardGraph;
-
+    private JScrollPane scrollpane = null;
+    
     // entity sprites
-    private Vector<EntitySprite> entitySprites = new Vector<EntitySprite>();
-    private Hashtable<Integer,EntitySprite> entitySpriteIds = new Hashtable<Integer,EntitySprite>();
+    private ArrayList<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
+    private HashMap<Integer,EntitySprite> entitySpriteIds = new HashMap<Integer,EntitySprite>();
 
     // sprites for the three selection cursors
     private CursorSprite cursorSprite;
@@ -202,18 +156,13 @@ public class BoardView1
     private CursorSprite secondLOSSprite;
 
     // sprite for current movement
-    private Vector<StepSprite> pathSprites = new Vector<StepSprite>();
+    private ArrayList<StepSprite> pathSprites = new ArrayList<StepSprite>();
 
     // vector of sprites for all firing lines
-    private Vector<AttackSprite> attackSprites = new Vector<AttackSprite>();
+    private ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
 
     // vector of sprites for C3 network lines
-    private Vector<C3Sprite> C3Sprites = new Vector<C3Sprite>();
-
-    // tooltip stuff
-    private Window tipWindow;
-    private boolean isTipPossible = false;
-    private long lastIdle;
+    private ArrayList<C3Sprite> C3Sprites = new ArrayList<C3Sprite>();
 
     private TilesetManager tileManager = null;
 
@@ -232,67 +181,46 @@ public class BoardView1
     private boolean              useLOSTool = true;
 
     // Initial scale factor for sprites and map
-    public      int                     zoomIndex;
-    private float               scale;
-    private ImageCache<Image,Image> scaledImageCache = new ImageCache<Image,Image>();
+    private float               scale = 1.00f;
         
     // Displayables (Chat box, etc.)
-    private Vector<Displayable> displayables = new Vector<Displayable>();
+    private ArrayList<Displayable> displayables = new ArrayList<Displayable>();
 
     // Move units step by step
-    private Vector<MovingUnit>               movingUnits = new Vector<MovingUnit>();
+    private ArrayList<MovingUnit>               movingUnits = new ArrayList<MovingUnit>();
     private long                             moveWait = 0;
 
     // moving entity sprites
-    private Vector<MovingEntitySprite> movingEntitySprites = new Vector<MovingEntitySprite>();
-    private Hashtable<Integer,MovingEntitySprite> movingEntitySpriteIds = new Hashtable<Integer,MovingEntitySprite>();
-    private Vector<GhostEntitySprite> ghostEntitySprites = new Vector<GhostEntitySprite>();
-    protected transient Vector<BoardViewListener> boardListeners = new Vector<BoardViewListener>();
+    private ArrayList<MovingEntitySprite> movingEntitySprites = new ArrayList<MovingEntitySprite>();
+    private HashMap<Integer,MovingEntitySprite> movingEntitySpriteIds = new HashMap<Integer,MovingEntitySprite>();
+    private ArrayList<GhostEntitySprite> ghostEntitySprites = new ArrayList<GhostEntitySprite>();
+    protected transient ArrayList<BoardViewListener> boardListeners = new ArrayList<BoardViewListener>();
 
     // wreck sprites
-    private Vector<WreckSprite> wreckSprites = new Vector<WreckSprite>();
+    private ArrayList<WreckSprite> wreckSprites = new ArrayList<WreckSprite>();
 
     private Coords rulerStart; // added by kenn
     private Coords rulerEnd; // added by kenn
     private Color rulerStartColor; // added by kenn
     private Color rulerEndColor; // added by kenn
-
-    // Position of the mouse before right mouse button was pressed. Used to have an anchor for scrolling 
-    private Point oldMousePosition = null;
-    
-    // Indicate that a scrolling took place, so no popup should be drawn on right mouse button release
-    private boolean scrolled = false;
     
     private Coords lastCursor;
     private Coords highlighted;
     private Coords selected;
     private Coords firstLOS;
 
-    private ClientGUI clientgui; //TODO please eliminate the usage of the clientgui 
-    
 
     //selected entity and weapon for artillery display
     private Entity selectedEntity = null;
     private Mounted selectedWeapon = null;
     
     //hexes with ECM effect
-    private Hashtable<Coords, Integer> ecmHexes = null;
-    
-    private boolean dirtyBoard = true;
+    private HashMap<Coords, Integer> ecmHexes = null;
 
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(IGame game, Frame frame) throws java.io.IOException {
-        this(game, frame, null);
-    }
-
-    /**
-     * Construct a new board view for the specified game
-     */
-    public BoardView1(IGame game, Frame frame, ClientGUI clientgui) throws java.io.IOException {
-        //TODO please eliminate the usage of the clientgui
-        this.clientgui = clientgui;
+    public BoardView1(IGame game, JFrame frame) throws java.io.IOException {
         this.game = game;
         this.frame = frame;
 
@@ -303,28 +231,16 @@ public class BoardView1
         scheduleRedraw();
         addKeyListener(this);
         addMouseListener(this);
-        addMouseMotionListener(this);
-        addMouseWheelListener( new MouseWheelListener(){
-            public void mouseWheelMoved(MouseWheelEvent we){
-                if(GUIPreferences.getInstance().getMouseWheelZoom()) {
-                    if (we.getWheelRotation() > 0){
-                            zoomIn();
-                    } else {
-                            zoomOut();
-                    }
-                }
-            }
-        });
-        
-        zoomIndex = GUIPreferences.getInstance().getMapZoomIndex();
-        checkZoomIndex();
-        scale = ZOOM_FACTORS[ zoomIndex ];
-        
-        updateFontSizes();
-        updateBoardSize();
+        MouseMotionListener doScrollRectToVisible = new MouseMotionAdapter() {
+            public void mouseDragged(MouseEvent e) {
+               Rectangle r = new Rectangle(e.getX(), e.getY(), 1, 1);
+               ((JPanel)e.getSource()).scrollRectToVisible(r);
+           }
+        };
+        addMouseMotionListener(doScrollRectToVisible);
+        setAutoscrolls(true);
 
-        // tooltip
-        tipWindow = new Window(frame);
+        updateBoardSize();
         
         hex_size = new Dimension((int)(HEX_W*scale), (int)(HEX_H*scale));
         
@@ -365,7 +281,7 @@ public class BoardView1
      */
     public void addBoardViewListener(BoardViewListener listener) {
         if (!boardListeners.contains(listener)) {
-            boardListeners.addElement(listener);
+            boardListeners.add(listener);
         }
     }
     
@@ -375,7 +291,7 @@ public class BoardView1
      * @param listener the board listener.
      */
     public void removeBoardViewListener(BoardViewListener listener) {
-        boardListeners.removeElement(listener);
+        boardListeners.remove(listener);
     }
 
     /**
@@ -419,26 +335,26 @@ public class BoardView1
         }
     }
 
-    private void addMovingUnit(Entity entity, Vector movePath) {
+    private void addMovingUnit(Entity entity, Vector<UnitLocation> movePath) {
         if ( !movePath.isEmpty() ) {
             MovingUnit m = new MovingUnit(entity, movePath);
-            movingUnits.addElement(m);
+            movingUnits.add(m);
 
             GhostEntitySprite ghostSprite = new GhostEntitySprite(entity);
             ghostEntitySprites.add(ghostSprite);
 
             // Center on the starting hex of the moving unit.
-            UnitLocation loc = ( (UnitLocation) movePath.elementAt(0) );
+            UnitLocation loc = movePath.get(0);
             centerOnHex( loc.getCoords() );
         }
     }
 
     public void addDisplayable(Displayable disp) {
-        displayables.addElement(disp);
+        displayables.add(disp);
     }
 
     public void removeDisplayable(Displayable disp) {
-        displayables.removeElement(disp);
+        displayables.remove(disp);
     }
 
     /**
@@ -447,64 +363,17 @@ public class BoardView1
      * @param   vertical - the vertical <code>Scrollbar</code>
      * @param   horizontal - the horizontal <code>Scrollbar</code>
      */
-    public void setScrollbars (Scrollbar vertical, Scrollbar horizontal) {
-        this.vScrollbar = vertical;
-        this.hScrollbar = horizontal;
-
-        // When the scroll bars are adjusted, update our offset.
-        this.vScrollbar.addAdjustmentListener (this);
-        this.hScrollbar.addAdjustmentListener (this);
+    public void setScrollPane (JScrollPane scrollPane) {
+    	this.scrollpane = scrollPane;
     }
-
-    /**
-     * Update ourself when a scroll bar is adjusted.
-     *
-     * @param   event - the <code>AdjustmentEvent</code> that caused this call.
-     */
-    public void adjustmentValueChanged (AdjustmentEvent event) {
-        Point oldPt = this.scroll;
-        Point newPt = new Point (oldPt.x, oldPt.y);
-        if (event.getAdjustable().getOrientation() == Adjustable.VERTICAL) {
-            newPt.y = event.getValue();
-        } else {
-            newPt.x = event.getValue();
-        }
-        this.scroll.setLocation (newPt);
-        this.repaint();
-    }
-
-    public void paint(Graphics g) {
-        update(g);
-    }
-
+    
     /**
      * Draw the screen!
      */
-    public synchronized void update(Graphics g) {
+    public synchronized void paintComponent(Graphics g) {
         // Limit our size to the viewport of the scroll pane.
-        final Dimension size = getSize();
-        //         final long startTime = System.currentTimeMillis(); // commentme
+        final Dimension size = scrollpane.getViewport().getSize();
 
-        // Make sure our scrollbars have the right sizes.
-        // N.B. A buggy Sun implementation makes me to do this here instead 
-        // of updateBoardSize() (which is where *I* think it belongs).
-        if (null != this.vScrollbar) {
-            this.vScrollbar.setVisibleAmount (size.height);
-            this.vScrollbar.setBlockIncrement (size.height);
-            this.vScrollbar.setUnitIncrement ((int) (scale * HEX_H / 2.0));
-            this.vScrollbar.setMaximum (boardSize.height);
-        }
-        if (null != this.hScrollbar) {
-            this.hScrollbar.setVisibleAmount (size.width);
-            this.hScrollbar.setBlockIncrement (size.width);
-            this.hScrollbar.setUnitIncrement ((int) (scale * HEX_W / 2.0));
-            this.hScrollbar.setMaximum (boardSize.width);
-        }
-
-        // update view, offset
-        view.setLocation(scroll);
-        view.setSize(getOptimalView(size));
-        offset.setLocation(getOptimalOffset(size));
 
         if (!this.isTileImagesLoaded()) {
             g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50); //$NON-NLS-1$
@@ -515,68 +384,54 @@ public class BoardView1
             return;
         }
 
-        // make sure back buffer is valid
-        if (backGraph == null || !view.getSize().equals(backSize)) {
-            // make new back buffer
-            backSize = view.getSize();
-            backImage = createImage(backSize.width, backSize.height);
-            backGraph = backImage.getGraphics();
-        }
-        
-        // make sure board rectangle contains our current view rectangle
-        if (boardImage == null || !boardRect.union(view).equals(boardRect) || dirtyBoard) {
-            updateBoardImage();
-        }
-
-        // draw onto the back buffer:
-
         // draw the board
-        backGraph.drawImage(boardImage, 0, 0, this);
+        drawHexes(g);
 
         // draw wrecks
         if (GUIPreferences.getInstance().getShowWrecks()) {
-            drawSprites(wreckSprites);
+            drawSprites(g,wreckSprites);
         }
 
         // Minefield signs all over the place!
-        drawMinefields();
+        drawMinefields(g);
         
         // Artillery targets
-        drawArtilleryHexes();
+        drawArtilleryHexes(g);
 
         // draw highlight border
-        drawSprite(highlightSprite);
+        drawSprite(g,highlightSprite);
 
         // draw cursors
-        drawSprite(cursorSprite);
-        drawSprite(selectedSprite);
-        drawSprite(firstLOSSprite);
-        drawSprite(secondLOSSprite);
+        drawSprite(g,cursorSprite);
+        drawSprite(g,selectedSprite);
+        drawSprite(g,firstLOSSprite);
+        drawSprite(g,secondLOSSprite);
 
         // draw deployment indicators
         if (m_plDeployer != null) {
-            drawDeployment();
+            drawDeployment(g);
         }
 
         // draw C3 links
-        drawSprites(C3Sprites);
+        drawSprites(g,C3Sprites);
 
         // draw onscreen entities
-        drawSprites(entitySprites);
+        drawSprites(g,entitySprites);
 
         // draw moving onscreen entities
-        drawSprites(movingEntitySprites);
+        drawSprites(g,movingEntitySprites);
 
         // draw ghost onscreen entities
-        drawSprites(ghostEntitySprites);
+        drawSprites(g,ghostEntitySprites);
 
         // draw onscreen attacks
-        drawSprites(attackSprites);
+        drawSprites(g,attackSprites);
 
         // draw movement, if valid
-        drawSprites(pathSprites);
+        drawSprites(g,pathSprites);
 
         // added by kenn
+        /* TODO fix the ruler business
         // draw the ruler line
         if (rulerStart != null) {
             Point start =  getCentreHexLocation(rulerStart);
@@ -592,29 +447,13 @@ public class BoardView1
             backGraph.setColor(rulerStartColor);
             backGraph.fillRect(start.x - boardRect.x - 1, start.y - boardRect.y - 1, 2, 2);
         }
-        // end kenn
+        // end kenn */
 
         // draw all the "displayables"
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = displayables.elementAt(i);
-            disp.draw(backGraph, backSize);
+            Displayable disp = displayables.get(i);
+            disp.draw(g, size);
         }
-
-        // draw the back buffer onto the screen
-        // first clear the entire view if the map has been zoomed
-        if ( scale < 1.00f){
-            Image tmpImage = createImage( size.width, size.height );
-            Graphics tmpGraphics = tmpImage.getGraphics();
-            tmpGraphics.drawImage(backImage, offset.x, offset.y, this);
-            g.drawImage(tmpImage, 0, 0, this);
-            tmpGraphics.dispose();
-        } else {
-            g.drawImage(backImage, offset.x, offset.y, this);
-        }
-        //g.drawString(""+scale, 10, 10);
-
-        //         final long finishTime = System.currentTimeMillis();//commentme
-        //         System.out.println("BoardView1: updated screen in " + (finishTime - startTime) + " ms."); //commentme
     }
 
     /**
@@ -625,126 +464,36 @@ public class BoardView1
         int height = game.getBoard().getHeight() * (int)(HEX_H*scale) + (int)(HEX_H/2*scale);
         boardSize = new Dimension(width, height);
     }
-
-    /**
-     * Think up the size of the view rectangle based on the size of the component
-     * and the size of board
-     */
-    private Dimension getOptimalView(Dimension size) {
-        return new Dimension(
-                Math.min(size.width, boardSize.width),
-                Math.min(size.height, boardSize.height));
-    }
-
-    /**
-     * Where should the offset be for this screen size?
-     */
-    private Point getOptimalOffset(Dimension size) {
-        int ox = 0;
-        int oy = 0;
-        if (size.width > boardSize.width) {
-            ox = (size.width - boardSize.width) / 2;
-        }
-        if (size.height > boardSize.height) {
-            oy = (size.height - boardSize.height) / 2;
-        }
-        return new Point(ox, oy);
-    }
-
-    /**
-     * Repaint the bounds of a sprite, offset by view
-     */
-    private void repaintBounds(Rectangle bounds) {
-        if (view != null) {
-            repaint(bounds.x - view.x + offset.x, bounds.y - view.y + offset.y, bounds.width, bounds.height);
-        }
-    }
-
+    
     /**
      * Looks through a vector of buffered images and draws them if they're
      * onscreen.
      */
-    private synchronized void drawSprites(Vector<? extends Sprite> spriteVector) {
-        for (Sprite sprite : spriteVector) {
-            drawSprite(sprite);
+    private synchronized void drawSprites(Graphics g, ArrayList<? extends Sprite> spriteArrayList) {
+        for (Sprite sprite : spriteArrayList) {
+            drawSprite(g, sprite);
         }
     }
 
     /**
      * Draws a sprite, if it is in the current view
      */
-    private final void drawSprite(Sprite sprite) {
+    private final void drawSprite(Graphics g, Sprite sprite) {
+        Rectangle view = g.getClipBounds();
         if (view.intersects(sprite.getBounds()) &&
             !sprite.hidden) {
-            final int drawX = sprite.getBounds().x - view.x;
-            final int drawY = sprite.getBounds().y - view.y;
             if (!sprite.isReady()) {
                 sprite.prepare();
             }
-            sprite.drawOnto(backGraph, drawX, drawY, this);
+            sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y, this);
         }
-    }
-
-    /**
-     * Manages a cache of scaled images.
-     */
-    private Image getScaledImage(Image base) {
-        if (base == null) {
-            return null;
-        }
-        if ( zoomIndex == BASE_ZOOM_INDEX ) {
-            return base;
-        }
-        
-        Image scaled = scaledImageCache.get(base);
-        if (scaled == null) {
-            MediaTracker tracker = new MediaTracker(this);
-            if(base.getWidth(null) == -1 ||
-                    base.getHeight(null) == -1) {
-                tracker.addImage(base,0);
-                try {
-                    tracker.waitForID(0);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                tracker.removeImage(base);
-            }
-            int width = (int)(base.getWidth( null ) * scale);
-            int height = (int)(base.getHeight( null ) * scale);
-
-            scaled = scale(base, width, height);
-            tracker.addImage( scaled, 1 );
-            // Wait for image to load
-            try{
-                tracker.waitForID( 1 );
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            tracker.removeImage(scaled);
-              
-            scaledImageCache.put(base, scaled);
-        }
-        return scaled;
-    }
-   
-    /**
-     * The actual scaling code.
-     */
-    private Image scale(Image img, int width, int height) {
-        ImageFilter filter;
-        filter = new ImprovedAveragingScaleFilter(img.getWidth(null),
-                                                  img.getHeight(null),
-                                                  width, height);
-        
-        ImageProducer prod;
-        prod = new FilteredImageSource(img.getSource(), filter);
-        return Toolkit.getDefaultToolkit().createImage(prod);
     }
     
     /**
      * Draw an outline around legal deployment hexes
      */
-    private void drawDeployment() {
+    private void drawDeployment(Graphics g) {
+        Rectangle view = g.getClipBounds();
         // only update visible hexes
         int drawX = view.x / (int)(HEX_WC*scale) - 1;
         int drawY = view.y / (int)(HEX_H*scale) - 1;
@@ -757,14 +506,13 @@ public class BoardView1
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
                 Point p = getHexLocation(c);
-                p.translate(-(view.x), -(view.y));
                 if (board.isLegalDeployment(c, m_plDeployer)) {
-                    backGraph.setColor(Color.yellow);
+                    g.setColor(Color.yellow);
                     int[] xcoords = { p.x + (int)(21*scale), p.x + (int)(62*scale), p.x + (int)(83*scale), p.x + (int)(83*scale),
                             p.x + (int)(62*scale), p.x + (int)(21*scale), p.x, p.x };
                     int[] ycoords = { p.y, p.y, p.y + (int)(35*scale), p.y + (int)(36*scale), p.y + (int)(71*scale),
                             p.y + (int)(71*scale), p.y + (int)(36*scale), p.y + (int)(35*scale) };
-                    backGraph.drawPolygon(xcoords, ycoords, 8);
+                    g.drawPolygon(xcoords, ycoords, 8);
                 }
             }
         }
@@ -780,9 +528,7 @@ public class BoardView1
             return null;
         }
 
-        //TODO please eliminate the usage of the clientgui
-        if (clientgui != null &&
-            !selectedEntity.getOwner().equals(clientgui.getClient().getLocalPlayer())) {
+        if (!selectedEntity.getOwner().equals(localPlayer)) {
             return null; // Not my business to see this
         }
     
@@ -800,8 +546,9 @@ public class BoardView1
     
     /** Display artillery modifier in pretargeted hexes
      */
-    private void drawArtilleryHexes() {
+    private void drawArtilleryHexes(Graphics g) {
         Mounted weapon = getSelectedArtilleryWeapon();
+        Rectangle view = g.getClipBounds();
         
         if(game.getArtillerySize()==0 && weapon==null) {
             return; //nothing to do
@@ -821,7 +568,6 @@ public class BoardView1
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
                 Point p = getHexLocation(c);
-                p.translate(-(view.x), -(view.y));
 
                 if (!board.contains(c)){ continue; }
 
@@ -841,12 +587,12 @@ public class BoardView1
                         //draw the crosshairs
                         if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
                             //predesignated or already hit
-                            scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT));
+                            scaledImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_AUTOHIT);
                         } else {
-                            scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED));
+                            scaledImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_ADJUSTED);
                         }
 
-                        backGraph.drawImage(scaledImage, p.x, p.y, this);
+                        g.drawImage(scaledImage, p.x, p.y, this);
                     }
                 }
                 //process incoming attacks - requires server to update client's view of game
@@ -855,8 +601,8 @@ public class BoardView1
                     ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
 
                     if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
-                        scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING));
-                        backGraph.drawImage(scaledImage, p.x, p.y, this);
+                        scaledImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING);
+                        g.drawImage(scaledImage, p.x, p.y, this);
                         break; //do not draw multiple times, tooltop will show all attacks
                     }
                 }
@@ -864,22 +610,11 @@ public class BoardView1
         }
     }
     
-    private Vector<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {
-        Vector<ArtilleryAttackAction> v = new Vector<ArtilleryAttackAction>();
-        for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
-            ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
-
-            if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
-                v.addElement(a);
-            }
-        }
-        return v;
-    }
-    
     /**
      * Writes "MINEFIELD" in minefield hexes...
      */
-    private void drawMinefields() {
+    private void drawMinefields(Graphics g) {
+        Rectangle view = g.getClipBounds();
         // only update visible hexes
         int drawX = view.x / (int)(HEX_WC*scale) - 1;
         int drawY = view.y / (int)(HEX_H*scale) - 1;
@@ -893,28 +628,27 @@ public class BoardView1
             for (int j = 0; j < drawWidth; j++) {
                 Coords c = new Coords(j + drawX, i + drawY);
                 Point p = getHexLocation(c);
-                p.translate(-(view.x), -(view.y));
                 
                 if (!board.contains(c)){ continue; }
                 if (!game.containsMinefield(c)){ continue; }
                 
-                Minefield mf = game.getMinefields(c).elementAt(0);
+                Minefield mf = game.getMinefields(c).get(0);
                 
-                Image tmpImage = getScaledImage( tileManager.getMinefieldSign());
-                backGraph.drawImage(
+                Image tmpImage = tileManager.getMinefieldSign();
+                g.drawImage(
                         tmpImage,
                         p.x + (int)(13*scale), 
                         p.y + (int)(13*scale), 
                         this);
                 
-                backGraph.setColor(Color.black);
+                g.setColor(Color.black);
                 int nbrMfs = game.getNbrMinefields(c);
                 if (nbrMfs > 1) {
                     drawCenteredString(Messages.getString("BoardView1.Multiple"),  //$NON-NLS-1$
                                 p.x,
                                 p.y + (int)(51*scale),
                                 font_minefield,
-                                backGraph);
+                                g);
                 } else if (nbrMfs == 1) {
                     switch (mf.getType()) {
                         case (Minefield.TYPE_CONVENTIONAL) :
@@ -923,7 +657,7 @@ public class BoardView1
                                     p.x,
                                     p.y + (int)(51*scale),
                                     font_minefield,
-                                    backGraph);
+                                    g);
                             break;
                         case (Minefield.TYPE_THUNDER) :
                             drawCenteredString(
@@ -931,7 +665,7 @@ public class BoardView1
                                     p.x, 
                                     p.y + (int)(51*scale),
                                     font_minefield,
-                                    backGraph);
+                                    g);
                         break;
                         case (Minefield.TYPE_THUNDER_INFERNO) :
                             drawCenteredString(
@@ -939,7 +673,7 @@ public class BoardView1
                                     p.x,
                                     p.y + (int)(51*scale),
                                     font_minefield,
-                                    backGraph);
+                                    g);
                         break;
                         case (Minefield.TYPE_THUNDER_ACTIVE) :
                             drawCenteredString(
@@ -947,7 +681,7 @@ public class BoardView1
                                     p.x,
                                     p.y + (int)(51*scale),
                                     font_minefield,
-                                    backGraph);
+                                    g);
                         break;
                         case (Minefield.TYPE_COMMAND_DETONATED) :
                             drawCenteredString(
@@ -955,13 +689,13 @@ public class BoardView1
                                     p.x,
                                     p.y + (int)(51*scale),
                                     font_minefield,
-                                    backGraph);
+                                    g);
                             drawCenteredString(
                                     Messages.getString("BoardView1.detonated"),  //$NON-NLS-1$
                                     p.x,
                                     p.y + (int)(60*scale),
                                     font_minefield,
-                                    backGraph);
+                                    g);
                         break;
                         case (Minefield.TYPE_VIBRABOMB) :
                             drawCenteredString(
@@ -969,14 +703,14 @@ public class BoardView1
                                     p.x,
                                     p.y + (int)(51*scale),
                                     font_minefield,
-                                    backGraph);
+                                    g);
                   if (mf.getPlayerId() == localPlayer.getId()) {
                       drawCenteredString(
                                     "(" + mf.getSetting() + ")",  //$NON-NLS-1$ //$NON-NLS-2$
                                         p.x,
                                         p.y + (int)(60*scale),
                                         font_minefield,
-                                        backGraph);
+                                        g);
                   }
                         break;
                     }
@@ -995,163 +729,69 @@ public class BoardView1
         graph.drawString( string, x, y );
     }
     
-    /**
-     * Updates the board buffer to contain all the hexes needed by the view.
-     */
-    private void updateBoardImage() {
-        // check to make sure image is big enough
-        if (boardGraph == null || view.width > boardRect.width
-            || view.height > boardRect.height) {
-            /* Ok, some history here.  Before the zoom patch, the
-               boardImage was created with the same size as the view.
-               After the zoom patch, the boardImage was created with
-               the same size as the entire board (all maps).  This
-               change ate up a hideous amount of memory (eg: in a 3x3
-               map set test with one mech, memory usage went from
-               about 15MB to 60MB).  I have now changed it back to the
-               old way, and the zoom feature *seems* to still work.
-               Why the zoom author made the change, I cannot say. */
-            boardImage = createImage(view.width, view.height);
-            //boardImage = createImage(boardSize.width, boardSize.height);
-            /* ----- */
-
-            if(boardGraph != null)
-                boardGraph.dispose();
-            boardGraph = boardImage.getGraphics();
-
-            // Handle resizes correctly.
-            checkScrollBounds();
-            boardRect = new Rectangle(view);
-            System.out.println("boardview1: made a new board buffer " + boardRect); //$NON-NLS-1$
-            drawHexes(view);
-            dirtyBoard = false;            
-        }
-        if (!boardRect.union(view).equals(boardRect) || dirtyBoard) {
-            moveBoardImage();
-        }
-    }
-
     /** 
      * This method creates an image the size of the entire board (all
      * mapsheets), draws the hexes onto it, and returns that image.
      */
     public Image getEntireBoardImage() {
         Image entireBoard = createImage(boardSize.width, boardSize.height);
-        Graphics temp = boardImage.getGraphics();
-        boardGraph = entireBoard.getGraphics();
-        drawHexes(new Rectangle(boardSize));
+        Graphics boardGraph = entireBoard.getGraphics();
+        drawHexes(boardGraph);
         boardGraph.dispose();
-        boardGraph = temp;
         return entireBoard;
-    }
-
-    /**
-     * Moves the board view to another area.
-     */
-    private void moveBoardImage() {
-        // salvage the old
-
-        boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
-        
-        boardGraph.copyArea(0, 0, boardRect.width, boardRect.height,
-                boardRect.x - view.x, boardRect.y - view.y);
-
-        // what's left to paint?
-        int midX = Math.max(view.x, boardRect.x);
-        int midWidth = view.width - Math.abs(view.x - boardRect.x);
-        Rectangle unLeft = new Rectangle(view.x, view.y, boardRect.x - view.x, view.height);
-        Rectangle unRight = new Rectangle(boardRect.x + boardRect.width, view.y, view.x -boardRect.x, view.height);
-        Rectangle unTop = new Rectangle(midX, view.y, midWidth, boardRect.y - view.y);
-        Rectangle unBottom = new Rectangle(midX, boardRect.y + boardRect.height, midWidth, view.y - boardRect.y);
-        
-        // update boardRect
-        boardRect = new Rectangle(view);
-        
-        if(dirtyBoard) {
-            drawHexes(view);
-            dirtyBoard = false;
-        } else {
-            // paint needed areas
-            if (unLeft.width > 0) {
-                drawHexes(unLeft);
-            } else if (unRight.width > 0) {
-                drawHexes(unRight);
-            }
-            if (unTop.height > 0) {
-                drawHexes(unTop);
-            } else if (unBottom.height > 0) {
-                drawHexes(unBottom);
-            }
-        }
     }
 
     /**
      * Redraws all hexes in the specified rectangle
      */
-    private void drawHexes(Rectangle rect) {
-        
-        // rect is the view
-        int drawX = (int)(rect.x / (HEX_WC*scale))-1;
-        int drawY = (int)(rect.y / (HEX_H*scale))-1;
+    private void drawHexes(Graphics g) {
+        Rectangle view = g.getClipBounds();
+        // only update visible hexes
+        int drawX = view.x / (int)(HEX_WC*scale) - 1;
+        int drawY = view.y / (int)(HEX_H*scale) - 1;
 
-        int drawWidth = (int)(rect.width / (HEX_WC*scale))+3;
-        int drawHeight = (int)(rect.height / (HEX_H*scale))+3;
+        int drawWidth = view.width / (int)(HEX_WC*scale) + 3;
+        int drawHeight = view.height / (int)(HEX_H*scale) + 3;
 
-        // only draw what we came to draw
+/*        // only draw what we came to draw
         boardGraph.setClip(rect.x - boardRect.x, rect.y - boardRect.y,
                            rect.width, rect.height);
 
         // clear, if we need to
         if (rect.x < (21*scale)) {
-            boardGraph.clearRect(
+            g.clearRect(
                     rect.x - boardRect.x, rect.y - boardRect.y,
                     (int)(21*scale) - rect.x, rect.height);
         }
         if (rect.y < (36*scale)) {
-            boardGraph.clearRect(
+            g.clearRect(
                     rect.x - boardRect.x, rect.y - boardRect.y,
                     rect.width, (int)(36*scale) - rect.y);
         }
         if (rect.x > boardSize.width - view.width - (21*scale)) {
-            boardGraph.clearRect(
+            g.clearRect(
                     boardRect.width - (int)(21*scale), rect.y - boardRect.y,
                     (int)(21*scale), rect.height);
         }
         if (rect.y > boardSize.height - view.height - (int)(36*scale)) {
-            boardGraph.clearRect(
+            g.clearRect(
                     rect.x - boardRect.x, boardRect.height - (int)(36*scale),
                     rect.width, (int)(36*scale));
         }
-
+*/
         // draw some hexes
         for (int i = 0; i < drawHeight; i++) {
             for (int j = 0; j < drawWidth; j++) {
-                drawHex(new Coords(j + drawX, i + drawY));
+                drawHex(new Coords(j + drawX, i + drawY), g);
             }
         }
-    }
-
-    /**
-     * Redraws a hex and all the hexes immediately around it.  Used when the
-     * hex is on the screen, as opposed to when it is scrolling onto the screen,
-     * so it resets the clipping rectangle before drawing.
-     */
-    private void redrawAround(Coords c) {
-        boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
-        drawHex(c);
-        drawHex(c.translated(0));
-        drawHex(c.translated(1));
-        drawHex(c.translated(2));
-        drawHex(c.translated(3));
-        drawHex(c.translated(4));
-        drawHex(c.translated(5));
     }
 
     /**
      * Draws a hex onto the board buffer.  This assumes that boardRect is
      * current, and does not check if the hex is visible.
      */
-    private void drawHex(Coords c) {
+    private void drawHex(Coords c, Graphics boardGraph) {
         if (!game.getBoard().contains(c)) {
             return;
         }
@@ -1159,41 +799,32 @@ public class BoardView1
         final IHex hex = game.getBoard().getHex(c);
         final Point hexLoc = getHexLocation(c);
 
-        int level = hex.getElevation();
-        int depth = hex.depth();
-        int height = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
-
-        // offset drawing point
-        
-        int drawX = hexLoc.x - boardRect.x;
-        int drawY = hexLoc.y - boardRect.y;
+        // offset drawing point        
+        int drawX = hexLoc.x; //- boardRect.x;
+        int drawY = hexLoc.y; //- boardRect.y;
 
         // draw picture
         Image baseImage = tileManager.baseFor(hex);
-        Image scaledImage = getScaledImage(baseImage);
         
-        boardGraph.drawImage(scaledImage, drawX, drawY, this);
+        boardGraph.drawImage(baseImage, drawX, drawY, this);
         
         if (tileManager.supersFor(hex) != null) {
             for (Iterator i = tileManager.supersFor(hex).iterator(); i.hasNext();){
-                scaledImage = getScaledImage((Image)i.next());
-                boardGraph.drawImage(scaledImage, drawX, drawY, this);
+                boardGraph.drawImage((Image)i.next(), drawX, drawY, this);
             }
         }
         
         if(ecmHexes != null) {
             Integer tint = ecmHexes.get(c);
             if(tint != null) {
-                scaledImage = getScaledImage(tileManager.getEcmShade(tint.intValue()));
-                boardGraph.drawImage(scaledImage, drawX, drawY, this);
+                boardGraph.drawImage(tileManager.getEcmShade(tint.intValue()), drawX, drawY, this);
             }
         }
         
         if(GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) && 
             game.getOptions().booleanOption("night_battle") &&
             !game.isPositionIlluminated(c)) {
-            scaledImage = getScaledImage(tileManager.getNightFog());
-            boardGraph.drawImage(scaledImage, drawX, drawY, this);
+            boardGraph.drawImage(tileManager.getNightFog(), drawX, drawY, this);
         }
         boardGraph.setColor(GUIPreferences.getInstance().getMapTextColor());
         
@@ -1205,38 +836,6 @@ public class BoardView1
                     drawY + (int)(12*scale),
                     font_hexnum,
                     boardGraph);
-        }
-        // draw terrain level / water depth / building height
-        if (zoomIndex > 3) {
-            int ypos = 70;
-            if(level != 0) {
-                drawCenteredString(
-                        Messages.getString("BoardView1.LEVEL") + level, //$NON-NLS-1$
-                        drawX,
-                        drawY + (int)(ypos*scale),
-                        font_elev,
-                        boardGraph);
-                ypos -= 10;
-            }
-            if(depth != 0) {
-                drawCenteredString(
-                        Messages.getString("BoardView1.DEPTH") + depth, //$NON-NLS-1$
-                        drawX,
-                        drawY + (int)(ypos*scale),
-                        font_elev,
-                        boardGraph);
-                ypos -= 10;
-            }
-            if(height > 0) {
-                boardGraph.setColor(GUIPreferences.getInstance().getColor("AdvancedBuildingTextColor"));
-                drawCenteredString(
-                        Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
-                        drawX,
-                        drawY + (int)(ypos*scale),
-                        font_elev,
-                        boardGraph);
-                ypos -= 10;
-            }
         }
         
         // draw elevation borders
@@ -1318,10 +917,10 @@ public class BoardView1
     }
 
     // added by kenn
-    /**
+    /** TODO put back ruler
      * Returns the absolute position of the centre
      * of the hex graphic
-     */
+     *
     private Point getCentreHexLocation(int x, int y) {
         Point p = getHexLocation(x, y);
         p.x += (HEX_W/2*scale);
@@ -1330,6 +929,15 @@ public class BoardView1
     }
     private Point getCentreHexLocation(Coords c) {
         return getCentreHexLocation(c.x, c.y);
+    }*/
+
+    public void drawRuler(Coords s, Coords e, Color sc, Color ec) {
+        rulerStart = s;
+        rulerEnd = e;
+        rulerStartColor = sc;
+        rulerEndColor = ec;
+
+        repaint();
     }
     // end kenn
 
@@ -1337,364 +945,39 @@ public class BoardView1
      * Returns the coords at the specified point
      */
     Coords getCoordsAt(Point p) {
-        final int x = (p.x + scroll.x - offset.x) / (int)(HEX_WC*scale);
-        final int y = ((p.y + scroll.y - offset.y) - ((x & 1) == 1 ? (int)(HEX_H/2*scale) : 0)) / (int)(HEX_H*scale);
+        final int x = (p.x ) / (int)(HEX_WC*scale);
+        final int y = ((p.y ) - ((x & 1) == 1 ? (int)(HEX_H/2*scale) : 0)) / (int)(HEX_H*scale);
         return new Coords(x, y);
-    }
-    
-    /**
-     * Shows the tooltip thinger
-     */
-    private void showTooltip() {
-        try {
-            final Point tipLoc = new Point(getLocationOnScreen());
-            // retrieve tip text
-            String[] tipText = getTipText(mousePos);
-            if (tipText == null) {
-                return;
-            }
-
-            // update tip text
-            tipWindow.removeAll();
-            tipWindow.add(new TooltipCanvas(tipText));
-            tipWindow.pack();
-
-            tipLoc.translate(mousePos.x, mousePos.y + 20);
-
-            // adjust horizontal location for the tipWindow if it goes off the frame
-            if (frame.getLocation().x + frame.getSize().width < tipLoc.x + tipWindow.getSize().width + 10) {
-                if (frame.getSize().width > tipWindow.getSize().width) {
-                    // bound it by the right edge of the frame
-                    tipLoc.x -= tipLoc.x + tipWindow.getSize().width + 10 - frame.getSize().width - frame.getLocation().x;
-                }
-                else {
-                    // too big to fit, left justify to the frame (roughly).
-                    // how do I extract the first term of HEX_SIZE to use here?--LDE
-                    tipLoc.x = getLocationOnScreen().x + hex_size.width;
-                }
-            }
-
-            // set tip location
-            tipWindow.setLocation(tipLoc);
-
-            tipWindow.setVisible(true);
-        } catch (Exception e) {
-            tipWindow = new Window(frame);
-        }
-    }
-
-    /**
-     * The text to be displayed when the mouse is at a certain point
-     */
-    private String[] getTipText(Point point) {
-
-        int stringsSize = 0;
-        IHex mhex = null;
-
-        // first, we have to determine how much text we are going to have
-        // are we on a hex?
-        final Coords mcoords = getCoordsAt(point);
-        if (GUIPreferences.getInstance().getShowMapHexPopup() && game.getBoard().contains(mcoords)) {
-            mhex = game.getBoard().getHex(mcoords);
-            stringsSize += 1;
-        }
-
-        // check if it's on any entities
-        for (Iterator<EntitySprite> i = entitySprites.iterator(); i.hasNext();) {
-            final EntitySprite eSprite = i.next();
-            if (eSprite.isInside(point)) {
-                stringsSize += 3;
-            }
-        }
-
-        // check if it's on any attacks
-        for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
-            final AttackSprite aSprite = i.next();
-            if (aSprite.isInside(point)) {
-                stringsSize += 1 + aSprite.weaponDescs.size();
-            }
-        }
-
-        // If the hex contains a building or rubble, make more space.
-        // Also if it contains woods or jungle.
-        if ( mhex != null ) {
-            if (mhex.containsTerrain(Terrains.RUBBLE))
-                stringsSize ++;
-            if (mhex.containsTerrain(Terrains.BUILDING))
-                stringsSize ++;
-            if (mhex.containsTerrain(Terrains.FUEL_TANK))
-                stringsSize ++;
-            if (mhex.containsTerrain(Terrains.BRIDGE)) 
-                stringsSize ++;
-            if (mhex.containsTerrain(Terrains.JUNGLE)) 
-                stringsSize ++;
-            else if (mhex.containsTerrain(Terrains.WOODS)) 
-                stringsSize ++;
-            if (mhex.containsTerrain(Terrains.ICE))
-                stringsSize ++;
-        }
-
-        stringsSize += game.getNbrMinefields(mcoords);
-        
-        // Artillery
-        final Vector artilleryAttacks = getArtilleryAttacksAtLocation(mcoords);
-        stringsSize += artilleryAttacks.size();
-
-        // Artillery fire adjustment
-        final Mounted curWeapon = getSelectedArtilleryWeapon();
-        if(curWeapon != null)
-            stringsSize++;
-
-        // if the size is zip, you must a'quit
-        if (stringsSize == 0) {
-            return null;
-        }
-
-        // now we can allocate an array of strings
-        String[] strings = new String[stringsSize];
-        int stringsIndex = 0;
-
-        // are we on a hex?
-        if (mhex != null) {
-            strings[stringsIndex] = Messages.getString("BoardView1.Hex") + mcoords.getBoardNum() //$NON-NLS-1$
-                + Messages.getString("BoardView1.level") + mhex.getElevation(); //$NON-NLS-1$
-            stringsIndex += 1;
-
-            if (mhex.containsTerrain(Terrains.JUNGLE)) {
-                int ttl = mhex.getTerrain(Terrains.JUNGLE).getLevel();
-                int tf = mhex.getTerrain(Terrains.JUNGLE).getTerrainFactor();
-                if (ttl == 1)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipLightJungle",new Object[]{tf});
-                else if (ttl == 2)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipHeavyJungle",new Object[]{tf});
-                else if (ttl == 3)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipUltraJungle",new Object[]{tf});
-                else
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipJungle",new Object[]{tf});
-                stringsIndex += 1;
-            } else if (mhex.containsTerrain(Terrains.WOODS)) {
-                int ttl = mhex.getTerrain(Terrains.WOODS).getLevel();
-                int tf = mhex.getTerrain(Terrains.WOODS).getTerrainFactor();
-                if (ttl == 1)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipLightWoods",new Object[]{tf});
-                else if (ttl == 2)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipHeavyWoods",new Object[]{tf});
-                else if (ttl == 3)
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipUltraWoods",new Object[]{tf});
-                else
-                    strings[stringsIndex] = Messages.getString("BoardView1.TipWoods",new Object[]{tf});
-                stringsIndex += 1;
-            } 
-                
-            if (mhex.containsTerrain(Terrains.ICE)) {
-                int tf = mhex.getTerrain(Terrains.ICE).getTerrainFactor();
-                strings[stringsIndex] = Messages.getString("BoardView1.TipIce",new Object[]{tf});
-                stringsIndex += 1;
-            }
-
-            // Do we have rubble?
-            if ( mhex.containsTerrain(Terrains.RUBBLE) ) {
-                strings[stringsIndex] = Messages.getString("BoardView1.Rubble"); //$NON-NLS-1$
-                stringsIndex += 1;
-            }
-
-            // Do we have a building?
-            if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
-                // Get the building.
-                Building bldg = game.getBoard().getBuildingAt( mcoords );
-                StringBuffer buf = new StringBuffer(Messages.getString("BoardView1.Height")); //$NON-NLS-1$
-                // Each hex of a building has its own elevation.
-                buf.append( mhex.terrainLevel(Terrains.FUEL_TANK_ELEV) );
-                buf.append( " " ); //$NON-NLS-1$
-                buf.append( bldg.toString() );
-                buf.append( Messages.getString("BoardView1.CF") ); //$NON-NLS-1$
-                buf.append( bldg.getCurrentCF() );
-                strings[stringsIndex] = buf.toString();
-                stringsIndex += 1;
-            }
-            if (mhex.containsTerrain(Terrains.BUILDING)) {
-                // Get the building.
-                Building bldg = game.getBoard().getBuildingAt( mcoords );
-                StringBuffer buf = new StringBuffer(Messages.getString("BoardView1.Height")); //$NON-NLS-1$
-                // Each hex of a building has its own elevation.
-                buf.append( mhex.terrainLevel(Terrains.BLDG_ELEV) );
-                buf.append( " " ); //$NON-NLS-1$
-                buf.append( bldg.toString() );
-                buf.append( Messages.getString("BoardView1.CF") ); //$NON-NLS-1$
-                buf.append( bldg.getCurrentCF() );
-                strings[stringsIndex] = buf.toString();
-                stringsIndex += 1;
-            }
-
-            // Do we have a bridge?
-            if ( mhex.containsTerrain(Terrains.BRIDGE) ) {
-                // Get the building.
-                Building bldg = game.getBoard().getBuildingAt( mcoords );
-                StringBuffer buf = new StringBuffer( Messages.getString("BoardView1.Height") ); //$NON-NLS-1$
-                // Each hex of a building has its own elevation.
-                buf.append( mhex.terrainLevel(Terrains.BRIDGE_ELEV) );
-                buf.append( " " ); //$NON-NLS-1$
-                buf.append( bldg.toString() );
-                buf.append( Messages.getString("BoardView1.CF") ); //$NON-NLS-1$
-                buf.append( bldg.getCurrentCF() );
-                strings[stringsIndex] = buf.toString();
-                stringsIndex += 1;
-            }
-
-            if (game.containsMinefield(mcoords)) {
-                Vector minefields = game.getMinefields(mcoords);
-                for (int i = 0; i < minefields.size(); i++){
-                    Minefield mf = (Minefield) minefields.elementAt(i);
-                    String owner =  " (" + game.getPlayer(mf.getPlayerId()).getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-
-                    switch (mf.getType()) {
-                    case (Minefield.TYPE_CONVENTIONAL) :
-                        strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield") +" " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                        break;
-                    case (Minefield.TYPE_THUNDER) :
-                        strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDamage() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        break;
-                    case (Minefield.TYPE_COMMAND_DETONATED) :
-                        strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield") +" " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                        break;
-                    case (Minefield.TYPE_VIBRABOMB) :
-                        if (mf.getPlayerId() == localPlayer.getId()) {
-                            strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getSetting() + ") " + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        } else {
-                            strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield") + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                        }
-                        break;
-                    case (Minefield.TYPE_THUNDER_ACTIVE) :
-                        strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDamage() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        break;
-                    case (Minefield.TYPE_THUNDER_INFERNO) :
-                        strings[stringsIndex] = mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDamage() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                        break;
-                    }
-                    stringsIndex++;
-                }
-            }
-        }
-        // check if it's on any entities
-        for (Iterator<EntitySprite> i = entitySprites.iterator(); i.hasNext();) {
-            final EntitySprite eSprite = i.next();
-            if (eSprite.isInside(point)) {
-                final String[] entityStrings = eSprite.getTooltip();
-                System.arraycopy(entityStrings, 0, strings, stringsIndex, entityStrings.length);
-                stringsIndex += entityStrings.length;
-            }
-        }
-
-        // check if it's on any attacks
-        for (Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
-            final AttackSprite aSprite = i.next();
-            if (aSprite.isInside(point)) {
-                final String[] attackStrings = aSprite.getTooltip();
-                System.arraycopy(attackStrings, 0, strings, stringsIndex, attackStrings.length);
-                stringsIndex += 1 + aSprite.weaponDescs.size();
-            }
-        }
-        
-        // check artillery attacks
-        for(Iterator i = artilleryAttacks.iterator(); i.hasNext();) {
-            final ArtilleryAttackAction aaa = (ArtilleryAttackAction)i.next();
-            final WeaponResult wr = aaa.getWR();
-            final Entity ae = game.getEntity(wr.waa.getEntityId());
-            String s = null;
-            if(ae != null) {
-                if(wr.waa.getWeaponId() > -1) {
-                    Mounted weap = ae.getEquipment(wr.waa.getWeaponId());
-                    s = weap.getName();
-                    if(wr.waa.getAmmoId() > -1) {
-                        Mounted ammo = ae.getEquipment(wr.waa.getAmmoId());
-                        s += "(" + ammo.getName() + ")";
-                    }
-                }
-            }
-            if(s == null) {
-                s = Messages.getString("BoardView1.Artillery");
-            }
-            strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAttack", 
-                    new Object[] { s, new Integer(aaa.turnsTilHit), wr.toHit.getValueAsString() } );
-        }
-
-        //check artillery fire adjustment
-        if(curWeapon != null && selectedEntity != null) {
-            //process targetted hexes
-            int amod = 0;
-            //Check the predesignated hexes
-            if(selectedEntity.getOwner().getArtyAutoHitHexes().contains(mcoords)) {
-                amod = TargetRoll.AUTOMATIC_SUCCESS;
-            }
-            else {
-                amod = selectedEntity.aTracker.getModifier(curWeapon, mcoords);
-            }
-            
-            if(amod==TargetRoll.AUTOMATIC_SUCCESS) {
-                strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAutohit");
-            } else {
-                strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAdjustment", new Object[] { new Integer(amod) } );
-            }
-        }
-        return strings;
-    }
-
-    /**
-     * Hides the tooltip thinger
-     */
-    public void hideTooltip() {
-        tipWindow.setVisible(false);
-    }
-
-    /**
-     * Returns true if the tooltip is showing
-     */
-    private boolean isTipShowing() {
-        return tipWindow.isShowing();
-    }
-
-    /**
-     * Checks if the mouse has been idling for a while and if so, shows the
-     * tooltip window
-     */
-    private void checkTooltip() {
-        if (isTipShowing()) {
-            if (!isTipPossible) {
-                hideTooltip();
-            }
-        } else if (isTipPossible && System.currentTimeMillis() - lastIdle > GUIPreferences.getInstance().getTooltipDelay()) {
-            showTooltip();
-        }
     }
 
     public void redrawMovingEntity(Entity entity, Coords position, int facing) {
         Integer entityId = new Integer( entity.getId() );
         EntitySprite sprite = entitySpriteIds.get( entityId );
-        Vector<EntitySprite> newSprites;
-        Hashtable<Integer,EntitySprite> newSpriteIds;
+        ArrayList<EntitySprite> newSprites;
+        HashMap<Integer,EntitySprite> newSpriteIds;
 
         if (sprite != null) {
-            newSprites = new Vector<EntitySprite>(entitySprites);
-            newSpriteIds = new Hashtable<Integer,EntitySprite>(entitySpriteIds);
+            newSprites = new ArrayList<EntitySprite>(entitySprites);
+            newSpriteIds = new HashMap<Integer,EntitySprite>(entitySpriteIds);
 
-            newSprites.removeElement(sprite);
+            newSprites.remove(sprite);
 
             entitySprites = newSprites;
             entitySpriteIds = newSpriteIds;
         }
 
         MovingEntitySprite mSprite = movingEntitySpriteIds.get(entityId);
-        Vector<MovingEntitySprite> newMovingSprites = new Vector<MovingEntitySprite>(movingEntitySprites);
-        Hashtable<Integer,MovingEntitySprite> newMovingSpriteIds = new Hashtable<Integer,MovingEntitySprite>(movingEntitySpriteIds);
+        ArrayList<MovingEntitySprite> newMovingSprites = new ArrayList<MovingEntitySprite>(movingEntitySprites);
+        HashMap<Integer,MovingEntitySprite> newMovingSpriteIds = new HashMap<Integer,MovingEntitySprite>(movingEntitySpriteIds);
 
 
         if (mSprite != null) {
-            newMovingSprites.removeElement(mSprite);
+            newMovingSprites.remove(mSprite);
         }
 
         if (entity.getPosition() != null) {
             mSprite = new MovingEntitySprite(entity, position, facing);
-            newMovingSprites.addElement(mSprite);
+            newMovingSprites.add(mSprite);
             newMovingSpriteIds.put( entityId, mSprite );
         }
 
@@ -1715,35 +998,37 @@ public class BoardView1
     public void redrawEntity(Entity entity) {
         Integer entityId = new Integer( entity.getId() );
         EntitySprite sprite = entitySpriteIds.get( entityId );
-        Vector<EntitySprite> newSprites = new Vector<EntitySprite>(entitySprites);
-        Hashtable<Integer,EntitySprite> newSpriteIds = new Hashtable<Integer,EntitySprite>(entitySpriteIds);
+        ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(entitySprites);
+        HashMap<Integer,EntitySprite> newSpriteIds = new HashMap<Integer,EntitySprite>(entitySpriteIds);
 
 
         if (sprite != null) {
-            newSprites.removeElement(sprite);
+            newSprites.remove(sprite);
         }
         Coords position = entity.getPosition();
         if (position != null) {            
             sprite = new EntitySprite(entity);
-            newSprites.addElement(sprite);
+            newSprites.add(sprite);
             newSpriteIds.put( entityId, sprite );
         }
 
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
 
-        for (java.util.Enumeration<C3Sprite> i = C3Sprites.elements(); i.hasMoreElements();) {
-            final C3Sprite c3sprite = i.nextElement();
-            if (c3sprite.entityId == entity.getId())
-                C3Sprites.removeElement(c3sprite);
+        for (int i = 0; i < C3Sprites.size(); i++) {
+            C3Sprite c3sprite = C3Sprites.get(i);
+            if (c3sprite.entityId == entity.getId()) {
+                C3Sprites.remove(c3sprite);
+                i--;
+            }
             else if(c3sprite.masterId == entity.getId()) {
                 // Only redraw client-to-master; otherwise
                 // we leave stray lines when we move.
                 if(entity.hasC3()) {
-                    C3Sprites.addElement(new C3Sprite(game.getEntity(c3sprite.entityId), game.getEntity(c3sprite.masterId)));
+                    C3Sprites.add(new C3Sprite(game.getEntity(c3sprite.entityId), game.getEntity(c3sprite.masterId)));
                 }
-                C3Sprites.removeElement(c3sprite);
-
+                C3Sprites.remove(c3sprite);
+                i--;
             }
         }
 
@@ -1756,16 +1041,16 @@ public class BoardView1
      * Clears all old entity sprites out of memory and sets up new ones.
      */
     private void redrawAllEntities() {
-        Vector<EntitySprite> newSprites = new Vector<EntitySprite>(game.getNoOfEntities());
-        Hashtable<Integer,EntitySprite> newSpriteIds = new Hashtable<Integer,EntitySprite>(game.getNoOfEntities());
-        Vector<WreckSprite> newWrecks = new Vector<WreckSprite>();
+        ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(game.getNoOfEntities());
+        HashMap<Integer,EntitySprite> newSpriteIds = new HashMap<Integer,EntitySprite>(game.getNoOfEntities());
+        ArrayList<WreckSprite> newWrecks = new ArrayList<WreckSprite>();
 
         Enumeration e = game.getWreckedEntities();
         while (e.hasMoreElements()) {
             Entity entity = (Entity) e.nextElement();
             if (!(entity instanceof Infantry) && (entity.getPosition() != null)) {
                 WreckSprite ws = new WreckSprite(entity);
-                newWrecks.addElement(ws);
+                newWrecks.add(ws);
             }
         }
 
@@ -1788,30 +1073,11 @@ public class BoardView1
         scheduleRedraw();
     }
 
-    /**
-     * Moves the cursor to the new position, or hides it, if newPos is null
-     */
-    private void moveCursor(CursorSprite cursor, Coords newPos) {
-        final Rectangle oldBounds = new Rectangle(cursor.getBounds());
-        if (newPos != null) {
-            //cursor.setLocation(getHexLocation(newPos));
-            cursor.setHexLocation(newPos);
-        } else {
-            cursor.setOffScreen();
-        }
-        // repaint affected area
-        repaintBounds(oldBounds);
-        repaintBounds(cursor.getBounds());
-    }
-
-
     public void centerOnHex(Coords c) {
         if ( null == c ) return;
-        scroll.setLocation(getHexLocation(c));
-        scroll.translate((int)(42*scale) - (view.width / 2), (int)(36*scale) - (view.height / 2));
-
-        isScrolling = false;
-        checkScrollBounds();
+        Point hexPoint = getHexLocation(c);
+        Rectangle rect = new Rectangle(hexPoint.x, hexPoint.y, HEX_W, HEX_H);
+        scrollpane.getViewport().scrollRectToVisible(rect);
         repaint();
     }
 
@@ -1821,7 +1087,7 @@ public class BoardView1
      * new one, we do that.
      */
     public void drawMovementData(MovePath md) {
-        Vector<StepSprite> temp = pathSprites;
+        ArrayList<StepSprite> temp = pathSprites;
         MoveStep previousStep = null;
 
         clearMovementData();
@@ -1833,7 +1099,7 @@ public class BoardView1
             for (Iterator<StepSprite> j = temp.iterator(); j.hasNext();) {
                 final StepSprite sprite = j.next();
                 if (sprite.getStep().canReuseSprite(step)) {
-                    pathSprites.addElement(sprite);
+                    pathSprites.add(sprite);
                     found = true;
                 }
             }
@@ -1846,9 +1112,9 @@ public class BoardView1
                     //Mark the previous elevation change sprite hidden
                     // so that we can draw a new one in it's place without
                     // having overlap.
-                    pathSprites.elementAt(pathSprites.size() -1 ).hidden = true;
+                    pathSprites.get(pathSprites.size() -1 ).hidden = true;
                 }
-                pathSprites.addElement(new StepSprite(step));
+                pathSprites.add(new StepSprite(step));
             }
             previousStep = step;
         }
@@ -1858,11 +1124,8 @@ public class BoardView1
      * Clears current movement data from the screen
      */
     public void clearMovementData() {
-        Vector<StepSprite> temp = pathSprites;
-        pathSprites = new Vector<StepSprite>();
-        for (Sprite sprite: temp) {
-            repaintBounds(sprite.getBounds());
-        }
+        pathSprites = new ArrayList<StepSprite>();
+        repaint();
     }
 
     public void setLocalPlayer(Player p) {
@@ -1893,7 +1156,7 @@ public class BoardView1
                 final Entity fe = (Entity)i.nextElement();
                 if (fe.getPosition() == null) return;
                 if ( e.onSameC3NetworkAs(fe)) {
-                    C3Sprites.addElement(new C3Sprite(e, fe));
+                    C3Sprites.add(new C3Sprite(e, fe));
                 }
             }
         }
@@ -1904,7 +1167,7 @@ public class BoardView1
             // ECM cuts off the network
             if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster.getPosition())
                 &&!Compute.isAffectedByECM(eMaster, eMaster.getPosition(), eMaster.getPosition())) {
-                C3Sprites.addElement(new C3Sprite(e, e.getC3Master()));
+                C3Sprites.add(new C3Sprite(e, e.getC3Master()));
             }
         }
     }
@@ -1971,12 +1234,12 @@ public class BoardView1
         if (aa instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction)aa;
             if ( aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
-                attackSprites.addElement(new AttackSprite(aa));
+                attackSprites.add(new AttackSprite(aa));
             } else if ( waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
-                attackSprites.addElement(new AttackSprite(aa));
+                attackSprites.add(new AttackSprite(aa));
             }
         } else {
-            attackSprites.addElement(new AttackSprite(aa));
+            attackSprites.add(new AttackSprite(aa));
         }
     }
 
@@ -2010,27 +1273,18 @@ public class BoardView1
     }
 
     public void clearC3Networks() {
-        C3Sprites.removeAllElements();
+        C3Sprites.clear();
     }
 
     /**
      * Clears out all attacks that were being drawn
      */
     public void clearAllAttacks() {
-        attackSprites.removeAllElements();
-    }
-
-    protected void firstLOSHex(Coords c) {
-        if (useLOSTool) {
-            moveCursor(secondLOSSprite, null);
-            moveCursor(firstLOSSprite, c);
-        }
+        attackSprites.clear();
     }
 
     protected void secondLOSHex(Coords c2, Coords c1) {
         if (useLOSTool) {
-            moveCursor(firstLOSSprite, c1);
-            moveCursor(secondLOSSprite, c2);
             
             boolean mechInFirst = GUIPreferences.getInstance().getMechInFirst();
             boolean mechInSecond = GUIPreferences.getInstance().getMechInSecond();
@@ -2088,81 +1342,6 @@ public class BoardView1
             }
             JOptionPane.showMessageDialog(frame, message.toString(), Messages.getString("BoardView1.LOSTitle"), JOptionPane.INFORMATION_MESSAGE);
         }
-    }
-
-    /**
-     * If the mouse is at the edges of the screen, this
-     * scrolls the board image on the canvas.
-     * NOTE: CTL scroll is handled in mouseMoved()
-     */
-    public boolean doScroll() {
-        final Point oldScroll = new Point(scroll);
-        boolean s = false;
-        
-        if ( isScrolling && GUIPreferences.getInstance().getRightDragScroll()) {
-            if (! (oldMousePosition == null || mousePos.equals(oldMousePosition)) ) {
-                scroll.x -= GUIPreferences.getInstance().getScrollSensitivity() * (mousePos.x - oldMousePosition.x);
-                scroll.y -= GUIPreferences.getInstance().getScrollSensitivity() * (mousePos.y - oldMousePosition.y);
-                checkScrollBounds();
-                oldMousePosition.setLocation(mousePos);
-                s = !oldScroll.equals(scroll);
-                scrolled = scrolled || s;
-            }
-        }
-
-        if (isScrolling && (GUIPreferences.getInstance().getClickEdgeScroll() ||GUIPreferences.getInstance().getAutoEdgeScroll()) ) {
-            final int sf = GUIPreferences.getInstance().getScrollSensitivity(); // scroll factor
-            // adjust x scroll
-            // scroll when the mouse is at the edges
-            if (mousePos.x < 100) {
-                scroll.x -= (100 - mousePos.x) / sf;
-            } else if (mousePos.x > (backSize.width - 100)) {
-                scroll.x -= ((backSize.width - 100) - mousePos.x) / sf;
-            }
-            // scroll when the mouse is at the edges
-            if (mousePos.y < 100) {
-                scroll.y -= (100 - mousePos.y) / sf;
-            } else if (mousePos.y > (backSize.height - 100)) {
-                scroll.y -= ((backSize.height - 100) - mousePos.y) / sf;
-            }
-            checkScrollBounds();
-            if (!oldScroll.equals(scroll)) {
-                //            repaint();
-                s = true;
-                scrolled = s;
-            }
-        }
-
-        return s;
-    }
-
-    /**
-     * Makes sure that the scroll dimensions stay in bounds
-     */
-    public void checkScrollBounds() {
-        if (scroll.x < 0) {
-            scroll.x = 0;
-        } else if (scroll.x > (boardSize.width - view.width)) {
-            scroll.x = (boardSize.width - view.width);
-        }
-
-        if (scroll.y < 0) {
-            scroll.y = 0;
-        } else if (scroll.y > (boardSize.height - view.height)) {
-            scroll.y = (boardSize.height - view.height);
-        }
-
-        // Update our scroll bars.
-        if (null != this.vScrollbar) {
-            this.vScrollbar.setValue (scroll.y);
-        }
-        if (null != this.hScrollbar) {
-            this.hScrollbar.setValue (scroll.x);
-        }
-    }
-
-    protected void stopScrolling() {
-        isScrolling = false;
     }
 
     /**
@@ -2276,38 +1455,37 @@ public class BoardView1
 
             if (moveWait > GUIPreferences.getInstance().getInt("AdvancedMoveStepDelay")) {
 
-                Vector<MovingUnit> spent = new Vector<MovingUnit>();
+                ArrayList<MovingUnit> spent = new ArrayList<MovingUnit>();
 
                 for (MovingUnit move : movingUnits) {
                     movingSomething = true;
                     Entity ge = game.getEntity(move.entity.getId()); 
                     if (move.path.size() > 0) {
-                        UnitLocation loc =
-                            ( (UnitLocation) move.path.elementAt(0) );
+                        UnitLocation loc = move.path.get(0);
                         if (ge != null) {
                             redrawMovingEntity( move.entity,
                                                 loc.getCoords(),
                                                 loc.getFacing() );
                         }
-                        move.path.removeElementAt(0);
+                        move.path.remove(0);
                     } else {
                         if (ge != null) {
                             redrawEntity(ge);
                         }
-                        spent.addElement(move);
+                        spent.add(move);
                     }
 
                 }
 
                 for (MovingUnit move : spent) {
-                    movingUnits.removeElement(move);
+                    movingUnits.remove(move);
                 }
                 moveWait = 0;
 
                 if (movingUnits.size() == 0) {
                     movingEntitySpriteIds.clear();
-                    movingEntitySprites.removeAllElements();
-                    ghostEntitySprites.removeAllElements();
+                    movingEntitySprites.clear();
+                    ghostEntitySprites.clear();
                     processBoardViewEvent(new BoardViewEvent(this, BoardViewEvent.FINISHED_MOVING_UNITS));
                 }
             }
@@ -2320,64 +1498,16 @@ public class BoardView1
     //
     public void keyPressed(KeyEvent ke) {
         switch(ke.getKeyCode()) {
-        case KeyEvent.VK_NUMPAD7 :
-            scroll.y -= 36;
-            scroll.x -= 36;
-            break;
-        case KeyEvent.VK_NUMPAD8 :
-            scroll.y -= 36;
-            break;
-        case KeyEvent.VK_NUMPAD9 :
-            scroll.y -= 36;
-            scroll.x += 36;
-            break;
-        case KeyEvent.VK_NUMPAD1 :
-            scroll.y += 36;
-            scroll.x -= 36;
-            break;
-        case KeyEvent.VK_NUMPAD2 :
-            scroll.y += 36;
-            break;
-        case KeyEvent.VK_NUMPAD3 :
-            scroll.y += 36;
-            scroll.x += 36;
-            break;
-        case KeyEvent.VK_NUMPAD4 :
-            scroll.x -= 36;
-            break;
-        case KeyEvent.VK_NUMPAD6 :
-            scroll.x += 36;
-            break;
         case KeyEvent.VK_NUMPAD5 :
             // center on the selected entity
-            java.util.Vector v = game.getPlayerEntities(localPlayer);
-            //TODO please eliminate the usage of the clientgui
-            Entity se = clientgui == null?null:game.getEntity(clientgui.getSelectedEntityNum());
-            for (int i = 0; i < v.size(); i++) {
-                Entity e = (Entity) v.elementAt(i);
-                if (e==se) {
-                    centerOnHex(e.getPosition());
-                }
-            }
-            break;
-        case KeyEvent.VK_CONTROL :
-            ctlKeyHeld = true;
-            initCtlScroll = true;
+            centerOnHex(selectedEntity.getPosition());
             break;
         }
 
-        if (isTipShowing()) {
-            hideTooltip();
-        }
-        lastIdle = System.currentTimeMillis();
-        checkScrollBounds();
         repaint();
     }
 
     public void keyReleased(KeyEvent ke) {
-        if (ke.getKeyCode() == KeyEvent.VK_CONTROL) {
-            ctlKeyHeld = false;
-        }
     }
     public void keyTyped(KeyEvent ke) {
     }
@@ -2386,21 +1516,12 @@ public class BoardView1
     // MouseListener
     //
     public void mousePressed(MouseEvent me) {
-        scrolled = false; // not scrolled yet
 
         Point point = me.getPoint();
         if ( null == point ) {
             return;
         }
-        oldMousePosition = point;
 
-        isTipPossible = false;
-        for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = displayables.elementAt(i);
-            if ((backSize != null) && (disp.isHit(point, backSize))) {
-                return;
-            }
-        }
 
         // Disable scrolling when ctrl or alt is held down, since this
         //  means the user wants to use the LOS/ruler tools.
@@ -2428,36 +1549,21 @@ public class BoardView1
             mask |= InputEvent.BUTTON2_MASK;
         }
 
-        if ( (me.getModifiers() & mask ) == 0 ) {
-            isScrolling = true; //activate scrolling
-        } else {
-            isScrolling = false; //activate scrolling
-        }
-
-        if (isTipShowing()) {
-            hideTooltip();
-        }
-
         mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiers());
     }
 
     public void mouseReleased(MouseEvent me) {
-        isTipPossible = true;
-        oldMousePosition = mousePos;
-
         for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = displayables.elementAt(i);
+            Displayable disp = displayables.get(i);
             if (disp.isReleased()) {
                 return;
             }
         }
-        isScrolling = false;
 
         //Unless the user has auto-scroll on and is using the left
         //mouse button, no click action should be triggered if the map
         //is being scrolled.
-        if (scrolled &&
-            ((me.getModifiers() & InputEvent.BUTTON1_MASK) == 0 || !GUIPreferences.getInstance().getAutoEdgeScroll()))
+        if ((me.getModifiers() & InputEvent.BUTTON1_MASK) == 0 || !GUIPreferences.getInstance().getAutoEdgeScroll())
             return;
         if (me.getClickCount() == 1) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_CLICK, me.getModifiers());
@@ -2468,255 +1574,19 @@ public class BoardView1
 
     public void mouseEntered(MouseEvent me) {
     }
-
     public void mouseExited(MouseEvent me) {
-        isTipPossible = false;
     }
     public void mouseClicked(MouseEvent me) {
-    }
-
-    //
-    // MouseMotionListener
-    //
-    public void mouseDragged(MouseEvent me) {
-        isTipPossible = false;
-
-        Point point = me.getPoint();
-        if ( null == point ) {
-            return;
-        }
-
-        for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = displayables.elementAt(i);
-            if (disp.isDragged(point, backSize)) {
-                repaint();
-                return;
-            }
-        }
-        mousePos = point;
-
-        // Disable scrolling when ctrl or alt is held down, since this
-        //  means the user wants to use the LOS/ruler tools.
-        int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
-
-        if ( !GUIPreferences.getInstance().getRightDragScroll() &&
-            !GUIPreferences.getInstance().getAlwaysRightClickScroll() &&
-            game.getPhase() == IGame.PHASE_FIRING) {
-            // In the firing phase, also disable scrolling if
-            //  the right or middle buttons are clicked, since
-            //  this means the user wants to activate the
-            //  popup menu or ruler tool.
-            mask |= InputEvent.BUTTON2_MASK | InputEvent.BUTTON3_MASK;
-        }
-
-        if ( GUIPreferences.getInstance().getRightDragScroll() ) {
-            mask |= InputEvent.BUTTON1_MASK | InputEvent.BUTTON2_MASK;
-        }
-
-        // disable auto--edge-scrolling if no option set
-        if ( !GUIPreferences.getInstance().getAutoEdgeScroll() ) {
-            mask |= InputEvent.BUTTON1_MASK;
-        }
-
-        // disable edge-scrolling if no option set
-        if ( !GUIPreferences.getInstance().getClickEdgeScroll() && !GUIPreferences.getInstance().getRightDragScroll() ) {
-            mask |= InputEvent.BUTTON3_MASK;
-        }
-        
-        if ( (me.getModifiers() & mask ) == 0 ) {
-            isScrolling = true; //activate scrolling
-        } else {
-            isScrolling = false; //activate scrolling
-        }
-
-        mouseAction(getCoordsAt(point), BOARD_HEX_DRAG, me.getModifiers());
-    }
-
-    public void mouseMoved(MouseEvent me) {
-        Point point = me.getPoint();
-        if ( null == point ) {
-            return;
-        }
-
-        for (int i = 0; i < displayables.size(); i++) {
-            Displayable disp = displayables.elementAt(i);
-            if (disp.isBeingDragged()) {
-                isTipPossible = false;
-                return;
-            }
-            if (backSize != null) {
-                disp.isMouseOver(point, backSize);
-            }
-        }
-        mousePos = point;
-        if (isTipShowing()) {
-            hideTooltip();
-        }
-        if (ctlKeyHeld && GUIPreferences.getInstance().getCtlScroll()) {
-            if (initCtlScroll) {
-                previousMouseX = me.getX();
-                previousMouseY = me.getY();
-                initCtlScroll = false;
-            }
-            scroll.x += GUIPreferences.getInstance().getScrollSensitivity() * (me.getX() - previousMouseX);
-            scroll.y += GUIPreferences.getInstance().getScrollSensitivity() * (me.getY() - previousMouseY);
-            previousMouseX = me.getX();
-            previousMouseY = me.getY();
-            checkScrollBounds();
-            repaint();
-        }
-        lastIdle = System.currentTimeMillis();
-        isTipPossible = true;
-    }
-
-    /**
-     * Increases zoomIndex and refreshes the map.
-     * 
-     */
-    public void zoomIn(){
-        if(zoomIndex == ZOOM_FACTORS.length - 1)
-            return;
-        zoomIndex++;
-        zoom();
-    }
-
-    /**
-     * Decreases zoomIndex and refreshes the map.
-     *
-     */
-    public void zoomOut(){
-        if(zoomIndex == 0)
-            return;
-        zoomIndex--;
-        zoom();
-    }
-
-    /**
-     * zoomIndex is a reference to a static array of scale factors.
-     * The index ranges from 0 to 9 and by default is set to 7 which corresponds
-     * to a scale of 1.0 (draws megamek images at normal size).  To zoom out the
-     * index needs to be set to a lower value.  To zoom in make it larger.
-     * If only zooming a step at a time use the zoomIn and zoomOut methods instead.
-     * 
-     * @param zoomIndex
-     */
-    public void setZoomIndex( int zoomIndex ){
-        this.zoomIndex = zoomIndex;
-        zoom();
-    }
-
-    public int getZoomIndex(){
-        return zoomIndex;
-    }
-    
-    private void checkZoomIndex(){
-        if ( zoomIndex > ZOOM_FACTORS.length-1 ) {
-            zoomIndex = ZOOM_FACTORS.length-1;
-        }
-        if ( zoomIndex < 0 ) zoomIndex = 0;
-    }
-    
-    //
-    // Changes hex dimensions and refreshes the map with the new scale
-    //
-    private void zoom(){
-        checkZoomIndex();
-        scale = ZOOM_FACTORS[zoomIndex];
-        GUIPreferences.getInstance().setMapZoomIndex(zoomIndex);
-
-        hex_size = new Dimension((int)(HEX_W*scale), (int)(HEX_H*scale));
-
-        final Dimension size = getSize();
-        
-        scaledImageCache = new ImageCache<Image,Image>();
-
-        cursorSprite.prepare();
-        highlightSprite.prepare();
-        selectedSprite.prepare();
-        firstLOSSprite.prepare();
-        secondLOSSprite.prepare();
-
-        updateBoard();
-
-        view.setLocation(scroll);
-        view.setSize(getOptimalView(size));
-        offset.setLocation(getOptimalOffset(size));
-
-        updateFontSizes();
-        updateBoardImage();
-        
-        repaint();
-    }
-    
-    private void updateFontSizes(){
-        if ( zoomIndex <= 4 ) {
-                font_elev = FONT_7;
-                font_hexnum = FONT_7;
-                font_minefield = FONT_7;
-        }
-        if ( zoomIndex <= 5 & zoomIndex > 4 ){
-                font_elev = FONT_8;
-                font_hexnum = FONT_8;
-                font_minefield = FONT_8;
-        }
-        if ( zoomIndex > 5 ){
-            font_elev = FONT_9;
-            font_hexnum = FONT_9;
-            font_minefield = FONT_9;
-        }
     }
     
     private class MovingUnit {
         public Entity entity;
-        public Vector path;
-        MovingUnit(Entity entity, Vector path) {
+        public ArrayList<UnitLocation> path;
+        MovingUnit(Entity entity, Vector<UnitLocation> path) {
             this.entity = entity;
-            this.path = path;
+            this.path = new ArrayList<UnitLocation>(path);
         }
     }
-
-    /**
-     * Displays a bit of text in a box.
-     *
-     * TODO: make multi-line
-     */
-    private class TooltipCanvas extends Canvas
-    {
-        private String[] tipStrings;
-        private Dimension size;
-
-        public TooltipCanvas(String[] tipStrings) {
-            this.tipStrings = tipStrings;
-
-            // setup
-            setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-            setBackground(SystemColor.info);
-            setForeground(SystemColor.infoText);
-
-            // determine size
-            final FontMetrics fm = getFontMetrics(getFont());
-            int width = 0;
-            for (int i = 0; i < tipStrings.length; i++) {
-                if (fm.stringWidth(tipStrings[i]) > width) {
-                    width = fm.stringWidth(tipStrings[i]);
-                }
-            }
-            size = new Dimension(width + 5, fm.getAscent() * tipStrings.length + 4);
-            setSize(size);
-        }
-
-        public void paint(Graphics g) {
-            final FontMetrics fm = getFontMetrics(getFont());
-            g.setColor(getBackground());
-            g.fillRect(0, 0, size.width, size.height);
-            g.setColor(getForeground());
-            g.drawRect(0, 0, size.width - 1, size.height - 1);
-            for (int i = 0; i < tipStrings.length; i++) {
-                g.drawString(tipStrings[i], 2, (i + 1) * fm.getAscent());
-            }
-        }
-    }
-
 
     /**
      * Everything in the main map view is either the board or it's a sprite
@@ -2843,13 +1713,8 @@ public class BoardView1
             graph.drawPolygon(hexPoly);
 
             // create final image
-            if (zoomIndex == BASE_ZOOM_INDEX ){
-                image = createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(TRANSPARENT)));
-            } else {
-                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(TRANSPARENT))));
-            }
+            image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
             graph.dispose();
             tempImage.flush();
         }
@@ -2917,13 +1782,8 @@ public class BoardView1
             graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
 
             // create final image
-            if (zoomIndex == BASE_ZOOM_INDEX ){
                 image = createImage(new FilteredImageSource(tempImage.getSource(),
                         new KeyAlphaFilter(TRANSPARENT)));
-            } else {
-                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(TRANSPARENT))));
-            }
             graph.dispose();
             tempImage.flush();
         }
@@ -2987,13 +1847,8 @@ public class BoardView1
             graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
 
             // create final image
-            if (zoomIndex == BASE_ZOOM_INDEX ){
-                image = createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(TRANSPARENT)));
-            } else {
-                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(TRANSPARENT))));
-            }
+            image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
             graph.dispose();
             tempImage.flush();
         }
@@ -3085,13 +1940,8 @@ public class BoardView1
                              tempRect.y + tempRect.height - 1);
 
             // create final image
-            if (zoomIndex == BASE_ZOOM_INDEX ){
-                image = createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(TRANSPARENT)));
-            } else {
-                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(TRANSPARENT))));
-            }
+            image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
             graph.dispose();
             tempImage.flush();
         }
@@ -3123,7 +1973,8 @@ public class BoardView1
             if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
                 shortName = shortName.concat(" (FL: ").concat(Integer.toString(entity.getElevation())).concat(")");
             }
-            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+            int face = entity.isCommander()?Font.ITALIC:Font.PLAIN;
+            Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55,
                                         getFontMetrics(font).stringWidth(shortName) + 1,
                                         getFontMetrics(font).getAscent());
@@ -3176,7 +2027,8 @@ public class BoardView1
             if (PreferenceManager.getClientPreferences().getShowUnitId()) {
                 shortName+=(Messages.getString("BoardView1.ID")+entity.getId()); //$NON-NLS-1$
             }
-            Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+            int face = entity.isCommander()?Font.ITALIC:Font.PLAIN;
+            Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
             Rectangle tempRect =
                 new Rectangle(47, 55,
                               getFontMetrics(font).stringWidth(shortName) + 1,
@@ -3427,13 +2279,8 @@ public class BoardView1
             }
 
             // create final image
-            if (zoomIndex == BASE_ZOOM_INDEX ){
-                image = createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(TRANSPARENT)));
-            } else {
-                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(TRANSPARENT))));
-            }
+            image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
             graph.dispose();
             tempImage.flush();
         }
@@ -3469,8 +2316,8 @@ public class BoardView1
          * Overrides to provide for a smaller sensitive area.
          */
         public boolean isInside(Point point) {
-            return entityRect.contains(     point.x + view.x - offset.x,
-                                        point.y + view.y - offset.y);
+            return entityRect.contains(point.x,
+                                        point.y);
         }
 
         public String[] getTooltip() {
@@ -3740,13 +2587,8 @@ public class BoardView1
             }
 
             // create final image
-            if (zoomIndex == BASE_ZOOM_INDEX ){
-                image = createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(TRANSPARENT)));
-            } else {
-                image = getScaledImage(createImage(new FilteredImageSource(tempImage.getSource(),
-                        new KeyAlphaFilter(TRANSPARENT))));
-            }
+            image = createImage(new FilteredImageSource(tempImage.getSource(),
+                    new KeyAlphaFilter(TRANSPARENT)));
             graph.dispose();
             tempImage.flush();
         }
@@ -3919,8 +2761,8 @@ public class BoardView1
          * Return true if the point is inside our polygon
          */
         public boolean isInside(Point point) {
-            return C3Poly.contains(point.x + view.x - bounds.x - offset.x,
-                                   point.y + view.y - bounds.y - offset.y);
+            return C3Poly.contains(point.x - bounds.x,
+                                   point.y - bounds.y);
         }
 
     }
@@ -3934,7 +2776,7 @@ public class BoardView1
      */
     private class AttackSprite extends Sprite
     {
-        private Vector<AttackAction> attacks = new Vector<AttackAction>();
+        private ArrayList<AttackAction> attacks = new ArrayList<AttackAction>();
         private Point a;
         private Point t;
         private double an;
@@ -3945,12 +2787,12 @@ public class BoardView1
         private int targetId;
         private String attackerDesc;
         private String targetDesc;
-        private Vector<String> weaponDescs = new Vector<String>();
+        private ArrayList<String> weaponDescs = new ArrayList<String>();
         private final Entity ae;
         private final Targetable target;
 
         public AttackSprite(AttackAction attack) {
-            this.attacks.addElement(attack);
+            this.attacks.add(attack);
             this.entityId = attack.getEntityId();
             this.targetType = attack.getTargetType();
             this.targetId = attack.getTargetId();
@@ -4083,8 +2925,8 @@ public class BoardView1
          * Return true if the point is inside our polygon
          */
         public boolean isInside(Point point) {
-            return attackPoly.contains(point.x + view.x - bounds.x - offset.x,
-                                       point.y + view.y - bounds.y - offset.y);
+            return attackPoly.contains(point.x - bounds.x,
+                                       point.y - bounds.y);
         }
 
         public int getEntityId() {
@@ -4103,7 +2945,7 @@ public class BoardView1
             final WeaponType wtype = (WeaponType)entity.getEquipment(attack.getWeaponId()).getType();
             final String roll = attack.toHit(game).getValueAsString();
             final String table = attack.toHit(game).getTableDesc();
-            weaponDescs.addElement( wtype.getName() + Messages.getString("BoardView1.needs") + roll + " " + table ); //$NON-NLS-1$
+            weaponDescs.add( wtype.getName() + Messages.getString("BoardView1.needs") + roll + " " + table ); //$NON-NLS-1$
         }
 
         public void addWeapon(KickAttackAction attack) {
@@ -4126,7 +2968,7 @@ public class BoardView1
                 bufer = Messages.getString("BoardView1.kickRight", new Object[]{rollRight}); //$NON-NLS-1$
                 break;
             }
-            weaponDescs.addElement(bufer);
+            weaponDescs.add(bufer);
         }
 
         public void addWeapon(PunchAttackAction attack) {
@@ -4149,34 +2991,34 @@ public class BoardView1
                 bufer = Messages.getString("BoardView1.punchRight", new Object[]{rollRight}); //$NON-NLS-1$
                 break;
             }
-            weaponDescs.addElement(bufer);
+            weaponDescs.add(bufer);
         }
 
         public void addWeapon(PushAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.addElement(Messages.getString("BoardView1.push", new Object[]{roll})); //$NON-NLS-1$
+            weaponDescs.add(Messages.getString("BoardView1.push", new Object[]{roll})); //$NON-NLS-1$
         }
 
         public void addWeapon(ClubAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
             final String club = attack.getClub().getName();
-            weaponDescs.addElement(Messages.getString("BoardView1.hit", new Object[]{club,roll})); //$NON-NLS-1$
+            weaponDescs.add(Messages.getString("BoardView1.hit", new Object[]{club,roll})); //$NON-NLS-1$
         }
 
         public void addWeapon(ChargeAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.addElement(Messages.getString("BoardView1.charge", new Object[]{roll})); //$NON-NLS-1$
+            weaponDescs.add(Messages.getString("BoardView1.charge", new Object[]{roll})); //$NON-NLS-1$
         }
         public void addWeapon(DfaAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.addElement(Messages.getString("BoardView1.DFA", new Object[]{roll})); //$NON-NLS-1$
+            weaponDescs.add(Messages.getString("BoardView1.DFA", new Object[]{roll})); //$NON-NLS-1$
         }
         public void addWeapon(ProtomechPhysicalAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.addElement(Messages.getString("BoardView1.proto", new Object[]{roll})); //$NON-NLS-1$
+            weaponDescs.add(Messages.getString("BoardView1.proto", new Object[]{roll})); //$NON-NLS-1$
         }
         public void addWeapon(SearchlightAttackAction attack) {
-            weaponDescs.addElement(Messages.getString("BoardView1.Searchlight"));
+            weaponDescs.add(Messages.getString("BoardView1.Searchlight"));
         }
 
         public String[] getTooltip() {
@@ -4207,17 +3049,6 @@ public class BoardView1
     public TilesetManager getTilesetManager() {
         return tileManager;
     }
-
-    // added by kenn
-    public void drawRuler(Coords s, Coords e, Color sc, Color ec) {
-        rulerStart = s;
-        rulerEnd = e;
-        rulerStartColor = sc;
-        rulerEndColor = ec;
-
-        repaint();
-    }
-    // end kenn
 
     /**
      * @param lastCursor The lastCursor to set.
@@ -4284,9 +3115,6 @@ public class BoardView1
     public void select(Coords coords) {
         if(coords == null || game.getBoard().contains(coords)) {
             setSelected(coords);
-            moveCursor(selectedSprite, coords);
-            moveCursor(firstLOSSprite, null);
-            moveCursor(secondLOSSprite, null);
             processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_SELECTED,0));
         }
     }
@@ -4310,9 +3138,6 @@ public class BoardView1
     public void highlight(Coords coords) {
         if(coords == null || game.getBoard().contains(coords)) {
             setHighlighted(coords);
-            moveCursor(highlightSprite, coords);
-            moveCursor(firstLOSSprite, null);
-            moveCursor(secondLOSSprite, null);
             processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
         }
     }
@@ -4337,9 +3162,6 @@ public class BoardView1
         if(coords == null || game.getBoard().contains(coords)) {
             if(getLastCursor() == null || coords == null || !coords.equals(getLastCursor())) {
                 setLastCursor(coords);
-                moveCursor(cursorSprite, coords);
-                moveCursor(firstLOSSprite, null);
-                moveCursor(secondLOSSprite, null);
                 processBoardViewEvent(new BoardViewEvent(this, coords, null, BoardViewEvent.BOARD_HEX_CURSOR, 0));
             } else {
                 setLastCursor(coords);
@@ -4361,7 +3183,6 @@ public class BoardView1
         if(c == null || game.getBoard().contains(c)) {
             if (getFirstLOS() == null) {
                 setFirstLOS(c);
-                firstLOSHex(c);
                 processBoardViewEvent(new BoardViewEvent(this, c, null, BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
             } else {
                 secondLOSHex(c,getFirstLOS());
@@ -4406,13 +3227,6 @@ public class BoardView1
         mouseAction(coords.x, coords.y, mtype, modifiers);
     }
     
-    /**
-     * Return, whether a popup may be drawn, this currently means, whether no scrolling took place.
-     */
-    public boolean mayDrawPopup() {
-        return !scrolled;
-    }
-
     /* (non-Javadoc)
      * @see megamek.common.BoardListener#boardNewBoard(megamek.common.BoardEvent)
      */
@@ -4427,11 +3241,8 @@ public class BoardView1
         IHex hex = game.getBoard().getHex(b.getCoords());
         tileManager.clearHex(hex);
         tileManager.waitForHex(hex);
-        if (boardGraph != null) {
-            redrawAround(b.getCoords());
-        }
+        repaint();
     }
-
 
     private GameListener gameListener = new GameListenerAdapter(){
         
@@ -4509,16 +3320,6 @@ public class BoardView1
 
     protected synchronized void updateBoard() {
         updateBoardSize();
-        if(backGraph != null)
-            backGraph.dispose();
-        backGraph = null;
-        backImage = null;
-        backSize = null;
-        boardImage = null;
-        if(boardGraph != null)
-            boardGraph.dispose();
-        boardGraph = null;
-        //tileManager.reset();
         redrawAllEntities();
     }
     
@@ -4536,20 +3337,14 @@ public class BoardView1
             if (isShowing()) {
                 boolean redraw = false;
                 for (int i = 0; i < displayables.size(); i++) {
-                    Displayable disp = displayables.elementAt(i);
+                    Displayable disp = displayables.get(i);
                     if (!disp.isSliding()) {
                         disp.setIdleTime(currentTime - lastTime, true);
                     } else {
                         redraw = redraw || disp.slide();
                     }
                 }
-                if (backSize != null) {
-                    redraw = redraw || doMoveUnits(currentTime - lastTime);
-                    redraw = redraw || doScroll();
-                    checkTooltip();
-                } else {
-                    repaint(100);
-                }
+                redraw = redraw || doMoveUnits(currentTime - lastTime);
                 if (redraw) {
                     repaint();
                 }
@@ -4561,7 +3356,7 @@ public class BoardView1
     public synchronized void WeaponSelected(MechDisplayEvent b) {
         selectedEntity = b.getEntity();
         selectedWeapon = b.getEquip();
-        repaint(100);
+        repaint();
     }
 
     private class EcmBubble extends Coords {
@@ -4588,7 +3383,7 @@ public class BoardView1
                 list.add(new EcmBubble(ent.getPosition(), range, tint));
             }
         }
-        Hashtable<Coords, Integer> table = new Hashtable<Coords, Integer>();
+        HashMap<Coords, Integer> table = new HashMap<Coords, Integer>();
         for(EcmBubble b : list) {
             Integer col = new Integer(b.tint);
             for(int x=-b.range;x<=b.range;x++) {
@@ -4617,8 +3412,36 @@ public class BoardView1
         }
         synchronized(this) {
             ecmHexes = table;
-            dirtyBoard = true;
         }
-        repaint(100);
+        repaint();
     }
+
+	public Dimension getPreferredScrollableViewportSize() {
+		return getPreferredSize();
+	}
+
+	public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
+        final Dimension size = scrollpane.getViewport().getSize();
+		if (arg1 == SwingConstants.VERTICAL)
+			return size.height;
+		return size.width;
+	}
+
+	public boolean getScrollableTracksViewportHeight() {
+		return false;
+	}
+
+	public boolean getScrollableTracksViewportWidth() {
+		return false;
+	}
+
+	public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
+		if (arg1 == SwingConstants.VERTICAL)
+			return (int) (scale * HEX_H / 2.0);
+		return (int) (scale * HEX_W / 2.0);
+	}
+	
+	public Dimension getPreferredSize() {
+		return boardSize;
+	}
 }

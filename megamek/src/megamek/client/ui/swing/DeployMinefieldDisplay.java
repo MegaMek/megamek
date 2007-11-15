@@ -253,8 +253,7 @@ public class DeployMinefieldDisplay
                 VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.frame);
                 vsd.setVisible(true);
 
-                // Hack warning...              
-                clientgui.bv.stopScrolling();
+                // Hack warning...
                 mf = Minefield.createVibrabombMF(coords, p.getId(), vsd.getSetting());
                 p.setNbrMFVibra(p.getNbrMFVibra() - 1);
             } else {

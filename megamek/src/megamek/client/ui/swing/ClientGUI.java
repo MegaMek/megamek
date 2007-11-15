@@ -50,6 +50,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.filechooser.FileFilter;
 import java.applet.Applet;
 import java.applet.AudioClip;
@@ -63,11 +64,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.MenuItem;
-import java.awt.Panel;
 import java.awt.Point;
 import java.awt.PopupMenu;
 import java.awt.Rectangle;
-import java.awt.Scrollbar;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -108,7 +107,7 @@ public class ClientGUI
     // keep me
     private ChatterBox cb;
     public BoardView1 bv;
-    private Panel scroller;
+    private JScrollPane scroller;
     public JDialog mechW;
     public MechDisplay mechD;
     public JDialog minimapW;
@@ -212,16 +211,6 @@ public class ClientGUI
     }
 
     public void keyPressed(KeyEvent ke) {
-        switch (ke.getKeyCode()) {
-            case KeyEvent.VK_PAGE_DOWN:
-                bv.zoomIn();
-                break;
-            case KeyEvent.VK_PAGE_UP:
-                bv.zoomOut();
-                break;
-            default:
-                //pass it on
-        }
     }
 
     public void keyTyped(KeyEvent ke) {
@@ -308,22 +297,16 @@ public class ClientGUI
         try {
             client.game.addGameListener(gameListener);
             // Create the board viewer.
-            bv = new BoardView1(client.game, frame, this);
+            bv = new BoardView1(client.game, frame);
 
             // Place the board viewer in a set of scrollbars.
-            scroller = new Panel();
-            scroller.setLayout(new BorderLayout());
-            Scrollbar vertical = new Scrollbar(Scrollbar.VERTICAL);
-            Scrollbar horizontal = new Scrollbar(Scrollbar.HORIZONTAL);
-            scroller.add(bv, BorderLayout.CENTER);
+            scroller = new JScrollPane(bv);
             // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
             if (System.getProperty
                     ("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
                     ("false")) { //$NON-NLS-1$
                 // Assign the scrollbars to the board viewer.
-                scroller.add(vertical, BorderLayout.EAST);
-                scroller.add(horizontal, BorderLayout.SOUTH);
-                bv.setScrollbars(vertical, horizontal);
+                bv.setScrollPane(scroller);
             }
         } catch (IOException e) {
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
@@ -560,10 +543,6 @@ public class ClientGUI
             toggleMap();
         } else if (event.getActionCommand().equals(VIEW_UNIT_OVERVIEW)) {
             toggleUnitOverview();
-        } else if (event.getActionCommand().equals(VIEW_ZOOM_IN)) {
-            bv.zoomIn();
-        } else if (event.getActionCommand().equals(VIEW_ZOOM_OUT)) {
-            bv.zoomOut();
         } else if (event.getActionCommand().equals(VIEW_LOS_SETTING)) {
             showLOSSettingDialog();
         }
@@ -858,8 +837,6 @@ public class ClientGUI
     }
 
     private void showBoardPopup(Point point) {
-        if (!bv.mayDrawPopup())
-            return;
         fillPopup(bv.getCoordsAt(point));
         if (popup.getItemCount() > 0) {
             popup.show(bv, point.x, point.y);

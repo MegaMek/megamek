@@ -451,13 +451,13 @@ public class BoardSelectionDialog
             MapPreview mapPreview = null;
             try {
                 mapPreview = new MapPreview(mapPreviewW, board);
+                mapPreviewW.removeAll();
+                mapPreviewW.add(mapPreview);
+                mapPreviewW.setVisible(true);
+                mapPreview.initializeMap();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            mapPreviewW.removeAll();
-            mapPreviewW.add(mapPreview);
-            mapPreviewW.setVisible(true);
-            mapPreview.initializeMap();
         }
     }
 

@@ -66,7 +66,7 @@ class DataStreamConnection extends AbstractConnection {
         NetworkPacket packet = null;
         if (in == null) {
             in = new DataInputStream(
-                new BufferedInputStream(getInputStream()));
+                new BufferedInputStream(getInputStream(),1024));
             state=PacketReadState.Header;
         }
         
@@ -79,9 +79,13 @@ class DataStreamConnection extends AbstractConnection {
                 len=in.readInt();
                 state=PacketReadState.Data;
                 //drop through on purpose
-            case Data: 
-                if(in.available()<len) 
-                    return null;
+            case Data:               
+                //we want to let huge packets block a bit..
+                if(len<1000||in.available()<500)
+                {
+                    if(in.available()<len)                 
+                        return null;
+                }
                 byte[] data=new byte[len];
                 in.readFully(data); 
                 packet=new NetworkPacket(zipped,encoding,data);

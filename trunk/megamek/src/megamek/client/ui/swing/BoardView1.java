@@ -228,7 +228,7 @@ public class BoardView1
 
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
-        scheduleRedraw();
+        scheduleRedrawTimer();//call only once
         addKeyListener(this);
         addMouseListener(this);
         MouseMotionListener doScrollRectToVisible = new MouseMotionAdapter() {
@@ -254,19 +254,27 @@ public class BoardView1
         
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
     }
-    protected void scheduleRedraw() {
-        final RedrawWorker redrawWorker = new RedrawWorker();
+    protected final RedrawWorker redrawWorker = new RedrawWorker();
+    /**
+     *  this should only be called once!! this will cause
+     *  a timer to schedule constant screen updates every 20 
+     *  milliseconds! 
+     *  
+     */
+    protected void scheduleRedrawTimer() {
         final TimerTask redraw=new TimerTask() {
             public void run() {
-                try {
-                    SwingUtilities.invokeAndWait(redrawWorker);
-                } catch(Exception ie) {
-                }
+                scheduleRedraw();
             }
         };
         TimerSingleton.getInstance().schedule(redraw,20,20);            
     }
-    
+    protected void scheduleRedraw() {
+        try {
+            SwingUtilities.invokeAndWait(redrawWorker);
+        } catch(Exception ie) {
+        }    
+    }
     public void preferenceChange(PreferenceChangeEvent e) {
         if(e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
@@ -610,6 +618,19 @@ public class BoardView1
         }
     }
     
+    /*
+        NOTENOTENOTE: (itmo)
+        wouldnt this be simpler with two arrays. One with
+        the strings {"BoardView1.thunderblaablaa","BoardView1.Conventi.."}
+        one with the offsets {51,51,42} etc
+        Preferably indexed by an enum:
+        enum{
+            Conventional,
+            Thunder; 
+        }
+        
+        or something? 
+    */
     /**
      * Writes "MINEFIELD" in minefield hexes...
      */

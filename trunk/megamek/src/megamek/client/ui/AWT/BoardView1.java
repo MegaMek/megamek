@@ -285,7 +285,7 @@ public class BoardView1
 
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
-        scheduleRedraw();
+        scheduleRedrawTimer();
 
         addKeyListener(this);
         addMouseListener(this);
@@ -324,17 +324,20 @@ public class BoardView1
         
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
     }
-    protected void scheduleRedraw() {
-        final RedrawWorker redrawWorker = new RedrawWorker();
+    protected final RedrawWorker redrawWorker = new RedrawWorker();
+    protected void scheduleRedrawTimer() {
         final TimerTask redraw=new TimerTask() {
             public void run() {
-                try {
-                    SwingUtilities.invokeAndWait(redrawWorker);
-                } catch(Exception ie) {
-                }
+                scheduleRedraw();
             }
         };
         TimerSingleton.getInstance().schedule(redraw,20,20);            
+    }
+    protected void scheduleRedraw() {
+        try {
+            SwingUtilities.invokeAndWait(redrawWorker);
+        } catch(Exception ie) {
+        }    
     }
     public void preferenceChange(PreferenceChangeEvent e) {
         if(e.getName().equals(IClientPreferences.MAP_TILESET)) {

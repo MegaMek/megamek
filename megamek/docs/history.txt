@@ -2,6 +2,7 @@
 ----------------
 v0.33.13-dev (SVN)
 + Fix lock when sending large packets
++ Patch 1830744: doubleblind improvement
 
 v0.33.12 (2007-11-09, GMT 22:21 GMT+2)
 + Corrected names of the Celestials

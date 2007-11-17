@@ -99,11 +99,20 @@ public class Report implements Serializable {
     /** Testing only - remove me later. */
     //debugReport
     public static final int TESTING = 3;
+    /** messages which should be sent only to the player indicated
+        by "player"*/
+    public static final int PLAYER=4;
 
     /** The entity this report concerns, if applicable.  If this is
         left blank, then the report will be considered
         <code>public</code>. */
     public transient int subject = Entity.NONE;
+    /**
+     *  the player this report concerns, if applicable. This should be
+     *  filled in if this report is not public and still does not belong
+     *  to a specific visible entity
+     */
+    public transient int player= Player.PLAYER_NONE;
 
     /** This hash table will store the tagData Vector indexes that are
         supposed to be obscured before sending to clients.  This only

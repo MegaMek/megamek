@@ -1034,6 +1034,10 @@ public class ChatLounge
                     }
                }
             }
+            if(client.game.getOptions().booleanOption("real_blind_drop")
+                && player.getId()!=client.getLocalPlayer().getId()) {
+                playerValue=playerValue>0?9999:0;
+            }
             if (useBv) {
                 lisBVs.add(player.getName() + Messages.getString("ChatLounge.BV") + (int) playerValue + " (FM:" + (int) (playerValue*player.getForceSizeBVMod()) + ")"); //$NON-NLS-1$
             } else if (useCost) {

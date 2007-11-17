@@ -1238,7 +1238,7 @@ public class Server implements Runnable {
 		while (players.hasMoreElements()) {
 			Player player = players.nextElement();
 			r = new Report();
-			r.type = Report.PUBLIC;
+            r.type=Report.PUBLIC;
 			r.messageId = 7016;
 			r.add(player.getName());
 			r.add(player.getBV());
@@ -1734,6 +1734,10 @@ public class Server implements Runnable {
 				Player player = players2.nextElement();
 				Report r = new Report();
 				r.type = Report.PUBLIC;
+                if(doBlind()) {
+                    r.type = Report.PLAYER;
+                    r.player=player.getId();
+                }
 				r.messageId = 7016;
 				r.add(player.getName());
 				r.add(player.getBV());
@@ -2895,90 +2899,91 @@ public class Server implements Runnable {
 		} else {
 			addReport(new Report(1210, Report.PUBLIC)); // newline
 		}
+        if(!doBlind()) {
+            if (game.getOptions().booleanOption("individual_initiative")) {
+                r = new Report(1040, Report.PUBLIC);
+                addReport(r);
+                for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements();) {
+                    GameTurn t = e.nextElement();
+                    if (t instanceof GameTurn.SpecificEntityTurn) {
+                        Entity entity = game
+                                .getEntity(((GameTurn.SpecificEntityTurn) t)
+                                        .getEntityNum());
+                        r = new Report(1045);
+                        r.subject = entity.getId();
+                        r.addDesc(entity);
+                        r.add(entity.getInitiative().toString());
+                        addReport(r);
+                    } else {
+                        Player player = getPlayer(t.getPlayerNum());
+                        if (null != player) {
+                            r = new Report(1050, Report.PUBLIC);
+                            r.add(player.getName());
+                            addReport(r);
+                        }
+                    }
+                }
+            } else {
+                for (Enumeration i = game.getTeams(); i.hasMoreElements();) {
+                    final Team team = (Team) i.nextElement();
 
-		if (game.getOptions().booleanOption("individual_initiative")) {
-			r = new Report(1040, Report.PUBLIC);
-			addReport(r);
-			for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements();) {
-				GameTurn t = e.nextElement();
-				if (t instanceof GameTurn.SpecificEntityTurn) {
-					Entity entity = game
-							.getEntity(((GameTurn.SpecificEntityTurn) t)
-									.getEntityNum());
-					r = new Report(1045);
-					r.subject = entity.getId();
-					r.addDesc(entity);
-					r.add(entity.getInitiative().toString());
-					addReport(r);
-				} else {
-					Player player = getPlayer(t.getPlayerNum());
-					if (null != player) {
-						r = new Report(1050, Report.PUBLIC);
-						r.add(player.getName());
-						addReport(r);
-					}
-				}
-			}
-		} else {
-			for (Enumeration i = game.getTeams(); i.hasMoreElements();) {
-				final Team team = (Team) i.nextElement();
+                    // If there is only one player, list them as the 'team', and
+                    // use the team iniative
+                    if (team.getSize() == 1) {
+                        final Player player = (Player) team.getPlayers()
+                                .nextElement();
+                        r = new Report(1015, Report.PUBLIC);
+                        r.add(player.getName());
+                        r.add(team.getInitiative().toString());
+                        addReport(r);
+                    } else {
+                        // Multiple players. List the team, then break it down.
+                        r = new Report(1015, Report.PUBLIC);
+                        r.add(Player.teamNames[team.getId()]);
+                        r.add(team.getInitiative().toString());
+                        addReport(r);
+                        for (Enumeration j = team.getPlayers(); j.hasMoreElements();) {
+                            final Player player = (Player) j.nextElement();
+                            r = new Report(1015, Report.PUBLIC);
+                            r.indent();
+                            r.add(player.getName());
+                            r.add(player.getInitiative().toString());
+                            addReport(r);
+                        }
+                    }
+                }
 
-				// If there is only one player, list them as the 'team', and
-				// use the team iniative
-				if (team.getSize() == 1) {
-					final Player player = (Player) team.getPlayers()
-							.nextElement();
-					r = new Report(1015, Report.PUBLIC);
-					r.add(player.getName());
-					r.add(team.getInitiative().toString());
-					addReport(r);
-				} else {
-					// Multiple players. List the team, then break it down.
-					r = new Report(1015, Report.PUBLIC);
-					r.add(Player.teamNames[team.getId()]);
-					r.add(team.getInitiative().toString());
-					addReport(r);
-					for (Enumeration j = team.getPlayers(); j.hasMoreElements();) {
-						final Player player = (Player) j.nextElement();
-						r = new Report(1015, Report.PUBLIC);
-						r.indent();
-						r.add(player.getName());
-						r.add(player.getInitiative().toString());
-						addReport(r);
-					}
-				}
-			}
+                // The turn order is different in movement phase
+                // if a player has any "even" moving units.
+                r = new Report(1020, Report.PUBLIC);
 
-			// The turn order is different in movement phase
-			// if a player has any "even" moving units.
-			r = new Report(1020, Report.PUBLIC);
-
-			boolean hasEven = false;
-			for (Enumeration<GameTurn> i = game.getTurns(); i.hasMoreElements();) {
-				GameTurn turn = i.nextElement();
-				Player player = getPlayer(turn.getPlayerNum());
-				if (null != player) {
-					r.add(player.getName());
-					if (player.getEvenTurns() > 0)
-						hasEven = true;
-				}
-			}
-			r.newlines = 2;
-			addReport(r);
-			if (hasEven) {
-				r = new Report(1021, Report.PUBLIC);
-				if ((game.getOptions().booleanOption("inf_deploy_even") || game
-						.getOptions().booleanOption("protos_deploy_even"))
-						&& !(game.getLastPhase() == IGame.PHASE_END_REPORT))
-					r.choose(true);
-				else
-					r.choose(false);
-				r.indent();
-				r.newlines = 2;
-				addReport(r);
-			}
+                boolean hasEven = false;
+                for (Enumeration<GameTurn> i = game.getTurns(); i.hasMoreElements();) {
+                    GameTurn turn = i.nextElement();
+                    Player player = getPlayer(turn.getPlayerNum());
+                    if (null != player) {
+                        r.add(player.getName());
+                        if (player.getEvenTurns() > 0)
+                            hasEven = true;
+                    }
+                }
+                r.newlines = 2;
+                addReport(r);
+                if (hasEven) {
+                    r = new Report(1021, Report.PUBLIC);
+                    if ((game.getOptions().booleanOption("inf_deploy_even") || game
+                            .getOptions().booleanOption("protos_deploy_even"))
+                            && !(game.getLastPhase() == IGame.PHASE_END_REPORT))
+                        r.choose(true);
+                    else
+                        r.choose(false);
+                    r.indent();
+                    r.newlines = 2;
+                    addReport(r);
+                }
+            }
 		}
-		if (!abbreviatedReport) {
+        if (!abbreviatedReport) {
 			// Wind direction and strength
 			r = new Report(1025, Report.PUBLIC);
 			r.add(game.getStringWindDirection());
@@ -18850,7 +18855,7 @@ public class Server implements Runnable {
 		if (e.getOwner().getId() == p.getId()) {
 			// The owner of an entity should be able to see it, of course.
 			return true;
-		}
+		}        
 		Vector<Player> playersWhoCanSee = whoCanSee(e);
 		for (int i = 0; i < playersWhoCanSee.size(); i++) {
 			Player currentPlayer = playersWhoCanSee.elementAt(i);
@@ -19012,6 +19017,12 @@ public class Server implements Runnable {
 	/**
 	 * Filter a single report so that the correct double-blind obscuration takes
 	 * place.
+     *
+     *  to mark a message as "thsi should be visible toanyone seeing this entity"
+     *      set r.subject to the entity id
+     *  to mark a message as "only visble to the player" 
+     *      set r.player to that player's id and set r.type=Report.PLAYER
+     *  to mark a message as visible to all , set r.type to Report.PUBLIC
 	 * 
 	 * @param r
 	 *            the Report to filter
@@ -19024,7 +19035,9 @@ public class Server implements Runnable {
 	 */
 	private Report filterReport(Report r, Player p, boolean omitCheck) {
 
-		if (r.subject == Entity.NONE && r.type != Report.PUBLIC) {
+		if (r.subject == Entity.NONE && 
+            r.type != Report.PLAYER && 
+            r.type != Report.PUBLIC) {
 			// Reports that don't have a subject should be public.
 			System.err
 					.println("Error: Attempting to filter a Report object that is not public yet has no subject.\n\t\tmessageId: "
@@ -19043,7 +19056,9 @@ public class Server implements Runnable {
 				return r;
 		}
 
-		if (!omitCheck && (entity == null || owner == null)) {
+		if (r.type!=Report.PLAYER && 
+            !omitCheck && 
+            (entity == null || owner == null)) {
 			System.err
 					.println("Error: Attempting to filter a Report object that is not public but has a subject ("
 							+ entity
@@ -19055,7 +19070,11 @@ public class Server implements Runnable {
 
 		Report copy = new Report(r);
 		for (int j = 0; j < copy.dataCount(); j++) {
-			if (omitCheck || !canSee(p, entity)) {
+			if ((r.type==Report.PLAYER&&
+                 p.getId()!=r.player
+                )
+                ||omitCheck 
+                || (entity!=null&&!canSee(p, entity))) {
 				if (r.isValueObscured(j)) {
 					copy.hideData(j);
 					// Mark the original report to indicate which players

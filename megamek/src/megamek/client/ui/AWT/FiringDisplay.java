@@ -322,14 +322,15 @@ public class FiringDisplay
             Entity t = client.game.getEntity(lastTarget);
             target(t);
 
-            clientgui.getBoardView().highlight(ce().getPosition());
+            if (!ce().isOffBoard())
+                clientgui.getBoardView().highlight(ce().getPosition());
             clientgui.getBoardView().select(null);
             clientgui.getBoardView().cursor(null);
 
             refreshAll();
             cacheVisibleTargets();
 
-            if (!clientgui.bv.isMovingUnits()) {
+            if (!clientgui.bv.isMovingUnits() && !ce().isOffBoard()) {
                 clientgui.bv.centerOnHex(ce().getPosition());
             }
 

@@ -6080,12 +6080,12 @@ public abstract class Entity extends TurnOrdered
             && (overallMoveType == IEntityMovementType.MOVE_RUN
                 || overallMoveType == IEntityMovementType.MOVE_VTOL_RUN)
             && prevFacing != curFacing
-            && !lastPos.equals(curPos))
-            {
+            && !lastPos.equals(curPos)
+            && !(this instanceof Infantry)) {
                 roll.append(new PilotingRollData(getId(), 0, "flanking and turning"));
              
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: VTOL is not apparently sideslipping");
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: not apparently sideslipping");
         }
     
         return roll;

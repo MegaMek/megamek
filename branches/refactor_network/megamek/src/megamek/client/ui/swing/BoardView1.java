@@ -264,14 +264,17 @@ public class BoardView1
     protected void scheduleRedrawTimer() {
         final TimerTask redraw=new TimerTask() {
             public void run() {
-                scheduleRedraw();
+                try {
+                    SwingUtilities.invokeAndWait(redrawWorker);
+                } catch(Exception ie) {
+                }    
             }
         };
         TimerSingleton.getInstance().schedule(redraw,20,20);            
     }
     protected void scheduleRedraw() {
         try {
-            SwingUtilities.invokeAndWait(redrawWorker);
+            SwingUtilities.invokeLater(redrawWorker);
         } catch(Exception ie) {
         }    
     }

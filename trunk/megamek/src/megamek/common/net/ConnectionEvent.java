@@ -51,8 +51,8 @@ public abstract class ConnectionEvent extends java.util.EventObject {
      * to the getSource() 
      * @return
      */
-    public IConnection getConnection() {
-        return (IConnection)getSource();
+    public Connection getConnection() {
+        return (Connection)getSource();
     }
 
     public String toString() {

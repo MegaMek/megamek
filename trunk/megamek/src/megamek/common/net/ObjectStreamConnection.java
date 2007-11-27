@@ -25,7 +25,7 @@ import java.net.Socket;
  * to send/receive data.
  *
  */
-class ObjectStreamConnection extends AbstractConnection {
+class ObjectStreamConnection extends Connection {
 
     /**
      * Input stream

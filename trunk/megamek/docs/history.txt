@@ -5,6 +5,7 @@ v0.33.13-dev (SVN)
 + Patch 1830744: doubleblind improvement
 + Don't center on artillery unit's location in artillery firing phase when that unit
     is offboard
++ Reverted all network changes for now, until we have stabilised them
 
 v0.33.12 (2007-11-09, GMT 22:21 GMT+2)
 + Corrected names of the Celestials

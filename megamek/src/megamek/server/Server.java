@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.*;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -141,7 +140,7 @@ import megamek.common.actions.UnjamAction;
 import megamek.common.actions.UnloadStrandedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
-import megamek.common.net.IConnection;
+import megamek.common.net.Connection;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
@@ -197,11 +196,11 @@ public class Server implements Runnable {
 	private String motd;
 
 	// game info
-	private Vector<IConnection> connections = new Vector<IConnection>(4);
+	private Vector<Connection> connections = new Vector<Connection>(4);
 
-	private Vector<IConnection> connectionsPending = new Vector<IConnection>(4);
+	private Vector<Connection> connectionsPending = new Vector<Connection>(4);
 
-	private Hashtable<Integer, IConnection> connectionIds = new Hashtable<Integer, IConnection>();
+	private Hashtable<Integer, Connection> connectionIds = new Hashtable<Integer, Connection>();
 
 	private int connectionCounter;
 
@@ -250,7 +249,7 @@ public class Server implements Runnable {
 		 * Called when it is sensed that a connection has terminated.
 		 */
 		public void disconnected(DisconnectedEvent e) {
-			IConnection conn = e.getConnection();
+			Connection conn = e.getConnection();
 
 			// write something in the log
 			System.out.println("s: connection " + conn.getId()
@@ -287,7 +286,6 @@ public class Server implements Runnable {
 		this.password = password.length() > 0 ? password : null;
 		// initialize server socket
 		serverSocket = new ServerSocket(port);
-        serverSocket.setSoTimeout(50);
 
 		motd = createMotd();
 
@@ -439,25 +437,25 @@ public class Server implements Runnable {
 		}
 
 		// kill pending connnections
-		for (Enumeration<IConnection> i = connectionsPending.elements(); i
+		for (Enumeration<Connection> i = connectionsPending.elements(); i
 				.hasMoreElements();) {
-			final IConnection conn = i.nextElement();
+			final Connection conn = i.nextElement();
 			conn.close();
 		}
 		connectionsPending.removeAllElements();
 
 		// Send "kill" commands to all connections
 		// N.B. I may be starting a race here.
-		for (Enumeration<IConnection> i = connections.elements(); i
+		for (Enumeration<Connection> i = connections.elements(); i
 				.hasMoreElements();) {
-			final IConnection conn = i.nextElement();
+			final Connection conn = i.nextElement();
 			send(conn.getId(), new Packet(Packet.COMMAND_CLOSE_CONNECTION));
 		}
 
 		// kill active connnections
-		for (Enumeration<IConnection> i = connections.elements(); i
+		for (Enumeration<Connection> i = connections.elements(); i
 				.hasMoreElements();) {
-			final IConnection conn = i.nextElement();
+			final Connection conn = i.nextElement();
 			conn.close();
 		}
 		connections.removeAllElements();
@@ -551,7 +549,7 @@ public class Server implements Runnable {
 	 * connection.
 	 */
 	private void receivePlayerName(Packet packet, int connId) {
-		final IConnection conn = getPendingConnection(connId);
+		final Connection conn = getPendingConnection(connId);
 		String name = (String) packet.getObject(0);
 		boolean returning = false;
 
@@ -1015,31 +1013,31 @@ public class Server implements Runnable {
 	/**
 	 * a shorter name for getConnection()
 	 */
-	private IConnection getClient(int connId) {
+	private Connection getClient(int connId) {
 		return getConnection(connId);
 	}
 
 	/**
 	 * Returns a connection, indexed by id
 	 */
-	public Enumeration<IConnection> getConnections() {
+	public Enumeration<Connection> getConnections() {
 		return connections.elements();
 	}
 
 	/**
 	 * Returns a connection, indexed by id
 	 */
-	public IConnection getConnection(int connId) {
+	public Connection getConnection(int connId) {
 		return connectionIds.get(new Integer(connId));
 	}
 
 	/**
 	 * Returns a pending connection
 	 */
-	private IConnection getPendingConnection(int connId) {
-		for (Enumeration<IConnection> i = connectionsPending.elements(); i
+	private Connection getPendingConnection(int connId) {
+		for (Enumeration<Connection> i = connectionsPending.elements(); i
 				.hasMoreElements();) {
-			final IConnection conn = i.nextElement();
+			final Connection conn = i.nextElement();
 
 			if (conn.getId() == connId) {
 				return conn;
@@ -19958,9 +19956,9 @@ public class Server implements Runnable {
 		if (connections == null) {
 			return;
 		}
-		for (Enumeration<IConnection> i = connections.elements(); i
+		for (Enumeration<Connection> i = connections.elements(); i
 				.hasMoreElements();) {
-			final IConnection conn = i.nextElement();
+			final Connection conn = i.nextElement();
 			conn.send(packet);
 		}
 	}
@@ -19977,9 +19975,9 @@ public class Server implements Runnable {
 			return;
 		}
 
-		for (Enumeration<IConnection> i = connections.elements(); i
+		for (Enumeration<Connection> i = connections.elements(); i
 				.hasMoreElements();) {
-			final IConnection conn = i.nextElement();
+			final Connection conn = i.nextElement();
 			Player p = game.getPlayer(conn.getId());
 			Packet packet;
 			if (tacticalGeniusReport)
@@ -20073,7 +20071,7 @@ public class Server implements Runnable {
 		switch (packet.getCommand()) {
 		case Packet.COMMAND_CLOSE_CONNECTION:
 			// We have a client going down!
-			IConnection c = getConnection(connId);
+			Connection c = getConnection(connId);
 			if (c != null) {
 				c.close();
 			}
@@ -20190,7 +20188,6 @@ public class Server implements Runnable {
 	public void run() {
 		Thread currentThread = Thread.currentThread();
 		System.out.println("s: listening for clients...");
-        HashSet<IConnection> toUpdate=new HashSet<IConnection>();
 		while (connector == currentThread) {
 			try {
 				Socket s = serverSocket.accept();
@@ -20199,7 +20196,7 @@ public class Server implements Runnable {
 				System.out.println("s: accepting player connection #" + id
 						+ " ...");
 
-				IConnection c = ConnectionFactory.getInstance()
+				Connection c = ConnectionFactory.getInstance()
 						.createServerConnection(s, id);
 				c.addConnectionListener(connectionListener);
 				c.open();
@@ -20208,23 +20205,9 @@ public class Server implements Runnable {
 				greeting(id);
 				ConnectionWatchdog w = new ConnectionWatchdog(this, id);
 				timer.schedule(w, 1000, 500);
-			} catch(InterruptedIOException iioe){
-                //ignore , just SOTimeout blowing..
-            }catch (IOException ex) {
+			} catch (IOException ex) {
 
 			}
-            /*  update all connections*/
-            toUpdate.clear();
-            toUpdate.addAll(connections);
-            toUpdate.addAll(connectionsPending);
-            /*  process stuff*/
-            Iterator<IConnection> it=toUpdate.iterator();            
-            while(it.hasNext())
-                it.next().update();
-            /*  then make sure stuff is sent away*/
-            it=toUpdate.iterator();
-            while(it.hasNext())
-                it.next().flush();
 		}
 	}
 
@@ -22499,9 +22482,9 @@ public class Server implements Runnable {
 	private void addReport(Vector<Report> reports) {
 		// Only bother with player reports if doing double blind.
 		if (doBlind()) {
-			for (Enumeration<IConnection> i = connections.elements(); i
+			for (Enumeration<Connection> i = connections.elements(); i
 					.hasMoreElements();) {
-				final IConnection conn = i.nextElement();
+				final Connection conn = i.nextElement();
 				Player p = game.getPlayer(conn.getId());
 
 				p.getTurnReport().addAll(filterReportVector(reports, p));
@@ -22517,9 +22500,9 @@ public class Server implements Runnable {
 	private void addReport(Report report) {
 		// Only bother with player reports if doing double blind.
 		if (doBlind()) {
-			for (Enumeration<IConnection> i = connections.elements(); i
+			for (Enumeration<Connection> i = connections.elements(); i
 					.hasMoreElements();) {
-				final IConnection conn = i.nextElement();
+				final Connection conn = i.nextElement();
 				Player p = game.getPlayer(conn.getId());
 
 				p.getTurnReport().addElement(filterReport(report, p, false));
@@ -22534,9 +22517,9 @@ public class Server implements Runnable {
 	private void clearReports() {
 		// Only bother with player reports if doing double blind.
 		if (doBlind()) {
-			for (Enumeration<IConnection> i = connections.elements(); i
+			for (Enumeration<Connection> i = connections.elements(); i
 					.hasMoreElements();) {
-				final IConnection conn = i.nextElement();
+				final Connection conn = i.nextElement();
 				Player p = game.getPlayer(conn.getId());
 
 				p.getTurnReport().removeAllElements();
@@ -22552,9 +22535,9 @@ public class Server implements Runnable {
 	private void addNewLines() {
 		// Only bother with player reports if doing double blind.
 		if (doBlind()) {
-			for (Enumeration<IConnection> i = connections.elements(); i
+			for (Enumeration<Connection> i = connections.elements(); i
 					.hasMoreElements();) {
-				final IConnection conn = i.nextElement();
+				final Connection conn = i.nextElement();
 				Player p = game.getPlayer(conn.getId());
 
 				Report.addNewline(p.getTurnReport());
@@ -23083,7 +23066,6 @@ public class Server implements Runnable {
 				server.getPendingConnection(id).close();
 				cancel();
 				System.err.println("Growl");
-                System.err.println("\n\n\n\n\n");
 				return;
 			}
 			server.greeting(id);

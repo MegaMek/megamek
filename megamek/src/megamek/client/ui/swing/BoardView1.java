@@ -228,7 +228,7 @@ public class BoardView1
 
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
-        scheduleRedrawTimer();//call only once
+        scheduleRedraw();//call only once
         addKeyListener(this);
         addMouseListener(this);
         MouseMotionListener doScrollRectToVisible = new MouseMotionAdapter() {
@@ -254,27 +254,25 @@ public class BoardView1
         
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
     }
-    protected final RedrawWorker redrawWorker = new RedrawWorker();
+
     /**
      *  this should only be called once!! this will cause
      *  a timer to schedule constant screen updates every 20 
-     *  milliseconds! 
-     *  
+     *  milliseconds!   
      */
-    protected void scheduleRedrawTimer() {
+    protected void scheduleRedraw() {
+        final RedrawWorker redrawWorker = new RedrawWorker();
         final TimerTask redraw=new TimerTask() {
             public void run() {
-                scheduleRedraw();
+                try {
+                    SwingUtilities.invokeAndWait(redrawWorker);
+                } catch(Exception ie) {
+                } 
             }
         };
         TimerSingleton.getInstance().schedule(redraw,20,20);            
     }
-    protected void scheduleRedraw() {
-        try {
-            SwingUtilities.invokeAndWait(redrawWorker);
-        } catch(Exception ie) {
-        }    
-    }
+    
     public void preferenceChange(PreferenceChangeEvent e) {
         if(e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
@@ -1055,7 +1053,7 @@ public class BoardView1
 
         if(entity.hasC3() || entity.hasC3i()) addC3Link(entity);
 
-        scheduleRedraw();
+        repaint();
     }
 
     /**
@@ -1091,7 +1089,7 @@ public class BoardView1
         entitySpriteIds = newSpriteIds;
         wreckSprites = newWrecks;
 
-        scheduleRedraw();
+        repaint();
     }
 
     public void centerOnHex(Coords c) {
@@ -1139,6 +1137,7 @@ public class BoardView1
             }
             previousStep = step;
         }
+        repaint();
     }
 
     /**

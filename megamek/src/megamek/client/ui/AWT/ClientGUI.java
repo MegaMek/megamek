@@ -672,7 +672,7 @@ public class ClientGUI
             error.printStackTrace();
         }
 
-        client.die();        
+        client.die();
         
         //TODO Is there a better solution?
         //This is required because the ChatLounge adds the listener to the

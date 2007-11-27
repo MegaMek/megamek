@@ -22,7 +22,7 @@ package megamek.server.commands;
 
 import java.util.*;
 
-import megamek.common.net.IConnection;
+import megamek.common.net.Connection;
 import megamek.server.*;
 
 /**
@@ -58,7 +58,7 @@ public class TeamCommand extends ServerCommand {
             }
             
             for (Enumeration i = server.getConnections(); i.hasMoreElements();) {
-                IConnection conn = (IConnection)i.nextElement();
+                Connection conn = (Connection)i.nextElement();
                 
                 if ( server.getPlayer(conn.getId()).getTeam() == team )
                     server.sendChat(conn.getId(),origin, message.toString());

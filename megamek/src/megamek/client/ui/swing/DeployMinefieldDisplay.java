@@ -46,8 +46,6 @@ public class DeployMinefieldDisplay
         extends StatusBarPhaseDisplay
         implements BoardViewListener, ActionListener, DoneButtoned,
         KeyListener, GameListener, Distractable {
-    private static final long serialVersionUID = -1243277953037374936L;
-
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
@@ -150,6 +148,12 @@ public class DeployMinefieldDisplay
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
+//         c.gridwidth = GridBagConstraints.REMAINDER;
+//         addBag(clientgui.bv, gridbag, c);
+
+//         c.weightx = 1.0;    c.weighty = 0;
+//         c.gridwidth = 1;
+//         addBag(client.cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;

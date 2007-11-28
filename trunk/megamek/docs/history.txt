@@ -7,6 +7,7 @@ v0.33.13-dev (SVN)
     is offboard
 + Reverted all network changes for now, until we have stabilised them
 + Infantry shouldn't sideslip
++ Bug 1839351: No vertical scroll on initial help screen
 
 v0.33.12 (2007-11-09, GMT 22:21 GMT+2)
 + Corrected names of the Celestials

@@ -49,7 +49,7 @@ public class CommonHelpDialog extends Dialog
         // Create the help dialog.
         this.setLayout( new BorderLayout() );
         lblHelp = new AdvancedLabel(Messages.getString("CommonHelpDialog.noHelp.Message")); //$NON-NLS-1$
-        ScrollPane scroll = new ScrollPane();
+        ScrollPane scroll = new ScrollPane(java.awt.ScrollPane.SCROLLBARS_ALWAYS);
         scroll.add( lblHelp );
         this.add( scroll, BorderLayout.CENTER );
 

@@ -32,6 +32,7 @@ import java.io.Serializable;
  */
 public class Mounted implements Serializable, RoundUpdated {
 
+    private static final long serialVersionUID = 6438017987074691566L;
     private boolean usedThisRound = false;
     private boolean destroyed = false;
     private boolean hit = false;
@@ -270,6 +271,8 @@ public class Mounted implements Serializable, RoundUpdated {
             desc.append(shotsLeft);
             desc.append(")");
         }
+        if (isDumping())
+            desc.append(" (dumping)");
         return desc.toString();
     }
 

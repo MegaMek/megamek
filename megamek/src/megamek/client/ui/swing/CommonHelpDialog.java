@@ -61,7 +61,7 @@ public class CommonHelpDialog extends JDialog {
         lblHelp = new JTextArea(Messages.getString("CommonHelpDialog.noHelp.Message")); //$NON-NLS-1$
         lblHelp.setEditable(false);
         lblHelp.setOpaque(false);
-        JScrollPane scroll = new JScrollPane(lblHelp);
+        JScrollPane scroll = new JScrollPane(lblHelp,javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         getContentPane().add(scroll, BorderLayout.CENTER);
 
         // Add a "Close" button.

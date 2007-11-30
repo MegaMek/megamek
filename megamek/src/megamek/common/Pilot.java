@@ -134,23 +134,6 @@ public class Pilot
         return !unconscious && !dead;
     }
     
-    public int getRollsNeeded() {
-        // Ejected pilots don't need to roll.
-        if (!ejected) {
-            return rollsNeeded;
-        }
-        return 0;
-    }
-    
-    public void setRollsNeeded(int rollsNeeded) {
-        // Ejected pilots stop taking hits.
-        if (!ejected) {
-            if ( !doomed ) {
-                this.rollsNeeded = rollsNeeded;
-            }
-        }
-    }
-    
     public boolean isKoThisRound() {
         return koThisRound;
     }

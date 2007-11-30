@@ -1716,7 +1716,6 @@ public class Server implements Runnable {
 			send(createFlarePacket());
 			resolveExtremeTempInfantryDeath();
 			resolveAmmoDumps();
-			resolveCrewDamage();
 			resolveCrewWakeUp();
 			resolveMechWarriorPickUp();
 			resolveVeeINarcPodRemoval();
@@ -1926,9 +1925,7 @@ public class Server implements Runnable {
 			addMovementHeat();
 			applyBuildingDamage();
 			checkFor20Damage();
-			resolveCrewDamage();
 			resolvePilotingRolls(); // Skids cause damage in movement phase
-			resolveCrewDamage(); // again, I guess
 			checkForFlamingDeath();
 			// check phase report
 			if (vPhaseReport.size() > 1) {
@@ -1950,9 +1947,7 @@ public class Server implements Runnable {
 			resolveOnlyWeaponAttacks();
 			applyBuildingDamage();
 			checkFor20Damage();
-			resolveCrewDamage();
 			resolvePilotingRolls();
-			resolveCrewDamage(); // again, I guess
 			// check phase report
 			if (vPhaseReport.size() > 1) {
 				game.addReports(vPhaseReport);
@@ -1972,9 +1967,7 @@ public class Server implements Runnable {
 			resolvePhysicalAttacks();
 			applyBuildingDamage();
 			checkFor20Damage();
-			resolveCrewDamage();
 			resolvePilotingRolls();
-			resolveCrewDamage(); // again, I guess
 			resolveSinkVees();
 			// check phase report
 			if (vPhaseReport.size() > 1) {
@@ -2003,9 +1996,7 @@ public class Server implements Runnable {
 			resolveIndirectArtilleryAttacks();
 			applyBuildingDamage();
 			checkFor20Damage();
-			resolveCrewDamage();
 			resolvePilotingRolls();
-			resolveCrewDamage(); // again, I guess
 			// check reports
 			if (vPhaseReport.size() > 1) {
 				game.addReports(vPhaseReport);
@@ -14187,7 +14178,6 @@ public class Server implements Runnable {
 	private Vector<Report> damageCrew(Entity en, int damage) {
 		Vector<Report> vDesc = new Vector<Report>();
 		Pilot crew = en.getCrew();
-
 		if (!crew.isDead() && !crew.isEjected() && !crew.isDoomed()) {
 			crew.setHits(crew.getHits() + damage);
 			Report r = new Report(6025);
@@ -14199,45 +14189,26 @@ public class Server implements Runnable {
 			r.newlines = 0;
 			vDesc.addElement(r);
 			if (Pilot.DEATH > crew.getHits()) {
-				crew.setRollsNeeded(crew.getRollsNeeded() + damage);
+                vDesc.addAll(resolveCrewDamage(en, damage));
 			} else if (!crew.isDoomed()) {
 				crew.setDoomed(true);
 				vDesc.addAll(destroyEntity(en, "pilot death", true));
 			}
 		}
-
 		return vDesc;
-	}
-
-	/**
-	 * This checks if the mech pilot goes unconscious from the damage he has
-	 * taken this phase.
-	 */
-	private void resolveCrewDamage() {
-		boolean anyRolls = false;
-		for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-			final Entity e = (Entity) i.nextElement();
-			if (resolveCrewDamage(e, anyRolls)) {
-				anyRolls = true;
-			}
-		}
-		if (anyRolls) {
-			addNewLines();
-		}
 	}
 
 	/**
 	 * resolves consciousness rolls for one entity
 	 */
-	private boolean resolveCrewDamage(Entity e, boolean anyRolls) {
+	private Vector<Report> resolveCrewDamage(Entity e, int damage) {
+        Vector<Report> vDesc = new Vector<Report>();
 		final int totalHits = e.getCrew().getHits();
-		final int rollsNeeded = e.getCrew().getRollsNeeded();
-		e.crew.setRollsNeeded(0);
 		if (e instanceof MechWarrior || !e.isTargetable()
-				|| !e.getCrew().isActive() || rollsNeeded == 0) {
-			return false;
+				|| !e.getCrew().isActive() || damage == 0) {
+			return vDesc;
 		}
-		for (int hit = totalHits - rollsNeeded + 1; hit <= totalHits; hit++) {
+		for (int hit = totalHits - damage + 1; hit <= totalHits; hit++) {
 			int rollTarget = Compute.getConsciousnessNumber(hit);
 			boolean edgeUsed = false;
 			do {
@@ -14247,6 +14218,7 @@ public class Server implements Runnable {
 				if (e.getCrew().getOptions().booleanOption("pain_resistance"))
 					roll = Math.min(12, roll + 1);
 				Report r = new Report(6030);
+                r.indent(2);
 				r.subject = e.getId();
 				r.addDesc(e);
 				r.add(e.getCrew().getName());
@@ -14271,16 +14243,16 @@ public class Server implements Runnable {
 					} // if
 					// return true;
 				} // else
-				addReport(r);
+				vDesc.add(r);
 			} while (e.crew.hasEdgeRemaining() && e.crew.isKoThisRound()
 					&& e.crew.getOptions().booleanOption("edge_when_ko"));
 			// end of do-while
 			if (e.crew.isKoThisRound()) {
 				e.crew.setUnconscious(true);
-				return true;
+				return vDesc;
 			}
 		}
-		return true;
+		return vDesc;
 	}
 
 	/**

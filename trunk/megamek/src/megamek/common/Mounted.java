@@ -719,11 +719,19 @@ public class Mounted implements Serializable, RoundUpdated {
         return "megamek.common.Mounted (" + typeName + ")";
     }
 
+    public int getBaseDamageAbsorptionRate(){
+    	return baseDamageAbsorptionRate;
+    }
+    
+    public int getBaseDamageCapacity(){
+    	return baseDamageCapacity;
+    }
+    
     /**
      * Rules state that every time the shield takes a crit its damage absorption
      * for each attack is reduced by 1. 
      * Also for every Arm actuator critted damage absorption is reduced by 1
-     * and finally if the should is hit the damage absorption is reduced by 2
+     * and finally if the shoulder is hit the damage absorption is reduced by 2
      * making it possble to kill a shield before its gone through its full
      * damage capacity.
      * @param entity

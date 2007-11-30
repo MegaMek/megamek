@@ -9,6 +9,7 @@ v0.33.13-dev (SVN)
 + Infantry shouldn't sideslip
 + Bug 1839351: No vertical scroll on initial help screen
 + Show when ammo is dumping in system view.
++ Bug 1841267: Consciousness rolls should be made immediately, not at end of phase.
 
 v0.33.12 (2007-11-09, GMT 22:21 GMT+2)
 + Corrected names of the Celestials

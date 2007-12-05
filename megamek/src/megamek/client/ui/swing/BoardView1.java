@@ -8,12 +8,13 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
@@ -27,9 +28,9 @@ import java.util.Iterator;
 import java.util.TimerTask;
 import java.util.Vector;
 
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
@@ -94,27 +95,13 @@ import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.IPreferenceChangeListener;
 import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
-/*
- * MegaMek -
- * Copyright (C) 2000,2001,2002,2003,2004,2005,2006 Ben Mazur (bmazur@sev.org)
- *
- *  This program is free software; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the Free
- *  Software Foundation; either version 2 of the License, or (at your option)
- *  any later version.
- *
- *  This program is distributed in the hope that it will be useful, but
- *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
- *  for more details.
- */
 
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
 public class BoardView1
     extends JPanel
-    implements IBoardView, Scrollable, BoardListener, MouseListener, KeyListener, MechDisplayListener, IPreferenceChangeListener
+    implements IBoardView, Scrollable, BoardListener, MouseListener, KeyEventDispatcher, MechDisplayListener, IPreferenceChangeListener
 {
 
     private static final long serialVersionUID = -5582195884759007416L;
@@ -137,7 +124,6 @@ public class BoardView1
     private Font       font_minefield   = FONT_12;
 
     private IGame game;
-    private JFrame frame;
 
     private Dimension boardSize;
 
@@ -220,16 +206,14 @@ public class BoardView1
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(IGame game, JFrame frame) throws java.io.IOException {
+    public BoardView1(IGame game) throws java.io.IOException {
         this.game = game;
-        this.frame = frame;
 
         tileManager = new TilesetManager(this);
 
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
         scheduleRedraw();//call only once
-        addKeyListener(this);
         addMouseListener(this);
         MouseMotionListener doScrollRectToVisible = new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
@@ -239,6 +223,7 @@ public class BoardView1
         };
         addMouseMotionListener(doScrollRectToVisible);
         setAutoscrolls(true);
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 
         updateBoardSize();
         
@@ -387,6 +372,8 @@ public class BoardView1
                 System.out.println("boardview1: loading images for board"); //$NON-NLS-1$
                 tileManager.loadNeededImages(game);
             }
+            //wait 1 second, then repaint
+            repaint(1000);
             return;
         }
 
@@ -437,23 +424,22 @@ public class BoardView1
         drawSprites(g,pathSprites);
 
         // added by kenn
-        /* TODO fix the ruler business
         // draw the ruler line
         if (rulerStart != null) {
             Point start =  getCentreHexLocation(rulerStart);
             if (rulerEnd != null) {
                 Point end = getCentreHexLocation(rulerEnd);
-                backGraph.setColor(Color.yellow);
-                backGraph.drawLine(start.x - boardRect.x, start.y - boardRect.y, end.x - boardRect.x, end.y - boardRect.y);
+                g.setColor(Color.yellow);
+                g.drawLine(start.x, start.y, end.x, end.y);
 
-                backGraph.setColor(rulerEndColor);
-                backGraph.fillRect(end.x - boardRect.x - 1, end.y - boardRect.y - 1, 2, 2);
+                g.setColor(rulerEndColor);
+                g.fillRect(end.x - 1, end.y - 1, 2, 2);
             }
 
-            backGraph.setColor(rulerStartColor);
-            backGraph.fillRect(start.x - boardRect.x - 1, start.y - boardRect.y - 1, 2, 2);
+            g.setColor(rulerStartColor);
+            g.fillRect(start.x - 1, start.y - 1, 2, 2);
         }
-        // end kenn */
+        // end kenn
 
         // draw all the "displayables"
         for (int i = 0; i < displayables.size(); i++) {
@@ -936,10 +922,10 @@ public class BoardView1
     }
 
     // added by kenn
-    /** TODO put back ruler
+    /**
      * Returns the absolute position of the centre
      * of the hex graphic
-     *
+     */
     private Point getCentreHexLocation(int x, int y) {
         Point p = getHexLocation(x, y);
         p.x += (HEX_W/2*scale);
@@ -948,7 +934,7 @@ public class BoardView1
     }
     private Point getCentreHexLocation(Coords c) {
         return getCentreHexLocation(c.x, c.y);
-    }*/
+    }
 
     public void drawRuler(Coords s, Coords e, Color sc, Color ec) {
         rulerStart = s;
@@ -1360,7 +1346,7 @@ public class BoardView1
                     message.append(Messages.getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
                 }
             }
-            JOptionPane.showMessageDialog(frame, message.toString(), Messages.getString("BoardView1.LOSTitle"), JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this.getRootPane(), message.toString(), Messages.getString("BoardView1.LOSTitle"), JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -1514,22 +1500,61 @@ public class BoardView1
     }
 
     //
-    // KeyListener
+    // KeyEventDispatcher
     //
-    public void keyPressed(KeyEvent ke) {
+    public boolean dispatchKeyEvent(KeyEvent ke) {
+        JScrollBar vbar = scrollpane.getVerticalScrollBar();
+        JScrollBar hbar = scrollpane.getHorizontalScrollBar();
         switch(ke.getKeyCode()) {
+        case KeyEvent.VK_NUMPAD7 :
+            hbar.setValue((int)(hbar.getValue() - HEX_W*scale));
+            vbar.setValue((int)(vbar.getValue() - HEX_H*scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD8 :
+        case KeyEvent.VK_UP :
+            vbar.setValue((int)(vbar.getValue() - HEX_H*scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD9 :
+            hbar.setValue((int)(hbar.getValue() + HEX_W*scale));
+            vbar.setValue((int)(vbar.getValue() - HEX_H*scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD1 :
+            hbar.setValue((int)(hbar.getValue() - HEX_W*scale));
+            vbar.setValue((int)(vbar.getValue() + HEX_H*scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD2 :
+        case KeyEvent.VK_DOWN :
+            vbar.setValue((int)(vbar.getValue() + HEX_H*scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD3 :
+            hbar.setValue((int)(hbar.getValue() + HEX_W*scale));
+            vbar.setValue((int)(vbar.getValue() + HEX_H*scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD4 :
+        case KeyEvent.VK_LEFT :
+            hbar.setValue((int)(hbar.getValue() - HEX_W*scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD6 :
+        case KeyEvent.VK_RIGHT :
+            hbar.setValue((int)(hbar.getValue() + HEX_W*scale));
+            ke.consume();
+            break;
         case KeyEvent.VK_NUMPAD5 :
             // center on the selected entity
             centerOnHex(selectedEntity.getPosition());
+            ke.consume();
             break;
         }
 
         repaint();
-    }
-
-    public void keyReleased(KeyEvent ke) {
-    }
-    public void keyTyped(KeyEvent ke) {
+        return false;
     }
 
     //
@@ -1583,8 +1608,8 @@ public class BoardView1
         //Unless the user has auto-scroll on and is using the left
         //mouse button, no click action should be triggered if the map
         //is being scrolled.
-        if ((me.getModifiers() & InputEvent.BUTTON1_MASK) == 0 || !GUIPreferences.getInstance().getAutoEdgeScroll())
-            return;
+        /*if (scrolled && (me.getModifiers() & InputEvent.BUTTON1_MASK) == 0 || !GUIPreferences.getInstance().getAutoEdgeScroll())
+            return;*/
         if (me.getClickCount() == 1) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_CLICK, me.getModifiers());
         } else {

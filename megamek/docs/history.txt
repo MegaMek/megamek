@@ -12,6 +12,7 @@ v0.33.13-dev (SVN)
 + Bug 1841267: Consciousness rolls should be made immediately, not at end of phase.
 + added Mounted.getBaseDamageAbsorptionRate() for MW Use
 + added Mounted.getBaseDamageCapacity for MW use
++ fixed initial board paint problem (partly related to network fix) and put back LOS Ruler and keyboard scroll
 
 v0.33.12 (2007-11-09, GMT 22:21 GMT+2)
 + Corrected names of the Celestials

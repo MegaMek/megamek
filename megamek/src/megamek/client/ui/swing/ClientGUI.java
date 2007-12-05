@@ -297,17 +297,11 @@ public class ClientGUI
         try {
             client.game.addGameListener(gameListener);
             // Create the board viewer.
-            bv = new BoardView1(client.game, frame);
+            bv = new BoardView1(client.game);
 
             // Place the board viewer in a set of scrollbars.
             scroller = new JScrollPane(bv);
-            // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
-            if (System.getProperty
-                    ("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
-                    ("false")) { //$NON-NLS-1$
-                // Assign the scrollbars to the board viewer.
-                bv.setScrollPane(scroller);
-            }
+            bv.setScrollPane(scroller);
         } catch (IOException e) {
             doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();

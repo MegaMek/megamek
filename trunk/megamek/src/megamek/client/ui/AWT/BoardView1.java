@@ -2315,32 +2315,36 @@ public class BoardView1
     public void keyPressed(KeyEvent ke) {
         switch(ke.getKeyCode()) {
         case KeyEvent.VK_NUMPAD7 :
-            scroll.y -= 36;
-            scroll.x -= 36;
+            scroll.y -= HEX_H*scale;
+            scroll.x -= HEX_W*scale;
             break;
         case KeyEvent.VK_NUMPAD8 :
-            scroll.y -= 36;
+        case KeyEvent.VK_UP :
+            scroll.y -= HEX_H*scale;
             break;
         case KeyEvent.VK_NUMPAD9 :
-            scroll.y -= 36;
-            scroll.x += 36;
+            scroll.y -= HEX_H*scale;
+            scroll.x += HEX_W*scale;
             break;
         case KeyEvent.VK_NUMPAD1 :
-            scroll.y += 36;
-            scroll.x -= 36;
+            scroll.y += HEX_H*scale;
+            scroll.x -= HEX_W*scale;
             break;
         case KeyEvent.VK_NUMPAD2 :
-            scroll.y += 36;
+        case KeyEvent.VK_DOWN :
+            scroll.y += HEX_H*scale;
             break;
         case KeyEvent.VK_NUMPAD3 :
-            scroll.y += 36;
-            scroll.x += 36;
+            scroll.y += HEX_H*scale;
+            scroll.x += HEX_W*scale;
             break;
         case KeyEvent.VK_NUMPAD4 :
-            scroll.x -= 36;
+        case KeyEvent.VK_LEFT :
+            scroll.x -= HEX_W*scale;
             break;
         case KeyEvent.VK_NUMPAD6 :
-            scroll.x += 36;
+        case KeyEvent.VK_RIGHT :
+            scroll.x += HEX_W*scale;
             break;
         case KeyEvent.VK_NUMPAD5 :
             // center on the selected entity

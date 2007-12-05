@@ -128,7 +128,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
      */
     public BoardEditor() {
         try {
-            bv = new BoardView1(game, frame);
+            bv = new BoardView1(game);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(frame, Messages.getString("BoardEditor.CouldntInitialize") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();

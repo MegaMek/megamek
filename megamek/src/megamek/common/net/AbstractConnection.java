@@ -71,18 +71,6 @@ public abstract class AbstractConnection implements IConnection {
     private int id;
 
     /**
-     * Receiver thread
-     */
-    private Thread receiver;
-
-    /**
-     * Sender thread 
-     */
-    private Thread sender;
-    
-    private Thread singleThread;
-
-    /**
      * Bytes send during the connection lifecycle
      */
     private long bytesSent;
@@ -194,7 +182,6 @@ public abstract class AbstractConnection implements IConnection {
                 }
             }               
             open = true;
-            initThreads();
         }
         return true;
     }
@@ -207,8 +194,6 @@ public abstract class AbstractConnection implements IConnection {
             System.err.print(getConnectionTypeAbbrevation());
             sendQueue.reportContents();
             sendQueue.finish();
-            receiver = null;
-            sender = null;
             try {
                 if (socket != null) {
                     socket.close();
@@ -422,7 +407,8 @@ public abstract class AbstractConnection implements IConnection {
     }
     /**
      *  checks if there is anything to send or receive and
-     *  sends or receives that stuff. Should not block
+     *  sends or receives that stuff. Should not block and will
+     *  not flush the actual socket, just the packet sendqueue
      *
      *  should not block for too long at a time, instead should
      *  return 0 and hope to be called soon again
@@ -431,15 +417,7 @@ public abstract class AbstractConnection implements IConnection {
      *          must return >=0 always
      */
     public synchronized long update() {
-        SendPacket packet=null;
-        try {
-            while ((packet=sendQueue.getPacket())!=null) {
-                processPacket(packet);
-            }
-        }catch (Exception e) {
-            reportSendException(e, packet);
-            close();
-        }        
+        flush();
         INetworkPacket np;
         try {
             while ((np=readNetworkPacket())!=null) {
@@ -451,6 +429,23 @@ public abstract class AbstractConnection implements IConnection {
             close();
         }                   
         return 50;
+    }
+    /**
+     *  this is the method that should be overridden
+     */
+    public synchronized void flush() {
+        doFlush();
+    }
+    protected synchronized void doFlush() {
+        SendPacket packet=null;
+        try {
+            while ((packet=sendQueue.getPacket())!=null) {
+                processPacket(packet);
+            }
+        } catch (Exception e) {
+            reportSendException(e, packet);
+            close();
+        }                
     }
     /**
      *  process a received packet
@@ -485,27 +480,6 @@ public abstract class AbstractConnection implements IConnection {
      */
     protected void processPacket(SendPacket packet) throws Exception {
         sendNow(packet);
-    }
-    /**
-     * Initializes the sender and receiver threads
-     */
-    private void initThreads() {
-        /*
-            replace these threads first with a single thread 
-            that does the update by calling a single method
-        */
-        Runnable singleRunnable=new Runnable() {
-            public void run() {
-                while (singleThread==Thread.currentThread()) {
-                    try {
-                        Thread.sleep(update());
-                    } catch(InterruptedException ie){
-                    }
-                }
-            }
-        };
-        //singleThread=new Thread(singleRunnable);
-        //singleThread.start();            
     }
     
     /**

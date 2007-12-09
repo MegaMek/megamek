@@ -324,7 +324,7 @@ public class ClientGUI
         uo = new UnitOverview(this);
         bv.addDisplayable(uo);
         bv.addMouseListener(this);
-        bv.addKeyListener(this);
+        bv.addKeyListener(this);        
         bv.add(popup);
         Dimension screenSize = frame.getToolkit().getScreenSize();
         int x;

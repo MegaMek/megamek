@@ -1482,7 +1482,8 @@ public class MechDisplay extends JPanel {
                 if (m != null && bOwner && m.getType() instanceof AmmoType
                         && !(m.getType().hasInstantModeSwitch())
                         && IGame.PHASE_DEPLOYMENT != clientgui.getClient().game.getPhase()
-                        && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive()) {
+                        && m.getShotsLeft() > 0 && !m.isDumping() && en.isActive()
+                        && clientgui.getClient().game.getOptions().intOption("dumping_from_round") <= clientgui.getClient().game.getRoundCount()) {
                     m_bDumpAmmo.setEnabled(true);
                     if ( clientgui.getClient().game.getOptions().booleanOption("maxtech_hotload") 
                             && en instanceof Tank && m.getType().hasFlag(AmmoType.F_HOTLOAD) ){

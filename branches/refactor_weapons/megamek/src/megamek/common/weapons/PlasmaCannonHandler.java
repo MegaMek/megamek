@@ -75,8 +75,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             return 0;
         } else {
             if (target instanceof Infantry && !(target instanceof BattleArmor))
-                //TODO: check rules
-                return 10+Compute.d6(2);
+                return Compute.d6(3);
             return 1;
         }
     }

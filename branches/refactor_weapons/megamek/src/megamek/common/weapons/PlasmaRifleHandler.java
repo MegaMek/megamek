@@ -88,8 +88,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             return 1;
         } else {
             if (target instanceof Infantry && !(target instanceof BattleArmor))
-                //TODO: check rules
-                return 10+Compute.d6(2);
+                return Compute.d6(2);
             bSalvo = true;
             return 5;
         }

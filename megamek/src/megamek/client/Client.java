@@ -20,9 +20,9 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Hashtable;
+import java.util.*;
+import javax.swing.SwingUtilities;
+
 
 import megamek.client.bot.BotClient;
 import megamek.client.commands.*;
@@ -42,7 +42,7 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.net.Connection;
+import megamek.common.net.IConnection;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
@@ -65,7 +65,7 @@ public class Client implements IClientCommandHandler {
     // we need these to communicate with the server
     private String name;
     
-    private Connection connection; 
+    private IConnection connection; 
     
     //the hash table of client commands
     private Hashtable<String, ClientCommand> commandsHash = new Hashtable<String, ClientCommand>();
@@ -133,6 +133,30 @@ public class Client implements IClientCommandHandler {
         registerCommand(new DeployCommand(this));
         registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
+        
+        TimerSingleton ts=TimerSingleton.getInstance();        
+        /*  this should be moved to UI implementations so 
+            that they are responsible for figuring out who
+            should call update for connection..
+            so if somebody does a text-only implementation
+            which doesnt support AWT event queue, we dont
+            depend on it*/
+        final Runnable packetUpdate=new Runnable() {
+            public void run()
+            {                    
+                if(connection!=null)
+                    connection.update();
+            }
+        };
+        final TimerTask packetUpdate2=new TimerTask() {
+            public void run() {
+                try {
+                    SwingUtilities.invokeAndWait(packetUpdate);
+                } catch(Exception ie) {
+                }
+            }
+        };
+        ts.schedule(packetUpdate2,500,100);        
     }
 
     /**
@@ -154,6 +178,7 @@ public class Client implements IClientCommandHandler {
         // If we're still connected, tell the server that we're going down.
         if (connected) {
             send(new Packet(Packet.COMMAND_CLOSE_CONNECTION));
+            flushConn();
         }
         connected = false;
 
@@ -480,6 +505,7 @@ public class Client implements IClientCommandHandler {
         }
 
         send(new Packet(Packet.COMMAND_ENTITY_DEPLOY, data));
+        flushConn();
     }
 
     /**
@@ -492,6 +518,7 @@ public class Client implements IClientCommandHandler {
         data[1] = attacks;
 
         send(new Packet(Packet.COMMAND_ENTITY_ATTACK, data));
+        flushConn();
     }
 
     /**
@@ -523,6 +550,7 @@ public class Client implements IClientCommandHandler {
      */
     public void sendChat(String message) {
         send(new Packet(Packet.COMMAND_CHAT, message));
+        flushConn();
     }
 
     /**
@@ -530,6 +558,7 @@ public class Client implements IClientCommandHandler {
      */
     public synchronized void sendDone(boolean done) {
         send(new Packet(Packet.COMMAND_PLAYER_READY, new Boolean(done)));
+        flushConn();
     }
 
     /**
@@ -818,6 +847,19 @@ public class Client implements IClientCommandHandler {
      */
     protected void send(Packet packet) {        
         connection.send(packet);
+    }
+    /**
+     *  send all buffered packets on their way
+     *  this should be called after everything which causes us to
+     *  wait for a reply. For example "done" button presses etc. 
+     *
+     *  to make stuff more efficient, this should only be called
+     *  after a batch of packets is sent,not separately for 
+     *  each packet
+     */
+    protected void flushConn()
+    {
+        connection.flush();
     }
 
     @SuppressWarnings("unchecked")

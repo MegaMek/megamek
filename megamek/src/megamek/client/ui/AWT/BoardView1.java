@@ -285,7 +285,7 @@ public class BoardView1
 
         game.addGameListener(gameListener);
         game.getBoard().addBoardListener(this);
-        scheduleRedraw();
+        scheduleRedrawTimer();
 
         addKeyListener(this);
         addMouseListener(this);
@@ -324,25 +324,24 @@ public class BoardView1
         
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
     }
-    
-    /**
-     *  this should only be called once!! this will cause
-     *  a timer to schedule constant screen updates every 20 
-     *  milliseconds!   
-     */
-    protected void scheduleRedraw() {
-        final RedrawWorker redrawWorker = new RedrawWorker();
+    protected final RedrawWorker redrawWorker = new RedrawWorker();
+    protected void scheduleRedrawTimer() {
         final TimerTask redraw=new TimerTask() {
             public void run() {
                 try {
                     SwingUtilities.invokeAndWait(redrawWorker);
                 } catch(Exception ie) {
-                } 
+                }    
             }
         };
         TimerSingleton.getInstance().schedule(redraw,20,20);            
     }
-    
+    protected void scheduleRedraw() {
+        try {
+            SwingUtilities.invokeLater(redrawWorker);
+        } catch(Exception ie) {
+        }    
+    }
     public void preferenceChange(PreferenceChangeEvent e) {
         if(e.getName().equals(IClientPreferences.MAP_TILESET)) {
             updateBoard();
@@ -1741,7 +1740,7 @@ public class BoardView1
 
         if(entity.hasC3() || entity.hasC3i()) addC3Link(entity);
 
-        repaint();
+        scheduleRedraw();
     }
 
     /**
@@ -1777,7 +1776,7 @@ public class BoardView1
         entitySpriteIds = newSpriteIds;
         wreckSprites = newWrecks;
 
-        repaint();
+        scheduleRedraw();
     }
 
     /**

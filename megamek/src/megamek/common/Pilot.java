@@ -36,7 +36,6 @@ public class Pilot
     private boolean     ejected;
     
     // these are only used on the server:
-    private int rollsNeeded; // how many KO rolls needed this turn
     private boolean koThisRound; // did I go KO this game round?
     
     private PilotOptions options = new PilotOptions();
@@ -55,7 +54,6 @@ public class Pilot
         hits = 0;
         unconscious = false;
         dead = false;
-        rollsNeeded = 0;
         koThisRound = false;
         
         options.initialize();
@@ -109,7 +107,6 @@ public class Pilot
         if (!ejected) {
             this.dead = dead;
             if (dead) {
-                rollsNeeded = 0;
                 hits = 6;
             }
         }
@@ -124,7 +121,6 @@ public class Pilot
         if (!ejected) {
             doomed = b;
             if (doomed) {
-                rollsNeeded = 0;
                 hits = 6;
             }
         }

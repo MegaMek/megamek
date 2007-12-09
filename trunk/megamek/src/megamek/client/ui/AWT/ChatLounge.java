@@ -1420,7 +1420,6 @@ public class ChatLounge
         }
 
         if (ev.getSource() == butDone) {
-            
             // enforce exclusive deployment zones in double blind
             if (client.game.getOptions().booleanOption("double_blind") &&
                 client.game.getOptions().booleanOption("exclusive_db_deployment")) {

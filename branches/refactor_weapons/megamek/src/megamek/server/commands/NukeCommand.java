@@ -40,7 +40,7 @@ public class NukeCommand extends ServerCommand {
      * Run this command with the arguments supplied
      */
     public void run(int connId, String[] args) {
-
+/*
         // Check to make sure nuking is allowed by game options!
         if (!(server.getGame().getOptions().booleanOption("really_allow_nukes") && server.getGame().getOptions().booleanOption("allow_nukes"))) {
             server.sendServerChat(connId, "Command-line nukes are not enabled in this game.");
@@ -76,6 +76,6 @@ public class NukeCommand extends ServerCommand {
         } else {
             // Error out; it's not a valid call.
             server.sendServerChat(connId, "Nuke command failed (3).  Proper format is \"/nuke <x> <y> <type>\" or \"/nuke <x> <y> <damage> <degredation> <secondary radius> <craterdepth>\"");
-        }
+        }*/
     }
 }

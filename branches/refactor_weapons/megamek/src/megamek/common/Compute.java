@@ -57,6 +57,7 @@ public class Compute {
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
     
     private static final int[][] clusterHitsTable = new int[][] {
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
         { 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 },
         { 3, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 },
         { 4, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 },
@@ -570,10 +571,7 @@ public class Compute {
         boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM)
                 || (wtype.getAmmoType() == AmmoType.T_MML)
                 || (wtype.getAmmoType() == AmmoType.T_EXLRM)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT5) 
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT10)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT15)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT20)
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT)
                 || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
                 && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption(
@@ -2360,25 +2358,25 @@ public class Compute {
         int minimum = maxtech ? 1 : 2;
 
         if (hotloaded ){
-            int roll1 = d6(1);
-            int roll2 = d6(1);
-            int roll3 = d6(1);
+            int roll1 = d6();
+            int roll2 = d6();
+            int roll3 = d6();
             int lowRoll1 = 0;
             int lowRoll2 = 0;
             
             if ( roll1 <= roll2 && roll1 <= roll3){
                 lowRoll1 = roll1;
                 lowRoll2 = Math.min(roll2, roll3);
-            }else if ( roll2 <= roll1 && roll2 <= roll3 ){
+            } else if ( roll2 <= roll1 && roll2 <= roll3 ){
                 lowRoll1 = roll2;
                 lowRoll2 = Math.min(roll1, roll3);
-            }else if ( roll3 <= roll1 && roll3 <= roll2 ){
+            } else if ( roll3 <= roll1 && roll3 <= roll2 ){
                 lowRoll1 = roll3;
                 lowRoll2 = Math.min(roll2,roll1);
             }
             nRoll = lowRoll1 + lowRoll2;
         }
-        if(streak) nRoll = 11;
+        if (streak) nRoll = 11;
         nRoll += nMod;
         nRoll = Math.min(Math.max(nRoll, minimum), 12);
         if (maxtech && nRoll == 1) {
@@ -2389,12 +2387,19 @@ public class Compute {
         }
 
         for (int i = 0; i < clusterHitsTable.length; i++) {
-            if (clusterHitsTable[i][0] >= missiles) {
-                return Math.min(missiles, clusterHitsTable[i][nRoll - 1]);
+            if (clusterHitsTable[i][0] == missiles) {
+                return clusterHitsTable[i][nRoll - 1];
+            }
+        }
+        // BA missiles may have larger number of missiles than max entry on the table
+        // if so, take largest, subtract value and try again
+        for (int i = clusterHitsTable.length-1; i >= 0; i--) {
+            if (missiles > clusterHitsTable[i][0]) {
+                return clusterHitsTable[i][nRoll-1] + missilesHit(missiles-clusterHitsTable[i][0], nMod, maxtech, hotloaded, streak); 
             }
         }
         throw new RuntimeException(
-                "Could not find number of missles in hit table");
+                "Could not find number of missiles in hit table");
     }
 
     public static int missilesHit(int missiles, int nMod) {

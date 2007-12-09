@@ -597,7 +597,7 @@ public class BoardView1
                 for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
                     ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
 
-                    if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
+                    if(a.getTarget(game).getPosition().equals(c)) {
                         scaledImage = tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING);
                         g.drawImage(scaledImage, p.x, p.y, this);
                         break; //do not draw multiple times, tooltop will show all attacks

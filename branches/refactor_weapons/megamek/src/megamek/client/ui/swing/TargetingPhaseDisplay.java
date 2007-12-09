@@ -52,6 +52,7 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.SearchlightAttackAction;
@@ -509,6 +510,10 @@ public class TargetingPhaseDisplay
 
         WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(),
                 target.getTargetId(), weaponNum);
+        if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            waa = new ArtilleryAttackAction(cen, target.getTargetType(),
+                    target.getTargetId(), weaponNum, client.game);
+        }
         if (null != mounted.getLinked() &&
                 ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
             Mounted ammoMount = mounted.getLinked();

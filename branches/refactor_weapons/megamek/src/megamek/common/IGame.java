@@ -25,6 +25,7 @@ import megamek.common.actions.LayMinefieldAction;
 import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.options.GameOptions;
+import megamek.common.weapons.AttackHandler;
 import megamek.common.TagInfo;
 
 /**
@@ -50,29 +51,29 @@ public interface IGame {
     
     public static final int PHASE_TARGETING = 7;
     
-    public static final int PHASE_MOVEMENT = 8;
+    public static final int PHASE_TARGETING_REPORT = 8;
     
-    public static final int PHASE_MOVEMENT_REPORT = 9;
+    public static final int PHASE_MOVEMENT = 9;
     
-    public static final int PHASE_OFFBOARD = 10;
+    public static final int PHASE_MOVEMENT_REPORT = 10;
     
-    public static final int PHASE_OFFBOARD_REPORT = 11;
+    public static final int PHASE_OFFBOARD = 11;
     
-    public static final int PHASE_FIRING = 12;
+    public static final int PHASE_OFFBOARD_REPORT = 12;
     
-    public static final int PHASE_FIRING_REPORT = 13;
+    public static final int PHASE_FIRING = 13;
     
-    public static final int PHASE_PHYSICAL = 14;
+    public static final int PHASE_FIRING_REPORT = 14;
+    
+    public static final int PHASE_PHYSICAL = 15;
 
-    public static final int PHASE_PHYSICAL_REPORT = 15;
+    public static final int PHASE_PHYSICAL_REPORT = 16;
     
-    public static final int PHASE_END = 16;
+    public static final int PHASE_END = 17;
 
-    public static final int PHASE_END_REPORT = 17;
+    public static final int PHASE_END_REPORT = 18;
     
-    public static final int PHASE_VICTORY = 18;
-
-    //public static final int PHASE_VICTORY_REPORT = 19;
+    public static final int PHASE_VICTORY = 19;
     
     public static final int PHASE_DEPLOY_MINEFIELDS = 20;
     
@@ -760,17 +761,24 @@ public interface IGame {
     /** Adds the specified action to the actions list for this phase. */
     public abstract void addAction(EntityAction ea);
     
-    public abstract void addArtilleryAttack(ArtilleryAttackAction aaa);
+    public abstract void addAttack(AttackHandler ah);
     
-    public abstract void removeArtilleryAttack(ArtilleryAttackAction aaa);
+    public abstract void removeAttack(AttackHandler ah);
     
-    public abstract Vector<ArtilleryAttackAction> getArtilleryVector();
+    public abstract Enumeration getAttacks();
     
-    public abstract Enumeration<ArtilleryAttackAction> getArtilleryAttacks();
+    public abstract Vector<AttackHandler> getAttacksVector();
     
-    public abstract int getArtillerySize();
+    public abstract void resetAttacks();
     
-    public abstract void setArtilleryVector(Vector<ArtilleryAttackAction> v);
+    public int getArtillerySize();
+    
+    public void setArtilleryVector(Vector<ArtilleryAttackAction> v);
+    
+    public Enumeration<ArtilleryAttackAction> getArtilleryAttacks();
+        
+    //HACK.
+    public abstract void setAttacksVector(Vector<AttackHandler> v); 
     
     /** 
      * Returns an Enumeration of actions scheduled for this phase. 

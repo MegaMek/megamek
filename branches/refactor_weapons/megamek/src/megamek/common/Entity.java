@@ -3620,7 +3620,7 @@ public abstract class Entity extends TurnOrdered
     
     /**
      * add a narc pod from this team to the mech.  Unremovable
-     * @param pod The <code>INarcPod</code> to be attached.
+     * @param pod The <code>NarcPod</code> to be attached.
      */
     public void attachNarcPod(NarcPod pod) {
         this.pendingNarcPods.add(pod);

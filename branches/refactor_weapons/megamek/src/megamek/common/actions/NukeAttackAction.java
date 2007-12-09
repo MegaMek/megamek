@@ -20,7 +20,7 @@ import java.io.Serializable;
  *
  * NukeAttackAction--not *actually* an action, but here's just as good as anywhere.  Holds the data needed for an artillery attack in flight.
  */
-public class NukeAttackAction extends ArtilleryAttackAction implements Serializable {
+public class NukeAttackAction {/*extends ArtilleryAttackAction implements Serializable {
     public static int TYPE_GENERIC = 0;
     public static int TYPE_SPECIFIC = 1;
 
@@ -49,5 +49,5 @@ public class NukeAttackAction extends ArtilleryAttackAction implements Serializa
         target = t;
         nukeClass = nukeType;
         playerId = pl;
-    }
+    }*/
 }

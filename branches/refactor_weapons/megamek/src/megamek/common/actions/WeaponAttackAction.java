@@ -14,6 +14,7 @@
 
 package megamek.common.actions;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.ArrayList;
 
@@ -53,7 +54,7 @@ import megamek.common.MiscType;
 /**
  * Represents intention to fire a weapon at the target.
  */
-public class WeaponAttackAction extends AbstractAttackAction {
+public class WeaponAttackAction extends AbstractAttackAction implements Serializable {
     private int weaponId;
     private int ammoId = -1;
     private int aimedLocation = Entity.LOC_NONE;
@@ -62,6 +63,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     private boolean nemesisConfused;
     private boolean swarmingMissiles;
     private int oldTargetId = -1;
+    private int swarmMissiles = 0;
     
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
@@ -999,6 +1001,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return "Weapon is not in a state where it can be fired";
         }
 
+        // can't fire Indirect LRM with direct LOS
+        if (isIndirect && game.getOptions().booleanOption("indirect_fire") &&
+                !game.getOptions().booleanOption("indirect_always_possible") &&
+                LosEffects.calculateLos(game, ae.getId(), target).canSee()) {
+            return new String("Indirect-fire LRM cannot be fired with direct LOS from attacker to target.");
+        }
+
         // If we're lying mines, we can't shoot.
         if (ae.isLayingMines()) {
             return "Can't fire weapons when laying mines";
@@ -1532,5 +1541,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
     
     public void setOldTargetId(int id) {
         oldTargetId = id;
+    }
+
+    public int getSwarmMissiles() {
+        return swarmMissiles;
+    }
+
+    public void setSwarmMissiles(int swarmMissiles) {
+        this.swarmMissiles = swarmMissiles;
     }
 }

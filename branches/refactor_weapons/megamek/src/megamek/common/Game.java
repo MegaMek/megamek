@@ -43,6 +43,7 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
+import megamek.common.weapons.AttackHandler;
 
 import java.io.Serializable;
 import java.util.Enumeration;
@@ -120,6 +121,7 @@ public class Game implements Serializable, IGame
 
     private Hashtable<Coords, Vector<Minefield>> minefields = new Hashtable<Coords, Vector<Minefield>>();
     private Vector<Minefield> vibrabombs = new Vector<Minefield>();
+    private Vector<AttackHandler> attacks = new Vector<AttackHandler>();
     private Vector<ArtilleryAttackAction> offboardArtilleryAttacks = new Vector<ArtilleryAttackAction>();
     
     
@@ -1850,15 +1852,6 @@ public class Game implements Serializable, IGame
         actions.addElement(ea);
         processGameEvent(new GameNewActionEvent(this,ea));        
     }
-    public void addArtilleryAttack(ArtilleryAttackAction aaa) {
-        offboardArtilleryAttacks.addElement(aaa);
-    }
-    public void removeArtilleryAttack(ArtilleryAttackAction aaa) {
-        offboardArtilleryAttacks.removeElement(aaa);
-    }
-    public Vector<ArtilleryAttackAction> getArtilleryVector() {
-        return offboardArtilleryAttacks;
-    }
     public void setArtilleryVector(Vector<ArtilleryAttackAction> v) {
         offboardArtilleryAttacks = v;
         processGameEvent(new GameBoardChangeEvent(this));
@@ -1867,7 +1860,7 @@ public class Game implements Serializable, IGame
         offboardArtilleryAttacks.removeAllElements();
     }
     public Enumeration<ArtilleryAttackAction> getArtilleryAttacks() {
-        return offboardArtilleryAttacks.elements(); //Fix?
+        return offboardArtilleryAttacks.elements();
     }
     public int getArtillerySize() {
         return offboardArtilleryAttacks.size();
@@ -2062,6 +2055,48 @@ public class Game implements Serializable, IGame
     /** Resets the PSR list. */
     public void resetPSRs() {
         pilotRolls.removeAllElements();
+    }
+    
+    /**
+     * add an AttackHandler to the attacks list
+     * @param ah  - The <code>AttackHandler</code> to add
+     */
+    public void addAttack(AttackHandler ah) {
+        attacks.add(ah);
+    }
+    /**
+     * remove an AttackHandler from the attacks list
+     * @param ah  - The <code>AttackHandler</code> to remove
+     */
+    public void removeAttack(AttackHandler ah) {
+        attacks.removeElement(ah);
+    }
+    /**
+     * get the attacks
+     * @return a <code>Enumeration</code> of all <code>AttackHandler</code>s
+     */
+    public Enumeration getAttacks() {
+        return attacks.elements();
+    }
+    /**
+     * get the attacks vector
+     * @return the <code>Vector</code> containing the attacks
+     */
+    public Vector<AttackHandler> getAttacksVector() {
+        return attacks;
+    }
+    /**
+     * reset the attacks vector
+     */
+    public void resetAttacks() {
+        attacks = new Vector<AttackHandler>();
+    }
+    /**
+     * set the attacks vector
+     * @param v - the <code>Vector</code> that should be the new attacks vector
+     */
+    public void setAttacksVector(Vector<AttackHandler> v) {
+        attacks=v;
     }
 
     /** Getter for property roundCount.

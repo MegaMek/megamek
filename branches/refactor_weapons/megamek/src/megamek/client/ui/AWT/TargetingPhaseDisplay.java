@@ -476,9 +476,12 @@ public class TargetingPhaseDisplay
         if(GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
             doSearchlight();
         }
-
         WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(),
                 target.getTargetId(), weaponNum);
+        if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            waa = new ArtilleryAttackAction(cen, target.getTargetType(),
+                    target.getTargetId(), weaponNum, client.game);
+        }
         if ( null != mounted.getLinked() && 
                 ((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_NA ) {
                Mounted ammoMount = mounted.getLinked();

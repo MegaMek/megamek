@@ -975,10 +975,7 @@ public class CEntity {
         // assume LBX cannon are using cluster rounds, Ultra-cannon
         // are firing double rate, and RACs are fired in quad mode.
         if (wt.getDamage() == WeaponType.DAMAGE_MISSILE & 
-                wt.getAmmoType() != AmmoType.T_TBOLT5 & 
-                wt.getAmmoType() != AmmoType.T_TBOLT10 & 
-                wt.getAmmoType() != AmmoType.T_TBOLT15 & 
-                wt.getAmmoType() != AmmoType.T_TBOLT20) {
+                wt.getAmmoType() != AmmoType.T_TBOLT) {
             use_table = true;
         }
         if ((wt.getAmmoType() == AmmoType.T_AC_LBX)
@@ -1115,10 +1112,7 @@ public class CEntity {
                     fDamage = 10.0;
                 }
             }
-            if (wt.getAmmoType() == AmmoType.T_TBOLT5 
-                    || wt.getAmmoType() == AmmoType.T_TBOLT10
-                    || wt.getAmmoType() == AmmoType.T_TBOLT15
-                    || wt.getAmmoType() == AmmoType.T_TBOLT20){
+            if (wt.getAmmoType() == AmmoType.T_TBOLT){
                 if (range <= wt.getMinimumRange()){
                     fDamage *= 0.5;
                 }

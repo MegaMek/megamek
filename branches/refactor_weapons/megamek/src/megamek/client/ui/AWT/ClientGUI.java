@@ -869,6 +869,7 @@ public class ClientGUI
                 panMain.add(main, component);
                 panSecondary.add(secondary, ((ReportDisplay) component).getSecondaryDisplay());
                 break;
+            case IGame.PHASE_TARGETING_REPORT :
             case IGame.PHASE_MOVEMENT_REPORT:
             case IGame.PHASE_OFFBOARD_REPORT:
             case IGame.PHASE_FIRING_REPORT:
@@ -1438,6 +1439,7 @@ public class ClientGUI
                     }
                     break;
                 case IGame.PHASE_INITIATIVE_REPORT:
+                case IGame.PHASE_TARGETING_REPORT :
                 case IGame.PHASE_MOVEMENT_REPORT:
                 case IGame.PHASE_OFFBOARD_REPORT:
                 case IGame.PHASE_FIRING_REPORT:

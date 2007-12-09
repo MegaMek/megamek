@@ -19,33 +19,23 @@ import java.io.Serializable;
 import java.util.*;
 /**
  *
- * ArtilleryAttackAction--not *actually* an action, but here's just as good as anywhere.  Holds the data needed for an artillery attack in flight.
+ * ArtilleryAttackAction
+ *  Holds the data needed for an artillery attack in flight.
  */
-public class ArtilleryAttackAction
+public class ArtilleryAttackAction extends WeaponAttackAction
 implements Serializable
 {
-    private WeaponResult wr;
     public int turnsTilHit;
     private Vector<Integer> spotterIds; // IDs of possible spotters, won't know until it lands.
     protected int playerId;
-    private Coords firingCoords; //Coords of firing entity, needed for resolving attack direction.
+    private Coords firingCoords;
 
-    public ArtilleryAttackAction() {
-        wr = null;
-        turnsTilHit = 0;
-        spotterIds = null;
-        playerId = 0;
-        firingCoords = null;
-    }
-
-    public ArtilleryAttackAction(WeaponResult wr, IGame game,
-                                 int playerId, Vector<Integer> spotterIds,Coords coords) {
-        this.wr = wr;
-        this.playerId = playerId;
-        this.spotterIds = spotterIds;
-        this.firingCoords= coords;
+    public ArtilleryAttackAction(int entityId, int targetType, int targetId, int weaponId, IGame game) { 
+        super(entityId, targetType, targetId, weaponId);
+        this.playerId = game.getEntity(entityId).getOwnerId();
+        this.firingCoords = game.getEntity(entityId).getPosition();
         int distance = Compute.effectiveDistance
-            (game, wr.waa.getEntity(game), wr.waa.getTarget(game));
+            (game, getEntity(game), getTarget(game));
         if(game.getOptions().booleanOption("maxtech_artillery")) {
             if(distance <=17)
                 turnsTilHit = 0;
@@ -63,14 +53,6 @@ implements Serializable
             // Two boards is one turn of flight time, except on the same sheet.
             turnsTilHit = (distance<=17) ? 0 : ((distance/34)+1);
         }
-    }
-
-    public void setWR(WeaponResult wr) {
-        this.wr=wr;
-    }
-
-    public WeaponResult getWR() {
-        return wr;
     }
 
     public Vector<Integer> getSpotterIds() {

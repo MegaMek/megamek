@@ -64,6 +64,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.AbstractEntityAction;
+import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.FlipArmsAction;
@@ -615,10 +616,11 @@ public class FiringDisplay
         // For bug 1002223
         // Re-compute the to-hit numbers by adding in correct order.
         Vector<EntityAction> newAttacks = new Vector<EntityAction>();
-        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e.hasMoreElements();) {
-            AbstractEntityAction o = e.nextElement();
-            if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) o;
+        for (EntityAction o:attacks) {
+            if (o instanceof ArtilleryAttackAction) {
+                newAttacks.addElement(o);
+            } else if (o instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction)o;
                 Entity attacker = waa.getEntity(client.game);
                 Targetable target = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
@@ -633,15 +635,17 @@ public class FiringDisplay
                 newAttacks.addElement(o);
             }
         }
-        for (Enumeration<AbstractEntityAction> e = attacks.elements(); e.hasMoreElements();) {
-            Object o = e.nextElement();
-            if (o instanceof WeaponAttackAction) {
+        //now add the attacks in rear/arm arcs
+        for (EntityAction o:attacks) {
+            if (o instanceof ArtilleryAttackAction) {
+                newAttacks.addElement(o);
+            } else if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(client.game);
                 Targetable target = waa.getTarget(client.game);
                 boolean curInFrontArc = Compute.isInArc(attacker.getPosition(), attacker.getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
                 if (!curInFrontArc) {
-                    WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId());
+                    WeaponAttackAction waa2 = new WeaponAttackAction(waa.getEntityId(), waa.getTargetType(), waa.getTargetId(), waa.getWeaponId() );
                     waa2.setAimedLocation(waa.getAimedLocation());
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
@@ -707,8 +711,14 @@ public class FiringDisplay
             doSearchlight();
         }
 
-        WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(),
-                target.getTargetId(), weaponNum);
+        WeaponAttackAction waa;
+        if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            waa = new WeaponAttackAction(cen, target.getTargetType(),
+                            target.getTargetId(), weaponNum);
+        } else {
+            waa = new ArtilleryAttackAction(cen, target.getTargetType(),
+                            target.getTargetId(), weaponNum, client.game);
+        }
 
         if (mounted.getLinked() != null &&
                 ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
@@ -1634,10 +1644,7 @@ public class FiringDisplay
                             case (AmmoType.T_ATM):
                             case (AmmoType.T_MML) :
                             case (AmmoType.T_EXLRM):
-                            case (AmmoType.T_TBOLT5):
-                            case (AmmoType.T_TBOLT10):
-                            case (AmmoType.T_TBOLT15):
-                            case (AmmoType.T_TBOLT20):
+                            case AmmoType.T_TBOLT:
                             case AmmoType.T_PXLRM:
                             case AmmoType.T_HSRM:
                             case AmmoType.T_MRM_STREAK:

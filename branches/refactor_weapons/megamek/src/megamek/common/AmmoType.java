@@ -63,21 +63,18 @@ public class AmmoType extends EquipmentType {
     public static final int     T_HEAVY_FLAMER      = 36;
     public static final int     T_COOLANT_POD       = 37; // not really ammo, but explodes and is depleted
     public static final int     T_EXLRM             = 38;
-    public static final int     T_TBOLT5            = 39;
-    public static final int     T_TBOLT10           = 40;
-    public static final int     T_TBOLT15           = 41;
-    public static final int     T_TBOLT20           = 42;
-    public static final int     T_RAIL_GUN          = 43;
-    public static final int     T_MAGSHOT           = 44; // Magshot from TR3055U and S7 Pack
-    public static final int     T_PXLRM             = 45;
-    public static final int     T_HSRM              = 46;
-    public static final int     T_MRM_STREAK        = 47;
-    public static final int     T_MPOD              = 48;
-    public static final int     T_HAG               = 49;
-    public static final int     T_MML               = 50;
-    public static final int     T_PLASMA            = 51;
-    public static final int     T_SBGAUSS           = 52;
-    public static final int     NUM_TYPES           = 53;
+    public static final int     T_TBOLT             = 39;
+    public static final int     T_MAGSHOT           = 40; // Magshot from TR3055U and S7 Pack
+    public static final int     T_PXLRM             = 41;
+    public static final int     T_HSRM              = 42;
+    public static final int     T_MRM_STREAK        = 43;
+    public static final int     T_MPOD              = 44;
+    public static final int     T_HAG               = 45;
+    public static final int     T_MML               = 46;
+    public static final int     T_PLASMA            = 47;
+    public static final int     T_SBGAUSS           = 48;
+    public static final int     T_RAIL_GUN          = 49;
+    public static final int     NUM_TYPES           = 50;
     
 
     // ammo flags
@@ -103,7 +100,7 @@ public class AmmoType extends EquipmentType {
     public static final long     M_PRECISION         = 0x000000000010L;
     public static final long     M_TRACER            = 0x000400000000L;
 
-    // ATM & MML Munition Types
+    // ATM Munition Types
     public static final long     M_EXTENDED_RANGE    = 0x000000000020L;
     public static final long     M_HIGH_EXPLOSIVE    = 0x000000000040L;
 
@@ -141,13 +138,12 @@ public class AmmoType extends EquipmentType {
     public static final long     M_TORPEDO           = 0x020000000000L;
 
     // iNarc Munition Types
-    public static final long     M_EXPLOSIVE         = 0x000001000000L;
+    public static final long     M_NARC_EX           = 0x000001000000L;
     public static final long     M_ECM               = 0x000002000000L;
     public static final long     M_HAYWIRE           = 0x000004000000L;
     public static final long     M_NEMESIS           = 0x000008000000L;
 
-    // Narc Munition Types
-    public static final long     M_NARC_EX           = 0x000010000000L;
+    public static final long     M_EXPLOSIVE         = 0x000010000000L;
 
     // Arrow IV Munition Types
     public static final long     M_HOMING            = 0x000020000000L;
@@ -2586,7 +2582,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_AC_LBX;
         ammo.munitionType = M_CLUSTER;
         ammo.shots = 5;
-        ammo.bv = 33;
+        ammo.bv = 30;
         ammo.cost = 34000;
 
         return ammo;
@@ -3005,7 +3001,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
-        ammo.bv = 12;
+        ammo.bv = 10;
         ammo.kgPerShot = 8.33;
         return ammo;
 
@@ -3023,7 +3019,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
-        ammo.bv = 12;
+        ammo.bv = 11;
         ammo.kgPerShot = 8.33;
         return ammo;
 
@@ -3225,7 +3221,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 19;
         ammo.ammoType = AmmoType.T_LRM_TORPEDO;
         ammo.shots = 100;
-        ammo.bv = 28;
+        ammo.bv = 27;
         ammo.kgPerShot = 8.33;
         return ammo;
 
@@ -3337,7 +3333,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM;
         ammo.shots = 100;
-        ammo.bv = 5;
+        ammo.bv = 6;
         ammo.kgPerShot = 10;
 
         return ammo;
@@ -3483,7 +3479,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
-        ammo.bv = 12;
+        ammo.bv = 10;
         ammo.kgPerShot = 8.33;
         return ammo;
 
@@ -3501,7 +3497,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 8;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
-        ammo.bv = 12;
+        ammo.bv = 11;
         ammo.kgPerShot = 8.33;
         return ammo;
 
@@ -3701,7 +3697,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 19;
         ammo.ammoType = AmmoType.T_LRM;
         ammo.shots = 100;
-        ammo.bv = 28;
+        ammo.bv = 27;
         ammo.kgPerShot = 8.33;
         return ammo;
 
@@ -3810,7 +3806,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_SRM_TORPEDO;
         ammo.shots = 100;
-        ammo.bv = 5;
+        ammo.bv = 6;
 
         return ammo;
     }
@@ -3882,7 +3878,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 3;
         ammo.ammoType = AmmoType.T_SRM_STREAK;
         ammo.shots = 100;
-        ammo.bv = 8;
+        ammo.bv = 7;
         ammo.kgPerShot = 10;
 
         return ammo;
@@ -4046,7 +4042,6 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_MML;
-        ammo.munitionType = M_EXTENDED_RANGE;
         ammo.shots = 24;
         ammo.bv = 6;
         ammo.cost = 75000;
@@ -4085,7 +4080,6 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 7;
         ammo.ammoType = AmmoType.T_MML;
-        ammo.munitionType = M_EXTENDED_RANGE;
         ammo.shots = 17;
         ammo.bv = 8;
         ammo.cost = 75000;
@@ -4124,7 +4118,6 @@ public class AmmoType extends EquipmentType {
         ammo.damagePerShot = 1;
         ammo.rackSize = 9;
         ammo.ammoType = AmmoType.T_MML;
-        ammo.munitionType = M_EXTENDED_RANGE;
         ammo.shots = 13;
         ammo.bv = 11;
         ammo.cost = 75000;
@@ -4527,7 +4520,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM_TORPEDO_COMBO;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 7;
         ammo.cost = 30000;
 
         return ammo;
@@ -4879,7 +4872,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 2;
 
         return ammo;
     }
@@ -4897,7 +4890,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 3;
 
         return ammo;
     }
@@ -4915,7 +4908,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 5;
 
         return ammo;
     }
@@ -4933,7 +4926,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 6;
 
         return ammo;
     }
@@ -4951,7 +4944,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_LRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 7;
 
         return ammo;
     }
@@ -5058,7 +5051,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 1;
 
         return ammo;
     }
@@ -5075,7 +5068,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 2;
 
         return ammo;
     }
@@ -5092,7 +5085,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 2;
 
         return ammo;
     }
@@ -5109,7 +5102,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 3;
 
         return ammo;
     }   
@@ -5126,7 +5119,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_MRM;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 4;
 
         return ammo;
     }
@@ -5234,25 +5227,27 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 2;
 
         return ammo;
     }
-
-    private static AmmoType createAdvancedSRM5Ammo() {
+    
+    
+    private static AmmoType createAdvancedSRM2Ammo() {
         AmmoType ammo = new AmmoType();
 
         ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "Advanced SRM 5 Ammo";
-        ammo.setInternalName("BA-Advanced SRM-5 Ammo");
-        ammo.addLookupName("BAAdvancedSRM5 Ammo");
-        ammo.addLookupName("BAAdvanced SRM5 Ammo");
+        ammo.name = "Advanced SRM 2 Ammo";
+        ammo.setInternalName("BA-Advanced SRM-2 Ammo");
+        ammo.addLookupName("BA-Advanced SRM-2 Ammo OS");
+        ammo.addLookupName("BAAdvancedSRM2 Ammo");
+        ammo.addLookupName("BAAdvanced SRM2 Ammo");
         ammo.damagePerShot = 2;
-        ammo.rackSize = 5;
+        ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 4;
 
         return ammo;
     }
@@ -5270,26 +5265,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
-
-        return ammo;
-    }
-    
-    private static AmmoType createAdvancedSRM2Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        ammo.name = "Advanced SRM 2 Ammo";
-        ammo.setInternalName("BA-Advanced SRM-2 Ammo");
-        ammo.addLookupName("BA-Advanced SRM-2 Ammo OS");
-        ammo.addLookupName("BAAdvancedSRM2 Ammo");
-        ammo.addLookupName("BAAdvanced SRM2 Ammo");
-        ammo.damagePerShot = 2;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
-        ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 6;
 
         return ammo;
     }
@@ -5307,7 +5283,25 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 8;
+
+        return ammo;
+    }
+
+    private static AmmoType createAdvancedSRM5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "Advanced SRM 5 Ammo";
+        ammo.setInternalName("BA-Advanced SRM-5 Ammo");
+        ammo.addLookupName("BAAdvancedSRM5 Ammo");
+        ammo.addLookupName("BAAdvanced SRM5 Ammo");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_SRM_ADVANCED;
+        ammo.flags |= F_BATTLEARMOR;
+        ammo.shots = 1;
+        ammo.bv = 10;
 
         return ammo;
     }
@@ -5325,7 +5319,7 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_SRM_ADVANCED;
         ammo.flags |= F_BATTLEARMOR;
         ammo.shots = 1;
-        ammo.bv = 0;
+        ammo.bv = 12;
 
         return ammo;
     }
@@ -5343,7 +5337,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_LAC;
         ammo.shots = 45;
-        ammo.bv = 3;
+        ammo.bv = 4;
         ammo.cost = 2000;
 
         return ammo;
@@ -5362,7 +5356,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 5;
         ammo.ammoType = AmmoType.T_LAC;
         ammo.shots = 20;
-        ammo.bv = 5;
+        ammo.bv = 8;
         ammo.cost = 5000;
 
         return ammo;
@@ -5543,7 +5537,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISTBolt5 Ammo");
         ammo.damagePerShot = 5;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_TBOLT5;
+        ammo.ammoType = AmmoType.T_TBOLT;
         ammo.shots = 12;
         ammo.bv = 8;
         ammo.cost = 50000;
@@ -5563,7 +5557,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISTBolt10 Ammo");
         ammo.damagePerShot = 10;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_TBOLT10;
+        ammo.ammoType = AmmoType.T_TBOLT;
         ammo.shots = 6;
         ammo.bv = 16;
         ammo.cost = 50000;
@@ -5583,7 +5577,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISTBolt15 Ammo");
         ammo.damagePerShot = 15;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_TBOLT15;
+        ammo.ammoType = AmmoType.T_TBOLT;
         ammo.shots = 4;
         ammo.bv = 26;
         ammo.cost = 50000;
@@ -5603,7 +5597,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISTBolt20 Ammo");
         ammo.damagePerShot = 20;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_TBOLT20;
+        ammo.ammoType = AmmoType.T_TBOLT;
         ammo.shots = 3;
         ammo.bv = 35;
         ammo.cost = 50000;
@@ -6003,7 +5997,7 @@ public class AmmoType extends EquipmentType {
         ammo.rackSize = 2;
         ammo.ammoType = AmmoType.T_PLASMA;
         ammo.shots = 10;
-        ammo.bv = 27;
+        ammo.bv = 21;
         ammo.cost = 30000;
         ammo.explosive = false;
 
@@ -6035,14 +6029,14 @@ public class AmmoType extends EquipmentType {
     public static boolean canClearMinefield(AmmoType at) {
 
         if (at != null &&
-            (at.getAmmoType() == T_LRM ||
-             at.getAmmoType() == T_TBOLT20 ||
-             at.getAmmoType() == T_EXLRM ||
-             at.getAmmoType() == T_PXLRM ||
-             at.getAmmoType() == T_MRM_STREAK ||
-             at.getAmmoType() == T_MRM) &&
-            at.getRackSize() >= 20 &&
-            at.getMunitionType() == M_STANDARD) {
+            ( ((at.getAmmoType() == T_LRM ||
+              at.getAmmoType() == T_EXLRM ||
+              at.getAmmoType() == T_PXLRM ||
+              at.getAmmoType() == T_MRM  ||
+              at.getAmmoType() == T_MRM_STREAK) &&
+                  at.getRackSize() >= 20) ||
+            (at.getAmmoType() == T_TBOLT && at.getDamagePerShot() == 20) &&
+             at.getMunitionType() == M_STANDARD)) {
             return true;
         }
 

@@ -15,6 +15,7 @@ v0.33.13-dev (SVN)
 + fixed initial board paint problem (partly related to network fix) and put back LOS Ruler and keyboard scroll
 + Fix infinite loop with c3 line drawing.
   TODO: when the c3 master moves first, lines are not updated correctly
++ Add unofficial gameoption to specify from which round onwards ammodumping is allowed
 
 v0.33.12 (2007-11-09, GMT 22:21 GMT+2)
 + Corrected names of the Celestials

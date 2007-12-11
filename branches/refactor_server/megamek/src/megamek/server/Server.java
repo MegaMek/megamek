@@ -2188,11 +2188,36 @@ public class Server implements Runnable {
 	 */
 	public boolean victory() 
     {
-        Victory.ReportListener rl=null;
-        Victory.Result vr=victory.victory(rl);
-        //TBD if no victory we should cancelVictory() here
-        //TBD we should also set victory team and player here if victory
-        return vr!=null&&vr.victory();
+        Victory.Result vr=victory.victory(game);
+        if(vr.victory())
+        {
+            //for every player won add 
+            /*
+				Report r = new Report(7200, Report.PUBLIC);
+				r.add(game.getPlayer(wonPlayer).getName());
+				vr.addReport(r);
+                */
+            //for every team won add
+            /* 
+				Report r = new Report(7200, Report.PUBLIC);
+				r.add("Team " + wonTeam);
+				vr.addReport(r);
+            */            
+            //TBD figure out how to translate a result to this 
+                //TBD using draws etc. 
+            //game.setVictoryPlayerId(vr.winningPlayerId());
+            //game.setVictoryTeam(vr.winningTeamId());                    
+        }else{
+            game.setVictoryPlayerId(Player.PLAYER_NONE);
+            game.setVictoryTeam(Player.TEAM_NONE);                    
+            if(game.isForceVictory())
+                cancelVictory();
+        }
+        for(Report r:vr.getReports())
+        {
+            addReport(r);
+        }
+        return vr.victory();
 	}//end victory
 
 	/**

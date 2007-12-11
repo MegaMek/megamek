@@ -31,6 +31,12 @@ import megamek.common.TagInfo;
  * This interface is the root of all data about the game in progress.
  * Both the Client and the Server should have one of these objects and it
  * is their job to keep it synched.
+ *
+ *  note from itmo: this needs WAY MORE javadoc. also preferably remove
+ *          the abstract-modifiers and divide this interface into two
+ *          subinterfaces for reading and modifying. 
+ *          -stuff should be documented as contracts. bad example of
+ *           javadoccing found in getVictory* ...
  */
 public interface IGame {
     
@@ -902,6 +908,7 @@ public interface IGame {
     
     /**
      * Getter for property forceVictory.
+     * this tells us that a claim for victory is active.
      * @return Value of property forceVictory.
      */
     public abstract boolean isForceVictory();
@@ -944,6 +951,9 @@ public interface IGame {
 
     /**
      * Getter for property victoryPlayerId.
+     *
+     *  itmo: apparently this is the guy who claims to have won the game
+     *      also used to tell who won when the game is won
      * @return Value of property victoryPlayerId.
      */
     public abstract int getVictoryPlayerId();
@@ -956,6 +966,9 @@ public interface IGame {
     
     /**
      * Getter for property victoryTeam.
+     *
+     *  corresponding claiming/winning team if the player is in a 
+     *  team
      * @return Value of property victoryTeam.
      */
     public abstract int getVictoryTeam();

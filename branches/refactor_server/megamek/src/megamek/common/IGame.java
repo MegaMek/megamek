@@ -17,6 +17,7 @@ package megamek.common;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.HashMap;
 
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -37,6 +38,7 @@ import megamek.common.TagInfo;
  *          subinterfaces for reading and modifying. 
  *          -stuff should be documented as contracts. bad example of
  *           javadoccing found in getVictory* ...
+ *  also phases should be documented. wtf is an exchange-phase?
  */
 public interface IGame {
     
@@ -86,6 +88,21 @@ public interface IGame {
     
     public static final int PHASE_SET_ARTYAUTOHITHEXES = 22;
 
+    /**
+     *  @return the currently active context-object for victorycondition
+     *          checking. This should be a mutable object and it will
+     *          be modified by the victory condition checkers. 
+     *          whoever saves the game state when doing saves, is also
+     *          responsible of saving this state. 
+     *
+     *          at the start of the game this should be initialized to an
+     *          empty hashmap
+     */
+    public abstract HashMap<String,Object> getVictoryContext();
+    /**
+     *   set the game victory state. 
+     */
+    public abstract void setVictoryContext(HashMap<String,Object> ctx);
     /**
      * Adds the specified game listener to receive
      * board events from this Game.

@@ -12,8 +12,10 @@ implements Victory
 
     public ForceVictory()
     {}
-    public Victory.Result victory(IGame game)
-    {
+    public Victory.Result victory(
+                        IGame game,
+                        HashMap<String,Object> ctx)
+    {        
 		if (!game.isForceVictory())
             return new SimpleNoResult();
         int victoryPlayerId = game.getVictoryPlayerId();

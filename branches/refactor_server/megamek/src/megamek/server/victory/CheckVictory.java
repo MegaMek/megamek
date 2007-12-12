@@ -17,12 +17,17 @@ implements Victory
     {
         this.v=v;assert(v!=null);
     }
-    public Victory.Result victory(IGame game)
+    public Victory.Result victory(
+                            IGame game,
+                            HashMap<String,Object> ctx)
     {
+        //lets call this now to make sure it gets to update its state
+        Victory.Result ret=v.victory(game,ctx);
+        
 		if (!game.gameTimerIsExpired()
 				&& !game.getOptions().booleanOption("check_victory")) {
 			return new SimpleNoResult();
 		}
-        return v.victory(game);
+        return ret;
     }
 }

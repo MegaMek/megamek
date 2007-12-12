@@ -49,6 +49,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * The game class is the root of all data about the game in progress.
@@ -127,6 +128,8 @@ public class Game implements Serializable, IGame
     
     private Vector<TagInfo> tagInfoForTurn = new Vector<TagInfo>();
     private Vector<Flare> flares = new Vector<Flare>();
+    
+    private HashMap<String,Object> victoryContext=null;
     
     /**
      * Constructor
@@ -2162,7 +2165,14 @@ public class Game implements Serializable, IGame
         } 
         return player.getTeam() == victoryTeam;
     }
-    
+    public HashMap<String,Object> getVictoryContext()
+    {
+        return victoryContext;
+    }
+    public void setVictoryContext(HashMap<String,Object> ctx)
+    {
+        this.victoryContext=ctx;
+    }
     /** Shortcut to isPlayerVictor(Player player) */
     public boolean isPlayerVictor(int playerId) {
         return isPlayerVictor(getPlayer(playerId));

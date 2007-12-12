@@ -22,7 +22,8 @@ extends AbstractBVVictory
     }
     
     public Victory.Result victory(
-                        IGame game)
+                        IGame game,
+                        HashMap<String,Object> ctx)
     {
         boolean victory=false;
         VictoryResult vr=new VictoryResult(true);

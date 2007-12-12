@@ -25,7 +25,8 @@ implements Victory
         this.thr=threshold;
     }
     public Victory.Result victory(
-                        IGame game)
+                        IGame game,
+                        HashMap<String,Object> ctx)
     {
         boolean victory=false;
         VictoryResult vr=new VictoryResult(true);
@@ -33,7 +34,7 @@ implements Victory
         // combine scores
         for(Victory v:vs)
         {
-            Victory.Result res=v.victory(game);
+            Victory.Result res=v.victory(game,ctx);
             for(Report r:res.getReports())
             {
                 vr.addReport(r);

@@ -15,17 +15,20 @@ implements Victory
     protected Victory check=new CheckVictory(new NoodleVictory());
     
     public Victory.Result victory(
-                        IGame game)
+                        IGame game,
+                        HashMap<String,Object> ctx)
     {
+        //here we make the assumption that none of the later
+        //victories need to update ctx all the time.. which is nasty
         Victory.Result ret=null;
-        ret=force.victory(game);
+        ret=force.victory(game,ctx);
         if(ret.victory())
             return ret;
             
-        ret=lastMan.victory(game);
+        ret=lastMan.victory(game,ctx);
         if(ret.victory())
             return ret;
             
-        return check.victory(game);
+        return check.victory(game,ctx);
     }
 }

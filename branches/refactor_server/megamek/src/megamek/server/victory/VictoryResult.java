@@ -17,7 +17,7 @@ implements Victory.Result
                         new HashMap<Integer,Double>();
     protected HashMap<Integer,Double> teamScore=
                         new HashMap<Integer,Double>();
-                    
+    protected double hiScore=0;
     public VictoryResult(
                 boolean win)
     {
@@ -29,14 +29,43 @@ implements Victory.Result
     //TBD add getWinningPlayer and getWinningTeam
     // which should return NONE:s to signal draw if too complex winnage
     
-    
+    protected void updateHiScore()
+    {
+        //used to calculate winner
+        hiScore=Double.MIN_VALUE;
+        for(Double d:playerScore.values())
+        {
+            if(d>hiScore)
+                hiScore=d;
+        }
+        for(Double d:teamScore.values())
+        {
+            if(d>hiScore)
+                hiScore=d;        
+        }
+        
+    }
     public void addPlayerScore(int id,double score)
     {
         playerScore.put(id,score);
+        updateHiScore();
     }
     public void addTeamScore(int id,double score)
     {
         teamScore.put(id,score);
+        updateHiScore();
+    }
+    public boolean isWinningPlayer(int id)
+    {
+        double d=getPlayerScore(id);
+        //two decimal compare..
+        return ((d*100)%100)==((hiScore*100)%100);
+    }
+    public boolean isWinningTeam(int id)
+    {
+        double d=getTeamScore(id);
+        //two decimal compare..
+        return ((d*100)%100)==((hiScore*100)%100);
     }
     public boolean victory()
     {

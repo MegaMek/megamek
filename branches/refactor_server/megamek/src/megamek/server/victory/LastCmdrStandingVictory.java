@@ -12,7 +12,9 @@ implements Victory
     public  LastCmdrStandingVictory()
     {
     }
-    public Victory.Result victory(IGame game)
+    public Victory.Result victory(
+                        IGame game,
+                        HashMap<String,Object> ctx)
     {
         // check all players/teams for aliveness
         int playersAlive = 0;

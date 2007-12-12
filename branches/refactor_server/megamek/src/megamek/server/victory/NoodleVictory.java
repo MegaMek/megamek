@@ -7,14 +7,17 @@ import megamek.common.Report;
 import java.util.*;
 /**
  *  detailed spaghetti from the old victory code
+ *  this assumes game options do not change during game 
+ *  (atleast regarding victory conditions) 
  */
 public class NoodleVictory
 implements Victory
 {
+    protected Victory v;
     public  NoodleVictory()
     {
     }
-    public Victory.Result victory(IGame game)
+    protected void construct(IGame game)
     {
         ArrayList<Victory> victories=new ArrayList<Victory>();
         
@@ -35,10 +38,17 @@ implements Victory
             victories.add(new LastCmdrStandingVictory());
 		}
         // use a summing victory target to check if someone is winning 
-        Victory.Result res=
-            new SummingThresholdVictory(
+        v=new SummingThresholdVictory(
                 game.getOptions().intOption("achieve_conditions"),
-                victories.toArray(new Victory[0])).victory(game);
+                victories.toArray(new Victory[0]));        
+    }
+    public Victory.Result victory(
+                            IGame game,
+                            HashMap<String,Object> ctx)
+    {
+        if(v==null)
+            construct(game);
+        Victory.Result res=v.victory(game,ctx);        
         
         if(res.victory())
         {

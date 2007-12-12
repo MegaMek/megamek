@@ -229,7 +229,10 @@ public class Server implements Runnable {
 
 	private Timer timer = new Timer();
     
-    private Victory victory=new SpaghettiVictory();
+    //victorycondition related stuff
+    private Victory victory=null;
+    private VictoryFactory vf=new SpaghettiVictoryFactory();
+    
 
 	/*
 	 * Tracks entities which have been destroyed recently. Allows refactoring of
@@ -351,7 +354,16 @@ public class Server implements Runnable {
 		connector = new Thread(this, "Connection Listener");
 		connector.start();
 	}
-
+    /**
+     *  use victoryfactory to generate a new victorycondition checker
+     *  provided that the victorycontext is saved properly, calling this
+     *  method at any time is ok and should not affect anything unless
+     *  the victorycondition-configoptions have changed. 
+     */
+    protected void createVictoryConditions()
+    {
+        victory=vf.createVictory("this string should be taken from game options");
+    }
 	/**
 	 * Sets the game for this server. Restores any transient fields, and sets
 	 * all players as ghosts. This should only be called during server
@@ -1827,10 +1839,12 @@ public class Server implements Runnable {
 			resetPlayersDone();
 			calculatePlayerBVs();
 			// Build teams vector
-			game.setupTeams();
+			game.setupTeams();            
 			applyBoardSettings();
 			game.setupRoundDeployment();
 			game.determineWind();
+            game.setVictoryContext(new HashMap<String,Object>());
+            createVictoryConditions();
 			// If we add transporters for any Magnetic Clamp
 			// equiped squads, then update the clients' entities.
 			if (game.checkForMagneticClamp()) {
@@ -2188,34 +2202,57 @@ public class Server implements Runnable {
 	 */
 	public boolean victory() 
     {
-        Victory.Result vr=victory.victory(game);
+        Victory.Result vr=victory.victory(
+                                game,
+                                game.getVictoryContext());
+        for(Report r:vr.getReports())
+        {
+            addReport(r);
+        }
+        
         if(vr.victory())
         {
-            //for every player won add 
-            /*
+            boolean draw=false;
+            int wonPlayer=Player.PLAYER_NONE;
+            int wonTeam=Player.TEAM_NONE;
+            //should this be done for draws?? 
+            for(int wPlayer:vr.getPlayers())
+            {
+                wonPlayer=wPlayer;
 				Report r = new Report(7200, Report.PUBLIC);
 				r.add(game.getPlayer(wonPlayer).getName());
-				vr.addReport(r);
-                */
-            //for every team won add
-            /* 
+				addReport(r);   
+                if(wonPlayer!=Player.PLAYER_NONE)
+                    draw=true;
+            }
+            //should this be done for draws?
+            for(int wTeam:vr.getTeams())
+            {
+                wonTeam=wTeam;
 				Report r = new Report(7200, Report.PUBLIC);
-				r.add("Team " + wonTeam);
-				vr.addReport(r);
-            */            
-            //TBD figure out how to translate a result to this 
-                //TBD using draws etc. 
-            //game.setVictoryPlayerId(vr.winningPlayerId());
-            //game.setVictoryTeam(vr.winningTeamId());                    
+				r.add("Team "+wonTeam);
+				addReport(r);                
+                if(wonPlayer!=Player.PLAYER_NONE||
+                    wonTeam!=Player.TEAM_NONE)
+                    draw=true;
+            }
+            if(draw)
+            {
+                //multiple-won draw
+                game.setVictoryPlayerId(Player.PLAYER_NONE);
+                game.setVictoryTeam(Player.TEAM_NONE);
+            }else{
+                //nobody-won draw or 
+                //single player won or 
+                //single team won
+                game.setVictoryPlayerId(wonPlayer);
+                game.setVictoryTeam(wonTeam);
+            }
         }else{
             game.setVictoryPlayerId(Player.PLAYER_NONE);
             game.setVictoryTeam(Player.TEAM_NONE);                    
             if(game.isForceVictory())
                 cancelVictory();
-        }
-        for(Report r:vr.getReports())
-        {
-            addReport(r);
         }
         return vr.victory();
 	}//end victory

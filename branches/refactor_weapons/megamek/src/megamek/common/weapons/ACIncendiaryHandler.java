@@ -19,11 +19,10 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Entity;
-import megamek.common.IGame;
 import megamek.common.HitData;
+import megamek.common.IGame;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -52,7 +51,6 @@ public class ACIncendiaryHandler extends AmmoWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
-        AmmoType atype = (AmmoType) weapon.getLinked().getType();
         int nDamage;
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());

@@ -21,7 +21,6 @@ import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.IEntityMovementMode;
 import megamek.common.IGame;
-import megamek.common.Mounted;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -71,9 +70,6 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
     
     public AttackHandler fire(WeaponAttackAction waa, IGame game, Server server) {
         ToHitData toHit = waa.toHit(game);
-        Entity ae = game.getEntity(waa.getEntityId());
-        Mounted weapon = ae.getEquipment(waa.getWeaponId());
-
         return toHit.getValue() == TargetRoll.IMPOSSIBLE ? null
                 : getCorrectHandler(toHit, waa, game, server);
     }

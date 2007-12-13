@@ -21,8 +21,8 @@ import java.util.Vector;
 
 import megamek.common.Building;
 import megamek.common.Entity;
-import megamek.common.IGame;
 import megamek.common.HitData;
+import megamek.common.IGame;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;

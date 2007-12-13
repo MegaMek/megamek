@@ -82,7 +82,7 @@ public class PrototypeLBXHandler extends LBXHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#doChecks()
      */
-    protected boolean doChecks(Vector vPhaseReport) {
+    protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2) {
             r = new Report(3165); 
             r.subject = subjectId;

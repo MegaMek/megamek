@@ -147,7 +147,6 @@ public class LRMSwarmHandler extends LRMHandler {
         useAmmo();
         addHeat();
         nDamPerHit = calcDamagePerHit();
-        boolean bAllShotsHit = allShotsHit();
         
         //Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport,entityTarget,bMissed)) {

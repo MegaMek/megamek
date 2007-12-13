@@ -29,6 +29,11 @@ import megamek.server.Server;
 public class ArtilleryWeaponDirectFireHandler extends ArtilleryWeaponIndirectFireHandler {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 7116191142234200717L;
+
+    /**
      * @param t
      * @param w
      * @param g

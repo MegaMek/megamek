@@ -26,7 +26,6 @@ import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.NarcPod;
 import megamek.common.Report;
-import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -124,6 +123,7 @@ public class NarcHandler extends MissileWeaponHandler {
             r = new Report(3250);
             r.subject = subjectId;
             vPhaseReport.addElement(r);     
+            entityTarget.attachNarcPod(pod);
         } else if (atype.getAmmoType() == AmmoType.T_INARC) {
             //iNarced
             INarcPod pod = null;

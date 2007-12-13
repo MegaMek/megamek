@@ -30,11 +30,15 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.ArtilleryWeaponIndirectFireHandler;
 import megamek.server.Server;
 
 public class ArtilleryWeaponIndirectHomingHandler extends
         ArtilleryWeaponIndirectFireHandler implements Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7243477723032010917L;
 
     /**
      * @param t
@@ -175,7 +179,6 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             addHeat();
         }
         nDamPerHit = wtype.getRackSize();
-        boolean bAllShotsHit = allShotsHit();
 
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget, bMissed)) {

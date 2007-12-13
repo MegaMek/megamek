@@ -47,6 +47,10 @@ import megamek.server.Server;
 public class ArtilleryWeaponFlakHandler extends ArtilleryWeaponDirectFireHandler
         implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7795254956703302239L;
     boolean handledAmmoAndReport = false;
 
     /**
@@ -224,12 +228,6 @@ public class ArtilleryWeaponFlakHandler extends ArtilleryWeaponDirectFireHandler
         r.subject = subjectId;
         r.add(roll);
         vPhaseReport.addElement(r);
-
-        // Any necessary PSRs, jam checks, etc.
-        // If this boolean is true, don't report
-        // the miss later, as we already reported
-        // it in doChecks
-        boolean missReported = doChecks(vPhaseReport);
 
         // do we hit?
         bMissed = roll < toHit.getValue();

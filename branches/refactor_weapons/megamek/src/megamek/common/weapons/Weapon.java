@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -30,6 +31,7 @@ import megamek.server.Server;
 public abstract class Weapon extends WeaponType {
     
     public Weapon() {
+        this.ammoType = AmmoType.T_NA;
         this.minimumRange = WEAPON_NA;
     }
 

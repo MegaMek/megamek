@@ -24,23 +24,26 @@ import megamek.common.TechConstants;
  * @author Sebastian Brocks
  * 
  */
-public class ISKingDavidLightGaussRifle extends Weapon {
+public class ISTsunamiGaussRifle extends Weapon {
     /**
      * 
      */
-    public ISKingDavidLightGaussRifle() {
+    public ISTsunamiGaussRifle() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
-        this.name = "King David Light Gauss Rifle";
+        this.name = "Tsunami Heavy Gauss Rifle";
         this.setInternalName(this.name);
-        this.addLookupName("ISKingDavidLightGaussRifle");
+        this.addLookupName("BA-ISTsunamiHeavyGaussRifle");
+        this.heat = 0;
         this.damage = 1;
         this.ammoType = AmmoType.T_NA;
-        this.shortRange = 3;
-        this.mediumRange = 6;
-        this.longRange = 9;
-        this.extremeRange = 12;
-        this.bv = 7;
-        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        this.shortRange = 2;
+        this.mediumRange = 4;
+        this.longRange = 5;
+        this.extremeRange = 8;
+        this.tonnage = 0.0f;
+        this.criticals = 0;
+        this.bv = 6;
+        this.flags |= F_DIRECT_FIRE |  F_NO_FIRES | F_BALLISTIC;
     }
 }

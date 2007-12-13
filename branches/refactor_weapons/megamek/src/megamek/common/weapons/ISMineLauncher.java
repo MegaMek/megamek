@@ -18,6 +18,7 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -28,25 +29,30 @@ import megamek.server.Server;
  * @author Andrew Hunter
  * 
  */
-public class ISAutoGrenadeLauncher extends Weapon {
-
-    public ISAutoGrenadeLauncher() {
+public class ISMineLauncher extends Weapon {
+    /**
+     * 
+     */
+    public ISMineLauncher() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
-        this.name = "Auto Grenade Launcher";
-        this.setInternalName(this.name);
-        this.addLookupName("ISAutoGL");
+        this.name = "Mine Launcher";
+        this.setInternalName(BattleArmor.MINE_LAUNCHER);
+        this.addLookupName("ISMine Launcher");
         this.heat = 0;
-        this.damage = 1;
-        this.ammoType = AmmoType.T_NA;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
+        this.damage = DAMAGE_SPECIAL;
+        this.rackSize = 1;
+        this.ammoType = AmmoType.T_MINE;
+        this.shortRange = 0;
+        this.mediumRange = 0;
+        this.longRange = 0;
+        this.extremeRange = 0;
         this.tonnage = 0.0f;
         this.criticals = 0;
-        this.bv = 1;
-        this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        this.bv = 0;
+        String[] modes = { "Single", "2-shot", "3-shot", "4-shot" };
+        this.setModes(modes);
+        this.flags |= F_DIRECT_FIRE | F_BATTLEARMOR | F_SOLO_ATTACK;
     }
     
     /*
@@ -58,6 +64,6 @@ public class ISAutoGrenadeLauncher extends Weapon {
      */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new AutoGrenadeLauncherHandler(toHit, waa, game, server);
+        return new MineLauncherHandler(toHit, waa, game, server);
     }
 }

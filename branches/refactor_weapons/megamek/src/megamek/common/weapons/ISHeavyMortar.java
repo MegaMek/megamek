@@ -46,7 +46,6 @@ public class ISHeavyMortar extends Weapon {
         this.longRange = 6;
         this.extremeRange = 8;
         this.bv = 17;
-        this.setModes(new String[] {"", "Indirect"});
         this.flags |= F_BALLISTIC;
     }
     

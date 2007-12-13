@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -25,27 +24,28 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  * 
  */
-public class ISAutoGrenadeLauncher extends Weapon {
-
-    public ISAutoGrenadeLauncher() {
+public class ISCompactNarc extends NarcWeapon {
+    /**
+     * 
+     */
+    public ISCompactNarc() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
-        this.name = "Auto Grenade Launcher";
-        this.setInternalName(this.name);
-        this.addLookupName("ISAutoGL");
+        this.name = "Compact Narc";
+        this.setInternalName("ISCompactNarc");
+        this.addLookupName("ISCompact Narc");
         this.heat = 0;
-        this.damage = 1;
-        this.ammoType = AmmoType.T_NA;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
+        this.rackSize = 4;
+        this.shortRange = 2;
+        this.mediumRange = 4;
+        this.longRange = 5;
+        this.extremeRange = 8;
         this.tonnage = 0.0f;
         this.criticals = 0;
-        this.bv = 1;
+        this.bv = 16;
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
     }
     

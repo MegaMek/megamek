@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -12,35 +12,35 @@
  *  for more details.
  */
 /*
- * Created on Sep 24, 2004
+ * Created on Sep 25, 2004
  *
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
-/**
- * @author Sebastian Brocks
- * 
- */
-public class ISKingDavidLightGaussRifle extends Weapon {
-    /**
-     * 
-     */
-    public ISKingDavidLightGaussRifle() {
+public class ISLAC10 extends LACWeapon {
+
+    public ISLAC10() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
-        this.name = "King David Light Gauss Rifle";
+        this.techLevel = TechConstants.T_IS_LEVEL_3;
+        this.name = "Light Auto Cannon/10";
         this.setInternalName(this.name);
-        this.addLookupName("ISKingDavidLightGaussRifle");
-        this.damage = 1;
-        this.ammoType = AmmoType.T_NA;
+        this.addLookupName("IS Light AutoCannon/10");
+        this.addLookupName("ISLAC10");
+        this.addLookupName("IS Light Autocannon/10");
+        this.heat = 3;
+        this.damage = 10;
+        this.rackSize = 10;
         this.shortRange = 3;
         this.mediumRange = 6;
         this.longRange = 9;
         this.extremeRange = 12;
-        this.bv = 7;
-        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        this.tonnage = 8.0f;
+        this.criticals = 4;
+        this.bv = 74;
+        String[] modes = { "", "Rapid" };
+        this.setModes(modes);
+        this.cost = 225000;
     }
 }

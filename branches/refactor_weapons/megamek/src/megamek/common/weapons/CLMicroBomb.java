@@ -25,39 +25,33 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  * 
  */
-public class ISAutoGrenadeLauncher extends Weapon {
-
-    public ISAutoGrenadeLauncher() {
+public class CLMicroBomb extends Weapon {
+    /**
+     * 
+     */
+    public CLMicroBomb() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
-        this.name = "Auto Grenade Launcher";
-        this.setInternalName(this.name);
-        this.addLookupName("ISAutoGL");
+        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.name = "Micro Bomb";
+        this.setInternalName("CLMicroBomb");
+        this.addLookupName("CLMicro Bomb");
         this.heat = 0;
-        this.damage = 1;
-        this.ammoType = AmmoType.T_NA;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
-        this.tonnage = 0.0f;
-        this.criticals = 0;
-        this.bv = 1;
-        this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+        this.damage = DAMAGE_VARIABLE;
+        this.rackSize = 2;
+        this.ammoType = AmmoType.T_BA_MICRO_BOMB;
+        this.shortRange = 0;
+        this.mediumRange = 0;
+        this.longRange = 0;
+        this.extremeRange = 0;
+        this.bv = 0;
+        this.flags |= F_BATTLEARMOR | F_NO_FIRES;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
-     */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new AutoGrenadeLauncherHandler(toHit, waa, game, server);
+        return new MicroBombHandler(toHit, waa, game, server);
     }
 }

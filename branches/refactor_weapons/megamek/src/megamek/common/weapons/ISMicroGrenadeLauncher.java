@@ -17,30 +17,32 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
  * 
  */
-public class ISKingDavidLightGaussRifle extends Weapon {
+public class ISMicroGrenadeLauncher extends Weapon {
     /**
      * 
      */
-    public ISKingDavidLightGaussRifle() {
+    public ISMicroGrenadeLauncher() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
-        this.name = "King David Light Gauss Rifle";
+        this.name = "Micro Grenade Launcher";
         this.setInternalName(this.name);
-        this.addLookupName("ISKingDavidLightGaussRifle");
+        this.addLookupName("ISMicroGrenadeLauncher");
+        this.heat = 0;
         this.damage = 1;
-        this.ammoType = AmmoType.T_NA;
-        this.shortRange = 3;
-        this.mediumRange = 6;
-        this.longRange = 9;
-        this.extremeRange = 12;
-        this.bv = 7;
-        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
+        this.minimumRange = WEAPON_NA;
+        this.shortRange = 1;
+        this.mediumRange = 2;
+        this.longRange = 2;
+        this.extremeRange = 4;
+        this.tonnage = 0.0f;
+        this.criticals = 0;
+        this.bv = 0;
+        this.flags |=  F_BALLISTIC;
     }
 }

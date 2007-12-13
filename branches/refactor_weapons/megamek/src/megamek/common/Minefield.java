@@ -18,6 +18,10 @@ import java.io.*;
 
 public class Minefield implements Serializable, Cloneable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1556863068173491352L;
     public static final int TYPE_CONVENTIONAL = 0;
     public static final int TYPE_COMMAND_DETONATED = 1;
     public static final int TYPE_VIBRABOMB = 2;

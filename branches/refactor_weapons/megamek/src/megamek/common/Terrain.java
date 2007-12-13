@@ -26,6 +26,10 @@ import java.io.*;
  */
 public class Terrain implements ITerrain, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7624691566755134033L;
     private final int type;
     private int level;
     private boolean exitsSpecified = false;

@@ -25,6 +25,10 @@ import java.util.*;
 public class ArtilleryAttackAction extends WeaponAttackAction
 implements Serializable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3893844894076028005L;
     public int turnsTilHit;
     private Vector<Integer> spotterIds; // IDs of possible spotters, won't know until it lands.
     protected int playerId;

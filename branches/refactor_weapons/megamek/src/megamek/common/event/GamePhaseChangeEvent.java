@@ -20,6 +20,11 @@ package megamek.common.event;
 public class GamePhaseChangeEvent extends GameEvent {
     
     /**
+     * 
+     */
+    private static final long serialVersionUID = 5589252062756476818L;
+
+    /**
      * Old phase
      */
     private int oldPhase;

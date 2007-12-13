@@ -733,13 +733,15 @@ public class EquipmentType {
         addType(new CLMediumRecoillessRifle());
         addType(new CLHeavyRecoillessRifle());
         addType(new CLBearhunterSuperheavyAC());
-        addType(new ISAutoGrenadeLauncher());
         addType(new ISKingDavidLightGaussRifle());
         addType(new ISDavidLightGaussRifle());
         addType(new ISFiredrakeNeedler());
         addType(new ISBAPlasmaRifle());
         addType(new ISHeavyMortar());
+        addType(new ISLightMortar());
         addType(new ISAutoGrenadeLauncher());
+        addType(new ISCompactNarc());
+        addType(new ISMineLauncher());
         
     }    
 

@@ -23,6 +23,10 @@ import java.io.*;
 public class RandomMapDialog
     extends Dialog implements ActionListener, FocusListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1676096571134662220L;
     private static final String NONE   = Messages.getString("RandomMapDialog.elevNONE"); //$NON-NLS-1$
     private static final String LOW    = Messages.getString("RandomMapDialog.elevLow"); //$NON-NLS-1$
     private static final String MEDIUM = Messages.getString("RandomMapDialog.elevMedium"); //$NON-NLS-1$

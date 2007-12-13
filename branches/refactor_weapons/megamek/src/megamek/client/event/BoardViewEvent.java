@@ -25,6 +25,10 @@ import megamek.common.Entity;
  */
 public class BoardViewEvent extends java.util.EventObject
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4823618884833399318L;
     public static final int BOARD_HEX_CLICKED = 0;
     public static final int BOARD_HEX_DOUBLECLICKED = 1;
     public static final int BOARD_HEX_DRAGGED = 2;

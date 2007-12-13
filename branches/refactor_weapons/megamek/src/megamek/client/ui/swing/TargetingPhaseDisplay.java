@@ -72,6 +72,11 @@ public class TargetingPhaseDisplay
         extends StatusBarPhaseDisplay
         implements GameListener, ActionListener, DoneButtoned,
         KeyListener, ItemListener, BoardViewListener, Distractable, ListSelectionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3441669419807288865L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

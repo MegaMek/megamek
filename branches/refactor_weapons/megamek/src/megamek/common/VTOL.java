@@ -23,6 +23,11 @@ package megamek.common;
  */
 public class VTOL extends Tank {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7406911547399249173L;
+
     public static final int LOC_ROTOR = 5;  //will this cause problems w/r/t turrets?
     
     protected static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR", "RO" };

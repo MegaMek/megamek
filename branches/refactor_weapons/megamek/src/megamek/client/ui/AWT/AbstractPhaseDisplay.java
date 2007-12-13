@@ -40,6 +40,11 @@ import megamek.common.event.GameTurnChangeEvent;
 
 public class AbstractPhaseDisplay extends Panel implements BoardViewListener, GameListener {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1299003414052911854L;
+
     //
     // BoardListener
     //

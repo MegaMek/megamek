@@ -27,6 +27,11 @@ import megamek.common.ToHitData;
 public class BreakGrappleAttackAction extends PhysicalAttackAction
 {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5615694825997720537L;
+
     public BreakGrappleAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
     }

@@ -15,6 +15,10 @@
 import java.io.Serializable;
 
 public class NarcPod implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8883459353515484784L;
     private int team;
     private int location;
 

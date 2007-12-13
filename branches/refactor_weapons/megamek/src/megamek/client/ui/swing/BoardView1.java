@@ -3398,6 +3398,10 @@ public class BoardView1
     }
 
     private class EcmBubble extends Coords {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 3304636458460529324L;
         int range;
         int tint;
         public EcmBubble(Coords c, int range, int tint) {

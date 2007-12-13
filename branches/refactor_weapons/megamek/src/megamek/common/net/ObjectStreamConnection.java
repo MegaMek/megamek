@@ -79,6 +79,11 @@ class ObjectStreamConnection extends AbstractConnection {
     private static class NetworkPacket  implements INetworkPacket, Serializable {
         
         /**
+         * 
+         */
+        private static final long serialVersionUID = -6526944082619874044L;
+
+        /**
          * Is data compressed
          */
         private boolean compressed;

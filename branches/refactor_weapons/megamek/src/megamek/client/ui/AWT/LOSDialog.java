@@ -22,6 +22,11 @@ import java.awt.event.*;
 public class LOSDialog
     extends Dialog implements ActionListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2709304305904897160L;
+
     private Button butOK = new Button(Messages.getString("Okay")); //$NON-NLS-1$
 
     /**

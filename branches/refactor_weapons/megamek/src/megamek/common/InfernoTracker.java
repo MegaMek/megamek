@@ -29,10 +29,19 @@ public class InfernoTracker
     // Private helper classes, methods, and attributes.
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -5256053831078922473L;
+
+    /**
      * This class defines the effects of a single hit by an Inferno round.
      */
     /* package */ static class Inferno
   implements Serializable {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1799687411697517801L;
         private int         heatPerRound;
   private int         burnRoundsPerHit;      
 

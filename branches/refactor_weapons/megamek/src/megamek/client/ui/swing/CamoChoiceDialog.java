@@ -67,6 +67,11 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         ItemSelectable, ListSelectionListener {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 9220162367683378065L;
+
+    /**
      * The parent <code>Frame</code> of this dialog.
      */
     private JFrame frame;

@@ -26,6 +26,10 @@ import java.io.*;
 */
 public final class Team extends TurnOrdered implements Serializable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2270215552964191597L;
     private Vector<Player> players = new Vector<Player>();
     private int id;
 

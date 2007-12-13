@@ -40,6 +40,11 @@ import javax.swing.JPanel;
 
 public class AbstractPhaseDisplay extends JPanel implements BoardViewListener, GameListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4421205210788230341L;
+
     //
     // BoardListener
     //

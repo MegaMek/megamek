@@ -23,6 +23,10 @@ import java.awt.Dimension;
  */
 public class ClientDialog extends JDialog {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6154951760485853883L;
     private static final double TASKBAR_SIZE = .05;
     private static final int CONTAINER_BUFFER = 10;
 

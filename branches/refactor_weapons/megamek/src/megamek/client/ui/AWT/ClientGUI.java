@@ -88,6 +88,10 @@ import java.util.Vector;
 public class ClientGUI
         extends Panel
         implements MouseListener, WindowListener, ActionListener, KeyListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8010157442415211490L;
     // Action commands.
     public static final String VIEW_MEK_DISPLAY = "viewMekDisplay"; //$NON-NLS-1$
     public static final String VIEW_MINI_MAP = "viewMiniMap"; //$NON-NLS-1$
@@ -1287,6 +1291,10 @@ public class ClientGUI
      * A menu item that lives to view an entity.
      */
     private class ViewMenuItem extends MenuItem implements ActionListener {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 3756822619315859847L;
         Entity entity;
 
         public ViewMenuItem(Entity entity) {
@@ -1309,6 +1317,10 @@ public class ClientGUI
      * just be silly.)
      */
     private class SelectMenuItem extends MenuItem implements ActionListener {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -2472642242836893482L;
         Entity entity;
 
         public SelectMenuItem(Entity entity) {
@@ -1333,6 +1345,10 @@ public class ClientGUI
      * do so
      */
     private class TargetMenuItem extends MenuItem implements ActionListener {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -3854766135227390453L;
         Targetable target;
 
         public TargetMenuItem(Targetable t) {

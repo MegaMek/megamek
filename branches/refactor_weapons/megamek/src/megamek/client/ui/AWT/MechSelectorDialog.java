@@ -79,6 +79,11 @@ public class MechSelectorDialog
     extends Dialog implements ActionListener, ItemListener, KeyListener, 
     Runnable, WindowListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4382585886146902257L;
+
     // how long after a key is typed does a new search begin
     private final static int KEY_TIMEOUT = 1000;
      

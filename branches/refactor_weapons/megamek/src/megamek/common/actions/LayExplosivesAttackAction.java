@@ -26,6 +26,11 @@ import megamek.common.ToHitData;
 public class LayExplosivesAttackAction extends AbstractAttackAction
 {    
    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8799415934269686590L;
+
     public LayExplosivesAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
     }

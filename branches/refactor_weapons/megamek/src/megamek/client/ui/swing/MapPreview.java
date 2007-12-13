@@ -30,6 +30,10 @@ public class MapPreview extends Canvas  {
 
     // these indices match those in Terrains.java, and are therefore sensitive to any changes there
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4114846885029353250L;
     private final static Color[] m_terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
     private static Color BACKGROUND;

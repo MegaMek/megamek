@@ -49,6 +49,10 @@ import megamek.common.ToHitData;
  * @version 1.0
  */
 public class Ruler extends JDialog implements BoardViewListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4820402626782115601L;
     public static Color color1 = Color.cyan;
     public static Color color2 = Color.magenta;
 

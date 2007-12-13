@@ -37,6 +37,11 @@ public class FiringDisplay
     implements BoardViewListener, GameListener, ActionListener, DoneButtoned,
                KeyListener, ItemListener, Distractable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1270378753030784714L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
@@ -1573,7 +1578,6 @@ public class FiringDisplay
                         case (AmmoType.T_SNIPER) :
                         case (AmmoType.T_THUMPER) :
                         case (AmmoType.T_SRM_ADVANCED) :
-                        case (AmmoType.T_BA_INFERNO) :
                         case (AmmoType.T_LRM_TORPEDO_COMBO) :
                         case (AmmoType.T_ATM) :
                         case (AmmoType.T_MML) :

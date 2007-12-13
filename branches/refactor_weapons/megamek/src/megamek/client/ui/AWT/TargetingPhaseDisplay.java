@@ -35,6 +35,11 @@ public class TargetingPhaseDisplay
     implements GameListener, ActionListener, DoneButtoned,
                KeyListener, ItemListener, BoardViewListener, Distractable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6948890985035249901L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

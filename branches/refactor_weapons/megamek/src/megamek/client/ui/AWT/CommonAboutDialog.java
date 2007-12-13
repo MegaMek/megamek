@@ -28,6 +28,10 @@ import megamek.client.ui.AWT.widget.AdvancedLabel;
 public class CommonAboutDialog extends Dialog
 {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 4295988339023189039L;
+    /**
      * We only need a single copy of the "about" title image that we share.
      */
     private static Image imgTitleImage = null;

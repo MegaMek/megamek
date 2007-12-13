@@ -34,6 +34,12 @@ public class ProtomechPhysicalAttackAction
     extends AbstractAttackAction
 {
  
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1432011536091665084L;
+
+
     public ProtomechPhysicalAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
     }

@@ -39,6 +39,11 @@ public class Infantry
     // Private attributes and helper functions.
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -8706716079307721282L;
+
+    /**
      * The number of men originally in this platoon.
      */
     private int         menStarting = 0;

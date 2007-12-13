@@ -18,7 +18,11 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
@@ -46,5 +50,17 @@ public class ISAutoGrenadeLauncher extends Weapon {
         this.bv = 1;
         this.setModes(new String[] {"", "Indirect"});
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     *      megamek.server.Server)
+     */
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new AutoGrenadeLauncherHandler(toHit, waa, game, server);
     }
 }

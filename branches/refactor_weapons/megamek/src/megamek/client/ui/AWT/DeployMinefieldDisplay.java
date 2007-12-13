@@ -32,6 +32,11 @@ public class DeployMinefieldDisplay
     implements BoardViewListener,  ActionListener, DoneButtoned,
                KeyListener, GameListener, Distractable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1471981663393324556L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

@@ -12,6 +12,11 @@ import java.awt.event.ActionListener;
 
 public class MechPanelTabStrip extends PicMap {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1282343469769007184L;
+
     private static final String IMAGE_DIR = "data/images/widgets";
 
     private PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[5];

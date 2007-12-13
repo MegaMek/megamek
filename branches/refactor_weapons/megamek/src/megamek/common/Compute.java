@@ -2014,8 +2014,7 @@ public class Compute {
 		                    // and against vehicles and protos if allowed by
 		                    // game option
 		                    if (((abin_type.getAmmoType() == AmmoType.T_SRM)
-                                    || (abin_type.getAmmoType() == AmmoType.T_MML)
-                                    || (abin_type.getAmmoType() == AmmoType.T_BA_INFERNO))
+                                    || (abin_type.getAmmoType() == AmmoType.T_MML))
 		                            && abin_type.getMunitionType() == AmmoType.M_INFERNO) {
 		                        ammo_multiple = 0.5;
 		                        if (target instanceof Mech) {

@@ -23,6 +23,10 @@ import megamek.common.Coords;
  */
 public class BoardEvent extends java.util.EventObject
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6895134212472497607L;
     public static final int BOARD_NEW_BOARD = 0;
     public static final int BOARD_CHANGED_HEX = 1;
 

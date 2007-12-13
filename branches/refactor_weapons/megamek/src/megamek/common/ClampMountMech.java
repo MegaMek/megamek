@@ -31,6 +31,11 @@ package megamek.common;
     // Private attributes, constants and helper functions.
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -5687854937528642266L;
+
+    /**
      * The <code>String</code> reported when the handles are in use.
      */
     private static final String NO_VACANCY_STRING = "A Fa Shih squad is loaded";

@@ -59,6 +59,11 @@ import java.util.ArrayList;
 public class Game implements Serializable, IGame
 {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 8376320092671792532L;
+
+    /**
      * Define constants to describe the condition a
      * unit was in when it wass removed from the game.
      */

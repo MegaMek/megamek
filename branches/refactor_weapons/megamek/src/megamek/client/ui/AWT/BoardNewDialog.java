@@ -15,6 +15,11 @@ import java.awt.event.ActionEvent;
  * a quick class for the new map diaglogue box
  */
 public class BoardNewDialog extends Dialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6562881140632503653L;
+
     public int            xvalue, yvalue;
 
     protected Label        labWidth, labHeight;

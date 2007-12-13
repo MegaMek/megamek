@@ -33,6 +33,10 @@ import megamek.common.ToHitData;
 public class PunchAttackAction
     extends PhysicalAttackAction
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3684646558944678180L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
     public static final int RIGHT = 2;

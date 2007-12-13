@@ -29,6 +29,10 @@ import megamek.common.*;
  */
 public class DisplacementAttackAction extends AbstractAttackAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1713221946987876208L;
     private Coords targetPos;
 
     /** Creates new DisplacementAttackAction */

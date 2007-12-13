@@ -17,6 +17,11 @@
 package megamek.common;
 
 public class BipedMech extends Mech {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4166375446709772785L;
+
     public static final String[] LOCATION_NAMES = {"Head",
     "Center Torso", "Right Torso", "Left Torso",
     "Right Arm", "Left Arm", "Right Leg", "Left Leg"};

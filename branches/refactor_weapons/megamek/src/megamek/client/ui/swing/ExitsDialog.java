@@ -15,6 +15,10 @@ import java.awt.BorderLayout;
  * A dialog of which exits are connected for terrain.
  */
 public class ExitsDialog extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3126840102187553386L;
     private JCheckBox cheExit0 = new JCheckBox("0"); //$NON-NLS-1$
     private JCheckBox cheExit1 = new JCheckBox("1"); //$NON-NLS-1$
     private JCheckBox cheExit2 = new JCheckBox("2"); //$NON-NLS-1$

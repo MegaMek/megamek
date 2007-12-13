@@ -25,6 +25,10 @@ import megamek.client.ui.AWT.widget.AdvancedLabel;
 public class AlertDialog
     extends Dialog implements ActionListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -132834772501650316L;
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private AdvancedLabel labMessage;
     

@@ -33,6 +33,11 @@ public class DeploymentDisplay
     implements BoardViewListener,  ActionListener, DoneButtoned,
                KeyListener, GameListener, Distractable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6264922297603128233L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

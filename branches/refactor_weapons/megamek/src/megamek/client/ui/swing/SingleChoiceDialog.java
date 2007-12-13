@@ -28,6 +28,11 @@ import javax.swing.JFrame;
  */
 public class SingleChoiceDialog extends ChoiceDialog {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 3189147678153823244L;
+
+    /**
      * Create a choice dialog.  If no choices are passed in, this will be
      * a very boring dialog, but it will not suffer an exception.
      *

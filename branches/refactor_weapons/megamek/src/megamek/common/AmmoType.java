@@ -49,32 +49,31 @@ public class AmmoType extends EquipmentType {
     public static final int     T_GAUSS_HEAVY       = 22;
     public static final int     T_AC_ROTARY         = 23;
     public static final int     T_SRM_ADVANCED      = 24;
-    public static final int     T_BA_INFERNO        = 25;
-    public static final int     T_BA_MICRO_BOMB     = 26;
-    public static final int     T_LRM_TORPEDO_COMBO = 27;
-    public static final int     T_MINE              = 28;
-    public static final int     T_ATM               = 29; // Clan ATM missile systems
-    public static final int     T_ROCKET_LAUNCHER   = 30;
-    public static final int     T_INARC             = 31;
-    public static final int     T_LRM_STREAK        = 32;
-    public static final int     T_AC_LBX_THB        = 33;
-    public static final int     T_AC_ULTRA_THB      = 34;
-    public static final int     T_LAC               = 35;
-    public static final int     T_HEAVY_FLAMER      = 36;
-    public static final int     T_COOLANT_POD       = 37; // not really ammo, but explodes and is depleted
-    public static final int     T_EXLRM             = 38;
-    public static final int     T_TBOLT             = 39;
-    public static final int     T_MAGSHOT           = 40; // Magshot from TR3055U and S7 Pack
-    public static final int     T_PXLRM             = 41;
-    public static final int     T_HSRM              = 42;
-    public static final int     T_MRM_STREAK        = 43;
-    public static final int     T_MPOD              = 44;
-    public static final int     T_HAG               = 45;
-    public static final int     T_MML               = 46;
-    public static final int     T_PLASMA            = 47;
-    public static final int     T_SBGAUSS           = 48;
-    public static final int     T_RAIL_GUN          = 49;
-    public static final int     NUM_TYPES           = 50;
+    public static final int     T_BA_MICRO_BOMB     = 25;
+    public static final int     T_LRM_TORPEDO_COMBO = 26;
+    public static final int     T_MINE              = 27;
+    public static final int     T_ATM               = 28; // Clan ATM missile systems
+    public static final int     T_ROCKET_LAUNCHER   = 29;
+    public static final int     T_INARC             = 30;
+    public static final int     T_LRM_STREAK        = 31;
+    public static final int     T_AC_LBX_THB        = 32;
+    public static final int     T_AC_ULTRA_THB      = 33;
+    public static final int     T_LAC               = 34;
+    public static final int     T_HEAVY_FLAMER      = 35;
+    public static final int     T_COOLANT_POD       = 36; // not really ammo, but explodes and is depleted
+    public static final int     T_EXLRM             = 37;
+    public static final int     T_TBOLT             = 38;
+    public static final int     T_MAGSHOT           = 39; // Magshot from TR3055U and S7 Pack
+    public static final int     T_PXLRM             = 40;
+    public static final int     T_HSRM              = 41;
+    public static final int     T_MRM_STREAK        = 42;
+    public static final int     T_MPOD              = 43;
+    public static final int     T_HAG               = 44;
+    public static final int     T_MML               = 45;
+    public static final int     T_PLASMA            = 46;
+    public static final int     T_SBGAUSS           = 47;
+    public static final int     T_RAIL_GUN          = 48;
+    public static final int     NUM_TYPES           = 49;
     
 
     // ammo flags
@@ -4525,54 +4524,7 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
-/*    private static AmmoType createFenrirSRM4Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
-        ammo.name = "SRM 4 Ammo";
-        ammo.setInternalName("Fenrir SRM-4 Ammo");
-        ammo.addLookupName("FenrirSRM4 Ammo");
-        ammo.damagePerShot = 2;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 4;
-        ammo.bv = 0;
-
-        return ammo;
-    }
-    private static AmmoType createPhalanxSRM4Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
-        ammo.name = "SRM 4 Ammo";
-        ammo.setInternalName("PhalanxSRM4Ammo");
-        ammo.addLookupName("Phalanx SRM4 Ammo");
-        ammo.damagePerShot = 2;
-        ammo.rackSize = 2;
-        ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 2;
-        ammo.bv = 0;
-
-        return ammo;
-    }
-    private static AmmoType createGrenadierSRM4Ammo() {
-        AmmoType ammo = new AmmoType();
-
-        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
-        ammo.name = "SRM 4 Ammo";
-        ammo.setInternalName("BA-SRM4 Grenadier Ammo");
-        ammo.addLookupName("BA-SRM4 Grenadier Ammo");
-        ammo.damagePerShot = 2;
-        ammo.rackSize = 4;
-        ammo.ammoType = AmmoType.T_SRM;
-        ammo.flags |= F_BATTLEARMOR;
-        ammo.shots = 7;
-        ammo.bv = 0;
-
-        return ammo;
-    }*/
+    
     private static AmmoType createBACompactNarcAmmo() {
         AmmoType ammo = new AmmoType();
 

@@ -32,6 +32,10 @@ package megamek.common;
 
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 593951005031815098L;
+    /**
      * The set of front locations that load troopers externally.
      */
     private static final int[] EXTERIOR_LOCATIONS = { Tank.LOC_RIGHT,

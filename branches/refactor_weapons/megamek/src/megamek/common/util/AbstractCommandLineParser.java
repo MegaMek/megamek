@@ -25,6 +25,11 @@ public abstract class AbstractCommandLineParser {
      * Exception thrown in case of error
      */
     public static class ParseException extends Exception {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -3077985683676777509L;
+
         ParseException(String message) {
             super(message);
         }

@@ -31,6 +31,10 @@ import megamek.common.ToHitData;
  * The attacker brushes the target off.
  */
 public class BrushOffAttackAction extends AbstractAttackAction {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7455082808488032572L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
     public static final int RIGHT = 2;

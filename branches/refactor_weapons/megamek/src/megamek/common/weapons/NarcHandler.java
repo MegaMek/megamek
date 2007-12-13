@@ -16,14 +16,12 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
-import megamek.common.Infantry;
 import megamek.common.NarcPod;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -52,21 +50,7 @@ public class NarcHandler extends MissileWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
-        // conventional infantry gets hit in one lump
-        // BAs do one lump of damage per BA suit
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            if (ae instanceof BattleArmor) {
-                bSalvo = true;
-                return ((BattleArmor)ae).getShootingStrength();
-            }
-            return 1;
-        }
         bSalvo = true;
-        if (ae instanceof BattleArmor) {
-            if (amsEnganged)
-                return Compute.missilesHit(((BattleArmor)ae).getShootingStrength(), -2);
-            else return Compute.missilesHit(((BattleArmor)ae).getShootingStrength());
-        }
         if (amsEnganged) {
             r = new Report(3235);
             r.subject = subjectId;

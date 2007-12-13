@@ -15288,8 +15288,7 @@ public class Server implements Runnable {
 		// Inferno ammo causes heat buildup as well as the damage
 		if (mounted.getType() instanceof AmmoType
 				&& (((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_SRM
-						|| ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_BA_INFERNO || ((AmmoType) mounted
-						.getType()).getAmmoType() == AmmoType.T_MML)
+						|| ((AmmoType) mounted.getType()).getAmmoType() == AmmoType.T_MML)
 				&& ((AmmoType) mounted.getType()).getMunitionType() == AmmoType.M_INFERNO
 				&& mounted.getShotsLeft() > 0) {
 			en.heatBuildup += Math.min(mounted.getExplosionDamage(), 30);
@@ -19932,7 +19931,7 @@ public class Server implements Runnable {
 	 * @param altitude
 	 *            Absolute altitude for flak attack
 	 */
-	void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo,
+	public void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo,
 			int subjectId, Entity killer, int damage, int falloff,
 			boolean flak, int altitude) {
 		for (int ring = 0; damage > 0; ring++, damage -= falloff) {

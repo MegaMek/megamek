@@ -31,6 +31,10 @@ import java.awt.Polygon;
  */
 public class StraightArrowPolygon extends Polygon {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6865457471619747091L;
     private Polygon hotArea = new Polygon();
     private Point startPoint;
     private Point endPoint;

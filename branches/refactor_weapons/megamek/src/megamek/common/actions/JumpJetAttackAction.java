@@ -32,6 +32,10 @@ import megamek.common.ToHitData;
  */
 public class JumpJetAttackAction extends PhysicalAttackAction
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5068155731614378911L;
     public static final int BOTH = 0;
     public static final int LEFT = 1;
     public static final int RIGHT = 2;

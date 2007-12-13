@@ -20,6 +20,10 @@ package megamek.common.actions;
 public class FiringModeChangeAction
     extends AbstractEntityAction
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3706302227286581807L;
     private int equipmentId;
     
     public FiringModeChangeAction(int entityId, int equipmentId) {

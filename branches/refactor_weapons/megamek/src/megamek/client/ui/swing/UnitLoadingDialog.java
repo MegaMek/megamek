@@ -29,6 +29,10 @@ import java.awt.GridLayout;
 
 public class UnitLoadingDialog extends JDialog {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3454307876761238915L;
     private JLabel lLoading = new JLabel(Messages.getString("UnitLoadingDialog.LoadingUnits")); //$NON-NLS-1$
     private JLabel lSpacer = new JLabel();
     private JLabel lCacheText = new JLabel(Messages.getString("UnitLoadingDialog.fromCache")); //$NON-NLS-1$

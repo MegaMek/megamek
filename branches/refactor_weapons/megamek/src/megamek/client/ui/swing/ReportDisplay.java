@@ -42,6 +42,11 @@ import java.util.ArrayList;
 public class ReportDisplay
         extends StatusBarPhaseDisplay
         implements ActionListener, KeyListener, DoneButtoned, Distractable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6185643976857892270L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

@@ -38,6 +38,11 @@ import megamek.common.net.PacketReceivedEvent;
 public class PacketTool extends Frame implements Runnable {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 3249150110009720658L;
+
+    /**
      * The currently-loaded <code>Board</code>.  May be <code>null</code>.
      */
     private Board board = null;

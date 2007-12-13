@@ -93,6 +93,11 @@ import megamek.common.WeaponType;
 public class MechDisplay extends JPanel {
     // buttons & gizmos for top level
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2060993542227677984L;
+
     private MechPanelTabStrip tabStrip;
 
     private JPanel displayP;
@@ -229,6 +234,11 @@ public class MechDisplay extends JPanel {
      */
     private class MovementPanel extends PicMap {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 8284603003897415518L;
+
         private GeneralInfoMapSet gi;
 
         private int minTopMargin = 8;
@@ -273,6 +283,10 @@ public class MechDisplay extends JPanel {
      * This panel contains the armor readout display.
      */
     private class ArmorPanel extends PicMap {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -3612396252172441104L;
         private TankMapSet tank;
         private MechMapSet mech;
         private InfantryMapSet infantry;
@@ -407,6 +421,11 @@ public class MechDisplay extends JPanel {
      */
     public class WeaponPanel extends PicMap
             implements ItemListener, ListSelectionListener {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -5728839963281503332L;
+
         private static final String IMAGE_DIR = "data/images/widgets";
 
         public JList weaponList;
@@ -1258,6 +1277,11 @@ public class MechDisplay extends JPanel {
      */
     private class SystemPanel extends PicMap
             implements ItemListener, ActionListener, ListSelectionListener {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 6660316427898323590L;
+
         private static final String IMAGE_DIR = "data/images/widgets";
 
         private JLabel locLabel;
@@ -1760,6 +1784,11 @@ public class MechDisplay extends JPanel {
      */
     private class ExtraPanel extends PicMap
             implements ActionListener {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -4907296187995261075L;
 
         private static final String IMAGE_DIR = "data/images/widgets";
 

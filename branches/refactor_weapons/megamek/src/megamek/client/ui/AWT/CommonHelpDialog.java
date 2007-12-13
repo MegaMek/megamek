@@ -25,6 +25,10 @@ import megamek.client.ui.AWT.widget.AdvancedLabel;
  */
 public class CommonHelpDialog extends Dialog
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6500342607269603829L;
     private AdvancedLabel lblHelp;
     /**
      * Create a help dialog for the given parent <code>Frame</code> by

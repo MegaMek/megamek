@@ -29,6 +29,10 @@ import java.awt.*;
  */
 public class BoardComponent extends Panel {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5110070086699741736L;
     private Scrollbar scrVertical = new Scrollbar(Scrollbar.VERTICAL);
     private Scrollbar scrHorizontal = new Scrollbar(Scrollbar.HORIZONTAL);
     private Panel panBlank = new Panel();

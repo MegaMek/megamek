@@ -47,6 +47,10 @@ public class DeploymentDisplay
         extends StatusBarPhaseDisplay
         implements BoardViewListener, ActionListener, DoneButtoned,
         KeyListener, GameListener, Distractable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -430925219438520710L;
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
     // Action command names

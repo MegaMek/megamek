@@ -18,6 +18,10 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 
 public class IndexedCheckbox extends JCheckBox {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5224809762401860469L;
     private int index;
 
     public IndexedCheckbox(String label, boolean state, ButtonGroup group, int index) {

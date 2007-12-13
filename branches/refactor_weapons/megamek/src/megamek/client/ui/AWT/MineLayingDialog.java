@@ -40,6 +40,10 @@ import java.util.Vector;
 public class MineLayingDialog
     extends Dialog implements ActionListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5096876851665428969L;
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     private AdvancedLabel labMessage;

@@ -41,6 +41,10 @@ public class CEntity {
 
     static class Table extends HashMap<Integer,CEntity> {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 6437109733397107056L;
         private TestBot tb;
 
         public Table(TestBot tb) {

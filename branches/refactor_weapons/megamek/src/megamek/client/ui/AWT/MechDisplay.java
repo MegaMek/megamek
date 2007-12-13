@@ -88,6 +88,11 @@ import megamek.common.WeaponType;
 public class MechDisplay extends BufferedPanel {
     // buttons & gizmos for top level
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4645698758006581017L;
+
     MechPanelTabStrip tabStrip;
 
     public BufferedPanel displayP;
@@ -235,6 +240,11 @@ public class MechDisplay extends BufferedPanel {
      */
     class MovementPanel extends PicMap {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 4441873286085299525L;
+
         private GeneralInfoMapSet gi;
 
         private int minTopMargin = 8;
@@ -280,6 +290,10 @@ public class MechDisplay extends BufferedPanel {
      * This panel contains the armor readout display.
      */
     class ArmorPanel extends PicMap {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -3574160027530756521L;
         private TankMapSet tank;
         private MechMapSet mech;
         private InfantryMapSet infantry;
@@ -415,6 +429,11 @@ public class MechDisplay extends BufferedPanel {
      */
     class WeaponPanel extends BufferedPanel
             implements ItemListener {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -3872316514581547799L;
+
         private static final String IMAGE_DIR = "data/images/widgets";
 
         public java.awt.List weaponList;
@@ -1205,6 +1224,11 @@ public class MechDisplay extends BufferedPanel {
     class SystemPanel
             extends BufferedPanel
             implements ItemListener, ActionListener {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -1294456418186738773L;
+
         private static final String IMAGE_DIR = "data/images/widgets";
 
         private TransparentLabel locLabel, slotLabel, modeLabel;
@@ -1646,6 +1670,11 @@ public class MechDisplay extends BufferedPanel {
     class ExtraPanel
             extends BufferedPanel
             implements ItemListener, ActionListener {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -8727340674330120715L;
 
         private static final String IMAGE_DIR = "data/images/widgets";
 

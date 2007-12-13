@@ -28,6 +28,11 @@ import java.awt.*;
 public class SingleChoiceDialog extends ChoiceDialog
 {
     /**
+     * 
+     */
+    private static final long serialVersionUID = -8101154201976808940L;
+
+    /**
      * Create a choice dialog.  If no choices are passed in, this will be
      * a very boring dialog, but it will not suffer an exception.
      *

@@ -22,6 +22,11 @@ import java.awt.event.*;
 public class AimedShotDialog
     extends Dialog
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3780327164169237560L;
+
     private Button butNoAim = new Button(Messages.getString("AimedShotDialog.dontAim")); //$NON-NLS-1$
 
     /**

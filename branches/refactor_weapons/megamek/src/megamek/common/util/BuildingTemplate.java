@@ -17,6 +17,11 @@ import megamek.common.Coords;
  *
  */
 public class BuildingTemplate implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -911419490135815472L;
+
     public static final int BASEMENT_RANDOM=-1;
 
     private Vector<Coords> coordsList = new Vector<Coords>();

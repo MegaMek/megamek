@@ -84,6 +84,11 @@ public class FiringDisplay
         extends StatusBarPhaseDisplay
         implements BoardViewListener, GameListener, ActionListener, DoneButtoned,
         KeyListener, ItemListener, Distractable, ListSelectionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5586388490027013723L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
@@ -1639,7 +1644,6 @@ public class FiringDisplay
                             case (AmmoType.T_SNIPER):
                             case (AmmoType.T_THUMPER):
                             case (AmmoType.T_SRM_ADVANCED):
-                            case (AmmoType.T_BA_INFERNO):
                             case (AmmoType.T_LRM_TORPEDO_COMBO):
                             case (AmmoType.T_ATM):
                             case (AmmoType.T_MML) :

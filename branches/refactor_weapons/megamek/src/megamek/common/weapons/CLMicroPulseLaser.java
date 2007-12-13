@@ -17,7 +17,11 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
@@ -49,5 +53,17 @@ public class CLMicroPulseLaser extends PulseLaserWeapon {
         this.flags |= F_NO_FIRES;
         this.bv = 12;
         this.cost = 12500;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     *      megamek.server.Server)
+     */
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new BurstPulseLaserWeaponHandler(toHit, waa, game, server);
     }
 }

@@ -21,13 +21,13 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.weapons.WeaponHandler;
 import megamek.server.Server;
 
-public class EnergyWeaponHandler extends WeaponHandler {
+public class PulseLaserWeaponHandler extends WeaponHandler {
     /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public EnergyWeaponHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+    public PulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
             Server s) {
         super(toHit, waa, g, s);
     }
@@ -55,9 +55,10 @@ public class EnergyWeaponHandler extends WeaponHandler {
         if (bGlancing) {
             toReturn = (int)Math.floor(nDamPerHit/2.0);
         }
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) 
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
         	toReturn /= 10;
+        	toReturn += 2;
+        }	        
         return Math.round(toReturn);
-    }        
-
+    }
 }

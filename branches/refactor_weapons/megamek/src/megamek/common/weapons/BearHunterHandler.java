@@ -17,60 +17,30 @@
  */
 package megamek.common.weapons;
 
-import java.util.Vector;
 
 import megamek.common.BattleArmor;
-import megamek.common.Building;
 import megamek.common.Compute;
-import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  * 
  */
-public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
+public class BearHunterHandler extends WeaponHandler {
     /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public VehicleFlamerHeatHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+    public BearHunterHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
             Server s) {
         super(toHit, waa, g, s);
     }
 
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
-        if (entityTarget instanceof Mech
-                && game.getOptions().booleanOption("flamer_heat")) {
-            // heat
-            int nDamage = nDamPerHit * hits;
-            //hits
-            r = new Report(3390);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
-            r = new Report(3400);
-            r.subject = subjectId;
-            r.indent(2);
-            r.add(nDamage);
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-            entityTarget.heatBuildup += nDamage;
-            hits = 0;
-        } else {
-            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                    nCluster, nDamPerHit, bldgAbsorbs);
-        }
-    }
-    
     /*
      * (non-Javadoc)
      * 
@@ -78,9 +48,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            if (ae instanceof BattleArmor)
-                return Compute.d6(3);
-            return Compute.d6(4); 
+            return Compute.d6(3);
         }               
         return super.calcDamagePerHit();
     }

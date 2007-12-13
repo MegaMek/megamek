@@ -94,7 +94,7 @@ public class SRMAXHandler extends SRMHandler {
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return wtype.getRackSize()/5;
+            return Math.round(((float)wtype.getRackSize())/5);
         return 1;
     }
 }

@@ -17,8 +17,10 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.BattleArmor;
 import megamek.common.EntityWeightClass;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.PilotingRollData;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -71,13 +73,18 @@ public class HGRHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
+        float toReturn;
         int nRange = ae.getPosition().distance(target.getPosition());
         if (nRange <= wtype.getShortRange()) {
-            return 25;
+            toReturn = 25;
         } else if (nRange <= wtype.getMediumRange()) {
-            return 20;
+            toReturn = 20;
         } else {
-            return 10;
+            toReturn = 10;
         }
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            toReturn /= 10;
+        }
+        return Math.round(toReturn);
     }
 }

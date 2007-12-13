@@ -13,6 +13,11 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.IGame;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
+
 /**
  * @author beerockxs
  *
@@ -22,6 +27,18 @@ public class PulseLaserWeapon extends LaserWeapon {
     public PulseLaserWeapon() {
         super();
         this.flags |= F_PULSE;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     *      megamek.server.Server)
+     */
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new PulseLaserWeaponHandler(toHit, waa, game, server);
     }
 
 }

@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2004 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -17,35 +17,38 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
+
+import megamek.common.BattleArmor;
+import megamek.common.Compute;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  * 
  */
-public abstract class FlamerWeapon extends EnergyWeapon {
+public class MediumRecoillessHandler extends WeaponHandler {
     /**
-     * 
+     * @param toHit
+     * @param waa
+     * @param g
      */
-    public FlamerWeapon() {
-        super();
-        this.flags |= F_FLAMER;
-        this.ammoType = AmmoType.T_NA;
-        String modes[] = { "Damage", "Heat" };
-        this.setModes(modes);
+    public MediumRecoillessHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+            Server s) {
+        super(toHit, waa, g, s);
     }
 
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())
-                .curMode().equals("Heat"))) {
-            return new FlamerHeatHandler(toHit, waa, game, server);
-        } else {
-            return new FlamerHandler(toHit, waa, game, server);
-        }
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     */
+    protected int calcDamagePerHit() {
+        if (target instanceof Infantry && !(target instanceof BattleArmor))
+            return Compute.d6(2);
+        else return super.calcDamagePerHit();
     }
 }

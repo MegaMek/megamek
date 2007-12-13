@@ -58,6 +58,12 @@ public class LBXHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            float toReturn = wtype.getDamage();
+            toReturn /= 10;
+            toReturn += 1;
+            return Math.round(toReturn);
+        }
         return 1;
     }
 

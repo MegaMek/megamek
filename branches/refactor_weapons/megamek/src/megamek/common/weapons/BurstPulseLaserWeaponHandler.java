@@ -14,20 +14,20 @@
 package megamek.common.weapons;
 
 import megamek.common.BattleArmor;
+import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
-import megamek.common.weapons.WeaponHandler;
 import megamek.server.Server;
 
-public class EnergyWeaponHandler extends WeaponHandler {
+public class BurstPulseLaserWeaponHandler extends PulseLaserWeaponHandler {
     /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public EnergyWeaponHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+    public BurstPulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
             Server s) {
         super(toHit, waa, g, s);
     }
@@ -38,26 +38,9 @@ public class EnergyWeaponHandler extends WeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage();
-        // Check for Altered Damage from Energy Weapons (MTR, pg.22)
-        int nRange = ae.getPosition().distance(target.getPosition());
-        if (game.getOptions().booleanOption("maxtech_altdmg")) {
-            if (nRange <= 1) {
-                toReturn++;
-            } else if (nRange <= wtype.getMediumRange()) {
-                // Do Nothing for Short and Medium Range
-            } else if (nRange <= wtype.getLongRange()) {
-                toReturn--;
-            } else if (nRange <= wtype.getExtremeRange()) {
-                toReturn = (int)Math.floor(nDamPerHit/2.0);
-            }
-        }
-        if (bGlancing) {
-            toReturn = (int)Math.floor(nDamPerHit/2.0);
-        }
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) 
-        	toReturn /= 10;
-        return Math.round(toReturn);
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            return Compute.d6(2);
+        } else return super.calcDamagePerHit();
     }        
 
 }

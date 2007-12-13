@@ -46,7 +46,7 @@ public class SNPPCHandler extends ISPPCHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        int toReturn;
+        float toReturn;
         int nRange = ae.getPosition().distance(target.getPosition());
         if (nRange <= wtype.getShortRange()) {
             toReturn = 10;
@@ -56,7 +56,7 @@ public class SNPPCHandler extends ISPPCHandler {
             toReturn = 5;
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return toReturn/10;
-        return toReturn;
+            toReturn /= 10;
+        return Math.round(toReturn);
     }
 }

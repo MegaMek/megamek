@@ -19,9 +19,12 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.BattleArmor;
 import megamek.common.Building;
+import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -66,5 +69,17 @@ public class FlamerHeatHandler extends WeaponHandler {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, nDamPerHit, bldgAbsorbs);
         }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     */
+    protected int calcDamagePerHit() {
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            return Compute.d6(4); 
+        }               
+        return super.calcDamagePerHit();
     }
 }

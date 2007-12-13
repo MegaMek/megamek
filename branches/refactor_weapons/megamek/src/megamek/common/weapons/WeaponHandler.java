@@ -314,13 +314,14 @@ public class WeaponHandler implements AttackHandler {
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     protected int calcDamagePerHit() {
-        int toReturn = wtype.getDamage();
+        float toReturn = wtype.getDamage();
+        // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor))
             toReturn/=10;
         if (bGlancing) {
             toReturn/=2;
         }
-        return toReturn;
+        return Math.round(toReturn);
     }
 
     /**

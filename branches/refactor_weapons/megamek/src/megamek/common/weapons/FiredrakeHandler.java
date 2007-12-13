@@ -19,10 +19,13 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.BattleArmor;
 import megamek.common.Building;
+import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -101,5 +104,17 @@ public class FiredrakeHandler extends WeaponHandler {
                             entityTarget, hit, nDamage, false, 5, false, false,
                             throughFront));
         }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     */
+    protected int calcDamagePerHit() {
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            return Compute.d6(3);
+        }               
+        return super.calcDamagePerHit();
     }
 }

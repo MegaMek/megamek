@@ -48,7 +48,7 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
                 .curMode().equals("Cool"))) {
             return new VehicleFlamerCoolHandler(toHit, waa, game, server);
         } else {
-            return new AmmoWeaponHandler(toHit, waa, game, server);
+            return new VehicleFlamerHandler(toHit, waa, game, server);
         }
     }
 }

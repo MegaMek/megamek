@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -31,6 +32,7 @@ import megamek.common.HitData;
 import megamek.common.IEntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
+import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mounted;
 import megamek.common.Report;
@@ -370,5 +372,20 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
             }
         }
         return false;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     */
+    protected int calcDamagePerHit() {
+        float toReturn = wtype.getDamage();
+        // area effect damage is double
+        if (target instanceof Infantry && !(target instanceof BattleArmor))
+            toReturn /= 0.5;
+        if (bGlancing) {
+            toReturn/=2;
+        }
+        return Math.round(toReturn);
     }
 }

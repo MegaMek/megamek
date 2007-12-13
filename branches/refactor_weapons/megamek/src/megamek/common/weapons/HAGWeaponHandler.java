@@ -59,7 +59,13 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-       return 1;
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            float toReturn = wtype.getRackSize();
+            toReturn /= 10;
+            toReturn += 1;
+            return Math.round(toReturn);
+        }
+        return 1;
     }
     
     /*

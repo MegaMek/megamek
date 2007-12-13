@@ -45,7 +45,7 @@ public class ATMHandler extends MissileWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        int toReturn;
+        float toReturn;
         AmmoType atype = (AmmoType)ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
             sSalvoType = " high-explosive missile(s) ";
@@ -57,8 +57,8 @@ public class ATMHandler extends MissileWeaponHandler {
             toReturn = 2;
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return toReturn * wtype.getRackSize()/5;
-        return toReturn;
+            return Math.round(toReturn * wtype.getRackSize()/5);
+        return Math.round(toReturn);
     }
     /*
      *  (non-Javadoc)

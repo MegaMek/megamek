@@ -1,5 +1,5 @@
 /**
- * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
+ * MegaMek - Copyright (C) 2004,2005 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
  *  under the terms of the GNU General Public License as published by the Free 
@@ -11,47 +11,48 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
+/*
+ * Created on Sep 24, 2004
+ *
+ */
 package megamek.common.weapons;
 
 import megamek.common.BattleArmor;
+import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
+ * 
  */
-public class SRMHandler extends MissileWeaponHandler {
+public class APGaussWeaponHandler extends AmmoWeaponHandler {
+    Mounted ammo;
 
     /**
      * @param t
      * @param w
      * @param g
-     * @param s
      */
-    public SRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public APGaussWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
     
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return Math.round(((float)wtype.getRackSize()*2)/5);
-        return 2;
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            return Compute.d6(2);
+        }               
+        return super.calcDamagePerHit();
     }
 
-    /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
-     */
-    protected int calcnCluster() {
-        return 1;
-    }
 
 }

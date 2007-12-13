@@ -162,7 +162,6 @@ import megamek.server.commands.FixElevationCommand;
 import megamek.server.commands.HelpCommand;
 import megamek.server.commands.KickCommand;
 import megamek.server.commands.LocalSaveGameCommand;
-import megamek.server.commands.NukeCommand;
 import megamek.server.commands.ResetCommand;
 import megamek.server.commands.RollCommand;
 import megamek.server.commands.RulerCommand;
@@ -321,7 +320,6 @@ public class Server implements Runnable {
 		registerCommand(new HelpCommand(this));
 		registerCommand(new KickCommand(this));
 		registerCommand(new LocalSaveGameCommand(this));
-		registerCommand(new NukeCommand(this));
 		registerCommand(new ResetCommand(this));
 		registerCommand(new RollCommand(this));
 		registerCommand(new SaveGameCommand(this));
@@ -5522,7 +5520,7 @@ public class Server implements Runnable {
 	/**
 	 * Delivers a Arrow IV FASCAM shot to the targetted hex area.
 	 */
-	private void deliverFASCAMMinefield(Coords coords, int playerId) {
+	public void deliverFASCAMMinefield(Coords coords, int playerId) {
 		// Only if this is on the board...
 		if (game.getBoard().contains(coords)) {
 			Minefield minefield = null;
@@ -5639,7 +5637,7 @@ public class Server implements Runnable {
      * deliver artillery smoke
      * @param coords the <code>Coords</code> where to deliver
      */
-	private void deliverArtillerySmoke(Coords coords) {
+	public void deliverArtillerySmoke(Coords coords) {
 		if (game.getOptions().booleanOption("maxtech_fire")) {
 			IHex h = game.getBoard().getHex(coords);
 			// Unless there is a heavy smoke in the hex already, add one.
@@ -5660,7 +5658,7 @@ public class Server implements Runnable {
      * @param coords    the <code>Coords</code> where to deliver
      * @param subjectId the <code>int</code> id of the target
      */
-	private void deliverArtilleryInferno(Coords coords, int subjectId) {
+	public void deliverArtilleryInferno(Coords coords, int subjectId) {
 		IHex h = game.getBoard().getHex(coords);
 		Report r;
 		// Unless there is a fire in the hex already, start one.
@@ -18135,7 +18133,7 @@ public class Server implements Runnable {
 		if (!collapse.isEmpty()) {
 
 			// Get the position map of all entities in the game.
-			Hashtable positionMap = game.getPositionMap();
+			Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
 
 			// Walk through the buildings that have collapsed.
 			buildings = collapse.elements();

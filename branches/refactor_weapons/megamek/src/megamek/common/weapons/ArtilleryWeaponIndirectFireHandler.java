@@ -276,6 +276,28 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
             server.deliverArtilleryFlare(coords, radius);
             return false;
         }
+        if (atype.getMunitionType() == AmmoType.M_DAVY_CROCKETT_M) {
+            // The appropriate term here is "Bwahahahahaha..."
+            server.doNuclearExplosion(coords, 1, vPhaseReport);
+            return false;
+        }
+        if (atype.getMunitionType() == AmmoType.M_FASCAM) {
+            server.deliverFASCAMMinefield(coords, ae.getOwner().getId());
+            return false;
+        }
+        if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
+            server.deliverArtilleryInferno(coords, subjectId);
+            return false;
+        }
+        if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
+            server.deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
+                    20, waa.getOtherAttackInfo());
+            return false;
+        }
+        if (atype.getMunitionType() == AmmoType.M_SMOKE) {
+            server.deliverArtillerySmoke(coords);
+            return false;
+        }
 
         int nCluster = 5;
         int hits;

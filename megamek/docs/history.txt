@@ -24,6 +24,7 @@ v0.33.13-dev (SVN)
 + Bug: indirect fire using narc homing pod was getting +2 on the cluster table
 + Bug 1747264: AMS engaging Swarm missiles (fixed with weapons refactor)
 + Bug 1690655: BA Flamers should be able to cause heat
++ Bug 1630629: Conventional SRM Infantry number of Inferno missiles (fixed with weapons refactor)
 
 v0.33.12 (2007-11-09, GMT 22:21 GMT+2)
 + Corrected names of the Celestials

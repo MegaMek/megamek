@@ -335,14 +335,10 @@ public class CEntity {
                     continue;
                 }
             } else {
-                // Ignore list: T_BA_MG T_BA_SMALL_LASER
-                // Also, ignore anything with the F_INFANTRY flag
+                // ignore anything with the F_INFANTRY flag
                 if (!weapon.hasFlag(WeaponType.F_INFANTRY) & weapon.getAmmoType() != AmmoType.T_NA){
                     if (m.getLinked() == null){
-                        if (weapon.getAmmoType() != AmmoType.T_BA_MG & 
-                                weapon.getAmmoType() != AmmoType.T_BA_SMALL_LASER){
-                            continue;
-                        }
+                        continue;
                     }
                 }
             }

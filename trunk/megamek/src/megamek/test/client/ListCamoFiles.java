@@ -15,7 +15,7 @@
 package megamek.test.client;
 
 import java.io.File;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import megamek.client.ui.AWT.util.ImageFileFactory;
 import megamek.common.preference.PreferenceManager;
@@ -39,15 +39,15 @@ public class ListCamoFiles {
             File camoLib = new File( rootDir + "/images/camo");
             DirectoryItems images = new DirectoryItems
                 ( camoLib, "", ImageFileFactory.getInstance() );
-            Enumeration categories = images.getCategoryNames();
-            Enumeration names = null;
+            Iterator<String> categories = images.getCategoryNames();
+            Iterator<String> names = null;
             String catName = null;
 
             // Walk through the category names, listing all of the image files.
-            while ( categories.hasMoreElements() ) {
+            while ( categories.hasNext() ) {
 
                 // Get this category name, and replace null with blank.
-                catName = (String) categories.nextElement();
+                catName = categories.next();
 
                 // Print the category.
                 System.out.print( "Printing files in " );
@@ -60,8 +60,8 @@ public class ListCamoFiles {
 
                 // Walk through the item names.
                 names = images.getItemNames( catName );
-                while ( names.hasMoreElements() ) {
-                    System.out.println( names.nextElement() );
+                while ( names.hasNext() ) {
+                    System.out.println( names.next() );
                 }
             } //Handle the next category.
         }

@@ -715,7 +715,7 @@ public class MechSelectorDialog
         count = 0;
         if (m_chkEquipment.getState()) {
             for (Mounted m : entity.getEquipment()) {
-                EquipmentType mt = (EquipmentType)m.getType();
+                EquipmentType mt = m.getType();
                 if (mt.getName().equals(m_cEquipment.getSelectedItem())) {
                     count++;
                 }

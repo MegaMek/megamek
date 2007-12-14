@@ -14,17 +14,16 @@
 
 package megamek.common.util;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Vector;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-import megamek.common.util.Collections;
-import megamek.common.util.StringUtil;
 
 /**
  * This class represents a collection of item files present within a ZIP or
@@ -225,7 +224,7 @@ public class ZippedItems implements Categorized {
                 // Yup.  Find the sub-category's name.
                 index++;
                 catName = name.substring( 0, index );
-                catName = (String) names.get( catName );
+                catName = names.get( catName );
 
                 // We *should* have found category name.
                 if ( null == catName ) {
@@ -268,8 +267,8 @@ public class ZippedItems implements Categorized {
      * @return  an <code>Enumeration</code> of <code>String</code> names.
      *          This value will not be <code>null</code>, but it may be empty.
      */
-    public Enumeration<String> getCategoryNames() {
-        return Collections.elements( categories.keySet() );
+    public Iterator<String> getCategoryNames() {
+        return categories.keySet().iterator();
     }
 
     /**
@@ -280,13 +279,13 @@ public class ZippedItems implements Categorized {
      * @return  an <code>Enumeration</code> of <code>String</code> names.
      *          This value will not be <code>null</code>, but it may be empty.
      */
-    public Enumeration<String> getItemNames( String categoryName ) {
+    public Iterator<String> getItemNames( String categoryName ) {
 
         // Get the map with the given category name.
         Map<String, Object> items = categories.get( categoryName );
 
         // Return the names of this category's items.
-        return Collections.elements( items.keySet() );
+        return items.keySet().iterator();
     }
 
     /**

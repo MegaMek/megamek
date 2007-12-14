@@ -70,7 +70,6 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.Enumeration;
 import java.util.Vector;
-import javax.swing.JPanel;
 import java.util.Date;
 
 /**

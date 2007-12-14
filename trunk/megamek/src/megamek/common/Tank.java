@@ -79,8 +79,6 @@ public class Tank
     public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
     public String[] getLocationNames() { return LOCATION_NAMES; }
     
-    private int armorType = 0;
-    private int structureType = 0;
     private int sensorHits = 0;
     private int stabiliserHits = 0;
     private boolean driverHit = false;

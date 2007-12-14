@@ -30,6 +30,12 @@ package megamek.common.loaders;
 public class EntityLoadingException extends java.lang.Exception {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -4472736483205970852L;
+
+
+    /**
      * Creates new <code>EntityLoadingException</code> without detail message.
      */
     public EntityLoadingException() {

@@ -31,6 +31,10 @@ import megamek.client.ui.AWT.widget.AdvancedLabel;
 public class CommonSettingsDialog extends ClientDialog
     implements ActionListener, ItemListener, FocusListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5270441082873687662L;
     private ScrollPane  scrolledPane = new ScrollPane();
     private TabPanel    panTabs;
     

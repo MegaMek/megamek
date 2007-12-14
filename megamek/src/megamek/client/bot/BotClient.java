@@ -156,6 +156,7 @@ public abstract class BotClient extends Client {
                 // Kinda cheap leaving this until the end phase, players can't do this
                 toggleStealth();
             case IGame.PHASE_INITIATIVE_REPORT :
+            case IGame.PHASE_TARGETING_REPORT :
             case IGame.PHASE_MOVEMENT_REPORT :
             case IGame.PHASE_OFFBOARD_REPORT :
             case IGame.PHASE_FIRING_REPORT :

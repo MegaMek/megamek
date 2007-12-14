@@ -88,7 +88,6 @@ public class HitData
         this.hitAimedLocation = hitAimedLocation;
         this.specCritMod = specCrit;
         this.fromFront = fromWhere;
-        this.setDamageType(damageType);
     }
     
     public void setFromFront (boolean dir) {
@@ -171,25 +170,11 @@ public class HitData
     public boolean isFallDamage(){
         return fallDamage;
     }
-    
-    public boolean hasDamageTypeFlag(long damage, long flag) {
-        return (damage & flag) != 0;
-    }
 
     public int getDamageType() {
         return damageType;
     }
-    
-    public void setDamageType(long damageType) {
-        if ( hasDamageTypeFlag(damageType, WeaponType.F_ENERGY) )
-            this.damageType = HitData.DAMAGE_ENERGY;
-        else if ( hasDamageTypeFlag(damageType,WeaponType.F_BALLISTIC) )
-            this.damageType = HitData.DAMAGE_BALLISTIC;
-        else if ( hasDamageTypeFlag(damageType,WeaponType.F_MISSILE) )
-            this.damageType = HitData.DAMAGE_MISSLE;
-        else
-            this.damageType = HitData.DAMAGE_NONE;
-    }
+
     
     public void setDamageType(int type) {
         this.damageType = type;

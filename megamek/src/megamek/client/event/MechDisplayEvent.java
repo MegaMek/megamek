@@ -25,6 +25,11 @@ import megamek.common.Mounted;
  */
 public class MechDisplayEvent extends java.util.EventObject
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -932419778029797238L;
+
     public static final int WEAPON_SELECTED = 0;
     
     private int entityId = megamek.common.Entity.NONE;

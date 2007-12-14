@@ -31,6 +31,10 @@ import java.util.*;
 public class CustomBattleArmorDialog 
     extends Dialog implements ActionListener, ItemListener, KeyListener, 
     Runnable, TextListener, WindowListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5195200950623503842L;
     private Client m_client;
     private ClientGUI m_clientgui;
 

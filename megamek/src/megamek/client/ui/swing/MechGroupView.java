@@ -45,6 +45,10 @@ public class MechGroupView
         extends JDialog
         implements ActionListener, ListSelectionListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6128402142715924422L;
     private JList entities = new JList();
     private JButton closeButton = new JButton(Messages.getString("Close"));
     private JTextArea ta = new JTextArea();

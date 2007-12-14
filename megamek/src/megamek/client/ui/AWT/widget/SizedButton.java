@@ -26,6 +26,10 @@ import java.io.Serializable;
  */
 public class SizedButton extends Button implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3034809147641614294L;
     /** The preferred size of this button.
      */
     private Dimension prefSize = new Dimension();

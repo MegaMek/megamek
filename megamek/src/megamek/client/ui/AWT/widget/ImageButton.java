@@ -29,6 +29,11 @@ import java.awt.Shape;
  */
 public class ImageButton extends SizedButton {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6321828904190965119L;
+
     /** The image that the button displays.
      */
     private Image image = null;

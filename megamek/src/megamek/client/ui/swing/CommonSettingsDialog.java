@@ -48,6 +48,11 @@ import java.util.Arrays;
 
 public class CommonSettingsDialog extends ClientDialog
         implements ActionListener, ItemListener, FocusListener, ListSelectionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1535370193846895473L;
+
     private JTabbedPane panTabs;
 
     private JCheckBox minimapEnabled;

@@ -339,7 +339,6 @@ public class EquipmentType {
             EquipmentType.allTypes = new Vector<EquipmentType>();
             EquipmentType.lookupHash = new Hashtable<String,EquipmentType>();
             
-            // will I need any others?
             WeaponType.initializeTypes();
             AmmoType.initializeTypes();
             MiscType.initializeTypes();
@@ -358,7 +357,7 @@ public class EquipmentType {
             EquipmentType.initializeTypes();
         }
         EquipmentType.allTypes.addElement(type);
-    }
+    } 
 
     public static int getArmorType(String inType) {
         EquipmentType et = EquipmentType.get(inType);
@@ -429,8 +428,10 @@ public class EquipmentType {
         return armorPointMultipliers[inArmor];
     }
     
-    //stuff like hatchets, which depend on an unknown quality (usually tonnage of the unit.)
-    //entity is whatever has this item
+    /**
+     * stuff like hatchets, which depend on an unknown quality (usually tonnage of the unit.)
+     * entity is whatever has this item
+     */
     public int resolveVariableCost(Entity entity) {
         int cost=0;
         if(this instanceof MiscType) {

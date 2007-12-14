@@ -16,6 +16,10 @@ v0.33.13-dev (SVN)
 + Fix infinite loop with c3 line drawing.
   TODO: when the c3 master moves first, lines are not updated correctly
 + Add unofficial gameoption to specify from which round onwards ammodumping is allowed
++ merged weapons refactoring branch
+   NOTE: This necessitated the removal of command-line nukes
+   NOTE: there might be some bugs lurking in weapons firing code, report them as you find them
+   NOTE: They'll now be a whole lot easier to fix.
 
 v0.33.12 (2007-11-09, GMT 22:21 GMT+2)
 + Corrected names of the Celestials

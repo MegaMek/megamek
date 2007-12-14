@@ -74,6 +74,10 @@ public class MovementDisplay
         extends StatusBarPhaseDisplay
         implements ActionListener, DoneButtoned,
         KeyListener, GameListener, BoardViewListener, Distractable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7246715124042905688L;
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
     private static final int NUM_BUTTON_LAYOUTS = 4;

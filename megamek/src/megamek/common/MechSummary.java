@@ -23,6 +23,10 @@
  
  public class MechSummary implements Serializable
  {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6635709122122038237L;
     private String m_sName;
     private String m_sChassis;
     private String m_sModel;

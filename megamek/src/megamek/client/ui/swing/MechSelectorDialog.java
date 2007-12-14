@@ -86,6 +86,11 @@ import megamek.common.verifier.TestTank;
 public class MechSelectorDialog
         extends JDialog implements ActionListener, ItemListener, KeyListener,
         Runnable, WindowListener, ListSelectionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8428224408984372674L;
+
     // how long after a key is typed does a new search begin
     private final static int KEY_TIMEOUT = 1000;
 

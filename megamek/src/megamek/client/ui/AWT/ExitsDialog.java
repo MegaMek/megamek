@@ -15,6 +15,10 @@ import java.awt.event.ActionListener;
  */
 public class ExitsDialog extends Dialog implements ActionListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3877195794958147600L;
     private Checkbox    cheExit0 = new Checkbox("0"); //$NON-NLS-1$
     private Checkbox    cheExit1 = new Checkbox("1"); //$NON-NLS-1$
     private Checkbox    cheExit2 = new Checkbox("2"); //$NON-NLS-1$

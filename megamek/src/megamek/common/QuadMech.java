@@ -21,7 +21,12 @@ import java.io.PrintWriter;
 import megamek.common.preference.PreferenceManager;
 
 public class QuadMech extends Mech {
-	public static final String[] LOCATION_NAMES = { "Head", "Center Torso",
+	/**
+     * 
+     */
+    private static final long serialVersionUID = 7183093787457804717L;
+
+    public static final String[] LOCATION_NAMES = { "Head", "Center Torso",
 			"Right Torso", "Left Torso", "Front Right Leg", "Front Left Leg",
 			"Rear Right Leg", "Rear Left Leg" };
 

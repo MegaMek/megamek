@@ -38,6 +38,11 @@ import java.util.ArrayList;
 public class Coords
     implements Serializable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4451256806040563030L;
+
     public static final double HEXSIDE = Math.PI / 3.0;
     
     public int            x;

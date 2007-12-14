@@ -23,6 +23,10 @@ import java.util.*;
 
 public class AdvancedLabel extends Component {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8349184630103360938L;
     private Vector<String> stringVector = new Vector<String>();
     private Color[] colorArray;
 

@@ -113,6 +113,11 @@ public class ColorParser {
     }
 
     public static class ParseException extends Exception {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -4543806307959221311L;
+
         public ParseException(String message) {
             super(message);
         }        

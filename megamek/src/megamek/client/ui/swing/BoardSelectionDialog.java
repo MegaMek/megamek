@@ -58,6 +58,10 @@ import megamek.common.util.BoardUtilities;
  */
 public class BoardSelectionDialog
         extends JDialog implements ActionListener, IMapSettingsObserver, ListSelectionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4591325591152076483L;
     private ClientGUI client;
     private MapSettings mapSettings;
 

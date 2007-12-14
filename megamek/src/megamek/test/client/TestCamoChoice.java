@@ -40,6 +40,10 @@ import megamek.common.Player;
 public class TestCamoChoice extends Frame implements ActionListener,
                                                      ItemListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8394784210464718865L;
     CamoChoiceDialog dialog = null;
     final Color defaultBG;
     ImageButton butCamo = null;

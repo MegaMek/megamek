@@ -24,6 +24,10 @@ import megamek.common.Player;
 public class PlayerListDialog
     extends Dialog implements ActionListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4047664349320678833L;
     private Button butClose   = new Button(Messages.getString("PlayerListDialog.Close")); //$NON-NLS-1$
     private List   playerList = new List();
     

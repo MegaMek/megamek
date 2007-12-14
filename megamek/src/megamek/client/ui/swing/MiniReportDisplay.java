@@ -29,6 +29,10 @@ import java.awt.event.WindowEvent;
  */
 public class MiniReportDisplay extends JDialog
         implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -703103629596703945L;
     private JButton butOkay;
     private JTextArea taData;
 

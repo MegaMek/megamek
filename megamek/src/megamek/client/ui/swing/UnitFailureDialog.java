@@ -40,6 +40,11 @@ import java.util.Hashtable;
 public class UnitFailureDialog extends JDialog
         implements ActionListener, ListSelectionListener, KeyListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7075012201265932299L;
+
     private Hashtable hFailedFiles;
 
     private JList failedList;

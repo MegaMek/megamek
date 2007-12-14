@@ -48,6 +48,11 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
                                                         ItemListener,
                                                         ItemSelectable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7942369852180659605L;
+
     /** The parent <code>Frame</code> of this dialog.
      */
     private Frame frame;

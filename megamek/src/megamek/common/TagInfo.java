@@ -18,6 +18,10 @@ import java.io.Serializable;
 
 public class TagInfo implements Serializable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8428068101269842100L;
     public int attackerId; //who fired the TAG
     public int targetId; //entity the tag was fired at
     public int priority; //how many homing missiles to grab at a time

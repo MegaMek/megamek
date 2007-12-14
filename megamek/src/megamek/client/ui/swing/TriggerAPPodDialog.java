@@ -44,6 +44,10 @@ import java.util.Vector;
  */
 public class TriggerAPPodDialog
         extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9009039614015364943L;
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JTextArea labMessage;
 

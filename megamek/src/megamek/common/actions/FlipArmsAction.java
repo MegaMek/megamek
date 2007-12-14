@@ -17,6 +17,10 @@ package megamek.common.actions;
 public class FlipArmsAction
     extends AbstractEntityAction
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5330424034128054338L;
     private boolean isFlipped;
     
     public FlipArmsAction(int entityId, boolean isFlipped) {

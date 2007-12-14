@@ -17,6 +17,10 @@ import java.awt.event.ActionEvent;
  * here's a quick class for the connect to game diaglogue box
  */
 public class ConnectDialog extends Dialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1638137243441415627L;
     public String name, serverAddr;
     public int port;
 

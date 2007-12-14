@@ -45,6 +45,10 @@ import java.util.Vector;
 public class TriggerAPPodDialog
     extends Dialog implements ActionListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 161017051720020010L;
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private AdvancedLabel labMessage;
 

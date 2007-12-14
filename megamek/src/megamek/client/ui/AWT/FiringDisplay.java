@@ -37,6 +37,11 @@ public class FiringDisplay
     implements BoardViewListener, GameListener, ActionListener, DoneButtoned,
                KeyListener, ItemListener, Distractable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1270378753030784714L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
@@ -565,7 +570,9 @@ public class FiringDisplay
         // Re-compute the to-hit numbers by adding in correct order.
         Vector<EntityAction> newAttacks = new Vector<EntityAction>();
         for (EntityAction o:attacks) {
-            if (o instanceof WeaponAttackAction) {
+            if (o instanceof ArtilleryAttackAction) {
+                newAttacks.addElement(o);
+            } else if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction)o;
                 Entity attacker = waa.getEntity(client.game);
                 Targetable target = waa.getTarget(client.game);
@@ -583,7 +590,9 @@ public class FiringDisplay
         }
         //now add the attacks in rear/arm arcs
         for (EntityAction o:attacks) {
-            if (o instanceof WeaponAttackAction) {
+            if (o instanceof ArtilleryAttackAction) {
+                newAttacks.addElement(o);
+            } else if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(client.game);
                 Targetable target = waa.getTarget(client.game);
@@ -655,8 +664,14 @@ public class FiringDisplay
             doSearchlight();
         }
 
-        WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(), 
-                target.getTargetId(), weaponNum);
+        WeaponAttackAction waa;
+        if (!mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            waa = new WeaponAttackAction(cen, target.getTargetType(),
+                            target.getTargetId(), weaponNum);
+        } else {
+            waa = new ArtilleryAttackAction(cen, target.getTargetType(),
+                            target.getTargetId(), weaponNum, client.game);
+        }
 
         if ( null != mounted.getLinked() && 
              ((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_NA ) {
@@ -1563,15 +1578,11 @@ public class FiringDisplay
                         case (AmmoType.T_SNIPER) :
                         case (AmmoType.T_THUMPER) :
                         case (AmmoType.T_SRM_ADVANCED) :
-                        case (AmmoType.T_BA_INFERNO) :
                         case (AmmoType.T_LRM_TORPEDO_COMBO) :
                         case (AmmoType.T_ATM) :
                         case (AmmoType.T_MML) :
                         case (AmmoType.T_EXLRM) :
-                        case (AmmoType.T_TBOLT5) :
-                        case (AmmoType.T_TBOLT10) :
-                        case (AmmoType.T_TBOLT15) :
-                        case (AmmoType.T_TBOLT20) :
+                        case (AmmoType.T_TBOLT) :
                         case AmmoType.T_PXLRM:
                         case AmmoType.T_HSRM:
                         case AmmoType.T_MRM_STREAK:

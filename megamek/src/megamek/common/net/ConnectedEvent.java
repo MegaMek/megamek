@@ -20,6 +20,11 @@ package megamek.common.net;
 public class ConnectedEvent extends ConnectionEvent {
     
     /**
+     * 
+     */
+    private static final long serialVersionUID = -5880245401940306338L;
+
+    /**
      * Constructs connection event
      * @param source The object on which the Event initially occurred.
      */

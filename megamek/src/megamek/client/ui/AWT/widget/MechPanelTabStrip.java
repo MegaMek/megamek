@@ -6,6 +6,11 @@ import megamek.client.ui.AWT.MechDisplay;
 
 public class MechPanelTabStrip extends PicMap {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3500291122616266724L;
+
     private static final String IMAGE_DIR = "data/images/widgets";
 
     private PMPicPolygonalArea[] tabs = new PMPicPolygonalArea[5];

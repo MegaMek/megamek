@@ -45,7 +45,11 @@ import megamek.common.ToHitData;
  * @version 1.0
  */
 public class Ruler extends Dialog implements BoardViewListener {
-   public static Color color1 = Color.cyan;
+   /**
+     * 
+     */
+    private static final long serialVersionUID = 704013239167655138L;
+public static Color color1 = Color.cyan;
    public static Color color2 = Color.magenta;
 
    private Coords start;

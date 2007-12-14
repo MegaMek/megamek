@@ -34,6 +34,10 @@ public class BattleArmor
     extends Infantry
     implements Serializable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4594311535026187825L;
     /*
      * Infantry have no critical slot limitations.
      * IS squads usually have 4 men, Clan points usually have 5.
@@ -747,6 +751,14 @@ public class BattleArmor
      */
     public boolean isStealthActive() {
         return (isStealthy || isMimetic || isSimpleCamo);
+    }
+    
+    /**
+     * does this BA have fire resistant armor?
+     * @return
+     */
+    public boolean hasFireresistantArmor() {
+        return armorType == 7;
     }
 
     /**

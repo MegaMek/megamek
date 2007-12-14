@@ -33,6 +33,10 @@ import java.io.Serializable;
  */
 public class TargetRoll implements Serializable {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7453086182585457422L;
     public final static int IMPOSSIBLE          = Integer.MAX_VALUE;
     public final static int AUTOMATIC_FAIL      = Integer.MAX_VALUE - 1;
     public final static int AUTOMATIC_SUCCESS   = Integer.MIN_VALUE;
@@ -210,6 +214,10 @@ public class TargetRoll implements Serializable {
     }
     
     private class Modifier implements Serializable {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -7228584817530534507L;
         int value;
         String desc;
         

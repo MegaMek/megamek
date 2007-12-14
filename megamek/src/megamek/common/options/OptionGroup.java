@@ -19,6 +19,11 @@ import java.util.*;
 
 public class OptionGroup implements IBasicOptionGroup, Serializable {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6445683666789832313L;
+
     private Vector<String> optionNames = new Vector<String>();
     
     private String name;

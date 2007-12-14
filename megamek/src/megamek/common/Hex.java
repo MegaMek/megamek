@@ -23,6 +23,10 @@ import java.util.StringTokenizer;
  * @author Ben
  */
 public class Hex implements IHex, Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 82483704768044696L;
     private int elevation;
     private ITerrain[] terrains;
     private String theme;

@@ -37,6 +37,11 @@ import javax.swing.SwingConstants;
 
 public class LOSDialog
         extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5633160028901713806L;
+
     private JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
 
     /**

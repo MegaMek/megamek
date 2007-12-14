@@ -31,6 +31,10 @@ import java.util.Enumeration;
 
 public class PlayerListDialog
         extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7270469195373150106L;
     private JButton butClose = new JButton(Messages.getString("PlayerListDialog.Close")); //$NON-NLS-1$
     private JList playerList = new JList(new DefaultListModel());
 

@@ -31,6 +31,11 @@ import megamek.common.*;
  */
 public class DfaAttackAction extends DisplacementAttackAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3953889779582616903L;
+
     /** Creates new DfaAttackAction */
     public DfaAttackAction(int entityId, int targetId, Coords targetPos) {
         super(entityId, targetId, targetPos);

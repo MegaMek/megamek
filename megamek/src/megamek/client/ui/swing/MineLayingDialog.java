@@ -39,6 +39,10 @@ import java.util.ArrayList;
  */
 public class MineLayingDialog
         extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1067865530113792340L;
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
     private JLabel labMessage;

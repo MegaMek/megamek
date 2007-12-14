@@ -36,6 +36,11 @@ import java.awt.event.MouseListener;
 import java.io.Serializable;
 
 public class DialogOptionComponent extends JPanel implements MouseListener, ItemListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4190538980884459746L;
+
     IOption option;
 
     private JCheckBox checkbox;
@@ -211,6 +216,10 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
     }
 
     private static class BasicOption implements IBasicOption, Serializable {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -1888895390718831758L;
         private String name;
         private Object value;
 

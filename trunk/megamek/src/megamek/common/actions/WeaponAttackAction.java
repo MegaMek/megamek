@@ -274,7 +274,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                     te != null && atype != null && 
                     usesAmmo &&
                     atype.getMunitionType() == AmmoType.M_NARC_CAPABLE &&
-                    (te.isNarcedBy(ae.getOwner().getTeam()))) {
+                    (te.isNarcedBy(ae.getOwner().getTeam()) || te.isINarcedBy(ae.getOwner().getTeam()))) {
                 spotter = te;
                 narcSpotter = true;
             }

@@ -96,9 +96,7 @@ public class AttackOption extends ToHitData {
             // do NOT return AmmoType.T_NA
             
             final boolean isInfantryWeapon = w.hasFlag(WeaponType.F_INFANTRY);
-            final boolean usesAmmo = (!isInfantryWeapon & w.getAmmoType() != AmmoType.T_NA &
-                    w.getAmmoType() != AmmoType.T_BA_SMALL_LASER & 
-                    w.getAmmoType() != AmmoType.T_BA_MG);
+            final boolean usesAmmo = (!isInfantryWeapon & w.getAmmoType() != AmmoType.T_NA);
             
             final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
             if (usesAmmo && (ammo == null || ammo.getShotsLeft() == 0)) {

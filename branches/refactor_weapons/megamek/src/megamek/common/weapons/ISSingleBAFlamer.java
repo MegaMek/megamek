@@ -12,7 +12,7 @@
  *  for more details.
  */
 /*
- * Created on Sep 12, 2004
+ * Created on Sep 24, 2004
  *
  */
 package megamek.common.weapons;
@@ -23,28 +23,26 @@ import megamek.common.TechConstants;
  * @author Andrew Hunter
  * 
  */
-public class CLSmallLaser extends LaserWeapon {
-    public CLSmallLaser() {
+public class ISSingleBAFlamer extends FlamerWeapon {
+    /**
+     * 
+     */
+    public ISSingleBAFlamer() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        this.name = "Small Laser";
-        this.setInternalName("ClSmall Laser");
-        this.addLookupName("CL Small Laser");
-        this.addLookupName("CLSmallLaser");
-        this.heat = 1;
-        this.damage = 3;
+        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.name = "Flamer";
+        this.setInternalName("IS Single BA Flamer");
+        this.addLookupName("ISSingleBAFlamer");
+        this.heat = 3;
+        this.damage = 2;
         this.shortRange = 1;
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 4;
-        this.waterShortRange = 1;
-        this.waterMediumRange = 2;
-        this.waterLongRange = 2;
-        this.waterExtremeRange = 4;
-        this.tonnage = 0.5f;
+        this.tonnage = 1f;
         this.criticals = 1;
-        this.flags |= F_NO_FIRES;
-        this.bv = 9;
-        this.cost = 11250;
+        this.bv = 6;
+        this.cost = 7500;
+        this.flags |= F_BATTLEARMOR;
     }
 }

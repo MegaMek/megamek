@@ -20,17 +20,18 @@ package megamek.common.weapons;
 import megamek.common.TechConstants;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  * 
  */
-public class CLSmallLaser extends LaserWeapon {
-    public CLSmallLaser() {
+public class ISSingleBASmallLaser extends LaserWeapon {
+    
+    public ISSingleBASmallLaser() {
         super();
-        this.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_LEVEL_1;
         this.name = "Small Laser";
-        this.setInternalName("ClSmall Laser");
-        this.addLookupName("CL Small Laser");
-        this.addLookupName("CLSmallLaser");
+        this.setInternalName("IS Single BA Small Laser");
+        this.addLookupName("ISSingle BA Small Laser");
+        this.addLookupName("ISSingleBASmallLaser");
         this.heat = 1;
         this.damage = 3;
         this.shortRange = 1;
@@ -43,7 +44,7 @@ public class CLSmallLaser extends LaserWeapon {
         this.waterExtremeRange = 4;
         this.tonnage = 0.5f;
         this.criticals = 1;
-        this.flags |= F_NO_FIRES;
+        this.flags |= F_NO_FIRES | F_BATTLEARMOR;
         this.bv = 9;
         this.cost = 11250;
     }

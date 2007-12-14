@@ -12,13 +12,11 @@
  *  for more details.
  */
 /*
- * Created on Sep 24, 2004
+ * Created on Sep 12, 2004
  *
  */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.IGame;
 import megamek.common.TechConstants;
 import megamek.common.ToHitData;
@@ -26,33 +24,36 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  * 
  */
-public class ISMineLauncher extends Weapon {
+public class ISSingleBASmallPulseLaser extends PulseLaserWeapon {
     /**
      * 
      */
-    public ISMineLauncher() {
+    public ISSingleBASmallPulseLaser() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
-        this.name = "Mine Launcher";
-        this.setInternalName(BattleArmor.MINE_LAUNCHER);
-        this.addLookupName("ISMine Launcher");
-        this.heat = 0;
-        this.damage = DAMAGE_SPECIAL;
-        this.rackSize = 1;
-        this.ammoType = AmmoType.T_MINE;
-        this.shortRange = 0;
-        this.mediumRange = 0;
-        this.longRange = 0;
-        this.extremeRange = 0;
-        this.tonnage = 0.0f;
-        this.criticals = 0;
-        this.bv = 0;
-        String[] modes = { "Single", "2-shot", "3-shot", "4-shot" };
-        this.setModes(modes);
-        this.flags |= F_DIRECT_FIRE | F_SOLO_ATTACK;
+        this.name = "Small Pulse Laser";
+        this.setInternalName("ISSingleBASmallPulseLaser");
+        this.addLookupName("IS Single BA Small Pulse Laser");
+        this.addLookupName("ISSingleBASmall Pulse Laser");
+        this.heat = 2;
+        this.damage = 3;
+        this.toHitModifier = -2;
+        this.shortRange = 1;
+        this.mediumRange = 2;
+        this.longRange = 3;
+        this.extremeRange = 4;
+        this.waterShortRange = 1;
+        this.waterMediumRange = 2;
+        this.waterLongRange = 2;
+        this.waterExtremeRange = 4;
+        this.tonnage = 1.0f;
+        this.criticals = 1;
+        this.bv = 12;
+        this.cost = 16000;
+        this.flags |= F_BATTLEARMOR;
     }
     
     /*
@@ -64,6 +65,6 @@ public class ISMineLauncher extends Weapon {
      */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new MineLauncherHandler(toHit, waa, game, server);
+        return new BurstPulseLaserWeaponHandler(toHit, waa, game, server);
     }
 }

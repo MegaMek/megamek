@@ -1779,9 +1779,11 @@ public class Compute {
                         if ((g.getEntity(waa.getTargetId())
                                 .getSwarmAttackerId() == Entity.NONE)
                                 && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
-                            fDamage = 1.5f * inf_attacker
+                            /*fDamage = 1.5f * inf_attacker
                                     .getDamage(inf_attacker
-                                            .getShootingStrength());
+                                            .getShootingStrength());*/
+                            //TODO: Fix me
+                            fDamage = 4;
                         }
                         // Otherwise, call it 0 damage
                         else {
@@ -1792,8 +1794,10 @@ public class Compute {
                     else {
                         // conventional weapons; field guns should be handled
                         // under the standard weapons section
-                        fDamage = 0.6f * inf_attacker.getDamage(inf_attacker
-                                .getShootingStrength());
+                        /*fDamage = 0.6f * inf_attacker.getDamage(inf_attacker
+                                .getShootingStrength());*/
+                        //TODO: Fix me
+                        fDamage = 2;
                     }
 
                 } else {

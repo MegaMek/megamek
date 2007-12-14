@@ -77,12 +77,12 @@ public class AmmoType extends EquipmentType {
     
 
     // ammo flags
-    public static final long     F_MG                = 0x0001L;
-    public static final long     F_BATTLEARMOR       = 0x0002L; // only used by BA squads
-    public static final long     F_PROTOMECH         = 0x0004L; // only used by Protomechs
-    public static final long     F_HOTLOAD           = 0x0008L; // Ammo Can be hotloaded
-    public static final long     F_ENCUMBERING       = 0x0010L; // BA can't jump or make antimech until dumped
-    public static final long     F_MML_LRM           = 0x0020L; // LRM type
+    public static final long     F_MG                = 1 << 0;
+    public static final long     F_BATTLEARMOR       = 1 << 1; // only used by BA squads
+    public static final long     F_PROTOMECH         = 1 << 2; // only used by Protomechs
+    public static final long     F_HOTLOAD           = 1 << 3; // Ammo Can be hotloaded
+    public static final long     F_ENCUMBERING       = 1 << 4; // BA can't jump or make antimech until dumped
+    public static final long     F_MML_LRM           = 1 << 5; // LRM type
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -92,67 +92,67 @@ public class AmmoType extends EquipmentType {
     public static final long     M_STANDARD          = 0;
 
     // AC Munition Types
-    public static final long     M_CLUSTER           = 0x000000000001L;
-    public static final long     M_ARMOR_PIERCING    = 0x000000000002L;
-    public static final long     M_FLECHETTE         = 0x000000000004L;
-    public static final long     M_INCENDIARY_AC     = 0x000000000008L;
-    public static final long     M_PRECISION         = 0x000000000010L;
-    public static final long     M_TRACER            = 0x000400000000L;
+    public static final long     M_CLUSTER           = 1 << 0;
+    public static final long     M_ARMOR_PIERCING    = 1 << 1;
+    public static final long     M_FLECHETTE         = 1 << 2;
+    public static final long     M_INCENDIARY_AC     = 1 << 3;
+    public static final long     M_PRECISION         = 1 << 4;
+    public static final long     M_TRACER            = 1 << 5;
 
     // ATM Munition Types
-    public static final long     M_EXTENDED_RANGE    = 0x000000000020L;
-    public static final long     M_HIGH_EXPLOSIVE    = 0x000000000040L;
+    public static final long     M_EXTENDED_RANGE    = 1 << 6;
+    public static final long     M_HIGH_EXPLOSIVE    = 1 << 7;
 
     // LRM & SRM Munition Types
-    public static final long     M_FRAGMENTATION     = 0x000000000080L;
-    public static final long     M_LISTEN_KILL       = 0x000000000100L;
-    public static final long     M_ANTI_TSM          = 0x000000000200L;
-    public static final long     M_NARC_CAPABLE      = 0x000000000400L;
-    public static final long     M_ARTEMIS_CAPABLE   = 0x000000000800L;
-    public static final long     M_DEAD_FIRE         = 0x001000000000L;
-    public static final long     M_HEAT_SEEKING      = 0x002000000000L;
-    public static final long     M_TANDEM_CHARGE     = 0x004000000000L;
+    public static final long     M_FRAGMENTATION     = 1 << 8;
+    public static final long     M_LISTEN_KILL       = 1 << 9;
+    public static final long     M_ANTI_TSM          = 1 << 10;
+    public static final long     M_NARC_CAPABLE      = 1 << 11;
+    public static final long     M_ARTEMIS_CAPABLE   = 1 << 12;
+    public static final long     M_DEAD_FIRE         = 1 << 13;
+    public static final long     M_HEAT_SEEKING      = 1 << 14;
+    public static final long     M_TANDEM_CHARGE     = 1 << 15;
 
     // LRM Munition Types
     // Incendiary is special, though...
     //FIXME - I'm not implemented!!!
-    public static final long     M_INCENDIARY_LRM    = 0x000000001000L;
-    public static final long     M_FLARE             = 0x000000002000L;
-    public static final long     M_SEMIGUIDED        = 0x000000004000L;
-    public static final long     M_SWARM             = 0x000000008000L;
-    public static final long     M_SWARM_I           = 0x000000010000L;
-    public static final long     M_THUNDER           = 0x000000020000L;
-    public static final long     M_THUNDER_AUGMENTED = 0x000000040000L;
-    public static final long     M_THUNDER_INFERNO   = 0x000000080000L;
-    public static final long     M_THUNDER_VIBRABOMB = 0x000000100000L;
-    public static final long     M_THUNDER_ACTIVE    = 0x000000200000L;
-    public static final long     M_FOLLOW_THE_LEADER = 0x008000000000L;
-    public static final long     M_MULTI_PURPOSE     = 0x010000000000L;
+    public static final long     M_INCENDIARY_LRM    = 1 << 16;
+    public static final long     M_FLARE             = 1 << 17;
+    public static final long     M_SEMIGUIDED        = 1 << 18;
+    public static final long     M_SWARM             = 1 << 19;
+    public static final long     M_SWARM_I           = 1 << 20;
+    public static final long     M_THUNDER           = 1 << 21;
+    public static final long     M_THUNDER_AUGMENTED = 1 << 22;
+    public static final long     M_THUNDER_INFERNO   = 1 << 23;
+    public static final long     M_THUNDER_VIBRABOMB = 1 << 24;
+    public static final long     M_THUNDER_ACTIVE    = 1 << 25;
+    public static final long     M_FOLLOW_THE_LEADER = 1 << 26;
+    public static final long     M_MULTI_PURPOSE     = 1 << 27;
 
     // SRM Munition Types
-    public static final long     M_INFERNO           = 0x000000400000L;
-    public static final long     M_AX_HEAD           = 0x000000800000L;
+    public static final long     M_INFERNO           = 1 << 28;
+    public static final long     M_AX_HEAD           = 1 << 29;
     
     //SRM, MRM and LRM
-    public static final long     M_TORPEDO           = 0x020000000000L;
+    public static final long     M_TORPEDO           = 1 << 30;
 
     // iNarc Munition Types
-    public static final long     M_NARC_EX           = 0x000001000000L;
-    public static final long     M_ECM               = 0x000002000000L;
-    public static final long     M_HAYWIRE           = 0x000004000000L;
-    public static final long     M_NEMESIS           = 0x000008000000L;
+    public static final long     M_NARC_EX           = 1 << 31;
+    public static final long     M_ECM               = 1 << 32;
+    public static final long     M_HAYWIRE           = 1 << 33;
+    public static final long     M_NEMESIS           = 1 << 34;
 
-    public static final long     M_EXPLOSIVE         = 0x000010000000L;
+    public static final long     M_EXPLOSIVE         = 1 << 35;
 
     // Arrow IV Munition Types
-    public static final long     M_HOMING            = 0x000020000000L;
-    public static final long     M_FASCAM            = 0x000040000000L;
-    public static final long     M_INFERNO_IV        = 0x000080000000L;
-    public static final long     M_VIBRABOMB_IV      = 0x000100000000L;
-    public static final long     M_SMOKE             = 0x000200000000L;
+    public static final long     M_HOMING            = 1 << 36;
+    public static final long     M_FASCAM            = 1 << 37;
+    public static final long     M_INFERNO_IV        = 1 << 38;
+    public static final long     M_VIBRABOMB_IV      = 1 << 39;
+    public static final long     M_SMOKE             = 1 << 40;
 
     // Nuclear Munitions
-    public static final long     M_DAVY_CROCKETT_M   = 0x000800000000L;
+    public static final long     M_DAVY_CROCKETT_M   = 1 << 41;
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
@@ -226,10 +226,10 @@ public class AmmoType extends EquipmentType {
     // Returns the first usable ammo type for the given oneshot launcher
     public static AmmoType getOneshotAmmo(Mounted mounted) {
         WeaponType wt = (WeaponType)mounted.getType();
-        Vector<AmmoType> Vammo = AmmoType.getMunitionsFor(wt.getAmmoType());
+        Vector<AmmoType> vAmmo = AmmoType.getMunitionsFor(wt.getAmmoType());
         AmmoType at = null;
-        for (int i = 0; i < Vammo.size(); i++) {
-            at = Vammo.elementAt(i);
+        for (int i = 0; i < vAmmo.size(); i++) {
+            at = vAmmo.elementAt(i);
             if ((at.getRackSize() == wt.getRackSize()) && (TechConstants.isLegal(mounted.getType().getTechLevel(),at.getTechLevel()))) {
                 return at;
             }

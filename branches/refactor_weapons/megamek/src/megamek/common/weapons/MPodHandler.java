@@ -29,33 +29,18 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  * 
  */
-public class LBXHandler extends AmmoWeaponHandler {
+public class MPodHandler extends LBXHandler {
     /**
      * @param t
      * @param w
      * @param g
      * @param s
      */
-    public LBXHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public MPodHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
-    protected int calcDamagePerHit() {
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            float toReturn = wtype.getDamage();
-            toReturn /= 10;
-            toReturn += 1;
-            return Math.round(toReturn);
-        }
-        return 1;
     }
 
     /*
@@ -67,14 +52,18 @@ public class LBXHandler extends AmmoWeaponHandler {
         // conventional infantry gets hit in one lump
         // BAs do one lump of damage per BA suit
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            if (ae instanceof BattleArmor) {
-                bSalvo = true;
-                return ((BattleArmor)ae).getShootingStrength();
-            }
             return 1;
         }
-        int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
-                .missilesHit(wtype.getRackSize());
+        int shots = 15;
+        if (nRange == 2) {
+            shots = 10;
+        } else if (nRange == 3) {
+            shots = 5;
+        } else if (nRange == 4) {
+            shots = 2;
+        }
+        int shotsHit = allShotsHit() ? shots : Compute
+                .missilesHit(shots);
         if (bGlancing) {
             shotsHit = (int)Math.floor(shotsHit/2.0);
         }

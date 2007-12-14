@@ -47,7 +47,7 @@ public class CLMicroBomb extends Weapon {
         this.longRange = 0;
         this.extremeRange = 0;
         this.bv = 0;
-        this.flags |= F_BATTLEARMOR | F_NO_FIRES;
+        this.flags |= F_NO_FIRES;
     }
     
     protected AttackHandler getCorrectHandler(ToHitData toHit,

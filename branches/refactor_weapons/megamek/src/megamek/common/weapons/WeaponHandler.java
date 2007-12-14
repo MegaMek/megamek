@@ -117,7 +117,7 @@ public class WeaponHandler implements AttackHandler {
      * @return an <code>int</code> containing the number of hits.
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
-        if (ae instanceof BattleArmor) {
+        if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)) {
             bSalvo = true;
             return Compute.missilesHit(((BattleArmor)ae).getShootingStrength());
         }

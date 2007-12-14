@@ -18,52 +18,46 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
-import megamek.common.BattleArmor;
 import megamek.common.IGame;
-import megamek.common.TechConstants;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brocks
  * 
  */
-public class ISMineLauncher extends Weapon {
+public abstract class MPodWeapon extends AmmoWeapon {
     /**
      * 
      */
-    public ISMineLauncher() {
+    public MPodWeapon() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
-        this.name = "Mine Launcher";
-        this.setInternalName(BattleArmor.MINE_LAUNCHER);
-        this.addLookupName("ISMine Launcher");
         this.heat = 0;
-        this.damage = DAMAGE_SPECIAL;
-        this.rackSize = 1;
-        this.ammoType = AmmoType.T_MINE;
-        this.shortRange = 0;
-        this.mediumRange = 0;
-        this.longRange = 0;
-        this.extremeRange = 0;
-        this.tonnage = 0.0f;
-        this.criticals = 0;
-        this.bv = 0;
-        String[] modes = { "Single", "2-shot", "3-shot", "4-shot" };
-        this.setModes(modes);
-        this.flags |= F_DIRECT_FIRE | F_SOLO_ATTACK;
+        this.damage = 15;
+        this.ammoType = AmmoType.T_MPOD;
+        this.rackSize = 15;
+        this.minimumRange = 0;
+        this.shortRange = 1;
+        this.mediumRange = 2;
+        this.longRange = 3;
+        this.extremeRange = 4;
+        this.tonnage = 1.0f;
+        this.criticals = 1;
+        this.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_ONESHOT;
+        this.bv = 5;
+        this.cost = 6000;
     }
-    
+
+
     /*
      * (non-Javadoc)
      * 
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
+     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
      */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new MineLauncherHandler(toHit, waa, game, server);
+        return new MPodHandler(toHit, waa, game, server);
     }
 }

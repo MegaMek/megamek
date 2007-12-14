@@ -48,7 +48,9 @@ public class LayExplosivesAttackAction extends AbstractAttackAction
         Infantry inf = (Infantry)entity; 
         //maxtech page 41, damage for each turn as much as a normal shot would do
         // should only be on motorized rifle platoons
-        return inf.getDamage(inf.getShootingStrength()) << (inf.turnsLayingExplosives - 1);
+        //return inf.getDamage(inf.getShootingStrength()) << (inf.turnsLayingExplosives - 1);
+        // TODO: fixme
+        return 2 << (inf.turnsLayingExplosives - 1);
     }
     
     public ToHitData toHit(IGame game) {

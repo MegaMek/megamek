@@ -42,42 +42,42 @@ public class WeaponType extends EquipmentType {
     public static final int     WEAPON_NA = Integer.MIN_VALUE;
 
     // weapon flags (note: many weapons can be identified by their ammo type)
-    public static final long     F_DIRECT_FIRE        = 0x000000001L; // marks any weapon affected by a targetting computer
-    public static final long     F_FLAMER             = 0x000000002L;
-    public static final long     F_LASER              = 0x000000004L; // for eventual glazed armor purposes
-    public static final long     F_PPC                = 0x000000008L; //              "
-    public static final long     F_AUTO_TARGET        = 0x000000010L; // for weapons that target automatically (AMS)
-    public static final long     F_NO_FIRES           = 0x000000020L; // cannot start fires
-    public static final long     F_PROTOMECH          = 0x000000040L; // Protomech weapons, which need weird ammo stuff.
-    public static final long     F_SOLO_ATTACK        = 0x000000080L; // must be only weapon attacking
-    public static final long     F_SPLITABLE          = 0x000000100L; // Weapons that can be split between locations
-    public static final long     F_MG                 = 0x000000200L; // MGL; for rapid fire set up
-    public static final long     F_INFERNO            = 0x000000400L; // Inferno weapon
-    public static final long     F_INFANTRY           = 0x000000800L; // small calibre weapon, no ammo, damage based on # men shooting
-    public static final long     F_BATTLEARMOR        = 0x000001000L; // BA
-    public static final long     F_DOUBLE_HITS        = 0x000002000L; // two shots hit per one rolled
-    public static final long     F_MISSILE_HITS       = 0x000004000L; // use missile rules or # of hits
-    public static final long     F_ONESHOT            = 0x000008000L; // weapon is oneShot.
-    public static final long     F_ARTILLERY          = 0x000010000L;
-    public static final long     F_BALLISTIC          = 0x000020000L; // For Gunnery/Ballistic skill
-    public static final long     F_ENERGY             = 0x000040000L; // For Gunnery/Energy skill
-    public static final long     F_MISSILE            = 0x000080000L; // For Gunnery/Missile skill
-    public static final long     F_PLASMA             = 0x000100000L; // For fires
-    public static final long     F_INCENDIARY_NEEDLES = 0x000200000L; // For fires
-    public static final long     F_PROTOTYPE          = 0x000400000L; // for war of 3039 prototype weapons
-    public static final long     F_HEATASDICE         = 0x000800000L; // heat is listed in dice, not points
-    public static final long     F_AMS                = 0x001000000L; // Weapon is an anti-missile system.
-    public static final long     F_BOOST_SWARM        = 0x002000000L; // boost leg & swarm
-    public static final long     F_INFANTRY_ONLY      = 0x004000000L; // only target infantry
-    public static final long     F_TAG                = 0x008000000L; // Target acquisition gear
-    public static final long     F_C3M                = 0x010000000L; // C3 Master with Target acquisition gear
-    public static final long     F_PLASMA_MFUK        = 0x020000000L; // Plasma Rifle
-    public static final long     F_EXTINGUISHER       = 0x040000000L; // Fire extinguisher
-    public static final long     F_SINGLE_TARGET      = 0x080000000L; // Does less damage to PBI in maxtech rules
-    public static final long     F_PULSE              = 0x100000000L; // pulse weapons
-    public static final long     F_BURST_FIRE         = 0x200000000L; // full damage vs infantry
-    public static final long     F_MGA                = 0x400000000L; // machine gun array
-    public static final long     F_NO_AIM             = 0x800000000L; // machine gun array
+    public static final long     F_DIRECT_FIRE        = 1 << 0; // marks any weapon affected by a targetting computer
+    public static final long     F_FLAMER             = 1 << 1;
+    public static final long     F_LASER              = 1 << 2; // for eventual glazed armor purposes
+    public static final long     F_PPC                = 1 << 3; //              "
+    public static final long     F_AUTO_TARGET        = 1 << 4; // for weapons that target automatically (AMS)
+    public static final long     F_NO_FIRES           = 1 << 5; // cannot start fires
+    public static final long     F_PROTOMECH          = 1 << 6; // Protomech weapons, which need weird ammo stuff.
+    public static final long     F_SOLO_ATTACK        = 1 << 7; // must be only weapon attacking
+    public static final long     F_SPLITABLE          = 1 << 8; // Weapons that can be split between locations
+    public static final long     F_MG                 = 1 << 9; // MGL; for rapid fire set up
+    public static final long     F_INFERNO            = 1 << 10; // Inferno weapon
+    public static final long     F_INFANTRY           = 1 << 11; // small calibre weapon, no ammo, damage based on # men shooting
+    public static final long     F_BATTLEARMOR        = 1 << 12; // weapon is only for one trooper of the squad/point
+    public static final long     F_DOUBLE_HITS        = 1 << 13; // two shots hit per one rolled
+    public static final long     F_MISSILE_HITS       = 1 << 14; // use missile rules or # of hits
+    public static final long     F_ONESHOT            = 1 << 15; // weapon is oneShot.
+    public static final long     F_ARTILLERY          = 1 << 16;
+    public static final long     F_BALLISTIC          = 1 << 17; // For Gunnery/Ballistic skill
+    public static final long     F_ENERGY             = 1 << 18; // For Gunnery/Energy skill
+    public static final long     F_MISSILE            = 1 << 19; // For Gunnery/Missile skill
+    public static final long     F_PLASMA             = 1 << 20; // For fires
+    public static final long     F_INCENDIARY_NEEDLES = 1 << 21; // For fires
+    public static final long     F_PROTOTYPE          = 1 << 22; // for war of 3039 prototype weapons
+    public static final long     F_HEATASDICE         = 1 << 23; // heat is listed in dice, not points
+    public static final long     F_AMS                = 1 << 24; // Weapon is an anti-missile system.
+    public static final long     F_BOOST_SWARM        = 1 << 25; // boost leg & swarm
+    public static final long     F_INFANTRY_ONLY      = 1 << 26; // only target infantry
+    public static final long     F_TAG                = 1 << 27; // Target acquisition gear
+    public static final long     F_C3M                = 1 << 28; // C3 Master with Target acquisition gear
+    public static final long     F_PLASMA_MFUK        = 1 << 29; // Plasma Rifle
+    public static final long     F_EXTINGUISHER       = 1 << 30; // Fire extinguisher
+    public static final long     F_SINGLE_TARGET      = 1 << 31; // Does less damage to PBI in maxtech rules
+    public static final long     F_PULSE              = 1 << 32; // pulse weapons
+    public static final long     F_BURST_FIRE         = 1 << 33; // full damage vs infantry
+    public static final long     F_MGA                = 1 << 34; // machine gun array
+    public static final long     F_NO_AIM             = 1 << 35; // machine gun array
 
     //protected RangeType rangeL;
     protected int   heat;
@@ -496,6 +496,8 @@ public class WeaponType extends EquipmentType {
             //MapPack Solaris VII
             addType(new ISMagshotGaussRifle());
             addType(new CLMagshotGaussRifle());
+            addType(new ISMPod());
+            addType(new CLMPod());
             //Thunderbolts
             addType(new ISThunderBolt5());
             addType(new ISThunderBolt10());
@@ -600,134 +602,14 @@ public class WeaponType extends EquipmentType {
             addType(new CLHeavyGrenadeLauncher());
             addType(new ISCompactNarc());
             addType(new ISMineLauncher());
+            addType(new CLMicroBomb());
             addType(new ISGrandMaulerGaussCannon());
             addType(new ISTsunamiGaussRifle());
+            addType(new ISSingleBAMG());
+            addType(new ISSingleBAFlamer());
+            addType(new ISSingleBASmallPulseLaser());
+            addType(new ISSingleBASmallLaser());
         }
-
-    private static WeaponType createBASingleMG() {
-        WeaponType weapon = new WeaponType();
-
-        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "Machine Gun";
-        weapon.setInternalName("BASingleMachineGun");
-        weapon.addLookupName("BA-Single Machine Gun");
-        weapon.heat = 0;
-        weapon.damage = 2;
-        weapon.rackSize = 2;
-        weapon.ammoType = AmmoType.T_BA_MG;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 1;
-        weapon.mediumRange = 2;
-        weapon.longRange = 3;
-        weapon.extremeRange = 4;
-        weapon.tonnage = 0.0f;
-        weapon.criticals = 0;
-        weapon.bv = 5;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC;
-
-        return weapon;
-    }
-    private static WeaponType createBASingleFlamer() {
-        WeaponType weapon = new WeaponType();
-
-        weapon.techLevel = TechConstants.T_IS_LEVEL_2;
-        weapon.name = "Flamer";
-        weapon.setInternalName("ISBASingleFlamer");
-        weapon.addLookupName("IS BA-Single Flamer");
-        weapon.heat = 3;
-        weapon.damage = 2;
-        weapon.ammoType = AmmoType.T_NA;
-        weapon.minimumRange = WEAPON_NA;
-        weapon.shortRange = 1;
-        weapon.mediumRange = 2;
-        weapon.longRange = 3;
-        weapon.extremeRange = 4;
-        weapon.tonnage = 0.0f;
-        weapon.criticals = 0;
-        weapon.flags |= F_DIRECT_FIRE | F_FLAMER | F_ENERGY;
-        weapon.bv = 6;
-
-        return weapon;
-    }
-
-    private static WeaponType createCLTorpedoLRM5() {
-        WeaponType weapon = new WeaponType();
-
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        weapon.name = "Torpedo/LRM 5";
-        weapon.setInternalName("CLTorpedoLRM5");
-        weapon.addLookupName("Clan Torpedo/LRM-5");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_MISSILE;
-        weapon.rackSize = 5;
-        weapon.ammoType = AmmoType.T_LRM_TORPEDO_COMBO;
-        weapon.minimumRange = 6;
-        weapon.shortRange = 7;
-        weapon.mediumRange = 14;
-        weapon.longRange = 21;        
-        weapon.extremeRange = 28;
-        weapon.waterShortRange = 7;
-        weapon.waterMediumRange = 14;
-        weapon.waterLongRange = 21;
-        weapon.waterExtremeRange = 28;
-        weapon.tonnage = 0.0f;
-        weapon.criticals = 0;
-        weapon.bv = 55;
-
-        return weapon;
-    }
-    
-    private static WeaponType createISMPod() {
-        WeaponType weapon = new WeaponType();
-
-        weapon.techLevel = TechConstants.T_IS_LEVEL_3;
-        weapon.name = "M-Pod";
-        weapon.setInternalName("ISMPod");
-        weapon.addLookupName("ISMPod");
-        weapon.addLookupName("ISM-Pod");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_VARIABLE;
-        weapon.rackSize = 15;
-        weapon.ammoType = AmmoType.T_MPOD;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 1;
-        weapon.mediumRange = 2;
-        weapon.longRange = 3;
-        weapon.extremeRange = 4;
-        weapon.tonnage = 1.0f;
-        weapon.criticals = 1;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_ONESHOT;
-        weapon.bv = 5;
-        weapon.cost = 6000;
-
-        return weapon;
-    }
-    
-    private static WeaponType createCLMPod() {
-        WeaponType weapon = new WeaponType();
-
-        weapon.techLevel = TechConstants.T_CLAN_LEVEL_3;
-        weapon.name = "M-Pod";
-        weapon.setInternalName("CLMPod");
-        weapon.addLookupName("CLMPod");
-        weapon.addLookupName("CLM-Pod");
-        weapon.heat = 0;
-        weapon.damage = DAMAGE_VARIABLE;
-        weapon.rackSize = 15;
-        weapon.ammoType = AmmoType.T_MPOD;
-        weapon.minimumRange = 0;
-        weapon.shortRange = 1;
-        weapon.mediumRange = 2;
-        weapon.longRange = 3;
-        weapon.extremeRange = 4;
-        weapon.tonnage = 1.0f;
-        weapon.criticals = 1;
-        weapon.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_ONESHOT;
-        weapon.bv = 5;
-        weapon.cost = 6000;
-
-        return weapon;
-    }    
 
     public String toString() {
         return "WeaponType: " + name;

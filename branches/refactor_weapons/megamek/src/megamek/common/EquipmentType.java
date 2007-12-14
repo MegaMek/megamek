@@ -19,7 +19,6 @@
  */
 
 package megamek.common;
-import megamek.common.weapons.*;
 
 import java.io.BufferedWriter;
 import java.io.File;

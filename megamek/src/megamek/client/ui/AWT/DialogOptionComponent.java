@@ -31,6 +31,11 @@ import megamek.common.options.IOption;
 
 public class DialogOptionComponent extends Panel implements MouseListener, ItemListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4062277493444205351L;
+
     IOption option;
     
     private Checkbox checkbox;
@@ -202,6 +207,10 @@ public class DialogOptionComponent extends Panel implements MouseListener, ItemL
     }
     
     private static class BasicOption implements IBasicOption, Serializable {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -8128677074350169153L;
         private String name;
         private Object value;
 

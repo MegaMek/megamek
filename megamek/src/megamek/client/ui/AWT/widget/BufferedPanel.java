@@ -27,7 +27,11 @@ import java.util.Enumeration;
 
 public class BufferedPanel extends Panel implements ComponentListener {
 
-     //Vector of Background Drawers
+     /**
+     * 
+     */
+    private static final long serialVersionUID = -269285161007938633L;
+    //Vector of Background Drawers
      private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
      private Dimension preferredSize = new Dimension();
 

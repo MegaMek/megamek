@@ -48,6 +48,10 @@ import megamek.common.util.RandomArmyCreator;
 
 public class RandomArmyDialog extends JDialog implements ActionListener, WindowListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4072453002423681675L;
     private ClientGUI m_clientgui;
     private Client m_client;
     private boolean includeMaxTech;

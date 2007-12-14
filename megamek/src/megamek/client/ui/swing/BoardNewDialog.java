@@ -17,6 +17,10 @@ import javax.swing.SwingConstants;
  * a quick class for the new map diaglogue box
  */
 public class BoardNewDialog extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6109373881940834702L;
     private int xvalue;
     private int yvalue;
     private JLabel labWidth;

@@ -28,6 +28,10 @@ import java.io.Serializable;
  */
 public class DistractableAdapter implements Distractable, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9093831078254025400L;
     /** Current state of distraction. */
     private boolean isDistracted;
 

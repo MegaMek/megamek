@@ -47,6 +47,10 @@ import megamek.common.MapSettings;
 
 public class RandomMapDialog
         extends JDialog implements ActionListener, FocusListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1932447917045308611L;
     private static final String NONE = Messages.getString("RandomMapDialog.elevNONE"); //$NON-NLS-1$
     private static final String LOW = Messages.getString("RandomMapDialog.elevLow"); //$NON-NLS-1$
     private static final String MEDIUM = Messages.getString("RandomMapDialog.elevMedium"); //$NON-NLS-1$

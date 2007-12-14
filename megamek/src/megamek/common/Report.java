@@ -65,6 +65,7 @@ public class Report implements Serializable {
        used by the server (or only the client).  This shaves a few
        bytes off the packet size, helping the dial-up people :) */
 
+    private static final long serialVersionUID = -5586008091586682078L;
     /** Required - associates this object with its text. */
     public int messageId = Report.MESSAGE_NONE;
     private static final int MESSAGE_NONE = -1;

@@ -74,6 +74,10 @@ import java.util.Vector;
 public class CustomMechDialog 
 extends ClientDialog implements ActionListener, DialogOptionListener { 
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4426594323169113467L;
     private Label labName = new Label(Messages.getString("CustomMechDialog.labName"), Label.RIGHT); //$NON-NLS-1$
     private TextField fldName = new TextField(20);
     private Label labGunnery = new Label(Messages.getString("CustomMechDialog.labGunnery"), Label.RIGHT); //$NON-NLS-1$
@@ -665,6 +669,10 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     }
     
     class MineChoicePanel extends Panel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 7164680650764583622L;
         private Choice m_choice;
         private Mounted m_mounted;
                 
@@ -704,6 +712,10 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     }
     
     class MunitionChoicePanel extends Panel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 5264839073432470450L;
         private Vector<AmmoType> m_vTypes;
         private Choice m_choice;
         private Mounted m_mounted;
@@ -830,6 +842,10 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
      * unit for the weight of the selected munition.
      */
     class ProtomechMunitionChoicePanel extends MunitionChoicePanel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 4915594909134005147L;
         private final float m_origShotsLeft;
         private final AmmoType m_origAmmo;
 
@@ -857,6 +873,11 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     }
     
     class RapidfireMGPanel extends Panel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -5884253129817172942L;
+
         private Mounted m_mounted;
         
         protected Checkbox chRapid = new Checkbox();

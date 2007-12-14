@@ -26,6 +26,11 @@ public final class TroopSpace implements Transporter {
     // Private attributes and helper functions.
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 7837499891552862932L;
+
+    /**
      * The troops being carried.
      */
     /* package */ Vector<Entity> troops = new Vector<Entity>();

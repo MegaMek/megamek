@@ -20,6 +20,10 @@ package megamek.common.event;
  */
 public class GameReportEvent extends GameEvent {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -986977282796844524L;
     private String report;
 
     /**

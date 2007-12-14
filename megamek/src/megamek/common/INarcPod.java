@@ -25,6 +25,10 @@ import java.io.Serializable;
 
 public class INarcPod implements Serializable, Targetable {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3566809840132774242L;
     public static final int HOMING  = 1;
     public static final int ECM     = 2;
     public static final int HAYWIRE = 4;

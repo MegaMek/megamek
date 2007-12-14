@@ -30,6 +30,11 @@ public class ReportDisplay
     extends StatusBarPhaseDisplay
     implements ActionListener, KeyListener, DoneButtoned, Distractable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6160984033049923873L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

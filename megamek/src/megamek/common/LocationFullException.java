@@ -29,6 +29,12 @@ package megamek.common;
 public class LocationFullException extends java.lang.Exception {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -8220621982313473559L;
+
+
+    /**
      * Creates new <code>LocationFullExecption</code> without detail message.
      */
     public LocationFullException() {

@@ -19,6 +19,10 @@ import megamek.common.preference.PreferenceManager;
  * here's a quick class for the connect to game diaglogue box
  */
 public class ConnectDialog extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5895056240077042429L;
     public String playerName;
     public String serverAddr;
     public int port;

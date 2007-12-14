@@ -38,6 +38,10 @@ import java.awt.event.WindowEvent;
 public class ConfirmDialog
         extends JDialog implements ActionListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8491332593940944224L;
     private GridBagLayout gridbag = new GridBagLayout();
     private GridBagConstraints c = new GridBagConstraints();
 

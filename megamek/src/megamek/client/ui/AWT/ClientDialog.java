@@ -23,6 +23,10 @@ import java.awt.Frame;
  */
 public class ClientDialog extends Dialog {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1640475498623472521L;
     private static final double TASKBAR_SIZE = .05;
     private static final int CONTAINER_BUFFER = 10;
 

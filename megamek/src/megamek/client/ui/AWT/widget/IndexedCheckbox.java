@@ -18,6 +18,10 @@ import java.awt.Checkbox;
 import java.awt.CheckboxGroup;
 
 public class IndexedCheckbox extends Checkbox {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8591352017935140738L;
     private int index;
     
     public IndexedCheckbox(String label, boolean state, CheckboxGroup group, int index) {

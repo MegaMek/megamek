@@ -20,6 +20,10 @@ package megamek.common;
  * @author  fastsammy@sourceforge.net (Robin D. Toll)
  */
 public class FuelTank extends Building {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5275543640680231747L;
     private int _magnitude;
 
     public FuelTank(Coords coords, IBoard board, int structureType, int magnitude) {

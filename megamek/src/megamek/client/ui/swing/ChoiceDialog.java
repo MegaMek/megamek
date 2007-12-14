@@ -46,6 +46,11 @@ import java.awt.event.WindowEvent;
  */
 public class ChoiceDialog
         extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3093043054221558221L;
+
     private boolean confirm;
 
     private JPanel panButtons = new JPanel();

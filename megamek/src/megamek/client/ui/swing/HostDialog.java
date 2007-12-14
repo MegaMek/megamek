@@ -23,6 +23,10 @@ import megamek.common.preference.PreferenceManager;
  * here's a quick class for the host new game diaglogue box
  */
 public class HostDialog extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -103094006944170081L;
     public String playerName;
     public String serverPass;
     public int port;

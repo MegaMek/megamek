@@ -35,6 +35,11 @@ public class TargetingPhaseDisplay
     implements GameListener, ActionListener, DoneButtoned,
                KeyListener, ItemListener, BoardViewListener, Distractable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6948890985035249901L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
@@ -476,9 +481,12 @@ public class TargetingPhaseDisplay
         if(GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
             doSearchlight();
         }
-
         WeaponAttackAction waa = new WeaponAttackAction(cen, target.getTargetType(),
                 target.getTargetId(), weaponNum);
+        if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
+            waa = new ArtilleryAttackAction(cen, target.getTargetType(),
+                    target.getTargetId(), weaponNum, client.game);
+        }
         if ( null != mounted.getLinked() && 
                 ((WeaponType)mounted.getType()).getAmmoType() != AmmoType.T_NA ) {
                Mounted ammoMount = mounted.getLinked();

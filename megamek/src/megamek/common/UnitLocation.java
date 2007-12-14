@@ -29,6 +29,11 @@ import java.io.Serializable;
  */
 public class UnitLocation implements Serializable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3989732522854387850L;
+
     /** The entity ID of the unit at this location. */
     private final int entityId;
 

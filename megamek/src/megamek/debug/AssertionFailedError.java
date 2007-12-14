@@ -19,6 +19,11 @@ package megamek.debug;
  */
 public class AssertionFailedError extends Error {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6889087511944790249L;
+
     public AssertionFailedError () {
     }
 

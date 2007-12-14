@@ -23,6 +23,11 @@ package megamek.common.event;
 public class GameBoardChangeEvent extends GameEvent {
 
    /**
+     * 
+     */
+    private static final long serialVersionUID = -6307225739747874155L;
+
+/**
     * @param source event source
     */
    public GameBoardChangeEvent(Object source) {

@@ -17,6 +17,10 @@ package megamek.common.actions;
 public class LayMinefieldAction
     extends AbstractEntityAction
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5213526937050576813L;
     /** Save the equipment ID of the mine being laid. */
     int mineId;
 

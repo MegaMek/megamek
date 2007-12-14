@@ -80,6 +80,10 @@ import megamek.common.preference.PreferenceManager;
 public class CustomMechDialog
         extends ClientDialog implements ActionListener, DialogOptionListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6809436986445582731L;
     private JLabel labName = new JLabel(Messages.getString("CustomMechDialog.labName"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JTextField fldName = new JTextField(20);
     private JLabel labGunnery = new JLabel(Messages.getString("CustomMechDialog.labGunnery"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -673,6 +677,10 @@ public class CustomMechDialog
     }
 
     class MineChoicePanel extends JPanel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -1868675102440527538L;
         private JComboBox m_choice;
         private Mounted m_mounted;
 
@@ -712,6 +720,10 @@ public class CustomMechDialog
     }
 
     class MunitionChoicePanel extends JPanel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 3401106035583965326L;
         private ArrayList<AmmoType> m_vTypes;
         private JComboBox m_choice;
         private Mounted m_mounted;
@@ -839,6 +851,10 @@ public class CustomMechDialog
      * unit for the weight of the selected munition.
      */
     class ProtomechMunitionChoicePanel extends MunitionChoicePanel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -8170286698673268120L;
         private final float m_origShotsLeft;
         private final AmmoType m_origAmmo;
 
@@ -866,6 +882,11 @@ public class CustomMechDialog
     }
 
     class RapidfireMGPanel extends JPanel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 5261919826318225201L;
+
         private Mounted m_mounted;
 
         JCheckBox chRapid = new JCheckBox();

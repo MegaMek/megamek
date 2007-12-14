@@ -25,6 +25,10 @@ import megamek.client.ui.AWT.widget.AdvancedLabel;
 public class ConfirmDialog
     extends Dialog implements ActionListener {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3187345924955607514L;
     private GridBagLayout gridbag = new GridBagLayout();
     private GridBagConstraints c = new GridBagConstraints();
 

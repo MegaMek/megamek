@@ -21,6 +21,11 @@ public class GameSettingsChangeEvent extends GameEvent {
     
     /**
      * 
+     */
+    private static final long serialVersionUID = 7470732576407688193L;
+
+    /**
+     * 
      * @param source
      */
     public GameSettingsChangeEvent(Object source) {

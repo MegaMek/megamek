@@ -23,6 +23,10 @@ import java.awt.event.ActionEvent;
  * Allow a user to set types and colors for scenario players
  */
 public class ScenarioDialog extends Dialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -991978467413706967L;
     public static final int T_ME = 0;
     public static final int T_HUMAN = 1;
     public static final int T_BOT = 2;

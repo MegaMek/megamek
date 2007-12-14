@@ -20,6 +20,10 @@ package megamek.common.net;
  */
 public class PacketReceivedEvent extends ConnectionEvent {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3542045596045067466L;
     private Packet packet;
 
     /**

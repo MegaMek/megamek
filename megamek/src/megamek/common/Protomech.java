@@ -28,7 +28,12 @@ import megamek.common.preference.PreferenceManager;
  * Protomechs. Level 2 Clan equipment.
  */
 public class Protomech extends Entity implements Serializable {
-	public static final int NUM_PMECH_LOCATIONS = 6;
+	/**
+     * 
+     */
+    private static final long serialVersionUID = -1376410042751538158L;
+
+    public static final int NUM_PMECH_LOCATIONS = 6;
 
 	public static final String[] LOCATION_NAMES = { "Head", "Torso",
 			"Right Arm", "Left Arm", "Legs", "Main Gun" };

@@ -35,6 +35,10 @@ import java.util.Enumeration;
  */
 public class StartingPositionDialog extends java.awt.Dialog implements ActionListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2459992981678758743L;
     private Client client;
     private ClientGUI clientgui;
 

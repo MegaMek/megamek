@@ -29,6 +29,11 @@ import megamek.common.ToHitData;
 
 public class PhysicalAttackAction extends AbstractAttackAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4702357516725749181L;
+
     public PhysicalAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
     }

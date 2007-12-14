@@ -21,6 +21,10 @@ import java.io.Serializable;
  */
 public class PhysicalResult
 implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4011084578252131074L;
     public AbstractAttackAction aaa = null;
     public ToHitData toHit = null;
     public ToHitData toHitRight = null;

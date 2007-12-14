@@ -41,6 +41,10 @@ public class CEntity {
 
     static class Table extends HashMap<Integer,CEntity> {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 6437109733397107056L;
         private TestBot tb;
 
         public Table(TestBot tb) {
@@ -975,10 +979,7 @@ public class CEntity {
         // assume LBX cannon are using cluster rounds, Ultra-cannon
         // are firing double rate, and RACs are fired in quad mode.
         if (wt.getDamage() == WeaponType.DAMAGE_MISSILE & 
-                wt.getAmmoType() != AmmoType.T_TBOLT5 & 
-                wt.getAmmoType() != AmmoType.T_TBOLT10 & 
-                wt.getAmmoType() != AmmoType.T_TBOLT15 & 
-                wt.getAmmoType() != AmmoType.T_TBOLT20) {
+                wt.getAmmoType() != AmmoType.T_TBOLT) {
             use_table = true;
         }
         if ((wt.getAmmoType() == AmmoType.T_AC_LBX)
@@ -1115,10 +1116,7 @@ public class CEntity {
                     fDamage = 10.0;
                 }
             }
-            if (wt.getAmmoType() == AmmoType.T_TBOLT5 
-                    || wt.getAmmoType() == AmmoType.T_TBOLT10
-                    || wt.getAmmoType() == AmmoType.T_TBOLT15
-                    || wt.getAmmoType() == AmmoType.T_TBOLT20){
+            if (wt.getAmmoType() == AmmoType.T_TBOLT){
                 if (range <= wt.getMinimumRange()){
                     fDamage *= 0.5;
                 }
@@ -1131,11 +1129,15 @@ public class CEntity {
                 if (wt.hasFlag(WeaponType.F_INFANTRY)) {
                     // Weapons fielded by conventional infantry and light BA
                     // Field guns should be handled under the normal weapons section
-                    fDamage = 0.6f * inf_attacker.getDamage(inf_attacker.
-                            getShootingStrength());
+                    /*fDamage = 0.6f * inf_attacker.getDamage(inf_attacker.
+                            getShootingStrength());*/
+                    //TODO: fix me
+                    fDamage = 1;
                     if (attacker instanceof BattleArmor){
-                        fDamage = inf_attacker.getDamage(ba_attacker.
-                                getShootingStrength());
+                        /*fDamage = inf_attacker.getDamage(ba_attacker.
+                                getShootingStrength());*/
+                        //TODO: fix me
+                        fDamage = 1;
                     }
                 }
                 
@@ -1154,8 +1156,10 @@ public class CEntity {
                     // Damage is same as conventional weapons, but with chance for crits
                     if (!(attacker instanceof BattleArmor)){
                         total_mod = 7 + 2 * (inf_attacker.getOInternal(0) - inf_attacker.getShootingStrength())/5;
-                        fDamage = 1.5 * inf_attacker.getDamage(inf_attacker
-                                .getShootingStrength());
+                        /*fDamage = 1.5 * inf_attacker.getDamage(inf_attacker
+                                .getShootingStrength());*/
+                        //TODO: Fix me
+                        fDamage = 5;
                     } else {
                         total_mod = 11 - ba_attacker.getShootingStrength();
                         fDamage = 5.0 * ba_attacker.getShootingStrength();

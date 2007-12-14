@@ -25,6 +25,10 @@ import megamek.common.Player;
  * Allow a user to set types and colors for scenario players
  */
 public class ScenarioDialog extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5682593522064612790L;
     private static final int T_ME = 0;
     public static final int T_BOT = 2;
     private Player[] m_players;

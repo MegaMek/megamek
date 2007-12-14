@@ -33,6 +33,11 @@ import java.util.Vector;
     // Private attributes, constants and helper functions.
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -7149931565043762975L;
+
+    /**
      * The troopers being carried.
      */
     protected Entity troopers;

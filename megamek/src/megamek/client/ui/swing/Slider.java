@@ -34,6 +34,10 @@ import javax.swing.event.ChangeListener;
  */
 public class Slider extends JDialog implements ActionListener, ChangeListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7823206132140091543L;
     private JButton butOk = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
     private JSlider value;

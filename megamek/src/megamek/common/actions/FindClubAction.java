@@ -36,6 +36,11 @@ import megamek.common.Terrains;
  */
 public class FindClubAction extends AbstractEntityAction {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8948591442556777640L;
+
     /** Creates new FindClubAction */
     public FindClubAction(int entityId) {
         super(entityId);

@@ -25,6 +25,10 @@ import megamek.common.options.PilotOptions;
 public class Pilot
     implements Serializable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -141169182388269619L;
     private String      name;
     private int         gunnery;
     private int         piloting;

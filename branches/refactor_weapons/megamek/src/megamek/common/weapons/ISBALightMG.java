@@ -11,6 +11,10 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
+/*
+ * Created on Oct 20, 2004
+ *
+ */
 package megamek.common.weapons;
 
 import megamek.common.TechConstants;
@@ -19,30 +23,29 @@ import megamek.common.TechConstants;
  * @author Sebastian Brocks
  * 
  */
-public class ISSingleBAMG extends BAMGWeapon {
+public class ISBALightMG extends BAMGWeapon {
 
     /**
      * 
      */
-    public ISSingleBAMG() {
+    public ISBALightMG() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_1;
-        this.name = "Machine Gun";
-        this.setInternalName("IS Single BA Machine Gun");
-        this.addLookupName("ISSingle BA Machine Gun");
-        this.addLookupName("ISSingleBAMachine Gun");
+        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.name = "Light Machine Gun";
+        this.setInternalName("BA Light Machine Gun");
+        this.addLookupName("IS BA Light Machine Gun");
+        this.addLookupName("ISBALightMG");
         this.heat = 0;
-        this.damage = 2;
-        this.rackSize = 2;
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
+        this.damage = 1;
+        this.rackSize = 1;
+        this.shortRange = 2;
+        this.mediumRange = 4;
+        this.longRange = 6;
         this.extremeRange = 4;
         this.tonnage = 0.5f;
         this.criticals = 1;
         this.bv = 5;
-        this.cost = 5000;        
-        this.flags |= F_BATTLEARMOR;
+        this.cost = 5000;
     }
 
 }

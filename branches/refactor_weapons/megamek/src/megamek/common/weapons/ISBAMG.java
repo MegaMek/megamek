@@ -19,18 +19,18 @@ import megamek.common.TechConstants;
  * @author Sebastian Brocks
  * 
  */
-public class ISSingleBAMG extends BAMGWeapon {
+public class ISBAMG extends BAMGWeapon {
 
     /**
      * 
      */
-    public ISSingleBAMG() {
+    public ISBAMG() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;
         this.name = "Machine Gun";
-        this.setInternalName("IS Single BA Machine Gun");
-        this.addLookupName("ISSingle BA Machine Gun");
-        this.addLookupName("ISSingleBAMachine Gun");
+        this.setInternalName("BA Machine Gun");
+        this.addLookupName("IS BA Machine Gun");
+        this.addLookupName("ISBAMachine Gun");
         this.heat = 0;
         this.damage = 2;
         this.rackSize = 2;
@@ -41,8 +41,7 @@ public class ISSingleBAMG extends BAMGWeapon {
         this.tonnage = 0.5f;
         this.criticals = 1;
         this.bv = 5;
-        this.cost = 5000;        
-        this.flags |= F_BATTLEARMOR;
+        this.cost = 5000;
     }
 
 }

@@ -30,10 +30,10 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Andrew Hunter
+ * @author Sebastian Brockxs
  * 
  */
-public class MGHandler extends AmmoWeaponHandler {
+public class BAMGHandler extends WeaponHandler {
     int nDamPerHit = 0;
 
     /**
@@ -42,7 +42,7 @@ public class MGHandler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public MGHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public BAMGHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
 
@@ -58,7 +58,14 @@ public class MGHandler extends AmmoWeaponHandler {
             nDamPerHit = Compute.d6();
         } else {
             if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-                nDamPerHit =  Compute.d6(wtype.getDamage());
+                switch (wtype.getDamage()) {
+                    case 1:
+                        nDamPerHit = (int)Math.ceil(Compute.d6()/2);
+                    case 2:
+                        nDamPerHit = Compute.d6();
+                    case 3:
+                        nDamPerHit = Compute.d6(2);                        
+                }
             } else {
                 nDamPerHit = super.calcDamagePerHit();
             }
@@ -95,24 +102,4 @@ public class MGHandler extends AmmoWeaponHandler {
         }
         vPhaseReport.add(r);
     }
-    
-    /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#useAmmo()
-     */
-    protected void useAmmo() {
-        if (weapon.isRapidfire()) {
-            checkAmmo();
-            int ammoUsage = 3*nDamPerHit;
-            for (int i=0; i<ammoUsage; i++) {
-                if (ammo.getShotsLeft() <= 0) {
-                    ae.loadWeapon(weapon);
-                    ammo = weapon.getLinked();
-                } 
-                ammo.setShotsLeft(ammo.getShotsLeft()-1);
-            }
-            setDone();
-        } else super.useAmmo();
-    }
-
 }

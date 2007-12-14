@@ -3,28 +3,35 @@
 v0.33.13-dev (SVN)
 + Fix lock when sending large packets
 + Patch 1830744: doubleblind improvement
-+ Don't center on artillery unit's location in artillery firing phase when that unit
-    is offboard
++ Don't center on artillery unit's location in artillery firing phase when that
+    unit is offboard
 + Reverted all network changes for now, until we have stabilised them
 + Infantry shouldn't sideslip
 + Bug 1839351: No vertical scroll on initial help screen
 + Show when ammo is dumping in system view.
-+ Bug 1841267: Consciousness rolls should be made immediately, not at end of phase.
++ Bug 1841267: Consciousness rolls should be made immediately, not at end of
+    phase.
 + added Mounted.getBaseDamageAbsorptionRate() for MW Use
 + added Mounted.getBaseDamageCapacity for MW use
-+ fixed initial board paint problem (partly related to network fix) and put back LOS Ruler and keyboard scroll
++ fixed initial board paint problem (partly related to network fix) and put
+    back LOS Ruler and keyboard scroll
 + Fix infinite loop with c3 line drawing.
   TODO: when the c3 master moves first, lines are not updated correctly
-+ Add unofficial gameoption to specify from which round onwards ammodumping is allowed
++ Add unofficial gameoption to specify from which round onwards ammodumping is
+    allowed
 + merged weapons refactoring branch
    NOTE: This necessitated the removal of command-line nukes
-   NOTE: there might be some bugs lurking in weapons firing code, report them as you find them
+   NOTE: there might be some bugs lurking in weapons firing code, report them as
+    you find them
    NOTE: They'll now be a whole lot easier to fix.
 + Bug 1811135: iNarc homing pods not allowing indirect LRM fire.
 + Bug: indirect fire using narc homing pod was getting +2 on the cluster table
 + Bug 1747264: AMS engaging Swarm missiles (fixed with weapons refactor)
 + Bug 1690655: BA Flamers should be able to cause heat
-+ Bug 1630629: Conventional SRM Infantry number of Inferno missiles (fixed with weapons refactor)
++ Bug 1630629: Conventional SRM Infantry number of Inferno missiles (fixed with
+    weapons refactor)
++ Improved LOS-Tool. If both hexes contain a unit, the respective unit's
+    current height will be used for the calculation
 
 v0.33.12 (2007-11-09, GMT 22:21 GMT+2)
 + Corrected names of the Celestials
@@ -53,25 +60,30 @@ v0.33.11 (2007-11-09, 15:26 GMT+2)
 + Data 1801670: 3050U IS Mechfiles
 + Data 1794069: Missing Mechfiles
 + Data 1789446: Celestial Invictus Omnis
-+ Bug 1714093: NPE in BrushOffAttackAction in certain situations, removed most Vectors from BoardView1
-+ Bug 1678555: Illegal Number Format when an anticipated Game option input is empty, defaults to 0 now
++ Bug 1714093: NPE in BrushOffAttackAction in certain situations, removed most 
+    Vectors from BoardView1
++ Bug 1678555: Illegal Number Format when an anticipated Game option input is
+    empty, defaults to 0 now
 + Added the Celestial Dominus variants and some pics for them
 + Bug 1824240: Pilot has been picked up with 2 different units
 + Minor refactoring, yay Javadoc!
-+ Fix BV bug for Mechs, explose equipment did not subtract correctly in most cases
-+ Bug 1600957: Selected boards could be null (our placeholder for "surprise") which caused an NPE in some cases
-+ Sometimes our target loses it's position, causing the display thread to throw an NPE
++ Fix BV bug for Mechs, explose equipment did not subtract correctly in most
+    cases
++ Bug 1600957: Selected boards could be null (our placeholder for "surprise") 
+    which caused an NPE in some cases
++ Sometimes our target loses it's position, causing the display thread to throw
+    an NPE
 + Bug 1587654: NPE resolving nuclear effects on offboard units
 + Patch 1827968: swing minimap and network improvements
 + More Celestial images
 + Updated build.xml to allow automatically built client releases
 
 v0.33.10 (2007-10-28, 16:13 GMT+1)
-+ Implemented Retractable Blades. TODO: make them actually retractable (should be able
-    to retract or extend at end of movement, no pushing/punching or carrying stuff when
-    extended, no physical attack when retracted.
-+ Mechs with extended retractable blades can't push or punch (no way to retract the blade
-    currently)
++ Implemented Retractable Blades. TODO: make them actually retractable (should
+    be able to retract or extend at end of movement, no pushing/punching or
+    carrying stuff when extended, no physical attack when retracted.
++ Mechs with extended retractable blades can't push or punch (no way to retract
+    the blade currently)
 + Bug 1787586: Plasma rifles not causing damage (0.33.9)
 + Bug: Abandon Crew Message being reported on Tanks with dead crews.
 + Bug: Inferno Infantry hitting with twice the number of missles they should be.
@@ -84,20 +96,24 @@ v0.33.10 (2007-10-28, 16:13 GMT+1)
 + Added Clan BPOD MiscType object.
 + CASEII and Magshot not being calculated with BV 2.0
 + Bug: Clear Hexes from heavy to light would reset TF
-+ Enhancement Request from Mekwars forum: Draw markers on minimap for pre-designated
-  artillery auto-hit hexes.
++ Enhancement Request from Mekwars forum: Draw markers on minimap for pre-
+  designated artillery auto-hit hexes.
 + Patch 1714216: BV checking command
 + Patch 1694672: Board/map size configuration
-+ Patch 1804518, Bug 1788089, Bug 1813331: Heat and min range incorrect for HAG 30 and 40
++ Patch 1804518, Bug 1788089, Bug 1813331: Heat and min range incorrect for HAG
+    30 and 40
 + Bug 1801922: Cannot charge after starting Movement Phase prone
-+ Bug: Quad mule kicks should only be allowed to the rear arc, not the side arcs
++ Bug: Quad mule kick should only be allowed to the rear arc, not the side arcs
 + Bug 1806055: C3 Master and Advanced Search
-+ Bug: After reset, starting position got set to any, but UI still showed old starting position
-+ Bug: when changing a game option that possibly changed BV (like force-size mod),
-   BV displayed in the chatlounge didn't change
++ Bug: After reset, starting position got set to any, but UI still showed old
+    starting position
++ Bug: when changing a game option that possibly changed BV (like force-size
+   mod), BV displayed in the chatlounge didn't change
 + Skidding Bug: Hex just entered counted for distance.
-+ Bug 1751666: Made the option apply only to 'Mechs as per suggestion of initial submitter.
-+ Enhancement: Show both base BV as well as BV modified by force modifier for each player.
++ Bug 1751666: Made the option apply only to 'Mechs as per suggestion of 
+    initial submitter.
++ Enhancement: Show both base BV as well as BV modified by force modifier for
+    each player.
 
 v0.33.9 (2007-09-02, 17:47 GMT+2)
 + NPE in SearchlightAttackAction.java
@@ -105,8 +121,8 @@ v0.33.9 (2007-09-02, 17:47 GMT+2)
 + Syncrhonized Swing and AWT side.  Swing BoardView1 still needs work.
 + Bug 1753425: Correct cost of MRM40(OS)
 + Patch 1758243, Bug 1734691: LOS walking "both sides of the fence"
-+ Added new piloting skill multiplier which will be featured in an upcoming errata,
-    derived from BV2 version of HMP
++ Added new piloting skill multiplier which will be featured in an upcoming
+    errata, derived from BV2 version of HMP
 + Bug 1758296: Cost of Special Ammo Types
 + Allow piloting and gunnery skills of up to 8
 + Corrected Locust IIC 6 file to make MGAs work
@@ -129,14 +145,14 @@ v0.33.9 (2007-09-02, 17:47 GMT+2)
 + Jump Boosters causing an invalid unit erorr when Jump was greater then run
 + Bug: Plasma Cannons not delievering heat on a glancing blow.
 + Backed out patch 1758243, caused lots of LOS bugs.
-+ Added several new server commands, most are intended to enable megamek to be useable
-	by visually impaired people, but some of them (ruler forinstane) should be usefull
-	to normal users too.
++ Added several new server commands, most are intended to enable megamek to be 
+    useable by visually impaired people, but some of them (ruler forinstance) 
+    should be useful to normal users too.
 + ejected MechWarriors don't need to make consciousness rolls now
 + Bug 1771542: MASC bug
-+ Fixed a null pointer server crash releated to the cameo image in swing. Note that the
-	cameo image is still behaving very odd.
-+ Begun making client commands in the swing GUI. Client commands start with a #.
++ Fixed a null pointer server crash releated to the camo image in swing. Note
+   that the	camo image is still behaving very odd.
++ Begun making client commands in the swing GUI. Client commands start with a #
 + Help command for client commands added.
 + More client commands and slight improvements to chatting using the swing GUI.
 + Added the replacePlayer command as both a server and as a client command.
@@ -145,11 +161,12 @@ v0.33.9 (2007-09-02, 17:47 GMT+2)
 + Bug 1755219: PPC capacitors now load from HMP/HMV files
 + Bug 1748916: stabiliser crits now skipped if location has no weapons
 + Fix VTOL armor display
-+ New victory condition "commander killed", where a force can win by defeating all
-  enemy command units.  Command units are configured by customising in the lobby or
-  in the scenario file (see example.mms).
++ New victory condition "commander killed", where a force can win by defeating
+    all enemy command units.  Command units are configured by customising in
+    the lobby or in the scenario file (see example.mms).
 + Added unofficial option to allow Tanks to use level 3 targeting systems, too
-+ Bug: unload stranded units turn was being skipped, so infantry couldn't get out of immobilie APC
++ Bug: unload stranded units turn was being skipped, so infantry couldn't get
+    out of immobilie APC
 + Set starting position to Any after /reset
 + Infantry entering boggy terrain now handled correctly
 + Bug: ISLMGA had extreme range set to 4 instead of 8
@@ -165,13 +182,14 @@ v0.33.8 (2007-07-16, 21:00 GMT +2)
 + RFE 1726259: Option disable force size BV multiplier
 + Cleaned up batchall.de.zip: removed no longer needed units
 + MG arrays now work, LCT-5T mechfile updated
-+ Added TeamCommand allowing players on the same team to speak to each other in game
++ Added TeamCommand allowing players on the same team to speak to each other in
+    game
 + Bug: Visibility limiting BAP range.
 + changed TeamCommand command from /team to /t make it easier to type. 
 + Made Server.sendChat method public so TeamCommand could access it.
 + Started adding code for PPC Capacitors.
 + Added PPC Capacitor.
-+ Bug: PPC and PPC Capacitors not exploding when critted and Capacitor is charged.
++ Bug: PPC not exploding when critted and Capacitor is charged.
 + Added Reactive Armor
 + Added Reflective Armor
 + Added CASE II
@@ -181,12 +199,13 @@ v0.33.8 (2007-07-16, 21:00 GMT +2)
 + slight (very slight) improvement in bot speed, cleaned up some code in the 
   ui while looking at ways to finish the swing conversion
 + Added validate command line option to validate files in data/mechfiles quickly
-+ Bug: Unit could enter walls that where taller then them as if they where buildings.
++ Bug: Unit could enter walls that where taller then them as if they where 
+    buildings.
 + Improved breach reporting
 + Fix ammo BV for protos, dbv multiplyer now correct for super fast units
-+ Bug: if missing entry in mechset.txt or wreckset.txt map does not load. Will now default
-  to light mech image and print an error message to STDERR
-+ Bug: Silver Bullet Gauss says Missiles instead of projectiles. in fireing phase
++ Bug: if missing entry in mechset.txt or wreckset.txt map does not load. Will
+    now default to light mech image and print an error message to STDERR
++ Bug: Silver Bullet Gauss says Missiles instead of projectiles in firing phase
 + added more fixes to db messages
 + Code cleanup (more javadoc, more generics, few small bug fixes, etc)
 + Partially working AirMechs.
@@ -196,12 +215,15 @@ v0.33.8 (2007-07-16, 21:00 GMT +2)
 + Bug: doExplosion() could have a 0 length myDamages array.
 + RFE: do not rotate rectangular Maps.
 + Bug 1747502: NPE: Mek designed with TAG/C3M and semi-guided missiles
-+ Bug 1732189: Fixed two read errors committed into HMVFile during unused variable cleanup.
-+ Different speed factor calculation, depending on speed, as per the rules question forum
++ Bug 1732189: Fixed two read errors committed into HMVFile during unused 
+   variable cleanup.
++ Different speed factor calculation, depending on speed, as per the rules
+   question forum
 
 v0.33.6 (2007-05-26, 20:00 GMT +2)
 + added some javadoc documentation. This is a work in progress.
-+ Made pilot BV fetchable as a static function in case someone wants to implement requrest #1636523
++ Made pilot BV fetchable as a static function in case someone wants to 
+   implement requrest #1636523
 + Fixed a null pointer exception.
 + Bug 1706265 fixed
 + Added House rule MW pilots cannot spot.
@@ -217,7 +239,7 @@ v0.33.6 (2007-05-26, 20:00 GMT +2)
 + Patch #1705501: Bot ammo/color can be changed in chat lounge.
 + Bug 1706879: Megamek thread problems when changing teams
 + Added save-to-XML functionality to weapons.
-+ Per rules clarification/change, HAGs cannot make targetted shots with a TC.
++ Per rules clarification/change, HAGs cannot make targetted shots with a TC.  
 + Patch #1707730: ER Pulse BV Correction
 + Bug: Victory conditions used the first player in the winners Map as the 
   winner even if they didn't accomplish all the objectives. This only occurs
@@ -240,7 +262,7 @@ v0.33.6 (2007-05-26, 20:00 GMT +2)
   images
 + Data 1579068: some new Mek Images
 + Data 1577478: Most 3055U L3 Solaris Mechfiles
-+ Added Generic <Entity> to Entity.getKills(), was causing Warnings in MW --Torren
++ Added Generic <Entity> to Entity.getKills(), was causing Warnings in MW 
 + Fixed various ammo and weapon BVs per the table in TechManual
 + Bug: No PSR roll when Jumping in Low Gravity.
 + Bug 1725205: Damage applied to wrong facing on failed entry into buildin
@@ -257,20 +279,22 @@ v0.33.5 (2007-04-14, 19:12 GMT+1)
 + Fix BV 2.0 bug where one-shot weapons counted for their BV plus a full ton
    of the respective none-one-shot weapon's ammo.
 + Added BV Force size modifier for BV shown in the chatlounge.
-   For games with more than 2 players, all units that are not in your team are counted
-   as the opposing force.
+   For games with more than 2 players, all units that are not in your team are
+   counted as the opposing force.
 + Bug 1695464: C3 Master not in equipment list of advanced search.
-+ Bug: rear punches to quad mechs now do hit rear locations instead of front locations.
++ Bug: rear punches to quad mechs now do hit rear locations instead of front
+   locations.
 + Added a couple more RS:PPU 'Mechs
 + Corrected RS:PPU 'Mechs to be level 2 rather than 3
-+ Added House rule that Mechwarriors on the field only have 1 hex vis in double 
++ Added House rule that Mechwarriors on the field only have 1 hex vis in double
   blind games
-+ Corrected internal structure points for meks<=20t (they missed 1 point in the legs)
++ Corrected internal structure points for meks<=20t (they missed 1 point in the
+  legs)
 + Reverted last change, developer was half-blind :|
 + Added Building type Wall(5) Units can stand on but not enter.
 + Fix C3 extra BV error.
-+ Added IEntityRemoveCondition REMOVE_STACKPOLE for units that where completely destroyed
-  This is used by MekWars.
++ Added IEntityRemoveCondition REMOVE_STACKPOLE for units that where completely
+  destroyed. This is used by MekWars.
 + Bug: Hexes with collapsed walls not reverting to rubble.  
 + Added MaxTech Walk Backwards rule option
   

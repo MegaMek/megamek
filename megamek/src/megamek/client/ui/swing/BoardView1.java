@@ -41,6 +41,9 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.Messages;
+import megamek.client.ui.swing.SingleChoiceDialog;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
@@ -1285,25 +1288,37 @@ public class BoardView1
     protected void secondLOSHex(Coords c2, Coords c1) {
         if (useLOSTool) {
             
-            boolean mechInFirst = GUIPreferences.getInstance().getMechInFirst();
-            boolean mechInSecond = GUIPreferences.getInstance().getMechInSecond();
-            
-            LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
-            ai.attackPos = c1;
-            ai.targetPos = c2;
-            ai.attackHeight = mechInFirst?1:0;
-            ai.targetHeight = mechInSecond?1:0;
-            ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + ai.attackHeight;
-            ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
+            Entity ae = chooseEntity(c1);
+            Entity te = chooseEntity(c2);
 
-            LosEffects le = LosEffects.calculateLos(game, ai);
             StringBuffer message = new StringBuffer();
-            message.append(Messages.getString("BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
-                    mechInFirst ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
-                    c1.getBoardNum()}));
-            message.append(Messages.getString("BoardView1.Target", new Object[]{ //$NON-NLS-1$
-                    mechInSecond ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
-                    c2.getBoardNum()}));
+            LosEffects le;
+            if (ae == null || te == null) {
+                boolean mechInFirst = GUIPreferences.getInstance().getMechInFirst();
+                boolean mechInSecond = GUIPreferences.getInstance().getMechInSecond();
+                LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
+                ai.attackPos = c1;
+                ai.targetPos = c2;
+                ai.attackHeight = mechInFirst?1:0;
+                ai.targetHeight = mechInSecond?1:0;
+                ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + ai.attackHeight;
+                ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
+                le = LosEffects.calculateLos(game, ai);
+                message.append(Messages.getString("BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
+                        mechInFirst ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                                c1.getBoardNum()}));
+                message.append(Messages.getString("BoardView1.Target", new Object[]{ //$NON-NLS-1$
+                        mechInSecond ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                                c2.getBoardNum()}));
+            } else {
+                le = LosEffects.calculateLos(game, ae.getId(), te);
+                message.append(Messages.getString("BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
+                        ae.getDisplayName(),
+                        c1.getBoardNum()}));
+                message.append(Messages.getString("BoardView1.Target", new Object[]{ //$NON-NLS-1$
+                        te.getDisplayName(),
+                        c2.getBoardNum()}));
+            }
             if (le.isBlocked()) {
                 message.append(Messages.getString("BoardView1.LOSBlocked", new Object[]{ //$NON-NLS-1$
                     new Integer(c1.distance(c2))}));
@@ -3458,32 +3473,77 @@ public class BoardView1
         repaint();
     }
 
-	public Dimension getPreferredScrollableViewportSize() {
-		return getPreferredSize();
-	}
+    public Dimension getPreferredScrollableViewportSize() {
+        return getPreferredSize();
+    }
 
-	public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
+    public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
         final Dimension size = scrollpane.getViewport().getSize();
-		if (arg1 == SwingConstants.VERTICAL)
-			return size.height;
-		return size.width;
-	}
+        if (arg1 == SwingConstants.VERTICAL)
+            return size.height;
+        return size.width;
+    }
 
-	public boolean getScrollableTracksViewportHeight() {
-		return false;
-	}
+    public boolean getScrollableTracksViewportHeight() {
+        return false;
+    }
 
-	public boolean getScrollableTracksViewportWidth() {
-		return false;
-	}
+    public boolean getScrollableTracksViewportWidth() {
+        return false;
+    }
 
-	public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
-		if (arg1 == SwingConstants.VERTICAL)
-			return (int) (scale * HEX_H / 2.0);
-		return (int) (scale * HEX_W / 2.0);
-	}
-	
-	public Dimension getPreferredSize() {
-		return boardSize;
-	}
+    public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
+        if (arg1 == SwingConstants.VERTICAL)
+            return (int) (scale * HEX_H / 2.0);
+        return (int) (scale * HEX_W / 2.0);
+    }
+
+    public Dimension getPreferredSize() {
+        return boardSize;
+    }
+    /**
+     * Have the player select an Entity from the entities at the given coords.
+     *
+     * @param   pos - the <code>Coords</code> containing targets.
+     */
+    private Entity chooseEntity( Coords pos ) {
+
+        // Assume that we have *no* choice.
+        Entity choice = null;
+
+        // Get the available choices.
+        Enumeration<Entity> choices = game.getEntities( pos );
+
+        // Convert the choices into a List of targets.
+        Vector<Entity> entities = new Vector<Entity>();
+        while ( choices.hasMoreElements() ) {
+            entities.addElement( choices.nextElement() );
+        }
+
+        // Do we have a single choice?
+        if (entities.size() == 1) {
+            // Return  that choice.
+            choice = entities.elementAt( 0 );
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        else if ( entities.size() > 1 ) {
+            String[] names = new String[ entities.size() ];
+            for ( int loop = 0; loop < names.length; loop++ ) {
+                names[loop] = entities.elementAt(loop).getDisplayName();
+            }
+            SingleChoiceDialog choiceDialog =
+                new SingleChoiceDialog( null,
+                        Messages.getString("BoardView1.ChooseEntityDialog.title"), //$NON-NLS-1$
+                        Messages.getString("BoardView1.ChooseEntityDialog.message", new Object[]{pos.getBoardNum()}), //$NON-NLS-1$
+                        names );
+            choiceDialog.setVisible(true);
+            if (choiceDialog.getAnswer() == true) {
+                choice = entities.elementAt(choiceDialog.getChoice());
+            }
+        } // End have-choices
+
+        // Return the chosen unit.
+        return choice;
+    }
 }

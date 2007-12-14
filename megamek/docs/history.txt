@@ -20,6 +20,8 @@ v0.33.13-dev (SVN)
    NOTE: This necessitated the removal of command-line nukes
    NOTE: there might be some bugs lurking in weapons firing code, report them as you find them
    NOTE: They'll now be a whole lot easier to fix.
++ Bug 1811135: iNarc homing pods not allowing indirect LRM fire.
++ Bug: indirect fire using narc homing pod was getting +2 on the cluster table
 
 v0.33.12 (2007-11-09, GMT 22:21 GMT+2)
 + Corrected names of the Celestials

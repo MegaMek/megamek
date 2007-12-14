@@ -902,7 +902,7 @@ public abstract class Mech
      */
     public int height() {
         IHex posHex = game.getBoard().getHex(getPosition());
-        return (isProne() || ((posHex != null) && (posHex.containsTerrain(Terrains.BUILDING)))) ? 0 : 1;
+        return (isProne() || ((posHex != null) && Compute.isInBuilding(game, this))) ? 0 : 1;
     }
     
     /**

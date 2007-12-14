@@ -39,6 +39,11 @@ public class Infantry
     // Private attributes and helper functions.
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -8706716079307721282L;
+
+    /**
      * The number of men originally in this platoon.
      */
     private int         menStarting = 0;
@@ -53,11 +58,6 @@ public class Infantry
      * The number of men left alive in this platoon.
      */
     private int         men     = 0;
-
-    /**
-     * The kind of weapons used by this platoon.
-     */
-    private int         weapons = 0;
 
     /**
      * The amount of damage the platoon can do if it hits.
@@ -86,59 +86,6 @@ public class Infantry
     public static final int DUG_IN_FORTIFYING1 = 3; //no protection, can't attack
     public static final int DUG_IN_FORTIFYING2 = 4; //no protection, can't attack
     private int dugIn = DUG_IN_NONE;
-    
-    private static final int DAMAGE_BALLISTIC_RIFLE[] =
-    { 0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,14,14,15,15,16 };
-    private static final int DAMAGE_ENERGY_RIFLE[] =
-    { 0,0,1,1,1,1,2,2,2,3,3,3,3,4,4,4,4,5,5,5,6,6,6,6,7,7,7,8,8,8,8 };
-    private static final int DAMAGE_MACHINE_GUN[] =
-    { 0,1,1,2,2,3,3,4,4,5,6,6,7,7,8,8,9,10,10,11,11,12,12,13,13,14,15,15,16,16,17 };
-    private static final int DAMAGE_SRM[] =
-    { 0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15 };
-    // Inferno SRMs do half damage (rounded down).
-    private static final int DAMAGE_INFERNO_SRM[] =
-    { 0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,6,6,6,6,7,7,7 };
-    private static final int DAMAGE_LRM[] =
-    { 0,0,1,1,2,2,3,3,3,4,4,5,5,6,6,6,7,7,8,8,9,9,9,10,10,11,11,11,12,12,13 };
-    private static final int DAMAGE_FLAMER[] =
-    { 0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,12,13,13,14,14 };
-    
-    /**
-     * Set up the damage array for this platoon for the given weapon type.
-     *
-     * @param   weapon - the type of weapon used by this platoon.
-     * @exception IllegalArgumentException if a bad weapon
-     *          type is passed.
-     */
-    private void setDamage( int weapon )
-    {
-        switch(weapon) {
-            case INF_RIFLE:
-                damage = DAMAGE_BALLISTIC_RIFLE;
-                break;
-            case INF_MG:
-                damage = DAMAGE_MACHINE_GUN;
-                break;
-            case INF_FLAMER:
-                damage = DAMAGE_FLAMER;
-                break;
-            case INF_LASER:
-                damage = DAMAGE_ENERGY_RIFLE;
-                break;
-            case INF_SRM:
-                damage = DAMAGE_SRM;
-                break;
-            case INF_INFERNO_SRM:
-                damage = DAMAGE_INFERNO_SRM;
-                break;
-            case INF_LRM:        
-                damage = DAMAGE_LRM;
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown infantry weapon");
-        }
-        assert(damage.length == INF_PLT_MAX_MEN+1);
-    } // End private void setDamage( int ) throws Exception
 
     // Public and Protected constants, constructors, and methods.
 
@@ -205,22 +152,13 @@ public class Infantry
     public Infantry() {
         // Instantiate the superclass.
         super();
-
         // Create a "dead" leg rifle platoon.
         this.menStarting = 0;
         this.menShooting = 0;
         this.men = 0;
-        this.weapons = INF_RIFLE;
         setMovementMode(IEntityMovementMode.INF_LEG);
-
-        // Populate the damage array.
-        this.setDamage(this.weapons);
-
         // Determine the number of MPs.
         this.setOriginalWalkMP(1);
-
-        // Clear the weapon type to be set later.
-        this.weapons = INF_UNKNOWN;
     }
 
     /**
@@ -482,41 +420,6 @@ public class Infantry
                   Infantry.STOP_SWARM.equals( equip.getInternalName() ) ) {
             // Do nothing.
         }
-        // Handle infantry weapons.
-        else if ( (mounted.getType() instanceof WeaponType) &&
-                  equip.hasFlag(WeaponType.F_INFANTRY) ) {
-
-            // Infantry can only mount one kind of infantry weapon.
-            WeaponType weapon = (WeaponType) mounted.getType();
-            long weaponType;
-            if ( this.weapons != INF_UNKNOWN ) {
-                throw new LocationFullException
-                    ( "Unit is already equiped with an infantry weapon" +
-                      " and does not need a " + weapon.getName() );
-            }
-
-            // If the weapon uses ammo, then *that* is our weapon type,
-            // otherwise it's a laser or flamer (get from equipment flags).
-            if ( weapon.getAmmoType() != AmmoType.T_NA ) {
-                weaponType = weapon.getAmmoType();
-            }
-            else {
-                weaponType = weapon.getFlags() & 
-                    (WeaponType.F_LASER + WeaponType.F_FLAMER + WeaponType.F_INFERNO);
-            }
-            this.weapons = (int)weaponType;
-            
-            // Update our damage profile.
-            this.setDamage( weapons );
-
-        }
-/*        // Infantry platoons can't carry big equipment.
-        else if ( this.isPlatoon() ) {
-            throw new LocationFullException
-                ( "Infantry platoons can not be equiped with a " +
-                  mounted.getName() );
-        }*/
-
         // Update our superclass.
         super.addEquipment( mounted, loc, rearMounted );
     }
@@ -589,156 +492,8 @@ public class Infantry
      * Calculates the battle value of this platoon.
      */
     public int calculateBattleValue() {
-
-        double dBV = 0;
-        
-        int mm = this.getMovementMode();
-        
-        if(IEntityMovementMode.WHEELED == mm
-                || IEntityMovementMode.TRACKED == mm
-                || IEntityMovementMode.HOVER == mm
-                || IEntityMovementMode.INF_UMU == mm) {
-//          FIXME, when techmanual comes out
-            mm = IEntityMovementMode.INF_MOTORIZED; 
-        }
-
-        // BV is factor of anti-Mek training, movement type and weapon type.
-        if ( this.antiMek ) {
-
-            if (this.weapons == INF_RIFLE) {
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 32;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 42;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 46;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_MG) {
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 47;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 63;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 62;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_FLAMER) {
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 41;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 54;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 51;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_LASER) {
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 60;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 70;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 71;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_SRM || weapons == INF_INFERNO_SRM) {
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 60;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 70;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 71;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_LRM) {
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 56;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 75;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 87;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else throw new IllegalArgumentException
-                    ( "Unknown infantry weapon: " + this.weapons );
-        } // End anti-Mek-trained
-        else {
-            if (this.weapons == INF_RIFLE) {
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 23;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 28;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 29;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_MG) {
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 31;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 39;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 37;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_FLAMER) {
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 28;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 35;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 32;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_LASER) {  
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 37;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 42;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 41;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_SRM || weapons == INF_INFERNO_SRM) {
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 60;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 70;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 71;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else if (this.weapons == INF_LRM) {
-                if ( IEntityMovementMode.INF_LEG == mm )
-                    dBV = 56;
-                else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                    dBV = 75;
-                else if ( IEntityMovementMode.INF_JUMP == mm )
-                    dBV = 87;
-                else throw new IllegalArgumentException
-                        ( "Unknown movement type: " + mm );
-            } else throw new IllegalArgumentException
-                    ( "Unknown infantry weapon: " + this.weapons );
-
-        } // End not-anti-Mek
-
-        // add BV of field guns
-        for(Mounted mounted : getWeaponList()) {
-            WeaponType wtype = (WeaponType)mounted.getType();
-            if(!wtype.hasFlag(WeaponType.F_INFANTRY))
-                dBV += wtype.getBV(this);
-        }
-
-        // Adjust for missing troopers
-        dBV = dBV * getInternalRemainingPercent();
-
-        // adjust for crew
-        double pilotFactor = crew.getBVSkillMultiplier();
-
-        int finalBV = (int)Math.round(dBV);
-
-        int retVal = (int)Math.round((finalBV) * pilotFactor);
-        return retVal;
+        //TODO: Implement me
+        return 0;
     } // End public int calculateBattleValue()
 
     public Vector<Report> victoryReport() {
@@ -801,16 +556,6 @@ public class Infantry
     }
 
     // The methods below aren't in the Entity interface.
-
-    /**
-     * Determine the amount of damage that the infantry can produce,
-     * given a number of men left in the platoon.
-     *
-     * @param menLeft - the number of men in the platoon capable of shooting.
-     * @return <code>int</code> - the amount of damage done when the platoon
-     *      hits its target.
-     */
-    public int getDamage( int menLeft ) { return damage[menLeft]; }
 
     /**
      * Get the number of men in the platoon (before damage is applied).
@@ -894,7 +639,8 @@ public class Infantry
         if(IEntityMovementMode.INF_UMU == mm) {
             mm = IEntityMovementMode.INF_LEG;
             multiplier *= 2;
-        }
+        }/*
+        //TODO: fix me for new style of weapons
         if (this.weapons == INF_RIFLE) {
             if ( IEntityMovementMode.INF_LEG == mm )
                 cost = 600000;
@@ -953,7 +699,7 @@ public class Infantry
                     ( "Unknown movement type: " + mm );
         } else throw new IllegalArgumentException
                     ( "Unknown infantry weapon: " + this.weapons );
-        // End not-anti-Mek
+        // End not-anti-Mek*/
 
         return cost*multiplier;
     }

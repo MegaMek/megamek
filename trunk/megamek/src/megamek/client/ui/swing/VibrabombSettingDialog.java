@@ -30,6 +30,10 @@ import java.awt.event.ActionListener;
  */
 public class VibrabombSettingDialog
         extends JDialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7642956136536119067L;
     private GridBagLayout gridbag = new GridBagLayout();
     private GridBagConstraints c = new GridBagConstraints();
     private JButton butOk = new JButton(Messages.getString("Okay")); //$NON-NLS-1$

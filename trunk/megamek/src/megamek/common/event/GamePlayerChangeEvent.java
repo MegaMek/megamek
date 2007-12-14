@@ -22,6 +22,11 @@ import megamek.common.Player;
 public class GamePlayerChangeEvent extends GamePlayerEvent {
     
     /**
+     * 
+     */
+    private static final long serialVersionUID = -3708864968498633017L;
+
+    /**
      * @param source
      * @param player
      */

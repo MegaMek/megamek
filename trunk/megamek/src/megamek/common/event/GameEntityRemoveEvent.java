@@ -23,6 +23,11 @@ public class GameEntityRemoveEvent extends GameEntityEvent {
     
     /**
      * 
+     */
+    private static final long serialVersionUID = -4694809256962666172L;
+
+    /**
+     * 
      * @param source
      * @param entity
      */

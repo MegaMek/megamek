@@ -30,6 +30,10 @@ import java.awt.event.ActionListener;
  */
 public class Prompt extends Dialog implements ActionListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6997067046923377859L;
     private Button butOk = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     private TextField txtValue = new TextField();

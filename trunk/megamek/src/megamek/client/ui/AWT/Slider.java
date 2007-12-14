@@ -32,6 +32,10 @@ import java.awt.event.AdjustmentListener;
  */
 public class Slider extends Dialog implements ActionListener, AdjustmentListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6489454301676953500L;
     private Button butOk = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     private Scrollbar value;

@@ -21,6 +21,10 @@ import java.io.Serializable;
  */
 public class WeaponResult
 implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4843539676132886847L;
     public WeaponAttackAction waa = null;
     public ToHitData toHit = null; // stored before ammo depletion, jams
     public int roll = -1;

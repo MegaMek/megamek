@@ -35,6 +35,10 @@ import megamek.common.options.*;
  */
 public class GameOptionsDialog extends Dialog implements ActionListener, DialogOptionListener {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4076751608068469452L;
     private ClientGUI client;
     private GameOptions options;
 

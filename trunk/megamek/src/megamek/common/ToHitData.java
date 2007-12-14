@@ -21,6 +21,8 @@ import megamek.common.LosEffects;
  */
 public class ToHitData extends TargetRoll
 {
+
+    private static final long serialVersionUID = 737321999301910678L;
     public static final int HIT_NORMAL      = 0;
     public static final int HIT_PUNCH       = 1;
     public static final int HIT_KICK        = 2;

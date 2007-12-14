@@ -8,6 +8,10 @@ package megamek.common;
  */
 public class LandAirMech extends BipedMech {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3527907120230165939L;
     public static final int MODE_MECH =     0x001;
     public static final int MODE_AIRMECH =  0x002;
     public static final int MODE_AIRCRAFT = 0x004; //this is supposed to be an areospace fighter. don't know their rules though

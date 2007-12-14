@@ -33,6 +33,11 @@ import java.util.Enumeration;
  */
 public class GameTurn implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8340385894504735190L;
+
     private int playerId;
     
     /** Creates a new instance of GameTurn */
@@ -92,6 +97,10 @@ public class GameTurn implements Serializable {
      * A type of game turn that allows only one specific entity to move.
      */
     public static class SpecificEntityTurn extends GameTurn {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -4209080275946913689L;
         private int entityId;
         
         public SpecificEntityTurn(int playerId, int entityId) {
@@ -122,6 +131,11 @@ public class GameTurn implements Serializable {
      */
     public static class TriggerAPPodTurn extends SpecificEntityTurn {
         
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -5104845305165987340L;
+
         public TriggerAPPodTurn(int playerId, int entityId) {
             super(playerId, entityId);
         }
@@ -145,6 +159,11 @@ public class GameTurn implements Serializable {
      */
     public static class CounterGrappleTurn extends SpecificEntityTurn {
         
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 5248356977626018582L;
+
         public CounterGrappleTurn(int playerId, int entityId) {
             super(playerId, entityId);
         }
@@ -207,6 +226,10 @@ public class GameTurn implements Serializable {
      * A type of game turn that allows only certain types of units to move.
      */
     public static class EntityClassTurn extends GameTurn {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 1305684619846966124L;
         private final int mask;
 
         /**
@@ -259,6 +282,10 @@ public class GameTurn implements Serializable {
      * dismount at the start of the turn.
      */
     public static class UnloadStrandedTurn extends GameTurn {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 2403095752478007872L;
         private int[] entityIds = null;
 
         /**
@@ -411,6 +438,10 @@ public class GameTurn implements Serializable {
      * belonging to certain units to move.
      */
     public static class UnitNumberTurn extends GameTurn {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -681892308327846884L;
         private final char unitNumber;
 
         /**

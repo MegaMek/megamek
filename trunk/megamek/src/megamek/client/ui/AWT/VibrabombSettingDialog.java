@@ -24,6 +24,10 @@ import java.awt.event.*;
 public class VibrabombSettingDialog
     extends Dialog implements ActionListener {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1432135839873581337L;
     private GridBagLayout gridbag = new GridBagLayout();
     private GridBagConstraints c = new GridBagConstraints();
 

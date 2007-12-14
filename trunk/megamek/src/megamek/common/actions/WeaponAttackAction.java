@@ -14,6 +14,7 @@
 
 package megamek.common.actions;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.ArrayList;
 
@@ -53,7 +54,11 @@ import megamek.common.MiscType;
 /**
  * Represents intention to fire a weapon at the target.
  */
-public class WeaponAttackAction extends AbstractAttackAction {
+public class WeaponAttackAction extends AbstractAttackAction implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9096603813317359351L;
     private int weaponId;
     private int ammoId = -1;
     private int aimedLocation = Entity.LOC_NONE;
@@ -62,6 +67,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
     private boolean nemesisConfused;
     private boolean swarmingMissiles;
     private int oldTargetId = -1;
+    private int swarmMissiles = 0;
     
     // equipment that affects this attack (AMS, ECM?, etc)
     // only used server-side
@@ -175,10 +181,8 @@ public class WeaponAttackAction extends AbstractAttackAction {
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
         // 2003-01-02 BattleArmor MG and Small Lasers have unlimited ammo.
         // 2002-09-16 Infantry weapons have unlimited ammo.
-        final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
-            wtype.getAmmoType() != AmmoType.T_BA_MG &&
-            wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
-            !isWeaponInfantry;
+        final boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA
+            && !isWeaponInfantry;
         final Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         final AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();
         final boolean targetInBuilding = Compute.isInBuilding( game, te );
@@ -186,8 +190,7 @@ public class WeaponAttackAction extends AbstractAttackAction {
             && weapon.curMode().equals("Indirect");
         boolean isInferno = (atype != null)
                     && ((atype.getAmmoType() == AmmoType.T_SRM)
-                        || (atype.getAmmoType() == AmmoType.T_MML)
-                        || (atype.getAmmoType() == AmmoType.T_BA_INFERNO))
+                        || (atype.getAmmoType() == AmmoType.T_MML))
                     && (atype.getMunitionType() == AmmoType.M_INFERNO)
                     || isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO));
         boolean isArtilleryDirect= wtype.hasFlag(WeaponType.F_ARTILLERY) && game.getPhase() == IGame.PHASE_FIRING;
@@ -999,6 +1002,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
             return "Weapon is not in a state where it can be fired";
         }
 
+        // can't fire Indirect LRM with direct LOS
+        if (isIndirect && game.getOptions().booleanOption("indirect_fire") &&
+                !game.getOptions().booleanOption("indirect_always_possible") &&
+                LosEffects.calculateLos(game, ae.getId(), target).canSee()) {
+            return new String("Indirect-fire LRM cannot be fired with direct LOS from attacker to target.");
+        }
+
         // If we're lying mines, we can't shoot.
         if (ae.isLayingMines()) {
             return "Can't fire weapons when laying mines";
@@ -1283,6 +1293,24 @@ public class WeaponAttackAction extends AbstractAttackAction {
                     }
                 }
             }
+            // BAC compact narc: we have one weapon for each trooper, but you can fire only at one target at a time
+            if (wtype.getName().equals("Compact Narc")) {
+                for (Enumeration<EntityAction> i = game.getActions();i.hasMoreElements();) {
+                    EntityAction ea = i.nextElement();
+                    if (!(ea instanceof WeaponAttackAction)) {
+                        continue;
+                    }
+                    final WeaponAttackAction prevAttack = (WeaponAttackAction) ea;
+                    if (prevAttack.getEntityId() == attackerId) {
+                        Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+                        if( prevWeapon.getType().getName().equals("Compact Narc")) {
+                            if (prevAttack.getTargetId() != target.getTargetId()) {
+                                return "Can fire multiple compact narcs only at one target.";
+                            }                        
+                        }
+                    }
+                }
+            }
         }
 
         // check if indirect fire is valid
@@ -1532,5 +1560,13 @@ public class WeaponAttackAction extends AbstractAttackAction {
     
     public void setOldTargetId(int id) {
         oldTargetId = id;
+    }
+
+    public int getSwarmMissiles() {
+        return swarmMissiles;
+    }
+
+    public void setSwarmMissiles(int swarmMissiles) {
+        this.swarmMissiles = swarmMissiles;
     }
 }

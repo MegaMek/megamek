@@ -61,6 +61,10 @@ public class CustomBattleArmorDialog
         extends JDialog implements ActionListener, ItemListener, KeyListener,
         Runnable, DocumentListener, WindowListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3695492007702718496L;
     private Client m_client;
     private ClientGUI m_clientgui;
 

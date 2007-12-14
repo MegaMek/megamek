@@ -44,6 +44,10 @@ public class MiniMap extends Canvas  {
 
     // these indices match those in Terrains.java, and are therefore sensitive to any changes there
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 423940911886095110L;
     private final static Color[] m_terrainColors = new Color[Terrains.SIZE];
     private static Color HEAVY_WOODS;
     private static Color BACKGROUND;

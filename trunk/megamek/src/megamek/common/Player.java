@@ -25,6 +25,10 @@ import megamek.common.event.GamePlayerChangeEvent;
 public final class Player extends TurnOrdered
     implements Serializable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6828849559007455760L;
     public static final int     PLAYER_NONE = -1;
     public static final int     TEAM_NONE = 0;
 

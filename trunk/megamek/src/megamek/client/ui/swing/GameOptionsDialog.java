@@ -52,6 +52,10 @@ import java.util.Vector;
  */
 public class GameOptionsDialog extends JDialog implements ActionListener, DialogOptionListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6072295678938594119L;
     private ClientGUI client;
     private GameOptions options;
 

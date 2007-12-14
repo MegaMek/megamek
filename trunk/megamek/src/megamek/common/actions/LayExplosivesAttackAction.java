@@ -26,6 +26,11 @@ import megamek.common.ToHitData;
 public class LayExplosivesAttackAction extends AbstractAttackAction
 {    
    
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8799415934269686590L;
+
     public LayExplosivesAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
     }
@@ -41,7 +46,11 @@ public class LayExplosivesAttackAction extends AbstractAttackAction
         if(!(entity instanceof Infantry))
             return 0;
         Infantry inf = (Infantry)entity; 
-        return inf.getDamage(inf.getShootingStrength()) << (inf.turnsLayingExplosives - 1);
+        //maxtech page 41, damage for each turn as much as a normal shot would do
+        // should only be on motorized rifle platoons
+        //return inf.getDamage(inf.getShootingStrength()) << (inf.turnsLayingExplosives - 1);
+        // TODO: fixme
+        return 2 << (inf.turnsLayingExplosives - 1);
     }
     
     public ToHitData toHit(IGame game) {

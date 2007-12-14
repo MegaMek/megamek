@@ -39,6 +39,10 @@ import static megamek.MegaMek.VERSION;
  */
 public class CommonAboutDialog extends JDialog {
     /**
+     * 
+     */
+    private static final long serialVersionUID = -9019180090528719535L;
+    /**
      * We only need a single copy of the "about" title image that we share.
      */
     private static Image imgTitleImage;

@@ -48,6 +48,11 @@ import megamek.common.util.DistractableAdapter;
 public class ChatLounge
     extends AbstractPhaseDisplay
     implements ActionListener, ItemListener, BoardViewListener, GameListener, DoneButtoned, Distractable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2899398109433232077L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

@@ -33,6 +33,10 @@ public class MechGroupView
     extends Dialog
     implements ActionListener, ItemListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 85778571937208805L;
     List entities = new List(20);
     Button closeButton = new Button(Messages.getString("Close"));
     TextArea ta = new TextArea();

@@ -34,6 +34,10 @@ import java.io.IOException;
  * Every about dialog in MegaMek should have an identical look-and-feel.
  */
 public class CommonHelpDialog extends JDialog {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5189627839475444823L;
     private JTextArea lblHelp;
 
     /**

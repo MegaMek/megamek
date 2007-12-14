@@ -25,6 +25,10 @@ import megamek.common.MechSummaryCache;
 
 public class UnitLoadingDialog extends Dialog {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3249278694929784106L;
     private Label lLoading = new Label(Messages.getString("UnitLoadingDialog.LoadingUnits")); //$NON-NLS-1$
     private Label lSpacer = new Label();
     private Label lCacheText = new Label(Messages.getString("UnitLoadingDialog.fromCache")); //$NON-NLS-1$

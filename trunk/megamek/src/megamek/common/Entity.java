@@ -3620,7 +3620,7 @@ public abstract class Entity extends TurnOrdered
     
     /**
      * add a narc pod from this team to the mech.  Unremovable
-     * @param pod The <code>INarcPod</code> to be attached.
+     * @param pod The <code>NarcPod</code> to be attached.
      */
     public void attachNarcPod(NarcPod pod) {
         this.pendingNarcPods.add(pod);
@@ -4754,8 +4754,7 @@ public abstract class Entity extends TurnOrdered
         for(Mounted amounted : getAmmo()) {
             AmmoType atype = (AmmoType)amounted.getType();
             if (((atype.getAmmoType() == AmmoType.T_SRM)
-                    || (atype.getAmmoType() == AmmoType.T_MML)
-                    || (atype.getAmmoType() == AmmoType.T_BA_INFERNO))
+                    || (atype.getAmmoType() == AmmoType.T_MML))
                     && atype.getMunitionType() == AmmoType.M_INFERNO
                     && amounted.getShotsLeft() > 0 ) {
                 found = true;

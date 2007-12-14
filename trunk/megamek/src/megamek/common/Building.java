@@ -30,6 +30,11 @@ public class Building implements Serializable {
     // Private attributes and helper functions.
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -8236017592012683793L;
+
+    /**
      * The ID of this building.
      */
     private int         id              = Building.UNKNOWN;
@@ -68,6 +73,10 @@ public class Building implements Serializable {
     private boolean     burning         = false;
 
     public class DemolitionCharge implements Serializable {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -6655782801564155668L;
         public int damage;
         public int playerId;
 

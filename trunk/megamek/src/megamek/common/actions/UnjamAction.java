@@ -18,6 +18,11 @@ public class UnjamAction
     extends AbstractEntityAction
 {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3001837570251595589L;
+
     public UnjamAction(int entityId) {
         super(entityId);
     }

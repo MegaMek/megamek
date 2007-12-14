@@ -29,6 +29,11 @@ import megamek.common.verifier.TestEntity;
  */
 public class Engine implements Serializable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -246032529363109609L;
+
     public final static float[] ENGINE_RATINGS = { 0.0f, 0.25f,
         0.5f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.5f, 1.5f, 1.5f,
         2.0f, 2.0f, 2.0f, 2.5f, 2.5f, 3.0f, 3.0f, 3.0f, 3.5f, 3.5f, 4.0f,

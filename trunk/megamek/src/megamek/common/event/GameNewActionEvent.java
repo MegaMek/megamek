@@ -23,6 +23,10 @@ import megamek.common.actions.EntityAction;
  */
 public class GameNewActionEvent extends GameEvent {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 928848699583079097L;
     protected EntityAction action; 
 
     /**

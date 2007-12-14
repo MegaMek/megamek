@@ -24,6 +24,10 @@ import megamek.common.IBoard;
  */
 public class GameBoardNewEvent extends GameEvent {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4444092727458493689L;
     protected IBoard oldBoard;
     protected IBoard newBoard;
     

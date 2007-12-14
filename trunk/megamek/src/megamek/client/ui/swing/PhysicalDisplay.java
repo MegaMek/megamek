@@ -81,6 +81,11 @@ public class PhysicalDisplay
         implements GameListener, ActionListener, DoneButtoned,
         KeyListener, BoardViewListener, Distractable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3274750006768636001L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

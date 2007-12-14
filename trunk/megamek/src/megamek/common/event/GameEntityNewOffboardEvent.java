@@ -22,6 +22,11 @@ public class GameEntityNewOffboardEvent extends GameEvent {
     
     /**
      * 
+     */
+    private static final long serialVersionUID = 8497680533582651572L;
+
+    /**
+     * 
      * @param source
      */
     public GameEntityNewOffboardEvent(Object source) {

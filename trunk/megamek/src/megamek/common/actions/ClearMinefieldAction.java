@@ -17,6 +17,11 @@ package megamek.common.actions;
 public class ClearMinefieldAction
     extends AbstractEntityAction
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4465058967763135772L;
+
     public ClearMinefieldAction(int entityId) {
         super(entityId);
     }

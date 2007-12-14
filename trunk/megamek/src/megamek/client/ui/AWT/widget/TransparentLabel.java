@@ -4,6 +4,10 @@ import java.awt.*;
 
 public class TransparentLabel extends PicMap{
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 570936407477398505L;
     public final static int LEFT = -1;
     public final static int CENTER = 0;
     public final static int RIGHT = 1;

@@ -33,6 +33,10 @@ import java.util.Vector;
  */
 public class CommonMenuBar extends JMenuBar implements ActionListener {
     /**
+     * 
+     */
+    private static final long serialVersionUID = -3696211330827384307L;
+    /**
      * The <code>Game</code> current selected.
      * This value may be <code>null</code>.
      */

@@ -18,6 +18,10 @@ import java.awt.*;
 
 public class SimpleLine extends Canvas {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8615969226702396249L;
     private int h = 2;
     private int w;
     

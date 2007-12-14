@@ -21,6 +21,10 @@ import java.awt.event.ActionEvent;
  * here's a quick class for the host new game diaglogue box
  */
 public class HostDialog extends Dialog implements ActionListener {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4493711407007393414L;
     public String name;
     public String serverPass;
     public int port;

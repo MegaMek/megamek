@@ -75,6 +75,11 @@ public class MovementDisplay
     implements ActionListener, DoneButtoned,
                KeyListener, GameListener, BoardViewListener, Distractable
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 9136822404087057673L;
+
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 

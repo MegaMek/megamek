@@ -76,6 +76,10 @@ import java.io.OutputStream;
 
 public class BoardEditor extends JComponent implements ItemListener, ListSelectionListener,
         ActionListener, DocumentListener, IMapSettingsObserver {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4689863639249616192L;
     private JFrame frame = new JFrame();
     private Game game = new Game();
     private IBoard board = game.getBoard();
@@ -793,6 +797,11 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
      * component form
      */
     private class HexCanvas extends JPanel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 3201928357525361191L;
+
         HexCanvas() {
             setPreferredSize(new Dimension(90, 90));
         }

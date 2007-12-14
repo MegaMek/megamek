@@ -27,6 +27,11 @@ import java.util.Hashtable;
 public class UnitFailureDialog extends Dialog
     implements ActionListener, ItemListener, KeyListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7570434698437571985L;
+
     private Hashtable hFailedFiles;
 
     private List failedList = new List(10);

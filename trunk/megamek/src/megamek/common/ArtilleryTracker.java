@@ -24,6 +24,10 @@ import java.io.Serializable;
 public class ArtilleryTracker implements Serializable {
     
     /**
+     * 
+     */
+    private static final long serialVersionUID = -6913144265531983734L;
+    /**
      * Maps WeaponID's of artillery weapons to a Vector of ArtilleryModifiers, 
      * for all the different coords it's got mods to.
      */
@@ -116,6 +120,10 @@ public class ArtilleryTracker implements Serializable {
      */
     private static class ArtilleryModifier implements Serializable {
 
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 4913880091708068708L;
         private Coords coords;
         private int modifier;
 

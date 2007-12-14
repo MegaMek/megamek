@@ -51,6 +51,10 @@ import megamek.common.Player;
  */
 public class StartingPositionDialog extends JDialog implements ActionListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7255701351824139329L;
     private Client client;
     private ClientGUI clientgui;
 

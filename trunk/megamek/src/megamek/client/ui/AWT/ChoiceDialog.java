@@ -30,6 +30,11 @@ import java.awt.event.*;
 public class ChoiceDialog
     extends Dialog implements ActionListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5672829093914553736L;
+
     private boolean confirm = false;
 
     private Panel panButtons = new Panel();

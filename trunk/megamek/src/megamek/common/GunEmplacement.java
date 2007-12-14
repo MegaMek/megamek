@@ -27,6 +27,10 @@ public class GunEmplacement extends Entity
     implements Serializable {
 
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8561738092216598248L;
     private String name = null;
     private int cf = 40; // default is a medium building w/ CF 40
     private int height = 2; // default height is 2

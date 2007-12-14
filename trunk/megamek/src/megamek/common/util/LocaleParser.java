@@ -116,6 +116,11 @@ public class LocaleParser {
     }
 
     public static class ParseException extends Exception {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -8008986744358951377L;
+
         public ParseException(String message) {
             super(message);
         }        

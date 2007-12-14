@@ -85,7 +85,6 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.UnitLocation;
-import megamek.common.WeaponResult;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -123,6 +122,8 @@ public class BoardView1
     extends Canvas
     implements IBoardView, BoardListener, MouseListener, MouseMotionListener, KeyListener, AdjustmentListener, MechDisplayListener, IPreferenceChangeListener
 {
+    private static final long serialVersionUID = -7518808415074725538L;
+
     private static final int        TRANSPARENT = 0xFFFF00FF;
 
     // the dimensions of megamek's hex images
@@ -843,7 +844,7 @@ public class BoardView1
                 for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
                     ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
 
-                    if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
+                    if(a.getTarget(game).getPosition().equals(c)) {
                         scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING));
                         backGraph.drawImage(scaledImage, p.x, p.y, this);
                         break; //do not draw multiple times, tooltop will show all attacks
@@ -857,8 +858,7 @@ public class BoardView1
         ArrayList<ArtilleryAttackAction> v = new ArrayList<ArtilleryAttackAction>();
         for(Enumeration<ArtilleryAttackAction> attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
             ArtilleryAttackAction a = attacks.nextElement();
-
-            if(a.getWR().waa.getTarget(game).getPosition().equals(c)) {
+            if(a.getTarget(game).getPosition().equals(c)) {
                 v.add(a);
             }
         }
@@ -1587,15 +1587,14 @@ public class BoardView1
         // check artillery attacks
         for(Iterator i = artilleryAttacks.iterator(); i.hasNext();) {
             final ArtilleryAttackAction aaa = (ArtilleryAttackAction)i.next();
-            final WeaponResult wr = aaa.getWR();
-            final Entity ae = game.getEntity(wr.waa.getEntityId());
+            final Entity ae = game.getEntity(aaa.getEntityId());
             String s = null;
             if(ae != null) {
-                if(wr.waa.getWeaponId() > -1) {
-                    Mounted weap = ae.getEquipment(wr.waa.getWeaponId());
+                if(aaa.getWeaponId() > -1) {
+                    Mounted weap = ae.getEquipment(aaa.getWeaponId());
                     s = weap.getName();
-                    if(wr.waa.getAmmoId() > -1) {
-                        Mounted ammo = ae.getEquipment(wr.waa.getAmmoId());
+                    if(aaa.getAmmoId() > -1) {
+                        Mounted ammo = ae.getEquipment(aaa.getAmmoId());
                         s += "(" + ammo.getName() + ")";
                     }
                 }
@@ -1604,7 +1603,7 @@ public class BoardView1
                 s = Messages.getString("BoardView1.Artillery");
             }
             strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAttack", 
-                    new Object[] { s, new Integer(aaa.turnsTilHit), wr.toHit.getValueAsString() } );
+                    new Object[] { s, new Integer(aaa.turnsTilHit), aaa.toHit(game).getValueAsString() } );
         }
 
         //check artillery fire adjustment
@@ -2659,6 +2658,7 @@ public class BoardView1
      */
     private class TooltipCanvas extends Canvas
     {
+        private static final long serialVersionUID = 7085249378990745380L;
         private String[] tipStrings;
         private Dimension size;
 

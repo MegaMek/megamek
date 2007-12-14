@@ -60,11 +60,6 @@ public class Infantry
     private int         men     = 0;
 
     /**
-     * The amount of damage the platoon can do if it hits.
-     */
-    private int[]       damage  = new int[INF_PLT_MAX_MEN + 1];
-
-    /*
      * Infantry have no critical slot limitations or locations.
      */
     private static final int[]  NUM_OF_SLOTS    = {0};

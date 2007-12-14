@@ -62,6 +62,7 @@ import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.util.StraightArrowPolygon;
 import megamek.client.TimerSingleton;
 import megamek.common.Building;
+import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -71,6 +72,7 @@ import megamek.common.IEntityMovementMode;
 import megamek.common.IEntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
@@ -2006,13 +2008,16 @@ public class BoardView1
     }
 
     protected void secondLOSHex(Coords c2, Coords c1) {
-        if (useLOSTool) {
-            moveCursor(firstLOSSprite, c1);
-            moveCursor(secondLOSSprite, c2);
-            
+        moveCursor(firstLOSSprite, c1);
+        moveCursor(secondLOSSprite, c2);
+        Entity ae = chooseEntity(c1);
+        Entity te = chooseEntity(c2);
+
+        StringBuffer message = new StringBuffer();
+        LosEffects le;
+        if (ae == null || te == null) {
             boolean mechInFirst = GUIPreferences.getInstance().getMechInFirst();
             boolean mechInSecond = GUIPreferences.getInstance().getMechInSecond();
-            
             LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
             ai.attackPos = c1;
             ai.targetPos = c2;
@@ -2020,55 +2025,61 @@ public class BoardView1
             ai.targetHeight = mechInSecond?1:0;
             ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + ai.attackHeight;
             ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
-
-            LosEffects le = LosEffects.calculateLos(game, ai);
-            StringBuffer message = new StringBuffer();
+            le = LosEffects.calculateLos(game, ai);
             message.append(Messages.getString("BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
                     mechInFirst ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
-                    c1.getBoardNum()}));
+                            c1.getBoardNum()}));
             message.append(Messages.getString("BoardView1.Target", new Object[]{ //$NON-NLS-1$
                     mechInSecond ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                            c2.getBoardNum()}));
+        } else {
+            le = LosEffects.calculateLos(game, ae.getId(), te);
+            message.append(Messages.getString("BoardView1.Attacker", new Object[]{ //$NON-NLS-1$
+                    ae.getDisplayName(),
+                    c1.getBoardNum()}));
+            message.append(Messages.getString("BoardView1.Target", new Object[]{ //$NON-NLS-1$
+                    te.getDisplayName(),
                     c2.getBoardNum()}));
-            if (le.isBlocked()) {
-                message.append(Messages.getString("BoardView1.LOSBlocked", new Object[]{ //$NON-NLS-1$
+        }
+        if (le.isBlocked()) {
+            message.append(Messages.getString("BoardView1.LOSBlocked", new Object[]{ //$NON-NLS-1$
                     new Integer(c1.distance(c2))}));
-            } else {
-                message.append(Messages.getString("BoardView1.LOSNotBlocked", new Object[]{ //$NON-NLS-1$
-                        new Integer(c1.distance(c2))}));
-                if (le.getHeavyWoods() > 0) {
-                    message.append(Messages.getString("BoardView1.HeavyWoods", new Object[]{ //$NON-NLS-1$
-                            new Integer(le.getHeavyWoods())}));
+        } else {
+            message.append(Messages.getString("BoardView1.LOSNotBlocked", new Object[]{ //$NON-NLS-1$
+                    new Integer(c1.distance(c2))}));
+            if (le.getHeavyWoods() > 0) {
+                message.append(Messages.getString("BoardView1.HeavyWoods", new Object[]{ //$NON-NLS-1$
+                        new Integer(le.getHeavyWoods())}));
+            }
+            if (le.getLightWoods() > 0) {
+                message.append(Messages.getString("BoardView1.LightWoods", new Object[]{ //$NON-NLS-1$
+                        new Integer(le.getLightWoods())}));
+            }
+            if (le.getLightSmoke() > 0) {
+                message.append(Messages.getString("BoardView1.LightSmoke", new Object[]{ //$NON-NLS-1$
+                        new Integer(le.getLightSmoke())}));
+            }
+            if (le.getHeavySmoke() > 0) {
+                if (game.getOptions().booleanOption("maxtech_fire")) { //$NON-NLS-1$
+                    message.append(Messages.getString("BoardView1.HeavySmoke", new Object[]{ //$NON-NLS-1$
+                            new Integer(le.getHeavySmoke())}));
                 }
-                if (le.getLightWoods() > 0) {
-                    message.append(Messages.getString("BoardView1.LightWoods", new Object[]{ //$NON-NLS-1$
-                            new Integer(le.getLightWoods())}));
-                }
-                if (le.getLightSmoke() > 0) {
-                    message.append(Messages.getString("BoardView1.LightSmoke", new Object[]{ //$NON-NLS-1$
-                            new Integer(le.getLightSmoke())}));
-                }
-                if (le.getHeavySmoke() > 0) {
-                    if (game.getOptions().booleanOption("maxtech_fire")) { //$NON-NLS-1$
-                        message.append(Messages.getString("BoardView1.HeavySmoke", new Object[]{ //$NON-NLS-1$
-                                new Integer(le.getHeavySmoke())}));
-                    }
-                    else {
-                        message.append(Messages.getString("BoardView1.Smoke", new Object[]{ //$NON-NLS-1$
-                                new Integer(le.getHeavySmoke())}));
-                    }
-                }
-                if (le.isTargetCover()) {
-                    message.append(Messages.getString("BoardView1.TargetPartialCover")); //$NON-NLS-1$
-                }
-                if (le.isAttackerCover()) {
-                    message.append(Messages.getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
+                else {
+                    message.append(Messages.getString("BoardView1.Smoke", new Object[]{ //$NON-NLS-1$
+                            new Integer(le.getHeavySmoke())}));
                 }
             }
-            AlertDialog alert = new AlertDialog(frame,
-                                                Messages.getString("BoardView1.LOSTitle"), //$NON-NLS-1$
-                                                message.toString(), false);
-            alert.setVisible(true);
+            if (le.isTargetCover()) {
+                message.append(Messages.getString("BoardView1.TargetPartialCover")); //$NON-NLS-1$
+            }
+            if (le.isAttackerCover()) {
+                message.append(Messages.getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
+            }
         }
+        AlertDialog alert = new AlertDialog(frame,
+                Messages.getString("BoardView1.LOSTitle"), //$NON-NLS-1$
+                message.toString(), false);
+        alert.setVisible(true);
     }
 
     /**
@@ -4605,5 +4616,51 @@ public class BoardView1
             dirtyBoard = true;
         }
         repaint(100);
+    }
+    
+    /**
+     * Have the player select an Entity from the entities at the given coords.
+     *
+     * @param   pos - the <code>Coords</code> containing targets.
+     */
+    private Entity chooseEntity(Coords pos) {
+
+        // Assume that we have *no* choice.
+        Entity choice = null;
+
+        // Get the available choices.
+        Enumeration<Entity> choices = game.getEntities( pos );
+
+        // Convert the choices into a List of targets.
+        Vector<Entity> entities = new Vector<Entity>();
+        while ( choices.hasMoreElements() ) {
+            entities.addElement( choices.nextElement() );
+        }
+
+        // Do we have a single choice?
+        if (entities.size() == 1) {
+            // Return  that choice.
+            choice = entities.elementAt( 0 );
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        else if ( entities.size() > 1 ) {
+            String[] names = new String[ entities.size() ];
+            for ( int loop = 0; loop < names.length; loop++ ) {
+                names[loop] = entities.elementAt(loop).getDisplayName();
+            }
+            SingleChoiceDialog choiceDialog =
+                new SingleChoiceDialog( this.frame,
+                        Messages.getString("BoardView1.ChooseEntityDialog.title"), //$NON-NLS-1$
+                        Messages.getString("BoardView1.ChooseEntityDialog.message", new Object[]{pos.getBoardNum()}), //$NON-NLS-1$
+                        names );
+            choiceDialog.setVisible(true);
+            if (choiceDialog.getAnswer() == true) {
+                choice = entities.elementAt(choiceDialog.getChoice());
+            }
+        } // End have-choices
+
+        // Return the chosen unit.
+        return choice;
     }
 }

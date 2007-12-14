@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.*;
+import java.io.InterruptedIOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -93,9 +93,6 @@ import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.Report;
-import megamek.common.weapons.AttackHandler;
-import megamek.common.weapons.Weapon;
-import megamek.common.weapons.WeaponHandler;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -139,10 +136,10 @@ import megamek.common.actions.UnjamAction;
 import megamek.common.actions.UnloadStrandedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
-import megamek.common.net.IConnection;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
+import megamek.common.net.IConnection;
 import megamek.common.net.Packet;
 import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.IBasicOption;
@@ -154,6 +151,9 @@ import megamek.common.verifier.EntityVerifier;
 import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
+import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.Weapon;
+import megamek.common.weapons.WeaponHandler;
 import megamek.server.commands.AddBotCommand;
 import megamek.server.commands.CheckBVCommand;
 import megamek.server.commands.DefeatCommand;
@@ -2512,7 +2512,7 @@ public class Server implements Runnable {
 		for (int i = 0; i < mapSettings.getMapWidth()
 				* mapSettings.getMapHeight(); i++) {
 			sheetBoards[i] = new Board();
-			String name = (String) mapSettings.getBoardsSelectedVector()
+			String name = mapSettings.getBoardsSelectedVector()
 					.elementAt(i);
 			boolean isRotated = false;
 			if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
@@ -2935,7 +2935,7 @@ public class Server implements Runnable {
                     // If there is only one player, list them as the 'team', and
                     // use the team iniative
                     if (team.getSize() == 1) {
-                        final Player player = (Player) team.getPlayers()
+                        final Player player = team.getPlayers()
                                 .nextElement();
                         r = new Report(1015, Report.PUBLIC);
                         r.add(player.getName());
@@ -4260,7 +4260,6 @@ public class Server implements Runnable {
 					// let the player replot their move as MP might be changed
 					md.clear();
 					fellDuringMovement = true; // so they get a new turn
-					break;
 				} else
 					addReport(vReport);
 			}
@@ -6620,7 +6619,7 @@ public class Server implements Runnable {
 		}
 
 		// hmmm... somebody there... problems.
-		if (fallElevation >= 2 && causeAffa && affaTarget != null) {
+		if (fallElevation >= 2 && causeAffa) {
 			// accidental fall from above: havoc!
 			r = new Report(2210);
 			r.subject = entity.getId();
@@ -7185,12 +7184,8 @@ public class Server implements Runnable {
 			            public int player = firingEntity.getOwnerId();
 			            public Targetable target = aaa.getTarget(game);
 			            public boolean accept(Entity entity) {
-			                if ( (player == entity.getOwnerId()) &&
-			                                !((LosEffects.calculateLos(game, entity.getId(), target)).isBlocked()) && entity.isActive()) {
-			                    return true;
-			                } else {
-			                    return false;
-			                }
+			                return ( (player == entity.getOwnerId()) &&
+			                                !((LosEffects.calculateLos(game, entity.getId(), target)).isBlocked()) && entity.isActive());
 			            }
 			        } );
 			        Vector<Integer> spotterIds = new Vector<Integer>();
@@ -7699,7 +7694,6 @@ public class Server implements Runnable {
 				addReport(r);
 			} else {
 				// Sorry, no club for you.
-				clubType = null;
 				r = new Report(3050);
 				r.subject = entity.getId();
 				r.addDesc(entity);
@@ -9306,8 +9300,7 @@ public class Server implements Runnable {
 
 		// On a roll of 10+ a lance hitting a mech/Vehicle can cause 1 point of
 		// internal damage
-		if (te != null
-				&& ((MiscType) caa.getClub().getType())
+		if (((MiscType) caa.getClub().getType())
 						.hasSubType(MiscType.S_LANCE) && te.getArmor(hit) > 0
 				&& te.getArmorType() != EquipmentType.T_ARMOR_HARDENED) {
 			roll = Compute.d6(2);
@@ -19265,13 +19258,15 @@ public class Server implements Runnable {
 	 */
 
 	private void resolveIceBroken(Coords c) {
-		game.getBoard().getHex(c).removeTerrain(Terrains.ICE);
+        IHex hex = game.getBoard().getHex(c);
+		hex.removeTerrain(Terrains.ICE);
 		sendChangedHex(c);
 		// drop entities on the surface into the water
 		for (Enumeration entities = game.getEntities(c); entities
 				.hasMoreElements();) {
 			Entity e = (Entity) entities.nextElement();
-			if (e.getElevation() == 0) {
+            //If the unit is on the surface, and is no longer allowed in the hex
+			if (e.getElevation() == 0 && e.isHexProhibited(hex)) {
 				doEntityFall(e, new PilotingRollData(TargetRoll.AUTOMATIC_FAIL));
 			}
 		}

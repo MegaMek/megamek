@@ -14,12 +14,10 @@
 
 package megamek.common.util;
 
-import java.util.TreeMap;
-import java.util.Vector;
 import java.io.File;
-import java.util.Enumeration;
-import megamek.common.util.Collections;
-import megamek.common.util.StringUtil;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.TreeMap;
 
 /**
  * This class represents a collection of files present within a directory
@@ -64,9 +62,9 @@ public class DirectoryItems implements Categorized {
      * @param   category - the <code>Categorized</code> files.
      */
     private void addCategory( Categorized category ) {
-        Enumeration<String> names = category.getCategoryNames();
-        while ( names.hasMoreElements() ) {
-            categories.put( names.nextElement(), category );
+        Iterator<String> names = category.getCategoryNames();
+        while ( names.hasNext() ) {
+            categories.put( names.next(), category );
         }
     }
 
@@ -193,8 +191,8 @@ public class DirectoryItems implements Categorized {
      * @return  an <code>Enumeration</code> of <code>String</code> names.
      *          This value will not be <code>null</code>, but it may be empty.
      */
-    public Enumeration<String> getCategoryNames() {
-        return Collections.elements( categories.keySet() );
+    public Iterator<String> getCategoryNames() {
+        return categories.keySet().iterator();
     }
 
     /**
@@ -205,14 +203,14 @@ public class DirectoryItems implements Categorized {
      * @return  an <code>Enumeration</code> of <code>String</code> names.
      *          This value will not be <code>null</code>, but it may be empty.
      */
-    public Enumeration<String> getItemNames( String categoryName ) {
+    public Iterator<String> getItemNames( String categoryName ) {
 
         // Get the category with the given name.
         Categorized category = categories.get( categoryName );
 
         // Return an empty Enumeration if we couldn't find the category.
         if ( null == category ) {
-            return new Vector<String>().elements();
+            return new ArrayList<String>().iterator();
         }
 
         // Is this a subcategory?
@@ -223,7 +221,7 @@ public class DirectoryItems implements Categorized {
         }
 
         // Return the names of this directory's items.
-        return Collections.elements( items.keySet() );
+        return items.keySet().iterator();
     }
 
     /**

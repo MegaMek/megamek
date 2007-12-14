@@ -33,6 +33,7 @@ v0.33.13-dev (SVN)
 + Improved LOS-Tool. If both hexes contain a unit, the respective unit's
     current height will be used for the calculation
 + Bug: mechs always had elevation 1 when in a hex with a building
++ Bug 1775622: Hovers sink in broken ice hex
 
 v0.33.12 (2007-11-09, GMT 22:21 GMT+2)
 + Corrected names of the Celestials

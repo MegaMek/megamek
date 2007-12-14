@@ -14,7 +14,18 @@
 
 package megamek.common.actions;
 
-import megamek.common.*;
+import megamek.common.Building;
+import megamek.common.Compute;
+import megamek.common.Coords;
+import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.IGame;
+import megamek.common.IHex;
+import megamek.common.Mech;
+import megamek.common.TargetRoll;
+import megamek.common.Targetable;
+import megamek.common.Terrains;
+import megamek.common.ToHitData;
 
 /**
  * The attacker pushes the target.
@@ -67,13 +78,7 @@ public class PushAttackAction
                                       int attackerId,
                                       Targetable target) {
         final Entity ae = game.getEntity(attackerId);
-        /* Completely forgot to look at TE since TE can be a Non Entity.
-         * --Torren
-        // arguments legal?
-        if (ae == null || target == null) {
-            throw new IllegalArgumentException("Attacker or target not valid");
-        }
-*/
+
         int targetId = Entity.NONE;
         Entity te = null;
         if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
@@ -113,7 +118,7 @@ public class PushAttackAction
         }
 
         //Can only push mechs
-        if ( te !=null && !(te instanceof Mech) ) {
+        if (!(te instanceof Mech) ) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not a mech");
         }
 
@@ -123,12 +128,12 @@ public class PushAttackAction
         }
 
         // Can't target a transported entity.
-        if ( te != null && Entity.NONE != te.getTransportId() ) {
+        if ( Entity.NONE != te.getTransportId() ) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if ( te != null && Entity.NONE != te.getSwarmTargetId() ) {
+        if ( Entity.NONE != te.getSwarmTargetId() ) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is swarming a Mek.");
         }
 
@@ -155,12 +160,12 @@ public class PushAttackAction
         }
 
         // can't push mech making non-pushing displacement attack
-        if ( te != null && te.hasDisplacementAttack() && !te.isPushing() ) {
+        if ( te.hasDisplacementAttack() && !te.isPushing() ) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is making a charge/DFA attack");
         }
 
         // can't push mech pushing another, different mech
-        if ( te != null && te.isPushing() &&
+        if ( te.isPushing() &&
              te.getDisplacementAttack().getTargetId() != ae.getId() ) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is pushing another mech");
         }
@@ -171,7 +176,7 @@ public class PushAttackAction
         }
 
         // can't attack the target of another displacement attack
-        if ( te != null && te.isTargetOfDisplacementAttack() &&
+        if ( te.isTargetOfDisplacementAttack() &&
              te.findTargetedDisplacement().getEntityId() != ae.getId() ) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is the target of another push/charge/DFA");
         }
@@ -187,7 +192,7 @@ public class PushAttackAction
         }
 
         // can't push prone mechs
-        if ( te != null && te.isProne()) {
+        if ( te.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is prone");
         }
 

@@ -14,7 +14,17 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Choice;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.ItemSelectable;
+import java.awt.Label;
+import java.awt.List;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -24,11 +34,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
-import megamek.client.ui.AWT.widget.AdvancedLabel;
+
 import megamek.client.ui.AWT.util.ImageFileFactory;
 import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.client.ui.AWT.widget.ImageButton;
 import megamek.common.Player;
 import megamek.common.util.DirectoryItems;
@@ -124,7 +135,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         else {
 
             // Translate the "root camo" category name.
-            Enumeration<String> camoNames;
+            Iterator<String> camoNames;
             if ( Player.ROOT_CAMO.equals( category ) ) {
                 camoNames = camos.getItemNames( "" ); //$NON-NLS-1$
             } else {
@@ -132,8 +143,8 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
             }
 
             // Get the camo names for this category.
-            while ( camoNames.hasMoreElements() ) {
-                items.add( camoNames.nextElement() );
+            while ( camoNames.hasNext() ) {
+                items.add( camoNames.next() );
             }
         }
 
@@ -221,7 +232,7 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         frame = parent;
 
         // Declare local variables.
-        Enumeration<String> names;
+        Iterator<String> names;
         String name;
 
         // Parse the camo directory.
@@ -254,12 +265,12 @@ public class CamoChoiceDialog extends Dialog implements ActionListener,
         // Only add the "root camo" category if it contains items.
         categories.addItem( Player.NO_CAMO );
         if (camos != null) {
-            if ( camos.getItemNames("").hasMoreElements() ) { //$NON-NLS-1$
+            if ( camos.getItemNames("").hasNext() ) { //$NON-NLS-1$
                 categories.addItem( Player.ROOT_CAMO );
             }
             names = camos.getCategoryNames();
-            while ( names.hasMoreElements() ) {
-                name = names.nextElement();
+            while ( names.hasNext() ) {
+                name = names.next();
                 if ( !name.equals("") ) { //$NON-NLS-1$
                     categories.addItem( name );
                 }

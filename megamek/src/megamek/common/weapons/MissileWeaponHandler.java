@@ -116,11 +116,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || 
                  entityTarget.isINarcedBy(ae.getOwner().getTeam()))) {
             // only apply Narc bonus if we're not suffering ECM effect
-            // and we are using narc ammo.
+            // and we are using narc ammo, and we're not firing indirectly.
             if (!bECMAffected
                     && !bMekStealthActive
                     && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
-                    && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
+                    && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE
+                    && (weapon.curMode() == null || !weapon.curMode().equals("Indirect"))) {
                 nSalvoBonus += 2;
             }
         }

@@ -88,7 +88,7 @@ public class ThrashAttackAction extends AbstractAttackAction {
         }
 
         // Can't thrash against swarming infantry.
-        else if (te != null && Entity.NONE != te.getSwarmTargetId()) {
+        else if (Entity.NONE != te.getSwarmTargetId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Can't thrash at swarming infantry");
         }
 

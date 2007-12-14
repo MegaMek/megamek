@@ -49,6 +49,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.Vector;
 
 /**
@@ -154,7 +155,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         else {
 
             // Translate the "root camo" category name.
-            Enumeration<String> camoNames;
+            Iterator<String> camoNames;
             if (Player.ROOT_CAMO.equals(category)) {
                 camoNames = camos.getItemNames(""); //$NON-NLS-1$
             } else {
@@ -162,8 +163,8 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
             }
 
             // Get the camo names for this category.
-            while (camoNames.hasMoreElements()) {
-                ((DefaultListModel) items.getModel()).addElement(camoNames.nextElement());
+            while (camoNames.hasNext()) {
+                ((DefaultListModel) items.getModel()).addElement(camoNames.next());
             }
         }
 
@@ -248,7 +249,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         frame = parent;
 
         // Declare local variables.
-        Enumeration<String> names;
+        Iterator<String> names;
         String name;
 
         // Parse the camo directory.
@@ -283,12 +284,12 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         // Only add the "root camo" category if it contains items.
         categories.addItem(Player.NO_CAMO);
         if (camos != null) {
-            if (camos.getItemNames("").hasMoreElements()) { //$NON-NLS-1$
+            if (camos.getItemNames("").hasNext()) { //$NON-NLS-1$
                 categories.addItem(Player.ROOT_CAMO);
             }
             names = camos.getCategoryNames();
-            while (names.hasMoreElements()) {
-                name = names.nextElement();
+            while (names.hasNext()) {
+                name = names.next();
                 if (!"".equals(name)) { //$NON-NLS-1$
                     categories.addItem(name);
                 }

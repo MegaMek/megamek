@@ -22,8 +22,6 @@ import java.util.Vector;
 
 public class AmmoType extends EquipmentType {
     // ammo types
-    public static final int     T_BA_SMALL_LASER    = -3; // !usesAmmo(), 3 damage per hit
-    public static final int     T_BA_MG             = -2; // !usesAmmo(), 2 damage per hit
     public static final int     T_NA                = -1;
     public static final int     T_AC                = 1;
     public static final int     T_VEHICLE_FLAMER    = 2;

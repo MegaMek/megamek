@@ -46,25 +46,25 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
         super(toHit, waa, g, s);
     }
 
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
+     */
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
         if (entityTarget instanceof Mech
                 && game.getOptions().booleanOption("flamer_heat")) {
             // heat
-            int nDamage = nDamPerHit * hits;
-            //hits
-            r = new Report(3390);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            int heat = wtype.getHeat();
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            r.add(nDamage);
+            r.add(heat);
             r.newlines = 0;
+            r.choose(true);
             vPhaseReport.addElement(r);
-            entityTarget.heatBuildup += nDamage;
-            hits = 0;
+            entityTarget.heatBuildup += heat;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, nDamPerHit, bldgAbsorbs);

@@ -1547,8 +1547,6 @@ public class FiringDisplay
         WeaponType wtype = (WeaponType)weapon.getType();
         boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
         boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA
-                && wtype.getAmmoType() != AmmoType.T_BA_MG
-                &&wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER
                 && !isWeaponInfantry;
         Mounted ammo = usesAmmo ? weapon.getLinked() : null;
         AmmoType atype = ammo == null ? null : (AmmoType)ammo.getType();

@@ -124,9 +124,8 @@ public class FiringDisplay
 
     private JButton butSearchlight;
     
-//    private JButton            butReport;
     private JButton butSpace;
-    private JButton butFireMode; // Fire Mode - Add a Fire Mode JButton - Rasia
+    private JButton butFireMode;
 
     private JButton butNext;
     private JButton butDone;
@@ -222,7 +221,6 @@ public class FiringDisplay
         butSpace = new JButton("."); //$NON-NLS-1$
         butSpace.setEnabled(false);
 
-        // Fire Mode - Adding a Fire Mode JButton to the 2nd Menu - Rasia
         butFireMode = new JButton(Messages.getString("FiringDisplay.Mode")); //$NON-NLS-1$
         butFireMode.addActionListener(this);
         butFireMode.addKeyListener(this);
@@ -260,12 +258,6 @@ public class FiringDisplay
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
-//         c.gridwidth = GridBagConstraints.REMAINDER;
-//         addBag(clientgui.bv, gridbag, c);
-
-//         c.weightx = 1.0;    c.weighty = 0;
-//         c.gridwidth = 1;
-//         addBag(client.cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;
@@ -307,7 +299,6 @@ public class FiringDisplay
                 panButtons.add(butTwist);
                 panButtons.add(butFireMode);
                 panButtons.add(butMore);
-//             panButtons.add(butDone);
                 break;
             case 1:
                 panButtons.add(butNext);
@@ -317,7 +308,6 @@ public class FiringDisplay
                 panButtons.add(butSpot);
                 panButtons.add(butSearchlight);
                 panButtons.add(butMore);
-//             panButtons.add(butDone);
                 break;
         }
 
@@ -673,6 +663,9 @@ public class FiringDisplay
         ash.lockLocation(false);
     }
 
+    /**
+     * fire searchlight
+     */
     private void doSearchlight() {
         // validate
         if (ce() == null || target == null) {
@@ -1190,6 +1183,10 @@ public class FiringDisplay
         }
     }
 
+    /**
+     * update for change of arms-flipping status
+     * @param armsFlipped
+     */
     private void updateFlipArms(boolean armsFlipped) {
         if (armsFlipped == ce().getArmsFlipped()) {
             return;
@@ -1305,10 +1302,6 @@ public class FiringDisplay
             updateFlipArms(false);
             torsoTwist(1);
         }
-/*        if (ev.getKeyCode() == KeyEvent.VK_M) {
-            changeMode(); 
-        }
-*/
     }
 
     public void keyReleased(KeyEvent ev) {
@@ -1519,8 +1512,10 @@ public class FiringDisplay
             }
         }
 
-        // All aimed shots with a targeting computer
-        // must be at the same location.
+        /**
+         * All aimed shots with a targeting computer
+         * must be at the same location.
+         */
         public void lockLocation(boolean lock) {
             if (lock) {
                 lockedTarget = target;
@@ -1547,7 +1542,9 @@ public class FiringDisplay
             return aimingMode;
         }
 
-        // Returns the name of aimed location.
+        /**
+         * Returns the name of aimed location.
+         */
         public String getAimingLocation() {
             if (target != null &&
                     (aimingAt != Entity.LOC_NONE) &&
@@ -1563,12 +1560,15 @@ public class FiringDisplay
             return null;
         }
 
-        // Sets the aiming mode, depending on the target and
-        // the attacker. Against immobile mechs, targeting
-        // computer aiming mode will be used if turned on.
-        // (This is a hack, but it's the resolution suggested
-        // by the bug submitter, and I don't think it's half
-        // bad.
+        /**
+         * Sets the aiming mode, depending on the target and
+         * the attacker. Against immobile mechs, targeting
+         * computer aiming mode will be used if turned on.
+         * (This is a hack, but it's the resolution suggested
+         * by the bug submitter, and I don't think it's half
+         * bad. 
+         */
+
         public void setAimingMode() {
             boolean allowAim;
 
@@ -1597,24 +1597,29 @@ public class FiringDisplay
             aimingMode = IAimingModes.AIM_MODE_NONE;
         }
 
-        // If in aiming mode.
+        /**
+         * @return if are we in aiming mode
+         */
         public boolean inAimingMode() {
             return aimingMode != IAimingModes.AIM_MODE_NONE;
         }
 
-        // If a hit location is currently selected.
+        /**
+         * @return if a hit location currently selected.
+         */
         public boolean isAimingAtLocation() {
             return aimingAt != Entity.LOC_NONE;
         }
 
-        // Determines if a certain weapon may aimed at a specific
-        // hit location.
+        /**
+         * should aimned shoots be allowed with the passed weapon
+         * @param weapon
+         * @return
+         */
         public boolean allowAimedShotWith(Mounted weapon) {
             WeaponType wtype = (WeaponType) weapon.getType();
             boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
             boolean usesAmmo = wtype.getAmmoType() != AmmoType.T_NA &&
-                    wtype.getAmmoType() != AmmoType.T_BA_MG &&
-                    wtype.getAmmoType() != AmmoType.T_BA_SMALL_LASER &&
                     !isWeaponInfantry;
             Mounted ammo = usesAmmo ? weapon.getLinked() : null;
             AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();

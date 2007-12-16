@@ -1870,7 +1870,7 @@ public class BoardView1
             for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
                 final Entity fe = i.nextElement();
                 if (fe.getPosition() == null) return;
-                if ( e.onSameC3NetworkAs(fe)) {
+                if ( e.onSameC3NetworkAs(fe) && !fe.equals(e)) {
                     C3Sprites.add(new C3Sprite(e, fe));
                 }
             }

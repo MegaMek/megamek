@@ -3,6 +3,8 @@
 v0.33.14-dev (SVN)
 + Malak Dominus fixed
 + Bug 1851887: NPE with bot and PPC weapons that can't have a capacitor
++ Partial fix for Bug 1852029: client crash when deploying c3i units
+    now only happens when c3i units are actually on a network
 
 v0.33.13 (2007-12-13, 21:34 GMT+1)
 + Fix lock when sending large packets

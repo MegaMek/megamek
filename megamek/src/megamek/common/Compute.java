@@ -609,7 +609,7 @@ public class Compute {
         //
         if (wtype.hasFlag(WeaponType.F_PPC)) {
             if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")) {
-                if (weapon.curMode().equals("Field Inhibitor OFF")) {
+                if (weapon.curMode() != null && weapon.curMode().equals("Field Inhibitor OFF")) {
                     weaponRanges[RangeType.RANGE_MINIMUM] = 0;
                 }
             }

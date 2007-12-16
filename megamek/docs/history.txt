@@ -2,6 +2,7 @@
 ----------------
 v0.33.14-dev (SVN)
 + Malak Dominus fixed
++ Bug 1851887: NPE with bot and PPC weapons that can't have a capacitor
 
 v0.33.13 (2007-12-13, 21:34 GMT+1)
 + Fix lock when sending large packets

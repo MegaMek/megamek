@@ -1668,9 +1668,6 @@ public class Compute {
                         fDamage = wt.getRackSize();
                     }
                 }
-                if (wt.hasFlag(WeaponType.F_DOUBLE_HITS)) {
-                    fHits *= 2;
-                }
                 if (wt.hasFlag(WeaponType.F_MISSILE_HITS)) {
                     fHits *= expectedHitsByRackSize[wt.getRackSize()];
                 }

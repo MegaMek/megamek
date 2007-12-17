@@ -1078,9 +1078,6 @@ public class CEntity {
                         fDamage = wt.getRackSize();
                     }
                 }
-                if (wt.hasFlag(WeaponType.F_DOUBLE_HITS)) {
-                    fHits *= 2.0;
-                }
                 if (wt.hasFlag(WeaponType.F_MISSILE_HITS)) {
                     fHits *= expectedHitsByRackSize[wt.getRackSize()];
                 }

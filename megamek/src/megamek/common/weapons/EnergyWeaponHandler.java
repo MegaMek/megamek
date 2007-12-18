@@ -48,11 +48,11 @@ public class EnergyWeaponHandler extends WeaponHandler {
             } else if (nRange <= wtype.getLongRange()) {
                 toReturn--;
             } else if (nRange <= wtype.getExtremeRange()) {
-                toReturn = (int)Math.floor(nDamPerHit/2.0);
+                toReturn = (int)Math.floor(toReturn/2.0);
             }
         }
         if (bGlancing) {
-            toReturn = (int)Math.floor(nDamPerHit/2.0);
+            toReturn = toReturn/=2;
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor)) 
         	toReturn /= 10;

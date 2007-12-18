@@ -59,11 +59,13 @@ public abstract class BotClient extends Client {
             
             public void gamePlayerChat(GamePlayerChatEvent e) {
                 processChat(e);
+                flushConn();
             }
             
             public void gameTurnChange(GameTurnChangeEvent e) {
                 if (isMyTurn()) {
                     calculateMyTurn();
+                    flushConn();
                 }
             }
             
@@ -72,6 +74,7 @@ public abstract class BotClient extends Client {
                     //Opponent has used tactical genius, must press
                     // "Done" again to advance past initiative report.
                     sendDone(true);
+                    flushConn();
                 }
             }
             

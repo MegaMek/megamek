@@ -225,9 +225,10 @@ public class WeaponHandler implements AttackHandler {
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
+        nDamPerHit = calcDamagePerHit();
         useAmmo();
         addHeat();
-        nDamPerHit = calcDamagePerHit();
+        
 
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget, bMissed)) {

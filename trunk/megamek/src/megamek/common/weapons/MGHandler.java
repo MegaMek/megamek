@@ -34,7 +34,6 @@ import megamek.server.Server;
  * 
  */
 public class MGHandler extends AmmoWeaponHandler {
-    int nDamPerHit = 0;
 
     /**
      * @param t

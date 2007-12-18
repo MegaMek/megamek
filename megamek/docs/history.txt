@@ -6,6 +6,7 @@ v0.33.14-dev (SVN)
 + Partial fix for Bug 1852029: client crash when deploying c3i units
     now only happens when c3i units are actually on a network
 + Bug 1852058: flags in weapontype don't work correctly
++ Bug 1853433: energy weapons glancing blow causes no damage
 
 v0.33.13 (2007-12-13, 21:34 GMT+1)
 + Fix lock when sending large packets

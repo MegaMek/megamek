@@ -143,9 +143,8 @@ public class Client implements IClientCommandHandler {
             depend on it*/
         final Runnable packetUpdate=new Runnable() {
             public void run()
-            {                    
-                if(connection!=null)
-                    connection.update();
+            {   
+                updateConnection();
             }
         };
         final TimerTask packetUpdate2=new TimerTask() {
@@ -158,7 +157,14 @@ public class Client implements IClientCommandHandler {
         };
         ts.schedule(packetUpdate2,500,100);        
     }
-
+    /**
+     *  call this once to update the connection
+     */
+    protected void updateConnection()
+    {
+        if(connection!=null)
+            connection.update();    
+    }
     /**
      * Attempt to connect to the specified host
      */
@@ -373,12 +379,17 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     *
+     *  wtf is this? waits for 5 seconds just for nothing?? - itmo
+     *  fixed this to be a bit more sensible..
      */
-    public void retrieveServerInfo() {
+    public void retrieveServerInfo() 
+    {
+        updateConnection();
         int retry = 50;
         while (retry-- > 0 && !connected) {
             synchronized (this) {
+                flushConn();
+                updateConnection();
                 try {
                     wait(100);
                 } catch (InterruptedException ex) {

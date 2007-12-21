@@ -1,50 +1,50 @@
-The bot was written by Steve Hawkins <hawkprime@users.sourceforge.net> building off of 
-the work of Michael Hanson <hanson@cs.stanford.edu>.
-  
-The bot works with most units: mechs, tanks and infantry.  There are a few bugs that will cause 
-it to stop responding.  When this happens, start again from the last saved game.  
+Document History:
+Version 1 - Michael Hanson <hanson@cs.stanford.edu>
+Version 2 - Steve Hawkins <hawkprime@users.sourceforge.net>
+Version 3 - Jeff Wang <swang30@users.sourceforge.net>
 
-  Starting A Game Against The Bot
-    To play against the bot, host a game.
-    Go to the players list and click add bot.
-    Selecting that bot from the players list will allow you to change its team or remove it. 
-    Set the bot's starting position by selecting it from the starting 
-    position list, then click change start.
-    As you use the add unit dialog, just assign some mechs to the bot.
-    Hit done and have fun!
-	
-    The bot will also work in most Scenarios.
-    
-    Alternatively, you can still launch the bot in a separate client like before.
-        
-    TODO: camo change ability
-    TODO: have unit loading list work with bots
-    
-History:
+Bot History:
+Version 1 - Michael Hanson - Original implementation
+Version 2 - Steve Hawkins - Utility model improved, Genetic Algorithm added
+Version 3 - Sebastian Brocks <beerockxs@users.sourceforge.net> / Jeff Wang - General 
+			speed improvements, gui-less client
 
-.3.x Current
-  A gui-less incarnation of the the .3 bot with support for random minefield placement.
-I'm sure that this new setup will cause people trouble at first, but it should be worth it.
-  
-.3
-  A refactoring of the bot that removed about 1/3 of the code and most of the original code.  
-It also supports double-blind although not very well...  
+Known issues:
+The Bot does some dumb things, such as using MASC without being in danger, or 
+	running on pavement when not necessary.
+The Bot is slow, as compared to many games out there.  But still faster than a 
+	human on tabletop games. :)
+The Bot crashes sometimes. (Boo!)
+The Bot can't handle alternative victory conditions.  It still tries to kill you, 
+	no matter what.
+The Bot can't handle Double-Blind.
 
-.2.x 
-  Various bug fixes and tweaks by MegaMek developers.  Support for infantry, 
-vehicles and automatic deployment.
+Usage:
+The bot works with most units: mechs, tanks and infantry.  
+Memory wise, normal MM needs 20 MB + .5 MB for each entity + 1 MB for each 
+board. The bot will need an additional 15 MB + 2 MB for each entity.  There are a
+few bugs that will cuase it to stop responding, usually, there will be a stack
+trace associated with the error in megamek.log, please save this log, and post it
+as a bug on Sourceforge.  You can restart your game from the last save.
 
-.2 TestBot - Steve Hawkins
-  Spurred on by taking an AI class, the original bot was improved to have a more
-robust utility model and a polynomial movement exploration algorithm.  The movement
-algorithm was further enhanced to a hierarchical filtering process that included limited
-look ahead and planning.  Entities go through a characterization phase to have fast approximations
-available for the first stages of the filtering.  Also, firing determination and lance movement were 
-changed to use genetic algorithms.  
+Using the gui-less client (preferred)-
+	a) start your own game normally
+	b) go to the players list and click add bot
+	c) set up units, teams, etc. normally.
+	d) hit done and play.
+	 
+Using the gui client (new or saved game) -
+	a) start your own game normally, and get to the lobby, set up your units.
+	b) start another MM instance (you can start multiple copies of MM from one install)
+	c) click on Connect as Computer Player and enter the connection parameters you 
+		specified in (a)
+	d) get to the lobby, add your units and click done on both clients.
 
-.1 The Original - Michael Hanson
-  Semi-utility based with an exponential movement exploration algorithm. No movement
-planning or look ahead. Support for some physical attacks.
+Starting from a saved game (gui-less client)-
+	a) load your saved game normally
+	b) on the chat line, enter "/replacePlayer <botname>" (No quotes, and replace 
+		<botname> with the name of the bot.)
+	c) play on normally.
 
 Other Possibilities:
 
@@ -62,6 +62,16 @@ Other Possibilities:
     Example usage would be to have the bot provide fire support and handle close
     range fighting yourself.
 
+  Bot Speed
+    The Bot works better with a smaller amount of units.  4 gives decent response
+    time, anything above 12 is highly questionable.  Multiple bots taking 4 each
+    will work a lot faster than 1 bot taking 12 units, but of course the
+    coordination between them will be about nil.
+    The gui-less client is about 100x slower than the gui client.  Don't use the
+    gui client unless you have to, or it's a small bot.
+    Individual Initiative works better for The Bot, because it only needs to
+    calculate what's the best move RIGHT NOW.
+    
   Bot Vs. Bot
     Because the bot connects like a normal client, you can start two seperate
     bots and they will fight against each other.  If you do not want to play, 
@@ -86,14 +96,6 @@ Other Possibilities:
     too little terrain will hurt its performance. It also does no real path
     planning, so limited mobility mechs can get lost.
  
-Tech Note:
-
-Be careful about the memory allocated to you JVM when playing against the bot.
-MegaMek by itself currently needs about 20MB + .5MB for each entity.  Some number of bots 
-need about 15MB + 2MB for each entity.  It is quite possible for a lance on lance battle
-to generate an OutOfMemory error after several rounds.  We are working on reducing
-this overhead, but until then make sure to give the JVM enough heap space. 
-
 Next Steps:
 
 Reuse the new pathing code.

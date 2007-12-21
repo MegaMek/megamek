@@ -8,6 +8,7 @@ v0.33.14-dev (SVN)
 + Bug 1852058: flags in weapontype don't work correctly
 + Bug 1853433: energy weapons glancing blow causes no damage
 + Bug 1853428: adding a bot takes very long
++ updated ai-readme.txt
 
 v0.33.13 (2007-12-13, 21:34 GMT+1)
 + Fix lock when sending large packets

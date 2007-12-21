@@ -1582,229 +1582,229 @@ public class Server implements Runnable {
 	 *            the <code>int</code> id of the phase to prepare for
 	 */
 	private void prepareForPhase(int phase) {
-		switch (phase) {
-		case IGame.PHASE_LOUNGE:
-			clearReports();
-			mapSettings.setBoardsAvailableVector(scanForBoards(mapSettings
-					.getBoardWidth(), mapSettings.getBoardHeight()));
-			mapSettings.setNullBoards(DEFAULT_BOARD);
-			send(createMapSettingsPacket());
-			break;
-		case IGame.PHASE_INITIATIVE:
-			// remove the last traces of last round
-			game.resetActions();
-			game.resetTagInfo();
-			clearReports();
-			resetEntityRound();
-			resetEntityPhase(phase);
-			checkForObservers();
-			// roll 'em
-			resetActivePlayersDone();
-			rollInitiative();
+	    switch (phase) {
+	        case IGame.PHASE_LOUNGE:
+	            clearReports();
+	            mapSettings.setBoardsAvailableVector(scanForBoards(mapSettings
+	                    .getBoardWidth(), mapSettings.getBoardHeight()));
+	            mapSettings.setNullBoards(DEFAULT_BOARD);
+	            send(createMapSettingsPacket());
+	            break;
+	        case IGame.PHASE_INITIATIVE:
+	            // remove the last traces of last round
+	            game.resetActions();
+	            game.resetTagInfo();
+	            clearReports();
+	            resetEntityRound();
+	            resetEntityPhase(phase);
+	            checkForObservers();
+	            // roll 'em
+	            resetActivePlayersDone();
+	            rollInitiative();
 
-			if (!game.shouldDeployThisRound())
-				incrementAndSendGameRound();
+	            if (!game.shouldDeployThisRound())
+	                incrementAndSendGameRound();
 
-			// setIneligible(phase);
-			determineTurnOrder(phase);
-			writeInitiativeReport(false);
-			System.out.println("Round " + game.getRoundCount()
-					+ " memory usage: " + MegaMek.getMemoryUsed());
-			break;
-		case IGame.PHASE_DEPLOY_MINEFIELDS:
-			checkForObservers();
-			resetActivePlayersDone();
-			setIneligible(phase);
+	            // setIneligible(phase);
+	            determineTurnOrder(phase);
+	            writeInitiativeReport(false);
+	            System.out.println("Round " + game.getRoundCount()
+	                    + " memory usage: " + MegaMek.getMemoryUsed());
+	            break;
+	        case IGame.PHASE_DEPLOY_MINEFIELDS:
+	            checkForObservers();
+	            resetActivePlayersDone();
+	            setIneligible(phase);
 
-			Enumeration<Player> e = game.getPlayers();
-			Vector<GameTurn> turns = new Vector<GameTurn>();
-			while (e.hasMoreElements()) {
-				Player p = e.nextElement();
-				if (p.hasMinefields()) {
-					GameTurn gt = new GameTurn(p.getId());
-					turns.addElement(gt);
-				}
-			}
-			game.setTurnVector(turns);
-			game.resetTurnIndex();
+	            Enumeration<Player> e = game.getPlayers();
+	            Vector<GameTurn> turns = new Vector<GameTurn>();
+	            while (e.hasMoreElements()) {
+	                Player p = e.nextElement();
+	                if (p.hasMinefields()) {
+	                    GameTurn gt = new GameTurn(p.getId());
+	                    turns.addElement(gt);
+	                }
+	            }
+	            game.setTurnVector(turns);
+	            game.resetTurnIndex();
 
-			// send turns to all players
-			send(createTurnVectorPacket());
-			break;
-		case IGame.PHASE_SET_ARTYAUTOHITHEXES:
-			// place off board entities actually off-board
-			Enumeration<Entity> entities = game.getEntities();
-			while (entities.hasMoreElements()) {
-				Entity en = entities.nextElement();
-				en.deployOffBoard();
-			}
-			checkForObservers();
-			resetActivePlayersDone();
-			setIneligible(phase);
+	            // send turns to all players
+	            send(createTurnVectorPacket());
+	            break;
+	        case IGame.PHASE_SET_ARTYAUTOHITHEXES:
+	            // place off board entities actually off-board
+	            Enumeration<Entity> entities = game.getEntities();
+	            while (entities.hasMoreElements()) {
+	                Entity en = entities.nextElement();
+	                en.deployOffBoard();
+	            }
+	            checkForObservers();
+	            resetActivePlayersDone();
+	            setIneligible(phase);
 
-			Enumeration<Player> players = game.getPlayers();
-			Vector<GameTurn> turn = new Vector<GameTurn>();
+	            Enumeration<Player> players = game.getPlayers();
+	            Vector<GameTurn> turn = new Vector<GameTurn>();
 
-			// Walk through the players of the game, and add
-			// a turn for all players with artillery weapons.
-			while (players.hasMoreElements()) {
+	            // Walk through the players of the game, and add
+	            // a turn for all players with artillery weapons.
+	            while (players.hasMoreElements()) {
 
-				// Get the next player.
-				final Player p = players.nextElement();
+	                // Get the next player.
+	                final Player p = players.nextElement();
 
-				// Does the player have any artillery-equipped units?
-				EntitySelector playerArtySelector = new EntitySelector() {
-					private Player owner = p;
+	                // Does the player have any artillery-equipped units?
+	                EntitySelector playerArtySelector = new EntitySelector() {
+	                    private Player owner = p;
 
-					public boolean accept(Entity entity) {
-						if (owner.equals(entity.getOwner())
-								&& entity.isEligibleForTargetingPhase())
-							return true;
-						return false;
-					}
-				};
-				if (game.getSelectedEntities(playerArtySelector)
-						.hasMoreElements()) {
+	                    public boolean accept(Entity entity) {
+	                        if (owner.equals(entity.getOwner())
+	                                && entity.isEligibleForTargetingPhase())
+	                            return true;
+	                        return false;
+	                    }
+	                };
+	                if (game.getSelectedEntities(playerArtySelector)
+	                        .hasMoreElements()) {
 
-					// Yes, the player has arty-equipped units.
-					GameTurn gt = new GameTurn(p.getId());
-					turn.addElement(gt);
-				}
-			}
-			game.setTurnVector(turn);
-			game.resetTurnIndex();
+	                    // Yes, the player has arty-equipped units.
+	                    GameTurn gt = new GameTurn(p.getId());
+	                    turn.addElement(gt);
+	                }
+	            }
+	            game.setTurnVector(turn);
+	            game.resetTurnIndex();
 
-			// send turns to all players
-			send(createTurnVectorPacket());
-			break;
-		case IGame.PHASE_MOVEMENT:
-		case IGame.PHASE_DEPLOYMENT:
-		case IGame.PHASE_FIRING:
-		case IGame.PHASE_PHYSICAL:
-		case IGame.PHASE_TARGETING:
-		case IGame.PHASE_OFFBOARD:
-			resetEntityPhase(phase);
-			checkForObservers();
-			setIneligible(phase);
-			determineTurnOrder(phase);
-			resetActivePlayersDone();
-			// send(createEntitiesPacket());
-			entityAllUpdate();
-			clearReports();
-			doTryUnstuck();
-			break;
-		case IGame.PHASE_END:
-			resetEntityPhase(phase);
-			clearReports();
-			resolveHeat();
-			// write End Phase header
-			addReport(new Report(5005, Report.PUBLIC));
-			checkForSuffocation();
-			if (game.getOptions().booleanOption("vacuum")) {
-				checkForVacuumDeath();
-			}
-			for (DynamicTerrainProcessor tp:terrainProcessors) {
-				tp.DoEndPhaseChanges(vPhaseReport);
-			}
-			addReport(game.ageFlares());
-			send(createFlarePacket());
-			resolveExtremeTempInfantryDeath();
-			resolveAmmoDumps();
-			resolveCrewWakeUp();
-			resolveMechWarriorPickUp();
-			resolveVeeINarcPodRemoval();
-			resolveFortify();
-			checkForObservers();
-			entityAllUpdate();
-			break;
-		case IGame.PHASE_INITIATIVE_REPORT:
-			autoSave();
-			// Show player BVs
-			Enumeration<Player> players2 = game.getPlayers();
-			while (players2.hasMoreElements()) {
-				Player player = players2.nextElement();
-				Report r = new Report();
-				r.type = Report.PUBLIC;
-                if(doBlind()) {
-                    r.type = Report.PLAYER;
-                    r.player=player.getId();
-                }
-				r.messageId = 7016;
-				r.add(player.getName());
-				r.add(player.getBV());
-				r.add(player.getInitialBV());
-				addReport(r);
-			}
-        case IGame.PHASE_TARGETING_REPORT :
-		case IGame.PHASE_MOVEMENT_REPORT:
-		case IGame.PHASE_OFFBOARD_REPORT:
-		case IGame.PHASE_FIRING_REPORT:
-		case IGame.PHASE_PHYSICAL_REPORT:
-		case IGame.PHASE_END_REPORT:
-			resetActivePlayersDone();
-			sendReport();
-			if (game.getOptions().booleanOption("paranoid_autosave"))
-				autoSave();
-			break;
-		case IGame.PHASE_VICTORY:
-			resetPlayersDone();
-			clearReports();
-			prepareVictoryReport();
-			game.addReports(vPhaseReport);
-			send(createFullEntitiesPacket());
-			send(createReportPacket(null));
-			send(createEndOfGamePacket());
-			break;
-		}
+	            // send turns to all players
+	            send(createTurnVectorPacket());
+	            break;
+	        case IGame.PHASE_MOVEMENT:
+	        case IGame.PHASE_DEPLOYMENT:
+	        case IGame.PHASE_FIRING:
+	        case IGame.PHASE_PHYSICAL:
+	        case IGame.PHASE_TARGETING:
+	        case IGame.PHASE_OFFBOARD:
+	            resetEntityPhase(phase);
+	            checkForObservers();
+	            setIneligible(phase);
+	            determineTurnOrder(phase);
+	            resetActivePlayersDone();
+	            // send(createEntitiesPacket());
+	            entityAllUpdate();
+	            clearReports();
+	            doTryUnstuck();
+	            break;
+	        case IGame.PHASE_END:
+	            resetEntityPhase(phase);
+	            clearReports();
+	            resolveHeat();
+	            // write End Phase header
+	            addReport(new Report(5005, Report.PUBLIC));
+	            checkForSuffocation();
+	            if (game.getOptions().booleanOption("vacuum")) {
+	                checkForVacuumDeath();
+	            }
+	            for (DynamicTerrainProcessor tp:terrainProcessors) {
+	                tp.DoEndPhaseChanges(vPhaseReport);
+	            }
+	            addReport(game.ageFlares());
+	            send(createFlarePacket());
+	            resolveExtremeTempInfantryDeath();
+	            resolveAmmoDumps();
+	            resolveCrewWakeUp();
+	            resolveMechWarriorPickUp();
+	            resolveVeeINarcPodRemoval();
+	            resolveFortify();
+	            checkForObservers();
+	            entityAllUpdate();
+	            break;
+	        case IGame.PHASE_INITIATIVE_REPORT:
+	            autoSave();
+	            // Show player BVs
+	            Enumeration<Player> players2 = game.getPlayers();
+	            while (players2.hasMoreElements()) {
+	                Player player = players2.nextElement();
+	                Report r = new Report();
+	                r.type = Report.PUBLIC;
+	                if(doBlind()) {
+	                    r.type = Report.PLAYER;
+	                    r.player=player.getId();
+	                }
+	                r.messageId = 7016;
+	                r.add(player.getName());
+	                r.add(player.getBV());
+	                r.add(player.getInitialBV());
+	                addReport(r);
+	            }
+	        case IGame.PHASE_TARGETING_REPORT :
+	        case IGame.PHASE_MOVEMENT_REPORT:
+	        case IGame.PHASE_OFFBOARD_REPORT:
+	        case IGame.PHASE_FIRING_REPORT:
+	        case IGame.PHASE_PHYSICAL_REPORT:
+	        case IGame.PHASE_END_REPORT:
+	            resetActivePlayersDone();
+	            sendReport();
+	            if (game.getOptions().booleanOption("paranoid_autosave"))
+	                autoSave();
+	            break;
+	        case IGame.PHASE_VICTORY:
+	            resetPlayersDone();
+	            clearReports();
+	            prepareVictoryReport();
+	            game.addReports(vPhaseReport);
+	            send(createFullEntitiesPacket());
+	            send(createReportPacket(null));
+	            send(createEndOfGamePacket());
+	            break;
+	    }
 	}
 
 	/**
 	 * Should we play this phase or skip it?
 	 */
 	private boolean isPhasePlayable(int phase) {
-		switch (phase) {
-		case IGame.PHASE_INITIATIVE:
-		case IGame.PHASE_END:
-			return false;
-		case IGame.PHASE_SET_ARTYAUTOHITHEXES:
-		case IGame.PHASE_DEPLOY_MINEFIELDS:
-		case IGame.PHASE_DEPLOYMENT:
-		case IGame.PHASE_MOVEMENT:
-		case IGame.PHASE_FIRING:
-		case IGame.PHASE_PHYSICAL:
-		case IGame.PHASE_TARGETING:
-			return game.hasMoreTurns();
-		case IGame.PHASE_OFFBOARD:
-			return isOffboardPlayable();
-		default:
-			return true;
-		}
+	    switch (phase) {
+	        case IGame.PHASE_INITIATIVE:
+	        case IGame.PHASE_END:
+	            return false;
+	        case IGame.PHASE_SET_ARTYAUTOHITHEXES:
+	        case IGame.PHASE_DEPLOY_MINEFIELDS:
+	        case IGame.PHASE_DEPLOYMENT:
+	        case IGame.PHASE_MOVEMENT:
+	        case IGame.PHASE_FIRING:
+	        case IGame.PHASE_PHYSICAL:
+	        case IGame.PHASE_TARGETING:
+	            return game.hasMoreTurns();
+	        case IGame.PHASE_OFFBOARD:
+	            return isOffboardPlayable();
+	        default:
+	            return true;
+	    }
 	}
 
 	/**
 	 * Skip offboard phase, if there is no homing / semiguided ammo in play
 	 */
 	private boolean isOffboardPlayable() {
-		if (!game.hasMoreTurns())
-			return false;
-		for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
-			Entity entity = (Entity) e.nextElement();
-			for (Mounted m : entity.getAmmo()) {
-				AmmoType atype = (AmmoType) m.getType();
-				if ((atype.getAmmoType() == AmmoType.T_LRM || atype
-						.getAmmoType() == AmmoType.T_MML)
-						&& atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
-					return true;
-				}
-				if ((atype.getAmmoType() == AmmoType.T_ARROW_IV
-						|| atype.getAmmoType() == AmmoType.T_LONG_TOM || atype
-						.getAmmoType() == AmmoType.T_SNIPER)
-						&& atype.getMunitionType() == AmmoType.M_HOMING) {
-					return true;
-				}
-			}
-		}
-		return false;
+	    if (!game.hasMoreTurns())
+	        return false;
+	    for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
+	        Entity entity = (Entity) e.nextElement();
+	        for (Mounted m : entity.getAmmo()) {
+	            AmmoType atype = (AmmoType) m.getType();
+	            if ((atype.getAmmoType() == AmmoType.T_LRM || atype
+	                    .getAmmoType() == AmmoType.T_MML)
+	                    && atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
+	                return true;
+	            }
+	            if ((atype.getAmmoType() == AmmoType.T_ARROW_IV
+	                    || atype.getAmmoType() == AmmoType.T_LONG_TOM || atype
+	                    .getAmmoType() == AmmoType.T_SNIPER)
+	                    && atype.getMunitionType() == AmmoType.M_HOMING) {
+	                return true;
+	            }
+	        }
+	    }
+	    return false;
 	}
 
 	/**
@@ -1812,257 +1812,258 @@ public class Server implements Runnable {
 	 * first player to play.
 	 */
 	private void executePhase(int phase) {
-		switch (phase) {
-		case IGame.PHASE_EXCHANGE:
-			resetPlayersDone();
-			calculatePlayerBVs();
-			// Build teams vector
-			game.setupTeams();
-			applyBoardSettings();
-			game.setupRoundDeployment();
-			game.determineWind();
-			// If we add transporters for any Magnetic Clamp
-			// equiped squads, then update the clients' entities.
-			if (game.checkForMagneticClamp()) {
-				entityAllUpdate();
-			}
-			// transmit the board to everybody
-			send(createBoardPacket());
-			break;
-		case IGame.PHASE_MOVEMENT:
-			// write Movement Phase header to report
-			addReport(new Report(2000, Report.PUBLIC));
-		case IGame.PHASE_SET_ARTYAUTOHITHEXES:
-		case IGame.PHASE_DEPLOY_MINEFIELDS:
-		case IGame.PHASE_DEPLOYMENT:
-		case IGame.PHASE_FIRING:
-		case IGame.PHASE_PHYSICAL:
-		case IGame.PHASE_TARGETING:
-		case IGame.PHASE_OFFBOARD:
-			changeToNextTurn();
-			if (game.getOptions().booleanOption("paranoid_autosave"))
-				autoSave();
-			break;
-		}
+	    switch (phase) {
+	        case IGame.PHASE_EXCHANGE:
+	            resetPlayersDone();
+	            calculatePlayerBVs();
+	            // Build teams vector
+	            game.setupTeams();
+	            applyBoardSettings();
+	            game.setupRoundDeployment();
+	            game.determineWind();
+	            // If we add transporters for any Magnetic Clamp
+	            // equiped squads, then update the clients' entities.
+	            if (game.checkForMagneticClamp()) {
+	                entityAllUpdate();
+	            }
+	            // transmit the board to everybody
+	            send(createBoardPacket());
+	            break;
+	        case IGame.PHASE_MOVEMENT:
+	            // write Movement Phase header to report
+	            addReport(new Report(2000, Report.PUBLIC));
+	        case IGame.PHASE_SET_ARTYAUTOHITHEXES:
+	        case IGame.PHASE_DEPLOY_MINEFIELDS:
+	        case IGame.PHASE_DEPLOYMENT:
+	        case IGame.PHASE_FIRING:
+	        case IGame.PHASE_PHYSICAL:
+	        case IGame.PHASE_TARGETING:
+	        case IGame.PHASE_OFFBOARD:
+	            changeToNextTurn();
+	            if (game.getOptions().booleanOption("paranoid_autosave"))
+	                autoSave();
+	            break;
+	    }
 	}
 
 	/**
 	 * Calculates all players initial BV, should only be called at start of game
 	 */
 	public void calculatePlayerBVs() {
-		for (Enumeration<Player> players = game.getPlayers(); players
-				.hasMoreElements();)
-			players.nextElement().setInitialBV();
+	    for (Enumeration<Player> players = game.getPlayers(); players
+	    .hasMoreElements();)
+	        players.nextElement().setInitialBV();
 	}
 
 	/**
 	 * Ends this phase and moves on to the next.
 	 */
 	private void endCurrentPhase() {
-		switch (game.getPhase()) {
-		case IGame.PHASE_LOUNGE:
-			changePhase(IGame.PHASE_EXCHANGE);
-			break;
-		case IGame.PHASE_EXCHANGE:
-			changePhase(IGame.PHASE_SET_ARTYAUTOHITHEXES);
-			break;
-		case IGame.PHASE_STARTING_SCENARIO:
-			changePhase(IGame.PHASE_SET_ARTYAUTOHITHEXES);
-			break;
-		case IGame.PHASE_SET_ARTYAUTOHITHEXES:
-			Enumeration<Player> e = game.getPlayers();
-			boolean mines = false;
-			while (e.hasMoreElements()) {
-				Player p = e.nextElement();
-				if (p.hasMinefields()) {
-					mines = true;
-				}
-			}
-			if (mines) {
-				changePhase(IGame.PHASE_DEPLOY_MINEFIELDS);
-			} else {
-				changePhase(IGame.PHASE_INITIATIVE);
-			}
-			break;
-		case IGame.PHASE_DEPLOY_MINEFIELDS:
-			changePhase(IGame.PHASE_INITIATIVE);
-			break;
-		case IGame.PHASE_DEPLOYMENT:
-			game.clearDeploymentThisRound();
-			game.checkForCompleteDeployment();
-			Enumeration<Player> pls = game.getPlayers();
-			while (pls.hasMoreElements()) {
-				Player p = pls.nextElement();
-				p.adjustStartingPosForReinforcements();
-			}
+	    switch (game.getPhase()) {
+	        case IGame.PHASE_LOUNGE:
+	            changePhase(IGame.PHASE_EXCHANGE);
+	            break;
+	        case IGame.PHASE_EXCHANGE:
+	            changePhase(IGame.PHASE_SET_ARTYAUTOHITHEXES);
+	            break;
+	        case IGame.PHASE_STARTING_SCENARIO:
+	            changePhase(IGame.PHASE_SET_ARTYAUTOHITHEXES);
+	            break;
+	        case IGame.PHASE_SET_ARTYAUTOHITHEXES:
+	            Enumeration<Player> e = game.getPlayers();
+	            boolean mines = false;
+	            while (e.hasMoreElements()) {
+	                Player p = e.nextElement();
+	                if (p.hasMinefields()) {
+	                    mines = true;
+	                }
+	            }
+	            if (mines) {
+	                changePhase(IGame.PHASE_DEPLOY_MINEFIELDS);
+	            } else {
+	                changePhase(IGame.PHASE_INITIATIVE);
+	            }
+	            break;
+	        case IGame.PHASE_DEPLOY_MINEFIELDS:
+	            changePhase(IGame.PHASE_INITIATIVE);
+	            break;
+	        case IGame.PHASE_DEPLOYMENT:
+	            game.clearDeploymentThisRound();
+	            game.checkForCompleteDeployment();
+	            Enumeration<Player> pls = game.getPlayers();
+	            while (pls.hasMoreElements()) {
+	                Player p = pls.nextElement();
+	                p.adjustStartingPosForReinforcements();
+	            }
 
-			if (game.getRoundCount() < 1) {
-				changePhase(IGame.PHASE_INITIATIVE);
-			} else {
-				changePhase(IGame.PHASE_TARGETING);
-			}
-			break;
-		case IGame.PHASE_INITIATIVE:
-			game.addReports(vPhaseReport);
-			changePhase(IGame.PHASE_INITIATIVE_REPORT);
-			break;
-		case IGame.PHASE_INITIATIVE_REPORT:
-			// boolean doDeploy = game.shouldDeployThisRound() &&
-			// (game.getLastPhase() != IGame.PHASE_DEPLOYMENT);
-			if (game.shouldDeployThisRound()) {
-				changePhase(IGame.PHASE_DEPLOYMENT);
-			} else {
-				changePhase(IGame.PHASE_TARGETING);
-			}
-			break;
-		case IGame.PHASE_MOVEMENT:
-			doAllAssaultDrops();
-			addMovementHeat();
-			applyBuildingDamage();
-			checkFor20Damage();
-			resolvePilotingRolls(); // Skids cause damage in movement phase
-			checkForFlamingDeath();
-			// check phase report
-			if (vPhaseReport.size() > 1) {
-				game.addReports(vPhaseReport);
-				changePhase(IGame.PHASE_MOVEMENT_REPORT);
-			} else {
-				// just the header, so we'll add the <nothing> label
-				addReport(new Report(1205, Report.PUBLIC));
-				game.addReports(vPhaseReport);
-				sendReport();
-				changePhase(IGame.PHASE_OFFBOARD);
-			}
-			break;
-		case IGame.PHASE_MOVEMENT_REPORT:
-			changePhase(IGame.PHASE_OFFBOARD);
-			break;
-		case IGame.PHASE_FIRING:
-			resolveAllButWeaponAttacks();
-			resolveOnlyWeaponAttacks();
-            handleAttacks();
-			applyBuildingDamage();
-			checkFor20Damage();
-			resolvePilotingRolls();
-			// check phase report
-			if (vPhaseReport.size() > 1) {
-				game.addReports(vPhaseReport);
-				changePhase(IGame.PHASE_FIRING_REPORT);
-			} else {
-				// just the header, so we'll add the <nothing> label
-				addReport(new Report(1205, Report.PUBLIC));
-				sendReport();
-				game.addReports(vPhaseReport);
-				changePhase(IGame.PHASE_PHYSICAL);
-			}
-			break;
-		case IGame.PHASE_FIRING_REPORT:
-			changePhase(IGame.PHASE_PHYSICAL);
-			break;
-		case IGame.PHASE_PHYSICAL:
-			resolvePhysicalAttacks();
-			applyBuildingDamage();
-			checkFor20Damage();
-			resolvePilotingRolls();
-			resolveSinkVees();
-			// check phase report
-			if (vPhaseReport.size() > 1) {
-				game.addReports(vPhaseReport);
-				changePhase(IGame.PHASE_PHYSICAL_REPORT);
-			} else {
-				// just the header, so we'll add the <nothing> label
-				addReport(new Report(1205, Report.PUBLIC));
-				game.addReports(vPhaseReport);
-				sendReport();
-				changePhase(IGame.PHASE_END);
-			}
-			break;
-		case IGame.PHASE_PHYSICAL_REPORT:
-			changePhase(IGame.PHASE_END);
-			break;
-		case IGame.PHASE_TARGETING:
-            vPhaseReport.addElement(new Report(1035, Report.PUBLIC));
-            resolveOnlyWeaponAttacks();
-            handleAttacks();
-            //check reports
-            if (vPhaseReport.size() > 1) {
-                game.addReports(vPhaseReport);
-                changePhase(IGame.PHASE_TARGETING_REPORT);
-            } else {
-                //just the header, so we'll add the <nothing> label
-                vPhaseReport.addElement(new Report(1205, Report.PUBLIC));
-                game.addReports(vPhaseReport);
-                sendReport();
-                changePhase(IGame.PHASE_MOVEMENT);
-            }
-	     	break;
-	    case IGame.PHASE_OFFBOARD:
-			// write Offboard Attack Phase header
-			addReport(new Report(1100, Report.PUBLIC));
-			resolveAllButWeaponAttacks(); // torso twist or flip arms possible
-			resolveOnlyWeaponAttacks(); // should only be TAG at this point
-            handleAttacks();
-            for (Enumeration i = game.getPlayers();i.hasMoreElements();) {
-                Player player = (Player)i.nextElement();
-                int connId = player.getId();
-                send(connId, createArtilleryPacket(player));
-            }
-			applyBuildingDamage();
-			checkFor20Damage();
-			resolvePilotingRolls();
-			// check reports
-			if (vPhaseReport.size() > 1) {
-				game.addReports(vPhaseReport);
-				changePhase(IGame.PHASE_OFFBOARD_REPORT);
-			} else {
-				// just the header, so we'll add the <nothing> label
-				addReport(new Report(1205, Report.PUBLIC));
-				game.addReports(vPhaseReport);
-				sendReport();
-				changePhase(IGame.PHASE_FIRING);
-			}
-			break;
-		case IGame.PHASE_OFFBOARD_REPORT:
-			changePhase(IGame.PHASE_FIRING);
-			break;
-        case IGame.PHASE_TARGETING_REPORT:
-            changePhase(IGame.PHASE_MOVEMENT);
-            break;
-		case IGame.PHASE_END:
-			// remove any entities that died in the heat/end phase before check
-			// for victory
-			resetEntityPhase(IGame.PHASE_END);
-			boolean victory = victory(); // note this may add reports
-			// check phase report
-			// HACK: hardcoded message ID check
-			if (vPhaseReport.size() > 3
-					|| vPhaseReport.elementAt(1).messageId != 1205) {
-				game.addReports(vPhaseReport);
-				changePhase(IGame.PHASE_END_REPORT);
-			} else {
-				// just the heat and end headers, so we'll add
-				// the <nothing> label
-				addReport(new Report(1205, Report.PUBLIC));
-				game.addReports(vPhaseReport);
-				sendReport();
-				if (victory) {
-					changePhase(IGame.PHASE_VICTORY);
-				} else {
-					changePhase(IGame.PHASE_INITIATIVE);
-				}
-			}
-			break;
-		case IGame.PHASE_END_REPORT:
-			if (victory()) {
-				changePhase(IGame.PHASE_VICTORY);
-			} else {
-				changePhase(IGame.PHASE_INITIATIVE);
-			}
-			break;
-		case IGame.PHASE_VICTORY:
-			resetGame();
-			break;
-		}
+	            if (game.getRoundCount() < 1) {
+	                changePhase(IGame.PHASE_INITIATIVE);
+	            } else {
+	                changePhase(IGame.PHASE_TARGETING);
+	            }
+	            break;
+	        case IGame.PHASE_INITIATIVE:
+	            game.addReports(vPhaseReport);
+	            changePhase(IGame.PHASE_INITIATIVE_REPORT);
+	            break;
+	        case IGame.PHASE_INITIATIVE_REPORT:
+	            // boolean doDeploy = game.shouldDeployThisRound() &&
+	            // (game.getLastPhase() != IGame.PHASE_DEPLOYMENT);
+	            if (game.shouldDeployThisRound()) {
+	                changePhase(IGame.PHASE_DEPLOYMENT);
+	            } else {
+	                changePhase(IGame.PHASE_TARGETING);
+	            }
+	            break;
+	        case IGame.PHASE_MOVEMENT:
+	            doAllAssaultDrops();
+	            addMovementHeat();
+	            applyBuildingDamage();
+	            checkFor20Damage();
+	            resolvePilotingRolls(); // Skids cause damage in movement phase
+	            checkForFlamingDeath();
+	            // check phase report
+	            if (vPhaseReport.size() > 1) {
+	                game.addReports(vPhaseReport);
+	                changePhase(IGame.PHASE_MOVEMENT_REPORT);
+	            } else {
+	                // just the header, so we'll add the <nothing> label
+	                addReport(new Report(1205, Report.PUBLIC));
+	                game.addReports(vPhaseReport);
+	                sendReport();
+	                changePhase(IGame.PHASE_OFFBOARD);
+	            }
+	            break;
+	        case IGame.PHASE_MOVEMENT_REPORT:
+	            changePhase(IGame.PHASE_OFFBOARD);
+	            break;
+	        case IGame.PHASE_FIRING:
+	            resolveAllButWeaponAttacks();
+	            resolveOnlyWeaponAttacks();
+                    assignAMS();
+	            handleAttacks();
+	            applyBuildingDamage();
+	            checkFor20Damage();
+	            resolvePilotingRolls();
+	            // check phase report
+	            if (vPhaseReport.size() > 1) {
+	                game.addReports(vPhaseReport);
+	                changePhase(IGame.PHASE_FIRING_REPORT);
+	            } else {
+	                // just the header, so we'll add the <nothing> label
+	                addReport(new Report(1205, Report.PUBLIC));
+	                sendReport();
+	                game.addReports(vPhaseReport);
+	                changePhase(IGame.PHASE_PHYSICAL);
+	            }
+	            break;
+	        case IGame.PHASE_FIRING_REPORT:
+	            changePhase(IGame.PHASE_PHYSICAL);
+	            break;
+	        case IGame.PHASE_PHYSICAL:
+	            resolvePhysicalAttacks();
+	            applyBuildingDamage();
+	            checkFor20Damage();
+	            resolvePilotingRolls();
+	            resolveSinkVees();
+	            // check phase report
+	            if (vPhaseReport.size() > 1) {
+	                game.addReports(vPhaseReport);
+	                changePhase(IGame.PHASE_PHYSICAL_REPORT);
+	            } else {
+	                // just the header, so we'll add the <nothing> label
+	                addReport(new Report(1205, Report.PUBLIC));
+	                game.addReports(vPhaseReport);
+	                sendReport();
+	                changePhase(IGame.PHASE_END);
+	            }
+	            break;
+	        case IGame.PHASE_PHYSICAL_REPORT:
+	            changePhase(IGame.PHASE_END);
+	            break;
+	        case IGame.PHASE_TARGETING:
+	            vPhaseReport.addElement(new Report(1035, Report.PUBLIC));
+	            resolveOnlyWeaponAttacks();
+	            handleAttacks();
+	            //check reports
+	            if (vPhaseReport.size() > 1) {
+	                game.addReports(vPhaseReport);
+	                changePhase(IGame.PHASE_TARGETING_REPORT);
+	            } else {
+	                //just the header, so we'll add the <nothing> label
+	                vPhaseReport.addElement(new Report(1205, Report.PUBLIC));
+	                game.addReports(vPhaseReport);
+	                sendReport();
+	                changePhase(IGame.PHASE_MOVEMENT);
+	            }
+	            break;
+	        case IGame.PHASE_OFFBOARD:
+	            // write Offboard Attack Phase header
+	            addReport(new Report(1100, Report.PUBLIC));
+	            resolveAllButWeaponAttacks(); // torso twist or flip arms possible
+	            resolveOnlyWeaponAttacks(); // should only be TAG at this point
+	            handleAttacks();
+	            for (Enumeration i = game.getPlayers();i.hasMoreElements();) {
+	                Player player = (Player)i.nextElement();
+	                int connId = player.getId();
+	                send(connId, createArtilleryPacket(player));
+	            }
+	            applyBuildingDamage();
+	            checkFor20Damage();
+	            resolvePilotingRolls();
+	            // check reports
+	            if (vPhaseReport.size() > 1) {
+	                game.addReports(vPhaseReport);
+	                changePhase(IGame.PHASE_OFFBOARD_REPORT);
+	            } else {
+	                // just the header, so we'll add the <nothing> label
+	                addReport(new Report(1205, Report.PUBLIC));
+	                game.addReports(vPhaseReport);
+	                sendReport();
+	                changePhase(IGame.PHASE_FIRING);
+	            }
+	            break;
+	        case IGame.PHASE_OFFBOARD_REPORT:
+	            changePhase(IGame.PHASE_FIRING);
+	            break;
+	        case IGame.PHASE_TARGETING_REPORT:
+	            changePhase(IGame.PHASE_MOVEMENT);
+	            break;
+	        case IGame.PHASE_END:
+	            // remove any entities that died in the heat/end phase before check
+	            // for victory
+	            resetEntityPhase(IGame.PHASE_END);
+	            boolean victory = victory(); // note this may add reports
+	            // check phase report
+	            // HACK: hardcoded message ID check
+	            if (vPhaseReport.size() > 3
+	                    || vPhaseReport.elementAt(1).messageId != 1205) {
+	                game.addReports(vPhaseReport);
+	                changePhase(IGame.PHASE_END_REPORT);
+	            } else {
+	                // just the heat and end headers, so we'll add
+	                // the <nothing> label
+	                addReport(new Report(1205, Report.PUBLIC));
+	                game.addReports(vPhaseReport);
+	                sendReport();
+	                if (victory) {
+	                    changePhase(IGame.PHASE_VICTORY);
+	                } else {
+	                    changePhase(IGame.PHASE_INITIATIVE);
+	                }
+	            }
+	            break;
+	        case IGame.PHASE_END_REPORT:
+	            if (victory()) {
+	                changePhase(IGame.PHASE_VICTORY);
+	            } else {
+	                changePhase(IGame.PHASE_INITIATIVE);
+	            }
+	            break;
+	        case IGame.PHASE_VICTORY:
+	            resetGame();
+	            break;
+	    }
 	}
 
 	/**
@@ -7243,49 +7244,45 @@ public class Server implements Runnable {
 	/**
 	 * Auto-target active AMS systems
 	 */
-    /*
-	private void assignAMS(Vector<WeaponResult> results) {
+	private void assignAMS() {
 
-		// sort all missile-based attacks by the target
-		Hashtable<Entity, Vector<WeaponResult>> htAttacks = new Hashtable<Entity, Vector<WeaponResult>>();
-		for (WeaponResult wr : results) {
-			WeaponAttackAction waa = wr.waa;
-			Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
-					waa.getWeaponId());
+	    // sort all missile-based attacks by the target
+	    Hashtable<Entity, Vector<WeaponHandler>> htAttacks = new Hashtable<Entity, Vector<WeaponHandler>>();
+	    for (AttackHandler ah : game.getAttacksVector()) {
+                WeaponHandler wh = (WeaponHandler)ah;
+	        WeaponAttackAction waa = wh.waa;
+	        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
+	                waa.getWeaponId());
 
-			// Only entities can have AMS.
-			if (Targetable.TYPE_ENTITY != waa.getTargetType()) {
-				continue;
-			}
+	        // Only entities can have AMS.
+	        if (Targetable.TYPE_ENTITY != waa.getTargetType()) {
+	            continue;
+	        }
 
-			// AMS is only used against attacks that hit (TW p129)
-			if (wr.roll < wr.toHit.getValue()) {
-				continue;
-			}
+	        // AMS is only used against attacks that hit (TW p129)
+	        if (wh.roll < wh.toHit.getValue()) {
+	            continue;
+	        }
 
-			// Can only use AMS versus missles.
-			if (((WeaponType) weapon.getType()).getDamage() == WeaponType.DAMAGE_MISSILE) {
-				Entity target = game.getEntity(waa.getTargetId());
-				Vector<WeaponResult> v = htAttacks.get(target);
-				if (v == null) {
-					v = new Vector<WeaponResult>();
-					htAttacks.put(target, v);
-				}
-				v.addElement(wr);
-			}
-		}
+	        // Can only use AMS versus missles.
+	        if (((WeaponType) weapon.getType()).getDamage() == WeaponType.DAMAGE_MISSILE) {
+	            Entity target = game.getEntity(waa.getTargetId());
+	            Vector<WeaponHandler> v = htAttacks.get(target);
+	            if (v == null) {
+	                v = new Vector<WeaponHandler>();
+	                htAttacks.put(target, v);
+	            }
+	            v.addElement(wh);
+	        }
+	    }
 
-		// let each target assign its AMS
-		for (Entity e : htAttacks.keySet()) {
-			Vector<WeaponResult> vAttacks = htAttacks.get(e);
-			e.assignAMS(vAttacks);
-			for (WeaponResult wr : vAttacks) {
-				wr = resolveAmsFor(wr.waa, wr);
-			}
-		}
+	    // let each target assign its AMS
+	    for (Entity e : htAttacks.keySet()) {
+	        Vector<WeaponHandler> vAttacks = htAttacks.get(e);
+	        e.assignAMS(vAttacks);
+	    }
 	}
-    */
-
+        
 	/**
 	 * Called during the weapons fire phase. Resolves anything other than
 	 * weapons fire that happens. Torso twists, for example.
@@ -7475,23 +7472,23 @@ public class Server implements Runnable {
 	 * Called during the fire phase to resolve all (and only) weapon attacks
 	 */
 	private void resolveOnlyWeaponAttacks() {
-		// loop thru received attack actions, getting attack handlers
-		for (Enumeration<EntityAction> i = game.getActions(); i
-				.hasMoreElements();) {
-			EntityAction ea = i.nextElement();
-			if (ea instanceof WeaponAttackAction) {
-				WeaponAttackAction waa = (WeaponAttackAction) ea;
-                Entity ae = game.getEntity(waa.getEntityId());
-                Mounted m = ae.getEquipment(waa.getWeaponId());
-                Weapon w = (Weapon)m.getType();
-                AttackHandler ah = w.fire(waa, game, this);
-                if (ah != null) {
-                    game.addAttack(ah);
-                }
-			}
-		}
-		// and clear the attacks Vector
-		game.resetActions();
+	    // loop thru received attack actions, getting attack handlers
+	    for (Enumeration<EntityAction> i = game.getActions(); i
+	    .hasMoreElements();) {
+	        EntityAction ea = i.nextElement();
+	        if (ea instanceof WeaponAttackAction) {
+	            WeaponAttackAction waa = (WeaponAttackAction) ea;
+	            Entity ae = game.getEntity(waa.getEntityId());
+	            Mounted m = ae.getEquipment(waa.getWeaponId());
+	            Weapon w = (Weapon)m.getType();
+	            AttackHandler ah = w.fire(waa, game, this);
+	            if (ah != null) {
+	                game.addAttack(ah);
+	            }
+	        }
+	    }
+	    // and clear the attacks Vector
+	    game.resetActions();
 	}
 
 	/**

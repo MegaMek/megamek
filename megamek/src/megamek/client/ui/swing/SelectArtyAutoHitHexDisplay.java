@@ -160,14 +160,11 @@ public class SelectArtyAutoHitHexDisplay
         if (!client.game.getBoard().contains(coords)) {
             return;
         }
-        if (!artyAutoHitHexes.contains(coords) && artyAutoHitHexes.size() < 6
+        if (!artyAutoHitHexes.contains(coords) && artyAutoHitHexes.size() < 5
                 && clientgui.doYesNoDialog(Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
                         Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[]{coords.getBoardNum()}))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
-            setArtyEnabled(6 - artyAutoHitHexes.size());
-            if (artyAutoHitHexes.size() == 6) {
-                setArtyEnabled(0);
-            }
+            setArtyEnabled(5 - artyAutoHitHexes.size());
         }
 
     }

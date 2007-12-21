@@ -40,6 +40,7 @@ public class WeaponHandler implements AttackHandler {
 
     public ToHitData toHit;
     public WeaponAttackAction waa;
+    public int roll;
     
     protected IGame game;
     protected Server server;
@@ -51,7 +52,6 @@ public class WeaponHandler implements AttackHandler {
     protected Mounted weapon;
     protected Entity ae;
     protected Targetable target;
-    protected int roll;   
     protected int subjectId;
     protected int nRange;
     protected int nDamPerHit;    

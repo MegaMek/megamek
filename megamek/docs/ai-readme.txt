@@ -71,6 +71,9 @@ Other Possibilities:
     gui client unless you have to, or it's a small bot.
     Individual Initiative works better for The Bot, because it only needs to
     calculate what's the best move RIGHT NOW.
+    Have the Bot use slower/un-jump-jetted units.  A 3/5/0 has lower number of
+    calculations than a 7/11/0 which in turn has lower number of possibilities
+    than a 3/5/3.
     
   Bot Vs. Bot
     Because the bot connects like a normal client, you can start two seperate

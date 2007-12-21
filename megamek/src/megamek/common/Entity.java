@@ -25,6 +25,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.WeaponHandler;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -3564,7 +3565,7 @@ public abstract class Entity extends TurnOrdered
      * Assign AMS systems to the most dangerous incoming missile attacks.
      * This should only be called once per turn, or AMS will get extra attacks
      */
-    public void assignAMS(Vector<WeaponResult> vAttacks) {
+    public void assignAMS(Vector<WeaponHandler> vAttacks) {
 
         HashSet<WeaponAttackAction> targets = new HashSet<WeaponAttackAction>();
         for(Mounted weapon : getWeaponList()) {
@@ -3590,7 +3591,7 @@ public abstract class Entity extends TurnOrdered
 
                 // make a new vector of only incoming attacks in arc
                 Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(vAttacks.size());
-                for (WeaponResult wr:vAttacks) {
+                for (WeaponHandler wr:vAttacks) {
                     if(!targets.contains(wr.waa) &&
                             Compute.isInArc(game, this.getId(), getEquipmentNum(weapon),
                             game.getEntity(wr.waa.getEntityId()))) {

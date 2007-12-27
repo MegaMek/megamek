@@ -226,9 +226,9 @@ public class ReportDisplay
 
     public void appendReportTab(String additionalText) {
         int phaseTab = tabs.indexOfTab("Phase");
-        if (phaseTab > 1)
-            ((JTextArea) ((JScrollPane) tabs.getComponentAt(phaseTab - 2)).getViewport().getView()).append(additionalText);
-        ((JTextArea) ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport().getView()).append(additionalText);
+        if (phaseTab > 0)
+            ((JTextArea) ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport().getView()).append(additionalText);
+        ((JTextArea) ((JScrollPane) tabs.getComponentAt(phaseTab)).getViewport().getView()).append(additionalText);
     }
 
     public void resetTabs() {

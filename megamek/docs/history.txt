@@ -11,6 +11,7 @@ v0.33.14-dev (SVN)
 + updated ai-readme.txt
 + Fix AMS
 + only allow 5 arty-autohit-hexes
++ fixed the phase tabs on the Swing gui
 
 v0.33.13 (2007-12-13, 21:34 GMT+1)
 + Fix lock when sending large packets

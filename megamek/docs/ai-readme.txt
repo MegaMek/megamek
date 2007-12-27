@@ -17,13 +17,13 @@ The Bot is slow, as compared to many games out there.  But still faster than a
 The Bot crashes sometimes. (Boo!)
 The Bot can't handle alternative victory conditions.  It still tries to kill you, 
 	no matter what.
-The Bot can't handle Double-Blind.
+The Bot can't handle Double-Blind. (It just sits there, having no target to attack.)
 
 Usage:
 The bot works with most units: mechs, tanks and infantry.  
 Memory wise, normal MM needs 20 MB + .5 MB for each entity + 1 MB for each 
 board. The bot will need an additional 15 MB + 2 MB for each entity.  There are a
-few bugs that will cuase it to stop responding, usually, there will be a stack
+few bugs that will cause it to stop responding, usually, there will be a stack
 trace associated with the error in megamek.log, please save this log, and post it
 as a bug on Sourceforge.  You can restart your game from the last save.
 
@@ -67,7 +67,7 @@ Other Possibilities:
     time, anything above 12 is highly questionable.  Multiple bots taking 4 each
     will work a lot faster than 1 bot taking 12 units, but of course the
     coordination between them will be about nil.
-    The gui-less client is about 100x slower than the gui client.  Don't use the
+    The gui-less client is about 100x faster than the gui client.  Don't use the
     gui client unless you have to, or it's a small bot.
     Individual Initiative works better for The Bot, because it only needs to
     calculate what's the best move RIGHT NOW.
@@ -92,7 +92,7 @@ Other Possibilities:
     to your playing style.
     Its thinking is mostly limited to a single turn, provided it does understand
     to move mechs to good ranges.
-    The movement is not yet hierarcial, so with every new unit there is a 
+    The movement is not yet hierarchal, so with every new unit there is a 
     somewhat linear increase in the time the bot thinks. Unless you have 
     patience, don't do something over 8 on 8. 
     The bot will preform well with most units on average terrain maps.  A lot or
@@ -102,6 +102,6 @@ Other Possibilities:
 Next Steps:
 
 Reuse the new pathing code.
-Intellegent deployment and mine placement.
+Intelligent deployment and mine placement.
 More strategy: have the bots concentrate on controlling specified locations.
-Attempt to be as good as an intermidiate player on a 4x4 map in an 16 on 16 battle.
+Attempt to be as good as an intermediate player on a 4x4 map in an 16 on 16 battle.

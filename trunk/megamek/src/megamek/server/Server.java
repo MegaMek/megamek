@@ -13712,7 +13712,7 @@ public class Server implements Runnable {
 				r = new Report(6605);
 				r.subject = t.getId();
 				vDesc.add(r);
-				t.setCommanderHit(true);
+                                t.setDriverHit(true);
 				break;
 			case Tank.CRIT_CREW_KILLED:
 				r = new Report(6190);

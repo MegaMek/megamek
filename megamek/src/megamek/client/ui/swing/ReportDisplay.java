@@ -27,7 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
-import javax.swing.JViewport;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -37,7 +36,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.ArrayList;
 
 public class ReportDisplay
         extends StatusBarPhaseDisplay
@@ -53,12 +51,9 @@ public class ReportDisplay
     // parent game
     public Client client;
     
-//     // chatterbox keeps track of chatting and other messages
-//     private ChatterBox        cb;
-    
+
     // displays
     private JTabbedPane tabs;
-    private ArrayList<JScrollPane> vTextArea;
 
     // buttons
     private JButton readyB;
@@ -75,11 +70,9 @@ public class ReportDisplay
 
         client.game.addGameListener(this);
 
-//         cb = client.cb;
-
         // Create a tabbed panel to hold our reports.
         tabs = new JTabbedPane();
-        //debugReport: add new client setting
+
         Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
                 GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
         tabs.setFont(tabPanelFont);
@@ -108,10 +101,6 @@ public class ReportDisplay
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(tabs, gridbag, c);
 
-//         c.gridwidth = 1;
-//         c.weightx = 1.0;    c.weighty = 0.0;
-//         addBag(cb.getComponent(), gridbag, c);
-
         c.gridwidth = 1;
         c.weightx = 0.0;
         c.weighty = 0.0;
@@ -122,14 +111,6 @@ public class ReportDisplay
             panButtons.add(new JLabel("")); //$NON-NLS-1$
         }
         addBag(panButtons, gridbag, c);
-
-//         c.weightx = 1.0;    c.weighty = 0.0;
-//         c.gridwidth = GridBagConstraints.REMAINDER;
-//         addBag(panStatus, gridbag, c);
-
-//         c.gridwidth = GridBagConstraints.REMAINDER;
-//         c.weightx = 0.0;    c.weighty = 0.0;
-//         addBag(readyB, gridbag, c);
 
         addKeyListener(this);
 
@@ -202,23 +183,31 @@ public class ReportDisplay
             // report.
             round = 1;
         }
-        if (round >= vTextArea.size()) {
+        if (tabs.indexOfTab("Round "+round) == -1) {
             //Need a new tab for the new round.
 
             //get rid of phase tab
-            if (round > 1) {
-                tabs.remove(vTextArea.get(vTextArea.size() - 1));
-                vTextArea.remove(vTextArea.size() - 1);
-            }
-
+            int phaseTab = tabs.indexOfTab("Phase");
+            if (phaseTab >=0)
+                tabs.removeTabAt(phaseTab);
+            if (phaseTab == -1) phaseTab += 1; // special handling for round 0
+            
             //add as many round tabs as necessary to catch us up
             JTextArea ta;
-            while (round > vTextArea.size()) {
-                //HACK: We shouldn't have to rely on our access to the client object...
-                ta = new JTextArea(client.receiveReport(client.game.getReports(vTextArea.size() + 1)), 40, 25);
+            //TODO: we should remove the use of client
+            for (int catchup = phaseTab + 1; catchup <= round; catchup++) {
+                if (tabs.indexOfTab("Round "+ catchup) != -1) {
+                    ((JTextArea) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Round "+ catchup)))
+                            .getViewport().getView()).setText(client.receiveReport(client.game.getReports(catchup)));
+                    continue;
+                }
+                String text = roundText;
+                if (catchup != round) {
+                    text = client.receiveReport(client.game.getReports(catchup));
+                }
+                ta = new JTextArea(text, 40, 25);
                 ta.setEditable(false);
-                tabs.add("Round " + (vTextArea.size() + 1), ta);
-                vTextArea.add(new JScrollPane(ta));
+                tabs.add("Round " + catchup, new JScrollPane(ta));
             }
 
             //add the new current phase tab
@@ -226,33 +215,24 @@ public class ReportDisplay
             ta.setEditable(false);
             ta.setOpaque(false);
             JScrollPane sp = new JScrollPane(ta);
-            vTextArea.add(sp);
             tabs.add("Phase", sp);
             tabs.setSelectedComponent(sp);
         } else {
-            //Update the previous rounds tab and the phase tab.
-            ((JTextArea) ((JViewport) vTextArea.get(round - 1).getComponent(0)).getView()).setText(roundText);
-            ((JTextArea) ((JViewport) vTextArea.get(round).getComponent(0)).getView()).setText(phaseText);
+            //Update the existing round tab and the phase tab.
+            ((JTextArea) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Round "+ round))).getViewport().getView()).setText(roundText);
+            ((JTextArea) ((JScrollPane) tabs.getComponentAt(tabs.indexOfTab("Phase"))).getViewport().getView()).setText(phaseText);
         }
     }
 
     public void appendReportTab(String additionalText) {
-        ((JTextArea) vTextArea.get(vTextArea.size() - 1).getComponent(0)).append(additionalText);
-        ((JTextArea) vTextArea.get(vTextArea.size() - 2).getComponent(0)).append(additionalText);
+        int phaseTab = tabs.indexOfTab("Phase");
+        if (phaseTab > 1)
+            ((JTextArea) ((JScrollPane) tabs.getComponentAt(phaseTab - 2)).getViewport().getView()).append(additionalText);
+        ((JTextArea) ((JScrollPane) tabs.getComponentAt(phaseTab - 1)).getViewport().getView()).append(additionalText);
     }
 
     public void resetTabs() {
         tabs.removeAll();
-        vTextArea = new ArrayList<JScrollPane>();
-        /* HACK: Without this initial empty TextArea, the tabs will be
-           blank (no TextArea at all) during the first initiative
-           phase.  I think it has something to do with the layout
-           manager, but I'm not really sure.  Maybe a strategically
-           placed validate() would be better?
-        JTextArea ta = new JTextArea("", 40, 25);
-        ta.setEditable(false);
-        vTextArea.add(new JScrollPane(ta));
-        tabs.add("Phase", ta);*/
     }
 
     //

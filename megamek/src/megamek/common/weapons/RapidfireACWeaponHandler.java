@@ -30,6 +30,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
@@ -175,7 +176,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
                 r.choose(false);
                 vPhaseReport.addElement(r);
                 vPhaseReport.addAll(server.damageEntity(ae, new HitData(wlocation),
-                        wtype.getDamage(), false, 0, true));
+                        wtype.getDamage(), false, DamageType.NONE, true));
             }
             return true;
         }

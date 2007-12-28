@@ -25,6 +25,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -83,7 +84,7 @@ public class SRMAXHandler extends SRMHandler {
                 hit.makeGlancingBlow();
             }
             vPhaseReport.addAll(
-                    server.damageEntity(entityTarget, hit, nDamage, false, 3, false, false, throughFront));
+                    server.damageEntity(entityTarget, hit, nDamage, false, DamageType.ACID, false, false, throughFront));
         }
 
     }

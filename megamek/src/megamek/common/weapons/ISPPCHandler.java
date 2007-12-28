@@ -28,6 +28,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -94,7 +95,7 @@ public class ISPPCHandler extends EnergyWeaponHandler {
                 r.choose(false);
                 vPhaseReport.addElement(r);
                 vPhaseReport.addAll(server.damageEntity(ae, 
-                        new HitData(wlocation), 10, false, 0, true));
+                        new HitData(wlocation), 10, false, DamageType.NONE, true));
                 r = new Report(3185);
                 r.subject = ae.getId();
                 vPhaseReport.addElement(r);

@@ -32,6 +32,7 @@ import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -69,7 +70,7 @@ public class BAMineLauncherHandler extends AmmoWeaponHandler {
             // ASSUMPTION: buildings CAN'T absorb *this* damage.
             // specialDamage = damageEntity(entityTarget, hit, damage);
             specialDamageReport = server.damageEntity(entityTarget, hit,
-                    damage, false, 0, false, false, throughFront);
+                    damage, false, DamageType.NONE, false, false, throughFront);
         } else {
             // add newline _before_ last report
             try {

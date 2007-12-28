@@ -28,6 +28,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
@@ -60,7 +61,7 @@ public class InfantryAttackHandler extends WeaponHandler {
                 damage += ((BattleArmor) ae).getVibroClawDamage();
             // ASSUMPTION: buildings CAN'T absorb *this* damage.
             specialDamageReport = server.damageEntity(entityTarget, hit,
-                    damage, false, 0, false, false, throughFront);
+                    damage, false, DamageType.NONE, false, false, throughFront);
         } else {
             // add newline _before_ last report
             try {

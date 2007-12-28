@@ -27,6 +27,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -95,7 +96,7 @@ public class ACIncendiaryHandler extends AmmoWeaponHandler {
                 hit.makeGlancingBlow();
             }
             vPhaseReport.addAll(
-                    server.damageEntity(entityTarget, hit, nDamage, false, 4, false));
+                    server.damageEntity(entityTarget, hit, nDamage, false, DamageType.INCENDIARY, false));
         }
     }
 }

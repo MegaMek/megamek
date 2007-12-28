@@ -41,6 +41,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -337,7 +338,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
                         .getAimingMode());
 
                 vPhaseReport.addAll( server.damageEntity(entity,
-                        hit, Math.min(nCluster, hits), false, 0, false, true,
+                        hit, Math.min(nCluster, hits), false, DamageType.NONE, false, true,
                         throughFront));
                 hits -= Math.min(nCluster, hits);
             }

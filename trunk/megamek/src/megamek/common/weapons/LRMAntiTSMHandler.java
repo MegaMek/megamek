@@ -31,6 +31,7 @@ import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -201,7 +202,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
             }
             entityTarget.hitThisRoundByAntiTSM = true;
             vPhaseReport.addAll(
-                    server.damageEntity(entityTarget, hit, nDamage, false, 0, false, false, throughFront));
+                    server.damageEntity(entityTarget, hit, nDamage, false, DamageType.NONE, false, false, throughFront));
         }
     }
 }

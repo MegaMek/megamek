@@ -180,6 +180,13 @@ import megamek.server.commands.WhoCommand;
  * @author Ben Mazur
  */
 public class Server implements Runnable {
+    
+    /**
+     * The DamageType enumeration is used for the damageEntity function.
+     *
+     */
+    public enum DamageType {NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, FIREDRAKE, MAXTECH_INFANTRY_DAMAGE, IGNORE_PASSENGER}
+    
 	// public final static String LEGAL_CHARS =
 	// "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-";
 	public final static String DEFAULT_BOARD = MapSettings.BOARD_SURPRISE;
@@ -7065,7 +7072,7 @@ public class Server implements Runnable {
 	 */
 	private void receiveAttack(Packet packet, int connId) {
 		Entity entity = game.getEntity(packet.getIntValue(0));
-		Vector vector = (Vector) packet.getObject(1);
+		Vector<EntityAction> vector = (Vector<EntityAction>) packet.getObject(1);
 
 		// is this the right phase?
 		if (game.getPhase() != IGame.PHASE_FIRING
@@ -7098,7 +7105,7 @@ public class Server implements Runnable {
 	 * Process a batch of entity attack (or twist) actions by adding them to the
 	 * proper list to be processed later.
 	 */
-	private void processAttack(Entity entity, Vector vector) {
+	private void processAttack(Entity entity, Vector<EntityAction> vector) {
 
 		// Not **all** actions take up the entity's turn.
 		boolean setDone = !(game.getTurn() instanceof GameTurn.TriggerAPPodTurn);
@@ -8187,12 +8194,12 @@ public class Server implements Runnable {
 					ahit = new HitData(Mech.LOC_LARM);
 				else
 					ahit = new HitData(Mech.LOC_RARM);
-				addReport(damageEntity(ae, ahit, 2, false, 0, false, false,
+				addReport(damageEntity(ae, ahit, 2, false, DamageType.NONE, false, false,
 						false));
 			}
-			int damageType = 0;
+			DamageType damageType = DamageType.NONE;
 			if (game.getOptions().booleanOption("maxtech_infantry_damage")) {
-				damageType = 6;
+				damageType = DamageType.MAXTECH_INFANTRY_DAMAGE;
 			}
 			addReport(damageEntity(te, hit, damage, false, damageType, false,
 					false, throughFront));
@@ -8402,12 +8409,12 @@ public class Server implements Runnable {
 					ahit = new HitData(Mech.LOC_RLEG);
 					break;
 				}
-				addReport(damageEntity(ae, ahit, 2, false, 0, false, false,
+				addReport(damageEntity(ae, ahit, 2, false, DamageType.NONE, false, false,
 						false));
 			}
-			int damageType = 0;
+            DamageType damageType = DamageType.NONE;
 			if (game.getOptions().booleanOption("maxtech_infantry_damage")) {
-				damageType = 6;
+				damageType = DamageType.MAXTECH_INFANTRY_DAMAGE;
 			}
 			addReport(damageEntity(te, hit, damage, false, damageType, false,
 					false, throughFront));
@@ -8601,7 +8608,7 @@ public class Server implements Runnable {
 				if (glancing) {
 					damage = (int) Math.floor(damage / 2.0);
 				}
-				addReport(damageEntity(te, hit, damage, false, 0, false, false,
+				addReport(damageEntity(te, hit, damage, false, DamageType.NONE, false, false,
 						throughFront));
 			}
 		}
@@ -8767,7 +8774,7 @@ public class Server implements Runnable {
 			if (glancing) {
 				damage = (int) Math.floor(damage / 2.0);
 			}
-			addReport(damageEntity(te, hit, damage, false, 0, false, false,
+			addReport(damageEntity(te, hit, damage, false, DamageType.NONE, false, false,
 					throughFront));
 		}
 
@@ -9279,17 +9286,17 @@ public class Server implements Runnable {
 				int loc = caa.getClub().getLocation();
 				if (loc == Entity.LOC_NONE) {
 					addReport(damageEntity(ae, new HitData(Mech.LOC_LARM), 1,
-							false, 0, false, false, false));
+							false, DamageType.NONE, false, false, false));
 					addReport(damageEntity(ae, new HitData(Mech.LOC_RARM), 1,
-							false, 0, false, false, false));
+							false, DamageType.NONE, false, false, false));
 				} else {
-					addReport(damageEntity(ae, new HitData(loc), 2, false, 0,
+					addReport(damageEntity(ae, new HitData(loc), 2, false, DamageType.NONE,
 							false, false, false));
 				}
 			}
-			int damageType = 0;
+            DamageType damageType = DamageType.NONE;
 			if (game.getOptions().booleanOption("maxtech_infantry_damage")) {
-				damageType = 6;
+				damageType = DamageType.MAXTECH_INFANTRY_DAMAGE;
 			}
 			addReport(damageEntity(te, hit, damage, false, damageType, false,
 					false, throughFront));
@@ -9311,7 +9318,7 @@ public class Server implements Runnable {
 			addReport(r);
 			if (roll >= 10) {
 				hit.makeGlancingBlow();
-				addReport(damageEntity(te, hit, 1, false, 0, true, false,
+				addReport(damageEntity(te, hit, 1, false, DamageType.NONE, true, false,
 						throughFront));
 			}
 		}
@@ -9969,7 +9976,7 @@ public class Server implements Runnable {
 			HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ae
 					.sideTable(target.getPosition()));
 			hit.setDamageType(HitData.DAMAGE_PHYSICAL);
-			addReport(damageEntity(ae, hit, toAttacker, false, 0, false, false,
+			addReport(damageEntity(ae, hit, toAttacker, false, DamageType.NONE, false, false,
 					throughFront));
 			addNewLines();
 			entityUpdate(ae.getId());
@@ -10059,7 +10066,7 @@ public class Server implements Runnable {
 				checkBreakSpikes(ae, hit.getLocation());
 				spikeDamage += 2;
 			}
-			addReport(damageEntity(ae, hit, cluster, false, 0, false, false,
+			addReport(damageEntity(ae, hit, cluster, false, DamageType.NONE, false, false,
 					throughFront));
 			damageTaken -= cluster;
 		}
@@ -10121,17 +10128,17 @@ public class Server implements Runnable {
 					cluster = 1;
 					spikeDamage += 2;
 				}
-				addReport(damageEntity(te, hit, cluster, false, 0, false,
+				addReport(damageEntity(te, hit, cluster, false, DamageType.NONE, false,
 						false, throughFront));
 			}
 		}
 		// finally apply spike damage to attacker
 		if (ae instanceof Mech)
 			addReport(damageEntity(ae, new HitData(Mech.LOC_CT), spikeDamage,
-					false, 0, false, false, throughFront));
+					false, DamageType.NONE, false, false, throughFront));
 		else if (ae instanceof Tank)
 			addReport(damageEntity(ae, new HitData(Tank.LOC_FRONT),
-					spikeDamage, false, 0, false, false, throughFront));
+					spikeDamage, false, DamageType.NONE, false, false, throughFront));
 
 		// move attacker and target, if possible
 		Coords src = te.getPosition();
@@ -10402,7 +10409,7 @@ public class Server implements Runnable {
 					checkBreakSpikes(te, hit.getLocation());
 					spikeDamage += 2;
 				}
-				addReport(damageEntity(te, hit, cluster, false, 0, false,
+				addReport(damageEntity(te, hit, cluster, false, DamageType.NONE, false,
 						false, throughFront));
 				damage -= 5;
 			}
@@ -10410,22 +10417,22 @@ public class Server implements Runnable {
 			if (spikeDamage > 0) {
 				if (ae instanceof QuadMech) {
 					addReport(damageEntity(ae, new HitData(Mech.LOC_LARM),
-							(spikeDamage + 2) / 4, false, 0, false, false,
+							(spikeDamage + 2) / 4, false, DamageType.NONE, false, false,
 							false));
 					addReport(damageEntity(ae, new HitData(Mech.LOC_RARM),
-							(spikeDamage + 2) / 4, false, 0, false, false,
+							(spikeDamage + 2) / 4, false, DamageType.NONE, false, false,
 							false));
 					if (spikeDamage > 2) {
 						addReport(damageEntity(ae, new HitData(Mech.LOC_LLEG),
-								spikeDamage / 4, false, 0, false, false, false));
+								spikeDamage / 4, false, DamageType.NONE, false, false, false));
 						addReport(damageEntity(ae, new HitData(Mech.LOC_RLEG),
-								spikeDamage / 4, false, 0, false, false, false));
+								spikeDamage / 4, false, DamageType.NONE, false, false, false));
 					}
 				} else {
 					addReport(damageEntity(ae, new HitData(Mech.LOC_LLEG),
-							spikeDamage / 2, false, 0, false, false, false));
+							spikeDamage / 2, false, DamageType.NONE, false, false, false));
 					addReport(damageEntity(ae, new HitData(Mech.LOC_RLEG),
-							spikeDamage / 2, false, 0, false, false, false));
+							spikeDamage / 2, false, DamageType.NONE, false, false, false));
 				}
 			}
 		}
@@ -11603,7 +11610,7 @@ public class Server implements Runnable {
      */
 	public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
 			boolean ammoExplosion) {
-		return damageEntity(te, hit, damage, ammoExplosion, 0, false, false);
+		return damageEntity(te, hit, damage, ammoExplosion, DamageType.NONE, false, false);
 	}
 
 	/**
@@ -11619,7 +11626,7 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code>s
 	 */
 	public Vector<Report> damageEntity(Entity te, HitData hit, int damage) {
-		return damageEntity(te, hit, damage, false, 0, false, false);
+		return damageEntity(te, hit, damage, false, DamageType.NONE, false, false);
 	}
 
     /**
@@ -11637,9 +11644,7 @@ public class Server implements Runnable {
      *            hurts the pilot, causes auto-ejects, and can blow the unit to
      *            smithereens
      * @param bFrag
-     *            If 0, nothing; if 1, Fragmentation; if 2, Flechette. 3 acid
-     *            head, 4 incendiary, 5 firedrake, 6 maxtech infantry damage 7
-     *            ignore passenger FIXME: this is getting ugly
+     *            The DamageType of the attack.
      * @param damageIS
      *            Should the target location's internal structure be damaged
      *            directly?
@@ -11647,7 +11652,7 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
 	public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
-			boolean ammoExplosion, int bFrag, boolean damageIS) {
+			boolean ammoExplosion, DamageType bFrag, boolean damageIS) {
 		return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS,
 				false);
 	}
@@ -11667,9 +11672,7 @@ public class Server implements Runnable {
      *            hurts the pilot, causes auto-ejects, and can blow the unit to
      *            smithereens
      * @param bFrag
-     *            If 0, nothing; if 1, Fragmentation; if 2, Flechette. 3 acid
-     *            head, 4 incendiary, 5 firedrake, 6 maxtech infantry damage 7
-     *            ignore passenger FIXME: this is getting ugly
+     *            The DamageType of the attack.
      * @param damageIS
      *            Should the target location's internal structure be damaged
      *            directly?
@@ -11678,7 +11681,7 @@ public class Server implements Runnable {
      * @return a <code>Vector</code> of <code>Report</code>s
      */
 	private Vector<Report> damageEntity(Entity te, HitData hit, int damage,
-			boolean ammoExplosion, int bFrag, boolean damageIS,
+			boolean ammoExplosion, DamageType bFrag, boolean damageIS,
 			boolean areaSatArty) {
 		return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS,
 				areaSatArty, true);
@@ -11699,9 +11702,7 @@ public class Server implements Runnable {
 	 *            hurts the pilot, causes auto-ejects, and can blow the unit to
 	 *            smithereens
 	 * @param bFrag
-	 *            If 0, nothing; if 1, Fragmentation; if 2, Flechette. 3 acid
-	 *            head, 4 incendiary, 5 firedrake, 6 maxtech infantry damage 7
-	 *            ignore passenger FIXME: this is getting ugly
+	 *           The DamageType of the attack.
 	 * @param damageIS
 	 *            Should the target location's internal structure be damaged
 	 *            directly?
@@ -11712,7 +11713,7 @@ public class Server implements Runnable {
 	 * @return a <code>Vector</code> of <code>Report</code>s
 	 */
 	public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
-			boolean ammoExplosion, int bFrag, boolean damageIS,
+			boolean ammoExplosion, DamageType bFrag, boolean damageIS,
 			boolean areaSatArty, boolean throughFront) {
 
 		Vector<Report> vDesc = new Vector<Report>();
@@ -11838,7 +11839,7 @@ public class Server implements Runnable {
 		if (isPlatoon && !te.isDestroyed() && !te.isDoomed()
 				&& ((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE) {
 			te_hex = game.getBoard().getHex(te.getPosition());
-			if (te_hex != null && bFrag != 6
+			if (te_hex != null && bFrag != DamageType.MAXTECH_INFANTRY_DAMAGE
 					&& !te_hex.containsTerrain(Terrains.WOODS)
 					&& !te_hex.containsTerrain(Terrains.JUNGLE)
 					&& !te_hex.containsTerrain(Terrains.ROUGH)
@@ -11873,7 +11874,7 @@ public class Server implements Runnable {
 		// We're actually going to abuse this for AX-head warheads, too, so as
 		// to not add another parameter.
 		switch (bFrag) {
-		case 1:
+		case FRAGMENTATION:
 			if (!isPlatoon && te != null) {
 				damage = 0;
 				r = new Report(6050);
@@ -11883,7 +11884,7 @@ public class Server implements Runnable {
 				vDesc.addElement(r);
 			}
 			break;
-		case 2:
+		case FLECHETTE:
 			if (!isPlatoon && te != null && !isBattleArmor) {
 				damage /= 2;
 				r = new Report(6060);
@@ -11893,7 +11894,7 @@ public class Server implements Runnable {
 				vDesc.addElement(r);
 			}
 			break;
-		case 3:
+		case ACID:
 			if (isFerroFibrousTarget) {
 				damage = te.getArmor(hit) >= 3 ? 3 : te.getArmor(hit);
 				r = new Report(6061);
@@ -11910,13 +11911,13 @@ public class Server implements Runnable {
 				vDesc.addElement(r);
 			}
 			break;
-		case 4:
+		case INCENDIARY:
 			// Incendiary AC ammo does +2 damage to unarmoured infantry
 			if (isPlatoon) {
 				damage += 2;
 			}
 			break;
-		case 5:
+		case FIREDRAKE:
 			// Firedrake needler does 0 damage to armoured target
 			if (!isPlatoon) {
 				damage = 0;
@@ -11926,7 +11927,7 @@ public class Server implements Runnable {
 				r.newlines = 0;
 				vDesc.addElement(r);
 			}
-		case 6:
+		case MAXTECH_INFANTRY_DAMAGE:
 			if (isPlatoon) {
 				if (damage >= 10)
 					damage = 2;
@@ -12068,7 +12069,7 @@ public class Server implements Runnable {
 				Entity passenger = te.getExteriorUnitAt(nLoc, hit.isRear());
 				// Does an exterior passenger absorb some of the damage?
 				if (!ammoExplosion && null != passenger && Compute.d6() >= 5
-						&& !passenger.isDoomed() && bFrag != 7) {
+						&& !passenger.isDoomed() && bFrag != DamageType.IGNORE_PASSENGER) {
 					// Yup. Roll up some hit data for that passenger.
 					r = new Report(6075);
 					r.subject = passenger.getId();
@@ -12119,7 +12120,7 @@ public class Server implements Runnable {
 				int swarmer = te.getSwarmAttackerId();
 				if ((!(te instanceof Mech) || bTorso) && swarmer != Entity.NONE
 						&& (hit.getEffect() & HitData.EFFECT_CRITICAL) == 0
-						&& Compute.d6() >= 5 && bFrag != 7) {
+						&& Compute.d6() >= 5 && bFrag != DamageType.IGNORE_PASSENGER) {
 					Entity swarm = game.getEntity(swarmer);
 					// Yup. Roll up some hit data for that passenger.
 					r = new Report(6076);
@@ -13056,7 +13057,7 @@ public class Server implements Runnable {
 				int cluster = Math.min(5, damage);
 				HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
 						Compute.targetSideTable(position, entity));
-				vDesc.addAll(damageEntity(entity, hit, cluster, false, 7,
+				vDesc.addAll(damageEntity(entity, hit, cluster, false, DamageType.IGNORE_PASSENGER,
 						false, true));
 				damage -= cluster;
 			}
@@ -13115,7 +13116,7 @@ public class Server implements Runnable {
 					int cluster = Math.min(5, damage);
 					HitData hit = e.rollHitLocation(ToHitData.HIT_NORMAL,
 							ToHitData.SIDE_FRONT);
-					vDesc.addAll(damageEntity(e, hit, cluster, false, 7, false,
+					vDesc.addAll(damageEntity(e, hit, cluster, false, DamageType.IGNORE_PASSENGER, false,
 							true));
 					damage -= cluster;
 				}
@@ -17196,7 +17197,7 @@ public class Server implements Runnable {
 	 * Creates a packet containing offboard artillery attacks
 	 */
 	private Packet createArtilleryPacket(Player p) {
-        Vector v = new Vector();
+        Vector<ArtilleryAttackAction> v = new Vector<ArtilleryAttackAction>();
         int team = p.getTeam();
         for (Enumeration i = game.getAttacks();i.hasMoreElements();) {
             WeaponHandler wh = (WeaponHandler)i.nextElement();
@@ -18713,17 +18714,17 @@ public class Server implements Runnable {
 		if (entity instanceof BipedMech) {
 			for (int i = 6; i <= 7; i++) {
 				hit = new HitData(i);
-				addReport(damageEntity(entity, hit, damage, false, 0, true));
+				addReport(damageEntity(entity, hit, damage, false, DamageType.NONE, true));
 			}
 		}
 		if (entity instanceof QuadMech) {
 			for (int i = 4; i <= 7; i++) {
 				hit = new HitData(i);
-				addReport(damageEntity(entity, hit, damage, false, 0, true));
+				addReport(damageEntity(entity, hit, damage, false, DamageType.NONE, true));
 			}
 		} else if (entity instanceof Tank) {
 			hit = new HitData(Tank.LOC_FRONT);
-			addReport(damageEntity(entity, hit, damage, false, 0, true));
+			addReport(damageEntity(entity, hit, damage, false, DamageType.NONE, true));
 		}
 	}
 
@@ -19832,7 +19833,7 @@ public class Server implements Runnable {
 				for (int loc = 0; loc < entity.locations(); loc++) {
 					if (entity.getInternal(loc) > 0) {
 						HitData hit = new HitData(loc);
-						addReport(damageEntity(entity, hit, hits, false, 0,
+						addReport(damageEntity(entity, hit, hits, false, DamageType.NONE,
 								false, true, false));
 					}
 				}
@@ -19842,7 +19843,7 @@ public class Server implements Runnable {
 							toHit.getSideTable());
 
 					addReport(damageEntity(entity, hit,
-							Math.min(cluster, hits), false, 0, false, true,
+							Math.min(cluster, hits), false, DamageType.NONE, false, true,
 							false));
 					hits -= Math.min(5, hits);
 				}

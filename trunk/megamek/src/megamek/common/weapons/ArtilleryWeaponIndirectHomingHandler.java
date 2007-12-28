@@ -31,6 +31,7 @@ import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 public class ArtilleryWeaponIndirectHomingHandler extends
         ArtilleryWeaponIndirectFireHandler implements Serializable {
@@ -263,7 +264,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                         .getSideTable(), waa.getAimedLocation(), waa
                         .getAimingMode());
                 vPhaseReport.addAll( server.damageEntity(entity, hit,
-                        ratedDamage, false, 0, false, true, throughFront));
+                        ratedDamage, false, DamageType.NONE, false, true, throughFront));
                 server.creditKill(entity, ae);
             }
         }

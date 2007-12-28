@@ -49,7 +49,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
 
 
     public void initialize() {
-        OptionGroup base = addGroup("base"); //$NON-NLS-1$
+        IBasicOptionGroup base = addGroup("base"); //$NON-NLS-1$
         addOption(base,"friendly_fire", false); //$NON-NLS-1$
         addOption(base,"skip_ineligable_movement", false); //$NON-NLS-1$
         addOption(base,"skip_ineligable_firing", false); //$NON-NLS-1$
@@ -66,7 +66,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(base,"restrict_game_commands", false); //$NON-NLS-1$
         addOption(base,"bridgeCF", 0); //$NON-NLS-1$
         
-        OptionGroup victory = addGroup("victory"); //$NON-NLS-1$
+        IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
         addOption(victory,"check_victory", true); //$NON-NLS-1$
         addOption(victory,"achieve_conditions", 1); //$NON-NLS-1$
         addOption(victory,"use_bv_destroyed", false); //$NON-NLS-1$
@@ -77,7 +77,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(victory,"game_turn_limit", 10); //$NON-NLS-1$
         addOption(victory,"commander_killed", false); //$NON-NLS-1$
 
-        OptionGroup level2 = addGroup("level2"); //$NON-NLS-1$
+        IBasicOptionGroup level2 = addGroup("level2"); //$NON-NLS-1$
         addOption(level2,"flamer_heat", true); //$NON-NLS-1$
         addOption(level2,"fire", false); //$NON-NLS-1$
         addOption(level2,"indirect_fire", true); //$NON-NLS-1$
@@ -89,7 +89,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level2,"assault_drop", false); //$NON-NLS-1$
         addOption(level2,"hidden_units", false); //$NON-NLS-1$
         
-        OptionGroup level3 = addGroup("level3"); //$NON-NLS-1$
+        IBasicOptionGroup level3 = addGroup("level3"); //$NON-NLS-1$
         addOption(level3,"allow_nukes",false);
         addOption(level3,"really_allow_nukes",false);
         addOption(level3,"allow_level_3_units", false);
@@ -130,8 +130,9 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level3,"maxtech_hotload", false); //$NON-NLS-1$
         addOption(level3,"maxtech_rapid_ac", false); //$NON-NLS-1$
         addOption(level3,"maxtech_walk_backwards", false); //$NON-NLS-1$
+        addOption(level3,"maxtech_infantry_damage", false); //$NON-NLS-1$
 
-        OptionGroup ruleBreakers = addGroup("ruleBreakers"); //$NON-NLS-1$
+        IBasicOptionGroup ruleBreakers = addGroup("ruleBreakers"); //$NON-NLS-1$
         addOption(ruleBreakers,"no_tac", false); //$NON-NLS-1$
         addOption(ruleBreakers,"no_immobile_vehicles", false); //$NON-NLS-1$
         addOption(ruleBreakers,"vehicles_can_eject", false); //$NON-NLS-1$

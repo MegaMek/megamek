@@ -54,7 +54,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      * The first group added by <code>addGroup</code> is the first in the
      * <code>Enumeration</code> returned by <code>getGroups</code>   
      */
-    private Vector<OptionGroup> groups = new Vector<OptionGroup>();
+    private Vector<IBasicOptionGroup> groups = new Vector<IBasicOptionGroup>();
 
     /**
      * Flag that indicates that this filling the the options info data is
@@ -96,19 +96,19 @@ public class AbstractOptionsInfo implements IOptionsInfo {
     /* (non-Javadoc)
      * @see megamek.common.options.IOptionsInfo#getGroups()
      */
-    public Enumeration getGroups() {
+    public Enumeration<IBasicOptionGroup> getGroups() {
         return groups.elements();
     }
 
-    OptionGroup addGroup(String name) {
+    IBasicOptionGroup addGroup(String name) {
         return addGroup(name,null); 
     }
 
-    OptionGroup addGroup(String name, String key) {
-        OptionGroup group = null;
+    IBasicOptionGroup addGroup(String name, String key) {
+        IBasicOptionGroup group = null;
         if (!finished) {
             for (int i = 0; i < groups.size(); i++) {
-                OptionGroup g = groups.elementAt(i); 
+                IBasicOptionGroup g = groups.elementAt(i); 
                 if ( g != null && g.getName().equals(name)) {
                     group = groups.elementAt(i);
                     break;
@@ -122,9 +122,10 @@ public class AbstractOptionsInfo implements IOptionsInfo {
         return group;
     }
 
-    void addOptionInfo(OptionGroup group, String name) {
+    void addOptionInfo(IBasicOptionGroup group, String name) {
         if (!finished) {
-            group.addOptionName(name);
+            // TODO: I'm not happy about this cast but this is better than it was before.
+            ((OptionGroup) group).addOptionName(name);
             setOptionInfo(name, new OptionInfo(name));
         }
     }
@@ -137,7 +138,7 @@ public class AbstractOptionsInfo implements IOptionsInfo {
      */
     protected String getGroupDisplayableName(String groupName) {
         for (int i = 0; i < groups.size(); i++) {
-            OptionGroup g = groups.elementAt(i); 
+            IBasicOptionGroup g = groups.elementAt(i); 
             if ( g != null && g.getName().equals(groupName)) {
                 return Messages.getString(name+GROUP_SUFFIX+groupName+DISPLAYABLE_NAME_SUFFIX);
             }

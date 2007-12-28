@@ -1700,7 +1700,7 @@ public class BoardView1
      *
      *  Try to prevent annoying ConcurrentModificationExceptions
      */
-    public void redrawEntity(Entity entity) {
+    public synchronized void redrawEntity(Entity entity) {
         Integer entityId = new Integer( entity.getId() );
         EntitySprite sprite = entitySpriteIds.get( entityId );
         ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(entitySprites);
@@ -1719,13 +1719,14 @@ public class BoardView1
 
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
-        for (C3Sprite c3Sprite : C3Sprites) {
-            if (c3Sprite.entityId == entity.getId()) {
-                C3Sprites.remove(c3Sprite);
+        for (Iterator<C3Sprite> i = C3Sprites.iterator(); i.hasNext();) {
+            final C3Sprite c3sprite = i.next();
+            if (c3sprite.entityId == entity.getId()) {
+                i.remove();
             }
         }
 
-        if(entity.hasC3() || entity.hasC3i()) addC3Link(entity);
+        if (entity.hasC3() || entity.hasC3i()) addC3Link(entity);
 
         scheduleRedraw();
     }
@@ -1855,8 +1856,7 @@ public class BoardView1
      * Specifies that this should mark the deployment hexes for a player.  If
      * the player is set to null, no hexes will be marked.
      */
-    public void markDeploymentHexesFor(Player p)
-    {
+    public void markDeploymentHexesFor(Player p) {
         m_plDeployer = p;
     }
 
@@ -1866,16 +1866,16 @@ public class BoardView1
     public void addC3Link(Entity e) {
         if (e.getPosition() == null) return;
 
-        if(e.hasC3i()) {
+        if (e.hasC3i()) {
             for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
                 final Entity fe = i.nextElement();
                 if (fe.getPosition() == null) return;
-                if ( e.onSameC3NetworkAs(fe) && !fe.equals(e)) {
+                if (e.onSameC3NetworkAs(fe) && !fe.equals(e)) {
                     C3Sprites.add(new C3Sprite(e, fe));
                 }
             }
         }
-        else if(e.getC3Master() != null) {
+        else if (e.getC3Master() != null) {
             Entity eMaster = e.getC3Master();
             if (eMaster.getPosition() == null) return;
 

@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.14-dev (SVN)
+v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed
 + Bug 1851887: NPE with bot and PPC weapons that can't have a capacitor
 + Partial fix for Bug 1852029: client crash when deploying c3i units

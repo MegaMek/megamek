@@ -23,6 +23,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -89,7 +90,7 @@ public class SRMFragHandler extends SRMHandler {
                 hit.makeGlancingBlow();
             }
             vPhaseReport.addAll(
-                    server.damageEntity(entityTarget, hit, nDamage, false, 1, false, false, throughFront));
+                    server.damageEntity(entityTarget, hit, nDamage, false, DamageType.FRAGMENTATION, false, false, throughFront));
         }
 
     }

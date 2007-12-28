@@ -436,7 +436,7 @@ public class TdbFile implements IMechLoader {
             mech.setArmorType(armorType);
 
             if (LAMTonnage != null) {
-                throw new EntityLoadingException("Unsupported tech: LAM?");
+                //throw new EntityLoadingException("Unsupported tech: LAM?");
             }
             if (techBase.equals("Inner Sphere")) {
                 switch (Integer.parseInt(rulesLevel)) {
@@ -569,9 +569,9 @@ public class TdbFile implements IMechLoader {
             if (critData[loc][i][1] == null || !isRearMounted[Integer.parseInt(critData[loc][i][1])]) {
                 rearMounted = false;
             }
-            boolean split = true;
+            //boolean split = true;
             if (critData[loc][i][1] == null || !isSplit[Integer.parseInt(critData[loc][i][1])]) {
-                split = false;
+                //split = false;
             }
             if (critName.equalsIgnoreCase("Armored Cowl")) {
                 mech.setCowl(5);

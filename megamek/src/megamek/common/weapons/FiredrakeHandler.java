@@ -30,6 +30,7 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -101,7 +102,7 @@ public class FiredrakeHandler extends WeaponHandler {
                 hit.makeGlancingBlow();
             }
             vPhaseReport.addAll(server.damageEntity(
-                            entityTarget, hit, nDamage, false, 5, false, false,
+                            entityTarget, hit, nDamage, false, DamageType.FIREDRAKE, false, false,
                             throughFront));
         }
     }

@@ -31,6 +31,7 @@ import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter A basic, simple attack handler. May or may not work for
@@ -386,7 +387,7 @@ public class WeaponHandler implements AttackHandler {
                 hit.makeGlancingBlow();
             }
             vPhaseReport.addAll(server.damageEntity(
-                    entityTarget, hit, nDamage, false, 0, false, false,
+                    entityTarget, hit, nDamage, false, DamageType.NONE, false, false,
                     throughFront));
         }
     }

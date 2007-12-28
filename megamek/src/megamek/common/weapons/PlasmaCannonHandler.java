@@ -46,18 +46,15 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
         if (entityTarget instanceof Mech) {
-            if (!bSalvo) {
-                //hits
-                r = new Report(3390);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-            }
+            r = new Report(3390);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            r.choose(true);
             int extraHeat = Compute.d6(2);
             r.add(extraHeat);
+            r.choose(true);
             r.newlines = 0;
             vPhaseReport.addElement(r);
             entityTarget.heatBuildup += extraHeat;
@@ -109,7 +106,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             return 1;
         }
         if (target instanceof Mech) {
-            return 0;
+            return 1;
         } else {
             if (target instanceof BattleArmor && ((BattleArmor)target).hasFireresistantArmor())
                 return 0;

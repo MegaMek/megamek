@@ -45,25 +45,19 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
+        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+                nCluster, nDamPerHit, bldgAbsorbs);
         if (entityTarget instanceof Mech) {
-            if (!bSalvo) {
-                //hits
-                r = new Report(3390);
-                r.subject = subjectId;
-                vPhaseReport.addElement(r);
-            }
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            r.choose(true);
             int extraHeat = Compute.d6();
             r.add(extraHeat);
+            r.choose(true);
             r.newlines = 0;
             vPhaseReport.addElement(r);
             entityTarget.heatBuildup += extraHeat;
         }
-        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                nCluster, nDamPerHit, bldgAbsorbs);
     }
     
     /*

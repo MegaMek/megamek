@@ -2177,7 +2177,7 @@ public class Server implements Runnable {
 		case IGame.PHASE_TARGETING:
 		case IGame.PHASE_OFFBOARD:
 			if (toSkip != null) {
-				processAttack(toSkip, new Vector(0));
+				processAttack(toSkip, new Vector<EntityAction>(0));
 			}
 			endCurrentTurn(toSkip);
 			break;

@@ -1028,9 +1028,10 @@ public class BoardView1
         entitySprites = newSprites;
         entitySpriteIds = newSpriteIds;
 
-        for (C3Sprite c3Sprite : C3Sprites) {
-            if (c3Sprite.entityId == entity.getId()) {
-                C3Sprites.remove(c3Sprite);
+        for (Iterator<C3Sprite> i = C3Sprites.iterator(); i.hasNext();) {
+            final C3Sprite c3sprite = i.next();
+            if (c3sprite.entityId == entity.getId()) {
+                i.remove();
             }
         }
 

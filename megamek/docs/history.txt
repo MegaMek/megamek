@@ -19,6 +19,7 @@ v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Fix bug with C3 lines. TODO: some lines are not correctly removed
 + Fix Plasma Rifle and Plasma Cannon
 + Fix Clan Narc Techlevel
++ Fixes and improvements to some client commands.
 
 v0.33.13 (2007-12-13, 21:34 GMT+1)
 + Fix lock when sending large packets

@@ -3,6 +3,8 @@
  */
 package megamek.client.commands;
 
+import java.util.Enumeration;
+
 import megamek.common.Entity;
 import megamek.client.Client;
 
@@ -28,6 +30,15 @@ public class ShowEntityCommand extends ClientCommand {
         //is this nessesary to prevent cheating?
         if(client.game.getOptions().booleanOption("double_blind")) {
             return "Sorry, this command is disabled during double blind.";
+        }
+        if(args.length == 1) {
+            String list = "List of all entities.\n";
+            Enumeration<Entity> entities = client.getEntities();
+            while (entities.hasMoreElements()) {
+                Entity ent = entities.nextElement();
+                list += ent.getId() + " " + ent.getOwner().getName() + "'s " + ent.getDisplayName() + "\n";
+            }
+            return list;
         }
         try {
             int id = Integer.parseInt(args[1]);

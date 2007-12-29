@@ -21,6 +21,7 @@ import megamek.common.WeaponType;
 import megamek.common.actions.AbstractEntityAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.SearchlightAttackAction;
+import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.WeaponAttackAction;
 
 /**
@@ -62,13 +63,13 @@ public class FireCommand extends ClientCommand {
                 }
             } else if(args[1].equalsIgnoreCase("HELP")) {
                 return "Available commands:\n" + 
-                    "#move ABORT = aborts planed fireing and deselect unit." +
-                    "#move SELECT unitID = Selects thhe unit named unit ID for fireing. This is a prerequisite for all commands listed after this." +
-                    "#move COMMIT = executs the current fireing plan." +
-                    "#move LIST unitID = List targeting information for all weapons at the specified target. This is currently the only way to get weapon IDs." +
-                    "#move TWIST = used for torso twisitng, not implemented yet." +
-                    "#move TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified target. Any number of weapons may be specified." +
-                    "#move TARGET unitID ALL = fires all remaining weapons at the specified target.";
+                    "#fire ABORT = aborts planed fireing and deselect unit.\n" +
+                    "#fire SELECT unitID = Selects the unit named unit ID for fireing. This is a prerequisite for all commands listed after this.\n" +
+                    "#fire COMMIT = executs the current fireing plan.\n" +
+                    "#fire LIST unitID = List targeting information for all weapons at the specified target. This is currently the only way to get weapon IDs.\n" +
+                    "#fire TWIST heading = used for torso twisitng, the heading being to which direction (N, NE, SE, etc) to try and turn.\n" +
+                    "#fire TARGET unitID weaponID1 weaponID2 ... = fires all specified weapons at the specified target. Any number of weapons may be specified.\n" +
+                    "#fire TARGET unitID ALL = fires all remaining weapons at the specified target.\n";
             } else if(ce() != null) {
                 if(args[1].equalsIgnoreCase("COMMIT")) {
                     commit();
@@ -111,12 +112,13 @@ public class FireCommand extends ClientCommand {
                         }
                         
                         return "Invalid Target ID.";
-                    } else if(args[1].equalsIgnoreCase("TWIST")) {
-                        return "Not implemented yet.";
+                    } else if(args[1].equalsIgnoreCase("TWIST") && args.length > 2) {
+                        torsoTwist(getDirection(args[2]));
+                        return "Torso-twisted (or rotated turret). All attacks planned until now have been clearned.";
                     }
                 }
             } else {
-                return "No ce() selected, first select an ce() to shoot from.";
+                return "No entity selected, first select an entity to shoot from.";
             }
         }
         clearAttacks();
@@ -150,6 +152,29 @@ public class FireCommand extends ClientCommand {
         ce().setSecondaryFacing(ce().getFacing());
         ce().setArmsFlipped(false);
         cen = Entity.NONE;
+    }
+    
+    private void torsoTwist(int target) {
+        Enumeration<AbstractEntityAction> i = attacks.elements();
+        while (i.hasMoreElements()) {
+            Object o = i.nextElement();
+            if (o instanceof WeaponAttackAction) {
+                WeaponAttackAction waa = (WeaponAttackAction) o;
+                ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
+            }
+        }
+        attacks.removeAllElements();
+        
+        // remove temporary attacks from game & board
+        client.game.removeActionsFor(cen);
+        
+        // restore any other movement to default
+        ce().setSecondaryFacing(ce().getFacing());
+        ce().setArmsFlipped(false);
+        
+        int direction = ce().clipSecondaryFacing(target);
+        attacks.addElement(new TorsoTwistAction(cen, direction));
+        ce().setSecondaryFacing(direction);
     }
     
     private void fire(int weaponNum, Targetable target) {

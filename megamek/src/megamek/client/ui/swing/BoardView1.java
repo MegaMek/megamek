@@ -1117,11 +1117,12 @@ public class BoardView1
 
     public void centerOnHex(Coords c) {
         if ( null == c ) return;
+        //the scrollbars auto-correct if we try to set a value that's out of bounds
         Point hexPoint = getCentreHexLocation(c);
         JScrollBar vscroll = scrollpane.getVerticalScrollBar();
-        vscroll.setValue(hexPoint.y);
+        vscroll.setValue(hexPoint.y-vscroll.getVisibleAmount()/2);
         JScrollBar hscroll = scrollpane.getHorizontalScrollBar();
-        hscroll.setValue(c.x);
+        hscroll.setValue(hexPoint.x-hscroll.getVisibleAmount()/2);
         repaint();
     }
 

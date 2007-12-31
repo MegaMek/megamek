@@ -68,6 +68,7 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.Terrains;
 import megamek.common.UnitLocation;
 import megamek.common.WeaponType;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -118,13 +119,15 @@ public class BoardView1
     // line width of the c3 network lines
     private static final int C3_LINE_WIDTH = 1;
 
+    private static Font FONT_9 = new Font("SansSerif", Font.PLAIN, 9); //$NON-NLS-1$
     private static Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
     private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12); //$NON-NLS-1$
 
     private Dimension       hex_size = null;
     
-    private Font       font_hexnum          = FONT_10;
-    private Font       font_minefield   = FONT_12;
+    private Font font_hexnum = FONT_10;
+    private Font font_elev = FONT_9;
+    private Font font_minefield = FONT_12;
 
     private IGame game;
 
@@ -220,8 +223,7 @@ public class BoardView1
         addMouseListener(this);
         MouseMotionListener doScrollRectToVisible = new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
-               Rectangle r = new Rectangle(e.getX(), e.getY(), 1, 1);
-               ((JPanel)e.getSource()).scrollRectToVisible(r);
+                centerOnHex(getCoordsAt(new Point(e.getX(), e.getY())));
            }
         };
         addMouseMotionListener(doScrollRectToVisible);
@@ -812,6 +814,10 @@ public class BoardView1
         final IHex hex = game.getBoard().getHex(c);
         final Point hexLoc = getHexLocation(c);
 
+        int level = hex.getElevation();
+        int depth = hex.depth();
+        int height = Math.max(hex.terrainLevel(Terrains.BLDG_ELEV), hex.terrainLevel(Terrains.BRIDGE_ELEV));
+
         // offset drawing point        
         int drawX = hexLoc.x; //- boardRect.x;
         int drawY = hexLoc.y; //- boardRect.y;
@@ -851,6 +857,39 @@ public class BoardView1
                     boardGraph);
         }
         
+        // draw terrain level / water depth / building height
+        if (scale > 0.5f) {
+            int ypos = 70;
+            if(level != 0) {
+                drawCenteredString(
+                        Messages.getString("BoardView1.LEVEL") + level, //$NON-NLS-1$
+                        drawX,
+                        drawY + (int)(ypos*scale),
+                        font_elev,
+                        boardGraph);
+                ypos -= 10;
+            }
+            if(depth != 0) {
+                drawCenteredString(
+                        Messages.getString("BoardView1.DEPTH") + depth, //$NON-NLS-1$
+                        drawX,
+                        drawY + (int)(ypos*scale),
+                        font_elev,
+                        boardGraph);
+                ypos -= 10;
+            }
+            if(height > 0) {
+                boardGraph.setColor(GUIPreferences.getInstance().getColor("AdvancedBuildingTextColor"));
+                drawCenteredString(
+                        Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
+                        drawX,
+                        drawY + (int)(ypos*scale),
+                        font_elev,
+                        boardGraph);
+                ypos -= 10;
+            }
+        }
+
         // draw elevation borders
         boardGraph.setColor(Color.black);
         if (drawElevationLine(c, 0)) {
@@ -1078,9 +1117,11 @@ public class BoardView1
 
     public void centerOnHex(Coords c) {
         if ( null == c ) return;
-        Point hexPoint = getHexLocation(c);
-        Rectangle rect = new Rectangle(hexPoint.x, hexPoint.y, HEX_W, HEX_H);
-        scrollpane.getViewport().scrollRectToVisible(rect);
+        Point hexPoint = getCentreHexLocation(c);
+        JScrollBar vscroll = scrollpane.getVerticalScrollBar();
+        vscroll.setValue(hexPoint.y);
+        JScrollBar hscroll = scrollpane.getHorizontalScrollBar();
+        hscroll.setValue(c.x);
         repaint();
     }
 

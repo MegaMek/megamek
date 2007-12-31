@@ -1,6 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.33.15-dev (SVN)
++ elevation/depths listing added back for Swing gui, made combobox initial 
+	state in some dialogs make more sense.
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

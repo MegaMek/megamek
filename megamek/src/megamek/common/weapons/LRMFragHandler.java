@@ -46,6 +46,44 @@ public class LRMFragHandler extends LRMHandler {
      *  (non-Javadoc)
      * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector, megamek.common.Building, int, boolean)
      */
+    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg,
+            int nDamage, boolean bSalvo) {
+        if (!bSalvo) {
+            // hits!
+            r = new Report(2270);
+            r.subject = subjectId;
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        }
+        // report that damage was "applied" to terrain
+        
+        //Fragmentation does double damage to woods
+        nDamage *= 2;
+        
+        r = new Report(3385);
+        r.indent();
+        r.subject = subjectId;
+        r.add(nDamage);
+        vPhaseReport.addElement(r);
+
+        // Any clear attempt can result in accidental ignition, even
+        // weapons that can't normally start fires. that's weird.
+        // Buildings can't be accidentally ignited.
+        if (bldg != null
+                && server.tryIgniteHex(target.getPosition(), subjectId, false,
+                        9)) {
+            return;
+        }
+
+        //int tn = 14 - nDamage;
+        server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        return;
+    }
+
+    /*
+     *  (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector, megamek.common.Building, int, boolean)
+     */
     protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg,
             int nDamage, boolean bSalvo) {
         return;

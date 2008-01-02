@@ -451,8 +451,8 @@ public class WeaponHandler implements AttackHandler {
             return;
         }
 
-        int tn = 14 - nDamage;
-        server.tryClearHex(target.getPosition(), tn, subjectId);
+        //int tn = 14 - nDamage;
+        server.tryClearHex(target.getPosition(), nDamage, subjectId);
         return;
     }
 

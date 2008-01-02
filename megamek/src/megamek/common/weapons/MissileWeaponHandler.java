@@ -128,10 +128,16 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if (bGlancing) {
             nGlancing -=4;
         }
-        if (ae instanceof BattleArmor)
-            missilesHit = Compute.missilesHit(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength(), nSalvoBonus + nGlancing + nMissilesModifier + getAMSHitsMod(vPhaseReport), bGlancing || maxtechmissiles, weapon.isHotLoaded());
-        else 
-            missilesHit = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nGlancing + nMissilesModifier + getAMSHitsMod(vPhaseReport), bGlancing || maxtechmissiles, weapon.isHotLoaded());
+        
+        if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
+        	missilesHit = wtype.getRackSize();
+        else{
+        	if (ae instanceof BattleArmor)
+	            missilesHit = Compute.missilesHit(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength(), nSalvoBonus + nGlancing + nMissilesModifier + getAMSHitsMod(vPhaseReport), bGlancing || maxtechmissiles, weapon.isHotLoaded());
+	        else
+	            missilesHit = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nGlancing + nMissilesModifier + getAMSHitsMod(vPhaseReport), bGlancing || maxtechmissiles, weapon.isHotLoaded());
+        }
+        
         if (missilesHit > 0) {
             r = new Report(3325);
             r.subject = subjectId;
@@ -305,8 +311,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         boolean shotAtNemesisTarget = false;
         if (bNemesisConfusable && !waa.isNemesisConfused()) {
             // loop through nemesis targets
-            for (Enumeration e = game.getNemesisTargets(ae, target.getPosition());e.hasMoreElements();) {
-                Entity entity = (Entity)e.nextElement();
+            for (Enumeration<Entity> e = game.getNemesisTargets(ae, target.getPosition());e.hasMoreElements();) {
+                Entity entity = e.nextElement();
                 //friendly unit with attached iNarc Nemesis pod standing in the way
                 r = new Report(3125);
                 r.subject = subjectId;

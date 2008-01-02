@@ -8,6 +8,7 @@ v0.33.15-dev (SVN)
   then subtracting that number from the current terrains CF
 + Bug: Flechette ammo not doing double damage to woods
 + Bug: Fragmentation ammo not doing double damage to woods
++ Bug: Missiles not hitting for full damage against woods
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

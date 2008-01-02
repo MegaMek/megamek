@@ -13,9 +13,13 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.BattleArmor;
+import megamek.common.Building;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -35,6 +39,7 @@ public class SRMHandler extends MissileWeaponHandler {
     public SRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
+    
     
     /*
      *  (non-Javadoc)

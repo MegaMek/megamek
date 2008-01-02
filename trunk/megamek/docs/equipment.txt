@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs/equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
 Type,Tech,Rules,Name,Aliases
 W,Any,1,Medium Laser,IS Medium Laser,ISMediumLaser,
 W,Any,1,Large Laser,IS Large Laser,ISLargeLaser,
@@ -221,7 +221,7 @@ W,IS,2,MRM 30 (OS),OS MRM-30,ISMRM30 (OS),IS MRM 30 (OS),
 W,IS,2,MRM 40 (OS),OS MRM-40,ISMRM40 (OS),IS MRM 40 (OS),
 W,IS,2,ISNarcBeacon,IS Narc Beacon,IS Narc Missile Beacon,
 W,IS,2,ISNarcBeacon (OS),IS OS Narc Beacon,IS Narc Missile Beacon (OS),
-W,IS,2,CLNarcBeacon,Clan Narc Beacon,Clan Narc Missile Beacon,
+W,Clan,2,CLNarcBeacon,Clan Narc Beacon,Clan Narc Missile Beacon,
 W,Clan,2,CLNarcBeacon (OS),Clan OS Narc Beacon,Clan Narc Missile Beacon (OS),
 W,IS,2,ISImprovedNarc,IS iNarc Beacon,IS iNarc Missile Beacon,
 W,IS,2,ISImprovedNarc (OS),IS OS iNarc Beacon,IS iNarc Missile Beacon (OS),

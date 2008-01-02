@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -43,7 +44,7 @@ public class LRMHandler extends MissileWeaponHandler {
             Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
      *  (non-Javadoc)
      * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector, megamek.common.Entity, boolean)

@@ -4,6 +4,10 @@ v0.33.15-dev (SVN)
 + Swing GUI: elevation/depths listing added back, 
 	made combobox initial state in some dialogs make more sense.
 + Swing GUI: center on hex works correctly now, also, drag-scroll works again.
++ Bug: damage to woods using old clear terrain code by subtracting damage from 14
+  then subtracting that number from the current terrains CF
++ Bug: Flechette ammo not doing double damage to woods
++ Bug: Fragmentation ammo not doing double damage to woods
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

@@ -291,6 +291,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 entityTarget);
         boolean bNemesisConfusable = isNemesisConfusable();
 
+        ae.setLastTarget(entityTarget.getId());
+
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 

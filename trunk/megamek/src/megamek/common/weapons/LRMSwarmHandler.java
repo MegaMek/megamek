@@ -63,6 +63,8 @@ public class LRMSwarmHandler extends LRMHandler {
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
 
+        ae.setLastTarget(entityTarget.getId());
+
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
@@ -268,6 +270,8 @@ public class LRMSwarmHandler extends LRMHandler {
         if (swarmMissilesNowLeft == 0) {
             swarmMissilesNowLeft = wtype.getRackSize();
         }
+        ae.setLastTarget(entityTarget.getId());
+
         Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(), entityTarget, waa.getWeaponId());
         if (swarmTarget != null) {
             r = new Report(3420);

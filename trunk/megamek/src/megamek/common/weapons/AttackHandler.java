@@ -21,12 +21,12 @@ import java.util.Vector;
 
 import megamek.common.Report;
 
-
 /**
  * @author Andrew Hunter Describes a set of methods a class can use to represent
  *         an attack from some weapon.
  */
 public interface AttackHandler {
+    
     // Does it care?
     public boolean cares(int phase);
 
@@ -41,4 +41,5 @@ public interface AttackHandler {
     public boolean announcedEntityFiring();
     
     public void setAnnouncedEntityFiring(boolean announcedEntityFiring);
+    
 }

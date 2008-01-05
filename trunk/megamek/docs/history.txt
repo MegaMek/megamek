@@ -9,6 +9,8 @@ v0.33.15-dev (SVN)
 + Bug: Flechette ammo not doing double damage to woods
 + Bug: Fragmentation ammo not doing double damage to woods
 + Bug: Missiles not hitting for full damage against woods
++ RFE 1859840: Leg damage in Partial Cover
++ Bug: Last Entity Targetted was not being saved
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

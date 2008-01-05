@@ -23,6 +23,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -52,6 +53,24 @@ public class FlamerHeatHandler extends WeaponHandler {
         if (entityTarget instanceof Mech
                 && game.getOptions().booleanOption("flamer_heat")) {
             // heat
+            
+            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
+                    .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+
+            if ( entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
+                    Compute.targetSideTable(ae, entityTarget)) ) {
+                // Weapon strikes Partial Cover.
+                r = new Report(3460);
+                r.subject = subjectId;
+                r.add(entityTarget.getShortName());
+                r.add(entityTarget.getLocationAbbr(hit));
+                r.newlines = 0;
+                r.indent(2);
+                vPhaseReport.addElement(r);
+                missed = true;
+                return;
+            }
+
             int heat = wtype.getHeat();
             r = new Report(3400);
             r.subject = subjectId;

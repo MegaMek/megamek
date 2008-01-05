@@ -58,6 +58,7 @@ public class WeaponHandler implements AttackHandler {
     protected int nDamPerHit;    
     protected boolean throughFront;
     protected boolean announcedEntityFiring = false;
+    protected boolean missed = false;
 
     /**
      * return the <code>int</code> Id of the attacking <code>Entity</code>
@@ -150,6 +151,7 @@ public class WeaponHandler implements AttackHandler {
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
 
+        ae.setLastTarget(entityTarget.getId());
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 
@@ -341,9 +343,26 @@ public class WeaponHandler implements AttackHandler {
             Building bldg, int hits, int nCluster, int nDamPerHit,
             int bldgAbsorbs) {
         int nDamage;
+        missed = false;
+        
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
 
+        if ( entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
+                Compute.targetSideTable(ae, entityTarget)) ) {
+            // Weapon strikes Partial Cover.
+            r = new Report(3460);
+            r.subject = subjectId;
+            r.add(entityTarget.getShortName());
+            r.add(entityTarget.getLocationAbbr(hit));
+            r.newlines = 0;
+            r.indent(2);
+            vPhaseReport.addElement(r);
+            nDamage = 0;
+            missed = true;
+            return;
+        }
+        
         if (!bSalvo) {
             // Each hit in the salvo get's its own hit location.
             r = new Report(3405);
@@ -362,6 +381,7 @@ public class WeaponHandler implements AttackHandler {
         }
         // Resolve damage normally.
         nDamage = nDamPerHit * Math.min(nCluster, hits);
+
 
         // A building may be damaged, even if the squad is not.
         if (bldgAbsorbs > 0) {
@@ -382,6 +402,7 @@ public class WeaponHandler implements AttackHandler {
             r.addDesc(entityTarget);
             r.newlines = 0;
             vPhaseReport.addElement(r);
+            missed = true;
         } else {
             if (bGlancing) {
                 hit.makeGlancingBlow();
@@ -551,4 +572,5 @@ public class WeaponHandler implements AttackHandler {
     public void setAnnouncedEntityFiring(boolean announcedEntityFiring) {
         this.announcedEntityFiring = announcedEntityFiring;
     }
+    
 }

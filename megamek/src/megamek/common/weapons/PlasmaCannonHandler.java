@@ -19,6 +19,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -45,10 +46,62 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
+        
         if (entityTarget instanceof Mech) {
-            r = new Report(3390);
-            r.subject = subjectId;
-            vPhaseReport.addElement(r);
+            
+            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
+                    .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+
+            if ( entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
+                    Compute.targetSideTable(ae, entityTarget)) ) {
+                // Weapon strikes Partial Cover.
+                r = new Report(3460);
+                r.subject = subjectId;
+                r.add(entityTarget.getShortName());
+                r.add(entityTarget.getLocationAbbr(hit));
+                r.newlines = 0;
+                r.indent(2);
+                vPhaseReport.addElement(r);
+                missed = true;
+                return;
+            }
+            
+            if (!bSalvo) {
+                // Each hit in the salvo get's its own hit location.
+                r = new Report(3405);
+                r.subject = subjectId;
+                r.add(toHit.getTableDesc());
+                r.add(entityTarget.getLocationAbbr(hit));
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
+
+            if (hit.hitAimedLocation()) {
+                r = new Report(3410);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
+            // Resolve damage normally.
+            int nDamage = nDamPerHit * Math.min(nCluster, hits);
+
+            // A building may be damaged, even if the squad is not.
+            if (bldgAbsorbs > 0) {
+                nDamage *= 2;
+                int toBldg = Math.min(bldgAbsorbs, nDamage);
+                nDamage -= toBldg;
+                Report.addNewline(vPhaseReport);
+                Report buildingReport = server.damageBuilding(bldg, toBldg);
+                buildingReport.indent(2);
+                buildingReport.subject = subjectId;
+                vPhaseReport.addElement(buildingReport);
+                if ( nDamage == 0)
+                    missed = true;
+            }
+
+            if ( missed )
+                return;
+            
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);

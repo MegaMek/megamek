@@ -49,6 +49,12 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             }
+            super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+                    nCluster, 0, bldgAbsorbs);
+            
+            if ( missed )
+                return;
+            
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);

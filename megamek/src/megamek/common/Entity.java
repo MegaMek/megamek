@@ -5750,7 +5750,54 @@ public abstract class Entity extends TurnOrdered
     }
 
     public boolean removePartialCoverHits(int location, int cover, int side) {
+        if ( cover > LosEffects.COVER_NONE ) {
+            switch(cover) {
+            case LosEffects.COVER_LOWLEFT:
+                if (location == Mech.LOC_LLEG)
+                    return true;
+                break;
+            case LosEffects.COVER_LOWRIGHT:
+                if (location == Mech.LOC_RLEG)
+                    return true;
+                break;
+            case LosEffects.COVER_LEFT:
+                if (location == Mech.LOC_LLEG
+                        || location == Mech.LOC_LARM
+                        || location == Mech.LOC_LT )
+                    return true;
+                break;
+            case LosEffects.COVER_RIGHT:
+                if (location == Mech.LOC_RLEG
+                        || location == Mech.LOC_RARM
+                        || location == Mech.LOC_RT )
+                    return true;
+                break;
+            case LosEffects.COVER_HORIZONTAL:
+                if (location == Mech.LOC_LLEG
+                        || location == Mech.LOC_RLEG )
+                    return true;
+                break;
+            case LosEffects.COVER_UPPER:
+                if (location == Mech.LOC_LLEG
+                        || location == Mech.LOC_RLEG )
+                    return false;
+                return true;
+            case LosEffects.COVER_FULL:
+                return true;
+            case LosEffects.COVER_75LEFT:
+                if (location == Mech.LOC_RARM
+                        || location == Mech.LOC_RLEG )
+                    return false;
+                return true;
+            case LosEffects.COVER_75RIGHT:
+                if (location == Mech.LOC_LLEG
+                        || location == Mech.LOC_LARM)
+                    return false;
+                return true;
+            }
+        }
         return false;
+
     }
 
     /** returns true if this is a valid target for Arrow IV homing

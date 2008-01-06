@@ -42,6 +42,25 @@ public class StreakHandler extends MissileWeaponHandler {
     public StreakHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
+    
+    /*
+     *  (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     */
+    protected int calcDamagePerHit() {
+        if (target instanceof Infantry && !(target instanceof BattleArmor))
+            return Math.round(((float)wtype.getRackSize()*2)/5);
+        return 2;
+    }
+
+    /*
+     *  (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
+     */
+    protected int calcnCluster() {
+        return 1;
+    }
+
     /*
      *  (non-Javadoc)
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)

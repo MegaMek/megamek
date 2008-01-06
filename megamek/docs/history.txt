@@ -12,6 +12,7 @@ v0.33.15-dev (SVN)
 + RFE 1859840: Leg damage in Partial Cover
 + Bug: Last Entity Targetted was not being saved
 + RFE 1862748: 0.33.14 dev incorrect handling of cluster weapons
++ Bug: LAC not using AC special Munitions.
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

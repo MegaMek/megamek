@@ -607,6 +607,12 @@ public class WeaponType extends EquipmentType {
             addType(new ISSingleBAFlamer());
             addType(new ISSingleBASmallPulseLaser());
             addType(new ISSingleBASmallLaser());
+            addType(new ISBAMG());
+            addType(new ISBALightMG());
+            addType(new ISBAHeavyMG());
+            addType(new CLBAMG());
+            addType(new CLBALightMG());
+            addType(new CLBAHeavyMG());
         }
 
     public String toString() {

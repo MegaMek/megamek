@@ -37,9 +37,11 @@ public class InfantryFlamerWeapon extends InfantryWeapon {
         this.addLookupName("InfantryFlamer");
         this.shortRange = 1;
         this.mediumRange = 2;
-        this.longRange = 2;
-        this.extremeRange = 2;
+        this.longRange = 3;
+        this.extremeRange = 3;
         this.flags |= F_DIRECT_FIRE | F_FLAMER | F_ENERGY;
+        String modes[] = { "Damage", "Heat" };
+        this.setModes(modes);
     }
     
     /*
@@ -50,6 +52,10 @@ public class InfantryFlamerWeapon extends InfantryWeapon {
      */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
+        if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())
+                .curMode().equals("Heat"))) {
+            return new InfantryFlamerHeatHandler(toHit, waa, game, server);
+        }
         return new InfantryFlamerHandler(toHit, waa, game, server);
     }
 }

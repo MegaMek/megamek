@@ -17,6 +17,8 @@
  */
 package megamek.common.weapons;
 
+import java.io.Serializable;
+
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.TargetRoll;
@@ -28,7 +30,7 @@ import megamek.server.Server;
 /**
  * @author Andrew Hunter A class representing a weapon.
  */
-public abstract class Weapon extends WeaponType {
+public abstract class Weapon extends WeaponType implements Serializable {
     
     public Weapon() {
         this.ammoType = AmmoType.T_NA;

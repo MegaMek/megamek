@@ -53,8 +53,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bMissed;
     protected boolean bSalvo = false;
     protected boolean bGlancing = false;
-    protected transient WeaponType wtype;
-    protected transient Mounted weapon;
+    protected WeaponType wtype;
+    protected Mounted weapon;
     protected Entity ae;
     protected Targetable target;
     protected int subjectId;
@@ -98,10 +98,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
     
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        
-        //ae = game.getEntity(waa.getEntityId());
-        weapon = ae.getEquipment(waa.getWeaponId());
-        wtype = (WeaponType) weapon.getType();
         
         server = Server.getServerInstance();
     }

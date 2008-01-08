@@ -14,7 +14,9 @@
 
 package megamek.common;
 
-public interface Targetable
+import java.io.Serializable;
+
+public interface Targetable extends Serializable
 {
     public static final int TYPE_ENTITY               = 0;
     public static final int TYPE_HEX_CLEAR            = 1;

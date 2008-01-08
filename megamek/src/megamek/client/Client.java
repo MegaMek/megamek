@@ -21,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.*;
+
 import javax.swing.SwingUtilities;
 
 
@@ -1049,6 +1050,10 @@ public class Client implements IClientCommandHandler {
                     System.err.println("Unable to save file: " + sFinalFile);
                     e.printStackTrace();
                 }
+                break;
+            case Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY:
+                game.getBoard().setSpecialHexDisplayTable( (Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
+                System.err.println("Specials updated");
                 break;
         }
     }

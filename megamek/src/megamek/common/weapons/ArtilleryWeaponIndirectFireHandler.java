@@ -36,6 +36,7 @@ import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mounted;
 import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -47,8 +48,7 @@ import megamek.server.Server.DamageType;
  * @author Sebastian Brocks
  * 
  */
-public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
-        implements Serializable {
+public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
     /**
      * 
@@ -56,6 +56,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
     private static final long serialVersionUID = -1277649123562229298L;
     boolean handledAmmoAndReport = false;
 
+    
+    /**
+     * This consructor may only be used for deserialization.
+     *
+     */
+    protected ArtilleryWeaponIndirectFireHandler() {
+        super();
+    }
     /**
      * @param t
      * @param w
@@ -87,8 +95,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
         if (!this.cares(phase)) {
             return true;
         }
+        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
         if (phase == IGame.PHASE_TARGETING) {
-            ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
             if (!handledAmmoAndReport) {
                 this.useAmmo();
                 this.addHeat();
@@ -102,6 +110,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
+                game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
+                        new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILERY_INCOMING,
+                                game.getTurnIndex() + aaa.turnsTilHit,
+                                "Artilery Incoming. Better text later."));
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -111,7 +123,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
             }
             return true;
         }
-        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
         if (aaa.turnsTilHit > 0) {
             aaa.turnsTilHit--;
             return true;
@@ -180,12 +191,22 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
             if (roll >= toHit.getValue()) {
                 artyAttacker.aTracker.setModifier(weapon,
                         ToHitData.AUTOMATIC_SUCCESS, targetPos);
+                
+                game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
+                        new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
+                                game.getTurnIndex(),
+                                "Artilery AutoHit. Better text later."));
             }
             // If the shot missed, but was adjusted by a
             // spotter, future shots are more likely to hit.
             else if (null != bestSpotter) {
                 artyAttacker.aTracker.setModifier(weapon, artyAttacker.aTracker
                         .getModifier(weapon, targetPos) - 1, targetPos);
+                
+                game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
+                        new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_ADJUSTED,
+                                game.getTurnIndex(),
+                                "Artilery toHit Adjusted. Better text later."));
             }
 
         } // End artyAttacker-alive
@@ -232,6 +253,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
         r.add(roll);
         vPhaseReport.addElement(r);
 
+        game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
+                new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILEY_TARGET,
+                        game.getTurnIndex(),
+                        "Artilery Target. Better text later."));
+        
         // do we hit?
         bMissed = roll < toHit.getValue();
 
@@ -247,6 +273,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
             r.subject = subjectId;
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
+            
+            game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
+                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILERY_HIT,
+                            game.getTurnIndex(),
+                            "Artilery Hit. Better text later."));
         } else {
             coords = Compute.scatter(coords, (game.getOptions()
                     .booleanOption("margin_scatter_distance")) ? (toHit
@@ -257,6 +288,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler
                 r.subject = subjectId;
                 r.add(coords.getBoardNum());
                 vPhaseReport.addElement(r);
+                
+                game.getBoard().addSpecialHexDisplay(coords, 
+                        new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILERY_HIT,
+                                game.getTurnIndex(),
+                                "Artilery Scatered Here. Better text later."));
             } else {
                 // misses and scatters off-board
                 r = new Report(3200);

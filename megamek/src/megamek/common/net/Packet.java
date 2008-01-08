@@ -84,6 +84,7 @@ public class Packet {
     public static final int        COMMAND_SERVER_CORRECT_NAME  = 480;
     
     public static final int        COMMAND_SEND_SAVEGAME        = 490;
+    public static final int        COMMAND_SENDING_SPECIAL_HEX_DISPLAY = 500;
 
     private int command;
 

@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -216,7 +215,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        r.add(wtype.getName());
+        if(wtype != null) {
+            r.add(wtype.getName());
+        } else {
+            r.add("Error: From Nowhwere");
+        }
         r.add(target.getDisplayName(), true);
         vPhaseReport.addElement(r);
         if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
@@ -443,6 +446,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (bGlancing) {
             toReturn/=2;
         }
+        
+        System.err.println("Attack is doing " + toReturn + " damage.");
+        
         return Math.round(toReturn);
     }
 }

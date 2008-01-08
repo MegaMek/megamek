@@ -29,6 +29,13 @@ import megamek.server.Server;
  */
 public class AmmoWeaponHandler extends WeaponHandler {
     Mounted ammo;
+    
+    /**
+     * Used for deserialization. DO NOT USE OTHERWISE.
+     *
+     */
+    protected AmmoWeaponHandler() {
+    }
 
     /**
      * @param t

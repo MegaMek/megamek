@@ -13,6 +13,10 @@
  */
 package megamek.common.weapons;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Vector;
 
 import megamek.common.BattleArmor;
@@ -37,20 +41,20 @@ import megamek.server.Server.DamageType;
  * @author Andrew Hunter A basic, simple attack handler. May or may not work for
  *         any particular weapon; must be overloaded to support special rules.
  */
-public class WeaponHandler implements AttackHandler {
+public class WeaponHandler implements AttackHandler, Serializable {
 
     public ToHitData toHit;
     public WeaponAttackAction waa;
     public int roll;
     
     protected IGame game;
-    protected Server server;
+    protected transient Server server; //must not save the server
     protected Report r;
     protected boolean bMissed;
     protected boolean bSalvo = false;
     protected boolean bGlancing = false;
-    protected WeaponType wtype;
-    protected Mounted weapon;
+    protected transient WeaponType wtype;
+    protected transient Mounted weapon;
     protected Entity ae;
     protected Targetable target;
     protected int subjectId;
@@ -86,6 +90,20 @@ public class WeaponHandler implements AttackHandler {
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         return false;
+    }
+    
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+    }
+    
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        
+        //ae = game.getEntity(waa.getEntityId());
+        weapon = ae.getEquipment(waa.getWeaponId());
+        wtype = (WeaponType) weapon.getType();
+        
+        server = Server.getServerInstance();
     }
 
     /**
@@ -512,6 +530,13 @@ public class WeaponHandler implements AttackHandler {
         vPhaseReport.addElement(r);
     }
 
+    /**
+     * Used for deserialization. DO NOT USE OTHERWISE.
+     *
+     */
+    protected WeaponHandler() {
+    }
+    
     // Among other things, basically a refactored Server#preTreatWeaponAttack
     public WeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         toHit = t;

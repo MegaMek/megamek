@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -255,6 +256,17 @@ public interface IBoard {
      *          infernos.  This value will be non-negative.
      */
     public abstract int getInfernoIVBurnTurns(Coords coords);
+    
+    /**
+     * This returns special events that should be makred on hexes, such as artilery fire.
+     */
+    public abstract Collection<SpecialHexDisplay> getSpecialHexDisplay(Coords coords);
+    
+    public abstract void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd);
+    
+    public abstract void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd);
+    
+    public abstract Hashtable<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable();
     
     /**
      * Get an enumeration of all buildings on the board.

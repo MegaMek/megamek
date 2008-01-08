@@ -267,8 +267,10 @@ public class Report implements Serializable {
      * @param entity the entity you wish to add
      */
     public void addDesc(Entity entity) {
-        add(entity.getShortName(), true);
-        add(entity.getOwner().getName());
+        if(entity != null) {
+            add(entity.getShortName(), true);
+            add(entity.getOwner().getName());
+        }
     }
 
     /**

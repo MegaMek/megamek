@@ -1226,6 +1226,16 @@ public class BoardView1
                         boardGraph);
                 ypos -= 10;
             }
+            /*
+             * Used for debug
+             * if(null != game.getBoard().getSpecialHexDisplay(c)) {
+                drawCenteredString(
+                        "SPECIAL", //$NON-NLS-1$
+                        drawX,
+                        drawY + (int)(ypos*scale),
+                        font_elev,
+                        boardGraph);
+            }*/
         }
         
         // draw elevation borders

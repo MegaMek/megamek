@@ -248,6 +248,8 @@ public class Server implements Runnable {
 	// private HashSet knownDeadEntities = new HashSet();
 	private static EntityVerifier entityVerifier;
 
+    private static Server serverInstance  = null;
+
 	private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
 
 		/**
@@ -288,6 +290,7 @@ public class Server implements Runnable {
 	 *            used
 	 */
 	public Server(String password, int port) throws IOException {
+        serverInstance = this;
 		this.password = password.length() > 0 ? password : null;
 		// initialize server socket
 		serverSocket = new ServerSocket(port);
@@ -710,6 +713,7 @@ public class Server implements Runnable {
 
 			send(connId, createArtilleryPacket(player));
 			send(connId, createFlarePacket());
+            send(connId, createSpecialHexDisplayPacket());
 
 		} // Found the player.
 
@@ -2018,6 +2022,9 @@ public class Server implements Runnable {
 	            applyBuildingDamage();
 	            checkFor20Damage();
 	            resolvePilotingRolls();
+                
+                send(createSpecialHexDisplayPacket());
+                
 	            // check reports
 	            if (vPhaseReport.size() > 1) {
 	                game.addReports(vPhaseReport);
@@ -17193,6 +17200,13 @@ public class Server implements Runnable {
 		return new Packet(Packet.COMMAND_ENTITY_ATTACK, data);
 	}
 
+    /**
+     * 
+     */
+    private Packet createSpecialHexDisplayPacket() {    
+        return new Packet(Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, game.getBoard().getSpecialHexDisplayTable());
+    }
+    
 	/**
 	 * Creates a packet containing offboard artillery attacks
 	 */
@@ -20102,4 +20116,11 @@ public class Server implements Runnable {
 	    //HACK, but anything else seems to run into weird problems.
 	    game.setAttacksVector(keptAttacks);
 	}
+
+    /**
+     * @return
+     */
+    public static Server getServerInstance() {
+        return serverInstance;
+    }
 }

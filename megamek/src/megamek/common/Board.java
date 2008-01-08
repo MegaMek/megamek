@@ -28,14 +28,15 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StreamTokenizer;
 import java.io.Writer;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.Vector;
 import java.util.Date;
 
 import megamek.common.event.BoardEvent;
 import megamek.common.event.BoardListener;
-
-import java.util.Hashtable;
 
 public class Board implements Serializable, IBoard {
 
@@ -61,6 +62,8 @@ public class Board implements Serializable, IBoard {
      * Record the infernos placed on the board.
      */
     private Hashtable<Coords,InfernoTracker> infernos = new Hashtable<Coords,InfernoTracker>();
+    
+    private Hashtable<Coords, Collection<SpecialHexDisplay>> specialHexes = new Hashtable<Coords, Collection<SpecialHexDisplay>>(); 
 
     /** Option to turn have roads auto-exiting to pavement. */
     private boolean roadsAutoExit = true;
@@ -934,7 +937,7 @@ public class Board implements Serializable, IBoard {
      * @param   bldgs - the <code>Vector</code> of <code>Building</code>
      *          objects to be collapsed.
      */
-    public void collapseBuilding( Vector bldgs ) {
+    public void collapseBuilding( Vector<Building> bldgs ) {
 
         // Walk through the vector of buildings.
         Enumeration loop = bldgs.elements();
@@ -1036,7 +1039,7 @@ public class Board implements Serializable, IBoard {
      * @param   bldgs - the <code>Vector</code> of <code>Building</code>
      *          objects to be updated.
      */
-    public void updateBuildingCF( Vector bldgs ) {
+    public void updateBuildingCF( Vector<Building> bldgs ) {
 
         // Walk through the vector of buildings.
         Enumeration loop = bldgs.elements();
@@ -1186,4 +1189,39 @@ public class Board implements Serializable, IBoard {
         }
     }
 
+    /* (non-Javadoc)
+     * @see megamek.common.IBoard#getSpecialHexDisplay(megamek.common.Coords)
+     */
+    public Collection<SpecialHexDisplay> getSpecialHexDisplay(Coords coords) {
+        return specialHexes.get(coords);
+    }
+
+    /* (non-Javadoc)
+     * @see megamek.common.IBoard#addSpecialHexDisplay(megamek.common.Coords, megamek.common.SpecialHexDisplay)
+     */
+    public void addSpecialHexDisplay(Coords coords, SpecialHexDisplay shd) {
+        Collection<SpecialHexDisplay> col;
+        if(!specialHexes.containsKey(coords)) {
+            col = new LinkedList<SpecialHexDisplay>();
+            specialHexes.put(coords, col);
+        } else {
+            col = specialHexes.get(coords);
+        }
+        
+        col.add(shd);
+    }
+
+    /* (non-Javadoc)
+     * @see megamek.common.IBoard#getSpecialHexDisplayTable()
+     */
+    public Hashtable<Coords, Collection<SpecialHexDisplay>> getSpecialHexDisplayTable() {
+        return specialHexes;
+    }
+
+    /* (non-Javadoc)
+     * @see megamek.common.IBoard#setSpecialHexDisplayTable(java.util.Hashtable)
+     */
+    public void setSpecialHexDisplayTable(Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {
+        specialHexes = shd;
+    }
 }

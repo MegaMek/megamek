@@ -22,12 +22,14 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Report;
+import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -41,6 +43,10 @@ import megamek.server.Server;
  */
 public class MissileWeaponHandler extends AmmoWeaponHandler {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4801130911083653548L;
     boolean bECMAffected;
     String sSalvoType = " missile(s) ";
     int nSalvoBonus = 0;
@@ -138,6 +144,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 	            missilesHit = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nGlancing + nMissilesModifier + getAMSHitsMod(vPhaseReport), bGlancing || maxtechmissiles, weapon.isHotLoaded());
         }
         
+        if ( (target instanceof Mech || target instanceof Tank)
+                && ((Entity)target).getArmorType() == EquipmentType.T_ARMOR_REACTIVE )
+                missilesHit /= 2;
+                
         if (missilesHit > 0) {
             r = new Report(3325);
             r.subject = subjectId;

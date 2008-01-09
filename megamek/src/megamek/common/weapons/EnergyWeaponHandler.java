@@ -14,13 +14,22 @@
 package megamek.common.weapons;
 
 import megamek.common.BattleArmor;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 public class EnergyWeaponHandler extends WeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2452514543790235562L;
+
     /**
      * @param toHit
      * @param waa
@@ -51,9 +60,14 @@ public class EnergyWeaponHandler extends WeaponHandler {
                 toReturn = (int)Math.floor(toReturn/2.0);
             }
         }
-        if (bGlancing) {
+        if (bGlancing ) {
             toReturn = toReturn/=2;
         }
+        
+        if ( (target instanceof Mech || target instanceof Tank ) 
+                && ((Entity)target).getArmorType() == EquipmentType.T_ARMOR_REFLECTIVE )
+            toReturn /=2;
+        
         if (target instanceof Infantry && !(target instanceof BattleArmor)) 
         	toReturn /= 10;
         return Math.round(toReturn);

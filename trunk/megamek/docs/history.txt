@@ -16,7 +16,8 @@ v0.33.15-dev (SVN)
 + Bug: Infantry flamers can't cause heat and have wrong range
 + Bug: Missing BA MGs
 + Bug: Under a vareity of circumstances savegames would stop working
-+ RFE 1853753: Reflective armor not working
++ Bug 1853753: Reflective armor not working
++ Bug 1866014: Arrow IV fireing double Shots
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

@@ -591,7 +591,8 @@ public class FiringDisplay
         //now add the attacks in rear/arm arcs
         for (EntityAction o:attacks) {
             if (o instanceof ArtilleryAttackAction) {
-                newAttacks.addElement(o);
+                //newAttacks.addElement(o);
+                continue;
             } else if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
                 Entity attacker = waa.getEntity(client.game);

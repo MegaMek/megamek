@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.33.16-dev (SVN)
++ Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change
 
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 

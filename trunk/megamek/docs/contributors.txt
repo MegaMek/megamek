@@ -126,6 +126,7 @@
      Alan Bell
      victor23
      beretboy <dp777@users.sourceforge.net>
+     Walter Smith <walter_smith@users.sourceforge.net>
 
   Translations
      Jörg Harder <joergharder@t-online.de>

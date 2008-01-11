@@ -25,6 +25,7 @@ v0.33.15-dev (SVN)
     in chaos mode
 + Data 1831037: Vehicles from 3050 Upgrades
 + Bug: Artillery only doing splash damage
++ Bug 1858586: AP Gauss Rifle doesn't read ammo 0.33.14 dev
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

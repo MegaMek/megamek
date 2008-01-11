@@ -41,7 +41,8 @@ public class InfantryInfernoSRMWeapon extends InfantryWeapon {
         this.mediumRange = 4;
         this.longRange = 6;
         this.extremeRange = 8;
-        this.bv = 4;
+        // SRM Launcher (Standard, two-shot) TM p. 319
+        this.bv = 2.63;
         this.flags |= F_DIRECT_FIRE | F_INFERNO | F_MISSILE; 
     }
     

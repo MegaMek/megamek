@@ -42,7 +42,8 @@ public class InfantryLRMWeapon extends InfantryWeapon {
         this.mediumRange = 9;
         this.longRange = 12;
         this.extremeRange = 18;
-        this.bv = 4;
+        //corean farshot support lrm, TM, p. 319
+        this.bv = 1.15;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_MISSILE;
         this.setModes(new String[] {"", "Indirect"});
     }

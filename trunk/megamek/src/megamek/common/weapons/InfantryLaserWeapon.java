@@ -39,7 +39,8 @@ public class InfantryLaserWeapon extends InfantryWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 4;
-        this.bv = 4;
+        //laser rifle, TM p. 319
+        this.bv = 0.88;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_LASER | F_ENERGY;
     }
     

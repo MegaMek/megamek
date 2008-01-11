@@ -30,7 +30,7 @@ public class CLStreakSRM6 extends StreakSRMWeapon {
         this.setInternalName("CLStreakSRM6");
         this.addLookupName("Clan Streak SRM-6");
         this.addLookupName("Clan Streak SRM 6");
-        this.heat = 6;
+        this.heat = 4;
         this.rackSize = 6;
         this.shortRange = 4;
         this.mediumRange = 8;

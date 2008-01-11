@@ -35,7 +35,7 @@ public class ISMediumRecoillessRifle extends Weapon {
     public ISMediumRecoillessRifle() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
-        this.name = "Medium Recoilless";
+        this.name = "Medium Recoilless Rifle";
         this.setInternalName(this.name);
         this.addLookupName("ISMedium Recoilless Rifle");
         this.damage = 3;

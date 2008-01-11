@@ -35,7 +35,7 @@ public class ISLightRecoillessRifle extends Weapon {
     public ISLightRecoillessRifle() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
-        this.name = "Light Recoilless";
+        this.name = "Light Recoilless Rifle";
         this.setInternalName(this.name);
         this.addLookupName("ISLight Recoilless Rifle");
         this.heat = 0;

@@ -18,6 +18,7 @@ v0.33.15-dev (SVN)
 + Bug: Under a vareity of circumstances savegames would stop working
 + Bug 1853753: Reflective armor not working
 + Bug 1866014: Arrow IV fireing double Shots
++ Bug: Fix clearing woods
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

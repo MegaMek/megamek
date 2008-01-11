@@ -61,7 +61,7 @@ public class AmmoType extends EquipmentType {
     public static final int     T_COOLANT_POD       = 36; // not really ammo, but explodes and is depleted
     public static final int     T_EXLRM             = 37;
     public static final int     T_TBOLT             = 38;
-    public static final int     T_MAGSHOT           = 39; // Magshot from TR3055U and S7 Pack
+    public static final int     T_MAGSHOT           = 39;
     public static final int     T_PXLRM             = 40;
     public static final int     T_HSRM              = 41;
     public static final int     T_MRM_STREAK        = 42;
@@ -71,7 +71,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_PLASMA            = 46;
     public static final int     T_SBGAUSS           = 47;
     public static final int     T_RAIL_GUN          = 48;
-    public static final int     NUM_TYPES           = 49;
+    public static final int     T_APGAUSS           = 49;
+    public static final int     NUM_TYPES           = 50;
     
 
     // ammo flags
@@ -5597,7 +5598,6 @@ public class AmmoType extends EquipmentType {
         ammo.name = "Magshot GR Ammo";
         ammo.setInternalName("CLMagshotGR Ammo");
         ammo.addLookupName("Clan Magshot GR Ammo");
-        ammo.rackSize = 2;
         ammo.damagePerShot = 2;
         ammo.explosive = false;
         ammo.ammoType = AmmoType.T_MAGSHOT;
@@ -5615,10 +5615,9 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("CLAPGaussRifle Ammo");
         ammo.addLookupName("Clan AP Gauss Rifle Ammo");
         ammo.addLookupName("Clan Anti-Personnel Gauss Rifle Ammo");
-        ammo.rackSize = 3;
         ammo.damagePerShot = 3;
         ammo.explosive = false;
-        ammo.ammoType = AmmoType.T_MAGSHOT;
+        ammo.ammoType = AmmoType.T_APGAUSS;
         ammo.shots = 40;
         ammo.bv = 3;
         ammo.cost = 1000;

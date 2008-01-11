@@ -19,6 +19,8 @@ v0.33.15-dev (SVN)
 + Bug 1853753: Reflective armor not working
 + Bug 1866014: Arrow IV fireing double Shots
 + Bug: Fix clearing woods
++ Data 1865963: Updated BA Files
++ Data 1843823: White Flame sprite
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

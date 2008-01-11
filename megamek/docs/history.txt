@@ -2,7 +2,11 @@
 ----------------
 v0.33.16-dev (SVN)
 + Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change
-
++ Fixed Server.writeInitiativeReport(boolean) for DB. Will show all players
+	rolls without Individual Initiative on but not player unit turns. With Individual
+	Initiative on only the Inititative of units that re visible to the player will 
+	be showing.
+	
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 
 	made combobox initial state in some dialogs make more sense.

@@ -2780,56 +2780,58 @@ public class Server implements Runnable {
         } else {
             addReport(new Report(1210, Report.PUBLIC)); // newline
         }
-        if (!doBlind()) {
-            if (game.getOptions().booleanOption("individual_initiative")) {
-                r = new Report(1040, Report.PUBLIC);
-                addReport(r);
-                for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements();) {
-                    GameTurn t = e.nextElement();
-                    if (t instanceof GameTurn.SpecificEntityTurn) {
-                        Entity entity = game.getEntity(((GameTurn.SpecificEntityTurn) t).getEntityNum());
-                        r = new Report(1045);
-                        r.subject = entity.getId();
-                        r.addDesc(entity);
-                        r.add(entity.getInitiative().toString());
-                        addReport(r);
-                    } else {
-                        Player player = getPlayer(t.getPlayerNum());
-                        if (null != player) {
-                            r = new Report(1050, Report.PUBLIC);
-                            r.add(player.getName());
-                            addReport(r);
-                        }
-                    }
-                }
-            } else {
-                for (Enumeration i = game.getTeams(); i.hasMoreElements();) {
-                    final Team team = (Team) i.nextElement();
 
-                    // If there is only one player, list them as the 'team', and
-                    // use the team iniative
-                    if (team.getSize() == 1) {
-                        final Player player = team.getPlayers().nextElement();
-                        r = new Report(1015, Report.PUBLIC);
+        if (game.getOptions().booleanOption("individual_initiative")) {
+            r = new Report(1040, Report.PUBLIC);
+            addReport(r);
+            for (Enumeration<GameTurn> e = game.getTurns(); e.hasMoreElements();) {
+                GameTurn t = e.nextElement();
+                if (t instanceof GameTurn.SpecificEntityTurn) {
+                    Entity entity = game.getEntity(((GameTurn.SpecificEntityTurn) t).getEntityNum());
+                    r = new Report(1045);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.add(entity.getInitiative().toString());
+                    addReport(r);
+                } else {
+                    Player player = getPlayer(t.getPlayerNum());
+                    if (null != player) {
+                        r = new Report(1050, Report.PUBLIC);
                         r.add(player.getName());
-                        r.add(team.getInitiative().toString());
                         addReport(r);
-                    } else {
-                        // Multiple players. List the team, then break it down.
-                        r = new Report(1015, Report.PUBLIC);
-                        r.add(Player.teamNames[team.getId()]);
-                        r.add(team.getInitiative().toString());
-                        addReport(r);
-                        for (Enumeration j = team.getPlayers(); j.hasMoreElements();) {
-                            final Player player = (Player) j.nextElement();
-                            r = new Report(1015, Report.PUBLIC);
-                            r.indent();
-                            r.add(player.getName());
-                            r.add(player.getInitiative().toString());
-                            addReport(r);
-                        }
                     }
                 }
+            }
+        } else {
+            for (Enumeration<Team> i = game.getTeams(); i.hasMoreElements();) {
+                final Team team = i.nextElement();
+
+                // If there is only one player, list them as the 'team', and
+                // use the team iniative
+                if (team.getSize() == 1) {
+                    final Player player = team.getPlayers().nextElement();
+                    r = new Report(1015, Report.PUBLIC);
+                    r.add(player.getName());
+                    r.add(team.getInitiative().toString());
+                    addReport(r);
+                } else {
+                    // Multiple players. List the team, then break it down.
+                    r = new Report(1015, Report.PUBLIC);
+                    r.add(Player.teamNames[team.getId()]);
+                    r.add(team.getInitiative().toString());
+                    addReport(r);
+                    for (Enumeration<Player> j = team.getPlayers(); j.hasMoreElements();) {
+                        final Player player = j.nextElement();
+                        r = new Report(1015, Report.PUBLIC);
+                        r.indent();
+                        r.add(player.getName());
+                        r.add(player.getInitiative().toString());
+                        addReport(r);
+                    }
+                }
+            }
+
+            if (!doBlind()) {
 
                 // The turn order is different in movement phase
                 // if a player has any "even" moving units.
@@ -2858,6 +2860,7 @@ public class Server implements Runnable {
                     addReport(r);
                 }
             }
+
         }
         if (!abbreviatedReport) {
             // Wind direction and strength

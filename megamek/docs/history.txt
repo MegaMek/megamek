@@ -27,6 +27,7 @@ v0.33.15-dev (SVN)
 + Bug: Artillery only doing splash damage
 + Bug 1858586: AP Gauss Rifle doesn't read ammo 0.33.14 dev
 + Bug 1857824: double blind weapons fire results don't show in turn report
++ provisional infantry BV 2.0
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

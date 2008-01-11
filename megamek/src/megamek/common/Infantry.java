@@ -15,6 +15,8 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Vector;
 
 /**
@@ -487,8 +489,48 @@ public class Infantry
      * Calculates the battle value of this platoon.
      */
     public int calculateBattleValue() {
-        //TODO: Implement me
-        return 0;
+        double dbv;
+        dbv = this.getInternal(Entity.LOC_NONE) * 1.5;
+        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false).getValue();
+        double targetMovementModifier = Math.max(tmmRan, tmmJumped);
+        double tmmFactor = 1+(targetMovementModifier/10);
+        dbv *= tmmFactor;
+        double weaponbv;
+        double obv;
+        // adjust further for speed factor
+        // this is a bit weird, because the formula gives
+        // a different result than the table, because MASC/TSM
+        // is handled differently (page 315, TM, compare
+        // http://forums.classicbattletech.com/index.php/topic,20468.0.html
+        double speedFactor;
+        double speedFactorTableLookup = this.getOriginalRunMP()+Math.round((double)this.getJumpMP()/2);
+        if (speedFactorTableLookup > 25) 
+            speedFactor = Math.pow(1+(((double)runMP+(Math.round((double)getJumpMP()/2))-5)/10), 1.2);
+        else
+            speedFactor = Math.pow(1+((speedFactorTableLookup-5)/10), 1.2);
+        speedFactor = Math.round(speedFactor * 100) / 100.0;
+        ArrayList<Mounted> weapons = this.getWeaponList();
+        double wbv = 0;
+        for (Mounted weapon : weapons) {
+            WeaponType wtype = (WeaponType)weapon.getType();
+            if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
+                continue;
+            }
+            wbv += wtype.getBV(this);
+            //if antimek, count it twice
+            if (antiMek)
+                wbv += wtype.getBV(this);            
+        }
+        // stupid assumption to at least get a value:
+        // each weapon is carried once by each platoon member
+        wbv *= this.getInternal(Entity.LOC_NONE);
+        obv = wbv * speedFactor;
+        int bv  = (int)Math.round(obv + dbv);
+        // and then factor in pilot
+        double pilotFactor = crew.getBVSkillMultiplier();
+        return (int)Math.round((bv) * pilotFactor);
+        
     } // End public int calculateBattleValue()
 
     public Vector<Report> victoryReport() {

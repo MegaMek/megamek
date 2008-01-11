@@ -342,7 +342,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         int nCluster = 5;
         int hits;
 
-        int ratedDamage = wtype.getDamage();
+        int ratedDamage = wtype.getRackSize();
         Building bldg = null;
         bldg = game.getBoard().getBuildingAt(coords);
         int bldgAbsorbs = (bldg != null) ? bldg.getPhaseCF() / 10 : 0;

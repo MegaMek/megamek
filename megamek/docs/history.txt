@@ -24,6 +24,7 @@ v0.33.15-dev (SVN)
 + Data 1845005: Solaris Map Update, corrected Boreal Reach map and Colosseum
     in chaos mode
 + Data 1831037: Vehicles from 3050 Upgrades
++ Bug: Artillery only doing splash damage
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

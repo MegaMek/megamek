@@ -21,6 +21,8 @@ v0.33.15-dev (SVN)
 + Bug: Fix clearing woods
 + Data 1865963: Updated BA Files
 + Data 1843823: White Flame sprite
++ Data 1845005: Solaris Map Update, corrected Boreal Reach map and Colosseum
+    in chaos mode
 
 v0.33.14 (2007-12-28, 21:05 GMT+1)
 + Malak Dominus fixed

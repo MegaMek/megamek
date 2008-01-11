@@ -9,9 +9,9 @@ v0.33.15-dev (SVN)
 + Bug: Flechette ammo not doing double damage to woods
 + Bug: Fragmentation ammo not doing double damage to woods
 + Bug: Missiles not hitting for full damage against woods
-+ RFE 1859840: Leg damage in Partial Cover
++ Bug: 1859840: Leg damage in Partial Cover
 + Bug: Last Entity Targetted was not being saved
-+ RFE 1862748: 0.33.14 dev incorrect handling of cluster weapons
++ Bug: 1862748: 0.33.14 dev incorrect handling of cluster weapons
 + Bug: LAC not using AC special Munitions.
 + Bug: Infantry flamers can't cause heat and have wrong range
 + Bug: Missing BA MGs

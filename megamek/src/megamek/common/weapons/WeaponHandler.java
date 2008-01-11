@@ -165,7 +165,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
 
-        ae.setLastTarget(entityTarget.getId());
+        if (entityTarget != null)
+            ae.setLastTarget(entityTarget.getId());
         // Which building takes the damage?
         Building bldg = game.getBoard().getBuildingAt(target.getPosition());
 

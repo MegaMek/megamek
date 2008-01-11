@@ -40,7 +40,7 @@ public class CLAPGaussRifle extends GaussWeapon {
         this.addLookupName("Clan AP Gauss Rifle");
         this.heat = 1;
         this.damage = 3;
-        this.ammoType = AmmoType.T_MAGSHOT;
+        this.ammoType = AmmoType.T_APGAUSS;
         this.shortRange = 3;
         this.mediumRange = 6;
         this.longRange = 9;

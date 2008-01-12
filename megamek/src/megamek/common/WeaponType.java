@@ -613,6 +613,7 @@ public class WeaponType extends EquipmentType {
             addType(new CLBAMG());
             addType(new CLBALightMG());
             addType(new CLBAHeavyMG());
+            addType(new ISBAMagshotGaussRifle());
         }
 
     public String toString() {

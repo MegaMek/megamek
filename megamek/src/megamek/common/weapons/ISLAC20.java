@@ -39,8 +39,6 @@ public class ISLAC20 extends LACWeapon {
         this.tonnage = 9.0f;
         this.criticals = 6;
         this.bv = 118;
-        String[] modes = { "", "Rapid" };
-        this.setModes(modes);
         this.cost = 325000;
     }
 }

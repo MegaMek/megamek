@@ -46,9 +46,6 @@ public class ISAC10 extends ACWeapon {
         this.criticals = 7;
         this.bv = 123;
         this.cost = 200000;
-        String[] modes = { "", "Rapid" };
-        this.setModes(modes);
-        this.explosive = true; //when firing incendiary ammo
 
     }
 }

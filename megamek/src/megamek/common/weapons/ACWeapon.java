@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.Mounted;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -36,6 +37,9 @@ public abstract class ACWeapon extends AmmoWeapon {
         super();
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         this.ammoType = AmmoType.T_AC;
+        String[] modes = { "", "Rapid" };
+        this.setModes(modes);
+        this.explosive = true; //when firing incendiary ammo
     }
 
     /*
@@ -48,7 +52,11 @@ public abstract class ACWeapon extends AmmoWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
+        Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
+                waa.getWeaponId());
+        if (weapon.curMode().equals("Rapid")) {
+            return new RapidfireACWeaponHandler(toHit, waa, game, server);
+        } else if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
             return new ACAPHandler(toHit, waa, game, server);
         } else if (atype.getMunitionType() ==  AmmoType.M_FLECHETTE) {
             return new ACFlechetteHandler(toHit, waa, game, server);

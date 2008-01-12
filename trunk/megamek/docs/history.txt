@@ -3,9 +3,10 @@
 v0.33.16-dev (SVN)
 + Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change
 + Fixed Server.writeInitiativeReport(boolean) for DB. Will show all players
-	rolls without Individual Initiative on but not player unit turns. With Individual
-	Initiative on only the Inititative of units that re visible to the player will 
-	be showing.
+	rolls without Individual Initiative on but not player unit turns. With
+	Individual Initiative on only the Inititative of units that re visible 
+	to the player will be showing.
++ Added missing IS BA Magshot Gauss Rifle
 	
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 
@@ -22,7 +23,7 @@ v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Bug: LAC not using AC special Munitions.
 + Bug: Infantry flamers can't cause heat and have wrong range
 + Bug: Missing BA MGs
-+ Bug: Under a vareity of circumstances savegames would stop working
++ Bug: Under a variety of circumstances savegames would stop working
 + Bug 1853753: Reflective armor not working
 + Bug 1866014: Arrow IV fireing double Shots
 + Bug: Fix clearing woods

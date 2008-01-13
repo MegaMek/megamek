@@ -180,11 +180,6 @@ public class KickAttackAction extends PhysicalAttackAction
 
         // check range
         final int range = ae.getPosition().distance(target.getPosition());
-        if ( target instanceof Infantry && 1 == range ) {
-            // As per Randall in the post, http://www.classicbattletech.com/w3t/showflat.php?Cat=&Board=ask&Number=626894&page=1&view=collapsed&sb=5&o=0&fpart=
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                                 "Can only stomp Infantry in same hex");
-        }
 
         // check elevation
         if (attackerElevation < targetElevation || attackerElevation > targetHeight) {
@@ -227,8 +222,9 @@ public class KickAttackAction extends PhysicalAttackAction
         
         setCommonModifiers(toHit, game, ae, target);
 
-        // BMR(r), page 33. +3 modifier for kicking infantry.
-        if ( target instanceof Infantry ) {
+        //+3 modifier for kicking infantry in same hex
+        //see bug 1749177
+        if ( target instanceof Infantry && range == 0) {
             toHit.addModifier( 3, "Stomping Infantry" );
         }
 

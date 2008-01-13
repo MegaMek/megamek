@@ -1175,21 +1175,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
                 return "Target is not on fire.";
             }
         }
-    
-        // can't target non-wood hexes for clearing (except thin ice)
-        if (Targetable.TYPE_HEX_CLEAR == target.getTargetType()) {
-            IHex hexTarget = game.getBoard().getHex(target.getPosition()); 
-            if (!hexTarget.containsTerrain(Terrains.WOODS)
-                    && !hexTarget.containsTerrain(Terrains.JUNGLE)
-                    && !(hexTarget.containsTerrain(Terrains.ICE)
-                    && hexTarget.containsTerrain(Terrains.WATER))) {
-                return "Target terrain cannot be cleared.";
-            }
-            // Infantry can't clear woods.
-            if (isAttackerInfantry) {
-                return "Infantry can not clear terrain.";
-            }
-        }
         // Infantry can't clear woods.
         if (isAttackerInfantry
                 && Targetable.TYPE_HEX_CLEAR == target.getTargetType()) {

@@ -1460,9 +1460,15 @@ public class MoveStep implements Serializable {
 
         // If we entering a building, all non-infantry pay additional MP.
         if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV)
-            && !(isInfantry) && !(isProto)) {
-            Building bldg = game.getBoard().getBuildingAt(getPosition());
-            mp += bldg.getType();
+            && !(isInfantry)) {
+            if (!isProto)  {
+                // non-protos pay extra according to the building type
+                Building bldg = game.getBoard().getBuildingAt(getPosition());
+                mp += bldg.getType();
+            } else {
+                // protos pay one extra
+                mp += 1;
+            }            
         }
         
         // Infantry (except mechanized) pay 1 less MP to enter woods

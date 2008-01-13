@@ -4584,6 +4584,10 @@ public class Server implements Runnable {
 
                     // If we have different buildings, roll for each.
                     else if (bldgEntered != null) {
+                        if (entity instanceof Protomech) {
+                            // protos entering a building cause 1 damage
+                            this.damageBuilding(bldgEntered, 1);
+                        }
                         collapsed = passBuildingWall(entity, bldgExited, lastPos, curPos, distance, "exiting", step.isThisStepBackwards());
                         addAffectedBldg(bldgExited, collapsed);
                         collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "entering", step.isThisStepBackwards());
@@ -5431,13 +5435,7 @@ public class Server implements Runnable {
                 int direction = Compute.targetSideTable(ae, te);
                 while (missiles-- > 0) {
                     HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
-                    if (te instanceof Protomech && hit.getLocation() == Protomech.LOC_NMISS) {
-                        r = new Report(6035);
-                        r.subject = te.getId();
-                        addReport(r);
-                    } else {
-                        addReport(criticalEntity(te, hit.getLocation(), -2));
-                    }
+                    addReport(criticalEntity(te, hit.getLocation(), -2));
                 }
             } else if (te instanceof Protomech) {
                 te.heatFromExternal += missiles;

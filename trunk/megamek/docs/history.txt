@@ -10,6 +10,7 @@ v0.33.16-dev (SVN)
 + Fix MaxTech Rapidfire AC option. Note: With submunitions, the sepcial effect
     currently does not work when using rapidfire.
 + Bug 1869698: Custom BA editor no longer functional
++ Bug 1653277: Proto movement in cities
 	
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 

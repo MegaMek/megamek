@@ -39,8 +39,8 @@ public class InfantryRifleWeapon extends InfantryWeapon {
         this.ammoType = AmmoType.T_AC;
         this.shortRange = 1;
         this.mediumRange = 2;
-        this.longRange = 2;
-        this.extremeRange = 2;
+        this.longRange = 3;
+        this.extremeRange = 3;
         //auto-rifle from TM p. 319
         this.bv = 1.28;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC; 

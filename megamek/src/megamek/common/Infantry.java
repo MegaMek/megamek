@@ -16,7 +16,6 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Vector;
 
 /**
@@ -496,7 +495,7 @@ public class Infantry
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
         double tmmFactor = 1+(targetMovementModifier/10);
         dbv *= tmmFactor;
-        double weaponbv;
+        //double weaponbv;
         double obv;
         // adjust further for speed factor
         // this is a bit weird, because the formula gives

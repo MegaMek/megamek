@@ -110,7 +110,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             r.choose(true);
             r.newlines = 0;
             vPhaseReport.addElement(r);
-            entityTarget.heatBuildup += extraHeat;
+            entityTarget.heatFromExternal += extraHeat;
         } else
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                 nCluster, nDamPerHit, bldgAbsorbs);

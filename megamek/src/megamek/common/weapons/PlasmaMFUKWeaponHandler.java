@@ -62,7 +62,7 @@ public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
             r.choose(true);
             r.newlines = 0;
             vPhaseReport.addElement(r);
-            entityTarget.heatBuildup += 5;
+            entityTarget.heatFromExternal += 5;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, nDamPerHit, bldgAbsorbs);

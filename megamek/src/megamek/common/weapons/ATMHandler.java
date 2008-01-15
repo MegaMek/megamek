@@ -57,7 +57,7 @@ public class ATMHandler extends MissileWeaponHandler {
             toReturn = 2;
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return Math.round(toReturn * wtype.getRackSize()/5);
+            return (int)Math.ceil(toReturn * wtype.getRackSize()/5);
         return Math.round(toReturn);
     }
     /*

@@ -63,7 +63,7 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
             float toReturn = wtype.getRackSize();
             toReturn /= 10;
             toReturn += 1;
-            return Math.round(toReturn);
+            return (int)Math.ceil(toReturn);
         }
         return 1;
     }

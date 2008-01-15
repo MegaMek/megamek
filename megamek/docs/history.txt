@@ -14,6 +14,7 @@ v0.33.16-dev (SVN)
 + Bug 1749177: Can't kick adjacent infantry
 + Bug 1745274: allow all weapons to be fired at clear hexes to raise heat
 + Bug: Infantry Rifle long range wrong
++ Bug: Fix Narc/iNarc report bug
 	
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 

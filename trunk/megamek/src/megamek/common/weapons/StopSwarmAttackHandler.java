@@ -30,7 +30,7 @@ import megamek.server.Server;
  * @author Andrew Hunter
  * 
  */
-public class StopSwarmAttackHandler extends InfantryAttackHandler {
+public class StopSwarmAttackHandler extends WeaponHandler {
     /**
      * @param toHit
      * @param waa

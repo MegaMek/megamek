@@ -43,16 +43,4 @@ public abstract class InfantryAttack extends Weapon {
         this.bv = 0;
         this.cost = 0;
     }
-    
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game)
-     */
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new InfantryAttackHandler(toHit, waa, game, server);
-    }
-
 }

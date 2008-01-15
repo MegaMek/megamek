@@ -106,6 +106,7 @@ public class NarcHandler extends MissileWeaponHandler {
             NarcPod pod = new NarcPod(ae.getOwner().getTeam(), hit.getLocation());
             r = new Report(3250);
             r.subject = subjectId;
+            r.add(entityTarget.getDisplayName());
             vPhaseReport.addElement(r);     
             entityTarget.attachNarcPod(pod);
         } else if (atype.getAmmoType() == AmmoType.T_INARC) {
@@ -116,17 +117,20 @@ public class NarcHandler extends MissileWeaponHandler {
                                     INarcPod.ECM, hit.getLocation());
                 r = new Report(3251);
                 r.subject = subjectId;
+                r.add(entityTarget.getDisplayName());
                 vPhaseReport.addElement(r);
             } else if (atype.getMunitionType() == AmmoType.M_HAYWIRE) {
                 pod = new INarcPod( ae.getOwner().getTeam(),
                                     INarcPod.HAYWIRE, hit.getLocation());
                 r = new Report(3252);
                 r.subject = subjectId;
+                r.add(entityTarget.getDisplayName());
                 vPhaseReport.addElement(r);
             } else if (atype.getMunitionType() == AmmoType.M_NEMESIS) {
                 pod = new INarcPod( ae.getOwner().getTeam(),
                                     INarcPod.NEMESIS, hit.getLocation());
                 r = new Report(3253);
+                r.add(entityTarget.getDisplayName());
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             } else {
@@ -134,6 +138,7 @@ public class NarcHandler extends MissileWeaponHandler {
                                     INarcPod.HOMING, hit.getLocation());
                 r = new Report(3254);
                 r.subject = subjectId;
+                r.add(entityTarget.getDisplayName());
                 vPhaseReport.addElement(r);
             }
             entityTarget.attachINarcPod(pod);

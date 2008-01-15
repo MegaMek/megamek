@@ -16,6 +16,7 @@ v0.33.16-dev (SVN)
 + Bug: Infantry Rifle long range wrong
 + Bug: Fix Narc/iNarc report bug
 + Bug: External heat for plasma weapons and flamers not capped at +15
++ Bug: Fix leg attacks
 
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 

@@ -58,6 +58,6 @@ public class PulseLaserWeaponHandler extends WeaponHandler {
         	toReturn /= 10;
         	toReturn += 2;
         }	        
-        return Math.round(toReturn);
+        return (int)Math.ceil(toReturn);
     }
 }

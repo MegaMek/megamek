@@ -340,7 +340,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (bGlancing) {
             toReturn/=2;
         }
-        return Math.round(toReturn);
+        return (int)Math.ceil(toReturn);
     }
 
     /**

@@ -50,7 +50,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor))
             toReturn /= 5;
-        return Math.round(toReturn);
+        return (int)Math.ceil(toReturn);
     }
 
 }

@@ -202,7 +202,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = wtype.getRackSize();
             toReturn /= 5;
-            return Math.round(toReturn);
+            return (int)Math.ceil(toReturn);
         }
         return 1;
     }

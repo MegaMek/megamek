@@ -820,4 +820,9 @@ public class Infantry
         
         setDugIn(DUG_IN_NONE);
     }
+    
+    public boolean isAntiMek(){
+        return antiMek;
+    }
+    
 } // End class Infantry

@@ -20,6 +20,7 @@ v0.33.16-dev (SVN)
 + Have less verbose megameklog when catching IOExceptions in AbstractConnection#update()
 + Fix rounding issues with anti-infantry damage
 + Added isAntiMek() to Infantry class.
++ Bug: MG infantry should do d6 extra damage to conventional infantry
 
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 

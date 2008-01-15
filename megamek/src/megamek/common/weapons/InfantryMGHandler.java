@@ -18,7 +18,13 @@
 package megamek.common.weapons;
 
 
+import java.util.Vector;
+
+import megamek.common.BattleArmor;
+import megamek.common.Compute;
 import megamek.common.IGame;
+import megamek.common.Infantry;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -37,6 +43,27 @@ public class InfantryMGHandler extends InfantryWeaponHandler {
     public InfantryMGHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
         damage = new int[] {1,1,2,2,3,3,4,4,5,6,6,7,7,8,8,9,10,10,11,11,12,12,13,13,14,15,15,16,16,17};
+    }
+    
+    /*
+     *  (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
+     */
+    protected int calcHits(Vector<Report> vPhaseReport) {
+        // conventional infantry gets an extra d6 damage
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            int troopersHit =  Compute.missilesHit(((Infantry)ae).getShootingStrength());
+            r = new Report(3325);
+            r.subject = subjectId;
+            r.add(troopersHit);
+            r.add(" troopers ");
+            int toReturn = damage[troopersHit-1]+Compute.d6();
+            r.add(toHit.getTableDesc()+", causing "+toReturn+ "damage.");
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+            return toReturn;
+        }
+        else return super.calcHits(vPhaseReport);
     }
 
 }

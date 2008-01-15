@@ -79,7 +79,7 @@ public class FlamerHeatHandler extends WeaponHandler {
             r.newlines = 0;
             r.choose(true);
             vPhaseReport.addElement(r);
-            entityTarget.heatBuildup += heat;
+            entityTarget.heatFromExternal += heat;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, nDamPerHit, bldgAbsorbs);

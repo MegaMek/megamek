@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.HitData;
@@ -28,12 +29,13 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
  * 
  */
-public class LegAttackHandler extends InfantryAttackHandler {
+public class LegAttackHandler extends WeaponHandler {
     /**
      * @param toHit
      * @param waa
@@ -42,6 +44,14 @@ public class LegAttackHandler extends InfantryAttackHandler {
     public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa,
             IGame g, Server s) {
         super(toHit, waa, g, s);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
+     */
+    protected int calcHits(Vector<Report> vPhaseReport) {
+        return 1;
     }
 
     protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
@@ -58,7 +68,15 @@ public class LegAttackHandler extends InfantryAttackHandler {
                 hit = new HitData(Mech.LOC_RLEG);
             }
         }
-        super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                nCluster, nDamPerHit, bldgAbsorbs);
+        int damage = 4;
+        if (ae instanceof BattleArmor)
+            damage += ((BattleArmor) ae).getVibroClawDamage();
+        // ASSUMPTION: buildings CAN'T absorb *this* damage.
+        vPhaseReport.addAll(server.damageEntity(entityTarget, hit,
+                damage, false, DamageType.NONE, false, false, throughFront));
+        Report.addNewline(vPhaseReport);
+        // Do criticals.
+        vPhaseReport.addAll(server.criticalEntity(entityTarget, hit
+                .getLocation(), 0));
     }
 }

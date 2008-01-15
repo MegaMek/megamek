@@ -31,7 +31,7 @@ import megamek.server.Server;
  * @author Andrew Hunter
  * 
  */
-public class SwarmAttackHandler extends InfantryAttackHandler {
+public class SwarmAttackHandler extends WeaponHandler {
     /**
      * @param toHit
      * @param waa
@@ -66,5 +66,13 @@ public class SwarmAttackHandler extends InfantryAttackHandler {
             ae.setSwarmTargetId( waa.getTargetId() );
             entityTarget.setSwarmAttackerId( waa.getEntityId() );
         }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
+     */
+    protected int calcHits(Vector<Report> vPhaseReport) {
+        return 1;
     }
 }

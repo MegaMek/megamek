@@ -423,6 +423,9 @@ public abstract class AbstractConnection implements IConnection {
             while ((np=readNetworkPacket())!=null) {
                 processPacket(np);
             }
+        } catch (IOException e) {
+            System.err.println("IOException during AbstractConnection#update()");
+            close();
         } catch (Exception e) {
             e.printStackTrace();
             reportReceiveException(e);

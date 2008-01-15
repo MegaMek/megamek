@@ -49,7 +49,7 @@ public class StreakHandler extends MissileWeaponHandler {
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return Math.round(((float)wtype.getRackSize()*2)/5);
+            return (int)Math.ceil(((float)wtype.getRackSize()*2)/5);
         return 2;
     }
 

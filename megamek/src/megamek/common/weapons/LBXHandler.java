@@ -53,7 +53,7 @@ public class LBXHandler extends AmmoWeaponHandler {
             float toReturn = wtype.getDamage();
             toReturn /= 10;
             toReturn += 1;
-            return Math.round(toReturn);
+            return (int)Math.ceil(toReturn);
         }
         return 1;
     }

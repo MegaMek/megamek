@@ -29,6 +29,7 @@ v0.33.16-dev (SVN)
 + RFE : MTF files are loaded more dynamically
 + Bug: Allow for tank weapon malfunctions and turret jams to be fixed.
 + RFE : MTF files loaded at 95% dynamically
++ Bug: Not removing unjammed weapon from jammed weapons list.
 
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 

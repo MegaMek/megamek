@@ -4,10 +4,10 @@ v0.33.16-dev (SVN)
 + Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change
 + Fixed Server.writeInitiativeReport(boolean) for DB. Will show all players
 	rolls without Individual Initiative on but not player unit turns. With
-	Individual Initiative on only the Inititative of units that re visible 
+	Individual Initiative on only the Inititative of units that are visible 
 	to the player will be showing.
 + Added missing IS BA Magshot Gauss Rifle
-+ Fix MaxTech Rapidfire AC option. Note: With submunitions, the sepcial effect
++ Fix MaxTech Rapidfire AC option. Note: With submunitions, the special effect
     currently does not work when using rapidfire.
 + Bug 1869698: Custom BA editor no longer functional
 + Bug 1653277: Proto movement in cities
@@ -17,24 +17,27 @@ v0.33.16-dev (SVN)
 + Bug: Fix Narc/iNarc report bug
 + Bug: External heat for plasma weapons and flamers not capped at +15
 + Bug: Fix leg attacks
-+ Have less verbose megameklog when catching IOExceptions in AbstractConnection#update()
++ Have less verbose megameklog when catching IOExceptions in AbstractConnection
+    #update()
 + Fix rounding issues with anti-infantry damage
 + Added isAntiMek() to Infantry class.
 + Bug: MG infantry should do d6 extra damage to conventional infantry
 + Bug 1870439: Broken BA weapons
++ Allow right-click-drag scroll also in offboard firing phase if option is set
 
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 
 	made combobox initial state in some dialogs make more sense.
 + Swing GUI: center on hex works correctly now, also, drag-scroll works again.
-+ Bug: damage to woods using old clear terrain code by subtracting damage from 14
++ Bug: damage to woods using old clear terrain code by subtracting damage from
+    14
   then subtracting that number from the current terrains CF
 + Bug: Flechette ammo not doing double damage to woods
 + Bug: Fragmentation ammo not doing double damage to woods
 + Bug: Missiles not hitting for full damage against woods
-+ Bug: 1859840: Leg damage in Partial Cover
++ Bug 1859840: Leg damage in Partial Cover
 + Bug: Last Entity Targetted was not being saved
-+ Bug: 1862748: 0.33.14 dev incorrect handling of cluster weapons
++ Bug 1862748: 0.33.14 dev incorrect handling of cluster weapons
 + Bug: LAC not using AC special Munitions.
 + Bug: Infantry flamers can't cause heat and have wrong range
 + Bug: Missing BA MGs

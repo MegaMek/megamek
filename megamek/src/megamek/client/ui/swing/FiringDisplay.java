@@ -29,6 +29,7 @@ import java.awt.event.KeyListener;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -41,6 +42,7 @@ import javax.swing.event.ListSelectionListener;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
 import megamek.common.AmmoType;
 import megamek.common.BipedMech;
@@ -58,7 +60,9 @@ import megamek.common.Infantry;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.Protomech;
 import megamek.common.QuadMech;
+import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -703,6 +707,30 @@ public class FiringDisplay
         if (ce() == null || target == null || mounted == null
                 || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid"); //$NON-NLS-1$
+        }
+        // check if we now shoot at a target in the front arc and previously
+        // shot a target in side/rear arc that then was primary target
+        // if so, ask and tell the user that to-hits will change
+        if (ce() instanceof Mech || ce() instanceof Tank || ce() instanceof Protomech) {
+            EntityAction lastAction = null;
+            try {               
+                lastAction = attacks.lastElement();
+            } catch (NoSuchElementException ex) {}
+            if (lastAction != null && lastAction instanceof WeaponAttackAction) {
+                WeaponAttackAction oldWaa = (WeaponAttackAction)lastAction;
+                Targetable oldTarget = oldWaa.getTarget(client.game);
+                if (!oldTarget.equals(target)) {
+                    boolean oldInFront = Compute.isInArc(ce().getPosition(), ce().getSecondaryFacing(), oldTarget.getPosition(), Compute.ARC_FORWARD);
+                    boolean curInFront = Compute.isInArc(ce().getPosition(), ce().getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
+                    if (!oldInFront && curInFront) {
+                        String title = Messages.getString("FiringDisplay.SecondaryTargetToHitChange.title"); //$NON-NLS-1$
+                        String body = Messages.getString("FiringDisplay.SecondaryTargetToHitChange.message"); //$NON-NLS-1$
+                        if (!clientgui.doYesNoDialog(title, body)) {
+                            return;
+                        }
+                    }
+                }
+            }
         }
         
         // declare searchlight, if possible

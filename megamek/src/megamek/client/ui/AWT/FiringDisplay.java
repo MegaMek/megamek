@@ -591,7 +591,6 @@ public class FiringDisplay
         //now add the attacks in rear/arm arcs
         for (EntityAction o:attacks) {
             if (o instanceof ArtilleryAttackAction) {
-                //newAttacks.addElement(o);
                 continue;
             } else if (o instanceof WeaponAttackAction) {
                 WeaponAttackAction waa = (WeaponAttackAction) o;
@@ -658,6 +657,30 @@ public class FiringDisplay
         if (ce() == null || target == null || mounted == null 
         || !(mounted.getType() instanceof WeaponType)) {
             throw new IllegalArgumentException("current fire parameters are invalid"); //$NON-NLS-1$
+        }
+        // check if we now shoot at a target in the front arc and previously
+        // shot a target in side/rear arc that then was primary target
+        // if so, ask and tell the user that to-hits will change
+        if (ce() instanceof Mech || ce() instanceof Tank || ce() instanceof Protomech) {
+            EntityAction lastAction = null;
+            try {               
+                lastAction = attacks.lastElement();
+            } catch (NoSuchElementException ex) {}
+            if (lastAction != null && lastAction instanceof WeaponAttackAction) {
+                WeaponAttackAction oldWaa = (WeaponAttackAction)lastAction;
+                Targetable oldTarget = oldWaa.getTarget(client.game);
+                if (!oldTarget.equals(target)) {
+                    boolean oldInFront = Compute.isInArc(ce().getPosition(), ce().getSecondaryFacing(), oldTarget.getPosition(), Compute.ARC_FORWARD);
+                    boolean curInFront = Compute.isInArc(ce().getPosition(), ce().getSecondaryFacing(), target.getPosition(), Compute.ARC_FORWARD);
+                    if (!oldInFront && curInFront) {
+                        String title = Messages.getString("FiringDisplay.SecondaryTargetToHitChange.title"); //$NON-NLS-1$
+                        String body = Messages.getString("FiringDisplay.SecondaryTargetToHitChange.message"); //$NON-NLS-1$
+                        if (!clientgui.doYesNoDialog(title, body)) {
+                            return;
+                        }
+                    }
+                }
+            }
         }
         
         // declare searchlight, if possible

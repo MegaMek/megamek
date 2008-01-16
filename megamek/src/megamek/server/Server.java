@@ -5346,15 +5346,9 @@ public class Server implements Runnable {
      * @param missiles
      *            the <code>int</code> amount of missiles
      */
-    public void deliverInfernoMissiles(Entity ae, Targetable t, int missiles) {
+    public void deliverInfernoMissiles(Entity ae, Targetable t, int missiles, Vector<Report> vPhaseReport) {
         IHex hex = game.getBoard().getHex(t.getPosition());
         Report r;
-        // inferno missiles hit
-        r = new Report(3370);
-        r.subject = ae.getId();
-        r.add(missiles);
-        addReport(r);
-
         switch (t.getTargetType()) {
         case Targetable.TYPE_HEX_ARTILLERY:
             // used for BA inferno explosion
@@ -5364,22 +5358,22 @@ public class Server implements Runnable {
                     r = new Report(6685);
                     r.subject = e.getId();
                     r.addDesc(e);
-                    addReport(r);
-                    deliverInfernoMissiles(ae, e, missiles);
+                    vPhaseReport.add(r);
+                    deliverInfernoMissiles(ae, e, missiles, vPhaseReport);
                 } else {
                     int roll = Compute.d6();
                     r = new Report(3570);
                     r.subject = e.getId();
                     r.addDesc(e);
                     r.add(roll);
-                    addReport(r);
+                    vPhaseReport.add(r);
                     if (roll >= 5) {
-                        deliverInfernoMissiles(ae, e, missiles);
+                        deliverInfernoMissiles(ae, e, missiles, vPhaseReport);
                     }
                 }
             }
             if (game.getBoard().getBuildingAt(t.getPosition()) != null) {
-                addReport(damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles));
+                vPhaseReport.add(damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles));
             }
             // fall through
         case Targetable.TYPE_HEX_CLEAR:
@@ -5398,12 +5392,12 @@ public class Server implements Runnable {
                 r.subject = e.getId();
                 r.addDesc(e);
                 r.add(roll);
-                addReport(r);
+                vPhaseReport.add(r);
                 if (roll >= 5) {
-                    deliverInfernoMissiles(ae, e, missiles);
+                    deliverInfernoMissiles(ae, e, missiles, vPhaseReport);
                 }
             }
-            addReport(damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles));
+            vPhaseReport.add(damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles));
             break;
         case Targetable.TYPE_ENTITY:
             Entity te = (Entity) t;
@@ -5420,13 +5414,13 @@ public class Server implements Runnable {
                 if (missiles != m) {
                     r = new Report(3403);
                     r.add(m - missiles);
-                    addReport(r);
+                    vPhaseReport.add(r);
                 }
                 r = new Report(3400);
                 r.add(2 * missiles);
                 r.subject = te.getId();
                 r.choose(true);
-                addReport(r);
+                vPhaseReport.add(r);
                 te.heatFromExternal += 2 * missiles;
             } else if (te instanceof Tank) {
                 if (game.getOptions().booleanOption("vehicle_fires") && te instanceof Tank) {
@@ -5435,7 +5429,7 @@ public class Server implements Runnable {
                 int direction = Compute.targetSideTable(ae, te);
                 while (missiles-- > 0) {
                     HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
-                    addReport(criticalEntity(te, hit.getLocation(), -2));
+                    vPhaseReport.addAll(criticalEntity(te, hit.getLocation(), -2));
                 }
             } else if (te instanceof Protomech) {
                 te.heatFromExternal += missiles;
@@ -5446,23 +5440,23 @@ public class Server implements Runnable {
                         r = new Report(6035);
                         r.subject = te.getId();
                         r.newlines = 0;
-                        addReport(r);
+                        vPhaseReport.add(r);
                     } else {
                         r = new Report(6690);
                         r.subject = te.getId();
                         r.newlines = 0;
                         r.add(te.getLocationName(hit));
-                        addReport(r);
+                        vPhaseReport.add(r);
                         te.destroyLocation(hit.getLocation());
                         // Handle Protomech pilot damage
                         // due to location destruction
                         int hits = Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()] - ((Protomech) te).getPilotDamageTaken(hit.getLocation());
                         if (hits > 0) {
-                            addReport(damageCrew(te, hits));
+                            vPhaseReport.addAll(damageCrew(te, hits));
                             ((Protomech) te).setPilotDamageTaken(hit.getLocation(), Protomech.POSSIBLE_PILOT_DAMAGE[hit.getLocation()]);
                         }
                         if (te.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
-                            addReport(destroyEntity(te, "flaming inferno death", false, true));
+                            vPhaseReport.addAll(destroyEntity(te, "flaming inferno death", false, true));
                         }
                     }
                 }
@@ -5473,7 +5467,7 @@ public class Server implements Runnable {
                         r.indent(2);
                         r.subject = te.getId();
                         r.addDesc(te);
-                        addReport(r);
+                        vPhaseReport.add(r);
                         return;
                     }
                 }
@@ -5482,17 +5476,17 @@ public class Server implements Runnable {
                     te.heatFromExternal -= 3;
                     HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
                     hit.setEffect(HitData.EFFECT_CRITICAL);
-                    addReport(damageEntity(te, hit, 1));
+                    vPhaseReport.addAll(damageEntity(te, hit, 1));
                 }
             } else if (te instanceof Infantry) {
                 HitData hit = new HitData(Infantry.LOC_INFANTRY);
-                addReport(damageEntity(te, hit, 3 * missiles));
+                vPhaseReport.addAll(damageEntity(te, hit, 3 * missiles));
             } else {
                 // gun emplacements
                 int direction = Compute.targetSideTable(ae, te);
                 while (missiles-- > 0) {
                     HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, direction);
-                    addReport(damageEntity(te, hit, 2));
+                    vPhaseReport.addAll(damageEntity(te, hit, 2));
                 }
             }
         }
@@ -5560,7 +5554,7 @@ public class Server implements Runnable {
                 r.add(mf.getCoords().getBoardNum(), true);
                 addReport(r);
 
-                deliverInfernoMissiles(entity, entity, mf.getDamage());
+                deliverInfernoMissiles(entity, entity, mf.getDamage(), vPhaseReport);
 
                 if (game.getOptions().booleanOption("fire")) {
                     // start a fire in the targets hex
@@ -11629,10 +11623,10 @@ public class Server implements Runnable {
                                         Entity transport = game.getEntity(te.getTransportId());
                                         if (transport != null)
                                             c = transport.getPosition();
-                                        deliverInfernoMissiles(te, te, infernos);
+                                        deliverInfernoMissiles(te, te, infernos, vPhaseReport);
                                     }
                                     if (c != null) {
-                                        deliverInfernoMissiles(te, new HexTarget(c, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY), infernos);
+                                        deliverInfernoMissiles(te, new HexTarget(c, game.getBoard(), Targetable.TYPE_HEX_ARTILLERY), infernos, vPhaseReport);
                                     }
                                 }
                             }
@@ -12814,11 +12808,17 @@ public class Server implements Runnable {
                 vDesc.addAll(destroyEntity(t, "turret blown off", true, true));
                 break;
             case Tank.CRIT_TURRET_JAM:
-                // TODO: this should be clearable
+                if (t.isTurretEverJammed()) {
+                    r = new Report(6640);
+                    r.subject = t.getId();
+                    vDesc.add(r);
+                    t.lockTurret();
+                    break;
+                }
                 r = new Report(6635);
                 r.subject = t.getId();
                 vDesc.add(r);
-                t.lockTurret();
+                t.jamTurret();
                 break;
             case Tank.CRIT_TURRET_LOCK:
                 r = new Report(6640);
@@ -12835,6 +12835,10 @@ public class Server implements Runnable {
                         weapons.add(weap);
                     }
                 }
+                //TODO: fix for new TW rules
+                // roll 1d6, 1-3, defending player
+                // chooses which weapon gets destroyed
+                // 4-6: attacker chooses which weapon gets destroyed
                 Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
                 weapon.setHit(true);
                 r.add(weapon.getName());
@@ -12855,6 +12859,7 @@ public class Server implements Runnable {
                 }
                 Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
                 weapon.setJammed(true);
+                t.addJammedWeapon(weapon);
                 r.add(weapon.getName());
                 vDesc.add(r);
                 break;

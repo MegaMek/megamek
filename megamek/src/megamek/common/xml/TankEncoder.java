@@ -60,9 +60,6 @@ public class TankEncoder {
         out.write( "\" /><stunnedTurns value=\"" );
         value = tank.getStunnedTurns();
         out.write( String.valueOf(value) );
-        out.write( "\" /><jammedTurns value=\"" );
-        value = tank.getJammedTurns();
-        out.write( String.valueOf(value) );
         out.write( "\" /><moveHit value=\"" );
         out.write( tank.isMovementHit() ? "true" : "false" );
         out.write( "\" /><moveHitPending value=\"" );
@@ -147,27 +144,6 @@ public class TankEncoder {
                         ( "Couldn't get an integer from " + attrStr );
                 }
                 entity.setStunnedTurns( attrVal );
-            }
-
-            // Did we find the jammed turns node?
-            else if ( childName.equals( "jammedTurns" ) ) {
-
-                // Get the Tank's jammed turns.
-                attrStr = child.getAttribute( "value" );
-                if ( null == attrStr ) {
-                    throw new IllegalStateException
-                        ( "Couldn't decode the jammedTurns for a Tank unit." );
-                }
-
-                // Try to pull the number from the attribute string
-                try {
-                    attrVal = Integer.parseInt( attrStr );
-                }
-                catch ( NumberFormatException exp ) {
-                    throw new IllegalStateException
-                        ( "Couldn't get an integer from " + attrStr );
-                }
-                entity.setJammedTurns( attrVal );
             }
 
             // Did we find the hasNoTurret node?

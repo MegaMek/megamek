@@ -1063,7 +1063,7 @@ public class MechDisplay extends BufferedPanel {
                     m_chAmmo.setEnabled(false);
                 }
             } else {
-                if (!(entity instanceof Infantry)) {
+                if (!(entity instanceof Infantry && !(entity instanceof BattleArmor))) {
                     m_chAmmo.setEnabled(true);
                 } else {
                     m_chAmmo.setEnabled(false);

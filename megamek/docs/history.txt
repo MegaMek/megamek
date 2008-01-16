@@ -25,6 +25,7 @@ v0.33.16-dev (SVN)
 + Bug 1870439: Broken BA weapons
 + Allow right-click-drag scroll also in offboard firing phase if option is set
 + RFE 1742627: pop up message when firing will change previous to-hits
++ Bug 1685545: BA Mine Launcher doesn't work
 
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 

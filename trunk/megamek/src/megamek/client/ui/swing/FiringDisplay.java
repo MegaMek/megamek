@@ -726,6 +726,7 @@ public class FiringDisplay
         choiceDialog.setVisible(true);
         if ( choiceDialog.getAnswer() == true ) {
             weapons.get(choiceDialog.getChoice()).setJammed(false);
+            weapons.remove(choiceDialog.getChoice());
             ready();
         }
     }

@@ -61,6 +61,8 @@ public class FiringDisplay
     public static final String FIRE_TWIST      = "fireTwist"; //$NON-NLS-1$
     public static final String FIRE_CANCEL     = "fireCancel"; //$NON-NLS-1$
     public static final String FIRE_SEARCHLIGHT= "fireSearchlight"; //$NON-NLS-1$
+    public static final String FIRE_CLEAR_TURRET = "fireClearTurret"; //$NON-NLS-1$
+    public static final String FIRE_CLEAR_WEAPON = "fireClearWeaponJam"; //$NON-NLS-1$
 
     // parent game
     public Client client;
@@ -81,7 +83,9 @@ public class FiringDisplay
     
 //    private Button            butReport;
     private Button            butSpace;
-    private Button            butFireMode; // Fire Mode - Add a Fire Mode Button - Rasia
+    private Button            butFireMode;
+    private Button            butFireClearTurret;  
+    private Button            butFireClearWeaponJam;
     
     private Button            butNext;
     private Button            butDone;
@@ -178,12 +182,23 @@ public class FiringDisplay
         butSpace = new Button("."); //$NON-NLS-1$
         butSpace.setEnabled(false);
 
-        // Fire Mode - Adding a Fire Mode Button to the 2nd Menu - Rasia
         butFireMode = new Button(Messages.getString("FiringDisplay.Mode")); //$NON-NLS-1$
         butFireMode.addActionListener(this);
         butFireMode.addKeyListener(this);
         butFireMode.setActionCommand(FIRE_MODE);
         butFireMode.setEnabled(false);
+        
+        butFireClearTurret = new Button(Messages.getString("FiringDisplay.ClearTurret")); //$NON-NLS-1$
+        butFireClearTurret.addActionListener(this);
+        butFireClearTurret.addKeyListener(this);
+        butFireClearTurret.setActionCommand(FIRE_CLEAR_TURRET);
+        butFireClearTurret.setEnabled(false);
+        
+        butFireClearWeaponJam = new Button(Messages.getString("FiringDisplay.ClearWeaponJam")); //$NON-NLS-1$
+        butFireClearWeaponJam.addActionListener(this);
+        butFireClearWeaponJam.addKeyListener(this);
+        butFireClearWeaponJam.setActionCommand(FIRE_CLEAR_WEAPON);
+        butFireClearWeaponJam.setEnabled(false);
 
         butDone = new Button(Messages.getString("FiringDisplay.Done")); //$NON-NLS-1$
         butDone.addActionListener(this);
@@ -259,8 +274,8 @@ public class FiringDisplay
             panButtons.add(butNextTarg);
             panButtons.add(butTwist);
             panButtons.add(butFireMode);
+            panButtons.add(butFireClearWeaponJam);
             panButtons.add(butMore);
-//             panButtons.add(butDone);
             break;
         case 1 :
             panButtons.add(butNext);
@@ -269,8 +284,8 @@ public class FiringDisplay
             panButtons.add(butFindClub);
             panButtons.add(butSpot);
             panButtons.add(butSearchlight);
+            panButtons.add(butFireClearTurret);
             panButtons.add(butMore);
-//             panButtons.add(butDone);
             break;
         }
         
@@ -342,12 +357,14 @@ public class FiringDisplay
             // Update the menu bar.
             clientgui.getMenuBar().setEntity( ce() );
             
-            // 2003-12-29, nemchenk -- only twist if crew conscious
+            // only twist if crew conscious
             setTwistEnabled(ce().canChangeSecondaryFacing() && ce().getCrew().isActive());
 
             setFindClubEnabled(FindClubAction.canMechFindClub(client.game, en));
             setFlipArmsEnabled(ce().canFlipArms());
             updateSearchlight();
+            updateClearTurret();
+            updateClearWeaponJam();
         } else {
             System.err.println("FiringDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
         }
@@ -382,7 +399,7 @@ public class FiringDisplay
             setNextEnabled(true);
             butDone.setEnabled(true);
             butMore.setEnabled(true);
-            setFireModeEnabled(true); // Fire Mode - Setting Fire Mode to true, currently doesn't detect if weapon has a special Fire Mode or not- Rasia        client.setDisplayVisible(true);
+            setFireModeEnabled(true);
             clientgui.getBoardView().select(null);
         }
     }
@@ -424,7 +441,9 @@ public class FiringDisplay
         butDone.setEnabled(false);
         setNextTargetEnabled(false);
         setFlipArmsEnabled(false);
-        setFireModeEnabled(false); // Fire Mode - Handlng of Fire Mode Button - Rasia
+        setFireModeEnabled(false);
+        setFireClearTurretEnabled(false);
+        setFireClearWeaponJamEnabled(false);
     }
     
    /**
@@ -621,6 +640,36 @@ public class FiringDisplay
         ash.lockLocation(false);
     }
     
+    private void doClearTurret() {
+        String title = Messages.getString("FiringDisplay.ClearTurretJam.title"); //$NON-NLS-1$
+        String body = Messages.getString("FiringDisplay.ClearTurret.message"); //$NON-NLS-1$
+        if (!clientgui.doYesNoDialog(title, body)) {
+            return;
+        }
+        if (attacks.size() == 0 && ce() instanceof Tank && ((Tank)ce()).isTurretJammed()) {
+            ((Tank)ce()).unjamTurret();
+            ready();
+        }
+    }
+    
+    private void doClearWeaponJam() {
+        ArrayList<Mounted> weapons = ((Tank)ce()).getJammedWeapons();
+        String[] names = new String[ weapons.size() ];
+        for ( int loop = 0; loop < names.length; loop++ ) {
+            names[loop] = weapons.get(loop).getDesc();
+        }
+        SingleChoiceDialog choiceDialog =
+            new SingleChoiceDialog( clientgui.frame,
+                                    Messages.getString("FiringDisplay.ClearWeaponJam.title"), //$NON-NLS-1$
+                                    Messages.getString("FiringDisplay.ClearWeaponJam.question"), //$NON-NLS-1$ 
+                                    names );
+        choiceDialog.setVisible(true);
+        if ( choiceDialog.getAnswer() == true ) {
+            weapons.get(choiceDialog.getChoice()).setJammed(false);
+            ready();
+        }
+    }
+    
     private void doSearchlight() {
         // validate
         if (ce() == null || target == null) {
@@ -742,6 +791,10 @@ public class FiringDisplay
         
         // find the next available weapon 
         int nextWeapon = ce().getNextWeapon(weaponNum);
+        
+        // we fired a weapon, can't clear turret jams or weapon jams anymore
+        updateClearTurret();
+        updateClearWeaponJam();
         
         // check; if there are no ready weapons, you're done.
         if (nextWeapon == -1 && GUIPreferences.getInstance().getAutoEndFiring()) {
@@ -1148,7 +1201,6 @@ public class FiringDisplay
             jumpToNextTarget();
         } else if (ev.getActionCommand().equals(FIRE_FLIP_ARMS)) {
             updateFlipArms(!ce().getArmsFlipped());
-        // Fire Mode - More Fire Mode button handling - Rasia
         } else if (ev.getActionCommand().equals(FIRE_MODE)) {
             changeMode();
         } else if ((ev.getActionCommand().equalsIgnoreCase("changeSinks"))
@@ -1159,6 +1211,10 @@ public class FiringDisplay
             refreshAll();
         } else if (ev.getActionCommand().equals(FIRE_SEARCHLIGHT)) {
             doSearchlight();
+        } else if (ev.getActionCommand().equals(FIRE_CLEAR_TURRET)) {
+            doClearTurret();
+        } else if (ev.getActionCommand().equals(FIRE_CLEAR_WEAPON)) {
+            doClearWeaponJam();
         }
     }
     
@@ -1184,6 +1240,13 @@ public class FiringDisplay
                 && ce().isUsingSpotlight() 
                 && ce().getCrew().isActive()
                 && SearchlightAttackAction.isPossible(client.game, cen, target,null));
+    }
+    
+    private void updateClearTurret() {
+        setFireClearTurretEnabled(ce() instanceof Tank && ((Tank)ce()).isTurretJammed() && attacks.size() == 0);
+    }
+    private void updateClearWeaponJam() {
+        setFireClearWeaponJamEnabled(ce() instanceof Tank && ((Tank)ce()).isTurretJammed() && attacks.size() == 0);
     }
 
     private void setFireEnabled(boolean enabled) {
@@ -1221,6 +1284,14 @@ public class FiringDisplay
     private void setFireModeEnabled(boolean enabled) {
         butFireMode.setEnabled(enabled);
         clientgui.getMenuBar().setFireModeEnabled(enabled);
+    }
+    private void setFireClearTurretEnabled(boolean enabled) {
+        butFireClearTurret.setEnabled(enabled);
+        clientgui.getMenuBar().setFireClearTurretEnabled(enabled);
+    }
+    private void setFireClearWeaponJamEnabled(boolean enabled) {
+        butFireClearWeaponJam.setEnabled(enabled);
+        clientgui.getMenuBar().setFireClearWeaponJamEnabled(enabled);
     }
     private void setNextEnabled(boolean enabled) {
         butNext.setEnabled(enabled);

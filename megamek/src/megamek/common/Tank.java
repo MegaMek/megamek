@@ -34,15 +34,16 @@ public class Tank
 	private static final long serialVersionUID = -857210851169206264L;
 	private boolean m_bHasNoTurret = false;
     private boolean m_bTurretLocked = false;
+    private boolean m_bTurretJammed = false;
+    private boolean m_bTurretEverJammed = false;
     private int m_nTurretOffset = 0;
     private int m_nStunnedTurns = 0;
-    private int m_nJammedTurns = 0;
-    private Mounted m_jammedGun = null;
     private boolean m_bImmobile = false;
     private boolean m_bImmobileHit = false;
     private int burningLocations = 0;
     protected int movementDamage = 0;
     private boolean infernoFire = false;
+    private ArrayList<Mounted> jammedWeapons = new ArrayList<Mounted>();
     
     // locations
     public static final int        LOC_BODY               = 0;
@@ -111,7 +112,11 @@ public class Tank
     }    
 
     public boolean isTurretLocked() {
-        return m_bTurretLocked;
+        return m_bTurretLocked || m_bTurretJammed;
+    }
+    
+    public boolean isTurretJammed() {
+        return m_bTurretJammed;
     }
 
     /**
@@ -123,11 +128,11 @@ public class Tank
     }
     
     public boolean canChangeSecondaryFacing() {
-        return !m_bHasNoTurret && !m_bTurretLocked;
+        return !m_bHasNoTurret && !isTurretLocked();
     }
     
     public boolean isValidSecondaryFacing(int n) {
-        return !m_bTurretLocked;
+        return !isTurretLocked();
     }
     
     public int clipSecondaryFacing(int n) {
@@ -135,7 +140,7 @@ public class Tank
     }
 
     public void setSecondaryFacing(int sec_facing) {
-        if (!m_bTurretLocked) {
+        if (!isTurretLocked()) {
             super.setSecondaryFacing(sec_facing);
             if (!m_bHasNoTurret) {
                 m_nTurretOffset = sec_facing - getFacing();
@@ -145,7 +150,7 @@ public class Tank
     
     public void setFacing(int facing) {
         super.setFacing(facing);
-        if (m_bTurretLocked) {
+        if (isTurretLocked()) {
             int nTurretFacing = (facing + m_nTurretOffset + 6) % 6;
             super.setSecondaryFacing(nTurretFacing);
         }
@@ -238,6 +243,19 @@ public class Tank
     public void lockTurret() {
         m_bTurretLocked = true;
     }
+    
+    public void jamTurret() {
+        m_bTurretEverJammed = true;
+        m_bTurretJammed = true;                    
+    }
+    
+    public void unjamTurret() {
+        m_bTurretJammed = false;
+    }
+    
+    public boolean isTurretEverJammed() {
+        return m_bTurretEverJammed;
+    }
 
     public int getStunnedTurns() {
         return m_nStunnedTurns;
@@ -254,22 +272,6 @@ public class Tank
             m_nStunnedTurns++;
     }
 
-    public int getJammedTurns() {
-        return m_nJammedTurns;
-    }
-
-    public void setJammedTurns( int turns ) {
-        // Set the jammed gun, if none are currently jammed.
-        if ( null == m_jammedGun ) {
-            m_jammedGun = this.getMainWeapon();
-            // We *may* be in the middle of de-serializing this tank.
-            if ( null != m_jammedGun ) {
-                m_jammedGun.setJammed(true);
-            }
-        }
-        m_nJammedTurns = turns;
-    }
-
     public void applyDamage() {
         m_bImmobile |= m_bImmobileHit;
     }
@@ -280,16 +282,6 @@ public class Tank
         // check for crew stun
         if (m_nStunnedTurns > 0) {
             m_nStunnedTurns--;
-        }
-        
-        // check for weapon jam
-        if (m_jammedGun != null) {
-            if (m_nJammedTurns > 0) {
-                m_nJammedTurns--;
-            } else {
-                m_jammedGun.setJammed(false);
-                m_jammedGun = null;
-            }
         }
         
         // reset turret facing, if not jammed
@@ -883,11 +875,6 @@ public class Tank
      */
     public void restore() {
         super.restore();
-
-        // Restore our jammed gun, if necessary.
-        if ( m_nJammedTurns > 0 && null == m_jammedGun ) {
-            m_jammedGun = this.getMainWeapon();
-        }
     }
 
     public boolean canCharge() {
@@ -1315,6 +1302,14 @@ public class Tank
      */
     public boolean canSpot() {
         return super.canSpot() && this.getStunnedTurns() == 0;
+    }
+    
+    public void addJammedWeapon(Mounted weapon) {
+        jammedWeapons.add(weapon);
+    }
+    
+    public ArrayList<Mounted> getJammedWeapons() {
+        return jammedWeapons;
     }
 
 }

@@ -153,9 +153,8 @@ public class MtfFile implements IMechLoader {
 
             critData = new String[8][12];
 
-            for (int x = 0; x < locationOrder.length; x++) {
-                readCrits(r, locationOrder[x]);
-            }
+           
+            readCrits(r);
 
             r.close();
         } catch (IOException ex) {
@@ -170,13 +169,32 @@ public class MtfFile implements IMechLoader {
         }
     }
 
-    private void readCrits(BufferedReader r, int loc) throws IOException {
-        r.readLine(); // blank line
+    private void readCrits(BufferedReader r) throws IOException {
+
+        int slot = 0;
+        int loc = 0;
+        String crit = "";
+        
+        while ( r.ready() ){
+            crit = r.readLine();
+            if ( crit.trim().length() < 1 )
+                continue;
+            
+            if ( isValidLocation(crit) ){
+                loc = getLocation(crit);
+                slot = 0;
+                continue;
+            }
+            critData[loc][slot++] = crit.trim();
+            
+        }
+        
+       /* r.readLine(); // blank line
         r.readLine(); // location name.... verify?
 
         for (int i = 0; i < 12; i++) {
             critData[loc][i] = r.readLine();
-        }
+        }*/
     }
 
     public Entity getEntity() throws EntityLoadingException {
@@ -482,7 +500,7 @@ public class MtfFile implements IMechLoader {
         }
         int firstEmpty = -1;
         for (int slot = 0; slot < mech.getNumberOfCriticals(loc); slot++) {
-            if (critData[loc][slot].equals(MtfFile.EMPTY)) {
+            if (critData[loc][slot].equals(MtfFile.EMPTY) || critData[loc][slot] == null) {
                 firstEmpty = slot;
             }
             if (firstEmpty != -1 && !critData[loc][slot].equals(MtfFile.EMPTY)) {
@@ -497,4 +515,47 @@ public class MtfFile implements IMechLoader {
         }
     }
 
+    private int getLocation(String location){
+        
+        if ( location.trim().equalsIgnoreCase("Left Arm:"))
+            return Mech.LOC_LARM;
+        
+        if ( location.trim().equalsIgnoreCase("Right Arm:"))
+            return Mech.LOC_RARM;
+
+        if ( location.equalsIgnoreCase("Left Leg:"))
+            return Mech.LOC_LLEG;
+        
+        if ( location.trim().equalsIgnoreCase("Right Leg:"))
+            return Mech.LOC_RLEG;
+        
+        if ( location.trim().equalsIgnoreCase("Left Torso:"))
+            return Mech.LOC_LT;
+        
+        if ( location.trim().equalsIgnoreCase("Right Torso:"))
+            return Mech.LOC_RT;
+
+        if ( location.trim().equalsIgnoreCase("Center Torso:"))
+            return Mech.LOC_CT;
+
+        //else 
+        return Mech.LOC_HEAD;
+    }
+    
+    private boolean isValidLocation(String location){
+        
+        if ( location.trim().equalsIgnoreCase("Left Arm:") 
+        || location.trim().equalsIgnoreCase("Right Arm:")
+        || location.equalsIgnoreCase("Left Leg:")
+        || location.trim().equalsIgnoreCase("Right Leg:")
+        || location.trim().equalsIgnoreCase("Left Torso:")
+        || location.trim().equalsIgnoreCase("Right Torso:")
+        || location.trim().equalsIgnoreCase("Center Torso:")
+        || location.trim().equalsIgnoreCase("Head:") )
+            return true;
+
+        //else 
+        return false;
+    }
+    
 }

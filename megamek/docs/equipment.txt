@@ -1,5 +1,5 @@
 Megamek Equipment Database
-This file can be regenerated with java -jar MegaMek.jar -eqdb docs/equipment.txt
+This file can be regenerated with java -jar MegaMek.jar -eqdb docs\equipment.txt
 Type,Tech,Rules,Name,Aliases
 W,Any,1,Medium Laser,IS Medium Laser,ISMediumLaser,
 W,Any,1,Large Laser,IS Large Laser,ISLargeLaser,

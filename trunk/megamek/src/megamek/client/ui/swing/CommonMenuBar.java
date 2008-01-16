@@ -123,6 +123,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem fireFindClub;
     private JMenuItem fireSpot;
     private JMenuItem fireSearchlight;
+    private JMenuItem fireClearTurret;
+    private JMenuItem fireClearWeaponJam;
     private JMenuItem fireCancel;
     private JMenuItem physicalNext;
     private JMenuItem physicalPunch;
@@ -371,6 +373,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         fireFindClub = createMenuItem(menu, Messages.getString("CommonMenuBar.fireFindClub"), FiringDisplay.FIRE_FIND_CLUB); //$NON-NLS-1$
         fireSpot = createMenuItem(menu, Messages.getString("CommonMenuBar.fireSpot"), FiringDisplay.FIRE_SPOT); //$NON-NLS-1$
         fireSearchlight = createMenuItem(menu, Messages.getString("CommonMenuBar.fireSearchlight"), FiringDisplay.FIRE_SEARCHLIGHT); //$NON-NLS-1$
+        fireClearTurret = createMenuItem(menu, Messages.getString("CommonMenuBar.fireClearTurret"), FiringDisplay.FIRE_CLEAR_TURRET); //$NON-NLS-1$
+        fireClearWeaponJam = createMenuItem(menu, Messages.getString("CommonMenuBar.fireClearWeaponJam"), FiringDisplay.FIRE_CLEAR_WEAPON); //$NON-NLS-1$
         menu.addSeparator();
         fireCancel = createMenuItem(menu, Messages.getString("CommonMenuBar.fireCancel"), FiringDisplay.FIRE_CANCEL, KeyEvent.VK_ESCAPE); //$NON-NLS-1$
 
@@ -888,5 +892,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
 
     public synchronized void setFireSearchlightEnabled(boolean enabled) {
         fireSearchlight.setEnabled(enabled);
+    }
+    
+    public synchronized void setFireClearTurretEnabled(boolean enabled) {
+        fireClearTurret.setEnabled(enabled);
+    }
+    
+    public synchronized void setFireClearWeaponJamEnabled(boolean enabled) {
+        fireClearWeaponJam.setEnabled(enabled);
     }
 }

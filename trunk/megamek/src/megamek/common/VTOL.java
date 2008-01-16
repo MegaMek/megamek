@@ -327,6 +327,10 @@ public class VTOL extends Tank {
                         }
                     }
                 case 9:
+                    // TODO: fix for new TW rules
+                    // roll 1d6, 1-3, defending player
+                    // chooses which weapon gets destroyed
+                    // 4-6: attacker chooses which weapon gets destroyed
                     for(Mounted m:getWeaponList()) {
                         if(m.getLocation() == loc
                                 && !m.isDestroyed()

@@ -73,10 +73,12 @@ import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.EntityAction;
 import megamek.common.actions.FindClubAction;
 import megamek.common.actions.FlipArmsAction;
+import megamek.common.actions.RepairWeaponMalfunctionAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.SpotAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.TriggerAPPodAction;
+import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -697,13 +699,14 @@ public class FiringDisplay
      *
      */
     private void doClearTurret() {
-        String title = Messages.getString("FiringDisplay.ClearTurretJam.title"); //$NON-NLS-1$
+        String title = Messages.getString("FiringDisplay.ClearTurret.title"); //$NON-NLS-1$
         String body = Messages.getString("FiringDisplay.ClearTurret.message"); //$NON-NLS-1$
         if (!clientgui.doYesNoDialog(title, body)) {
             return;
         }
         if (attacks.size() == 0 && ce() instanceof Tank && ((Tank)ce()).isTurretJammed()) {
-            ((Tank)ce()).unjamTurret();
+            UnjamTurretAction uta = new UnjamTurretAction(ce().getId());
+            attacks.add(uta);
             ready();
         }
     }
@@ -725,8 +728,8 @@ public class FiringDisplay
                                     names );
         choiceDialog.setVisible(true);
         if ( choiceDialog.getAnswer() == true ) {
-            weapons.get(choiceDialog.getChoice()).setJammed(false);
-            weapons.remove(choiceDialog.getChoice());
+            RepairWeaponMalfunctionAction rwma = new RepairWeaponMalfunctionAction(ce().getId(),ce().getEquipmentNum(weapons.get(choiceDialog.getChoice())));
+            attacks.add(rwma);
             ready();
         }
     }
@@ -1315,7 +1318,7 @@ public class FiringDisplay
         setFireClearTurretEnabled(ce() instanceof Tank && ((Tank)ce()).isTurretJammed() && attacks.size() == 0);
     }
     private void updateClearWeaponJam() {
-        setFireClearWeaponJamEnabled(ce() instanceof Tank && ((Tank)ce()).isTurretJammed() && attacks.size() == 0);
+        setFireClearWeaponJamEnabled(ce() instanceof Tank && ((Tank)ce()).getJammedWeapons().size() != 0 && attacks.size() == 0);
     }
 
     private void setFireEnabled(boolean enabled) {

@@ -13,6 +13,52 @@
  */
 package megamek.client.ui.swing;
 
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.MenuItem;
+import java.awt.Point;
+import java.awt.PopupMenu;
+import java.awt.Rectangle;
+import java.awt.SystemColor;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.filechooser.FileFilter;
+
 import megamek.client.Client;
 import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewListener;
@@ -42,50 +88,6 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.filechooser.FileFilter;
-import java.applet.Applet;
-import java.applet.AudioClip;
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
-import java.awt.Dimension;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.Point;
-import java.awt.PopupMenu;
-import java.awt.Rectangle;
-import java.awt.SystemColor;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
-import java.io.IOException;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Vector;
-
 public class ClientGUI
         extends JPanel
         implements MouseListener, WindowListener, ActionListener, KeyListener {
@@ -109,7 +111,7 @@ public class ClientGUI
     private CommonSettingsDialog setdlg;
     private String helpFileName = "readme.txt"; //$NON-NLS-1$
     // keep me
-    private ChatterBox cb;
+    ChatterBox cb;
     public BoardView1 bv;
     private JScrollPane scroller;
     public JDialog mechW;
@@ -122,8 +124,8 @@ public class ClientGUI
     protected JComponent curPanel;
     public ChatLounge chatlounge;
     // some dialogs...
-    private BoardSelectionDialog boardSelectionDialog;
-    private GameOptionsDialog gameOptionsDialog;
+    BoardSelectionDialog boardSelectionDialog;
+    GameOptionsDialog gameOptionsDialog;
     private MechSelectorDialog mechSelectorDialog;
     private CustomBattleArmorDialog customBADialog;
     private StartingPositionDialog startingPositionDialog;
@@ -134,7 +136,7 @@ public class ClientGUI
      */
     private JFileChooser dlgLoadList;
     private JFileChooser dlgSaveList;
-    private Client client;
+    Client client;
     /**
      * Cache for the "bing" soundclip.
      */
@@ -166,7 +168,7 @@ public class ClientGUI
     /**
      * Map phase component names to phase component objects.
      */
-    private HashMap<String, JComponent> phaseComponents = new HashMap<String, JComponent>();
+    HashMap<String, JComponent> phaseComponents = new HashMap<String, JComponent>();
     //TODO: there's a better place for this
     private Map<String, Client> bots = new TreeMap<String, Client>(StringUtil.stringComparator());
     /**
@@ -549,7 +551,7 @@ public class ClientGUI
     /**
      * Saves the current settings to the cfg file.
      */
-    private void saveSettings() {
+    void saveSettings() {
         // save frame location
         GUIPreferences.getInstance().setWindowPosX(frame.getLocation().x);
         GUIPreferences.getInstance().setWindowPosY(frame.getLocation().y);
@@ -585,7 +587,7 @@ public class ClientGUI
     /**
      * Shuts down threads and sockets
      */
-    private void die() {
+    void die() {
         //Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
         Iterator<String> names = phaseComponents.keySet().iterator();
@@ -650,7 +652,7 @@ public class ClientGUI
         return startingPositionDialog;
     }
 
-    private void switchPanel(int phase) {
+    void switchPanel(int phase) {
         // Clear the old panel's listeners.
         if (curPanel instanceof BoardViewListener) {
             bv.removeBoardViewListener((BoardViewListener) curPanel);
@@ -901,7 +903,7 @@ public class ClientGUI
     /**
      * Sets the visibility of the minimap window
      */
-    private void setMapVisible(boolean visible) {
+    void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
         if (visible) {
             frame.requestFocus();
@@ -913,8 +915,8 @@ public class ClientGUI
 
         // add select options
         if (canSelectEntities()) {
-            for (Enumeration i = client.game.getEntities(coords); i.hasMoreElements();) {
-                final Entity entity = (Entity) i.nextElement();
+            for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+                final Entity entity = i.nextElement();
                 if (client.game.getTurn().isValidEntity(entity, client.game)) {
                     popup.add(new SelectMenuItem(entity));
                 }
@@ -925,8 +927,8 @@ public class ClientGUI
         }
 
         // add view options
-        for (Enumeration i = client.game.getEntities(coords); i.hasMoreElements();) {
-            final Entity entity = (Entity) i.nextElement();
+        for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+            final Entity entity = i.nextElement();
             popup.add(new ViewMenuItem(entity));
         }
 
@@ -935,8 +937,8 @@ public class ClientGUI
             if (popup.getItemCount() > 0) {
                 popup.addSeparator();
             }
-            for (Enumeration i = client.game.getEntities(coords); i.hasMoreElements();) {
-                final Entity entity = (Entity) i.nextElement();
+            for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+                final Entity entity = i.nextElement();
                 popup.add(new TargetMenuItem(entity));
             }
             // Can target weapons at the hex if it contains woods or building.
@@ -1105,11 +1107,11 @@ public class ClientGUI
         if (unitFile != null) {
             try {
                 // Read the units from the file.
-                Vector loadedUnits = EntityListFile.loadFrom(unitFile);
+                Vector<Entity> loadedUnits = EntityListFile.loadFrom(unitFile);
 
                 // Add the units from the file.
-                for (Enumeration iter = loadedUnits.elements(); iter.hasMoreElements();) {
-                    final Entity entity = (Entity) iter.nextElement();
+                for (Enumeration<Entity> iter = loadedUnits.elements(); iter.hasMoreElements();) {
+                    final Entity entity = iter.nextElement();
                     entity.setOwner(client.getLocalPlayer());
                     client.sendAddEntity(entity);
                 }
@@ -1132,7 +1134,7 @@ public class ClientGUI
      *                 to be saved to a file.  If this value is <code>null</code>
      *                 or empty, the "Save As" dialog will not be displayed.
      */
-    protected void saveListFile(Vector<Entity> unitList) {
+    protected void saveListFile(ArrayList<Entity> unitList) {
         // Handle empty lists.
         if (unitList == null || unitList.isEmpty()) {
             return;
@@ -1326,7 +1328,7 @@ public class ClientGUI
     /**
      * Make a "bing" sound.
      */
-    private void bing() {
+    void bing() {
         if (!GUIPreferences.getInstance().getSoundMute()
                 && bingClip != null) {
             bingClip.play();
@@ -1431,17 +1433,17 @@ public class ClientGUI
 
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
-            for (Iterator i = getBots().values().iterator(); i.hasNext();) {
-                ((Client) i.next()).die();
+            for (Iterator<Client> i = getBots().values().iterator(); i.hasNext();) {
+                i.next().die();
             }
             getBots().clear();
             
             // Make a list of the player's living units.
-            Vector<Entity> living = client.game.getPlayerEntities(client.getLocalPlayer());
+            ArrayList<Entity> living = client.game.getPlayerEntities(client.getLocalPlayer());
             
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter.hasMoreElements();) {
-                living.addElement(iter.nextElement());
+                living.add(iter.nextElement());
             }
             
             // Allow players to save their living units to a file.

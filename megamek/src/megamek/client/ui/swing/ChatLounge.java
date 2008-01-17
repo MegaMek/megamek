@@ -34,7 +34,6 @@ import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
@@ -91,7 +90,7 @@ public class ChatLounge
     private DistractableAdapter distracted = new DistractableAdapter();
 
     // parent Client
-    private Client client;
+    Client client;
     private ClientGUI clientgui;
 
     // The camo selection dialog.
@@ -132,9 +131,9 @@ public class ChatLounge
     private JButton butSaveList;
     private JButton butDeleteAll;
 
-    private JButton butLoad;
-    private JButton butArmy;
-    private JButton butLoadCustomBA;
+    JButton butLoad;
+    JButton butArmy;
+    JButton butLoadCustomBA;
     private JButton butDelete;
     private JButton butCustom;
     private JButton butMechReadout;
@@ -528,7 +527,7 @@ public class ChatLounge
 
         ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
         int index = 0;
-        for (Enumeration i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
+        for (Enumeration<String> i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
             ((DefaultListModel) lisBoardsSelected.getModel()).addElement((index++) + ": " + i.nextElement()); //$NON-NLS-1$
         }
     }
@@ -983,8 +982,8 @@ public class ChatLounge
      */
     private void refreshPlayerInfo() {
         ((DefaultListModel) lisPlayerInfo.getModel()).removeAllElements();
-        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player) i.nextElement();
+        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
+            final Player player = i.nextElement();
             if (player != null) {
                 StringBuffer pi = new StringBuffer();
                 pi.append(player.getName()).append(" : "); //$NON-NLS-1$
@@ -1008,8 +1007,8 @@ public class ChatLounge
      */
     private void refreshMinefield() {
         ((DefaultListModel) lisMinefield.getModel()).removeAllElements();
-        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player) i.nextElement();
+        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
+            final Player player = i.nextElement();
             if (player != null) {
                 StringBuffer pi = new StringBuffer();
                 pi.append(player.getName()).append(" : "); //$NON-NLS-1$
@@ -1038,14 +1037,14 @@ public class ChatLounge
         final boolean useCost = chkCost.isSelected();
 
         ((DefaultListModel) lisBVs.getModel()).removeAllElements();
-        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            final Player player = (Player) i.nextElement();
+        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
+            final Player player = i.nextElement();
             if (player == null) {
                 continue;
             }
             float playerValue = 0;
-            for (Enumeration j = client.getEntities(); j.hasMoreElements();) {
-                Entity entity = (Entity) j.nextElement();
+            for (Enumeration<Entity> j = client.getEntities(); j.hasMoreElements();) {
+                Entity entity = j.nextElement();
                 if (entity.getOwner().equals(player)) {
                     if (useBv)
                         playerValue += entity.calculateBattleValue();
@@ -1119,8 +1118,8 @@ public class ChatLounge
      */
     private void refreshStarts() {
         ((DefaultListModel) lisStarts.getModel()).removeAllElements();
-        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            Player player = (Player) i.nextElement();
+        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
+            Player player = i.nextElement();
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
@@ -1236,9 +1235,9 @@ public class ChatLounge
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();
         ArrayList<Entity> c3members = new ArrayList<Entity>();
-        Enumeration playerUnits = c.game.getPlayerEntities(c.getLocalPlayer()).elements();
-        while (playerUnits.hasMoreElements()) {
-            Entity unit = (Entity) playerUnits.nextElement();
+        Iterator<Entity> playerUnits = c.game.getPlayerEntities(c.getLocalPlayer()).iterator();
+        while (playerUnits.hasNext()) {
+            Entity unit = playerUnits.next();
             if (!entity.equals(unit) && entity.onSameC3NetworkAs(unit)) {
                 c3members.add(unit);
             }
@@ -1436,8 +1435,8 @@ public class ChatLounge
                     clientgui.doAlertDialog("Starting Position not allowed", "In Double Blind play, you cannot choose 'Any' as starting position.");
                     return;
                 }
-                for (Enumeration e = client.game.getPlayers(); e.hasMoreElements();) {
-                    Player player = (Player) e.nextElement();
+                for (Enumeration<Player> e = client.game.getPlayers(); e.hasMoreElements();) {
+                    Player player = e.nextElement();
                     if (player.getStartingPos() == 0) {
                         continue;
                     }
@@ -1455,8 +1454,8 @@ public class ChatLounge
             boolean done = !client.getLocalPlayer().isDone();
             client.sendDone(done);
             refreshDoneButton(done);
-            for (Iterator i = clientgui.getBots().values().iterator(); i.hasNext();) {
-                ((Client) i.next()).sendDone(done);
+            for (Iterator<Client> i = clientgui.getBots().values().iterator(); i.hasNext();) {
+                i.next().sendDone(done);
             }
         } else if (ev.getSource().equals(butLoad)) {
             loadMech();
@@ -1478,12 +1477,12 @@ public class ChatLounge
             }
         } else if (ev.getSource().equals(butDeleteAll)) {
             // Build a Vector of this player's entities.
-            Vector currentUnits = client.game.getPlayerEntities(client.getLocalPlayer());
+            ArrayList<Entity> currentUnits = client.game.getPlayerEntities(client.getLocalPlayer());
 
             // Walk through the vector, deleting the entities.
-            Enumeration entities = currentUnits.elements();
-            while (entities.hasMoreElements()) {
-                final Entity entity = (Entity) entities.nextElement();
+            Iterator<Entity> entities = currentUnits.iterator();
+            while (entities.hasNext()) {
+                final Entity entity = entities.next();
                 client.sendDeleteEntity(entity.getId());
             }
         } else if (ev.getSource().equals(butChangeBoard) || ev.getSource().equals(lisBoardsSelected)) {

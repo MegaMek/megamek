@@ -15,10 +15,13 @@
 
 package megamek.common;
 
-/* Do not use the Sun collections (com.sun.java.util.collections.*) framework
- * in this class until Java 1.1 compatibility is abandoned or a
- * non-serialization based save feature is implemented.
- */
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Vector;
+
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.EntityAction;
@@ -45,12 +48,6 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.AttackHandler;
 
-import java.io.Serializable;
-import java.util.Enumeration;
-import java.util.Hashtable;
-import java.util.Vector;
-import java.util.ArrayList;
-
 /**
  * The game class is the root of all data about the game in progress.
  * Both the Client and the Server should have one of these objects and it
@@ -76,7 +73,7 @@ public class Game implements Serializable, IGame
     private Hashtable<Integer,Entity> entityIds = new Hashtable<Integer,Entity>();
 
     /** Track entities removed from the game (probably by death) */
-    private Vector<Entity> vOutOfGame = new Vector<Entity>();
+    Vector<Entity> vOutOfGame = new Vector<Entity>();
 
     private Vector<Player> players = new Vector<Player>();
     private Vector<Team> teams   = new Vector<Team>(); // DES
@@ -188,9 +185,9 @@ public class Game implements Serializable, IGame
         processGameEvent(new GameBoardChangeEvent(this));
     }
 
-    public void addMinefields(Vector<Minefield> minefields) {
-        for (int i = 0; i < minefields.size(); i++) {
-            Minefield mf = minefields.elementAt(i);
+    public void addMinefields(Vector<Minefield> mines) {
+        for (int i = 0; i < mines.size(); i++) {
+            Minefield mf = mines.elementAt(i);
             addMinefieldHelper(mf);
         }
         processGameEvent(new GameBoardChangeEvent(this));
@@ -324,7 +321,7 @@ public class Game implements Serializable, IGame
      in their own object
      */
     public void setupTeams() {
-        Vector<Team> teams = new Vector<Team>();
+        Vector<Team> initTeams = new Vector<Team>();
         boolean useTeamInit = getOptions().getOption("team_initiative").booleanValue();
         
         // Get all NO_TEAM players.  If team_initiative is false, all
@@ -334,7 +331,7 @@ public class Game implements Serializable, IGame
             if ( !useTeamInit || player.getTeam() == Player.TEAM_NONE ) {
                 Team new_team = new Team(Player.TEAM_NONE);
                 new_team.addPlayer(player);
-                teams.addElement(new_team);
+                initTeams.addElement(new_team);
             }
         }
         
@@ -353,11 +350,11 @@ public class Game implements Serializable, IGame
                 }
                 
                 if (new_team != null) {
-                    teams.addElement(new_team);
+                	initTeams.addElement(new_team);
                 }
             }
         }
-        this.teams = teams;
+        this.teams = initTeams;
     }
 
     /**
@@ -569,8 +566,8 @@ public class Game implements Serializable, IGame
      * Returns true if this phase has turns.  If false, the phase is simply
      * waiting for everybody to declare "done".
      */
-    public boolean phaseHasTurns(int phase) {
-        switch (phase) {
+    public boolean phaseHasTurns(int thisPhase) {
+        switch (thisPhase) {
             case PHASE_SET_ARTYAUTOHITHEXES :
             case PHASE_DEPLOY_MINEFIELDS :
             case PHASE_DEPLOYMENT :
@@ -1631,12 +1628,12 @@ public class Game implements Serializable, IGame
      * @param   player - the <code>Player</code> whose entities are required.
      * @return  a <code>Vector</code> of <code>Entity</code>s.
      */
-    public Vector<Entity> getPlayerEntities( Player player ) {
-        Vector<Entity> output = new Vector<Entity>();
+    public ArrayList<Entity> getPlayerEntities( Player player ) {
+    	ArrayList<Entity> output = new ArrayList<Entity>();
         for (Enumeration<Entity> i = entities.elements(); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
             if ( player.equals(entity.getOwner()) ) {
-                output.addElement( entity );
+                output.add( entity );
             }
         }
         return output;
@@ -2080,7 +2077,7 @@ public class Game implements Serializable, IGame
      * get the attacks
      * @return a <code>Enumeration</code> of all <code>AttackHandler</code>s
      */
-    public Enumeration getAttacks() {
+    public Enumeration<AttackHandler> getAttacks() {
         return attacks.elements();
     }
     /**
@@ -2232,7 +2229,7 @@ public class Game implements Serializable, IGame
         else {
             final EntitySelector entry = selector;
             retVal = new Enumeration<Entity>() {
-                    private EntitySelector selector = entry;
+                    private EntitySelector entitySelector = entry;
                     private Entity current = null;
                     private Enumeration<Entity> iter = getEntities();
 
@@ -2245,7 +2242,7 @@ public class Game implements Serializable, IGame
                             while ( null == current &&
                                     iter.hasMoreElements() ) {
                                 current = iter.nextElement();
-                                if ( !selector.accept( current ) ) {
+                                if ( !entitySelector.accept( current ) ) {
                                     current = null;
                                 }
                             }
@@ -2333,7 +2330,7 @@ public class Game implements Serializable, IGame
         else {
             final EntitySelector entry = selector;
             retVal = new Enumeration<Entity>() {
-                    private EntitySelector selector = entry;
+                    private EntitySelector entitySelector = entry;
                     private Entity current = null;
                     private Enumeration<Entity> iter = vOutOfGame.elements();
 
@@ -2346,7 +2343,7 @@ public class Game implements Serializable, IGame
                             while ( null == current &&
                                     iter.hasMoreElements() ) {
                                 current = iter.nextElement();
-                                if ( !selector.accept( current ) ) {
+                                if ( !entitySelector.accept( current ) ) {
                                     current = null;
                                 }
                             }
@@ -2417,9 +2414,9 @@ public class Game implements Serializable, IGame
      * that players other units" options.
      */
     public boolean checkForValidNonInfantryAndOrProtomechs(int playerId) {
-        Enumeration<Entity> iter = getPlayerEntities(getPlayer(playerId)).elements();
-        while (iter.hasMoreElements()) {
-            Entity entity = iter.nextElement();
+        Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId)).iterator();
+        while (iter.hasNext()) {
+            Entity entity = iter.next();
             boolean excluded = false;
             if (entity instanceof Infantry &&
                 getOptions().booleanOption("inf_move_later")) {

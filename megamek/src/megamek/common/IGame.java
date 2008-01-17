@@ -14,6 +14,7 @@
 
 package megamek.common;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -26,7 +27,6 @@ import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.AttackHandler;
-import megamek.common.TagInfo;
 
 /**
  * This interface is the root of all data about the game in progress.
@@ -712,7 +712,7 @@ public interface IGame {
      * @param   player - the <code>Player</code> whose entities are required.
      * @return  a <code>Vector</code> of <code>Entity</code>s.
      */
-    public abstract Vector<Entity> getPlayerEntities(Player player);
+    public abstract ArrayList<Entity> getPlayerEntities(Player player);
     
     /**
      * Determines if the indicated entity is stranded on a transport that
@@ -765,7 +765,7 @@ public interface IGame {
     
     public abstract void removeAttack(AttackHandler ah);
     
-    public abstract Enumeration getAttacks();
+    public abstract Enumeration<AttackHandler> getAttacks();
     
     public abstract Vector<AttackHandler> getAttacksVector();
     

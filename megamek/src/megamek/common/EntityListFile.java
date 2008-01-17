@@ -24,7 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Vector;
 
 /**
@@ -343,7 +344,7 @@ public class EntityListFile {
      *             to be stored in a file.
      * @throws IOException is thrown on any error.
      */
-    public static void saveTo(File file, Vector<Entity> list)
+    public static void saveTo(File file, ArrayList<Entity> list)
             throws IOException {
 
         // Open up the file.  Produce UTF-8 output.
@@ -361,9 +362,9 @@ public class EntityListFile {
         output.write(CommonConstants.NL);
 
         // Walk through the list of entities.
-        Enumeration<Entity> items = list.elements();
-        while (items.hasMoreElements()) {
-            final Entity entity = items.nextElement();
+        Iterator<Entity> items = list.iterator();
+        while (items.hasNext()) {
+            final Entity entity = items.next();
 
             // Start writing this entity to the file.
             output.write("   <entity chassis=\"");

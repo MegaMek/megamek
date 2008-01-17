@@ -126,6 +126,7 @@ import megamek.common.actions.LayMinefieldAction;
 import megamek.common.actions.ProtomechPhysicalAttackAction;
 import megamek.common.actions.PunchAttackAction;
 import megamek.common.actions.PushAttackAction;
+import megamek.common.actions.RepairWeaponMalfunctionAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.SpotAction;
 import megamek.common.actions.ThrashAttackAction;
@@ -133,6 +134,7 @@ import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.TriggerAPPodAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.UnjamAction;
+import megamek.common.actions.UnjamTurretAction;
 import megamek.common.actions.UnloadStrandedAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.common.containers.PlayerIDandList;
@@ -6838,6 +6840,27 @@ public class Server implements Runnable {
             } else if (ea instanceof SearchlightAttackAction) {
                 SearchlightAttackAction saa = (SearchlightAttackAction) ea;
                 addReport(saa.resolveAction(game));
+            } else if (ea instanceof UnjamTurretAction) {
+                if (entity instanceof Tank) {
+                    ((Tank)entity).unjamTurret();
+                    Report r = new Report(3033);
+                    r.addDesc(entity);
+                    addReport(r);
+                } else {
+                    System.err.println("Non-Tank tried to unjam turret");
+                }                
+            } else if (ea instanceof RepairWeaponMalfunctionAction) {
+                if (entity instanceof Tank) {
+                    Mounted m = entity.getEquipment(((RepairWeaponMalfunctionAction)ea).getWeaponId());
+                    m.setJammed(false);
+                    ((Tank)entity).getJammedWeapons().remove(m);
+                    Report r = new Report(3034);
+                    r.addDesc(entity);
+                    r.add(m.getName());
+                    addReport(r);
+                } else {
+                    System.err.println("Non-Tank tried to repair weapon malfunction");
+                }
             }
         }
 

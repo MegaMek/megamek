@@ -41,8 +41,8 @@ public class CLHeavyMG extends MGWeapon {
         this.ammoType = AmmoType.T_MG_HEAVY;
         this.shortRange = 1;
         this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
+        this.longRange = 2;
+        this.extremeRange = 2;
         this.tonnage = 0.5f;
         this.criticals = 1;
         this.bv = 6;

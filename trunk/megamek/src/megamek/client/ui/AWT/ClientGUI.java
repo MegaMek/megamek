@@ -14,35 +14,6 @@
 
 package megamek.client.ui.AWT;
 
-import megamek.client.Client;
-import megamek.client.event.BoardViewListener;
-import megamek.client.ui.AWT.util.PlayerColors;
-import megamek.client.ui.AWT.widget.BufferedPanel;
-import megamek.common.BuildingTarget;
-import megamek.common.Coords;
-import megamek.common.Entity;
-import megamek.common.EntityListFile;
-import megamek.common.HexTarget;
-import megamek.common.IGame;
-import megamek.common.IHex;
-import megamek.common.MechSummaryCache;
-import megamek.common.MinefieldTarget;
-import megamek.common.Player;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
-import megamek.common.event.GameEndEvent;
-import megamek.common.event.GameListener;
-import megamek.common.event.GameListenerAdapter;
-import megamek.common.event.GameMapQueryEvent;
-import megamek.common.event.GamePhaseChangeEvent;
-import megamek.common.event.GamePlayerChatEvent;
-import megamek.common.event.GamePlayerDisconnectedEvent;
-import megamek.common.event.GameReportEvent;
-import megamek.common.event.GamePlayerConnectedEvent;
-import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.util.Distractable;
-import megamek.common.util.StringUtil;
-
 import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.BorderLayout;
@@ -78,12 +49,42 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.Vector;
+
+import megamek.client.Client;
+import megamek.client.event.BoardViewListener;
+import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.AWT.widget.BufferedPanel;
+import megamek.common.BuildingTarget;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.EntityListFile;
+import megamek.common.HexTarget;
+import megamek.common.IGame;
+import megamek.common.IHex;
+import megamek.common.MechSummaryCache;
+import megamek.common.MinefieldTarget;
+import megamek.common.Player;
+import megamek.common.Targetable;
+import megamek.common.Terrains;
+import megamek.common.event.GameEndEvent;
+import megamek.common.event.GameListener;
+import megamek.common.event.GameListenerAdapter;
+import megamek.common.event.GameMapQueryEvent;
+import megamek.common.event.GamePhaseChangeEvent;
+import megamek.common.event.GamePlayerChatEvent;
+import megamek.common.event.GamePlayerConnectedEvent;
+import megamek.common.event.GamePlayerDisconnectedEvent;
+import megamek.common.event.GameReportEvent;
+import megamek.common.event.GameSettingsChangeEvent;
+import megamek.common.util.Distractable;
+import megamek.common.util.StringUtil;
 
 public class ClientGUI
         extends Panel
@@ -111,7 +112,7 @@ public class ClientGUI
     private String helpFileName = "readme.txt"; //$NON-NLS-1$
 
     // keep me
-    private ChatterBox cb;
+    ChatterBox cb;
     public BoardView1 bv;
     private Panel scroller;
     public Dialog mechW;
@@ -125,8 +126,8 @@ public class ClientGUI
     public ChatLounge chatlounge = null;
 
     // some dialogs...
-    private BoardSelectionDialog boardSelectionDialog;
-    private GameOptionsDialog gameOptionsDialog;
+    BoardSelectionDialog boardSelectionDialog;
+    GameOptionsDialog gameOptionsDialog;
     private MechSelectorDialog mechSelectorDialog;
     private CustomBattleArmorDialog customBADialog;
     private StartingPositionDialog startingPositionDialog;
@@ -179,7 +180,7 @@ public class ClientGUI
     /**
      * Map phase component names to phase component objects.
      */
-    private HashMap<String,Component> phaseComponents = new HashMap<String,Component>();
+    HashMap<String,Component> phaseComponents = new HashMap<String,Component>();
 
     //TODO: there's a better place for this
     private Map<String,Client> bots = new TreeMap<String,Client>(StringUtil.stringComparator());
@@ -718,7 +719,7 @@ public class ClientGUI
         return startingPositionDialog;
     }
 
-    private void switchPanel(int phase) {
+    void switchPanel(int phase) {
 
         // Clear the old panel's listeners.
         if (curPanel instanceof BoardViewListener) {
@@ -1212,7 +1213,7 @@ public class ClientGUI
      *                 to be saved to a file.  If this value is <code>null</code>
      *                 or empty, the "Save As" dialog will not be displayed.
      */
-    protected void saveListFile(Vector<Entity> unitList) {
+    protected void saveListFile(ArrayList<Entity> unitList) {
 
         // Handle empty lists.
         if (null == unitList || unitList.isEmpty()) {
@@ -1512,17 +1513,17 @@ public class ClientGUI
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
 
-            for (Iterator i = getBots().values().iterator(); i.hasNext();) {
-                ((Client) i.next()).die();
+            for (Iterator<Client> i = getBots().values().iterator(); i.hasNext();) {
+                i.next().die();
             }
             getBots().clear();
             
             // Make a list of the player's living units.
-            Vector<Entity> living = client.game.getPlayerEntities(client.getLocalPlayer());
+            ArrayList<Entity> living = client.game.getPlayerEntities(client.getLocalPlayer());
             
             // Be sure to include all units that have retreated.
             for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter.hasMoreElements();) {
-                living.addElement(iter.nextElement());
+                living.add(iter.nextElement());
             }
             
             // Allow players to save their living units to a file.

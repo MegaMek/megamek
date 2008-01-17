@@ -14,13 +14,27 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.util.ArrayList;
 import java.util.Vector;
 
-import megamek.common.*;
-import megamek.common.util.StringUtil;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.ui.AWT.widget.PMUtil;
+import megamek.common.BattleArmor;
+import megamek.common.Entity;
+import megamek.common.GunEmplacement;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.Protomech;
+import megamek.common.Tank;
+import megamek.common.util.StringUtil;
 
 public class UnitOverview implements Displayable {
 
@@ -84,7 +98,7 @@ public class UnitOverview implements Displayable {
         }
         
         graph.setFont(FONT);
-        java.util.Vector v = clientgui.getClient().game.getPlayerEntities(clientgui.getClient().getLocalPlayer());
+        ArrayList<Entity> v = clientgui.getClient().game.getPlayerEntities(clientgui.getClient().getLocalPlayer());
         unitIds = new int[v.size()];
 
         scroll = v.size() > unitsPerPage;
@@ -108,7 +122,7 @@ public class UnitOverview implements Displayable {
         }
 
         for (int i = scrollOffset; i < v.size() && i < actUnitsPerPage + scrollOffset; i++) {
-            Entity e = (Entity) v.elementAt(i);
+            Entity e = v.get(i);
             unitIds[i] = e.getId();
             String name = getIconName(e, fm);
             Image i1 = clientgui.bv.getTilesetManager().iconFor(e);
@@ -396,40 +410,40 @@ public class UnitOverview implements Displayable {
         }
     }
 
-    protected String getIconName(Entity e, FontMetrics fm) {
+    protected String getIconName(Entity e, FontMetrics metrics) {
 
         if (e instanceof BattleArmor) {
             String iconName = e.getShortName();                 
-            if (fm.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
-                Vector v = StringUtil.splitString(iconName, " "); //$NON-NLS-1$
-                iconName = (String) v.elementAt(0);
+            if (metrics.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
+                Vector<String> v = StringUtil.splitString(iconName, " "); //$NON-NLS-1$
+                iconName = v.elementAt(0);
                 if (iconName.equals("Clan")) {
-                    iconName = (String) v.elementAt(1);
+                    iconName = v.elementAt(1);
                 }
             }
-            return adjustString(iconName,fm);
+            return adjustString(iconName,metrics);
         } else if (e instanceof Protomech) {
             String iconName = e.getChassis() + " " + e.getModel(); //$NON-NLS-1$
-            return adjustString(iconName,fm);
+            return adjustString(iconName,metrics);
         } else if (e instanceof Tank) {                 
             String iconName = e.getShortName();
             
-            if (fm.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
-                Vector v = StringUtil.splitString(iconName, " "); //$NON-NLS-1$
-                iconName = (String) v.elementAt(0);
+            if (metrics.stringWidth(iconName) > ICON_NAME_MAX_LENGTH) {
+                Vector<String> v = StringUtil.splitString(iconName, " "); //$NON-NLS-1$
+                iconName = v.elementAt(0);
             }
-            return adjustString(iconName,fm);
+            return adjustString(iconName,metrics);
         }else if (e instanceof Infantry ||
                   e instanceof Mech ||
                   e instanceof GunEmplacement) {
             String iconName = e.getModel();
-            return adjustString(iconName,fm);
+            return adjustString(iconName,metrics);
         }
         return "!!Unknown!!";
     }
 
-    protected String adjustString(String s, FontMetrics fm) {
-        while (fm.stringWidth(s) > ICON_NAME_MAX_LENGTH) {
+    protected String adjustString(String s, FontMetrics metrics) {
+        while (metrics.stringWidth(s) > ICON_NAME_MAX_LENGTH) {
             s = s.substring(0, s.length() - 1);
         }
         return s;

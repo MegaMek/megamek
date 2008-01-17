@@ -15,27 +15,54 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Enumeration;
-import java.util.Vector;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Comparator;
-import java.util.Collections;
-
 import gov.nist.gui.TabPanel;
+
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Checkbox;
+import java.awt.CheckboxGroup;
+import java.awt.Choice;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.List;
+import java.awt.Panel;
+import java.awt.TextArea;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 import megamek.client.Client;
 import megamek.client.bot.BotClient;
-import megamek.client.bot.ui.AWT.BotGUI;
 import megamek.client.bot.TestBot;
+import megamek.client.bot.ui.AWT.BotGUI;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.widget.BufferedPanel;
 import megamek.client.ui.AWT.widget.ImageButton;
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.GunEmplacement;
+import megamek.common.IGame;
+import megamek.common.IStartingPositions;
+import megamek.common.Infantry;
+import megamek.common.MechSummaryCache;
+import megamek.common.Player;
+import megamek.common.Protomech;
+import megamek.common.Tank;
 import megamek.common.event.GameEntityNewEvent;
 import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameListener;
@@ -56,8 +83,7 @@ public class ChatLounge
     // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
-    // parent Client
-    private Client client;
+    Client client;
     private ClientGUI clientgui;
 
     // The camo selection dialog.
@@ -66,10 +92,10 @@ public class ChatLounge
     // buttons & such
     private Panel panPlayerInfo;
     private Label labPlayerInfo;
-    private List lisPlayerInfo;
+    List lisPlayerInfo;
 
     private Label labTeam;
-    private Choice choTeam;
+    Choice choTeam;
 
     private Label labCamo;
     private ImageButton butCamo;
@@ -98,9 +124,9 @@ public class ChatLounge
     private Button butSaveList;
     private Button butDeleteAll;
 
-    private Button butLoad;
-    private Button butArmy;
-    private Button butLoadCustomBA;
+    Button butLoad;
+    Button butArmy;
+    Button butLoadCustomBA;
     private Button butDelete;
     private Button butCustom;
     private Button butMechReadout;
@@ -133,7 +159,7 @@ public class ChatLounge
     private Button butDone;
     
     private Button butAddBot;
-    private Button butRemoveBot;
+    Button butRemoveBot;
 
     MechSummaryCache.Listener mechSummaryCacheListener = new MechSummaryCache.Listener() {
         public void doneLoading() {
@@ -511,8 +537,8 @@ public class ChatLounge
 
         lisBoardsSelected.removeAll();
         int index = 0;
-        for (Enumeration i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
-            lisBoardsSelected.add((index++) + ": " + (String) i.nextElement()); //$NON-NLS-1$
+        for (Enumeration<String> i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
+            lisBoardsSelected.add((index++) + ": " + i.nextElement()); //$NON-NLS-1$
         }
     }
 
@@ -1053,7 +1079,7 @@ public class ChatLounge
         }
     }
 
-    private void refreshCamos() {
+    void refreshCamos() {
         // Get the seleted player's selected camo.
         Client c = getPlayerListSelected(lisPlayerInfo);
         String curCat = c.getLocalPlayer().getCamoCategory();
@@ -1217,9 +1243,9 @@ public class ChatLounge
         // **ALL** members of the network may get changed.
         Entity c3master = entity.getC3Master();
         Vector<Entity> c3members = new Vector<Entity>();
-        Enumeration<Entity> playerUnits = c.game.getPlayerEntities(c.getLocalPlayer()).elements();
-        while (playerUnits.hasMoreElements()) {
-            Entity unit = playerUnits.nextElement();
+        Iterator<Entity> playerUnits = c.game.getPlayerEntities(c.getLocalPlayer()).iterator();
+        while (playerUnits.hasNext()) {
+            Entity unit = playerUnits.next();
             if (!entity.equals(unit) && entity.onSameC3NetworkAs(unit)) {
                 c3members.addElement(unit);
             }
@@ -1237,9 +1263,9 @@ public class ChatLounge
             // Do we need to update the members of our C3 network?
             if ((c3master != null && !c3master.equals(entity.getC3Master()))
                 || (c3master == null && entity.getC3Master() != null)) {
-                playerUnits = c3members.elements();
-                while (playerUnits.hasMoreElements()) {
-                    Entity unit = playerUnits.nextElement();
+                Enumeration<Entity> c3Units = c3members.elements();
+                while (c3Units.hasMoreElements()) {
+                    Entity unit = c3Units.nextElement();
                     c.sendUpdateEntity(unit);
                 }
             }
@@ -1475,12 +1501,12 @@ public class ChatLounge
             }
         } else if (ev.getSource() == butDeleteAll) {
             // Build a Vector of this player's entities.
-            Vector<Entity> currentUnits = client.game.getPlayerEntities(client.getLocalPlayer());
+            ArrayList<Entity> currentUnits = client.game.getPlayerEntities(client.getLocalPlayer());
 
             // Walk through the vector, deleting the entities.
-            Enumeration<Entity> entities = currentUnits.elements();
-            while (entities.hasMoreElements()) {
-                final Entity entity = entities.nextElement();
+            Iterator<Entity> entities = currentUnits.iterator();
+            while (entities.hasNext()) {
+                final Entity entity = entities.next();
                 client.sendDeleteEntity(entity.getId());
             }
         } else if (ev.getSource() == butChangeBoard || ev.getSource() == lisBoardsSelected) {
@@ -1551,7 +1577,7 @@ public class ChatLounge
         }
     }
     
-    private Client getPlayerListSelected(List l) {
+    Client getPlayerListSelected(List l) {
         if (l.getSelectedIndex() == -1) {
             return client;
         }

@@ -1131,9 +1131,9 @@ public class Client implements IClientCommandHandler {
         if (o != null) {
             int count = ((Integer)o).intValue();
             if (count > 1) {
-                Vector myEntities = game.getPlayerEntities(game.getPlayer(local_pn));
+                ArrayList<Entity> myEntities = game.getPlayerEntities(game.getPlayer(local_pn));
                 for (int i = 0; i < myEntities.size(); i++) {
-                    Entity e = (Entity)myEntities.elementAt(i);
+                    Entity e = myEntities.get(i);
                     if (e.getShortNameRaw().equals(entity.getShortNameRaw())
                         && e.duplicateMarker > entity.duplicateMarker) {
                         e.duplicateMarker--;
@@ -1166,9 +1166,8 @@ public class Client implements IClientCommandHandler {
     public String runCommand(String[] args) {
         if(args != null && args.length > 0 && commandsHash.containsKey(args[0])) {
             return commandsHash.get(args[0]).run(args);
-        } else {
-            return "Unknown Client Command.";
         }
+		return "Unknown Client Command.";
     }
     
     /**
@@ -1181,8 +1180,8 @@ public class Client implements IClientCommandHandler {
     /**
      * Returns the command associated with the specified name
      */
-    public ClientCommand getCommand(String name) {
-        return commandsHash.get(name);
+    public ClientCommand getCommand(String commandName) {
+        return commandsHash.get(commandName);
     }
 
     /* (non-Javadoc)

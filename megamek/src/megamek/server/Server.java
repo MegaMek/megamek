@@ -12302,7 +12302,7 @@ public class Server implements Runnable {
 
         r.indent();
         r.add(position.getBoardNum(), true);
-        addReport(r);
+        vDesc.add(r);
 
         int curDepth = game.getBoard().getHex(position).floor() - craterDepth;
         int range = 0;
@@ -12366,11 +12366,9 @@ public class Server implements Runnable {
 
         // Then, do actual blast damage.
         // Use the standard blast function for this.
-        // We pass in "fase" for "auto-kill everything in hex" because we
-        // already did.
         Vector<Report> tmpV = new Vector<Report>();
         Vector<Integer> blastedUnitsVec = new Vector<Integer>();
-        doExplosion(baseDamage, degredation, false, position, true, tmpV, blastedUnitsVec);
+        doExplosion(baseDamage, degredation, true, position, true, tmpV, blastedUnitsVec);
         Report.indentAll(tmpV, 2);
         vDesc.addAll(tmpV);
 

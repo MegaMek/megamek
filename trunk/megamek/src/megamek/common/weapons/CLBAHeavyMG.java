@@ -39,8 +39,8 @@ public class CLBAHeavyMG extends BAMGWeapon {
         this.rackSize = 3;
         this.shortRange = 1;
         this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
+        this.longRange = 2;
+        this.extremeRange = 2;
         this.tonnage = 0.5f;
         this.criticals = 1;
         this.bv = 6;

@@ -885,7 +885,7 @@ public class HmpFile
         criticals.put(new Long(0x11B), "Thunderbolt-15 (THB)");
         criticals.put(new Long(0x11C), "Thunderbolt-20 (THB)");
         criticals.put(new Long(0x11F), "Watchdog ECM (THB)");
-        criticals.put(new Long(0x120), "ISLaserAMS (THB)");
+        criticals.put(new Long(0x120), "IS Laser AMS (THB)");
         criticals.put(new Long(0x121), "ISRotaryAC2");
         criticals.put(new Long(0x122), "ISRotaryAC5");
 
@@ -976,7 +976,7 @@ public class HmpFile
         isCriticals.put(new Long(0x33), "ISERLargeLaser");
         isCriticals.put(new Long(0x34), "ISERPPC");
         isCriticals.put(new Long(0x35), "ISFlamer");
-        isCriticals.put(new Long(0x36), "ISLaserAMS");
+        isCriticals.put(new Long(0x36), "ISLaserAntiMissileSystem");
         isCriticals.put(new Long(0x37), "ISLargeLaser");
         isCriticals.put(new Long(0x38), "ISMediumLaser");
         isCriticals.put(new Long(0x39), "ISSmallLaser");
@@ -1097,7 +1097,7 @@ public class HmpFile
         isCriticals.put(new Long(0xAA), "CLERPPC");
         isCriticals.put(new Long(0xAB), "CLFlamer");
 
-        isCriticals.put(new Long(0xAF), "CLLaserAMS");
+        isCriticals.put(new Long(0xAF), "CLLaserAntiMissileSystem");
         isCriticals.put(new Long(0xB0), "CLLargePulseLaser");
         isCriticals.put(new Long(0xB1), "CLMediumPulseLaser");
         isCriticals.put(new Long(0xB2), "CLSmallPulseLaser");

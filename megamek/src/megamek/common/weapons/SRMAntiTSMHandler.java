@@ -60,8 +60,7 @@ public class SRMAntiTSMHandler extends SRMHandler {
             return 1;
         }
         int missilesHit;
-        int nGlancing = 0;
-        int nMissilesModifier = 0;
+        int nMissilesModifier = nSalvoBonus;
         boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
         if (maxtechmissiles) {
             if (nRange<=1) {
@@ -75,10 +74,12 @@ public class SRMAntiTSMHandler extends SRMHandler {
             }
         }
         if (bGlancing) {
-            nGlancing -=4;
+            nMissilesModifier -=4;
         }
+        //Add ams mod
+        nMissilesModifier += getAMSHitsMod(vPhaseReport);
         // anti tsm hit with half the normal number, round up
-        missilesHit = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nGlancing + nMissilesModifier , bGlancing || maxtechmissiles);
+        missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bGlancing || maxtechmissiles);
         missilesHit = (int)Math.ceil((double)missilesHit/2);
         r = new Report(3325);
         r.subject = subjectId;
@@ -87,10 +88,13 @@ public class SRMAntiTSMHandler extends SRMHandler {
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);
-        if (nSalvoBonus > 0) {
-            r = new Report(3340);
+        if (nMissilesModifier != 0) {
+            if (nMissilesModifier > 0)
+                r = new Report(3340);
+            else
+                r = new Report(3341);
             r.subject = subjectId;
-            r.add(nSalvoBonus);
+            r.add(nMissilesModifier);
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }

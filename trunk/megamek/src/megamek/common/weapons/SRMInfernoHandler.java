@@ -40,7 +40,6 @@ public class SRMInfernoHandler extends SRMHandler {
      */
     public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
-        nSalvoBonus = 0;
         sSalvoType = " inferno missile(s) ";
         bSalvo = false;
     }

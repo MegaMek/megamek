@@ -49,8 +49,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -4801130911083653548L;
     boolean bECMAffected;
     String sSalvoType = " missile(s) ";
-    int nSalvoBonus = 0;
     boolean amsEnganged = false;
+    int nSalvoBonus = 0;
     
     /**
      * @param t
@@ -90,7 +90,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 : null;
         int missilesHit;
         int nGlancing = 0;
-        int nMissilesModifier = 0;
+        int nMissilesModifier = nSalvoBonus;
         boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
         if (maxtechmissiles) {
             if (nRange<=1) {
@@ -115,9 +115,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) &&
                 atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE &&
                 !bECMAffected) {
-            nSalvoBonus += 2;
+            nMissilesModifier += 2;
         } else if (!bECMAffected && atype.getAmmoType() == AmmoType.T_ATM) {
-            nSalvoBonus += 2; 
+            nMissilesModifier += 2; 
         } else if (entityTarget != null &&
                 (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || 
                  entityTarget.isINarcedBy(ae.getOwner().getTeam()))) {
@@ -128,20 +128,22 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                     && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
                     && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE
                     && (weapon.curMode() == null || !weapon.curMode().equals("Indirect"))) {
-                nSalvoBonus += 2;
+                nMissilesModifier += 2;
             }
         }
         if (bGlancing) {
-            nGlancing -=4;
+            nMissilesModifier -=4;
         }
+        // add AMS mods
+        nMissilesModifier += getAMSHitsMod(vPhaseReport);
         
         if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
         	missilesHit = wtype.getRackSize();
         else{
         	if (ae instanceof BattleArmor)
-	            missilesHit = Compute.missilesHit(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength(), nSalvoBonus + nGlancing + nMissilesModifier + getAMSHitsMod(vPhaseReport), bGlancing || maxtechmissiles, weapon.isHotLoaded());
+	            missilesHit = Compute.missilesHit(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength(),nMissilesModifier, bGlancing || maxtechmissiles, weapon.isHotLoaded());
 	        else
-	            missilesHit = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nGlancing + nMissilesModifier + getAMSHitsMod(vPhaseReport), bGlancing || maxtechmissiles, weapon.isHotLoaded());
+	            missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier, bGlancing || maxtechmissiles, weapon.isHotLoaded());
         }
         
         if ( (target instanceof Mech || target instanceof Tank)
@@ -170,10 +172,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             }
-            if (nSalvoBonus > 0) {
-                r = new Report(3340);
+            if (nMissilesModifier != 0) {
+                if (nMissilesModifier > 0)
+                    r = new Report(3340);
+                else
+                    r = new Report(3341);
                 r.subject = subjectId;
-                r.add(nSalvoBonus);
+                r.add(nMissilesModifier);
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             }
@@ -253,7 +258,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         Mounted mAmmo = counter.getLinked();
                         Entity ae = waa.getEntity(game);
                         if (!(counter.getType() instanceof WeaponType)
-                                || !counter.getType().hasFlag(WeaponType.F_AMS)
                                 || !counter.isReady() || counter.isMissing()
                                 // no AMS when a shield in the AMS location
                                 || ae.hasShield()
@@ -278,7 +282,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         // set the ams as having fired
                         counter.setUsedThisRound(true);
                         this.amsEnganged = true;
-                        nSalvoBonus -= 4;
+                        r = new Report(3350);
+                        r.newlines = 0;
+                        vPhaseReport.add(r);
                         return -4;
                     }
                 }

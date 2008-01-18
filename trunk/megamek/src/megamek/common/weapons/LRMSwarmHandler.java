@@ -333,7 +333,7 @@ public class LRMSwarmHandler extends LRMHandler {
             }
         }
         if (bGlancing) {
-            nGlancing -=4;
+            nMissilesModifier -=4;
         }
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles
@@ -345,13 +345,13 @@ public class LRMSwarmHandler extends LRMHandler {
                 swarmsForHitTable = 15;
             else if (swarmMissilesLeft > 15 && swarmMissilesLeft <= 20)
                 swarmsForHitTable = 20;
-            missilesHit = Compute.missilesHit(swarmsForHitTable, nSalvoBonus +  nGlancing + nMissilesModifier, maxtechmissiles | bGlancing);
+            missilesHit = Compute.missilesHit(swarmsForHitTable, nMissilesModifier, maxtechmissiles | bGlancing);
             if (missilesHit > swarmMissilesLeft) {
                 missilesHit = swarmMissilesLeft;
             }
         } else {
             swarmMissilesLeft = wtype.getRackSize();
-            missilesHit = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nGlancing + nMissilesModifier , bGlancing || maxtechmissiles);
+            missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bGlancing || maxtechmissiles);
         }
         swarmMissilesNowLeft = swarmMissilesLeft - missilesHit;
         r = new Report(3325);

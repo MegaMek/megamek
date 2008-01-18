@@ -93,7 +93,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
                 mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) &&
                 atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE &&
                 !bECMAffected) {
-            nSalvoBonus += 2;
+            nMissilesModifier += 2;
         } else if (entityTarget != null && 
                 (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || 
                  entityTarget.isINarcedBy(ae.getOwner().getTeam()))) {
@@ -103,14 +103,17 @@ public class LRMAntiTSMHandler extends LRMHandler {
                     && !bMekStealthActive
                     && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
                     && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
-                nSalvoBonus += 2;
+                nMissilesModifier += 2;
             }
         }
         if (bGlancing) {
-            nGlancing -=4;
+            nMissilesModifier -=4;
         }
+        //AMS mod
+        nMissilesModifier += getAMSHitsMod(vPhaseReport);
+        
         // anti tsm hit with half the normal number, round up
-        missilesHit = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus + nGlancing + nMissilesModifier , bGlancing || maxtechmissiles);
+        missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bGlancing || maxtechmissiles);
         missilesHit = (int)Math.ceil((double)missilesHit/2);
         r = new Report(3325);
         r.subject = subjectId;
@@ -133,10 +136,13 @@ public class LRMAntiTSMHandler extends LRMHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        if (nSalvoBonus > 0) {
-            r = new Report(3340);
+        if (nMissilesModifier != 0) {
+            if (nMissilesModifier > 0)
+                r = new Report(3340);
+            else
+                r = new Report(3341);
             r.subject = subjectId;
-            r.add(nSalvoBonus);
+            r.add(nMissilesModifier);
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }

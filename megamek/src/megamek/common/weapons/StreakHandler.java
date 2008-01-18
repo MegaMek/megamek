@@ -77,7 +77,7 @@ public class StreakHandler extends MissileWeaponHandler {
         }
         // no AMS when streak misses
         if (bMissed) return 0;
-        int nMissilesModifier = 0;
+        int nMissilesModifier = nSalvoBonus;
         int nGlancing = 0;
         if (bGlancing)
             nGlancing -= 4;
@@ -98,10 +98,21 @@ public class StreakHandler extends MissileWeaponHandler {
         if (amsMod == 0) {
             missilesHit = wtype.getRackSize();
         } else {
-            missilesHit = Compute.missilesHit(wtype.getRackSize(), nSalvoBonus
-                            + nMissilesModifier + nGlancing + amsMod,
+            nMissilesModifier += amsMod;
+            missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                            nMissilesModifier,
                             maxtechmissiles | bGlancing, weapon.isHotLoaded(),
                             true);
+            if (nMissilesModifier != 0) {
+                if (nMissilesModifier > 0)
+                    r = new Report(3340);
+                else
+                    r = new Report(3341);
+                r.subject = subjectId;
+                r.add(nMissilesModifier);
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
         }
         if (missilesHit > 0) {
             r = new Report(3325);

@@ -37,11 +37,10 @@ public class InfantryLRMWeapon extends InfantryWeapon {
         this.setInternalName(this.name);
         this.addLookupName("InfantryLRM");
         this.ammoType = AmmoType.T_LRM;
-        this.minimumRange = 3;
-        this.shortRange = 6;
-        this.mediumRange = 9;
-        this.longRange = 12;
-        this.extremeRange = 18;
+        this.shortRange = 3;
+        this.mediumRange = 6;
+        this.longRange = 9;
+        this.extremeRange = 12;
         //corean farshot support lrm, TM, p. 319
         this.bv = 1.15;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_MISSILE;

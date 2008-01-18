@@ -34,6 +34,7 @@ v0.33.16-dev (SVN)
 + Bug: Fix Heavy MG range
 + Bug: units in ground zero of a Davy-Crockett M attack not destroyed
 + Bug: Fix some AMS issues
++ Bug 1741939: HMP problems with laser AMS
 
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 

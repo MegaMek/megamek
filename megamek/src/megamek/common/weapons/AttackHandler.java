@@ -20,6 +20,7 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.Report;
+import megamek.common.actions.WeaponAttackAction;
 
 /**
  * @author Andrew Hunter Describes a set of methods a class can use to represent
@@ -41,5 +42,7 @@ public interface AttackHandler {
     public boolean announcedEntityFiring();
     
     public void setAnnouncedEntityFiring(boolean announcedEntityFiring);
+    
+    public WeaponAttackAction getWaa();
     
 }

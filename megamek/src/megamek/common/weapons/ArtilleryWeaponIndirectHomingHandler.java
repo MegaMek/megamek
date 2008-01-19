@@ -322,9 +322,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 info.shots++;
                 game.updateTagInfo(info, bestIndex);
                 break; // got a target, stop searching
-            } else {
-                entityTarget = null;
             }
+            entityTarget = null;
             // nothing found on 1st pass, so clear shots fired to 0
             game.clearTagInfoShots(ae, tc);
         }

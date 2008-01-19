@@ -188,7 +188,7 @@ public class Server implements Runnable {
      * 
      */
     public enum DamageType {
-        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, FIREDRAKE, MAXTECH_INFANTRY_DAMAGE, IGNORE_PASSENGER
+        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, FIREDRAKE, IGNORE_PASSENGER
     }
 
     // public final static String LEGAL_CHARS =
@@ -6731,6 +6731,10 @@ public class Server implements Runnable {
         for (AttackHandler ah : game.getAttacksVector()) {
             WeaponHandler wh = (WeaponHandler) ah;
             WeaponAttackAction waa = wh.waa;
+            // ignore artillery attacks, here the attacking entity
+            // might no longer be in the game
+            if (waa instanceof ArtilleryAttackAction)
+                continue;
             Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId());
 
             // Only entities can have AMS.
@@ -7650,9 +7654,6 @@ public class Server implements Runnable {
                 addReport(damageEntity(ae, ahit, 2, false, DamageType.NONE, false, false, false));
             }
             DamageType damageType = DamageType.NONE;
-            if (game.getOptions().booleanOption("maxtech_infantry_damage")) {
-                damageType = DamageType.MAXTECH_INFANTRY_DAMAGE;
-            }
             addReport(damageEntity(te, hit, damage, false, damageType, false, false, throughFront));
         }
 
@@ -7852,9 +7853,6 @@ public class Server implements Runnable {
                 addReport(damageEntity(ae, ahit, 2, false, DamageType.NONE, false, false, false));
             }
             DamageType damageType = DamageType.NONE;
-            if (game.getOptions().booleanOption("maxtech_infantry_damage")) {
-                damageType = DamageType.MAXTECH_INFANTRY_DAMAGE;
-            }
             addReport(damageEntity(te, hit, damage, false, damageType, false, false, throughFront));
         }
 
@@ -8677,9 +8675,6 @@ public class Server implements Runnable {
                 }
             }
             DamageType damageType = DamageType.NONE;
-            if (game.getOptions().booleanOption("maxtech_infantry_damage")) {
-                damageType = DamageType.MAXTECH_INFANTRY_DAMAGE;
-            }
             addReport(damageEntity(te, hit, damage, false, damageType, false, false, throughFront));
         }
 
@@ -11052,7 +11047,7 @@ public class Server implements Runnable {
         // Is the infantry in the open?
         if (isPlatoon && !te.isDestroyed() && !te.isDoomed() && ((Infantry) te).getDugIn() != Infantry.DUG_IN_COMPLETE) {
             te_hex = game.getBoard().getHex(te.getPosition());
-            if (te_hex != null && bFrag != DamageType.MAXTECH_INFANTRY_DAMAGE && !te_hex.containsTerrain(Terrains.WOODS) && !te_hex.containsTerrain(Terrains.JUNGLE) && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE) && !te_hex.containsTerrain(Terrains.SWAMP) && !te_hex.containsTerrain(Terrains.BUILDING) && !te_hex.containsTerrain(Terrains.FUEL_TANK) && !te_hex.containsTerrain(Terrains.FORTIFIED) && !ammoExplosion) {
+            if (te_hex != null && !te_hex.containsTerrain(Terrains.WOODS) && !te_hex.containsTerrain(Terrains.JUNGLE) && !te_hex.containsTerrain(Terrains.ROUGH) && !te_hex.containsTerrain(Terrains.RUBBLE) && !te_hex.containsTerrain(Terrains.SWAMP) && !te_hex.containsTerrain(Terrains.BUILDING) && !te_hex.containsTerrain(Terrains.FUEL_TANK) && !te_hex.containsTerrain(Terrains.FORTIFIED) && !ammoExplosion) {
                 // PBI. Damage is doubled.
                 damage *= 2;
                 r = new Report(6040);
@@ -11130,17 +11125,6 @@ public class Server implements Runnable {
                 r.newlines = 0;
                 vDesc.addElement(r);
             }
-        case MAXTECH_INFANTRY_DAMAGE:
-            if (isPlatoon) {
-                if (damage >= 10)
-                    damage = 2;
-                else
-                    damage = 1;
-                if (te.getArmor(hit) > 0)
-                    damage *= 2; // these hits are unaffected by heavy
-                // armour.
-            }
-
         default:
             // We can ignore this.
             break;
@@ -18734,11 +18718,38 @@ public class Server implements Runnable {
     private void handleAttacks() {
         Report r;
         int lastAttackerId = -1;
-        Vector<AttackHandler> currentAttacks, keptAttacks;
+        Vector<AttackHandler> currentAttacks, keptAttacks, artyAttacks;
         currentAttacks = game.getAttacksVector();
         keptAttacks = new Vector<AttackHandler>();
+        artyAttacks = new Vector<AttackHandler>();
         Vector<Report> handleAttackReports = new Vector<Report>();
+        // first, do normal attacks
+        // we need to do this so TAG happens before homing arty shots
         for (AttackHandler ah : currentAttacks) {
+            if (ah.getWaa() instanceof ArtilleryAttackAction) {
+                artyAttacks.add(ah);
+                continue;
+            }
+            if (ah.cares(game.getPhase())) {
+                int aId = ah.getAttackerId();
+                if (aId != lastAttackerId && !ah.announcedEntityFiring()) {
+                    // report who is firing
+                    r = new Report(3100);
+                    r.subject = aId;
+                    r.addDesc(game.getEntity(aId));
+                    handleAttackReports.addElement(r);
+                    ah.setAnnouncedEntityFiring(true);
+                }
+                lastAttackerId = aId;
+                boolean keep = ah.handle(game.getPhase(), handleAttackReports);
+                if (keep) {
+                    keptAttacks.add(ah);
+                }
+            } else
+                keptAttacks.add(ah);
+        }
+        // now, do arty attacks
+        for (AttackHandler ah : artyAttacks) {
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
                 if (aId != lastAttackerId && !ah.announcedEntityFiring()) {

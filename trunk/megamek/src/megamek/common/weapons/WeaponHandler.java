@@ -595,4 +595,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         this.announcedEntityFiring = announcedEntityFiring;
     }
     
+    public WeaponAttackAction getWaa() {
+        return waa;
+    }
+    
 }

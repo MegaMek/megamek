@@ -47,7 +47,7 @@ public class CLLightMGA extends AmmoWeapon {
         this.bv = 0; //we'll have to calculate this in calculateBV(),
                        //because it depends on the number of MGs linked to
                        //the MGA
-        this.flags |= F_BALLISTIC | F_BURST_FIRE;
+        this.flags |= F_BALLISTIC | F_BURST_FIRE | F_MGA;
         this.cost = 5000;
         String[] modes = {"Linked","Off"};
         this.setModes(modes);

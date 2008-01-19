@@ -18756,7 +18756,11 @@ public class Server implements Runnable {
                     // report who is firing
                     r = new Report(3100);
                     r.subject = aId;
-                    r.addDesc(game.getEntity(aId));
+                    Entity ae = game.getEntity(aId);
+                    // attacker may be dead, or fled, so check out-of-game entities
+                    if (ae == null)
+                        ae = game.getOutOfGameEntity(aId);
+                    r.addDesc(ae);
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
                 }

@@ -40,6 +40,8 @@ v0.33.16-dev (SVN)
 + Remove old MaxTech infantry damage option
 + Bug 1870305: Guided Arrow IV not working.
 + Bug: Report error with artillery when attacking unit dead or fled when arty lands
++ Bug: Taggers not allowed to shoot when no arty units left in game, but an 
+    homing arty attack in the air
 
 v0.33.15 (2008-01-11, 20:35 GMT+1)
 + Swing GUI: elevation/depths listing added back, 

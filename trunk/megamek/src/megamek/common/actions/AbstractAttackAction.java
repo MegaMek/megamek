@@ -70,7 +70,13 @@ public abstract class AbstractAttackAction
     }
     
     public Entity getEntity(IGame g) {
-        return g.getEntity(getEntityId());
+        Entity e = g.getEntity(getEntityId());
+        // if we have an artyattack, we might need to get an out-of-game entity
+        // if it died or fled
+        if (e == null) {
+            e = g.getOutOfGameEntity(getEntityId());
+        }
+        return e;
     }
     
     /**

@@ -1747,6 +1747,20 @@ public class Server implements Runnable {
                 }
             }
         }
+        // loop through all current attacks
+        // if there are any that use homing ammo, we are playable
+        // we need to do this because we might have a homing arty shot in flight
+        // when the unit that mounted that ammo is no longer on the field
+        for (Enumeration<AttackHandler> attacks = game.getAttacks();attacks.hasMoreElements();) {
+            AttackHandler ah = attacks.nextElement();
+            Mounted ammo = ah.getWaa().getEntity(game).getEquipment(ah.getWaa().getAmmoId());
+            if (ammo != null) {
+                AmmoType atype = (AmmoType)ammo.getType(); 
+                if (atype.getMunitionType() == AmmoType.M_HOMING) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
@@ -2889,19 +2903,16 @@ public class Server implements Runnable {
     private void setIneligible(int phase) {
         Vector<Entity> assistants = new Vector<Entity>();
         boolean assistable = false;
-        Entity entity = null;
-        for (Enumeration e = game.getEntities(); e.hasMoreElements();) {
-            entity = (Entity) e.nextElement();
-            if (!entity.isEligibleFor(phase)) {
-                assistants.addElement(entity);
-            } else {
+        for (Entity entity : game.getEntitiesVector()) {
+            if (entity.isEligibleFor(phase)) {
                 assistable = true;
+            } else {
+                assistants.addElement(entity);
             }
         }
-        for (int i = 0; i < assistants.size(); i++) {
-            entity = assistants.elementAt(i);
-            if (!assistable || !entity.canAssist(phase)) {
-                entity.setDone(true);
+        for (Entity assistant : assistants) {
+            if (!assistable || !assistant.canAssist(phase)) {
+                assistant.setDone(true);
             }
         }
     }

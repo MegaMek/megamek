@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
@@ -35,6 +36,7 @@ public class ISLightMG extends MGWeapon {
         this.setInternalName(this.name);
         this.addLookupName("IS Light Machine Gun");
         this.addLookupName("ISLightMG");
+        this.ammoType = AmmoType.T_MG_LIGHT;
         this.heat = 0;
         this.damage = 1;
         this.rackSize = 1;

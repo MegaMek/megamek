@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
@@ -35,6 +36,7 @@ public class ISHeavyMG extends MGWeapon {
         this.setInternalName(this.name);
         this.addLookupName("IS Heavy Machine Gun");
         this.addLookupName("ISHeavyMG");
+        this.ammoType = AmmoType.T_MG_HEAVY;
         this.heat = 0;
         this.damage = 3;
         this.rackSize = 3;

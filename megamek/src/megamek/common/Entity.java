@@ -5220,13 +5220,13 @@ public abstract class Entity extends TurnOrdered
     }
     
     public boolean isAttackingThisTurn() {
-    	Vector actions = game.getActionsVector();
-    	for (Enumeration e = actions.elements(); e.hasMoreElements();) {
-    		EntityAction ea = (EntityAction) e.nextElement();
-    		if (ea.getEntityId() == this.getId() && ea instanceof AbstractAttackAction)
-    			return true;
-    	}
-    	return false;
+        Vector actions = game.getActionsVector();
+        for (Enumeration e = actions.elements(); e.hasMoreElements();) {
+            EntityAction ea = (EntityAction) e.nextElement();
+            if (ea.getEntityId() == this.getId() && ea instanceof AbstractAttackAction)
+                return true;
+        }
+        return false;
     }
 
     /**

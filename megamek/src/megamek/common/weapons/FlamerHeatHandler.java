@@ -53,7 +53,6 @@ public class FlamerHeatHandler extends WeaponHandler {
         if (entityTarget instanceof Mech
                 && game.getOptions().booleanOption("flamer_heat")) {
             // heat
-            
             HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                     .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
 
@@ -70,16 +69,14 @@ public class FlamerHeatHandler extends WeaponHandler {
                 missed = true;
                 return;
             }
-
-            int heat = wtype.getHeat();
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            r.add(heat);
+            r.add(2);
             r.newlines = 0;
             r.choose(true);
             vPhaseReport.addElement(r);
-            entityTarget.heatFromExternal += heat;
+            entityTarget.heatFromExternal += 2;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, nDamPerHit, bldgAbsorbs);

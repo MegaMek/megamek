@@ -33,7 +33,6 @@ public class ISSingleBAFlamer extends FlamerWeapon {
         this.name = "Flamer";
         this.setInternalName("IS Single BA Flamer");
         this.addLookupName("ISSingleBAFlamer");
-        this.heat = 3;
         this.damage = 2;
         this.shortRange = 1;
         this.mediumRange = 2;

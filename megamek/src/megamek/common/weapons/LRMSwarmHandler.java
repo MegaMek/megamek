@@ -35,6 +35,7 @@ import megamek.server.Server;
 public class LRMSwarmHandler extends LRMHandler {
     
     int swarmMissilesNowLeft = 0;
+    boolean handledHeatAndAmmo = false;
     
     /**
      * @param t
@@ -147,8 +148,11 @@ public class LRMSwarmHandler extends LRMHandler {
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
-        useAmmo();
-        addHeat();
+        if (!handledHeatAndAmmo) {
+            useAmmo();
+            addHeat();
+            handledHeatAndAmmo = true;
+        }
         nDamPerHit = calcDamagePerHit();
         
         //Do we need some sort of special resolution (minefields, artillery,
@@ -244,8 +248,9 @@ public class LRMSwarmHandler extends LRMHandler {
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon)m.getType();
                 AttackHandler ah = w.fire(newWaa, game, server);
-                WeaponHandler wh = (WeaponHandler)ah;
-                // attack the new target, and if we hit it, return;
+                LRMSwarmHandler wh = (LRMSwarmHandler)ah;
+                // attack the new target
+                wh.handledHeatAndAmmo = true;
                 wh.handle(phase, vPhaseReport);
             } else {
                 r = new Report(3425);
@@ -290,8 +295,9 @@ public class LRMSwarmHandler extends LRMHandler {
             Mounted m = ae.getEquipment(waa.getWeaponId());
             Weapon w = (Weapon)m.getType();
             AttackHandler ah = w.fire(newWaa, game, server);
-            WeaponHandler wh = (WeaponHandler)ah;
-            // attack the new target, and if we hit it, return;
+            LRMSwarmHandler wh = (LRMSwarmHandler)ah;
+            // attack the new target
+            wh.handledHeatAndAmmo = true;
             wh.handle(phase, vPhaseReport);
         } else {
             r = new Report(3425);
@@ -318,7 +324,6 @@ public class LRMSwarmHandler extends LRMHandler {
         }
         //no AMS for Swarms
         int missilesHit;
-        int nGlancing = 0;
         int nMissilesModifier = 0;
         boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
         if (maxtechmissiles) {

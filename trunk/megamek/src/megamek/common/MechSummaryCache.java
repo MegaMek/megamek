@@ -136,7 +136,7 @@ public class MechSummaryCache {
         return m_nameMap.get(sRef);
     }
 
-    public Hashtable getFailedFiles() {
+    public Hashtable<String,String> getFailedFiles() {
         block();
         return hFailedFiles;
     }
@@ -408,7 +408,7 @@ public class MechSummaryCache {
                     bNeedsUpdate = true;
                     thisDirectoriesFileCount++;
                     fileCount++;
-                    Enumeration failedEquipment = e.getFailedEquipment();
+                    Enumeration<String> failedEquipment = e.getFailedEquipment();
                     if (failedEquipment.hasMoreElements()) {
                         loadReport.append("    Loading from ").append(f)
                             .append("\n");
@@ -450,7 +450,7 @@ public class MechSummaryCache {
         loadReport.append("  Looking in zip file ")
             .append(fZipFile.getPath()).append("...\n");
 
-        for (java.util.Enumeration i = zFile.entries(); i.hasMoreElements();) {
+        for (Enumeration<?> i = zFile.entries(); i.hasMoreElements();) {
             if(Thread.interrupted()) {
                 done();
                 return false;
@@ -480,7 +480,7 @@ public class MechSummaryCache {
                 bNeedsUpdate = true;
                 thisZipFileCount++;
                 zipCount++;
-                Enumeration failedEquipment = e.getFailedEquipment();
+                Enumeration<String> failedEquipment = e.getFailedEquipment();
                 if (failedEquipment.hasMoreElements()) {
                     loadReport.append("    Loading from zip file")
                         .append(" >> ").append(zEntry.getName()).append("\n");

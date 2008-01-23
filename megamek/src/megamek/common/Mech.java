@@ -2303,8 +2303,8 @@ public abstract class Mech
 	                if (tmpP.hasTAG())
 	                    tagBV += atype.getBV(this);
 	                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-	                   for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-	                        Team m = (Team)e.nextElement();
+	                   for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements(); ) {
+	                        Team m = e.nextElement();
 	                        if (m.getId() == tmpP.getTeam()) {
 	                            if (m.hasTAG(game)) {
 	                                tagBV += atype.getBV(this);

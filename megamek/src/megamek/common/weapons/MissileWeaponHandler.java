@@ -89,7 +89,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
         int missilesHit;
-        int nGlancing = 0;
         int nMissilesModifier = nSalvoBonus;
         boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
         if (maxtechmissiles) {
@@ -113,22 +112,41 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 !mLinker.isDestroyed() && !mLinker.isMissing() &&
                 !mLinker.isBreached() && 
                 mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) &&
-                atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE &&
-                !bECMAffected) {
-            nMissilesModifier += 2;
-        } else if (!bECMAffected && atype.getAmmoType() == AmmoType.T_ATM) {
-            nMissilesModifier += 2; 
+                atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+            if (bECMAffected) {
+                //ECM prevents bonus
+                r = new Report(3330);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else
+                nMissilesModifier += 2;
+        } else if (atype.getAmmoType() == AmmoType.T_ATM) {
+            if (bECMAffected) {
+                //ECM prevents bonus
+                r = new Report(3330);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else
+                nMissilesModifier += 2; 
         } else if (entityTarget != null &&
                 (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || 
                  entityTarget.isINarcedBy(ae.getOwner().getTeam()))) {
             // only apply Narc bonus if we're not suffering ECM effect
             // and we are using narc ammo, and we're not firing indirectly.
-            if (!bECMAffected
-                    && !bMekStealthActive
+            if (!bMekStealthActive
                     && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
                     && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE
                     && (weapon.curMode() == null || !weapon.curMode().equals("Indirect"))) {
-                nMissilesModifier += 2;
+                if (bECMAffected) {
+                    //ECM prevents bonus
+                    r = new Report(3330);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                } else
+                    nMissilesModifier += 2;
             }
         }
         if (bGlancing) {
@@ -138,18 +156,18 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         
         if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-        	missilesHit = wtype.getRackSize();
+            missilesHit = wtype.getRackSize();
         else{
-        	if (ae instanceof BattleArmor)
-	            missilesHit = Compute.missilesHit(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength(),nMissilesModifier, bGlancing || maxtechmissiles, weapon.isHotLoaded());
-	        else
-	            missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier, bGlancing || maxtechmissiles, weapon.isHotLoaded());
+            if (ae instanceof BattleArmor)
+                missilesHit = Compute.missilesHit(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength(),nMissilesModifier, bGlancing || maxtechmissiles, weapon.isHotLoaded());
+            else
+                missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier, bGlancing || maxtechmissiles, weapon.isHotLoaded());
         }
-        
+
         if ( (target instanceof Mech || target instanceof Tank)
                 && ((Entity)target).getArmorType() == EquipmentType.T_ARMOR_REACTIVE )
-                missilesHit /= 2;
-                
+            missilesHit /= 2;
+
         if (missilesHit > 0) {
             r = new Report(3325);
             r.subject = subjectId;
@@ -158,14 +176,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             r.add(toHit.getTableDesc());
             r.newlines = 0;
             vPhaseReport.addElement(r);
-            if (bECMAffected) {
-                //ECM prevents bonus
-                r = new Report(3330);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            }
-            else if (bMekStealthActive) {
+            if (bMekStealthActive) {
                 //stealth prevents bonus
                 r = new Report(3335);
                 r.subject = subjectId;

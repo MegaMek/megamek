@@ -4007,7 +4007,7 @@ public abstract class Entity extends TurnOrdered
             // on pavement in that getting up does not skid.
             && !prevStep.isHasJustStood()) {
             // append the reason modifier
-            if(prevStep.isPavementStep()) {
+            if (prevStep.isPavementStep() && !prevHex.containsTerrain(Terrains.ICE)) {
                 if ( this instanceof Mech ) {
                     roll.append(new PilotingRollData(getId(),
                                       getMovementBeforeSkidPSRModifier(distance),

@@ -15,7 +15,6 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -24,10 +23,7 @@ import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
 import megamek.common.Report;
-import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -38,6 +34,11 @@ import megamek.server.Server.DamageType;
  *
  */
 public class LRMAntiTSMHandler extends LRMHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5702089152489814687L;
 
     /**
      * @param t
@@ -64,10 +65,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
             }
             return 1;
         }
-        Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
-                : null;
         int missilesHit;
-        int nGlancing = 0;
         int nMissilesModifier = 0;
         boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
         if (maxtechmissiles) {
@@ -85,27 +83,6 @@ public class LRMAntiTSMHandler extends LRMHandler {
         if (ae instanceof Mech) {
             bMekStealthActive = ae.isStealthActive();
         }
-        Mounted mLinker = weapon.getLinkedBy();
-        AmmoType atype = (AmmoType)ammo.getType();
-        if ( (mLinker != null && mLinker.getType() instanceof MiscType &&
-                !mLinker.isDestroyed() && !mLinker.isMissing() &&
-                !mLinker.isBreached() && 
-                mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) &&
-                atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE &&
-                !bECMAffected) {
-            nMissilesModifier += 2;
-        } else if (entityTarget != null && 
-                (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || 
-                 entityTarget.isINarcedBy(ae.getOwner().getTeam()))) {
-            // only apply Narc bonus if we're not suffering ECM effect
-            // and we are using narc ammo.
-            if (!bECMAffected
-                    && !bMekStealthActive
-                    && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
-                    && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
-                nMissilesModifier += 2;
-            }
-        }
         if (bGlancing) {
             nMissilesModifier -=4;
         }
@@ -122,14 +99,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         vPhaseReport.addElement(r);
-        if (bECMAffected) {
-            //ECM prevents bonus
-            r = new Report(3330);
-            r.subject = subjectId;
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-        }
-        else if (bMekStealthActive) {
+        if (bMekStealthActive) {
             //stealth prevents bonus
             r = new Report(3335);
             r.subject = subjectId;

@@ -3416,12 +3416,11 @@ public class Server implements Runnable {
                 // if Tanks or Mechs were charged.
                 int chargeDamage = ChargeAttackAction.getDamageFor(entity);
                 if (!bldgSuffered) {
-                    Report buildingReport = damageBuilding(bldg, chargeDamage);
-                    if (buildingReport != null) {
-                        buildingReport.indent(2);
-                        buildingReport.subject = entity.getId();
-                        addReport(buildingReport);
+                    Vector<Report> reports = damageBuilding(bldg, chargeDamage);
+                    for (Report report: reports) {
+                        report.subject = entity.getId();
                     }
+                    addReport(reports);
 
                     // Apply damage to the attacker.
                     int toAttacker = ChargeAttackAction.getDamageTakenBy(entity, bldg);
@@ -4373,7 +4372,7 @@ public class Server implements Runnable {
                     else if (bldgEntered != null) {
                         if (entity instanceof Protomech) {
                             // protos entering a building cause 1 damage
-                            this.damageBuilding(bldgEntered, 1);
+                            addReport(damageBuilding(bldgEntered, 1));
                         }
                         collapsed = passBuildingWall(entity, bldgExited, lastPos, curPos, distance, "exiting", step.isThisStepBackwards());
                         addAffectedBldg(bldgExited, collapsed);
@@ -5160,7 +5159,7 @@ public class Server implements Runnable {
                 }
             }
             if (game.getBoard().getBuildingAt(t.getPosition()) != null) {
-                vPhaseReport.add(damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles));
+                vPhaseReport.addAll(damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles));
             }
             // fall through
         case Targetable.TYPE_HEX_CLEAR:
@@ -5184,7 +5183,7 @@ public class Server implements Runnable {
                     deliverInfernoMissiles(ae, e, missiles, vPhaseReport);
                 }
             }
-            vPhaseReport.add(damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles));
+            vPhaseReport.addAll(damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles));
             break;
         case Targetable.TYPE_ENTITY:
             Entity te = (Entity) t;
@@ -7354,12 +7353,11 @@ public class Server implements Runnable {
 
                 // Only report if damage was done to the building.
                 if (damage > 0) {
-                    Report buildingReport = damageBuilding(bldg, damage);
-                    if (buildingReport != null) {
-                        buildingReport.indent();
-                        buildingReport.subject = ae.getId();
-                        addReport(buildingReport);
+                    Vector<Report> buildingReport = damageBuilding( bldg, damage );
+                    for (Report report: buildingReport) {
+                        report.subject = ae.getId();
                     }
+                    addReport(buildingReport);
                 }
 
             }
@@ -7372,13 +7370,11 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Report buildingReport = damageBuilding(bldg, damage);
-            if (buildingReport != null) {
-                buildingReport.indent();
-                buildingReport.newlines = 1;
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+            Vector<Report> buildingReport = damageBuilding( bldg, damage );
+            for (Report report: buildingReport) {
+                report.subject = ae.getId();
             }
+            addReport(buildingReport);
 
             // Damage any infantry in the hex.
             damageInfantryIn(bldg, damage);
@@ -7403,12 +7399,11 @@ public class Server implements Runnable {
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
-            Report buildingReport = damageBuilding(bldg, toBldg);
-            if (buildingReport != null) {
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+            Vector<Report> buildingReport = damageBuilding( bldg, toBldg );
+            for (Report report: buildingReport) {
+                report.subject = ae.getId();
             }
+            addReport(buildingReport);
         }
 
         // A building may absorb the entire shot.
@@ -7537,12 +7532,11 @@ public class Server implements Runnable {
 
                 // Only report if damage was done to the building.
                 if (damage > 0) {
-                    Report buildingReport = damageBuilding(bldg, damage);
-                    if (buildingReport != null) {
-                        buildingReport.indent();
-                        buildingReport.subject = ae.getId();
-                        addReport(buildingReport);
+                    Vector<Report> buildingReport = damageBuilding( bldg, damage);
+                    for (Report report: buildingReport) {
+                        report.subject = ae.getId();
                     }
+                    addReport(buildingReport);
                 }
 
             }
@@ -7555,13 +7549,12 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Report buildingReport = damageBuilding(bldg, damage);
-            if (buildingReport != null) {
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+            Vector<Report> buildingReport = damageBuilding( bldg, damage);
+            for (Report report: buildingReport) {
+                report.subject = ae.getId();
             }
-
+            addReport(buildingReport);
+            
             // Damage any infantry in the hex.
             damageInfantryIn(bldg, damage);
 
@@ -7585,12 +7578,11 @@ public class Server implements Runnable {
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
-            Report buildingReport = damageBuilding(bldg, toBldg);
-            if (buildingReport != null) {
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+            Vector<Report> buildingReport = damageBuilding( bldg, damage);
+            for (Report report: buildingReport) {
+                report.subject = ae.getId();
             }
+            addReport(buildingReport);
         }
 
         // A building may absorb the entire shot.
@@ -7747,12 +7739,11 @@ public class Server implements Runnable {
                 damage += pr.damageRight;
                 // Only report if damage was done to the building.
                 if (damage > 0) {
-                    Report buildingReport = damageBuilding(bldg, damage);
-                    if (buildingReport != null) {
-                        buildingReport.indent();
-                        buildingReport.subject = ae.getId();
-                        addReport(buildingReport);
+                    Vector<Report> buildingReport = damageBuilding( bldg, damage);
+                    for (Report report: buildingReport) {
+                        report.subject = ae.getId();
                     }
+                    addReport(buildingReport);
                 }
 
             }
@@ -7766,12 +7757,11 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Report buildingReport = damageBuilding(bldg, damage);
-            if (buildingReport != null) {
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+            Vector<Report> buildingReport = damageBuilding( bldg, damage);
+            for (Report report: buildingReport) {
+                report.subject = ae.getId();
             }
+            addReport(buildingReport);
 
             // Damage any infantry in the hex.
             damageInfantryIn(bldg, damage);
@@ -7801,12 +7791,11 @@ public class Server implements Runnable {
                 int toBldg = Math.min(bldgAbsorbs, damage);
                 damage -= toBldg;
                 addNewLines();
-                Report buildingReport = damageBuilding(bldg, toBldg);
-                if (buildingReport != null) {
-                    buildingReport.indent();
-                    buildingReport.subject = ae.getId();
-                    addReport(buildingReport);
+                Vector<Report> buildingReport = damageBuilding( bldg, damage);
+                for (Report report: buildingReport) {
+                    report.subject = ae.getId();
                 }
+                addReport(buildingReport);
             }
 
             // A building may absorb the entire shot.
@@ -7911,12 +7900,11 @@ public class Server implements Runnable {
 
                 // Only report if damage was done to the building.
                 if (damage > 0) {
-                    Report buildingReport = damageBuilding(bldg, damage);
-                    if (buildingReport != null) {
-                        buildingReport.indent();
-                        buildingReport.subject = ae.getId();
-                        addReport(buildingReport);
+                    Vector<Report> buildingReport = damageBuilding( bldg, damage);
+                    for (Report report: buildingReport) {
+                        report.subject = ae.getId();
                     }
+                    addReport(buildingReport);
                 }
 
             }
@@ -7929,12 +7917,11 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Report buildingReport = damageBuilding(bldg, damage);
-            if (buildingReport != null) {
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+            Vector<Report> buildingReport = damageBuilding( bldg, damage);
+            for (Report report: buildingReport) {
+                report.subject = ae.getId();
             }
+            addReport(buildingReport);
 
             // Damage any infantry in the hex.
             damageInfantryIn(bldg, damage);
@@ -7960,12 +7947,11 @@ public class Server implements Runnable {
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
-            Report buildingReport = damageBuilding(bldg, toBldg);
-            if (buildingReport != null) {
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+            Vector<Report> buildingReport = damageBuilding( bldg, damage);
+            for (Report report: buildingReport) {
+                report.subject = ae.getId();
             }
+            addReport(buildingReport);
         }
 
         // A building may absorb the entire shot.
@@ -8375,12 +8361,11 @@ public class Server implements Runnable {
 
                 // Only report if damage was done to the building.
                 if (damage > 0) {
-                    Report buildingReport = damageBuilding(bldg, damage);
-                    if (buildingReport != null) {
-                        buildingReport.indent();
-                        buildingReport.subject = ae.getId();
-                        addReport(buildingReport);
+                    Vector<Report> buildingReport = damageBuilding( bldg, damage);
+                    for (Report report: buildingReport) {
+                        report.subject = ae.getId();
                     }
+                    addReport(buildingReport);
                 }
 
             }
@@ -8393,12 +8378,11 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Report buildingReport = damageBuilding(bldg, damage);
-            if (buildingReport != null) {
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+            Vector<Report> buildingReport = damageBuilding( bldg, damage);
+            for (Report report: buildingReport) {
+                report.subject = ae.getId();
             }
+            addReport(buildingReport);
 
             // Damage any infantry in the hex.
             damageInfantryIn(bldg, damage);
@@ -8423,12 +8407,11 @@ public class Server implements Runnable {
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
-            Report buildingReport = damageBuilding(bldg, toBldg);
-            if (buildingReport != null) {
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+            Vector<Report> buildingReport = damageBuilding( bldg, damage);
+            for (Report report: buildingReport) {
+                report.subject = ae.getId();
             }
+            addReport(buildingReport);
         }
 
         // A building may absorb the entire shot.
@@ -9098,12 +9081,11 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Report buildingReport = damageBuilding(bldg, damage);
-            if (buildingReport != null) {
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+            Vector<Report> buildingReport = damageBuilding( bldg, damage);
+            for (Report report: buildingReport) {
+                report.subject = ae.getId();
             }
+            addReport(buildingReport);
 
             // Damage any infantry in the hex.
             damageInfantryIn(bldg, damage);
@@ -9225,12 +9207,11 @@ public class Server implements Runnable {
                 int toBldg = Math.min(bldgAbsorbs, cluster);
                 cluster -= toBldg;
                 addNewLines();
-                Report buildingReport = damageBuilding(bldg, toBldg);
-                if (buildingReport != null) {
-                    buildingReport.indent();
-                    buildingReport.subject = ae.getId();
-                    addReport(buildingReport);
+                Vector<Report> buildingReport = damageBuilding( bldg, damage);
+                for (Report report: buildingReport) {
+                    report.subject = ae.getId();
                 }
+                addReport(buildingReport);
             }
 
             // A building may absorb the entire shot.
@@ -9467,12 +9448,11 @@ public class Server implements Runnable {
         if ((target.getTargetType() == Targetable.TYPE_BUILDING) || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
 
             // The building takes the full brunt of the attack.
-            Report buildingReport = damageBuilding(bldg, damage);
-            if (buildingReport != null) {
-                buildingReport.indent();
-                buildingReport.subject = ae.getId();
-                addReport(buildingReport);
+            Vector<Report> buildingReport = damageBuilding( bldg, damage);
+            for (Report report: buildingReport) {
+                report.subject = ae.getId();
             }
+            addReport(buildingReport);
 
             // Damage any infantry in the hex.
             damageInfantryIn(bldg, damage);
@@ -11819,11 +11799,11 @@ public class Server implements Runnable {
             }
             if (closestDist >= damages.length)
                 continue; // It's not close enough to take damage.
-            Report r2 = damageBuilding(bldg, damages[closestDist]);
-            if (r2 != null) {
-                r2.type = Report.PUBLIC;
-                vDesc.addElement(r2);
+            Vector<Report> buildingReport = damageBuilding( bldg, damages[closestDist]);
+            for (Report report: buildingReport) {
+                report.type = Report.PUBLIC;
             }
+            vDesc.addAll(buildingReport);
         }
         applyBuildingDamage();
 
@@ -16722,7 +16702,7 @@ public class Server implements Runnable {
      *            the <code>int</code> amount of damage.
      * @return a <code>Report</code> to be shown to the players.
      */
-    public Report damageBuilding(Building bldg, int damage) {
+    public Vector<Report> damageBuilding(Building bldg, int damage) {
         final String defaultWhy = " absorbs ";
         return damageBuilding(bldg, damage, defaultWhy);
     }
@@ -16743,7 +16723,8 @@ public class Server implements Runnable {
      *            building took the damage.
      * @return a <code>Report</code> to be shown to the players.
      */
-    public Report damageBuilding(Building bldg, int damage, String why) {
+    public Vector<Report> damageBuilding(Building bldg, int damage, String why) {
+        Vector<Report> vPhaseReport = new Vector<Report>();
         Report r = new Report(1210);
         r.newlines = 0;
 
@@ -16765,29 +16746,27 @@ public class Server implements Runnable {
                     // If this is a fuel tank, we'll give it its own message.
                     r.messageId = 3441;
                     r.type = Report.PUBLIC;
-                    addReport(r);
-
+                    vPhaseReport.add(r);
                     // ...But we ALSO need to blow up everything nearby.
                     // Bwahahahahaha...
                     r = new Report(3560);
                     r.type = Report.PUBLIC;
                     r.newlines = 1;
-                    addReport(r);
+                    vPhaseReport.add(r);
                     Vector<Report> vRep = new Vector<Report>();
                     doExplosion(((FuelTank) bldg).getMagnitude(), 10, false, bldg.getCoords().nextElement(), true, vRep, null);
                     Report.indentAll(vRep, 2);
-                    addReport(vRep);
-                    return null;
+                    vPhaseReport.addAll(vRep);
+                    return vPhaseReport;
                 }
-
                 if (bldg.getType() == Building.WALL)
                     r.messageId = 3442;
                 else
                     r.messageId = 3440;
             }
-
         }
-        return r;
+        Report.indentAll(vPhaseReport, 2);
+        return vPhaseReport;
     }
 
     public void sendChangedCFBuildings(Vector<Building> buildings) {
@@ -18149,11 +18128,11 @@ public class Server implements Runnable {
             bldgAbsorbs = bldg.getPhaseCF() / 10;
             if (!(ammo != null && ammo.getMunitionType() == AmmoType.M_FLECHETTE)) {
                 // damage the building
-                r = damageBuilding(bldg, damage);
-                if (r != null) {
-                    r.subject = subjectId;
-                    addReport(r);
+                Vector<Report> buildingReport = damageBuilding( bldg, damage);
+                for (Report report: buildingReport) {
+                    report.subject = subjectId;
                 }
+                addReport(buildingReport);
                 addNewLines();
             }
         }

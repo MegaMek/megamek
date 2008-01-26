@@ -158,10 +158,11 @@ public class LRMAntiTSMHandler extends LRMHandler {
             int toBldg = Math.min( bldgAbsorbs, nDamage );
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Report buildingReport = server.damageBuilding( bldg, toBldg );
-            buildingReport.indent(2);
-            buildingReport.subject = subjectId;
-            vPhaseReport.addElement(buildingReport);
+            Vector<Report> buildingReport = server.damageBuilding( bldg, toBldg );
+            for (Report report: buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
         }
 
         // A building may absorb the entire shot.

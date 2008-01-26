@@ -354,9 +354,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.add(bldgAbsorbs);
             vPhaseReport.addElement(r);
-            Report buildingReport = server.damageBuilding(bldg, ratedDamage);
-            buildingReport.subject = subjectId;
-            vPhaseReport.addElement(buildingReport);
+            Vector<Report> buildingReport = server.damageBuilding( bldg, ratedDamage );
+            for (Report report: buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
         }
 
         for (Enumeration impactHexHits = game.getEntities(coords); impactHexHits
@@ -403,10 +405,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 r.add(bldgAbsorbs);
                 vPhaseReport.addElement(r);
-                Report buildingReport = server
-                        .damageBuilding(bldg, ratedDamage);
-                buildingReport.subject = subjectId;
-                vPhaseReport.addElement(buildingReport);
+                Vector<Report> buildingReport = server.damageBuilding( bldg, ratedDamage );
+                for (Report report: buildingReport) {
+                    report.subject = subjectId;
+                }
+                vPhaseReport.addAll(buildingReport);
             }
 
             Enumeration splashHexHits = game.getEntities(tempcoords);

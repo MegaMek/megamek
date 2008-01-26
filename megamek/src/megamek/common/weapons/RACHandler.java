@@ -65,6 +65,8 @@ public class RACHandler extends UltraWeaponHandler {
                     jams = true;
                 }
                 break;
+            default:
+                break;
         }
         if (jams) {
             r = new Report(3160);
@@ -83,22 +85,37 @@ public class RACHandler extends UltraWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
     protected void useAmmo() {
-        int shotsNeedFiring;
+        int actualShots;
         setDone();
         checkAmmo();
-        int total = ae.getTotalAmmoOfType(ammo.getType());
-        if (total >= 6) {
+        if (weapon.curMode().equals("6-shot")) {
             howManyShots = 6;
-        } else if (total >= 5) {
+        } else if (weapon.curMode().equals("5-shot")) {
             howManyShots = 5;
-        } else if (total >= 3) {
+        } else if (weapon.curMode().equals("4-shot")) {
+            howManyShots = 4;
+        } else if (weapon.curMode().equals("3-shot")) {
             howManyShots = 3;
-        } else if (total >= 2) {
+        } else if (weapon.curMode().equals("2-shot")) {
             howManyShots = 2;
-        } else {
+        } else if (weapon.curMode().equals("Single")) {
             howManyShots = 1;
         }
-        shotsNeedFiring = howManyShots;
+        int total = ae.getTotalAmmoOfType(ammo.getType());
+        if (total >= 6) {
+            actualShots = 6;
+        } else if (total >= 5) {
+            actualShots = 5;
+        } else if (total >= 3) {
+            actualShots = 3;
+        } else if (total >= 2) {
+            actualShots = 2;
+        } else {
+            actualShots = 1;
+        }
+        if (actualShots < howManyShots)
+            howManyShots = actualShots;
+        int shotsNeedFiring = howManyShots;
         if (ammo.getShotsLeft() == 0) {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();

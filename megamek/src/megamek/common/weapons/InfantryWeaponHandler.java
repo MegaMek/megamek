@@ -72,7 +72,7 @@ public abstract class InfantryWeaponHandler extends WeaponHandler {
         r.subject = subjectId;
         r.add(troopersHit);
         r.add(" troopers ");
-        r.add(toHit.getTableDesc()+", causing "+damage[troopersHit-1]+ "damage.");
+        r.add(toHit.getTableDesc()+", causing "+damage[troopersHit-1]+ " damage.");
         r.newlines = 0;
         vPhaseReport.addElement(r);
         return damage[troopersHit-1];

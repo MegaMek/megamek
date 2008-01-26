@@ -30,6 +30,11 @@ import megamek.server.Server;
 
 public class PlasmaCannonHandler extends AmmoWeaponHandler {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 2304364403526293671L;
+
+    /**
      * @param toHit
      * @param waa
      * @param g
@@ -48,10 +53,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             int nDamPerHit, int bldgAbsorbs) {
         
         if (entityTarget instanceof Mech) {
-            
             HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                     .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
-
             if ( entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
                     Compute.targetSideTable(ae, entityTarget)) ) {
                 // Weapon strikes Partial Cover.
@@ -64,8 +67,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                 vPhaseReport.addElement(r);
                 missed = true;
                 return;
-            }
-            
+            }            
             if (!bSalvo) {
                 // Each hit in the salvo get's its own hit location.
                 r = new Report(3405);
@@ -75,33 +77,6 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             }
-
-            if (hit.hitAimedLocation()) {
-                r = new Report(3410);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            }
-            // Resolve damage normally.
-            int nDamage = nDamPerHit * Math.min(nCluster, hits);
-
-            // A building may be damaged, even if the squad is not.
-            if (bldgAbsorbs > 0) {
-                nDamage *= 2;
-                int toBldg = Math.min(bldgAbsorbs, nDamage);
-                nDamage -= toBldg;
-                Report.addNewline(vPhaseReport);
-                Report buildingReport = server.damageBuilding(bldg, toBldg);
-                buildingReport.indent(2);
-                buildingReport.subject = subjectId;
-                vPhaseReport.addElement(buildingReport);
-                if ( nDamage == 0)
-                    missed = true;
-            }
-
-            if ( missed )
-                return;
-            
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);

@@ -223,11 +223,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 r.subject = entityTarget.getId();
             r.add(bldgAbsorbs);
             vPhaseReport.addElement(r);
-            Report buildingReport = server.damageBuilding(bldg, nDamPerHit);
-            buildingReport.indent(2);
-            if (entityTarget != null)
-                buildingReport.subject = entityTarget.getId();
-            vPhaseReport.addElement(buildingReport);
+            Vector<Report> buildingReport = server.damageBuilding( bldg, nDamPerHit );
+            for (Report report: buildingReport) {
+                report.subject = entityTarget.getId();
+            }
+            vPhaseReport.addAll(buildingReport);
         }
         nDamPerHit-=bldgAbsorbs;
 

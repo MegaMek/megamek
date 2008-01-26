@@ -423,7 +423,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 hit.makeGlancingBlow();
             }
             vPhaseReport.addAll(server.damageEntity(
-                    entityTarget, hit, nDamage, false, DamageType.NONE, false, false,
+                    entityTarget, hit, nDamage, false, ae.getSwarmTargetId()==entityTarget.getId()?DamageType.IGNORE_PASSENGER:DamageType.NONE, false, false,
                     throughFront));
         }
     }

@@ -29,6 +29,11 @@ import megamek.server.Server;
  */
 public class SwarmAttack extends InfantryAttack {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8593642424068542897L;
+
     public SwarmAttack() {
         super();
         this.name = "Swarm Mek";

@@ -418,7 +418,7 @@ public class MegaMek {
                 }
                 
                 if ( ms == null )
-                    System.err.println(filename+" not found try using \"chassie model\" for input.");
+                    System.err.println(filename+" not found try using \"chassis model\" for input.");
                 else
                     try {
                         Entity entity = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();

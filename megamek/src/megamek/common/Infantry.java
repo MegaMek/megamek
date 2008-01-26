@@ -516,14 +516,17 @@ public class Infantry
             if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
                 continue;
             }
-            wbv += wtype.getBV(this);
-            //if antimek, count it twice
-            if (antiMek)
-                wbv += wtype.getBV(this);            
+            // infantry weapons get counted multiple times
+            if (weapon.getType().hasFlag(WeaponType.F_INFANTRY)) {
+                // stupid assumption to at least get a value:
+                // each weapon is carried once by each platoon member
+                // if an antiMek platoon, count twice
+                wbv += wtype.getBV(this)*this.getInternal(Entity.LOC_NONE)*(antiMek?2:0);
+            } else {
+                //field guns count only once
+                wbv += wtype.getBV(this);                
+            }
         }
-        // stupid assumption to at least get a value:
-        // each weapon is carried once by each platoon member
-        wbv *= this.getInternal(Entity.LOC_NONE);
         obv = wbv * speedFactor;
         int bv  = (int)Math.round(obv + dbv);
         // and then factor in pilot

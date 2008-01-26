@@ -29,10 +29,10 @@ public class Tank
     implements Serializable
 {
     /**
-	 * 
-	 */
-	private static final long serialVersionUID = -857210851169206264L;
-	private boolean m_bHasNoTurret = false;
+     * 
+     */
+    private static final long serialVersionUID = -857210851169206264L;
+    private boolean m_bHasNoTurret = false;
     private boolean m_bTurretLocked = false;
     private boolean m_bTurretJammed = false;
     private boolean m_bTurretEverJammed = false;

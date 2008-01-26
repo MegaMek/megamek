@@ -403,10 +403,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Report buildingReport = server.damageBuilding(bldg, toBldg);
-            buildingReport.indent(2);
-            buildingReport.subject = subjectId;
-            vPhaseReport.addElement(buildingReport);
+            Vector<Report> buildingReport = server.damageBuilding( bldg, nDamage );
+            for (Report report: buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
         }
 
         // A building may absorb the entire shot.
@@ -434,11 +435,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // Only report if damage was done to the building.
         int toBldg = hits * nDamPerHit;
         if (toBldg > 0) {
-            Report buildingReport = server.damageBuilding(bldg, toBldg);
-            buildingReport.indent(2);
-            buildingReport.newlines = 1;
-            buildingReport.subject = subjectId;
-            vPhaseReport.addElement(buildingReport);
+            Vector<Report> buildingReport = server.damageBuilding( bldg, toBldg );
+            for (Report report: buildingReport) {
+                report.subject = subjectId;
+            }
+            vPhaseReport.addAll(buildingReport);
         }
     }
 
@@ -501,11 +502,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.addElement(r);
         }
         Report.addNewline(vPhaseReport);
-        Report buildingReport = server.damageBuilding(bldg, nDamage);
-        buildingReport.indent(2);
-        buildingReport.newlines = 1;
-        buildingReport.subject = subjectId;
-        vPhaseReport.addElement(buildingReport);
+        Vector<Report> buildingReport = server.damageBuilding( bldg, nDamage );
+        for (Report report: buildingReport) {
+            report.subject = subjectId;
+        }
+        vPhaseReport.addAll(buildingReport);
 
         // Damage any infantry in the hex.
         server.damageInfantryIn(bldg, nDamage);

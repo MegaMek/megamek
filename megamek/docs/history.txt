@@ -9,6 +9,8 @@ v0.33.17-dev (SVN)
 + Bug 1879828: RAC firing to many shots
 + Updated HACKING file
 + Bug 1880143: swarming infantry can damage themselves
++ Merged refactor server branch: Refactored Victory Conditions, easy to implement new ones
+    Should work just the same
 
 v0.33.16 (2007-01-19, 18:45 GMT+1)
 + Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change

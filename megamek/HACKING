@@ -15,10 +15,8 @@ solve this problem, but let me know if it doesn't work in your setup.
 Someday, I intend to address every single issue listed above.  For now,
 however, please accept the limitations and move on.
 
-MegaMek can be run on any Java v1.4 or v1.5 runtime, but we've gotten some
-problem reports from specific OS/JVM combinations.  The code makes use of
-certain v1.5 language features, and we use the Retroweaver library to convert
-it.  That means that MegaMek can only be *compiled* by a v1.5 JDK.
+MegaMek can be run on any Java v1.5 runtime, but we've gotten some
+problem reports from specific OS/JVM combinations.
 
 While there is no Makefile, it's very easy to build MegaMek with Jikes.  My
 computer is running Debian Sarge with GCC installed.  Therefore, I can build
@@ -44,6 +42,11 @@ The following runtime flags are available:
                 flag is omitted, output is automatically sent to MegaMek.log.
         -testxml filename : Parse the named XML file, display its contents, and
                 then exit.
+        -gui swing : Start the swing GUI
+        -eqdb filename : creates a list of all valid Equipment names for MTF
+                files and saves it to the specified file
+        -validate unitname : tests if the specified unit is a valid design
+        		E.g. to test the Stalker STK-4N, use -validate "Stalker STK-4N"
 
 TODO list:
  * The Splash Screen that is displayed first when MegaMek starts contains an
@@ -62,4 +65,4 @@ TODO list:
 
 James Damour
 suvarov454@users.sourceforge.net
-last updated 2005-09-23
+last updated 2008-01-25

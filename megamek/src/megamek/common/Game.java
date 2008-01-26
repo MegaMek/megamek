@@ -18,6 +18,7 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
@@ -131,6 +132,8 @@ public class Game implements Serializable, IGame
     
     private Vector<TagInfo> tagInfoForTurn = new Vector<TagInfo>();
     private Vector<Flare> flares = new Vector<Flare>();
+    
+    private HashMap<String,Object> victoryContext=null;
     
     /**
      * Constructor
@@ -2198,6 +2201,13 @@ public class Game implements Serializable, IGame
             return player.getId() == victoryPlayerId;
         } 
         return player.getTeam() == victoryTeam;
+    }
+    public HashMap<String,Object> getVictoryContext() {
+        return victoryContext;
+    }
+    
+    public void setVictoryContext(HashMap<String,Object> ctx) {
+        this.victoryContext=ctx;
     }
     
     /** Shortcut to isPlayerVictor(Player player) */

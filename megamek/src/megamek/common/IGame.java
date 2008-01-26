@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
+import java.util.HashMap;
 
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
@@ -32,6 +33,13 @@ import megamek.common.weapons.AttackHandler;
  * This interface is the root of all data about the game in progress.
  * Both the Client and the Server should have one of these objects and it
  * is their job to keep it synched.
+ *
+ *  note from itmo: this needs WAY MORE javadoc. also preferably remove
+ *          the abstract-modifiers and divide this interface into two
+ *          subinterfaces for reading and modifying. 
+ *          -stuff should be documented as contracts. bad example of
+ *           javadoccing found in getVictory* ...
+ *  also phases should be documented. wtf is an exchange-phase?
  */
 public interface IGame {
     
@@ -81,6 +89,21 @@ public interface IGame {
     
     public static final int PHASE_SET_ARTYAUTOHITHEXES = 22;
 
+    /**
+     *  @return the currently active context-object for victorycondition
+     *          checking. This should be a mutable object and it will
+     *          be modified by the victory condition checkers. 
+     *          whoever saves the game state when doing saves, is also
+     *          responsible of saving this state. 
+     *
+     *          at the start of the game this should be initialized to an
+     *          empty hashmap
+     */
+    public abstract HashMap<String,Object> getVictoryContext();
+    /**
+     *   set the game victory state. 
+     */
+    public abstract void setVictoryContext(HashMap<String,Object> ctx);
     /**
      * Adds the specified game listener to receive
      * board events from this Game.
@@ -910,6 +933,7 @@ public interface IGame {
     
     /**
      * Getter for property forceVictory.
+     * this tells us that a claim for victory is active.
      * @return Value of property forceVictory.
      */
     public abstract boolean isForceVictory();
@@ -952,6 +976,9 @@ public interface IGame {
 
     /**
      * Getter for property victoryPlayerId.
+     *
+     *  itmo: apparently this is the guy who claims to have won the game
+     *      also used to tell who won when the game is won
      * @return Value of property victoryPlayerId.
      */
     public abstract int getVictoryPlayerId();
@@ -964,6 +991,9 @@ public interface IGame {
     
     /**
      * Getter for property victoryTeam.
+     *
+     *  corresponding claiming/winning team if the player is in a 
+     *  team
      * @return Value of property victoryTeam.
      */
     public abstract int getVictoryTeam();

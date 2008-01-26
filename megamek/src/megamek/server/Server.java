@@ -36,11 +36,11 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
 
+import megamek.server.victory.*;
 import megamek.MegaMek;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
@@ -231,6 +231,11 @@ public class Server implements Runnable {
     // Track Physical Action results, HACK to deal with opposing pushes
     // canceling each other
     private Vector<PhysicalResult> physicalResults = new Vector<PhysicalResult>();
+    
+    //victorycondition related stuff
+    private Victory victory=null;
+    private VictoryFactory vf=new SpaghettiVictoryFactory();
+    
 
     private Vector<DynamicTerrainProcessor> terrainProcessors = new Vector<DynamicTerrainProcessor>();
 
@@ -356,7 +361,16 @@ public class Server implements Runnable {
         connector = new Thread(this, "Connection Listener");
         connector.start();
     }
-
+    /**
+     *  use victoryfactory to generate a new victorycondition checker
+     *  provided that the victorycontext is saved properly, calling this
+     *  method at any time is ok and should not affect anything unless
+     *  the victorycondition-configoptions have changed. 
+     */
+    protected void createVictoryConditions() {
+        victory=vf.createVictory("this string should be taken from game options");
+    }
+    
     /**
      * Sets the game for this server. Restores any transient fields, and sets
      * all players as ghosts. This should only be called during server
@@ -1778,6 +1792,8 @@ public class Server implements Runnable {
             applyBoardSettings();
             game.setupRoundDeployment();
             game.determineWind();
+            game.setVictoryContext(new HashMap<String,Object>());
+            createVictoryConditions();
             // If we add transporters for any Magnetic Clamp
             // equiped squads, then update the clients' entities.
             if (game.checkForMagneticClamp()) {
@@ -2121,7 +2137,6 @@ public class Server implements Runnable {
             endCurrentTurn(toSkip);
             break;
         default:
-
         }
     }
 
@@ -2140,300 +2155,59 @@ public class Server implements Runnable {
     /**
      * Returns true if victory conditions have been met. Victory conditions are
      * when there is only one player left with mechs or only one team.
+     *
+     *  will also add some reports to reporting
      */
     public boolean victory() {
-        if (game.isForceVictory()) {
-            int victoryPlayerId = game.getVictoryPlayerId();
-            int victoryTeam = game.getVictoryTeam();
-            Vector<Player> players = game.getPlayersVector();
-            boolean forceVictory = true;
-
-            // Individual victory.
-            if (victoryPlayerId != Player.PLAYER_NONE) {
-                for (int i = 0; i < players.size(); i++) {
-                    Player player = players.elementAt(i);
-
-                    if (player.getId() != victoryPlayerId && !player.isObserver()) {
-                        if (!player.admitsDefeat()) {
-                            forceVictory = false;
-                            break;
-                        }
-                    }
-                }
-            }
-            // Team victory.
-            if (victoryTeam != Player.TEAM_NONE) {
-                for (int i = 0; i < players.size(); i++) {
-                    Player player = players.elementAt(i);
-
-                    if (player.getTeam() != victoryTeam && !player.isObserver()) {
-                        if (!player.admitsDefeat()) {
-                            forceVictory = false;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            if (forceVictory) {
-                return true;
-            }
-
-            for (int i = 0; i < players.size(); i++) {
-                Player player = players.elementAt(i);
-                player.setAdmitsDefeat(false);
-            }
-
-            cancelVictory();
+        Victory.Result vr=victory.victory(
+                                game,
+                                game.getVictoryContext());
+        for (Report r:vr.getReports()) {
+            addReport(r);
         }
-
-        if (!game.gameTimerIsExpired() && !game.getOptions().booleanOption("check_victory")) {
-            return false;
-        }
-
-        // check all players/teams for aliveness
-        int playersAlive = 0;
-        Player lastPlayer = null;
-        boolean oneTeamAlive = false;
-        int lastTeam = Player.TEAM_NONE;
-        boolean unteamedAlive = false;
-        for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
-            Player player = e.nextElement();
-            int team = player.getTeam();
-            if (game.getLiveDeployedEntitiesOwnedBy(player) <= 0) {
-                continue;
+        
+        if (vr.victory()) {
+            boolean draw=false;
+            int wonPlayer=Player.PLAYER_NONE;
+            int wonTeam=Player.TEAM_NONE;
+            //should this be done for draws?? 
+            for(int wPlayer:vr.getPlayers()) {
+                wonPlayer=wPlayer;
+				Report r = new Report(7200, Report.PUBLIC);
+				r.add(game.getPlayer(wonPlayer).getName());
+				addReport(r);   
+                if(wonPlayer!=Player.PLAYER_NONE)
+                    draw=true;
             }
-            // we found a live one!
-            playersAlive++;
-            lastPlayer = player;
-            // check team
-            if (team == Player.TEAM_NONE) {
-                unteamedAlive = true;
-            } else if (lastTeam == Player.TEAM_NONE) {
-                // possibly only one team alive
-                oneTeamAlive = true;
-                lastTeam = team;
-            } else if (team != lastTeam) {
-                // more than one team alive
-                oneTeamAlive = false;
-                lastTeam = team;
+            //should this be done for draws?
+            for (int wTeam:vr.getTeams()) {
+                wonTeam=wTeam;
+                Report r = new Report(7200, Report.PUBLIC);
+                r.add("Team "+wonTeam);
+                addReport(r);                
+                if(wonPlayer!=Player.PLAYER_NONE||
+                    wonTeam!=Player.TEAM_NONE)
+                    draw=true;
             }
-        }
-
-        // check if there's one player alive
-        if (playersAlive < 1) {
-            game.setVictoryPlayerId(Player.PLAYER_NONE);
-            game.setVictoryTeam(Player.TEAM_NONE);
-            return true;
-        } else if (playersAlive == 1) {
-            if (lastPlayer != null && lastPlayer.getTeam() == Player.TEAM_NONE) {
-                // individual victory
-                game.setVictoryPlayerId(lastPlayer.getId());
+            if (draw) {
+                //multiple-won draw
+                game.setVictoryPlayerId(Player.PLAYER_NONE);
                 game.setVictoryTeam(Player.TEAM_NONE);
-                return true;
+            } else{
+                //nobody-won draw or 
+                //single player won or 
+                //single team won
+                game.setVictoryPlayerId(wonPlayer);
+                game.setVictoryTeam(wonTeam);
             }
-        }
-
-        // did we only find one live team?
-        if (oneTeamAlive && !unteamedAlive) {
-            // team victory
+        } else {
             game.setVictoryPlayerId(Player.PLAYER_NONE);
-            game.setVictoryTeam(lastTeam);
-            return true;
+            game.setVictoryTeam(Player.TEAM_NONE);                    
+            if(game.isForceVictory())
+                cancelVictory();
         }
-
-        // now check for detailed victory conditions...
-        Hashtable<Integer, Integer> winPlayers = new Hashtable<Integer, Integer>();
-        Hashtable<Integer, Integer> winTeams = new Hashtable<Integer, Integer>();
-
-        // BV related victory conditions
-        if (game.getOptions().booleanOption("use_bv_destroyed") || game.getOptions().booleanOption("use_bv_ratio")) {
-            HashSet<Integer> doneTeams = new HashSet<Integer>();
-            for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
-                Player player = e.nextElement();
-                if (player.isObserver())
-                    continue;
-                int fbv = 0;
-                int ebv = 0;
-                int eibv = 0;
-                int team = player.getTeam();
-                if (team != Player.TEAM_NONE) {
-                    if (doneTeams.contains(team))
-                        continue; // skip if already
-                    doneTeams.add(team);
-                }
-
-                for (Enumeration<Player> f = game.getPlayers(); f.hasMoreElements();) {
-                    Player other = f.nextElement();
-                    if (other.isObserver())
-                        continue;
-                    if (other.isEnemyOf(player)) {
-                        ebv += other.getBV();
-                        eibv += other.getInitialBV();
-                    } else {
-                        fbv += other.getBV();
-                    }
-                }
-
-                if (game.getOptions().booleanOption("use_bv_ratio")) {
-                    if (ebv == 0 || (100 * fbv) / ebv >= game.getOptions().intOption("bv_ratio_percent")) {
-                        Report r = new Report(7100, Report.PUBLIC);
-                        if (team == Player.TEAM_NONE) {
-                            r.add(player.getName());
-                            Integer vc = winPlayers.get(player.getId());
-                            if (vc == null)
-                                vc = new Integer(0);
-                            winPlayers.put(player.getId(), vc + 1);
-                        } else {
-                            r.add("Team " + team);
-                            Integer vc = winTeams.get(team);
-                            if (vc == null)
-                                vc = new Integer(0);
-                            winTeams.put(team, vc + 1);
-                        }
-                        r.add(ebv == 0 ? 9999 : (100 * fbv) / ebv);
-                        addReport(r);
-                    }
-                }
-                if (game.getOptions().booleanOption("use_bv_destroyed")) {
-                    if ((ebv * 100) / eibv <= 100 - game.getOptions().intOption("bv_destroyed_percent")) {
-                        Report r = new Report(7105, Report.PUBLIC);
-                        if (team == Player.TEAM_NONE) {
-                            r.add(player.getName());
-                            Integer vc = winPlayers.get(player.getId());
-                            if (vc == null)
-                                vc = new Integer(0);
-                            winPlayers.put(player.getId(), vc + 1);
-                        } else {
-                            r.add("Team " + team);
-                            Integer vc = winTeams.get(team);
-                            if (vc == null)
-                                vc = new Integer(0);
-                            winTeams.put(team, vc + 1);
-                        }
-                        r.add(100 - ((ebv * 100) / eibv));
-                        addReport(r);
-                    }
-                }
-            }
-        }
-
-        // Commander killed victory condition
-        if (game.getOptions().booleanOption("commander_killed")) {
-            // check all players/teams for aliveness
-            playersAlive = 0;
-            lastPlayer = null;
-            oneTeamAlive = false;
-            lastTeam = Player.TEAM_NONE;
-            unteamedAlive = false;
-            for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
-                Player player = e.nextElement();
-                int team = player.getTeam();
-                if (game.getLiveCommandersOwnedBy(player) <= 0) {
-                    continue;
-                }
-                // we found a live one!
-                playersAlive++;
-                lastPlayer = player;
-                // check team
-                if (team == Player.TEAM_NONE) {
-                    unteamedAlive = true;
-                } else if (lastTeam == Player.TEAM_NONE) {
-                    // possibly only one team alive
-                    oneTeamAlive = true;
-                    lastTeam = team;
-                } else if (team != lastTeam) {
-                    // more than one team alive
-                    oneTeamAlive = false;
-                    lastTeam = team;
-                }
-            }
-
-            // check if there's one player alive
-            if (playersAlive < 1) {
-                for (Player p : game.getPlayersVector()) {
-                    Integer vc = winPlayers.get(p.getId());
-                    if (vc == null)
-                        vc = new Integer(0);
-                    winPlayers.put(p.getId(), vc + 1);
-                }
-                for (Team t : game.getTeamsVector()) {
-                    Integer vc = winTeams.get(t.getId());
-                    if (vc == null)
-                        vc = new Integer(0);
-                    winTeams.put(t.getId(), vc + 1);
-                }
-            } else if (playersAlive == 1) {
-                if (lastPlayer != null && lastPlayer.getTeam() == Player.TEAM_NONE) {
-                    // individual victory
-                    Integer vc = winPlayers.get(lastPlayer.getId());
-                    if (vc == null)
-                        vc = new Integer(0);
-                    winPlayers.put(lastPlayer.getId(), vc + 1);
-                }
-            }
-
-            // did we only find one live team?
-            if (oneTeamAlive && !unteamedAlive) {
-                Integer vc = winTeams.get(lastTeam);
-                if (vc == null)
-                    vc = new Integer(0);
-                winTeams.put(lastTeam, vc + 1);
-            }
-        }
-
-        // Any winners?
-        int wonPlayer = Player.PLAYER_NONE;
-        int wonTeam = Player.TEAM_NONE;
-        boolean draw = false;
-        for (Map.Entry<Integer, Integer> e : winPlayers.entrySet()) {
-            if (e.getValue() >= game.getOptions().intOption("achieve_conditions")) {
-                if (wonPlayer != Player.PLAYER_NONE)
-                    draw = true;
-                wonPlayer = e.getKey();
-                Report r = new Report(7200, Report.PUBLIC);
-                r.add(game.getPlayer(wonPlayer).getName());
-                addReport(r);
-            }
-        }
-        for (Map.Entry<Integer, Integer> e : winTeams.entrySet()) {
-            if (e.getValue() >= game.getOptions().intOption("achieve_conditions")) {
-                if (wonTeam != Player.TEAM_NONE || wonPlayer != Player.PLAYER_NONE)
-                    draw = true;
-                wonTeam = e.getKey();
-                Report r = new Report(7200, Report.PUBLIC);
-                r.add("Team " + wonTeam);
-                addReport(r);
-            }
-        }
-        if (draw) {
-            game.setVictoryPlayerId(Player.PLAYER_NONE);
-            game.setVictoryTeam(Player.TEAM_NONE);
-            return true;
-        }
-        if (wonPlayer != Player.PLAYER_NONE) {
-            // individual victory
-            game.setVictoryPlayerId(wonPlayer);
-            game.setVictoryTeam(Player.TEAM_NONE);
-            return true;
-        }
-        if (wonTeam != Player.TEAM_NONE) {
-            // team victory
-            game.setVictoryPlayerId(Player.PLAYER_NONE);
-            game.setVictoryTeam(wonTeam);
-            return true;
-        }
-
-        // If noone has won...
-        if (game.gameTimerIsExpired()) {
-            game.setVictoryPlayerId(Player.PLAYER_NONE);
-            game.setVictoryTeam(Player.TEAM_NONE);
-
-            return true;
-        }
-
-        return false;
-    }
+        return vr.victory();
+    }//end victory
 
     /**
      * Applies board settings. This loads and combines all the boards that were

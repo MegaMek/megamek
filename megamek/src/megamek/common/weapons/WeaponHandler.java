@@ -217,12 +217,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
         r.add(roll);
         vPhaseReport.addElement(r);
 
-        // Any necessary PSRs, jam checks, etc.
-        // If this boolean is true, don't report
-        // the miss later, as we already reported
-        // it in doChecks
-        boolean missReported = doChecks(vPhaseReport);
-
         // do we hit?
         bMissed = roll < toHit.getValue();
 
@@ -247,6 +241,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
         useAmmo();
         addHeat();
         
+        // Any necessary PSRs, jam checks, etc.
+        // If this boolean is true, don't report
+        // the miss later, as we already reported
+        // it in doChecks
+        boolean missReported = doChecks(vPhaseReport);
+        if (missReported) {
+            bMissed = true;
+        }
 
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget, bMissed)) {

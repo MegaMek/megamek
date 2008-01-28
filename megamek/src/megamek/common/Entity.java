@@ -4358,7 +4358,7 @@ public abstract class Entity extends TurnOrdered
         while ( iter.hasMoreElements() ) {
             try {
                 String name = iter.nextElement();
-                Class transporter = Class.forName( name );
+                Class<?> transporter = Class.forName( name );
                 Object object = null;
                 if ( TroopSpace.class.getName().equals( name ) ) {
                     // Get the tonnage of space.
@@ -5220,9 +5220,9 @@ public abstract class Entity extends TurnOrdered
     }
     
     public boolean isAttackingThisTurn() {
-        Vector actions = game.getActionsVector();
-        for (Enumeration e = actions.elements(); e.hasMoreElements();) {
-            EntityAction ea = (EntityAction) e.nextElement();
+        Vector<EntityAction> actions = game.getActionsVector();
+        for (Enumeration<EntityAction> e = actions.elements(); e.hasMoreElements();) {
+            EntityAction ea =  e.nextElement();
             if (ea.getEntityId() == this.getId() && ea instanceof AbstractAttackAction)
                 return true;
         }

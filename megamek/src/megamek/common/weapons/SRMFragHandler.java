@@ -32,6 +32,11 @@ import megamek.server.Server.DamageType;
 public class SRMFragHandler extends SRMHandler {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -2281133981582906299L;
+
+    /**
      * @param t
      * @param w
      * @param g

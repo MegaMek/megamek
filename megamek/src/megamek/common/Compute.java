@@ -1145,7 +1145,7 @@ public class Compute {
                 .getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
 
         int primaryTarget = Entity.NONE;
-        for (Enumeration i = game.getActions(); i.hasMoreElements();) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
             Object o = i.nextElement();
             if (!(o instanceof WeaponAttackAction)) {
                 continue;
@@ -1506,11 +1506,11 @@ public class Compute {
      * damage
      */
     public static WeaponAttackAction getHighestExpectedDamage(IGame g,
-            Vector vAttacks, boolean assumeHit) {
+            Vector<WeaponAttackAction> vAttacks, boolean assumeHit) {
         float fHighest = -1.0f;
         WeaponAttackAction waaHighest = null;
         for (int x = 0, n = vAttacks.size(); x < n; x++) {
-            WeaponAttackAction waa = (WeaponAttackAction) vAttacks.elementAt(x);
+            WeaponAttackAction waa = vAttacks.elementAt(x);
             float fDanger = getExpectedDamage(g, waa, assumeHit);
             if (fDanger > fHighest) {
                 fHighest = fDanger;
@@ -2499,8 +2499,8 @@ Average:     0.649                0.781                0.527                0.42
         // Only grab enemies with active ECM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Enumeration e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = (Entity) e.nextElement();
+        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
+            Entity ent =  e.nextElement();
             Coords entPos = ent.getPosition();
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null
                     && !ent.equals(ae)) {
@@ -3639,9 +3639,9 @@ Average:     0.649                0.781                0.527                0.42
         Entity tempEntity = null;
         Entity attacker = game.getEntity(aeId);
         // first, check the hex of the original target
-        Enumeration entities = game.getEnemyEntities(coords, te);
+        Enumeration<Entity> entities = game.getEnemyEntities(coords, te);
         while (entities.hasMoreElements()) {
-            tempEntity = (Entity) entities.nextElement();
+            tempEntity = entities.nextElement();
             if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                 // we found a target
                 return tempEntity;

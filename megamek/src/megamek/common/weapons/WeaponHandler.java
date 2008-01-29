@@ -43,6 +43,10 @@ import megamek.server.Server.DamageType;
  */
 public class WeaponHandler implements AttackHandler, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7137408139594693559L;
     public ToHitData toHit;
     public WeaponAttackAction waa;
     public int roll;

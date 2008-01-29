@@ -32,6 +32,11 @@ import megamek.server.Server.DamageType;
 public class LRMFragHandler extends LRMHandler {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 2308151080895016663L;
+
+    /**
      * @param t
      * @param w
      * @param g

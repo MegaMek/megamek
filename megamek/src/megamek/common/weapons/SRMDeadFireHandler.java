@@ -13,23 +13,21 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.BattleArmor;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 /**
- * @author Sebastian Brocks
+ * @author Jason Tighe
  *
  */
-public class SRMHandler extends MissileWeaponHandler {
+public class SRMDeadFireHandler extends SRMHandler {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -1618484541772117621L;
+    private static final long serialVersionUID = -1511452503641090393L;
 
     /**
      * @param t
@@ -37,27 +35,25 @@ public class SRMHandler extends MissileWeaponHandler {
      * @param g
      * @param s
      */
-    public SRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public SRMDeadFireHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
+        sSalvoType = " dead fire missile(s) ";
     }
     
-    
-    /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
-    protected int calcDamagePerHit() {
-        if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return (int)Math.ceil(((float)wtype.getRackSize()*2)/5);
-        return 2;
-    }
-
     /*
      *  (non-Javadoc)
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
         return 1;
+    }
+
+    /*
+     *  (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     */
+    protected int calcDamagePerHit() {
+        return 3;
     }
 
 }

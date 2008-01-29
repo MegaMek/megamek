@@ -541,7 +541,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             }
         } else if (wtype.getAmmoType() == AmmoType.T_LRM ||
                    wtype.getAmmoType() == AmmoType.T_SRM) {
-            if (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
+            if (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE ||
+                    atype.getMunitionType() == AmmoType.M_LISTEN_KILL) {
                 isNemesisConfusable = true;
             }
         }

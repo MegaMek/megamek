@@ -16,7 +16,6 @@ package megamek.common.weapons;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -34,6 +33,11 @@ import megamek.server.Server;
  */
 public class LRMHandler extends MissileWeaponHandler {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9160255801810263821L;
+
     /**
      * @param t
      * @param w
@@ -60,9 +64,9 @@ public class LRMHandler extends MissileWeaponHandler {
                 vPhaseReport.addElement(r);
                 Coords coords = target.getPosition();
 
-                Enumeration minefields = game.getMinefields(coords).elements();
+                Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
                 while (minefields.hasMoreElements()) {
-                    Minefield mf = (Minefield) minefields.nextElement();
+                    Minefield mf = minefields.nextElement();
 
                     server.removeMinefield(mf);
                 }

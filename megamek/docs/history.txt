@@ -18,6 +18,7 @@ v0.33.17-dev (SVN)
 + Bug: Follow the Leader LRM/MML not working correctly
 + Bug: Tandem Charge SRM/MML not working correctly
 + fixed some warnings
++ Bug: All !Draw Victores showing as Draws.
 
 v0.33.16 (2007-01-19, 18:45 GMT+1)
 + Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change

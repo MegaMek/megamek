@@ -198,7 +198,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     /**
      * Return a list of superimposed images for the hex
      */
-    public List supersFor(IHex hex) {
+    public List<Image> supersFor(IHex hex) {
         return hexTileset.getSupers(hex, comp);
     }
 
@@ -291,8 +291,8 @@ public class TilesetManager implements IPreferenceChangeListener {
         }
         
         // load all mech images
-        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            loadImage((Entity) i.nextElement());
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            loadImage(i.nextElement());
         }
         
         // load minefield sign
@@ -452,7 +452,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         private Image base;
         private Image wreck;
         private Image icon;
-        private int tint;
+        int tint;
         private Image camo;
         private Image[] facings = new Image[6];
         private Image[] wreckFacings = new Image[6];

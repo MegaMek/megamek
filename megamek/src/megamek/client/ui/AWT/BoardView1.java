@@ -48,9 +48,16 @@ import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
-import javax.swing.SwingUtilities;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TimerTask;
+import java.util.Vector;
 
+import javax.swing.SwingUtilities;
+
+import megamek.client.TimerSingleton;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
@@ -60,7 +67,6 @@ import megamek.client.ui.AWT.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.AWT.util.KeyAlphaFilter;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.util.StraightArrowPolygon;
-import megamek.client.TimerSingleton;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -152,18 +158,18 @@ public class BoardView1
     private static Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
     private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12); //$NON-NLS-1$
 
-    private Dimension       hex_size = null;
+    Dimension       hex_size = null;
     
     private Font       font_hexnum          = FONT_10;
     private Font       font_elev        = FONT_9;
     private Font       font_minefield   = FONT_12;
 
-    private IGame game;
+    IGame game;
     private Frame frame;
 
     private Point       mousePos = new Point();
-    private Rectangle   view = new Rectangle();
-    private Point       offset = new Point();
+    Rectangle   view = new Rectangle();
+    Point       offset = new Point();
     private Dimension boardSize;
 
     // scrolly stuff:
@@ -178,7 +184,7 @@ public class BoardView1
 
     // back buffer to draw to
     private Image backImage;
-    private Dimension backSize;
+    Dimension backSize;
     private Graphics backGraph;
 
     // buffer for all the hexes you can possibly see
@@ -201,7 +207,7 @@ public class BoardView1
     private ArrayList<StepSprite> pathSprites = new ArrayList<StepSprite>();
 
     // vector of sprites for all firing lines
-    private ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
+    ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
 
     // vector of sprites for C3 network lines
     private ArrayList<C3Sprite> C3Sprites = new ArrayList<C3Sprite>();
@@ -211,12 +217,12 @@ public class BoardView1
     private boolean isTipPossible = false;
     private long lastIdle;
 
-    private TilesetManager tileManager = null;
+    TilesetManager tileManager = null;
 
     // polygons for a few things
-    private Polygon              hexPoly;
-    private Polygon[]            facingPolys;
-    private Polygon[]            movementPolys;
+    Polygon              hexPoly;
+    Polygon[]            facingPolys;
+    Polygon[]            movementPolys;
 
     // the player who owns this BoardView's client
     private Player               localPlayer = null;
@@ -229,11 +235,11 @@ public class BoardView1
 
     // Initial scale factor for sprites and map
     public      int                     zoomIndex;
-    private float               scale;
+    float               scale;
     private ImageCache<Image,Image> scaledImageCache = new ImageCache<Image,Image>();
         
     // Displayables (Chat box, etc.)
-    private ArrayList<Displayable> displayables = new ArrayList<Displayable>();
+    ArrayList<Displayable> displayables = new ArrayList<Displayable>();
 
     // Move units step by step
     private ArrayList<MovingUnit>               movingUnits = new ArrayList<MovingUnit>();
@@ -411,7 +417,7 @@ public class BoardView1
         }
     }
 
-    private void addMovingUnit(Entity entity, Vector<UnitLocation> movePath) {
+    void addMovingUnit(Entity entity, Vector<UnitLocation> movePath) {
         if ( !movePath.isEmpty() ) {
             MovingUnit m = new MovingUnit(entity, movePath);
             movingUnits.add(m);
@@ -680,7 +686,7 @@ public class BoardView1
     /**
      * Manages a cache of scaled images.
      */
-    private Image getScaledImage(Image base) {
+    Image getScaledImage(Image base) {
         if (base == null) {
             return null;
         }
@@ -841,8 +847,8 @@ public class BoardView1
                 }
                 //process incoming attacks - requires server to update client's view of game
                 
-                for(Enumeration attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
-                    ArtilleryAttackAction a = (ArtilleryAttackAction)attacks.nextElement();
+                for(Enumeration<ArtilleryAttackAction> attacks=game.getArtilleryAttacks();attacks.hasMoreElements();) {
+                    ArtilleryAttackAction a = attacks.nextElement();
 
                     if(a.getTarget(game).getPosition().equals(c)) {
                         scaledImage = getScaledImage(tileManager.getArtilleryTarget(TilesetManager.ARTILLERY_INCOMING));
@@ -1164,8 +1170,8 @@ public class BoardView1
         boardGraph.drawImage(scaledImage, drawX, drawY, this);
         
         if (tileManager.supersFor(hex) != null) {
-            for (Iterator i = tileManager.supersFor(hex).iterator(); i.hasNext();){
-                scaledImage = getScaledImage((Image)i.next());
+            for (Iterator<Image> i = tileManager.supersFor(hex).iterator(); i.hasNext();){
+                scaledImage = getScaledImage(i.next());
                 boardGraph.drawImage(scaledImage, drawX, drawY, this);
             }
         }
@@ -1312,7 +1318,7 @@ public class BoardView1
                 x * (int)(HEX_WC*scale),
                 y * (int)(HEX_H*scale) + ((x & 1) == 1 ? (int)(HEX_H/2*scale) : 0));
     }
-    private Point getHexLocation(Coords c) {
+    Point getHexLocation(Coords c) {
         return getHexLocation(c.x, c.y);
     }
 
@@ -1436,7 +1442,7 @@ public class BoardView1
         stringsSize += game.getNbrMinefields(mcoords);
         
         // Artillery
-        final ArrayList artilleryAttacks = getArtilleryAttacksAtLocation(mcoords);
+        final ArrayList<ArtilleryAttackAction> artilleryAttacks = getArtilleryAttacksAtLocation(mcoords);
         stringsSize += artilleryAttacks.size();
 
         // Artillery fire adjustment
@@ -1541,9 +1547,9 @@ public class BoardView1
             }
 
             if (game.containsMinefield(mcoords)) {
-                Vector minefields = game.getMinefields(mcoords);
+                Vector<Minefield> minefields = game.getMinefields(mcoords);
                 for (int i = 0; i < minefields.size(); i++){
-                    Minefield mf = (Minefield) minefields.elementAt(i);
+                    Minefield mf = minefields.elementAt(i);
                     String owner =  " (" + game.getPlayer(mf.getPlayerId()).getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
                     switch (mf.getType()) {
@@ -1595,8 +1601,8 @@ public class BoardView1
         }
         
         // check artillery attacks
-        for(Iterator i = artilleryAttacks.iterator(); i.hasNext();) {
-            final ArtilleryAttackAction aaa = (ArtilleryAttackAction)i.next();
+        for(Iterator<ArtilleryAttackAction> i = artilleryAttacks.iterator(); i.hasNext();) {
+            final ArtilleryAttackAction aaa = i.next();
             final Entity ae = game.getEntity(aaa.getEntityId());
             String s = null;
             if(ae != null) {
@@ -1655,7 +1661,7 @@ public class BoardView1
      * Checks if the mouse has been idling for a while and if so, shows the
      * tooltip window
      */
-    private void checkTooltip() {
+    void checkTooltip() {
         if (isTipShowing()) {
             if (!isTipPossible) {
                 hideTooltip();
@@ -1744,7 +1750,7 @@ public class BoardView1
     /**
      * Clears all old entity sprites out of memory and sets up new ones.
      */
-    private void redrawAllEntities() {
+    void redrawAllEntities() {
         ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(game.getNoOfEntities());
         HashMap<Integer,EntitySprite> newSpriteIds = new HashMap<Integer,EntitySprite>(game.getNoOfEntities());
         ArrayList<WreckSprite> newWrecks = new ArrayList<WreckSprite>();
@@ -2269,7 +2275,7 @@ public class BoardView1
         movementPolys[7].addPoint(35, 53);
     }
 
-    private synchronized boolean doMoveUnits(long idleTime) {
+    synchronized boolean doMoveUnits(long idleTime) {
         boolean movingSomething = false;
 
         if (movingUnits.size() > 0) {
@@ -2722,7 +2728,7 @@ public class BoardView1
      * which they draw onto the screen when told to.  Sprites keep a bounds
      * rectangle, so it's easy to tell when they'return onscreen.
      */
-    private abstract class Sprite implements ImageObserver
+    abstract class Sprite implements ImageObserver
     {
         protected Rectangle bounds;
         protected Image image;
@@ -3945,7 +3951,7 @@ public class BoardView1
         private int targetId;
         private String attackerDesc;
         private String targetDesc;
-        private ArrayList<String> weaponDescs = new ArrayList<String>();
+        ArrayList<String> weaponDescs = new ArrayList<String>();
         private final Entity ae;
         private final Targetable target;
 
@@ -4496,13 +4502,13 @@ public class BoardView1
         }
     };
 
-    private synchronized void boardChanged() {
+    synchronized void boardChanged() {
 //        boardImage = null;
 //        boardGraph = null;
         redrawAllEntities();        
     }
 
-    private void clearSprites() {
+    void clearSprites() {
         pathSprites.clear();
         attackSprites.clear();
         C3Sprites.clear();

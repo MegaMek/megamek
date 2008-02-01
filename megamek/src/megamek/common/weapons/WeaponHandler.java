@@ -501,8 +501,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         9)) {
             return;
         }
-
-        //int tn = 14 - nDamage;
         server.tryClearHex(target.getPosition(), nDamage, subjectId);
         return;
     }

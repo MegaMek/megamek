@@ -26,6 +26,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.EquipmentType;
+import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IOffBoardDirections;
 import megamek.common.Infantry;
@@ -132,14 +133,14 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private PilotOptions options;
     
     private Vector<DialogOptionComponent> optionComps = new Vector<DialogOptionComponent>();
-    
+   
     private Panel panOptions = new Panel();
     private ScrollPane scrOptions = new ScrollPane();
-    
+ 
     private ScrollPane scrAll = new ScrollPane();
 
     private TextArea texDesc = new TextArea(Messages.getString("CustomMechDialog.texDesc"), 3, 35, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
-
+   
     private boolean editable;
     
     private int direction = -1;
@@ -234,7 +235,8 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         tempPanel.add(choDeployment);
         refreshDeployment();
 
-        if ( clientgui.getClient().game.getOptions().booleanOption("pilot_advantages") ) { //$NON-NLS-1$
+        if ( clientgui.getClient().game.getOptions().booleanOption("pilot_advantages") //$NON-NLS-1$
+                || clientgui.getClient().game.getOptions().booleanOption("manei_domini") ) { //$NON-NLS-1$
             scrOptions.add(panOptions);
 
             c.weightx = 1.0;
@@ -969,11 +971,25 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
             
+            if(group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) && !clientgui.getClient().game.getOptions().booleanOption("pilot_advantages"))
+                continue;
+            
+            if(group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES) && !clientgui.getClient().game.getOptions().booleanOption("manei_domini"))
+                continue;
+            
+            
             addGroup(group, gridbag, c);
             
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
                 IOption option = j.nextElement();
 
+                //disallow VDNI for non-vehicle units (what about Protomechs?)
+                //TODO: Allow pain shunt abilities for infantry and BA
+                if( (entity instanceof Infantry || entity instanceof BattleArmor || entity instanceof GunEmplacement) 
+                        && (option.getName().equals("vdni") || option.getName().equals("bvdni"))) {
+                    continue;
+                }
+                
                 addOption(option, gridbag, c, editable);
             }
         }
@@ -1000,6 +1016,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             }
             for (String name:uniqueWeapons) {
                 optionComp.addValue(name);
+                
             }
             optionComp.setSelected(option.stringValue());
         }
@@ -1013,7 +1030,7 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     public void showDescFor(IOption option) {
         texDesc.setText(option.getDescription());
     }
-
+       
     // TODO : implement me!!!
     public void optionClicked( DialogOptionComponent comp,
                                IOption option, boolean state ) {

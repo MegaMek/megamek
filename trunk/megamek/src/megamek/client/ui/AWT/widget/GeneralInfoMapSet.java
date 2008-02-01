@@ -247,7 +247,7 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         for (int i=0; i < advantagesR.length; i++ ) {
             advantagesR[i].setString(""); //$NON-NLS-1$
         }
-        if (en.crew.countAdvantages() > 0) {
+        if (en.crew.countAdvantages() > 0 || en.crew.countMDImplants() > 0) {
             int i=0;
             for (Enumeration advantages = en.crew.getAdvantages(); advantages.hasMoreElements();) {
                 IOption option = (IOption)advantages.nextElement();
@@ -255,6 +255,12 @@ public class GeneralInfoMapSet implements DisplayMapSet{
                     advantagesR[i++].setString(option.getDisplayableNameWithValue());
                 }
             }
+            for (Enumeration implants = en.crew.getMDImplants(); implants.hasMoreElements();) {
+                IOption option = (IOption)implants.nextElement();
+                if (option.booleanValue()) {
+                    advantagesR[i++].setString(option.getDisplayableNameWithValue());
+                }
+            }       
         }
         
         if (en.mpUsed > 0) {

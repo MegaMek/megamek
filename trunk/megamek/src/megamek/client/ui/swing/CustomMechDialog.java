@@ -52,6 +52,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.EquipmentType;
+import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IOffBoardDirections;
 import megamek.common.Infantry;
@@ -242,7 +243,8 @@ public class CustomMechDialog
         tempPanel.add(choDeployment);
         refreshDeployment();
 
-        if (clientgui.getClient().game.getOptions().booleanOption("pilot_advantages")) { //$NON-NLS-1$
+        if ( clientgui.getClient().game.getOptions().booleanOption("pilot_advantages") //$NON-NLS-1$
+                || clientgui.getClient().game.getOptions().booleanOption("manei_domini") ) { //$NON-NLS-1$
             scrOptions = new JScrollPane(panOptions);
 
             c.weightx = 1.0;
@@ -968,11 +970,22 @@ public class CustomMechDialog
 
         for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
+            
+            if(group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) && !clientgui.getClient().game.getOptions().booleanOption("pilot_advantages"))
+                continue;
+            
+            if(group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES) && !clientgui.getClient().game.getOptions().booleanOption("manei_domini"))
+                continue;
 
             addGroup(group, gridbag, c);
 
             for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
                 IOption option = j.nextElement();
+                //disallow VDNI for non-vehicle units (what about Protomechs?)
+                if( (entity instanceof Infantry || entity instanceof BattleArmor || entity instanceof GunEmplacement) 
+                        && (option.getName().equals("vdni") || option.getName().equals("bvdni"))) {
+                    continue;
+                }
 
                 addOption(option, gridbag, c, editable);
             }

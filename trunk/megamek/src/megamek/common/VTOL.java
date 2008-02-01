@@ -368,6 +368,12 @@ public class VTOL extends Tank {
             prd.addModifier(2, "pilot injured");
         if(isStabiliserHit(LOC_ROTOR))
             prd.addModifier(3, "flight stabiliser damaged");
+        
+        //VDNI bonus?
+        if(getCrew().getOptions().booleanOption("vdni") && !getCrew().getOptions().booleanOption("bvdni")) {
+            prd.addModifier(-1, "VDNI");
+        }
+        
         return prd;
     }
     

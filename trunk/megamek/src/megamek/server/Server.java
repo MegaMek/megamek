@@ -9964,16 +9964,18 @@ public class Server implements Runnable {
                     heatLimitDesc = 15;
                     damageToCrew = 1;
                 }
-                if (entity.heat > 0 && entity instanceof Mech && ((Mech) entity).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED)
+                if (entity.heat > 0 && entity instanceof Mech && ((Mech) entity).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED 
+                        && !entity.crew.getOptions().booleanOption("pain_shunt"))
                     damageToCrew += 1;
                 r = new Report(5070);
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.add(heatLimitDesc);
                 r.add(damageToCrew);
-                addReport(r);
+                addReport(r);              
                 damageCrew(entity, damageToCrew);
-            } else if (mtHeat && entity.heat >= 32 && !entity.crew.isDead() && !entity.crew.isDoomed()) {
+            } else if (mtHeat && entity.heat >= 32 && !entity.crew.isDead() && !entity.crew.isDoomed() 
+                        && !entity.crew.getOptions().booleanOption("pain_shunt")) {
                 // Pilot may take damage from heat if MaxTech option is set
                 int heatroll = Compute.d6(2);
                 int avoidNumber = -1;
@@ -9993,7 +9995,6 @@ public class Server implements Runnable {
                     // damage avoided
                     r.choose(true);
                 } else {
-                    damageCrew(entity, 1);
                     r.choose(false);
                 }
                 addReport(r);
@@ -10512,6 +10513,12 @@ public class Server implements Runnable {
         if (e instanceof MechWarrior || !e.isTargetable() || !e.getCrew().isActive() || damage == 0) {
             return vDesc;
         }
+        
+        //no consciousness roll for pain-shunted warriors
+        if(e.crew.getOptions().booleanOption("pain_shunt")) {
+            return vDesc;
+        }
+        
         for (int hit = totalHits - damage + 1; hit <= totalHits; hit++) {
             int rollTarget = Compute.getConsciousnessNumber(hit);
             boolean edgeUsed = false;
@@ -11218,6 +11225,7 @@ public class Server implements Runnable {
             // is there damage remaining?
             if (damage > 0) {
                 tookInternalDamage = true;
+                
                 // is there internal structure in the location hit?
                 if (te.getInternal(hit) > 0) {
                     // Triggers a critical hit on Vehicles and Mechs.
@@ -11603,6 +11611,24 @@ public class Server implements Runnable {
             }
         }
 
+        //if using VDNI (but not buffered), check for damage on an internal hit
+        if(tookInternalDamage && te.crew.getOptions().booleanOption("vdni") && !te.crew.getOptions().booleanOption("bvdni") 
+                && !te.crew.getOptions().booleanOption("pain_shunt")) {
+            Report.addNewline(vDesc);
+            int roll = Compute.d6(2);
+            r = new Report(3580);
+            r.subject = te.getId();
+            r.addDesc(te);
+            r.add(7);
+            r.add(roll);
+            r.choose(roll >= 8);
+            r.indent(2);
+            vDesc.add(r);
+            if (roll >= 8) {
+                vDesc.addAll(damageCrew(te, 1));
+            }
+        }
+        
         // damage field guns on infantry platoons if there arent enough men left
         // to man it
         if (isPlatoon) {
@@ -12431,7 +12457,7 @@ public class Server implements Runnable {
     public Vector<Report> applyCriticalHit(Entity en, int loc, CriticalSlot cs, boolean secondaryEffects) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
-
+        
         // Handle hits on "critical slots" of tanks.
         if (en instanceof Tank) {
             Tank t = (Tank) en;
@@ -12480,29 +12506,84 @@ public class Server implements Runnable {
                 // damage
                 break;
             case Tank.CRIT_COMMANDER:
-                r = new Report(6600);
-                r.subject = t.getId();
-                vDesc.add(r);
-                t.setCommanderHit(true);
+                if(en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni")) {
+                    r = new Report(6191);
+                    r.subject = t.getId();
+                    vDesc.add(r);
+                    vDesc.addAll(damageCrew(en,1));
+                } else {
+                    if(en.crew.getOptions().booleanOption("pain_shunt") && !t.isCommanderHitPS()) {
+                        r = new Report(6606);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                        t.setCommanderHitPS(true);
+                    } else {
+                        r = new Report(6605);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                        t.setCommanderHit(true);
+                    }
+                }
                 break;
             case Tank.CRIT_DRIVER:
-                r = new Report(6605);
-                r.subject = t.getId();
-                vDesc.add(r);
-                t.setDriverHit(true);
+                if(en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni")) {
+                    r = new Report(6191);
+                    r.subject = t.getId();
+                    vDesc.add(r);
+                    vDesc.addAll(damageCrew(en,1));
+                } else {
+                    if(en.crew.getOptions().booleanOption("pain_shunt") && !t.isDriverHitPS()) {
+                        r = new Report(6601);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                        t.setDriverHit(true);
+                    } else {
+                        r = new Report(6600);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                        t.setDriverHitPS(true);
+                    }
+                }
                 break;
             case Tank.CRIT_CREW_KILLED:
-                r = new Report(6190);
-                r.subject = t.getId();
-                vDesc.add(r);
-                t.getCrew().setDoomed(true);
+                if(en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni")) {
+                    r = new Report(6191);
+                    r.subject = t.getId();
+                    vDesc.add(r);
+                    vDesc.addAll(damageCrew(en,1));
+                } else {
+                    if(en.crew.getOptions().booleanOption("pain_shunt") && !t.isCrewHitPS()) {
+                        r = new Report(6191);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                        t.setCrewHitPS(true);
+                    } else {
+                        r = new Report(6190);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                        t.getCrew().setDoomed(true);
+                    }
+                }
                 break;
             case Tank.CRIT_CREW_STUNNED:
-                t.stunCrew();
-                r = new Report(6185);
-                r.add(t.getStunnedTurns() - 1);
-                r.subject = t.getId();
-                vDesc.add(r);
+                if(en.crew.getOptions().booleanOption("vdni") || en.crew.getOptions().booleanOption("bvdni")) {
+                    r = new Report(6191);
+                    r.subject = t.getId();
+                    vDesc.add(r);
+                    vDesc.addAll(damageCrew(en,1));
+                } else {
+                    if(en.crew.getOptions().booleanOption("pain_shunt")) {
+                        r = new Report(6186);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                    } else {
+                        t.stunCrew();
+                        r = new Report(6185);
+                        r.add(t.getStunnedTurns() - 1);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                    }
+                }
                 break;
             case Tank.CRIT_ENGINE:
                 r = new Report(6210);
@@ -12949,6 +13030,23 @@ public class Server implements Runnable {
             en.hitThisRoundByAntiTSM = false;
         }
 
+        //if using buffered VDNI then a possible pilot hit
+        if(en.crew.getOptions().booleanOption("bvdni") && !en.crew.getOptions().booleanOption("pain_shunt")) {
+            Report.addNewline(vDesc);
+            int roll = Compute.d6(2);
+            r = new Report(3580);
+            r.subject = en.getId();
+            r.addDesc(en);
+            r.add(7);
+            r.add(roll);
+            r.choose(roll >= 8);
+            r.indent(2);
+            vDesc.add(r);
+            if (roll >= 7) {
+                vDesc.addAll(damageCrew(en, 1));
+            }
+        }
+        
         // Return the results of the damage.
         return vDesc;
     }
@@ -14008,7 +14106,8 @@ public class Server implements Runnable {
             pilotDamage = 1;
         if (en.getCrew().getOptions().booleanOption("iron_man"))
             pilotDamage = 1;
-        vDesc.addAll(damageCrew(en, pilotDamage));
+        if(!en.crew.getOptions().booleanOption("pain_shunt"))
+            vDesc.addAll(damageCrew(en, pilotDamage));
         if (en.crew.isDoomed() || en.crew.isDead()) {
             vDesc.addAll(destroyEntity(en, "crew death", true));
         } else {

@@ -25,6 +25,7 @@ import java.util.Vector;
 public class PilotOptions extends AbstractOptions implements Serializable {
 	private static final long serialVersionUID = 6628080570425023949L;
 	public static final String LVL3_ADVANTAGES = "lvl3Advantages"; //$NON-NLS-1$
+    public static final String MD_ADVANTAGES = "MDAdvantages"; //$NON-NLS-1$
 
     public PilotOptions() {
         super();
@@ -52,6 +53,12 @@ public class PilotOptions extends AbstractOptions implements Serializable {
         addOption(adv, "edge_when_ko", false); //$NON-NLS-1$
         addOption(adv, "edge_when_explosion", false); //$NON-NLS-1$
         
+        //manei domini
+        IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES); //$NON-NLS-1$
+        addOption(md,"vdni", false); //$NON-NLS-1$
+        addOption(md,"bvdni", false); //$NON-NLS-1$
+        addOption(md,"pain_shunt", false); //$NON-NLS-1$
+           
     }
 
     /* (non-Javadoc)

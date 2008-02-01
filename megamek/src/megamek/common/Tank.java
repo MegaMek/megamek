@@ -84,6 +84,11 @@ public class Tank
     private int stabiliserHits = 0;
     private boolean driverHit = false;
     private boolean commanderHit = false;
+    
+    //pain-shunted units can take two driver and commander hits and two hits before being killed
+    private boolean driverHitPS = false;
+    private boolean commanderHitPS = false;
+    private boolean crewHitPS = false;
 
     public boolean hasNoTurret() 
     { 
@@ -186,6 +191,30 @@ public class Tank
     
     public void setCommanderHit(boolean hit) {
         commanderHit = hit;
+    }
+    
+    public boolean isDriverHitPS() {
+        return driverHitPS;
+    }
+    
+    public void setDriverHitPS(boolean hit) {
+        driverHitPS = hit;
+    }
+    
+    public boolean isCommanderHitPS() {
+        return commanderHitPS;
+    }
+    
+    public void setCommanderHitPS(boolean hit) {
+        commanderHitPS = hit;
+    }
+    
+    public boolean isCrewHitPS() {
+        return crewHitPS;
+    }
+    
+    public void setCrewHitPS(boolean hit) {
+        crewHitPS = hit;
     }
     
     public boolean isMovementHit() {
@@ -769,6 +798,11 @@ public class Tank
             prd.addModifier(1, "commander injured");
         if(driverHit)
             prd.addModifier(2, "driver injured");
+        
+        //      VDNI bonus?
+        if(getCrew().getOptions().booleanOption("vdni") && !getCrew().getOptions().booleanOption("bvdni")) {
+            prd.addModifier(-1, "VDNI");
+        }
         return prd;
     }
 

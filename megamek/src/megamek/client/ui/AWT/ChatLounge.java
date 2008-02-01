@@ -948,7 +948,8 @@ public class ChatLounge
         }
 
         int crewAdvCount = entity.getCrew().countAdvantages();
-
+        boolean isManeiDomini = entity.getCrew().countMDImplants() > 0;
+        
         if (blindDrop) {
             String unitClass = ""; //$NON-NLS-1$
             if (entity instanceof Infantry) {
@@ -968,6 +969,7 @@ public class ChatLounge
                 new Integer(entity.getCrew().getGunnery()),
                 new Integer(entity.getCrew().getPiloting()),
                 (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                (isManeiDomini ? Messages.getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 unitClass,
                 ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$
                 ((entity.getDeployRound() > 0) ? Messages.getString("ChatLounge.deploysAfterRound") + entity.getDeployRound() : "")}); //$NON-NLS-1$ //$NON-NLS-2$
@@ -978,6 +980,7 @@ public class ChatLounge
                     new Integer(entity.getCrew().getGunnery()),
                     new Integer(entity.getCrew().getPiloting()),
                     (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    (isManeiDomini ? Messages.getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     new Integer(entity.calculateBattleValue()),
                     strTreeView,
                     ((entity.isOffBoard()) ? Messages.getString("ChatLounge.deploysOffBoard") : ""), //$NON-NLS-1$ //$NON-NLS-2$

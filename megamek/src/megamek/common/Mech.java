@@ -2589,9 +2589,14 @@ public abstract class Mech
         if (hasActiveEiCockpit()) {
             roll.addModifier(-1, "Enhanced Imaging");
         }
-
+        
+//      VDNI bonus?
+        if(getCrew().getOptions().booleanOption("vdni") && !getCrew().getOptions().booleanOption("bvdni")) {
+            roll.addModifier(-1, "VDNI");
+        }
+        
         // Small/torso-mounted cockpit penalty?
-        if (getCockpitType() == Mech.COCKPIT_SMALL) {
+        if (getCockpitType() == Mech.COCKPIT_SMALL && !getCrew().getOptions().booleanOption("bvdni")) {
             roll.addModifier(1, "Small Cockpit");
         } else if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             roll.addModifier(1, "Torso-Mounted Cockpit");

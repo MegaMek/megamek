@@ -47,8 +47,7 @@ public class ISPPCHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#doChecks()
+     * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         // Resolve roll for disengaged field inhibitors on PPCs, if needed

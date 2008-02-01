@@ -66,7 +66,7 @@ public class KickAttackAction extends PhysicalAttackAction
     /**
      * Damage that the specified mech does with a kick
      */
-    public static int getDamageFor(Entity entity, int leg) {
+    public static int getDamageFor(Entity entity, int leg, boolean targetInfantry) {
         int[] kickLegs = new int[2];
         if ( entity.entityIsQuad() 
                 && leg != LEFTMULE
@@ -98,6 +98,9 @@ public class KickAttackAction extends PhysicalAttackAction
         // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(legLoc) == ILocationExposureStatus.WET) {
             toReturn = (int)Math.ceil(toReturn * 0.5f);
+        }
+        if (targetInfantry) {
+            toReturn = Math.max(1, toReturn/10);
         }
         return toReturn;
     }

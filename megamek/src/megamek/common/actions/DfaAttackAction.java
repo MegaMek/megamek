@@ -55,8 +55,13 @@ public class DfaAttackAction extends DisplacementAttackAction {
     /**
      * Damage that a mech does with a successful DFA.
      */
-    public static int getDamageFor(Entity entity) {
-        return (int)Math.ceil((entity.getWeight() / 10.0) * 3.0);
+    public static int getDamageFor(Entity entity, boolean targetInfantry) {
+        int toReturn = (int)Math.ceil((entity.getWeight() / 10.0) * 3.0);
+        if (targetInfantry) {
+            toReturn = Math.max(1, toReturn/10);
+        }
+        return toReturn; 
+        
     }
     
     /**

@@ -14,34 +14,6 @@
  
 package megamek.client.ui.AWT;
  
-import megamek.client.Client;
-import megamek.client.ui.AWT.widget.BufferedPanel;
-import megamek.common.BattleArmor;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.IEntityMovementMode;
-import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.MechSummaryComparator;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.UnitType;
-import megamek.common.WeaponType;
-import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.PilotOptions;
-import megamek.common.preference.IClientPreferences;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestEntity;
-import megamek.common.verifier.TestMech;
-import megamek.common.verifier.TestTank;
-
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Checkbox;
@@ -69,7 +41,36 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Vector;
+
+import megamek.client.Client;
+import megamek.client.ui.AWT.widget.BufferedPanel;
+import megamek.common.BattleArmor;
+import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
+import megamek.common.EquipmentType;
+import megamek.common.IEntityMovementMode;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.MechFileParser;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.MechSummaryComparator;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.Tank;
+import megamek.common.TechConstants;
+import megamek.common.UnitType;
+import megamek.common.WeaponType;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.PilotOptions;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestTank;
 
 /* 
  * Allows a user to sort through a list of MechSummaries and select one
@@ -436,7 +437,9 @@ public class MechSelectorDialog
     }
 
     private void populateWeaponsAndEquipmentChoices() {
-        m_cWeapons1.removeAll();
+    	LinkedHashSet<String> weapons = new LinkedHashSet<String>();
+    	LinkedHashSet<String> equipment = new LinkedHashSet<String>(); 
+    	m_cWeapons1.removeAll();
         m_cWeapons2.removeAll();
         m_cEquipment.removeAll();
         m_tWeapons1.setText("");
@@ -463,13 +466,12 @@ public class MechSelectorDialog
                         || et.hasFlag(WeaponType.F_BATTLEARMOR)))) {
                     continue;
                 }
-                m_cWeapons1.add(et.getName());
-                m_cWeapons2.add(et.getName());
+                weapons.add(et.getName());
                 if (et.hasFlag(WeaponType.F_C3M)
                     && (nType == TechConstants.T_LEVEL_2_ALL
                         || nType == TechConstants.T_IS_LEVEL_2
                         || nType == TechConstants.T_IS_LEVEL_2_ALL)) {
-                    m_cEquipment.add(et.getName());
+                    equipment.add(et.getName());
                 }
             }
             if (et instanceof MiscType
@@ -482,8 +484,15 @@ public class MechSelectorDialog
                          || nType == TechConstants.T_IS_LEVEL_2)
                         && ((et.getTechLevel() == TechConstants.T_IS_LEVEL_1)
                             || (et.getTechLevel() == TechConstants.T_IS_LEVEL_2))))) {
-                m_cEquipment.add(et.getName());
+                equipment.add(et.getName());
             }
+        }
+        for (String weaponName : weapons) {
+        	m_cWeapons1.add(weaponName);
+        	m_cWeapons2.add(weaponName);
+        }
+        for (String equipName : equipment) {
+        	m_cEquipment.add(equipName);
         }
         m_cWeapons1.invalidate();
         m_cWeapons2.invalidate();

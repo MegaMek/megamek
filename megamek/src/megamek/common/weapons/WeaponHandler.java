@@ -137,7 +137,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return an <code>int</code> containing the number of hits.
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
-        if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)) {
+        // normal BA attacks (non-swarm, non single-trooper weapons)
+        // do more than 1 hit
+        if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
+                && !(ae.getSwarmTargetId() == target.getTargetId())) {
             bSalvo = true;
             return Compute.missilesHit(((BattleArmor)ae).getShootingStrength());
         }
@@ -340,6 +343,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
      */
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
+        // during a swarm, all damage gets applied as one block to one location
+        if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
+                && (ae.getSwarmTargetId() == target.getTargetId())) {
+            toReturn *= ((BattleArmor)ae).getShootingStrength();
+        }
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor))
             toReturn/=10;
@@ -367,8 +375,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         missed = false;
         
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
-
+                    .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+        
         if ( entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
                 Compute.targetSideTable(ae, entityTarget)) ) {
             // Weapon strikes Partial Cover.

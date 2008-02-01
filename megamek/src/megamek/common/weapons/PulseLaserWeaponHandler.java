@@ -17,6 +17,7 @@ import megamek.common.BattleArmor;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -38,6 +39,11 @@ public class PulseLaserWeaponHandler extends WeaponHandler {
      */
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
+        // during a swarm, all damage gets applied as one block to one location
+        if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
+                && (ae.getSwarmTargetId() == target.getTargetId())) {
+            toReturn *= ((BattleArmor)ae).getShootingStrength();
+        }
         // Check for Altered Damage from Energy Weapons (MTR, pg.22)
         int nRange = ae.getPosition().distance(target.getPosition());
         if (game.getOptions().booleanOption("maxtech_altdmg")) {

@@ -527,9 +527,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected boolean allShotsHit() {
-        if ((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE || target
+        if (((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE || target
                 .getTargetType() == Targetable.TYPE_BUILDING)
-                && nRange <= 1) {
+                && nRange <= 1) || target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
             return true;
         }
         return false;

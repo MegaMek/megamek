@@ -26,6 +26,7 @@ v0.33.17-dev (SVN)
    NOTE: this is not working completely correct, right now it's one lump and one location
    per weapon the attacking BA squad is carrying, not one lump of damage overall
 + Bug: clearing woods should always do full damage
++ Bug: do damage to woods from artillery shots
 
 v0.33.16 (2008-01-19, 18:45 GMT+1)
 + Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change

@@ -42,8 +42,7 @@ public class RACHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#doChecks()
+     * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         boolean jams = false;

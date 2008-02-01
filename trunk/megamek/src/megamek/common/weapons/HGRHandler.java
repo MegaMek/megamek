@@ -17,11 +17,14 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.BattleArmor;
 import megamek.common.EntityWeightClass;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.PilotingRollData;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -44,10 +47,9 @@ public class HGRHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#doChecks()
+     * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
-    protected void doChecks() {
+    protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (ae.mpUsed > 0) {
             // the mod is weight-based
             int nMod;
@@ -65,6 +67,7 @@ public class HGRHandler extends AmmoWeaponHandler {
             psr.setCumulative(false);
             game.addPSR(psr);
         }
+        return false;
     }
 
     /*

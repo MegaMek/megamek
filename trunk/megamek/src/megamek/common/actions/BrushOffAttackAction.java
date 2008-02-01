@@ -67,7 +67,7 @@ public class BrushOffAttackAction extends AbstractAttackAction {
      *          if the attack misses, the entity deals the damage to themself.
      */
     public static int getDamageFor(Entity entity, int arm) {
-        return PunchAttackAction.getDamageFor(entity, arm);
+        return PunchAttackAction.getDamageFor(entity, arm, false);
     }
 
     /**

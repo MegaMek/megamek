@@ -234,7 +234,7 @@ public class PunchAttackAction
     /**
      * Damage that the specified mech does with a punch.
      */
-    public static int getDamageFor(Entity entity, int arm) {
+    public static int getDamageFor(Entity entity, int arm, boolean targetInfantry) {
         final int armLoc = (arm == PunchAttackAction.RIGHT)
                            ? Mech.LOC_RARM : Mech.LOC_LARM;
         int damage = (int)Math.ceil(entity.getWeight() / 10.0);
@@ -261,6 +261,9 @@ public class PunchAttackAction
         // underwater damage is half, round up (see bug 1110692)
         if (entity.getLocationStatus(armLoc) == ILocationExposureStatus.WET) {
             toReturn = (int)Math.ceil(toReturn * 0.5f);
+        }
+        if (targetInfantry) {
+            toReturn = Math.max(1, toReturn/10);
         }
         return toReturn;
     }

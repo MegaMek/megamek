@@ -39,6 +39,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.AWT.AimedShotDialog;
 import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.AWT.widget.IndexedCheckbox;
+import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
@@ -48,6 +49,7 @@ import megamek.common.GameTurn;
 import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
+import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -484,8 +486,8 @@ public class PhysicalDisplay
         final ToHitData rightArm = PunchAttackAction.toHit(client.game, cen, target, PunchAttackAction.RIGHT);
         String title = Messages.getString("PhysicalDisplay.PunchDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
         String message = Messages.getString("PhysicalDisplay.PunchDialog.message", new Object[]{//$NON-NLS-1$
-            rightArm.getValueAsString(), new Double(Compute.oddsAbove(rightArm.getValue())), rightArm.getDesc(), new Integer(PunchAttackAction.getDamageFor(ce(), PunchAttackAction.RIGHT)), rightArm.getTableDesc(),
-            leftArm.getValueAsString(), new Double(Compute.oddsAbove(leftArm.getValue())), leftArm.getDesc(), new Integer(PunchAttackAction.getDamageFor(ce(), PunchAttackAction.LEFT)), leftArm.getTableDesc()});
+            rightArm.getValueAsString(), new Double(Compute.oddsAbove(rightArm.getValue())), rightArm.getDesc(), new Integer(PunchAttackAction.getDamageFor(ce(), PunchAttackAction.RIGHT, target instanceof Infantry && !(target instanceof BattleArmor))), rightArm.getTableDesc(),
+            leftArm.getValueAsString(), new Double(Compute.oddsAbove(leftArm.getValue())), leftArm.getDesc(), new Integer(PunchAttackAction.getDamageFor(ce(), PunchAttackAction.LEFT, target instanceof Infantry && !(target instanceof BattleArmor))), leftArm.getTableDesc()});
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible
@@ -567,7 +569,7 @@ public class PhysicalDisplay
         String title = Messages.getString("PhysicalDisplay.KickDialog.title", new Object[]{target.getDisplayName()}); //$NON-NLS-1$
         String message = Messages.getString("PhysicalDisplay.KickDialog.message", new Object[]{//$NON-NLS-1$
             attackLeg.getValueAsString(), new Double(Compute.oddsAbove(attackLeg.getValue())), attackLeg.getDesc()
-            , KickAttackAction.getDamageFor(ce(), attackSide) + attackLeg.getTableDesc()});
+            , KickAttackAction.getDamageFor(ce(), attackSide, target instanceof Infantry && !(target instanceof BattleArmor)) + attackLeg.getTableDesc()});
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();
             // declare searchlight, if possible

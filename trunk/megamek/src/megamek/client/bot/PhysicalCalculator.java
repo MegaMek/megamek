@@ -283,10 +283,15 @@ public final class PhysicalCalculator {
         int location_table;
         int bestType = PhysicalOption.NONE;
         Mounted bestClub = null;
+        boolean targetConvInfantry = false;
 
         // Infantry and tanks can't conduct any of these attacks
         if (from instanceof Infantry || from instanceof Tank) {
             return null;
+        }
+        
+        if (to instanceof Infantry && !(to instanceof BattleArmor)) {
+            targetConvInfantry = true;
         }
         
         // Find arc the attack comes in
@@ -310,7 +315,7 @@ public final class PhysicalCalculator {
 
         ToHitData odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.LEFT);
         if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
-            damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT);
+            damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT, targetConvInfantry);
             bestDmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
             // Adjust damage for targets armor
             bestType = PhysicalOption.PUNCH_LEFT;
@@ -319,7 +324,7 @@ public final class PhysicalCalculator {
 
         odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.RIGHT);
         if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
-            damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.RIGHT);
+            damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.RIGHT, targetConvInfantry);
             dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
             // Adjust damage for targets armor
             dmg *= punchThroughMod(to, location_table, target_arc, dmg, dmg);
@@ -333,7 +338,7 @@ public final class PhysicalCalculator {
         odds = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.LEFT);
         ToHitData odds_a = PunchAttackAction.toHit(game, from.getId(), to, PunchAttackAction.RIGHT);
         if (odds.getValue() != TargetRoll.IMPOSSIBLE && odds_a.getValue() != TargetRoll.IMPOSSIBLE) {
-            damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT);
+            damage = PunchAttackAction.getDamageFor(from, PunchAttackAction.LEFT, targetConvInfantry);
             dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
             double dmg_a = Compute.oddsAbove(odds_a.getValue()) / 100.0 * damage;
             dmg += dmg_a;
@@ -506,16 +511,22 @@ public final class PhysicalCalculator {
         double dmg;
         double coll_damage = 0.0;
         int damage;
+        boolean targetConvInfantry = false;
         ToHitData odds = KickAttackAction.toHit(game, from.getId(), to, action);
         if (odds.getValue() == TargetRoll.IMPOSSIBLE) {
             return 0.0;
         }
+        
+        if (to instanceof Infantry && !(to instanceof BattleArmor)) {
+            targetConvInfantry = true;
+        }        
+        
         // Calculate collateral damage, due to possible target fall
         if (to instanceof Mech) {
             coll_damage = calculateFallingDamage(Compute.oddsAbove(odds.getValue()) / 100.0, to);
         }
 
-        damage = KickAttackAction.getDamageFor(from, action);
+        damage = KickAttackAction.getDamageFor(from, action, targetConvInfantry);
         dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
         // Adjust damage for targets armor
         dmg *= punchThroughMod(to, locTable, arc, dmg, dmg);

@@ -30,6 +30,7 @@ v0.33.17-dev (SVN)
 + Patch 1883999: Manei Domini VDNI, BVDNI, and Pain Shunt
 + Patch 1875860, Bug 1776718: Double Entries in the Mek selection search
 + Data 1879903: New Artillery Gifs and a Resized Mechwarrior Gif
++ Bug 1882694: Map rotation error
 
 v0.33.16 (2008-01-19, 18:45 GMT+1)
 + Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change

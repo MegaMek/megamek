@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.17-dev (SVN)
+v0.33.17 (2008-02-01)
 + Bug: Flamers causing 3 heat instead of 2
 + Bug: Swarm LRMs causing ammo-use and heat for each target they hit
 + Cleaned up warnings in Mech.java and MechSummaryCache.java

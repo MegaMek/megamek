@@ -35,6 +35,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -445,7 +446,9 @@ public class MechSelectorDialog
     }
 
     private void populateWeaponsAndEquipmentChoices() {
-        m_cWeapons1.removeAll();
+    	LinkedHashSet<String> weapons = new LinkedHashSet<String>();
+    	LinkedHashSet<String> equipment = new LinkedHashSet<String>();
+    	m_cWeapons1.removeAll();
         m_cWeapons2.removeAll();
         m_cEquipment.removeAll();
         m_tWeapons1.setText("");
@@ -472,13 +475,12 @@ public class MechSelectorDialog
                         || et.hasFlag(WeaponType.F_BATTLEARMOR)))) {
                     continue;
                 }
-                m_cWeapons1.addItem(et.getName());
-                m_cWeapons2.addItem(et.getName());
+                weapons.add(et.getName());
                 if (et.hasFlag(WeaponType.F_C3M)
                     && (nType == TechConstants.T_LEVEL_2_ALL
                         || nType == TechConstants.T_IS_LEVEL_2
                         || nType == TechConstants.T_IS_LEVEL_2_ALL)) {
-                    m_cEquipment.addItem(et.getName());
+                    equipment.add(et.getName());
                 }
             }
             if (et instanceof MiscType
@@ -491,8 +493,15 @@ public class MechSelectorDialog
                     || nType == TechConstants.T_IS_LEVEL_2)
                     && ((et.getTechLevel() == TechConstants.T_IS_LEVEL_1)
                     || (et.getTechLevel() == TechConstants.T_IS_LEVEL_2))))) {
-                m_cEquipment.addItem(et.getName());
+                equipment.add(et.getName());
             }
+        }
+        for (String weaponName : weapons) {
+            m_cWeapons1.addItem(weaponName);
+            m_cWeapons2.addItem(weaponName);
+        }
+        for (String equipName : equipment) {
+        	m_cEquipment.addItem(equipName);
         }
         m_cWeapons1.invalidate();
         m_cWeapons2.invalidate();

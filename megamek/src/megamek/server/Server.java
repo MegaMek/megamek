@@ -17079,11 +17079,11 @@ public class Server implements Runnable {
         } else if (aaa instanceof DfaAttackAction) {
             DfaAttackAction daa = (DfaAttackAction) aaa;
             toHit = daa.toHit(game);
-            damage = DfaAttackAction.getDamageFor(ae);
+            damage = DfaAttackAction.getDamageFor(ae, daa.getTarget(game) instanceof Infantry && !(daa.getTarget(game) instanceof BattleArmor));
         } else if (aaa instanceof KickAttackAction) {
             KickAttackAction kaa = (KickAttackAction) aaa;
             toHit = kaa.toHit(game);
-            damage = KickAttackAction.getDamageFor(ae, kaa.getLeg());
+            damage = KickAttackAction.getDamageFor(ae, kaa.getLeg(), kaa.getTarget(game) instanceof Infantry && !(kaa.getTarget(game) instanceof BattleArmor));
         } else if (aaa instanceof ProtomechPhysicalAttackAction) {
             ProtomechPhysicalAttackAction paa = (ProtomechPhysicalAttackAction) aaa;
             toHit = paa.toHit(game);
@@ -17096,8 +17096,8 @@ public class Server implements Runnable {
             toHit = paa.toHit(game);
             paa.setArm(PunchAttackAction.RIGHT);
             ToHitData toHitRight = paa.toHit(game);
-            damage = PunchAttackAction.getDamageFor(ae, PunchAttackAction.LEFT);
-            damageRight = PunchAttackAction.getDamageFor(ae, PunchAttackAction.RIGHT);
+            damage = PunchAttackAction.getDamageFor(ae, PunchAttackAction.LEFT, paa.getTarget(game) instanceof Infantry && !(paa.getTarget(game) instanceof BattleArmor));
+            damageRight = PunchAttackAction.getDamageFor(ae, PunchAttackAction.RIGHT, paa.getTarget(game) instanceof Infantry && !(paa.getTarget(game) instanceof BattleArmor));
             paa.setArm(arm);
             // If we're punching while prone (at a Tank,
             // duh), then we can only use one arm.

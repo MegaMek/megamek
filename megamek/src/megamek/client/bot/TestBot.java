@@ -423,7 +423,7 @@ public class TestBot extends BotClient {
                                     self.current.setState();
                                     toHit =
                                             DfaAttackAction.toHit(game, option.getEntity().getId(), target.getEntity(), option);
-                                    damage = 2 * DfaAttackAction.getDamageFor(option.getEntity());
+                                    damage = 2 * DfaAttackAction.getDamageFor(option.getEntity(), target.getEntity() instanceof Infantry && !(target.getEntity() instanceof BattleArmor));
                                     self_threat =
                                             option.getCEntity().getThreatUtility(DfaAttackAction.getDamageTakenBy(option.getEntity()),
                                                     ToHitData.SIDE_REAR)

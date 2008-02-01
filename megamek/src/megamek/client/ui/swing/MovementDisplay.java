@@ -35,6 +35,7 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.AWT.Messages;
+import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -1204,7 +1205,7 @@ public class MovementDisplay
                             (Messages.getString("MovementDisplay.DFADialog.title", new Object[]{target.getDisplayName()}), //$NON-NLS-1$
                                     Messages.getString("MovementDisplay.DFADialog.message", new Object[]{//$NON-NLS-1$
                                         toHit.getValueAsString(), new Double(Compute.oddsAbove(toHit.getValue())),
-                                        toHit.getDesc(), new Integer(DfaAttackAction.getDamageFor(ce)), toHit.getTableDesc(),
+                                        toHit.getDesc(), new Integer(DfaAttackAction.getDamageFor(ce, target instanceof Infantry && !(target instanceof BattleArmor))), toHit.getTableDesc(),
                                         new Integer(DfaAttackAction.getDamageTakenBy(ce))}))) {
                         // if they answer yes, DFA the target
                         cmd.getLastStep().setTarget(target);

@@ -25,6 +25,7 @@ v0.33.17-dev (SVN)
 + Bug: damage during swarm attack should be applied as one lump
    NOTE: this is not working completely correct, right now it's one lump and one location
    per weapon the attacking BA squad is carrying, not one lump of damage overall
++ Bug: clearing woods should always do full damage
 
 v0.33.16 (2008-01-19, 18:45 GMT+1)
 + Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change

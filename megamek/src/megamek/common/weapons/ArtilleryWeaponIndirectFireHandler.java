@@ -360,6 +360,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             }
             vPhaseReport.addAll(buildingReport);
         }
+        // do damage to woods, 2 * normal damage (TW page 112)
+        handleClearDamage(vPhaseReport, bldg, ratedDamage*2, bSalvo);
 
         for (Enumeration impactHexHits = game.getEntities(coords); impactHexHits
                 .hasMoreElements();) {
@@ -392,6 +394,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             if (coords.equals(tempcoords)) {
                 continue;
             }
+            //do damage to woods, 2 * normal damage (TW page 112)
+            handleClearDamage(vPhaseReport, bldg, ratedDamage*2, bSalvo);
 
             ratedDamage = wtype.getRackSize() / 2;
             bldg = null;

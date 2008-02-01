@@ -252,6 +252,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         bldg = game.getBoard().getBuildingAt(coords);
         bldgAbsorbs = (bldg != null) ? bldg.getPhaseCF() / 10 : 0;
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
+        //assumption: homing artillery splash damage is area effect.
+        // do damage to woods, 2 * normal damage (TW page 112)
+        handleClearDamage(vPhaseReport, bldg, ratedDamage*2, bSalvo);
         ratedDamage -= bldgAbsorbs;
         if (ratedDamage > 0) {
             for (Enumeration impactHexHits = game.getEntities(coords); impactHexHits

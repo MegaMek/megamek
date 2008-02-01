@@ -3451,9 +3451,13 @@ Average:     0.649                0.781                0.527                0.42
         }
 
         // See if the source hex has a road or bridge that exits into the
-        // destination hex.
-        else if (srcHex.containsTerrainExit(Terrains.ROAD, src2destDir)
-                || srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir)) {
+        // destination hex, and the dest hex has pavement or a corresponding
+        // exit to the src hex
+        else if ((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir)
+                || srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir))
+                && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
+                        || destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir)
+                        || destHex.containsTerrain(Terrains.PAVEMENT))){
             result = true;
         }
 

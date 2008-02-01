@@ -35,6 +35,7 @@ v0.33.17 (2008-02-01)
 + Bug 1882694: Map rotation error
 + Bug: movement along road not checking destination hex for road, too
 + Physical Attacks against Infantry should do only 1/10 damage
++ Bug: Draw occuring on Team Game Victories
 
 v0.33.16 (2008-01-19, 18:45 GMT+1)
 + Patch 1869642: Clan Streak6 Heat Fix and Recoilless Rifle Name Change

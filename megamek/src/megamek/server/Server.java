@@ -2185,8 +2185,7 @@ public class Server implements Runnable {
                 Report r = new Report(7200, Report.PUBLIC);
                 r.add("Team "+wonTeam);
                 addReport(r);                
-                if(wonPlayer == Player.PLAYER_NONE||
-                    wonTeam == Player.TEAM_NONE)
+                if(wonTeam == Player.TEAM_NONE)
                     draw=true;
             }
             if (draw) {

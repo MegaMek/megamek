@@ -125,12 +125,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
-        // BAs do one lump of damage per BA suit
+        // BAs can't mount Plasma Cannons
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            if (ae instanceof BattleArmor) {
-                bSalvo = true;
-                return ((BattleArmor)ae).getShootingStrength();
-            }
             return 1;
         }
         if (target instanceof Mech) {

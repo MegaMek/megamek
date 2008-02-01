@@ -518,6 +518,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         if (ae.crew.getOptions().booleanOption("gunnery_missile") && wtype.hasFlag(WeaponType.F_MISSILE) ) {
             toHit.addModifier ( -1, "Gunnery/Missile" );
         }
+        
+        //check for VDNI
+        if(ae.crew.getOptions().booleanOption("vdni") || ae.crew.getOptions().booleanOption("bvdni")) {
+            toHit.addModifier(-1, "VDNI");
+        }
 
         // If it has a torso-mounted cockpit and two head sensor hits or three sensor hits...
         // It gets a =4 penalty for being blind!

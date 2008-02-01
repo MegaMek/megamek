@@ -20,6 +20,7 @@ package megamek.common.weapons;
 
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.ToHitData;
@@ -47,11 +48,16 @@ public class FlamerHandler extends WeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
+        int toReturn = super.calcDamagePerHit();
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor)
-                return Compute.d6(3);
-            return Compute.d6(4); 
-        }               
+                toReturn = Compute.d6(3);
+            toReturn = Compute.d6(4); 
+        }
+        // pain shunted infantry get half damage
+        if (target instanceof Infantry && ((Entity)target).getCrew().getOptions().booleanOption("pain_shunt") ) {
+            toReturn /= 2;
+        }
         return super.calcDamagePerHit();
     }
 }

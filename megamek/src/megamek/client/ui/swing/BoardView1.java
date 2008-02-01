@@ -2519,10 +2519,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     .append(entity.getCrew().getPiloting()).append(
                             Messages.getString("BoardView1.pilot")); //$NON-NLS-1$
             int numAdv = entity.getCrew().countAdvantages();
+            boolean isMD = entity.getCrew().countMDImplants() > 0;
             if (numAdv > 0) {
                 buffer.append(" <") //$NON-NLS-1$
                         .append(numAdv).append(
                                 Messages.getString("BoardView1.advs")); //$NON-NLS-1$
+            }
+            if(isMD) {
+                buffer.append(Messages.getString("BoardView1.md")); //$NON-NLS-1$
             }
             tipStrings[0] = buffer.toString();
 

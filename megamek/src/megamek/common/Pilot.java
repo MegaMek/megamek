@@ -43,7 +43,7 @@ public class Pilot
     private boolean koThisRound; // did I go KO this game round?
     
     private PilotOptions options = new PilotOptions();
-
+    
     /** The number of hits that a pilot can take before he dies. */
     static public final int DEATH       = 6;
     
@@ -149,7 +149,7 @@ public class Pilot
     public PilotOptions getOptions() { 
       return options; 
     }
-
+    
     public void clearAdvantages() {
       for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
           IOptionGroup group = i.nextElement();
@@ -192,7 +192,7 @@ public class Pilot
     public Enumeration<IOption> getAdvantages() {
         for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
             IOptionGroup group = i.nextElement();
-
+            
             if ( group.getKey().equalsIgnoreCase(PilotOptions.LVL3_ADVANTAGES) )
                 return group.getOptions();
         }
@@ -257,6 +257,57 @@ public class Pilot
 		return result;
     }
 
+    public void clearMDImplants() {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            
+            if ( !group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES) )
+              continue;
+              
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+                IOption option = j.nextElement();
+                
+                option.clearValue();
+            }
+        }
+        
+    }
+      
+    public int countMDImplants() {
+        int count = 0;
+        
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+            
+            if ( !group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES) )
+                continue;
+              
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+                IOption option = j.nextElement();
+                
+                if ( option.booleanValue() )
+                  count++;
+            }
+        }
+        
+        return count;
+    }
+
+    /**
+          Returns the MD Implants this pilot has
+     */
+    public Enumeration<IOption> getMDImplants() {
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
+              
+            if ( group.getKey().equalsIgnoreCase(PilotOptions.MD_ADVANTAGES) )
+                return group.getOptions();
+        }
+
+        // no pilot advantages -- return an empty Enumeration
+        return new Vector<IOption>().elements();
+    }
+    
     public String getDesc() {
         String s = new String(name);
         if (hits > 0) {
@@ -332,7 +383,27 @@ public class Pilot
      * Returns the BV multiplyer for this pilot's gunnery/piloting
      */
     public double getBVSkillMultiplier() {
-       return getBVSkillMultiplier(gunnery, piloting);
+       return getBVImplantMultiplier() * getBVSkillMultiplier(gunnery, piloting);
+    }
+    
+    public double getBVImplantMultiplier() {
+        
+        //get highest level
+        int level = 1;
+        if(options.booleanOption("pain_shunt")) {
+            level = 2;
+        }
+        if(options.booleanOption("vdni")) {
+            level = 3;
+        }
+        if(options.booleanOption("bvdni")) {
+            level = 5;
+        }
+        
+        double mod = (level / 4.0) + 0.75;
+        
+        return mod;
+        
     }
     
     /**

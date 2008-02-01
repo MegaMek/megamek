@@ -44,8 +44,7 @@ public class PrototypeUltraWeaponHandler extends UltraWeaponHandler {
  
     /*
      * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#doChecks()
+     * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll <= 4 && howManyShots == 2) {

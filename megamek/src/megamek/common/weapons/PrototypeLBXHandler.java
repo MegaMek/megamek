@@ -79,8 +79,7 @@ public class PrototypeLBXHandler extends LBXHandler {
     
     /*
      * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#doChecks()
+     * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2) {

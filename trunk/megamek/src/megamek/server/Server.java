@@ -2222,8 +2222,8 @@ public class Server implements Runnable {
             String name = mapSettings.getBoardsSelectedVector().elementAt(i);
             boolean isRotated = false;
             if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
-                // Do not rotate Boards with an odd Hight
-                if (mapSettings.getMapWidth() % 2 == 0)
+                // only rotate boards with an even width
+                if (mapSettings.getBoardWidth() % 2 == 0)
                     isRotated = true;
                 name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
             }

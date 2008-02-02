@@ -84,10 +84,15 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             bSalvo = false;
             return 1;
         } else {
+            int toReturn = 5;
             if (target instanceof Infantry && !(target instanceof BattleArmor))
-                return Compute.d6(2);
+                toReturn = Compute.d6(2);
             bSalvo = true;
-            return 5;
+            // pain shunted infantry get half damage
+            if (target instanceof Infantry && ((Entity)target).getCrew().getOptions().booleanOption("pain_shunt") ) {
+                toReturn = Math.max(toReturn/2, 1);
+            }
+            return toReturn;
         }
     }
     

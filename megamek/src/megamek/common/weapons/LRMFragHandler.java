@@ -15,12 +15,15 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
@@ -47,6 +50,29 @@ public class LRMFragHandler extends LRMHandler {
         sSalvoType = " fragmentation missile(s) ";
     }
     
+    /**
+     * Calculate the damage per hit.
+     * 
+     * @return an <code>int</code> representing the damage dealt per hit.
+     */
+    protected int calcDamagePerHit() {
+        float toReturn = wtype.getDamage();
+        // during a swarm, all damage gets applied as one block to one location
+        if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
+                && (ae.getSwarmTargetId() == target.getTargetId())) {
+            toReturn *= ((BattleArmor)ae).getShootingStrength();
+        }
+
+        if ( !(target instanceof Infantry) )
+            toReturn = 0;
+        
+        if (bGlancing) {
+            toReturn/=2;
+        }
+        return (int)Math.ceil(toReturn);
+    }
+
+
     /*
      *  (non-Javadoc)
      * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector, megamek.common.Building, int, boolean)

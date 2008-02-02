@@ -23,6 +23,7 @@ import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -35,6 +36,11 @@ import megamek.server.Server.DamageType;
  */
 public class ACFlechetteHandler extends AmmoWeaponHandler {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 7965585014230084304L;
+
+    /**
      * @param t
      * @param w
      * @param g
@@ -43,6 +49,25 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
             Server s) {
         super(t, w, g, s);
     }
+
+    /**
+     * Calculate the damage per hit.
+     * 
+     * @return an <code>int</code> representing the damage dealt per hit.
+     */
+    protected int calcDamagePerHit() {
+        float toReturn = wtype.getDamage();
+
+        if ( !(target instanceof Infantry) )
+            toReturn/=2;
+        
+        if (bGlancing) {
+            toReturn/=2;
+        }
+        
+        return (int)Math.ceil(toReturn);
+    }
+
 
     /*
      *  (non-Javadoc)

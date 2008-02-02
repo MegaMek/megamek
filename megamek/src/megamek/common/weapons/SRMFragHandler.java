@@ -64,7 +64,8 @@ public class SRMFragHandler extends SRMHandler {
             toReturn *= ((BattleArmor)ae).getShootingStrength();
         }
 
-        if ( !(target instanceof Infantry) )
+        if ( !(target instanceof Infantry) 
+                || target instanceof BattleArmor )
             toReturn = 0;
         
         if (bGlancing) {

@@ -197,13 +197,13 @@ public class GameOptionsDialog extends Dialog implements ActionListener, DialogO
         c.insets = new Insets(1, 1, 0, 0);
         c.ipadx = 0;    c.ipady = 0;
         
-        for (Enumeration i = options.getGroups(); i.hasMoreElements();) {
-            IOptionGroup group = (IOptionGroup)i.nextElement();
+        for (Enumeration<IOptionGroup> i = options.getGroups(); i.hasMoreElements();) {
+            IOptionGroup group = i.nextElement();
             
             addGroup(group, gridbag, c);
             
-            for (Enumeration j = group.getOptions(); j.hasMoreElements();) {
-                IOption option = (IOption)j.nextElement();
+            for (Enumeration<IOption> j = group.getOptions(); j.hasMoreElements();) {
+                IOption option = j.nextElement();
                 
                 addOption(option, gridbag, c);
             }

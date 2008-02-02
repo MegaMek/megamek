@@ -2,6 +2,7 @@
 ----------------
 v0.33.18-dev (SVN)
 + Bug: Flechette and Frag ammo not doing full damage to Infantry
++ RFE: Force Victory skips all units in every phase to end game.
 
 v0.33.17 (2008-02-01)
 + Bug: Flamers causing 3 heat instead of 2

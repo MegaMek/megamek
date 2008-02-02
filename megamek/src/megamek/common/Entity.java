@@ -5087,9 +5087,16 @@ public abstract class Entity extends TurnOrdered
             return false;
         }
         
+        
         //carcass can't do anything
         if(isCarcass())
             return false;
+
+        // check game options
+        if (game.getOptions().booleanOption("skip_forced_victory")) {
+           if ( game.isForceVictory() )
+               return false;
+        }
 
         switch (phase) {
             case IGame.PHASE_MOVEMENT :

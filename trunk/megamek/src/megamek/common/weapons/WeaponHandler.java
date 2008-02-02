@@ -349,8 +349,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
             toReturn *= ((BattleArmor)ae).getShootingStrength();
         }
         // we default to direct fire weapons for anti-infantry damage
-        if (target instanceof Infantry && !(target instanceof BattleArmor))
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn/=10;
+        }
         if (bGlancing) {
             toReturn/=2;
         }

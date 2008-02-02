@@ -63,7 +63,8 @@ public class LRMFragHandler extends LRMHandler {
             toReturn *= ((BattleArmor)ae).getShootingStrength();
         }
 
-        if ( !(target instanceof Infantry) )
+        if ( !(target instanceof Infantry) 
+                || target instanceof BattleArmor )
             toReturn = 0;
         
         if (bGlancing) {

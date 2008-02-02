@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.HitData;
@@ -58,7 +59,8 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
 
-        if ( !(target instanceof Infantry) )
+        if ( !(target instanceof Infantry)
+                || target instanceof BattleArmor )
             toReturn/=2;
         
         if (bGlancing) {

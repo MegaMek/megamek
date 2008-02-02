@@ -67,6 +67,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(base,"bridgeCF", 0); //$NON-NLS-1$
         
         IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
+        addOption(victory,"skip_forced_victory", false); //$NON-NLS-1$
         addOption(victory,"check_victory", true); //$NON-NLS-1$
         addOption(victory,"achieve_conditions", 1); //$NON-NLS-1$
         addOption(victory,"use_bv_destroyed", false); //$NON-NLS-1$
@@ -76,7 +77,6 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(victory,"use_game_turn_limit", false); //$NON-NLS-1$
         addOption(victory,"game_turn_limit", 10); //$NON-NLS-1$
         addOption(victory,"commander_killed", false); //$NON-NLS-1$
-        addOption(victory,"skip_forced_victory", false); //$NON-NLS-1$
 
         IBasicOptionGroup level2 = addGroup("level2"); //$NON-NLS-1$
         addOption(level2,"flamer_heat", true); //$NON-NLS-1$
@@ -282,7 +282,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
      * Saves the given <code>Vector</code> of <code>IBasicOption</code>
      * @param options <code>Vector</code> of <code>IBasicOption</code>
      */
-    public static void saveOptions( Vector options ) {
+    public static void saveOptions( Vector<IBasicOption> options ) {
         try {
             Writer output = new BufferedWriter( new OutputStreamWriter ( new FileOutputStream(new File(GAME_OPTIONS_FILE_NAME)) ) );
 
@@ -294,7 +294,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
   
             // Now the options themselves
             for ( int i = 0; i < options.size(); i++ ) {
-                final IBasicOption option = (IBasicOption) options.elementAt(i);
+                final IBasicOption option = options.elementAt(i);
   
                 output.write( "   <gameoption>" ); //$NON-NLS-1$
 

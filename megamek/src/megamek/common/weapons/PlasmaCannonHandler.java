@@ -99,9 +99,14 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         if (target instanceof Mech) {
             return 0;
         } else {
+            int toReturn = 1;
             if (target instanceof Infantry && !(target instanceof BattleArmor))
-                return Compute.d6(3);
-            return 1;
+                toReturn = Compute.d6(3);
+            // pain shunted infantry get half damage
+            if (target instanceof Infantry && ((Entity)target).getCrew().getOptions().booleanOption("pain_shunt") ) {
+                toReturn = Math.max(toReturn/2, 1);
+            }
+            return toReturn;
         }
     }
     

@@ -56,7 +56,7 @@ public class LRMFragHandler extends LRMHandler {
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage();
+        float toReturn = 1;
         // during a swarm, all damage gets applied as one block to one location
         if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
                 && (ae.getSwarmTargetId() == target.getTargetId())) {

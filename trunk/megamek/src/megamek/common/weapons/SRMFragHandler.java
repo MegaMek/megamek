@@ -57,7 +57,7 @@ public class SRMFragHandler extends SRMHandler {
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage();
+        float toReturn = 2;
         // during a swarm, all damage gets applied as one block to one location
         if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
                 && (ae.getSwarmTargetId() == target.getTargetId())) {

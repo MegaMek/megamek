@@ -76,6 +76,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(victory,"use_game_turn_limit", false); //$NON-NLS-1$
         addOption(victory,"game_turn_limit", 10); //$NON-NLS-1$
         addOption(victory,"commander_killed", false); //$NON-NLS-1$
+        addOption(victory,"skip_forced_victory", false); //$NON-NLS-1$
 
         IBasicOptionGroup level2 = addGroup("level2"); //$NON-NLS-1$
         addOption(level2,"flamer_heat", true); //$NON-NLS-1$

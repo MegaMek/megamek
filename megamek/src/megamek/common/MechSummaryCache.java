@@ -101,6 +101,7 @@ public class MechSummaryCache {
 
     private MechSummary[] m_data;
     private Map<String,MechSummary> m_nameMap;
+    private Map<String,MechSummary> m_fileNameMap;
     private Hashtable<String,String> hFailedFiles;
     private int cacheCount;
     private int fileCount;
@@ -112,6 +113,7 @@ public class MechSummaryCache {
 
     private MechSummaryCache() {
         m_nameMap = new HashMap<String,MechSummary>();
+        m_fileNameMap = new HashMap<String,MechSummary>();
     }
 
     public MechSummary[] getAllMechs() {
@@ -133,7 +135,9 @@ public class MechSummaryCache {
 
     public MechSummary getMech(String sRef) {
         block();
-        return m_nameMap.get(sRef);
+        if ( m_nameMap.containsKey(sRef))
+            return m_nameMap.get(sRef);
+        return m_fileNameMap.get(sRef);
     }
 
     public Hashtable<String,String> getFailedFiles() {
@@ -232,6 +236,7 @@ public class MechSummaryCache {
         // store map references
         for (int x = 0; x < m_data.length; x++) {
             m_nameMap.put(m_data[x].getName(), m_data[x]);
+            m_fileNameMap.put(m_data[x].getEntryName(), m_data[x]);
         }
 
         // save updated cache back to disk

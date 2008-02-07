@@ -1105,9 +1105,6 @@ public class Server implements Runnable {
                 condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
             }
 
-            if (entity.getRemovalCondition() == IEntityRemovalConditions.REMOVE_STACKPOLE)
-                condition = IEntityRemovalConditions.REMOVE_STACKPOLE;
-
             entityUpdate(entity.getId());
             game.removeEntity(entity.getId(), condition);
             send(createRemoveEntityPacket(entity.getId(), condition));
@@ -11729,7 +11726,7 @@ public class Server implements Runnable {
             r.subject = en.getId();
             r.indent(2);
             vDesc.addElement(r);
-            vDesc.addAll(destroyEntity(en, "engine explosion", false, false, true));
+            vDesc.addAll(destroyEntity(en, "engine explosion", false, false));
             // kill the crew
             en.getCrew().setDoomed(true);
 
@@ -12132,7 +12129,7 @@ public class Server implements Runnable {
             if (entity.isDestroyed())
                 continue;
 
-            vDesc.addAll(destroyEntity(entity, "nuclear explosion proximity", false, false, true));
+            vDesc.addAll(destroyEntity(entity, "nuclear explosion proximity", false, false));
             // Kill the crew
             entity.getCrew().setDoomed(true);
         }
@@ -12335,7 +12332,7 @@ public class Server implements Runnable {
             // Sucks, doesn't it?
             // This applies to all units.
             // Yup, just sucks.
-            vDesc.addAll(destroyEntity(entity, "nuclear explosion secondary effects", false, false, true));
+            vDesc.addAll(destroyEntity(entity, "nuclear explosion secondary effects", false, false));
             // Kill the crew
             entity.getCrew().setDoomed(true);
         } else if (roll <= 6) {
@@ -13811,38 +13808,13 @@ public class Server implements Runnable {
      *            salvaged (or cannibalized for spare parts). If
      *            <code>true</code>, salvage operations are possible, if
      *            <code>false</code>, the unit is too badly damaged.
-     * @return a <code>Vector</code> of <code>Report</code> objects that can
-     *         be sent to the output log.
-     */
-    private Vector<Report> destroyEntity(Entity entity, String reason, boolean survivable, boolean canSalvage) {
-        // Generally, the entity can still be salvaged.
-        return destroyEntity(entity, reason, survivable, canSalvage, false);
-    }
-
-    /**
-     * Marks a unit as destroyed! Units transported inside the destroyed unit
-     * will get a chance to escape unless the destruction was not survivable.
-     * 
-     * @param entity -
-     *            the <code>Entity</code> that has been destroyed.
-     * @param reason -
-     *            a <code>String</code> detailing why the entity was
-     *            destroyed.
-     * @param survivable -
-     *            a <code>boolean</code> that identifies the desctruction as
-     *            unsurvivable for transported units.
-     * @param canSalvage -
-     *            a <code>boolean</code> that indicates if the unit can be
-     *            salvaged (or cannibalized for spare parts). If
-     *            <code>true</code>, salvage operations are possible, if
-     *            <code>false</code>, the unit is too badly damaged.
      * @param stackpole -
      *            a <code>boolean</code> that identifies the desctruction as a
      *            stackpole and completely destroyed.
      * @return a <code>Vector</code> of <code>Report</code> objects that can
      *         be sent to the output log.
      */
-    private Vector<Report> destroyEntity(Entity entity, String reason, boolean survivable, boolean canSalvage, boolean stackpole) {
+    private Vector<Report> destroyEntity(Entity entity, String reason, boolean survivable, boolean canSalvage) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
@@ -13853,10 +13825,6 @@ public class Server implements Runnable {
             condition = IEntityRemovalConditions.REMOVE_DEVASTATED;
         }
 
-        // MW allows you to salvage parts from cored units
-        // Stackpoled units have nothing left and cannot be salvaged.
-        if (stackpole)
-            condition = IEntityRemovalConditions.REMOVE_STACKPOLE;
 
         // Destroy the entity, unless it's already destroyed.
         if (!entity.isDoomed() && !entity.isDestroyed()) {
@@ -15754,7 +15722,7 @@ public class Server implements Runnable {
      * @return A <code>Packet</code> to be sent to clients.
      */
     private Packet createRemoveEntityPacket(int entityId, int condition) {
-        if (condition != IEntityRemovalConditions.REMOVE_UNKNOWN && condition != IEntityRemovalConditions.REMOVE_IN_RETREAT && condition != IEntityRemovalConditions.REMOVE_PUSHED && condition != IEntityRemovalConditions.REMOVE_SALVAGEABLE && condition != IEntityRemovalConditions.REMOVE_EJECTED && condition != IEntityRemovalConditions.REMOVE_CAPTURED && condition != IEntityRemovalConditions.REMOVE_DEVASTATED && condition != IEntityRemovalConditions.REMOVE_STACKPOLE && condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED) {
+        if (condition != IEntityRemovalConditions.REMOVE_UNKNOWN && condition != IEntityRemovalConditions.REMOVE_IN_RETREAT && condition != IEntityRemovalConditions.REMOVE_PUSHED && condition != IEntityRemovalConditions.REMOVE_SALVAGEABLE && condition != IEntityRemovalConditions.REMOVE_EJECTED && condition != IEntityRemovalConditions.REMOVE_CAPTURED && condition != IEntityRemovalConditions.REMOVE_DEVASTATED  && condition != IEntityRemovalConditions.REMOVE_NEVER_JOINED) {
             throw new IllegalArgumentException("Unknown unit condition: " + condition);
         }
         Object[] array = new Object[2];

@@ -19,25 +19,23 @@ import megamek.common.TechConstants;
  * @author Sebastian Brocks
  *
  */
-public class CLPROLRM1 extends LRMWeapon {
+public class CLStreakSRM1 extends StreakSRMWeapon {
 
     /**
      * 
      */
-    public CLPROLRM1() {
-        super(); 
+    public CLStreakSRM1() {
         this.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        this.name = "LRM 1";
-        this.setInternalName("CLPROLRM1");
+        this.name = "Streak SRM 1";
+        this.setInternalName("CLStreakSRM1");
         this.heat = 0;
         this.rackSize = 1;
-        this.minimumRange = WEAPON_NA;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 21;
-        this.extremeRange = 28;
-        this.tonnage = 0.2f;
+        this.shortRange = 4;
+        this.mediumRange = 8;
+        this.longRange = 12;
+        this.extremeRange = 16;
+        this.tonnage = 0.5f;
         this.criticals = 0;
-        this.bv = 17;
+        this.bv = 20;
     }
 }

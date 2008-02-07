@@ -7,7 +7,8 @@ v0.33.18-dev (SVN)
 + RFE: Moved Force Victory option to top of the victory group
 + Plasma Rifle and Plasma Cannon also deal half damage to pain shunt infantry
 + RFE: MechSummary now saves and retrives entity files based on file name as
-	well as just entity mode+chassie
+    well as just entity mode+chassie
++ Bug: multiple weapons of same type using up one of several ammo bins sometimes didn't work correctly
 	
 v0.33.17 (2008-02-01)
 + Bug: Flamers causing 3 heat instead of 2

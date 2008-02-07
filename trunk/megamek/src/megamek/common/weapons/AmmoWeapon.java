@@ -58,7 +58,7 @@ public abstract class AmmoWeapon extends Weapon {
         Mounted weapon = ae.getEquipment(waa.getWeaponId());
         Mounted ammo = weapon.getLinked();
         if (ammo == null || ammo.getShotsLeft() < 1) {
-            ae.loadWeapon(weapon);
+            ae.loadWeaponWithSameAmmo(weapon);
             ammo = weapon.getLinked();
         }
     }

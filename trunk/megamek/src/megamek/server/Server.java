@@ -13808,9 +13808,6 @@ public class Server implements Runnable {
      *            salvaged (or cannibalized for spare parts). If
      *            <code>true</code>, salvage operations are possible, if
      *            <code>false</code>, the unit is too badly damaged.
-     * @param stackpole -
-     *            a <code>boolean</code> that identifies the desctruction as a
-     *            stackpole and completely destroyed.
      * @return a <code>Vector</code> of <code>Report</code> objects that can
      *         be sent to the output log.
      */

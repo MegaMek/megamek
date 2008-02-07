@@ -10,6 +10,7 @@ v0.33.18-dev (SVN)
     well as just entity mode+chassie
 + Bug: multiple weapons of same type using up one of several ammo bins sometimes didn't work correctly
 + Removed duplicate weapons for Protos
++ Remove StackPole Removal Code. Was no longer needed
 	
 v0.33.17 (2008-02-01)
 + Bug: Flamers causing 3 heat instead of 2

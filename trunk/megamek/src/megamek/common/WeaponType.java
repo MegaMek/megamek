@@ -48,7 +48,6 @@ public class WeaponType extends EquipmentType {
     public static final long     F_PPC                = 1l << 3; //              "
     public static final long     F_AUTO_TARGET        = 1l << 4; // for weapons that target automatically (AMS)
     public static final long     F_NO_FIRES           = 1l << 5; // cannot start fires
-    public static final long     F_PROTOMECH          = 1l << 6; // Protomech weapons, which need weird ammo stuff.
     public static final long     F_SOLO_ATTACK        = 1l << 7; // must be only weapon attacking
     public static final long     F_SPLITABLE          = 1l << 8; // Weapons that can be split between locations
     public static final long     F_MG                 = 1l << 9; // MGL; for rapid fire set up
@@ -403,8 +402,11 @@ public class WeaponType extends EquipmentType {
             addType(new ISStreakSRM2OS());
             addType(new ISStreakSRM4OS());
             addType(new ISStreakSRM6OS());
+            addType(new CLStreakSRM1());
             addType(new CLStreakSRM2());
+            addType(new CLStreakSRM3());
             addType(new CLStreakSRM4());
+            addType(new CLStreakSRM5());
             addType(new CLStreakSRM6());
             addType(new CLStreakSRM2OS());
             addType(new CLStreakSRM4OS());
@@ -505,65 +507,6 @@ public class WeaponType extends EquipmentType {
             addType(new LegAttack());
             addType(new SwarmAttack());
             addType(new StopSwarmAttack());
-            //Protomech Weapons
-            addType(new CLPROSRM1());
-            addType(new CLPROSRM2());
-            addType(new CLPROSRM3());
-            addType(new CLPROSRM4());
-            addType(new CLPROSRM5());
-            addType(new CLPROSRM6());
-            addType(new CLPROSRT1());
-            addType(new CLPROSRT2());
-            addType(new CLPROSRT3());
-            addType(new CLPROSRT4());
-            addType(new CLPROSRT5());
-            addType(new CLPROSRT6());
-            addType(new CLPROStreakSRM1());
-            addType(new CLPROStreakSRM2());
-            addType(new CLPROStreakSRM3());
-            addType(new CLPROStreakSRM4());
-            addType(new CLPROStreakSRM5());
-            addType(new CLPROStreakSRM6());
-            addType(new CLPROLRM1());
-            addType(new CLPROLRM2());
-            addType(new CLPROLRM3());
-            addType(new CLPROLRM4());
-            addType(new CLPROLRM5());
-            addType(new CLPROLRM6());
-            addType(new CLPROLRM7());
-            addType(new CLPROLRM8());
-            addType(new CLPROLRM9());
-            addType(new CLPROLRM10());
-            addType(new CLPROLRM11());
-            addType(new CLPROLRM12());
-            addType(new CLPROLRM13());
-            addType(new CLPROLRM14());
-            addType(new CLPROLRM15());
-            addType(new CLPROLRM16());
-            addType(new CLPROLRM17());
-            addType(new CLPROLRM18());
-            addType(new CLPROLRM19());
-            addType(new CLPROLRM20());
-            addType(new CLPROLRT1());
-            addType(new CLPROLRT2());
-            addType(new CLPROLRT3());
-            addType(new CLPROLRT4());
-            addType(new CLPROLRT5());
-            addType(new CLPROLRT6());
-            addType(new CLPROLRT7());
-            addType(new CLPROLRT8());
-            addType(new CLPROLRT9());
-            addType(new CLPROLRT10());
-            addType(new CLPROLRT11());
-            addType(new CLPROLRT12());
-            addType(new CLPROLRT13());
-            addType(new CLPROLRT14());
-            addType(new CLPROLRT15());
-            addType(new CLPROLRT16());
-            addType(new CLPROLRT17());
-            addType(new CLPROLRT18());
-            addType(new CLPROLRT19());
-            addType(new CLPROLRT20());
 
             //Infantry Weapons
             addType(new InfantryRifleWeapon());

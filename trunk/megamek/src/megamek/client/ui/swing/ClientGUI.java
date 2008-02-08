@@ -132,6 +132,7 @@ public class ClientGUI
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
     private RandomSkillDialog randomSkillDialog;
+    private CustomInitiativeDialog initDialog;
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
      */
@@ -652,6 +653,13 @@ public class ClientGUI
             startingPositionDialog = new StartingPositionDialog(this);
         }
         return startingPositionDialog;
+    }
+    
+    public CustomInitiativeDialog getCustomInitiativeDialog() {
+        if (initDialog == null) {
+            initDialog = new CustomInitiativeDialog(this);
+        }
+        return initDialog;
     }
 
     void switchPanel(int phase) {

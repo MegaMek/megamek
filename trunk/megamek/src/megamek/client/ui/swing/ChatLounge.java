@@ -16,6 +16,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -59,6 +60,8 @@ import megamek.client.bot.BotClient;
 import megamek.client.bot.TestBot;
 import megamek.client.bot.ui.swing.BotGUI;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.AWT.AlertDialog;
+import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -106,6 +109,8 @@ public class ChatLounge
 
     private JLabel labCamo;
     private JButton butCamo;
+    
+    private JButton butInit;
 
     private JPanel panMinefield;
     private JLabel labMinefield;
@@ -314,6 +319,11 @@ public class ChatLounge
             butCamo.setBackground(PlayerColors.getColor(player.getColorIndex()));
         }
 
+        butInit = new JButton(Messages.getString("ChatLounge.butInit")); //$NON-NLS-1$
+        butInit.setEnabled(true);
+        butInit.setActionCommand("custom_init"); //$NON-NLS-1$
+        butInit.addActionListener(this);
+        
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -345,6 +355,12 @@ public class ChatLounge
         gridbag.setConstraints(choTeam, c);
         panPlayerInfo.add(choTeam);
 
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(butInit, c);
+        panPlayerInfo.add(butInit);
+        
         c.gridwidth = 1;
         c.weightx = 0.0;
         c.weighty = 0.0;
@@ -1009,6 +1025,13 @@ public class ChatLounge
                     pi.append(", ").append(player.getCamoFileName()); //$NON-NLS-1$
                 }
 
+                pi.append(", INIT: ");
+                if(player.getConstantInitBonus() >= 0) {
+                    pi.append(" +").append(Integer.toString(player.getConstantInitBonus()));
+                } else {
+                    pi.append(" ").append(Integer.toString(player.getConstantInitBonus()));
+                }
+                
                 ((DefaultListModel) lisPlayerInfo.getModel()).addElement(pi.toString());
             }
         }
@@ -1540,6 +1563,20 @@ public class ChatLounge
             updateMinefield();
         } else if (ev.getSource().equals(butCamo)) {
             camoDialog.setVisible(true);
+        } else if (ev.getSource() == butInit) {
+            //alert about teams
+            if(clientgui.client.game.getOptions().booleanOption("team_initiative")) {
+                AlertDialog id = new AlertDialog(clientgui.frame, Messages.getString("ChatLounge.InitiativeAlert.title"), Messages.getString("ChatLounge.InitiativeAlert.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                id.setVisible(true);
+            }
+            Client c = getPlayerListSelected(lisPlayerInfo);
+            if (c == null) {
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
+                return;
+            }
+            clientgui.getCustomInitiativeDialog().setClient(c);
+            clientgui.getCustomInitiativeDialog().updateValues();
+            clientgui.getCustomInitiativeDialog().setVisible(true);
         } else if (ev.getSource().equals(butAddBot)) {
             String name = "Bot" + lisPlayerInfo.getModel().getSize(); //$NON-NLS-1$
             name = (String) JOptionPane.showInputDialog(clientgui.frame, Messages.getString("ChatLounge.Name"),

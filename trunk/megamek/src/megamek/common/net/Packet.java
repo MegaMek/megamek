@@ -85,6 +85,7 @@ public class Packet {
     
     public static final int        COMMAND_SEND_SAVEGAME        = 490;
     public static final int        COMMAND_SENDING_SPECIAL_HEX_DISPLAY = 500;
+    public static final int        COMMAND_CUSTOM_INITIATIVE           = 510;
 
     private int command;
 

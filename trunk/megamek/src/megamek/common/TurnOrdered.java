@@ -143,14 +143,22 @@ public abstract class TurnOrdered implements Serializable
     public static void rollInitAndResolveTies(Vector<? extends TurnOrdered> v, Vector<? extends TurnOrdered> rerollRequests) {
         for (Enumeration<? extends TurnOrdered> i = v.elements(); i.hasMoreElements();) {
             final TurnOrdered item = i.nextElement();
+            int bonus = 0;
+            if(item instanceof Team) {
+                bonus = ((Team)item).getTotalInitBonus();
+            }
+            if(item instanceof Entity) {
+                Entity e = (Entity)item;
+                bonus = e.game.getTeamForPlayer(e.owner).getTotalInitBonus();
+            }
             if (rerollRequests == null) { //normal init roll
-                item.getInitiative().addRoll(); // add a roll for all teams
+                item.getInitiative().addRoll(bonus); // add a roll for all teams
             } else {
                 //Resolve Tactical Genius (lvl 3) pilot ability
                 for (Enumeration<? extends TurnOrdered> j = rerollRequests.elements(); j.hasMoreElements();) {
                     final TurnOrdered rerollItem = j.nextElement();
                     if (item == rerollItem) { // this is the team re-rolling
-                        item.getInitiative().replaceRoll();
+                        item.getInitiative().replaceRoll(bonus);
                         break; // each team only needs one reroll
                     }
                 }

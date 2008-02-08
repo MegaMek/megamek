@@ -620,6 +620,13 @@ public class Client implements IClientCommandHandler {
     public void sendUpdateEntity(Entity entity) {
         send(new Packet(Packet.COMMAND_ENTITY_UPDATE, entity));
     }
+    
+    /**
+     * Sends an "update custom initiative" packet
+     */
+    public void sendCustomInit(Player player) {
+        send(new Packet(Packet.COMMAND_CUSTOM_INITIATIVE, player));
+    }
 
     /**
      * Sends a "delete entity" packet

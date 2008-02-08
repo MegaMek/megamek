@@ -68,6 +68,10 @@ public final class Player extends TurnOrdered
     
     private int initialBV;
 
+    //initiative bonuses go here because we don't know if teams are rolling initiative collectively
+    //if they are then we pick the best non-zero bonuses
+    private int constantInitBonus = 0;
+    
     /**
      * The "no camo" category.
      */
@@ -391,5 +395,14 @@ public final class Player extends TurnOrdered
         }
         
         return (enemyUnitCount/ourUnitCount) + (ourUnitCount/enemyUnitCount) - 1;
+    }
+    
+    public void setConstantInitBonus(int b) {
+        this.constantInitBonus = b;
+    }
+            
+            
+    public int getConstantInitBonus() {
+        return constantInitBonus;
     }
 }

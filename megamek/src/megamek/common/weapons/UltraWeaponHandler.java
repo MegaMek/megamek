@@ -93,7 +93,6 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         // conventional infantry gets hit in one lump
         // BAs can't mount UACS/RACs
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-
             return 1;
         }
         int shotsHit;

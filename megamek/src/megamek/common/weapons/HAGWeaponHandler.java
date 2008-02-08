@@ -85,7 +85,10 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
         } else if (nRange > wtype.getMediumRange()) {
             nHitsModifier -= 2;
         }
-        nHits = Compute.missilesHit(wtype.getRackSize(), nHitsModifier, bGlancing, false);
+        if (allShotsHit())
+            nHits = wtype.getRackSize();            
+        else 
+            nHits = Compute.missilesHit(wtype.getRackSize(), nHitsModifier, bGlancing, false);
         r = new Report(3325);
         r.subject = subjectId;
         r.add(nHits);

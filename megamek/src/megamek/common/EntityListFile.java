@@ -394,6 +394,10 @@ public class EntityListFile {
                 output.write("\" advantages=\"");
                 output.write(String.valueOf(crew.getAdvantageList("::")));
             }
+            if (crew.countMDImplants() > 0) {
+                output.write("\" implants=\"");
+                output.write(String.valueOf(crew.getImplantList("::")));
+            }
             if (entity instanceof Mech) {
                 if (((Mech) entity).isAutoEject()) {
                     output.write("\" autoeject=\"true");

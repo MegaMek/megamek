@@ -140,6 +140,7 @@ public class XMLStreamParser implements XMLResponder {
     public static final String  PILOTING= "piloting";
     public static final String  HITS    = "hits";
     public static final String  ADVS    = "advantages";
+    public static final String  IMPLANTS = "implants";
     public static final String  AUTOEJECT = "autoeject";
     public static final String  INDEX   = "index";
     public static final String  IS_DESTROYED    = "isDestroyed";
@@ -425,6 +426,7 @@ public class XMLStreamParser implements XMLResponder {
                 String piloting = (String) attr.get( PILOTING );
                 String hits = (String) attr.get( HITS );
                 String advantages = (String) attr.get( ADVS );
+                String implants = (String) attr.get( IMPLANTS );
                 String autoeject = (String) attr.get ( AUTOEJECT );
                 
                 // Did we find required attributes?
@@ -490,6 +492,24 @@ public class XMLStreamParser implements XMLResponder {
                       }
 
                     }
+                    
+                    if ( (null != implants) && (implants.trim().length() > 0) ) {
+                        StringTokenizer st = new StringTokenizer(implants, "::");
+                        while (st.hasMoreTokens()) {
+                            String implant = st.nextToken();
+                            String implantName = Pilot.parseAdvantageName(implant);
+                            Object value = Pilot.parseAdvantageValue(implant);
+
+                            try {
+                                crew.getOptions().getOption(implantName).setValue(value);
+                            } catch ( Exception e ) {
+                                this.warning.append("Error restoring advantage: ")
+                                    .append( implant )
+                                    .append( ".\n" );
+                            }
+                        }
+
+                      }
                     
                     // Was the crew wounded?
                     if ( hits != null ) {

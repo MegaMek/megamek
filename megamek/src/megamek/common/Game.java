@@ -135,6 +135,9 @@ public class Game implements Serializable, IGame
     
     private HashMap<String,Object> victoryContext=null;
     
+    //internal integer value for an external game id link
+    private int externalGameId = 0;
+    
     /**
      * Constructor
      */
@@ -142,6 +145,16 @@ public class Game implements Serializable, IGame
 
     }
 
+    //Added public accessors for external game id
+     public int getExternalGameId() {
+        return externalGameId;
+    }
+    
+    public void setExternalGameId(int value) {
+        this.externalGameId = value;
+    }
+
+    
     public IBoard getBoard() {
         return board;
     }

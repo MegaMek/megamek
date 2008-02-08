@@ -12,6 +12,7 @@ v0.33.18-dev (SVN)
 + Removed duplicate weapons for Protos
 + Remove StackPole Removal Code. Was no longer needed
 + Fixed javaDoc for Server.destroyEntity();
++ Patch 1889352: Scenario Updates
 	
 v0.33.17 (2008-02-01)
 + Bug: Flamers causing 3 heat instead of 2

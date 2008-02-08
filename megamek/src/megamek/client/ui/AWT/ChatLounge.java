@@ -100,6 +100,8 @@ public class ChatLounge
     private Label labCamo;
     private ImageButton butCamo;
 
+    private Button butInit;
+    
     private Panel panMinefield;
     private Label labMinefield;
     private List lisMinefield;
@@ -325,6 +327,11 @@ public class ChatLounge
             butCamo.setBackground(PlayerColors.getColor(player.getColorIndex()));
         }
 
+        butInit = new Button(Messages.getString("ChatLounge.butInit")); //$NON-NLS-1$
+        butInit.setEnabled(true);
+        butInit.setActionCommand("custom_init"); //$NON-NLS-1$
+        butInit.addActionListener(this);
+        
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -356,6 +363,12 @@ public class ChatLounge
         gridbag.setConstraints(choTeam, c);
         panPlayerInfo.add(choTeam);
 
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(butInit, c);
+        panPlayerInfo.add(butInit);
+        
         c.gridwidth = 1;
         c.weightx = 0.0;
         c.weighty = 0.0;
@@ -1018,6 +1031,13 @@ public class ChatLounge
                     pi.append(", ").append(player.getCamoFileName()); //$NON-NLS-1$
                 }
 
+                pi.append(", INIT: ");
+                if(player.getConstantInitBonus() >= 0) {
+                    pi.append(" +").append(Integer.toString(player.getConstantInitBonus()));
+                } else {
+                    pi.append(" ").append(Integer.toString(player.getConstantInitBonus()));
+                }
+                
                 lisPlayerInfo.add(pi.toString());
             }
         }
@@ -1563,6 +1583,20 @@ public class ChatLounge
             updateMinefield();
         } else if (ev.getSource() == butCamo) {
             camoDialog.setVisible(true);
+        } else if (ev.getSource() == butInit) {
+            //alert about teams
+            if(clientgui.client.game.getOptions().booleanOption("team_initiative")) {
+                AlertDialog id = new AlertDialog(clientgui.frame, Messages.getString("ChatLounge.InitiativeAlert.title"), Messages.getString("ChatLounge.InitiativeAlert.message")); //$NON-NLS-1$ //$NON-NLS-2$
+                id.setVisible(true);
+            }
+            Client c = getPlayerListSelected(lisPlayerInfo);
+            if (c == null) {
+                clientgui.doAlertDialog(Messages.getString("ChatLounge.ImproperCommand"), Messages.getString("ChatLounge.SelectBotOrPlayer")); //$NON-NLS-1$ //$NON-NLS-2$
+                return;
+            }
+            clientgui.getCustomInitiativeDialog().setClient(c);
+            clientgui.getCustomInitiativeDialog().updateValues();
+            clientgui.getCustomInitiativeDialog().setVisible(true);
         } else if (ev.getSource() == butAddBot) {
             String name = "Bot" + lisPlayerInfo.getItemCount(); //$NON-NLS-1$
             Prompt p = new Prompt(clientgui.frame, Messages.getString("ChatLounge.ChooseBotName"), Messages.getString("ChatLounge.Name"), name, 15); //$NON-NLS-1$ //$NON-NLS-2$

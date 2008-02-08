@@ -531,6 +531,7 @@ public class Server implements Runnable {
             connPlayer.setNbrMFConventional(player.getNbrMFConventional());
             connPlayer.setNbrMFCommand(player.getNbrMFCommand());
             connPlayer.setNbrMFVibra(player.getNbrMFVibra());
+            connPlayer.setConstantInitBonus(player.getConstantInitBonus());
         }
     }
 
@@ -2578,6 +2579,15 @@ public class Server implements Runnable {
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(entity.getInitiative().toString());
+                    //add bonus
+                    int bonus = game.getTeamForPlayer(entity.getOwner()).getTotalInitBonus();
+                    String bstring = "";
+                    if(bonus>=0) {
+                        bstring = bstring + "+" + bonus;
+                    } else {
+                        bstring = bstring + bonus;
+                    }
+                    r.add(bstring);
                     addReport(r);
                 } else {
                     Player player = getPlayer(t.getPlayerNum());
@@ -2599,16 +2609,32 @@ public class Server implements Runnable {
                     r = new Report(1015, Report.PUBLIC);
                     r.add(player.getName());
                     r.add(team.getInitiative().toString());
+                    int bonus = team.getTotalInitBonus();
+                    String bstring = "";
+                    if(bonus>=0) {
+                        bstring = bstring + "+" + bonus;
+                    } else {
+                        bstring = bstring + bonus;
+                    }
+                    r.add(bstring);
                     addReport(r);
                 } else {
                     // Multiple players. List the team, then break it down.
                     r = new Report(1015, Report.PUBLIC);
                     r.add(Player.teamNames[team.getId()]);
                     r.add(team.getInitiative().toString());
+                    int bonus = team.getTotalInitBonus();
+                    String bstring = "";
+                    if(bonus>=0) {
+                        bstring = bstring + "+" + bonus;
+                    } else {
+                        bstring = bstring + bonus;
+                    }
+                    r.add(bstring);
                     addReport(r);
                     for (Enumeration<Player> j = team.getPlayers(); j.hasMoreElements();) {
                         final Player player = j.nextElement();
-                        r = new Report(1015, Report.PUBLIC);
+                        r = new Report(1016, Report.PUBLIC);
                         r.indent();
                         r.add(player.getName());
                         r.add(player.getInitiative().toString());
@@ -15203,6 +15229,14 @@ public class Server implements Runnable {
         }
     }
 
+    private void receiveCustomInit(Packet c, int connIndex) {                
+        // In the chat lounge, notify players of customizing of unit
+        if (game.getPhase() == IGame.PHASE_LOUNGE) {
+            Player p = (Player) c.getObject(0);
+            sendServerChat("" + p.getName() + " has customized initiative.");
+        }
+    }
+    
     /**
      * receive and process an entity mode change packet
      * 
@@ -16067,6 +16101,11 @@ public class Server implements Runnable {
             break;
         case Packet.COMMAND_SET_ARTYAUTOHITHEXES:
             receiveArtyAutoHitHexes(packet, connId);
+        case Packet.COMMAND_CUSTOM_INITIATIVE:
+            receiveCustomInit(packet, connId);
+            resetPlayersDone();
+            transmitAllPlayerDones();
+            break;
         }
     }
 

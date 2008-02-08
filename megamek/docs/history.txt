@@ -17,6 +17,7 @@ v0.33.18-dev (SVN)
 + Bug: Artillery damage to BA
 + Fix FLAK artillery against VTOLs
 + Patch 1889327: Random skill generation
++ Patch 1889714: initiative bonuses
 	
 v0.33.17 (2008-02-01)
 + Bug: Flamers causing 3 heat instead of 2

@@ -150,4 +150,26 @@ public final class Team extends TurnOrdered implements Serializable
         }
         return false;
     }
+    
+    //cycle through players team and select the best initiative 
+    //take negatives only if the current bonus is zero
+    public int getTotalInitBonus() {
+            
+        int constantb = 0;
+        //int turnb = 0;
+        
+        for (Enumeration<Player> p = getPlayers(); p.hasMoreElements(); ) {
+            Player player = p.nextElement();
+            if(player.getConstantInitBonus() > constantb && player.getConstantInitBonus() != 0) {
+                constantb = player.getConstantInitBonus();
+            }
+            //also accept it if it is negative and current bonus is zero
+            if(player.getConstantInitBonus() < 0 && constantb == 0) {
+                constantb = player.getConstantInitBonus();
+            }
+            
+        }   
+        return constantb;
+    }
+    
 }

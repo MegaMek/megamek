@@ -142,7 +142,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
                 && !(ae.getSwarmTargetId() == target.getTargetId())) {
             bSalvo = true;
-            return Compute.missilesHit(((BattleArmor)ae).getShootingStrength());
+            return allShotsHit()?((BattleArmor)ae).getShootingStrength():Compute.missilesHit(((BattleArmor)ae).getShootingStrength());
         }
         return 1;
     }

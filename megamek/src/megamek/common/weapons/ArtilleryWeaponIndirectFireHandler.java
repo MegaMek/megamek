@@ -38,6 +38,7 @@ import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -130,6 +131,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         final Targetable target = aaa.getTarget(game);
         final Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
+        boolean isFlak = target instanceof VTOL;
         Entity bestSpotter = null;
         Entity ae = game.getEntity(aaa.getEntityId());
         if (ae == null) {
@@ -138,7 +140,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         Mounted ammo = ae.getEquipment(aaa.getAmmoId());
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
         // Are there any valid spotters?
-        if (null != spottersBefore) {
+        if (null != spottersBefore && !isFlak) {
             // fetch possible spotters now
             Enumeration spottersAfter = game
                     .getSelectedEntities(new EntitySelector() {
@@ -178,9 +180,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             toHit.addModifier(mod, "Spotting modifier");
         }
 
-        // Is the attacker still alive?
+        // Is the attacker still alive and we're not shooting FLAK?
+        // then adjust the target
         Entity artyAttacker = aaa.getEntity(game);
-        if (null != artyAttacker) {
+        if (null != artyAttacker && !isFlak) {
 
             // Get the arty weapon.
             Mounted weapon = artyAttacker.getEquipment(aaa.getWeaponId());
@@ -255,11 +258,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.add(roll);
         vPhaseReport.addElement(r);
-
-        game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
-                new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILEY_TARGET,
-                        game.getTurnIndex(),
-                        "Artilery Target. Better text later."));
+        
+        if (!isFlak) {
+            game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
+                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILEY_TARGET,
+                            game.getTurnIndex(),
+                            "Artilery Target. Better text later."));
+        }
         
         // do we hit?
         bMissed = roll < toHit.getValue();
@@ -272,33 +277,43 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
         Coords coords = target.getPosition();
         if (!bMissed) {
-            r = new Report(3190);
+            if (!isFlak) {
+                r = new Report(3190);
+                game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
+                        new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILERY_HIT,
+                                game.getTurnIndex(),
+                                "Artilery Hit. Better text later."));
+            } else {
+                r = new Report(3191);
+            }
             r.subject = subjectId;
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
-            
-            game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
-                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILERY_HIT,
-                            game.getTurnIndex(),
-                            "Artilery Hit. Better text later."));
         } else {
             coords = Compute.scatter(coords, (game.getOptions()
                     .booleanOption("margin_scatter_distance")) ? (toHit
                     .getValue() - roll) : -1);
             if (game.getBoard().contains(coords)) {
                 // misses and scatters to another hex
-                r = new Report(3195);
+                if (!isFlak) {
+                    r = new Report(3195);
+                    game.getBoard().addSpecialHexDisplay(coords, 
+                            new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILERY_HIT,
+                                    game.getTurnIndex(),
+                                    "Artilery Scatered Here. Better text later."));
+                } else {
+                    r = new Report(3192);
+                }                
                 r.subject = subjectId;
                 r.add(coords.getBoardNum());
                 vPhaseReport.addElement(r);
-                
-                game.getBoard().addSpecialHexDisplay(coords, 
-                        new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILERY_HIT,
-                                game.getTurnIndex(),
-                                "Artilery Scatered Here. Better text later."));
             } else {
                 // misses and scatters off-board
-                r = new Report(3200);
+                if (isFlak) {
+                    r = new Report(3200);
+                } else {
+                    r = new Report(3193);
+                }
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
                 return !bMissed;
@@ -338,106 +353,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             server.deliverArtillerySmoke(coords);
             return false;
         }
-
-        int nCluster = 5;
-        int hits;
-
-        int ratedDamage = wtype.getRackSize();
-        Building bldg = null;
-        bldg = game.getBoard().getBuildingAt(coords);
-        int bldgAbsorbs = (bldg != null) ? bldg.getPhaseCF() / 10 : 0;
-        bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-        ratedDamage -= bldgAbsorbs;
-        if ((bldg != null) && (bldgAbsorbs > 0)) {
-            // building absorbs some of the damage
-            r = new Report(6425);
-            r.subject = subjectId;
-            r.add(bldgAbsorbs);
-            vPhaseReport.addElement(r);
-            Vector<Report> buildingReport = server.damageBuilding( bldg, ratedDamage );
-            for (Report report: buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
+        int altitude = 0;
+        if (isFlak) {
+            altitude = ((VTOL)target).getElevation();
         }
-        // do damage to woods, 2 * normal damage (TW page 112)
-        handleClearDamage(vPhaseReport, bldg, ratedDamage*2, bSalvo);
+        server.artilleryDamageArea(coords, artyAttacker.getPosition(), atype, subjectId, artyAttacker, isFlak, altitude);
 
-        for (Enumeration impactHexHits = game.getEntities(coords); impactHexHits
-                .hasMoreElements();) {
-            Entity entity = (Entity) impactHexHits.nextElement();
-            hits = ratedDamage;
-
-            while (hits > 0) {
-                toHit.setSideTable(entity.sideTable(aaa.getCoords()));
-                if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
-                    // VTOLs take no damage from normal artillery unless landed
-                    if (entity.getElevation() > 0) {
-                        break;
-                    }
-                }
-                HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit
-                        .getSideTable(), waa.getAimedLocation(), waa
-                        .getAimingMode());
-
-                vPhaseReport.addAll( server.damageEntity(entity,
-                        hit, Math.min(nCluster, hits), false, DamageType.NONE, false, true,
-                        throughFront));
-                hits -= Math.min(nCluster, hits);
-            }
-        }
-        for (int dir = 0; dir <= 5; dir++) {
-            Coords tempcoords = coords.translated(dir);
-            if (!game.getBoard().contains(tempcoords)) {
-                continue;
-            }
-            if (coords.equals(tempcoords)) {
-                continue;
-            }
-            //do damage to woods, 2 * normal damage (TW page 112)
-            handleClearDamage(vPhaseReport, bldg, ratedDamage*2, bSalvo);
-
-            ratedDamage = wtype.getRackSize() / 2;
-            bldg = null;
-            bldg = game.getBoard().getBuildingAt(tempcoords);
-            bldgAbsorbs = (bldg != null) ? bldg.getPhaseCF() / 10 : 0;
-            bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-            ratedDamage -= bldgAbsorbs;
-            if ((bldg != null) && (bldgAbsorbs > 0)) {
-                // building absorbs some of the damage
-                r = new Report(6425);
-                r.subject = subjectId;
-                r.add(bldgAbsorbs);
-                vPhaseReport.addElement(r);
-                Vector<Report> buildingReport = server.damageBuilding( bldg, ratedDamage );
-                for (Report report: buildingReport) {
-                    report.subject = subjectId;
-                }
-                vPhaseReport.addAll(buildingReport);
-            }
-
-            Enumeration splashHexHits = game.getEntities(tempcoords);
-            if (splashHexHits.hasMoreElements()) {
-                r = new Report(3210);
-                r.newlines = 0;
-                r.subject = subjectId;
-                r.add(tempcoords.getBoardNum());
-                r.indent();
-                vPhaseReport.addElement(r);
-            }
-            for (; splashHexHits.hasMoreElements();) {
-                Entity entity = (Entity) splashHexHits.nextElement();
-                hits = ratedDamage;
-                while (hits > 0) {
-                    HitData hit = entity.rollHitLocation(toHit.getHitTable(),
-                            toHit.getSideTable(), waa.getAimedLocation(), waa
-                                    .getAimingMode());
-                    vPhaseReport.addAll( server.damageEntity(
-                            entity, hit, Math.min(nCluster, hits)));
-                    hits -= Math.min(nCluster, hits);
-                }
-            }
-        }
+        
         return false;
     }
     

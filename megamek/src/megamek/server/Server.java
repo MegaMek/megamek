@@ -18346,7 +18346,7 @@ public class Server implements Runnable {
      * @param altitude
      *            Absolute altitude for flak attack
      */
-    void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer, boolean flak, int altitude) {
+    public void artilleryDamageArea(Coords centre, Coords attackSource, AmmoType ammo, int subjectId, Entity killer, boolean flak, int altitude) {
         int damage;
         int falloff = 5;
         if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {

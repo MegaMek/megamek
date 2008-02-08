@@ -89,6 +89,12 @@ public interface IGame {
     
     public static final int PHASE_SET_ARTYAUTOHITHEXES = 22;
 
+    //New accessors for external game id
+    public abstract int getExternalGameId();
+    
+    public abstract void setExternalGameId(int value);
+
+    
     /**
      *  @return the currently active context-object for victorycondition
      *          checking. This should be a mutable object and it will

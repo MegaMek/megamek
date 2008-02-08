@@ -267,6 +267,9 @@ public class ScenarioLoader
         
         g.setupRoundDeployment();
         
+        // Read the external game id from the scenario file
+        g.setExternalGameId(parseExternalGameId(p));
+        
         return g;
     }
     
@@ -328,12 +331,26 @@ public class ScenarioLoader
 			  }
 			  sapCreated = true;
 			}
-			
-			
+					
 			if (chpCreated) m_vCritHitPlans.addElement(chp);
 			if (dpCreated) m_vDamagePlans.addElement(dp);
 			if (sapCreated) m_vSetAmmoTo.addElement(sap);
 			
+                        // Check for pilot hits
+                        s = p.getProperty("Unit_" + sFaction +"_" + i + "_PilotHits");
+                        if ( null != s) {
+                            int hits = Integer.parseInt(s);
+                            if ( hits > 5 ) {
+                                hits = 0;
+                            }
+                            e.crew.setHits(hits);
+                        }
+		  
+                        // Check for unit external ids
+                        s = p.getProperty("Unit_" + sFaction +"_" + i + "_ExternalID");
+                        if ( null != s) {
+                            e.setExternalId(Integer.parseInt(s));
+                        }
 			
 			//Check for advantages
 			  s = p.getProperty("Unit_" + sFaction + "_" + i + "_Advantages");
@@ -836,5 +853,17 @@ public class ScenarioLoader
             setTo = Integer.parseInt(s.substring(ewSpot+1));
             specificDammage.addElement(new SpecDam(loc,setTo,rear,internal));
         }
+    }
+    
+    /**
+     * Parses out the external game id from the scenario file
+     */     
+    private int parseExternalGameId(Properties p) {
+        String sExternalId = p.getProperty("ExternalId");
+        int ExternalGameId = 0;
+        if (sExternalId != null) {
+            ExternalGameId = Integer.parseInt(sExternalId);
+        }
+       return ExternalGameId;
     }
 }

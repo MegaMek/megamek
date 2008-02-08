@@ -133,6 +133,7 @@ public class ClientGUI
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
+    private RandomSkillDialog randomSkillDialog;
 
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
@@ -454,6 +455,7 @@ public class ClientGUI
 
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
+        randomSkillDialog = new RandomSkillDialog(this);
         customBADialog = new CustomBattleArmorDialog(this);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
         new Thread(customBADialog, "Custom Battle Armor Dialog").start();
@@ -1591,5 +1593,9 @@ public class ClientGUI
 
     public RandomArmyDialog getRandomArmyDialog() {
         return randomArmyDialog;
+    }
+    
+    public RandomSkillDialog getRandomSkillDialog() {
+        return randomSkillDialog;
     }
 }

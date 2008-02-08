@@ -126,6 +126,7 @@ public class ChatLounge
 
     Button butLoad;
     Button butArmy;
+    Button butSkills;
     Button butLoadCustomBA;
     private Button butDelete;
     private Button butCustom;
@@ -165,6 +166,7 @@ public class ChatLounge
         public void doneLoading() {
             butLoad.setEnabled(true);
             butArmy.setEnabled(true);
+            butSkills.setEnabled(true);
             butLoadCustomBA.setEnabled(true);
         }
     };
@@ -631,6 +633,7 @@ public class ChatLounge
 
         butLoad = new Button(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
         butArmy = new Button(Messages.getString("ChatLounge.butArmy")); //$NON-NLS-1$
+        butSkills = new Button(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
         butLoadCustomBA = new Button(Messages.getString("ChatLounge.butLoadCustomBA"));
 
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
@@ -645,6 +648,7 @@ public class ChatLounge
         butLoad.setActionCommand("load_mech"); //$NON-NLS-1$
         butLoad.addActionListener(this);
         butArmy.addActionListener(this);
+        butSkills.addActionListener(this);
         butLoadCustomBA.setActionCommand("load_custom_ba"); //$NON-NLS-1$
         butLoadCustomBA.addActionListener(this);
 
@@ -716,6 +720,9 @@ public class ChatLounge
         gridbag.setConstraints(butArmy, c);
         panEntities.add(butArmy);
         
+        gridbag.setConstraints(butSkills, c);
+        panEntities.add(butSkills);
+        
         gridbag.setConstraints(butLoadCustomBA, c);
         panEntities.add(butLoadCustomBA);
 
@@ -734,6 +741,7 @@ public class ChatLounge
         c.gridwidth = 1;
         gridbag.setConstraints(butDeleteAll, c);
         panEntities.add(butDeleteAll);
+
     }
 
     /**
@@ -1328,6 +1336,10 @@ public class ChatLounge
     public void loadArmy() {
         clientgui.getRandomArmyDialog().setVisible(true);
     }
+    
+    public void loadRandomSkills() {
+        clientgui.getRandomSkillDialog().setVisible(true);
+    }
 
     public void loadCustomBA() {
         clientgui.getCustomBADialog().setVisible(true);
@@ -1488,6 +1500,8 @@ public class ChatLounge
             loadMech();
         } else if (ev.getSource() == butArmy) {
             loadArmy();
+        } else if (ev.getSource() == butSkills) {
+            loadRandomSkills();
         } else if (ev.getSource() == butLoadCustomBA) {
             loadCustomBA();
         } else if (ev.getSource() == butCustom || ev.getSource() == lisEntities) {

@@ -231,6 +231,34 @@ public class Pilot
       
       return adv.toString();
     }
+    
+    public String getImplantList(String sep) {
+        StringBuffer adv = new StringBuffer();
+        
+        if (null == sep) {
+          sep = "";
+        }
+        
+      for (Enumeration<IOption> j = getMDImplants(); j.hasMoreElements();) {
+          IOption option = j.nextElement();
+
+          if ( option.booleanValue() ) {
+              if ( adv.length() > 0 ) {
+                  adv.append(sep);
+              }
+
+              adv.append(option.getName());
+              if (option.getType() == IOption.STRING ||
+                  option.getType() == IOption.CHOICE ||
+                  option.getType() == IOption.INTEGER ) {
+                  adv.append(" ").append(option.stringValue());
+              }
+          }
+      }
+        
+        return adv.toString();
+      }
+    
 
     // Helper function to reverse getAdvantageList() above
     public static String parseAdvantageName(String s) {

@@ -13,6 +13,7 @@ v0.33.18-dev (SVN)
 + Remove StackPole Removal Code. Was no longer needed
 + Fixed javaDoc for Server.destroyEntity();
 + Patch 1889352: Scenario Updates
++ Patch 1889029: Save MD abilities to XML
 	
 v0.33.17 (2008-02-01)
 + Bug: Flamers causing 3 heat instead of 2

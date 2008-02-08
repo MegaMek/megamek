@@ -236,7 +236,10 @@ public class MechSummaryCache {
         // store map references
         for (int x = 0; x < m_data.length; x++) {
             m_nameMap.put(m_data[x].getName(), m_data[x]);
-            m_fileNameMap.put(m_data[x].getSourceFile().getName(), m_data[x]);
+            if ( m_data[x].getEntryName() == null)
+                m_fileNameMap.put(m_data[x].getSourceFile().getName(), m_data[x]);
+            else
+                m_fileNameMap.put(m_data[x].getEntryName(), m_data[x]);
         }
 
         // save updated cache back to disk

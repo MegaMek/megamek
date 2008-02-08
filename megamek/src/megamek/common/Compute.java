@@ -53,7 +53,26 @@ public class Compute {
     public static final int ARC_NORTH = 8;
     public static final int ARC_EAST = 9;
     public static final int ARC_WEST = 10;
+    
+    public static final int TYPE_IS = 0;
+    public static final int TYPE_CLAN = 1;
+    public static final int TYPE_MD = 2;
+    
+    public static final int LEVEL_GREEN = 0;
+    public static final int LEVEL_REGULAR = 1;
+    public static final int LEVEL_VETERAN = 2;
+    public static final int LEVEL_ELITE = 3;
+    
+    public static final int METHOD_TW = 0;
+    public static final int METHOD_TAHARQA = 1;
+    public static final int METHOD_CONSTANT = 2;
+    
 
+    private static final int[][] skillLevels = new int[][] {
+        {7,6,5,4,4,3,2,1,0},
+        {7,7,6,6,5,4,3,2,1}      
+    };
+    
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
     
     private static final int[][] clusterHitsTable = new int[][] {
@@ -3681,5 +3700,104 @@ Average:     0.649                0.781                0.527                0.42
         return newTarget;
     }
 
+    public static int[] getRandomSkills(int method, int type, int level, boolean isVee) {
+        
+        int[] skills = {4,5};
+        
+        //constant is the easy one
+        if(method == METHOD_CONSTANT) {
+            if(level == LEVEL_GREEN) {
+                skills[0] = 5;
+                skills[1] = 6;
+            }
+            if(level == LEVEL_VETERAN) {
+                skills[0] = 3;
+                skills[1] = 4;
+            }
+            if(level == LEVEL_ELITE) {
+                skills[0] = 2;
+                skills[1] = 3;
+            }
+            if(type == TYPE_CLAN || type == TYPE_MD) {
+                skills[0]--;
+                skills[1]--;
+            }
+            return skills;
+        }
+        
+        //if using Taharqa's method, then the base skill level for each entity is determined 
+        //separately
+        if(method == METHOD_TAHARQA) {
+            int lbonus = 0;
+            if(level == LEVEL_GREEN)
+                lbonus -= 2;
+            if(level == LEVEL_VETERAN)
+                lbonus += 2;
+            if(level == LEVEL_ELITE)
+                lbonus += 4;
+            
+            int lvlroll = d6(2) + lbonus;
+            
+            //restate level based on roll
+            if(lvlroll < 6) {
+                level = LEVEL_GREEN;
+            } else if (lvlroll < 10) {
+                level = LEVEL_REGULAR;
+            } else if (lvlroll < 12) {
+                level = LEVEL_VETERAN;
+            } else {
+                level = LEVEL_ELITE;
+            }
+        }
+        
+        //first get the bonus
+        int bonus = 0;
+        if(type == TYPE_CLAN) {
+            if(isVee) {
+                bonus--;
+            } else {
+                bonus++;
+            }
+        }
+        if(type == TYPE_MD) {
+            bonus++;
+        }
+        
+        int gunroll = d6(1) + bonus;
+        int pilotroll = d6(1) + bonus;
+        
+        int glevel = 0;
+        int plevel = 0;
+        
+        switch (level) {
+        case LEVEL_REGULAR:
+            glevel = (int)Math.ceil(gunroll / 2.0) + 2;
+            plevel = (int)Math.ceil(pilotroll / 2.0) + 2;
+            break;
+        case LEVEL_VETERAN:
+            glevel = (int)Math.ceil(gunroll / 2.0) + 3;
+            plevel = (int)Math.ceil(pilotroll / 2.0) + 3;
+            break;
+        case LEVEL_ELITE:
+            glevel = (int)Math.ceil(gunroll / 2.0) + 4;
+            plevel = (int)Math.ceil(pilotroll / 2.0) + 4;
+            break;
+        default:    
+            glevel = (int)Math.ceil((gunroll + 0.5) / 2.0);
+            plevel = (int)Math.ceil((pilotroll + 0.5) / 2.0);
+            if(gunroll <= 0) {
+                glevel = 0;
+            }
+            if(pilotroll <= 0) {
+                plevel = 0;
+            }
+        }
+        
+        skills[0] = skillLevels[0][glevel];
+        skills[1] = skillLevels[1][plevel];
+        
+        return skills;
+    }
+    
 } // End public class Compute
 

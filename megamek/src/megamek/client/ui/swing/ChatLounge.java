@@ -133,6 +133,7 @@ public class ChatLounge
 
     JButton butLoad;
     JButton butArmy;
+    JButton butSkills;
     JButton butLoadCustomBA;
     private JButton butDelete;
     private JButton butCustom;
@@ -620,6 +621,7 @@ public class ChatLounge
 
         butLoad = new JButton(Messages.getString("ChatLounge.butLoad")); //$NON-NLS-1$
         butArmy = new JButton(Messages.getString("ChatLounge.butArmy")); //$NON-NLS-1$
+        butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
         butLoadCustomBA = new JButton(Messages.getString("ChatLounge.butLoadCustomBA"));
 
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
@@ -628,11 +630,14 @@ public class ChatLounge
         butArmy.setEnabled(mechSummaryCache.isInitialized());
         butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
 
+        butSkills.setEnabled(true);
+        
         Font font = new Font("Sans Serif", Font.BOLD, 18); //$NON-NLS-1$
         butLoad.setFont(font);
         butLoad.setActionCommand("load_mech"); //$NON-NLS-1$
         butLoad.addActionListener(this);
         butArmy.addActionListener(this);
+        butSkills.addActionListener(this);
         butLoadCustomBA.setActionCommand("load_custom_ba"); //$NON-NLS-1$
         butLoadCustomBA.addActionListener(this);
 
@@ -703,6 +708,9 @@ public class ChatLounge
 
         gridbag.setConstraints(butArmy, c);
         panEntities.add(butArmy);
+        
+        gridbag.setConstraints(butSkills, c);
+        panEntities.add(butSkills);
 
         gridbag.setConstraints(butLoadCustomBA, c);
         panEntities.add(butLoadCustomBA);
@@ -1322,6 +1330,10 @@ public class ChatLounge
     private void loadArmy() {
         clientgui.getRandomArmyDialog().setVisible(true);
     }
+    
+    public void loadRandomSkills() {
+        clientgui.getRandomSkillDialog().setVisible(true);
+    }
 
     private void viewGroup() {
         new MechGroupView(clientgui.getFrame(), client, entityCorrespondance).setVisible(true);
@@ -1465,6 +1477,8 @@ public class ChatLounge
             loadMech();
         } else if (ev.getSource().equals(butArmy)) {
             loadArmy();
+        } else if (ev.getSource().equals(butSkills)) {
+            loadRandomSkills();
         } else if (ev.getSource().equals(butLoadCustomBA)) {
             loadCustomBA();
         } else if (ev.getSource().equals(butCustom) || ev.getSource().equals(lisEntities)) {

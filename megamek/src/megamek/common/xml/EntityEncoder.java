@@ -123,6 +123,10 @@ public class EntityEncoder {
             out.write( "\" advantages=\"" );
             out.write( String.valueOf(crew.getAdvantageList(" ")) );
         }
+        if ( crew.countMDImplants() > 0 ) {
+            out.write( "\" implants=\"" );
+            out.write( String.valueOf(crew.getImplantList(" ")) );
+        }
         out.write( "\"/>" );
 
         // Write the game-specific data.

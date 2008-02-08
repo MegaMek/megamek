@@ -345,20 +345,24 @@ public class LRMSwarmHandler extends LRMHandler {
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles
         if (swarmMissilesLeft > 0) {
-            int swarmsForHitTable = 5;
-            if (swarmMissilesLeft > 5 && swarmMissilesLeft <= 10)
-                swarmsForHitTable = 10;
-            else if (swarmMissilesLeft > 10 && swarmMissilesLeft <= 15)
-                swarmsForHitTable = 15;
-            else if (swarmMissilesLeft > 15 && swarmMissilesLeft <= 20)
-                swarmsForHitTable = 20;
-            missilesHit = Compute.missilesHit(swarmsForHitTable, nMissilesModifier, maxtechmissiles | bGlancing);
-            if (missilesHit > swarmMissilesLeft) {
-                missilesHit = swarmMissilesLeft;
-            }
+            if (allShotsHit())
+                missilesHit = swarmMissilesLeft;            
+            else {
+                int swarmsForHitTable = 5;
+                if (swarmMissilesLeft > 5 && swarmMissilesLeft <= 10)
+                    swarmsForHitTable = 10;
+                else if (swarmMissilesLeft > 10 && swarmMissilesLeft <= 15)
+                    swarmsForHitTable = 15;
+                else if (swarmMissilesLeft > 15 && swarmMissilesLeft <= 20)
+                    swarmsForHitTable = 20;
+                missilesHit = Compute.missilesHit(swarmsForHitTable, nMissilesModifier, maxtechmissiles | bGlancing);
+                if (missilesHit > swarmMissilesLeft) {
+                    missilesHit = swarmMissilesLeft;
+                }
+            }            
         } else {
+            missilesHit = allShotsHit() ? wtype.getRackSize():Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bGlancing || maxtechmissiles);
             swarmMissilesLeft = wtype.getRackSize();
-            missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bGlancing || maxtechmissiles);
         }
         swarmMissilesNowLeft = swarmMissilesLeft - missilesHit;
         r = new Report(3325);

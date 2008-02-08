@@ -18,6 +18,7 @@ v0.33.18-dev (SVN)
 + Fix FLAK artillery against VTOLs
 + Patch 1889327: Random skill generation
 + Patch 1889714: initiative bonuses
++ Bug 1889760: SRM damage vs adjacent building
 	
 v0.33.17 (2008-02-01)
 + Bug: Flamers causing 3 heat instead of 2

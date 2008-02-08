@@ -78,9 +78,13 @@ public class SRMAntiTSMHandler extends SRMHandler {
         }
         //Add ams mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
-        // anti tsm hit with half the normal number, round up
-        missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bGlancing || maxtechmissiles);
-        missilesHit = (int)Math.ceil((double)missilesHit/2);
+        if (allShotsHit()) {
+            missilesHit = wtype.getRackSize();
+        } else {
+            // anti tsm hit with half the normal number, round up
+            missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bGlancing || maxtechmissiles);
+            missilesHit = (int)Math.ceil((double)missilesHit/2);
+        }
         r = new Report(3325);
         r.subject = subjectId;
         r.add(missilesHit);

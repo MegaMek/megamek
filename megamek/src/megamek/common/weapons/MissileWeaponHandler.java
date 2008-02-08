@@ -155,9 +155,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         
-        if (target.getTargetType() == Targetable.TYPE_HEX_CLEAR)
-            missilesHit = wtype.getRackSize();
-        else{
+        if (allShotsHit())
+            missilesHit = wtype.getRackSize();            
+        else {
             if (ae instanceof BattleArmor)
                 missilesHit = Compute.missilesHit(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength(),nMissilesModifier, bGlancing || maxtechmissiles, weapon.isHotLoaded());
             else

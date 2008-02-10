@@ -234,7 +234,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // and some weapons can't ignite fires.
         if (entityTarget != null
                 && (bldg == null && wtype.getFireTN() != TargetRoll.IMPOSSIBLE)) {
-            server.tryIgniteHex(target.getPosition(), subjectId, false, 11);
+            server.tryIgniteHex(target.getPosition(), subjectId, false, 11, vPhaseReport);
         }
         
         // Report any AMS action.

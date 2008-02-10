@@ -50,7 +50,7 @@ public class SRMInfernoHandler extends SRMHandler {
      */
     protected void reportMiss(Vector<Report> vPhaseReport) {
         super.reportMiss(vPhaseReport);
-        server.tryIgniteHex(target.getPosition(), ae.getId(), true, 11);
+        server.tryIgniteHex(target.getPosition(), ae.getId(), true, 11, vPhaseReport);
     }
     
     /*

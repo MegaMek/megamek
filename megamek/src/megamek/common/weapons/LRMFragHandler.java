@@ -103,7 +103,7 @@ public class LRMFragHandler extends LRMHandler {
         // Buildings can't be accidentally ignited.
         if (bldg != null
                 && server.tryIgniteHex(target.getPosition(), subjectId, false,
-                        9)) {
+                        9, vPhaseReport)) {
             return;
         }
 

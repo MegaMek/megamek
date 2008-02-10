@@ -118,7 +118,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // and some weapons can't ignite fires.
         if (entityTarget != null
                 && (bldg == null && wtype.getFireTN() != TargetRoll.IMPOSSIBLE)) {
-            server.tryIgniteHex(target.getPosition(), subjectId, false, 11);
+            server.tryIgniteHex(target.getPosition(), subjectId, false, 11, vPhaseReport);
         }
 
         // BMRr, pg. 51: "All shots that were aimed at a target inside
@@ -474,7 +474,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
             Report.addNewline(vPhaseReport);
             server.tryIgniteHex(target.getPosition(), subjectId, false, tn,
-                    true);
+                    true, vPhaseReport);
         }
     }
 
@@ -499,7 +499,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // Buildings can't be accidentally ignited.
         if (bldg != null
                 && server.tryIgniteHex(target.getPosition(), subjectId, false,
-                        9)) {
+                        9, vPhaseReport)) {
             return;
         }
         server.tryClearHex(target.getPosition(), nDamage, subjectId);

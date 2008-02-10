@@ -5187,7 +5187,7 @@ public class Server implements Runnable {
         case Targetable.TYPE_HEX_CLEAR:
         case Targetable.TYPE_HEX_IGNITE:
             tryClearHex(t.getPosition(), missiles * 4, ae.getId());
-            tryIgniteHex(t.getPosition(), ae.getId(), true, 0);
+            tryIgniteHex(t.getPosition(), ae.getId(), true, 0, vPhaseReport);
             break;
         case Targetable.TYPE_BLDG_IGNITE:
         case Targetable.TYPE_BUILDING:
@@ -7041,7 +7041,7 @@ public class Server implements Runnable {
      *            <code>true</code> if the attempt roll should be added to the
      *            report.
      */
-    public boolean tryIgniteHex(Coords c, int entityId, boolean bInferno, int nTargetRoll, boolean bReportAttempt) {
+    public boolean tryIgniteHex(Coords c, int entityId, boolean bInferno, int nTargetRoll, boolean bReportAttempt, Vector<Report> vPhaseReport) {
 
         IHex hex = game.getBoard().getHex(c);
         boolean bAnyTerrain = false;
@@ -7070,7 +7070,7 @@ public class Server implements Runnable {
                 r = new Report(3065);
                 r.indent(2);
                 r.subject = entityId;
-                addReport(r);
+                vPhaseReport.add(r);
             }
             return true;
         } else if (ignite(hex, nTargetRoll, bAnyTerrain, entityId)) {
@@ -7078,7 +7078,7 @@ public class Server implements Runnable {
             r = new Report(3070);
             r.indent(2);
             r.subject = entityId;
-            addReport(r);
+            vPhaseReport.add(r);
             sendChangedHex(c);
             return true;
         }
@@ -7101,8 +7101,8 @@ public class Server implements Runnable {
      * @param nTargetRoll -
      *            the <code>int</code> roll target for the attempt.
      */
-    public boolean tryIgniteHex(Coords c, int entityId, boolean bInferno, int nTargetRoll) {
-        return tryIgniteHex(c, entityId, bInferno, nTargetRoll, false);
+    public boolean tryIgniteHex(Coords c, int entityId, boolean bInferno, int nTargetRoll, Vector<Report> vPhaseReport) {
+        return tryIgniteHex(c, entityId, bInferno, nTargetRoll, false, vPhaseReport);
     }
 
     public void tryClearHex(Coords c, int nDamage, int entityId) {

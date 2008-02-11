@@ -19,6 +19,16 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Iterator;
+import java.util.Map;
+
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -27,15 +37,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.Enumeration;
-import java.util.Hashtable;
 
 public class UnitFailureDialog extends JDialog
         implements ActionListener, ListSelectionListener, KeyListener {
@@ -45,22 +46,22 @@ public class UnitFailureDialog extends JDialog
      */
     private static final long serialVersionUID = -7075012201265932299L;
 
-    private Hashtable hFailedFiles;
+    private Map<String,String> hFailedFiles;
 
     private JList failedList;
 
     private JTextArea reasonTextArea =
             new JTextArea("", 4, 40); //$NON-NLS-1$
 
-    public UnitFailureDialog(JFrame frame, Hashtable hff) {
+    public UnitFailureDialog(JFrame frame, Map<String,String> hff) {
         super(frame, Messages.getString("UnitFailureDialog.title")); //$NON-NLS-1$
 
         hFailedFiles = hff;
         String[] failed = new String[hFailedFiles.size()];
         int i = 0;
-        Enumeration failedUnits = hFailedFiles.keys();
-        while (failedUnits.hasMoreElements()) {
-            failed[i++] = failedUnits.nextElement().toString();
+        Iterator<String> failedUnits = hFailedFiles.keySet().iterator();
+        while (failedUnits.hasNext()) {
+            failed[i++] = failedUnits.next();
         }
         failedList = new JList(failed);
 

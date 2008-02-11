@@ -215,9 +215,9 @@ public class RandomSkillDialog extends JDialog implements ActionListener, ItemLi
         chPlayer.removeAllItems();
         chPlayer.setEnabled(true);
         chPlayer.addItem(clientName);
-        for (Iterator i = clientgui.getBots().values().iterator(); i
+        for (Iterator<Client> i = clientgui.getBots().values().iterator(); i
                 .hasNext();) {
-            chPlayer.addItem(((Client) i.next()).getName());
+            chPlayer.addItem(i.next().getName());
         }
         if (chPlayer.getItemCount() == 1) {
             chPlayer.setEnabled(false);

@@ -84,7 +84,7 @@ public class UnitLoadingDialog extends JDialog {
         t.start();
     }
 
-    private void updateCounts() {
+    void updateCounts() {
         lCacheCount.setText(String.valueOf(MechSummaryCache.getInstance().getCacheCount()));
         lFileCount.setText(String.valueOf(MechSummaryCache.getInstance().getFileCount()));
         lZipCount.setText(String.valueOf(MechSummaryCache.getInstance().getZipCount()));

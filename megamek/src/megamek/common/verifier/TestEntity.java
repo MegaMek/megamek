@@ -19,20 +19,19 @@
 
 package megamek.common.verifier;
 
-import megamek.common.Entity;
-import megamek.common.Mech;
-import megamek.common.TechConstants;
-import megamek.common.CriticalSlot;
-import megamek.common.Mounted;
-import megamek.common.EquipmentType;
-import megamek.common.WeaponType;
-import megamek.common.AmmoType;
-import megamek.common.MiscType;
-import megamek.common.util.StringUtil;
-import megamek.common.Engine;
+import java.util.Iterator;
 
-import java.util.Enumeration;
-import java.lang.StringBuffer;
+import megamek.common.AmmoType;
+import megamek.common.CriticalSlot;
+import megamek.common.Engine;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
+import megamek.common.Mech;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.TechConstants;
+import megamek.common.WeaponType;
+import megamek.common.util.StringUtil;
 
 public abstract class TestEntity implements TestEntityOption {
 	
@@ -622,9 +621,9 @@ public abstract class TestEntity implements TestEntityOption {
 
 	public boolean hasFailedEquipment(StringBuffer buff) {
 		boolean hasFailedEquipment = false;
-		for (Enumeration e = getEntity().getFailedEquipment(); e
-				.hasMoreElements();) {
-			String name = (String) e.nextElement();
+		for (Iterator<String> e = getEntity().getFailedEquipment(); e
+				.hasNext();) {
+			String name = e.next();
 			if (!ignoreFailedEquip(name)) {
 				if (!hasFailedEquipment)
 					buff.append("Equipment that Failed to Load:\n");
@@ -658,11 +657,11 @@ public abstract class TestEntity implements TestEntityOption {
     }
 
 	public StringBuffer printFailedEquipment(StringBuffer buff) {
-		if (getEntity().getFailedEquipment().hasMoreElements())
+		if (getEntity().getFailedEquipment().hasNext())
 			buff.append("Equipment that Failed to Load:\n");
-		for (Enumeration e = getEntity().getFailedEquipment(); e
-				.hasMoreElements();)
-			buff.append(e.nextElement()).append("\n");
+		for (Iterator<String> e = getEntity().getFailedEquipment(); e
+				.hasNext();)
+			buff.append(e.next()).append("\n");
 		return buff;
 	}
 

@@ -205,15 +205,15 @@ public class Server implements Runnable {
     private String motd;
 
     // game info
-    private Vector<IConnection> connections = new Vector<IConnection>(4);
+    Vector<IConnection> connections = new Vector<IConnection>(4);
 
-    private Vector<IConnection> connectionsPending = new Vector<IConnection>(4);
+    Vector<IConnection> connectionsPending = new Vector<IConnection>(4);
 
-    private Hashtable<Integer, IConnection> connectionIds = new Hashtable<Integer, IConnection>();
+    Hashtable<Integer, IConnection> connectionIds = new Hashtable<Integer, IConnection>();
 
     private int connectionCounter;
 
-    private IGame game = new Game();
+    IGame game = new Game();
 
     private Vector<Report> vPhaseReport = new Vector<Report>();
 
@@ -494,7 +494,7 @@ public class Server implements Runnable {
     /**
      * Sent when a client attempts to connect.
      */
-    private void greeting(int cn) {
+    void greeting(int cn) {
         // send server greeting -- client should reply with client info.
         sendToPending(cn, new Packet(Packet.COMMAND_SERVER_GREETING));
     }
@@ -1032,7 +1032,7 @@ public class Server implements Runnable {
     /**
      * Returns a pending connection
      */
-    private IConnection getPendingConnection(int connId) {
+    IConnection getPendingConnection(int connId) {
         for (Enumeration<IConnection> i = connectionsPending.elements(); i.hasMoreElements();) {
             final IConnection conn = i.nextElement();
 
@@ -2216,7 +2216,7 @@ public class Server implements Runnable {
         IBoard[] sheetBoards = new IBoard[mapSettings.getMapWidth() * mapSettings.getMapHeight()];
         for (int i = 0; i < mapSettings.getMapWidth() * mapSettings.getMapHeight(); i++) {
             sheetBoards[i] = new Board();
-            String name = mapSettings.getBoardsSelectedVector().elementAt(i);
+            String name = mapSettings.getBoardsSelectedVector().get(i);
             boolean isRotated = false;
             if (name.startsWith(Board.BOARD_REQUEST_ROTATION)) {
                 // only rotate boards with an even width
@@ -7195,7 +7195,7 @@ public class Server implements Runnable {
 
         // add any pending charges
         for (Enumeration<AttackAction> i = game.getCharges(); i.hasMoreElements();) {
-            game.addAction((EntityAction) i.nextElement());
+            game.addAction(i.nextElement());
         }
         game.resetCharges();
 
@@ -14653,10 +14653,10 @@ public class Server implements Runnable {
      * Scans the boards directory for map boards of the appropriate size and
      * returns them.
      */
-    private Vector<String> scanForBoardsInDir(String addPath, String basePath, int w, int h, boolean subdirs) {
+    private ArrayList<String> scanForBoardsInDir(String addPath, String basePath, int w, int h, boolean subdirs) {
         File dir = new File(addPath);
         String fileList[] = dir.list();
-        Vector<String> tempList = new Vector<String>();
+        ArrayList<String> tempList = new ArrayList<String>();
         for (int i = 0; i < fileList.length; i++) {
             File x = new File(addPath.concat("/").concat(fileList[i]));
             if (x.isDirectory() && subdirs) {
@@ -14670,37 +14670,37 @@ public class Server implements Runnable {
                 continue;
             }
             if (Board.boardIsSize(basePath.concat("/").concat(fileList[i]), w, h)) {
-                tempList.addElement(basePath.concat("/").concat(fileList[i].substring(0, fileList[i].lastIndexOf(".board"))));
+                tempList.add(basePath.concat("/").concat(fileList[i].substring(0, fileList[i].lastIndexOf(".board"))));
             }
         }
         return tempList;
     }
 
-    private Vector<String> scanForBoards(int boardWidth, int boardHeight) {
+    private ArrayList<String> scanForBoards(int boardWidth, int boardHeight) {
         return scanForBoards(boardWidth, boardHeight, game.getOptions().booleanOption("maps_include_subdir"));
     }
 
-    private Vector<String> scanForBoards(int boardWidth, int boardHeight, boolean subdirs) {
-        Vector<String> boards = new Vector<String>();
+    private ArrayList<String> scanForBoards(int boardWidth, int boardHeight, boolean subdirs) {
+        ArrayList<String> boards = new ArrayList<String>();
 
         File boardDir = new File("data/boards");
-        boards.addElement(MapSettings.BOARD_GENERATED);
+        boards.add(MapSettings.BOARD_GENERATED);
         // just a check...
         if (!boardDir.isDirectory()) {
             return boards;
         }
 
         // scan files
-        Vector<String> tempList = new Vector<String>();
+        ArrayList<String> tempList = new ArrayList<String>();
         Comparator<String> sortComp = StringUtil.stringComparator();
         tempList = scanForBoardsInDir("data/boards", "", boardWidth, boardHeight, subdirs);
         // if there are any boards, add these:
         if (tempList.size() > 0) {
-            boards.addElement(MapSettings.BOARD_RANDOM);
-            boards.addElement(MapSettings.BOARD_SURPRISE);
+            boards.add(MapSettings.BOARD_RANDOM);
+            boards.add(MapSettings.BOARD_SURPRISE);
             Collections.sort(tempList, sortComp);
             for (int loop = 0; loop < tempList.size(); loop++) {
-                boards.addElement(tempList.elementAt(loop));
+                boards.add(tempList.get(loop));
             }
         }
 
@@ -14798,7 +14798,7 @@ public class Server implements Runnable {
         // it.
         if (!entity.isHidden()) {
             for (int i = 0; i < vEntities.size(); i++) {
-                Entity e = (Entity) vEntities.elementAt(i);
+                Entity e = vEntities.elementAt(i);
                 if (vCanSee.contains(e.getOwner()) || !e.isActive()) {
                     continue;
                 }
@@ -17630,7 +17630,7 @@ public class Server implements Runnable {
             MechWarrior e = (MechWarrior) mechWarriors.nextElement();
             Enumeration<Entity> pickupEntities = game.getEntities(e.getPosition());
             while (pickupEntities.hasMoreElements()) {
-                Entity pe = (Entity) pickupEntities.nextElement();
+                Entity pe = pickupEntities.nextElement();
                 if (pe.isDoomed() || pe.isShutDown() || pe.getCrew().isUnconscious()) {
                     continue;
                 }

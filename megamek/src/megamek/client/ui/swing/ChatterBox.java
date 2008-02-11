@@ -45,11 +45,11 @@ import java.util.LinkedList;
  */
 public class ChatterBox implements KeyListener {
     private static final int MAX_HISTORY = 10;
-    private Client client;
+    Client client;
 
     private JPanel chatPanel;
-    private JTextArea chatArea;
-    private JList playerList;
+    JTextArea chatArea;
+    JList playerList;
     private JTextField inputField;
     private JButton butDone;
     

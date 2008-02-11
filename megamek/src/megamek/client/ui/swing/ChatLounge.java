@@ -16,7 +16,6 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -544,8 +543,8 @@ public class ChatLounge
 
         ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
         int index = 0;
-        for (Enumeration<String> i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
-            ((DefaultListModel) lisBoardsSelected.getModel()).addElement((index++) + ": " + i.nextElement()); //$NON-NLS-1$
+        for (Iterator<String> i = client.getMapSettings().getBoardsSelected(); i.hasNext();) {
+            ((DefaultListModel) lisBoardsSelected.getModel()).addElement((index++) + ": " + i.next()); //$NON-NLS-1$
         }
     }
 

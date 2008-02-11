@@ -135,8 +135,8 @@ public class MiniMap extends Canvas {
 
     private ClientGUI clientgui;
     
-    private boolean dirtyMap=true;
-    private boolean[][] dirty;
+    boolean dirtyMap=true;
+    boolean[][] dirty;
     private Image terrainBuffer;
 
     /**
@@ -313,7 +313,7 @@ public class MiniMap extends Canvas {
         for (int j=0;j<dirty[i].length;j++)
             dirty[i][j]=false;
     }
-    private void initializeMap() {
+    void initializeMap() {
 
         // sanity check (cfg file could be hosed)
         if (zoom < 0) {
@@ -1123,7 +1123,7 @@ public class MiniMap extends Canvas {
         zoom++;
         initializeMap();    
     }
-    private void processMouseClick(int x, int y, MouseEvent me) {
+    void processMouseClick(int x, int y, MouseEvent me) {
         if (y > (getSize().height - 14)) {
 
             if (x < 14) {

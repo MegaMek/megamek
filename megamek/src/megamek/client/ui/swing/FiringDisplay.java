@@ -119,7 +119,7 @@ public class FiringDisplay
 
     // parent game
     private Client client;
-    private ClientGUI clientgui;
+    ClientGUI clientgui;
     // buttons
     private JComponent panButtons;
 
@@ -147,7 +147,7 @@ public class FiringDisplay
 
     // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE;        // current entity number
-    private Targetable target;        // target
+    Targetable target;        // target
 
     // HACK : track when we wan to show the target choice dialog.
     private boolean showTargetChoice = true;
@@ -1123,7 +1123,7 @@ public class FiringDisplay
     /**
      * Returns the current entity.
      */
-    private Entity ce() {
+    Entity ce() {
         return client.game.getEntity(cen);
     }
 

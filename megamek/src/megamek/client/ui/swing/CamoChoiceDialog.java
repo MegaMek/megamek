@@ -100,7 +100,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     /**
      * The "select new camo" button.
      */
-    private JButton select;
+    JButton select;
 
     /**
      * The previously selected category.
@@ -120,8 +120,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     /**
      * A helper function to close the dialog.
      */
-    /* package */
-    private void close() {
+    void close() {
 
         // Make sure the previous selection is the current selection.
         setCategory(prevCat);
@@ -137,8 +136,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
      * @param category - the <code>String</code> name of the category
      *                 whose items should be displayed.
      */
-    /* package */
-    private void fillList(String category) {
+    void fillList(String category) {
 
         // Clear the list of items.
         ((DefaultListModel) items.getModel()).removeAllElements();
@@ -449,7 +447,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
      * Update the "select new camo" button whenever a list item is selected.
      * <p/>
      */
-    private void updateButton() {
+    void updateButton() {
         // Get the category and the index of the selected item.
         String curCat = (String) categories.getSelectedItem();
 

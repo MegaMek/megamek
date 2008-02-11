@@ -131,9 +131,9 @@ public class CustomMechDialog
     private ArrayList<MineChoicePanel> m_vMines = new ArrayList<MineChoicePanel>();
     private JPanel panMines = new JPanel();
 
-    private Entity entity;
+    Entity entity;
     private boolean okay;
-    private ClientGUI clientgui;
+    ClientGUI clientgui;
     private Client client;
 
     private PilotOptions options;

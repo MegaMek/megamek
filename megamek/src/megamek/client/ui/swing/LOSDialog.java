@@ -42,12 +42,12 @@ public class LOSDialog
      */
     private static final long serialVersionUID = 5633160028901713806L;
 
-    private JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
+    JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
 
     /**
      * The checkboxes for available choices.
      */
-    private JCheckBox[] checkboxes1;
+    JCheckBox[] checkboxes1;
     private JCheckBox[] checkboxes2;
 
     public LOSDialog(JFrame parent, boolean mechInFirst, boolean mechInSecond) {

@@ -279,9 +279,9 @@ public class RandomArmyDialog extends JDialog implements ActionListener, WindowL
         m_chPlayer.removeAllItems();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
-        for (Iterator i = m_clientgui.getBots().values().iterator(); i
+        for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i
                 .hasNext();) {
-            m_chPlayer.addItem(((Client) i.next()).getName());
+            m_chPlayer.addItem(i.next().getName());
         }
         if (m_chPlayer.getItemCount() == 1) {
             m_chPlayer.setEnabled(false);

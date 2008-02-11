@@ -1,8 +1,8 @@
 package megamek.common.util;
 
 import java.io.Serializable;
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import megamek.common.Building;
 import megamek.common.Coords;
@@ -24,19 +24,19 @@ public class BuildingTemplate implements Serializable {
 
     public static final int BASEMENT_RANDOM=-1;
 
-    private Vector<Coords> coordsList = new Vector<Coords>();
+    private ArrayList<Coords> coordsList = new ArrayList<Coords>();
     private int type = Building.LIGHT;
     private int CF = 15;
     private int height = 2;
     private int basement = BASEMENT_RANDOM;
 
-    public BuildingTemplate(int type, Vector<Coords> coords) {
+    public BuildingTemplate(int type, ArrayList<Coords> coords) {
         this.type = type;
         coordsList = coords;
         CF = Building.getDefaultCF(type);
     }
     
-    public BuildingTemplate(int type, Vector<Coords> coords, int CF, int height, int basement) {
+    public BuildingTemplate(int type, ArrayList<Coords> coords, int CF, int height, int basement) {
         this.type = type;
         this.coordsList = coords;
         this.CF = CF;
@@ -48,8 +48,8 @@ public class BuildingTemplate implements Serializable {
      * 
      * @return vector containing Coords of all hexes the building covers
      */
-    public Enumeration<Coords> getCoords() {
-        return coordsList.elements();
+    public Iterator<Coords> getCoords() {
+        return coordsList.iterator();
     }
     
     /**

@@ -30,7 +30,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -102,7 +102,7 @@ public class BoardSelectionDialog
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
     private JButton butPreview = new JButton(Messages.getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$
     
-    private JDialog mapPreviewW;
+    JDialog mapPreviewW;
 
     /**
      * Creates new BoardSelectionDialog
@@ -322,8 +322,8 @@ public class BoardSelectionDialog
     private void refreshBoardsSelected() {
         ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
         int index = 0;
-        for (Enumeration i = mapSettings.getBoardsSelected(); i.hasMoreElements();) {
-            ((DefaultListModel) lisBoardsSelected.getModel()).addElement(index++ + ": " + i.nextElement()); //$NON-NLS-1$
+        for (Iterator<String> i = mapSettings.getBoardsSelected(); i.hasNext();) {
+            ((DefaultListModel) lisBoardsSelected.getModel()).addElement(index++ + ": " + i.next()); //$NON-NLS-1$
         }
         lisBoardsSelected.setSelectedIndex(0);
         refreshSelectAllCheck();
@@ -337,8 +337,8 @@ public class BoardSelectionDialog
 
     private void refreshBoardsAvailable() {
         ((DefaultListModel) lisBoardsAvailable.getModel()).removeAllElements();
-        for (Enumeration i = mapSettings.getBoardsAvailable(); i.hasMoreElements();) {
-            ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(i.nextElement());
+        for (Iterator<String> i = mapSettings.getBoardsAvailable(); i.hasNext();) {
+            ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(i.next());
         }
     }
 
@@ -355,7 +355,7 @@ public class BoardSelectionDialog
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }
             ((DefaultListModel) lisBoardsSelected.getModel()).setElementAt(newVar + ": " + name, newVar); //$NON-NLS-1$
-            mapSettings.getBoardsSelectedVector().setElementAt(name, newVar);
+            mapSettings.getBoardsSelectedVector().set(newVar, name);
         }
         lisBoardsSelected.setSelectedIndices(selected);
     }

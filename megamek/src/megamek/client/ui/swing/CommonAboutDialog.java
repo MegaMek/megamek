@@ -163,8 +163,7 @@ public class CommonAboutDialog extends JDialog {
     /**
      * Close this dialog.
      */
-    /* package */
-    private void quit() {
+    void quit() {
         setVisible(false);
     }
 }

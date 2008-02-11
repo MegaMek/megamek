@@ -14,8 +14,10 @@
 
 package megamek.common.util;
 
-import java.util.Vector;
-import java.util.Enumeration;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 import megamek.common.Board;
 import megamek.common.Compute;
@@ -27,11 +29,6 @@ import megamek.common.ITerrain;
 import megamek.common.ITerrainFactory;
 import megamek.common.MapSettings;
 import megamek.common.Terrains;
-
-import megamek.common.util.BuildingTemplate;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 
 public class BoardUtilities {
     /**
@@ -288,13 +285,13 @@ public class BoardUtilities {
         }
 
         // add buildings 
-        Vector<BuildingTemplate> buildings = mapSettings.getBoardBuildings();
+        ArrayList<BuildingTemplate> buildings = mapSettings.getBoardBuildings();
         CityBuilder cityBuilder = new CityBuilder(mapSettings, result);
         if(buildings.size() == 0) {
             buildings = cityBuilder.generateCity(roadNeeded);
         }
         for(int i=0; i<buildings.size();i++) {
-            placeBuilding(result, (buildings.elementAt(i)));
+            placeBuilding(result, (buildings.get(i)));
         }
         return result;
     }
@@ -304,10 +301,10 @@ public class BoardUtilities {
         int cf = building.getCF();
         int height = building.getHeight();
         ITerrainFactory tf = Terrains.getTerrainFactory();
-        Vector<IHex> hexes = new Vector<IHex>();
+        ArrayList<IHex> hexes = new ArrayList<IHex>();
         int level=0;
-        for(Enumeration<Coords> i=building.getCoords();i.hasMoreElements();) {
-            Coords c = i.nextElement();
+        for(Iterator<Coords> i=building.getCoords();i.hasNext();) {
+            Coords c = i.next();
             IHex hex = board.getHex(c);
             //work out exits...
             int exits = 0;
@@ -324,12 +321,12 @@ public class BoardUtilities {
             hex.addTerrain(tf.createTerrain(Terrains.BLDG_CF, cf));
             hex.addTerrain(tf.createTerrain(Terrains.BLDG_ELEV, height));
             //hex.addTerrain(tf.createTerrain(Terrains.BLDG_BASEMENT, building.getBasement()));
-            hexes.addElement(hex);
+            hexes.add(hex);
             level += hex.getElevation();
         }
         //set everything to the same level
         for(int j=0;j<hexes.size();j++) {
-            hexes.elementAt(j).setElevation(level / hexes.size());
+            hexes.get(j).setElevation(level / hexes.size());
         }
     }
 
@@ -582,7 +579,7 @@ public class BoardUtilities {
         } while (field != null); 
         
         /* search the elevation for the river */
-        HashSet<IHex> tmpRiverHexes = (HashSet<IHex>)riverHexes.clone();
+        HashSet<IHex> tmpRiverHexes = new HashSet<IHex>(riverHexes);
         while (!tmpRiverHexes.isEmpty()) {
             Iterator<IHex> iter = tmpRiverHexes.iterator();
             field = iter.next();
@@ -790,7 +787,7 @@ public class BoardUtilities {
         return higher && lower && count <= 3 && count > 0;
     }
     
-    private static void findCliffNeighbours(IBoard board, Coords c, Vector<Coords> candidate, HashSet<Coords> ignore) {
+    private static void findCliffNeighbours(IBoard board, Coords c, ArrayList<Coords> candidate, HashSet<Coords> ignore) {
         candidate.add(c);
         ignore.add(c);
         int elevation = board.getHex(c).getElevation();
@@ -811,7 +808,7 @@ public class BoardUtilities {
     
     protected static void addCliffs(IBoard board, int modifier) {
         HashSet<Coords> ignore = new HashSet<Coords>(); //previously considered hexes
-        Vector<Coords> candidate = new Vector<Coords>();
+        ArrayList<Coords> candidate = new ArrayList<Coords>();
         for(int x=0;x<board.getWidth();x++) {
             for(int y=0;y<board.getHeight();y++) {
                 Coords c = new Coords(x,y);
@@ -829,13 +826,13 @@ public class BoardUtilities {
                         elevation --;
                     else
                         elevation ++;
-                    for(Enumeration<Coords> e=candidate.elements();e.hasMoreElements();) {
-                        c = e.nextElement();
+                    for(Iterator<Coords> e=candidate.iterator();e.hasNext();) {
+                        c = e.next();
                         IHex hex = board.getHex(c);
                         hex.setElevation(elevation);
                     }
                 }
-                candidate.removeAllElements();
+                candidate.clear();
             }
         }
     }

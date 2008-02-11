@@ -51,11 +51,11 @@ public class ConfirmDialog
     private JPanel panButtons = new JPanel();
     private JButton butYes = new JButton(Messages.getString("Yes")); //$NON-NLS-1$
     private JButton butNo = new JButton(Messages.getString("No")); //$NON-NLS-1$
-    private JButton defaultButton = butYes;
+    JButton defaultButton = butYes;
 
     private boolean confirmation;
 
-    private JComponent firstFocusable;
+    JComponent firstFocusable;
 
     /**
      * Creates a new dialog window that lets the user answer Yes or No,

@@ -400,7 +400,7 @@ public class Ruler extends JDialog implements BoardViewListener {
 
     }
 
-    private void butFlip_actionPerformed() {
+    void butFlip_actionPerformed() {
         flip = !flip;
 
         if (startColor.equals(color1)) {
@@ -420,19 +420,19 @@ public class Ruler extends JDialog implements BoardViewListener {
         bv.drawRuler(start, end, startColor, endColor);
     }
 
-    private void butClose_actionPerformed() {
+    void butClose_actionPerformed() {
         clear();
         setVisible(false);
 
         bv.drawRuler(start, end, startColor, endColor);
     }
 
-    private void height1_keyReleased() {
+    void height1_keyReleased() {
         setText();
         setVisible(true);
     }
 
-    private void height2_keyReleased() {
+    void height2_keyReleased() {
         setText();
         setVisible(true);
     }

@@ -15,6 +15,7 @@
 package megamek.client.bot;
 
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
@@ -165,11 +166,11 @@ public final class PhysicalCalculator {
                 INarcPod test_pod;
                 INarcPod best_pod;
                 pod_ranking = 0.0;
-                Enumeration<INarcPod> pod_list = entity.getINarcPodsAttached();
-                best_pod = pod_list.nextElement();
-                for (pod_list = entity.getINarcPodsAttached(); pod_list.hasMoreElements();) {
+                Iterator<INarcPod> pod_list = entity.getINarcPodsAttached();
+                best_pod = pod_list.next();
+                for (pod_list = entity.getINarcPodsAttached(); pod_list.hasNext();) {
                     test_ranking = 1.0;
-                    test_pod = pod_list.nextElement();
+                    test_pod = pod_list.next();
                     // If pod is homing and attacker has no ECM
                     if (test_pod.getType() == INarcPod.HOMING && !entity.hasActiveECM()) {
                         // Pod is +1

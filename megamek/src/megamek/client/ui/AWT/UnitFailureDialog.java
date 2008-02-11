@@ -19,10 +19,22 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.List;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.Iterator;
+import java.util.Map;
 
 public class UnitFailureDialog extends Dialog
     implements ActionListener, ItemListener, KeyListener {
@@ -32,18 +44,18 @@ public class UnitFailureDialog extends Dialog
      */
     private static final long serialVersionUID = 7570434698437571985L;
 
-    private Hashtable hFailedFiles;
+    private Map<String,String> hFailedFiles;
 
     private List failedList = new List(10);
 
     private TextArea reasonTextArea = 
         new TextArea("",4,40,TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
 
-    public UnitFailureDialog(Frame frame, Hashtable hff) {
+    public UnitFailureDialog(Frame frame, Map<String,String> hff) {
         super(frame,Messages.getString("UnitFailureDialog.title")); //$NON-NLS-1$
 
         this.hFailedFiles = hff;
-        Enumeration failedUnits = hFailedFiles.keys();
+        Iterator<String> failedUnits = hFailedFiles.keySet().iterator();
 
         reasonTextArea.setEditable(false);
         failedList.addItemListener(this);
@@ -61,8 +73,8 @@ public class UnitFailureDialog extends Dialog
 
         add(okButton, BorderLayout.SOUTH);
 
-        while (failedUnits.hasMoreElements()) {
-            failedList.add(failedUnits.nextElement().toString());
+        while (failedUnits.hasNext()) {
+            failedList.add(failedUnits.next());
         }
 
         failedList.select(0);

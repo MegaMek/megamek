@@ -146,8 +146,8 @@ public class CustomBattleArmorDialog
     private ArrayList<BattleArmorEquipment> rightArmEquipment = null;
     private ArrayList<BattleArmorEquipment> torsoEquipment = null;
 
-    private static ArrayList<BattleArmorEquipment> equipmentTypes = null;
-    private static ArrayList<String> equipmentNames = null;
+    static ArrayList<BattleArmorEquipment> equipmentTypes = null;
+    static ArrayList<String> equipmentNames = null;
 
     private static final int TECH_BASE_IS = 0;
     private static final int TECH_BASE_CLAN = 1;
@@ -166,10 +166,10 @@ public class CustomBattleArmorDialog
     private static final int JUMP_TYPE_VTOL = 1;
     private static final int JUMP_TYPE_UMU = 2;
 
-    private static int EQUIPMENT_TYPE_WEAPON = 0;
+    static int EQUIPMENT_TYPE_WEAPON = 0;
     private static int EQUIPMENT_TYPE_WEAPON_AP = 1;
-    private static int EQUIPMENT_TYPE_PREPROCESS = 2;
-    private static int EQUIPMENT_TYPE_AMMO = 3;
+    static int EQUIPMENT_TYPE_PREPROCESS = 2;
+    static int EQUIPMENT_TYPE_AMMO = 3;
     private static int EQUIPMENT_TYPE_OTHER = 4;
 
     private static final int[][] ARMOR_TYPE_WEIGHT = {{50, 40, 100, 55, 100, 60, 60, 0, 50},

@@ -14,6 +14,7 @@
 
 package megamek.common.util;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Vector;
@@ -65,7 +66,7 @@ public class CityBuilder {
      * @param buildingTemplate
      * @return
      */
-    public Vector<BuildingTemplate> generateCity(boolean genericRoad){
+    public ArrayList<BuildingTemplate> generateCity(boolean genericRoad){
         
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
@@ -87,18 +88,18 @@ public class CityBuilder {
         else if ( cityType.equalsIgnoreCase("TOWN"))
             return buildTown(width,height,roads,mapSettings.getTownSize());
         else
-            return new Vector<BuildingTemplate>();
+            return new ArrayList<BuildingTemplate>();
         
         return placeBuildings(0);
     }
 
-    public Vector<BuildingTemplate> placeBuildings(int radius) {
+    public ArrayList<BuildingTemplate> placeBuildings(int radius) {
         int width = mapSettings.getBoardWidth();
         int height = mapSettings.getBoardHeight();
-        Vector<BuildingTemplate> buildingList = new Vector<BuildingTemplate>();
+        ArrayList<BuildingTemplate> buildingList = new ArrayList<BuildingTemplate>();
         HashSet<Coords> buildingUsed = new HashSet<Coords>();
         
-        Vector<Coords> coordList = new Vector<Coords>();
+        ArrayList<Coords> coordList = new ArrayList<Coords>();
         
         Coords centre = new Coords(width/2,height/2);
         double falloff = (double)mapSettings.getCityDensity() / (double)(radius*radius);
@@ -124,7 +125,7 @@ public class CityBuilder {
                 if(Compute.randomInt(100) > localdensity) {
                     continue; //empty lot
                 }
-                coordList = new Vector<Coords>();
+                coordList = new ArrayList<Coords>();
                 coordList.add(coord);
                 buildingUsed.add(coord);
                 while(Compute.randomInt(100) < localdensity) {
@@ -187,7 +188,7 @@ public class CityBuilder {
         }
     }
     
-    private Vector<BuildingTemplate> buildTown(int maxX, int maxY, int roads, int size) {
+    private ArrayList<BuildingTemplate> buildTown(int maxX, int maxY, int roads, int size) {
         buildHubCity(maxX,maxY,roads * size / 100);
         return placeBuildings(Math.min(maxX,maxY) * size / 200);
     }

@@ -434,7 +434,7 @@ public class CommonSettingsDialog extends ClientDialog
     /**
      * Cancel any updates made in this dialog, and closes it.
      */
-    private void cancel() {
+    void cancel() {
         setVisible(false);
     }
 

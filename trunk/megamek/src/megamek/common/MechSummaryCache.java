@@ -20,9 +20,9 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
@@ -47,7 +47,7 @@ public class MechSummaryCache {
         void doneLoading();
     }
 
-    private static MechSummaryCache m_instance;
+    static MechSummaryCache m_instance;
 
     private boolean initialized = false;
     private boolean initializing = false;
@@ -102,7 +102,7 @@ public class MechSummaryCache {
     private MechSummary[] m_data;
     private Map<String,MechSummary> m_nameMap;
     private Map<String,MechSummary> m_fileNameMap;
-    private Hashtable<String,String> hFailedFiles;
+    private Map<String,String> hFailedFiles;
     private int cacheCount;
     private int fileCount;
     private int zipCount;
@@ -140,17 +140,17 @@ public class MechSummaryCache {
         return m_fileNameMap.get(sRef);
     }
 
-    public Hashtable<String,String> getFailedFiles() {
+    public Map<String,String> getFailedFiles() {
         block();
         return hFailedFiles;
     }
 
-    private void loadMechData() {
+    void loadMechData() {
         Vector<MechSummary> vMechs = new Vector<MechSummary>();
         Set<String> sKnownFiles = new HashSet<String>();
         long lLastCheck = 0;
         entityVerifier = new EntityVerifier(new File(CONFIG_FILENAME));
-        hFailedFiles = new Hashtable<String,String>();
+        hFailedFiles = new HashMap<String,String>();
 
         EquipmentType.initializeTypes(); // load master equipment lists
 
@@ -416,13 +416,13 @@ public class MechSummaryCache {
                     bNeedsUpdate = true;
                     thisDirectoriesFileCount++;
                     fileCount++;
-                    Enumeration<String> failedEquipment = e.getFailedEquipment();
-                    if (failedEquipment.hasMoreElements()) {
+                    Iterator<String> failedEquipment = e.getFailedEquipment();
+                    if (failedEquipment.hasNext()) {
                         loadReport.append("    Loading from ").append(f)
                             .append("\n");
-                        while (failedEquipment.hasMoreElements()) {
+                        while (failedEquipment.hasNext()) {
                             loadReport.append("      Failed to load equipment: ")
-                                .append(failedEquipment.nextElement())
+                                .append(failedEquipment.next())
                                 .append("\n");
                         }
                     }
@@ -488,13 +488,13 @@ public class MechSummaryCache {
                 bNeedsUpdate = true;
                 thisZipFileCount++;
                 zipCount++;
-                Enumeration<String> failedEquipment = e.getFailedEquipment();
-                if (failedEquipment.hasMoreElements()) {
+                Iterator<String> failedEquipment = e.getFailedEquipment();
+                if (failedEquipment.hasNext()) {
                     loadReport.append("    Loading from zip file")
                         .append(" >> ").append(zEntry.getName()).append("\n");
-                    while (failedEquipment.hasMoreElements()) {
+                    while (failedEquipment.hasNext()) {
                         loadReport.append("      Failed to load equipment: ")
-                            .append(failedEquipment.nextElement())
+                            .append(failedEquipment.next())
                             .append("\n");
                     }
                 }

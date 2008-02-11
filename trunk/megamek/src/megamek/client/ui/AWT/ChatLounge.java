@@ -552,8 +552,8 @@ public class ChatLounge
 
         lisBoardsSelected.removeAll();
         int index = 0;
-        for (Enumeration<String> i = client.getMapSettings().getBoardsSelected(); i.hasMoreElements();) {
-            lisBoardsSelected.add((index++) + ": " + i.nextElement()); //$NON-NLS-1$
+        for (Iterator<String> i = client.getMapSettings().getBoardsSelected(); i.hasNext();) {
+            lisBoardsSelected.add((index++) + ": " + i.next()); //$NON-NLS-1$
         }
     }
 

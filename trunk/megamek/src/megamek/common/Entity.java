@@ -172,12 +172,12 @@ public abstract class Entity extends TurnOrdered
      */
     protected ArrayList<Mounted>            miscList = new ArrayList<Mounted>();
     
-    protected Vector<INarcPod>            pendingINarcPods = new Vector<INarcPod>();
-    protected Vector<INarcPod>            iNarcPods = new Vector<INarcPod>();
+    protected ArrayList<INarcPod>            pendingINarcPods = new ArrayList<INarcPod>();
+    protected ArrayList<INarcPod>            iNarcPods = new ArrayList<INarcPod>();
     protected ArrayList<NarcPod>            pendingNarcPods = new ArrayList<NarcPod>();
     protected ArrayList<NarcPod>            narcPods = new ArrayList<NarcPod>();
 
-    protected Vector<String>            failedEquipmentList = new Vector<String>();
+    protected ArrayList<String>            failedEquipmentList = new ArrayList<String>();
 
     // which teams have NARCd us?  a long allows for 64 teams.
     protected long              m_lNarcedBy = 0;
@@ -1891,7 +1891,7 @@ public abstract class Entity extends TurnOrdered
     }
 
     public void addFailedEquipment(String s) {
-        failedEquipmentList.addElement(s);
+        failedEquipmentList.add(s);
     }
 
     /**
@@ -1934,8 +1934,8 @@ public abstract class Entity extends TurnOrdered
      * Returns an enumeration which contains the name of each
      * piece of equipment that failed to load. 
      */
-    public Enumeration<String> getFailedEquipment() {
-        return failedEquipmentList.elements();
+    public Iterator<String> getFailedEquipment() {
+        return failedEquipmentList.iterator();
     }
 
     public int getTotalAmmoOfType(EquipmentType et) {
@@ -3468,7 +3468,7 @@ public abstract class Entity extends TurnOrdered
         m_lNarcedBy |= m_lPendingNarc;
         if (pendingINarcPods.size() > 0) {
             iNarcPods.addAll(pendingINarcPods);
-            pendingINarcPods = new Vector<INarcPod>();
+            pendingINarcPods = new ArrayList<INarcPod>();
         }
         if(pendingNarcPods.size() > 0) {
             narcPods.addAll(pendingNarcPods);
@@ -3633,7 +3633,7 @@ public abstract class Entity extends TurnOrdered
      * @param pod The <code>INarcPod</code> to be attached.
      */
     public void attachINarcPod(INarcPod pod) {
-        this.pendingINarcPods.addElement(pod);
+        this.pendingINarcPods.add(pod);
     }
     
     /**
@@ -3642,8 +3642,7 @@ public abstract class Entity extends TurnOrdered
      * @return true if the Entity is narced by that team.
      */
     public boolean isINarcedBy(int nTeamID) {
-        for (Enumeration<INarcPod> e = iNarcPods.elements();e.hasMoreElements(); ) {
-            INarcPod pod = e.nextElement();
+        for (INarcPod pod : iNarcPods) {
             if (pod.getTeam() == nTeamID && pod.getType() == INarcPod.HOMING)
                 return true;
         }
@@ -3656,8 +3655,7 @@ public abstract class Entity extends TurnOrdered
      * @return <code>true</code> if we have.
      */
     public boolean isINarcedWith( long type ) {
-        for (Enumeration<INarcPod> e = iNarcPods.elements();e.hasMoreElements(); ) {
-            INarcPod pod = e.nextElement();
+        for (INarcPod pod : iNarcPods) {
             if (pod.getType() == type)
                 return true;
         }
@@ -3688,8 +3686,8 @@ public abstract class Entity extends TurnOrdered
      *
      * @return  an <code>Enumeration</code> of <code>INarcPod</code>s.
      */
-    public Enumeration<INarcPod> getINarcPodsAttached() {
-        return iNarcPods.elements();
+    public Iterator<INarcPod> getINarcPodsAttached() {
+        return iNarcPods.iterator();
     }
 
     /**
@@ -3701,7 +3699,7 @@ public abstract class Entity extends TurnOrdered
      *          to this entity.
      */
     public boolean removeINarcPod (INarcPod pod) {
-        return iNarcPods.removeElement( pod );
+        return iNarcPods.remove( pod );
     }
 
     /**

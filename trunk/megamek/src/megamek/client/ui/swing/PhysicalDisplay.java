@@ -108,7 +108,7 @@ public class PhysicalDisplay
 
     private static final int NUM_BUTTON_LAYOUTS = 2;
     // parent game
-    private ClientGUI clientgui;
+    ClientGUI clientgui;
     private Client client;
 
     // buttons
@@ -139,7 +139,7 @@ public class PhysicalDisplay
 
     // let's keep track of what we're shooting and at what, too
     private int cen = Entity.NONE;        // current entity number
-    private Targetable target;        // target
+    Targetable target;        // target
 
     // stuff we want to do
     private Vector<EntityAction> attacks;
@@ -974,7 +974,7 @@ public class PhysicalDisplay
     /**
      * Targets an entity
      */
-    private void updateTarget() {
+    void updateTarget() {
         // dis/enable physical attach buttons
         if (cen != Entity.NONE && target != null) {
             if (target.getTargetType() != Targetable.TYPE_INARC_POD) {
@@ -1099,7 +1099,7 @@ public class PhysicalDisplay
     /**
      * Returns the current entity.
      */
-    private Entity ce() {
+    Entity ce() {
         return client.game.getEntity(cen);
     }
 
@@ -1176,9 +1176,9 @@ public class PhysicalDisplay
         // Is the attacker targeting its own hex?
         if (ce().getPosition().equals(pos)) {
             // Add any iNarc pods attached to the entity.
-            Enumeration<INarcPod> pods = ce().getINarcPodsAttached();
-            while (pods.hasMoreElements()) {
-                choice = pods.nextElement();
+            Iterator<INarcPod> pods = ce().getINarcPodsAttached();
+            while (pods.hasNext()) {
+                choice = pods.next();
                 targets.addElement(choice);
             }
         }

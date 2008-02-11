@@ -80,15 +80,15 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
      * 
      */
     private static final long serialVersionUID = 4689863639249616192L;
-    private JFrame frame = new JFrame();
+    JFrame frame = new JFrame();
     private Game game = new Game();
-    private IBoard board = game.getBoard();
-    private BoardView1 bv;
+    IBoard board = game.getBoard();
+    BoardView1 bv;
     private CommonMenuBar menuBar = new CommonMenuBar();
     private CommonAboutDialog about;
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
-    private IHex curHex = new Hex();
+    IHex curHex = new Hex();
     private File curfileImage;
     private File curfile;
     // buttons and labels and such:
@@ -125,7 +125,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
     private MiniMap minimap;
     private MapSettings mapSettings = new MapSettings();
 
-    private Coords lastClicked;
+    Coords lastClicked;
     
     /**
      * Creates and lays out a new Board Editor frame.
@@ -346,7 +346,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
      * Apply the current Hex to the Board at the specified
      * location.
      */
-    private void paintHex(Coords c) {
+    void paintHex(Coords c) {
         board.setHex(c, curHex.duplicate());
     }
 
@@ -386,7 +386,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
      *
      * @param hex hex to set.
      */
-    private void setCurrentHex(IHex hex) {
+    void setCurrentHex(IHex hex) {
         curHex = hex.duplicate();
         texElev.setText(Integer.toString(curHex.getElevation()));
         refreshTerrainList();
@@ -841,7 +841,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         setMapVisible(!minimapW.isVisible());
     }
 
-    private void setMapVisible(boolean visible) {
+    void setMapVisible(boolean visible) {
         minimapW.setVisible(visible);
     }
 }

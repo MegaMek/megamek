@@ -33,9 +33,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
@@ -373,9 +373,9 @@ public class MechSelectorDialog
         m_chPlayer.removeAllItems();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(clientName);
-        for (Iterator i = m_clientgui.getBots().values().iterator(); i
+        for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i
                 .hasNext();) {
-            m_chPlayer.addItem(((Client) i.next()).getName());
+            m_chPlayer.addItem(i.next().getName());
         }
         if (m_chPlayer.getItemCount() == 1) {
             m_chPlayer.setEnabled(false);
@@ -395,7 +395,7 @@ public class MechSelectorDialog
 
         unitLoadingDialog.setVisible(false);
 
-        final Hashtable hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
+        final Map<String,String> hFailedFiles = MechSummaryCache.getInstance().getFailedFiles();
         if (hFailedFiles != null && hFailedFiles.size() > 0) {
             new UnitFailureDialog(m_clientgui.frame, hFailedFiles); // self-showing dialog
         }
@@ -456,8 +456,8 @@ public class MechSelectorDialog
         m_chkEquipment.setSelected(false);
         int nType = m_chType.getSelectedIndex();
         int nUnitType = m_chUnitType.getSelectedIndex();
-        for (Enumeration e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
-            EquipmentType et = (EquipmentType) e.nextElement();
+        for (Enumeration<EquipmentType> e = EquipmentType.getAllTypes(); e.hasMoreElements();) {
+            EquipmentType et = e.nextElement();
             if (et instanceof WeaponType
                     && (et.getTechLevel() == nType
                     || ((nType == TechConstants.T_LEVEL_2_ALL)

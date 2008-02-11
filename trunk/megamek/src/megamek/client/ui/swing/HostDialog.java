@@ -40,10 +40,10 @@ public class HostDialog extends JDialog implements ActionListener {
     private JTextField serverPassF;
     private JTextField portF;
     private JCheckBox registerC;
-    private JLabel metaserverL;
-    private JTextField metaserverF;
-    private JLabel goalL;
-    private JTextField goalF;
+    JLabel metaserverL;
+    JTextField metaserverF;
+    JLabel goalL;
+    JTextField goalF;
     private JButton okayB;
     private JButton cancelB;
 

@@ -77,7 +77,7 @@ public class BoardSelectionDialog
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     private Button butPreview = new Button(Messages.getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$
     
-    private Dialog mapPreviewW;
+    Dialog mapPreviewW;
     
     private boolean bDelayedSingleSelect = false;
     
@@ -291,8 +291,8 @@ public class BoardSelectionDialog
     private void refreshBoardsSelected() {
         lisBoardsSelected.removeAll();
         int index = 0;
-        for (Enumeration i = mapSettings.getBoardsSelected(); i.hasMoreElements();) {
-            lisBoardsSelected.add((index++) + ": " + (String)i.nextElement()); //$NON-NLS-1$
+        for (Iterator<String> i = mapSettings.getBoardsSelected(); i.hasNext();) {
+            lisBoardsSelected.add((index++) + ": " + i.next()); //$NON-NLS-1$
         }
         lisBoardsSelected.select(0);
         refreshSelectAllCheck();
@@ -304,8 +304,8 @@ public class BoardSelectionDialog
     
     private void refreshBoardsAvailable() {
         lisBoardsAvailable.removeAll();
-        for (Enumeration i = mapSettings.getBoardsAvailable(); i.hasMoreElements();) {
-            lisBoardsAvailable.add((String)i.nextElement());
+        for (Iterator<String> i = mapSettings.getBoardsAvailable(); i.hasNext();) {
+            lisBoardsAvailable.add(i.next());
         }
     }
     
@@ -322,7 +322,7 @@ public class BoardSelectionDialog
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }
             lisBoardsSelected.replaceItem(selected[i] + ": " + name, selected[i]); //$NON-NLS-1$
-            mapSettings.getBoardsSelectedVector().setElementAt(name, selected[i]);
+            mapSettings.getBoardsSelectedVector().set(selected[i], name);
             lisBoardsSelected.select(selected[i]);
         }
     }

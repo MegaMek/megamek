@@ -15,35 +15,19 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.Dialog;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.Vector;
 
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.SwingConstants;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import megamek.client.Client;
 
@@ -53,7 +37,6 @@ public class CustomInitiativeDialog extends JDialog implements ActionListener, W
      * 
      */
     private static final long serialVersionUID = -599945723220511118L;
-    private ClientGUI m_clientgui;
     private Client m_client;
     
     private JPanel m_pParameters = new JPanel();
@@ -62,16 +45,11 @@ public class CustomInitiativeDialog extends JDialog implements ActionListener, W
     private JButton m_bOK = new JButton(Messages.getString("Okay"));
     private JButton m_bCancel = new JButton(Messages.getString("Cancel"));
 
-    private JLabel m_labRound = new JLabel("");
-    private JLabel m_labRoundTitle = new JLabel(Messages.getString("CustomInitiativeDialog.RoundTitle"));
     private JLabel m_labConstant = new JLabel(Messages.getString("CustomInitiativeDialog.ConstantBonus"));
     private JTextField m_constant = new JTextField(3);
     
-    private Vector<TextField> v_rounds = new Vector<TextField>();
-
     public CustomInitiativeDialog(ClientGUI cl) {
         super(cl.frame, Messages.getString("CustomInitiativeDialog.title"), true); //$NON-NLS-1$
-        m_clientgui = cl;
         m_client = cl.getClient();
         
         updateValues();

@@ -20,6 +20,8 @@
 
 package megamek.client.ui.AWT;
 
+import java.util.Iterator;
+
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.GunEmplacement;
@@ -31,8 +33,6 @@ import megamek.common.Protomech;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
-
-import java.util.Enumeration;
 
 /**
  * A utility class for retrieving mech information in a formatted string.
@@ -303,11 +303,11 @@ public class MechView {
 
     private String getFailed() {
         StringBuffer sFailed = new StringBuffer();
-        Enumeration eFailed = mech.getFailedEquipment();
-        if (eFailed.hasMoreElements()) {
+        Iterator<String> eFailed = mech.getFailedEquipment();
+        if (eFailed.hasNext()) {
             sFailed.append("The following equipment\n slots failed to load:\n"); //$NON-NLS-1$
-            while (eFailed.hasMoreElements()) {
-                sFailed.append(eFailed.nextElement()).append("\n"); //$NON-NLS-1$
+            while (eFailed.hasNext()) {
+                sFailed.append(eFailed.next()).append("\n"); //$NON-NLS-1$
             }
         }
         return sFailed.toString();

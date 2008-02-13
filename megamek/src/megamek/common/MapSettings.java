@@ -347,8 +347,11 @@ public class MapSettings implements Serializable {
         this.mapWidth = mapWidth;
         this.mapHeight = mapHeight;
 
+        boardsSelected.clear();
         // TODO make sure that nobody actualyl depends on .size()...
-        boardsSelected.ensureCapacity(mapWidth * mapHeight);
+        Vector<String> nullElements = new Vector<String>();
+        nullElements.setSize(mapWidth*mapHeight);
+        boardsSelected.addAll(nullElements);
     }
 
     public Iterator<String> getBoardsSelected() {

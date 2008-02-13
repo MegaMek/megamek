@@ -21,6 +21,7 @@ v0.33.18-dev (SVN)
 + Bug 1889760: SRM damage vs adjacent building
 + Changed MechSummaryCache to save sourceFile.getFileName() as the m_fileNameMap key  
 + Bug: fix report order when igniting hexes
++ Bug: Maps no workie cannot be loaded
 	
 v0.33.17 (2008-02-01)
 + Bug: Flamers causing 3 heat instead of 2

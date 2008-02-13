@@ -16375,6 +16375,7 @@ public class Server implements Runnable {
                     // Report if the infantry receive no points of damage.
                     if (toInf == 0) {
                         r = new Report(6445);
+                        r.subject = entity.getId();
                         addReport(r);
                     } else {
                         // Yup. Damage the entity.

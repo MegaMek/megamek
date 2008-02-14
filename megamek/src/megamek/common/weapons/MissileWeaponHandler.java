@@ -90,6 +90,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 : null;
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
+        boolean bWeather = false;
         boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
         if (maxtechmissiles) {
             if (nRange<=1) {
@@ -152,6 +153,23 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if (bGlancing) {
             nMissilesModifier -=4;
         }
+
+        // weather checks
+        if (game.getOptions().booleanOption("blizzard") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 4;
+            bWeather = true;
+        }
+
+        if (game.getOptions().booleanOption("moderate_winds") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 2;
+            bWeather = true;
+        }
+        
+        if (game.getOptions().booleanOption("high_winds")  && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 4;
+            bWeather = true;
+        }
+                   
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         
@@ -159,9 +177,9 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             missilesHit = wtype.getRackSize();            
         else {
             if (ae instanceof BattleArmor)
-                missilesHit = Compute.missilesHit(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength(),nMissilesModifier, bGlancing || maxtechmissiles, weapon.isHotLoaded());
+                missilesHit = Compute.missilesHit(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength(),nMissilesModifier, bWeather || bGlancing || maxtechmissiles, weapon.isHotLoaded());
             else
-                missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier, bGlancing || maxtechmissiles, weapon.isHotLoaded());
+                missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier, bWeather || bGlancing || maxtechmissiles, weapon.isHotLoaded());
         }
 
         if ( (target instanceof Mech || target instanceof Tank)

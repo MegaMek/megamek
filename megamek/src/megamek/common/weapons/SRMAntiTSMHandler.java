@@ -24,6 +24,7 @@ import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
@@ -61,6 +62,7 @@ public class SRMAntiTSMHandler extends SRMHandler {
         }
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
+        boolean bWeather = false;
         boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
         if (maxtechmissiles) {
             if (nRange<=1) {
@@ -76,13 +78,30 @@ public class SRMAntiTSMHandler extends SRMHandler {
         if (bGlancing) {
             nMissilesModifier -=4;
         }
+        
+        // weather checks
+        if (game.getOptions().booleanOption("blizzard") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 4;
+            bWeather = true;
+        }
+
+        if (game.getOptions().booleanOption("moderate_winds") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 2;
+            bWeather = true;
+        }
+        
+        if (game.getOptions().booleanOption("high_winds")  && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 4;
+            bWeather = true;
+        }
+        
         //Add ams mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         if (allShotsHit()) {
             missilesHit = wtype.getRackSize();
         } else {
             // anti tsm hit with half the normal number, round up
-            missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bGlancing || maxtechmissiles);
+            missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bWeather || bGlancing || maxtechmissiles);
             missilesHit = (int)Math.ceil((double)missilesHit/2);
         }
         r = new Report(3325);

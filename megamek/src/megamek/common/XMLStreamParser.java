@@ -137,6 +137,9 @@ public class XMLStreamParser implements XMLResponder {
     public static final String  MODEL   = "model";
     public static final String  NAME    = "name";
     public static final String  GUNNERY = "gunnery";
+    public static final String  GUNNERYL = "gunneryL";
+    public static final String  GUNNERYM = "gunneryM";
+    public static final String  GUNNERYB = "gunneryB";
     public static final String  PILOTING= "piloting";
     public static final String  HITS    = "hits";
     public static final String  ADVS    = "advantages";
@@ -423,6 +426,9 @@ public class XMLStreamParser implements XMLResponder {
                 // Look for the element's attributes.
                 String pilotName = (String) attr.get( NAME );
                 String gunnery = (String) attr.get( GUNNERY );
+                String gunneryL = (String) attr.get( GUNNERYL );
+                String gunneryM = (String) attr.get( GUNNERYM );
+                String gunneryB = (String) attr.get( GUNNERYB );
                 String piloting = (String) attr.get( PILOTING );
                 String hits = (String) attr.get( HITS );
                 String advantages = (String) attr.get( ADVS );
@@ -467,13 +473,58 @@ public class XMLStreamParser implements XMLResponder {
                             .append( ".\n" );
                         return;
                     }
-
+                    
+                    //get RPG skills
+                    int gunneryLVal = gunVal;
+                    int gunneryMVal = gunVal;
+                    int gunneryBVal = gunVal;
+                    if(null != gunneryL && gunneryL.length() > 0 ) {
+                        try {
+                            gunneryLVal = Integer.parseInt( gunneryL );
+                        } catch ( NumberFormatException excep ) {
+                            // Handled by the next if test.
+                        }
+                        if ( gunneryLVal < 0 || gunneryLVal > 7 ) {
+                            this.warning.append( "Found invalid piloting value: " )
+                                .append( gunneryL )
+                                .append( ".\n" );
+                            return;
+                        }
+                    }
+                    if(null != gunneryM && gunneryM.length() > 0 ) {
+                        try {
+                            gunneryMVal = Integer.parseInt( gunneryM );
+                        } catch ( NumberFormatException excep ) {
+                            // Handled by the next if test.
+                        }
+                        if ( gunneryMVal < 0 || gunneryMVal > 7 ) {
+                            this.warning.append( "Found invalid piloting value: " )
+                                .append( gunneryM )
+                                .append( ".\n" );
+                            return;
+                        }
+                    }
+                    if(null != gunneryB && gunneryB.length() > 0 ) {
+                        try {
+                            gunneryBVal = Integer.parseInt( gunneryB );
+                        } catch ( NumberFormatException excep ) {
+                            // Handled by the next if test.
+                        }
+                        if ( gunneryBVal < 0 || gunneryBVal > 7 ) {
+                            this.warning.append( "Found invalid piloting value: " )
+                                .append( gunneryB )
+                                .append( ".\n" );
+                            return;
+                        }
+                    }
+                    
                     // Update the entity's crew.
                     Pilot crew = entity.getCrew();
                     if ( null == pilotName || pilotName.length() == 0 ) {
                         pilotName = crew.getName();
                     }
-                    crew = new Pilot( pilotName, gunVal, pilotVal );
+                    
+                    crew = new Pilot( pilotName, gunneryLVal, gunneryMVal, gunneryBVal, pilotVal );
 
                     if ( (null != advantages) && (advantages.trim().length() > 0) ) {
                       StringTokenizer st = new StringTokenizer(advantages, "::");

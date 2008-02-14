@@ -229,8 +229,12 @@ public class GeneralInfoMapSet implements DisplayMapSet{
         }
         weightR.setString(Integer.toString((int)en.getWeight()));
         
-        pilotR.setString(en.crew.getDesc() + " (" + en.crew.getGunnery() + "/" + en.crew.getPiloting() + ")" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-
+        if(en.getGame() != null && en.getGame().getOptions().booleanOption("rpg_gunnery")) {
+            pilotR.setString(en.crew.getDesc() + " (" + en.crew.getGunneryRPG() + "/" + en.crew.getPiloting() + ")" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        } else {
+            pilotR.setString(en.crew.getDesc() + " (" + en.crew.getGunnery() + "/" + en.crew.getPiloting() + ")" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        }
+        
         ejectR.setString( Messages.getString("GeneralInfoMapSet.NA") ); //$NON-NLS-1$
         if (en instanceof Mech) {
             if (((Mech)en).isAutoEject()) {

@@ -253,6 +253,9 @@ public class RandomSkillDialog extends JDialog implements ActionListener, ItemLi
                         skills[1] = skills[0] + 1;
                     }
                     ent.getCrew().setGunnery(skills[0]);
+                    ent.getCrew().setGunneryL(skills[0]);
+                    ent.getCrew().setGunneryM(skills[0]);
+                    ent.getCrew().setGunneryB(skills[0]);
                     ent.getCrew().setPiloting(skills[1]);
                     c.sendUpdateEntity(ent);
                 }

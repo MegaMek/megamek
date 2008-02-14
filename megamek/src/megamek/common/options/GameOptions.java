@@ -98,6 +98,13 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(level3,"double_blind", false); //$NON-NLS-1$
         addOption(level3,"supress_all_double_blind_messages", false); //$NON-NLS-1$
         addOption(level3,"dusk", false); //$NON-NLS-1$
+        addOption(level3,"blizzard", false); //$NON-NLS-1$
+        addOption(level3,"blowing_sand", false); //$NON-NLS-1$
+        addOption(level3,"heavy_snowfall", false); //$NON-NLS-1$
+        addOption(level3,"light_rainfall", false); //$NON-NLS-1$
+        addOption(level3,"heavy_rainfall", false); //$NON-NLS-1$
+        addOption(level3,"moderate_winds", false); //$NON-NLS-1$
+        addOption(level3,"high_winds", false); //$NON-NLS-1$
         addOption(level3,"team_vision", true); //$NON-NLS-1$
         addOption(level3,"floating_crits", false); //$NON-NLS-1$
         addOption(level3,"engine_explosions", false); //$NON-NLS-1$
@@ -135,6 +142,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
 
         IBasicOptionGroup ruleBreakers = addGroup("ruleBreakers"); //$NON-NLS-1$
         addOption(ruleBreakers,"no_tac", false); //$NON-NLS-1$
+        addOption(ruleBreakers,"rpg_gunnery", false); //$NON-NLS-1$
         addOption(ruleBreakers,"no_immobile_vehicles", false); //$NON-NLS-1$
         addOption(ruleBreakers,"vehicles_can_eject", false); //$NON-NLS-1$
         addOption(ruleBreakers,"individual_initiative", false); //$NON-NLS-1$

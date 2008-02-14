@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.18-dev (SVN)
+v0.33.18 (2008-02-14, 23:31 GMT+1)
 + Bug: Flechette and Frag ammo not doing full damage to Infantry
 + RFE: Force Victory skips all units in every phase to end game.
 + Bug: BattleArmor being effected like Infantry against Frag and Flechette

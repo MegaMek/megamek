@@ -1,5 +1,6 @@
 package megamek.server.victory;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,7 +10,7 @@ import megamek.common.IGame;
  * detailed spaghetti from the old victory code this assumes game options do not
  * change during game (atleast regarding victory conditions)
  */
-public class NoodleVictory implements Victory {
+public class NoodleVictory implements Victory, Serializable {
     protected Victory v;
 
     public NoodleVictory() {

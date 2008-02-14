@@ -13,6 +13,7 @@
  */
 package megamek.server.victory;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import megamek.common.IGame;
@@ -25,7 +26,7 @@ import megamek.common.Report;
  * 
  * the scores will be an average of the given victory scores.
  */
-public class SummingThresholdVictory implements Victory {
+public class SummingThresholdVictory implements Victory, Serializable {
     protected Victory[] vs;
     protected int thr;
 

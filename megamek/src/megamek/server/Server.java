@@ -230,12 +230,7 @@ public class Server implements Runnable {
 
     // Track Physical Action results, HACK to deal with opposing pushes
     // canceling each other
-    private Vector<PhysicalResult> physicalResults = new Vector<PhysicalResult>();
-    
-    //victorycondition related stuff
-    private Victory victory=null;
-    private VictoryFactory vf=new SpaghettiVictoryFactory();
-    
+    private Vector<PhysicalResult> physicalResults = new Vector<PhysicalResult>();    
 
     private Vector<DynamicTerrainProcessor> terrainProcessors = new Vector<DynamicTerrainProcessor>();
 
@@ -360,15 +355,6 @@ public class Server implements Runnable {
         // Fully initialised, now accept connections
         connector = new Thread(this, "Connection Listener");
         connector.start();
-    }
-    /**
-     *  use victoryfactory to generate a new victorycondition checker
-     *  provided that the victorycontext is saved properly, calling this
-     *  method at any time is ok and should not affect anything unless
-     *  the victorycondition-configoptions have changed. 
-     */
-    protected void createVictoryConditions() {
-        victory=vf.createVictory("this string should be taken from game options");
     }
     
     /**
@@ -1791,7 +1777,7 @@ public class Server implements Runnable {
             game.setupRoundDeployment();
             game.determineWind();
             game.setVictoryContext(new HashMap<String,Object>());
-            createVictoryConditions();
+            game.createVictoryConditions();
             // If we add transporters for any Magnetic Clamp
             // equiped squads, then update the clients' entities.
             if (game.checkForMagneticClamp()) {
@@ -2157,7 +2143,7 @@ public class Server implements Runnable {
      *  will also add some reports to reporting
      */
     public boolean victory() {
-        Victory.Result vr=victory.victory(
+        Victory.Result vr= game.getVictory().victory(
                                 game,
                                 game.getVictoryContext());
         for (Report r:vr.getReports()) {

@@ -48,6 +48,9 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.AttackHandler;
+import megamek.server.victory.SpaghettiVictoryFactory;
+import megamek.server.victory.Victory;
+import megamek.server.victory.VictoryFactory;
 
 /**
  * The game class is the root of all data about the game in progress.
@@ -137,6 +140,10 @@ public class Game implements Serializable, IGame
     
     //internal integer value for an external game id link
     private int externalGameId = 0;
+    
+    //victorycondition related stuff
+    private Victory victory=null;
+    private VictoryFactory vf=new SpaghettiVictoryFactory();
     
     /**
      * Constructor
@@ -2685,5 +2692,19 @@ public class Game implements Serializable, IGame
 
     public boolean gameTimerIsExpired() {
         return ((getOptions().booleanOption("use_game_turn_limit")) && (getRoundCount() == getOptions().intOption("game_turn_limit")));
+    }
+    
+    /**
+     *  use victoryfactory to generate a new victorycondition checker
+     *  provided that the victorycontext is saved properly, calling this
+     *  method at any time is ok and should not affect anything unless
+     *  the victorycondition-configoptions have changed. 
+     */
+    public void createVictoryConditions() {
+        victory=vf.createVictory("this string should be taken from game options");
+    }
+    
+    public Victory getVictory() {
+        return victory;
     }
 }

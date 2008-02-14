@@ -35,10 +35,10 @@ public class InfantryLaserWeapon extends InfantryWeapon {
         this.name = "Infantry Laser";
         this.setInternalName(this.name);
         this.addLookupName("InfantryLaser");
-        this.shortRange = 1;
-        this.mediumRange = 2;
-        this.longRange = 3;
-        this.extremeRange = 4;
+        this.shortRange = 2;
+        this.mediumRange = 4;
+        this.longRange = 6;
+        this.extremeRange = 8;
         //laser rifle, TM p. 319
         this.bv = 0.88;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_LASER | F_ENERGY;

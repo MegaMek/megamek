@@ -13,6 +13,7 @@
  */
 package megamek.server.victory;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import megamek.common.IGame;
@@ -23,7 +24,7 @@ import megamek.common.IGame;
  * returning whatever the given victory returns. otherwise returns
  * SimpleNoResult
  */
-public class CheckVictory implements Victory {
+public class CheckVictory implements Victory, Serializable {
     protected Victory v;
 
     public CheckVictory(Victory v) {

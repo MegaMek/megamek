@@ -13,6 +13,7 @@
  */
 package megamek.server.victory;
 
+import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -22,7 +23,7 @@ import megamek.common.Player;
 /**
  * implements "last commander standing"
  */
-public class LastCmdrStandingVictory implements Victory {
+public class LastCmdrStandingVictory implements Victory, Serializable {
     public LastCmdrStandingVictory() {
     }
 

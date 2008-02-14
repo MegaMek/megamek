@@ -13,6 +13,7 @@
  */
 package megamek.server.victory;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 import megamek.common.IGame;
@@ -21,7 +22,7 @@ import megamek.common.IGame;
  * This is the original implementation of victory moved under the new
  * infrastructure
  */
-public class SpaghettiVictory implements Victory {
+public class SpaghettiVictory implements Victory, Serializable {
     protected Victory force = new ForceVictory();
     protected Victory lastMan = new LastManStandingVictory();
     protected Victory check = new CheckVictory(new NoodleVictory());

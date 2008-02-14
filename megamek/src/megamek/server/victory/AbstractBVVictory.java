@@ -13,6 +13,7 @@
  */
 package megamek.server.victory;
 
+import java.io.Serializable;
 import java.util.*;
 import megamek.common.IGame;
 import megamek.common.Player;
@@ -20,7 +21,7 @@ import megamek.common.Player;
 /**
  * abstract baseclass for bv-checking victory implementations
  */
-public abstract class AbstractBVVictory implements Victory {
+public abstract class AbstractBVVictory implements Victory, Serializable {
     public int getFriendlyBV(IGame game, Player player) {
         int ret = 0;
         for (Enumeration<Player> f = game.getPlayers(); f.hasMoreElements();) {

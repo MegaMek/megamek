@@ -28,6 +28,7 @@ import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.AttackHandler;
+import megamek.server.victory.Victory;
 
 /**
  * This interface is the root of all data about the game in progress.
@@ -1171,4 +1172,14 @@ public interface IGame {
     public abstract Vector<Report> ageFlares();
 
     public abstract boolean gameTimerIsExpired();
+    
+    /**
+     *  use victoryfactory to generate a new victorycondition checker
+     *  provided that the victorycontext is saved properly, calling this
+     *  method at any time is ok and should not affect anything unless
+     *  the victorycondition-configoptions have changed. 
+     */
+    public abstract void createVictoryConditions();
+    
+    public abstract Victory getVictory();
 }

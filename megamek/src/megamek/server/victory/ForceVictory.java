@@ -13,6 +13,7 @@
  */
 package megamek.server.victory;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Vector;
 
@@ -22,7 +23,7 @@ import megamek.common.Player;
 /**
  * implementation of player-agreed victory
  */
-public class ForceVictory implements Victory {
+public class ForceVictory implements Victory, Serializable {
 
     public ForceVictory() {
     }

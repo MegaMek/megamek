@@ -23,6 +23,7 @@ v0.33.18-dev (SVN)
 + Bug: fix report order when igniting hexes
 + Bug: Maps no workie cannot be loaded
 + Bug 1881340: NPE when checking for Victory after loading a savegame
++ Bug: Infantry Laser (ie. Energy Rifle Infantry) should have 2/4/6 range
 	
 v0.33.17 (2008-02-01)
 + Bug: Flamers causing 3 heat instead of 2

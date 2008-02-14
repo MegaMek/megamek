@@ -63,6 +63,8 @@ public class MechGroupView
         String[] entityStrings = new String[entityArray.length];
         int index = 0;
 
+        boolean rpgSkills = client.game.getOptions().booleanOption("rpg_gunnery");
+        
         for (final int newVar : entityArray) {
             Entity entity = client.game.getEntity(newVar);
             // Handle the "Blind Drop" option.
@@ -71,10 +73,10 @@ public class MechGroupView
             if (!entity.getOwner().equals(client.getLocalPlayer())
                     && client.game.getOptions().booleanOption("blind_drop")
                     && !client.game.getOptions().booleanOption("real_blind_drop")) {
-                entityStrings[index++] = ChatLounge.formatUnit(entity, true);
+                entityStrings[index++] = ChatLounge.formatUnit(entity, true, rpgSkills);
             } else if (entity.getOwner().equals(client.getLocalPlayer())
                     || !client.game.getOptions().booleanOption("blind_drop") && !client.game.getOptions().booleanOption("real_blind_drop")) {
-                entityStrings[index++] = ChatLounge.formatUnit(entity, false);
+                entityStrings[index++] = ChatLounge.formatUnit(entity, false, rpgSkills);
             }
         }
         entities = new JList(entityStrings);

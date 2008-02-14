@@ -25,6 +25,7 @@ import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -327,6 +328,7 @@ public class LRMSwarmHandler extends LRMHandler {
         //no AMS for Swarms
         int missilesHit;
         int nMissilesModifier = 0;
+        boolean bWeather = false;
         boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
         if (maxtechmissiles) {
             if (nRange<=1) {
@@ -342,6 +344,23 @@ public class LRMSwarmHandler extends LRMHandler {
         if (bGlancing) {
             nMissilesModifier -=4;
         }
+        
+        // weather checks
+        if (game.getOptions().booleanOption("blizzard") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 4;
+            bWeather = true;
+        }
+
+        if (game.getOptions().booleanOption("moderate_winds") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 2;
+            bWeather = true;
+        }
+        
+        if (game.getOptions().booleanOption("high_winds")  && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 4;
+            bWeather = true;
+        }
+        
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles
         if (swarmMissilesLeft > 0) {
@@ -361,7 +380,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 }
             }            
         } else {
-            missilesHit = allShotsHit() ? wtype.getRackSize():Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bGlancing || maxtechmissiles);
+            missilesHit = allShotsHit() ? wtype.getRackSize():Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bWeather || bGlancing || maxtechmissiles);
             swarmMissilesLeft = wtype.getRackSize();
         }
         swarmMissilesNowLeft = swarmMissilesLeft - missilesHit;

@@ -382,6 +382,14 @@ public class EntityListFile {
             output.write(crew.getName().replaceAll("\"", "&quot;"));
             output.write("\" gunnery=\"");
             output.write(String.valueOf(crew.getGunnery()));
+            if(entity.getGame().getOptions().booleanOption("rpg_gunnery")) {
+                output.write("\" gunneryL=\"");
+                output.write(String.valueOf(crew.getGunneryL()));
+                output.write("\" gunneryM=\"");
+                output.write(String.valueOf(crew.getGunneryM()));
+                output.write("\" gunneryB=\"");
+                output.write(String.valueOf(crew.getGunneryB()));
+            }
             output.write("\" piloting=\"");
             output.write(String.valueOf(crew.getPiloting()));
             if (crew.isDead() || crew.getHits() > 5) {

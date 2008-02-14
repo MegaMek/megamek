@@ -83,6 +83,12 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
     private TextField fldName = new TextField(20);
     private Label labGunnery = new Label(Messages.getString("CustomMechDialog.labGunnery"), Label.RIGHT); //$NON-NLS-1$
     private TextField fldGunnery = new TextField(3);
+    private Label labGunneryL = new Label(Messages.getString("CustomMechDialog.labGunneryL"), Label.RIGHT); //$NON-NLS-1$
+    private TextField fldGunneryL = new TextField(3);
+    private Label labGunneryM = new Label(Messages.getString("CustomMechDialog.labGunneryM"), Label.RIGHT); //$NON-NLS-1$
+    private TextField fldGunneryM = new TextField(3);
+    private Label labGunneryB = new Label(Messages.getString("CustomMechDialog.labGunneryB"), Label.RIGHT); //$NON-NLS-1$
+    private TextField fldGunneryB = new TextField(3);
     private Label labPiloting = new Label(Messages.getString("CustomMechDialog.labPiloting"), Label.RIGHT); //$NON-NLS-1$
     private TextField fldPiloting = new TextField(3);
     private Label labC3 = new Label(Messages.getString("CustomMechDialog.labC3"), Label.RIGHT); //$NON-NLS-1$
@@ -186,15 +192,48 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         gridbag.setConstraints(fldName, c);
         tempPanel.add(fldName);
         
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labGunnery, c);
-        tempPanel.add(labGunnery);
-        
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(fldGunnery, c);
-        tempPanel.add(fldGunnery);
+        if(client.game.getOptions().booleanOption("rpg_gunnery")) {
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labGunneryL, c);
+            tempPanel.add(labGunneryL);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(fldGunneryL, c);
+            tempPanel.add(fldGunneryL);
+            
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labGunneryM, c);
+            tempPanel.add(labGunneryM);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(fldGunneryM, c);
+            tempPanel.add(fldGunneryM);
+            
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labGunneryB, c);
+            tempPanel.add(labGunneryB);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(fldGunneryB, c);
+            tempPanel.add(fldGunneryB);
+            
+        } else {
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labGunnery, c);
+            tempPanel.add(labGunnery);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(fldGunnery, c);
+            tempPanel.add(fldGunnery);
+        }
         
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
@@ -445,12 +484,21 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
         fldName.addActionListener(this);
         fldGunnery.setText(new Integer(entity.getCrew().getGunnery()).toString());
         fldGunnery.addActionListener(this);
+        fldGunneryL.setText(new Integer(entity.getCrew().getGunneryL()).toString());
+        fldGunneryL.addActionListener(this);
+        fldGunneryM.setText(new Integer(entity.getCrew().getGunneryM()).toString());
+        fldGunneryM.addActionListener(this);
+        fldGunneryB.setText(new Integer(entity.getCrew().getGunneryB()).toString());
+        fldGunneryB.addActionListener(this);
         fldPiloting.setText(new Integer(entity.getCrew().getPiloting()).toString());
         fldPiloting.addActionListener(this);
         
         if (!editable) {
             fldName.setEnabled(false);
             fldGunnery.setEnabled(false);
+            fldGunneryL.setEnabled(false); 
+            fldGunneryM.setEnabled(false);
+            fldGunneryB.setEnabled(false);
             fldPiloting.setEnabled(false);
             choC3.setEnabled(false);
             choDeployment.setEnabled(false);
@@ -1218,11 +1266,17 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             // get values
             String name = fldName.getText();
             int gunnery;
+            int gunneryL;
+            int gunneryM;
+            int gunneryB;
             int piloting;
             int offBoardDistance;
             boolean autoEject = chAutoEject.getState();
             try {
                 gunnery = Integer.parseInt(fldGunnery.getText());
+                gunneryL = Integer.parseInt(fldGunneryL.getText());
+                gunneryM = Integer.parseInt(fldGunneryM.getText());
+                gunneryB = Integer.parseInt(fldGunneryB.getText());
                 piloting =  Integer.parseInt(fldPiloting.getText());
             } catch (NumberFormatException e) {
                 new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterValidSkills")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1230,10 +1284,11 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             }
             
             // keep these reasonable, please
-            if (gunnery < 0 || gunnery > 8 || piloting < 0 || piloting > 8) {
+            if (gunnery < 0 || gunnery > 8 || piloting < 0 || piloting > 8 || gunneryL < 0 || gunneryL > 8 || gunneryM < 0 || gunneryM > 8 || gunneryB < 0 || gunneryB > 8) {
                 new AlertDialog(clientgui.frame, Messages.getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterSkillsBetween0_8")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
+            
             if (chOffBoard.getState()){
                 try {
                     offBoardDistance = distance;
@@ -1253,7 +1308,11 @@ extends ClientDialog implements ActionListener, DialogOptionListener {
             }
 
             // change entity
-            entity.setCrew(new Pilot(name, gunnery, piloting));
+            if(client.game.getOptions().booleanOption("rpg_gunnery")) {
+                entity.setCrew(new Pilot(name, gunneryL, gunneryM, gunneryB, piloting));
+            } else {
+                entity.setCrew(new Pilot(name, gunnery, piloting));
+            }
             if (entity instanceof Mech) {
                 Mech mech = (Mech)entity;
                 mech.setAutoEject(!autoEject);

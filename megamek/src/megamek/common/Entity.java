@@ -130,6 +130,7 @@ public abstract class Entity extends TurnOrdered
     public int                  engineHitsThisRound;
     public boolean              rolledForEngineExplosion = false; //So that we don't roll twice in one round
     public boolean              dodging;
+    public boolean              reckless;
 
     public boolean              spotting;
     private boolean             clearingMinefield = false;
@@ -3861,6 +3862,20 @@ public abstract class Entity extends TurnOrdered
         //Let's see if we have a modifier to our piloting skill roll. We'll pass in the roll
         //object and adjust as necessary
         roll = addEntityBonuses(roll);
+        
+        //add weather related stuff
+        
+        if(game.getOptions().booleanOption("blizzard")) {
+            roll.addModifier(+1, "blizzard");
+        }
+        
+        if(game.getOptions().booleanOption("heavy_snowfall")) {
+             roll.addModifier(+1, "heavy snowfall");
+        }
+        
+        if(game.getOptions().booleanOption("light_rainfall") || game.getOptions().booleanOption("heavy_rainfall")) {
+             roll.addModifier(+1, "rainfall");
+        }
 
         return roll;
     }
@@ -3987,8 +4002,6 @@ public abstract class Entity extends TurnOrdered
         // TODO: add check for elevation of pavement, road,
         //       or bridge matches entity elevation.
         if (moveType != IEntityMovementType.MOVE_JUMP
-            && movementMode != IEntityMovementMode.HOVER
-            && movementMode != IEntityMovementMode.WIGE
             && prevHex != null
             /* Bug 754610: Revert fix for bug 702735.
                && ( prevHex.contains(Terrain.PAVEMENT) ||
@@ -3996,8 +4009,15 @@ public abstract class Entity extends TurnOrdered
                prevHex.contains(Terrain.BRIDGE) )
             */
             && ((prevStep.isPavementStep()
-                 && overallMoveType == IEntityMovementType.MOVE_RUN)
-               || prevHex.containsTerrain(Terrains.ICE))
+                 && overallMoveType == IEntityMovementType.MOVE_RUN
+                 && movementMode != IEntityMovementMode.HOVER
+                 && movementMode != IEntityMovementMode.WIGE)
+               || (prevHex.containsTerrain(Terrains.ICE)
+            	     && movementMode != IEntityMovementMode.HOVER
+                    && movementMode != IEntityMovementMode.WIGE)
+               || ((movementMode == IEntityMovementMode.HOVER
+                    || movementMode == IEntityMovementMode.WIGE) 
+                    && (game.getOptions().booleanOption("blizzard") || game.getOptions().booleanOption("high_winds"))))
             && prevFacing != curFacing
             && !lastPos.equals(curPos)
             && !isInfantry
@@ -6181,4 +6201,13 @@ public abstract class Entity extends TurnOrdered
         }
         return false;
     }
+
+    public void setReckless(boolean b) {
+        this.reckless = b;
+    }
+    
+    public boolean isReckless() {
+        return reckless;
+    }
+    
 }

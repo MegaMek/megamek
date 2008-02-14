@@ -39,6 +39,11 @@ public class Pilot
     private boolean     dead;
     private boolean     ejected;
     
+    //RPG skills
+    private int gunneryL;
+    private int gunneryM;
+    private int gunneryB;
+    
     // these are only used on the server:
     private boolean koThisRound; // did I go KO this game round?
     
@@ -54,6 +59,24 @@ public class Pilot
     public Pilot(String name, int gunnery, int piloting) {
         this.name = name;
         this.gunnery = gunnery;
+        this.gunneryL = gunnery;
+        this.gunneryM = gunnery;
+        this.gunneryB = gunnery;
+        this.piloting = piloting;
+        hits = 0;
+        unconscious = false;
+        dead = false;
+        koThisRound = false;
+        
+        options.initialize();
+    }
+    
+    public Pilot(String name, int gunneryL, int gunneryM, int gunneryB, int piloting) {
+        this.name = name;
+        this.gunnery = (int)Math.round((gunneryL + gunneryM + gunneryB) / 3.0);
+        this.gunneryL = gunneryL;
+        this.gunneryM = gunneryM;
+        this.gunneryB = gunneryB;
         this.piloting = piloting;
         hits = 0;
         unconscious = false;
@@ -70,6 +93,18 @@ public class Pilot
     public int getGunnery() {
         return gunnery;
     }
+    
+    public int getGunneryL() {
+        return gunneryL;
+    }
+    
+    public int getGunneryM() {
+        return gunneryM;
+    }
+    
+    public int getGunneryB() {
+        return gunneryB;
+    }
   
     public int getPiloting() {
         return piloting;
@@ -81,6 +116,18 @@ public class Pilot
     
     public void setGunnery(int gunnery) {
         this.gunnery = gunnery;
+    }
+    
+    public void setGunneryL(int gunnery) {
+        this.gunneryL = gunnery;
+    }
+    
+    public void setGunneryM(int gunnery) {
+        this.gunneryM = gunnery;
+    }
+    
+    public void setGunneryB(int gunnery) {
+        this.gunneryB = gunnery;
     }
     
     public void setPiloting(int piloting) {
@@ -517,4 +564,10 @@ public class Pilot
     public void setEjected( boolean abandoned ) {
         this.ejected = abandoned;
     }
+    
+    //A function that returns a string description of the gunnery skills when using RPG
+    public String getGunneryRPG() {
+        return "" + gunneryL + "(L)/" + gunneryM + "(M)/" + gunneryB + "(B)";        
+    }
+    
 }

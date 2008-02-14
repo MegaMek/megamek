@@ -13,10 +13,12 @@
  */
 package megamek.server.victory;
 
+import java.io.Serializable;
+
 /**
  * 
  */
-public class SpaghettiVictoryFactory implements VictoryFactory {
+public class SpaghettiVictoryFactory implements VictoryFactory, Serializable {
     /**
      * This is a really nasty implementation
      */

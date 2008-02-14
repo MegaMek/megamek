@@ -427,8 +427,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
         }
         else if (isArtilleryFLAK) {
             toHit = new ToHitData(9, "artillery FLAK");
-        } else {
+        } else {          
             toHit = new ToHitData(ae.crew.getGunnery(), "gunnery skill");
+            if(game.getOptions().booleanOption("rpg_gunnery")) {
+                if(wtype.hasFlag(WeaponType.F_ENERGY)) {
+                    toHit = new ToHitData(ae.crew.getGunneryL(), "gunnery (L) skill");
+                }
+                if(wtype.hasFlag(WeaponType.F_MISSILE)) {
+                    toHit = new ToHitData(ae.crew.getGunneryM(), "gunnery (M) skill");
+                }
+                if(wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                    toHit = new ToHitData(ae.crew.getGunneryB(), "gunnery (B) skill");
+                }
+            }
         }
 
         //Engineer's fire extinguisher has fixed to hit number,
@@ -550,6 +561,43 @@ public class WeaponAttackAction extends AbstractAttackAction implements Serializ
     
         toHit.append(nightModifiers(game, target, atype, ae));
         
+        //weather conditions
+        if(game.getOptions().booleanOption("blizzard")) {
+            if(wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                toHit.addModifier(+2, "Blizzard");
+            } else {
+        	toHit.addModifier(+1, "Blizzard");
+            }
+        }
+        
+        if(game.getOptions().booleanOption("blowing_sand")) {
+            if(wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                toHit.addModifier(+1, "Blowing sand");
+            } else {
+                toHit.addModifier(+2, "Blowing sand");
+            }
+        }
+        
+        if(game.getOptions().booleanOption("heavy_snowfall")) {
+            toHit.addModifier(+1, "Heavy snowfall");
+        }
+        
+        if(game.getOptions().booleanOption("light_rainfall") || game.getOptions().booleanOption("heavy_rainfall")) {
+            toHit.addModifier(+1, "Rainfall");
+        }
+        
+        if(game.getOptions().booleanOption("moderate_winds")) {
+            if(wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                toHit.addModifier(+1, "Moderate winds");
+            }
+        }
+        
+        if(game.getOptions().booleanOption("high_winds")) {
+            if(wtype.hasFlag(WeaponType.F_BALLISTIC)) {
+                toHit.addModifier(+2, "High winds");
+            }
+        }
+              
         //handle LAM speial rules
         
         // a temporary variable so I don't need to keep casting.

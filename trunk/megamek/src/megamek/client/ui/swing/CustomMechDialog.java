@@ -89,6 +89,12 @@ public class CustomMechDialog
     private JTextField fldName = new JTextField(20);
     private JLabel labGunnery = new JLabel(Messages.getString("CustomMechDialog.labGunnery"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JTextField fldGunnery = new JTextField(3);
+    private JLabel labGunneryL = new JLabel(Messages.getString("CustomMechDialog.labGunneryL"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JTextField fldGunneryL = new JTextField(3);
+    private JLabel labGunneryM = new JLabel(Messages.getString("CustomMechDialog.labGunneryM"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JTextField fldGunneryM = new JTextField(3);
+    private JLabel labGunneryB = new JLabel(Messages.getString("CustomMechDialog.labGunneryB"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JTextField fldGunneryB = new JTextField(3);
     private JLabel labPiloting = new JLabel(Messages.getString("CustomMechDialog.labPiloting"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JTextField fldPiloting = new JTextField(3);
     private JLabel labC3 = new JLabel(Messages.getString("CustomMechDialog.labC3"), SwingConstants.RIGHT); //$NON-NLS-1$
@@ -194,15 +200,48 @@ public class CustomMechDialog
         gridbag.setConstraints(fldName, c);
         tempPanel.add(fldName);
 
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(labGunnery, c);
-        tempPanel.add(labGunnery);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(fldGunnery, c);
-        tempPanel.add(fldGunnery);
+        if(client.game.getOptions().booleanOption("rpg_gunnery")) {
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labGunneryL, c);
+            tempPanel.add(labGunneryL);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(fldGunneryL, c);
+            tempPanel.add(fldGunneryL);
+            
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labGunneryM, c);
+            tempPanel.add(labGunneryM);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(fldGunneryM, c);
+            tempPanel.add(fldGunneryM);
+            
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labGunneryB, c);
+            tempPanel.add(labGunneryB);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(fldGunneryB, c);
+            tempPanel.add(fldGunneryB);
+            
+        } else {
+            c.gridwidth = 1;
+            c.anchor = GridBagConstraints.EAST;
+            gridbag.setConstraints(labGunnery, c);
+            tempPanel.add(labGunnery);
+            
+            c.gridwidth = GridBagConstraints.REMAINDER;
+            c.anchor = GridBagConstraints.WEST;
+            gridbag.setConstraints(fldGunnery, c);
+            tempPanel.add(fldGunnery);
+        }
 
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
@@ -453,12 +492,21 @@ public class CustomMechDialog
         fldName.addActionListener(this);
         fldGunnery.setText(Integer.toString(entity.getCrew().getGunnery()));
         fldGunnery.addActionListener(this);
+        fldGunneryL.setText(Integer.toString(entity.getCrew().getGunneryL()));
+        fldGunneryL.addActionListener(this);
+        fldGunneryM.setText(Integer.toString(entity.getCrew().getGunneryM()));
+        fldGunneryM.addActionListener(this);
+        fldGunneryB.setText(Integer.toString(entity.getCrew().getGunneryB()));
+        fldGunneryB.addActionListener(this);
         fldPiloting.setText(Integer.toString(entity.getCrew().getPiloting()));
         fldPiloting.addActionListener(this);
 
         if (!editable) {
             fldName.setEnabled(false);
             fldGunnery.setEnabled(false);
+            fldGunneryL.setEnabled(false);
+            fldGunneryM.setEnabled(false);
+            fldGunneryB.setEnabled(false);
             fldPiloting.setEnabled(false);
             choC3.setEnabled(false);
             choDeployment.setEnabled(false);
@@ -1206,11 +1254,17 @@ public class CustomMechDialog
             // get values
             String name = fldName.getText();
             int gunnery;
+            int gunneryL;
+            int gunneryM;
+            int gunneryB;
             int piloting;
             int offBoardDistance;
             boolean autoEject = chAutoEject.isSelected();
             try {
                 gunnery = Integer.parseInt(fldGunnery.getText());
+                gunneryL = Integer.parseInt(fldGunneryL.getText());
+                gunneryM = Integer.parseInt(fldGunneryM.getText());
+                gunneryB = Integer.parseInt(fldGunneryB.getText());
                 piloting = Integer.parseInt(fldPiloting.getText());
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterValidSkills"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1218,7 +1272,7 @@ public class CustomMechDialog
             }
             
             // keep these reasonable, please
-            if (gunnery < 0 || gunnery > 8 || piloting < 0 || piloting > 8) {
+            if (gunnery < 0 || gunnery > 8 || piloting < 0 || piloting > 8|| gunneryL < 0 || gunneryL > 8 || gunneryM < 0 || gunneryM > 8 || gunneryB < 0 || gunneryB > 8) {
                 JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterSkillsBetween0_8"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
@@ -1240,7 +1294,11 @@ public class CustomMechDialog
             }
 
             // change entity
-            entity.setCrew(new Pilot(name, gunnery, piloting));
+            if(client.game.getOptions().booleanOption("rpg_gunnery")) {
+                entity.setCrew(new Pilot(name, gunneryL, gunneryM, gunneryB, piloting));
+            } else {
+                entity.setCrew(new Pilot(name, gunnery, piloting));
+            }
             if (entity instanceof Mech) {
                 Mech mech = (Mech) entity;
                 mech.setAutoEject(!autoEject);

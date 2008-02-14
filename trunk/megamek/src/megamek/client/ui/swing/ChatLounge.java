@@ -905,17 +905,19 @@ public class ChatLounge
                 entity.getCrew().clearAdvantages();
             }
 
+            boolean rpgSkills = client.game.getOptions().booleanOption("rpg_gunnery");
+            
             // Handle the "Blind Drop" option.
             if (!entity.getOwner().equals(client.getLocalPlayer())
                     && client.game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
                     && !client.game.getOptions().booleanOption("real_blind_drop")) { //$NON-NLS-1$
 
-                ((DefaultListModel) lisEntities.getModel()).addElement(formatUnit(entity, true));
+                ((DefaultListModel) lisEntities.getModel()).addElement(formatUnit(entity, true, rpgSkills));
                 entityCorrespondance[listIndex++] = entity.getId();
             } else if (entity.getOwner().equals(client.getLocalPlayer())
                     || (!client.game.getOptions().booleanOption("blind_drop") //$NON-NLS-1$
                     && !client.game.getOptions().booleanOption("real_blind_drop"))) { //$NON-NLS-1$
-                ((DefaultListModel) lisEntities.getModel()).addElement(formatUnit(entity, false));
+                ((DefaultListModel) lisEntities.getModel()).addElement(formatUnit(entity, false, rpgSkills));
                 entityCorrespondance[listIndex++] = entity.getId();
             }
         }
@@ -933,7 +935,7 @@ public class ChatLounge
         butDelete.setEnabled(false);
     }
 
-    public static String formatUnit(Entity entity, boolean blindDrop) {
+    public static String formatUnit(Entity entity, boolean blindDrop, boolean rpgSkills) {
         String value;
 
         // Reset the tree strings.
@@ -963,6 +965,10 @@ public class ChatLounge
         int crewAdvCount = entity.getCrew().countAdvantages();
         boolean isManeiDomini = entity.getCrew().countMDImplants() > 0;
         
+        String gunnery = Integer.toString(entity.getCrew().getGunnery());
+        if(rpgSkills) {
+            gunnery = entity.getCrew().getGunneryRPG();
+        }
 
         if (blindDrop) {
             String unitClass; //$NON-NLS-1$
@@ -980,7 +986,7 @@ public class ChatLounge
             }
             value = Messages.getString("ChatLounge.EntityListEntry1", new Object[]{//$NON-NLS-1$
                 entity.getOwner().getName(),
-                new Integer(entity.getCrew().getGunnery()),
+                gunnery,
                 new Integer(entity.getCrew().getPiloting()),
                 (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 (isManeiDomini ? Messages.getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -991,7 +997,7 @@ public class ChatLounge
             value = strTreeSet
                     + Messages.getString("ChatLounge.EntityListEntry2", new Object[]{//$NON-NLS-1$
                         entity.getDisplayName(),
-                        new Integer(entity.getCrew().getGunnery()),
+                        gunnery,
                         new Integer(entity.getCrew().getPiloting()),
                         (crewAdvCount > 0 ? " <" + crewAdvCount + Messages.getString("ChatLounge.advs") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                         (isManeiDomini ? Messages.getString("ChatLounge.md") : ""), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

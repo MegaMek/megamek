@@ -9692,6 +9692,36 @@ public class Server implements Runnable {
                 }
             }
 
+            //weather conditions on heat
+            if (game.getOptions().booleanOption("blizzard")) {
+                entity.heatFromExternal -= 2;
+                r = new Report(5026);
+                r.subject = entity.getId();
+                addReport(r);
+            }
+
+            if (game.getOptions().booleanOption("heavy_rainfall")) {
+                entity.heatFromExternal -= 2;
+                r = new Report(5027);
+                r.subject = entity.getId();
+                addReport(r);
+            }
+
+
+            if (game.getOptions().booleanOption("heavy_snowfall")) {
+                entity.heatFromExternal -= 1;
+                r = new Report(5028);
+                r.subject = entity.getId();
+                addReport(r);
+            }
+
+            if (game.getOptions().booleanOption("light_rainfall")) {
+                entity.heatFromExternal -= 1;
+                r = new Report(5029);
+                r.subject = entity.getId();
+                addReport(r);
+            }
+
             // Add +5 Heat if the hex you're in is on fire
             // and was on fire for the full round.
             if (entityHex != null) {

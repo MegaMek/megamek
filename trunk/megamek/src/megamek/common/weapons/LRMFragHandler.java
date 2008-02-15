@@ -107,7 +107,6 @@ public class LRMFragHandler extends LRMHandler {
             return;
         }
 
-        //int tn = 14 - nDamage;
         server.tryClearHex(target.getPosition(), nDamage, subjectId);
         return;
     }
@@ -163,6 +162,16 @@ public class LRMFragHandler extends LRMHandler {
             vPhaseReport.addAll(
                     server.damageEntity(entityTarget, hit, nDamage, false, DamageType.FRAGMENTATION, false, false, throughFront));
         }
-
+    }
+    
+    /*
+     *  (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
+     */
+    protected int calcHits(Vector<Report> vPhaseReport) {
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            return wtype.getRackSize();
+        }
+        return super.calcHits(vPhaseReport);
     }
 }

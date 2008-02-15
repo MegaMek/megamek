@@ -4,6 +4,7 @@ v0.33.19-dev (SVN)
 + Patch 1865696: Weather effects
 + Patch 1890761: RPG Skills
 + Bug 1890785: Fragmentation LRMs/SRMs not working right
++ Bug 1890845: some Protomech LRMs missing
 
 v0.33.18 (2008-02-14, 23:31 GMT+1)
 + Bug: Flechette and Frag ammo not doing full damage to Infantry

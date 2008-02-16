@@ -1437,6 +1437,8 @@ public class BoardView1
                 stringsSize ++;
             if (mhex.containsTerrain(Terrains.ICE))
                 stringsSize ++;
+            if (mhex.containsTerrain(Terrains.SWAMP))
+                stringsSize ++;
         }
 
         stringsSize += game.getNbrMinefields(mcoords);
@@ -1500,6 +1502,12 @@ public class BoardView1
             // Do we have rubble?
             if ( mhex.containsTerrain(Terrains.RUBBLE) ) {
                 strings[stringsIndex] = Messages.getString("BoardView1.Rubble"); //$NON-NLS-1$
+                stringsIndex += 1;
+            }
+            
+            // Do we have swamp?
+            if (mhex.containsTerrain(Terrains.SWAMP)) {
+                strings[stringsIndex] = Messages.getString("BoardView1.TipSwamp");
                 stringsIndex += 1;
             }
 

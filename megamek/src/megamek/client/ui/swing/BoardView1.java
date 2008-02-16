@@ -42,6 +42,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.StraightArrowPolygon;
@@ -3894,6 +3895,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 stringsSize ++;
             if (mhex.containsTerrain(Terrains.JUNGLE)) 
                 stringsSize ++;
+            if (mhex.containsTerrain(Terrains.SWAMP))
+                stringsSize ++;
             else if (mhex.containsTerrain(Terrains.WOODS)) 
                 stringsSize ++;
             if (mhex.containsTerrain(Terrains.ICE))
@@ -3961,6 +3964,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // Do we have rubble?
             if ( mhex.containsTerrain(Terrains.RUBBLE) ) {
                 strings[stringsIndex] = Messages.getString("BoardView1.Rubble"); //$NON-NLS-1$
+                stringsIndex += 1;
+            }
+            
+            // Do we have swamp?
+            if (mhex.containsTerrain(Terrains.SWAMP)) {
+                strings[stringsIndex] = Messages.getString("BoardView1.TipSwamp");
                 stringsIndex += 1;
             }
 

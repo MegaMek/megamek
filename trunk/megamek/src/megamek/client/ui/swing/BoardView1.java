@@ -1653,7 +1653,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             break;
         case KeyEvent.VK_NUMPAD5:
             // center on the selected entity
-            centerOnHex(selectedEntity.getPosition());
+            if (selectedEntity != null)
+                centerOnHex(selectedEntity.getPosition());
             ke.consume();
             break;
         }

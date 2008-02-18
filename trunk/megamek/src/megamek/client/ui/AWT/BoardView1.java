@@ -2369,7 +2369,8 @@ public class BoardView1
             break;
         case KeyEvent.VK_NUMPAD5 :
             // center on the selected entity
-            centerOnHex(selectedEntity.getPosition());
+            if (selectedEntity != null)
+                centerOnHex(selectedEntity.getPosition());
             break;
         case KeyEvent.VK_CONTROL :
             ctlKeyHeld = true;

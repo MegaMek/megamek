@@ -67,10 +67,4 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
             return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, server);
         }
     }
-    
-    public AttackHandler fire(WeaponAttackAction waa, IGame game, Server server) {
-        ToHitData toHit = waa.toHit(game);
-        return toHit.getValue() == TargetRoll.IMPOSSIBLE ? null
-                : getCorrectHandler(toHit, waa, game, server);
-    }
 }

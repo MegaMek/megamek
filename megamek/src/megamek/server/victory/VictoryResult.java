@@ -16,8 +16,10 @@ package megamek.server.victory;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
+import megamek.common.Player;
 import megamek.common.Report;
 
 /**
@@ -36,9 +38,44 @@ public class VictoryResult implements Victory.Result {
         this.victory = win;
         tr = new Throwable();
     }
-
-    // TBD add getWinningPlayer and getWinningTeam
-    // which should return NONE:s to signal draw if too complex winnage
+    
+    public int getWinningPlayer() {
+        double max = Double.MIN_VALUE;
+        int maxPlayer = Player.PLAYER_NONE;
+        boolean draw = false;
+        for (int i: playerScore.keySet()) {
+            if (playerScore.get(i) == max) {
+                draw = true;
+            }
+            if (playerScore.get(i) > max) {
+                draw = false;
+                max = playerScore.get(i);
+                maxPlayer = i;
+            }
+        }
+        if (draw)
+            return Player.PLAYER_NONE;
+        return maxPlayer;
+    }
+    
+    public int getWinningTeam() {
+        double max = Double.MIN_VALUE;
+        int maxTeam = Player.TEAM_NONE;
+        boolean draw = false;;
+        for (int i: teamScore.keySet()) {
+            if (teamScore.get(i) == max) {
+                draw = true;
+            }
+            if (teamScore.get(i) > max) {
+                draw = false;
+                max = teamScore.get(i);
+                maxTeam = i;
+            }
+        }
+        if (draw)
+            return Player.TEAM_NONE;
+        return maxTeam;
+    }
 
     protected void updateHiScore() {
         // used to calculate winner
@@ -131,5 +168,9 @@ public class VictoryResult implements Victory.Result {
 
     public String toString() {
         return "victory provided to you by:" + getTrace();
+    }
+    
+    public boolean isDraw() {
+        return (getWinningPlayer() == Player.PLAYER_NONE && getWinningTeam() == Player.TEAM_NONE);
     }
 }

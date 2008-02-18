@@ -2151,32 +2151,25 @@ public class Server implements Runnable {
         }
         
         if (vr.victory()) {
-            boolean draw=false;
-            int wonPlayer=Player.PLAYER_NONE;
-            int wonTeam=Player.TEAM_NONE;
-            //should this be done for draws?? 
-            for(int wPlayer:vr.getPlayers()) {
-                wonPlayer=wPlayer;
+            boolean draw=vr.isDraw();
+            int wonPlayer=vr.getWinningPlayer();
+            int wonTeam=vr.getWinningTeam();
+            
+            if (wonPlayer != Player.PLAYER_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
                 r.add(game.getPlayer(wonPlayer).getName());
                 addReport(r);   
-                if(wonPlayer == Player.PLAYER_NONE)
-                    draw=true;
             }
-            //should this be done for draws?
-            for (int wTeam:vr.getTeams()) {
-                wonTeam=wTeam;
+            if (wonTeam != Player.TEAM_NONE) {
                 Report r = new Report(7200, Report.PUBLIC);
                 r.add("Team "+wonTeam);
-                addReport(r);                
-                if(wonTeam == Player.TEAM_NONE)
-                    draw=true;
+                addReport(r);
             }
             if (draw) {
                 //multiple-won draw
                 game.setVictoryPlayerId(Player.PLAYER_NONE);
                 game.setVictoryTeam(Player.TEAM_NONE);
-            } else{
+            } else {
                 //nobody-won draw or 
                 //single player won or 
                 //single team won

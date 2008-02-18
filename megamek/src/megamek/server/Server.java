@@ -2157,9 +2157,9 @@ public class Server implements Runnable {
             //should this be done for draws?? 
             for(int wPlayer:vr.getPlayers()) {
                 wonPlayer=wPlayer;
-				Report r = new Report(7200, Report.PUBLIC);
-				r.add(game.getPlayer(wonPlayer).getName());
-				addReport(r);   
+                Report r = new Report(7200, Report.PUBLIC);
+                r.add(game.getPlayer(wonPlayer).getName());
+                addReport(r);   
                 if(wonPlayer == Player.PLAYER_NONE)
                     draw=true;
             }

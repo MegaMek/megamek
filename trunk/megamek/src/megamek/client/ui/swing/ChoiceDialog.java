@@ -129,8 +129,8 @@ public class ChoiceDialog
             }
 
             // Single choice dialogs use radio buttons.
-            checkboxes = new JCheckBox[choices.length];
             if (isSingle) {
+                checkboxes = new JRadioButton[choices.length];    
                 ButtonGroup radioGroup = new ButtonGroup();
                 for (int loop = 0; loop < choices.length; loop++) {
                     checkboxes[loop] = new JRadioButton(choices[loop],
@@ -142,6 +142,7 @@ public class ChoiceDialog
 
             // All others use check boxes.
             else {
+                checkboxes = new JCheckBox[choices.length];
                 for (int loop = 0; loop < choices.length; loop++) {
                     checkboxes[loop] = new JCheckBox(choices[loop],
                             loop == 0);

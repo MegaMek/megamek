@@ -122,5 +122,21 @@ public interface Victory {
          * filled or are time triggered
          */
         public ArrayList<Report> getReports();
+        
+        /**
+         * @return id of the winning team, Player.TEAM_NONE if it's a draw
+         */
+        public int getWinningTeam();
+        
+        /**
+         * @return id of the winning player, Player.TEAM_NONE if it's a draw
+         */
+        public int getWinningPlayer();
+        
+        /**
+         * 
+         * @return if this is a draw
+         */
+        public boolean isDraw();
     }
 }

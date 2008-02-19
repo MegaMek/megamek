@@ -10,6 +10,7 @@ v0.33.19-dev (SVN)
 + Bug: Fix NPE in BoardView
 + Bug: Fix victory checking
 + Bug: Fix SingleChoiceDialogs in Swing UI
++ Bug: Fix flamer damage against infantry
 
 v0.33.18 (2008-02-14, 23:31 GMT+1)
 + Bug: Flechette and Frag ammo not doing full damage to Infantry

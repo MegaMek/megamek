@@ -58,6 +58,6 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
         if (target instanceof Infantry && ((Entity)target).getCrew().getOptions().booleanOption("pain_shunt") ) {
             toReturn /= 2;
         }
-        return super.calcDamagePerHit();
+        return toReturn;
     }
 }

@@ -64,8 +64,7 @@ public class HitData
         this(location, rear, EFFECT_NONE, hitAimedLocation, 0);
     }
     
-    public HitData(int location, boolean rear, int effect, boolean hitAimedLocation, int specCrit) 
-    {
+    public HitData(int location, boolean rear, int effect, boolean hitAimedLocation, int specCrit) {
         this(location, rear, effect, hitAimedLocation, specCrit, true, HitData.DAMAGE_NONE);
         
     }
@@ -79,15 +78,6 @@ public class HitData
         this.fromFront = fromWhere;
         this.damageType = damageType;
         
-    }
-    
-    public HitData (int location, boolean rear, int effect, boolean hitAimedLocation, int specCrit, boolean fromWhere, long damageType) {
-        this.location = location;
-        this.rear = rear;
-        this.effect = effect;
-        this.hitAimedLocation = hitAimedLocation;
-        this.specCritMod = specCrit;
-        this.fromFront = fromWhere;
     }
     
     public void setFromFront (boolean dir) {

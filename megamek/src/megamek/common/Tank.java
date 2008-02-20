@@ -434,8 +434,8 @@ public class Tank
         boolean bSide = false;
         int motiveMod = 0;
         if (side == ToHitData.SIDE_FRONT && isHullDown() && !m_bHasNoTurret) {
-        	//on a hull down vee, all front hits go to turret if one exists.
-        	nArmorLoc = LOC_TURRET;
+            //on a hull down vee, all front hits go to turret if one exists.
+            nArmorLoc = LOC_TURRET;
         }
         if (side == ToHitData.SIDE_LEFT) {
             nArmorLoc = LOC_LEFT;

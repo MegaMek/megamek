@@ -14679,8 +14679,10 @@ public class Server implements Runnable {
                 continue;
             }
             if (Board.boardIsSize(basePath.concat("/").concat(fileList[i]), w, h)) {
-                //tempList.add(basePath.concat("/").concat(fileList[i].substring(0, fileList[i].lastIndexOf(".board"))));
-                tempList.add(fileList[i].substring(0, fileList[i].lastIndexOf(".board")));
+                if ( subdirs )
+                    tempList.add(basePath.concat("/").concat(fileList[i].substring(0, fileList[i].lastIndexOf(".board"))));
+                else
+                    tempList.add(fileList[i].substring(0, fileList[i].lastIndexOf(".board")));
             }
         }
         return tempList;

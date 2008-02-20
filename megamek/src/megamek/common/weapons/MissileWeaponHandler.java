@@ -82,8 +82,22 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
+                r = new Report(3325);
+                r.subject = subjectId;
+                r.add(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength());
+                r.add(sSalvoType);
+                r.add(toHit.getTableDesc());
+                r.newlines = 0;
+                vPhaseReport.add(r);
                 return ((BattleArmor)ae).getShootingStrength();
             }
+            r = new Report(3325);
+            r.subject = subjectId;
+            r.add(wtype.getRackSize());
+            r.add(sSalvoType);
+            r.add(toHit.getTableDesc());
+            r.newlines = 0;
+            vPhaseReport.add(r);
             return 1;
         }
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target

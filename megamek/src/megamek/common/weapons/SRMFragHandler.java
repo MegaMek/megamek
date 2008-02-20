@@ -63,6 +63,10 @@ public class SRMFragHandler extends SRMHandler {
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor)ae).getShootingStrength();
         }
+        // against infantry, we have 1 hit with 4 damage per missile
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            toReturn = wtype.getRackSize() * 4;
+        }
 
         if ( !(target instanceof Infantry) 
                 || target instanceof BattleArmor )
@@ -164,18 +168,6 @@ public class SRMFragHandler extends SRMHandler {
             vPhaseReport.addAll(
                     server.damageEntity(entityTarget, hit, nDamage, false, DamageType.FRAGMENTATION, false, false, throughFront));
         }
-    }
-    
-    /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
-    protected int calcHits(Vector<Report> vPhaseReport) {
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            return wtype.getRackSize();
-        }
-        return super.calcHits(vPhaseReport);
-    }
-    
+    }   
     
 }

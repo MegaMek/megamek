@@ -62,6 +62,10 @@ public class LRMFragHandler extends LRMHandler {
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor)ae).getShootingStrength();
         }
+        // against infantry, we have 1 hit with 2 damage per missile
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            toReturn = wtype.getRackSize() * 2;
+        }
 
         if ( !(target instanceof Infantry) 
                 || target instanceof BattleArmor )
@@ -162,16 +166,5 @@ public class LRMFragHandler extends LRMHandler {
             vPhaseReport.addAll(
                     server.damageEntity(entityTarget, hit, nDamage, false, DamageType.FRAGMENTATION, false, false, throughFront));
         }
-    }
-    
-    /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
-     */
-    protected int calcHits(Vector<Report> vPhaseReport) {
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            return wtype.getRackSize();
-        }
-        return super.calcHits(vPhaseReport);
     }
 }

@@ -207,6 +207,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         } catch (ParseException e) {
             System.out.println("Error parsing game options xml file.");  //$NON-NLS-1$
             e.printStackTrace(System.out);
+            return changedOptions;
         }
 
         Enumeration rootChildren = root.elements();
@@ -224,8 +225,8 @@ public class GameOptions extends AbstractOptions implements Serializable {
         
             return changedOptions;
         }
-		System.out.println("Root node of game options file is incorrectly named. Name should be 'options' but name is '" + optionsNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-		return changedOptions;
+        System.out.println("Root node of game options file is incorrectly named. Name should be 'options' but name is '" + optionsNode.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+        return changedOptions;
     }
     
     private IOption parseOptionNode(ParsedXML node) {

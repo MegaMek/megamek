@@ -15,6 +15,7 @@ v0.33.19-dev (SVN)
 + Bug: Prevent NPE when gameoptions.xml is corrupted
 + Fix Frag missiles for real
 + Bug: minor bug with VTOL BVs.
++ Calculate ingame BV based on current MP, not factored for gravity
 
 v0.33.18 (2008-02-14, 23:31 GMT+1)
 + Bug: Flechette and Frag ammo not doing full damage to Infantry

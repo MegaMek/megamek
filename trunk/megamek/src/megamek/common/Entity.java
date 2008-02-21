@@ -3716,10 +3716,9 @@ public abstract class Entity extends TurnOrdered
      *
      * This should be overwritten if necessary
      * 
-     * @param assumeLinkedC3 if the calculation should assume that the mech is linked.
      * @param ignoreC3 if the contribution of the C3 computer should be ignored when calculating BV.
      */
-    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3){
+    public int calculateBattleValue(boolean ignoreC3){
         return calculateBattleValue();
     }
 

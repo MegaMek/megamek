@@ -82,10 +82,7 @@ public class MechView {
             sBasic.append(TechConstants.getLevelDisplayableName(mech.getTechLevel()));
         }
         sBasic.append("\n"); //$NON-NLS-1$
-        if (mech.hasC3M() || mech.hasC3S() || mech.hasC3i()) {
-            sBasic.append(Messages.getString("MechView.Linkedc3bv")); //$NON-NLS-1$
-            sBasic.append(mech.calculateBattleValue(true, false));
-        }
+        
         if (!isGunEmplacement) {
             sBasic.append("\n"); //$NON-NLS-1$
             sBasic.append(Messages.getString("MechView.Movement"))//$NON-NLS-1$

@@ -528,13 +528,13 @@ public class Tank
      * Calculates the battle value of this mech
      */
     public int calculateBattleValue() {
-        return calculateBattleValue(false, false);
+        return calculateBattleValue(false);
     }
 
     /**
      * Calculates the battle value of this tank
      */
-    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
+    public int calculateBattleValue(boolean ignoreC3) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
         
@@ -767,13 +767,13 @@ public class Tank
         if (((hasC3MM() && calculateFreeC3MNodes() < 2) ||
             (hasC3M() && calculateFreeC3Nodes() < 3) ||
             (hasC3S() && C3Master > NONE) ||
-            (hasC3i() && calculateFreeC3Nodes() < 5) ||
-            assumeLinkedC3) && !ignoreC3 && (game != null)) {
+            (hasC3i() && calculateFreeC3Nodes() < 5)) &&
+            !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(false, true);
+            totalForceBV += this.calculateBattleValue(true);
             for (Entity e : game.getC3NetworkMembers(this)) {
                 if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV+=e.calculateBattleValue(false, true);
+                    totalForceBV+=e.calculateBattleValue(true);
                 }
             }
             xbv += totalForceBV *= 0.05;

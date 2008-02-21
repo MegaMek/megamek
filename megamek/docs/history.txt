@@ -14,6 +14,7 @@ v0.33.19-dev (SVN)
 + Bug 1897329: maps from subdirectories cannot be found
 + Bug: Prevent NPE when gameoptions.xml is corrupted
 + Fix Frag missiles for real
++ Bug: minor bug with VTOL BVs.
 
 v0.33.18 (2008-02-14, 23:31 GMT+1)
 + Bug: Flechette and Frag ammo not doing full damage to Infantry

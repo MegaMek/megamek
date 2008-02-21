@@ -590,7 +590,9 @@ public class Tank
 
         // adjust for target movement modifier
         double tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), this instanceof VTOL, this instanceof VTOL).getValue();
-        double tmmFactor = 1+(tmmRan/10);
+        // for the future, when we implement jumping tanks
+        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false).getValue();
+        double tmmFactor = 1+(Math.max(tmmRan,tmmJumped)/10);
         dbv *= tmmFactor;
         
         double weaponBV = 0;

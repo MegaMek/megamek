@@ -589,7 +589,7 @@ public class Tank
         dbv *= typeModifier;
 
         // adjust for target movement modifier
-        double tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false).getValue();
+        double tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), this instanceof VTOL, this instanceof VTOL).getValue();
         double tmmFactor = 1+(tmmRan/10);
         dbv *= tmmFactor;
         

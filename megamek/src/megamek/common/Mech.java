@@ -773,7 +773,7 @@ public abstract class Mech
         if (hasArmedMASC()) {
             return getRunMPwithoutMASC() + "(" + getRunMP() + ")";
         }
-		return Integer.toString(getRunMP());
+        return Integer.toString(getRunMP());
     }
 
     /**
@@ -785,8 +785,17 @@ public abstract class Mech
 
     /**
      * This mech's jumping MP modified for missing jump jets
+     * and gravity
      */
     public int getJumpMP() {
+        return getJumpMP(true);
+    }
+    
+    /**
+     * This mech's jumping MP modified for missing jump jets
+     * and possibly gravity
+     */
+    public int getJumpMP(boolean gravity) {
         int jump = 0;
 
         if ( this.hasShield() && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
@@ -800,8 +809,9 @@ public abstract class Mech
                 break;
             }
         }
-        
-        return applyGravityEffectsOnMP(jump);
+        if (gravity)
+            return applyGravityEffectsOnMP(jump);
+        return jump;
     }
 
     /**
@@ -1955,7 +1965,7 @@ public abstract class Mech
      * Calculates the battle value of this mech
      */
     public int calculateBattleValue() {
-        return calculateBattleValue(false, false);
+        return calculateBattleValue(false);
     }
   
     /**
@@ -1964,7 +1974,7 @@ public abstract class Mech
      *  c3 will be added whether the mech is currently part of
      *  a network or not.
      */
-    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
+    public int calculateBattleValue(boolean ignoreC3) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -2060,6 +2070,11 @@ public abstract class Mech
             if (etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AC_ROTARY) {
                 toSubtract = 0;
             }
+            
+            // empty ammo shouldn't count
+            if (etype instanceof AmmoType && mounted.getShotsLeft() == 0) {
+                continue;
+            }
             // normal ACs only marked as explosive because they are when they just
             // fired incendiary ammo, therefore they don't count for explosive BV
             if (etype instanceof WeaponType 
@@ -2074,16 +2089,13 @@ public abstract class Mech
         dbv = Math.max(1, dbv - ammoPenalty);
         
         // adjust for target movement modifier
-        int runMP = getOriginalRunMPwithoutMASC();
-        // factor in masc or tsm
-        if (hasMASC()) {
-            runMP = getOriginalWalkMP() * 2;
-        }
+        int runMP = getRunMP(false);
+        // factor in TSM
         if (hasTSM()) {
-            runMP = (int)Math.ceil((getOriginalWalkMP() + 1) * 1.5);
+            runMP = (int)Math.ceil((getWalkMP(false) + 1) * 1.5);
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
-        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false), true, false).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
         // Try to find a Mek Stealth system.
         if (hasStealth())
@@ -2380,13 +2392,13 @@ public abstract class Mech
         if (((hasC3MM() && calculateFreeC3MNodes() < 2) ||
             (hasC3M() && calculateFreeC3Nodes() < 3) ||
             (hasC3S() && C3Master > NONE) ||
-            (hasC3i() && calculateFreeC3Nodes() < 5) ||
-            assumeLinkedC3) && !ignoreC3 && (game != null)) {
+            (hasC3i() && calculateFreeC3Nodes() < 5)) &&
+            !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
-            totalForceBV += this.calculateBattleValue(false, true);
+            totalForceBV += this.calculateBattleValue(true);
             for (Entity e : game.getC3NetworkMembers(this)) {
                 if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV+=e.calculateBattleValue(false, true);
+                    totalForceBV+=e.calculateBattleValue(true);
                 }
             }
             xbv += totalForceBV *= 0.05;

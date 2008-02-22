@@ -964,7 +964,7 @@ public class MechDisplay extends BufferedPanel {
          * displays the selected item from the list in the weapon
          * display panel.
          */
-        public void displaySelected() {
+        private void displaySelected() {
             // short circuit if not selected
             if (weaponList.getSelectedIndex() == -1) {
                 m_chAmmo.removeAll();
@@ -1000,11 +1000,11 @@ public class MechDisplay extends BufferedPanel {
                         .append(Integer.toString(wtype.getRackSize() / 2));
                 wDamR.setText(damage.toString());
             } else {
-            	if ( mounted.hasChargedCapacitor()){
-            		wDamR.setText(Integer.toString(wtype.getDamage()+5));
-            	}
-            	else
-            		wDamR.setText(Integer.toString(wtype.getDamage()));
+                if ( mounted.hasChargedCapacitor()){
+                    wDamR.setText(Integer.toString(wtype.getDamage()+5));
+                }
+                else
+                    wDamR.setText(Integer.toString(wtype.getDamage()));
             }
 
             // update range

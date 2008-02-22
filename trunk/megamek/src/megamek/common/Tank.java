@@ -105,12 +105,11 @@ public class Tank
     * for heat, extreme temperatures, and gravity.
     */
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
-        int i;
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
         if (gravity) j = applyGravityEffectsOnMP(j);
-        if (game != null) {
-            i = game.getTemperatureDifference();
+        if (game != null && !ignoreheat) {
+            int i = game.getTemperatureDifference();
             return Math.max(j - i, 0);
         }
         return j;
@@ -589,9 +588,9 @@ public class Tank
         dbv *= typeModifier;
 
         // adjust for target movement modifier
-        double tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), this instanceof VTOL, this instanceof VTOL).getValue();
+        double tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true), this instanceof VTOL, this instanceof VTOL).getValue();
         // for the future, when we implement jumping tanks
-        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false).getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(), true, false).getValue();
         double tmmFactor = 1+(Math.max(tmmRan,tmmJumped)/10);
         dbv *= tmmFactor;
         

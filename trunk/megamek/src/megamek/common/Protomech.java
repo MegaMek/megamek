@@ -228,7 +228,7 @@ public class Protomech extends Entity implements Serializable {
                 wmp = 0;
                 break;
         }
-        if (game != null) {
+        if (game != null && !ignoreheat) {
             i = game.getTemperatureDifference();
             return Math.max(wmp - i, 0);
         }

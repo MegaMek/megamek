@@ -215,7 +215,7 @@ public class GunEmplacement extends Entity
         return hex.containsTerrain(Terrains.BUILDING) ;
     }
     
-    public int getWalkMP(boolean gravity) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat) {
         return 0;
     }    
 
@@ -520,7 +520,7 @@ public class GunEmplacement extends Entity
         return CRITICAL_SLOTS;
     }
 
-    public int getRunMPwithoutMASC(boolean gravity) {
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
         return 0;
     }
     

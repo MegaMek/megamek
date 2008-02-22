@@ -74,16 +74,7 @@ public class BipedMech extends Mech {
         return canFlip;
     }
     
-    /**
-     * Returns this entity's walking/cruising mp, factored
-     * for heat, leg damage and gravity
-     */
-    
-    public int getWalkMP() {
-        return getWalkMP(true);
-    }
-    
-    public int getWalkMP(boolean gravity) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int wmp = getOriginalWalkMP();
         int legsDestroyed = 0;
         int hipHits = 0;
@@ -123,15 +114,31 @@ public class BipedMech extends Mech {
             wmp -= getNumberOfShields(MiscType.S_SHIELD_LARGE);
             wmp -= getNumberOfShields(MiscType.S_SHIELD_MEDIUM);
         }
-
-        // and we still need to factor in heat!
-        wmp -= (heat / 5);
         
-        // TSM negates some heat
-        if (heat >= 9 && hasTSM()) {
-            wmp += 2;
+        if (!ignoreheat) {
+            // factor in heat
+            if (game != null && game.getOptions().booleanOption("maxtech_heat")) {
+                if (heat<30) {
+                    wmp -= (heat / 5); 
+                } else if (heat>=49) {
+                    wmp -= 9;
+                } else if (heat>=43) {
+                    wmp -= 8;
+                } else if (heat>=37) {
+                    wmp -= 7;
+                } else if (heat>=31) {
+                    wmp -= 6;
+                } else {
+                    wmp -= 5;
+                }
+            } else {
+                wmp -= (heat / 5);
+            }
+            // TSM negates some heat
+            if (heat >= 9 && hasTSM()) {
+                wmp += 2;
+            }
         }
-        
         wmp = Math.max(wmp - getCargoMpReduction(), 0);
         
         //gravity
@@ -146,23 +153,22 @@ public class BipedMech extends Mech {
     /**
      * Returns this mech's running/flank mp modified for leg loss & stuff.
      */
-    
-    public int getRunMP(boolean gravity) {
+    public int getRunMP(boolean gravity, boolean ignoreheat) {
         if (countBadLegs() == 0) {
-            return super.getRunMP(gravity);
+            return super.getRunMP(gravity, ignoreheat);
         }
-		return getWalkMP(gravity);
+        return getWalkMP(gravity, ignoreheat);
     }
 
     /**
      * Returns run MP without considering MASC modified for leg loss & stuff.
      */
        
-    public int getRunMPwithoutMASC(boolean gravity) {
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
         if (countBadLegs() == 0) {
-            return super.getRunMPwithoutMASC(gravity);
+            return super.getRunMPwithoutMASC(gravity, ignoreheat);
         }
-		return getWalkMP(gravity);
+        return getWalkMP(gravity, ignoreheat);
     }
     
     /**

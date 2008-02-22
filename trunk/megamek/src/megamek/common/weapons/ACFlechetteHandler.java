@@ -59,7 +59,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
 
-        if ( !(target instanceof Infantry)
+        if (target instanceof Entity && !(target instanceof Infantry)
                 || target instanceof BattleArmor )
             toReturn/=2;
         
@@ -102,8 +102,6 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
                         9, vPhaseReport)) {
             return;
         }
-
-        //int tn = 14 - nDamage;
         server.tryClearHex(target.getPosition(), nDamage, subjectId);
         return;
     }

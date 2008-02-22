@@ -175,17 +175,17 @@ public class Infantry
     /**
      * Return this Infantry's run MP.
      */
-    public int getRunMP(boolean gravity) {
+    public int getRunMP(boolean gravity, boolean ignoreheat) {
         if (gravity) return applyGravityEffectsOnMP(this.getOriginalRunMP());
-		return this.getOriginalRunMP();
+        return this.getOriginalRunMP();
     }
 
 
     /**
      * Infantry don't have MASC
      */
-    public int getRunMPwithoutMASC(boolean gravity) {
-        return getRunMP(gravity);
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
+        return getRunMP(gravity, ignoreheat);
     }
 
     /**

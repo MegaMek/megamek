@@ -1035,7 +1035,7 @@ public class MovementDisplay
                             || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK)
                             || (step.getMovementType() == IEntityMovementType.MOVE_RUN)
                             || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
-                        if (step.getMpUsed() > entity.getRunMP(false)) {
+                        if (step.getMpUsed() > entity.getRunMP(false, false)) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(addNag(rollTarget));
@@ -1056,7 +1056,7 @@ public class MovementDisplay
                             || (step.getMovementType() == IEntityMovementType.MOVE_VTOL_RUN)) {
 
                         // For Tanks, we need to check if the tank had more MPs because it was moving along a road
-                        if (step.getMpUsed() > entity.getRunMP(false) && !step.isOnlyPavement()) {
+                        if (step.getMpUsed() > entity.getRunMP(false, false) && !step.isOnlyPavement()) {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                                 nagReport.append(addNag(rollTarget));
@@ -1065,7 +1065,7 @@ public class MovementDisplay
                         // If the tank was moving on a road, he got a +1 bonus.
                         // N.B. The Ask Precentor Martial forum said that a 4/6
                         //      tank on a road can move 5/7, **not** 5/8.
-                        else if (step.getMpUsed() > entity.getRunMP(false) + 1)
+                        else if (step.getMpUsed() > entity.getRunMP(false, false) + 1)
                         {
                             rollTarget = entity.checkMovedTooFast(step);
                             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {

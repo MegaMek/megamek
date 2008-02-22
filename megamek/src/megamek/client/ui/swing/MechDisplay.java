@@ -28,6 +28,7 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -898,7 +899,7 @@ public class MechDisplay extends JPanel {
 
             // update weapon list
             ((DefaultListModel) weaponList.getModel()).removeAllElements();
-            m_chAmmo.removeAll();
+            ((DefaultComboBoxModel)m_chAmmo.getModel()).removeAllElements();
             m_chAmmo.setEnabled(false);
 
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
@@ -1021,7 +1022,7 @@ public class MechDisplay extends JPanel {
         private void displaySelected() {
             // short circuit if not selected
             if (weaponList.getSelectedIndex() == -1) {
-                m_chAmmo.removeAll();
+                ((DefaultComboBoxModel)m_chAmmo.getModel()).removeAllElements();
                 m_chAmmo.setEnabled(false);
                 wNameR.setText(""); //$NON-NLS-1$
                 wHeatR.setText("--"); //$NON-NLS-1$
@@ -1099,7 +1100,7 @@ public class MechDisplay extends JPanel {
 
             // update ammo selector
             boolean bOwner = clientgui.getClient().getLocalPlayer().equals(entity.getOwner());
-            m_chAmmo.removeAll();
+            ((DefaultComboBoxModel)m_chAmmo.getModel()).removeAllElements();
             if (wtype.getAmmoType() == AmmoType.T_NA || !bOwner) {
                 m_chAmmo.setEnabled(false);
             } else if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
@@ -1223,7 +1224,8 @@ public class MechDisplay extends JPanel {
         // ItemListener
         //
         public void itemStateChanged(ItemEvent ev) {
-            if (ev.getItemSelectable().equals(m_chAmmo)) {
+            if (ev.getItemSelectable().equals(m_chAmmo) && m_chAmmo.getItemCount() > 0) {
+                System.out.println(m_chAmmo.getItemCount());
                 int n = weaponList.getSelectedIndex();
                 if (n == -1) {
                     return;
@@ -1494,7 +1496,7 @@ public class MechDisplay extends JPanel {
         //
         public void itemStateChanged(ItemEvent ev) {
             if (ev.getItemSelectable() == locList) {
-                m_chMode.removeAll();
+                ((DefaultComboBoxModel)m_chMode.getModel()).removeAllElements();
                 m_chMode.setEnabled(false);
                 displaySlots();
             } else if (ev.getItemSelectable() == slotList) {
@@ -1513,7 +1515,7 @@ public class MechDisplay extends JPanel {
                             && en instanceof Tank && m.getType().hasFlag(AmmoType.F_HOTLOAD) ){
                         m_bDumpAmmo.setEnabled(false);
                         m_chMode.setEnabled(true);
-                        m_chMode.removeAll();
+                        ((DefaultComboBoxModel)m_chMode.getModel()).removeAllElements();
                         for (Enumeration<EquipmentMode> e = m.getType().getModes(); e.hasMoreElements();) {
                             EquipmentMode em = e.nextElement();
                             m_chMode.addItem(em.getDisplayableName());
@@ -1529,17 +1531,17 @@ public class MechDisplay extends JPanel {
                     }//if the maxtech eccm option is not set then the ECM should not show anything.
                     if (m.getType().hasFlag(MiscType.F_ECM)
                             && !clientgui.getClient().game.getOptions().booleanOption("maxtech_eccm")) {
-                        m_chMode.removeAll();
+                        ((DefaultComboBoxModel)m_chMode.getModel()).removeAllElements();
                         return;
                     }
                     //disables AC mode switching from system tab if maxtech_rapid_ac is not turned on
                     if (  m.getType()instanceof WeaponType
                            && (((WeaponType)m.getType()).getAmmoType() == AmmoType.T_AC || ((WeaponType)m.getType()).getAmmoType() == AmmoType.T_LAC )
                             && !clientgui.getClient().game.getOptions().booleanOption("maxtech_rapid_ac") ) {
-                        m_chMode.removeAll();
+                        ((DefaultComboBoxModel)m_chMode.getModel()).removeAllElements();
                         return;
                     }
-                    m_chMode.removeAll();
+                    ((DefaultComboBoxModel)m_chMode.getModel()).removeAllElements();
                     for (Enumeration e = m.getType().getModes(); e.hasMoreElements();) {
                         EquipmentMode em = (EquipmentMode) e.nextElement();
                         m_chMode.addItem(em.getDisplayableName());
@@ -1551,7 +1553,7 @@ public class MechDisplay extends JPanel {
                         if (cs.getIndex() == Mech.SYSTEM_COCKPIT
                                 && en.hasEiCockpit()
                                 && en instanceof Mech) {
-                            m_chMode.removeAll();
+                            ((DefaultComboBoxModel)m_chMode.getModel()).removeAllElements();
                             m_chMode.setEnabled(true);
                             m_chMode.addItem("EI Off");
                             m_chMode.addItem("EI On");
@@ -1728,7 +1730,7 @@ public class MechDisplay extends JPanel {
 
         public void valueChanged(ListSelectionEvent event) {
             if (event.getSource().equals(locList)) {
-                m_chMode.removeAll();
+                ((DefaultComboBoxModel)m_chMode.getModel()).removeAllElements();
                 m_chMode.setEnabled(false);
                 displaySlots();
             } else if (event.getSource().equals(slotList)) {
@@ -1751,10 +1753,10 @@ public class MechDisplay extends JPanel {
                     }//if the maxtech eccm option is not set then the ECM should not show anything.
                     if (m.getType().hasFlag(MiscType.F_ECM)
                             && !clientgui.getClient().game.getOptions().booleanOption("maxtech_eccm")) {
-                        m_chMode.removeAll();
+                        ((DefaultComboBoxModel)m_chMode.getModel()).removeAllElements();
                         return;
                     }
-                    m_chMode.removeAll();
+                    ((DefaultComboBoxModel)m_chMode.getModel()).removeAllElements();
                     for (Enumeration<EquipmentMode> e = m.getType().getModes(); e.hasMoreElements();) {
                         EquipmentMode em = e.nextElement();
                         m_chMode.addItem(em.getDisplayableName());
@@ -1766,7 +1768,7 @@ public class MechDisplay extends JPanel {
                         if (cs.getIndex() == Mech.SYSTEM_COCKPIT
                                 && en.hasEiCockpit()
                                 && en instanceof Mech) {
-                            m_chMode.removeAll();
+                            ((DefaultComboBoxModel)m_chMode.getModel()).removeAllElements();
                             m_chMode.setEnabled(true);
                             m_chMode.addItem("EI Off");
                             m_chMode.addItem("EI On");

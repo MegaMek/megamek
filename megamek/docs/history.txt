@@ -18,6 +18,7 @@ v0.33.19-dev (SVN)
 + Calculate ingame BV based on current MP, not factored for gravity
 + Bug: Rapid Fire MG against conventional infantry used too much eat and ammo
 + Bug: Flechette ammo doing half damage when clearing
++ Bug: Fix swing ammo choice in mechdisplay
 
 v0.33.18 (2008-02-14, 23:31 GMT+1)
 + Bug: Flechette and Frag ammo not doing full damage to Infantry

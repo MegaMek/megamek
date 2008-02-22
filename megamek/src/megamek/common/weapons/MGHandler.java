@@ -34,6 +34,8 @@ import megamek.server.Server;
  * 
  */
 public class MGHandler extends AmmoWeaponHandler {
+    
+    private int nRapidDamHeatPerHit;
 
     /**
      * @param t
@@ -51,13 +53,13 @@ public class MGHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        if (weapon.isRapidfire() &&
-            !(target instanceof Infantry)) {
+        if (weapon.isRapidfire()) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             nDamPerHit = Compute.d6();
+            nRapidDamHeatPerHit = nDamPerHit;
         } else {
             if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-                nDamPerHit =  Compute.d6(wtype.getDamage());
+                nDamPerHit = Compute.d6(wtype.getDamage());
             } else {
                 nDamPerHit = super.calcDamagePerHit();
             }
@@ -72,7 +74,7 @@ public class MGHandler extends AmmoWeaponHandler {
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (weapon.isRapidfire()) {
-                ae.heatBuildup += nDamPerHit;
+                ae.heatBuildup += nRapidDamHeatPerHit;
             } else {
                 ae.heatBuildup += (wtype.getHeat());
             }
@@ -86,11 +88,9 @@ public class MGHandler extends AmmoWeaponHandler {
     protected void reportMiss(Vector<Report> vPhaseReport) {
         //Report the miss
         r = new Report(3220);
-        if (weapon.isRapidfire() &&
-                !(target instanceof Infantry &&
-                !(target instanceof BattleArmor)) ){
-              r.messageId = 3225;
-              r.add(nDamPerHit*3);
+        if (weapon.isRapidfire()){
+            r.messageId = 3225;
+            r.add(nDamPerHit*3);
         }
         vPhaseReport.add(r);
     }
@@ -102,7 +102,7 @@ public class MGHandler extends AmmoWeaponHandler {
     protected void useAmmo() {
         if (weapon.isRapidfire()) {
             checkAmmo();
-            int ammoUsage = 3*nDamPerHit;
+            int ammoUsage = 3*nRapidDamHeatPerHit;
             for (int i=0; i<ammoUsage; i++) {
                 if (ammo.getShotsLeft() <= 0) {
                     ae.loadWeapon(weapon);

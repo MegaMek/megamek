@@ -330,10 +330,12 @@ public class BattleArmor
     * Returns this entity's running mp, factored
     * for extreme temperatures and gravity.
      */
-    public int getRunMP(boolean gravity) {
+    public int getRunMP(boolean gravity, boolean ignoreheat) {
         int i;
-        int j = applyGravityEffectsOnMP(getOriginalRunMP());
-        if (game != null) {
+        int j = getOriginalRunMP();
+        if (gravity)
+            j = applyGravityEffectsOnMP(j);
+        if (game != null && !ignoreheat) {
             i = game.getTemperatureDifference();
             return Math.max(j - i, 0);
         }
@@ -349,7 +351,7 @@ public class BattleArmor
         if ( this.isBurdened() ) {
             return 0;
         }
-		return super.getJumpMP();
+        return super.getJumpMP();
     }
 
     /**

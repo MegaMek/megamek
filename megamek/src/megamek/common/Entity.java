@@ -1263,36 +1263,37 @@ public abstract class Entity extends TurnOrdered
      */
     
     public int getWalkMP() {
-        return getWalkMP(true);
+        return getWalkMP(true, false);
     }
     /**
      * Returns this entity's walking/cruising mp, factored
      * for heat and possibly gravity.
      * 
      * @param gravity Should the movement be factored for gravity
+     * @param ignoreheat Should heat be ignored?
      */
-    
-    
-    public int getWalkMP( boolean gravity ) {
+    public int getWalkMP( boolean gravity, boolean ignoreheat ) {
         int mp = getOriginalWalkMP();
         int minus;
-        if (game != null && game.getOptions().booleanOption("maxtech_heat")) {
-            if (heat<30) {
-                minus = (heat / 5); 
-            } else if (heat>=49) {
-                minus = 9;
-            } else if (heat>=43) {
-                minus = 8;
-            } else if (heat>=37) {
-                minus = 7;
-            } else if (heat>=31) {
-                minus = 6;
+        if (!ignoreheat) {
+            if (game != null && game.getOptions().booleanOption("maxtech_heat")) {
+                if (heat<30) {
+                    minus = (heat / 5); 
+                } else if (heat>=49) {
+                    minus = 9;
+                } else if (heat>=43) {
+                    minus = 8;
+                } else if (heat>=37) {
+                    minus = 7;
+                } else if (heat>=31) {
+                    minus = 6;
+                } else {
+                    minus = 5;
+                }
+                mp = Math.max(mp-minus,0);
             } else {
-                minus = 5;
+                mp = Math.max(mp - (heat / 5), 0);
             }
-            mp = Math.max(mp-minus,0);
-        } else {
-            mp = Math.max(mp - (heat / 5), 0);
         }
         mp = Math.max(mp-getCargoMpReduction(), 0);
         if(gravity) {
@@ -1326,18 +1327,18 @@ public abstract class Entity extends TurnOrdered
      * Returns this entity's running/flank mp modified for heat.
      */
     public int getRunMP() {
-        return getRunMP(true);
+        return getRunMP(true, false);
     }
     
-    public int getRunMP(boolean gravity) {
-        return (int)Math.ceil(getWalkMP(gravity) * 1.5);
+    public int getRunMP(boolean gravity, boolean ignoreheat) {
+        return (int)Math.ceil(getWalkMP(gravity, ignoreheat) * 1.5);
     }
 
     public int getRunMPwithoutMASC() {
-        return getRunMPwithoutMASC(true);
+        return getRunMPwithoutMASC(true, false);
     }
         
-    public abstract int getRunMPwithoutMASC(boolean gravity);
+    public abstract int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat);
     
     /**
      * Returns this entity's running/flank mp as a string.

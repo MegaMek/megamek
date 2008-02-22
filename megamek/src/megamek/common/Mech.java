@@ -748,22 +748,22 @@ public abstract class Mech
      * Potentially adjust runMP for MASC
      */
     
-    public int getRunMP(boolean gravity) {
+    public int getRunMP(boolean gravity, boolean ignoreheat) {
         if (hasArmedMASC()) {
-            return (getWalkMP(gravity) * 2)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
+            return (getWalkMP(gravity, ignoreheat) * 2)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
         }
-        return super.getRunMP(gravity)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
+        return super.getRunMP(gravity, ignoreheat)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
     }
 
     /**
      * Returns run MP without considering MASC
      */
     
-    public int getRunMPwithoutMASC(boolean gravity) {
-        return super.getRunMP(gravity)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
+        return super.getRunMP(gravity, ignoreheat )-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
     }
     public int getOriginalRunMPwithoutMASC() {
-        return super.getRunMP(false)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
+        return super.getRunMP(false, false)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
     }
 
     /**
@@ -2089,10 +2089,15 @@ public abstract class Mech
         dbv = Math.max(1, dbv - ammoPenalty);
         
         // adjust for target movement modifier
-        int runMP = getRunMP(false);
-        // factor in TSM
+        // we use full possible movement, ignoring gravity and heat
+        // but taking into account hit actuators
+        int runMP = getRunMP(false, true)-getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0;
+        // factor in TSM or MASC
         if (hasTSM()) {
-            runMP = (int)Math.ceil((getWalkMP(false) + 1) * 1.5);
+            runMP = (int)Math.ceil((getWalkMP(false, true) +1) * 1.5) - getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0;
+        }
+        if (hasMASC()) {
+            runMP = (getWalkMP(false, true) * 2)-getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0;
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
         int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false), true, false).getValue();

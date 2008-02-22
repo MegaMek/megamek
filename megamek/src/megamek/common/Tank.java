@@ -104,7 +104,7 @@ public class Tank
     * Returns this entity's walking/cruising mp, factored
     * for heat, extreme temperatures, and gravity.
     */
-    public int getWalkMP(boolean gravity) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int i;
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
@@ -851,8 +851,8 @@ public class Tank
     /**
      * Tanks don't have MASC
      */
-    public int getRunMPwithoutMASC(boolean gravity) {
-        return getRunMP(gravity);
+    public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
+        return getRunMP(gravity, ignoreheat);
     }
     
     public int getHeatCapacity() {

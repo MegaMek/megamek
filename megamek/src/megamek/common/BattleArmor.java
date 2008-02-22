@@ -314,9 +314,11 @@ public class BattleArmor
     * Returns this entity's walking mp, factored
     * for extreme temperatures and gravity.
     */
-    public int getWalkMP() {
+    public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int i;
-        int j = applyGravityEffectsOnMP(getOriginalWalkMP());
+        int j = getOriginalWalkMP();
+        if (gravity)
+            j = applyGravityEffectsOnMP(j);
         if (game != null) {
             i = game.getTemperatureDifference();
             return Math.max(j - i, 0);

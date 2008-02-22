@@ -3876,7 +3876,7 @@ public class Server implements Runnable {
             mpUsed = step.getMpUsed();
 
             if (cachedGravityLimit < 0)
-                cachedGravityLimit = IEntityMovementType.MOVE_JUMP == moveType ? entity.getOriginalJumpMP() : entity.getRunMP(false);
+                cachedGravityLimit = IEntityMovementType.MOVE_JUMP == moveType ? entity.getOriginalJumpMP() : entity.getRunMP(false, false);
             // check for charge
             if (step.getType() == MovePath.STEP_CHARGE) {
                 if (entity.canCharge()) {
@@ -10350,7 +10350,7 @@ public class Server implements Runnable {
                     if (entity instanceof Mech) {
                         int j = entity.mpUsed;
                         int damage = 0;
-                        while (j > entity.getRunMP(false)) {
+                        while (j > entity.getRunMP(false, false)) {
                             j--;
                             damage++;
                         }
@@ -10362,7 +10362,7 @@ public class Server implements Runnable {
                         if (!entity.gotPavementBonus) {
                             int j = entity.mpUsed;
                             int damage = 0;
-                            while (j > entity.getRunMP(false) + k) {
+                            while (j > entity.getRunMP(false, false) + k) {
                                 j--;
                                 damage++;
                             }
@@ -10386,7 +10386,7 @@ public class Server implements Runnable {
                     }
                     // high g, 1 damage for each MP we have less than normally
                     else if (game.getOptions().floatOption("gravity") > 1) {
-                        int damage = entity.getWalkMP(false) - entity.getWalkMP();
+                        int damage = entity.getWalkMP(false, false) - entity.getWalkMP();
                         // Wee, direct internal damage
                         doExtremeGravityDamage(entity, damage);
                     }

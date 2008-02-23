@@ -67,7 +67,7 @@ public class LRMFragHandler extends LRMHandler {
             toReturn = wtype.getRackSize() * 2;
         }
 
-        if ( !(target instanceof Infantry) 
+        if (target instanceof Entity && !(target instanceof Infantry) 
                 || target instanceof BattleArmor )
             toReturn = 0;
         

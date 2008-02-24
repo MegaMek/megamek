@@ -22,6 +22,9 @@ v0.33.19-dev (SVN)
 + Bug: Frag ammo not doing damage to woods
 + Bug: when using assault drop and deploying last assault-drop-capable unit 
     using assault drop, further non-assault-drop-capable units couldn't deploy
++ Bug: flechette ammo AC shots got their damage halved twice agains hardened
+    units
++ Some code simplification in weapons firing code
 
 v0.33.18 (2008-02-14, 23:31 GMT+1)
 + Bug: Flechette and Frag ammo not doing full damage to Infantry

@@ -248,6 +248,10 @@ public class DeploymentDisplay
             
             setAssaultDropEnabled(ce().canAssaultDrop() 
                     && ce().getGame().getOptions().booleanOption("assault_drop"));
+            if (!ce().canAssaultDrop()  && ce().getGame().getOptions().booleanOption("assault_drop")) {
+                butAssaultDrop.setLabel(Messages.getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
+                assaultDropPreference = false;
+            }
             
             clientgui.mechD.displayEntity(ce());
             clientgui.mechD.showPanel("movement"); //$NON-NLS-1$

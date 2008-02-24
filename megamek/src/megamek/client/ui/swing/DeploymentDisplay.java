@@ -16,6 +16,7 @@ package megamek.client.ui.swing;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.AWT.Messages;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -240,6 +241,11 @@ public class DeploymentDisplay
             }
             setAssaultDropEnabled(ce().canAssaultDrop()
                     && ce().getGame().getOptions().booleanOption("assault_drop"));
+            if (!ce().canAssaultDrop()  && ce().getGame().getOptions().booleanOption("assault_drop")) {
+                butAssaultDrop.setText(Messages.getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
+                assaultDropPreference = false;
+            }
+            
             clientgui.mechD.displayEntity(ce());
             clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
         

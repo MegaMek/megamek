@@ -67,6 +67,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean throughFront;
     protected boolean announcedEntityFiring = false;
     protected boolean missed = false;
+    protected DamageType damageType;
 
     /**
      * return the <code>int</code> Id of the attacking <code>Entity</code>
@@ -439,7 +440,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 hit.makeGlancingBlow();
             }
             vPhaseReport.addAll(server.damageEntity(
-                    entityTarget, hit, nDamage, false, ae.getSwarmTargetId()==entityTarget.getId()?DamageType.IGNORE_PASSENGER:DamageType.NONE, false, false,
+                    entityTarget, hit, nDamage, false, ae.getSwarmTargetId()==entityTarget.getId()?DamageType.IGNORE_PASSENGER:damageType, false, false,
                     throughFront));
         }
     }
@@ -550,6 +551,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     
     // Among other things, basically a refactored Server#preTreatWeaponAttack
     public WeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+        damageType = DamageType.NONE;
         toHit = t;
         waa = w;
         game = g;

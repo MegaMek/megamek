@@ -182,7 +182,7 @@ public class MGAWeaponHandler extends AmmoWeaponHandler {
                 hit.makeGlancingBlow();
             }
             vPhaseReport.addAll(server.damageEntity(
-                    entityTarget, hit, nDamage, false, DamageType.NONE, false, false,
+                    entityTarget, hit, nDamage, false, ae.getSwarmTargetId()==entityTarget.getId()?DamageType.IGNORE_PASSENGER:damageType, false, false,
                     throughFront));
         }
     }

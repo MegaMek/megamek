@@ -139,12 +139,12 @@ public class SRMTandemChargeHandler extends SRMHandler {
                     hit = new HitData(Mech.LOC_RARM);
                 }
                 hit.setEffect(HitData.EFFECT_NO_CRITICALS);
-                vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : DamageType.NONE, false, false, throughFront));
+                vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType, false, false, throughFront));
             } else if (entityTarget.getArmor(hit.getLocation(), hit.isRear()) > 0) {
-                vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : DamageType.NONE, false, false, throughFront));
+                vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType, false, false, throughFront));
                 hit.setEffect(HitData.EFFECT_NO_CRITICALS);
                 Report.addNewline(vPhaseReport);
-                vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : DamageType.NONE, true, false, throughFront));
+                vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType, true, false, throughFront));
             } else {
                 vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : DamageType.NONE, true, false, throughFront));
             }
@@ -156,6 +156,8 @@ public class SRMTandemChargeHandler extends SRMHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
+        if (target instanceof Infantry && !(target instanceof BattleArmor))
+            return (int)Math.ceil(((float)wtype.getRackSize())/5);
         return 1;
     }
 

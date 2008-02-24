@@ -28,12 +28,18 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
  * 
  */
 public class ACAPHandler extends AmmoWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4251291510045646817L;
+
     /**
      * @param t
      * @param w
@@ -98,8 +104,9 @@ public class ACAPHandler extends AmmoWeaponHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
-            vPhaseReport.addAll(
-                    server.damageEntity(entityTarget, hit, nDamage));
+            vPhaseReport.addAll(server.damageEntity(
+                    entityTarget, hit, nDamage, false, ae.getSwarmTargetId()==entityTarget.getId()?DamageType.IGNORE_PASSENGER:damageType, false, false,
+                            throughFront));
         }
     }
 }

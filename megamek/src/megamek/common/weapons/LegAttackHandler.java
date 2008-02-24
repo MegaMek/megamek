@@ -73,7 +73,7 @@ public class LegAttackHandler extends WeaponHandler {
             damage += ((BattleArmor) ae).getVibroClawDamage();
         // ASSUMPTION: buildings CAN'T absorb *this* damage.
         vPhaseReport.addAll(server.damageEntity(entityTarget, hit,
-                damage, false, DamageType.NONE, false, false, throughFront));
+                damage, false, damageType, false, false, throughFront));
         Report.addNewline(vPhaseReport);
         // Do criticals.
         vPhaseReport.addAll(server.criticalEntity(entityTarget, hit

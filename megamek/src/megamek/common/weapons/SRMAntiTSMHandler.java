@@ -16,10 +16,7 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.BattleArmor;
-import megamek.common.Building;
 import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Report;
@@ -36,6 +33,11 @@ import megamek.server.Server.DamageType;
 public class SRMAntiTSMHandler extends SRMHandler {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 6380017303917455020L;
+
+    /**
      * @param t
      * @param w
      * @param g
@@ -44,6 +46,7 @@ public class SRMAntiTSMHandler extends SRMHandler {
     public SRMAntiTSMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
         sSalvoType = " anti-TSM missile(s) ";
+        damageType = DamageType.ANTI_TSM;
     }
     
     /*
@@ -126,65 +129,5 @@ public class SRMAntiTSMHandler extends SRMHandler {
         vPhaseReport.addElement(r);
         bSalvo = true;
         return missilesHit;
-    }
-    
-    /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
-     */
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
-        int nDamage;
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
-
-        if (!bSalvo) {
-            // Each hit in the salvo get's its own hit location.
-            r = new Report(3405);
-            r.subject = subjectId;
-            r.add(toHit.getTableDesc());
-            r.add(entityTarget.getLocationAbbr(hit));
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-        }
-
-        if (hit.hitAimedLocation()) {
-            r = new Report(3410);
-            r.subject = subjectId;
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-        }
-        // Resolve damage normally.
-        nDamage = nDamPerHit * Math.min(nCluster, hits);
-
-        // A building may be damaged, even if the squad is not.
-        if ( bldgAbsorbs > 0 ) {
-            int toBldg = Math.min( bldgAbsorbs, nDamage );
-            nDamage -= toBldg;
-            Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding( bldg, toBldg );
-            for (Report report: buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
-        }
-
-        // A building may absorb the entire shot.
-        if ( nDamage == 0 ) {
-            r = new Report(3415);
-            r.subject = subjectId;
-            r.indent(2);
-            r.addDesc(entityTarget);
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-        } else {
-            if (bGlancing) {
-                hit.makeGlancingBlow();
-            }
-            entityTarget.hitThisRoundByAntiTSM = true;
-            vPhaseReport.addAll(
-                    server.damageEntity(entityTarget, hit, nDamage, false, DamageType.NONE, false, false, throughFront));
-        }
     }
 }

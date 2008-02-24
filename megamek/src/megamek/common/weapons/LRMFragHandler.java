@@ -48,6 +48,7 @@ public class LRMFragHandler extends LRMHandler {
     public LRMFragHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
         sSalvoType = " fragmentation missile(s) ";
+        damageType = DamageType.FRAGMENTATION;
     }
     
     /**
@@ -62,9 +63,9 @@ public class LRMFragHandler extends LRMHandler {
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor)ae).getShootingStrength();
         }
-        // against infantry, we have 1 hit with 2 damage per missile
+        // against infantry, we have 1 hit
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = wtype.getRackSize() * 2;
+            toReturn = wtype.getRackSize();
         }
 
         if (target instanceof Entity && !(target instanceof Infantry) 
@@ -122,49 +123,5 @@ public class LRMFragHandler extends LRMHandler {
     protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg,
             int nDamage, boolean bSalvo) {
         return;
-    }
-
-    /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
-     */
-    protected void handleEntityDamage(Entity entityTarget,
-            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-            int nDamPerHit, int bldgAbsorbs) {
-        int nDamage;
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
-        // Resolve damage normally.
-        nDamage = nDamPerHit * Math.min(nCluster, hits);
-
-        // A building may be damaged, even if the squad is not.
-        if ( bldgAbsorbs > 0 ) {
-            int toBldg = Math.min( bldgAbsorbs, nDamage );
-            nDamage -= toBldg;
-            Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding( bldg, toBldg );
-            for (Report report: buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
-        }
-        if (bGlancing) {
-            hit.makeGlancingBlow();
-        }
-        // A building may absorb the entire shot.
-        if ( nDamage == 0 ) {
-            r = new Report(3415);
-            r.subject = subjectId;
-            r.indent(2);
-            r.addDesc(entityTarget);
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-        } else {
-            if (bGlancing) {
-                hit.makeGlancingBlow();
-            }
-            vPhaseReport.addAll(
-                    server.damageEntity(entityTarget, hit, nDamage, false, DamageType.FRAGMENTATION, false, false, throughFront));
-        }
     }
 }

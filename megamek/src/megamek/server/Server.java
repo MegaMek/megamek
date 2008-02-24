@@ -188,7 +188,7 @@ public class Server implements Runnable {
      * 
      */
     public enum DamageType {
-        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, FIREDRAKE, IGNORE_PASSENGER
+        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, FIREDRAKE, IGNORE_PASSENGER, ANTI_TSM
     }
 
     // public final static String LEGAL_CHARS =
@@ -10878,24 +10878,41 @@ public class Server implements Runnable {
         // to not add another parameter.
         switch (bFrag) {
         case FRAGMENTATION:
-            if (!isPlatoon && te != null) {
-                damage = 0;
-                r = new Report(6050);
-                r.subject = te_n;
-                r.indent(2);
-                r.newlines = 0;
-                vDesc.addElement(r);
-            }
+            if (te != null) {
+                if (!isPlatoon) {
+                    damage = 0;
+                    r = new Report(6050);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
+                } else {
+                    damage *= 2;
+                    r = new Report(6045);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
+                }
+            }            
             break;
         case FLECHETTE:
-            if (!isPlatoon && te != null && !isBattleArmor) {
-                damage /= 2;
-                r = new Report(6060);
-                r.subject = te_n;
-                r.indent(2);
-                r.newlines = 0;
-                vDesc.addElement(r);
-            }
+            if (te != null) {
+                if (!isPlatoon && !isBattleArmor) {
+                    damage /= 2;
+                    r = new Report(6060);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
+                } else if (isPlatoon && !isBattleArmor) {
+                    r = new Report(6055);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    vDesc.addElement(r);                    
+                }
+            }            
             break;
         case ACID:
             if (isFerroFibrousTarget) {
@@ -10918,6 +10935,11 @@ public class Server implements Runnable {
             // Incendiary AC ammo does +2 damage to unarmoured infantry
             if (isPlatoon) {
                 damage += 2;
+                r = new Report(6064);
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                vDesc.addElement(r);
             }
             break;
         case FIREDRAKE:
@@ -10930,6 +10952,9 @@ public class Server implements Runnable {
                 r.newlines = 0;
                 vDesc.addElement(r);
             }
+        case ANTI_TSM:
+            if (te != null)
+                te.hitThisRoundByAntiTSM = true;
         default:
             // We can ignore this.
             break;

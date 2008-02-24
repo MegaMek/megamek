@@ -32,6 +32,11 @@ import megamek.server.Server.DamageType;
 
 public class MineLauncherHandler extends AmmoWeaponHandler {
     /**
+     * 
+     */
+    private static final long serialVersionUID = -6179453250580148965L;
+
+    /**
      * @param toHit
      * @param waa
      * @param g
@@ -99,7 +104,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
             // ASSUMPTION: buildings CAN'T absorb *this* damage.
             // specialDamage = damageEntity(entityTarget, hit, damage);
             specialDamageReport = server.damageEntity(entityTarget, hit,
-                    damage, false, ae.getSwarmTargetId()==entityTarget.getId()?DamageType.IGNORE_PASSENGER:DamageType.NONE, false, false, throughFront);
+                    damage, false, ae.getSwarmTargetId()==entityTarget.getId()?DamageType.IGNORE_PASSENGER:damageType, false, false, throughFront);
         } else {
             // add newline _before_ last report
             try {

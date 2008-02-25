@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISTsunamiGaussRifle extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4179313979730970060L;
+
     /**
      * 
      */
@@ -44,6 +48,6 @@ public class ISTsunamiGaussRifle extends Weapon {
         this.tonnage = 0.0f;
         this.criticals = 0;
         this.bv = 6;
-        this.flags |= F_DIRECT_FIRE |  F_NO_FIRES | F_BALLISTIC;
+        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
     }
 }

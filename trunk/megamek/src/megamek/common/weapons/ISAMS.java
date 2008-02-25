@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISAMS extends AmmoWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5678281956614161074L;
+
     /**
      * 
      */
@@ -37,13 +41,13 @@ public class ISAMS extends AmmoWeapon {
         this.addLookupName("IS AMS");
         this.heat = 1;
         this.rackSize = 2;
-        this.damage = 1;  // # of d6 of missiles affected
+        this.damage = 1; // # of d6 of missiles affected
         this.ammoType = AmmoType.T_AMS;
         this.tonnage = 0.5f;
         this.criticals = 1;
         this.bv = 32;
         this.flags |= F_AUTO_TARGET | F_AMS;
-        this.setModes(new String[] {"On", "Off"});
+        this.setModes(new String[] { "On", "Off" });
         this.setInstantModeSwitch(false);
         this.cost = 100000;
     }

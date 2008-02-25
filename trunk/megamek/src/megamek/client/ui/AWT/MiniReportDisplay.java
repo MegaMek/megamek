@@ -14,15 +14,20 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Shows a Report, with an Okay Button
  */
-public class MiniReportDisplay extends Dialog 
-    implements ActionListener
-{
+public class MiniReportDisplay extends Dialog implements ActionListener {
     /**
      * 
      */
@@ -32,34 +37,39 @@ public class MiniReportDisplay extends Dialog
 
     public MiniReportDisplay(Frame parent, String sReport) {
         super(parent, Messages.getString("MiniReportDisplay.title"), true); //$NON-NLS-1$
-        
+
         butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
         butOkay.addActionListener(this);
         taData = new TextArea(sReport, 20, 48);
         taData.setEditable(false);
 
         setLayout(new BorderLayout());
-        
+
         add(BorderLayout.SOUTH, butOkay);
         add(BorderLayout.CENTER, taData);
-        setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(), GUIPreferences.getInstance().getMiniReportSizeHeight());
+        setSize(GUIPreferences.getInstance().getMiniReportSizeWidth(),
+                GUIPreferences.getInstance().getMiniReportSizeHeight());
         doLayout();
-        setLocation(GUIPreferences.getInstance().getMiniReportPosX(), GUIPreferences.getInstance().getMiniReportPosY());
+        setLocation(GUIPreferences.getInstance().getMiniReportPosX(),
+                GUIPreferences.getInstance().getMiniReportPosY());
 
         // closing the window is the same as hitting butOkay
         addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    actionPerformed(new ActionEvent(butOkay,ActionEvent.ACTION_PERFORMED,butOkay.getLabel()));
-                }
+            public void windowClosing(WindowEvent e) {
+                actionPerformed(new ActionEvent(butOkay,
+                        ActionEvent.ACTION_PERFORMED, butOkay.getLabel()));
+            }
         });
 
         butOkay.requestFocus();
     }
-    
+
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == butOkay) {
-            GUIPreferences.getInstance().setMiniReportSizeWidth(getSize().width);
-            GUIPreferences.getInstance().setMiniReportSizeHeight(getSize().height);
+            GUIPreferences.getInstance()
+                    .setMiniReportSizeWidth(getSize().width);
+            GUIPreferences.getInstance().setMiniReportSizeHeight(
+                    getSize().height);
             GUIPreferences.getInstance().setMiniReportPosX(getLocation().x);
             GUIPreferences.getInstance().setMiniReportPosY(getLocation().y);
 

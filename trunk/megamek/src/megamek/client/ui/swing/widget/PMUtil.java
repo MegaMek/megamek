@@ -14,9 +14,10 @@
 
 package megamek.client.ui.swing.widget;
 
-import javax.swing.JComponent;
 import java.awt.Image;
 import java.awt.MediaTracker;
+
+import javax.swing.JComponent;
 
 /**
  * Set of usefull function.

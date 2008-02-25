@@ -16,15 +16,15 @@ package megamek.common.options;
 
 import java.util.Enumeration;
 
-
 /**
- * Interface that represents the "static" (common to all instances)
- * information about the Options container
+ * Interface that represents the "static" (common to all instances) information
+ * about the Options container
  */
 public interface IOptionsInfo {
 
     /**
      * Returns the <code>IOptionInfo</code> for the specified option
+     * 
      * @param name option name
      * @return the <code>IOptionInfo</code> for the specified option
      * @see IOptionInfo
@@ -32,9 +32,12 @@ public interface IOptionsInfo {
     public abstract IOptionInfo getOptionInfo(String name);
 
     /**
-     * Returns the <code>Enumeration</code> of the <code>IBasicOptionGroup</code>
-     * @return the <code>Enumeration</code> of the <code>IBasicOptionGroup</code>
+     * Returns the <code>Enumeration</code> of the
+     * <code>IBasicOptionGroup</code>
+     * 
+     * @return the <code>Enumeration</code> of the
+     *         <code>IBasicOptionGroup</code>
      */
     public abstract Enumeration<IBasicOptionGroup> getGroups();
-    
+
 }

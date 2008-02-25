@@ -44,25 +44,27 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
     /**
      * Common checking whether is it possible to physically attack the target
+     * 
      * @param game
      * @param attackerId
      * @param target
      * @return reason the attack is impossible, or null if it is possible
      */
-    protected static String toHitIsImpossible(IGame game, Entity ae, Targetable target) {
-        
-        if(target == null)
+    protected static String toHitIsImpossible(IGame game, Entity ae,
+            Targetable target) {
+
+        if (target == null)
             return "target is null";
 
         // check range
-        if (ae.getPosition().distance(target.getPosition()) > 1 ) {
+        if (ae.getPosition().distance(target.getPosition()) > 1) {
             return "Target not in range";
         }
 
-        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
-            //Checks specific to entity targets
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            // Checks specific to entity targets
             Entity te = (Entity) target;
-            
+
             // Can't target a transported entity.
             if (Entity.NONE != te.getTransportId()) {
                 return "Target is a passenger.";
@@ -77,49 +79,50 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             if (Entity.NONE != te.getSwarmTargetId()) {
                 return "Target is swarming a Mek.";
             }
-            
-            if(ae instanceof Mech && ((Mech)ae).getGrappled() != Entity.NONE) {
+
+            if (ae instanceof Mech && ((Mech) ae).getGrappled() != Entity.NONE) {
                 return "Locked in Grapple";
             }
 
-            //target unit in building checks
+            // target unit in building checks
             final boolean targetInBuilding = Compute.isInBuilding(game, te);
-            if ( targetInBuilding ) {
-                Building TargBldg = game.getBoard().getBuildingAt( te.getPosition() );
-                
+            if (targetInBuilding) {
+                Building TargBldg = game.getBoard().getBuildingAt(
+                        te.getPosition());
+
                 // Can't target units in buildings (from the outside).
-                if ( !Compute.isInBuilding(game, ae) ) {
+                if (!Compute.isInBuilding(game, ae)) {
                     return "Target is inside building";
-                }
-                else if ( !game.getBoard().getBuildingAt( ae.getPosition() )
-                          .equals( TargBldg ) ) {
+                } else if (!game.getBoard().getBuildingAt(ae.getPosition())
+                        .equals(TargBldg)) {
                     return "Target is inside different building";
                 }
             }
 
             // can't physically attack mechs making dfa attacks
-            if (te.isMakingDfa() ) {
+            if (te.isMakingDfa()) {
                 return "Target is making a DFA attack";
             }
 
         }
 
         // Can't target woods or ignite a building with a physical.
-        if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
-             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
-             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
+        if (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
+                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
+                || target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
             return "Invalid attack";
         }
 
         return null;
     }
-    
-    protected static void setCommonModifiers(ToHitData toHit, IGame game, Entity ae, Targetable target) {
+
+    protected static void setCommonModifiers(ToHitData toHit, IGame game,
+            Entity ae, Targetable target) {
         int attackerId = ae.getId();
         int targetId = target.getTargetId();
         // Battle Armor targets are hard for Meks and Tanks to hit.
-        if ( target instanceof BattleArmor ) {
-            toHit.addModifier( 1, "battle armor target" );
+        if (target instanceof BattleArmor) {
+            toHit.addModifier(1, "battle armor target");
         }
 
         // attacker movement
@@ -131,31 +134,36 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         // target terrain
         toHit.append(Compute.getTargetTerrainModifier(game, target));
 
-        // If it has a torso-mounted cockpit and two head sensor hits or three sensor hits...
+        // If it has a torso-mounted cockpit and two head sensor hits or three
+        // sensor hits...
         // It gets a =4 penalty for being blind!
-        if (((Mech)ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+        if (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
-                toHit = new ToHitData(TargetRoll.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                toHit = new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
                 return;
             } else if (sensorHits == 2) {
-                toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                toHit.addModifier(4,
+                        "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
-        
+
         // if we're spotting for indirect fire, add +1
         if (ae.isSpotting()) {
-            toHit.addModifier( +1, "attacker is spotting for indirect LRM fire");
+            toHit.addModifier(+1, "attacker is spotting for indirect LRM fire");
         }
-        
+
         // target immobile
         toHit.append(Compute.getImmobileMod(target));
 
         toHit.append(nightModifiers(game, target, null, ae));
 
-        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
-            //Checks specific to entity targets
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
+            // Checks specific to entity targets
             Entity te = (Entity) target;
 
             // target movement
@@ -168,14 +176,13 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
             IHex targHex = game.getBoard().getHex(te.getPosition());
             // water partial cover?
-            if (te.height() > 0
-                    && te.getElevation() == -1
+            if (te.height() > 0 && te.getElevation() == -1
                     && targHex.terrainLevel(Terrains.WATER) == te.height()) {
                 toHit.addModifier(1, "target has partial cover");
             }
-            
-            //Pilot skills
+
+            // Pilot skills
             Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
-        }            
+        }
     }
 }

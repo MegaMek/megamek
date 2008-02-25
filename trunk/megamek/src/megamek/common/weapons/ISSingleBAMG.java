@@ -17,9 +17,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISSingleBAMG extends BAMGWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3372924990936975254L;
 
     /**
      * 
@@ -41,7 +45,7 @@ public class ISSingleBAMG extends BAMGWeapon {
         this.tonnage = 0.5f;
         this.criticals = 1;
         this.bv = 5;
-        this.cost = 5000;        
+        this.cost = 5000;
         this.flags |= F_BATTLEARMOR;
     }
 

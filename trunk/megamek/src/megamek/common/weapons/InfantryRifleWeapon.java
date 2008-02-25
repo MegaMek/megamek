@@ -26,10 +26,14 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class InfantryRifleWeapon extends InfantryWeapon {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3164871600230559641L;
+
     public InfantryRifleWeapon() {
         super();
         this.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -41,10 +45,11 @@ public class InfantryRifleWeapon extends InfantryWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 3;
-        //auto-rifle from TM p. 319
+        // auto-rifle from TM p. 319
         this.bv = 1.28;
-        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC; 
+        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
     }
+
     /*
      * (non-Javadoc)
      * 

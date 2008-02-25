@@ -37,14 +37,21 @@ public class ConnectDialog extends JDialog implements ActionListener {
 
     public ConnectDialog(JFrame frame) {
         super(frame, Messages.getString("MegaMek.ConnectDialog.title"), true); //$NON-NLS-1$
-        yourNameL = new JLabel(Messages.getString("MegaMek.yourNameL"), SwingConstants.RIGHT); //$NON-NLS-1$
-        serverAddrL = new JLabel(Messages.getString("MegaMek.serverAddrL"), SwingConstants.RIGHT); //$NON-NLS-1$
-        portL = new JLabel(Messages.getString("MegaMek.portL"), SwingConstants.RIGHT); //$NON-NLS-1$
-        yourNameF = new JTextField(PreferenceManager.getClientPreferences().getLastPlayerName(), 16);
+        yourNameL = new JLabel(
+                Messages.getString("MegaMek.yourNameL"), SwingConstants.RIGHT); //$NON-NLS-1$
+        serverAddrL = new JLabel(
+                Messages.getString("MegaMek.serverAddrL"), SwingConstants.RIGHT); //$NON-NLS-1$
+        portL = new JLabel(
+                Messages.getString("MegaMek.portL"), SwingConstants.RIGHT); //$NON-NLS-1$
+        yourNameF = new JTextField(PreferenceManager.getClientPreferences()
+                .getLastPlayerName(), 16);
         yourNameF.addActionListener(this);
-        serverAddrF = new JTextField(PreferenceManager.getClientPreferences().getLastConnectAddr(), 16);
+        serverAddrF = new JTextField(PreferenceManager.getClientPreferences()
+                .getLastConnectAddr(), 16);
         serverAddrF.addActionListener(this);
-        portF = new JTextField(PreferenceManager.getClientPreferences().getLastConnectPort() + "", 4); //$NON-NLS-1$
+        portF = new JTextField(PreferenceManager.getClientPreferences()
+                .getLastConnectPort()
+                + "", 4); //$NON-NLS-1$
         portF.addActionListener(this);
         okayB = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         okayB.setActionCommand("done"); //$NON-NLS-1$
@@ -96,8 +103,9 @@ public class ConnectDialog extends JDialog implements ActionListener {
         getContentPane().add(cancelB);
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
-                frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2
+                - getSize().width / 2, frame.getLocation().y
+                + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -111,8 +119,10 @@ public class ConnectDialog extends JDialog implements ActionListener {
             }
 
             // update settings
-            PreferenceManager.getClientPreferences().setLastPlayerName(playerName);
-            PreferenceManager.getClientPreferences().setLastConnectAddr(serverAddr);
+            PreferenceManager.getClientPreferences().setLastPlayerName(
+                    playerName);
+            PreferenceManager.getClientPreferences().setLastConnectAddr(
+                    serverAddr);
             PreferenceManager.getClientPreferences().setLastConnectPort(port);
         }
         setVisible(false);

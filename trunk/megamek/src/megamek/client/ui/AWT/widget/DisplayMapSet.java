@@ -1,4 +1,3 @@
-
 /**
  * MegaMek - Copyright (C) 2000-2002 Ben Mazur (bmazur@sev.org)
  * 
@@ -15,16 +14,18 @@
 
 package megamek.client.ui.AWT.widget;
 
-import java.util.*;
-import megamek.common.*;
+import java.util.Vector;
+
+import megamek.common.Entity;
 
 /**
- * Generic set of PicMap areas do represent
- * various units in MechDisplay class
+ * Generic set of PicMap areas do represent various units in MechDisplay class
  */
 
 public interface DisplayMapSet {
     public PMAreasGroup getContentGroup();
+
     public Vector<BackGroundDrawer> getBackgroundDrawers();
+
     public void setEntity(Entity e);
 }

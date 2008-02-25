@@ -30,23 +30,27 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class NarcHandler extends MissileWeaponHandler {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3195613885543781820L;
+
     /**
      * @param t
      * @param w
      * @param g
      * @param s
      */
-    public NarcHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+    public NarcHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -74,74 +78,79 @@ public class NarcHandler extends MissileWeaponHandler {
         }
         return 1;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
         return 1;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
         return 0;
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
+     *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                        .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
-        AmmoType atype = (AmmoType)ammo.getType();
+                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+        AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getAmmoType() == AmmoType.T_NARC) {
-            //narced
-            NarcPod pod = new NarcPod(ae.getOwner().getTeam(), hit.getLocation());
+            // narced
+            NarcPod pod = new NarcPod(ae.getOwner().getTeam(), hit
+                    .getLocation());
             r = new Report(3250);
             r.subject = subjectId;
             r.add(entityTarget.getDisplayName());
-            vPhaseReport.addElement(r);     
+            vPhaseReport.addElement(r);
             entityTarget.attachNarcPod(pod);
         } else if (atype.getAmmoType() == AmmoType.T_INARC) {
-            //iNarced
+            // iNarced
             INarcPod pod = null;
             if (atype.getMunitionType() == AmmoType.M_ECM) {
-                pod = new INarcPod( ae.getOwner().getTeam(),
-                                    INarcPod.ECM, hit.getLocation());
+                pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.ECM, hit
+                        .getLocation());
                 r = new Report(3251);
                 r.subject = subjectId;
                 r.add(entityTarget.getDisplayName());
                 vPhaseReport.addElement(r);
             } else if (atype.getMunitionType() == AmmoType.M_HAYWIRE) {
-                pod = new INarcPod( ae.getOwner().getTeam(),
-                                    INarcPod.HAYWIRE, hit.getLocation());
+                pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.HAYWIRE,
+                        hit.getLocation());
                 r = new Report(3252);
                 r.subject = subjectId;
                 r.add(entityTarget.getDisplayName());
                 vPhaseReport.addElement(r);
             } else if (atype.getMunitionType() == AmmoType.M_NEMESIS) {
-                pod = new INarcPod( ae.getOwner().getTeam(),
-                                    INarcPod.NEMESIS, hit.getLocation());
+                pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.NEMESIS,
+                        hit.getLocation());
                 r = new Report(3253);
                 r.add(entityTarget.getDisplayName());
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             } else {
-                pod = new INarcPod( ae.getOwner().getTeam(),
-                                    INarcPod.HOMING, hit.getLocation());
+                pod = new INarcPod(ae.getOwner().getTeam(), INarcPod.HOMING,
+                        hit.getLocation());
                 r = new Report(3254);
                 r.subject = subjectId;
                 r.add(entityTarget.getDisplayName());
                 vPhaseReport.addElement(r);
             }
             entityTarget.attachINarcPod(pod);
-        }   
+        }
     }
 }

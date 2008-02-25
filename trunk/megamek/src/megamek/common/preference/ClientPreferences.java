@@ -23,7 +23,8 @@ import java.util.Locale;
 import megamek.common.MovePath;
 import megamek.common.util.LocaleParser;
 
-class ClientPreferences extends PreferenceStoreProxy implements IClientPreferences {
+class ClientPreferences extends PreferenceStoreProxy implements
+        IClientPreferences {
 
     ClientPreferences(IPreferenceStore store) {
         this.store = store;
@@ -31,19 +32,22 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         store.setDefault(LAST_CONNECT_PORT, 2346);
         store.setDefault(LAST_SERVER_PORT, 2346);
         store.setDefault(MAP_TILESET, "classic.tileset");
-        store.setDefault(MAX_PATHFINDER_TIME, MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
-        store.setDefault(DATA_DIRECTORY,"data");
-        store.setDefault(LOG_DIRECTORY,"logs");
-        store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY) + File.separator + "mechfiles");
-        store.setDefault(METASERVER_NAME, "http://www.damour.info/cgi-bin/james/metaserver");
+        store.setDefault(MAX_PATHFINDER_TIME,
+                MovePath.DEFAULT_PATHFINDER_TIME_LIMIT);
+        store.setDefault(DATA_DIRECTORY, "data");
+        store.setDefault(LOG_DIRECTORY, "logs");
+        store.setDefault(MECH_DIRECTORY, store.getDefaultString(DATA_DIRECTORY)
+                + File.separator + "mechfiles");
+        store.setDefault(METASERVER_NAME,
+                "http://www.damour.info/cgi-bin/james/metaserver");
         store.setDefault(GOAL_PLAYERS, 2);
         store.setDefault(GAMELOG_KEEP, true);
         store.setDefault(GAMELOG_FILENAME, "gamelog.txt");
-        //store.setDefault(GAMELOG_MAX_SIZE, 1);
+        // store.setDefault(GAMELOG_MAX_SIZE, 1);
         store.setDefault(STAMP_FORMAT, "_yyyy-MM-dd_HH-mm-ss");
-        store.setDefault(UNIT_START_CHAR,'A');
-        store.setDefault(GUI_NAME,"AWT");
-        store.setDefault(USE_AVERAGE_SKILLS,true);
+        store.setDefault(UNIT_START_CHAR, 'A');
+        store.setDefault(GUI_NAME, "AWT");
+        store.setDefault(USE_AVERAGE_SKILLS, true);
         store.setDefault(PRINT_ENTITY_CHANGE, false);
         store.setDefault(BOARD_WIDTH, 16);
         store.setDefault(BOARD_HEIGHT, 17);
@@ -56,7 +60,7 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
     public boolean getPrintEntityChange() {
         return store.getBoolean(PRINT_ENTITY_CHANGE);
     }
-    
+
     public String[] getAdvancedProperties() {
         return store.getAdvancedProperties();
     }
@@ -135,9 +139,9 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
         return store.getString(GAMELOG_FILENAME);
     }
 
-    //public int getGameLogMaxSize() {
-    //    return store.getInt(GAMELOG_MAX_SIZE);
-    //}
+    // public int getGameLogMaxSize() {
+    // return store.getInt(GAMELOG_MAX_SIZE);
+    // }
 
     public boolean stampFilenames() {
         return store.getBoolean(STAMP_FILENAMES);
@@ -152,7 +156,7 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
     }
 
     public char getUnitStartChar() {
-        return (char)store.getInt(UNIT_START_CHAR);
+        return (char) store.getInt(UNIT_START_CHAR);
     }
 
     public boolean keepGameLog() {
@@ -212,21 +216,22 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
     public void setMapTileset(String name) {
         store.setValue(MAP_TILESET, name);
     }
+
     public void setMaxPathfinderTime(int i) {
         store.setValue(MAX_PATHFINDER_TIME, i);
     }
 
     public void setGameLogFilename(String name) {
-        store.setValue(GAMELOG_FILENAME, name);        
+        store.setValue(GAMELOG_FILENAME, name);
     }
-    
+
     public void setPrintEntityChange(boolean print) {
         store.setValue(PRINT_ENTITY_CHANGE, print);
     }
 
-    //public void setGameLogMaxSize(int i) {
-    //    store.setValue(GAMELOG_MAX_SIZE, i);        
-    //}
+    // public void setGameLogMaxSize(int i) {
+    // store.setValue(GAMELOG_MAX_SIZE, i);
+    // }
 
     public void setStampFilenames(boolean state) {
         store.setValue(STAMP_FILENAMES, state);
@@ -237,11 +242,11 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
     }
 
     public void setShowUnitId(boolean state) {
-        store.setValue(SHOW_UNIT_ID, state);        
+        store.setValue(SHOW_UNIT_ID, state);
     }
 
     public void setUnitStartChar(char c) {
-        store.setValue(UNIT_START_CHAR, c);        
+        store.setValue(UNIT_START_CHAR, c);
     }
 
     public String getGUIName() {
@@ -249,11 +254,11 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
     }
 
     public void setGUIName(String guiName) {
-        store.setValue(GUI_NAME, guiName);        
+        store.setValue(GUI_NAME, guiName);
     }
-    
+
     protected Locale locale = null;
-    
+
     public void setLocale(String l) {
         LocaleParser p = new LocaleParser();
         if (!p.parse(l)) {
@@ -264,34 +269,35 @@ class ClientPreferences extends PreferenceStoreProxy implements IClientPreferenc
 
     public Locale getLocale() {
         if (locale == null) {
-            //return Locale.getDefault();
+            // return Locale.getDefault();
             return Locale.US;
         }
-		return locale;
+        return locale;
     }
 
     public String getLocaleString() {
         if (locale == null)
             return "";
-		StringBuffer result = new StringBuffer();             
-		if (locale.getLanguage().length() != 0) {
-		    result.append(locale.getLanguage());
-		    if (locale.getCountry().length() != 0) {
-		        result.append("_"+locale.getCountry());
-		        if (locale.getVariant().length() != 0) {
-		            result.append("_"+locale.getVariant());
-		        }
-		    }
-		}
-		return result.toString();
+        StringBuffer result = new StringBuffer();
+        if (locale.getLanguage().length() != 0) {
+            result.append(locale.getLanguage());
+            if (locale.getCountry().length() != 0) {
+                result.append("_" + locale.getCountry());
+                if (locale.getVariant().length() != 0) {
+                    result.append("_" + locale.getVariant());
+                }
+            }
+        }
+        return result.toString();
     }
 
     protected void setMekHitLocLog() {
         String name = store.getString(MEK_HIT_LOC_LOG);
-        if (name.length()!=0) {
+        if (name.length() != 0) {
             try {
-                mekHitLocLog = new PrintWriter(new BufferedWriter(new FileWriter(name)));
-                mekHitLocLog.println( "Table\tSide\tRoll" );
+                mekHitLocLog = new PrintWriter(new BufferedWriter(
+                        new FileWriter(name)));
+                mekHitLocLog.println("Table\tSide\tRoll");
             } catch (Throwable thrown) {
                 thrown.printStackTrace();
                 mekHitLocLog = null;

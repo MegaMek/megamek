@@ -20,14 +20,6 @@
 
 package megamek.client.ui.swing;
 
-import megamek.common.options.IBasicOption;
-import megamek.common.options.IOption;
-
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
 import java.awt.BorderLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -35,7 +27,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Serializable;
 
-public class DialogOptionComponent extends JPanel implements MouseListener, ItemListener {
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import megamek.common.options.IBasicOption;
+import megamek.common.options.IOption;
+
+public class DialogOptionComponent extends JPanel implements MouseListener,
+        ItemListener {
     /**
      * 
      */
@@ -53,7 +55,8 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
         this(parent, option, true);
     }
 
-    public DialogOptionComponent(DialogOptionListener parent, IOption option, boolean editable) {
+    public DialogOptionComponent(DialogOptionListener parent, IOption option,
+            boolean editable) {
         dialogOptionListener = parent;
         this.option = option;
 
@@ -62,7 +65,8 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
         setLayout(new BorderLayout());
         switch (option.getType()) {
             case IOption.BOOLEAN:
-                checkbox = new JCheckBox(option.getDisplayableName(), option.booleanValue());
+                checkbox = new JCheckBox(option.getDisplayableName(), option
+                        .booleanValue());
                 checkbox.addMouseListener(this);
                 checkbox.addItemListener(this);
                 add(checkbox, BorderLayout.CENTER);
@@ -84,8 +88,9 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
                     choice.setEnabled(false);
 
                 break;
-            default :
-                textField = new JTextField(option.stringValue(), option.getTextFieldLength());
+            default:
+                textField = new JTextField(option.stringValue(), option
+                        .getTextFieldLength());
                 textField.addMouseListener(this);
                 label = new JLabel(option.getDisplayableName());
                 label.addMouseListener(this);
@@ -111,27 +116,27 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
     }
 
     public Object getValue() {
-    	String text = "";
+        String text = "";
         switch (option.getType()) {
             case IOption.BOOLEAN:
                 return Boolean.valueOf(checkbox.isSelected());
             case IOption.INTEGER:
-            	text = textField.getText();
-            	if (text.trim().equals("")) {
-            		text = "0";
-            	}
+                text = textField.getText();
+                if (text.trim().equals("")) {
+                    text = "0";
+                }
                 return Integer.valueOf(textField.getText());
             case IOption.FLOAT:
-            	text = textField.getText();
-            	if (text.trim().equals("")) {
-            		text = "0";
-            	}
+                text = textField.getText();
+                if (text.trim().equals("")) {
+                    text = "0";
+                }
                 return Float.valueOf(textField.getText());
             case IOption.STRING:
                 return textField.getText();
             case IOption.CHOICE:
                 return choice.getSelectedItem();
-            default :
+            default:
                 return null;
         }
     }
@@ -142,9 +147,9 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
 
     /**
      * Update the option component so that it is editable or view-only.
-     *
+     * 
      * @param editable - <code>true</code> if the contents of the component
-     *                 are editable, <code>false</code> if they are view-only.
+     *            are editable, <code>false</code> if they are view-only.
      */
     public void setEditable(boolean editable) {
 
@@ -156,7 +161,7 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
             case IOption.CHOICE:
                 choice.setEnabled(editable);
                 break;
-            default :
+            default:
                 textField.setEnabled(editable);
                 break;
         }
@@ -177,12 +182,14 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
     public void resetToDefault() {
         switch (option.getType()) {
             case IOption.BOOLEAN:
-                checkbox.setSelected(((Boolean) option.getDefault()).booleanValue());
+                checkbox.setSelected(((Boolean) option.getDefault())
+                        .booleanValue());
                 break;
             case IOption.CHOICE:
-                choice.setSelectedIndex(0); //Assume first choice is always default
+                choice.setSelectedIndex(0); // Assume first choice is always
+                                            // default
                 break;
-            default :
+            default:
                 textField.setText(String.valueOf(option.getDefault()));
                 break;
         }
@@ -228,14 +235,18 @@ public class DialogOptionComponent extends JPanel implements MouseListener, Item
             this.value = value;
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see megamek.common.options.IBasicOption#getName()
          */
         public String getName() {
             return name;
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see megamek.common.options.IBasicOption#getValue()
          */
         public Object getValue() {

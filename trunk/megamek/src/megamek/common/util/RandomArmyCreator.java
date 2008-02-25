@@ -63,12 +63,12 @@ public class RandomArmyCreator {
         /**
          * Latest design year
          */
-        public int maxYear =9999;
+        public int maxYear = 9999;
 
         /**
          * Earliest design year
          */
-        public int minYear =0;
+        public int minYear = 0;
 
         /**
          * A value from TechConstants, which will filter the units
@@ -79,9 +79,10 @@ public class RandomArmyCreator {
          * Canon units only?
          */
         public boolean canon;
-        
+
         /**
-         * If true, add extra infantry to pad out the BV and get closer to maximum
+         * If true, add extra infantry to pad out the BV and get closer to
+         * maximum
          */
         public boolean padWithInfantry;
     }
@@ -245,46 +246,50 @@ public class RandomArmyCreator {
         Collections.<MechSummary> sort(allInfantry, bvComparator);
         Collections.<MechSummary> sort(allBA, bvComparator);
 
-        //get the average BV for each unit class, to determine how to split up the total 
+        // get the average BV for each unit class, to determine how to split up
+        // the total
         int mechWeight = countBV(allMechs) / Math.max(1, allMechs.size());
         int tankWeight = countBV(allTanks) / Math.max(1, allTanks.size());
         int infWeight = countBV(allInfantry) / Math.max(1, allInfantry.size());
         int baWeight = countBV(allBA) / Math.max(1, allBA.size());
-        int helpWeight = Math.max(1, p.mechs * mechWeight + p.tanks*tankWeight + 
-                p.infantry*infWeight + p.tanks*tankWeight);
-        
+        int helpWeight = Math.max(1, p.mechs * mechWeight + p.tanks
+                * tankWeight + p.infantry * infWeight + p.tanks * tankWeight);
+
         int baBV = (p.ba * baWeight * p.maxBV) / helpWeight;
-        if(p.ba > 0 && allBA.size() > 0) {
+        if (p.ba > 0 && allBA.size() > 0) {
             baBV = Math.max(baBV, p.ba * allBA.get(0).getBV());
-            baBV = Math.min(baBV, p.ba * allBA.get(allBA.size()-1).getBV());
+            baBV = Math.min(baBV, p.ba * allBA.get(allBA.size() - 1).getBV());
         } else {
             baBV = 0;
         }
         int mechBV = (p.mechs * mechWeight * p.maxBV) / helpWeight;
-        if(p.mechs > 0 && allMechs.size() > 0) {
+        if (p.mechs > 0 && allMechs.size() > 0) {
             mechBV = Math.max(mechBV, p.mechs * allMechs.get(0).getBV());
-            mechBV = Math.min(mechBV, p.mechs * allMechs.get(allMechs.size()-1).getBV());
+            mechBV = Math.min(mechBV, p.mechs
+                    * allMechs.get(allMechs.size() - 1).getBV());
         } else {
             mechBV = 0;
         }
         int tankBV = (p.tanks * tankWeight * p.maxBV) / helpWeight;
-        if(p.tanks > 0 && allTanks.size() > 0) {
+        if (p.tanks > 0 && allTanks.size() > 0) {
             tankBV = Math.max(tankBV, p.tanks * allTanks.get(0).getBV());
-            tankBV = Math.min(tankBV, p.tanks * allTanks.get(allTanks.size()-1).getBV());
+            tankBV = Math.min(tankBV, p.tanks
+                    * allTanks.get(allTanks.size() - 1).getBV());
         } else {
             tankBV = 0;
         }
 
-        //add the units in roughly increasing BV order
+        // add the units in roughly increasing BV order
         ArrayList<MechSummary> units = generateArmy(allBA, p.ba, baBV,
                 allowedVariance);
         units.addAll(generateArmy(allTanks, p.tanks, tankBV + baBV
                 - countBV(units), allowedVariance));
         units.addAll(generateArmy(allMechs, p.mechs, mechBV + tankBV + baBV
                 - countBV(units), allowedVariance));
-        if(p.padWithInfantry) {
+        if (p.padWithInfantry) {
             int inf = (p.maxBV - countBV(units)) / infWeight;
-            units.addAll(generateArmy(allInfantry, inf, p.maxBV - countBV(units), allowedVariance));
+            units.addAll(generateArmy(allInfantry, inf, p.maxBV
+                    - countBV(units), allowedVariance));
         } else {
             units.addAll(generateArmy(allInfantry, p.infantry, p.maxBV
                     - countBV(units), allowedVariance));

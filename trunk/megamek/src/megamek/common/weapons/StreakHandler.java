@@ -27,11 +27,15 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class StreakHandler extends MissileWeaponHandler {
-    
-    boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition());
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4122111574368642492L;
+    boolean isAngelECMAffected = Compute.isAffectedByAngelECM(ae, ae
+            .getPosition(), target.getPosition());
 
     /**
      * @param t
@@ -42,19 +46,21 @@ public class StreakHandler extends MissileWeaponHandler {
     public StreakHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return (int)Math.ceil(((float)wtype.getRackSize()*2)/5);
+            return (int) Math.ceil(((float) wtype.getRackSize() * 2) / 5);
         return 2;
     }
 
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
@@ -62,7 +68,8 @@ public class StreakHandler extends MissileWeaponHandler {
     }
 
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -71,19 +78,21 @@ public class StreakHandler extends MissileWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor)ae).getShootingStrength();
+                return ((BattleArmor) ae).getShootingStrength();
             }
             return 1;
         }
         // no AMS when streak misses
-        if (bMissed) return 0;
+        if (bMissed)
+            return 0;
         int nMissilesModifier = nSalvoBonus;
         int nGlancing = 0;
         if (bGlancing)
             nGlancing -= 4;
-        boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
+        boolean maxtechmissiles = game.getOptions().booleanOption(
+                "maxtech_mslhitpen");
         if (maxtechmissiles) {
-            if (nRange<=1) {
+            if (nRange <= 1) {
                 nMissilesModifier += 1;
             } else if (nRange <= wtype.getShortRange()) {
                 nMissilesModifier += 0;
@@ -100,9 +109,8 @@ public class StreakHandler extends MissileWeaponHandler {
         } else {
             nMissilesModifier += amsMod;
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                            nMissilesModifier,
-                            maxtechmissiles | bGlancing, weapon.isHotLoaded(),
-                            true);
+                    nMissilesModifier, maxtechmissiles | bGlancing, weapon
+                            .isHotLoaded(), true);
             if (nMissilesModifier != 0) {
                 if (nMissilesModifier > 0)
                     r = new Report(3340);
@@ -129,7 +137,7 @@ public class StreakHandler extends MissileWeaponHandler {
         bSalvo = true;
         return missilesHit;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -138,7 +146,7 @@ public class StreakHandler extends MissileWeaponHandler {
     protected void useAmmo() {
         checkAmmo();
         if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
-                            // *shouldn't* fire.
+            // *shouldn't* fire.
             System.out.println("Handler can't find any ammo!  Oh no!");
         }
         if (ammo.getShotsLeft() <= 0) {
@@ -150,14 +158,15 @@ public class StreakHandler extends MissileWeaponHandler {
             setDone();
         }
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     protected void reportMiss(Vector<Report> vPhaseReport) {
         if (!isAngelECMAffected) {
-            //no lock
+            // no lock
             Report r = new Report(3215);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
@@ -165,9 +174,10 @@ public class StreakHandler extends MissileWeaponHandler {
             super.reportMiss(vPhaseReport);
         }
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     protected void addHeat() {
@@ -176,9 +186,10 @@ public class StreakHandler extends MissileWeaponHandler {
             ae.heatBuildup += (wtype.getHeat());
         }
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#allShotsHit()
      */
     protected boolean allShotsHit() {

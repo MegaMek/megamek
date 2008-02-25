@@ -14,15 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import megamek.common.Entity;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -33,12 +24,21 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
+import megamek.common.Entity;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+
 /**
- * A dialog displayed to the player when they
- * want to lay mines with their BA unit.
+ * A dialog displayed to the player when they want to lay mines with their BA
+ * unit.
  */
-public class MineLayingDialog
-        extends JDialog implements ActionListener {
+public class MineLayingDialog extends JDialog implements ActionListener {
     /**
      * 
      */
@@ -56,9 +56,9 @@ public class MineLayingDialog
     private ArrayList<Mounted> vMines = new ArrayList<Mounted>();
 
     /**
-     * Display a dialog that shows the mines on the entity, and allows
-     * the player to choose one.
-     *
+     * Display a dialog that shows the mines on the entity, and allows the
+     * player to choose one.
+     * 
      * @param parent the <code>Frame</code> parent of this dialog
      * @param entity the <code>Entity</code> that carries the mines.
      */
@@ -66,7 +66,10 @@ public class MineLayingDialog
         super(parent, Messages.getString("MineLayingDialog.title"), true); //$NON-NLS-1$
         this.entity = entity;
 
-        labMessage = new JLabel(Messages.getString("MineLayingDialog.selectMineToLay", new Object[]{entity.getDisplayName()})); //$NON-NLS-1$
+        labMessage = new JLabel(
+                Messages
+                        .getString(
+                                "MineLayingDialog.selectMineToLay", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$
 
         // Walk through the entity's misc equipment, looking for mines.
         for (Mounted mount : entity.getMisc()) {
@@ -88,7 +91,7 @@ public class MineLayingDialog
         // buttons
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -130,8 +133,9 @@ public class MineLayingDialog
             size = getSize();
         }
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width / 2 - size.width / 2,
-                parent.getLocation().y + parent.getSize().height / 2 - size.height / 2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - size.width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - size.height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -147,7 +151,7 @@ public class MineLayingDialog
 
     /**
      * Get the id of the mine the player wants to use.
-     *
+     * 
      * @return the <code>int</code> id of the mine to lay
      */
     public int getMine() {

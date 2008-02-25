@@ -21,26 +21,27 @@ import java.io.StringReader;
 
 public class ColorParser {
 
-    private static String[] colorNames = { "black", "blue", "cyan", "darkgray", "gray", 
-            "green", "lightgray", "magenta", "orange", "pink", "red", "white", "yellow" };
-            
+    private static String[] colorNames = { "black", "blue", "cyan", "darkgray",
+            "gray", "green", "lightgray", "magenta", "orange", "pink", "red",
+            "white", "yellow" };
+
     private static Color[] colorValues = { Color.black, Color.blue, Color.cyan,
-            Color.darkGray, Color.gray, Color.green, Color.lightGray, 
-            Color.magenta, Color.orange, Color.pink, Color.red, Color.white, 
+            Color.darkGray, Color.gray, Color.green, Color.lightGray,
+            Color.magenta, Color.orange, Color.pink, Color.red, Color.white,
             Color.yellow };
 
     protected StreamTokenizer st;
     protected int currentToken;
     protected ParseException exception;
     protected Color color;
-    
+
     public Color getColor() {
         return color;
     }
 
     public boolean parse(String color) {
         clear();
-        StringReader s = new StringReader(color);  
+        StringReader s = new StringReader(color);
         st = new StreamTokenizer(s);
         return parse();
     }
@@ -54,16 +55,15 @@ public class ColorParser {
     public ParseException getException() {
         return exception;
     }
-    
 
     protected void clear() {
-        color=null;
-        exception = null;        
+        color = null;
+        exception = null;
         st = null;
     }
-    
+
     protected boolean parse() {
-        boolean hasErrors=false;
+        boolean hasErrors = false;
         nextToken();
         try {
             parseColor();
@@ -73,7 +73,7 @@ public class ColorParser {
         }
         return hasErrors;
     }
-    
+
     protected void parseColor() throws ParseException {
         if (currentToken == StreamTokenizer.TT_WORD) {
             String sName = st.sval;
@@ -84,26 +84,26 @@ public class ColorParser {
                 }
             }
             throw new ParseException("Unrecognized color: " + sName);
-        }
-        else if (currentToken == StreamTokenizer.TT_NUMBER) {
-            int red = (int)st.nval;
+        } else if (currentToken == StreamTokenizer.TT_NUMBER) {
+            int red = (int) st.nval;
             nextToken();
             if (currentToken != StreamTokenizer.TT_NUMBER) {
-                throw new ParseException("green color value expected");                
+                throw new ParseException("green color value expected");
             }
-            int green = (int)st.nval;
+            int green = (int) st.nval;
             nextToken();
             if (currentToken != StreamTokenizer.TT_NUMBER) {
-                throw new ParseException("blue color value expected");                
+                throw new ParseException("blue color value expected");
             }
-            int blue = (int)st.nval;
+            int blue = (int) st.nval;
             nextToken();
             color = new Color(red, green, blue);
         } else {
-            throw new ParseException("color name or integer read component value expected");
+            throw new ParseException(
+                    "color name or integer read component value expected");
         }
     }
-        
+
     protected void nextToken() {
         try {
             currentToken = st.nextToken();
@@ -120,7 +120,7 @@ public class ColorParser {
 
         public ParseException(String message) {
             super(message);
-        }        
+        }
     }
 
 }

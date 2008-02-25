@@ -22,11 +22,14 @@ import megamek.common.Report;
 /**
  * a summing victory condition will first sum all given victory conditions, if
  * any of them are in victory state AND someone is over the threshold, then will
- * return victory , otherwise just the scores
- * 
- * the scores will be an average of the given victory scores.
+ * return victory , otherwise just the scores the scores will be an average of
+ * the given victory scores.
  */
 public class SummingThresholdVictory implements Victory, Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7211998189207932320L;
     protected Victory[] vs;
     protected int thr;
 

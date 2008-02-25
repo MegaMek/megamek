@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISThumper extends ArtilleryWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3256813053043672610L;
 
     /**
      * 

@@ -17,9 +17,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISBAMagshotGaussRifle extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 870812653880382979L;
+
     /**
      * 
      */

@@ -21,10 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLHAG30 extends HAGWeapon {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7189182993830405980L;
 
     public CLHAG30() {
         super();

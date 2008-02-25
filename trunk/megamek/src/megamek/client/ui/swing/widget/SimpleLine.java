@@ -14,10 +14,11 @@
 
 package megamek.client.ui.swing.widget;
 
-import javax.swing.JComponent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+
+import javax.swing.JComponent;
 
 public class SimpleLine extends JComponent {
 

@@ -31,9 +31,12 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class HAGWeaponHandler extends AmmoWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8193801876308832102L;
     Mounted ammo;
 
     /**
@@ -45,17 +48,19 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
         super(t, w, g, s);
 
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
         return 5;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
@@ -63,13 +68,14 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
             float toReturn = wtype.getRackSize();
             toReturn /= 10;
             toReturn += 1;
-            return (int)Math.ceil(toReturn);
+            return (int) Math.ceil(toReturn);
         }
         return 1;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -86,9 +92,10 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
             nHitsModifier -= 2;
         }
         if (allShotsHit())
-            nHits = wtype.getRackSize();            
-        else 
-            nHits = Compute.missilesHit(wtype.getRackSize(), nHitsModifier, bGlancing, false);
+            nHits = wtype.getRackSize();
+        else
+            nHits = Compute.missilesHit(wtype.getRackSize(), nHitsModifier,
+                    bGlancing, false);
         r = new Report(3325);
         r.subject = subjectId;
         r.add(nHits);

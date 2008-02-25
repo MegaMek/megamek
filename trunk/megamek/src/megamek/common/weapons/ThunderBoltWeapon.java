@@ -21,7 +21,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public abstract class ThunderBoltWeapon extends MissileWeapon {
 
@@ -31,10 +30,10 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
     public ThunderBoltWeapon() {
         super();
         this.ammoType = AmmoType.T_TBOLT;
-        this.setModes(new String[] {"", "Indirect"});
+        this.setModes(new String[] { "", "Indirect" });
         this.rackSize = 1;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -45,6 +44,5 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new ThunderBoltWeaponHandler(toHit, waa, game, server);
     }
-    
- 
+
 }

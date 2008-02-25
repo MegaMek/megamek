@@ -17,26 +17,26 @@ package megamek.common.options;
 import java.util.Enumeration;
 
 /**
- * Public interface for the group of the options.
- * It extends the <code>IBasicOptionGroup</code> and adds the ability to 
- * query the options that belongs to this group. Instances of this 
- * interface are ONLY returned as the members of the <code>Enumeration</code> 
- * returned by the megamek.common.options.IOptions#getGroups()
+ * Public interface for the group of the options. It extends the
+ * <code>IBasicOptionGroup</code> and adds the ability to query the options
+ * that belongs to this group. Instances of this interface are ONLY returned as
+ * the members of the <code>Enumeration</code> returned by the
+ * megamek.common.options.IOptions#getGroups()
+ * 
  * @see IOptions#getGroups()
  */
 public interface IOptionGroup extends IBasicOptionGroup {
-    
+
     /**
-     * Returns the user friendly NLS dependent name suitable for 
-     * displaying in the options editor dialogs etc.
+     * Returns the user friendly NLS dependent name suitable for displaying in
+     * the options editor dialogs etc.
+     * 
      * @return displayable name
      */
     public abstract String getDisplayableName();
-    
+
     /**
-     * 
      * @return the <code>Enumeration</code> of the <code>IOption</code>
-     * 
      * @see IOptions#getGroups()
      */
     public abstract Enumeration<IOption> getOptions();

@@ -31,7 +31,6 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Jason Tighe
- * 
  */
 public class SRMTandemChargeHandler extends SRMHandler {
 
@@ -46,7 +45,8 @@ public class SRMTandemChargeHandler extends SRMHandler {
      * @param g
      * @param s
      */
-    public SRMTandemChargeHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public SRMTandemChargeHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
         sSalvoType = " tandem charge missile(s) ";
     }
@@ -62,13 +62,17 @@ public class SRMTandemChargeHandler extends SRMHandler {
      * @param nDamPerHit
      * @param bldgAbsorbs
      */
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster, int nDamPerHit, int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget,
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int nDamPerHit, int bldgAbsorbs) {
         int nDamage;
         missed = false;
 
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit.getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
+                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
 
-        if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(), Compute.targetSideTable(ae, entityTarget))) {
+        if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
+                .getCover(), Compute.targetSideTable(ae, entityTarget))) {
             // Weapon strikes Partial Cover.
             r = new Report(3460);
             r.subject = subjectId;
@@ -106,7 +110,8 @@ public class SRMTandemChargeHandler extends SRMHandler {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, nDamage);
+            Vector<Report> buildingReport = server
+                    .damageBuilding(bldg, nDamage);
             for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
@@ -127,37 +132,62 @@ public class SRMTandemChargeHandler extends SRMHandler {
                 hit.makeGlancingBlow();
             }
 
-            if (entityTarget.hasActiveShield(hit.getLocation(), hit.isRear()) || entityTarget.hasPassiveShield(hit.getLocation(), hit.isRear()) || entityTarget.hasNoDefenseShield(hit.getLocation())) {
-                vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : DamageType.NONE, false, false, throughFront));
-                if (hit.getLocation() == Mech.LOC_RARM || hit.getLocation() == Mech.LOC_RLEG || hit.getLocation() == Mech.LOC_RT) {
+            if (entityTarget.hasActiveShield(hit.getLocation(), hit.isRear())
+                    || entityTarget.hasPassiveShield(hit.getLocation(), hit
+                            .isRear())
+                    || entityTarget.hasNoDefenseShield(hit.getLocation())) {
+                vPhaseReport.addAll(server.damageEntity(entityTarget, hit,
+                        nDamage, false, ae.getSwarmTargetId() == entityTarget
+                                .getId() ? DamageType.IGNORE_PASSENGER
+                                : DamageType.NONE, false, false, throughFront));
+                if (hit.getLocation() == Mech.LOC_RARM
+                        || hit.getLocation() == Mech.LOC_RLEG
+                        || hit.getLocation() == Mech.LOC_RT) {
                     hit = new HitData(Mech.LOC_RARM);
-                } else if (hit.getLocation() == Mech.LOC_LARM || hit.getLocation() == Mech.LOC_LLEG || hit.getLocation() == Mech.LOC_LT) {
+                } else if (hit.getLocation() == Mech.LOC_LARM
+                        || hit.getLocation() == Mech.LOC_LLEG
+                        || hit.getLocation() == Mech.LOC_LT) {
                     hit = new HitData(Mech.LOC_LARM);
-                } else if (entityTarget.hasActiveShield(Mech.LOC_LARM) || entityTarget.hasPassiveShield(Mech.LOC_LARM) || entityTarget.hasNoDefenseShield(Mech.LOC_LARM)) {
+                } else if (entityTarget.hasActiveShield(Mech.LOC_LARM)
+                        || entityTarget.hasPassiveShield(Mech.LOC_LARM)
+                        || entityTarget.hasNoDefenseShield(Mech.LOC_LARM)) {
                     hit = new HitData(Mech.LOC_LARM);
                 } else {
                     hit = new HitData(Mech.LOC_RARM);
                 }
                 hit.setEffect(HitData.EFFECT_NO_CRITICALS);
-                vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType, false, false, throughFront));
+                vPhaseReport.addAll(server.damageEntity(entityTarget, hit,
+                        nDamage, false, ae.getSwarmTargetId() == entityTarget
+                                .getId() ? DamageType.IGNORE_PASSENGER
+                                : damageType, false, false, throughFront));
             } else if (entityTarget.getArmor(hit.getLocation(), hit.isRear()) > 0) {
-                vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType, false, false, throughFront));
+                vPhaseReport.addAll(server.damageEntity(entityTarget, hit,
+                        nDamage, false, ae.getSwarmTargetId() == entityTarget
+                                .getId() ? DamageType.IGNORE_PASSENGER
+                                : damageType, false, false, throughFront));
                 hit.setEffect(HitData.EFFECT_NO_CRITICALS);
                 Report.addNewline(vPhaseReport);
-                vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : damageType, true, false, throughFront));
+                vPhaseReport.addAll(server.damageEntity(entityTarget, hit,
+                        nDamage, false, ae.getSwarmTargetId() == entityTarget
+                                .getId() ? DamageType.IGNORE_PASSENGER
+                                : damageType, true, false, throughFront));
             } else {
-                vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : DamageType.NONE, true, false, throughFront));
+                vPhaseReport.addAll(server.damageEntity(entityTarget, hit,
+                        nDamage, false, ae.getSwarmTargetId() == entityTarget
+                                .getId() ? DamageType.IGNORE_PASSENGER
+                                : DamageType.NONE, true, false, throughFront));
             }
         }
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return (int)Math.ceil(((float)wtype.getRackSize())/5);
+            return (int) Math.ceil(((float) wtype.getRackSize()) / 5);
         return 1;
     }
 

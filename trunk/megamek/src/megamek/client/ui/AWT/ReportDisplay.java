@@ -14,22 +14,32 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Vector;
-
 import gov.nist.gui.TabPanel;
 
+import java.awt.Button;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.TextArea;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Vector;
+
 import megamek.client.Client;
-import megamek.common.*;
+import megamek.common.IGame;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
-public class ReportDisplay 
-    extends StatusBarPhaseDisplay
-    implements ActionListener, KeyListener, DoneButtoned, Distractable
-{
+public class ReportDisplay extends StatusBarPhaseDisplay implements
+        ActionListener, KeyListener, DoneButtoned, Distractable {
     /**
      * 
      */
@@ -40,88 +50,93 @@ public class ReportDisplay
 
     // parent game
     public Client client;
-    
-//     // chatterbox keeps track of chatting and other messages
-//     private ChatterBox        cb;
-    
+
+    // // chatterbox keeps track of chatting and other messages
+    // private ChatterBox cb;
+
     // displays
-    private TabPanel        tabs;
-    private Vector<TextArea>  vTextArea;
+    private TabPanel tabs;
+    private Vector<TextArea> vTextArea;
 
     // buttons
-    private Button            readyB;
-    private Button            rerollInitiativeB;
-    
-    private boolean rerolled; //have we rerolled an init?
-    
+    private Button readyB;
+    private Button rerollInitiativeB;
+
+    private boolean rerolled; // have we rerolled an init?
+
     /**
-     * Creates and lays out a new movement phase display 
-     * for the specified client.
+     * Creates and lays out a new movement phase display for the specified
+     * client.
      */
     public ReportDisplay(Client client) {
         this.client = client;
 
-        client.game.addGameListener( this );
+        client.game.addGameListener(this);
 
-//         cb = client.cb;
+        // cb = client.cb;
 
         // Create a tabbed panel to hold our reports.
         tabs = new TabPanel();
-        //debugReport: add new client setting
-        Font tabPanelFont = new Font ("Dialog",Font.BOLD, //$NON-NLS-1$
-         GUIPreferences.getInstance().getInt("AdvancedChatLoungeTabFontSize"));
-        tabs.setTabFont (tabPanelFont);
+        // debugReport: add new client setting
+        Font tabPanelFont = new Font("Dialog", Font.BOLD, //$NON-NLS-1$
+                GUIPreferences.getInstance().getInt(
+                        "AdvancedChatLoungeTabFontSize"));
+        tabs.setTabFont(tabPanelFont);
 
         resetTabs();
 
-        setupStatusBar( "" ); //$NON-NLS-1$
-        
+        setupStatusBar(""); //$NON-NLS-1$
+
         readyB = new Button(Messages.getString("ReportDisplay.Done")); //$NON-NLS-1$
         readyB.setActionCommand("ready"); //$NON-NLS-1$
         readyB.addActionListener(this);
-        
-        rerollInitiativeB = new Button(Messages.getString("ReportDisplay.Reroll")); //$NON-NLS-1$
+
+        rerollInitiativeB = new Button(Messages
+                .getString("ReportDisplay.Reroll")); //$NON-NLS-1$
         rerollInitiativeB.setActionCommand("reroll_initiative"); //$NON-NLS-1$
         rerollInitiativeB.addActionListener(this);
-        
+
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-        
+
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(tabs, gridbag, c);
 
-//         c.gridwidth = 1;
-//         c.weightx = 1.0;    c.weighty = 0.0;
-//         addBag(cb.getComponent(), gridbag, c);
+        // c.gridwidth = 1;
+        // c.weightx = 1.0; c.weighty = 0.0;
+        // addBag(cb.getComponent(), gridbag, c);
 
         c.gridwidth = 1;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         Panel panButtons = new Panel();
-        panButtons.setLayout( new GridLayout(1, 8) );
+        panButtons.setLayout(new GridLayout(1, 8));
         panButtons.add(rerollInitiativeB);
-        for ( int padding = 0; padding < 6; padding++ ) {
-            panButtons.add( new Label( "" ) ); //$NON-NLS-1$
+        for (int padding = 0; padding < 6; padding++) {
+            panButtons.add(new Label("")); //$NON-NLS-1$
         }
-        addBag( panButtons, gridbag, c );
+        addBag(panButtons, gridbag, c);
 
-//         c.weightx = 1.0;    c.weighty = 0.0;
-//         c.gridwidth = GridBagConstraints.REMAINDER;
-//         addBag(panStatus, gridbag, c);
+        // c.weightx = 1.0; c.weighty = 0.0;
+        // c.gridwidth = GridBagConstraints.REMAINDER;
+        // addBag(panStatus, gridbag, c);
 
-//         c.gridwidth = GridBagConstraints.REMAINDER;
-//         c.weightx = 0.0;    c.weighty = 0.0;
-//         addBag(readyB, gridbag, c);
+        // c.gridwidth = GridBagConstraints.REMAINDER;
+        // c.weightx = 0.0; c.weighty = 0.0;
+        // addBag(readyB, gridbag, c);
 
         addKeyListener(this);
-        
+
     }
 
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(Component comp, GridBagLayout gridbag,
+            GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -129,12 +144,12 @@ public class ReportDisplay
 
     /**
      * Show or hide the "reroll inititiative" button in this report display.
-     *
-     * @param   show a <code>boolean</code> that indicates that the button
-     *          should be shown in this report display.
+     * 
+     * @param show a <code>boolean</code> that indicates that the button
+     *            should be shown in this report display.
      */
-    public void showRerollButton( boolean show ) {
-        rerollInitiativeB.setVisible( show );
+    public void showRerollButton(boolean show) {
+        rerollInitiativeB.setVisible(show);
     }
 
     /**
@@ -150,22 +165,23 @@ public class ReportDisplay
      * Requests an initiative reroll and disables the ready button.
      */
     public void rerollInitiative() {
-        rerolled=true;
+        rerolled = true;
         rerollInitiativeB.setEnabled(false);
         readyB.setEnabled(false);
         client.sendRerollInitiativeRequest();
     }
+
     /**
      * have we rerolled init this round?
      */
     public boolean hasRerolled() {
         return rerolled;
     }
-    
+
     public void resetButtons() {
         resetReadyButton();
         if (client.game.getPhase() == IGame.PHASE_INITIATIVE_REPORT
-            && client.game.hasTacticalGenius(client.getLocalPlayer())) {
+                && client.game.hasTacticalGenius(client.getLocalPlayer())) {
             showRerollButton(true);
         } else {
             showRerollButton(false);
@@ -176,42 +192,46 @@ public class ReportDisplay
     public void resetReadyButton() {
         readyB.setEnabled(true);
     }
-    
+
     public void resetRerollButton() {
         rerollInitiativeB.setEnabled(true);
     }
 
     public void setReportTab(int round, String roundText, String phaseText) {
         if (round == 0) {
-            //The deployment reports (round 0) are combined with round one's
+            // The deployment reports (round 0) are combined with round one's
             // report.
             round = 1;
         }
         if (round >= vTextArea.size()) {
-            //Need a new tab for the new round.
+            // Need a new tab for the new round.
 
-            //get rid of phase tab
+            // get rid of phase tab
             tabs.remove(vTextArea.elementAt(vTextArea.size() - 1));
             vTextArea.removeElementAt(vTextArea.size() - 1);
 
-            //add as many round tabs as necessary to catch us up
+            // add as many round tabs as necessary to catch us up
             TextArea ta;
             while (round > vTextArea.size()) {
-                //HACK: We shouldn't have to rely on our access to the client object...
-                ta = new TextArea(client.receiveReport(client.game.getReports(vTextArea.size() + 1)), 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+                // HACK: We shouldn't have to rely on our access to the client
+                // object...
+                ta = new TextArea(client.receiveReport(client.game
+                        .getReports(vTextArea.size() + 1)), 40, 25,
+                        TextArea.SCROLLBARS_VERTICAL_ONLY);
                 ta.setEditable(false);
-                tabs.add("Round " + (vTextArea.size() + 1),ta);
+                tabs.add("Round " + (vTextArea.size() + 1), ta);
                 vTextArea.addElement(ta);
             }
 
-            //add the new current phase tab
-            ta = new TextArea(phaseText, 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+            // add the new current phase tab
+            ta = new TextArea(phaseText, 40, 25,
+                    TextArea.SCROLLBARS_VERTICAL_ONLY);
             ta.setEditable(false);
             tabs.add("Phase", ta);
             vTextArea.addElement(ta);
             tabs.last();
         } else {
-            //Update the previous rounds tab and the phase tab.
+            // Update the previous rounds tab and the phase tab.
             vTextArea.elementAt(round - 1).setText(roundText);
             vTextArea.elementAt(round).setText(phaseText);
         }
@@ -225,12 +245,14 @@ public class ReportDisplay
     public void resetTabs() {
         tabs.removeAll();
         vTextArea = new Vector<TextArea>();
-        /* HACK: Without this initial empty TextArea, the tabs will be
-           blank (no TextArea at all) during the first initiative
-           phase.  I think it has something to do with the layout
-           manager, but I'm not really sure.  Maybe a strategically
-           placed validate() would be better? */
-        TextArea ta = new TextArea("", 40, 25, TextArea.SCROLLBARS_VERTICAL_ONLY);
+        /*
+         * HACK: Without this initial empty TextArea, the tabs will be blank (no
+         * TextArea at all) during the first initiative phase. I think it has
+         * something to do with the layout manager, but I'm not really sure.
+         * Maybe a strategically placed validate() would be better?
+         */
+        TextArea ta = new TextArea("", 40, 25,
+                TextArea.SCROLLBARS_VERTICAL_ONLY);
         ta.setEditable(false);
         vTextArea.addElement(ta);
         tabs.add("Phase", ta);
@@ -240,46 +262,48 @@ public class ReportDisplay
     // ActionListener
     //
     public void actionPerformed(ActionEvent ev) {
-        if(ev.getActionCommand().equalsIgnoreCase("ready")) { //$NON-NLS-1$
+        if (ev.getActionCommand().equalsIgnoreCase("ready")) { //$NON-NLS-1$
             ready();
         }
-        if(ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) { //$NON-NLS-1$
+        if (ev.getActionCommand().equalsIgnoreCase("reroll_initiative")) { //$NON-NLS-1$
             rerollInitiative();
         }
     }
-    
 
     //
     // KeyListener
     //
     public void keyPressed(KeyEvent ev) {
-        if(ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        if (ev.getKeyCode() == KeyEvent.VK_ESCAPE) {
         }
-        if(ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
+        if (ev.getKeyCode() == KeyEvent.VK_ENTER && ev.isControlDown()) {
             ready();
         }
     }
+
     public void keyReleased(KeyEvent ev) {
     }
+
     public void keyTyped(KeyEvent ev) {
     }
 
-    public void gamePhaseChange(GamePhaseChangeEvent e){
+    public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
+        if (this.isIgnoringEvents()) {
             return;
         }
 
-        setReportTab(client.game.getRoundCount(), client.roundReport, client.phaseReport);
+        setReportTab(client.game.getRoundCount(), client.roundReport,
+                client.phaseReport);
         resetButtons();
-        rerolled=false;
+        rerolled = false;
     }
 
     /**
      * Determine if the listener is currently distracted.
-     *
-     * @return  <code>true</code> if the listener is ignoring events.
+     * 
+     * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
         return this.distracted.isIgnoringEvents();
@@ -287,14 +311,14 @@ public class ReportDisplay
 
     /**
      * Specify if the listener should be distracted.
-     *
-     * @param   distract <code>true</code> if the listener should ignore events
-     *          <code>false</code> if the listener should pay attention again.
-     *          Events that occured while the listener was distracted NOT
-     *          going to be processed.
+     * 
+     * @param distract <code>true</code> if the listener should ignore events
+     *            <code>false</code> if the listener should pay attention
+     *            again. Events that occured while the listener was distracted
+     *            NOT going to be processed.
      */
-    public void setIgnoringEvents( boolean distracted ) {
-        this.distracted.setIgnoringEvents( distracted );
+    public void setIgnoringEvents(boolean distracted) {
+        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**
@@ -306,9 +330,9 @@ public class ReportDisplay
 
     /**
      * Retrieve the "Done" button of this object.
-     *
-     * @return  the <code>java.awt.Button</code> that activates this
-     *          object's "Done" action.
+     * 
+     * @return the <code>java.awt.Button</code> that activates this object's
+     *         "Done" action.
      */
     public Button getDoneButton() {
         return readyB;
@@ -316,9 +340,9 @@ public class ReportDisplay
 
     /**
      * Get the secondary display section of this phase.
-     *
-     * @return  the <code>Component</code> which is displayed in the
-     *          secondary section during this phase.
+     * 
+     * @return the <code>Component</code> which is displayed in the secondary
+     *         section during this phase.
      */
     public Component getSecondaryDisplay() {
         return panStatus;

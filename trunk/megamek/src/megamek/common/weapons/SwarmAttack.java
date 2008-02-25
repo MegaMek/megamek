@@ -25,10 +25,9 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class SwarmAttack extends InfantryAttack {
-    
+
     /**
      * 
      */
@@ -39,7 +38,7 @@ public class SwarmAttack extends InfantryAttack {
         this.name = "Swarm Mek";
         this.setInternalName(Infantry.SWARM_MEK);
     }
-    
+
     /*
      * (non-Javadoc)
      * 

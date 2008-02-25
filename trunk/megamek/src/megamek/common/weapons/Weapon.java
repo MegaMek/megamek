@@ -31,7 +31,7 @@ import megamek.server.Server;
  * @author Andrew Hunter A class representing a weapon.
  */
 public abstract class Weapon extends WeaponType implements Serializable {
-    
+
     public Weapon() {
         this.ammoType = AmmoType.T_NA;
         this.minimumRange = WEAPON_NA;
@@ -39,9 +39,11 @@ public abstract class Weapon extends WeaponType implements Serializable {
 
     public AttackHandler fire(WeaponAttackAction waa, IGame game, Server server) {
         ToHitData toHit = waa.toHit(game);
-        //FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned even
-        //if the have an impossible to hit, because there might be other targets
-        //someone else please please figure out how to do this nice
+        // FIXME: SUPER DUPER EVIL HACK: swarm missile handlers must be returned
+        // even
+        // if the have an impossible to hit, because there might be other
+        // targets
+        // someone else please please figure out how to do this nice
         AttackHandler ah = getCorrectHandler(toHit, waa, game, server);
         if (ah instanceof LRMSwarmHandler || ah instanceof LRMSwarmIHandler)
             return ah;

@@ -25,7 +25,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public abstract class BAMGWeapon extends Weapon {
 

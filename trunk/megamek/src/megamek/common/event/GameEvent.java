@@ -16,7 +16,7 @@ package megamek.common.event;
 
 /**
  * Instances of descendant classes are sent as a result of Game change
- *
+ * 
  * @see GameListener
  */
 public abstract class GameEvent extends java.util.EventObject {
@@ -47,13 +47,12 @@ public abstract class GameEvent extends java.util.EventObject {
     /**
      * Construct game event
      */
-    public GameEvent(Object source, int type){
+    public GameEvent(Object source, int type) {
         super(source);
         this.type = type;
     }
 
     /**
-     * 
      * @return the type of the event
      */
     public int getType() {
@@ -63,25 +62,25 @@ public abstract class GameEvent extends java.util.EventObject {
     public String toString() {
         StringBuffer buff = new StringBuffer();
         switch (this.type) {
-            case GAME_PLAYER_CHANGE :
+            case GAME_PLAYER_CHANGE:
                 buff.append("Status Change");
                 break;
-            case GAME_PLAYER_CHAT :
+            case GAME_PLAYER_CHAT:
                 buff.append("Chat");
                 break;
-            case GAME_PHASE_CHANGE :
+            case GAME_PHASE_CHANGE:
                 buff.append("Phase Change");
                 break;
-            case GAME_TURN_CHANGE :
+            case GAME_TURN_CHANGE:
                 buff.append("Turn Change");
                 break;
             case GAME_ENTITY_NEW:
                 buff.append("New Entities");
                 break;
-            case GAME_SETTINGS_CHANGE :
+            case GAME_SETTINGS_CHANGE:
                 buff.append("New Settings");
                 break;
-            default :
+            default:
                 buff.append("Unknown");
                 break;
         }

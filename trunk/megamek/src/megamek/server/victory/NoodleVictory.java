@@ -11,6 +11,10 @@ import megamek.common.IGame;
  * change during game (atleast regarding victory conditions)
  */
 public class NoodleVictory implements Victory, Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1458500624064481866L;
     protected Victory v;
 
     public NoodleVictory() {

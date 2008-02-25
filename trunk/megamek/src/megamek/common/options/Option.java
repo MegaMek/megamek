@@ -14,13 +14,12 @@
 
 package megamek.common.options;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.Vector;
 
-
 public class Option implements IOption, Serializable {
-	private static final long serialVersionUID = 8310472250031962888L;
-	private String name;
+    private static final long serialVersionUID = 8310472250031962888L;
+    private String name;
     private int type;
     private Object defaultValue;
     private Object value;
@@ -47,7 +46,7 @@ public class Option implements IOption, Serializable {
     public Option(IOptions owner, String name, Vector defaultValue) {
         this(owner, name, CHOICE, ""); //$NON-NLS-1$
     }
-    
+
     public Option(IOptions owner, String name, int type, Object defaultValue) {
         this.owner = owner;
         this.name = name;
@@ -56,10 +55,11 @@ public class Option implements IOption, Serializable {
             this.defaultValue = defaultValue;
             this.value = defaultValue;
         } else {
-            throw new IllegalArgumentException("Tried to give wrong type of value for option type."); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "Tried to give wrong type of value for option type."); //$NON-NLS-1$
         }
     }
-    
+
     public IOptions getOwner() {
         return owner;
     }
@@ -67,12 +67,13 @@ public class Option implements IOption, Serializable {
     public String getName() {
         return name;
     }
-    
+
     public String getDisplayableNameWithValue() {
         updateInfo();
-        return info.getDisplayableName() + (type == IOption.INTEGER ? " " + value : "");
+        return info.getDisplayableName()
+                + (type == IOption.INTEGER ? " " + value : "");
     }
-    
+
     public String getDisplayableName() {
         updateInfo();
         return info.getDisplayableName();
@@ -82,68 +83,69 @@ public class Option implements IOption, Serializable {
         updateInfo();
         return info.getDescription();
     }
-    
+
     public int getTextFieldLength() {
         updateInfo();
         return info.getTextFieldLength();
     }
-      
+
     public boolean isLabelBeforeTextField() {
         updateInfo();
         return info.isLabelBeforeTextField();
     }
-    
+
     public int getType() {
         return type;
     }
-    
+
     public Object getDefault() {
         return defaultValue;
     }
-    
+
     public Object getValue() {
         return value;
     }
-    
 
     public boolean booleanValue() {
         if (type == INTEGER) {
             return (Integer) value > 0;
         }
-		if (type == CHOICE || type == STRING) {
-		    if (value.equals("None") || value.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
-		        return false;
-		    }
-			return true;
-		}
-		return ((Boolean)value).booleanValue();
+        if (type == CHOICE || type == STRING) {
+            if (value.equals("None") || value.equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+                return false;
+            }
+            return true;
+        }
+        return ((Boolean) value).booleanValue();
     }
 
     public int intValue() {
-        return ((Integer)value).intValue();
+        return ((Integer) value).intValue();
     }
 
     public float floatValue() {
-        return ((Float)value).floatValue();
+        return ((Float) value).floatValue();
     }
-    
+
     public String stringValue() {
         return value.toString();
     }
-    
+
     public void setValue(Object value) {
         if (isValidValue(value)) {
             this.value = value;
         } else {
-            throw new IllegalArgumentException("Tried to give wrong type of value for option type."); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "Tried to give wrong type of value for option type."); //$NON-NLS-1$
         }
     }
-    
+
     public void setValue(String value) {
         if (type == STRING || type == CHOICE) {
             this.value = value;
         } else {
-            throw new IllegalArgumentException("Tried to give String value to non-String option."); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "Tried to give String value to non-String option."); //$NON-NLS-1$
         }
     }
 
@@ -151,7 +153,8 @@ public class Option implements IOption, Serializable {
         if (type == BOOLEAN) {
             this.value = new Boolean(value);
         } else {
-            throw new IllegalArgumentException("Tried to give boolean value to non-boolean option."); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "Tried to give boolean value to non-boolean option."); //$NON-NLS-1$
         }
     }
 
@@ -159,7 +162,8 @@ public class Option implements IOption, Serializable {
         if (type == INTEGER) {
             this.value = new Integer(value);
         } else {
-            throw new IllegalArgumentException("Tried to give integer value to non-integer option."); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "Tried to give integer value to non-integer option."); //$NON-NLS-1$
         }
     }
 
@@ -167,50 +171,51 @@ public class Option implements IOption, Serializable {
         if (type == FLOAT) {
             this.value = new Float(value);
         } else {
-            throw new IllegalArgumentException("Tried to give float value to non-float option."); //$NON-NLS-1$
+            throw new IllegalArgumentException(
+                    "Tried to give float value to non-float option."); //$NON-NLS-1$
         }
     }
 
     // Turns this option "off"
     public void clearValue() {
         switch (type) {
-            case STRING : 
-            case CHOICE : 
+            case STRING:
+            case CHOICE:
                 setValue(""); //$NON-NLS-1$
                 break;
-            case BOOLEAN : 
+            case BOOLEAN:
                 setValue(false);
                 break;
-            case INTEGER : 
+            case INTEGER:
                 setValue(0);
                 break;
-            case FLOAT : 
+            case FLOAT:
                 setValue(0);
         }
     }
 
     private boolean isValidValue(Object object) {
         switch (type) {
-            case STRING : 
-            case CHOICE : 
+            case STRING:
+            case CHOICE:
                 return object instanceof String;
-            case BOOLEAN : 
+            case BOOLEAN:
                 return object instanceof Boolean;
-            case INTEGER : 
+            case INTEGER:
                 return object instanceof Integer;
-            case FLOAT : 
+            case FLOAT:
                 return object instanceof Float;
-            default: 
+            default:
                 return false;
         }
     }
 
     /**
-     * Updates the displayable info about the option 
+     * Updates the displayable info about the option
      */
     private void updateInfo() {
         if (info == null) {
             info = owner.getOptionInfo(name);
-        }        
+        }
     }
 }

@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-
 import java.util.Vector;
 
 import megamek.common.Building;
@@ -33,37 +32,45 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5917196139361672006L;
 
     /**
      * @param t
      * @param w
      * @param g
      */
-    public InfantryInfernoSRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public InfantryInfernoSRMHandler(ToHitData t, WeaponAttackAction w,
+            IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
-        int troopersHit =  Compute.missilesHit(((Infantry)ae).getShootingStrength());
+        int troopersHit = Compute.missilesHit(((Infantry) ae)
+                .getShootingStrength());
         r = new Report(3325);
         r.subject = subjectId;
         r.add(troopersHit);
         r.add(" trooper(s) ");
-        r.add(toHit.getTableDesc()+".");
+        r.add(toHit.getTableDesc() + ".");
         r.newlines = 0;
         vPhaseReport.addElement(r);
-        return damage[troopersHit-1]/2;
+        return damage[troopersHit - 1] / 2;
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#handle(int, java.util.Vector)
      */
     public boolean handle(int phase, Vector<Report> vPhaseReport) {
@@ -97,23 +104,20 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        }
-        else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        }
-        else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        }
-        else {
-            //roll to hit
+        } else {
+            // roll to hit
             r = new Report(3150);
             r.newlines = 0;
             r.subject = subjectId;
@@ -130,12 +134,12 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
 
         // do we hit?
         bMissed = roll < toHit.getValue();
-        
+
         // are we a glancing hit?
         if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
-                r = new  Report(3186);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -144,13 +148,13 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
             }
         } else {
             bGlancing = false;
-        } 
+        }
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
         useAmmo();
         addHeat();
-        
+
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
         // the miss later, as we already reported
@@ -159,12 +163,13 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
         if (missReported) {
             bMissed = true;
         }
-        
+
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg, vPhaseReport)) {
+            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+                    vPhaseReport)) {
                 return false;
             }
         }

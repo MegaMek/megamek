@@ -14,24 +14,22 @@
 
 package megamek.common.actions;
 
-public class TorsoTwistAction
-    extends AbstractEntityAction
-{
+public class TorsoTwistAction extends AbstractEntityAction {
     /**
      * 
      */
     private static final long serialVersionUID = -3382479723829018297L;
     private int facing;
-    
+
     public TorsoTwistAction(int entityId, int facing) {
         super(entityId);
         this.facing = facing;
     }
-    
+
     public int getFacing() {
         return facing;
     }
-    
+
     public void setFacing(int facing) {
         this.facing = facing;
     }

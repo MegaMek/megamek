@@ -29,7 +29,6 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class SRMFragHandler extends SRMHandler {
 
@@ -49,8 +48,7 @@ public class SRMFragHandler extends SRMHandler {
         sSalvoType = " fragmentation missile(s) ";
         damageType = DamageType.FRAGMENTATION;
     }
-    
-    
+
     /**
      * Calculate the damage per hit.
      * 
@@ -59,32 +57,34 @@ public class SRMFragHandler extends SRMHandler {
     protected int calcDamagePerHit() {
         float toReturn = 2;
         // during a swarm, all damage gets applied as one block to one location
-        if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
+        if (ae instanceof BattleArmor
+                && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
-            toReturn *= ((BattleArmor)ae).getShootingStrength();
+            toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // against infantry, we have 1 hit
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = wtype.getRackSize() * 2;
         }
 
-        if (target instanceof Entity && !(target instanceof Infantry) 
-                || target instanceof BattleArmor )
+        if (target instanceof Entity && !(target instanceof Infantry)
+                || target instanceof BattleArmor)
             toReturn = 0;
-        
+
         if (bGlancing) {
-            toReturn/=2;
+            toReturn /= 2;
         }
-        return (int)Math.ceil(toReturn);
+        return (int) Math.ceil(toReturn);
     }
 
-
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector, megamek.common.Building, int, boolean)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector,
+     *      megamek.common.Building, int, boolean)
      */
-    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg,
-            int nDamage, boolean bSalvo) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport,
+            Building bldg, int nDamage, boolean bSalvo) {
         if (!bSalvo) {
             // hits!
             r = new Report(2270);
@@ -93,10 +93,10 @@ public class SRMFragHandler extends SRMHandler {
             vPhaseReport.addElement(r);
         }
         // report that damage was "applied" to terrain
-        
-        //Fragmentation does double damage to woods
+
+        // Fragmentation does double damage to woods
         nDamage *= 2;
-        
+
         r = new Report(3385);
         r.indent();
         r.subject = subjectId;
@@ -116,14 +116,15 @@ public class SRMFragHandler extends SRMHandler {
         return;
     }
 
-
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector, megamek.common.Building, int, boolean)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector,
+     *      megamek.common.Building, int, boolean)
      */
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg,
-            int nDamage, boolean bSalvo) {
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport,
+            Building bldg, int nDamage, boolean bSalvo) {
         return;
     }
-    
+
 }

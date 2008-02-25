@@ -11,7 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
- 
+
 package megamek.client.ui.AWT.widget;
 
 import java.awt.Checkbox;
@@ -23,13 +23,14 @@ public class IndexedCheckbox extends Checkbox {
      */
     private static final long serialVersionUID = -8591352017935140738L;
     private int index;
-    
-    public IndexedCheckbox(String label, boolean state, CheckboxGroup group, int index) {
+
+    public IndexedCheckbox(String label, boolean state, CheckboxGroup group,
+            int index) {
         super(label, state, group);
-        
+
         this.index = index;
     }
-    
+
     public int getIndex() {
         return index;
     }

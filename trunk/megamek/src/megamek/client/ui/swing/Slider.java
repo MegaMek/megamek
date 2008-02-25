@@ -47,7 +47,8 @@ public class Slider extends JDialog implements ActionListener, ChangeListener {
     private JLabel maxText = new JLabel();
     private JLabel curText = new JLabel();
 
-    public Slider(JFrame parent, String title, String question, int defaultValue, int min, int max) {
+    public Slider(JFrame parent, String title, String question,
+            int defaultValue, int min, int max) {
         super(parent, title, true);
         super.setResizable(false);
 
@@ -80,8 +81,9 @@ public class Slider extends JDialog implements ActionListener, ChangeListener {
         p.add(butCancel);
         getContentPane().add(p, BorderLayout.SOUTH);
         pack();
-        setLocation(parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
-                parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - getSize().width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - getSize().height / 2);
     }
 
     public boolean showDialog() {

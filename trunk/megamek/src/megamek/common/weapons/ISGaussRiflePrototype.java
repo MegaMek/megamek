@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISGaussRiflePrototype extends GaussWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 317770140657000258L;
+
     /**
      * 
      */
@@ -52,7 +56,7 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         this.criticals = 8;
         this.flags |= F_PROTOTYPE;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

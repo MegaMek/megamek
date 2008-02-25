@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISLaserAMSTHB extends LaserWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1940059603781427515L;
+
     /**
      * 
      */
@@ -37,7 +41,7 @@ public class ISLaserAMSTHB extends LaserWeapon {
         this.addLookupName("IS Laser AMS (THB)");
         this.heat = 3;
         this.rackSize = 2;
-        this.damage = 2;  // # of d6 of missiles affected
+        this.damage = 2; // # of d6 of missiles affected
         this.ammoType = AmmoType.T_NA;
         this.tonnage = 1.5f;
         this.criticals = 2;

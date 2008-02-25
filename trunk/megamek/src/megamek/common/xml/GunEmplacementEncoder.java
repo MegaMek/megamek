@@ -15,39 +15,41 @@
 
 package megamek.common.xml;
 
-import java.io.Writer;
-import java.io.IOException;
-import java.util.Enumeration;
 import gd.xml.tiny.ParsedXML;
-import megamek.common.*;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Enumeration;
+
+import megamek.common.Entity;
+import megamek.common.GunEmplacement;
+import megamek.common.IGame;
 
 /**
- * Objects of this class can encode a <code>Entity</code> object as XML
- * into an output writer and decode one from a parsed XML node.  It is used
- * when saving games into a version- neutral format.
- *
- * @author      Mike Gratton <mike@vee.net>
+ * Objects of this class can encode a <code>Entity</code> object as XML into
+ * an output writer and decode one from a parsed XML node. It is used when
+ * saving games into a version- neutral format.
+ * 
+ * @author Mike Gratton <mike@vee.net>
  */
 public class GunEmplacementEncoder {
 
-
     /**
      * Encode a <code>Entity</code> object to an output writer.
-     *
-     * @param   entity - the <code>Entity</code> to be encoded.
-     *          This value must not be <code>null</code>.
-     * @param   out - the <code>Writer</code> that will receive the XML.
-     *          This value must not be <code>null</code>.
-     * @throws  <code>IOException</code> if there's any error on write.
+     * 
+     * @param entity - the <code>Entity</code> to be encoded. This value must
+     *            not be <code>null</code>.
+     * @param out - the <code>Writer</code> that will receive the XML. This
+     *            value must not be <code>null</code>.
+     * @throws <code>IOException</code> if there's any error on write.
      */
-    public static void encode( Entity entity, Writer out )
-        throws IOException {
+    public static void encode(Entity entity, Writer out) throws IOException {
         GunEmplacement ge = (GunEmplacement) entity;
         // save this so that the GE has the correct building type when decoded
         out.write("<cf>");
         out.write(Integer.toString(ge.getConstructionFactor()));
         out.write("<cf/>");
-        
+
         if (ge.hasTurret() && ge.isTurretLocked()) {
             out.write("<turretLocked facing=\"");
             out.write(Integer.toString(ge.getSecondaryFacing()));
@@ -57,19 +59,19 @@ public class GunEmplacementEncoder {
 
     /**
      * Decode a <code>Entity</code> object from the passed node.
-     *
-     * @param   node - the <code>ParsedXML</code> node for this object.
-     *          This value must not be <code>null</code>.
-     * @param   game - the <code>IGame</code> the decoded object belongs to.
-     * @return  the <code>Entity</code> object based on the node.
-     * @throws  <code>IllegalStateException</code> if the node does not
-     *          contain a valid <code>Entity</code>.
+     * 
+     * @param node - the <code>ParsedXML</code> node for this object. This
+     *            value must not be <code>null</code>.
+     * @param game - the <code>IGame</code> the decoded object belongs to.
+     * @return the <code>Entity</code> object based on the node.
+     * @throws <code>IllegalStateException</code> if the node does not contain
+     *             a valid <code>Entity</code>.
      */
-    public static Entity decode( ParsedXML node, IGame game ) {
-        if (!node.getName().equals( "class" ) ||
-            !"GunEmplacement".equals(node.getAttribute("name"))) {
-            throw new IllegalStateException
-                ("Not passed an GunEmplacement node.");
+    public static Entity decode(ParsedXML node, IGame game) {
+        if (!node.getName().equals("class")
+                || !"GunEmplacement".equals(node.getAttribute("name"))) {
+            throw new IllegalStateException(
+                    "Not passed an GunEmplacement node.");
         }
 
         GunEmplacement ge = new GunEmplacement();
@@ -80,14 +82,14 @@ public class GunEmplacementEncoder {
         while (children.hasMoreElements()) {
             ParsedXML child = (ParsedXML) children.nextElement();
             String childName = child.getName();
-            
+
             if (childName.equals("cf")) {
                 String cf = child.getContent().trim();
                 try {
                     ge.setConstructionFactor(Integer.parseInt(cf));
                 } catch (NumberFormatException nfe) {
-                    throw new IllegalStateException
-                        ("Invalid integer value for cf element: " + cf);
+                    throw new IllegalStateException(
+                            "Invalid integer value for cf element: " + cf);
                 }
             } else if (childName.equals("turretLocked")) {
                 String facing = child.getAttribute("facing");
@@ -95,9 +97,9 @@ public class GunEmplacementEncoder {
                 try {
                     ge.setSecondaryFacing(Integer.parseInt(facing));
                 } catch (NumberFormatException nfe) {
-                    throw new IllegalStateException
-                        ("Invalid integer value for facing attribute: " +
-                         facing);
+                    throw new IllegalStateException(
+                            "Invalid integer value for facing attribute: "
+                                    + facing);
                 }
             }
         }
@@ -106,4 +108,3 @@ public class GunEmplacementEncoder {
     }
 
 }
-

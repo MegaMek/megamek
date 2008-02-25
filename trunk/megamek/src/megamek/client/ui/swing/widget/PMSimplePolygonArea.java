@@ -39,11 +39,14 @@ public class PMSimplePolygonArea implements PMHotArea {
     private Cursor cursor = new Cursor(Cursor.HAND_CURSOR);
 
     public PMSimplePolygonArea(Polygon p, Color backColor, Color brdColor,
-                               Color hiBrdColor, boolean highlight) {
+            Color hiBrdColor, boolean highlight) {
         this.areaShape = p;
-        if (backColor != null) this.backColor = backColor;
-        if (brdColor != null) this.normalBorderColor = brdColor;
-        if (hiBrdColor != null) this.highlightBorderColor = hiBrdColor;
+        if (backColor != null)
+            this.backColor = backColor;
+        if (brdColor != null)
+            this.normalBorderColor = brdColor;
+        if (hiBrdColor != null)
+            this.highlightBorderColor = hiBrdColor;
         this.highlight = highlight;
     }
 
@@ -55,7 +58,7 @@ public class PMSimplePolygonArea implements PMHotArea {
         this(p, null, null, null, true);
     }
 
-    //PMElement interface methods
+    // PMElement interface methods
     public void translate(int x, int y) {
         areaShape.translate(x, y);
     }
@@ -65,7 +68,8 @@ public class PMSimplePolygonArea implements PMHotArea {
     }
 
     public void drawInto(Graphics g) {
-        if ((g == null) || (!visible)) return;
+        if ((g == null) || (!visible))
+            return;
         Color oldColor = g.getColor();
         g.setColor(this.backColor);
         g.fillPolygon(areaShape);
@@ -90,7 +94,7 @@ public class PMSimplePolygonArea implements PMHotArea {
         actionListener = AWTEventMulticaster.remove(actionListener, l);
     }
 
-    //PMHotArea interface methods
+    // PMHotArea interface methods
     public Shape getAreaShape() {
         return this.areaShape;
     }
@@ -104,15 +108,17 @@ public class PMSimplePolygonArea implements PMHotArea {
     }
 
     public void onMouseClick(MouseEvent e) {
-        //!!!!!!code here
+        // !!!!!!code here
     }
 
     public void onMouseOver(MouseEvent e) {
-        if (highlight) selected = true;
+        if (highlight)
+            selected = true;
     }
 
     public void onMouseExit(MouseEvent e) {
-        if (highlight) selected = false;
+        if (highlight)
+            selected = false;
     }
 
     public void onMouseDown(MouseEvent e) {

@@ -25,7 +25,6 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
     /**
@@ -36,7 +35,7 @@ public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
         this.flags |= F_PLASMA_MFUK | F_DIRECT_FIRE;
         ammoType = AmmoType.T_NA;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -46,7 +45,7 @@ public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
      */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-            return new PlasmaMFUKWeaponHandler(toHit, waa, game, server);
+        return new PlasmaMFUKWeaponHandler(toHit, waa, game, server);
     }
 
 }

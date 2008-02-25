@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
@@ -28,9 +27,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class BearHunterHandler extends WeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7766588145048155958L;
+
     /**
      * @param toHit
      * @param waa
@@ -49,7 +52,7 @@ public class BearHunterHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             return Compute.d6(3);
-        }               
+        }
         return super.calcDamagePerHit();
     }
 }

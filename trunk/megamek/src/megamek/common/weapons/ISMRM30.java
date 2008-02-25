@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISMRM30 extends MRMWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = -4212839099494076415L;
+
+    /**
+     * 
+     */
     public ISMRM30() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
         this.name = "MRM 30";
         this.setInternalName(this.name);

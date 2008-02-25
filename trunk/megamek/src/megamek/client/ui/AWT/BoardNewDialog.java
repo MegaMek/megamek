@@ -1,15 +1,15 @@
 package megamek.client.ui.AWT;
 
+import java.awt.Button;
 import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Label;
 import java.awt.TextField;
-import java.awt.Button;
-import java.awt.Frame;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * a quick class for the new map diaglogue box
@@ -20,11 +20,11 @@ public class BoardNewDialog extends Dialog implements ActionListener {
      */
     private static final long serialVersionUID = -6562881140632503653L;
 
-    public int            xvalue, yvalue;
+    public int xvalue, yvalue;
 
-    protected Label        labWidth, labHeight;
-    protected TextField    texWidth, texHeight;
-    protected Button        butOkay, butCancel;
+    protected Label labWidth, labHeight;
+    protected TextField texWidth, texHeight;
+    protected Button butOkay, butCancel;
 
     public BoardNewDialog(Frame frame, String[] hexList, int hexSelected) {
         super(frame, Messages.getString("BoardEditor.SetDimentions"), true); //$NON-NLS-1$
@@ -32,8 +32,10 @@ public class BoardNewDialog extends Dialog implements ActionListener {
         xvalue = 0;
         yvalue = 0;
 
-        labWidth = new Label(Messages.getString("BoardEditor.labWidth"), Label.RIGHT); //$NON-NLS-1$
-        labHeight = new Label(Messages.getString("BoardEditor.labHeight"), Label.RIGHT); //$NON-NLS-1$
+        labWidth = new Label(
+                Messages.getString("BoardEditor.labWidth"), Label.RIGHT); //$NON-NLS-1$
+        labHeight = new Label(
+                Messages.getString("BoardEditor.labHeight"), Label.RIGHT); //$NON-NLS-1$
 
         texWidth = new TextField("16", 2); //$NON-NLS-1$
         texHeight = new TextField("17", 2); //$NON-NLS-1$
@@ -53,7 +55,8 @@ public class BoardNewDialog extends Dialog implements ActionListener {
         setLayout(gridbag);
 
         c.fill = GridBagConstraints.NONE;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         c.insets = new Insets(5, 5, 1, 1);
 
         gridbag.setConstraints(labWidth, c);
@@ -71,7 +74,8 @@ public class BoardNewDialog extends Dialog implements ActionListener {
         gridbag.setConstraints(texHeight, c);
         add(texHeight);
 
-        c.ipadx = 20;    c.ipady = 5;
+        c.ipadx = 20;
+        c.ipady = 5;
         c.gridwidth = GridBagConstraints.RELATIVE;
         gridbag.setConstraints(butOkay, c);
         add(butOkay);
@@ -82,8 +86,9 @@ public class BoardNewDialog extends Dialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
-                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2
+                - getSize().width / 2, frame.getLocation().y
+                + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -91,7 +96,7 @@ public class BoardNewDialog extends Dialog implements ActionListener {
             try {
                 xvalue = Integer.decode(texWidth.getText()).intValue();
                 yvalue = Integer.decode(texHeight.getText()).intValue();
-            } catch(NumberFormatException ex) {
+            } catch (NumberFormatException ex) {
                 System.err.println(ex.getMessage());
             }
             setVisible(false);

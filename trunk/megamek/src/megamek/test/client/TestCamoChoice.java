@@ -31,14 +31,13 @@ import megamek.common.Player;
 
 /**
  * This class will test the <code>CamoChoiceDialog</code> by displaying it.
- *
  * Created on January 19, 2004
- *
- * @author  James Damour
+ * 
+ * @author James Damour
  * @version 1
  */
 public class TestCamoChoice extends Frame implements ActionListener,
-                                                     ItemListener {
+        ItemListener {
 
     /**
      * 
@@ -48,16 +47,16 @@ public class TestCamoChoice extends Frame implements ActionListener,
     final Color defaultBG;
     ImageButton butCamo = null;
 
-    public static void main( String[] args ) {
+    public static void main(String[] args) {
 
         final TestCamoChoice frame = new TestCamoChoice();
 
         frame.addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) {
-                    frame.dispose();
-                    System.exit(1);
-                }
-            });
+            public void windowClosing(WindowEvent e) {
+                frame.dispose();
+                System.exit(1);
+            }
+        });
         frame.setVisible(true);
 
     }
@@ -68,38 +67,39 @@ public class TestCamoChoice extends Frame implements ActionListener,
     }
 
     private TestCamoChoice() {
-        super( "Test Camo Choice");
+        super("Test Camo Choice");
 
-        dialog = new CamoChoiceDialog( this );
-        dialog.addItemListener( this );
-        dialog.setCategory( "flashhawk2k.zip" );
-        dialog.setItemName( "camo1.jpg" );
+        dialog = new CamoChoiceDialog(this);
+        dialog.addItemListener(this);
+        dialog.setCategory("flashhawk2k.zip");
+        dialog.setItemName("camo1.jpg");
 
         butCamo = new ImageButton();
         Image[] array = (Image[]) dialog.getSelectedObjects();
-        if ( null != array ) butCamo.setImage( array[0] );
-        butCamo.setLabel( "Choose Camo..." );
-        butCamo.setPreferredSize( 84, 72 );
-        butCamo.addActionListener( this );
+        if (null != array)
+            butCamo.setImage(array[0]);
+        butCamo.setLabel("Choose Camo...");
+        butCamo.setPreferredSize(84, 72);
+        butCamo.addActionListener(this);
         defaultBG = butCamo.getBackground();
-        this.add( butCamo );
+        this.add(butCamo);
         this.pack();
     }
 
-    public void actionPerformed( ActionEvent event ) {
+    public void actionPerformed(ActionEvent event) {
         dialog.setVisible(true);
     }
 
-    public void itemStateChanged( ItemEvent event ) {
+    public void itemStateChanged(ItemEvent event) {
 
         // Get the camo that was selected.
         Image image = (Image) event.getItem();
 
         // If the image is null, a color was selected instead.
-        if ( null == image ) {
+        if (null == image) {
             String item = dialog.getItemName();
-            for ( int color = 0; color < Player.colorNames.length; color++ ) {
-                if ( Player.colorNames[color].equals( item ) ) {
+            for (int color = 0; color < Player.colorNames.length; color++) {
+                if (Player.colorNames[color].equals(item)) {
                     butCamo.setBackground(PlayerColors.getColor(color));
                     break;
                 }
@@ -108,12 +108,11 @@ public class TestCamoChoice extends Frame implements ActionListener,
 
         // We need to copy the image to make it appear.
         else {
-            butCamo.setBackground( defaultBG );
+            butCamo.setBackground(defaultBG);
         }
 
         // Update the butCamo's image.
-        butCamo.setImage( image );            
+        butCamo.setImage(image);
     }
-
 
 }

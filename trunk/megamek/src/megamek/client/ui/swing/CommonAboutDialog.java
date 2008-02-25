@@ -13,12 +13,9 @@
  */
 package megamek.client.ui.swing;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextArea;
+import static megamek.MegaMek.TIMESTAMP;
+import static megamek.MegaMek.VERSION;
+
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -31,8 +28,12 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Date;
 
-import static megamek.MegaMek.TIMESTAMP;
-import static megamek.MegaMek.VERSION;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
 
 /**
  * Every about dialog in MegaMek should have an identical look-and-feel.
@@ -49,7 +50,7 @@ public class CommonAboutDialog extends JDialog {
 
     /**
      * Get the single title image in a threadsafe way.
-     *
+     * 
      * @param frame - a <code>JFrame</code> object to instantiate the image.
      * @return the title <code>Image</code> common to all "about" dialogs.
      *         This value should <b>not</b> be <code>null</code>.
@@ -57,9 +58,9 @@ public class CommonAboutDialog extends JDialog {
     private static synchronized Image getTitleImage(JFrame frame) {
         // Have we loaded our image yet?
         if (imgTitleImage == null) {
-            // Nope.  Load it.
-            Image image = frame.getToolkit().getImage
-                    ("data/images/misc/megamek-splash2.gif"); //$NON-NLS-1$
+            // Nope. Load it.
+            Image image = frame.getToolkit().getImage(
+                    "data/images/misc/megamek-splash2.gif"); //$NON-NLS-1$
             MediaTracker tracker = new MediaTracker(frame);
             tracker.addImage(image, 0);
             try {
@@ -76,7 +77,7 @@ public class CommonAboutDialog extends JDialog {
 
     /**
      * Create an "about" dialog for MegaMek.
-     *
+     * 
      * @param frame - the parent <code>JFrame</code> for this dialog.
      */
     public CommonAboutDialog(JFrame frame) {
@@ -99,25 +100,28 @@ public class CommonAboutDialog extends JDialog {
         // Make a label containing the version of this app.
         StringBuffer buff = new StringBuffer();
         buff.append(Messages.getString("CommonAboutDialog.version"))//$NON-NLS-1$
-                .append(VERSION)
-                .append(Messages.getString("CommonAboutDialog.timestamp"))//$NON-NLS-1$
-                .append(new Date(TIMESTAMP).toString())
-                .append(Messages.getString("CommonAboutDialog.javaVendor"))//$NON-NLS-1$
+                .append(VERSION).append(
+                        Messages.getString("CommonAboutDialog.timestamp"))//$NON-NLS-1$
+                .append(new Date(TIMESTAMP).toString()).append(
+                        Messages.getString("CommonAboutDialog.javaVendor"))//$NON-NLS-1$
                 .append(System.getProperty("java.vendor"))//$NON-NLS-1$
                 .append(Messages.getString("CommonAboutDialog.javaVersion"))//$NON-NLS-1$
                 .append(System.getProperty("java.version")); //$NON-NLS-1$
         JTextArea lblVersion = new JTextArea(buff.toString());
         lblVersion.setEditable(false);
         lblVersion.setOpaque(false);
-        JTextArea lblCopyright = new JTextArea(Messages.getString("CommonAboutDialog.copyright")); //$NON-NLS-1$
+        JTextArea lblCopyright = new JTextArea(Messages
+                .getString("CommonAboutDialog.copyright")); //$NON-NLS-1$
         lblCopyright.setEditable(false);
         lblCopyright.setOpaque(false);
-        JTextArea lblAbout = new JTextArea(Messages.getString("CommonAboutDialog.about")); //$NON-NLS-1$
+        JTextArea lblAbout = new JTextArea(Messages
+                .getString("CommonAboutDialog.about")); //$NON-NLS-1$
         lblAbout.setEditable(false);
         lblAbout.setOpaque(false);
 
         // Add a "Close" button.
-        JButton butClose = new JButton(Messages.getString("CommonAboutDialog.Close")); //$NON-NLS-1$
+        JButton butClose = new JButton(Messages
+                .getString("CommonAboutDialog.Close")); //$NON-NLS-1$
         butClose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 quit();

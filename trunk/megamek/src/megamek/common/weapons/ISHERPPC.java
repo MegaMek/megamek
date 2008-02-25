@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISHERPPC extends PPCWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6733393836643781374L;
+
     /**
      * 
      */

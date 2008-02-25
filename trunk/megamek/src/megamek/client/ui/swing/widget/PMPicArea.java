@@ -24,9 +24,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 
 /**
- * Simple rectangle hot are for PicMap component.
- * Show single image when idle and "hoghlite" image
- * when mouse is over this area.
+ * Simple rectangle hot are for PicMap component. Show single image when idle
+ * and "hoghlite" image when mouse is over this area.
  */
 
 public class PMPicArea implements PMHotArea {
@@ -44,7 +43,8 @@ public class PMPicArea implements PMHotArea {
     public PMPicArea(Image idle, Image active) {
         this.idleImage = idle;
         this.activeImage = active;
-        areaShape = new Rectangle(x, y, idle.getWidth(null), idle.getHeight(null));
+        areaShape = new Rectangle(x, y, idle.getWidth(null), idle
+                .getHeight(null));
     }
 
     public PMPicArea(Image im) {
@@ -52,7 +52,7 @@ public class PMPicArea implements PMHotArea {
         highlight = false;
     }
 
-    //PMElement interface methods
+    // PMElement interface methods
     public void translate(int x, int y) {
         areaShape.translate(x, y);
         this.x = this.x + x;
@@ -64,7 +64,8 @@ public class PMPicArea implements PMHotArea {
     }
 
     public void drawInto(Graphics g) {
-        if ((g == null) || (!visible)) return;
+        if ((g == null) || (!visible))
+            return;
         if (selected) {
             g.drawImage(activeImage, x, y, null);
         } else {
@@ -85,7 +86,7 @@ public class PMPicArea implements PMHotArea {
         actionListener = AWTEventMulticaster.remove(actionListener, l);
     }
 
-    //PMHotArea interface methods
+    // PMHotArea interface methods
     public Shape getAreaShape() {
         return this.areaShape;
     }
@@ -99,15 +100,17 @@ public class PMPicArea implements PMHotArea {
     }
 
     public void onMouseClick(MouseEvent e) {
-        //!!!!!!code here
+        // !!!!!!code here
     }
 
     public void onMouseOver(MouseEvent e) {
-        if (highlight) selected = true;
+        if (highlight)
+            selected = true;
     }
 
     public void onMouseExit(MouseEvent e) {
-        if (highlight) selected = false;
+        if (highlight)
+            selected = false;
     }
 
     public void onMouseDown(MouseEvent e) {

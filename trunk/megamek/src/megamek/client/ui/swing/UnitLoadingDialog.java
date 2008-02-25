@@ -19,13 +19,14 @@
 
 package megamek.client.ui.swing;
 
-import megamek.common.MechSummaryCache;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+
+import megamek.common.MechSummaryCache;
 
 public class UnitLoadingDialog extends JDialog {
 
@@ -33,13 +34,17 @@ public class UnitLoadingDialog extends JDialog {
      * 
      */
     private static final long serialVersionUID = -3454307876761238915L;
-    private JLabel lLoading = new JLabel(Messages.getString("UnitLoadingDialog.LoadingUnits")); //$NON-NLS-1$
+    private JLabel lLoading = new JLabel(Messages
+            .getString("UnitLoadingDialog.LoadingUnits")); //$NON-NLS-1$
     private JLabel lSpacer = new JLabel();
-    private JLabel lCacheText = new JLabel(Messages.getString("UnitLoadingDialog.fromCache")); //$NON-NLS-1$
+    private JLabel lCacheText = new JLabel(Messages
+            .getString("UnitLoadingDialog.fromCache")); //$NON-NLS-1$
     private JLabel lCacheCount = new JLabel();
-    private JLabel lFileText = new JLabel(Messages.getString("UnitLoadingDialog.fromFiles")); //$NON-NLS-1$
+    private JLabel lFileText = new JLabel(Messages
+            .getString("UnitLoadingDialog.fromFiles")); //$NON-NLS-1$
     private JLabel lFileCount = new JLabel();
-    private JLabel lZipText = new JLabel(Messages.getString("UnitLoadingDialog.fromZips")); //$NON-NLS-1$
+    private JLabel lZipText = new JLabel(Messages
+            .getString("UnitLoadingDialog.fromZips")); //$NON-NLS-1$
     private JLabel lZipCount = new JLabel();
 
     // Determines how often to update the loading dialog.
@@ -75,7 +80,7 @@ public class UnitLoadingDialog extends JDialog {
                     try {
                         Thread.sleep(UPDATE_FREQUENCY);
                     } catch (InterruptedException e) {
-                        //not supposed to come here
+                        // not supposed to come here
                     }
                 }
             }
@@ -85,8 +90,11 @@ public class UnitLoadingDialog extends JDialog {
     }
 
     void updateCounts() {
-        lCacheCount.setText(String.valueOf(MechSummaryCache.getInstance().getCacheCount()));
-        lFileCount.setText(String.valueOf(MechSummaryCache.getInstance().getFileCount()));
-        lZipCount.setText(String.valueOf(MechSummaryCache.getInstance().getZipCount()));
+        lCacheCount.setText(String.valueOf(MechSummaryCache.getInstance()
+                .getCacheCount()));
+        lFileCount.setText(String.valueOf(MechSummaryCache.getInstance()
+                .getFileCount()));
+        lZipCount.setText(String.valueOf(MechSummaryCache.getInstance()
+                .getZipCount()));
     }
 }

@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLLongTom extends ArtilleryWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2543864156188708488L;
 
     /**
      * 
@@ -39,7 +43,7 @@ public class CLLongTom extends ArtilleryWeapon {
         this.heat = 20;
         this.rackSize = 20;
         this.ammoType = AmmoType.T_LONG_TOM;
-        this.shortRange = 1;  //
+        this.shortRange = 1; //
         this.mediumRange = 2;
         this.longRange = 20;
         this.extremeRange = 20; // No extreme range.

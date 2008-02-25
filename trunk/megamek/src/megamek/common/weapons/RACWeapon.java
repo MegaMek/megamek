@@ -34,7 +34,8 @@ public abstract class RACWeapon extends UACWeapon {
     public RACWeapon() {
         super();
         this.ammoType = AmmoType.T_AC_ROTARY;
-        String[] modes = { "Single", "2-shot", "3-shot", "4-shot", "5-shot", "6-shot" };
+        String[] modes = { "Single", "2-shot", "3-shot", "4-shot", "5-shot",
+                "6-shot" };
         this.setModes(modes);
         // explosive when jammed
         this.explosive = true;
@@ -52,9 +53,9 @@ public abstract class RACWeapon extends UACWeapon {
         Mounted weapon = game.getEntity(waa.getEntityId()).getEquipment(
                 waa.getWeaponId());
         if (weapon.curMode().equals("6-shot")
-                        ||  weapon.curMode().equals("5-shot")
-                        ||  weapon.curMode().equals("4-shot")
-                        ||  weapon.curMode().equals("3-shot")) {
+                || weapon.curMode().equals("5-shot")
+                || weapon.curMode().equals("4-shot")
+                || weapon.curMode().equals("3-shot")) {
             return new RACHandler(toHit, waa, game, server);
         } else if (weapon.curMode().equals("2-shot")) {
             return new UltraWeaponHandler(toHit, waa, game, server);

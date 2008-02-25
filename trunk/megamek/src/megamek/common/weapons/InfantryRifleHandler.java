@@ -24,18 +24,24 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class InfantryRifleHandler extends InfantryWeaponHandler {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7850800163289264583L;
+
     /**
      * @param t
      * @param w
      * @param g
      */
-    public InfantryRifleHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public InfantryRifleHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
-        damage = new int[] {1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,14,14,15,15,16};
+        damage = new int[] { 1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9,
+                9, 10, 10, 11, 11, 12, 12, 13, 14, 14, 15, 15, 16 };
     }
 
 }

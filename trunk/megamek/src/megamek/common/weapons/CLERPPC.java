@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLERPPC extends PPCWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5108976056064542099L;
+
     /**
      * 
      */

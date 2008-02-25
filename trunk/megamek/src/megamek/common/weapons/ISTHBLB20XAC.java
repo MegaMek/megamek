@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISTHBLB20XAC extends LBXACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1568107024307749233L;
+
     /**
      * 
      */
@@ -44,7 +48,7 @@ public class ISTHBLB20XAC extends LBXACWeapon {
         this.extremeRange = 14;
         this.tonnage = 14.0f;
         this.criticals = 10;
-        this.flags |=  F_SPLITABLE;
+        this.flags |= F_SPLITABLE;
         this.bv = 204;
         this.cost = 700000;
     }

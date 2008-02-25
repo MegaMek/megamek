@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISHeavyRecoillessRifle extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1717246683401964562L;
+
     /**
      * 
      */
@@ -47,7 +51,7 @@ public class ISHeavyRecoillessRifle extends Weapon {
         this.bv = 22;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

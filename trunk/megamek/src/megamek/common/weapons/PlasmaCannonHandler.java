@@ -39,24 +39,27 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
+     *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
-        
+
         if (entityTarget instanceof Mech) {
-            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                    .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
-            if ( entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                    Compute.targetSideTable(ae, entityTarget)) ) {
+            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                    toHit.getSideTable(), waa.getAimedLocation(), waa
+                            .getAimingMode());
+            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
+                    .getCover(), Compute.targetSideTable(ae, entityTarget))) {
                 // Weapon strikes Partial Cover.
                 r = new Report(3460);
                 r.subject = subjectId;
@@ -67,7 +70,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                 vPhaseReport.addElement(r);
                 missed = true;
                 return;
-            }            
+            }
             if (!bSalvo) {
                 // Each hit in the salvo get's its own hit location.
                 r = new Report(3405);
@@ -88,11 +91,12 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             entityTarget.heatFromExternal += extraHeat;
         } else
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
-                nCluster, nDamPerHit, bldgAbsorbs);
+                    nCluster, nDamPerHit, bldgAbsorbs);
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
@@ -103,15 +107,18 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             if (target instanceof Infantry && !(target instanceof BattleArmor))
                 toReturn = Compute.d6(3);
             // pain shunted infantry get half damage
-            if (target instanceof Infantry && ((Entity)target).getCrew().getOptions().booleanOption("pain_shunt") ) {
-                toReturn = Math.max(toReturn/2, 1);
+            if (target instanceof Infantry
+                    && ((Entity) target).getCrew().getOptions().booleanOption(
+                            "pain_shunt")) {
+                toReturn = Math.max(toReturn / 2, 1);
             }
             return toReturn;
         }
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
@@ -123,9 +130,10 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             return 5;
         }
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -137,7 +145,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
         if (target instanceof Mech) {
             return 1;
         } else {
-            if (target instanceof BattleArmor && ((BattleArmor)target).hasFireresistantArmor())
+            if (target instanceof BattleArmor
+                    && ((BattleArmor) target).hasFireresistantArmor())
                 return 0;
             return Compute.d6(3);
         }

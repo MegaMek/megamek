@@ -31,29 +31,30 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class LRMSwarmHandler extends LRMHandler {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7962873403915683220L;
     int swarmMissilesNowLeft = 0;
     boolean handledHeatAndAmmo = false;
-    
+
     /**
      * @param t
      * @param w
      * @param g
      * @param s
      */
-    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+    public LRMSwarmHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
         sSalvoType = " swarm missile(s) ";
     }
-    
 
-    
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     public boolean handle(int phase, Vector<Report> vPhaseReport) {
@@ -92,23 +93,20 @@ public class LRMSwarmHandler extends LRMHandler {
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        }
-        else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        }
-        else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        }
-        else {
-            //roll to hit
+        } else {
+            // roll to hit
             r = new Report(3150);
             r.newlines = 0;
             r.subject = subjectId;
@@ -123,15 +121,14 @@ public class LRMSwarmHandler extends LRMHandler {
         r.add(roll);
         vPhaseReport.addElement(r);
 
-
         // do we hit?
         bMissed = roll < toHit.getValue();
-        
+
         // are we a glancing hit?
         if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
-                r = new  Report(3186);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -149,26 +146,27 @@ public class LRMSwarmHandler extends LRMHandler {
             addHeat();
             handledHeatAndAmmo = true;
         }
-        
+
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
         // the miss later, as we already reported
         // it in doChecks
         boolean missReported = doChecks(vPhaseReport);
-        
+
         nDamPerHit = calcDamagePerHit();
-        
-        //Do we need some sort of special resolution (minefields, artillery,
-        if (specialResolution(vPhaseReport,entityTarget,bMissed)) {
+
+        // Do we need some sort of special resolution (minefields, artillery,
+        if (specialResolution(vPhaseReport, entityTarget, bMissed)) {
             return false;
         }
-        
+
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
 
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg, vPhaseReport, phase)) {
+            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+                    vPhaseReport, phase)) {
                 return false;
             }
         }
@@ -196,7 +194,7 @@ public class LRMSwarmHandler extends LRMHandler {
         }
 
         // Make sure the player knows when his attack causes no damage.
-        if ( hits == 0 ) {
+        if (hits == 0) {
             r = new Report(3365);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
@@ -234,7 +232,8 @@ public class LRMSwarmHandler extends LRMHandler {
         } // Handle the next cluster.
         Report.addNewline(vPhaseReport);
         if (swarmMissilesNowLeft > 0) {
-            Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(), entityTarget, waa.getWeaponId());
+            Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(),
+                    entityTarget, waa.getWeaponId());
             if (swarmTarget != null) {
                 r = new Report(3420);
                 r.subject = ae.getId();
@@ -243,15 +242,15 @@ public class LRMSwarmHandler extends LRMHandler {
                 vPhaseReport.addElement(r);
                 weapon.setUsedThisRound(false);
                 WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                    swarmTarget.getTargetId(), waa.getWeaponId());
+                        swarmTarget.getTargetId(), waa.getWeaponId());
                 newWaa.setSwarmingMissiles(true);
                 newWaa.setSwarmMissiles(swarmMissilesNowLeft);
                 newWaa.setOldTargetId(target.getTargetId());
                 newWaa.setAmmoId(waa.getAmmoId());
                 Mounted m = ae.getEquipment(waa.getWeaponId());
-                Weapon w = (Weapon)m.getType();
+                Weapon w = (Weapon) m.getType();
                 AttackHandler ah = w.fire(newWaa, game, server);
-                LRMSwarmHandler wh = (LRMSwarmHandler)ah;
+                LRMSwarmHandler wh = (LRMSwarmHandler) ah;
                 // attack the new target
                 wh.handledHeatAndAmmo = true;
                 wh.handle(phase, vPhaseReport);
@@ -265,15 +264,17 @@ public class LRMSwarmHandler extends LRMHandler {
         }
         return false;
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity, boolean, megamek.common.Building, java.util.Vector)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
+     *      boolean, megamek.common.Building, java.util.Vector)
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
-            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport,
-            int phase) {
-        super.handleSpecialMiss(entityTarget,targetInBuilding, bldg,
+            boolean targetInBuilding, Building bldg,
+            Vector<Report> vPhaseReport, int phase) {
+        super.handleSpecialMiss(entityTarget, targetInBuilding, bldg,
                 vPhaseReport);
         int swarmMissilesNowLeft = waa.getSwarmMissiles();
         if (swarmMissilesNowLeft == 0) {
@@ -281,7 +282,8 @@ public class LRMSwarmHandler extends LRMHandler {
         }
         ae.setLastTarget(entityTarget.getId());
 
-        Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(), entityTarget, waa.getWeaponId());
+        Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(),
+                entityTarget, waa.getWeaponId());
         if (swarmTarget != null) {
             r = new Report(3420);
             r.subject = ae.getId();
@@ -290,15 +292,15 @@ public class LRMSwarmHandler extends LRMHandler {
             vPhaseReport.addElement(r);
             weapon.setUsedThisRound(false);
             WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                swarmTarget.getTargetId(), waa.getWeaponId());
+                    swarmTarget.getTargetId(), waa.getWeaponId());
             newWaa.setSwarmingMissiles(true);
             newWaa.setSwarmMissiles(swarmMissilesNowLeft);
             newWaa.setOldTargetId(target.getTargetId());
             newWaa.setAmmoId(waa.getAmmoId());
             Mounted m = ae.getEquipment(waa.getWeaponId());
-            Weapon w = (Weapon)m.getType();
+            Weapon w = (Weapon) m.getType();
             AttackHandler ah = w.fire(newWaa, game, server);
-            LRMSwarmHandler wh = (LRMSwarmHandler)ah;
+            LRMSwarmHandler wh = (LRMSwarmHandler) ah;
             // attack the new target
             wh.handledHeatAndAmmo = true;
             wh.handle(phase, vPhaseReport);
@@ -310,9 +312,10 @@ public class LRMSwarmHandler extends LRMHandler {
         }
         return false;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -321,17 +324,18 @@ public class LRMSwarmHandler extends LRMHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor)ae).getShootingStrength();
+                return ((BattleArmor) ae).getShootingStrength();
             }
             return 1;
         }
-        //no AMS for Swarms
+        // no AMS for Swarms
         int missilesHit;
         int nMissilesModifier = 0;
         boolean bWeather = false;
-        boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
+        boolean maxtechmissiles = game.getOptions().booleanOption(
+                "maxtech_mslhitpen");
         if (maxtechmissiles) {
-            if (nRange<=1) {
+            if (nRange <= 1) {
                 nMissilesModifier += 1;
             } else if (nRange <= wtype.getShortRange()) {
                 nMissilesModifier += 0;
@@ -342,30 +346,33 @@ public class LRMSwarmHandler extends LRMHandler {
             }
         }
         if (bGlancing) {
-            nMissilesModifier -=4;
+            nMissilesModifier -= 4;
         }
-        
+
         // weather checks
-        if (game.getOptions().booleanOption("blizzard") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+        if (game.getOptions().booleanOption("blizzard")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
             nMissilesModifier -= 4;
             bWeather = true;
         }
 
-        if (game.getOptions().booleanOption("moderate_winds") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+        if (game.getOptions().booleanOption("moderate_winds")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
             nMissilesModifier -= 2;
             bWeather = true;
         }
-        
-        if (game.getOptions().booleanOption("high_winds")  && wtype.hasFlag(WeaponType.F_MISSILE)) {
+
+        if (game.getOptions().booleanOption("high_winds")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
             nMissilesModifier -= 4;
             bWeather = true;
         }
-        
+
         int swarmMissilesLeft = waa.getSwarmMissiles();
         // swarm or swarm-I shots may just hit with the remaining missiles
         if (swarmMissilesLeft > 0) {
             if (allShotsHit())
-                missilesHit = swarmMissilesLeft;            
+                missilesHit = swarmMissilesLeft;
             else {
                 int swarmsForHitTable = 5;
                 if (swarmMissilesLeft > 5 && swarmMissilesLeft <= 10)
@@ -374,13 +381,16 @@ public class LRMSwarmHandler extends LRMHandler {
                     swarmsForHitTable = 15;
                 else if (swarmMissilesLeft > 15 && swarmMissilesLeft <= 20)
                     swarmsForHitTable = 20;
-                missilesHit = Compute.missilesHit(swarmsForHitTable, nMissilesModifier, maxtechmissiles | bGlancing);
+                missilesHit = Compute.missilesHit(swarmsForHitTable,
+                        nMissilesModifier, maxtechmissiles | bGlancing);
                 if (missilesHit > swarmMissilesLeft) {
                     missilesHit = swarmMissilesLeft;
                 }
-            }            
+            }
         } else {
-            missilesHit = allShotsHit() ? wtype.getRackSize():Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bWeather || bGlancing || maxtechmissiles);
+            missilesHit = allShotsHit() ? wtype.getRackSize() : Compute
+                    .missilesHit(wtype.getRackSize(), nMissilesModifier,
+                            bWeather || bGlancing || maxtechmissiles);
             swarmMissilesLeft = wtype.getRackSize();
         }
         swarmMissilesNowLeft = swarmMissilesLeft - missilesHit;

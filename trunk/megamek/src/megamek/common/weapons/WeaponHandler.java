@@ -50,9 +50,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
     public ToHitData toHit;
     public WeaponAttackAction waa;
     public int roll;
-    
+
     protected IGame game;
-    protected transient Server server; //must not save the server
+    protected transient Server server; // must not save the server
     protected Report r;
     protected boolean bMissed;
     protected boolean bSalvo = false;
@@ -63,7 +63,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected Targetable target;
     protected int subjectId;
     protected int nRange;
-    protected int nDamPerHit;    
+    protected int nDamPerHit;
     protected boolean throughFront;
     protected boolean announcedEntityFiring = false;
     protected boolean missed = false;
@@ -87,23 +87,22 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     /**
-     * 
-     * @param vPhaseReport -
-     *            A <code>Vector</code> containing the phasereport.
+     * @param vPhaseReport - A <code>Vector</code> containing the phasereport.
      * @return a <code>boolean</code> value indicating wether or not the
      *         attack misses because of a failed check.
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         return false;
     }
-    
+
     private void writeObject(ObjectOutputStream out) throws IOException {
         out.defaultWriteObject();
     }
-    
-    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+
+    private void readObject(ObjectInputStream in) throws IOException,
+            ClassNotFoundException {
         in.defaultReadObject();
-        
+
         server = Server.getServerInstance();
     }
 
@@ -119,7 +118,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // and some weapons can't ignite fires.
         if (entityTarget != null
                 && (bldg == null && wtype.getFireTN() != TargetRoll.IMPOSSIBLE)) {
-            server.tryIgniteHex(target.getPosition(), subjectId, false, 11, vPhaseReport);
+            server.tryIgniteHex(target.getPosition(), subjectId, false, 11,
+                    vPhaseReport);
         }
 
         // BMRr, pg. 51: "All shots that were aimed at a target inside
@@ -133,17 +133,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Calculate the number of hits
      * 
-     * @param vPhaseReport -
-     *            the <code>Vector</code> containing the phase report.
+     * @param vPhaseReport - the <code>Vector</code> containing the phase
+     *            report.
      * @return an <code>int</code> containing the number of hits.
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
         // normal BA attacks (non-swarm, non single-trooper weapons)
         // do more than 1 hit
-        if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
+        if (ae instanceof BattleArmor
+                && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
                 && !(ae.getSwarmTargetId() == target.getTargetId())) {
             bSalvo = true;
-            return allShotsHit()?((BattleArmor)ae).getShootingStrength():Compute.missilesHit(((BattleArmor)ae).getShootingStrength());
+            return allShotsHit() ? ((BattleArmor) ae).getShootingStrength()
+                    : Compute.missilesHit(((BattleArmor) ae)
+                            .getShootingStrength());
         }
         return 1;
     }
@@ -248,7 +251,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         nDamPerHit = calcDamagePerHit();
         useAmmo();
         addHeat();
-        
+
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
         // the miss later, as we already reported
@@ -326,7 +329,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 // And we're done!
                 return false;
             }
-            if (entityTarget != null) { 
+            if (entityTarget != null) {
                 handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                         nCluster, nDamPerHit, bldgAbsorbs);
                 server.creditKill(entityTarget, ae);
@@ -345,18 +348,19 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
         // during a swarm, all damage gets applied as one block to one location
-        if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
+        if (ae instanceof BattleArmor
+                && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
-            toReturn *= ((BattleArmor)ae).getShootingStrength();
+            toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn/=10;
+            toReturn /= 10;
         }
         if (bGlancing) {
-            toReturn/=2;
+            toReturn /= 2;
         }
-        return (int)Math.ceil(toReturn);
+        return (int) Math.ceil(toReturn);
     }
 
     /**
@@ -370,17 +374,17 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @param nDamPerHit
      * @param bldgAbsorbs
      */
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-            Building bldg, int hits, int nCluster, int nDamPerHit,
-            int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget,
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int nDamPerHit, int bldgAbsorbs) {
         int nDamage;
         missed = false;
-        
+
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                    .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
-        
-        if ( entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                Compute.targetSideTable(ae, entityTarget)) ) {
+                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+
+        if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
+                .getCover(), Compute.targetSideTable(ae, entityTarget))) {
             // Weapon strikes Partial Cover.
             r = new Report(3460);
             r.subject = subjectId;
@@ -393,7 +397,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             missed = true;
             return;
         }
-        
+
         if (!bSalvo) {
             // Each hit in the salvo get's its own hit location.
             r = new Report(3405);
@@ -413,14 +417,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // Resolve damage normally.
         nDamage = nDamPerHit * Math.min(nCluster, hits);
 
-
         // A building may be damaged, even if the squad is not.
         if (bldgAbsorbs > 0) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding( bldg, nDamage );
-            for (Report report: buildingReport) {
+            Vector<Report> buildingReport = server
+                    .damageBuilding(bldg, nDamage);
+            for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
             vPhaseReport.addAll(buildingReport);
@@ -439,9 +443,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
-            vPhaseReport.addAll(server.damageEntity(
-                    entityTarget, hit, nDamage, false, ae.getSwarmTargetId()==entityTarget.getId()?DamageType.IGNORE_PASSENGER:damageType, false, false,
-                    throughFront));
+            vPhaseReport
+                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                            false, ae.getSwarmTargetId() == entityTarget
+                                    .getId() ? DamageType.IGNORE_PASSENGER
+                                    : damageType, false, false, throughFront));
         }
     }
 
@@ -451,16 +457,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // Only report if damage was done to the building.
         int toBldg = hits * nDamPerHit;
         if (toBldg > 0) {
-            Vector<Report> buildingReport = server.damageBuilding( bldg, toBldg );
-            for (Report report: buildingReport) {
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg);
+            for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
             vPhaseReport.addAll(buildingReport);
         }
     }
 
-    protected void handleIgnitionDamage(Vector<Report> vPhaseReport, Building bldg,
-            boolean bSalvo, int hits) {
+    protected void handleIgnitionDamage(Vector<Report> vPhaseReport,
+            Building bldg, boolean bSalvo, int hits) {
         if (!bSalvo) {
             // hits!
             r = new Report(2270);
@@ -479,8 +485,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
     }
 
-    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg,
-            int nDamage, boolean bSalvo) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport,
+            Building bldg, int nDamage, boolean bSalvo) {
         if (!bSalvo) {
             // hits!
             r = new Report(2270);
@@ -507,8 +513,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         return;
     }
 
-    protected void handleBuildingDamage(Vector<Report> vPhaseReport, Building bldg,
-            int nDamage, boolean bSalvo) {
+    protected void handleBuildingDamage(Vector<Report> vPhaseReport,
+            Building bldg, int nDamage, boolean bSalvo) {
         if (!bSalvo) {
             // hits!
             r = new Report(3390);
@@ -516,8 +522,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.addElement(r);
         }
         Report.addNewline(vPhaseReport);
-        Vector<Report> buildingReport = server.damageBuilding( bldg, nDamage );
-        for (Report report: buildingReport) {
+        Vector<Report> buildingReport = server.damageBuilding(bldg, nDamage);
+        for (Report report : buildingReport) {
             report.subject = subjectId;
         }
         vPhaseReport.addAll(buildingReport);
@@ -528,8 +534,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     protected boolean allShotsHit() {
         if (((target.getTargetType() == Targetable.TYPE_BLDG_IGNITE || target
-                .getTargetType() == Targetable.TYPE_BUILDING)
-                && nRange <= 1) || target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
+                .getTargetType() == Targetable.TYPE_BUILDING) && nRange <= 1)
+                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
             return true;
         }
         return false;
@@ -544,11 +550,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     /**
      * Used for deserialization. DO NOT USE OTHERWISE.
-     *
      */
     protected WeaponHandler() {
     }
-    
+
     // Among other things, basically a refactored Server#preTreatWeaponAttack
     public WeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         damageType = DamageType.NONE;
@@ -588,14 +593,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * special resolution, like minefields and arty
      * 
-     * @param vPhaseReport -
-     *            a <code>Vector</code> containing the phase report
-     * @param entityTarget -
-     *            the <code>Entity</code> targeted, or <code>null</code>,
-     *            if no Entity targeted
-     * @param bMissed -
-     *            a <code>boolean</code> value indicating wether the attack
-     *            missed or hit
+     * @param vPhaseReport - a <code>Vector</code> containing the phase report
+     * @param entityTarget - the <code>Entity</code> targeted, or
+     *            <code>null</code>, if no Entity targeted
+     * @param bMissed - a <code>boolean</code> value indicating wether the
+     *            attack missed or hit
      * @return true when done with processing, false when not
      */
     protected boolean specialResolution(Vector<Report> vPhaseReport,
@@ -610,9 +612,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
     public void setAnnouncedEntityFiring(boolean announcedEntityFiring) {
         this.announcedEntityFiring = announcedEntityFiring;
     }
-    
+
     public WeaponAttackAction getWaa() {
         return waa;
     }
-    
+
 }

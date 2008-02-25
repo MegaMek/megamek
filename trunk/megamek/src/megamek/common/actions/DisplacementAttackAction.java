@@ -20,12 +20,11 @@
 
 package megamek.common.actions;
 
-import megamek.common.*;
+import megamek.common.Coords;
 
 /**
- *
- * @author  Ben
- * @version 
+ * @author Ben
+ * @version
  */
 public class DisplacementAttackAction extends AbstractAttackAction {
 
@@ -41,15 +40,16 @@ public class DisplacementAttackAction extends AbstractAttackAction {
         this.targetPos = targetPos;
     }
 
-    public DisplacementAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
+    public DisplacementAttackAction(int entityId, int targetType, int targetId,
+            Coords targetPos) {
         super(entityId, targetType, targetId);
         this.targetPos = targetPos;
     }
-    
+
     public Coords getTargetPos() {
         return targetPos;
     }
-    
+
     public void setTargetPos(Coords targetPos) {
         this.targetPos = targetPos;
     }

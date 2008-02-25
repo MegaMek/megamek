@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISLB10XACPrototype extends LBXACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4586376672142168553L;
+
     /**
      * 
      */
@@ -51,7 +55,7 @@ public class ISLB10XACPrototype extends LBXACWeapon {
         this.bv = 148;
         this.cost = 400000;
     }
-    
+
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())

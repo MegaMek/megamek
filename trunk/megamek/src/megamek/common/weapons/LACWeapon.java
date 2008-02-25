@@ -26,18 +26,18 @@ import megamek.server.Server;
 
 public abstract class LACWeapon extends AmmoWeapon {
 
-
     public LACWeapon() {
         super();
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         this.ammoType = AmmoType.T_LAC;
         String[] modes = { "", "Rapid" };
         this.setModes(modes);
-        this.explosive = true; //when firing incendiary ammo
+        this.explosive = true; // when firing incendiary ammo
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
      *      megamek.server.Server)
@@ -52,9 +52,9 @@ public abstract class LACWeapon extends AmmoWeapon {
             return new RapidfireACWeaponHandler(toHit, waa, game, server);
         } else if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
             return new ACAPHandler(toHit, waa, game, server);
-        } else if (atype.getMunitionType() ==  AmmoType.M_FLECHETTE) {
+        } else if (atype.getMunitionType() == AmmoType.M_FLECHETTE) {
             return new ACFlechetteHandler(toHit, waa, game, server);
-        } else if (atype.getMunitionType() == AmmoType.M_INCENDIARY_AC){
+        } else if (atype.getMunitionType() == AmmoType.M_INCENDIARY_AC) {
             return new ACIncendiaryHandler(toHit, waa, game, server);
         } else if (atype.getMunitionType() == AmmoType.M_TRACER) {
             return new ACTracerHandler(toHit, waa, game, server);

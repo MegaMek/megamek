@@ -30,34 +30,40 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class PrototypeLBXHandler extends LBXHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5200908977142584431L;
+
     /**
      * @param t
      * @param w
      * @param g
      * @param s
      */
-    public PrototypeLBXHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public PrototypeLBXHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
 
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report> vPhaseReport)
+     * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
+     *      vPhaseReport)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
         // BAs can't mount LBXs
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {            
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             return 1;
         }
         int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
                 .missilesHit(wtype.getRackSize(), -1);
         if (bGlancing) {
-            shotsHit = (int)Math.floor(shotsHit/2.0);
+            shotsHit = (int) Math.floor(shotsHit / 2.0);
         }
         r = new Report(3325);
         r.subject = subjectId;
@@ -72,14 +78,15 @@ public class PrototypeLBXHandler extends LBXHandler {
         bSalvo = true;
         return shotsHit;
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2) {
-            r = new Report(3165); 
+            r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);
             weapon.setHit(true);
@@ -87,5 +94,5 @@ public class PrototypeLBXHandler extends LBXHandler {
             return true;
         }
         return false;
-    }  
+    }
 }

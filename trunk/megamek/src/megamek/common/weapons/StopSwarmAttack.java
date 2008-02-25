@@ -21,10 +21,14 @@ import megamek.common.Infantry;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class StopSwarmAttack extends InfantryAttack {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5682796365154321224L;
+
     public StopSwarmAttack() {
         super();
         this.name = "Stop Swarm Attack";

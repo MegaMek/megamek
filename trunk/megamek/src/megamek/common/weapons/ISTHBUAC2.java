@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISTHBUAC2 extends UACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8027434391024117813L;
+
     /**
      * 
      */

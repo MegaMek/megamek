@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISRAC2 extends RACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7256023025545151994L;
+
     /**
      * 
      */

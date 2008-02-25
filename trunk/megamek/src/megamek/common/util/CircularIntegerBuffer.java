@@ -26,8 +26,9 @@ public class CircularIntegerBuffer {
     private int[] buffer;
 
     /**
-     * Creates the new buffer 
-     * @param size required size 
+     * Creates the new buffer
+     * 
+     * @param size required size
      */
     public CircularIntegerBuffer(int size) {
         buffer = new int[size];
@@ -36,15 +37,15 @@ public class CircularIntegerBuffer {
 
     /**
      * Returns the length of this buffer
+     * 
      * @return length of this buffer
      */
     public int length() {
         return buffer.length;
     }
-    
+
     /**
      * Clears the buffer
-     *
      */
     public void clear() {
         begin = buffer.length - 1;
@@ -53,6 +54,7 @@ public class CircularIntegerBuffer {
 
     /**
      * Adds new value
+     * 
      * @param value value to add
      */
     public void push(int value) {

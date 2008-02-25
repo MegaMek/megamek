@@ -24,7 +24,6 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public abstract class EnergyWeapon extends Weapon {
 
@@ -32,7 +31,7 @@ public abstract class EnergyWeapon extends Weapon {
         this.flags |= F_ENERGY;
 
     }
-    
+
     /*
      * (non-Javadoc)
      * 

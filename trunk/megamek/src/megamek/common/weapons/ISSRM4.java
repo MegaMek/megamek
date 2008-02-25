@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISSRM4 extends SRMWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = 4338199179135810932L;
+
+    /**
+     * 
+     */
     public ISSRM4() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;
         this.name = "SRM 4";
         this.setInternalName(this.name);

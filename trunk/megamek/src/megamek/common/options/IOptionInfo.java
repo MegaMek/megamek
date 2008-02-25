@@ -20,23 +20,26 @@ package megamek.common.options;
 public interface IOptionInfo {
 
     /**
-     * Returns the user friendly name suitable for displaying in the
-     * options editor dialogs etc.
+     * Returns the user friendly name suitable for displaying in the options
+     * editor dialogs etc.
+     * 
      * @return displayable name
      */
     public abstract String getDisplayableName();
 
     /**
-     * Returns the user friendly name suitable for displaying in cases 
-     * where not only the Name but also it value is required (like edge).
+     * Returns the user friendly name suitable for displaying in cases where not
+     * only the Name but also it value is required (like edge).
+     * 
      * @return displayable name
      */
     public abstract String getDisplayableNameWithValue();
 
     /**
-     * Return verbose description of the option suitable for context help, 
-     * tip etc. 
-     * @return option description 
+     * Return verbose description of the option suitable for context help, tip
+     * etc.
+     * 
+     * @return option description
      */
     public abstract String getDescription();
 
@@ -49,5 +52,5 @@ public interface IOptionInfo {
      * returns on which side of the text field the label is.
      */
     public abstract boolean isLabelBeforeTextField();
-    
+
 }

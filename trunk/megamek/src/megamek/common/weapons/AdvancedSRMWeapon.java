@@ -21,7 +21,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public abstract class AdvancedSRMWeapon extends SRMWeapon {
 
@@ -32,7 +31,7 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
         super();
         this.ammoType = AmmoType.T_SRM_ADVANCED;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

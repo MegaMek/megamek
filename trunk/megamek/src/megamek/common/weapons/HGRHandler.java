@@ -31,9 +31,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class HGRHandler extends AmmoWeaponHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6599352761593455842L;
 
     /**
      * @param t
@@ -47,6 +51,7 @@ public class HGRHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
@@ -88,6 +93,6 @@ public class HGRHandler extends AmmoWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn /= 10;
         }
-        return (int)Math.ceil(toReturn);
+        return (int) Math.ceil(toReturn);
     }
 }

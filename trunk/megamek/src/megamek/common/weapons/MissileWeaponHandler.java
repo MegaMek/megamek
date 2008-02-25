@@ -39,7 +39,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class MissileWeaponHandler extends AmmoWeaponHandler {
 
@@ -51,7 +50,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     String sSalvoType = " missile(s) ";
     boolean amsEnganged = false;
     int nSalvoBonus = 0;
-    
+
     /**
      * @param t
      * @param w
@@ -61,19 +60,26 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
             Server s) {
         super(t, w, g, s);
-        //if the attacker is effected by ECM or the target is protected by ECM then
-        //act as if effected.
-        if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition()) || 
-                Compute.isAffectedByAngelECM(ae, ae.getPosition(), target.getPosition())) {
+        // if the attacker is effected by ECM or the target is protected by ECM
+        // then
+        // act as if effected.
+        if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition())
+                || Compute.isAffectedByAngelECM(ae, ae.getPosition(), target
+                        .getPosition())) {
             bECMAffected = true;
-        } else if ( target.getTargetType() == Targetable.TYPE_ENTITY && ( Compute.isProtectedByECM((Entity)target,target.getPosition(),ae.getPosition()) ||
-                Compute.isProtectedByAngelECM((Entity)target,target.getPosition(),ae.getPosition()))) {
+        } else if (target.getTargetType() == Targetable.TYPE_ENTITY
+                && (Compute.isProtectedByECM((Entity) target, target
+                        .getPosition(), ae.getPosition()) || Compute
+                        .isProtectedByAngelECM((Entity) target, target
+                                .getPosition(), ae.getPosition()))) {
             bECMAffected = true;
-        } else bECMAffected = false;
+        } else
+            bECMAffected = false;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -84,12 +90,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 bSalvo = true;
                 r = new Report(3325);
                 r.subject = subjectId;
-                r.add(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength());
+                r.add(wtype.getRackSize()
+                        * ((BattleArmor) ae).getShootingStrength());
                 r.add(sSalvoType);
                 r.add(toHit.getTableDesc());
                 r.newlines = 0;
                 vPhaseReport.add(r);
-                return ((BattleArmor)ae).getShootingStrength();
+                return ((BattleArmor) ae).getShootingStrength();
             }
             r = new Report(3325);
             r.subject = subjectId;
@@ -105,9 +112,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
         boolean bWeather = false;
-        boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
+        boolean maxtechmissiles = game.getOptions().booleanOption(
+                "maxtech_mslhitpen");
         if (maxtechmissiles) {
-            if (nRange<=1) {
+            if (nRange <= 1) {
                 nMissilesModifier += 1;
             } else if (nRange <= wtype.getShortRange()) {
                 nMissilesModifier += 0;
@@ -122,14 +130,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             bMekStealthActive = ae.isStealthActive();
         }
         Mounted mLinker = weapon.getLinkedBy();
-        AmmoType atype = (AmmoType)ammo.getType();
-        if ( (mLinker != null && mLinker.getType() instanceof MiscType &&
-                !mLinker.isDestroyed() && !mLinker.isMissing() &&
-                !mLinker.isBreached() && 
-                mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) &&
-                atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+        AmmoType atype = (AmmoType) ammo.getType();
+        if ((mLinker != null && mLinker.getType() instanceof MiscType
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS))
+                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
             if (bECMAffected) {
-                //ECM prevents bonus
+                // ECM prevents bonus
                 r = new Report(3330);
                 r.subject = subjectId;
                 r.newlines = 0;
@@ -138,24 +146,26 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 nMissilesModifier += 2;
         } else if (atype.getAmmoType() == AmmoType.T_ATM) {
             if (bECMAffected) {
-                //ECM prevents bonus
+                // ECM prevents bonus
                 r = new Report(3330);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             } else
-                nMissilesModifier += 2; 
-        } else if (entityTarget != null &&
-                (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || 
-                 entityTarget.isINarcedBy(ae.getOwner().getTeam()))) {
+                nMissilesModifier += 2;
+        } else if (entityTarget != null
+                && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
+                        .isINarcedBy(ae.getOwner().getTeam()))) {
             // only apply Narc bonus if we're not suffering ECM effect
             // and we are using narc ammo, and we're not firing indirectly.
             if (!bMekStealthActive
-                    && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype.getAmmoType() == AmmoType.T_SRM))
+                    && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype
+                            .getAmmoType() == AmmoType.T_SRM))
                     && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE
-                    && (weapon.curMode() == null || !weapon.curMode().equals("Indirect"))) {
+                    && (weapon.curMode() == null || !weapon.curMode().equals(
+                            "Indirect"))) {
                 if (bECMAffected) {
-                    //ECM prevents bonus
+                    // ECM prevents bonus
                     r = new Report(3330);
                     r.subject = subjectId;
                     r.newlines = 0;
@@ -165,39 +175,47 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             }
         }
         if (bGlancing) {
-            nMissilesModifier -=4;
+            nMissilesModifier -= 4;
         }
 
         // weather checks
-        if (game.getOptions().booleanOption("blizzard") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+        if (game.getOptions().booleanOption("blizzard")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
             nMissilesModifier -= 4;
             bWeather = true;
         }
 
-        if (game.getOptions().booleanOption("moderate_winds") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+        if (game.getOptions().booleanOption("moderate_winds")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
             nMissilesModifier -= 2;
             bWeather = true;
         }
-        
-        if (game.getOptions().booleanOption("high_winds")  && wtype.hasFlag(WeaponType.F_MISSILE)) {
+
+        if (game.getOptions().booleanOption("high_winds")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
             nMissilesModifier -= 4;
             bWeather = true;
         }
-                   
+
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
-        
+
         if (allShotsHit())
-            missilesHit = wtype.getRackSize();            
+            missilesHit = wtype.getRackSize();
         else {
             if (ae instanceof BattleArmor)
-                missilesHit = Compute.missilesHit(wtype.getRackSize()*((BattleArmor)ae).getShootingStrength(),nMissilesModifier, bWeather || bGlancing || maxtechmissiles, weapon.isHotLoaded());
+                missilesHit = Compute.missilesHit(wtype.getRackSize()
+                        * ((BattleArmor) ae).getShootingStrength(),
+                        nMissilesModifier, bWeather || bGlancing
+                                || maxtechmissiles, weapon.isHotLoaded());
             else
-                missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier, bWeather || bGlancing || maxtechmissiles, weapon.isHotLoaded());
+                missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                        nMissilesModifier, bWeather || bGlancing
+                                || maxtechmissiles, weapon.isHotLoaded());
         }
 
-        if ( (target instanceof Mech || target instanceof Tank)
-                && ((Entity)target).getArmorType() == EquipmentType.T_ARMOR_REACTIVE )
+        if ((target instanceof Mech || target instanceof Tank)
+                && ((Entity) target).getArmorType() == EquipmentType.T_ARMOR_REACTIVE)
             missilesHit /= 2;
 
         if (missilesHit > 0) {
@@ -209,7 +227,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
             if (bMekStealthActive) {
-                //stealth prevents bonus
+                // stealth prevents bonus
                 r = new Report(3335);
                 r.subject = subjectId;
                 r.newlines = 0;
@@ -232,17 +250,19 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         bSalvo = true;
         return missilesHit;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
         return 5;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
@@ -250,14 +270,16 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = wtype.getRackSize();
             toReturn /= 5;
-            return (int)Math.ceil(toReturn);
+            return (int) Math.ceil(toReturn);
         }
         return 1;
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity, boolean, megamek.common.Building)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
+     *      boolean, megamek.common.Building)
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
@@ -266,9 +288,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // and some weapons can't ignite fires.
         if (entityTarget != null
                 && (bldg == null && wtype.getFireTN() != TargetRoll.IMPOSSIBLE)) {
-            server.tryIgniteHex(target.getPosition(), subjectId, false, 11, vPhaseReport);
+            server.tryIgniteHex(target.getPosition(), subjectId, false, 11,
+                    vPhaseReport);
         }
-        
+
         // Report any AMS action.
         if (amsEnganged) {
             r = new Report(3230);
@@ -284,19 +307,19 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         return true;
     }
-    
+
     protected int getAMSHitsMod(Vector<Report> vPhaseReport) {
         Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
                 : null;
         if (entityTarget != null) {
-            //any AMS attacks by the target?
+            // any AMS attacks by the target?
             ArrayList<Mounted> lCounters = waa.getCounterEquipment();
             if (null != lCounters) {
                 // resolve AMS counter-fire
                 for (int x = 0; x < lCounters.size(); x++) {
                     Mounted counter = lCounters.get(x);
                     if (counter.getType().hasFlag(WeaponType.F_AMS)
-                                    && !amsEnganged) {
+                            && !amsEnganged) {
 
                         Mounted mAmmo = counter.getLinked();
                         Entity ae = waa.getEntity(game);
@@ -304,23 +327,30 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                                 || !counter.isReady() || counter.isMissing()
                                 // no AMS when a shield in the AMS location
                                 || ae.hasShield()
-                                && ae.hasActiveShield(counter.getLocation(), false)
-                                // AMS only fires against attacks coming into the
+                                && ae.hasActiveShield(counter.getLocation(),
+                                        false)
+                                // AMS only fires against attacks coming into
+                                // the
                                 // arc the ams is covering
-                                || !Compute.isInArc(game, entityTarget.getId(), entityTarget
-                                        .getEquipmentNum(counter), ae)) {
+                                || !Compute.isInArc(game, entityTarget.getId(),
+                                        entityTarget.getEquipmentNum(counter),
+                                        ae)) {
                             continue;
                         }
 
                         // build up some heat (assume target is ams owner)
                         if (counter.getType().hasFlag(WeaponType.F_HEATASDICE))
-                            entityTarget.heatBuildup += Compute.d6(((WeaponType)counter.getType()).getHeat());
+                            entityTarget.heatBuildup += Compute
+                                    .d6(((WeaponType) counter.getType())
+                                            .getHeat());
                         else
-                            entityTarget.heatBuildup += ((WeaponType)counter.getType()).getHeat();
+                            entityTarget.heatBuildup += ((WeaponType) counter
+                                    .getType()).getHeat();
 
                         // decrement the ammo
                         if (mAmmo != null)
-                             mAmmo.setShotsLeft(Math.max(0, mAmmo.getShotsLeft() - 1));
+                            mAmmo.setShotsLeft(Math.max(0,
+                                    mAmmo.getShotsLeft() - 1));
 
                         // set the ams as having fired
                         counter.setUsedThisRound(true);
@@ -335,9 +365,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         return 0;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
     public boolean handle(int phase, Vector<Report> vPhaseReport) {
@@ -373,29 +404,32 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         boolean shotAtNemesisTarget = false;
         if (bNemesisConfusable && !waa.isNemesisConfused()) {
             // loop through nemesis targets
-            for (Enumeration<Entity> e = game.getNemesisTargets(ae, target.getPosition());e.hasMoreElements();) {
+            for (Enumeration<Entity> e = game.getNemesisTargets(ae, target
+                    .getPosition()); e.hasMoreElements();) {
                 Entity entity = e.nextElement();
-                //friendly unit with attached iNarc Nemesis pod standing in the way
+                // friendly unit with attached iNarc Nemesis pod standing in the
+                // way
                 r = new Report(3125);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
                 weapon.setUsedThisRound(false);
                 WeaponAttackAction newWaa = new WeaponAttackAction(ae.getId(),
-                    entity.getTargetId(), waa.getWeaponId());
+                        entity.getTargetId(), waa.getWeaponId());
                 newWaa.setNemesisConfused(true);
                 Entity ae = game.getEntity(waa.getEntityId());
                 Mounted m = ae.getEquipment(waa.getWeaponId());
-                Weapon w = (Weapon)m.getType();
+                Weapon w = (Weapon) m.getType();
                 AttackHandler ah = w.fire(newWaa, game, server);
-                WeaponHandler wh = (WeaponHandler)ah;
+                WeaponHandler wh = (WeaponHandler) ah;
                 // attack the new target, and if we hit it, return;
                 wh.handle(phase, vPhaseReport);
                 // if the new attack hit, we are finished.
-                if (!wh.bMissed) return false;
+                if (!wh.bMissed)
+                    return false;
                 shotAtNemesisTarget = true;
             }
             if (shotAtNemesisTarget) {
-                //back to original target
+                // back to original target
                 r = new Report(3130);
                 r.subject = subjectId;
                 r.newlines = 0;
@@ -409,23 +443,20 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        }
-        else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        }
-        else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        }
-        else {
-            //roll to hit
+        } else {
+            // roll to hit
             r = new Report(3150);
             r.newlines = 0;
             r.subject = subjectId;
@@ -442,12 +473,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
 
         // do we hit?
         bMissed = roll < toHit.getValue();
-        
+
         // are we a glancing hit?
         if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
-                r = new  Report(3186);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -469,20 +500,21 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // the miss later, as we already reported
         // it in doChecks
         boolean missReported = doChecks(vPhaseReport);
-        
+
         nDamPerHit = calcDamagePerHit();
-        
-        //Do we need some sort of special resolution (minefields, artillery,
-        if (specialResolution(vPhaseReport,entityTarget,bMissed)) {
+
+        // Do we need some sort of special resolution (minefields, artillery,
+        if (specialResolution(vPhaseReport, entityTarget, bMissed)) {
             return false;
         }
-        
+
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
 
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg, vPhaseReport)) {
+            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+                    vPhaseReport)) {
                 return false;
             }
         }
@@ -510,7 +542,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
 
         // Make sure the player knows when his attack causes no damage.
-        if ( hits == 0 ) {
+        if (hits == 0) {
             r = new Report(3365);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
@@ -549,32 +581,32 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         Report.addNewline(vPhaseReport);
         return false;
     }
-    
+
     protected boolean isNemesisConfusable() {
         // Are we iNarc Nemesis Confusable?
         boolean isNemesisConfusable = false;
-        AmmoType atype = (AmmoType)weapon.getLinked().getType();
+        AmmoType atype = (AmmoType) weapon.getLinked().getType();
         Mounted mLinker = weapon.getLinkedBy();
-        if ( wtype.getAmmoType() == AmmoType.T_ATM ||
-             ( mLinker != null &&
-               mLinker.getType() instanceof MiscType &&
-               !mLinker.isDestroyed() && !mLinker.isMissing() && !mLinker.isBreached() &&
-               mLinker.getType().hasFlag(MiscType.F_ARTEMIS) ) ) {
-            if ((!weapon.getType().hasModes() ||
-                 !weapon.curMode().equals("Indirect")) &&
-                ( ((atype.getAmmoType() == AmmoType.T_ATM) &&
-                   (atype.getMunitionType() == AmmoType.M_STANDARD ||
-                    atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE ||
-                    atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) ) ||
-                  ((atype.getAmmoType() == AmmoType.T_LRM ||
-                   atype.getAmmoType() == AmmoType.T_SRM) &&
-                  atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE))) {
+        if (wtype.getAmmoType() == AmmoType.T_ATM
+                || (mLinker != null && mLinker.getType() instanceof MiscType
+                        && !mLinker.isDestroyed() && !mLinker.isMissing()
+                        && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                        MiscType.F_ARTEMIS))) {
+            if ((!weapon.getType().hasModes() || !weapon.curMode().equals(
+                    "Indirect"))
+                    && (((atype.getAmmoType() == AmmoType.T_ATM) && (atype
+                            .getMunitionType() == AmmoType.M_STANDARD
+                            || atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE || atype
+                            .getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE)) || ((atype
+                            .getAmmoType() == AmmoType.T_LRM || atype
+                            .getAmmoType() == AmmoType.T_SRM) && atype
+                            .getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE))) {
                 isNemesisConfusable = true;
             }
-        } else if (wtype.getAmmoType() == AmmoType.T_LRM ||
-                   wtype.getAmmoType() == AmmoType.T_SRM) {
-            if (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE ||
-                    atype.getMunitionType() == AmmoType.M_LISTEN_KILL) {
+        } else if (wtype.getAmmoType() == AmmoType.T_LRM
+                || wtype.getAmmoType() == AmmoType.T_SRM) {
+            if (atype.getMunitionType() == AmmoType.M_NARC_CAPABLE
+                    || atype.getMunitionType() == AmmoType.M_LISTEN_KILL) {
                 isNemesisConfusable = true;
             }
         }

@@ -21,7 +21,6 @@ import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.IEntityMovementMode;
 import megamek.common.IGame;
-import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -32,7 +31,6 @@ import megamek.server.Server;
  */
 public abstract class ArtilleryWeapon extends AmmoWeapon {
 
-
     public ArtilleryWeapon() {
         super();
         this.flags |= F_ARTILLERY | F_SPLITABLE;
@@ -40,31 +38,36 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
     }
 
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
      *      megamek.server.Server)
      */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId()).
-        getEquipment(waa.getWeaponId()).getLinked().getType();
+        AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
+                .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_HOMING) {
             if (game.getPhase() == IGame.PHASE_FIRING) {
-                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game, server);
-            } else  {
-                return new ArtilleryWeaponIndirectHomingHandler(toHit, waa, game, server);
-            }            
+                return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game,
+                        server);
+            } else {
+                return new ArtilleryWeaponIndirectHomingHandler(toHit, waa,
+                        game, server);
+            }
         } else if (game.getPhase() == IGame.PHASE_FIRING) {
-            if (waa.getTargetType() == Targetable.TYPE_ENTITY &&
-                    atype.getMunitionType() == AmmoType.M_STANDARD &&
-                    ((Entity)waa.getTarget(game)).getMovementMode() == IEntityMovementMode.VTOL &&
-                    ((Entity)waa.getTarget(game)).getElevation() > 0) {
+            if (waa.getTargetType() == Targetable.TYPE_ENTITY
+                    && atype.getMunitionType() == AmmoType.M_STANDARD
+                    && ((Entity) waa.getTarget(game)).getMovementMode() == IEntityMovementMode.VTOL
+                    && ((Entity) waa.getTarget(game)).getElevation() > 0) {
                 return new ArtilleryWeaponFlakHandler(toHit, waa, game, server);
             }
-            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game, server);
+            return new ArtilleryWeaponDirectFireHandler(toHit, waa, game,
+                    server);
         } else {
-            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game, server);
+            return new ArtilleryWeaponIndirectFireHandler(toHit, waa, game,
+                    server);
         }
     }
 }

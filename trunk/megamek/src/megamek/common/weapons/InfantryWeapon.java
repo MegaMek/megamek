@@ -21,7 +21,6 @@ import megamek.common.AmmoType;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public abstract class InfantryWeapon extends Weapon {
     /**

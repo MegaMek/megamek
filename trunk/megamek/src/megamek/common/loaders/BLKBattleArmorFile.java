@@ -30,7 +30,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.IEntityMovementMode;
 import megamek.common.TechConstants;
-import megamek.common.util.*;
+import megamek.common.util.BuildingBlock;
 
 public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
 
@@ -42,20 +42,24 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
 
         BattleArmor t = new BattleArmor();
 
-        if (!dataFile.exists("name")) throw new EntityLoadingException("Could not find name block.");
+        if (!dataFile.exists("name"))
+            throw new EntityLoadingException("Could not find name block.");
         t.setChassis(dataFile.getDataAsString("Name")[0]);
 
         // Model is not strictly necessary.
-        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
-             t.setModel(dataFile.getDataAsString("Model")[0]);
+        if (dataFile.exists("Model")
+                && dataFile.getDataAsString("Model")[0] != null) {
+            t.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
-             t.setModel("");
+            t.setModel("");
         }
 
-        if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find year block.");
+        if (!dataFile.exists("year"))
+            throw new EntityLoadingException("Could not find year block.");
         t.setYear(dataFile.getDataAsInt("year")[0]);
 
-        if (!dataFile.exists("type")) throw new EntityLoadingException("Could not find type block.");
+        if (!dataFile.exists("type"))
+            throw new EntityLoadingException("Could not find type block.");
 
         if (dataFile.getDataAsString("type")[0].equals("IS Level 1")) {
             t.setTechLevel(TechConstants.T_IS_LEVEL_1);
@@ -76,33 +80,40 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
         }
 
-        if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find weight block.");
+        if (!dataFile.exists("tonnage"))
+            throw new EntityLoadingException("Could not find weight block.");
         t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
 
-        if (!dataFile.exists("BV")) throw new EntityLoadingException("Could not find BV block.");
-        t.setBattleValue( dataFile.getDataAsInt("BV")[0] );
+        if (!dataFile.exists("BV"))
+            throw new EntityLoadingException("Could not find BV block.");
+        t.setBattleValue(dataFile.getDataAsInt("BV")[0]);
 
-        if (!dataFile.exists("motion_type")) throw new EntityLoadingException("Could not find movement block.");
+        if (!dataFile.exists("motion_type"))
+            throw new EntityLoadingException("Could not find movement block.");
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         int nMotion = -1;
-        if(sMotion.equalsIgnoreCase("leg"))
+        if (sMotion.equalsIgnoreCase("leg"))
             nMotion = IEntityMovementMode.INF_LEG;
-        else if(sMotion.equalsIgnoreCase("jump"))
+        else if (sMotion.equalsIgnoreCase("jump"))
             nMotion = IEntityMovementMode.INF_JUMP;
-        else if(sMotion.equalsIgnoreCase("vtol"))
+        else if (sMotion.equalsIgnoreCase("vtol"))
             nMotion = IEntityMovementMode.VTOL;
-        else if(sMotion.equalsIgnoreCase("submarine"))
+        else if (sMotion.equalsIgnoreCase("submarine"))
             nMotion = IEntityMovementMode.INF_UMU;
-        if (nMotion == -1) throw new EntityLoadingException("Invalid movement type: " + sMotion);
+        if (nMotion == -1)
+            throw new EntityLoadingException("Invalid movement type: "
+                    + sMotion);
         t.setMovementMode(nMotion);
 
-        if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");
+        if (!dataFile.exists("cruiseMP"))
+            throw new EntityLoadingException("Could not find cruiseMP block.");
         t.setOriginalRunMP(dataFile.getDataAsInt("cruiseMP")[0]);
 
         if (dataFile.exists("jumpingMP"))
             t.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
 
-        if (!dataFile.exists("armor") ) throw new EntityLoadingException("Could not find armor block.");
+        if (!dataFile.exists("armor"))
+            throw new EntityLoadingException("Could not find armor block.");
 
         int[] armor = dataFile.getDataAsInt("armor");
 
@@ -121,8 +132,8 @@ public class BLKBattleArmorFile extends BLKFile implements IMechLoader {
 
         loadEquipment(t, "Squad", BattleArmor.LOC_SQUAD);
         String[] abbrs = t.getLocationAbbrs();
-        for ( int loop = 1; loop < t.locations(); loop++ ) {
-            loadEquipment( t, abbrs[loop], loop );
+        for (int loop = 1; loop < t.locations(); loop++) {
+            loadEquipment(t, abbrs[loop], loop);
         }
         return t;
     }

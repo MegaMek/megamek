@@ -29,36 +29,35 @@ package megamek.common.loaders;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
 import megamek.common.TechConstants;
-import megamek.common.util.*;
+import megamek.common.util.BuildingBlock;
 
-public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {    
-    
+public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
 
     public BLKGunEmplacementFile(BuildingBlock bb) {
         dataFile = bb;
     }
-      
+
     public Entity getEntity() throws EntityLoadingException {
-    
+
         GunEmplacement e = new GunEmplacement();
-        
+
         if (!dataFile.exists("Name")) {
             throw new EntityLoadingException("Could not find name block.");
         }
         e.setChassis(dataFile.getDataAsString("Name")[0]);
 
-        if (dataFile.exists("Model") &&
-            dataFile.getDataAsString("Model")[0] != null) {
+        if (dataFile.exists("Model")
+                && dataFile.getDataAsString("Model")[0] != null) {
             e.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
             e.setModel("");
         }
-        
+
         if (!dataFile.exists("Year")) {
             throw new EntityLoadingException("Could not find year block.");
         }
         e.setYear(dataFile.getDataAsInt("Year")[0]);
-            
+
         if (!dataFile.exists("Type")) {
             throw new EntityLoadingException("Could not find type block.");
         }
@@ -80,31 +79,32 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
         } else if (dataFile.getDataAsString("Type")[0].equals("Clan Level 3")) {
             e.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
         } else if (dataFile.getDataAsString("Type")[0]
-                   .equals("Mixed (IS Chassis)")) {
+                .equals("Mixed (IS Chassis)")) {
             e.setTechLevel(TechConstants.T_IS_LEVEL_3);
             e.setMixedTech(true);
         } else if (dataFile.getDataAsString("Type")[0]
-                   .equals("Mixed (Clan Chassis)")) {
+                .equals("Mixed (Clan Chassis)")) {
             e.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
             e.setMixedTech(true);
         } else if (dataFile.getDataAsString("Type")[0].equals("Mixed")) {
-            throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+            throw new EntityLoadingException(
+                    "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
         } else {
-            throw new EntityLoadingException
-                ("Unsupported tech level: " +
-                 dataFile.getDataAsString("Type")[0]);
+            throw new EntityLoadingException("Unsupported tech level: "
+                    + dataFile.getDataAsString("Type")[0]);
         }
 
         if (!dataFile.exists("ConstructionFactor")) {
             throw new EntityLoadingException("Could not find block.");
         }
-        e.initConstructionFactor
-            (dataFile.getDataAsInt("ConstructionFactor")[0]);
-            
+        e
+                .initConstructionFactor(dataFile
+                        .getDataAsInt("ConstructionFactor")[0]);
+
         if (dataFile.exists("Height")) {
             e.setHeight(dataFile.getDataAsInt("Height")[0]);
         }
-            
+
         if (dataFile.exists("Turret")) {
             e.setTurret(true);
             e.initTurretArmor(dataFile.getDataAsInt("Turret")[0]);
@@ -117,6 +117,6 @@ public class BLKGunEmplacementFile extends BLKFile implements IMechLoader {
             loadEquipment(e, "Turret", GunEmplacement.LOC_TURRET);
         }
         loadEquipment(e, "Building", GunEmplacement.LOC_BUILDING);
-        return e;        
+        return e;
     }
 }

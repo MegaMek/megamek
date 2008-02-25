@@ -15,10 +15,10 @@
 package megamek.common.net;
 
 /**
- * Instances of this class are sent when Connection established   
+ * Instances of this class are sent when Connection established
  */
 public class ConnectedEvent extends ConnectionEvent {
-    
+
     /**
      * 
      */
@@ -26,10 +26,11 @@ public class ConnectedEvent extends ConnectionEvent {
 
     /**
      * Constructs connection event
+     * 
      * @param source The object on which the Event initially occurred.
      */
     public ConnectedEvent(Object source) {
         super(source, CONNECTED);
     }
-    
+
 }

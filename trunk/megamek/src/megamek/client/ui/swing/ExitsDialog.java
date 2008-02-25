@@ -1,15 +1,16 @@
 package megamek.client.ui.swing;
 
-import javax.swing.JDialog;
+import java.awt.BorderLayout;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.GridBagLayout;
-import java.awt.BorderLayout;
 
 /**
  * A dialog of which exits are connected for terrain.
@@ -31,7 +32,8 @@ public class ExitsDialog extends JDialog implements ActionListener {
     private JPanel panWest = new JPanel(new BorderLayout());
     private JPanel panEast = new JPanel(new BorderLayout());
     private JPanel panExits = new JPanel(new BorderLayout());
-    private JButton butDone = new JButton(Messages.getString("BoardEditor.Done")); //$NON-NLS-1$
+    private JButton butDone = new JButton(Messages
+            .getString("BoardEditor.Done")); //$NON-NLS-1$
 
     ExitsDialog(JFrame frame) {
         super(frame, Messages.getString("BoardEditor.SetExits"), true); //$NON-NLS-1$
@@ -52,8 +54,9 @@ public class ExitsDialog extends JDialog implements ActionListener {
         getContentPane().add(panExits, BorderLayout.CENTER);
         getContentPane().add(butDone, BorderLayout.SOUTH);
         pack();
-        setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
-                frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2
+                - getSize().width / 2, frame.getLocation().y
+                + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void setExits(int exits) {

@@ -17,9 +17,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class CLStreakLRM5 extends LRMWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5240577239366457930L;
 
     /**
      * 

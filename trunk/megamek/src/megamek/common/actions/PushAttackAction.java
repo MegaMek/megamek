@@ -30,81 +30,83 @@ import megamek.common.ToHitData;
 /**
  * The attacker pushes the target.
  */
-public class PushAttackAction
-    extends DisplacementAttackAction
-{
+public class PushAttackAction extends DisplacementAttackAction {
     /**
-	 * Static Serial.
-	 */
-	private static final long serialVersionUID = 6878038939232914083L;
+     * Static Serial.
+     */
+    private static final long serialVersionUID = 6878038939232914083L;
 
-
-	public PushAttackAction(int entityId, int targetId, Coords targetPos) {
+    public PushAttackAction(int entityId, int targetId, Coords targetPos) {
         super(entityId, targetId, targetPos);
     }
 
-    public PushAttackAction(int entityId, int targetType, int targetId, Coords targetPos) {
+    public PushAttackAction(int entityId, int targetType, int targetId,
+            Coords targetPos) {
         super(entityId, targetType, targetId, targetPos);
     }
-    
+
     public ToHitData toHit(IGame game) {
-        return toHit(game, getEntityId(),
-                game.getTarget(getTargetType(), getTargetId()));
+        return toHit(game, getEntityId(), game.getTarget(getTargetType(),
+                getTargetId()));
     }
-    
+
     /**
-     * pushes are impossible when physical attacks are impossible, or
-     * a retractable blade is extended
+     * pushes are impossible when physical attacks are impossible, or a
+     * retractable blade is extended
+     * 
      * @param game
      * @param ae
      * @param target
      * @return
      */
-    protected static String toHitIsImpossible(IGame game, Entity ae, Targetable target) {
-        String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(game, ae, target);
+    protected static String toHitIsImpossible(IGame game, Entity ae,
+            Targetable target) {
+        String physicalImpossible = PhysicalAttackAction.toHitIsImpossible(
+                game, ae, target);
         String extendedBladeImpossible = null;
-        if (ae instanceof Mech && ((Mech)ae).hasExtendedRetractableBlade())
+        if (ae instanceof Mech && ((Mech) ae).hasExtendedRetractableBlade())
             extendedBladeImpossible = "Extended retractable blade";
         if (physicalImpossible != null)
             return physicalImpossible;
         return extendedBladeImpossible;
     }
 
-
     /**
      * To-hit number for the mech to push another mech
      */
-    public static ToHitData toHit(IGame game,
-                                      int attackerId,
-                                      Targetable target) {
+    public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
 
         int targetId = Entity.NONE;
         Entity te = null;
-        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
+        if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
             targetId = target.getTargetId();
         }
 
         if (ae == null)
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "You can't attack from a null entity!");
         if (te == null)
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't target a null entity!");
-  
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "You can't target a null entity!");
+
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(te.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
-        final int targetElevation = target.getElevation() + targHex.getElevation();
-        final boolean targetInBuilding = Compute.isInBuilding( game, te );
+        final int targetElevation = target.getElevation()
+                + targHex.getElevation();
+        final boolean targetInBuilding = Compute.isInBuilding(game, te);
         Building bldg = null;
-        if ( targetInBuilding ) {
-            bldg = game.getBoard().getBuildingAt( te.getPosition() );
+        if (targetInBuilding) {
+            bldg = game.getBoard().getBuildingAt(te.getPosition());
         }
         ToHitData toHit = null;
 
         // can't target yourself
         if (ae.equals(te)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't target yourself");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "You can't target yourself");
         }
 
         // non-mechs can't push
@@ -112,78 +114,90 @@ public class PushAttackAction
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Non-mechs can't push");
         }
 
-        //Quads can't push
-        if ( ae.entityIsQuad() ) {
+        // Quads can't push
+        if (ae.entityIsQuad()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is a quad");
         }
 
-        //Can only push mechs
-        if (!(te instanceof Mech) ) {
+        // Can only push mechs
+        if (!(te instanceof Mech)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not a mech");
         }
 
-        //Can't push with flipped arms
+        // Can't push with flipped arms
         if (ae.getArmsFlipped()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Arms are flipped to the rear. Can not push.");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Arms are flipped to the rear. Can not push.");
         }
 
         // Can't target a transported entity.
-        if ( Entity.NONE != te.getTransportId() ) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is a passenger.");
+        if (Entity.NONE != te.getTransportId()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Target is a passenger.");
         }
 
         // Can't target a entity conducting a swarm attack.
-        if ( Entity.NONE != te.getSwarmTargetId() ) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is swarming a Mek.");
+        if (Entity.NONE != te.getSwarmTargetId()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Target is swarming a Mek.");
         }
 
         // check if both arms are present
-        if (ae.isLocationBad(Mech.LOC_RARM)
-            || ae.isLocationBad(Mech.LOC_LARM)) {
+        if (ae.isLocationBad(Mech.LOC_RARM) || ae.isLocationBad(Mech.LOC_LARM)) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Arm missing");
         }
 
         // check if attacker has fired arm-mounted weapons
         if (ae.weaponFiredFrom(Mech.LOC_RARM)
-        || ae.weaponFiredFrom(Mech.LOC_LARM)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapons fired from arm this turn");
+                || ae.weaponFiredFrom(Mech.LOC_LARM)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Weapons fired from arm this turn");
         }
 
         // check range
-        if (ae.getPosition().distance(target.getPosition()) > 1 ) {
+        if (ae.getPosition().distance(target.getPosition()) > 1) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not in range");
         }
 
         // target must be at same elevation
         if (attackerElevation != targetElevation) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not at same elevation");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Target not at same elevation");
         }
 
         // can't push mech making non-pushing displacement attack
-        if ( te.hasDisplacementAttack() && !te.isPushing() ) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is making a charge/DFA attack");
+        if (te.hasDisplacementAttack() && !te.isPushing()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Target is making a charge/DFA attack");
         }
 
         // can't push mech pushing another, different mech
-        if ( te.isPushing() &&
-             te.getDisplacementAttack().getTargetId() != ae.getId() ) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is pushing another mech");
+        if (te.isPushing()
+                && te.getDisplacementAttack().getTargetId() != ae.getId()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Target is pushing another mech");
         }
 
         // can't do anything but counter-push if the target of another attack
-        if (ae.isTargetOfDisplacementAttack() && ae.findTargetedDisplacement().getEntityId() != target.getTargetId()) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is the target of another push/charge/DFA");
+        if (ae.isTargetOfDisplacementAttack()
+                && ae.findTargetedDisplacement().getEntityId() != target
+                        .getTargetId()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Attacker is the target of another push/charge/DFA");
         }
 
         // can't attack the target of another displacement attack
-        if ( te.isTargetOfDisplacementAttack() &&
-             te.findTargetedDisplacement().getEntityId() != ae.getId() ) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is the target of another push/charge/DFA");
+        if (te.isTargetOfDisplacementAttack()
+                && te.findTargetedDisplacement().getEntityId() != ae.getId()) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Target is the target of another push/charge/DFA");
         }
 
         // check facing
-        if (!target.getPosition().equals(ae.getPosition().translated(ae.getFacing()))) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target not directly ahead of feet");
+        if (!target.getPosition().equals(
+                ae.getPosition().translated(ae.getFacing()))) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Target not directly ahead of feet");
         }
 
         // can't push while prone
@@ -192,18 +206,19 @@ public class PushAttackAction
         }
 
         // can't push prone mechs
-        if ( te.isProne()) {
+        if (te.isProne()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is prone");
         }
 
         // Can't target units in buildings (from the outside).
-        if ( targetInBuilding ) {
-            if ( !Compute.isInBuilding(game, ae) ) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is inside building" );
-            }
-            else if ( !game.getBoard().getBuildingAt( ae.getPosition() )
-                      .equals( bldg ) ) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is inside differnt building" );
+        if (targetInBuilding) {
+            if (!Compute.isInBuilding(game, ae)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Target is inside building");
+            } else if (!game.getBoard().getBuildingAt(ae.getPosition()).equals(
+                    bldg)) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Target is inside differnt building");
             }
         }
 
@@ -215,13 +230,13 @@ public class PushAttackAction
         }
 
         // Can't target woods or ignite a building with a physical.
-        if ( target.getTargetType() == Targetable.TYPE_BLDG_IGNITE ||
-             target.getTargetType() == Targetable.TYPE_HEX_CLEAR ||
-             target.getTargetType() == Targetable.TYPE_HEX_IGNITE ) {
-            return new ToHitData( TargetRoll.IMPOSSIBLE, "Invalid attack");
+        if (target.getTargetType() == Targetable.TYPE_BLDG_IGNITE
+                || target.getTargetType() == Targetable.TYPE_HEX_CLEAR
+                || target.getTargetType() == Targetable.TYPE_HEX_IGNITE) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Invalid attack");
         }
 
-        //Set the base BTH
+        // Set the base BTH
         int base = ae.getCrew().getPiloting() - 1;
 
         toHit = new ToHitData(base, "base");
@@ -252,8 +267,7 @@ public class PushAttackAction
         }
 
         // water partial cover?
-        if (te.height() > 0
-                && te.getElevation() == -1
+        if (te.height() > 0 && te.getElevation() == -1
                 && targHex.terrainLevel(Terrains.WATER) == te.height()) {
             toHit.addModifier(3, "target has partial cover");
         }
@@ -265,16 +279,21 @@ public class PushAttackAction
 
         toHit.append(nightModifiers(game, target, null, ae));
         // side and elevation shouldn't matter
-        
-        // If it has a torso-mounted cockpit and two head sensor hits or three sensor hits...
+
+        // If it has a torso-mounted cockpit and two head sensor hits or three
+        // sensor hits...
         // It gets a =4 penalty for being blind!
-        if (((Mech)ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
-            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+        if (((Mech) ae).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+            int sensorHits = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+            int sensorHits2 = ae.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
-                return new ToHitData(TargetRoll.IMPOSSIBLE, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                        "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
-                toHit.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                toHit.addModifier(4,
+                        "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
 

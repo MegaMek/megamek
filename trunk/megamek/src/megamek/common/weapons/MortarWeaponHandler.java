@@ -23,15 +23,20 @@ import megamek.server.Server;
 
 public class MortarWeaponHandler extends PulseLaserWeaponHandler {
     /**
+     * 
+     */
+    private static final long serialVersionUID = -7274780412265916074L;
+
+    /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public MortarWeaponHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public MortarWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -40,7 +45,8 @@ public class MortarWeaponHandler extends PulseLaserWeaponHandler {
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             return Compute.d6();
-        } else return super.calcDamagePerHit();
-    }        
+        } else
+            return super.calcDamagePerHit();
+    }
 
 }

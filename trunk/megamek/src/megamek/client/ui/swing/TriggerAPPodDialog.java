@@ -14,17 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import megamek.common.Entity;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.actions.TriggerAPPodAction;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -38,12 +27,23 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+
+import megamek.common.Entity;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.actions.TriggerAPPodAction;
+
 /**
- * A dialog displayed to the player when they have an opportunity to
- * trigger an Anti-Personell Pod on one of their units.
+ * A dialog displayed to the player when they have an opportunity to trigger an
+ * Anti-Personell Pod on one of their units.
  */
-public class TriggerAPPodDialog
-        extends JDialog implements ActionListener {
+public class TriggerAPPodDialog extends JDialog implements ActionListener {
     /**
      * 
      */
@@ -86,7 +86,7 @@ public class TriggerAPPodDialog
 
         /**
          * See if this AP Pod should be triggered
-         *
+         * 
          * @return <code>true</code> if the pod should be triggered.
          */
         public boolean isTriggered() {
@@ -95,7 +95,7 @@ public class TriggerAPPodDialog
 
         /**
          * Get the equipment number of this AP Pod.
-         *
+         * 
          * @return the <code>int</code> of the pod.
          */
         public int getNum() {
@@ -104,9 +104,9 @@ public class TriggerAPPodDialog
     }
 
     /**
-     * Display a dialog that shows the AP Pods on the entity, and allows
-     * the player to fire any active pods.
-     *
+     * Display a dialog that shows the AP Pods on the entity, and allows the
+     * player to fire any active pods.
+     * 
      * @param parent the <code>Frame</code> parent of this dialog
      * @param entity the <code>Entity</code> that can fire AP Pods.
      */
@@ -114,7 +114,10 @@ public class TriggerAPPodDialog
         super(parent, Messages.getString("TriggerAPPodDialog.title"), true); //$NON-NLS-1$
         entityId = entity.getId();
 
-        labMessage = new JTextArea(Messages.getString("TriggerAPPodDialog.selectPodsToTrigger", new Object[]{entity.getDisplayName()})); //$NON-NLS-1$
+        labMessage = new JTextArea(
+                Messages
+                        .getString(
+                                "TriggerAPPodDialog.selectPodsToTrigger", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$
         labMessage.setEditable(false);
         labMessage.setOpaque(false);
 
@@ -138,12 +141,12 @@ public class TriggerAPPodDialog
 
                 // Can the entity fire the pod?
                 if (mount.canFire()) {
-                    // Yup.  Add a traker for this pod.
-                    TriggerPodTracker tracker = new TriggerPodTracker
-                            (pod, entity.getEquipmentNum(mount));
+                    // Yup. Add a traker for this pod.
+                    TriggerPodTracker tracker = new TriggerPodTracker(pod,
+                            entity.getEquipmentNum(mount));
                     trackers.add(tracker);
                 } else {
-                    // Nope.  Disable the checkbox.
+                    // Nope. Disable the checkbox.
                     pod.setEnabled(false);
                 }
 
@@ -153,7 +156,7 @@ public class TriggerAPPodDialog
 
         // OK button.
         butOkay.addActionListener(this);
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -198,8 +201,9 @@ public class TriggerAPPodDialog
             size = getSize();
         }
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width / 2 - size.width / 2,
-                parent.getLocation().y + parent.getSize().height / 2 - size.height / 2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - size.width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - size.height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -208,7 +212,7 @@ public class TriggerAPPodDialog
 
     /**
      * Get the trigger actions that the user selected.
-     *
+     * 
      * @return the <code>Enumeration</code> of <code>TriggerAPPodAction</code>
      *         objects that match the user's selections.
      */
@@ -220,8 +224,7 @@ public class TriggerAPPodDialog
 
             // Should we create an action for this pod?
             if (pod.isTriggered()) {
-                temp.addElement(new TriggerAPPodAction
-                        (entityId, pod.getNum()));
+                temp.addElement(new TriggerAPPodAction(entityId, pod.getNum()));
             }
         }
 

@@ -56,8 +56,8 @@ import megamek.common.util.BoardUtilities;
 /**
  * @author Ben
  */
-public class BoardSelectionDialog
-        extends JDialog implements ActionListener, IMapSettingsObserver, ListSelectionListener {
+public class BoardSelectionDialog extends JDialog implements ActionListener,
+        IMapSettingsObserver, ListSelectionListener {
     /**
      * 
      */
@@ -69,12 +69,14 @@ public class BoardSelectionDialog
 
     private JPanel panMapSize = new JPanel();
 
-    private JLabel labBoardSize = new JLabel(Messages.getString("BoardSelectionDialog.BoardSize"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JLabel labBoardSize = new JLabel(Messages
+            .getString("BoardSelectionDialog.BoardSize"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JLabel labBoardDivider = new JLabel("x", SwingConstants.CENTER); //$NON-NLS-1$
     private JTextField texBoardWidth = new JTextField(2);
     private JTextField texBoardHeight = new JTextField(2);
 
-    private JLabel labMapSize = new JLabel(Messages.getString("BoardSelectionDialog.MapSize"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private JLabel labMapSize = new JLabel(Messages
+            .getString("BoardSelectionDialog.MapSize"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JLabel labMapDivider = new JLabel("x", SwingConstants.CENTER); //$NON-NLS-1$
     private JTextField texMapWidth = new JTextField(2);
     private JTextField texMapHeight = new JTextField(2);
@@ -83,32 +85,40 @@ public class BoardSelectionDialog
     private JPanel panMapButtons = new JPanel();
 
     private JPanel panBoardsSelected = new JPanel();
-    private JLabel labBoardsSelected = new JLabel(Messages.getString("BoardSelectionDialog.MapsSelected"), SwingConstants.CENTER); //$NON-NLS-1$
+    private JLabel labBoardsSelected = new JLabel(
+            Messages.getString("BoardSelectionDialog.MapsSelected"), SwingConstants.CENTER); //$NON-NLS-1$
     private JList lisBoardsSelected = new JList(new DefaultListModel());
-    private JCheckBox chkSelectAll = new JCheckBox(Messages.getString("BoardSelectionDialog.SelectAll")); //$NON-NLS-1$
+    private JCheckBox chkSelectAll = new JCheckBox(Messages
+            .getString("BoardSelectionDialog.SelectAll")); //$NON-NLS-1$
 
     private JButton butChange = new JButton("<<"); //$NON-NLS-1$
 
     private JPanel panBoardsAvailable = new JPanel();
-    private JLabel labBoardsAvailable = new JLabel(Messages.getString("BoardSelectionDialog.mapsAvailable"), SwingConstants.CENTER); //$NON-NLS-1$
+    private JLabel labBoardsAvailable = new JLabel(
+            Messages.getString("BoardSelectionDialog.mapsAvailable"), SwingConstants.CENTER); //$NON-NLS-1$
     private JList lisBoardsAvailable = new JList(new DefaultListModel());
-    private JCheckBox chkRotateBoard = new JCheckBox(Messages.getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
+    private JCheckBox chkRotateBoard = new JCheckBox(Messages
+            .getString("BoardSelectionDialog.RotateBoard")); //$NON-NLS-1$
 
     private JPanel panButtons = new JPanel();
-    private JButton butUpdate = new JButton(Messages.getString("BoardSelectionDialog.UpdateSize")); //$NON-NLS-1$
-    private JButton butRandomMap = new JButton(Messages.getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
+    private JButton butUpdate = new JButton(Messages
+            .getString("BoardSelectionDialog.UpdateSize")); //$NON-NLS-1$
+    private JButton butRandomMap = new JButton(Messages
+            .getString("BoardSelectionDialog.GeneratedMapSettings")); //$NON-NLS-1$
     private JLabel labButtonSpace = new JLabel("", SwingConstants.CENTER); //$NON-NLS-1$
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
-    private JButton butPreview = new JButton(Messages.getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$
-    
+    private JButton butPreview = new JButton(Messages
+            .getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$
+
     JDialog mapPreviewW;
 
     /**
      * Creates new BoardSelectionDialog
      */
     public BoardSelectionDialog(ClientGUI client) {
-        super(client.frame, Messages.getString("BoardSelectionDialog.EditBoardLaout"), true); //$NON-NLS-1$
+        super(client.frame, Messages
+                .getString("BoardSelectionDialog.EditBoardLaout"), true); //$NON-NLS-1$
         this.client = client;
         mapSettings = (MapSettings) client.getClient().getMapSettings().clone();
         setResizable(true);
@@ -121,7 +131,7 @@ public class BoardSelectionDialog
         setupButtons();
 
         butChange.addActionListener(this);
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -149,9 +159,10 @@ public class BoardSelectionDialog
 
         gridbag.setConstraints(panButtons, c);
         getContentPane().add(panButtons);
-        
-        mapPreviewW = new JDialog(this.client.frame, Messages.getString("BoardSelectionDialog.MapPreview"), false); //$NON-NLS-1$
-        
+
+        mapPreviewW = new JDialog(this.client.frame, Messages
+                .getString("BoardSelectionDialog.MapPreview"), false); //$NON-NLS-1$
+
         mapPreviewW.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
@@ -167,8 +178,9 @@ public class BoardSelectionDialog
 
         pack();
         setResizable(false);
-        setLocation(client.frame.getLocation().x + client.frame.getSize().width / 2 - getSize().width / 2,
-                client.frame.getLocation().y + client.frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(client.frame.getLocation().x + client.frame.getSize().width
+                / 2 - getSize().width / 2, client.frame.getLocation().y
+                + client.frame.getSize().height / 2 - getSize().height / 2);
     }
 
     /**
@@ -227,25 +239,29 @@ public class BoardSelectionDialog
     private void setupSelected() {
         refreshBoardsSelected();
         lisBoardsSelected.addListSelectionListener(this);
-        lisBoardsSelected.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        lisBoardsSelected
+                .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         chkSelectAll.addActionListener(this);
 
         panBoardsSelected.setLayout(new BorderLayout());
 
         panBoardsSelected.add(labBoardsSelected, BorderLayout.NORTH);
-        panBoardsSelected.add(new JScrollPane(lisBoardsSelected), BorderLayout.CENTER);
+        panBoardsSelected.add(new JScrollPane(lisBoardsSelected),
+                BorderLayout.CENTER);
         panBoardsSelected.add(chkSelectAll, BorderLayout.SOUTH);
     }
 
     private void setupAvailable() {
         refreshBoardsAvailable();
         lisBoardsAvailable.addListSelectionListener(this);
-        lisBoardsAvailable.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        lisBoardsAvailable
+                .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 
         panBoardsAvailable.setLayout(new BorderLayout());
 
         panBoardsAvailable.add(labBoardsAvailable, BorderLayout.NORTH);
-        panBoardsAvailable.add(new JScrollPane(lisBoardsAvailable), BorderLayout.CENTER);
+        panBoardsAvailable.add(new JScrollPane(lisBoardsAvailable),
+                BorderLayout.CENTER);
         panBoardsAvailable.add(chkRotateBoard, BorderLayout.SOUTH);
     }
 
@@ -255,7 +271,7 @@ public class BoardSelectionDialog
         butCancel.addActionListener(this);
         butRandomMap.addActionListener(this);
         butPreview.addActionListener(this);
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -273,7 +289,7 @@ public class BoardSelectionDialog
 
         gridbag.setConstraints(butRandomMap, c);
         panButtons.add(butRandomMap);
-        
+
         gridbag.setConstraints(butPreview, c);
         panButtons.add(butPreview);
 
@@ -306,11 +322,13 @@ public class BoardSelectionDialog
     private void refreshMapButtons() {
         panMapButtons.removeAll();
 
-        panMapButtons.setLayout(new GridLayout(mapSettings.getMapHeight(), mapSettings.getMapWidth()));
+        panMapButtons.setLayout(new GridLayout(mapSettings.getMapHeight(),
+                mapSettings.getMapWidth()));
 
         for (int i = 0; i < mapSettings.getMapHeight(); i++) {
             for (int j = 0; j < mapSettings.getMapWidth(); j++) {
-                JButton button = new JButton(Integer.toString(i * mapSettings.getMapWidth() + j));
+                JButton button = new JButton(Integer.toString(i
+                        * mapSettings.getMapWidth() + j));
                 button.addActionListener(this);
                 panMapButtons.add(button);
             }
@@ -323,14 +341,16 @@ public class BoardSelectionDialog
         ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
         int index = 0;
         for (Iterator<String> i = mapSettings.getBoardsSelected(); i.hasNext();) {
-            ((DefaultListModel) lisBoardsSelected.getModel()).addElement(index++ + ": " + i.next()); //$NON-NLS-1$
+            ((DefaultListModel) lisBoardsSelected.getModel())
+                    .addElement(index++ + ": " + i.next()); //$NON-NLS-1$
         }
         lisBoardsSelected.setSelectedIndex(0);
         refreshSelectAllCheck();
     }
 
     private void refreshSelectAllCheck() {
-        boolean newVal = lisBoardsSelected.getSelectedIndices().length == lisBoardsSelected.getModel().getSize();
+        boolean newVal = lisBoardsSelected.getSelectedIndices().length == lisBoardsSelected
+                .getModel().getSize();
         if (chkSelectAll.isSelected() != newVal)
             chkSelectAll.setSelected(newVal);
     }
@@ -338,7 +358,8 @@ public class BoardSelectionDialog
     private void refreshBoardsAvailable() {
         ((DefaultListModel) lisBoardsAvailable.getModel()).removeAllElements();
         for (Iterator<String> i = mapSettings.getBoardsAvailable(); i.hasNext();) {
-            ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(i.next());
+            ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(i
+                    .next());
         }
     }
 
@@ -349,12 +370,13 @@ public class BoardSelectionDialog
         int[] selected = lisBoardsSelected.getSelectedIndices();
         for (final int newVar : selected) {
             String name = board;
-            if (!MapSettings.BOARD_RANDOM.equals(name) &&
-                    !MapSettings.BOARD_SURPRISE.equals(name) &&
-                    chkRotateBoard.isSelected()) {
+            if (!MapSettings.BOARD_RANDOM.equals(name)
+                    && !MapSettings.BOARD_SURPRISE.equals(name)
+                    && chkRotateBoard.isSelected()) {
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }
-            ((DefaultListModel) lisBoardsSelected.getModel()).setElementAt(newVar + ": " + name, newVar); //$NON-NLS-1$
+            ((DefaultListModel) lisBoardsSelected.getModel()).setElementAt(
+                    newVar + ": " + name, newVar); //$NON-NLS-1$
             mapSettings.getBoardsSelectedVector().set(newVar, name);
         }
         lisBoardsSelected.setSelectedIndices(selected);
@@ -369,7 +391,7 @@ public class BoardSelectionDialog
         int boardHeight;
         int mapWidth;
         int mapHeight;
-        
+
         // read map size settings
         try {
             boardWidth = Integer.parseInt(texBoardWidth.getText());
@@ -377,13 +399,20 @@ public class BoardSelectionDialog
             mapWidth = Integer.parseInt(texMapWidth.getText());
             mapHeight = Integer.parseInt(texMapHeight.getText());
         } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(client.frame, Messages.getString("BoardSelectionDialog.InvalidNumberOfmaps"), Messages.getString("BoardSelectionDialog.InvalidMapSize"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(client.frame, Messages
+                    .getString("BoardSelectionDialog.InvalidNumberOfmaps"),
+                    Messages.getString("BoardSelectionDialog.InvalidMapSize"),
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         // check settings
-        if (boardHeight <= 0 || boardHeight <= 0 || mapWidth <= 0 || mapHeight <= 0) {
-            JOptionPane.showMessageDialog(client.frame, Messages.getString("BoardSelectionDialog.MapSizeMustBeGreateter0"), Messages.getString("BoardSelectionDialog.InvalidMapSize"), JOptionPane.ERROR_MESSAGE);
+        if (boardHeight <= 0 || boardHeight <= 0 || mapWidth <= 0
+                || mapHeight <= 0) {
+            JOptionPane.showMessageDialog(client.frame, Messages
+                    .getString("BoardSelectionDialog.MapSizeMustBeGreateter0"),
+                    Messages.getString("BoardSelectionDialog.InvalidMapSize"),
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -398,17 +427,19 @@ public class BoardSelectionDialog
         refreshMapButtons();
 
         ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
-        ((DefaultListModel) lisBoardsSelected.getModel()).addElement(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
+        ((DefaultListModel) lisBoardsSelected.getModel()).addElement(Messages
+                .getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
         ((DefaultListModel) lisBoardsAvailable.getModel()).removeAllElements();
-        ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
+        ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(Messages
+                .getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
         client.getClient().sendMapQuery(mapSettings);
     }
 
     /**
-     * Updates to show the map settings that have, presumably, just been sent
-     * by the server.
+     * Updates to show the map settings that have, presumably, just been sent by
+     * the server.
      */
     public void update(MapSettings mapSettings, boolean updateSize) {
         this.mapSettings = (MapSettings) mapSettings.clone();
@@ -426,16 +457,34 @@ public class BoardSelectionDialog
      */
     private void send() {
         // check that they haven't modified the map size settings
-        if (!texBoardWidth.getText().equals(Integer.toString(mapSettings.getBoardWidth()))
-                || !texBoardHeight.getText().equals(Integer.toString(mapSettings.getBoardHeight()))
-                || !texMapWidth.getText().equals(Integer.toString(mapSettings.getMapWidth()))
-                || !texMapHeight.getText().equals(Integer.toString(mapSettings.getMapHeight()))) {
-            JOptionPane.showMessageDialog(client.frame, Messages.getString("BoardSelectionDialog.UpdateMapSize.message"), Messages.getString("BoardSelectionDialog.UpdateMapSize.title"), JOptionPane.ERROR_MESSAGE);
+        if (!texBoardWidth.getText().equals(
+                Integer.toString(mapSettings.getBoardWidth()))
+                || !texBoardHeight.getText().equals(
+                        Integer.toString(mapSettings.getBoardHeight()))
+                || !texMapWidth.getText().equals(
+                        Integer.toString(mapSettings.getMapWidth()))
+                || !texMapHeight.getText().equals(
+                        Integer.toString(mapSettings.getMapHeight()))) {
+            JOptionPane
+                    .showMessageDialog(
+                            client.frame,
+                            Messages
+                                    .getString("BoardSelectionDialog.UpdateMapSize.message"),
+                            Messages
+                                    .getString("BoardSelectionDialog.UpdateMapSize.title"),
+                            JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         if (mapSettings.getBoardsAvailableVector().size() <= 0) {
-            JOptionPane.showMessageDialog(client.frame, Messages.getString("BoardSelectionDialog.NoBoardOfSelectedSize.message"), Messages.getString("BoardSelectionDialog.NoBoardOfSelectedSize.title"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane
+                    .showMessageDialog(
+                            client.frame,
+                            Messages
+                                    .getString("BoardSelectionDialog.NoBoardOfSelectedSize.message"),
+                            Messages
+                                    .getString("BoardSelectionDialog.NoBoardOfSelectedSize.title"),
+                            JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -443,12 +492,13 @@ public class BoardSelectionDialog
         setVisible(false);
         mapPreviewW.setVisible(false);
     }
-    
+
     public void previewBoard() {
-        String boardName = (String)lisBoardsAvailable.getSelectedValue();
+        String boardName = (String) lisBoardsAvailable.getSelectedValue();
         if (lisBoardsAvailable.getSelectedIndex() > 2) {
-            IBoard board = new Board(new Integer(texBoardWidth.getText()), new Integer(texBoardHeight.getText()));
-            board.load(boardName+".board");
+            IBoard board = new Board(new Integer(texBoardWidth.getText()),
+                    new Integer(texBoardHeight.getText()));
+            board.load(boardName + ".board");
             if (chkRotateBoard.isSelected()) {
                 BoardUtilities.flip(board, true, true);
             }
@@ -467,7 +517,8 @@ public class BoardSelectionDialog
 
     public void actionPerformed(ActionEvent e) {
 
-        if (e.getSource().equals(butChange) || e.getSource().equals(lisBoardsAvailable)) {
+        if (e.getSource().equals(butChange)
+                || e.getSource().equals(lisBoardsAvailable)) {
             if (lisBoardsAvailable.getSelectedIndex() != -1) {
                 change((String) lisBoardsAvailable.getSelectedValue());
             }
@@ -508,10 +559,12 @@ public class BoardSelectionDialog
         refreshMapButtons();
 
         ((DefaultListModel) lisBoardsSelected.getModel()).removeAllElements();
-        ((DefaultListModel) lisBoardsSelected.getModel()).addElement(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
+        ((DefaultListModel) lisBoardsSelected.getModel()).addElement(Messages
+                .getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
         ((DefaultListModel) lisBoardsAvailable.getModel()).removeAllElements();
-        ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(Messages.getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
+        ((DefaultListModel) lisBoardsAvailable.getModel()).addElement(Messages
+                .getString("BoardSelectionDialog.Updating")); //$NON-NLS-1$
 
         client.getClient().sendMapQuery(mapSettings);
     }

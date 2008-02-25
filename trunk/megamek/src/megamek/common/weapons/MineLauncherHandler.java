@@ -41,13 +41,14 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
      * @param waa
      * @param g
      */
-    public MineLauncherHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public MineLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -56,13 +57,13 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor)ae).getShootingStrength();
+                return ((BattleArmor) ae).getShootingStrength();
             }
             return 1;
         }
         int hits = weapon.howManyShots();
-        if ( !this.allShotsHit() ) {
-            hits = Compute.missilesHit( hits );
+        if (!this.allShotsHit()) {
+            hits = Compute.missilesHit(hits);
         }
         bSalvo = true;
         String sSalvoType = " mine(s) ";
@@ -78,49 +79,56 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
         vPhaseReport.addElement(r);
         return hits;
     }
-    
+
     /*
      * (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
+     *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-            Building bldg, int hits, int nCluster, int nDamPerHit,
-            int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget,
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int nDamPerHit, int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
-        if ( target instanceof Mech ) {
-            hit = new HitData( Mech.LOC_CT );
-        }
-        else { // te instanceof Tank
-            hit = new HitData( Tank.LOC_FRONT );
+        if (target instanceof Mech) {
+            hit = new HitData(Mech.LOC_CT);
+        } else { // te instanceof Tank
+            hit = new HitData(Tank.LOC_FRONT);
         }
         // Do criticals.
-        Vector<Report> specialDamageReport = server.criticalEntity(entityTarget, hit
-                .getLocation(), 0);
+        Vector<Report> specialDamageReport = server.criticalEntity(
+                entityTarget, hit.getLocation(), 0);
 
         // Replace "no effect" results with 4 points of damage.
-        if (((Report) specialDamageReport.lastElement()).messageId == 6005) {
+        if ((specialDamageReport.lastElement()).messageId == 6005) {
             int damage = 4;
             // ASSUMPTION: buildings CAN'T absorb *this* damage.
             // specialDamage = damageEntity(entityTarget, hit, damage);
-            specialDamageReport = server.damageEntity(entityTarget, hit,
-                    damage, false, ae.getSwarmTargetId()==entityTarget.getId()?DamageType.IGNORE_PASSENGER:damageType, false, false, throughFront);
+            specialDamageReport = server
+                    .damageEntity(
+                            entityTarget,
+                            hit,
+                            damage,
+                            false,
+                            ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER
+                                    : damageType, false, false, throughFront);
         } else {
             // add newline _before_ last report
             try {
-                ((Report) specialDamageReport.elementAt(specialDamageReport
-                        .size() - 2)).newlines++;
+                (specialDamageReport.elementAt(specialDamageReport.size() - 2)).newlines++;
             } catch (ArrayIndexOutOfBoundsException aiobe) {
                 System.err
                         .println("ERROR: no previous report when trying to add newline");
             }
         }
         // Report the result
-        vPhaseReport.addAll( specialDamageReport);
+        vPhaseReport.addAll(specialDamageReport);
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
     protected void useAmmo() {

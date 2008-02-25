@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISHGaussRifle extends GaussWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2379383217525139478L;
+
     /**
      * 
      */

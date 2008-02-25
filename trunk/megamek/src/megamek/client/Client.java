@@ -20,15 +20,48 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.TimerTask;
+import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
-
 import megamek.client.bot.BotClient;
-import megamek.client.commands.*;
+import megamek.client.commands.AddBotCommand;
+import megamek.client.commands.ClientCommand;
+import megamek.client.commands.DeployCommand;
+import megamek.client.commands.FireCommand;
+import megamek.client.commands.HelpCommand;
+import megamek.client.commands.MoveCommand;
+import megamek.client.commands.RulerCommand;
+import megamek.client.commands.ShowEntityCommand;
+import megamek.client.commands.ShowTileCommand;
 import megamek.client.ui.IClientCommandHandler;
-import megamek.common.*;
+import megamek.common.Board;
+import megamek.common.Building;
+import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.EntitySelector;
+import megamek.common.Flare;
+import megamek.common.Game;
+import megamek.common.GameLog;
+import megamek.common.GameTurn;
+import megamek.common.IBoard;
+import megamek.common.IGame;
+import megamek.common.IHex;
+import megamek.common.MapSettings;
+import megamek.common.MechFileParser;
+import megamek.common.MechSummaryCache;
+import megamek.common.Minefield;
+import megamek.common.Mounted;
+import megamek.common.MovePath;
+import megamek.common.Player;
+import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
+import megamek.common.UnitLocation;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.AttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -43,10 +76,10 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GamePlayerDisconnectedEvent;
 import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
-import megamek.common.net.IConnection;
 import megamek.common.net.ConnectionFactory;
 import megamek.common.net.ConnectionListenerAdapter;
 import megamek.common.net.DisconnectedEvent;
+import megamek.common.net.IConnection;
 import megamek.common.net.Packet;
 import megamek.common.net.PacketReceivedEvent;
 import megamek.common.options.GameOptions;
@@ -54,29 +87,29 @@ import megamek.common.options.IBasicOption;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
-// FIXME awnser the question in the documentation. 
+// FIXME awnser the question in the documentation.
 /**
- * This class is instanciated for each client and for each bot running on that client.
- * I believe that non-local clients are not also instantiated on the local server,
- * but I am not sure.  
+ * This class is instanciated for each client and for each bot running on that
+ * client. I believe that non-local clients are not also instantiated on the
+ * local server, but I am not sure.
  */
 public class Client implements IClientCommandHandler {
     public static final String CLIENT_COMMAND = "#";
-    
+
     // we need these to communicate with the server
     private String name;
-    
-    private IConnection connection; 
-    
-    //the hash table of client commands
+
+    private IConnection connection;
+
+    // the hash table of client commands
     private Hashtable<String, ClientCommand> commandsHash = new Hashtable<String, ClientCommand>();
-    
+
     // some info about us and the server
     private boolean connected = false;
     public int local_pn = -1;
     private String host;
     private int port;
-    
+
     // the game state object
     public IGame game = new Game();
 
@@ -85,17 +118,17 @@ public class Client implements IClientCommandHandler {
     public String phaseReport;
     public String roundReport;
 
-    //And close client events!
+    // And close client events!
     private Vector<CloseClientListener> closeClientListeners = new Vector<CloseClientListener>();
 
     // we might want to keep a game log...
     private GameLog log;
-    
-    private Vector<Coords> artilleryAutoHitHexes=null;
-    
+
+    private Vector<Coords> artilleryAutoHitHexes = null;
+
     private boolean disconnectFlag = false;
 
-    private Hashtable<String,Integer> duplicateNameHash = new Hashtable<String,Integer>();
+    private Hashtable<String, Integer> duplicateNameHash = new Hashtable<String, Integer>();
 
     private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
 
@@ -111,11 +144,11 @@ public class Client implements IClientCommandHandler {
         }
 
     };
-    
+
     /**
-     * Construct a client which will try to connect.  If the connection
-     * fails, it will alert the player, free resources and hide the frame.
-     *
+     * Construct a client which will try to connect. If the connection fails, it
+     * will alert the player, free resources and hide the frame.
+     * 
      * @param name the player name for this client
      * @param host the hostname
      * @param port the host port
@@ -125,7 +158,7 @@ public class Client implements IClientCommandHandler {
         this.name = name;
         this.host = host;
         this.port = port;
-        
+
         registerCommand(new HelpCommand(this));
         registerCommand(new MoveCommand(this));
         registerCommand(new RulerCommand(this));
@@ -134,46 +167,47 @@ public class Client implements IClientCommandHandler {
         registerCommand(new DeployCommand(this));
         registerCommand(new ShowTileCommand(this));
         registerCommand(new AddBotCommand(this));
-        
-        TimerSingleton ts=TimerSingleton.getInstance();        
-        /*  this should be moved to UI implementations so 
-            that they are responsible for figuring out who
-            should call update for connection..
-            so if somebody does a text-only implementation
-            which doesnt support AWT event queue, we dont
-            depend on it*/
-        final Runnable packetUpdate=new Runnable() {
-            public void run()
-            {   
+
+        TimerSingleton ts = TimerSingleton.getInstance();
+        /*
+         * this should be moved to UI implementations so that they are
+         * responsible for figuring out who should call update for connection..
+         * so if somebody does a text-only implementation which doesnt support
+         * AWT event queue, we dont depend on it
+         */
+        final Runnable packetUpdate = new Runnable() {
+            public void run() {
                 updateConnection();
             }
         };
-        final TimerTask packetUpdate2=new TimerTask() {
+        final TimerTask packetUpdate2 = new TimerTask() {
             public void run() {
                 try {
                     SwingUtilities.invokeAndWait(packetUpdate);
-                } catch(Exception ie) {
+                } catch (Exception ie) {
                 }
             }
         };
-        ts.schedule(packetUpdate2,500,100);        
+        ts.schedule(packetUpdate2, 500, 100);
     }
+
     /**
-     *  call this once to update the connection
+     * call this once to update the connection
      */
-    protected void updateConnection()
-    {
-        if(connection!=null)
-            connection.update();    
+    protected void updateConnection() {
+        if (connection != null)
+            connection.update();
     }
+
     /**
      * Attempt to connect to the specified host
      */
     public boolean connect() {
-        connection = ConnectionFactory.getInstance().createClientConnection(host, port, 1);
+        connection = ConnectionFactory.getInstance().createClientConnection(
+                host, port, 1);
         boolean result = connection.open();
         if (result) {
-            connection.addConnectionListener(connectionListener);           
+            connection.addConnectionListener(connectionListener);
         }
         return result;
     }
@@ -193,8 +227,8 @@ public class Client implements IClientCommandHandler {
             connection.close();
             connection = null;
         }
-        
-        for (int i = 0; i < closeClientListeners.size(); i++){
+
+        for (int i = 0; i < closeClientListeners.size(); i++) {
             closeClientListeners.elementAt(i).clientClosed();
         }
 
@@ -221,7 +255,8 @@ public class Client implements IClientCommandHandler {
                 die();
             }
             if (!host.equals("localhost")) { //$NON-NLS-1$
-                game.processGameEvent(new GamePlayerDisconnectedEvent(this, getLocalPlayer()));
+                game.processGameEvent(new GamePlayerDisconnectedEvent(this,
+                        getLocalPlayer()));
             }
         }
     }
@@ -230,20 +265,23 @@ public class Client implements IClientCommandHandler {
      * Get hexes designated for automatic artillery hits.
      */
     public Vector<Coords> getArtilleryAutoHit() {
-    	return artilleryAutoHitHexes;
+        return artilleryAutoHitHexes;
     }
-    
+
     private void initGameLog() {
-        //log = new GameLog(
-        //  PreferenceManager.getClientPreferences().getGameLogFilename(),
-        //  false,
-        //  (new Integer(PreferenceManager.getClientPreferences().getGameLogMaxSize()).longValue() * 1024 * 1024) );
-        log = new GameLog(PreferenceManager.getClientPreferences().getGameLogFilename());
+        // log = new GameLog(
+        // PreferenceManager.getClientPreferences().getGameLogFilename(),
+        // false,
+        // (new
+        // Integer(PreferenceManager.getClientPreferences().getGameLogMaxSize()).longValue()
+        // * 1024 * 1024) );
+        log = new GameLog(PreferenceManager.getClientPreferences()
+                .getGameLogFilename());
     }
 
     private boolean keepGameLog() {
         return PreferenceManager.getClientPreferences().keepGameLog()
-            && !(this instanceof BotClient);
+                && !(this instanceof BotClient);
     }
 
     /**
@@ -258,8 +296,7 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Returns the individual player assigned the index
-     * parameter.
+     * Returns the individual player assigned the index parameter.
      */
     public Player getPlayer(int idx) {
         return game.getPlayer(idx);
@@ -273,8 +310,8 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Returns an <code>Enumeration</code> of the entities that match
-     * the selection criteria.
+     * Returns an <code>Enumeration</code> of the entities that match the
+     * selection criteria.
      */
     public Enumeration<Entity> getSelectedEntities(EntitySelector selector) {
         return game.getSelectedEntities(selector);
@@ -327,64 +364,61 @@ public class Client implements IClientCommandHandler {
     }
 
     /**
-     * Changes the game phase, and the displays that go
-     * along with it.
+     * Changes the game phase, and the displays that go along with it.
      */
     public void changePhase(int phase) {
         game.setPhase(phase);
         // Handle phase-specific items.
         switch (phase) {
-        case IGame.PHASE_STARTING_SCENARIO :
-            sendDone(true);
-            break;
-        case IGame.PHASE_EXCHANGE :
-            sendDone(true);
-            break;
-        case IGame.PHASE_DEPLOYMENT :
-            //free some memory thats only needed in lounge
-            MechSummaryCache.dispose();
-            MechFileParser.dispose();
-            memDump("entering deployment phase"); //$NON-NLS-1$
-            break;
-        case IGame.PHASE_TARGETING :
-            memDump("entering targeting phase"); //$NON-NLS-1$
-            break;
-        case IGame.PHASE_MOVEMENT :
-            memDump("entering movement phase"); //$NON-NLS-1$
-            break;
-        case IGame.PHASE_OFFBOARD :
-            memDump("entering offboard phase"); //$NON-NLS-1$
-            break;
-        case IGame.PHASE_FIRING :
-            memDump("entering firing phase"); //$NON-NLS-1$
-            break;
-        case IGame.PHASE_PHYSICAL :
-            memDump("entering physical phase"); //$NON-NLS-1$
-            break;
-        case IGame.PHASE_LOUNGE :
-            MechSummaryCache.getInstance();
-            duplicateNameHash.clear(); //reset this
-            break;
+            case IGame.PHASE_STARTING_SCENARIO:
+                sendDone(true);
+                break;
+            case IGame.PHASE_EXCHANGE:
+                sendDone(true);
+                break;
+            case IGame.PHASE_DEPLOYMENT:
+                // free some memory thats only needed in lounge
+                MechSummaryCache.dispose();
+                MechFileParser.dispose();
+                memDump("entering deployment phase"); //$NON-NLS-1$
+                break;
+            case IGame.PHASE_TARGETING:
+                memDump("entering targeting phase"); //$NON-NLS-1$
+                break;
+            case IGame.PHASE_MOVEMENT:
+                memDump("entering movement phase"); //$NON-NLS-1$
+                break;
+            case IGame.PHASE_OFFBOARD:
+                memDump("entering offboard phase"); //$NON-NLS-1$
+                break;
+            case IGame.PHASE_FIRING:
+                memDump("entering firing phase"); //$NON-NLS-1$
+                break;
+            case IGame.PHASE_PHYSICAL:
+                memDump("entering physical phase"); //$NON-NLS-1$
+                break;
+            case IGame.PHASE_LOUNGE:
+                MechSummaryCache.getInstance();
+                duplicateNameHash.clear(); // reset this
+                break;
         }
     }
 
     /**
-     * Adds the specified close client listener to receive
-     * close client events.
+     * Adds the specified close client listener to receive close client events.
      * This is used by external programs running megamek
-     *
-     * @param l            the game listener.
+     * 
+     * @param l the game listener.
      */
     public void addCloseClientListener(CloseClientListener l) {
         closeClientListeners.addElement(l);
     }
 
     /**
-     *  wtf is this? waits for 5 seconds just for nothing?? - itmo
-     *  fixed this to be a bit more sensible..
+     * wtf is this? waits for 5 seconds just for nothing?? - itmo fixed this to
+     * be a bit more sensible..
      */
-    public void retrieveServerInfo() 
-    {
+    public void retrieveServerInfo() {
         updateConnection();
         int retry = 50;
         while (retry-- > 0 && !connected) {
@@ -394,7 +428,7 @@ public class Client implements IClientCommandHandler {
                 try {
                     wait(100);
                 } catch (InterruptedException ex) {
-                    
+
                 }
             }
         }
@@ -411,7 +445,8 @@ public class Client implements IClientCommandHandler {
      * Can I unload entities stranded on immobile transports?
      */
     public boolean canUnloadStranded() {
-        return game.getTurn() instanceof GameTurn.UnloadStrandedTurn && game.getTurn().isValid(local_pn, game);
+        return game.getTurn() instanceof GameTurn.UnloadStrandedTurn
+                && game.getTurn().isValid(local_pn, game);
     }
 
     /**
@@ -434,7 +469,8 @@ public class Client implements IClientCommandHandler {
      * Send mode-change data to the server
      */
     public void sendModeChange(int nEntity, int nEquip, int nMode) {
-        Object[] data = { new Integer(nEntity), new Integer(nEquip), new Integer(nMode)};
+        Object[] data = { new Integer(nEntity), new Integer(nEquip),
+                new Integer(nMode) };
         send(new Packet(Packet.COMMAND_ENTITY_MODECHANGE, data));
     }
 
@@ -442,7 +478,8 @@ public class Client implements IClientCommandHandler {
      * Send system mode-change data to the server
      */
     public void sendSystemModeChange(int nEntity, int nSystem, int nMode) {
-        Object[] data = { new Integer(nEntity), new Integer(nSystem), new Integer(nMode)};
+        Object[] data = { new Integer(nEntity), new Integer(nSystem),
+                new Integer(nMode) };
         send(new Packet(Packet.COMMAND_ENTITY_SYSTEMMODECHANGE, data));
     }
 
@@ -450,7 +487,8 @@ public class Client implements IClientCommandHandler {
      * Send mode-change data to the server
      */
     public void sendAmmoChange(int nEntity, int nWeapon, int nAmmo) {
-        Object[] data = { new Integer(nEntity), new Integer(nWeapon), new Integer(nAmmo)};
+        Object[] data = { new Integer(nEntity), new Integer(nWeapon),
+                new Integer(nAmmo) };
         send(new Packet(Packet.COMMAND_ENTITY_AMMOCHANGE, data));
     }
 
@@ -468,40 +506,41 @@ public class Client implements IClientCommandHandler {
 
     /**
      * Maintain backwards compatability.
-     *
-     * @param   id - the <code>int</code> ID of the deployed entity
-     * @param   c - the <code>Coords</code> where the entity should be deployed
-     * @param   nFacing - the <code>int</code> direction the entity should face
+     * 
+     * @param id - the <code>int</code> ID of the deployed entity
+     * @param c - the <code>Coords</code> where the entity should be deployed
+     * @param nFacing - the <code>int</code> direction the entity should face
      */
     public void deploy(int id, Coords c, int nFacing) {
-        this.deploy(id, c, nFacing, new Vector<Entity>(),false);
+        this.deploy(id, c, nFacing, new Vector<Entity>(), false);
     }
 
     /**
      * BC with old version
-     *
-     * @param   id - the <code>int</code> ID of the deployed entity
-     * @param   c - the <code>Coords</code> where the entity should be deployed
-     * @param   nFacing - the <code>int</code> direction the entity should face
-     * @param   loadedUnits - a <code>List</code> of units that start the game
-     *          being transported byt the deployed entity.
+     * 
+     * @param id - the <code>int</code> ID of the deployed entity
+     * @param c - the <code>Coords</code> where the entity should be deployed
+     * @param nFacing - the <code>int</code> direction the entity should face
+     * @param loadedUnits - a <code>List</code> of units that start the game
+     *            being transported byt the deployed entity.
      */
     public void deploy(int id, Coords c, int nFacing, Vector<Entity> loadedUnits) {
-        deploy(id,c,nFacing,loadedUnits,false);
+        deploy(id, c, nFacing, loadedUnits, false);
     }
-    
+
     /**
-     * Deploy an entity at the given coordinates, with the given facing,
-     * and starting with the given units already loaded.
-     *
-     * @param   id - the <code>int</code> ID of the deployed entity
-     * @param   c - the <code>Coords</code> where the entity should be deployed
-     * @param   nFacing - the <code>int</code> direction the entity should face
-     * @param   loadedUnits - a <code>List</code> of units that start the game
-     *          being transported byt the deployed entity.
-     * @param   assaultDrop - true if deployment is an assault drop
+     * Deploy an entity at the given coordinates, with the given facing, and
+     * starting with the given units already loaded.
+     * 
+     * @param id - the <code>int</code> ID of the deployed entity
+     * @param c - the <code>Coords</code> where the entity should be deployed
+     * @param nFacing - the <code>int</code> direction the entity should face
+     * @param loadedUnits - a <code>List</code> of units that start the game
+     *            being transported byt the deployed entity.
+     * @param assaultDrop - true if deployment is an assault drop
      */
-    public void deploy(int id, Coords c, int nFacing, Vector<Entity> loadedUnits, boolean assaultDrop) {
+    public void deploy(int id, Coords c, int nFacing,
+            Vector<Entity> loadedUnits, boolean assaultDrop) {
         int packetCount = 5 + loadedUnits.size();
         int index = 0;
         Object[] data = new Object[packetCount];
@@ -585,9 +624,12 @@ public class Client implements IClientCommandHandler {
      */
     public void sendPlayerInfo() {
         Player player = game.getPlayer(local_pn);
-        PreferenceManager.getClientPreferences().setLastPlayerColor(player.getColorIndex());
-        PreferenceManager.getClientPreferences().setLastPlayerCategory(player.getCamoCategory());
-        PreferenceManager.getClientPreferences().setLastPlayerCamoName(player.getCamoFileName());
+        PreferenceManager.getClientPreferences().setLastPlayerColor(
+                player.getColorIndex());
+        PreferenceManager.getClientPreferences().setLastPlayerCategory(
+                player.getCamoCategory());
+        PreferenceManager.getClientPreferences().setLastPlayerCamoName(
+                player.getCamoFileName());
         send(new Packet(Packet.COMMAND_PLAYER_UPDATE, player));
     }
 
@@ -610,17 +652,17 @@ public class Client implements IClientCommandHandler {
      * Sends a "set Artillery Autohit Hexes" packet
      */
     public void sendArtyAutoHitHexes(Vector<Coords> hexes) {
-    	artilleryAutoHitHexes=hexes; // save for minimap use
+        artilleryAutoHitHexes = hexes; // save for minimap use
         send(new Packet(Packet.COMMAND_SET_ARTYAUTOHITHEXES, hexes));
     }
-    
+
     /**
      * Sends an "update entity" packet
      */
     public void sendUpdateEntity(Entity entity) {
         send(new Packet(Packet.COMMAND_ENTITY_UPDATE, entity));
     }
-    
+
     /**
      * Sends an "update custom initiative" packet
      */
@@ -648,14 +690,18 @@ public class Client implements IClientCommandHandler {
             game.setPlayer(pindex, newPlayer);
         }
 
-        PreferenceManager.getClientPreferences().setLastPlayerColor(newPlayer.getColorIndex());
-        PreferenceManager.getClientPreferences().setLastPlayerCategory(newPlayer.getCamoCategory());
-        PreferenceManager.getClientPreferences().setLastPlayerCamoName(newPlayer.getCamoFileName());
+        PreferenceManager.getClientPreferences().setLastPlayerColor(
+                newPlayer.getColorIndex());
+        PreferenceManager.getClientPreferences().setLastPlayerCategory(
+                newPlayer.getCamoCategory());
+        PreferenceManager.getClientPreferences().setLastPlayerCamoName(
+                newPlayer.getCamoFileName());
     }
 
     /**
      * Loads the turn list from the data in the packet
      */
+    @SuppressWarnings("unchecked")
     protected void receiveTurns(Packet packet) {
         game.setTurnVector((Vector<GameTurn>) packet.getObject(0));
     }
@@ -671,6 +717,7 @@ public class Client implements IClientCommandHandler {
     /**
      * Loads the entities from the data in the net command.
      */
+    @SuppressWarnings("unchecked")
     protected void receiveEntities(Packet c) {
         Vector<Entity> newEntities = (Vector<Entity>) c.getObject(0);
         Vector<Entity> newOutOfGame = (Vector<Entity>) c.getObject(1);
@@ -685,10 +732,11 @@ public class Client implements IClientCommandHandler {
     /**
      * Loads entity update data from the data in the net command.
      */
+    @SuppressWarnings("unchecked")
     protected void receiveEntityUpdate(Packet c) {
         int eindex = c.getIntValue(0);
         Entity entity = (Entity) c.getObject(1);
-        Vector<UnitLocation> movePath = (Vector<UnitLocation>) c.getObject(2);        
+        Vector<UnitLocation> movePath = (Vector<UnitLocation>) c.getObject(2);
         // Replace this entity in the game.
         game.setEntity(eindex, entity, movePath);
     }
@@ -713,16 +761,18 @@ public class Client implements IClientCommandHandler {
         if (e != null) { // we may not have this entity due to double blind
             e.setSeenByEnemy(packet.getBooleanValue(1));
             e.setVisibleToEnemy(packet.getBooleanValue(2));
-            //this next call is only needed sometimes, but we'll just
+            // this next call is only needed sometimes, but we'll just
             // call it everytime
-            game.processGameEvent(new GameEntityChangeEvent(this,e));
+            game.processGameEvent(new GameEntityChangeEvent(this, e));
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void receiveDeployMinefields(Packet packet) {
         game.addMinefields((Vector<Minefield>) packet.getObject(0));
     }
 
+    @SuppressWarnings("unchecked")
     protected void receiveSendingMinefields(Packet packet) {
         game.setMinefields((Vector<Minefield>) packet.getObject(0));
     }
@@ -735,22 +785,28 @@ public class Client implements IClientCommandHandler {
         game.removeMinefield((Minefield) packet.getObject(0));
     }
 
+    @SuppressWarnings("unchecked")
     protected void receiveBuildingUpdateCF(Packet packet) {
-        game.getBoard().updateBuildingCF((Vector<Building>) packet.getObject(0));
+        game.getBoard()
+                .updateBuildingCF((Vector<Building>) packet.getObject(0));
     }
 
+    @SuppressWarnings("unchecked")
     protected void receiveBuildingCollapse(Packet packet) {
-        game.getBoard().collapseBuilding((Vector<Building>) packet.getObject(0));
+        game.getBoard()
+                .collapseBuilding((Vector<Building>) packet.getObject(0));
     }
 
     /**
      * Loads entity firing data from the data in the net command
      */
+    @SuppressWarnings("unchecked")
     protected void receiveAttack(Packet c) {
         Vector<EntityAction> vector = (Vector<EntityAction>) c.getObject(0);
         int charge = c.getIntValue(1);
         boolean addAction = true;
-        for (Enumeration<EntityAction> i = vector.elements(); i.hasMoreElements();) {
+        for (Enumeration<EntityAction> i = vector.elements(); i
+                .hasMoreElements();) {
             EntityAction ea = i.nextElement();
             int entityId = ea.getEntityId();
             if (ea instanceof TorsoTwistAction && game.hasEntity(entityId)) {
@@ -779,18 +835,18 @@ public class Client implements IClientCommandHandler {
                 if (charge == 0) {
                     game.addAction(ea);
                 } else if (charge == 1) {
-                    game.addCharge((AttackAction) ea);                    
+                    game.addCharge((AttackAction) ea);
                 } else {
-                    game.addLayMinefieldAction((LayMinefieldAction)ea);
+                    game.addLayMinefieldAction((LayMinefieldAction) ea);
                 }
             }
         }
     }
 
-    //Should be private?
+    // Should be private?
     public String receiveReport(Vector<Report> v) {
         boolean doubleBlind = false;
-        
+
         if (v == null) {
             return "[null report vector]";
         }
@@ -801,40 +857,40 @@ public class Client implements IClientCommandHandler {
         }
 
         /*
-         * This make Double blind fully blind.
-         * 
-         * Its best to do this here as at the server level you can have
-         * two lines merged, i.e. no new line, and the second line doesn't 
-         * have any obsuring data. This way once the line gets to the client 
-         * we filter it. --Torren
+         * This make Double blind fully blind. Its best to do this here as at
+         * the server level you can have two lines merged, i.e. no new line, and
+         * the second line doesn't have any obsuring data. This way once the
+         * line gets to the client we filter it. --Torren
          */
-        while ( game.getOptions().booleanOption("supress_all_double_blind_messages") 
-                && report.indexOf(Report.OBSCURED_STRING) != -1 ){
+        while (game.getOptions().booleanOption(
+                "supress_all_double_blind_messages")
+                && report.indexOf(Report.OBSCURED_STRING) != -1) {
             doubleBlind = true;
             int startPos = report.indexOf(Report.OBSCURED_STRING);
-            int endPos = report.indexOf("\n",startPos);
-            if ( report.lastIndexOf("\n",startPos) != -1)
-                startPos = report.lastIndexOf("\n",startPos);
-            
-            //In case we get obscured reports but not final \n
-            if ( endPos <= 0 )
+            int endPos = report.indexOf("\n", startPos);
+            if (report.lastIndexOf("\n", startPos) != -1)
+                startPos = report.lastIndexOf("\n", startPos);
+
+            // In case we get obscured reports but not final \n
+            if (endPos <= 0)
                 endPos = report.length();
 
-            if ( startPos < 0 )
+            if (startPos < 0)
                 startPos = 0;
-            
-           report.delete(startPos,endPos);
+
+            report.delete(startPos, endPos);
         }
-        
+
         String endReport = report.toString();
- 
-        //Get rid of some extra double spaces that the pasing can sometimes cause.
-        while ( endReport.indexOf("\n\n") != -1 && doubleBlind){
-            //Looks silly but it slows the proccess down enough to keep an
-            //Inf Loop from happening. -- Torren
-            endReport = endReport.replaceAll("\n\n","\n");
+
+        // Get rid of some extra double spaces that the pasing can sometimes
+        // cause.
+        while (endReport.indexOf("\n\n") != -1 && doubleBlind) {
+            // Looks silly but it slows the proccess down enough to keep an
+            // Inf Loop from happening. -- Torren
+            endReport = endReport.replaceAll("\n\n", "\n");
         }
-        
+
         return endReport;
     }
 
@@ -843,7 +899,8 @@ public class Client implements IClientCommandHandler {
      */
     private void saveEntityStatus(String sStatus) {
         try {
-            String sLogDir = PreferenceManager.getClientPreferences().getLogDirectory();
+            String sLogDir = PreferenceManager.getClientPreferences()
+                    .getLogDirectory();
             File logDir = new File(sLogDir);
             if (!logDir.exists()) {
                 logDir.mkdir();
@@ -860,24 +917,21 @@ public class Client implements IClientCommandHandler {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * send the message to the server
      */
-    protected void send(Packet packet) {        
+    protected void send(Packet packet) {
         connection.send(packet);
     }
+
     /**
-     *  send all buffered packets on their way
-     *  this should be called after everything which causes us to
-     *  wait for a reply. For example "done" button presses etc. 
-     *
-     *  to make stuff more efficient, this should only be called
-     *  after a batch of packets is sent,not separately for 
-     *  each packet
+     * send all buffered packets on their way this should be called after
+     * everything which causes us to wait for a reply. For example "done" button
+     * presses etc. to make stuff more efficient, this should only be called
+     * after a batch of packets is sent,not separately for each packet
      */
-    protected void flushConn()
-    {
+    protected void flushConn() {
         connection.flush();
     }
 
@@ -888,92 +942,94 @@ public class Client implements IClientCommandHandler {
             return;
         }
         switch (c.getCommand()) {
-            case Packet.COMMAND_CLOSE_CONNECTION :
+            case Packet.COMMAND_CLOSE_CONNECTION:
                 disconnected();
                 break;
-            case Packet.COMMAND_SERVER_GREETING :
+            case Packet.COMMAND_SERVER_GREETING:
                 connected = true;
                 send(new Packet(Packet.COMMAND_CLIENT_NAME, name));
                 break;
-            case Packet.COMMAND_SERVER_CORRECT_NAME :
+            case Packet.COMMAND_SERVER_CORRECT_NAME:
                 correctName(c);
                 break;
-            case Packet.COMMAND_LOCAL_PN :
+            case Packet.COMMAND_LOCAL_PN:
                 this.local_pn = c.getIntValue(0);
                 break;
-            case Packet.COMMAND_PLAYER_UPDATE :
+            case Packet.COMMAND_PLAYER_UPDATE:
                 receivePlayerInfo(c);
                 break;
-            case Packet.COMMAND_PLAYER_READY :
+            case Packet.COMMAND_PLAYER_READY:
                 getPlayer(c.getIntValue(0)).setDone(c.getBooleanValue(1));
                 break;
-            case Packet.COMMAND_PLAYER_ADD :
+            case Packet.COMMAND_PLAYER_ADD:
                 receivePlayerInfo(c);
                 break;
-            case Packet.COMMAND_PLAYER_REMOVE :
+            case Packet.COMMAND_PLAYER_REMOVE:
                 game.removePlayer(c.getIntValue(0));
                 break;
-            case Packet.COMMAND_CHAT :
+            case Packet.COMMAND_CHAT:
                 if (log == null)
                     initGameLog();
                 if (log != null && keepGameLog()) {
-                    log.append( (String) c.getObject(0) );
+                    log.append((String) c.getObject(0));
                 }
-                game.processGameEvent(new GamePlayerChatEvent(this,null, (String) c.getObject(0)));
+                game.processGameEvent(new GamePlayerChatEvent(this, null,
+                        (String) c.getObject(0)));
                 break;
-            case Packet.COMMAND_ENTITY_ADD :
+            case Packet.COMMAND_ENTITY_ADD:
                 receiveEntityAdd(c);
                 break;
-            case Packet.COMMAND_ENTITY_UPDATE :
+            case Packet.COMMAND_ENTITY_UPDATE:
                 receiveEntityUpdate(c);
                 break;
-            case Packet.COMMAND_ENTITY_REMOVE :
+            case Packet.COMMAND_ENTITY_REMOVE:
                 receiveEntityRemove(c);
                 break;
-            case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR :
+            case Packet.COMMAND_ENTITY_VISIBILITY_INDICATOR:
                 receiveEntityVisibilityIndicator(c);
                 break;
-            case Packet.COMMAND_SENDING_MINEFIELDS :
+            case Packet.COMMAND_SENDING_MINEFIELDS:
                 receiveSendingMinefields(c);
                 break;
-            case Packet.COMMAND_DEPLOY_MINEFIELDS :
+            case Packet.COMMAND_DEPLOY_MINEFIELDS:
                 receiveDeployMinefields(c);
                 break;
-            case Packet.COMMAND_REVEAL_MINEFIELD :
+            case Packet.COMMAND_REVEAL_MINEFIELD:
                 receiveRevealMinefield(c);
                 break;
-            case Packet.COMMAND_REMOVE_MINEFIELD :
+            case Packet.COMMAND_REMOVE_MINEFIELD:
                 receiveRemoveMinefield(c);
                 break;
-            case Packet.COMMAND_CHANGE_HEX :
-                game.getBoard().setHex((Coords) c.getObject(0), (IHex) c.getObject(1));
+            case Packet.COMMAND_CHANGE_HEX:
+                game.getBoard().setHex((Coords) c.getObject(0),
+                        (IHex) c.getObject(1));
                 break;
-            case Packet.COMMAND_BLDG_UPDATE_CF :
+            case Packet.COMMAND_BLDG_UPDATE_CF:
                 receiveBuildingUpdateCF(c);
                 break;
-            case Packet.COMMAND_BLDG_COLLAPSE :
+            case Packet.COMMAND_BLDG_COLLAPSE:
                 receiveBuildingCollapse(c);
                 break;
-            case Packet.COMMAND_PHASE_CHANGE :
+            case Packet.COMMAND_PHASE_CHANGE:
                 changePhase(c.getIntValue(0));
                 break;
-            case Packet.COMMAND_TURN :
+            case Packet.COMMAND_TURN:
                 changeTurnIndex(c.getIntValue(0));
                 break;
-            case Packet.COMMAND_ROUND_UPDATE :
+            case Packet.COMMAND_ROUND_UPDATE:
                 game.setRoundCount(c.getIntValue(0));
                 break;
-            case Packet.COMMAND_SENDING_TURNS :
+            case Packet.COMMAND_SENDING_TURNS:
                 receiveTurns(c);
                 break;
-            case Packet.COMMAND_SENDING_BOARD :
+            case Packet.COMMAND_SENDING_BOARD:
                 receiveBoard(c);
                 break;
-            case Packet.COMMAND_SENDING_ENTITIES :
+            case Packet.COMMAND_SENDING_ENTITIES:
                 receiveEntities(c);
                 break;
-            case Packet.COMMAND_SENDING_REPORTS :
-            case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS :
+            case Packet.COMMAND_SENDING_REPORTS:
+            case Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS:
                 phaseReport = receiveReport((Vector) c.getObject(0));
                 if (keepGameLog()) {
                     if (log == null && game.getRoundCount() == 1)
@@ -982,20 +1038,22 @@ public class Client implements IClientCommandHandler {
                         log.append(phaseReport);
                 }
                 game.addReports((Vector<Report>) c.getObject(0));
-                roundReport = receiveReport(game.getReports(game.getRoundCount()));
-                if (c.getCommand() ==
-                    Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS) {
+                roundReport = receiveReport(game.getReports(game
+                        .getRoundCount()));
+                if (c.getCommand() == Packet.COMMAND_SENDING_REPORTS_TACTICAL_GENIUS) {
                     game.processGameEvent(new GameReportEvent(this, null));
                 }
                 break;
-            case Packet.COMMAND_SENDING_REPORTS_SPECIAL :
-                game.processGameEvent(new GameReportEvent(this, receiveReport((Vector) c.getObject(0))));
+            case Packet.COMMAND_SENDING_REPORTS_SPECIAL:
+                game.processGameEvent(new GameReportEvent(this,
+                        receiveReport((Vector) c.getObject(0))));
                 break;
-            case Packet.COMMAND_SENDING_REPORTS_ALL :
-                Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c.getObject(0);
+            case Packet.COMMAND_SENDING_REPORTS_ALL:
+                Vector<Vector<Report>> allReports = (Vector<Vector<Report>>) c
+                        .getObject(0);
                 game.setAllReports(allReports);
                 if (keepGameLog()) {
-                    //Re-write gamelog.txt from scratch
+                    // Re-write gamelog.txt from scratch
                     initGameLog();
                     if (log != null) {
                         for (int i = 0; i < allReports.size(); i++) {
@@ -1003,42 +1061,45 @@ public class Client implements IClientCommandHandler {
                         }
                     }
                 }
-                roundReport = receiveReport(game.getReports(game.getRoundCount()));
-                //We don't really have a copy of the phase report at
+                roundReport = receiveReport(game.getReports(game
+                        .getRoundCount()));
+                // We don't really have a copy of the phase report at
                 // this point, so I guess we'll just use the round report
                 // until the next phase actually completes.
                 phaseReport = roundReport;
                 break;
-            case Packet.COMMAND_ENTITY_ATTACK :
+            case Packet.COMMAND_ENTITY_ATTACK:
                 receiveAttack(c);
                 break;
-            case Packet.COMMAND_SENDING_GAME_SETTINGS :
+            case Packet.COMMAND_SENDING_GAME_SETTINGS:
                 game.setOptions((GameOptions) c.getObject(0));
                 break;
-            case Packet.COMMAND_SENDING_MAP_SETTINGS :
+            case Packet.COMMAND_SENDING_MAP_SETTINGS:
                 mapSettings = (MapSettings) c.getObject(0);
                 game.processGameEvent(new GameSettingsChangeEvent(this));
                 break;
-            case Packet.COMMAND_QUERY_MAP_SETTINGS :
-                game.processGameEvent(new GameMapQueryEvent(this, (MapSettings)c.getObject(0)));
+            case Packet.COMMAND_QUERY_MAP_SETTINGS:
+                game.processGameEvent(new GameMapQueryEvent(this,
+                        (MapSettings) c.getObject(0)));
                 break;
-            case Packet.COMMAND_END_OF_GAME :
+            case Packet.COMMAND_END_OF_GAME:
                 String sEntityStatus = (String) c.getObject(0);
                 game.end(c.getIntValue(1), c.getIntValue(2));
                 // save victory report
                 saveEntityStatus(sEntityStatus);
                 break;
-            case Packet.COMMAND_SENDING_ARTILLERYATTACKS :
-                Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>)c.getObject(0);
+            case Packet.COMMAND_SENDING_ARTILLERYATTACKS:
+                Vector<ArtilleryAttackAction> v = (Vector<ArtilleryAttackAction>) c
+                        .getObject(0);
                 game.setArtilleryVector(v);
                 break;
-            case Packet.COMMAND_SENDING_FLARES :
-                Vector<Flare> v2 = (Vector<Flare>)c.getObject(0);
+            case Packet.COMMAND_SENDING_FLARES:
+                Vector<Flare> v2 = (Vector<Flare>) c.getObject(0);
                 game.setFlares(v2);
                 break;
             case Packet.COMMAND_SEND_SAVEGAME:
-                String sFinalFile = (String)c.getObject(0);
-                String localFile = "savegames" + File.separator + sFinalFile;                
+                String sFinalFile = (String) c.getObject(0);
+                String localFile = "savegames" + File.separator + sFinalFile;
                 try {
                     File sDir = new File("savegames");
                     if (!sDir.exists()) {
@@ -1049,7 +1110,7 @@ public class Client implements IClientCommandHandler {
                 }
                 try {
                     ObjectOutputStream oos = new ObjectOutputStream(
-                        new FileOutputStream(localFile));
+                            new FileOutputStream(localFile));
                     oos.writeObject(c.getObject(1));
                     oos.flush();
                     oos.close();
@@ -1059,24 +1120,24 @@ public class Client implements IClientCommandHandler {
                 }
                 break;
             case Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY:
-                game.getBoard().setSpecialHexDisplayTable( (Hashtable<Coords, Collection<SpecialHexDisplay>>) c.getObject(0));
+                game.getBoard().setSpecialHexDisplayTable(
+                        (Hashtable<Coords, Collection<SpecialHexDisplay>>) c
+                                .getObject(0));
                 System.err.println("Specials updated");
                 break;
         }
     }
 
     /**
-     * Perform a dump of the current memory usage.
-     * <p/>
-     * This method is useful in tracking performance issues on various
-     * player's systems.  You can activate it by changing the "memorydumpon"
-     * setting to "true" in the MegaMek.cfg file.
-     *
-     * @param   where - a <code>String</code> indicating which part of the
-     *          game is making this call.
-     *
-     * @see     megamek.common.Settings#memoryDumpOn
-     * @see     megamek.client.Client#changePhase(int)
+     * Perform a dump of the current memory usage. <p/> This method is useful in
+     * tracking performance issues on various player's systems. You can activate
+     * it by changing the "memorydumpon" setting to "true" in the MegaMek.cfg
+     * file.
+     * 
+     * @param where - a <code>String</code> indicating which part of the game
+     *            is making this call.
+     * @see megamek.common.Settings#memoryDumpOn
+     * @see megamek.client.Client#changePhase(int)
      */
     private void memDump(String where) {
         if (PreferenceManager.getClientPreferences().memoryDumpOn()) {
@@ -1088,11 +1149,12 @@ public class Client implements IClientCommandHandler {
             for (int loop = where.length(); loop < 25; loop++) {
                 buf.append(' ');
             }
-            buf.append(": used (").append(used).append(") + free (").append(free).append(") = ").append(total); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            buf
+                    .append(": used (").append(used).append(") + free (").append(free).append(") = ").append(total); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             System.out.println(buf.toString());
         }
     }
-    
+
     public String getName() {
         return name;
     }
@@ -1106,16 +1168,16 @@ public class Client implements IClientCommandHandler {
     }
 
     private void correctName(Packet inP) {
-        setName((String)(inP.getObject(0)));
+        setName((String) (inP.getObject(0)));
     }
 
     public void setName(String newN) {
         name = newN;
     }
 
-    //Before we officially "add" this unit to the game, check and see
+    // Before we officially "add" this unit to the game, check and see
     // if this client (player) already has a unit in the game with the
-    // same name.  If so, add an identifier to the units name.
+    // same name. If so, add an identifier to the units name.
     private void checkDuplicateNamesDuringAdd(Entity entity) {
         if (duplicateNameHash.get(entity.getShortName()) == null) {
             duplicateNameHash.put(entity.getShortName(), new Integer(1));
@@ -1130,53 +1192,57 @@ public class Client implements IClientCommandHandler {
         }
     }
 
-    //If we remove an entity, we may need to update the duplicate identifier.
-    //TODO: This function is super slow :(
+    // If we remove an entity, we may need to update the duplicate identifier.
+    // TODO: This function is super slow :(
     private void checkDuplicateNamesDuringDelete(int id) {
         Entity entity = game.getEntity(id);
         Object o = duplicateNameHash.get(entity.getShortNameRaw());
         if (o != null) {
-            int count = ((Integer)o).intValue();
+            int count = ((Integer) o).intValue();
             if (count > 1) {
-                ArrayList<Entity> myEntities = game.getPlayerEntities(game.getPlayer(local_pn));
+                ArrayList<Entity> myEntities = game.getPlayerEntities(game
+                        .getPlayer(local_pn));
                 for (int i = 0; i < myEntities.size(); i++) {
                     Entity e = myEntities.get(i);
                     if (e.getShortNameRaw().equals(entity.getShortNameRaw())
-                        && e.duplicateMarker > entity.duplicateMarker) {
+                            && e.duplicateMarker > entity.duplicateMarker) {
                         e.duplicateMarker--;
                         e.generateShortName();
                         e.generateDisplayName();
                         sendUpdateEntity(e);
                     }
                 }
-                duplicateNameHash.put(entity.getShortNameRaw(), new Integer(count - 1));
+                duplicateNameHash.put(entity.getShortNameRaw(), new Integer(
+                        count - 1));
             } else {
                 duplicateNameHash.remove(entity.getShortNameRaw());
             }
         }
     }
-    
+
     /**
-     * 
      * @param text a client command with CLIENT_COMMAND prepended.
      */
     public String runCommand(String cmd) {
         cmd = cmd.substring(CLIENT_COMMAND.length());
-        
+
         return runCommand(cmd.split("\\s+"));
     }
-    
+
     /**
      * Runs the command
-     * @param args the command and it's arguments with the CLIENT_COMMAND already removed, and the string tokenized.
+     * 
+     * @param args the command and it's arguments with the CLIENT_COMMAND
+     *            already removed, and the string tokenized.
      */
     public String runCommand(String[] args) {
-        if(args != null && args.length > 0 && commandsHash.containsKey(args[0])) {
+        if (args != null && args.length > 0
+                && commandsHash.containsKey(args[0])) {
             return commandsHash.get(args[0]).run(args);
         }
-		return "Unknown Client Command.";
+        return "Unknown Client Command.";
     }
-    
+
     /**
      * Registers a new command in the client command table
      */
@@ -1191,7 +1257,9 @@ public class Client implements IClientCommandHandler {
         return commandsHash.get(commandName);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.client.ui.IClientCommandHandler#getAllCommandNames()
      */
     public Enumeration<String> getAllCommandNames() {

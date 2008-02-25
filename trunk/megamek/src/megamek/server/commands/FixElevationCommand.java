@@ -20,20 +20,21 @@
 
 package megamek.server.commands;
 
-import megamek.common.*;
-import megamek.server.*;
 import java.util.Enumeration;
 
+import megamek.common.Entity;
+import megamek.server.Server;
+
 /**
- *
- * @author  Coelocanth
- * @version 
+ * @author Coelocanth
+ * @version
  */
 public class FixElevationCommand extends ServerCommand {
 
     /** Creates new FixElevationCommand */
     public FixElevationCommand(Server server) {
-        super(server, "fixelevation", "Fix elevation of any units that are messed up");
+        super(server, "fixelevation",
+                "Fix elevation of any units that are messed up");
     }
 
     /**
@@ -41,14 +42,18 @@ public class FixElevationCommand extends ServerCommand {
      */
     public void run(int connId, String[] args) {
         int countbad = 0;
-        for(Enumeration e=server.getGame().getEntities();e.hasMoreElements();) {
-            Entity entity = (Entity)e.nextElement();
-            if(entity.fixElevation()) {
-                server.sendServerChat(entity.getDisplayName() + " elevation fixed, see megameklog.txt for details & report a bug if you know how this happened");
+        for (Enumeration e = server.getGame().getEntities(); e
+                .hasMoreElements();) {
+            Entity entity = (Entity) e.nextElement();
+            if (entity.fixElevation()) {
+                server
+                        .sendServerChat(entity.getDisplayName()
+                                + " elevation fixed, see megameklog.txt for details & report a bug if you know how this happened");
                 countbad++;
             }
         }
-        server.sendServerChat(connId, ""+countbad+" unit(s) had elevation problems");
+        server.sendServerChat(connId, "" + countbad
+                + " unit(s) had elevation problems");
     }
-    
+
 }

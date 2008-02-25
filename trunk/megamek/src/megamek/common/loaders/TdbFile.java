@@ -20,10 +20,14 @@
 
 package megamek.common.loaders;
 
-import java.io.*;
+import gd.xml.ParseException;
+import gd.xml.tiny.ParsedXML;
+import gd.xml.tiny.TinyParser;
+
+import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
-import java.util.Enumeration;
 
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
@@ -38,9 +42,6 @@ import megamek.common.QuadMech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
 
-import gd.xml.*;
-import gd.xml.tiny.*;
-
 public class TdbFile implements IMechLoader {
 
     private ParsedXML root = null;
@@ -48,54 +49,54 @@ public class TdbFile implements IMechLoader {
     /**
      * The names of the various elements recognized by this parser.
      */
-    private static final String  CREATOR_SECTION    = "creator";
-    private static final String  BASICS_SECTION    = "basics";
-    private static final String  ITEM_DEFS_SECTION    = "itemdefs";
-    private static final String  MOUNTED_ITEMS_SECTION    = "mounteditems";
-    private static final String  CRIT_DEFS_SECTION    = "critdefs";
+    private static final String CREATOR_SECTION = "creator";
+    private static final String BASICS_SECTION = "basics";
+    private static final String ITEM_DEFS_SECTION = "itemdefs";
+    private static final String MOUNTED_ITEMS_SECTION = "mounteditems";
+    private static final String CRIT_DEFS_SECTION = "critdefs";
 
-    private static final String  NAME               = "name";
-    private static final String  VERSION            = "version";
-    private static final String  MODEL              = "model";
-    private static final String  VARIANT            = "variant";
-    private static final String  TECHNOLOGY         = "technology";
-    private static final String  MOVEMECHMOD        = "movemechmod";
-    private static final String  TONNAGE            = "tonnage"; // also attribute
-    private static final String  TYPE               = "type";
-    private static final String  OMNI               = "isomni";
-    private static final String  WALK               = "walk";
-    private static final String  JUMP               = "jump";
-    private static final String  HEAT_SINKS         = "heatsinks";
-    private static final String  ARMOR              = "armor"; // also attribute
-    private static final String  ENGINE             = "engine";
-    private static final String  GYRO               = "gyro";
-    private static final String  COCKPIT            = "cockpit";
-    private static final String  STRUCTURE          = "internal"; // also attribute
-    private static final String  MOUNTED_ITEM       = "mounteditem";
-    private static final String  LOCATION           = "location";
-    private static final String  TARGSYS            = "targsys";
+    private static final String NAME = "name";
+    private static final String VERSION = "version";
+    private static final String MODEL = "model";
+    private static final String VARIANT = "variant";
+    private static final String TECHNOLOGY = "technology";
+    private static final String MOVEMECHMOD = "movemechmod";
+    private static final String TONNAGE = "tonnage"; // also attribute
+    private static final String TYPE = "type";
+    private static final String OMNI = "isomni";
+    private static final String WALK = "walk";
+    private static final String JUMP = "jump";
+    private static final String HEAT_SINKS = "heatsinks";
+    private static final String ARMOR = "armor"; // also attribute
+    private static final String ENGINE = "engine";
+    private static final String GYRO = "gyro";
+    private static final String COCKPIT = "cockpit";
+    private static final String STRUCTURE = "internal"; // also attribute
+    private static final String MOUNTED_ITEM = "mounteditem";
+    private static final String LOCATION = "location";
+    private static final String TARGSYS = "targsys";
 
     /**
      * The names of the attributes recognized by this parser.
      */
-    private static final String  LEVEL              = "level";
-    private static final String  COUNT              = "count";
-    private static final String  POINTS             = "points";
-    private static final String  REAR_MOUNTED       = "rearmounted";
-    private static final String  IS_SPREAD          = "isspread";
-    private static final String  ITEM_INDEX         = "itemindex";
-    private static final String  REAR_ARMOR         = "reararmor";
-    private static final String  RATING             = "rating";
+    private static final String LEVEL = "level";
+    private static final String COUNT = "count";
+    //private static final String POINTS = "points";
+    private static final String REAR_MOUNTED = "rearmounted";
+    private static final String IS_SPREAD = "isspread";
+    private static final String ITEM_INDEX = "itemindex";
+    private static final String REAR_ARMOR = "reararmor";
+    private static final String RATING = "rating";
 
     /**
      * Special values recognized by this parser.
      */
-    private static final String  TRUE               = "True";
-    private static final String  FALSE              = "False";
-    private static final String  DOUBLE             = "Double";
-    private static final String  LASER              = "Laser";
-    private static final String  COMPACT            = "Compact (2)";
-    private static final String  TRUE_LOWER         = "true";
+    private static final String TRUE = "True";
+    //private static final String FALSE = "False";
+    private static final String DOUBLE = "Double";
+    //private static final String LASER = "Laser";
+    //private static final String COMPACT = "Compact (2)";
+    private static final String TRUE_LOWER = "true";
 
     private String creatorName = "Unknown";
     private String creatorVersion = "Unknown";
@@ -114,7 +115,8 @@ public class TdbFile implements IMechLoader {
 
     private String heatSinks;
     private boolean dblSinks;
-    private String walkMP;
+    // don't need this, we get it from the engine rating
+    //private String walkMP;
     private String jumpMP;
 
     private int larmArmor;
@@ -149,23 +151,23 @@ public class TdbFile implements IMechLoader {
     public TdbFile(InputStream is) throws EntityLoadingException {
         try {
             root = TinyParser.parseXML(is);
-        }
-        catch (ParseException e) {
-            throw new EntityLoadingException("   Failure to parse XML ("+e.getLocalizedMessage()+")");
+        } catch (ParseException e) {
+            throw new EntityLoadingException("   Failure to parse XML ("
+                    + e.getLocalizedMessage() + ")");
         }
         // Arbitrarily sized static arrays suck, or so a computer
-        //  science teacher once told me.
+        // science teacher once told me.
         isRearMounted = new boolean[256];
         isSplit = new boolean[256];
 
         critData = new String[8][12][2];
-        parseNode((ParsedXML)root.elements().nextElement());
+        parseNode((ParsedXML) root.elements().nextElement());
     }
 
     private void parseNode(ParsedXML node) throws EntityLoadingException {
         if (!node.getTypeName().equals("tag")) {
             // We only want to parse element nodes, text nodes
-            //  are implicitly parsed when needed.
+            // are implicitly parsed when needed.
             return;
         }
 
@@ -184,7 +186,7 @@ public class TdbFile implements IMechLoader {
         } else if (children != null) {
             // Use recursion to process all the children
             while (children.hasMoreElements()) {
-                parseNode((ParsedXML)children.nextElement());
+                parseNode((ParsedXML) children.nextElement());
             }
         }
     }
@@ -192,97 +194,102 @@ public class TdbFile implements IMechLoader {
     private void parseCreatorNode(ParsedXML node) throws EntityLoadingException {
         if (!node.getTypeName().equals("tag")) {
             // We only want to parse element nodes, text nodes
-            //  are directly parsed below.
+            // are directly parsed below.
             return;
         }
 
         Enumeration children = node.elements();
 
         if (node.getName().equals(NAME)) {
-            creatorName = ((ParsedXML)children.nextElement()).getContent();
+            creatorName = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(VERSION)) {
-            creatorVersion = ((ParsedXML)children.nextElement()).getContent();
+            creatorVersion = ((ParsedXML) children.nextElement()).getContent();
         } else if (children != null) {
             // Use recursion to process all the children
             while (children.hasMoreElements()) {
-                parseCreatorNode((ParsedXML)children.nextElement());
+                parseCreatorNode((ParsedXML) children.nextElement());
             }
         }
         // Other tags (that don't match any if blocks above)
-        //  are simply ignored.
+        // are simply ignored.
     }
 
     private void parseBasicsNode(ParsedXML node) throws EntityLoadingException {
         if (!node.getTypeName().equals("tag")) {
             // We only want to parse element nodes, text nodes
-            //  are directly parsed below.
+            // are directly parsed below.
             return;
         }
 
         Enumeration children = node.elements();
 
         if (node.getName().equals(NAME)) {
-            name = ((ParsedXML)children.nextElement()).getContent();
+            name = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(MODEL)) {
-            model = ((ParsedXML)children.nextElement()).getContent();
+            model = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(OMNI)) {
-            isOmni = ((ParsedXML)children.nextElement()).getContent().equals(TRUE_LOWER);
+            isOmni = ((ParsedXML) children.nextElement()).getContent().equals(
+                    TRUE_LOWER);
         } else if (node.getName().equals(VARIANT)) {
-            variant = ((ParsedXML)children.nextElement()).getContent();
+            variant = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(TECHNOLOGY)) {
-            techBase = ((ParsedXML)children.nextElement()).getContent();
+            techBase = ((ParsedXML) children.nextElement()).getContent();
             rulesLevel = node.getAttribute(LEVEL);
         } else if (node.getName().equals(TONNAGE)) {
-            tonnage = ((ParsedXML)children.nextElement()).getContent();
+            tonnage = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(TYPE)) {
-            chassisConfig = ((ParsedXML)children.nextElement()).getContent();
+            chassisConfig = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(MOVEMECHMOD)) {
             // This tag seems to indicate the pod space on an omnimech
-            //  or the tonnage of the conversion equipment for
-            //  a LAM (Land Air Mech).
+            // or the tonnage of the conversion equipment for
+            // a LAM (Land Air Mech).
             LAMTonnage = node.getAttribute(TONNAGE);
         } else if (node.getName().equals(WALK)) {
-            walkMP = ((ParsedXML)children.nextElement()).getContent();
+            // we don't actually need this, because it's calculated from the
+            // engine rating
+            //walkMP = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(JUMP)) {
-            jumpMP = ((ParsedXML)children.nextElement()).getContent();
+            jumpMP = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(HEAT_SINKS)) {
-            if (((ParsedXML)children.nextElement()).getContent().indexOf(DOUBLE) != -1) {
+            if (((ParsedXML) children.nextElement()).getContent().indexOf(
+                    DOUBLE) != -1) {
                 dblSinks = true;
             } else {
                 dblSinks = false;
             }
             heatSinks = node.getAttribute(COUNT);
         } else if (node.getName().equals(ARMOR)) {
-            armorType = ((ParsedXML)children.nextElement()).getContent();
+            armorType = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(ENGINE)) {
-            engineType = ((ParsedXML)children.nextElement()).getContent();
+            engineType = ((ParsedXML) children.nextElement()).getContent();
             engineRating = Integer.parseInt(node.getAttribute(RATING));
         } else if (node.getName().equals(STRUCTURE)) {
-            structureType = ((ParsedXML)children.nextElement()).getContent();
+            structureType = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(GYRO)) {
-            gyroType = ((ParsedXML)children.nextElement()).getContent();
+            gyroType = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(COCKPIT)) {
-            cockpitType = ((ParsedXML)children.nextElement()).getContent();
+            cockpitType = ((ParsedXML) children.nextElement()).getContent();
         } else if (node.getName().equals(TARGSYS)) {
-            targSysStr = ((ParsedXML)children.nextElement()).getContent().trim();
+            targSysStr = ((ParsedXML) children.nextElement()).getContent()
+                    .trim();
             if ((targSysStr.length() >= 3)
-                    && (targSysStr.substring(0,3).equals("(C)"))) {
+                    && (targSysStr.substring(0, 3).equals("(C)"))) {
                 clanTC = true;
             }
         } else if (children != null) {
             // Use recursion to process all the children
             while (children.hasMoreElements()) {
-                parseBasicsNode((ParsedXML)children.nextElement());
+                parseBasicsNode((ParsedXML) children.nextElement());
             }
         }
         // Other tags (that don't match any if blocks above)
-        //  are simply ignored.
+        // are simply ignored.
     }
 
     private void parseMountedNode(ParsedXML node) throws EntityLoadingException {
         if (!node.getTypeName().equals("tag")) {
             // We only want to parse element nodes, text nodes
-            //  are directly parsed below.
+            // are directly parsed below.
             return;
         }
 
@@ -302,17 +309,17 @@ public class TdbFile implements IMechLoader {
         } else if (children != null) {
             // Use recursion to process all the children
             while (children.hasMoreElements()) {
-                parseMountedNode((ParsedXML)children.nextElement());
+                parseMountedNode((ParsedXML) children.nextElement());
             }
         }
         // Other tags (that don't match any if blocks above)
-        //  are simply ignored.
+        // are simply ignored.
     }
 
     private void parseCritNode(ParsedXML node) throws EntityLoadingException {
         if (!node.getTypeName().equals("tag")) {
             // We only want to parse element nodes, text nodes
-            //  are directly parsed below.
+            // are directly parsed below.
             return;
         }
 
@@ -329,10 +336,12 @@ public class TdbFile implements IMechLoader {
             if (node.getAttribute(REAR_ARMOR) != null) {
                 rearArmor = Integer.parseInt(node.getAttribute(REAR_ARMOR));
             }
-            if (node.getAttribute(NAME).equals("LA") || node.getAttribute(NAME).equals("FLL")) {
+            if (node.getAttribute(NAME).equals("LA")
+                    || node.getAttribute(NAME).equals("FLL")) {
                 loc = Mech.LOC_LARM;
                 larmArmor = armor;
-            } else if (node.getAttribute(NAME).equals("RA") || node.getAttribute(NAME).equals("FRL")) {
+            } else if (node.getAttribute(NAME).equals("RA")
+                    || node.getAttribute(NAME).equals("FRL")) {
                 loc = Mech.LOC_RARM;
                 rarmArmor = armor;
             } else if (node.getAttribute(NAME).equals("LT")) {
@@ -350,33 +359,37 @@ public class TdbFile implements IMechLoader {
             } else if (node.getAttribute(NAME).equals("H")) {
                 loc = Mech.LOC_HEAD;
                 headArmor = armor;
-            } else if (node.getAttribute(NAME).equals("LL") || node.getAttribute(NAME).equals("RLL")) {
+            } else if (node.getAttribute(NAME).equals("LL")
+                    || node.getAttribute(NAME).equals("RLL")) {
                 loc = Mech.LOC_LLEG;
                 llegArmor = armor;
-            } else if (node.getAttribute(NAME).equals("RL") || node.getAttribute(NAME).equals("RRL")) {
+            } else if (node.getAttribute(NAME).equals("RL")
+                    || node.getAttribute(NAME).equals("RRL")) {
                 loc = Mech.LOC_RLEG;
                 rlegArmor = armor;
             }
 
             if (loc == -1) {
-                throw new EntityLoadingException("   Bad Mech location: " + node.getAttribute(NAME));
+                throw new EntityLoadingException("   Bad Mech location: "
+                        + node.getAttribute(NAME));
             }
             while (children.hasMoreElements()) {
-                ParsedXML critSlotNode = (ParsedXML)children.nextElement();
-                critData[loc][i][0] = ((ParsedXML)critSlotNode.elements().nextElement()).getContent();
+                ParsedXML critSlotNode = (ParsedXML) children.nextElement();
+                critData[loc][i][0] = ((ParsedXML) critSlotNode.elements()
+                        .nextElement()).getContent();
                 if (clanTC && critData[loc][i][0].equals("Targeting Computer")) {
-                    critData[loc][i][0] = "(C) "+critData[loc][i][0];
+                    critData[loc][i][0] = "(C) " + critData[loc][i][0];
                 }
                 critData[loc][i++][1] = critSlotNode.getAttribute(ITEM_INDEX);
             }
         } else if (children != null) {
             // Use recursion to process all the children
             while (children.hasMoreElements()) {
-                parseCritNode((ParsedXML)children.nextElement());
+                parseCritNode((ParsedXML) children.nextElement());
             }
         }
         // Other tags (that don't match any if blocks above)
-        //  are simply ignored.
+        // are simply ignored.
     }
 
     public Entity getEntity() throws EntityLoadingException {
@@ -387,9 +400,10 @@ public class TdbFile implements IMechLoader {
                     || !creatorName.equals("The Drawing Board")
                     || Integer.parseInt(creatorVersion) != 2) {
                 // MegaMek no longer supports older versions of The
-                //  Drawing Board (pre 2.0.23) due to incomplete xml
-                //  file information in those versions.
-                throw new EntityLoadingException("This xml file is not a valid Drawing Board mech.  Make sure you are using version 2.0.23 or later of The Drawing Board.");
+                // Drawing Board (pre 2.0.23) due to incomplete xml
+                // file information in those versions.
+                throw new EntityLoadingException(
+                        "This xml file is not a valid Drawing Board mech.  Make sure you are using version 2.0.23 or later of The Drawing Board.");
             }
 
             if (gyroType.equals("Extra-Light"))
@@ -404,7 +418,7 @@ public class TdbFile implements IMechLoader {
                 mech = new BipedMech(gyroType, cockpitType);
             }
 
-            // aarg!  those stupid sub-names in parenthesis screw everything up
+            // aarg! those stupid sub-names in parenthesis screw everything up
             // we may do something different in the future, but for now, I'm
             // going to strip them out
             int pindex = name.indexOf("(");
@@ -425,65 +439,68 @@ public class TdbFile implements IMechLoader {
             mech.setYear(Integer.parseInt(techYear));
             mech.setOmni(isOmni);
 
-            if (structureType.substring(0,3).equals("(C)")) {
+            if (structureType.substring(0, 3).equals("(C)")) {
                 structureType = structureType.substring(4);
             }
             mech.setStructureType(structureType);
 
-            if (armorType.substring(0,3).equals("(C)")) {
+            if (armorType.substring(0, 3).equals("(C)")) {
                 armorType = armorType.substring(4);
             }
             mech.setArmorType(armorType);
 
             if (LAMTonnage != null) {
-                //throw new EntityLoadingException("Unsupported tech: LAM?");
+                // throw new EntityLoadingException("Unsupported tech: LAM?");
             }
             if (techBase.equals("Inner Sphere")) {
                 switch (Integer.parseInt(rulesLevel)) {
-                case 1 :
-                    mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
-                    break;
-                case 2 :
-                    mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
-                    break;
-                case 3 :
-                    mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
-                    break;
-                default :
-                    throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
+                    case 1:
+                        mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                        break;
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                        break;
+                    case 3:
+                        mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                        break;
+                    default:
+                        throw new EntityLoadingException(
+                                "Unsupported tech level: " + rulesLevel);
                 }
             } else if (techBase.equals("Clan")) {
                 switch (Integer.parseInt(rulesLevel)) {
-                case 2 :
-                    mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
-                    break;
-                case 3 :
-                    mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
-                    break;
-                default :
-                    throw new EntityLoadingException("Unsupported tech level: " + rulesLevel);
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+                        break;
+                    case 3:
+                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                        break;
+                    default:
+                        throw new EntityLoadingException(
+                                "Unsupported tech level: " + rulesLevel);
                 }
-            } else if (techBase.equals("Mixed (IS Chassis)") ||
-                       techBase.equals("Inner Sphere 'C'")) {
+            } else if (techBase.equals("Mixed (IS Chassis)")
+                    || techBase.equals("Inner Sphere 'C'")) {
                 mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
                 mech.setMixedTech(true);
             } else if (techBase.equals("Mixed (Clan Chassis)")) {
                 mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
                 mech.setMixedTech(true);
             } else {
-                throw new EntityLoadingException("Unsupported tech base: " + techBase);
+                throw new EntityLoadingException("Unsupported tech base: "
+                        + techBase);
             }
             mech.setWeight(Integer.parseInt(tonnage));
             if (jumpMP != null)
                 mech.setOriginalJumpMP(Integer.parseInt(jumpMP));
             int engineFlags = 0;
             if ((mech.isClan() && !mech.isMixedTech())
-                || (mech.isMixedTech() && mech.isClan() && !mech.itemOppositeTech(engineType))) {
+                    || (mech.isMixedTech() && mech.isClan() && !mech
+                            .itemOppositeTech(engineType))) {
                 engineFlags = Engine.CLAN_ENGINE;
             }
-            mech.setEngine(new Engine(engineRating,
-                                      Engine.getEngineTypeByString(engineType),
-                                      engineFlags));
+            mech.setEngine(new Engine(engineRating, Engine
+                    .getEngineTypeByString(engineType), engineFlags));
             int expectedSinks = Integer.parseInt(heatSinks);
 
             mech.autoSetInternal();
@@ -503,7 +520,7 @@ public class TdbFile implements IMechLoader {
             // oog, crits.
             compactCriticals(mech);
             // we do these in reverse order to get the outermost
-            //  locations first, which is necessary for split crits to work
+            // locations first, which is necessary for split crits to work
             for (int i = mech.locations() - 1; i >= 0; i--) {
                 parseCrits(mech, i);
             }
@@ -514,31 +531,34 @@ public class TdbFile implements IMechLoader {
 
             // add any heat sinks not allocated
             mech.addEngineSinks(expectedSinks - mech.heatSinks(), dblSinks);
-            
+
             // set targeting system
-            if(targSysStr.startsWith("Long-Range")) {
+            if (targSysStr.startsWith("Long-Range")) {
                 mech.setTargSysType(MiscType.T_TARGSYS_LONGRANGE);
-            } else if(targSysStr.startsWith("Short-Range")) {
+            } else if (targSysStr.startsWith("Short-Range")) {
                 mech.setTargSysType(MiscType.T_TARGSYS_SHORTRANGE);
-            } else if(targSysStr.startsWith("Variable-Range")) {
+            } else if (targSysStr.startsWith("Variable-Range")) {
                 mech.setTargSysType(MiscType.T_TARGSYS_VARIABLE_RANGE);
-            } else if(targSysStr.startsWith("Anti-Aircraft")) {
+            } else if (targSysStr.startsWith("Anti-Aircraft")) {
                 mech.setTargSysType(MiscType.T_TARGSYS_ANTI_AIR);
-            } else if(targSysStr.startsWith("Multi-Trac")) {
+            } else if (targSysStr.startsWith("Multi-Trac")) {
                 mech.setTargSysType(MiscType.T_TARGSYS_MULTI_TRAC);
-            } else if(targSysStr.startsWith("Multi-Trac II")) {
+            } else if (targSysStr.startsWith("Multi-Trac II")) {
                 mech.setTargSysType(MiscType.T_TARGSYS_MULTI_TRAC_II);
-            } else if(targSysStr.startsWith("Targeting Computer")) {
+            } else if (targSysStr.startsWith("Targeting Computer")) {
                 mech.setTargSysType(MiscType.T_TARGSYS_TARGCOMP);
             }
 
             return mech;
         } catch (NumberFormatException ex) {
-            throw new EntityLoadingException("NumberFormatException parsing file");
+            throw new EntityLoadingException(
+                    "NumberFormatException parsing file");
         } catch (NullPointerException ex) {
-            throw new EntityLoadingException("NullPointerException parsing file");
+            throw new EntityLoadingException(
+                    "NullPointerException parsing file");
         } catch (StringIndexOutOfBoundsException ex) {
-            throw new EntityLoadingException("StringIndexOutOfBoundsException parsing file");
+            throw new EntityLoadingException(
+                    "StringIndexOutOfBoundsException parsing file");
         }
     }
 
@@ -566,110 +586,121 @@ public class TdbFile implements IMechLoader {
             // parse out and add the critical
             String critName = critData[loc][i][0];
             boolean rearMounted = true;
-            if (critData[loc][i][1] == null || !isRearMounted[Integer.parseInt(critData[loc][i][1])]) {
+            if (critData[loc][i][1] == null
+                    || !isRearMounted[Integer.parseInt(critData[loc][i][1])]) {
                 rearMounted = false;
             }
-            //boolean split = true;
-            if (critData[loc][i][1] == null || !isSplit[Integer.parseInt(critData[loc][i][1])]) {
-                //split = false;
+            // boolean split = true;
+            if (critData[loc][i][1] == null
+                    || !isSplit[Integer.parseInt(critData[loc][i][1])]) {
+                // split = false;
             }
             if (critName.equalsIgnoreCase("Armored Cowl")) {
                 mech.setCowl(5);
             }
             if (critName.indexOf("Engine") != -1) {
-                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
+                mech.setCritical(loc, i, new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
                 continue;
             }
             if (critName.indexOf("Gyro") != -1) {
-                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
+                mech.setCritical(loc, i, new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
                 continue;
             }
             if (critName.indexOf("Life Support") != -1) {
-                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT));
+                mech.setCritical(loc, i, new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT));
                 continue;
             }
             if (critName.indexOf("Sensors") != -1) {
-                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
+                mech.setCritical(loc, i, new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
                 continue;
             }
             if (critName.indexOf("Cockpit") != -1) {
-                mech.setCritical(loc,i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
+                mech.setCritical(loc, i, new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
                 continue;
             }
             if (critName.endsWith("[LRM]") || critName.endsWith("[SRM]")) {
                 // This is a lame kludge for The Drawing Board, which
-                //  identifies which type of missle weapon an
-                //  Artemis IV system goes with.
-                critName = critName.substring(0,14);
+                // identifies which type of missle weapon an
+                // Artemis IV system goes with.
+                critName = critName.substring(0, 14);
             }
             if (critName.endsWith("- Artemis IV")) {
                 // Ugh, another lame kludge to allow for loading of
-                //  The Drawing Board's specially marked Artemis IV
-                //  missle ammo.  The only real game difference is
-                //  c-bill cost, which we don't care about anyway.
-                critName = critName.substring(0,critName.indexOf(" - Artemis IV"));
+                // The Drawing Board's specially marked Artemis IV
+                // missle ammo. The only real game difference is
+                // c-bill cost, which we don't care about anyway.
+                critName = critName.substring(0, critName
+                        .indexOf(" - Artemis IV"));
             }
             if (critName.endsWith("- Narc")) {
                 // Yet another lame kludge to allow for loading of
-                //  The Drawing Board's specially marked Narc
-                //  missle ammo.
-                critName = critName.substring(0,critName.indexOf(" - Narc"));
+                // The Drawing Board's specially marked Narc
+                // missle ammo.
+                critName = critName.substring(0, critName.indexOf(" - Narc"));
             }
             if (critName.equals("(C) Endosteel")) {
                 // MegaMek determines whether Endo Steel is IS or Clan
-                //  type by techbase of mech.
+                // type by techbase of mech.
                 critName = critName.substring(4);
             }
             if (critName.equals("(C) Ferro-Fibrous Armor")) {
                 // MegaMek determines whether FF Armor is IS or Clan
-                //  type by techbase of mech.
+                // type by techbase of mech.
                 critName = critName.substring(4);
             }
             try {
                 String hashPrefix;
                 if (critName.startsWith("(C)")) {
-                    //equipment specifically marked as clan
+                    // equipment specifically marked as clan
                     hashPrefix = "Clan ";
                     critName = critName.substring(4);
                 } else if (critName.startsWith("(IS)")) {
-                    //equipment specifically marked as inner sphere
+                    // equipment specifically marked as inner sphere
                     hashPrefix = "IS ";
                     critName = critName.substring(5);
                 } else if (mech.isClan()) {
-                    //assume equipment is clan because mech is clan
+                    // assume equipment is clan because mech is clan
                     hashPrefix = "Clan ";
                 } else {
-                    //assume equipment is inner sphere
+                    // assume equipment is inner sphere
                     hashPrefix = "IS ";
                 }
                 EquipmentType etype = EquipmentType.get(hashPrefix + critName);
                 if (etype == null) {
-                    //try without prefix
+                    // try without prefix
                     etype = EquipmentType.get(critName);
                 }
                 if (etype != null) {
                     if (etype.isSpreadable()) {
-                        // do we already have one of these?  Key on Type
+                        // do we already have one of these? Key on Type
                         Mounted m = hSharedEquip.get(etype);
                         if (m != null) {
                             // use the existing one
-                            mech.addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                                                                   mech.getEquipmentNum(m), etype.isHittable()));
+                            mech.addCritical(loc, new CriticalSlot(
+                                    CriticalSlot.TYPE_EQUIPMENT, mech
+                                            .getEquipmentNum(m), etype
+                                            .isHittable()));
                             continue;
                         }
-						m = mech.addEquipment(etype, loc, rearMounted);
-						hSharedEquip.put(etype, m);
-                    }
-                    else if (etype instanceof WeaponType &&
-                            etype.hasFlag(WeaponType.F_SPLITABLE)) {
-                        // do we already have this one in this or an outer location?
+                        m = mech.addEquipment(etype, loc, rearMounted);
+                        hSharedEquip.put(etype, m);
+                    } else if (etype instanceof WeaponType
+                            && etype.hasFlag(WeaponType.F_SPLITABLE)) {
+                        // do we already have this one in this or an outer
+                        // location?
                         Mounted m = null;
                         boolean bFound = false;
                         for (int x = 0, n = vSplitWeapons.size(); x < n; x++) {
                             m = vSplitWeapons.elementAt(x);
                             int nLoc = m.getLocation();
-                            if ((nLoc == loc || loc == Mech.getInnerLocation(nLoc))
-                                && m.getType() == etype) {
+                            if ((nLoc == loc || loc == Mech
+                                    .getInnerLocation(nLoc))
+                                    && m.getType() == etype) {
                                 bFound = true;
                                 break;
                             }
@@ -685,28 +716,25 @@ public class TdbFile implements IMechLoader {
                                 m.setSplit(true);
                             }
                             // give the most restrictive location for arcs
-                            int help=m.getLocation();
-                            m.setLocation(Mech.mostRestrictiveLoc(
-                                    loc, help));
-                            if (loc!=help) {
+                            int help = m.getLocation();
+                            m.setLocation(Mech.mostRestrictiveLoc(loc, help));
+                            if (loc != help) {
                                 m.setSecondLocation(Mech.leastRestrictiveLoc(
-                                    loc, help));
+                                        loc, help));
                             }
-                        }
-                        else {
+                        } else {
                             // make a new one
                             m = new Mounted(mech, etype);
                             m.setFoundCrits(1);
                             vSplitWeapons.addElement(m);
                         }
                         mech.addEquipment(m, loc, rearMounted);
-                    }
-                    else {
+                    } else {
                         mech.addEquipment(etype, loc, rearMounted);
                     }
                 } else {
                     if (!critName.equals("Empty")) {
-                        //Can't load this piece of equipment!
+                        // Can't load this piece of equipment!
                         // Add it to the list so we can show the user.
                         mech.addFailedEquipment(critName);
                         // Make the failed equipment an empty slot
@@ -715,7 +743,7 @@ public class TdbFile implements IMechLoader {
                         // Compact criticals again
                         compactCriticals(mech, loc);
                         // Re-parse the same slot, since the compacting
-                        //  could have moved new equipment to this slot
+                        // could have moved new equipment to this slot
                         i--;
                     }
                 }
@@ -726,13 +754,11 @@ public class TdbFile implements IMechLoader {
     }
 
     /**
-     * This function moves all "empty" slots to the end of a location's
-     * critical list.
-     *
-     * MegaMek adds equipment to the first empty slot available in a
-     * location.  This means that any "holes" (empty slots not at the
-     * end of a location), will cause the file crits and MegaMek's crits
-     * to become out of sync.
+     * This function moves all "empty" slots to the end of a location's critical
+     * list. MegaMek adds equipment to the first empty slot available in a
+     * location. This means that any "holes" (empty slots not at the end of a
+     * location), will cause the file crits and MegaMek's crits to become out of
+     * sync.
      */
     private void compactCriticals(Mech mech) {
         for (int loc = 0; loc < mech.locations(); loc++) {
@@ -742,7 +768,7 @@ public class TdbFile implements IMechLoader {
 
     private void compactCriticals(Mech mech, int loc) {
         if (loc == Mech.LOC_HEAD) {
-            //This location has an empty slot inbetween systems crits
+            // This location has an empty slot inbetween systems crits
             // which will mess up parsing if compacted.
             return;
         }
@@ -752,13 +778,13 @@ public class TdbFile implements IMechLoader {
                 firstEmpty = slot;
             }
             if (firstEmpty != -1 && !critData[loc][slot][0].equals("Empty")) {
-                //move this to the first empty slot
+                // move this to the first empty slot
                 critData[loc][firstEmpty][0] = critData[loc][slot][0];
                 critData[loc][firstEmpty][1] = critData[loc][slot][1];
-                //mark the old slot empty
+                // mark the old slot empty
                 critData[loc][slot][0] = "Empty";
                 critData[loc][slot][1] = null;
-                //restart just after the moved slot's new location
+                // restart just after the moved slot's new location
                 slot = firstEmpty;
                 firstEmpty = -1;
             }

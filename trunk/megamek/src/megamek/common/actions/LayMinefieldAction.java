@@ -14,9 +14,7 @@
 
 package megamek.common.actions;
 
-public class LayMinefieldAction
-    extends AbstractEntityAction
-{
+public class LayMinefieldAction extends AbstractEntityAction {
     /**
      * 
      */
@@ -26,9 +24,9 @@ public class LayMinefieldAction
 
     /**
      * Lay the indicated mine with the entity with the given entity ID.
-     *
-     * @param   entityId the <code>int</code> ID of the minelaying entity.
-     * @param   equipId the <code>int</code> ID of the mine.
+     * 
+     * @param entityId the <code>int</code> ID of the minelaying entity.
+     * @param equipId the <code>int</code> ID of the mine.
      */
     public LayMinefieldAction(int entityId, int equipId) {
         super(entityId);
@@ -37,8 +35,8 @@ public class LayMinefieldAction
 
     /**
      * Get the equipment ID of the mine being laid.
-     *
-     * @return  the <code>int</code> equipment ID of the mine.
+     * 
+     * @return the <code>int</code> equipment ID of the mine.
      */
     public int getMineId() {
         return this.mineId;

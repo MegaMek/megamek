@@ -22,11 +22,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class PrototypeLaserHandler extends EnergyWeaponHandler {
-    
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6832340682515730916L;
 
     /**
      * @param t
@@ -34,11 +36,14 @@ public class PrototypeLaserHandler extends EnergyWeaponHandler {
      * @param g
      * @param s
      */
-    public PrototypeLaserHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public PrototypeLaserHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
-        /*
-     *  (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
      */
     protected void addHeat() {

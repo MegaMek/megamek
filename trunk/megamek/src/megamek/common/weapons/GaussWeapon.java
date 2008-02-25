@@ -19,7 +19,6 @@ package megamek.common.weapons;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public abstract class GaussWeapon extends AmmoWeapon {
     /**

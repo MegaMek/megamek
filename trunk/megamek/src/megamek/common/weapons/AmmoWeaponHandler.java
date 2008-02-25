@@ -25,7 +25,6 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class AmmoWeaponHandler extends WeaponHandler {
     /**
@@ -33,10 +32,9 @@ public class AmmoWeaponHandler extends WeaponHandler {
      */
     private static final long serialVersionUID = -4934490646657484486L;
     Mounted ammo;
-    
+
     /**
      * Used for deserialization. DO NOT USE OTHERWISE.
-     *
      */
     protected AmmoWeaponHandler() {
     }
@@ -46,7 +44,8 @@ public class AmmoWeaponHandler extends WeaponHandler {
      * @param w
      * @param g
      */
-    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
 
     }
@@ -59,10 +58,10 @@ public class AmmoWeaponHandler extends WeaponHandler {
     protected void useAmmo() {
         checkAmmo();
         if (ammo == null) {// Can't happen. w/o legal ammo, the weapon
-                            // *shouldn't* fire.
+            // *shouldn't* fire.
             System.out.println("Handler can't find any ammo!  Oh no!");
         }
-        
+
         if (ammo.getShotsLeft() <= 0) {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();

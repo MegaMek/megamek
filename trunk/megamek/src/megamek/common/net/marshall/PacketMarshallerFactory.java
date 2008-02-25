@@ -16,32 +16,32 @@ package megamek.common.net.marshall;
 
 public class PacketMarshallerFactory {
 
-    private static PacketMarshallerFactory instance  = new PacketMarshallerFactory();
-    
-    private NativeSerializationMarshaller nativeSerializationMarshaller; 
-    private XMLMarshaller  XMLMarshaller; 
-    
+    private static PacketMarshallerFactory instance = new PacketMarshallerFactory();
+
+    private NativeSerializationMarshaller nativeSerializationMarshaller;
+    private XMLMarshaller XMLMarshaller;
+
     private PacketMarshallerFactory() {
     }
-    
+
     public static PacketMarshallerFactory getInstance() {
         return instance;
     }
 
     public PacketMarshaller getMarshaller(int marshallingType) {
         switch (marshallingType) {
-        case PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING:
-            if (nativeSerializationMarshaller == null) {
-                nativeSerializationMarshaller = new NativeSerializationMarshaller();
-            }
-            return nativeSerializationMarshaller;
-        case PacketMarshaller.XML_MARSHALING:
-            if (XMLMarshaller == null) {
-                XMLMarshaller = new XMLMarshaller();
-            }
-            return XMLMarshaller;
-        default:
-            return null;
+            case PacketMarshaller.NATIVE_SERIALIZATION_MARSHALING:
+                if (nativeSerializationMarshaller == null) {
+                    nativeSerializationMarshaller = new NativeSerializationMarshaller();
+                }
+                return nativeSerializationMarshaller;
+            case PacketMarshaller.XML_MARSHALING:
+                if (XMLMarshaller == null) {
+                    XMLMarshaller = new XMLMarshaller();
+                }
+                return XMLMarshaller;
+            default:
+                return null;
         }
     }
 

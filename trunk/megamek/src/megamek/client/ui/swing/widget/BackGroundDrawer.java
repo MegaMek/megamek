@@ -18,16 +18,13 @@ import java.awt.Graphics;
 import java.awt.Image;
 
 /**
- * Background drawer is a class which keeps reference
- * to a single Image and draws it according specified rules.
- * For example, we can order to draw image by fully tiling
- * it over all area, or tile it in a single row or column
- * with desired alignment, or draw it just once. Alignment
- * of drawing can be
- * <li>logical (top, bottom, center for vertical
- * alignment and left, right, center for horizontal one)</li>
- * <li>or given by exact number of pixels from top or left borders of
- * area</li>
+ * Background drawer is a class which keeps reference to a single Image and
+ * draws it according specified rules. For example, we can order to draw image
+ * by fully tiling it over all area, or tile it in a single row or column with
+ * desired alignment, or draw it just once. Alignment of drawing can be
+ * <li>logical (top, bottom, center for vertical alignment and left, right,
+ * center for horizontal one)</li>
+ * <li>or given by exact number of pixels from top or left borders of area</li>
  */
 
 public class BackGroundDrawer {
@@ -36,13 +33,11 @@ public class BackGroundDrawer {
      */
     public static final int NO_TILING = 1;
     /**
-     * Image will be tiled into single column over drawing
-     * area.
+     * Image will be tiled into single column over drawing area.
      */
     public static final int TILING_VERTICAL = 2;
     /**
-     * Image will be tiled into single row over drawing
-     * area.
+     * Image will be tiled into single row over drawing area.
      */
     public static final int TILING_HORIZONTAL = 4;
     /**
@@ -62,8 +57,8 @@ public class BackGroundDrawer {
      */
     public static final int VALIGN_BOTTOM = 64;
     /**
-     * Shift down from top border of area by exact number of
-     * pixels. (default 0 pixels)
+     * Shift down from top border of area by exact number of pixels. (default 0
+     * pixels)
      */
     public static final int VALIGN_EXACT = 128;
     /**
@@ -79,12 +74,12 @@ public class BackGroundDrawer {
      */
     public static final int HALIGN_RIGHT = 1024;
     /**
-     * Shift right from left border of area by exact number of
-     * pixels. (default 0 pixels)
+     * Shift right from left border of area by exact number of pixels. (default
+     * 0 pixels)
      */
     public static final int HALIGN_EXACT = 2048;
 
-    //Required bit masks to manipulate behavior variable.
+    // Required bit masks to manipulate behavior variable.
     private static final int TILING_TYPE_MASK = 4080;
     private static final int VALIGN_MASK = 3855;
     private static final int HALIGN_MASK = 255;
@@ -99,9 +94,9 @@ public class BackGroundDrawer {
 
     /**
      * @param mainImage image to draw by BackGroundDrawer.
-     * @param behavior  Integer value specifying way of tiling and alignment.
-     *                  For exapmple:
-     *                  <code> BackGroundDrawer(myImage, BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT);
+     * @param behavior Integer value specifying way of tiling and alignment. For
+     *            exapmple:
+     *            <code> BackGroundDrawer(myImage, BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT);
      *                  </code>
      */
 
@@ -112,7 +107,7 @@ public class BackGroundDrawer {
 
     /**
      * Tiling style is set to NO_TILING | VALIGN_CENTER | HALIGN_CENTER.
-     *
+     * 
      * @param mainImage image to draw by BackGroundDrawer.
      */
 
@@ -137,9 +132,9 @@ public class BackGroundDrawer {
 
     /**
      * Sets type of tiling.
-     *
-     * @param type Possible values: NO_TILING, TILING_BOTH,
-     *             TILING_VERTICAL, TILING_HORIZONTAL.
+     * 
+     * @param type Possible values: NO_TILING, TILING_BOTH, TILING_VERTICAL,
+     *            TILING_HORIZONTAL.
      */
     public void setTilingType(int type) {
         type &= TILING_TYPE_SELECT_MASK;
@@ -149,8 +144,8 @@ public class BackGroundDrawer {
 
     /**
      * Sets vertical align of tiling
-     *
-     * @param type Must be  VALIGN_TOP, VALIGN_CENTER, VALIGN_BOTTOM
+     * 
+     * @param type Must be VALIGN_TOP, VALIGN_CENTER, VALIGN_BOTTOM
      */
 
     public void setValign(int vAlign) {
@@ -161,8 +156,8 @@ public class BackGroundDrawer {
 
     /**
      * Sets horizontal align of tiling
-     *
-     * @param type Must be  HALIGN_LEFT, HALIGN_CENTER, HALIGN_RIGHT
+     * 
+     * @param type Must be HALIGN_LEFT, HALIGN_CENTER, HALIGN_RIGHT
      */
     public void setHalign(int hAlign) {
         hAlign &= HALIGN_SELECT_MASK;
@@ -197,19 +192,19 @@ public class BackGroundDrawer {
     }
 
     /**
-     * Draws image into Graphics with custom tiling
-     * type and alignment.
-     *
-     * @param g      Graphics to which draw to.
-     * @param width  Width of the drawing area.
+     * Draws image into Graphics with custom tiling type and alignment.
+     * 
+     * @param g Graphics to which draw to.
+     * @param width Width of the drawing area.
      * @param height Height of the drawing area.
      */
 
     public void drawInto(Graphics g, int width, int height) {
 
-        if (mainImage == null) return;
-        
-        //Checking behavior of painter
+        if (mainImage == null)
+            return;
+
+        // Checking behavior of painter
         if ((behavior & NO_TILING) != 0) {
             drawNoTiling(g, width, height);
             return;
@@ -242,9 +237,11 @@ public class BackGroundDrawer {
         int tileWidth = mainImage.getWidth(null);
         int tileHeight = mainImage.getHeight(null);
         int countX = (width / tileWidth);
-        if (width % tileWidth != 0) countX++;
+        if (width % tileWidth != 0)
+            countX++;
         int countY = (height / tileHeight);
-        if (height % tileHeight != 0) countY++;
+        if (height % tileHeight != 0)
+            countY++;
         for (int i = 0; i < countX; i++) {
             for (int j = 0; j < countY; j++) {
                 g.drawImage(mainImage, i * tileWidth, j * tileHeight, null);
@@ -256,7 +253,8 @@ public class BackGroundDrawer {
         int dx = getDX(width);
         int tileHeight = mainImage.getHeight(null);
         int countY = (height / tileHeight);
-        if (height % tileHeight != 0) countY++;
+        if (height % tileHeight != 0)
+            countY++;
         for (int j = 0; j < countY; j++) {
             g.drawImage(mainImage, dx, j * tileHeight, null);
         }
@@ -266,7 +264,8 @@ public class BackGroundDrawer {
         int dy = getDY(height);
         int tileWidth = mainImage.getWidth(null);
         int countX = (width / tileWidth);
-        if (width % tileWidth != 0) countX++;
+        if (width % tileWidth != 0)
+            countX++;
         for (int i = 0; i < countX; i++) {
             g.drawImage(mainImage, i * tileWidth, dy, null);
         }
@@ -279,7 +278,8 @@ public class BackGroundDrawer {
             dx = 0;
         } else if ((behavior & HALIGN_CENTER) != 0) {
             dx = (width - tw) / 2;
-            if (dx < 0) dx = 0;
+            if (dx < 0)
+                dx = 0;
         } else if ((behavior & HALIGN_RIGHT) != 0) {
             dx = width - tw;
         } else if ((behavior & HALIGN_EXACT) != 0) {
@@ -296,7 +296,8 @@ public class BackGroundDrawer {
             dy = 0;
         } else if ((behavior & VALIGN_CENTER) != 0) {
             dy = (height - th) / 2;
-            if (dy < 0) dy = 0;
+            if (dy < 0)
+                dy = 0;
         } else if ((behavior & VALIGN_BOTTOM) != 0) {
             dy = height - th;
         } else if ((behavior & VALIGN_EXACT) != 0) {

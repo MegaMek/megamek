@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLHeavySmallLaser extends LaserWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1717918421173868008L;
+
     /**
      * 
      */

@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLSniper extends ArtilleryWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -599648142688689572L;
 
     /**
      * 
@@ -39,7 +43,7 @@ public class CLSniper extends ArtilleryWeapon {
         this.heat = 10;
         this.rackSize = 10;
         this.ammoType = AmmoType.T_SNIPER;
-        this.shortRange = 1;  //
+        this.shortRange = 1; //
         this.mediumRange = 2;
         this.longRange = 12;
         this.extremeRange = 12; // No extreme range.

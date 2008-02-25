@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISLGaussRifle extends GaussWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8971550996626387100L;
+
     /**
      * 
      */

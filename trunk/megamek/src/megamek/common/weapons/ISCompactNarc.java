@@ -25,9 +25,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISCompactNarc extends NarcWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6784282679924023973L;
+
     /**
      * 
      */
@@ -48,7 +52,7 @@ public class ISCompactNarc extends NarcWeapon {
         this.bv = 16;
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

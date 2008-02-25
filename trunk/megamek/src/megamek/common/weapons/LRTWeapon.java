@@ -21,7 +21,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public abstract class LRTWeapon extends MissileWeapon {
 
@@ -31,9 +30,9 @@ public abstract class LRTWeapon extends MissileWeapon {
     public LRTWeapon() {
         super();
         this.ammoType = AmmoType.T_LRM_TORPEDO;
-        this.setModes(new String[] {"", "Indirect"});
+        this.setModes(new String[] { "", "Indirect" });
     }
-    
+
     /*
      * (non-Javadoc)
      * 

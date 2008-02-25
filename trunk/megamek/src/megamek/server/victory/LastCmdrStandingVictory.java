@@ -24,6 +24,11 @@ import megamek.common.Player;
  * implements "last commander standing"
  */
 public class LastCmdrStandingVictory implements Victory, Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2561526753703122263L;
+
     public LastCmdrStandingVictory() {
     }
 

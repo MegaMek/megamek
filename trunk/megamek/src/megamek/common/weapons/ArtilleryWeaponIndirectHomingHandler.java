@@ -46,8 +46,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      * @param w
      * @param g
      */
-    public ArtilleryWeaponIndirectHomingHandler(ToHitData t, WeaponAttackAction w,
-            IGame g, Server s) {
+    public ArtilleryWeaponIndirectHomingHandler(ToHitData t,
+            WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
 
@@ -91,10 +91,11 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         Entity entityTarget;
         if (game.getPhase() == IGame.PHASE_OFFBOARD) {
             convertHomingShotToEntityTarget();
-            entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa.getTarget(game)
+            entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
+                    .getTarget(game)
                     : null;
         } else {
-            entityTarget = (Entity)target;
+            entityTarget = (Entity) target;
         }
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
@@ -167,13 +168,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             bGlancing = false;
         }
 
-
         // we may still have to use ammo, if direct fire
         if (!handledAmmoAndReport) {
             useAmmo();
             addHeat();
         }
-        
+
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
         // the miss later, as we already reported
@@ -226,13 +226,14 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 r.subject = entityTarget.getId();
             r.add(bldgAbsorbs);
             vPhaseReport.addElement(r);
-            Vector<Report> buildingReport = server.damageBuilding( bldg, nDamPerHit );
-            for (Report report: buildingReport) {
+            Vector<Report> buildingReport = server.damageBuilding(bldg,
+                    nDamPerHit);
+            for (Report report : buildingReport) {
                 report.subject = entityTarget.getId();
             }
             vPhaseReport.addAll(buildingReport);
         }
-        nDamPerHit-=bldgAbsorbs;
+        nDamPerHit -= bldgAbsorbs;
 
         // Make sure the player knows when his attack causes no damage.
         if (nDamPerHit == 0) {
@@ -242,8 +243,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             return false;
         }
         if (!bMissed && entityTarget != null) {
-            handleEntityDamage(entityTarget, vPhaseReport, bldg, hits, nCluster,
-                    nDamPerHit, bldgAbsorbs);
+            handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
+                    nCluster, nDamPerHit, bldgAbsorbs);
             server.creditKill(entityTarget, ae);
         }
         Coords coords = target.getPosition();
@@ -252,9 +253,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         bldg = game.getBoard().getBuildingAt(coords);
         bldgAbsorbs = (bldg != null) ? bldg.getPhaseCF() / 10 : 0;
         bldgAbsorbs = Math.min(bldgAbsorbs, ratedDamage);
-        //assumption: homing artillery splash damage is area effect.
+        // assumption: homing artillery splash damage is area effect.
         // do damage to woods, 2 * normal damage (TW page 112)
-        handleClearDamage(vPhaseReport, bldg, ratedDamage*2, bSalvo);
+        handleClearDamage(vPhaseReport, bldg, ratedDamage * 2, bSalvo);
         ratedDamage -= bldgAbsorbs;
         if (ratedDamage > 0) {
             for (Enumeration impactHexHits = game.getEntities(coords); impactHexHits
@@ -263,14 +264,15 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 if (!bMissed) {
                     if (entity == entityTarget)
                         continue; // don't splash the target unless missile
-                                    // missed
+                    // missed
                 }
                 toHit.setSideTable(entity.sideTable(aaa.getCoords()));
                 HitData hit = entity.rollHitLocation(toHit.getHitTable(), toHit
                         .getSideTable(), waa.getAimedLocation(), waa
                         .getAimingMode());
-                vPhaseReport.addAll( server.damageEntity(entity, hit,
-                        ratedDamage, false, DamageType.NONE, false, true, throughFront));
+                vPhaseReport.addAll(server.damageEntity(entity, hit,
+                        ratedDamage, false, DamageType.NONE, false, true,
+                        throughFront));
                 server.creditKill(entity, ae);
             }
         }
@@ -279,15 +281,13 @@ public class ArtilleryWeaponIndirectHomingHandler extends
     }
 
     /**
-     * Find the tagged entity for this attack
-     *
-     * Each TAG will attract a number of shots up to its priority number (mode setting)
-     * When all the TAGs are used up, the shots fired are reset.
-     * So if you leave them all on 1-shot, then homing attacks will be evenly split, however many shots you fire.
-     *
-     * Priority setting is to allocate more homing attacks to a more important target as decided by player.
-     * 
-     * TAGs fired by the enemy aren't eligible, nor are TAGs fired at a target on a different map sheet.
+     * Find the tagged entity for this attack Each TAG will attract a number of
+     * shots up to its priority number (mode setting) When all the TAGs are used
+     * up, the shots fired are reset. So if you leave them all on 1-shot, then
+     * homing attacks will be evenly split, however many shots you fire.
+     * Priority setting is to allocate more homing attacks to a more important
+     * target as decided by player. TAGs fired by the enemy aren't eligible, nor
+     * are TAGs fired at a target on a different map sheet.
      */
     protected void convertHomingShotToEntityTarget() {
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
@@ -350,10 +350,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             aaa.setTargetType(Targetable.TYPE_ENTITY);
         }
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity, boolean, megamek.common.Building, java.util.Vector)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
+     *      boolean, megamek.common.Building, java.util.Vector)
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {

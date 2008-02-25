@@ -27,15 +27,19 @@ import megamek.server.Server;
 
 public class TAGHandler extends WeaponHandler {
     /**
+     * 
+     */
+    private static final long serialVersionUID = -967656770476044773L;
+
+    /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public TAGHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public TAGHandler(ToHitData toHit, WeaponAttackAction waa, IGame g, Server s) {
         super(toHit, waa, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -44,9 +48,12 @@ public class TAGHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         return 0;
     }
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
+     *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
@@ -69,11 +76,13 @@ public class TAGHandler extends WeaponHandler {
                     priority = 4;
                 }
             }
-            if (priority < 1) priority = 1;
-            //add even misses, as they waste homing missiles.
-            //it is possible for 2 or more tags to hit the same entity, 
-            //but this only matters in the offboard phase
-            TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(), priority, false);
+            if (priority < 1)
+                priority = 1;
+            // add even misses, as they waste homing missiles.
+            // it is possible for 2 or more tags to hit the same entity,
+            // but this only matters in the offboard phase
+            TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(),
+                    priority, false);
             game.addTagInfo(info);
             entityTarget.setTaggedBy(ae.getId());
             r = new Report(3188);
@@ -81,10 +90,12 @@ public class TAGHandler extends WeaponHandler {
             vPhaseReport.addElement(r);
         }
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity, boolean, megamek.common.Building, java.util.Vector)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
+     *      boolean, megamek.common.Building, java.util.Vector)
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
@@ -101,13 +112,15 @@ public class TAGHandler extends WeaponHandler {
                 priority = 4;
             }
         }
-        TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(), priority, true);
+        TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(), priority,
+                true);
         game.addTagInfo(info);
         return false;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     public boolean cares(int phase) {

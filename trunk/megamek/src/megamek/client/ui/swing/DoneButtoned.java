@@ -17,15 +17,15 @@ package megamek.client.ui.swing;
 import javax.swing.JButton;
 
 /**
- * Classes that implement this interface define a "Done" button that they
- * do not display.  Windows that show objects of this type should retrieve
- * this "Done" button and display it at an appropriate location.
+ * Classes that implement this interface define a "Done" button that they do not
+ * display. Windows that show objects of this type should retrieve this "Done"
+ * button and display it at an appropriate location.
  */
 public interface DoneButtoned {
 
     /**
      * Retrieve the "Done" button of this object.
-     *
+     * 
      * @return the <code>javax.swing.JButton</code> that activates this
      *         object's "Done" action.
      */

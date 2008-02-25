@@ -26,10 +26,14 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class InfantryMGWeapon extends InfantryWeapon {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3434311797513896108L;
+
     public InfantryMGWeapon() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -41,11 +45,11 @@ public class InfantryMGWeapon extends InfantryWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 4;
-        //machine gun (support) TM p. 319
+        // machine gun (support) TM p. 319
         this.bv = 3.93;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

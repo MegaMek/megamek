@@ -13,23 +13,23 @@
  */
 package megamek.client.ui.swing;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
+
 /**
  * Ask for the setting for a vibrabomb.
  */
-public class VibrabombSettingDialog
-        extends JDialog implements ActionListener {
+public class VibrabombSettingDialog extends JDialog implements ActionListener {
     /**
      * 
      */
@@ -46,7 +46,8 @@ public class VibrabombSettingDialog
         super.setResizable(false);
         frame = p;
         butOk.addActionListener(this);
-        JLabel labMessage = new JLabel(Messages.getString("VibrabombSettingDialog.selectSetting")); //$NON-NLS-1$
+        JLabel labMessage = new JLabel(Messages
+                .getString("VibrabombSettingDialog.selectSetting")); //$NON-NLS-1$
         getContentPane().setLayout(gridbag);
         c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(1, 1, 1, 1);
@@ -68,8 +69,9 @@ public class VibrabombSettingDialog
         gridbag.setConstraints(butOk, c);
         getContentPane().add(butOk);
         pack();
-        setLocation(p.getLocation().x + p.getSize().width / 2 - getSize().width / 2,
-                p.getLocation().y + p.getSize().height / 2 - getSize().height / 2);
+        setLocation(p.getLocation().x + p.getSize().width / 2 - getSize().width
+                / 2, p.getLocation().y + p.getSize().height / 2
+                - getSize().height / 2);
     }
 
     public int getSetting() {
@@ -84,15 +86,23 @@ public class VibrabombSettingDialog
                     setting = Integer.parseInt(s);
                 }
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(frame,
-                        Messages.getString("VibrabombSettingDialog.alert.Message"), //$NON-NLS-1$
-                        Messages.getString("VibrabombSettingDialog.alert.Title"), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("VibrabombSettingDialog.alert.Message"), //$NON-NLS-1$
+                                Messages
+                                        .getString("VibrabombSettingDialog.alert.Title"), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
                 return;
             }
             if ((setting < 20) || (setting > 100)) {
-                JOptionPane.showMessageDialog(frame,
-                        Messages.getString("VibrabombSettingDialog.alert.Message"), //$NON-NLS-1$
-                        Messages.getString("VibrabombSettingDialog.alert.Title"), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                Messages
+                                        .getString("VibrabombSettingDialog.alert.Message"), //$NON-NLS-1$
+                                Messages
+                                        .getString("VibrabombSettingDialog.alert.Title"), JOptionPane.WARNING_MESSAGE); //$NON-NLS-1$
                 return;
             }
         }

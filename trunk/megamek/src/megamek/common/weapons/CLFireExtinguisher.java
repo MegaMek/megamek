@@ -25,9 +25,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLFireExtinguisher extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5190894967392738394L;
+
     /**
      * 
      */
@@ -46,7 +50,7 @@ public class CLFireExtinguisher extends Weapon {
         this.criticals = 0;
         this.flags |= F_SOLO_ATTACK | F_NO_FIRES;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

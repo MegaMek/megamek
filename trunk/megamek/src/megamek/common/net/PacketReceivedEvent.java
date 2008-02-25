@@ -14,12 +14,11 @@
 
 package megamek.common.net;
 
-
 /**
  * Instances of this class are sent when packet received
  */
 public class PacketReceivedEvent extends ConnectionEvent {
-    
+
     /**
      * 
      */
@@ -28,16 +27,18 @@ public class PacketReceivedEvent extends ConnectionEvent {
 
     /**
      * Constructs connection event
+     * 
      * @param source The object on which the Event initially occurred.
      * @param packet The received packet
      */
-    public PacketReceivedEvent(Object source, Packet packet) {      
+    public PacketReceivedEvent(Object source, Packet packet) {
         super(source, PACKET_RECEIVED);
         this.packet = packet;
     }
-    
+
     /**
      * Returns the received packet
+     * 
      * @return the received packet
      */
     public Packet getPacket() {

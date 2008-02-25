@@ -20,20 +20,22 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class LRMSwarmIHandler extends LRMSwarmHandler {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6522069260223528740L;
     int swarmMissilesNowLeft = 0;
-    
+
     /**
      * @param t
      * @param w
      * @param g
      * @param s
      */
-    public LRMSwarmIHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+    public LRMSwarmIHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
         sSalvoType = " swarm-i missile(s) ";
     }

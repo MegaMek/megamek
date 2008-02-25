@@ -27,10 +27,14 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class LRMScatterableHandler extends MissileWeaponHandler {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3661776853552779877L;
+
     /**
      * @param t
      * @param w
@@ -41,34 +45,33 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
             Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector, megamek.common.Entity, boolean)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
+     *      megamek.common.Entity, boolean)
      */
-    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget,
-            boolean bMissed) {
+    protected boolean specialResolution(Vector<Report> vPhaseReport,
+            Entity entityTarget, boolean bMissed) {
         Coords coords = target.getPosition();
-        AmmoType atype = (AmmoType)ammo.getType();
+        AmmoType atype = (AmmoType) ammo.getType();
         if (!bMissed) {
             r = new Report(3190);
             r.subject = subjectId;
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
-        }
-        else {
-            coords = Compute.scatter(coords, game.getOptions().
-                    booleanOption("margin_scatter_distance") 
-                    ? toHit.getValue()-roll : -1);
+        } else {
+            coords = Compute.scatter(coords, game.getOptions().booleanOption(
+                    "margin_scatter_distance") ? toHit.getValue() - roll : -1);
             if (game.getBoard().contains(coords)) {
-                //misses and scatters to another hex
+                // misses and scatters to another hex
                 r = new Report(3195);
                 r.subject = subjectId;
                 r.add(coords.getBoardNum());
                 vPhaseReport.addElement(r);
-            }
-            else {
-                //misses and scatters off-board
+            } else {
+                // misses and scatters off-board
                 r = new Report(3200);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
@@ -79,26 +82,20 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
         // Handle the thunder munitions.
         if (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
             server.deliverThunderAugMinefield(coords, ae.getOwner().getId(),
-                                       atype.getRackSize());
-        }
-        else if (atype.getMunitionType() == AmmoType.M_THUNDER) {
-            server.deliverThunderMinefield(coords, ae.getOwner().getId(),
-                                    atype.getRackSize());
-        }
-        else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO) {
-            server.deliverThunderInfernoMinefield(coords, ae.getOwner().getId(),
                     atype.getRackSize());
-        }
-        else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) {
+        } else if (atype.getMunitionType() == AmmoType.M_THUNDER) {
+            server.deliverThunderMinefield(coords, ae.getOwner().getId(), atype
+                    .getRackSize());
+        } else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO) {
+            server.deliverThunderInfernoMinefield(coords,
+                    ae.getOwner().getId(), atype.getRackSize());
+        } else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) {
             server.deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
-                    atype.getRackSize(),
-                    waa.getOtherAttackInfo());
-        }
-        else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE) {
+                    atype.getRackSize(), waa.getOtherAttackInfo());
+        } else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE) {
             server.deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
                     atype.getRackSize());
-        }
-        else if (atype.getMunitionType() == AmmoType.M_FLARE) {
+        } else if (atype.getMunitionType() == AmmoType.M_FLARE) {
             server.deliverFlare(coords, atype.getRackSize());
         }
         return true;

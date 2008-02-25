@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLRAC10 extends RACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7945585759921446908L;
+
     /**
      * 
      */

@@ -34,34 +34,41 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4478740737686392126L;
+
     /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public VehicleFlamerHeatHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public VehicleFlamerHeatHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
     }
 
     /*
      * (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
+     *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
         if (entityTarget instanceof Mech
                 && game.getOptions().booleanOption("flamer_heat")) {
-            
-            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                    .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
 
-            if ( entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                    Compute.targetSideTable(ae, entityTarget)) ) {
+            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                    toHit.getSideTable(), waa.getAimedLocation(), waa
+                            .getAimingMode());
+
+            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
+                    .getCover(), Compute.targetSideTable(ae, entityTarget))) {
                 // Weapon strikes Partial Cover.
                 r = new Report(3460);
                 r.subject = subjectId;
@@ -89,7 +96,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
                     nCluster, nDamPerHit, bldgAbsorbs);
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -100,10 +107,12 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor)
                 toReturn = Compute.d6(3);
-            toReturn = Compute.d6(4); 
+            toReturn = Compute.d6(4);
         }
         // pain shunted infantry get half damage
-        if (target instanceof Infantry && ((Entity)target).getCrew().getOptions().booleanOption("pain_shunt") ) {
+        if (target instanceof Infantry
+                && ((Entity) target).getCrew().getOptions().booleanOption(
+                        "pain_shunt")) {
             toReturn /= 2;
         }
         return toReturn;

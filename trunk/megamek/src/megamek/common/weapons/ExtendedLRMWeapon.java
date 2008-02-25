@@ -17,7 +17,6 @@ import megamek.common.AmmoType;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public abstract class ExtendedLRMWeapon extends LRMWeapon {
 
@@ -28,4 +27,4 @@ public abstract class ExtendedLRMWeapon extends LRMWeapon {
         super();
         this.ammoType = AmmoType.T_EXLRM;
     }
- }
+}

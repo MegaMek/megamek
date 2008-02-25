@@ -14,55 +14,59 @@
 
 package megamek.common.options;
 
-import java.io.*;
-import java.util.*;
-
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * Parent class for options settings
  */
 public abstract class AbstractOptions implements IOptions, Serializable {
-    
-    private Hashtable<String,IOption> optionsHash = new Hashtable<String,IOption>();
-    
+
+    private Hashtable<String, IOption> optionsHash = new Hashtable<String, IOption>();
+
     protected AbstractOptions() {
         initialize();
         getOptionsInfoImp().finish();
     }
 
     protected abstract void initialize();
-    
+
     public Enumeration<IOptionGroup> getGroups() {
         return new GroupsEnumeration();
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.IOptions#getOptions()
      */
     public Enumeration<IOption> getOptions() {
         return optionsHash.elements();
-    }    
-    
-    
-    /* (non-Javadoc)
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.IOptions#getOptionInfo(java.lang.String)
      */
     public IOptionInfo getOptionInfo(String name) {
         return getOptionsInfo().getOptionInfo(name);
     }
-    
+
     public IOption getOption(String name) {
         return optionsHash.get(name);
     }
-    
+
     public boolean booleanOption(String name) {
         return getOption(name).booleanValue();
     }
-    
+
     public int intOption(String name) {
         return getOption(name).intValue();
     }
-    
+
     public float floatOption(String name) {
         return getOption(name).floatValue();
     }
@@ -76,7 +80,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
     }
 
     protected abstract AbstractOptionsInfo getOptionsInfoImp();
-    
+
     protected IBasicOptionGroup addGroup(String groupName) {
         return getOptionsInfoImp().addGroup(groupName);
     }
@@ -85,24 +89,34 @@ public abstract class AbstractOptions implements IOptions, Serializable {
         return getOptionsInfoImp().addGroup(groupName, key);
     }
 
-    protected void addOption(IBasicOptionGroup group, String name, String defaultValue) {
+    protected void addOption(IBasicOptionGroup group, String name,
+            String defaultValue) {
         addOption(group, name, IOption.STRING, defaultValue);
     }
-    protected void addOption(IBasicOptionGroup group, String name, boolean defaultValue) {
+
+    protected void addOption(IBasicOptionGroup group, String name,
+            boolean defaultValue) {
         addOption(group, name, IOption.BOOLEAN, new Boolean(defaultValue));
     }
-    protected void addOption(IBasicOptionGroup group, String name, int defaultValue) {
+
+    protected void addOption(IBasicOptionGroup group, String name,
+            int defaultValue) {
         addOption(group, name, IOption.INTEGER, new Integer(defaultValue));
     }
-    protected void addOption(IBasicOptionGroup group, String name, float defaultValue) {
+
+    protected void addOption(IBasicOptionGroup group, String name,
+            float defaultValue) {
         addOption(group, name, IOption.FLOAT, new Float(defaultValue));
     }
-    protected void addOption(IBasicOptionGroup group, String name, Vector defaultValue) {
+
+    protected void addOption(IBasicOptionGroup group, String name,
+            Vector defaultValue) {
         addOption(group, name, IOption.CHOICE, ""); //$NON-NLS-1$
     }
 
-    protected void addOption (IBasicOptionGroup group, String name, int type, Object defaultValue) {
-        optionsHash.put(name, new Option(this,name, type, defaultValue));
+    protected void addOption(IBasicOptionGroup group, String name, int type,
+            Object defaultValue) {
+        optionsHash.put(name, new Option(this, name, type, defaultValue));
         getOptionsInfoImp().addOptionInfo(group, name);
     }
 
@@ -114,14 +128,18 @@ public abstract class AbstractOptions implements IOptions, Serializable {
             groups = getOptionsInfo().getGroups();
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see java.util.Enumeration#hasMoreElements()
          */
         public boolean hasMoreElements() {
             return groups.hasMoreElements();
         }
 
-        /* (non-Javadoc)
+        /*
+         * (non-Javadoc)
+         * 
          * @see java.util.Enumeration#nextElement()
          */
         public IOptionGroup nextElement() {
@@ -131,7 +149,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
         protected class GroupProxy implements IOptionGroup {
 
             private IBasicOptionGroup group;
-            
+
             GroupProxy(IBasicOptionGroup group) {
                 this.group = group;
             }
@@ -145,7 +163,8 @@ public abstract class AbstractOptions implements IOptions, Serializable {
             }
 
             public String getDisplayableName() {
-                return getOptionsInfoImp().getGroupDisplayableName(group.getName());
+                return getOptionsInfoImp().getGroupDisplayableName(
+                        group.getName());
             }
 
             public Enumeration<String> getOptionNames() {
@@ -164,23 +183,27 @@ public abstract class AbstractOptions implements IOptions, Serializable {
                     this.optionNames = group.getOptionNames();
                 }
 
-                /* (non-Javadoc)
+                /*
+                 * (non-Javadoc)
+                 * 
                  * @see java.util.Enumeration#hasMoreElements()
                  */
                 public boolean hasMoreElements() {
                     return optionNames.hasMoreElements();
                 }
 
-                /* (non-Javadoc)
+                /*
+                 * (non-Javadoc)
+                 * 
                  * @see java.util.Enumeration#nextElement()
                  */
                 public IOption nextElement() {
                     return getOption(optionNames.nextElement());
-                }        
-                
+                }
+
             }
 
-        }        
+        }
     }
 
 }

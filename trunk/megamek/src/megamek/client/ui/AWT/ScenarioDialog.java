@@ -1,23 +1,23 @@
 package megamek.client.ui.AWT;
 
-import megamek.common.Player;
-import megamek.client.ui.AWT.widget.ImageButton;
-import megamek.client.ui.AWT.widget.AdvancedLabel;
-import megamek.client.ui.AWT.util.PlayerColors;
-
-import java.awt.Dialog;
-import java.awt.Label;
-import java.awt.Choice;
-import java.awt.Frame;
-import java.awt.Color;
 import java.awt.BorderLayout;
-import java.awt.Panel;
-import java.awt.GridLayout;
-import java.awt.FlowLayout;
 import java.awt.Button;
+import java.awt.Choice;
+import java.awt.Color;
+import java.awt.Dialog;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemListener;
-import java.awt.event.ActionEvent;
+
+import megamek.client.ui.AWT.util.PlayerColors;
+import megamek.client.ui.AWT.widget.AdvancedLabel;
+import megamek.client.ui.AWT.widget.ImageButton;
+import megamek.common.Player;
 
 /**
  * Allow a user to set types and colors for scenario players
@@ -37,7 +37,8 @@ public class ScenarioDialog extends Dialog implements ActionListener {
     private ImageButton[] m_camoButtons;
     private Frame m_frame;
 
-    /** The camo selection dialog.
+    /**
+     * The camo selection dialog.
      */
     private CamoChoiceDialog camoDialog;
     private ItemListener prevListener = null;
@@ -64,9 +65,12 @@ public class ScenarioDialog extends Dialog implements ActionListener {
             m_labels[x] = new Label(pa[x].getName(), Label.LEFT);
 
             m_typeChoices[x] = new Choice();
-            m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.me")); //$NON-NLS-1$
-            m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.otherh")); //$NON-NLS-1$
-            m_typeChoices[x].add(Messages.getString("MegaMek.ScenarioDialog.bot")); //$NON-NLS-1$
+            m_typeChoices[x].add(Messages
+                    .getString("MegaMek.ScenarioDialog.me")); //$NON-NLS-1$
+            m_typeChoices[x].add(Messages
+                    .getString("MegaMek.ScenarioDialog.otherh")); //$NON-NLS-1$
+            m_typeChoices[x].add(Messages
+                    .getString("MegaMek.ScenarioDialog.bot")); //$NON-NLS-1$
             final Color defaultBackground = m_typeChoices[x].getBackground();
 
             m_camoButtons[x] = new ImageButton();
@@ -84,18 +88,21 @@ public class ScenarioDialog extends Dialog implements ActionListener {
                 private final ImageButton button = curButton;
                 private final Color background = defaultBackground;
                 private final Player player = curPlayer;
+
                 public void actionPerformed(ActionEvent e) {
                     if (null != prevListener) {
                         dialog.removeItemListener(prevListener);
                     }
                     if (null == player.getCamoFileName()) {
                         dialog.setCategory(Player.NO_CAMO);
-                        dialog.setItemName(Player.colorNames[player.getColorIndex()]);
+                        dialog.setItemName(Player.colorNames[player
+                                .getColorIndex()]);
                     } else {
                         dialog.setCategory(player.getCamoCategory());
                         dialog.setItemName(player.getCamoFileName());
                     }
-                    prevListener = new CamoChoiceListener(dialog, button, background, player);
+                    prevListener = new CamoChoiceListener(dialog, button,
+                            background, player);
                     dialog.addItemListener(prevListener);
                     dialog.setVisible(true);
                 }
@@ -106,8 +113,10 @@ public class ScenarioDialog extends Dialog implements ActionListener {
         setLayout(new BorderLayout());
         Panel choicePanel = new Panel();
         choicePanel.setLayout(new GridLayout(pa.length + 1, 0));
-        choicePanel.add(new AdvancedLabel(Messages.getString("MegaMek.ScenarioDialog.pNameType"))); //$NON-NLS-1$
-        choicePanel.add(new Label(Messages.getString("MegaMek.ScenarioDialog.Camo"))); //$NON-NLS-1$
+        choicePanel.add(new AdvancedLabel(Messages
+                .getString("MegaMek.ScenarioDialog.pNameType"))); //$NON-NLS-1$
+        choicePanel.add(new Label(Messages
+                .getString("MegaMek.ScenarioDialog.Camo"))); //$NON-NLS-1$
         for (int x = 0; x < pa.length; x++) {
             Panel typePanel = new Panel();
             typePanel.setLayout(new GridLayout(0, 1));
@@ -131,9 +140,9 @@ public class ScenarioDialog extends Dialog implements ActionListener {
         add(butPanel, BorderLayout.SOUTH);
         pack();
         setResizable(false);
-        setLocation(
-            frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
-            frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2
+                - getSize().width / 2, frame.getLocation().y
+                + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -143,7 +152,10 @@ public class ScenarioDialog extends Dialog implements ActionListener {
                 playerTypes[x] = m_typeChoices[x].getSelectedIndex();
                 if (playerTypes[x] == T_ME) {
                     if (bMeSet) {
-                        new AlertDialog(m_frame, Messages.getString("MegaMek.ScenarioErrorAllert.title"), Messages.getString("MegaMek.ScenarioErrorAllert.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                        new AlertDialog(
+                                m_frame,
+                                Messages
+                                        .getString("MegaMek.ScenarioErrorAllert.title"), Messages.getString("MegaMek.ScenarioErrorAllert.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                         return;
                     }
                     bMeSet = true;

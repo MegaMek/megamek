@@ -14,7 +14,6 @@
 
 package megamek.client.ui.swing.widget;
 
-import javax.swing.JComponent;
 import java.awt.AWTEvent;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -28,28 +27,30 @@ import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.JComponent;
+
 /**
  * PicMap is a lightweight component, which area is composed by the set of cutom
- * elements added to PicMap Engine.
- * There are three main groups of cutom elements<br>
+ * elements added to PicMap Engine. There are three main groups of cutom
+ * elements<br>
  * 1) BackgroundDrawers<br>
  * 2) Hot areas<br>
- * 3) Labels<br>
- * * Hot areas and labels can be grouped handled together by AreasGroup class.
- * Content of PicMap - Areas group that includes all areas on the stage.
- * <p/>
- * Added Elements are placed into several layers within PicMap engine.
+ * 3) Labels<br> * Hot areas and labels can be grouped handled together by
+ * AreasGroup class. Content of PicMap - Areas group that includes all areas on
+ * the stage. <p/> Added Elements are placed into several layers within PicMap
+ * engine.
  * <ul>
  * <li>Bottom layer is BackgroundDrawers.
- * <li>Next is layer of all elements that not implements PMHotArea or
- * PMLAbel interfaces.
- * <li>On top of that is layer of Hot Areas - elements with extended functionality.
+ * <li>Next is layer of all elements that not implements PMHotArea or PMLAbel
+ * interfaces.
+ * <li>On top of that is layer of Hot Areas - elements with extended
+ * functionality.
  * <li>Topmost layer is layer of labels.
  * </ul>
  * Within single layer elements are drawing in the order they added to PicMap.
  */
 public abstract class PicMap extends JComponent {
-    //Vector of Background Drawers
+    // Vector of Background Drawers
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     // Group of other areas which does not implement PMHotArea or PMLAbel
     private PMAreasGroup otherAreas = new PMAreasGroup();
@@ -57,26 +58,26 @@ public abstract class PicMap extends JComponent {
     private PMAreasGroup hotAreas = new PMAreasGroup();
     // Labels
     private PMAreasGroup labels = new PMAreasGroup();
-    //Number of Hot areas on stage
+    // Number of Hot areas on stage
     private int areascount = 0;
-    //Root groop of hot areas (required for general operations)
+    // Root groop of hot areas (required for general operations)
     private PMAreasGroup rootGroup = new PMAreasGroup();
-    //Offscreen image
+    // Offscreen image
     private Image offScr;
-    //Margins
+    // Margins
     private int topMargin = 0;
     private int leftMargin = 0;
     private int bottomMargin = 0;
     private int rightMargin = 0;
 
-    //Pointer to Hot Area under mouse
+    // Pointer to Hot Area under mouse
     private PMHotArea activeHotArea = null;
 
-    //Minimum size
+    // Minimum size
     int minWidth = 1;
     int minHeight = 1;
 
-    //Is background opaque
+    // Is background opaque
     private boolean bgIsOpaque = true;
 
     /**
@@ -87,25 +88,24 @@ public abstract class PicMap extends JComponent {
         rootGroup.addArea(otherAreas);
         rootGroup.addArea(hotAreas);
         rootGroup.addArea(labels);
-        enableEvents(AWTEvent.MOUSE_EVENT_MASK |
-                AWTEvent.MOUSE_MOTION_EVENT_MASK |
-                AWTEvent.COMPONENT_EVENT_MASK);
+        enableEvents(AWTEvent.MOUSE_EVENT_MASK
+                | AWTEvent.MOUSE_MOTION_EVENT_MASK
+                | AWTEvent.COMPONENT_EVENT_MASK);
     }
 
     /**
-     * onResize() function is calling every time PicMap is resized.
-     * Have to be implemented directly to manage composition
-     * of component on resizing.
+     * onResize() function is calling every time PicMap is resized. Have to be
+     * implemented directly to manage composition of component on resizing.
      */
 
     public abstract void onResize();
 
     /**
-     * Adds element to PicMap component.
-     * Please note, that all objects implementing PMLabel interface
-     * will be placed in the topmost layer. All objects implementing PMHotArea
-     * will be placed in the middle layer. All others are going to bottom layer.
-     * Within same layer objects are drawing by order they added to components.
+     * Adds element to PicMap component. Please note, that all objects
+     * implementing PMLabel interface will be placed in the topmost layer. All
+     * objects implementing PMHotArea will be placed in the middle layer. All
+     * others are going to bottom layer. Within same layer objects are drawing
+     * by order they added to components.
      */
     public void addElement(PMElement e) {
         if (e instanceof PMLabel) {
@@ -133,7 +133,8 @@ public abstract class PicMap extends JComponent {
         if (e instanceof PMLabel) {
             labels.removeArea(e);
         } else if (e instanceof PMHotArea) {
-            if (hotAreas.removeArea(e)) areascount--;
+            if (hotAreas.removeArea(e))
+                areascount--;
         } else {
             otherAreas.removeArea(e);
         }
@@ -154,8 +155,8 @@ public abstract class PicMap extends JComponent {
     }
 
     /**
-     * Adds background drawer to the stage.
-     * Background drawers are drawn in order they added to the component.
+     * Adds background drawer to the stage. Background drawers are drawn in
+     * order they added to the component.
      */
 
     public void addBgDrawer(BackGroundDrawer bd) {
@@ -172,9 +173,9 @@ public abstract class PicMap extends JComponent {
     }
 
     /**
-     * Sets margins in pixels around Content of component.
-     * Does not affect Backgroun Drawers.
-     *
+     * Sets margins in pixels around Content of component. Does not affect
+     * Backgroun Drawers.
+     * 
      * @param l Left margin
      * @param t Top margin
      * @param r Right margin
@@ -217,7 +218,8 @@ public abstract class PicMap extends JComponent {
             int w = Math.max(getSize().width, minWidth);
             int h = Math.max(getSize().height, minHeight);
             offScr = createImage(w, h);
-            if (offScr == null) return;
+            if (offScr == null)
+                return;
             Graphics g = offScr.getGraphics();
             drawInto(g);
             repaint();
@@ -229,7 +231,8 @@ public abstract class PicMap extends JComponent {
 
     public void paintComponent(Graphics g) {
         if (bgIsOpaque) {
-            //If we want to use buffering Component will be with opaque background
+            // If we want to use buffering Component will be with opaque
+            // background
             g.drawImage(offScr, 0, 0, null);
         } else {
             // Disrectly drawing to the place (use buffering in conainer)
@@ -241,21 +244,20 @@ public abstract class PicMap extends JComponent {
     private void drawInto(Graphics g) {
         int w = Math.max(getSize().width, minWidth);
         int h = Math.max(getSize().height, minHeight);
-        //Background painting
+        // Background painting
         Enumeration<BackGroundDrawer> iter = bgDrawers.elements();
         while (iter.hasMoreElements()) {
             BackGroundDrawer bgd = iter.nextElement();
             bgd.drawInto(g, w, h);
         }
         Shape oldClip = g.getClip();
-        g.setClip(new Rectangle(leftMargin,
-                topMargin,
-                w - leftMargin - rightMargin,
-                h - topMargin - bottomMargin));
-        
-        //Hot areas painting
+        g.setClip(new Rectangle(leftMargin, topMargin, w - leftMargin
+                - rightMargin, h - topMargin - bottomMargin));
+
+        // Hot areas painting
         hotAreas.drawInto(g);
-        if (activeHotArea != null) activeHotArea.drawInto(g);
+        if (activeHotArea != null)
+            activeHotArea.drawInto(g);
         labels.drawInto(g);
         g.setClip(oldClip);
 
@@ -268,8 +270,8 @@ public abstract class PicMap extends JComponent {
     public Dimension getMinimumSize() {
         Rectangle r = rootGroup.getBounds();
         if (r != null) {
-            return new Dimension(r.x + r.width + rightMargin,
-                    r.y + r.height + bottomMargin);
+            return new Dimension(r.x + r.width + rightMargin, r.y + r.height
+                    + bottomMargin);
         }
         return new Dimension(minWidth, minHeight);
     }
@@ -279,8 +281,8 @@ public abstract class PicMap extends JComponent {
      */
 
     public PMHotArea getAreaUnder(int x, int y) {
-        //Have to check all elements of hotAreas vector
-        //from end to start. Compare against zero works faster.
+        // Have to check all elements of hotAreas vector
+        // from end to start. Compare against zero works faster.
         for (int i = (areascount - 1); i >= 0; i--) {
             PMHotArea ha = (PMHotArea) hotAreas.elementAt(i);
             if ((ha != null) && intersects(ha.getAreaShape(), x, y))
@@ -301,13 +303,12 @@ public abstract class PicMap extends JComponent {
     }
 
     /**
-     * Sets background of PicMap to fully opaque or fully transparent.
-     * Notes: Setting Background opaque to "false" switch off buffering
-     * of PicMap. Please provide appropriate graphic buffering in container.
-     * Notes: Setting Background opaque to "false" does not prevent draw of
-     * BackgroundDrawers in PicMap component.
-     * Notes: It is required only for Java1.1. Under Java1.3 and up offscreen
-     * will be transparent by default.
+     * Sets background of PicMap to fully opaque or fully transparent. Notes:
+     * Setting Background opaque to "false" switch off buffering of PicMap.
+     * Please provide appropriate graphic buffering in container. Notes: Setting
+     * Background opaque to "false" does not prevent draw of BackgroundDrawers
+     * in PicMap component. Notes: It is required only for Java1.1. Under
+     * Java1.3 and up offscreen will be transparent by default.
      */
 
     public void setBackgroundOpaque(boolean v) {
@@ -318,13 +319,16 @@ public abstract class PicMap extends JComponent {
         PMHotArea ha = getAreaUnder(e.getX(), e.getY());
         switch (e.getID()) {
             case MouseEvent.MOUSE_CLICKED:
-                if (ha != null) ha.onMouseClick(e);
+                if (ha != null)
+                    ha.onMouseClick(e);
                 break;
             case MouseEvent.MOUSE_PRESSED:
-                if (ha != null) ha.onMouseDown(e);
+                if (ha != null)
+                    ha.onMouseDown(e);
                 break;
             case MouseEvent.MOUSE_RELEASED:
-                if (ha != null) ha.onMouseUp(e);
+                if (ha != null)
+                    ha.onMouseUp(e);
                 break;
         }
         update();
@@ -334,8 +338,10 @@ public abstract class PicMap extends JComponent {
         switch (e.getID()) {
             case MouseEvent.MOUSE_MOVED:
                 PMHotArea ha = getAreaUnder(e.getX(), e.getY());
-                if ((ha == null && activeHotArea != null)  || (ha != null && !ha.equals(activeHotArea))) {
-                    if (activeHotArea != null) activeHotArea.onMouseExit(e);
+                if ((ha == null && activeHotArea != null)
+                        || (ha != null && !ha.equals(activeHotArea))) {
+                    if (activeHotArea != null)
+                        activeHotArea.onMouseExit(e);
                     activeHotArea = ha;
                     if (ha != null) {
                         ha.onMouseOver(e);
@@ -357,5 +363,4 @@ public abstract class PicMap extends JComponent {
                 break;
         }
     }
-}   
-
+}

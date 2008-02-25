@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLHeavyRecoillessRifle extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4900393422594499114L;
+
     /**
      * 
      */
@@ -47,7 +51,7 @@ public class CLHeavyRecoillessRifle extends Weapon {
         this.bv = 22;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

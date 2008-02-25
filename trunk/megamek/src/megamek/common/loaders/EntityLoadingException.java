@@ -21,11 +21,11 @@
 package megamek.common.loaders;
 
 /**
- * This exception is thrown if a mech or other cannot be properly loaded from 
- * a file due to IO errors, file format errors, or whatever.
- *
- * @author  Ben
- * @version 
+ * This exception is thrown if a mech or other cannot be properly loaded from a
+ * file due to IO errors, file format errors, or whatever.
+ * 
+ * @author Ben
+ * @version
  */
 public class EntityLoadingException extends java.lang.Exception {
 
@@ -34,21 +34,19 @@ public class EntityLoadingException extends java.lang.Exception {
      */
     private static final long serialVersionUID = -4472736483205970852L;
 
-
     /**
      * Creates new <code>EntityLoadingException</code> without detail message.
      */
     public EntityLoadingException() {
     }
 
-
     /**
-     * Constructs an <code>EntityLoadingException</code> with the specified detail message.
+     * Constructs an <code>EntityLoadingException</code> with the specified
+     * detail message.
+     * 
      * @param msg the detail message.
      */
     public EntityLoadingException(String msg) {
         super(msg);
     }
 }
-
-

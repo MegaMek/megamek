@@ -24,12 +24,14 @@ import megamek.common.net.Packet;
 /**
  * Marshaller that Java native serialization for <code>Packet</code>
  * representation.
- *
  */
 class NativeSerializationMarshaller extends PacketMarshaller {
 
-    /* (non-Javadoc)
-     * @see megamek.common.net.marshall.PacketMarshaller#marshall(megamek.common.net.Packet, java.io.OutputStream)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.net.marshall.PacketMarshaller#marshall(megamek.common.net.Packet,
+     *      java.io.OutputStream)
      */
     public void marshall(Packet packet, OutputStream stream) throws Exception {
         ObjectOutputStream out = new ObjectOutputStream(stream);
@@ -38,13 +40,15 @@ class NativeSerializationMarshaller extends PacketMarshaller {
         out.flush();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.net.marshall.PacketMarshaller#unmarshall(java.io.InputStream)
      */
     public Packet unmarshall(InputStream stream) throws Exception {
         ObjectInputStream in = new ObjectInputStream(stream);
         int command = in.readInt();
-        Object[] data = (Object[])in.readObject();
+        Object[] data = (Object[]) in.readObject();
         return new Packet(command, data);
     }
 

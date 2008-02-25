@@ -17,7 +17,7 @@ package megamek.common.preference;
 import java.util.EventObject;
 
 public class PreferenceChangeEvent extends EventObject {
-    
+
     /**
      * 
      */
@@ -25,23 +25,24 @@ public class PreferenceChangeEvent extends EventObject {
     protected String name;
     protected Object oldValue;
     protected Object newValue;
-        
-    public PreferenceChangeEvent(Object source, String name, Object oldValue, Object newValue) {
+
+    public PreferenceChangeEvent(Object source, String name, Object oldValue,
+            Object newValue) {
         super(source);
         this.name = name;
         this.oldValue = oldValue;
-        this.newValue = newValue; 
+        this.newValue = newValue;
     }
-    
-    public String getName(){
+
+    public String getName() {
         return name;
     }
 
-    public Object getOldvalue(){
+    public Object getOldvalue() {
         return oldValue;
     }
 
-    public Object getNewValue(){
+    public Object getNewValue() {
         return newValue;
     }
 }

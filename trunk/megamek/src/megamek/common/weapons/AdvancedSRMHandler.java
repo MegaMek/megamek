@@ -20,9 +20,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class AdvancedSRMHandler extends SRMHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1688593262282782251L;
 
     /**
      * @param t
@@ -30,7 +34,8 @@ public class AdvancedSRMHandler extends SRMHandler {
      * @param g
      * @param s
      */
-    public AdvancedSRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public AdvancedSRMHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
         nSalvoBonus = 1;
     }

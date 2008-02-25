@@ -14,8 +14,8 @@
 
 package megamek.common.actions;
 
-public interface EntityAction
-{
+public interface EntityAction {
     public int getEntityId();
+
     public void setEntityId(int entityId);
 }

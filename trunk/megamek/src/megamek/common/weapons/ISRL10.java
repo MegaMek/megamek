@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISRL10 extends RLWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = 3437644808445570760L;
+
+    /**
+     * 
+     */
     public ISRL10() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
         this.name = "RL 10";
         this.setInternalName("RL10");
@@ -33,7 +37,7 @@ public class ISRL10 extends RLWeapon {
         this.addLookupName("IS RLauncher-10");
         this.heat = 3;
         this.rackSize = 10;
-        this.shortRange= 5;
+        this.shortRange = 5;
         this.mediumRange = 11;
         this.longRange = 18;
         this.extremeRange = 22;

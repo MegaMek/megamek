@@ -14,9 +14,7 @@
 
 package megamek.common.actions;
 
-public class DodgeAction
-    extends AbstractEntityAction
-{
+public class DodgeAction extends AbstractEntityAction {
     /**
      * 
      */

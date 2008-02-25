@@ -23,10 +23,14 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6329291710822071023L;
+
     /**
      * @param t
      * @param w
@@ -37,20 +41,21 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
             Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        AmmoType atype = (AmmoType)ammo.getType();
+        AmmoType atype = (AmmoType) ammo.getType();
         float toReturn = atype.getDamagePerShot();
         if (nRange <= wtype.getMinimumRange()) {
             toReturn /= 2;
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor))
             toReturn /= 5;
-        return (int)Math.ceil(toReturn);
+        return (int) Math.ceil(toReturn);
     }
 
 }

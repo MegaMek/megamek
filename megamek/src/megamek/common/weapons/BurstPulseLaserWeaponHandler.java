@@ -23,15 +23,20 @@ import megamek.server.Server;
 
 public class BurstPulseLaserWeaponHandler extends PulseLaserWeaponHandler {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 7754921500244464882L;
+
+    /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public BurstPulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public BurstPulseLaserWeaponHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame g, Server s) {
         super(toHit, waa, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -40,7 +45,8 @@ public class BurstPulseLaserWeaponHandler extends PulseLaserWeaponHandler {
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             return Compute.d6(2);
-        } else return super.calcDamagePerHit();
-    }        
+        } else
+            return super.calcDamagePerHit();
+    }
 
 }

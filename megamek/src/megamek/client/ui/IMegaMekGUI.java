@@ -16,7 +16,6 @@ package megamek.client.ui;
 
 /**
  * TODO privide doc
- *
  */
 public interface IMegaMekGUI {
 

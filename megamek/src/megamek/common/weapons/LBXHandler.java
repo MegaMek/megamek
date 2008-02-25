@@ -30,9 +30,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class LBXHandler extends AmmoWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6803847280685526644L;
+
     /**
      * @param t
      * @param w
@@ -53,7 +57,7 @@ public class LBXHandler extends AmmoWeaponHandler {
             float toReturn = wtype.getDamage();
             toReturn /= 10;
             toReturn += 1;
-            return (int)Math.ceil(toReturn);
+            return (int) Math.ceil(toReturn);
         }
         return 1;
     }
@@ -61,7 +65,8 @@ public class LBXHandler extends AmmoWeaponHandler {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report> vPhaseReport)
+     * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
+     *      vPhaseReport)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
@@ -72,7 +77,7 @@ public class LBXHandler extends AmmoWeaponHandler {
         int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
                 .missilesHit(wtype.getRackSize());
         if (bGlancing) {
-            shotsHit = (int)Math.floor(shotsHit/2.0);
+            shotsHit = (int) Math.floor(shotsHit / 2.0);
         }
         r = new Report(3325);
         r.subject = subjectId;

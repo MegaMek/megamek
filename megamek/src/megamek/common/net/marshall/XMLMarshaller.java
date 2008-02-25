@@ -28,12 +28,14 @@ import megamek.common.xml.PacketEncoder;
 
 /**
  * Marshaller that uses XML for <code>Packet</code>representation.
- *
  */
 public class XMLMarshaller extends PacketMarshaller {
 
-    /* (non-Javadoc)
-     * @see megamek.common.net.marshall.PacketMarshaller#marshall(megamek.common.net.Packet, java.io.OutputStream)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.net.marshall.PacketMarshaller#marshall(megamek.common.net.Packet,
+     *      java.io.OutputStream)
      */
     public void marshall(Packet packet, OutputStream stream) throws Exception {
         OutputStreamWriter out = new OutputStreamWriter(stream);
@@ -41,17 +43,19 @@ public class XMLMarshaller extends PacketMarshaller {
         out.flush();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.net.marshall.PacketMarshaller#unmarshall(java.io.InputStream)
      */
     public Packet unmarshall(InputStream stream) throws Exception {
-        ParsedXML root = TinyParser.parseXML(stream); 
+        ParsedXML root = TinyParser.parseXML(stream);
         Enumeration rootChildren = root.elements();
         if (!rootChildren.hasMoreElements()) {
-            throw new ParseException( "No children of the root." );
+            throw new ParseException("No children of the root.");
         }
-        ParsedXML rootNode = (ParsedXML)rootChildren.nextElement();
-        Packet packet = PacketEncoder.decode( rootNode, null );
+        ParsedXML rootNode = (ParsedXML) rootChildren.nextElement();
+        Packet packet = PacketEncoder.decode(rootNode, null);
         return packet;
     }
 

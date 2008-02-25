@@ -26,10 +26,14 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class InfantrySRMWeapon extends InfantryWeapon {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5311681183178942222L;
+
     public InfantrySRMWeapon() {
         super();
         this.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -41,11 +45,11 @@ public class InfantrySRMWeapon extends InfantryWeapon {
         this.mediumRange = 4;
         this.longRange = 6;
         this.extremeRange = 8;
-        //SRM Launcher (Standard, two-shot) TM p. 319
+        // SRM Launcher (Standard, two-shot) TM p. 319
         this.bv = 2.63;
-        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_MISSILE; 
+        this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_MISSILE;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

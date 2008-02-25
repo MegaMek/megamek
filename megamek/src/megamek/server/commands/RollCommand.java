@@ -20,13 +20,12 @@
 
 package megamek.server.commands;
 
-import megamek.common.*;
-import megamek.server.*;
+import megamek.common.Compute;
+import megamek.server.Server;
 
 /**
- *
  * @author Ben
- * @version 
+ * @version
  */
 public class RollCommand extends ServerCommand {
 
@@ -56,20 +55,20 @@ public class RollCommand extends ServerCommand {
         }
         roll(connId, dice, sides);
     }
-    
+
     private void roll(int connId, int dice, int sides) {
         StringBuffer diceBuffer = new StringBuffer();
         int total = 0;
         for (int i = 0; i < dice; i++) {
             int roll = Compute.randomInt(sides) + 1;
             total += roll;
-            
+
             // for one die, we're all set
             if (dice < 2) {
                 diceBuffer.append(roll);
                 continue;
             }
-            
+
             // 2+ dice, use commas and "and"
             if (i < dice - 1) {
                 diceBuffer.append(roll);
@@ -79,6 +78,8 @@ public class RollCommand extends ServerCommand {
                 diceBuffer.append(roll);
             }
         }
-        server.sendServerChat(server.getPlayer(connId).getName() + " has rolled " + diceBuffer + " for a total of " + total + ", using " + dice + "d" + sides);
+        server.sendServerChat(server.getPlayer(connId).getName()
+                + " has rolled " + diceBuffer + " for a total of " + total
+                + ", using " + dice + "d" + sides);
     }
 }

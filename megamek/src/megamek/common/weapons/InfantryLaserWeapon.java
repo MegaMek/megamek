@@ -25,10 +25,14 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class InfantryLaserWeapon extends InfantryWeapon {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9065123199493897216L;
+
     public InfantryLaserWeapon() {
         super();
         this.techLevel = TechConstants.T_ALLOWED_ALL;
@@ -39,11 +43,11 @@ public class InfantryLaserWeapon extends InfantryWeapon {
         this.mediumRange = 4;
         this.longRange = 6;
         this.extremeRange = 8;
-        //laser rifle, TM p. 319
+        // laser rifle, TM p. 319
         this.bv = 0.88;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_LASER | F_ENERGY;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

@@ -27,9 +27,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class NarcExplosiveHandler extends MissileWeaponHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1655014339855184419L;
 
     /**
      * @param t
@@ -40,11 +44,12 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
     public NarcExplosiveHandler(ToHitData t, WeaponAttackAction w, IGame g,
             Server s) {
         super(t, w, g, s);
-        sSalvoType = " explosive pod ";        
+        sSalvoType = " explosive pod ";
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -53,17 +58,20 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor)ae).getShootingStrength();
+                return ((BattleArmor) ae).getShootingStrength();
             }
             return 1;
         }
         bSalvo = true;
         if (ae instanceof BattleArmor) {
             if (amsEnganged)
-                return Compute.missilesHit(((BattleArmor)ae).getShootingStrength(), -2);
-            else return Compute.missilesHit(((BattleArmor)ae).getShootingStrength());
+                return Compute.missilesHit(((BattleArmor) ae)
+                        .getShootingStrength(), -2);
+            else
+                return Compute.missilesHit(((BattleArmor) ae)
+                        .getShootingStrength());
         }
-            
+
         if (amsEnganged) {
             r = new Report(3235);
             r.subject = subjectId;
@@ -87,21 +95,23 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
         }
         return 1;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
         return 1;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        AmmoType atype = (AmmoType)ammo.getType();
+        AmmoType atype = (AmmoType) ammo.getType();
         float toReturn;
         if (atype.getAmmoType() == AmmoType.T_INARC) {
             toReturn = 6;
@@ -109,7 +119,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
             toReturn = 4;
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor))
-            toReturn/=10;
-        return (int)Math.ceil(toReturn);        
+            toReturn /= 10;
+        return (int) Math.ceil(toReturn);
     }
 }

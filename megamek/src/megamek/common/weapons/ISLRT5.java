@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISLRT5 extends LRTWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = 8732328051646920316L;
+
+    /**
+     * 
+     */
     public ISLRT5() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;
         this.name = "LRT 5";
         this.setInternalName(this.name);

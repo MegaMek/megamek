@@ -20,19 +20,22 @@
 
 package megamek.server.commands;
 
-import megamek.server.*;
+import megamek.server.Server;
 
 /**
  * Kicks a player off the server.
- *
- * @author  Ben
- * @version 
+ * 
+ * @author Ben
+ * @version
  */
 public class KickCommand extends ServerCommand {
 
     /** Creates new KickCommand */
     public KickCommand(Server server) {
-        super(server, "kick", "Disconnects a player.  Usage: /kick <password> [player id number].  For a list of player id #s, use the /who command.");
+        super(
+                server,
+                "kick",
+                "Disconnects a player.  Usage: /kick <password> [player id number].  For a list of player id #s, use the /who command.");
     }
 
     /**
@@ -40,34 +43,42 @@ public class KickCommand extends ServerCommand {
      */
     public void run(int connId, String[] args) {
         int kickArg = server.isPassworded() ? 2 : 1;
-        
+
         if (!canRunRestrictedCommand(connId)) {
-            server.sendServerChat(connId, "Observers are restricted from kicking others.");
+            server.sendServerChat(connId,
+                    "Observers are restricted from kicking others.");
             return;
         }
 
-        if (server.isPassworded() && (args.length < 3 || !server.isPassword(args[1]))) {
-            server.sendServerChat(connId, "The password is incorrect.  Usage: /kick <password> [id#]");
-        }
-        else 
+        if (server.isPassworded()
+                && (args.length < 3 || !server.isPassword(args[1]))) {
+            server
+                    .sendServerChat(connId,
+                            "The password is incorrect.  Usage: /kick <password> [id#]");
+        } else
             try {
                 int kickedId = Integer.parseInt(args[kickArg]);
-                
+
                 if (kickedId == connId) {
                     server.sendServerChat("Don't be silly.");
                     return;
                 }
-                
-                server.sendServerChat(server.getPlayer(connId).getName() + " attempts to kick player #" + kickedId + " (" + server.getPlayer(kickedId).getName() + ")...");
+
+                server.sendServerChat(server.getPlayer(connId).getName()
+                        + " attempts to kick player #" + kickedId + " ("
+                        + server.getPlayer(kickedId).getName() + ")...");
                 server.getConnection(kickedId).close();
-                
+
             } catch (ArrayIndexOutOfBoundsException ex) {
-                server.sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
+                server
+                        .sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
             } catch (NumberFormatException ex) {
-                server.sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
+                server
+                        .sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
             } catch (NullPointerException ex) {
-                server.sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
+                server
+                        .sendServerChat("/kick : kick failed.  Type /who for a list of players with id #s.");
             }
     }
-    
+
 }

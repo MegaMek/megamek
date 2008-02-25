@@ -18,13 +18,13 @@ import java.io.PrintWriter;
 import java.util.Locale;
 
 /**
- * Interface for common client settings store 
+ * Interface for common client settings store
  */
 public interface IClientPreferences extends IPreferenceStore {
 
     public static final String LAST_CONNECT_ADDR = "LastConnectAddr";
     public static final String LAST_CONNECT_PORT = "LastConnectPort";
-    public static final String LAST_PLAYER_CAMO_NAME = "LastPlayerCamoName";    
+    public static final String LAST_PLAYER_CAMO_NAME = "LastPlayerCamoName";
     public static final String LAST_PLAYER_CATEGORY = "LastPlayerCategory";
     public static final String LAST_PLAYER_COLOR = "LastPlayerColor";
     public static final String LAST_PLAYER_NAME = "LastPlayerName";
@@ -40,7 +40,7 @@ public interface IClientPreferences extends IPreferenceStore {
     public static final String MEMORY_DUMP_ON = "MemoryDumpOn";
     public static final String GAMELOG_KEEP = "KeepGameLog";
     public static final String GAMELOG_FILENAME = "GameLogFilename";
-    //public static final String GAMELOG_MAX_SIZE = "GameLogMaxSize";
+    // public static final String GAMELOG_MAX_SIZE = "GameLogMaxSize";
     public static final String STAMP_FILENAMES = "StampFilenames";
     public static final String STAMP_FORMAT = "StampFormat";
     public static final String SHOW_UNIT_ID = "ShowUnitId";
@@ -55,11 +55,11 @@ public interface IClientPreferences extends IPreferenceStore {
     public static final String BOARD_HEIGHT = "BoardHeight";
     public static final String MAP_WIDTH = "MapWidth";
     public static final String MAP_HEIGHT = "MapHeight";
-    
+
     boolean getPrintEntityChange();
-    
+
     boolean defaultAutoejectDisabled();
-    
+
     boolean useAverageSkills();
 
     String getLastConnectAddr();
@@ -88,17 +88,17 @@ public interface IClientPreferences extends IPreferenceStore {
 
     PrintWriter getMekHitLocLog();
 
-    String getMetaServerName(); 
+    String getMetaServerName();
 
-    void setMetaServerName(String name); 
+    void setMetaServerName(String name);
 
-    int getGoalPlayers(); 
+    int getGoalPlayers();
 
-    void setGoalPlayers(int n); 
-    
+    void setGoalPlayers(int n);
+
     String getGameLogFilename();
 
-    //int getGameLogMaxSize();
+    // int getGameLogMaxSize();
 
     boolean stampFilenames();
 
@@ -113,7 +113,7 @@ public interface IClientPreferences extends IPreferenceStore {
     boolean memoryDumpOn();
 
     void setDefaultAutoejectDisabled(boolean state);
-    
+
     void setUseAverageSkills(boolean state);
 
     void setKeepGameLog(boolean state);
@@ -135,14 +135,14 @@ public interface IClientPreferences extends IPreferenceStore {
     void setLastServerPort(int port);
 
     void setLocale(String text);
-    
+
     void setMapTileset(String filename);
 
     void setMaxPathfinderTime(int i);
 
     void setGameLogFilename(String text);
 
-    //void setGameLogMaxSize(int i);
+    // void setGameLogMaxSize(int i);
 
     void setStampFilenames(boolean state);
 
@@ -151,17 +151,17 @@ public interface IClientPreferences extends IPreferenceStore {
     void setShowUnitId(boolean state);
 
     void setUnitStartChar(char c);
-    
+
     String getGUIName();
 
     void setGUIName(String guiName);
-    
+
     int getBoardWidth();
-    
+
     int getBoardHeight();
-    
+
     int getMapWidth();
-    
+
     int getMapHeight();
 
 }

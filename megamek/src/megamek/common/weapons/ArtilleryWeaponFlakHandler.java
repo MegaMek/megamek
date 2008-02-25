@@ -43,10 +43,9 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
- * 
  */
-public class ArtilleryWeaponFlakHandler extends ArtilleryWeaponDirectFireHandler
-        implements Serializable {
+public class ArtilleryWeaponFlakHandler extends
+        ArtilleryWeaponDirectFireHandler implements Serializable {
 
     /**
      * 
@@ -59,8 +58,8 @@ public class ArtilleryWeaponFlakHandler extends ArtilleryWeaponDirectFireHandler
      * @param w
      * @param g
      */
-    public ArtilleryWeaponFlakHandler(ToHitData t,
-            WeaponAttackAction w, IGame g, Server s) {
+    public ArtilleryWeaponFlakHandler(ToHitData t, WeaponAttackAction w,
+            IGame g, Server s) {
         super(t, w, g, s);
     }
 
@@ -291,8 +290,9 @@ public class ArtilleryWeaponFlakHandler extends ArtilleryWeaponDirectFireHandler
             r.subject = subjectId;
             r.add(bldgAbsorbs);
             vPhaseReport.addElement(r);
-            Vector<Report> buildingReport = server.damageBuilding( bldg, ratedDamage );
-            for (Report report: buildingReport) {
+            Vector<Report> buildingReport = server.damageBuilding(bldg,
+                    ratedDamage);
+            for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
             vPhaseReport.addAll(buildingReport);
@@ -315,8 +315,8 @@ public class ArtilleryWeaponFlakHandler extends ArtilleryWeaponDirectFireHandler
                         .getSideTable(), waa.getAimedLocation(), waa
                         .getAimingMode());
 
-                vPhaseReport.addAll( server.damageEntity(entity,
-                        hit, Math.min(nCluster, hits), false, DamageType.NONE, false, true,
+                vPhaseReport.addAll(server.damageEntity(entity, hit, Math.min(
+                        nCluster, hits), false, DamageType.NONE, false, true,
                         throughFront));
                 hits -= Math.min(nCluster, hits);
             }
@@ -342,8 +342,9 @@ public class ArtilleryWeaponFlakHandler extends ArtilleryWeaponDirectFireHandler
                 r.subject = subjectId;
                 r.add(bldgAbsorbs);
                 vPhaseReport.addElement(r);
-                Vector<Report> buildingReport = server.damageBuilding( bldg, ratedDamage );
-                for (Report report: buildingReport) {
+                Vector<Report> buildingReport = server.damageBuilding(bldg,
+                        ratedDamage);
+                for (Report report : buildingReport) {
                     report.subject = subjectId;
                 }
                 vPhaseReport.addAll(buildingReport);
@@ -365,8 +366,8 @@ public class ArtilleryWeaponFlakHandler extends ArtilleryWeaponDirectFireHandler
                     HitData hit = entity.rollHitLocation(toHit.getHitTable(),
                             toHit.getSideTable(), waa.getAimedLocation(), waa
                                     .getAimingMode());
-                    vPhaseReport.addAll( server.damageEntity(
-                            entity, hit, Math.min(nCluster, hits)));
+                    vPhaseReport.addAll(server.damageEntity(entity, hit, Math
+                            .min(nCluster, hits)));
                     hits -= Math.min(nCluster, hits);
                 }
             }

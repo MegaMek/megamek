@@ -20,9 +20,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ACTracerHandler extends AmmoWeaponHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7326881584091651519L;
 
     /**
      * @param t
@@ -33,9 +37,10 @@ public class ACTracerHandler extends AmmoWeaponHandler {
     public ACTracerHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {

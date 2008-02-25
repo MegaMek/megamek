@@ -15,8 +15,8 @@
 package megamek.common.event;
 
 /**
- * Normally, reports are dealt with during report phases.  When a report is
- * sent at an odd time though, an instance of this class is sent.
+ * Normally, reports are dealt with during report phases. When a report is sent
+ * at an odd time though, an instance of this class is sent.
  */
 public class GameReportEvent extends GameEvent {
 
@@ -39,7 +39,7 @@ public class GameReportEvent extends GameEvent {
 
     /**
      * Get the text of the report associated with this event.
-     *
+     * 
      * @return a String of the report
      */
     public String getReport() {

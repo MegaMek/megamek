@@ -14,6 +14,8 @@
 
 package megamek.client.ui.swing;
 
+import javax.swing.JPanel;
+
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.common.Coords;
@@ -36,9 +38,8 @@ import megamek.common.event.GameReportEvent;
 import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
-import javax.swing.JPanel;
-
-public class AbstractPhaseDisplay extends JPanel implements BoardViewListener, GameListener {
+public class AbstractPhaseDisplay extends JPanel implements BoardViewListener,
+        GameListener {
 
     /**
      * 
@@ -71,10 +72,10 @@ public class AbstractPhaseDisplay extends JPanel implements BoardViewListener, G
 
     public void unitSelected(BoardViewEvent b) {
     }
-    
+
     // GameListener
     //
-    
+
     public void gamePlayerConnected(GamePlayerConnectedEvent e) {
     }
 

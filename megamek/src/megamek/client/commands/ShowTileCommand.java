@@ -11,19 +11,23 @@ import megamek.common.Entity;
 import megamek.common.IHex;
 
 /**
- * @author dirk
- * This command exists to print tile information to the chat window, it's primarily intended for vissually impaired users.
+ * @author dirk 
+ * This command exists to print tile information to the chat
+ * window, it's primarily intended for vissually impaired users.
  */
 
 public class ShowTileCommand extends ClientCommand {
 
     public ShowTileCommand(Client client) {
-        super(client, "tile", "print the information about a tile into the chat window. Ussage: #tile 01 01 [dir1 ...] which would show the details for the hex numbered 01 01. The command can be followed with any number of directions (N,NE,SE,S,SW,NW) to list the tiles following those diretions.");
+        super(
+                client,
+                "tile",
+                "print the information about a tile into the chat window. Ussage: #tile 01 01 [dir1 ...] which would show the details for the hex numbered 01 01. The command can be followed with any number of directions (N,NE,SE,S,SW,NW) to list the tiles following those diretions.");
     }
 
     /**
      * Run this command with the arguments supplied
-     *
+     * 
      * @see megamek.server.commands.ServerCommand#run(int, java.lang.String[])
      */
     @Override
@@ -31,43 +35,50 @@ public class ShowTileCommand extends ClientCommand {
         try {
             int i = 3;
             String str = "", report = "";
-            Coords coord = new Coords(Integer.parseInt(args[1]) - 1, Integer.parseInt(args[2]) - 1);
+            Coords coord = new Coords(Integer.parseInt(args[1]) - 1, Integer
+                    .parseInt(args[2]) - 1);
             IHex hex;
 
-            do {        
-                hex= client.game.getBoard().getHex(coord);
-                if(hex != null) {
-                    str = "Details for hex (" + (coord.x+1) + ", " + (coord.y+1) + ") : " + hex.toString();
-                    
-                    //if we are not playing in double blind mode also list the units in this tile.
-                    if(!client.game.getOptions().booleanOption("double_blind")) {
-                        Enumeration<Entity> entList = client.game.getEntities(coord);
-                        if(entList.hasMoreElements()) {
-                            str = str + "; Contains entities: " + entList.nextElement().getId();
-                            while(entList.hasMoreElements()) {
-                                str = str + ", " + entList.nextElement().getId();
+            do {
+                hex = client.game.getBoard().getHex(coord);
+                if (hex != null) {
+                    str = "Details for hex (" + (coord.x + 1) + ", "
+                            + (coord.y + 1) + ") : " + hex.toString();
+
+                    // if we are not playing in double blind mode also list the
+                    // units in this tile.
+                    if (!client.game.getOptions().booleanOption("double_blind")) {
+                        Enumeration<Entity> entList = client.game
+                                .getEntities(coord);
+                        if (entList.hasMoreElements()) {
+                            str = str + "; Contains entities: "
+                                    + entList.nextElement().getId();
+                            while (entList.hasMoreElements()) {
+                                str = str + ", "
+                                        + entList.nextElement().getId();
                             }
                         }
                     }
 
                     report = report + str + "\n";
                 } else {
-                   report = report + "Hex (" + (coord.x+1) + ", " + (coord.y+1) + ") is not on the board.\n";
+                    report = report + "Hex (" + (coord.x + 1) + ", "
+                            + (coord.y + 1) + ") is not on the board.\n";
                 }
 
-                if(i < args.length) {
+                if (i < args.length) {
                     coord = coord.translated(args[i]);
                 }
 
                 i++;
-            } while(i < args.length);
-            
+            } while (i < args.length);
+
             return report;
         } catch (NumberFormatException nfe) {
         } catch (NullPointerException npe) {
         } catch (IndexOutOfBoundsException ioobe) {
         }
-       
+
         return "Error parsing the command.";
     }
 

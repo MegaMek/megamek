@@ -14,16 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import javax.swing.AbstractButton;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -34,18 +24,26 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
 /**
- * A (somewhat primitive) dialog that asks a question and lets the player
- * select from the available choices.
- * The question string is tokenised on "\n".
- * <p/>
+ * A (somewhat primitive) dialog that asks a question and lets the player select
+ * from the available choices. The question string is tokenised on "\n". <p/>
  * Refactored from SingleChoiceDialog (which was based on Confirm)
- *
+ * 
  * @author suvarov454@sourceforge.net
  * @version $version: $
  */
-public class ChoiceDialog
-        extends JDialog implements ActionListener {
+public class ChoiceDialog extends JDialog implements ActionListener {
     /**
      * 
      */
@@ -54,8 +52,10 @@ public class ChoiceDialog
     private boolean confirm;
 
     private JPanel panButtons = new JPanel();
-    private JButton butSelectAll = new JButton(Messages.getString("ChoiceDialog.SelectAll")); //$NON-NLS-1$
-    private JButton butClearAll = new JButton(Messages.getString("ChoiceDialog.ClearAll")); //$NON-NLS-1$
+    private JButton butSelectAll = new JButton(Messages
+            .getString("ChoiceDialog.SelectAll")); //$NON-NLS-1$
+    private JButton butClearAll = new JButton(Messages
+            .getString("ChoiceDialog.ClearAll")); //$NON-NLS-1$
     private JButton butOK = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
@@ -66,17 +66,16 @@ public class ChoiceDialog
 
     /**
      * Create and initialize the dialog.
-     *
-     * @param parent   - the <code>Frame</code> that is locked by this dialog.
-     * @param question - <code>String</code> displayed above the choices.
-     *                 The question string is tokenised on "\n".
-     * @param choices  - an array of <code>String</code>s to be displayed.
+     * 
+     * @param parent - the <code>Frame</code> that is locked by this dialog.
+     * @param question - <code>String</code> displayed above the choices. The
+     *            question string is tokenised on "\n".
+     * @param choices - an array of <code>String</code>s to be displayed.
      * @param isSingle - a <code>boolean</code> that identifies whether the
-     *                 dialog is supposed to be a single choice dialog or support
+     *            dialog is supposed to be a single choice dialog or support
      */
-    private void initialize(JFrame parent,
-                            String question, String[] choices,
-                            boolean isSingle) {
+    private void initialize(JFrame parent, String question, String[] choices,
+            boolean isSingle) {
         super.setResizable(false);
 
         GridBagLayout gridbag = new GridBagLayout();
@@ -130,7 +129,7 @@ public class ChoiceDialog
 
             // Single choice dialogs use radio buttons.
             if (isSingle) {
-                checkboxes = new JRadioButton[choices.length];    
+                checkboxes = new JRadioButton[choices.length];
                 ButtonGroup radioGroup = new ButtonGroup();
                 for (int loop = 0; loop < choices.length; loop++) {
                     checkboxes[loop] = new JRadioButton(choices[loop],
@@ -144,14 +143,13 @@ public class ChoiceDialog
             else {
                 checkboxes = new JCheckBox[choices.length];
                 for (int loop = 0; loop < choices.length; loop++) {
-                    checkboxes[loop] = new JCheckBox(choices[loop],
-                            loop == 0);
+                    checkboxes[loop] = new JCheckBox(choices[loop], loop == 0);
                     choiceArea.add(checkboxes[loop]);
                 }
 
                 // If this is not a single-choice dialog, place the
                 // "select all" and "clear all" buttons in a row
-                // under the  scrollable area.
+                // under the scrollable area.
                 GridLayout grid = new GridLayout(1, 0);
                 grid.setHgap(20);
                 JPanel panAllButtons = new JPanel(grid);
@@ -190,8 +188,9 @@ public class ChoiceDialog
             setSize(size);
             size = getSize();
         }
-        setLocation(parent.getLocation().x + parent.getSize().width / 2 - size.width / 2,
-                parent.getLocation().y + parent.getSize().height / 2 - size.height / 2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - size.width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - size.height / 2);
     }
 
     private void setupButtons() {
@@ -221,38 +220,37 @@ public class ChoiceDialog
     }
 
     /**
-     * Create a choice dialog.  The player can choose any or all of the
-     * choices.  If no choices are passed in, this will be
-     * a very boring dialog, but it will not suffer an exception.
-     *
-     * @param parent   - the <code>Frame</code> that is locked by this dialog.
-     * @param title    - the title <code>String</code> for this dialog.
-     * @param question - <code>String</code> displayed above the choices.
-     *                 The question string is tokenised on "\n".
-     * @param choices  - an array of <code>String</code>s to be displayed.
+     * Create a choice dialog. The player can choose any or all of the choices.
+     * If no choices are passed in, this will be a very boring dialog, but it
+     * will not suffer an exception.
+     * 
+     * @param parent - the <code>Frame</code> that is locked by this dialog.
+     * @param title - the title <code>String</code> for this dialog.
+     * @param question - <code>String</code> displayed above the choices. The
+     *            question string is tokenised on "\n".
+     * @param choices - an array of <code>String</code>s to be displayed.
      * @param isSingle - a <code>boolean</code> that identifies that
      */
     /* package */
-    ChoiceDialog(JFrame parent, String title,
-                 String question, String[] choices,
-                 boolean isSingle) {
+    ChoiceDialog(JFrame parent, String title, String question,
+            String[] choices, boolean isSingle) {
         super(parent, title, true);
         initialize(parent, question, choices, isSingle);
     }
 
     /**
-     * Create a choice dialog.  The player can choose any or all of the
-     * choices.  If no choices are passed in, this will be
-     * a very boring dialog, but it will not suffer an exception.
-     *
-     * @param parent   - the <code>Frame</code> that is locked by this dialog.
-     * @param title    - the title <code>String</code> for this dialog.
-     * @param question - <code>String</code> displayed above the choices.
-     *                 The question string is tokenised on "\n".
-     * @param choices  - an array of <code>String</code>s to be displayed.
+     * Create a choice dialog. The player can choose any or all of the choices.
+     * If no choices are passed in, this will be a very boring dialog, but it
+     * will not suffer an exception.
+     * 
+     * @param parent - the <code>Frame</code> that is locked by this dialog.
+     * @param title - the title <code>String</code> for this dialog.
+     * @param question - <code>String</code> displayed above the choices. The
+     *            question string is tokenised on "\n".
+     * @param choices - an array of <code>String</code>s to be displayed.
      */
-    public ChoiceDialog(JFrame parent, String title,
-                        String question, String[] choices) {
+    public ChoiceDialog(JFrame parent, String title, String question,
+            String[] choices) {
         super(parent, title, true);
         initialize(parent, question, choices, false);
     }
@@ -281,10 +279,10 @@ public class ChoiceDialog
 
     /**
      * See if the player confirmed a choice.
-     *
+     * 
      * @return <code>true</code> if the player has confirmed a choice.
-     *         <code>false</code> if the player canceled, if the player
-     *         did not select a choice, or if no choices were available.
+     *         <code>false</code> if the player canceled, if the player did
+     *         not select a choice, or if no choices were available.
      */
     public boolean getAnswer() {
         return getChoices() != null;
@@ -292,12 +290,12 @@ public class ChoiceDialog
 
     /**
      * Which choices did the player select?
-     *
+     * 
      * @return If no choices were available, if the player canceled, if the
      *         player did not select a choice, or if the player canceled the
      *         choice, a <code>null</code> value is returned, otherwise an
-     *         array of the <code>int</code> indexes from the input array
-     *         that match the selected choices is returned.
+     *         array of the <code>int</code> indexes from the input array that
+     *         match the selected choices is returned.
      */
     public int[] getChoices() {
         int[] retval = null;
@@ -322,7 +320,7 @@ public class ChoiceDialog
                 // No, the player selected all choices.
                 retval = temp;
             } else if (index > 0) {
-                // Yup.  Create an array and copy the values from temp.
+                // Yup. Create an array and copy the values from temp.
                 retval = new int[index];
                 System.arraycopy(temp, 0, retval, 0, index);
             }

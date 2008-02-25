@@ -25,6 +25,11 @@ import megamek.common.Player;
  */
 public class LastManStandingVictory implements Victory, Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3372431109525075853L;
+
     public LastManStandingVictory() {
     }
 

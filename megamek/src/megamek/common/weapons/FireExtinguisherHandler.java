@@ -31,25 +31,31 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class FireExtinguisherHandler extends WeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7047033962986081773L;
+
     /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public FireExtinguisherHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public FireExtinguisherHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
     }
 
     /*
      * (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector, megamek.common.Entity, boolean)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
+     *      megamek.common.Entity, boolean)
      */
     protected boolean specialResolution(Vector<Report> vPhaseReport,
-                    Entity entityTarget, boolean bMissed) {
+            Entity entityTarget, boolean bMissed) {
         if (!bMissed) {
             r = new Report(2270);
             r.subject = subjectId;
@@ -82,7 +88,7 @@ public class FireExtinguisherHandler extends WeaponHandler {
                         ((Tank) target).extinguishAll();
                 }
             }
-        }        
+        }
         return true;
     }
 }

@@ -14,86 +14,101 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.File;
-import java.io.FilenameFilter;
-
-import java.util.Arrays;
-
 import gov.nist.gui.TabPanel;
 
+import java.awt.BorderLayout;
+import java.awt.Button;
+import java.awt.Checkbox;
+import java.awt.Choice;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.List;
+import java.awt.Panel;
+import java.awt.ScrollPane;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.util.Arrays;
+
+import megamek.client.ui.AWT.widget.AdvancedLabel;
 import megamek.common.preference.IClientPreferences;
 import megamek.common.preference.PreferenceManager;
-import megamek.client.ui.AWT.widget.AdvancedLabel;
 
-
-public class CommonSettingsDialog extends ClientDialog
-    implements ActionListener, ItemListener, FocusListener
-{
+public class CommonSettingsDialog extends ClientDialog implements
+        ActionListener, ItemListener, FocusListener {
     /**
      * 
      */
     private static final long serialVersionUID = 5270441082873687662L;
-    private ScrollPane  scrolledPane = new ScrollPane();
-    private TabPanel    panTabs;
-    
-    private Checkbox    minimapEnabled;
-    private Checkbox    autoEndFiring;
-    private Checkbox    autoDeclareSearchlight;
-    private Checkbox    nagForMASC;
-    private Checkbox    nagForPSR;
-    private Checkbox    nagForNoAction;
-    private Checkbox    animateMove;
-    private Checkbox    showWrecks;
-    private Checkbox    soundMute;
-    private Checkbox    showMapHexPopup;
-    private TextField   tooltipDelay;
-    private Choice      unitStartChar;
-    private TextField   maxPathfinderTime;
-    private Checkbox    getFocus;
-    
-    private Checkbox    rightDragScroll;
-    private Checkbox    ctlScroll;
-    private Checkbox    clickEdgeScroll;
-    private Checkbox    alwaysRightClickScroll;
-    private Checkbox    autoEdgeScroll;
-    private TextField   scrollSensitivity;
+    private ScrollPane scrolledPane = new ScrollPane();
+    private TabPanel panTabs;
 
-    private Checkbox    keepGameLog;
-    private TextField   gameLogFilename;
-    //private TextField   gameLogMaxSize;
-    private Checkbox    stampFilenames;
-    private TextField   stampFormat;
-    private Checkbox    defaultAutoejectDisabled;
-    private Checkbox    useAverageSkills;
-    private Checkbox    showUnitId;
-    private Choice      locale;
-    private Checkbox    chatloungeTabs;
+    private Checkbox minimapEnabled;
+    private Checkbox autoEndFiring;
+    private Checkbox autoDeclareSearchlight;
+    private Checkbox nagForMASC;
+    private Checkbox nagForPSR;
+    private Checkbox nagForNoAction;
+    private Checkbox animateMove;
+    private Checkbox showWrecks;
+    private Checkbox soundMute;
+    private Checkbox showMapHexPopup;
+    private TextField tooltipDelay;
+    private Choice unitStartChar;
+    private TextField maxPathfinderTime;
+    private Checkbox getFocus;
 
-    private Checkbox    showMapsheets;
-    private Checkbox    mouseWheelZoom;
+    private Checkbox rightDragScroll;
+    private Checkbox ctlScroll;
+    private Checkbox clickEdgeScroll;
+    private Checkbox alwaysRightClickScroll;
+    private Checkbox autoEdgeScroll;
+    private TextField scrollSensitivity;
 
-    private List        keys;
-    private int         keysIndex = 0;
-    private TextField   value;
-    
-    private Choice      tileSetChoice;
-    private File[]      tileSets;
+    private Checkbox keepGameLog;
+    private TextField gameLogFilename;
+    // private TextField gameLogMaxSize;
+    private Checkbox stampFilenames;
+    private TextField stampFormat;
+    private Checkbox defaultAutoejectDisabled;
+    private Checkbox useAverageSkills;
+    private Checkbox showUnitId;
+    private Choice locale;
+    private Checkbox chatloungeTabs;
+
+    private Checkbox showMapsheets;
+    private Checkbox mouseWheelZoom;
+
+    private List keys;
+    private int keysIndex = 0;
+    private TextField value;
+
+    private Choice tileSetChoice;
+    private File[] tileSets;
 
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
 
-    private static final String[] LOCALE_CHOICES = {"en", "de", "ru"};
+    private static final String[] LOCALE_CHOICES = { "en", "de", "ru" };
 
-     /**
-     * Standard constructor.  There is no default constructor for this class.
-     *
-     * @param   owner - the <code>Frame</code> that owns this dialog.
+    /**
+     * Standard constructor. There is no default constructor for this class.
+     * 
+     * @param owner - the <code>Frame</code> that owns this dialog.
      */
-    public CommonSettingsDialog( Frame owner) {
+    public CommonSettingsDialog(Frame owner) {
         // Initialize our superclass with a title.
-        super( owner, Messages.getString("CommonSettingsDialog.title") ); //$NON-NLS-1$
+        super(owner, Messages.getString("CommonSettingsDialog.title")); //$NON-NLS-1$
 
         panTabs = new TabPanel();
         Panel settingsPanel = getSettingsPanel();
@@ -102,34 +117,39 @@ public class CommonSettingsDialog extends ClientDialog
         panTabs.add("Advanced", getAdvancedSettingsPanel());
         setLayout(new BorderLayout());
         this.add(panTabs, BorderLayout.CENTER);
-        this.add( getButtonsPanel(), BorderLayout.SOUTH );
+        this.add(getButtonsPanel(), BorderLayout.SOUTH);
 
         // Close this dialog when the window manager says to.
         addWindowListener(new WindowAdapter() {
-                public void windowClosing(WindowEvent e) { cancel(); }
+            public void windowClosing(WindowEvent e) {
+                cancel();
+            }
         });
 
         // Center this dialog.
         pack();
 
         // Make the thing wide enough so a horizontal scrollbar isn't
-        //  necessary.  I'm not sure why the extra hardcoded 10 pixels
-        //  is needed, maybe it's a ms windows thing.
-        setLocationAndSize(settingsPanel.getPreferredSize().width + scrolledPane.getInsets().right + 10, settingsPanel.getPreferredSize().height);
+        // necessary. I'm not sure why the extra hardcoded 10 pixels
+        // is needed, maybe it's a ms windows thing.
+        setLocationAndSize(settingsPanel.getPreferredSize().width
+                + scrolledPane.getInsets().right + 10, settingsPanel
+                .getPreferredSize().height);
     }
 
     private Panel getButtonsPanel() {
         // Add the dialog controls.
         Panel buttons = new Panel();
-        buttons.setLayout( new GridLayout(1, 0, 20, 5) );
-        Button update = new Button( Messages.getString("CommonSettingsDialog.Update") ); //$NON-NLS-1$
-        update.setActionCommand( CommonSettingsDialog.UPDATE );
-        update.addActionListener( this );
-        buttons.add( update );
-        Button cancel = new Button( Messages.getString("Cancel") ); //$NON-NLS-1$
-        cancel.setActionCommand( CommonSettingsDialog.CANCEL );
-        cancel.addActionListener( this );
-        buttons.add( cancel );
+        buttons.setLayout(new GridLayout(1, 0, 20, 5));
+        Button update = new Button(Messages
+                .getString("CommonSettingsDialog.Update")); //$NON-NLS-1$
+        update.setActionCommand(CommonSettingsDialog.UPDATE);
+        update.addActionListener(this);
+        buttons.add(update);
+        Button cancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
+        cancel.setActionCommand(CommonSettingsDialog.CANCEL);
+        cancel.addActionListener(this);
+        buttons.add(cancel);
 
         return buttons;
     }
@@ -137,176 +157,178 @@ public class CommonSettingsDialog extends ClientDialog
     private Panel getSettingsPanel() {
         // Lay out this dialog.
         Panel tempPanel = new Panel();
-        tempPanel.setLayout( new GridLayout(0, 1) );
+        tempPanel.setLayout(new GridLayout(0, 1));
 
         // Add the setting controls.
-        minimapEnabled
-            = new Checkbox( Messages.getString("CommonSettingsDialog.minimapEnabled") ); //$NON-NLS-1$
-        tempPanel.add( minimapEnabled );
-        
-        autoEndFiring
-            = new Checkbox( Messages.getString("CommonSettingsDialog.autoEndFiring") ); //$NON-NLS-1$
-        tempPanel.add( autoEndFiring );
-        
-        autoDeclareSearchlight
-            = new Checkbox( Messages.getString("CommonSettingsDialog.autoDeclareSearchlight") ); //$NON-NLS-1$
-        tempPanel.add( autoDeclareSearchlight );
-    
-        nagForMASC
-            = new Checkbox( Messages.getString("CommonSettingsDialog.nagForMASC") ); //$NON-NLS-1$
-        tempPanel.add( nagForMASC );
-        
-        mouseWheelZoom
-            = new Checkbox( Messages.getString("CommonSettingsDialog.mouseWheelZoom") ); //$NON-NLS-1$
-        tempPanel.add( mouseWheelZoom );
-    
-        nagForPSR
-            = new Checkbox( Messages.getString("CommonSettingsDialog.nagForPSR") ); //$NON-NLS-1$
-        tempPanel.add( nagForPSR );
-        
-        nagForNoAction
-            = new Checkbox( Messages.getString("CommonSettingsDialog.nagForNoAction") ); //$NON-NLS-1$
-        tempPanel.add( nagForNoAction );
-        
-        animateMove
-            = new Checkbox( Messages.getString("CommonSettingsDialog.animateMove") ); //$NON-NLS-1$
-        tempPanel.add( animateMove );
-        
-        showWrecks
-            = new Checkbox( Messages.getString("CommonSettingsDialog.showWrecks") ); //$NON-NLS-1$
-        tempPanel.add( showWrecks );
-        
-        soundMute
-            = new Checkbox( Messages.getString("CommonSettingsDialog.soundMute") ); //$NON-NLS-1$
-        tempPanel.add( soundMute );
-        
-        showMapHexPopup
-            = new Checkbox( Messages.getString("CommonSettingsDialog.showMapHexPopup") ); //$NON-NLS-1$
-        tempPanel.add( showMapHexPopup );
+        minimapEnabled = new Checkbox(Messages
+                .getString("CommonSettingsDialog.minimapEnabled")); //$NON-NLS-1$
+        tempPanel.add(minimapEnabled);
+
+        autoEndFiring = new Checkbox(Messages
+                .getString("CommonSettingsDialog.autoEndFiring")); //$NON-NLS-1$
+        tempPanel.add(autoEndFiring);
+
+        autoDeclareSearchlight = new Checkbox(Messages
+                .getString("CommonSettingsDialog.autoDeclareSearchlight")); //$NON-NLS-1$
+        tempPanel.add(autoDeclareSearchlight);
+
+        nagForMASC = new Checkbox(Messages
+                .getString("CommonSettingsDialog.nagForMASC")); //$NON-NLS-1$
+        tempPanel.add(nagForMASC);
+
+        mouseWheelZoom = new Checkbox(Messages
+                .getString("CommonSettingsDialog.mouseWheelZoom")); //$NON-NLS-1$
+        tempPanel.add(mouseWheelZoom);
+
+        nagForPSR = new Checkbox(Messages
+                .getString("CommonSettingsDialog.nagForPSR")); //$NON-NLS-1$
+        tempPanel.add(nagForPSR);
+
+        nagForNoAction = new Checkbox(Messages
+                .getString("CommonSettingsDialog.nagForNoAction")); //$NON-NLS-1$
+        tempPanel.add(nagForNoAction);
+
+        animateMove = new Checkbox(Messages
+                .getString("CommonSettingsDialog.animateMove")); //$NON-NLS-1$
+        tempPanel.add(animateMove);
+
+        showWrecks = new Checkbox(Messages
+                .getString("CommonSettingsDialog.showWrecks")); //$NON-NLS-1$
+        tempPanel.add(showWrecks);
+
+        soundMute = new Checkbox(Messages
+                .getString("CommonSettingsDialog.soundMute")); //$NON-NLS-1$
+        tempPanel.add(soundMute);
+
+        showMapHexPopup = new Checkbox(Messages
+                .getString("CommonSettingsDialog.showMapHexPopup")); //$NON-NLS-1$
+        tempPanel.add(showMapHexPopup);
 
         Panel panSetting;
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.tooltipDelay")) ); //$NON-NLS-1$
-        tooltipDelay
-            = new TextField(4);
-        panSetting.add( tooltipDelay );
+        panSetting.add(new Label(Messages
+                .getString("CommonSettingsDialog.tooltipDelay"))); //$NON-NLS-1$
+        tooltipDelay = new TextField(4);
+        panSetting.add(tooltipDelay);
 
-        tempPanel.add( panSetting );
+        tempPanel.add(panSetting);
 
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
-        unitStartChar
-            = new Choice();
+        unitStartChar = new Choice();
         // Add option for "A, B, C, D..."
-        unitStartChar.addItem( "\u0041, \u0042, \u0043, \u0044..." ); //$NON-NLS-1$
+        unitStartChar.addItem("\u0041, \u0042, \u0043, \u0044..."); //$NON-NLS-1$
         // Add option for "ALPHA, BETA, GAMMA, DELTA..."
-        unitStartChar.addItem( "\u0391, \u0392, \u0393, \u0394..." ); //$NON-NLS-1$
+        unitStartChar.addItem("\u0391, \u0392, \u0393, \u0394..."); //$NON-NLS-1$
         // Add option for "alpha, beta, gamma, delta..."
-        unitStartChar.addItem( "\u03B1, \u03B2, \u03B3, \u03B4..." ); //$NON-NLS-1$
-        panSetting.add( unitStartChar );
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.protoMechUnitCodes")) ); //$NON-NLS-1$
+        unitStartChar.addItem("\u03B1, \u03B2, \u03B3, \u03B4..."); //$NON-NLS-1$
+        panSetting.add(unitStartChar);
+        panSetting.add(new Label(Messages
+                .getString("CommonSettingsDialog.protoMechUnitCodes"))); //$NON-NLS-1$
 
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.pathFiderTimeLimit")) ); //$NON-NLS-1$
-        maxPathfinderTime
-            = new TextField(5);
-        panSetting.add( maxPathfinderTime );
-        tempPanel.add( panSetting );
+        panSetting.add(new Label(Messages
+                .getString("CommonSettingsDialog.pathFiderTimeLimit"))); //$NON-NLS-1$
+        maxPathfinderTime = new TextField(5);
+        panSetting.add(maxPathfinderTime);
+        tempPanel.add(panSetting);
 
-        getFocus
-            = new Checkbox( Messages.getString("CommonSettingsDialog.getFocus")); //$NON-NLS-1$
-        tempPanel.add( getFocus );
-        tempPanel.add( panSetting );
+        getFocus = new Checkbox(Messages
+                .getString("CommonSettingsDialog.getFocus")); //$NON-NLS-1$
+        tempPanel.add(getFocus);
+        tempPanel.add(panSetting);
 
         // player-specific settings
-        defaultAutoejectDisabled
-            = new Checkbox( Messages.getString("CommonSettingsDialog.defaultAutoejectDisabled") ); //$NON-NLS-1$
+        defaultAutoejectDisabled = new Checkbox(Messages
+                .getString("CommonSettingsDialog.defaultAutoejectDisabled")); //$NON-NLS-1$
         defaultAutoejectDisabled.addItemListener(this);
-        tempPanel.add( defaultAutoejectDisabled );
+        tempPanel.add(defaultAutoejectDisabled);
 
-        useAverageSkills
-            = new Checkbox( Messages.getString("CommonSettingsDialog.useAverageSkills") ); //$NON-NLS-1$
+        useAverageSkills = new Checkbox(Messages
+                .getString("CommonSettingsDialog.useAverageSkills")); //$NON-NLS-1$
         useAverageSkills.addItemListener(this);
-        tempPanel.add( useAverageSkills );
-        
-        showUnitId
-            = new Checkbox ( Messages.getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
+        tempPanel.add(useAverageSkills);
+
+        showUnitId = new Checkbox(Messages
+                .getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
         showUnitId.addItemListener(this);
-        tempPanel.add( showUnitId );
-        
+        tempPanel.add(showUnitId);
+
         // client-side gameLog settings
-        keepGameLog
-            = new Checkbox( Messages.getString("CommonSettingsDialog.keepGameLog") ); //$NON-NLS-1$
+        keepGameLog = new Checkbox(Messages
+                .getString("CommonSettingsDialog.keepGameLog")); //$NON-NLS-1$
         keepGameLog.addItemListener(this);
-        tempPanel.add( keepGameLog );
+        tempPanel.add(keepGameLog);
 
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.logFileName")) ); //$NON-NLS-1$
-        gameLogFilename
-            = new TextField(15);
-        panSetting.add( gameLogFilename );
-        tempPanel.add( panSetting );
+        panSetting.add(new Label(Messages
+                .getString("CommonSettingsDialog.logFileName"))); //$NON-NLS-1$
+        gameLogFilename = new TextField(15);
+        panSetting.add(gameLogFilename);
+        tempPanel.add(panSetting);
 
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.tileset")) ); //$NON-NLS-1$
+        panSetting.add(new Label(Messages
+                .getString("CommonSettingsDialog.tileset"))); //$NON-NLS-1$
         tileSetChoice = new Choice();
-        panSetting.add( tileSetChoice );
-        tempPanel.add( panSetting );
+        panSetting.add(tileSetChoice);
+        tempPanel.add(panSetting);
 
         /*
-        panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.logFileMaxSize")) ); //$NON-NLS-1$
-        gameLogMaxSize
-            = new TextField(5);
-        panSetting.add( gameLogMaxSize );
-        tempPanel.add( panSetting );
-        */
+         * panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
+         * panSetting.add( new
+         * Label(Messages.getString("CommonSettingsDialog.logFileMaxSize")) );
+         * //$NON-NLS-1$ gameLogMaxSize = new TextField(5); panSetting.add(
+         * gameLogMaxSize ); tempPanel.add( panSetting );
+         */
 
-        stampFilenames
-            = new Checkbox( Messages.getString("CommonSettingsDialog.stampFilenames") ); //$NON-NLS-1$
+        stampFilenames = new Checkbox(Messages
+                .getString("CommonSettingsDialog.stampFilenames")); //$NON-NLS-1$
         stampFilenames.addItemListener(this);
-        tempPanel.add( stampFilenames );
+        tempPanel.add(stampFilenames);
 
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.stampFormat")) ); //$NON-NLS-1$
-        stampFormat
-            = new TextField(15);
-        panSetting.add( stampFormat );
-        tempPanel.add( panSetting );
+        panSetting.add(new Label(Messages
+                .getString("CommonSettingsDialog.stampFormat"))); //$NON-NLS-1$
+        stampFormat = new TextField(15);
+        panSetting.add(stampFormat);
+        tempPanel.add(panSetting);
 
         // scrolling options
-        tempPanel.add( new AdvancedLabel(Messages.getString("CommonSettingsDialog.mapScrollText")) ); //$NON-NLS-1$
+        tempPanel.add(new AdvancedLabel(Messages
+                .getString("CommonSettingsDialog.mapScrollText"))); //$NON-NLS-1$
 
-        rightDragScroll
-            = new Checkbox( Messages.getString("CommonSettingsDialog.rightDragScroll") ); //$NON-NLS-1$
-        tempPanel.add( rightDragScroll );
-        
-        ctlScroll
-            = new Checkbox( Messages.getString("CommonSettingsDialog.ctlScroll") ); //$NON-NLS-1$
-            tempPanel.add( ctlScroll );
+        rightDragScroll = new Checkbox(Messages
+                .getString("CommonSettingsDialog.rightDragScroll")); //$NON-NLS-1$
+        tempPanel.add(rightDragScroll);
 
-        clickEdgeScroll
-            = new Checkbox( Messages.getString("CommonSettingsDialog.clickEdgeScroll") ); //$NON-NLS-1$
-            tempPanel.add( clickEdgeScroll );
+        ctlScroll = new Checkbox(Messages
+                .getString("CommonSettingsDialog.ctlScroll")); //$NON-NLS-1$
+        tempPanel.add(ctlScroll);
 
-        alwaysRightClickScroll
-            = new Checkbox( Messages.getString("CommonSettingsDialog.alwaysRightClickScroll") ); //$NON-NLS-1$
-            tempPanel.add( alwaysRightClickScroll );
-        
-        autoEdgeScroll
-            = new Checkbox( Messages.getString("CommonSettingsDialog.autoEdgeScroll") ); //$NON-NLS-1$
-            tempPanel.add( autoEdgeScroll );
+        clickEdgeScroll = new Checkbox(Messages
+                .getString("CommonSettingsDialog.clickEdgeScroll")); //$NON-NLS-1$
+        tempPanel.add(clickEdgeScroll);
+
+        alwaysRightClickScroll = new Checkbox(Messages
+                .getString("CommonSettingsDialog.alwaysRightClickScroll")); //$NON-NLS-1$
+        tempPanel.add(alwaysRightClickScroll);
+
+        autoEdgeScroll = new Checkbox(Messages
+                .getString("CommonSettingsDialog.autoEdgeScroll")); //$NON-NLS-1$
+        tempPanel.add(autoEdgeScroll);
 
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.scrollSesitivity")) ); //$NON-NLS-1$
-        scrollSensitivity
-            = new TextField(4);
-        panSetting.add( scrollSensitivity );
-        tempPanel.add( panSetting );
+        panSetting.add(new Label(Messages
+                .getString("CommonSettingsDialog.scrollSesitivity"))); //$NON-NLS-1$
+        scrollSensitivity = new TextField(4);
+        panSetting.add(scrollSensitivity);
+        tempPanel.add(panSetting);
 
-        //locale settings
+        // locale settings
         panSetting = new Panel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add( new Label(Messages.getString("CommonSettingsDialog.locale"))); //$NON-NLS-1$
-        //        locale = new TextField(8);
+        panSetting.add(new Label(Messages
+                .getString("CommonSettingsDialog.locale"))); //$NON-NLS-1$
+        // locale = new TextField(8);
         locale = new Choice();
         locale.add(Messages.getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
         locale.add(Messages.getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
@@ -314,101 +336,104 @@ public class CommonSettingsDialog extends ClientDialog
         panSetting.add(locale);
         tempPanel.add(panSetting);
 
-        //chatloungtab setting
-        chatloungeTabs 
-            = new Checkbox( Messages.getString("CommonSettingsDialog.chatloungeTabs") ); //$NON-NLS-1$
-        tempPanel.add( chatloungeTabs );
+        // chatloungtab setting
+        chatloungeTabs = new Checkbox(Messages
+                .getString("CommonSettingsDialog.chatloungeTabs")); //$NON-NLS-1$
+        tempPanel.add(chatloungeTabs);
 
-        //showMapsheets setting
-        showMapsheets
-            = new Checkbox( Messages.getString("CommonSettingsDialog.showMapsheets") ); //$NON-NLS-1$
+        // showMapsheets setting
+        showMapsheets = new Checkbox(Messages
+                .getString("CommonSettingsDialog.showMapsheets")); //$NON-NLS-1$
         tempPanel.add(showMapsheets);
         return tempPanel;
     }
 
     /**
-     * Display the current settings in this dialog.
-     * <p/>
-     * Overrides <code>Dialog#show()</code>.
+     * Display the current settings in this dialog. <p/> Overrides
+     * <code>Dialog#show()</code>.
      */
     public void setVisible(boolean show) {
-        if(show) {
+        if (show) {
             GUIPreferences gs = GUIPreferences.getInstance();
             IClientPreferences cs = PreferenceManager.getClientPreferences();
-            
-            minimapEnabled.setState( gs.getMinimapEnabled() );
-            autoEndFiring.setState( gs.getAutoEndFiring() );
-            autoDeclareSearchlight.setState( gs.getAutoDeclareSearchlight());
-            nagForMASC.setState( gs.getNagForMASC() );
-            nagForPSR.setState( gs.getNagForPSR() );
-            nagForNoAction.setState( gs.getNagForNoAction() );
-            animateMove.setState( gs.getShowMoveStep() );
-            showWrecks.setState( gs.getShowWrecks() );
-            soundMute.setState( gs.getSoundMute() );
-            showMapHexPopup.setState( gs.getShowMapHexPopup() );
-            tooltipDelay.setText( Integer.toString(gs.getTooltipDelay() ) );
-            mouseWheelZoom.setState( gs.getMouseWheelZoom());
-    
+
+            minimapEnabled.setState(gs.getMinimapEnabled());
+            autoEndFiring.setState(gs.getAutoEndFiring());
+            autoDeclareSearchlight.setState(gs.getAutoDeclareSearchlight());
+            nagForMASC.setState(gs.getNagForMASC());
+            nagForPSR.setState(gs.getNagForPSR());
+            nagForNoAction.setState(gs.getNagForNoAction());
+            animateMove.setState(gs.getShowMoveStep());
+            showWrecks.setState(gs.getShowWrecks());
+            soundMute.setState(gs.getSoundMute());
+            showMapHexPopup.setState(gs.getShowMapHexPopup());
+            tooltipDelay.setText(Integer.toString(gs.getTooltipDelay()));
+            mouseWheelZoom.setState(gs.getMouseWheelZoom());
+
             // Select the correct char set (give a nice default to start).
             unitStartChar.select(0);
-            for ( int loop = 0; loop < unitStartChar.getItemCount(); loop++ ) {
-                if ( unitStartChar.getItem(loop).charAt(0) ==
-                     PreferenceManager.getClientPreferences().getUnitStartChar() ) {
+            for (int loop = 0; loop < unitStartChar.getItemCount(); loop++) {
+                if (unitStartChar.getItem(loop).charAt(0) == PreferenceManager
+                        .getClientPreferences().getUnitStartChar()) {
                     unitStartChar.select(loop);
                     break;
                 }
             }
-    
-            maxPathfinderTime.setText( Integer.toString(cs.getMaxPathfinderTime() ) );
-    
-            rightDragScroll.setState( gs.getRightDragScroll() );
-            ctlScroll.setState( gs.getCtlScroll() );
-            clickEdgeScroll.setState( gs.getClickEdgeScroll() );
-            alwaysRightClickScroll.setState( gs.getAlwaysRightClickScroll() );
-            autoEdgeScroll.setState( gs.getAutoEdgeScroll() );
-            scrollSensitivity.setText( Integer.toString(gs.getScrollSensitivity() ) );
-    
-            keepGameLog.setState( cs.keepGameLog() );
+
+            maxPathfinderTime.setText(Integer.toString(cs
+                    .getMaxPathfinderTime()));
+
+            rightDragScroll.setState(gs.getRightDragScroll());
+            ctlScroll.setState(gs.getCtlScroll());
+            clickEdgeScroll.setState(gs.getClickEdgeScroll());
+            alwaysRightClickScroll.setState(gs.getAlwaysRightClickScroll());
+            autoEdgeScroll.setState(gs.getAutoEdgeScroll());
+            scrollSensitivity.setText(Integer.toString(gs
+                    .getScrollSensitivity()));
+
+            keepGameLog.setState(cs.keepGameLog());
             gameLogFilename.setEnabled(keepGameLog.getState());
-            gameLogFilename.setText( cs.getGameLogFilename() );
-            //gameLogMaxSize.setEnabled(keepGameLog.getState());
-            //gameLogMaxSize.setText( Integer.toString(cs.getGameLogMaxSize()) );
-            stampFilenames.setState( cs.stampFilenames() );
+            gameLogFilename.setText(cs.getGameLogFilename());
+            // gameLogMaxSize.setEnabled(keepGameLog.getState());
+            // gameLogMaxSize.setText( Integer.toString(cs.getGameLogMaxSize())
+            // );
+            stampFilenames.setState(cs.stampFilenames());
             stampFormat.setEnabled(stampFilenames.getState());
             stampFormat.setText(cs.getStampFormat());
-    
-            defaultAutoejectDisabled.setState( cs.defaultAutoejectDisabled() );
+
+            defaultAutoejectDisabled.setState(cs.defaultAutoejectDisabled());
             useAverageSkills.setState(cs.useAverageSkills());
-            showUnitId.setState( cs.getShowUnitId() );
-    
+            showUnitId.setState(cs.getShowUnitId());
+
             int index = 0;
             if (cs.getLocaleString().startsWith("de"))
                 index = 1;
             if (cs.getLocaleString().startsWith("ru"))
                 index = 2;
             locale.select(index);
-            
-            chatloungeTabs.setState(gs.getChatLoungeTabs() );
-            
+
+            chatloungeTabs.setState(gs.getChatLoungeTabs());
+
             showMapsheets.setState(gs.getShowMapsheets());
-    
-            File dir = new File("data" + File.separator +
-                    "images" + 
-                    File.separator + "hexes" + File.separator);
+
+            File dir = new File("data" + File.separator + "images"
+                    + File.separator + "hexes" + File.separator);
             tileSets = dir.listFiles(new FilenameFilter() {
-                public boolean accept(File direc, String name) { 
-                    if(name.endsWith(".tileset")) return true;
-                    return false;}
+                public boolean accept(File direc, String name) {
+                    if (name.endsWith(".tileset"))
+                        return true;
+                    return false;
+                }
             });
             tileSetChoice.removeAll();
-            for(int i=0;i<tileSets.length;i++) {
+            for (int i = 0; i < tileSets.length; i++) {
                 String name = tileSets[i].getName();
-                tileSetChoice.add(name.substring(0,name.length() - 8));
-                if(name.equals(cs.getMapTileset()))
+                tileSetChoice.add(name.substring(0, name.length() - 8));
+                if (name.equals(cs.getMapTileset()))
                     tileSetChoice.select(i);
             }
-    
-            getFocus.setState( gs.getFocus() );
+
+            getFocus.setState(gs.getFocus());
         }
         super.setVisible(show);
     }
@@ -417,7 +442,7 @@ public class CommonSettingsDialog extends ClientDialog
      * Cancel any updates made in this dialog, and closes it.
      */
     private void cancel() {
-        this.setVisible( false );
+        this.setVisible(false);
     }
 
     /**
@@ -426,7 +451,7 @@ public class CommonSettingsDialog extends ClientDialog
     private void update() {
         GUIPreferences gs = GUIPreferences.getInstance();
         IClientPreferences cs = PreferenceManager.getClientPreferences();
-        
+
         gs.setMinimapEnabled(minimapEnabled.getState());
         gs.setAutoEndFiring(autoEndFiring.getState());
         gs.setAutoDeclareSearchlight(autoDeclareSearchlight.getState());
@@ -445,7 +470,7 @@ public class CommonSettingsDialog extends ClientDialog
         gs.setClickEdgeScroll(clickEdgeScroll.getState());
         gs.setAlwaysRightClickScroll(alwaysRightClickScroll.getState());
         gs.setAutoEdgeScroll(autoEdgeScroll.getState());
-        gs.setScrollSensitivity(Integer.parseInt(scrollSensitivity.getText()) );
+        gs.setScrollSensitivity(Integer.parseInt(scrollSensitivity.getText()));
         gs.setMouseWheelZoom(mouseWheelZoom.getState());
 
         cs.setMaxPathfinderTime(Integer.parseInt(maxPathfinderTime.getText()));
@@ -454,69 +479,71 @@ public class CommonSettingsDialog extends ClientDialog
 
         cs.setKeepGameLog(keepGameLog.getState());
         cs.setGameLogFilename(gameLogFilename.getText());
-        //cs.setGameLogMaxSize(Integer.parseInt(gameLogMaxSize.getText()));
+        // cs.setGameLogMaxSize(Integer.parseInt(gameLogMaxSize.getText()));
         cs.setStampFilenames(stampFilenames.getState());
         cs.setStampFormat(stampFormat.getText());
-
 
         cs.setDefaultAutoejectDisabled(defaultAutoejectDisabled.getState());
         cs.setUseAverageSkills(useAverageSkills.getState());
         cs.setShowUnitId(showUnitId.getState());
 
-        cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[locale.getSelectedIndex()]);
-        
+        cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[locale
+                .getSelectedIndex()]);
+
         gs.setChatloungeTabs(chatloungeTabs.getState());
         gs.setShowMapsheets(showMapsheets.getState());
-        
-        if(tileSetChoice.getSelectedIndex() >= 0)
-            cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()].getName());
 
-        this.setVisible( false );
+        if (tileSetChoice.getSelectedIndex() >= 0)
+            cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
+                    .getName());
+
+        this.setVisible(false);
     }
 
     /**
-     * Handle the player pressing the action buttons.
-     * <p/>
-     * Implements the <code>ActionListener</code> interface.
-     *
-     * @param   event - the <code>ActionEvent</code> that initiated this call.
+     * Handle the player pressing the action buttons. <p/> Implements the
+     * <code>ActionListener</code> interface.
+     * 
+     * @param event - the <code>ActionEvent</code> that initiated this call.
      */
-    public void actionPerformed( ActionEvent event ) {
+    public void actionPerformed(ActionEvent event) {
         String command = event.getActionCommand();
-        if ( CommonSettingsDialog.UPDATE.equalsIgnoreCase( command ) ) {
+        if (CommonSettingsDialog.UPDATE.equalsIgnoreCase(command)) {
             update();
-        }
-        else if ( CommonSettingsDialog.CANCEL.equalsIgnoreCase( command ) ) {
+        } else if (CommonSettingsDialog.CANCEL.equalsIgnoreCase(command)) {
             cancel();
         }
     }
 
     /**
-     * Handle the player clicking checkboxes.
-     * <p/>
-     * Implements the <code>ItemListener</code> interface.
-     *
-     * @param   event - the <code>ItemEvent</code> that initiated this call.
+     * Handle the player clicking checkboxes. <p/> Implements the
+     * <code>ItemListener</code> interface.
+     * 
+     * @param event - the <code>ItemEvent</code> that initiated this call.
      */
-    public void itemStateChanged( ItemEvent event ) {
+    public void itemStateChanged(ItemEvent event) {
         Object source = event.getItemSelectable();
-        if ( source.equals(keepGameLog) ) {
+        if (source.equals(keepGameLog)) {
             gameLogFilename.setEnabled(keepGameLog.getState());
-            //gameLogMaxSize.setEnabled(keepGameLog.getState());
+            // gameLogMaxSize.setEnabled(keepGameLog.getState());
         }
-        if ( source.equals(stampFilenames) ) {
+        if (source.equals(stampFilenames)) {
             stampFormat.setEnabled(stampFilenames.getState());
         }
-        if ( event.getSource() == keys && event.getStateChange() == ItemEvent.SELECTED) {
-            value.setText(GUIPreferences.getInstance().getString("Advanced" + keys.getSelectedItem()));
+        if (event.getSource() == keys
+                && event.getStateChange() == ItemEvent.SELECTED) {
+            value.setText(GUIPreferences.getInstance().getString(
+                    "Advanced" + keys.getSelectedItem()));
             keysIndex = keys.getSelectedIndex();
         }
     }
 
-    public void focusGained( FocusEvent e ) {}
+    public void focusGained(FocusEvent e) {
+    }
 
-    public void focusLost( FocusEvent e ) {
-        GUIPreferences.getInstance().setValue("Advanced" + keys.getItem(keysIndex), value.getText());
+    public void focusLost(FocusEvent e) {
+        GUIPreferences.getInstance().setValue(
+                "Advanced" + keys.getItem(keysIndex), value.getText());
     }
 
     private Panel getAdvancedSettingsPanel() {
@@ -526,7 +553,8 @@ public class CommonSettingsDialog extends ClientDialog
         String[] s = GUIPreferences.getInstance().getAdvancedProperties();
         Arrays.sort(s);
         for (int i = 0; i < s.length; i++) {
-            keys.add(s[i].substring(s[i].indexOf("Advanced") + 8, s[i].length()));
+            keys.add(s[i]
+                    .substring(s[i].indexOf("Advanced") + 8, s[i].length()));
         }
         keys.addItemListener(this);
         p.add(keys);

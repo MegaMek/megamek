@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLMicroBomb extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1467436625346131281L;
+
     /**
      * 
      */
@@ -49,7 +53,7 @@ public class CLMicroBomb extends Weapon {
         this.bv = 0;
         this.flags |= F_NO_FIRES;
     }
-    
+
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
         return new MicroBombHandler(toHit, waa, game, server);

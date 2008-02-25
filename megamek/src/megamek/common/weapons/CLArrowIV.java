@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLArrowIV extends ArtilleryWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8623816593973861926L;
 
     /**
      * 
@@ -40,7 +44,7 @@ public class CLArrowIV extends ArtilleryWeapon {
         this.heat = 10;
         this.rackSize = 20;
         this.ammoType = AmmoType.T_ARROW_IV;
-        this.shortRange = 1;  //
+        this.shortRange = 1; //
         this.mediumRange = 2;
         this.longRange = 6;
         this.extremeRange = 6; // No extreme range.

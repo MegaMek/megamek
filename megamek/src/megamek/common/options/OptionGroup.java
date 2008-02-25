@@ -14,64 +14,68 @@
 
 package megamek.common.options;
 
-import java.io.*;
-import java.util.*;
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Vector;
 
 public class OptionGroup implements IBasicOptionGroup, Serializable {
-    
+
     /**
      * 
      */
     private static final long serialVersionUID = 6445683666789832313L;
 
     private Vector<String> optionNames = new Vector<String>();
-    
+
     private String name;
     private String key;
 
     /**
      * Creates new OptionGroup
+     * 
      * @param name group name
      * @param key optional key
      */
     public OptionGroup(String name, String key) {
         this.name = name;
-        this.key = key;     
+        this.key = key;
     }
-    
+
     /**
      * Creates new OptionGroup with empty key
+     * 
      * @param name option name
      */
     public OptionGroup(String name) {
-      this(name, ""); //$NON-NLS-1$
+        this(name, ""); //$NON-NLS-1$
     }
 
     public String getName() {
         return name;
     }
-    
+
     public void setKey(String key) {
-      this.key = key;
+        this.key = key;
     }
-    
+
     public String getKey() {
-      return key;
+        return key;
     }
-        
+
     public Enumeration<String> getOptionNames() {
         return optionNames.elements();
     }
-    
+
     /**
-     * Adds new option name to this group. The option names are unique, 
-     * so if there is already an option <code>optionName</code> this
-     * function does nothing. 
+     * Adds new option name to this group. The option names are unique, so if
+     * there is already an option <code>optionName</code> this function does
+     * nothing.
+     * 
      * @param optionName new option name
      */
     public void addOptionName(String optionName) {
-        //This check is a performance penalty, but we don't 
-        //allow duplicate option names 
+        // This check is a performance penalty, but we don't
+        // allow duplicate option names
         if (!optionNames.contains(optionName)) {
             optionNames.addElement(optionName);
         }

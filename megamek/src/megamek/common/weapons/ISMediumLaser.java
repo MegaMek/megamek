@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISMediumLaser extends LaserWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2178224725694704541L;
+
     public ISMediumLaser() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;

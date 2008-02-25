@@ -21,21 +21,22 @@ import megamek.server.Server;
 
 public class CheckBVCommand extends ServerCommand {
 
-	public CheckBVCommand(Server server) {
-		super(server, "checkbv", "Shows the remaining BV of each player in the game.");
-	}
+    public CheckBVCommand(Server server) {
+        super(server, "checkbv",
+                "Shows the remaining BV of each player in the game.");
+    }
 
-	@Override
-	public void run(int connId, String[] args) {
+    @Override
+    public void run(int connId, String[] args) {
         server.sendServerChat(connId, "Remaining BV:");
         for (Enumeration i = server.getGame().getPlayers(); i.hasMoreElements();) {
-        	Player player = (Player)i.nextElement();
+            Player player = (Player) i.nextElement();
             StringBuffer cb = new StringBuffer();
             cb.append(player.getName()).append(": ");
             cb.append(player.getBV()).append("/").append(player.getInitialBV());
             server.sendServerChat(connId, cb.toString());
         }
         server.sendServerChat(connId, "end list");
-	}
+    }
 
 }

@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISTHBUAC20 extends UACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5199793409417838142L;
+
     /**
      * 
      */
@@ -44,7 +48,7 @@ public class ISTHBUAC20 extends UACWeapon {
         this.extremeRange = 16;
         this.tonnage = 15.0f;
         this.criticals = 11;
-        this.flags |=  F_SPLITABLE;
+        this.flags |= F_SPLITABLE;
         this.bv = 335;
         this.cost = 600000;
     }

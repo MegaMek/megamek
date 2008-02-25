@@ -25,6 +25,10 @@ import megamek.common.IGame;
  * SimpleNoResult
  */
 public class CheckVictory implements Victory, Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9146210812483189565L;
     protected Victory v;
 
     public CheckVictory(Victory v) {

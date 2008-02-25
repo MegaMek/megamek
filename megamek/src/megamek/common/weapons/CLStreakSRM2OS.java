@@ -17,9 +17,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class CLStreakSRM2OS extends StreakSRMWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2219171972794110915L;
 
     /**
      * 

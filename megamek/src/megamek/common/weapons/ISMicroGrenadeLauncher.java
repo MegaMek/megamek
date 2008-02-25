@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISMicroGrenadeLauncher extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5856065014622975919L;
+
     /**
      * 
      */
@@ -43,6 +47,6 @@ public class ISMicroGrenadeLauncher extends Weapon {
         this.tonnage = 0.0f;
         this.criticals = 0;
         this.bv = 0;
-        this.flags |=  F_BALLISTIC;
+        this.flags |= F_BALLISTIC;
     }
 }

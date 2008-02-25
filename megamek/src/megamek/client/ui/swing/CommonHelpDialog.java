@@ -14,11 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -29,6 +24,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 /**
  * Every about dialog in MegaMek should have an identical look-and-feel.
@@ -41,13 +42,13 @@ public class CommonHelpDialog extends JDialog {
     private JTextArea lblHelp;
 
     /**
-     * Create a help dialog for the given parent <code>Frame</code> by
-     * reading from the indicated <code>File</code>.
-     *
-     * @param frame    - the parent <code>Frame</code> for this dialog.
-     *                 This value should <b>not</b> be <code>null</code>.
-     * @param helpfile - the <code>File</code> containing the help text.
-     *                 This value should <b>not</b> be <code>null</code>.
+     * Create a help dialog for the given parent <code>Frame</code> by reading
+     * from the indicated <code>File</code>.
+     * 
+     * @param frame - the parent <code>Frame</code> for this dialog. This
+     *            value should <b>not</b> be <code>null</code>.
+     * @param helpfile - the <code>File</code> containing the help text. This
+     *            value should <b>not</b> be <code>null</code>.
      */
     public CommonHelpDialog(JFrame frame, File helpfile) {
         // Construct the superclass.
@@ -62,14 +63,18 @@ public class CommonHelpDialog extends JDialog {
 
         // Create the help dialog.
         setLayout(new BorderLayout());
-        lblHelp = new JTextArea(Messages.getString("CommonHelpDialog.noHelp.Message")); //$NON-NLS-1$
+        lblHelp = new JTextArea(Messages
+                .getString("CommonHelpDialog.noHelp.Message")); //$NON-NLS-1$
         lblHelp.setEditable(false);
         lblHelp.setOpaque(false);
-        JScrollPane scroll = new JScrollPane(lblHelp,javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        JScrollPane scroll = new JScrollPane(lblHelp,
+                javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
+                javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         getContentPane().add(scroll, BorderLayout.CENTER);
 
         // Add a "Close" button.
-        JButton butClose = new JButton(Messages.getString("CommonHelpDialog.Close")); //$NON-NLS-1$
+        JButton butClose = new JButton(Messages
+                .getString("CommonHelpDialog.Close")); //$NON-NLS-1$
         butClose.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent event) {
                 quit();
@@ -107,15 +112,16 @@ public class CommonHelpDialog extends JDialog {
             // Try to read in the help file.
             boolean firstLine = true;
             try {
-                BufferedReader input = new BufferedReader
-                        (new FileReader(helpfile));
+                BufferedReader input = new BufferedReader(new FileReader(
+                        helpfile));
                 String line = input.readLine();
-                //                while ( line != null && line.length() > 0 ) {
+                // while ( line != null && line.length() > 0 ) {
                 while (line != null) {
                     if (firstLine) {
                         firstLine = false;
                     } else {
-                        buff.append(" \n"); // the space is to force a line-feed on empty lines //$NON-NLS-1$
+                        buff.append(" \n"); // the space is to force a line-feed
+                                            // on empty lines //$NON-NLS-1$
                     }
                     buff.append(line);
                     line = input.readLine();
@@ -124,7 +130,10 @@ public class CommonHelpDialog extends JDialog {
                 if (!firstLine) {
                     buff.append("\n \n"); //$NON-NLS-1$
                 }
-                buff.append(Messages.getString("CommonHelpDialog.errorReading"))//$NON-NLS-1$
+                buff
+                        .append(
+                                Messages
+                                        .getString("CommonHelpDialog.errorReading"))//$NON-NLS-1$
                         .append(exp.getMessage());
                 exp.printStackTrace();
             }

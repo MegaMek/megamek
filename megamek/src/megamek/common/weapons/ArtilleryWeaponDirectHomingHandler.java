@@ -24,9 +24,9 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
-public class ArtilleryWeaponDirectHomingHandler extends ArtilleryWeaponIndirectHomingHandler {
+public class ArtilleryWeaponDirectHomingHandler extends
+        ArtilleryWeaponIndirectHomingHandler {
 
     /**
      * 
@@ -38,13 +38,15 @@ public class ArtilleryWeaponDirectHomingHandler extends ArtilleryWeaponIndirectH
      * @param w
      * @param g
      */
-    public ArtilleryWeaponDirectHomingHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public ArtilleryWeaponDirectHomingHandler(ToHitData t,
+            WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
 
     }
 
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     public boolean cares(int phase) {

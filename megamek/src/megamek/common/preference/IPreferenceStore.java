@@ -76,189 +76,185 @@ public interface IPreferenceStore {
     public static final String FALSE = "false";
 
     /**
-     * Returns the default value for the <code>boolean</code> preference with the
-     * given name. 
+     * Returns the default value for the <code>boolean</code> preference with
+     * the given name.
      */
     public abstract boolean getDefaultBoolean(String name);
 
     /**
      * Returns the default value for the <code>int</code> preference with the
-     * given name. 
+     * given name.
      */
     public abstract int getDefaultInt(String name);
 
     /**
      * Returns the default value for the <code>long</code> preference with the
-     * given name. 
+     * given name.
      */
     public abstract long getDefaultLong(String name);
 
     /**
-     * Returns the default value for the <code>String</code> preference with the
-     * given name. 
+     * Returns the default value for the <code>String</code> preference with
+     * the given name.
      */
     public abstract String getDefaultString(String name);
-    
+
     /**
-     * Returns the default value for the <code>double</code> preference with the
-     * given name. 
+     * Returns the default value for the <code>double</code> preference with
+     * the given name.
      */
     public abstract double getDefaultDouble(String name);
-    
+
     /**
-     * Returns the default value for the <code>float</code> preference with the
-     * given name. 
+     * Returns the default value for the <code>float</code> preference with
+     * the given name.
      */
     public abstract float getDefaultFloat(String name);
-    
+
     /**
      * Sets the default value for the <code>boolean</code> preference with the
-     * given name. 
+     * given name.
      */
     public abstract void setDefault(String name, boolean value);
 
     /**
      * Sets the default value for the <code>int</code> preference with the
-     * given name. 
+     * given name.
      */
     public abstract void setDefault(String name, int value);
 
     /**
      * Sets the default value for the <code>long</code> preference with the
-     * given name. 
+     * given name.
      */
     public abstract void setDefault(String name, long value);
 
     /**
      * Sets the default value for the <code>string</code> preference with the
-     * given name. 
+     * given name.
      */
     public abstract void setDefault(String name, String value);
 
     /**
      * Sets the default value for the <code>float</code> preference with the
-     * given name. 
+     * given name.
      */
     public abstract void setDefault(String name, float value);
-    
+
     /**
      * Sets the default value for the <code>double</code> preference with the
-     * given name. 
+     * given name.
      */
     public abstract void setDefault(String name, double value);
 
     /**
-     * Returns the value of the <code>boolean</code> preference with the
-     * given name.
-     * Returns the predefined default value in case if there is no preference 
-     * with the given name, or if the current value cannot be treated as a boolean.
+     * Returns the value of the <code>boolean</code> preference with the given
+     * name. Returns the predefined default value in case if there is no
+     * preference with the given name, or if the current value cannot be treated
+     * as a boolean.
      */
     public abstract boolean getBoolean(String name);
 
     /**
-     * Returns the value of the <code>int</code> preference with the
-     * given name.
-     * Returns the predefined default value in case if there is no preference 
-     * with the given name, or if the current value cannot be treated as a int.
+     * Returns the value of the <code>int</code> preference with the given
+     * name. Returns the predefined default value in case if there is no
+     * preference with the given name, or if the current value cannot be treated
+     * as a int.
      */
     public abstract int getInt(String name);
 
     /**
-     * Returns the value of the <code>long</code> preference with the
-     * given name.
-     * Returns the predefined default value in case if there is no preference 
-     * with the given name, or if the current value cannot be treated as a long.
+     * Returns the value of the <code>long</code> preference with the given
+     * name. Returns the predefined default value in case if there is no
+     * preference with the given name, or if the current value cannot be treated
+     * as a long.
      */
     public abstract long getLong(String name);
 
     /**
-     * Returns the value of the <code>String</code> preference with the
-     * given name.
-     * Returns the predefined default value in case if there is no preference 
-     * with the given name, or if the current value cannot be treated as a String.
+     * Returns the value of the <code>String</code> preference with the given
+     * name. Returns the predefined default value in case if there is no
+     * preference with the given name, or if the current value cannot be treated
+     * as a String.
      */
     public abstract String getString(String name);
 
     /**
-     * Returns the value of the <code>float</code> preference with the
-     * given name.
-     * Returns the predefined default value in case if there is no preference 
-     * with the given name, or if the current value cannot be treated as a float.
+     * Returns the value of the <code>float</code> preference with the given
+     * name. Returns the predefined default value in case if there is no
+     * preference with the given name, or if the current value cannot be treated
+     * as a float.
      */
     public abstract float getFloat(String name);
-    
+
     /**
-     * Returns the value of the <code>double</code> preference with the
-     * given name.
-     * Returns the predefined default value in case if there is no preference 
-     * with the given name, or if the current value cannot be treated as a double.
+     * Returns the value of the <code>double</code> preference with the given
+     * name. Returns the predefined default value in case if there is no
+     * preference with the given name, or if the current value cannot be treated
+     * as a double.
      */
     public abstract double getDouble(String name);
 
     /**
      * Sets the current value of the <code>boolean</code> preference with the
-     * given name.
-     * A preference change event is reported if the current value of the 
-     * preference changes from its previous value.
-     */    
+     * given name. A preference change event is reported if the current value of
+     * the preference changes from its previous value.
+     */
     public abstract void setValue(String name, boolean value);
 
     /**
      * Sets the current value of the <code>int</code> preference with the
-     * given name.
-     * A preference change event is reported if the current value of the 
-     * preference changes from its previous value.
-     */    
+     * given name. A preference change event is reported if the current value of
+     * the preference changes from its previous value.
+     */
     public abstract void setValue(String name, int value);
 
     /**
      * Sets the current value of the <code>long</code> preference with the
-     * given name.
-     * A preference change event is reported if the current value of the 
-     * preference changes from its previous value.
-     */    
+     * given name. A preference change event is reported if the current value of
+     * the preference changes from its previous value.
+     */
     public abstract void setValue(String name, long value);
 
     /**
      * Sets the current value of the <code>String</code> preference with the
-     * given name.
-     * A preference change event is reported if the current value of the 
-     * preference changes from its previous value.
-     */    
-    public abstract void setValue(String name, String  value);
+     * given name. A preference change event is reported if the current value of
+     * the preference changes from its previous value.
+     */
+    public abstract void setValue(String name, String value);
 
     /**
      * Sets the current value of the <code>float</code> preference with the
-     * given name.
-     * A preference change event is reported if the current value of the 
-     * preference changes from its previous value.
-     */    
+     * given name. A preference change event is reported if the current value of
+     * the preference changes from its previous value.
+     */
     public abstract void setValue(String name, float value);
 
     /**
      * Sets the current value of the <code>double</code> preference with the
-     * given name.
-     * A preference change event is reported if the current value of the 
-     * preference changes from its previous value.
-     */    
+     * given name. A preference change event is reported if the current value of
+     * the preference changes from its previous value.
+     */
     public abstract void setValue(String name, double value);
 
     /**
      * Adds a preference change listener to this store.
-     *
+     * 
      * @param listener a preference change listener
      */
-    public abstract void addPreferenceChangeListener(IPreferenceChangeListener listener);
+    public abstract void addPreferenceChangeListener(
+            IPreferenceChangeListener listener);
 
     /**
      * Removes the given listener from this store.
      */
-    public abstract void removePreferenceChangeListener(IPreferenceChangeListener listener);
-    
+    public abstract void removePreferenceChangeListener(
+            IPreferenceChangeListener listener);
+
     /**
      * Just sets the current value of the preference with the given name.
-     * <strong>does not fire preference change event</strong> 
-     */    
+     * <strong>does not fire preference change event</strong>
+     */
     public abstract void putValue(String name, String value);
 
     public abstract String[] getAdvancedProperties();

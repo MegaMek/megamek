@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
@@ -28,16 +27,20 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class LightRecoillessHandler extends WeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 702082996466252816L;
+
     /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public LightRecoillessHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public LightRecoillessHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
     }
 
@@ -49,6 +52,7 @@ public class LightRecoillessHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor))
             return Compute.d6();
-        else return super.calcDamagePerHit();
+        else
+            return super.calcDamagePerHit();
     }
 }

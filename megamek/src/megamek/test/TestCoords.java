@@ -18,48 +18,47 @@ import megamek.common.Coords;
 
 /**
  * This class will display various constants and the output of some methods in
- * the <code>Coords</code> class.  This will allow a knowledgeable programmer
+ * the <code>Coords</code> class. This will allow a knowledgeable programmer
  * to determine that the <code>Coords</code> class is operating correctly.
- *
  * TODO: integrate JUnit into this class.
  */
 public class TestCoords {
 
-    public static void main( String[] args ) {
+    public static void main(String[] args) {
 
-        System.out.println( "The maximum board height: " +
-                            Coords.MAX_BOARD_HEIGHT );
+        System.out.println("The maximum board height: "
+                + Coords.MAX_BOARD_HEIGHT);
 
-        System.out.println( "The maximum board width: " +
-                            Coords.MAX_BOARD_WIDTH );
+        System.out
+                .println("The maximum board width: " + Coords.MAX_BOARD_WIDTH);
 
-        Coords coords = new Coords( 1, 2 );
-        System.out.println( "The hash of " + coords + " is: " +
-                            coords.hashCode() );
+        Coords coords = new Coords(1, 2);
+        System.out.println("The hash of " + coords + " is: "
+                + coords.hashCode());
 
-        System.out.println( "The coords for a hash of 2056 is: " +
-                            Coords.getFromHashCode(2056) );
+        System.out.println("The coords for a hash of 2056 is: "
+                + Coords.getFromHashCode(2056));
 
-        Coords neg_coords = new Coords( -11, -22 );
-        System.out.println( "The hash of " + neg_coords + " is: " +
-                            neg_coords.hashCode() );
+        Coords neg_coords = new Coords(-11, -22);
+        System.out.println("The hash of " + neg_coords + " is: "
+                + neg_coords.hashCode());
 
-        System.out.println( "The coords for a hash of 22619 is: " +
-                            Coords.getFromHashCode(22619) );
+        System.out.println("The coords for a hash of 22619 is: "
+                + Coords.getFromHashCode(22619));
 
-        neg_coords = new Coords( 42, -68 );
-        System.out.println( "The hash of " + neg_coords + " is: " +
-                            neg_coords.hashCode() );
+        neg_coords = new Coords(42, -68);
+        System.out.println("The hash of " + neg_coords + " is: "
+                + neg_coords.hashCode());
 
-        System.out.println( "The coords for a hash of 86289 is: " +
-                            Coords.getFromHashCode(86289) );
+        System.out.println("The coords for a hash of 86289 is: "
+                + Coords.getFromHashCode(86289));
 
-        neg_coords = new Coords( -668, 42 );
-        System.out.println( "The hash of " + neg_coords + " is: " +
-                            neg_coords.hashCode() );
+        neg_coords = new Coords(-668, 42);
+        System.out.println("The hash of " + neg_coords + " is: "
+                + neg_coords.hashCode());
 
-        System.out.println( "The coords for a hash of 1368234 is: " +
-                            Coords.getFromHashCode(1368234) );
+        System.out.println("The coords for a hash of 1368234 is: "
+                + Coords.getFromHashCode(1368234));
     }
 
 }

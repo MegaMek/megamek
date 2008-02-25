@@ -28,7 +28,6 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class FiredrakeHandler extends WeaponHandler {
 
@@ -37,19 +36,16 @@ public class FiredrakeHandler extends WeaponHandler {
      */
     private static final long serialVersionUID = -4147623608122350519L;
 
-
     /**
      * @param t
      * @param w
      * @param g
      */
-    public FiredrakeHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+    public FiredrakeHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
         damageType = DamageType.FIREDRAKE;
     }
 
-    
     /*
      * (non-Javadoc)
      * 
@@ -58,7 +54,7 @@ public class FiredrakeHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             return Compute.d6(3);
-        }               
+        }
         return super.calcDamagePerHit();
     }
 }

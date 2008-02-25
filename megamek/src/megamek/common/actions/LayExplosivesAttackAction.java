@@ -23,9 +23,8 @@ import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 
-public class LayExplosivesAttackAction extends AbstractAttackAction
-{    
-   
+public class LayExplosivesAttackAction extends AbstractAttackAction {
+
     /**
      * 
      */
@@ -34,28 +33,30 @@ public class LayExplosivesAttackAction extends AbstractAttackAction
     public LayExplosivesAttackAction(int entityId, int targetId) {
         super(entityId, targetId);
     }
-    
+
     public LayExplosivesAttackAction(int entityId, int targetType, int targetId) {
         super(entityId, targetType, targetId);
     }
-    
+
     /**
      * Damage that the specified platoon does with explosives
      */
     public static int getDamageFor(Entity entity) {
-        if(!(entity instanceof Infantry))
+        if (!(entity instanceof Infantry))
             return 0;
-        Infantry inf = (Infantry)entity; 
-        //maxtech page 41, damage for each turn as much as a normal shot would do
+        Infantry inf = (Infantry) entity;
+        // maxtech page 41, damage for each turn as much as a normal shot would
+        // do
         // should only be on motorized rifle platoons
-        //return inf.getDamage(inf.getShootingStrength()) << (inf.turnsLayingExplosives - 1);
+        // return inf.getDamage(inf.getShootingStrength()) <<
+        // (inf.turnsLayingExplosives - 1);
         // TODO: fixme
         return 2 << (inf.turnsLayingExplosives - 1);
     }
-    
+
     public ToHitData toHit(IGame game) {
-        return toHit(game, getEntityId(),
-                game.getTarget(getTargetType(), getTargetId()));
+        return toHit(game, getEntityId(), game.getTarget(getTargetType(),
+                getTargetId()));
     }
 
     /**
@@ -63,27 +64,34 @@ public class LayExplosivesAttackAction extends AbstractAttackAction
      */
     public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
-        if ((target.getTargetType() != Targetable.TYPE_BUILDING) || (target.getTargetType() != Targetable.TYPE_FUEL_TANK)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can only target buildings");
+        if ((target.getTargetType() != Targetable.TYPE_BUILDING)
+                || (target.getTargetType() != Targetable.TYPE_FUEL_TANK)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "You can only target buildings");
         }
         if (ae == null)
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
-//        if(b == null || b.getId() != target.getTargetId())
-//            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target out of range");
-        if(!(ae instanceof Infantry))
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not infantry");
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "You can't attack from a null entity!");
+        // if(b == null || b.getId() != target.getTargetId())
+        // return new ToHitData(TargetRoll.IMPOSSIBLE, "Target out of range");
+        if (!(ae instanceof Infantry))
+            return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Attacker is not infantry");
         Infantry inf = (Infantry) ae;
-        if(inf.turnsLayingExplosives > 0)
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "STOP: Expected Damage: "+getDamageFor(ae));
+        if (inf.turnsLayingExplosives > 0)
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
+                    "STOP: Expected Damage: " + getDamageFor(ae));
         boolean ok = false;
         for (Mounted m : ae.getMisc()) {
-            if(m.getType().hasFlag(MiscType.F_TOOLS) && m.getType().hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
+            if (m.getType().hasFlag(MiscType.F_TOOLS)
+                    && m.getType().hasSubType(MiscType.S_DEMOLITION_CHARGE)) {
                 ok = true;
                 break;
             }
         }
-        if(!ok)
+        if (!ok)
             return new ToHitData(TargetRoll.IMPOSSIBLE, "No explosives carried");
-        return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "START: Can't move or fire while laying explosives");
+        return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
+                "START: Can't move or fire while laying explosives");
     }
 }

@@ -14,117 +14,136 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Button;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import megamek.client.ui.AWT.widget.AdvancedLabel;
 
 /**
  * A (somewhat primitive) dialog with a message and an okay button that makes
  * the dialog go away.
  */
-public class AlertDialog
-    extends Dialog implements ActionListener
-{
+public class AlertDialog extends Dialog implements ActionListener {
     /**
      * 
      */
     private static final long serialVersionUID = -132834772501650316L;
     private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
     private AdvancedLabel labMessage;
-    
-    public AlertDialog(Frame parent, String title,
-                       String message, boolean modal) {
+
+    public AlertDialog(Frame parent, String title, String message, boolean modal) {
         super(parent, title, modal);
-        
+
         labMessage = new AdvancedLabel(message);
         butOkay.addActionListener(this);
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
         add(labMessage);
-            
-        c.weightx = 1.0;    c.weighty = 1.0;
+
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.fill = GridBagConstraints.VERTICAL;
-        c.ipadx = 20;    c.ipady = 5;
+        c.ipadx = 20;
+        c.ipady = 5;
         gridbag.setConstraints(butOkay, c);
         add(butOkay);
-        
+
         addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) { setVisible(false); }
-    });
-        
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
+        });
+
         pack();
         Dimension size = getSize();
         boolean updateSize = false;
-        if ( size.width < GUIPreferences.getInstance().getMinimumSizeWidth() ) {
+        if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
             size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
-        if ( size.height < GUIPreferences.getInstance().getMinimumSizeHeight() ) {
+        if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
             size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
         }
-        if ( updateSize ) {
-            setSize( size );
+        if (updateSize) {
+            setSize(size);
             size = getSize();
         }
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - size.height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - size.width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - size.height / 2);
     }
 
     public AlertDialog(Frame parent, String title, String message) {
         super(parent, title, true);
-        
+
         labMessage = new AdvancedLabel(message);
         butOkay.addActionListener(this);
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
         add(labMessage);
-            
-        c.weightx = 1.0;    c.weighty = 1.0;
+
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.fill = GridBagConstraints.VERTICAL;
-        c.ipadx = 20;    c.ipady = 5;
+        c.ipadx = 20;
+        c.ipady = 5;
         gridbag.setConstraints(butOkay, c);
         add(butOkay);
-        
+
         addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) { setVisible(false); }
-    });
-        
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
+        });
+
         pack();
         Dimension size = getSize();
         boolean updateSize = false;
-        if ( size.width < GUIPreferences.getInstance().getMinimumSizeWidth() ) {
+        if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
             size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
-        if ( size.height < GUIPreferences.getInstance().getMinimumSizeHeight() ) {
+        if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
             size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
         }
-        if ( updateSize ) {
-            setSize( size );
+        if (updateSize) {
+            setSize(size);
             size = getSize();
         }
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - size.height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - size.width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - size.height / 2);
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         this.setVisible(false);
     }

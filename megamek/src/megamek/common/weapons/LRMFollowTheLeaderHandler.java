@@ -20,28 +20,29 @@ import megamek.server.Server;
 
 /**
  * @author Jason Tighe
- *
  */
 public class LRMFollowTheLeaderHandler extends LRMHandler {
 
-        /**
+    /**
      * 
      */
     private static final long serialVersionUID = 1740643533757582922L;
 
-        /**
+    /**
      * @param t
      * @param w
      * @param g
      * @param s
      */
-    public LRMFollowTheLeaderHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public LRMFollowTheLeaderHandler(ToHitData t, WeaponAttackAction w,
+            IGame g, Server s) {
         super(t, w, g, s);
         sSalvoType = " FTL missile(s) ";
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
@@ -49,7 +50,8 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
     }
 
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {

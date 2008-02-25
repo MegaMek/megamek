@@ -20,19 +20,18 @@ import megamek.common.Entity;
  * Instances of this class are sent when entity is removed
  */
 public class GameEntityRemoveEvent extends GameEntityEvent {
-    
+
     /**
      * 
      */
     private static final long serialVersionUID = -4694809256962666172L;
 
     /**
-     * 
      * @param source
      * @param entity
      */
     public GameEntityRemoveEvent(Object source, Entity entity) {
         super(source, entity, GAME_ENTITY_REMOVE);
     }
-    
+
 }

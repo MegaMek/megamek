@@ -17,10 +17,10 @@ package megamek.common.event;
 import megamek.common.Player;
 
 /**
- * Instances of this class are sent when Game turn changes   
+ * Instances of this class are sent when Game turn changes
  */
 public class GameTurnChangeEvent extends GamePlayerEvent {
-    
+
     /**
      * 
      */
@@ -33,5 +33,5 @@ public class GameTurnChangeEvent extends GamePlayerEvent {
     public GameTurnChangeEvent(Object source, Player player) {
         super(source, player, GAME_TURN_CHANGE);
     }
-    
+
 }

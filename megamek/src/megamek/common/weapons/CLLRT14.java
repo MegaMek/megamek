@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class CLLRT14 extends LRTWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = 7642378254853022847L;
+
+    /**
+     * 
+     */
     public CLLRT14() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_CLAN_LEVEL_2;
         this.name = "LRT 14";
         this.setInternalName("CLLRTorpedo14");

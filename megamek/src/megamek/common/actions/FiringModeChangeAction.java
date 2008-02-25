@@ -17,26 +17,23 @@ package megamek.common.actions;
 /**
  * Represents intention to change a fire mode of a weapon.
  */
-public class FiringModeChangeAction
-    extends AbstractEntityAction
-{
+public class FiringModeChangeAction extends AbstractEntityAction {
     /**
      * 
      */
     private static final long serialVersionUID = 3706302227286581807L;
     private int equipmentId;
-    
+
     public FiringModeChangeAction(int entityId, int equipmentId) {
         super(entityId);
         this.equipmentId = equipmentId;
     }
-    
+
     public int getEquipmentId() {
         return equipmentId;
     }
-    
+
     public void setEquipmentId(int equipmentId) {
         this.equipmentId = equipmentId;
-    }    
+    }
 }
-

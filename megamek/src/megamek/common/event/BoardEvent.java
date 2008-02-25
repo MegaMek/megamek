@@ -18,11 +18,10 @@ import megamek.common.Coords;
 
 /**
  * Instances of this class are sent as a result of Board change
- *
+ * 
  * @see BoardListener
  */
-public class BoardEvent extends java.util.EventObject
-{
+public class BoardEvent extends java.util.EventObject {
     /**
      * 
      */
@@ -38,7 +37,7 @@ public class BoardEvent extends java.util.EventObject
         this.coords = coords;
         this.type = type;
     }
-    
+
     /**
      * @return the type of event that this is
      */
@@ -47,8 +46,8 @@ public class BoardEvent extends java.util.EventObject
     }
 
     /**
-     * @return the coordinate where this event occurred, if
-     *         applicable; <code>null</code> otherwise.
+     * @return the coordinate where this event occurred, if applicable;
+     *         <code>null</code> otherwise.
      */
     public Coords getCoords() {
         return coords;

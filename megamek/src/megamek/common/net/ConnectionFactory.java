@@ -20,13 +20,14 @@ import java.net.Socket;
  */
 public class ConnectionFactory {
 
-    private static ConnectionFactory instance  = new ConnectionFactory();
-    
-    private ConnectionFactory() {        
+    private static ConnectionFactory instance = new ConnectionFactory();
+
+    private ConnectionFactory() {
     }
 
     /**
      * Returns the factory instance
+     * 
      * @return the factory instance
      */
     public static ConnectionFactory getInstance() {
@@ -35,6 +36,7 @@ public class ConnectionFactory {
 
     /**
      * Creates new Client (Client-Server) connection
+     * 
      * @param host server host
      * @param port server port
      * @param id connection ID
@@ -46,6 +48,7 @@ public class ConnectionFactory {
 
     /**
      * Creates new Server coinnection
+     * 
      * @param socket socket to read/write
      * @param id connection ID
      * @return new Server coinnection

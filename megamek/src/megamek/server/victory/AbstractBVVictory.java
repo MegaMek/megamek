@@ -14,7 +14,8 @@
 package megamek.server.victory;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.Enumeration;
+
 import megamek.common.IGame;
 import megamek.common.Player;
 

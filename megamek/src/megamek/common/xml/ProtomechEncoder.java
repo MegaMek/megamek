@@ -14,92 +14,94 @@
 
 package megamek.common.xml;
 
-import java.io.Writer;
-import java.io.IOException;
-import java.util.Enumeration;
 import gd.xml.tiny.ParsedXML;
-import megamek.common.*;
+
+import java.io.IOException;
+import java.io.Writer;
+import java.util.Enumeration;
+
+import megamek.common.Entity;
+import megamek.common.IGame;
+import megamek.common.Protomech;
 
 /**
- * Objects of this class can encode a <code>Entity</code> object as XML
- * into an output writer and decode one from a parsed XML node.  It is used
- * when saving games into a version- neutral format.
- *
- * @author      James Damour <suvarov454@users.sourceforge.net>
+ * Objects of this class can encode a <code>Entity</code> object as XML into
+ * an output writer and decode one from a parsed XML node. It is used when
+ * saving games into a version- neutral format.
+ * 
+ * @author James Damour <suvarov454@users.sourceforge.net>
  */
 public class ProtomechEncoder {
 
     /**
      * Encode a <code>Entity</code> object to an output writer.
-     *
-     * @param   entity - the <code>Entity</code> to be encoded.
-     *          This value must not be <code>null</code>.
-     * @param   out - the <code>Writer</code> that will receive the XML.
-     *          This value must not be <code>null</code>.
-     * @throws  <code>IllegalArgumentException</code> if the entity is
-     *          <code>null</code>.
-     * @throws  <code>IOException</code> if there's any error on write.
+     * 
+     * @param entity - the <code>Entity</code> to be encoded. This value must
+     *            not be <code>null</code>.
+     * @param out - the <code>Writer</code> that will receive the XML. This
+     *            value must not be <code>null</code>.
+     * @throws <code>IllegalArgumentException</code> if the entity is
+     *             <code>null</code>.
+     * @throws <code>IOException</code> if there's any error on write.
      */
-    public static void encode( Entity entity, Writer out )
-        throws IOException
-    {
+    public static void encode(Entity entity, Writer out) throws IOException {
         int value;
         Protomech proto = (Protomech) entity;
 
         // First, validate our input.
-        if ( null == entity ) {
-            throw new IllegalArgumentException( "The entity is null." );
+        if (null == entity) {
+            throw new IllegalArgumentException("The entity is null.");
         }
-        if ( null == out ) {
-            throw new IllegalArgumentException( "The writer is null." );
+        if (null == out) {
+            throw new IllegalArgumentException("The writer is null.");
         }
 
         // Our EntityEncoder already gave us our root element.
-        out.write( "<bv value=\"");
-        value = (int) ( proto.calculateBattleValue() /
-                        proto.getCrew().getBVSkillMultiplier() );
-        out.write( value );
-        out.write( "\" /><hasMainGun value=\"" );
-        out.write( proto.hasMainGun() ? "true" : "false" );
-        for ( int loc = 0; loc < proto.locations(); loc++ ) {
-            out.write( "\" /><pilotDamageTaken loc=\"" );
-            out.write( loc );
-            out.write( "\" value=\"" );
-            value = proto.getPilotDamageTaken( loc );
-            out.write( value );
+        out.write("<bv value=\"");
+        value = (int) (proto.calculateBattleValue() / proto.getCrew()
+                .getBVSkillMultiplier());
+        out.write(value);
+        out.write("\" /><hasMainGun value=\"");
+        out.write(proto.hasMainGun() ? "true" : "false");
+        for (int loc = 0; loc < proto.locations(); loc++) {
+            out.write("\" /><pilotDamageTaken loc=\"");
+            out.write(loc);
+            out.write("\" value=\"");
+            value = proto.getPilotDamageTaken(loc);
+            out.write(value);
         } // Handle the next location
-        out.write( "\" />" );
+        out.write("\" />");
 
     }
 
     /**
      * Decode a <code>Entity</code> object from the passed node.
-     *
-     * @param   node - the <code>ParsedXML</code> node for this object.
-     *          This value must not be <code>null</code>.
-     * @param   game - the <code>IGame</code> the decoded object belongs to.
-     * @return  the <code>Entity</code> object based on the node.
-     * @throws  <code>IllegalArgumentException</code> if the node is
-     *          <code>null</code>.
-     * @throws  <code>IllegalStateException</code> if the node does not
-     *          contain a valid <code>Entity</code>.
+     * 
+     * @param node - the <code>ParsedXML</code> node for this object. This
+     *            value must not be <code>null</code>.
+     * @param game - the <code>IGame</code> the decoded object belongs to.
+     * @return the <code>Entity</code> object based on the node.
+     * @throws <code>IllegalArgumentException</code> if the node is
+     *             <code>null</code>.
+     * @throws <code>IllegalStateException</code> if the node does not contain
+     *             a valid <code>Entity</code>.
      */
-    public static Entity decode( ParsedXML node, IGame game ) {
+    public static Entity decode(ParsedXML node, IGame game) {
         Protomech entity = null;
         String attrStr;
         int attrVal;
         int loc;
 
         // Did we get a null node?
-        if ( null == node ) {
-            throw new IllegalArgumentException( "The Protomech node is null." );
+        if (null == node) {
+            throw new IllegalArgumentException("The Protomech node is null.");
         }
 
         // Make sure that the node is for an Protomech unit.
-        attrStr = node.getAttribute( "name" );
-        if ( !node.getName().equals( "class" ) ||
-             null == attrStr || !attrStr.equals( "Protomech" ) ) {
-            throw new IllegalStateException( "Not passed an Protomech node." );
+        attrStr = node.getAttribute("name");
+        if (!node.getName().equals("class") || null == attrStr
+                || !attrStr.equals("Protomech")) {
+            throw new IllegalStateException("Not passed an Protomech node.");
         }
 
         // TODO : perform version checking.
@@ -109,69 +111,67 @@ public class ProtomechEncoder {
 
         // Walk the board node's children.
         Enumeration children = node.elements();
-        while ( children.hasMoreElements() ) {
+        while (children.hasMoreElements()) {
             ParsedXML child = (ParsedXML) children.nextElement();
             String childName = child.getName();
 
             // Handle null child names.
-            if ( null == childName ) {
+            if (null == childName) {
 
                 // No-op.
             }
 
             // Did we find the main gun node?
-            else if ( childName.equals( "hasMainGun" ) ) {
+            else if (childName.equals("hasMainGun")) {
 
                 // See if the Proto has a main gun.
-                attrStr = child.getAttribute( "value" );
-                if ( null == attrStr ) {
-                    throw new IllegalStateException
-                        ( "Couldn't decode hasMainGun for a Protomech unit." );
+                attrStr = child.getAttribute("value");
+                if (null == attrStr) {
+                    throw new IllegalStateException(
+                            "Couldn't decode hasMainGun for a Protomech unit.");
                 }
 
                 // If the value is "true", the Proto has a main gun.
-                if ( attrStr.equals( "true" ) ) {
-                    entity.setHasMainGun( true );
+                if (attrStr.equals("true")) {
+                    entity.setHasMainGun(true);
                 } else {
-                    entity.setHasMainGun( false );
+                    entity.setHasMainGun(false);
                 }
             }
 
             // Did we find the location-specific pilot damage node?
-            else if ( childName.equals( "pilotDamageTaken" ) ) {
+            else if (childName.equals("pilotDamageTaken")) {
 
                 // Get the damage taken by the pilot in this location.
-                attrStr = child.getAttribute( "value" );
-                if ( null == attrStr ) {
-                    throw new IllegalStateException
-                        ( "Couldn't decode the damage for a Protomech unit." );
+                attrStr = child.getAttribute("value");
+                if (null == attrStr) {
+                    throw new IllegalStateException(
+                            "Couldn't decode the damage for a Protomech unit.");
                 }
 
                 // Try to pull the number from the attribute string
                 try {
-                    attrVal = Integer.parseInt( attrStr );
-                }
-                catch ( NumberFormatException exp ) {
-                    throw new IllegalStateException
-                        ( "Couldn't get an integer from " + attrStr );
+                    attrVal = Integer.parseInt(attrStr);
+                } catch (NumberFormatException exp) {
+                    throw new IllegalStateException(
+                            "Couldn't get an integer from " + attrStr);
                 }
 
                 // Get this location.
-                attrStr = child.getAttribute( "loc" );
-                if ( null == attrStr ) {
-                    throw new IllegalStateException
-                        ( "Couldn't decode the location for a Protomech unit." );
+                attrStr = child.getAttribute("loc");
+                if (null == attrStr) {
+                    throw new IllegalStateException(
+                            "Couldn't decode the location for a Protomech unit.");
                 }
 
                 // Try to pull the number from the attribute string
                 try {
-                    loc = Integer.parseInt( attrStr );
+                    loc = Integer.parseInt(attrStr);
+                } catch (NumberFormatException exp) {
+                    throw new IllegalStateException(
+                            "Couldn't get an integer from " + attrStr);
                 }
-                catch ( NumberFormatException exp ) {
-                    throw new IllegalStateException
-                        ( "Couldn't get an integer from " + attrStr );
-                }
-                entity.setPilotDamageTaken( loc, attrVal );
+                entity.setPilotDamageTaken(loc, attrVal);
             }
 
         } // Handle the next element.
@@ -181,4 +181,3 @@ public class ProtomechEncoder {
     }
 
 }
-

@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISBAPlasmaRifle extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4885473724392214253L;
+
     /**
      * 
      */

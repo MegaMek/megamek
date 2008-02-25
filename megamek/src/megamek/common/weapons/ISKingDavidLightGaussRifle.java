@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISKingDavidLightGaussRifle extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3358799424901447503L;
+
     /**
      * 
      */

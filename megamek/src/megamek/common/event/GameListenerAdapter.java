@@ -14,69 +14,67 @@
 
 package megamek.common.event;
 
-
 /**
- * This adapter class provides default implementations for the
- * methods described by the <code>GameListener</code> interface.
+ * This adapter class provides default implementations for the methods described
+ * by the <code>GameListener</code> interface.
  * <p>
- * Classes that wish to deal with <code>GamedEvent</code>s can
- * extend this class and override only the methods which they are
- * interested in.
+ * Classes that wish to deal with <code>GamedEvent</code>s can extend this
+ * class and override only the methods which they are interested in.
  * </p>
- *
+ * 
  * @see GameListener
  * @see GameEvent
  */
 public class GameListenerAdapter implements GameListener {
-    
+
     public void gamePlayerConnected(GamePlayerConnectedEvent e) {
     }
-    
+
     public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
     }
-    
+
     public void gamePlayerChange(GamePlayerChangeEvent e) {
     }
-    
+
     public void gamePlayerChat(GamePlayerChatEvent e) {
     }
-    
+
     public void gamePhaseChange(GamePhaseChangeEvent e) {
     }
-    
+
     public void gameTurnChange(GameTurnChangeEvent e) {
     }
-    
+
     public void gameReport(GameReportEvent e) {
     }
-    
+
     public void gameEnd(GameEndEvent e) {
     }
-    
+
     public void gameBoardNew(GameBoardNewEvent e) {
     }
 
     public void gameBoardChanged(GameBoardChangeEvent e) {
     }
-    
+
     public void gameSettingsChange(GameSettingsChangeEvent e) {
     }
-    
+
     public void gameMapQuery(GameMapQueryEvent e) {
     }
-    
+
     public void gameEntityNew(GameEntityNewEvent e) {
     }
-    
+
     public void gameEntityNewOffboard(GameEntityNewOffboardEvent e) {
     }
-    
+
     public void gameEntityRemove(GameEntityRemoveEvent e) {
     }
-    
+
     public void gameEntityChange(GameEntityChangeEvent e) {
     }
-    
+
     public void gameNewAction(GameNewActionEvent e) {
     }
 

@@ -21,10 +21,14 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLTAG extends TAGWeapon {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7446980554102548125L;
+
     public CLTAG() {
         super();
         this.techLevel = TechConstants.T_CLAN_LEVEL_2;

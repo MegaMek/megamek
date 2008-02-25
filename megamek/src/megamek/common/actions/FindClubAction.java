@@ -30,9 +30,9 @@ import megamek.common.Terrains;
 
 /**
  * The entity tries to find a club.
- *
- * @author  Ben
- * @version 
+ * 
+ * @author Ben
+ * @version
  */
 public class FindClubAction extends AbstractEntityAction {
 
@@ -45,50 +45,53 @@ public class FindClubAction extends AbstractEntityAction {
     public FindClubAction(int entityId) {
         super(entityId);
     }
-    
+
     /**
      * Returns whether an entity can find a club in its current location
      */
     public static boolean canMechFindClub(IGame game, int entityId) {
         final Entity entity = game.getEntity(entityId);
-        if ( null == entity.getPosition() ) {
+        if (null == entity.getPosition()) {
             return false;
         }
         final IHex hex = game.getBoard().getHex(entity.getPosition());
 
-        //Non biped mechs can't
-        if ( !(entity instanceof BipedMech) ) {
+        // Non biped mechs can't
+        if (!(entity instanceof BipedMech)) {
             return false;
         }
 
         // Is the entity active?
-        if ( entity.isShutDown() || !entity.getCrew().isActive() ) {
+        if (entity.isShutDown() || !entity.getCrew().isActive()) {
             return false;
         }
 
-        //Check game options
-        if (game.getOptions().booleanOption("no_clan_physical") &&
-            entity.isClan()) {
+        // Check game options
+        if (game.getOptions().booleanOption("no_clan_physical")
+                && entity.isClan()) {
             return false;
         }
 
         // The hex must contain woods or rubble from
         // a medium, heavy, or hardened building,
         // or a blown off limb
-        if ( hex.terrainLevel(Terrains.WOODS) < 1 &&
-             hex.terrainLevel(Terrains.JUNGLE) < 1 &&
-             hex.terrainLevel(Terrains.RUBBLE) < Building.MEDIUM && 
-             hex.terrainLevel(Terrains.ARMS) < 1 &&
-             hex.terrainLevel(Terrains.LEGS) < 1) {
+        if (hex.terrainLevel(Terrains.WOODS) < 1
+                && hex.terrainLevel(Terrains.JUNGLE) < 1
+                && hex.terrainLevel(Terrains.RUBBLE) < Building.MEDIUM
+                && hex.terrainLevel(Terrains.ARMS) < 1
+                && hex.terrainLevel(Terrains.LEGS) < 1) {
             return false;
         }
 
         // also, need shoulders and hands
         // Claws can subtitue as hands --Torren
         if (!entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)
-        || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)
-        || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && !((BipedMech)entity).hasClaw(Mech.LOC_RARM))
-        || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)  && !((BipedMech)entity).hasClaw(Mech.LOC_LARM)) ) {
+                || !entity.hasWorkingSystem(Mech.ACTUATOR_SHOULDER,
+                        Mech.LOC_LARM)
+                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM) && !((BipedMech) entity)
+                        .hasClaw(Mech.LOC_RARM))
+                || (!entity.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM) && !((BipedMech) entity)
+                        .hasClaw(Mech.LOC_LARM))) {
             return false;
         }
 

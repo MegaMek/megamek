@@ -15,9 +15,9 @@
 package megamek.common.util;
 
 /**
- * Very simple skeleton for the command line parser.
- * Provides basic scanner primitives and token types.  
- * Descendants should implement at least <code>start</code> function 
+ * Very simple skeleton for the command line parser. Provides basic scanner
+ * primitives and token types. Descendants should implement at least
+ * <code>start</code> function
  */
 public abstract class AbstractCommandLineParser {
 
@@ -38,7 +38,7 @@ public abstract class AbstractCommandLineParser {
     /**
      * Prefix of the option. Subclasses may overwrite.
      */
-    protected String OPTION_PREFIX = "-"; 
+    protected String OPTION_PREFIX = "-";
 
     /**
      * End of input token
@@ -46,12 +46,12 @@ public abstract class AbstractCommandLineParser {
     protected static final int TOK_EOF = -1;
 
     /**
-     * Option token 
+     * Option token
      */
     protected static final int TOK_OPTION = 0;
-    
+
     /**
-     * Literal (any string that doesn not start with defice actually) 
+     * Literal (any string that doesn not start with defice actually)
      */
     protected static final int TOK_LITERAL = 3;
 
@@ -61,12 +61,12 @@ public abstract class AbstractCommandLineParser {
     private String[] args;
 
     /**
-     * The length of the input array 
+     * The length of the input array
      */
     private int argsLen;
-    
+
     /**
-     * Index of the of the next token to process  
+     * Index of the of the next token to process
      */
     private int position;
 
@@ -87,16 +87,18 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Constructs new parser
-     * @param args <code>array</code> of arguments to parse 
+     * 
+     * @param args <code>array</code> of arguments to parse
      */
     public AbstractCommandLineParser(String[] args) {
         megamek.debug.Assert.assertTrue(args != null, "args must be non null");
         this.args = args;
         argsLen = args.length;
     }
-    
+
     /**
      * Main entry point of the parser
+     * 
      * @throws ParseException
      */
     public void parse() throws ParseException {
@@ -105,7 +107,8 @@ public abstract class AbstractCommandLineParser {
     }
 
     /**
-     * Returns current arg 
+     * Returns current arg
+     * 
      * @return current arg
      */
     protected String getArgValue() {
@@ -113,7 +116,8 @@ public abstract class AbstractCommandLineParser {
     }
 
     /**
-     * Returns current token 
+     * Returns current token
+     * 
      * @return current token
      */
     protected int getToken() {
@@ -122,6 +126,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Sets the current token
+     * 
      * @param token
      */
     protected void setToken(int token) {
@@ -129,7 +134,8 @@ public abstract class AbstractCommandLineParser {
     }
 
     /**
-     * Returns <code>String</code> value of the current token 
+     * Returns <code>String</code> value of the current token
+     * 
      * @return
      */
     protected String getTokenValue() {
@@ -138,6 +144,7 @@ public abstract class AbstractCommandLineParser {
 
     /**
      * Sets the current token
+     * 
      * @param token
      */
     protected void setTokenValue(String tokenValue) {
@@ -145,7 +152,8 @@ public abstract class AbstractCommandLineParser {
     }
 
     /**
-     * Returns <code>String</code> value of the current token 
+     * Returns <code>String</code> value of the current token
+     * 
      * @return
      */
     protected int getPosition() {
@@ -153,20 +161,21 @@ public abstract class AbstractCommandLineParser {
     }
 
     /**
-     * Real entry point of parser 
+     * Real entry point of parser
+     * 
      * @throws ParseException
      */
     protected abstract void start() throws ParseException;
 
     /**
-     * Reads the next available token. 
+     * Reads the next available token.
      */
     protected void nextToken() {
         nextArg();
         if (argValue != null) {
             if (argValue.startsWith(OPTION_PREFIX)) {
                 token = TOK_OPTION;
-                tokenValue = argValue.substring(OPTION_PREFIX.length()); 
+                tokenValue = argValue.substring(OPTION_PREFIX.length());
             } else {
                 token = TOK_LITERAL;
                 tokenValue = argValue;
@@ -182,16 +191,17 @@ public abstract class AbstractCommandLineParser {
             argValue = args[position++];
         } else {
             argValue = null;
-        }        
+        }
     }
 
     /**
      * Indicates the parse error
+     * 
      * @param message
      * @throws ParseException
      */
     protected void error(String message) throws ParseException {
-        throw new ParseException(message);            
+        throw new ParseException(message);
     }
 
 }

@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISLargePulseLaser extends PulseLaserWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 94533476706680275L;
+
     /**
      * 
      */

@@ -20,51 +20,53 @@
 
 package megamek.server.commands;
 
-import java.util.*;
+import java.util.Enumeration;
 
 import megamek.common.net.IConnection;
-import megamek.server.*;
+import megamek.server.Server;
 
 /**
  * Team Chat
- * @author  Torren
- * @version 
+ * 
+ * @author Torren
+ * @version
  */
 public class TeamCommand extends ServerCommand {
 
     /** Creates new WhoCommand */
     public TeamCommand(Server server) {
-        super(server, "t", "Allows players on the same team to chat with each other in the game.");
+        super(server, "t",
+                "Allows players on the same team to chat with each other in the game.");
     }
-    
+
     public void run(int connId, String[] args) {
-        
+
         if (args.length > 1) {
-            
+
             int team = server.getPlayer(connId).getTeam();
 
-            if ( team < 1 || team > 8) {
+            if (team < 1 || team > 8) {
                 server.sendServerChat(connId, "You are not on a team!");
                 return;
             }
-                
+
             StringBuilder message = new StringBuilder();
 
-            String origin = "Team Chat["+server.getPlayer(connId).getName()+"]";
-            
-            for ( int pos = 1; pos < args.length;pos++) {
+            String origin = "Team Chat[" + server.getPlayer(connId).getName()
+                    + "]";
+
+            for (int pos = 1; pos < args.length; pos++) {
                 message.append(" ");
                 message.append(args[pos]);
             }
-            
+
             for (Enumeration i = server.getConnections(); i.hasMoreElements();) {
-                IConnection conn = (IConnection)i.nextElement();
-                
-                if ( server.getPlayer(conn.getId()).getTeam() == team )
-                    server.sendChat(conn.getId(),origin, message.toString());
+                IConnection conn = (IConnection) i.nextElement();
+
+                if (server.getPlayer(conn.getId()).getTeam() == team)
+                    server.sendChat(conn.getId(), origin, message.toString());
             }
         }
-    }    
-    
-    
+    }
+
 }

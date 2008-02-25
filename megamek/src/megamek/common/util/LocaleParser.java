@@ -22,14 +22,14 @@ import java.io.StringReader;
 public class LocaleParser {
 
     protected StreamTokenizer st;
-    protected String language="", country="", variant="";
+    protected String language = "", country = "", variant = "";
     protected int currentToken;
     protected ParseException exception;
 
     public String getLanguage() {
         return language;
     }
-    
+
     public String getCountry() {
         return country;
     }
@@ -38,9 +38,9 @@ public class LocaleParser {
         return variant;
     }
 
-    public boolean parse(String locstring ) {
+    public boolean parse(String locstring) {
         clear();
-        StringReader s = new StringReader(locstring);  
+        StringReader s = new StringReader(locstring);
         st = new StreamTokenizer(s);
         return parse();
     }
@@ -54,18 +54,17 @@ public class LocaleParser {
     public ParseException getException() {
         return exception;
     }
-    
 
     protected void clear() {
-        language="";
-        country="";
-        variant="";
-        exception = null;        
+        language = "";
+        country = "";
+        variant = "";
+        exception = null;
         st = null;
     }
-    
+
     protected boolean parse() {
-        boolean hasErrors=false;
+        boolean hasErrors = false;
         nextToken();
         try {
             parseLocale();
@@ -75,7 +74,7 @@ public class LocaleParser {
         }
         return hasErrors;
     }
-    
+
     protected void parseLocale() throws ParseException {
         if (currentToken != StreamTokenizer.TT_WORD) {
             throw new ParseException("language expected");
@@ -106,10 +105,10 @@ public class LocaleParser {
         variant = st.sval;
         nextToken();
     }
-        
+
     protected void nextToken() {
         try {
-            currentToken = st.nextToken();            
+            currentToken = st.nextToken();
         } catch (IOException e1) {
             currentToken = StreamTokenizer.TT_EOF;
         }
@@ -123,7 +122,7 @@ public class LocaleParser {
 
         public ParseException(String message) {
             super(message);
-        }        
+        }
     }
 
 }

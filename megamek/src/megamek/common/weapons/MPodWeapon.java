@@ -25,7 +25,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public abstract class MPodWeapon extends AmmoWeapon {
     /**
@@ -48,7 +47,6 @@ public abstract class MPodWeapon extends AmmoWeapon {
         this.bv = 5;
         this.cost = 6000;
     }
-
 
     /*
      * (non-Javadoc)

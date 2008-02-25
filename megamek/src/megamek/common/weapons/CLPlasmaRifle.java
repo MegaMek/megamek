@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLPlasmaRifle extends PlasmaMFUKWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1758452784566087479L;
+
     /**
      * 
      */

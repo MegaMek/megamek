@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLSupportPPC extends PPCWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2062417699006705116L;
+
     /**
      * 
      */
@@ -41,6 +45,7 @@ public class CLSupportPPC extends PPCWeapon {
         this.longRange = 7;
         this.extremeRange = 10;
         this.bv = 14;
-        this.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
+        this.setModes(new String[] { "Field Inhibitor ON",
+                "Field Inhibitor OFF" });
     }
 }

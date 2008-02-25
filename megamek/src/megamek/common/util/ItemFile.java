@@ -15,19 +15,17 @@
 package megamek.common.util;
 
 /**
- * This interface represents a categorizable file.
- *
- * Created on January 18, 2004
- *
- * @author  James Damour
+ * This interface represents a categorizable file. Created on January 18, 2004
+ * 
+ * @author James Damour
  * @version 1
  */
 public interface ItemFile {
 
     /**
      * Get the item for this file.
-     *
-     * @throws  <code>Exception</code> if there's any error getting the item.
+     * 
+     * @throws <code>Exception</code> if there's any error getting the item.
      */
     public Object getItem() throws Exception;
 }

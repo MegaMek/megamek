@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISAC2 extends ACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 49211848611799265L;
+
     /**
      * 
      */
@@ -47,6 +51,6 @@ public class ISAC2 extends ACWeapon {
         this.criticals = 1;
         this.bv = 37;
         this.cost = 75000;
-        this.explosive = true; //when firing incendiary ammo
+        this.explosive = true; // when firing incendiary ammo
     }
 }

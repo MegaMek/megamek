@@ -67,48 +67,48 @@ public interface IBoardView {
     public abstract Coords getFirstLOS();
 
     /**
-     * Determines if this Board contains the Coords,
-     * and if so, "selects" that Coords.
-     *
+     * Determines if this Board contains the Coords, and if so, "selects" that
+     * Coords.
+     * 
      * @param coords the Coords.
      */
     public abstract void select(Coords coords);
 
     /**
      * "Selects" the specified Coords.
-     *
+     * 
      * @param x the x coordinate.
      * @param y the y coordinate.
      */
     public abstract void select(int x, int y);
 
     /**
-     * Determines if this Board contains the Coords,
-     * and if so, highlights that Coords.
-     *
+     * Determines if this Board contains the Coords, and if so, highlights that
+     * Coords.
+     * 
      * @param coords the Coords.
      */
     public abstract void highlight(Coords coords);
 
     /**
      * Highlights the specified Coords.
-     *
+     * 
      * @param x the x coordinate.
      * @param y the y coordinate.
      */
     public abstract void highlight(int x, int y);
 
     /**
-     * Determines if this Board contains the Coords,
-     * and if so, "cursors" that Coords.
-     *
+     * Determines if this Board contains the Coords, and if so, "cursors" that
+     * Coords.
+     * 
      * @param coords the Coords.
      */
     public abstract void cursor(Coords coords);
 
     /**
      * "Cursors" the specified Coords.
-     *
+     * 
      * @param x the x coordinate.
      * @param y the y coordinate.
      */
@@ -117,39 +117,36 @@ public interface IBoardView {
     public abstract void checkLOS(Coords c);
 
     /**
-     * Determines if this Board contains the (x, y) Coords,
-     * and if so, notifies listeners about the specified mouse
-     * action.
+     * Determines if this Board contains the (x, y) Coords, and if so, notifies
+     * listeners about the specified mouse action.
      */
     public abstract void mouseAction(int x, int y, int mtype, int modifiers);
 
     /**
      * Notifies listeners about the specified mouse action.
-     *
+     * 
      * @param coords the Coords.
      */
     public abstract void mouseAction(Coords coords, int mtype, int modifiers);
 
     /**
-     * Adds the specified board view listener to receive
-     * events from this view.
+     * Adds the specified board view listener to receive events from this view.
      * 
      * @see BoardViewListener
-     *
      * @param listener the board listener.
      */
     public abstract void addBoardViewListener(BoardViewListener listener);
 
     /**
      * Removes the specified board listener.
-     *
+     * 
      * @param listener the board listener.
      */
     public abstract void removeBoardViewListener(BoardViewListener listener);
 
     /**
      * Notifies attached board listeners of the event.
-     *
+     * 
      * @param event the board event.
      */
     public abstract void processBoardViewEvent(BoardViewEvent event);

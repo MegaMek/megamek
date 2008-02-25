@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLAPGaussRifle extends GaussWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3055904827702262063L;
+
     /**
      * 
      */
@@ -50,7 +54,7 @@ public class CLAPGaussRifle extends GaussWeapon {
         this.bv = 21;
         this.cost = 8500;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

@@ -20,19 +20,20 @@
 
 package megamek.server.commands;
 
-import megamek.server.*;
+import megamek.server.Server;
 
 /**
  * Skips the current player's turn, if possible.
- *
- * @author  Ben
- * @version 
+ * 
+ * @author Ben
+ * @version
  */
 public class SkipCommand extends ServerCommand {
-    
+
     /** Creates a new instance of SkipCommand */
     public SkipCommand(Server server) {
-        super(server, "skip", "Skips the current turn, if possible.  Usage: /skip");
+        super(server, "skip",
+                "Skips the current turn, if possible.  Usage: /skip");
     }
 
     /**
@@ -40,12 +41,14 @@ public class SkipCommand extends ServerCommand {
      */
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
-            server.sendServerChat(connId, "Observers are restricted from skipping turns.");
+            server.sendServerChat(connId,
+                    "Observers are restricted from skipping turns.");
             return;
-        }                                                                                           
+        }
 
         if (server.isTurnSkippable()) {
-            server.sendServerChat(server.getPlayer(connId).getName() + " has issued the skip command...");
+            server.sendServerChat(server.getPlayer(connId).getName()
+                    + " has issued the skip command...");
             server.skipCurrentTurn();
         } else {
             server.sendServerChat("/skip : skip failed.");

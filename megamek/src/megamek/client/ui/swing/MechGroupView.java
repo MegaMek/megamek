@@ -15,8 +15,12 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.common.Entity;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -26,24 +30,20 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+
+import megamek.client.Client;
+import megamek.common.Entity;
 
 /**
- * This class displays a window that displays the forces currently selected
- * in the lounge.
- *
+ * This class displays a window that displays the forces currently selected in
+ * the lounge.
+ * 
  * @author Ryan McConnell (oscarmm)
  * @version $Revision$
  * @since 0.31
  */
-public class MechGroupView
-        extends JDialog
-        implements ActionListener, ListSelectionListener {
+public class MechGroupView extends JDialog implements ActionListener,
+        ListSelectionListener {
 
     /**
      * 
@@ -63,8 +63,9 @@ public class MechGroupView
         String[] entityStrings = new String[entityArray.length];
         int index = 0;
 
-        boolean rpgSkills = client.game.getOptions().booleanOption("rpg_gunnery");
-        
+        boolean rpgSkills = client.game.getOptions().booleanOption(
+                "rpg_gunnery");
+
         for (final int newVar : entityArray) {
             Entity entity = client.game.getEntity(newVar);
             // Handle the "Blind Drop" option.
@@ -72,11 +73,16 @@ public class MechGroupView
                 continue;
             if (!entity.getOwner().equals(client.getLocalPlayer())
                     && client.game.getOptions().booleanOption("blind_drop")
-                    && !client.game.getOptions().booleanOption("real_blind_drop")) {
-                entityStrings[index++] = ChatLounge.formatUnit(entity, true, rpgSkills);
+                    && !client.game.getOptions().booleanOption(
+                            "real_blind_drop")) {
+                entityStrings[index++] = ChatLounge.formatUnit(entity, true,
+                        rpgSkills);
             } else if (entity.getOwner().equals(client.getLocalPlayer())
-                    || !client.game.getOptions().booleanOption("blind_drop") && !client.game.getOptions().booleanOption("real_blind_drop")) {
-                entityStrings[index++] = ChatLounge.formatUnit(entity, false, rpgSkills);
+                    || !client.game.getOptions().booleanOption("blind_drop")
+                    && !client.game.getOptions().booleanOption(
+                            "real_blind_drop")) {
+                entityStrings[index++] = ChatLounge.formatUnit(entity, false,
+                        rpgSkills);
             }
         }
         entities = new JList(entityStrings);
@@ -94,8 +100,9 @@ public class MechGroupView
         closeButton.addActionListener(this);
 
         setSize(550, 600);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
-                frame.getLocation().y + frame.getSize().height / 10);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2
+                - getSize().width / 2, frame.getLocation().y
+                + frame.getSize().height / 10);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 e.getWindow().setVisible(false);
@@ -115,7 +122,8 @@ public class MechGroupView
             if (selected == -1) {
                 ta.setText("");
                 return;
-            } else if (!client.game.getEntity(entityArray[selected]).getOwner().equals(client.getLocalPlayer())) {
+            } else if (!client.game.getEntity(entityArray[selected]).getOwner()
+                    .equals(client.getLocalPlayer())) {
                 ta.setText("(enemy unit)");
             } else {
                 Entity entity = client.game.getEntity(entityArray[selected]);

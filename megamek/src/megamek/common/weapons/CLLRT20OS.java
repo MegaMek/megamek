@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class CLLRT20OS extends LRTWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = 4540170151130434608L;
+
+    /**
+     * 
+     */
     public CLLRT20OS() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_CLAN_LEVEL_2;
         this.name = "LRT 20 (OS)";
         this.setInternalName("CLLRTorpedo20 (OS)");

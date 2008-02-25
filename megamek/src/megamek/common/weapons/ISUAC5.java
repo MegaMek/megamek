@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISUAC5 extends UACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6307637324918648850L;
+
     /**
      * 
      */

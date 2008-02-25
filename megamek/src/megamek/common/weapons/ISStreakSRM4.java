@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISStreakSRM4 extends StreakSRMWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = 2884956805670848621L;
+
+    /**
+     * 
+     */
     public ISStreakSRM4() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
         this.name = "Streak SRM 4";
         this.setInternalName("ISStreakSRM4");

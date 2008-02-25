@@ -23,15 +23,20 @@ import megamek.server.Server;
 
 public class PulseLaserWeaponHandler extends WeaponHandler {
     /**
+     * 
+     */
+    private static final long serialVersionUID = -5701939682138221449L;
+
+    /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public PulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public PulseLaserWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -40,9 +45,10 @@ public class PulseLaserWeaponHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
         // during a swarm, all damage gets applied as one block to one location
-        if (ae instanceof BattleArmor && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
+        if (ae instanceof BattleArmor
+                && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
-            toReturn *= ((BattleArmor)ae).getShootingStrength();
+            toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
         // Check for Altered Damage from Energy Weapons (MTR, pg.22)
         int nRange = ae.getPosition().distance(target.getPosition());
@@ -54,16 +60,16 @@ public class PulseLaserWeaponHandler extends WeaponHandler {
             } else if (nRange <= wtype.getLongRange()) {
                 toReturn--;
             } else if (nRange <= wtype.getExtremeRange()) {
-                toReturn = (int)Math.floor(toReturn/2.0);
+                toReturn = (int) Math.floor(toReturn / 2.0);
             }
         }
         if (bGlancing) {
-            toReturn = (int)Math.floor(toReturn/2.0);
+            toReturn = (int) Math.floor(toReturn / 2.0);
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-        	toReturn /= 10;
-        	toReturn += 2;
-        }	        
-        return (int)Math.ceil(toReturn);
+            toReturn /= 10;
+            toReturn += 2;
+        }
+        return (int) Math.ceil(toReturn);
     }
 }

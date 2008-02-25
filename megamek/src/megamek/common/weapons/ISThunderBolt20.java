@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISThunderBolt20 extends ThunderBoltWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = -6976091682813292840L;
+
+    /**
+     * 
+     */
     public ISThunderBolt20() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_3;
         this.name = "Thunderbolt 20";
         this.setInternalName(this.name);

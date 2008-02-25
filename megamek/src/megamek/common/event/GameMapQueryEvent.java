@@ -17,18 +17,17 @@ package megamek.common.event;
 import megamek.common.MapSettings;
 
 /**
- * Instances of this class are sent when Client is asked for the Map   
+ * Instances of this class are sent when Client is asked for the Map
  */
 public class GameMapQueryEvent extends GameEvent {
-    
+
     /**
      * 
      */
     private static final long serialVersionUID = -2525971548410030612L;
     protected MapSettings settings;
-    
+
     /**
-     * 
      * @param source
      * @param settings
      */
@@ -36,9 +35,8 @@ public class GameMapQueryEvent extends GameEvent {
         super(source, GAME_MAP_QUERY);
         this.settings = settings;
     }
-    
+
     /**
-     * 
      * @return
      */
     public MapSettings getSettings() {

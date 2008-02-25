@@ -23,12 +23,14 @@ import megamek.common.Report;
 
 /**
  * implementation which will match when a certain percentage of all enemy BV is
- * destroyed.
- * 
- * NOTE: this could be improved by giving more points for killing more than
- * required amount
+ * destroyed. NOTE: this could be improved by giving more points for killing
+ * more than required amount
  */
 public class BVDestroyedVictory extends AbstractBVVictory {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1807333576570154144L;
     protected int destroyedPercent;
 
     public BVDestroyedVictory(int destroyedPercent) {
@@ -44,7 +46,6 @@ public class BVDestroyedVictory extends AbstractBVVictory {
             Player player = e.nextElement();
             if (player.isObserver())
                 continue;
-            int fbv = 0;
             int ebv = 0;
             int eibv = 0;
             int team = player.getTeam();
@@ -53,7 +54,6 @@ public class BVDestroyedVictory extends AbstractBVVictory {
                     continue; // skip if already
                 doneTeams.add(team);
             }
-            fbv = getFriendlyBV(game, player);
             ebv = getEnemyBV(game, player);
             eibv = getEnemyInitialBV(game, player);
 

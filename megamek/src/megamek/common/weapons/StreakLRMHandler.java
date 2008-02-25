@@ -30,24 +30,33 @@ import megamek.server.Server;
 public class StreakLRMHandler extends StreakHandler {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = -3848472655779311898L;
+
+    /**
      * @param t
      * @param w
      * @param g
      * @param s
      */
-    public StreakLRMHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+    public StreakLRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector, megamek.common.Entity, boolean)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
+     *      megamek.common.Entity, boolean)
      */
-    protected boolean specialResolution(Vector<Report> vPhaseReport, Entity entityTarget,boolean bMissed) {
-        if (!bMissed && target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) {
+    protected boolean specialResolution(Vector<Report> vPhaseReport,
+            Entity entityTarget, boolean bMissed) {
+        if (!bMissed
+                && target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR) {
             int clearAttempt = Compute.d6(2);
             if (clearAttempt >= Minefield.CLEAR_NUMBER_WEAPON) {
-                //minefield cleared
+                // minefield cleared
                 r = new Report(3255);
                 r.indent(1);
                 r.subject = subjectId;
@@ -59,7 +68,7 @@ public class StreakLRMHandler extends StreakHandler {
                     server.removeMinefield(mf);
                 }
             } else {
-                //fails to clear
+                // fails to clear
                 r = new Report(3260);
                 r.indent(1);
                 r.subject = subjectId;

@@ -18,10 +18,10 @@
  */
 
 package megamek.client.ui.AWT;
-import megamek.common.*;
+
+import megamek.common.MapSettings;
 
 /**
- *
  * @author ShaneK
  */
 public interface IMapSettingsObserver {

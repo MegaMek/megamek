@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISERLargeLaser extends LaserWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4487405793320900805L;
 
     public ISERLargeLaser() {
         super();

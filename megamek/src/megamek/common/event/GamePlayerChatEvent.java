@@ -17,18 +17,17 @@ package megamek.common.event;
 import megamek.common.Player;
 
 /**
- * Instances of this class are sent when chat message received    
+ * Instances of this class are sent when chat message received
  */
 public class GamePlayerChatEvent extends GamePlayerEvent {
-    
+
     /**
      * 
      */
     private static final long serialVersionUID = 9077796386452985153L;
     protected String message;
-    
+
     /**
-     * 
      * @param source
      * @param player
      * @param message
@@ -37,7 +36,7 @@ public class GamePlayerChatEvent extends GamePlayerEvent {
         super(source, player, GAME_PLAYER_CHAT);
         this.message = message;
     }
-    
+
     /**
      * @return the chat message.
      */

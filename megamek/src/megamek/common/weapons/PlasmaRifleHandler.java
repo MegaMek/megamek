@@ -29,6 +29,11 @@ import megamek.server.Server;
 
 public class PlasmaRifleHandler extends AmmoWeaponHandler {
     /**
+     * 
+     */
+    private static final long serialVersionUID = -2092721653693187140L;
+
+    /**
      * @param toHit
      * @param waa
      * @param g
@@ -37,10 +42,12 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             Server s) {
         super(toHit, waa, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
+     *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
@@ -59,9 +66,10 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             entityTarget.heatFromExternal += extraHeat;
         }
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
@@ -71,9 +79,10 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
             return 1;
         }
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
@@ -86,15 +95,18 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 toReturn = Compute.d6(2);
             bSalvo = true;
             // pain shunted infantry get half damage
-            if (target instanceof Infantry && ((Entity)target).getCrew().getOptions().booleanOption("pain_shunt") ) {
-                toReturn = Math.max(toReturn/2, 1);
+            if (target instanceof Infantry
+                    && ((Entity) target).getCrew().getOptions().booleanOption(
+                            "pain_shunt")) {
+                toReturn = Math.max(toReturn / 2, 1);
             }
             return toReturn;
         }
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -107,12 +119,14 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         // against mechs, 1 hit with 10 damage, plus heat
         if (target instanceof Mech) {
             toReturn = 1;
-        // otherwise, 10+2d6 damage
-        // but fireresistant BA armor gets no damage from heat, and half the normal one, so only 5 damage 
+            // otherwise, 10+2d6 damage
+            // but fireresistant BA armor gets no damage from heat, and half the
+            // normal one, so only 5 damage
         } else {
-            if (target instanceof BattleArmor && ((BattleArmor)target).hasFireresistantArmor())
-                toReturn = 10/2;
-            toReturn = 10+Compute.d6(2);
+            if (target instanceof BattleArmor
+                    && ((BattleArmor) target).hasFireresistantArmor())
+                toReturn = 10 / 2;
+            toReturn = 10 + Compute.d6(2);
         }
         return toReturn;
     }

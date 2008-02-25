@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISStreakSRM2 extends StreakSRMWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = 2636425754066916235L;
+
+    /**
+     * 
+     */
     public ISStreakSRM2() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
         this.name = "Streak SRM 2";
         this.setInternalName("ISStreakSRM2");
@@ -39,7 +43,7 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
         this.extremeRange = 12;
         this.tonnage = 1.5f;
         this.criticals = 1;
-        this.flags |= F_NO_FIRES ;
+        this.flags |= F_NO_FIRES;
         this.bv = 30;
         this.cost = 15000;
     }

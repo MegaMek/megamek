@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISLRM15OS extends LRMWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = 1089075678687256997L;
+
+    /**
+     * 
+     */
     public ISLRM15OS() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;
         this.name = "LRM 15 (OS)";
         this.setInternalName(this.name);

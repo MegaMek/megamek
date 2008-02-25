@@ -25,7 +25,6 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ACIncendiaryHandler extends AmmoWeaponHandler {
     /**
@@ -38,7 +37,8 @@ public class ACIncendiaryHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public ACIncendiaryHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public ACIncendiaryHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
         damageType = DamageType.INCENDIARY;
     }

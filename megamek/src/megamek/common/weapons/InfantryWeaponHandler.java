@@ -29,11 +29,10 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public abstract class InfantryWeaponHandler extends WeaponHandler {
-    
-    //damage lookup table, different for each infantry weapon
+
+    // damage lookup table, different for each infantry weapon
     int[] damage;
 
     /**
@@ -41,40 +40,46 @@ public abstract class InfantryWeaponHandler extends WeaponHandler {
      * @param w
      * @param g
      */
-    public InfantryWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public InfantryWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
         bSalvo = true;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
         return 1;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
         return 2;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
-        int troopersHit =  Compute.missilesHit(((Infantry)ae).getShootingStrength());
+        int troopersHit = Compute.missilesHit(((Infantry) ae)
+                .getShootingStrength());
         r = new Report(3325);
         r.subject = subjectId;
         r.add(troopersHit);
         r.add(" troopers ");
-        r.add(toHit.getTableDesc()+", causing "+damage[troopersHit-1]+ " damage.");
+        r.add(toHit.getTableDesc() + ", causing " + damage[troopersHit - 1]
+                + " damage.");
         r.newlines = 0;
         vPhaseReport.addElement(r);
-        return damage[troopersHit-1];
+        return damage[troopersHit - 1];
     }
 }

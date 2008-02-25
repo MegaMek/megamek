@@ -25,18 +25,18 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public abstract class TAGWeapon extends Weapon {
     public TAGWeapon() {
         super();
         this.flags |= F_TAG | F_NO_FIRES;
         ammoType = AmmoType.T_NA;
-        this.setModes(new String[] {"1-shot", "2-shot", "3-shot", "4-shot"});
+        this.setModes(new String[] { "1-shot", "2-shot", "3-shot", "4-shot" });
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
      *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
      *      megamek.server.Server)

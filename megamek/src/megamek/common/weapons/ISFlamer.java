@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISFlamer extends FlamerWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1414639280093120062L;
+
     /**
      * 
      */

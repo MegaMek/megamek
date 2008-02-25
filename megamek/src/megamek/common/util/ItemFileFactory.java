@@ -21,65 +21,63 @@ import java.util.zip.ZipFile;
 
 /**
  * This interface represents a factory that can produce items from cate-
- * gorizable files.  This interface extends the <code>FilenameFilter</code>,
- * so the factory is aware of the files that it can handle as input.
- *
- * Created on January 18, 2004
- *
- * @author  James Damour
+ * gorizable files. This interface extends the <code>FilenameFilter</code>,
+ * so the factory is aware of the files that it can handle as input. Created on
+ * January 18, 2004
+ * 
+ * @author James Damour
  * @version 1
  */
 public interface ItemFileFactory extends FilenameFilter {
 
     /**
      * Get the <code>ItemFile</code> for the given <code>File</code>.
-     *
-     * @param   file - the input <code>File</code> object that will be read
-     *          to produce the item.  This value must not be <code>null</code>.
-     * @return  an <code>ItemFile</code> for the given file.
-     * @throws  <code>IllegalArgumentException</code> if the <code>file</code>
-     *          is <code>null</code>.
+     * 
+     * @param file - the input <code>File</code> object that will be read to
+     *            produce the item. This value must not be <code>null</code>.
+     * @return an <code>ItemFile</code> for the given file.
+     * @throws <code>IllegalArgumentException</code> if the <code>file</code>
+     *             is <code>null</code>.
      */
-    public ItemFile getItemFile( File file ) throws IllegalArgumentException;
+    public ItemFile getItemFile(File file) throws IllegalArgumentException;
 
     /**
      * Get the <code>ItemFile</code> for the given <code>ZipEntry</code> in
      * the <code>ZipFile</code>.
-     *
-     * @param   zipEntry - the <code>ZipEntry</code> that will be read
-     *          to produce the item.  This value must not be <code>null</code>.
-     * @param   zipFile - the <code>ZipFile</code> object that contains
-     *          the <code>ZipEntry</code> that will produce the item.
-     *          This value must not be <code>null</code>.
-     * @return  an <code>ItemFile</code> for the given zip file entry.
-     * @throws  <code>IllegalArgumentException</code> if the <code>file</code>
-     *          is <code>null</code>.
+     * 
+     * @param zipEntry - the <code>ZipEntry</code> that will be read to
+     *            produce the item. This value must not be <code>null</code>.
+     * @param zipFile - the <code>ZipFile</code> object that contains the
+     *            <code>ZipEntry</code> that will produce the item. This value
+     *            must not be <code>null</code>.
+     * @return an <code>ItemFile</code> for the given zip file entry.
+     * @throws <code>IllegalArgumentException</code> if the <code>file</code>
+     *             is <code>null</code>.
      */
-    public ItemFile getItemFile( ZipEntry entry, ZipFile zipFile )
-        throws IllegalArgumentException;
+    public ItemFile getItemFile(ZipEntry entry, ZipFile zipFile)
+            throws IllegalArgumentException;
 
     /**
      * The method that must be implemented by any object that filters filenames
-     * (i.e., selects a subset of filenames from a list of filenames).
-     * <p/>
-     * This definition is copied from <code>java.io.FilenameFilter</code>
-     * for completeness.
-     *
-     * @param   dir - the <code>File</code> object of the directory containing
-     *          the named file.
-     * @param   name - the <code>String</code> name of the file.
+     * (i.e., selects a subset of filenames from a list of filenames). <p/> This
+     * definition is copied from <code>java.io.FilenameFilter</code> for
+     * completeness.
+     * 
+     * @param dir - the <code>File</code> object of the directory containing
+     *            the named file.
+     * @param name - the <code>String</code> name of the file.
      */
-    public boolean accept( File dir, String name );
+    public boolean accept(File dir, String name);
 
     /**
      * The method that must be implemented by any object that filters filenames
      * within a <code>ZipFile</code> (i.e., selects a subset of filenames from
      * a list of filenames in a ZIP archive).
-     *
-     * @param   zipFile - the <code>ZipFile</code> object that contains
-     *          the named file's entry.
-     * @param   name - the <code>String</code> name of the file.
+     * 
+     * @param zipFile - the <code>ZipFile</code> object that contains the
+     *            named file's entry.
+     * @param name - the <code>String</code> name of the file.
      */
-    public boolean accept( ZipFile zipFile, String name );
+    public boolean accept(ZipFile zipFile, String name);
 
 }

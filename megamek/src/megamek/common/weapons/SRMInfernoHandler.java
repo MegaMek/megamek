@@ -28,9 +28,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class SRMInfernoHandler extends SRMHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 826674238068613732L;
 
     /**
      * @param t
@@ -38,41 +42,49 @@ public class SRMInfernoHandler extends SRMHandler {
      * @param g
      * @param s
      */
-    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public SRMInfernoHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
         sSalvoType = " inferno missile(s) ";
         bSalvo = false;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     protected void reportMiss(Vector<Report> vPhaseReport) {
         super.reportMiss(vPhaseReport);
-        server.tryIgniteHex(target.getPosition(), ae.getId(), true, 11, vPhaseReport);
+        server.tryIgniteHex(target.getPosition(), ae.getId(), true, 11,
+                vPhaseReport);
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
         return 0;
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleAccidentalBuildingDamage(java.util.Vector, megamek.common.Building, int, int)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleAccidentalBuildingDamage(java.util.Vector,
+     *      megamek.common.Building, int, int)
      */
     protected void handleAccidentalBuildingDamage(Vector<Report> vPhaseReport,
             Building bldg, int hits, int nDamPerHit) {
         // Is the building hit by Inferno rounds?
-        if ( hits > 0 ) {
-            server.deliverInfernoMissiles(ae, new BuildingTarget(this.waa.getTarget(game).getPosition(), game.getBoard(), false), hits, vPhaseReport);
+        if (hits > 0) {
+            server.deliverInfernoMissiles(ae, new BuildingTarget(this.waa
+                    .getTarget(game).getPosition(), game.getBoard(), false),
+                    hits, vPhaseReport);
         }
     }
-    
+
     public boolean handle(int phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
@@ -104,23 +116,20 @@ public class SRMInfernoHandler extends SRMHandler {
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        }
-        else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        }
-        else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        }
-        else {
-            //roll to hit
+        } else {
+            // roll to hit
             r = new Report(3150);
             r.newlines = 0;
             r.subject = subjectId;
@@ -135,15 +144,14 @@ public class SRMInfernoHandler extends SRMHandler {
         r.add(roll);
         vPhaseReport.addElement(r);
 
-
         // do we hit?
         bMissed = roll < toHit.getValue();
-        
+
         // are we a glancing hit?
         if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
-                r = new  Report(3186);
+                r = new Report(3186);
                 r.subject = ae.getId();
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -152,13 +160,13 @@ public class SRMInfernoHandler extends SRMHandler {
             }
         } else {
             bGlancing = false;
-        } 
+        }
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
         useAmmo();
         addHeat();
-        
+
         // Any necessary PSRs, jam checks, etc.
         // If this boolean is true, don't report
         // the miss later, as we already reported
@@ -167,12 +175,13 @@ public class SRMInfernoHandler extends SRMHandler {
         if (missReported) {
             bMissed = true;
         }
-        
+
         if (bMissed && !missReported) {
             reportMiss(vPhaseReport);
             // Works out fire setting, AMS shots, and whether continuation is
             // necessary.
-            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg, vPhaseReport)) {
+            if (!handleSpecialMiss(entityTarget, targetInBuilding, bldg,
+                    vPhaseReport)) {
                 return false;
             }
         }

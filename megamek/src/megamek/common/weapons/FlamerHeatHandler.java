@@ -34,9 +34,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class FlamerHeatHandler extends WeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7785915075211288648L;
+
     /**
      * @param toHit
      * @param waa
@@ -53,11 +57,12 @@ public class FlamerHeatHandler extends WeaponHandler {
         if (entityTarget instanceof Mech
                 && game.getOptions().booleanOption("flamer_heat")) {
             // heat
-            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                    .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                    toHit.getSideTable(), waa.getAimedLocation(), waa
+                            .getAimingMode());
 
-            if ( entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                    Compute.targetSideTable(ae, entityTarget)) ) {
+            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
+                    .getCover(), Compute.targetSideTable(ae, entityTarget))) {
                 // Weapon strikes Partial Cover.
                 r = new Report(3460);
                 r.subject = subjectId;
@@ -82,7 +87,7 @@ public class FlamerHeatHandler extends WeaponHandler {
                     nCluster, nDamPerHit, bldgAbsorbs);
         }
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -93,10 +98,12 @@ public class FlamerHeatHandler extends WeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor)
                 toReturn = Compute.d6(3);
-            toReturn = Compute.d6(4); 
+            toReturn = Compute.d6(4);
         }
         // pain shunted infantry get half damage
-        if (target instanceof Infantry && ((Entity)target).getCrew().getOptions().booleanOption("pain_shunt") ) {
+        if (target instanceof Infantry
+                && ((Entity) target).getCrew().getOptions().booleanOption(
+                        "pain_shunt")) {
             toReturn /= 2;
         }
         return toReturn;

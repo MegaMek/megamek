@@ -14,6 +14,20 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -27,27 +41,13 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JPanel;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-
-public class SelectArtyAutoHitHexDisplay
-        extends StatusBarPhaseDisplay
+public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
         implements BoardViewListener, ActionListener, DoneButtoned,
         KeyListener, GameListener, Distractable {
 
-	private static final long serialVersionUID = -4948184589134809323L;
+    private static final long serialVersionUID = -4948184589134809323L;
 
-	// Distraction implementation.
+    // Distraction implementation.
     private DistractableAdapter distracted = new DistractableAdapter();
 
     // parent game
@@ -66,8 +66,8 @@ public class SelectArtyAutoHitHexDisplay
     private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
 
     /**
-     * Creates and lays out a new deployment phase display
-     * for the specified client.
+     * Creates and lays out a new deployment phase display for the specified
+     * client.
      */
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
@@ -76,18 +76,21 @@ public class SelectArtyAutoHitHexDisplay
 
         clientgui.getBoardView().addBoardViewListener(this);
 
-        setupStatusBar(Messages.getString("SelectArtyAutoHitHexDisplay.waitingArtillery")); //$NON-NLS-1$
+        setupStatusBar(Messages
+                .getString("SelectArtyAutoHitHexDisplay.waitingArtillery")); //$NON-NLS-1$
 
         p = client.getLocalPlayer();
 
         artyAutoHitHexes.setPlayerID(p.getId());
 
-        butA = new JButton(Messages.getString("SelectArtyAutoHitHexDisplay.artilleryAutohithexes")); //$NON-NLS-1$
+        butA = new JButton(Messages
+                .getString("SelectArtyAutoHitHexDisplay.artilleryAutohithexes")); //$NON-NLS-1$
         butA.addActionListener(this);
         butA.setActionCommand(SET_HIT_HEX);
         butA.setEnabled(false);
 
-        butDone = new JButton(Messages.getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
+        butDone = new JButton(Messages
+                .getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
         butDone.addActionListener(this);
         butDone.setEnabled(false);
 
@@ -95,7 +98,7 @@ public class SelectArtyAutoHitHexDisplay
         panButtons = new JPanel();
         panButtons.setLayout(new GridLayout(0, 2));
         panButtons.add(butA);
-        
+
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -120,7 +123,8 @@ public class SelectArtyAutoHitHexDisplay
         addKeyListener(this);
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag,
+            GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -160,9 +164,15 @@ public class SelectArtyAutoHitHexDisplay
         if (!client.game.getBoard().contains(coords)) {
             return;
         }
-        if (!artyAutoHitHexes.contains(coords) && artyAutoHitHexes.size() < 5
-                && clientgui.doYesNoDialog(Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
-                        Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[]{coords.getBoardNum()}))) { //$NON-NLS-1$
+        if (!artyAutoHitHexes.contains(coords)
+                && artyAutoHitHexes.size() < 5
+                && clientgui
+                        .doYesNoDialog(
+                                Messages
+                                        .getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
+                                Messages
+                                        .getString(
+                                                "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
             setArtyEnabled(5 - artyAutoHitHexes.size());
         }
@@ -182,12 +192,13 @@ public class SelectArtyAutoHitHexDisplay
         if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
             return;
         }
-        
+
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn()
+                || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
-        
+
         // check for a deployment
         clientgui.getBoardView().select(b.getCoords());
         addArtyAutoHitHex(b.getCoords());
@@ -207,14 +218,18 @@ public class SelectArtyAutoHitHexDisplay
 
         if (client.isMyTurn()) {
             beginMyTurn();
-            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_your_turn")); //$NON-NLS-1$
+            setStatusBarText(Messages
+                    .getString("SelectArtyAutoHitHexDisplay.its_your_turn")); //$NON-NLS-1$
         } else {
-            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
+            setStatusBarText(Messages
+                    .getString(
+                            "SelectArtyAutoHitHexDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
         }
     }
 
     /**
      * called when the game changes phase.
+     * 
      * @param e ignored parameter
      */
     public void gamePhaseChange(final GamePhaseChangeEvent e) {
@@ -223,12 +238,13 @@ public class SelectArtyAutoHitHexDisplay
             return;
         }
 
-        if (client.isMyTurn() &&
-                client.game.getPhase() != IGame.PHASE_SET_ARTYAUTOHITHEXES) {
+        if (client.isMyTurn()
+                && client.game.getPhase() != IGame.PHASE_SET_ARTYAUTOHITHEXES) {
             endMyTurn();
         }
         if (client.game.getPhase() == IGame.PHASE_SET_ARTYAUTOHITHEXES) {
-            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
+            setStatusBarText(Messages
+                    .getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
         }
     }
 
@@ -270,14 +286,17 @@ public class SelectArtyAutoHitHexDisplay
     }
 
     private void setArtyEnabled(int nbr) {
-        butA.setText(Messages.getString("SelectArtyAutoHitHexDisplay.designatedTargets", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
+        butA
+                .setText(Messages
+                        .getString(
+                                "SelectArtyAutoHitHexDisplay.designatedTargets", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butA.setEnabled(nbr > 0);
-//        clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
+        // clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
     }
 
     /**
      * Determine if the listener is currently distracted.
-     *
+     * 
      * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
@@ -286,11 +305,11 @@ public class SelectArtyAutoHitHexDisplay
 
     /**
      * Specify if the listener should be distracted.
-     *
-     * @param distracted <code>true</code> if the listener should ignore events
-     *                   <code>false</code> if the listener should pay attention again.
-     *                   Events that occured while the listener was distracted NOT
-     *                   going to be processed.
+     * 
+     * @param distracted <code>true</code> if the listener should ignore
+     *            events <code>false</code> if the listener should pay
+     *            attention again. Events that occured while the listener was
+     *            distracted NOT going to be processed.
      */
     public void setIgnoringEvents(boolean distracted) {
         this.distracted.setIgnoringEvents(distracted);
@@ -298,7 +317,7 @@ public class SelectArtyAutoHitHexDisplay
 
     /**
      * Retrieve the "Done" button of this object.
-     *
+     * 
      * @return the <code>javax.swing.JButton</code> that activates this
      *         object's "Done" action.
      */

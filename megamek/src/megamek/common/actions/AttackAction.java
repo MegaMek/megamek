@@ -14,11 +14,12 @@
 
 package megamek.common.actions;
 
-public interface AttackAction
-    extends EntityAction
-{
+public interface AttackAction extends EntityAction {
     public int getTargetType();
+
     public int getTargetId();
+
     public void setTargetType(int nType);
+
     public void setTargetId(int targetId);
 }

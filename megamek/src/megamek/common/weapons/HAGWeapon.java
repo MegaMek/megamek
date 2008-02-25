@@ -25,7 +25,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public abstract class HAGWeapon extends GaussWeapon {
     /**
@@ -37,7 +36,7 @@ public abstract class HAGWeapon extends GaussWeapon {
         this.ammoType = AmmoType.T_HAG;
         this.flags |= F_NO_AIM;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

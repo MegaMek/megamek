@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISExtendedLRM20 extends ExtendedLRMWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = -2230366483054553162L;
+
+    /**
+     * 
+     */
     public ISExtendedLRM20() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_3;
         this.name = "ExtendedLRM 20";
         this.setInternalName(this.name);

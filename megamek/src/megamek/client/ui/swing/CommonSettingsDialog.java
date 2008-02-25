@@ -14,23 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import megamek.common.preference.IClientPreferences;
-import megamek.common.preference.PreferenceManager;
-
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -46,8 +29,26 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 
-public class CommonSettingsDialog extends ClientDialog
-        implements ActionListener, ItemListener, FocusListener, ListSelectionListener {
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.PreferenceManager;
+
+public class CommonSettingsDialog extends ClientDialog implements
+        ActionListener, ItemListener, FocusListener, ListSelectionListener {
     /**
      * 
      */
@@ -79,7 +80,7 @@ public class CommonSettingsDialog extends ClientDialog
 
     private JCheckBox keepGameLog;
     private JTextField gameLogFilename;
-    //private JTextField   gameLogMaxSize;
+    // private JTextField gameLogMaxSize;
     private JCheckBox stampFilenames;
     private JTextField stampFormat;
     private JCheckBox defaultAutoejectDisabled;
@@ -101,11 +102,11 @@ public class CommonSettingsDialog extends ClientDialog
     private static final String CANCEL = "CANCEL"; //$NON-NLS-1$
     private static final String UPDATE = "UPDATE"; //$NON-NLS-1$
 
-    private static final String[] LOCALE_CHOICES = {"en", "de", "ru"};
+    private static final String[] LOCALE_CHOICES = { "en", "de", "ru" };
 
     /**
-     * Standard constructor.  There is no default constructor for this class.
-     *
+     * Standard constructor. There is no default constructor for this class.
+     * 
      * @param owner - the <code>Frame</code> that owns this dialog.
      */
     public CommonSettingsDialog(JFrame owner) {
@@ -132,16 +133,19 @@ public class CommonSettingsDialog extends ClientDialog
         pack();
 
         // Make the thing wide enough so a horizontal scrollbar isn't
-        //  necessary.  I'm not sure why the extra hardcoded 10 pixels
-        //  is needed, maybe it's a ms windows thing.
-        setLocationAndSize(settingsPanel.getPreferredSize().width + scroll.getInsets().right + 20, settingsPanel.getPreferredSize().height);
+        // necessary. I'm not sure why the extra hardcoded 10 pixels
+        // is needed, maybe it's a ms windows thing.
+        setLocationAndSize(settingsPanel.getPreferredSize().width
+                + scroll.getInsets().right + 20, settingsPanel
+                .getPreferredSize().height);
     }
 
     private JPanel getButtonsPanel() {
         // Add the dialog controls.
         JPanel buttons = new JPanel();
         buttons.setLayout(new GridLayout(1, 0, 20, 5));
-        JButton update = new JButton(Messages.getString("CommonSettingsDialog.Update")); //$NON-NLS-1$
+        JButton update = new JButton(Messages
+                .getString("CommonSettingsDialog.Update")); //$NON-NLS-1$
         update.setActionCommand(CommonSettingsDialog.UPDATE);
         update.addActionListener(this);
         buttons.add(update);
@@ -159,55 +163,55 @@ public class CommonSettingsDialog extends ClientDialog
         tempPanel.setLayout(new GridLayout(0, 1));
 
         // Add the setting controls.
-        minimapEnabled
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.minimapEnabled")); //$NON-NLS-1$
+        minimapEnabled = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.minimapEnabled")); //$NON-NLS-1$
         tempPanel.add(minimapEnabled);
 
-        autoEndFiring
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.autoEndFiring")); //$NON-NLS-1$
+        autoEndFiring = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.autoEndFiring")); //$NON-NLS-1$
         tempPanel.add(autoEndFiring);
 
-        autoDeclareSearchlight
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.autoDeclareSearchlight")); //$NON-NLS-1$
+        autoDeclareSearchlight = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.autoDeclareSearchlight")); //$NON-NLS-1$
         tempPanel.add(autoDeclareSearchlight);
 
-        nagForMASC
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForMASC")); //$NON-NLS-1$
+        nagForMASC = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.nagForMASC")); //$NON-NLS-1$
         tempPanel.add(nagForMASC);
-        
-        mouseWheelZoom
-            = new JCheckBox( Messages.getString("CommonSettingsDialog.mouseWheelZoom") ); //$NON-NLS-1$
-        tempPanel.add( mouseWheelZoom );
 
-        nagForPSR
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForPSR")); //$NON-NLS-1$
+        mouseWheelZoom = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.mouseWheelZoom")); //$NON-NLS-1$
+        tempPanel.add(mouseWheelZoom);
+
+        nagForPSR = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.nagForPSR")); //$NON-NLS-1$
         tempPanel.add(nagForPSR);
 
-        nagForNoAction
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.nagForNoAction")); //$NON-NLS-1$
+        nagForNoAction = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.nagForNoAction")); //$NON-NLS-1$
         tempPanel.add(nagForNoAction);
 
-        animateMove
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.animateMove")); //$NON-NLS-1$
+        animateMove = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.animateMove")); //$NON-NLS-1$
         tempPanel.add(animateMove);
 
-        showWrecks
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.showWrecks")); //$NON-NLS-1$
+        showWrecks = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.showWrecks")); //$NON-NLS-1$
         tempPanel.add(showWrecks);
 
-        soundMute
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.soundMute")); //$NON-NLS-1$
+        soundMute = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.soundMute")); //$NON-NLS-1$
         tempPanel.add(soundMute);
 
-        showMapHexPopup
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapHexPopup")); //$NON-NLS-1$
+        showMapHexPopup = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.showMapHexPopup")); //$NON-NLS-1$
         tempPanel.add(showMapHexPopup);
 
         JPanel panSetting;
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages.getString("CommonSettingsDialog.tooltipDelay"))); //$NON-NLS-1$
-        tooltipDelay
-                = new JTextField(4);
+        panSetting.add(new JLabel(Messages
+                .getString("CommonSettingsDialog.tooltipDelay"))); //$NON-NLS-1$
+        tooltipDelay = new JTextField(4);
         panSetting.add(tooltipDelay);
 
         tempPanel.add(panSetting);
@@ -221,135 +225,141 @@ public class CommonSettingsDialog extends ClientDialog
         // Add option for "alpha, beta, gamma, delta..."
         unitStartChar.addItem("\u03B1, \u03B2, \u03B3, \u03B4..."); //$NON-NLS-1$
         panSetting.add(unitStartChar);
-        panSetting.add(new JLabel(Messages.getString("CommonSettingsDialog.protoMechUnitCodes"))); //$NON-NLS-1$
+        panSetting.add(new JLabel(Messages
+                .getString("CommonSettingsDialog.protoMechUnitCodes"))); //$NON-NLS-1$
 
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages.getString("CommonSettingsDialog.pathFiderTimeLimit"))); //$NON-NLS-1$
-        maxPathfinderTime
-                = new JTextField(5);
+        panSetting.add(new JLabel(Messages
+                .getString("CommonSettingsDialog.pathFiderTimeLimit"))); //$NON-NLS-1$
+        maxPathfinderTime = new JTextField(5);
         panSetting.add(maxPathfinderTime);
         tempPanel.add(panSetting);
 
-        getFocus
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.getFocus")); //$NON-NLS-1$
+        getFocus = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.getFocus")); //$NON-NLS-1$
         tempPanel.add(getFocus);
         tempPanel.add(panSetting);
 
         // player-specific settings
-        defaultAutoejectDisabled
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.defaultAutoejectDisabled")); //$NON-NLS-1$
+        defaultAutoejectDisabled = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.defaultAutoejectDisabled")); //$NON-NLS-1$
         defaultAutoejectDisabled.addItemListener(this);
         tempPanel.add(defaultAutoejectDisabled);
 
-        useAverageSkills
-            = new JCheckBox( Messages.getString("CommonSettingsDialog.useAverageSkills") ); //$NON-NLS-1$
+        useAverageSkills = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.useAverageSkills")); //$NON-NLS-1$
         useAverageSkills.addItemListener(this);
-        tempPanel.add( useAverageSkills );
-        
-        showUnitId
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
+        tempPanel.add(useAverageSkills);
+
+        showUnitId = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.showUnitId")); //$NON-NLS-1$
         showUnitId.addItemListener(this);
         tempPanel.add(showUnitId);
-        
+
         // client-side gameLog settings
-        keepGameLog
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.keepGameLog")); //$NON-NLS-1$
+        keepGameLog = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.keepGameLog")); //$NON-NLS-1$
         keepGameLog.addItemListener(this);
         tempPanel.add(keepGameLog);
 
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages.getString("CommonSettingsDialog.logFileName"))); //$NON-NLS-1$
-        gameLogFilename
-                = new JTextField(15);
+        panSetting.add(new JLabel(Messages
+                .getString("CommonSettingsDialog.logFileName"))); //$NON-NLS-1$
+        gameLogFilename = new JTextField(15);
         panSetting.add(gameLogFilename);
         tempPanel.add(panSetting);
 
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages.getString("CommonSettingsDialog.tileset"))); //$NON-NLS-1$
+        panSetting.add(new JLabel(Messages
+                .getString("CommonSettingsDialog.tileset"))); //$NON-NLS-1$
         tileSetChoice = new JComboBox();
         panSetting.add(tileSetChoice);
         tempPanel.add(panSetting);
 
         /*
-        panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add( new JLabel(Messages.getString("CommonSettingsDialog.logFileMaxSize")) ); //$NON-NLS-1$
-        gameLogMaxSize
-            = new JTextField(5);
-        panSetting.add( gameLogMaxSize );
-        tempPanel.add( panSetting );
-        */
+         * panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
+         * panSetting.add( new
+         * JLabel(Messages.getString("CommonSettingsDialog.logFileMaxSize")) );
+         * //$NON-NLS-1$ gameLogMaxSize = new JTextField(5); panSetting.add(
+         * gameLogMaxSize ); tempPanel.add( panSetting );
+         */
 
-        stampFilenames
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.stampFilenames")); //$NON-NLS-1$
+        stampFilenames = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.stampFilenames")); //$NON-NLS-1$
         stampFilenames.addItemListener(this);
         tempPanel.add(stampFilenames);
 
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages.getString("CommonSettingsDialog.stampFormat"))); //$NON-NLS-1$
+        panSetting.add(new JLabel(Messages
+                .getString("CommonSettingsDialog.stampFormat"))); //$NON-NLS-1$
         stampFormat = new JTextField(15);
         panSetting.add(stampFormat);
         tempPanel.add(panSetting);
 
         // scrolling options
-        JTextArea ta = new JTextArea(Messages.getString("CommonSettingsDialog.mapScrollText"));
+        JTextArea ta = new JTextArea(Messages
+                .getString("CommonSettingsDialog.mapScrollText"));
         ta.setEditable(false);
         ta.setOpaque(false);
         tempPanel.add(ta); //$NON-NLS-1$
 
-        rightDragScroll
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.rightDragScroll")); //$NON-NLS-1$
+        rightDragScroll = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.rightDragScroll")); //$NON-NLS-1$
         tempPanel.add(rightDragScroll);
 
-        ctlScroll
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.ctlScroll")); //$NON-NLS-1$
+        ctlScroll = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.ctlScroll")); //$NON-NLS-1$
         tempPanel.add(ctlScroll);
 
-        clickEdgeScroll
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.clickEdgeScroll")); //$NON-NLS-1$
+        clickEdgeScroll = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.clickEdgeScroll")); //$NON-NLS-1$
         tempPanel.add(clickEdgeScroll);
 
-        alwaysRightClickScroll
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.alwaysRightClickScroll")); //$NON-NLS-1$
+        alwaysRightClickScroll = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.alwaysRightClickScroll")); //$NON-NLS-1$
         tempPanel.add(alwaysRightClickScroll);
 
-        autoEdgeScroll
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.autoEdgeScroll")); //$NON-NLS-1$
+        autoEdgeScroll = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.autoEdgeScroll")); //$NON-NLS-1$
         tempPanel.add(autoEdgeScroll);
 
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages.getString("CommonSettingsDialog.scrollSesitivity"))); //$NON-NLS-1$
-        scrollSensitivity
-                = new JTextField(4);
+        panSetting.add(new JLabel(Messages
+                .getString("CommonSettingsDialog.scrollSesitivity"))); //$NON-NLS-1$
+        scrollSensitivity = new JTextField(4);
         panSetting.add(scrollSensitivity);
         tempPanel.add(panSetting);
 
-        //displayLocale settings
+        // displayLocale settings
         panSetting = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panSetting.add(new JLabel(Messages.getString("CommonSettingsDialog.locale"))); //$NON-NLS-1$
-        //        displayLocale = new JTextField(8);
+        panSetting.add(new JLabel(Messages
+                .getString("CommonSettingsDialog.locale"))); //$NON-NLS-1$
+        // displayLocale = new JTextField(8);
         displayLocale = new JComboBox();
-        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
-        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
-        displayLocale.addItem(Messages.getString("CommonSettingsDialog.locale.Russian")); //$NON-NLS-1$
+        displayLocale.addItem(Messages
+                .getString("CommonSettingsDialog.locale.English")); //$NON-NLS-1$
+        displayLocale.addItem(Messages
+                .getString("CommonSettingsDialog.locale.Deutsch")); //$NON-NLS-1$
+        displayLocale.addItem(Messages
+                .getString("CommonSettingsDialog.locale.Russian")); //$NON-NLS-1$
         panSetting.add(displayLocale);
         tempPanel.add(panSetting);
 
-        //chatloungtab setting
-        chatloungeTabs
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.chatloungeTabs")); //$NON-NLS-1$
+        // chatloungtab setting
+        chatloungeTabs = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.chatloungeTabs")); //$NON-NLS-1$
         tempPanel.add(chatloungeTabs);
 
-        //showMapsheets setting
-        showMapsheets
-                = new JCheckBox(Messages.getString("CommonSettingsDialog.showMapsheets")); //$NON-NLS-1$
+        // showMapsheets setting
+        showMapsheets = new JCheckBox(Messages
+                .getString("CommonSettingsDialog.showMapsheets")); //$NON-NLS-1$
         tempPanel.add(showMapsheets);
         return tempPanel;
     }
 
     /**
-     * Display the current settings in this dialog.
-     * <p/>
-     * Overrides <code>Dialog#setVisible(boolean)</code>.
+     * Display the current settings in this dialog. <p/> Overrides
+     * <code>Dialog#setVisible(boolean)</code>.
      */
     public void setVisible(boolean visible) {
         GUIPreferences gs = GUIPreferences.getInstance();
@@ -370,8 +380,8 @@ public class CommonSettingsDialog extends ClientDialog
         // Select the correct char set (give a nice default to start).
         unitStartChar.setSelectedIndex(0);
         for (int loop = 0; loop < unitStartChar.getItemCount(); loop++) {
-            if (((String) unitStartChar.getItemAt(loop)).charAt(0) ==
-                    PreferenceManager.getClientPreferences().getUnitStartChar()) {
+            if (((String) unitStartChar.getItemAt(loop)).charAt(0) == PreferenceManager
+                    .getClientPreferences().getUnitStartChar()) {
                 unitStartChar.setSelectedIndex(loop);
                 break;
             }
@@ -389,8 +399,8 @@ public class CommonSettingsDialog extends ClientDialog
         keepGameLog.setSelected(cs.keepGameLog());
         gameLogFilename.setEnabled(keepGameLog.isSelected());
         gameLogFilename.setText(cs.getGameLogFilename());
-        //gameLogMaxSize.setEnabled(keepGameLog.isSelected());
-        //gameLogMaxSize.setText( Integer.toString(cs.getGameLogMaxSize()) );
+        // gameLogMaxSize.setEnabled(keepGameLog.isSelected());
+        // gameLogMaxSize.setText( Integer.toString(cs.getGameLogMaxSize()) );
         stampFilenames.setSelected(cs.stampFilenames());
         stampFormat.setEnabled(stampFilenames.isSelected());
         stampFormat.setText(cs.getStampFormat());
@@ -410,12 +420,12 @@ public class CommonSettingsDialog extends ClientDialog
 
         showMapsheets.setSelected(gs.getShowMapsheets());
 
-        File dir = new File("data" + File.separator +
-                "images" +
-                File.separator + "hexes" + File.separator);
+        File dir = new File("data" + File.separator + "images" + File.separator
+                + "hexes" + File.separator);
         tileSets = dir.listFiles(new FilenameFilter() {
             public boolean accept(File direc, String name) {
-                if (name.endsWith(".tileset")) return true;
+                if (name.endsWith(".tileset"))
+                    return true;
                 return false;
             }
         });
@@ -456,7 +466,8 @@ public class CommonSettingsDialog extends ClientDialog
         gs.setSoundMute(soundMute.isSelected());
         gs.setShowMapHexPopup(showMapHexPopup.isSelected());
         gs.setTooltipDelay(Integer.parseInt(tooltipDelay.getText()));
-        cs.setUnitStartChar(((String) unitStartChar.getSelectedItem()).charAt(0));
+        cs.setUnitStartChar(((String) unitStartChar.getSelectedItem())
+                .charAt(0));
 
         gs.setRightDragScroll(rightDragScroll.isSelected());
         gs.setCtlScroll(ctlScroll.isSelected());
@@ -472,7 +483,7 @@ public class CommonSettingsDialog extends ClientDialog
 
         cs.setKeepGameLog(keepGameLog.isSelected());
         cs.setGameLogFilename(gameLogFilename.getText());
-        //cs.setGameLogMaxSize(Integer.parseInt(gameLogMaxSize.getText()));
+        // cs.setGameLogMaxSize(Integer.parseInt(gameLogMaxSize.getText()));
         cs.setStampFilenames(stampFilenames.isSelected());
         cs.setStampFormat(stampFormat.getText());
 
@@ -480,22 +491,23 @@ public class CommonSettingsDialog extends ClientDialog
         cs.setUseAverageSkills(useAverageSkills.isSelected());
         cs.setShowUnitId(showUnitId.isSelected());
 
-        cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale.getSelectedIndex()]);
+        cs.setLocale(CommonSettingsDialog.LOCALE_CHOICES[displayLocale
+                .getSelectedIndex()]);
 
         gs.setChatloungeTabs(chatloungeTabs.isSelected());
         gs.setShowMapsheets(showMapsheets.isSelected());
 
         if (tileSetChoice.getSelectedIndex() >= 0)
-            cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()].getName());
+            cs.setMapTileset(tileSets[tileSetChoice.getSelectedIndex()]
+                    .getName());
 
         setVisible(false);
     }
 
     /**
-     * Handle the player pressing the action buttons.
-     * <p/>
-     * Implements the <code>ActionListener</code> interface.
-     *
+     * Handle the player pressing the action buttons. <p/> Implements the
+     * <code>ActionListener</code> interface.
+     * 
      * @param event - the <code>ActionEvent</code> that initiated this call.
      */
     public void actionPerformed(ActionEvent event) {
@@ -508,17 +520,16 @@ public class CommonSettingsDialog extends ClientDialog
     }
 
     /**
-     * Handle the player clicking checkboxes.
-     * <p/>
-     * Implements the <code>ItemListener</code> interface.
-     *
+     * Handle the player clicking checkboxes. <p/> Implements the
+     * <code>ItemListener</code> interface.
+     * 
      * @param event - the <code>ItemEvent</code> that initiated this call.
      */
     public void itemStateChanged(ItemEvent event) {
         Object source = event.getItemSelectable();
         if (source.equals(keepGameLog)) {
             gameLogFilename.setEnabled(keepGameLog.isSelected());
-            //gameLogMaxSize.setEnabled(keepGameLog.isSelected());
+            // gameLogMaxSize.setEnabled(keepGameLog.isSelected());
         } else if (source.equals(stampFilenames)) {
             stampFormat.setEnabled(stampFilenames.isSelected());
         }
@@ -528,7 +539,9 @@ public class CommonSettingsDialog extends ClientDialog
     }
 
     public void focusLost(FocusEvent e) {
-        GUIPreferences.getInstance().setValue("Advanced" + keys.getModel().getElementAt(keysIndex), value.getText());
+        GUIPreferences.getInstance().setValue(
+                "Advanced" + keys.getModel().getElementAt(keysIndex),
+                value.getText());
     }
 
     private JPanel getAdvancedSettingsPanel() {
@@ -553,7 +566,8 @@ public class CommonSettingsDialog extends ClientDialog
 
     public void valueChanged(ListSelectionEvent event) {
         if (event.getSource().equals(keys)) {
-            value.setText(GUIPreferences.getInstance().getString("Advanced" + keys.getSelectedValue()));
+            value.setText(GUIPreferences.getInstance().getString(
+                    "Advanced" + keys.getSelectedValue()));
             keysIndex = keys.getSelectedIndex();
         }
     }

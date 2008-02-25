@@ -14,25 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.swing.util.ImageFileFactory;
-import megamek.client.ui.swing.util.PlayerColors;
-import megamek.common.Player;
-import megamek.common.util.DirectoryItems;
-
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -52,20 +33,37 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+
+import megamek.client.ui.swing.util.ImageFileFactory;
+import megamek.client.ui.swing.util.PlayerColors;
+import megamek.common.Player;
+import megamek.common.util.DirectoryItems;
+
 /**
  * This dialog allows players to select the camo pattern (or color) used by
- * their units during the game.  It automatically fills itself with all the
- * color choices in <code>Settings</code> and all the camo patterns in the
- * "data/iamges/camo" directory tree.
- * <p/>
- * Created on January 19, 2004
- *
+ * their units during the game. It automatically fills itself with all the color
+ * choices in <code>Settings</code> and all the camo patterns in the
+ * "data/iamges/camo" directory tree. <p/> Created on January 19, 2004
+ * 
  * @author James Damour
  * @version 1
  */
 public class CamoChoiceDialog extends JDialog implements ActionListener,
-        ItemListener,
-        ItemSelectable, ListSelectionListener {
+        ItemListener, ItemSelectable, ListSelectionListener {
 
     /**
      * 
@@ -132,9 +130,9 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
 
     /**
      * A helper function to fill the list with items in the selected category.
-     *
-     * @param category - the <code>String</code> name of the category
-     *                 whose items should be displayed.
+     * 
+     * @param category - the <code>String</code> name of the category whose
+     *            items should be displayed.
      */
     void fillList(String category) {
 
@@ -162,7 +160,8 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
 
             // Get the camo names for this category.
             while (camoNames.hasNext()) {
-                ((DefaultListModel) items.getModel()).addElement(camoNames.next());
+                ((DefaultListModel) items.getModel()).addElement(camoNames
+                        .next());
             }
         }
 
@@ -178,18 +177,17 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     }
 
     /**
-     * A helper function to assign values for the previously selected camo.
-     * This function will also set the "keep old camo" button's image.
-     * Please note, if the specified selection does not exist, or if there
-     * is an error when generating the selection's image, the values won't
-     * change.
-     *
-     * @param category - the <code>String</code> category name.
-     *                 This value must be one of the categories from the
-     *                 <code>DirectoryItems</code>.
-     * @param item     - the <code>String</code> name of the item.
-     *                 This value must be one of the items in the named
-     *                 category from <code>DirectoryItems</code>.
+     * A helper function to assign values for the previously selected camo. This
+     * function will also set the "keep old camo" button's image. Please note,
+     * if the specified selection does not exist, or if there is an error when
+     * generating the selection's image, the values won't change.
+     * 
+     * @param category - the <code>String</code> category name. This value
+     *            must be one of the categories from the
+     *            <code>DirectoryItems</code>.
+     * @param item - the <code>String</code> name of the item. This value must
+     *            be one of the items in the named category from
+     *            <code>DirectoryItems</code>.
      */
     /* package */
     private void setPrevSelection(String category, String item) {
@@ -230,20 +228,26 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
             } catch (Exception err) {
                 // Print the stack trace and display the message.
                 err.printStackTrace();
-                JOptionPane.showMessageDialog(frame, err.getMessage(), Messages.getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                JOptionPane
+                        .showMessageDialog(
+                                frame,
+                                err.getMessage(),
+                                Messages
+                                        .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         }
     }
 
     /**
      * Create a dialog that allows players to choose a camo pattern.
-     *
+     * 
      * @param parent - the <code>Frame</code> that displays this dialog.
      */
     public CamoChoiceDialog(JFrame parent) {
 
         // Initialize our superclass and record our parent frame.
-        super(parent, Messages.getString("CamoChoiceDialog.select_camo_pattern"), true); //$NON-NLS-1$
+        super(parent, Messages
+                .getString("CamoChoiceDialog.select_camo_pattern"), true); //$NON-NLS-1$
         frame = parent;
 
         // Declare local variables.
@@ -264,7 +268,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
                 close();
             }
         });
-        
+
         // Use a border layout.
         getContentPane().setLayout(new BorderLayout());
 
@@ -277,7 +281,7 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         categories = new JComboBox();
         panel.add(categories, layout);
 
-        // Fill the pulldown.  Include the "no camo" category.
+        // Fill the pulldown. Include the "no camo" category.
         // Make sure the "no camo" and "root camo" are at top.
         // Only add the "root camo" category if it contains items.
         categories.addItem(Player.NO_CAMO);
@@ -336,7 +340,8 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         layout.gridy++;
 
         // Add a label for the "keep old camo" button.
-        panel.add(new JLabel(Messages.getString("CamoChoiceDialog.keep_old_camo")), layout); //$NON-NLS-1$
+        panel.add(new JLabel(Messages
+                .getString("CamoChoiceDialog.keep_old_camo")), layout); //$NON-NLS-1$
         layout.gridy++;
 
         // Create the "keep old camo" button.
@@ -361,7 +366,8 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         layout.gridy++;
 
         // Add a label for the "select new camo" button.
-        panel.add(new JLabel(Messages.getString("CamoChoiceDialog.select_new_camo")), layout); //$NON-NLS-1$
+        panel.add(new JLabel(Messages
+                .getString("CamoChoiceDialog.select_new_camo")), layout); //$NON-NLS-1$
         layout.gridy++;
 
         // Create the "select new camo" button.
@@ -376,9 +382,8 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         KeyAdapter enterAdapter = new KeyAdapter() {
             public void keyPressed(KeyEvent event) {
                 if (event.getKeyCode() == KeyEvent.VK_ENTER) {
-                    actionPerformed
-                            (new ActionEvent(select, event.getID(),
-                                    select.getActionCommand()));
+                    actionPerformed(new ActionEvent(select, event.getID(),
+                            select.getActionCommand()));
                 }
             }
         };
@@ -396,10 +401,9 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     }
 
     /**
-     * Handle the "select new camo" button's action.
-     * <p/>
-     * Implements <code>ActionListener</code>.
-     *
+     * Handle the "select new camo" button's action. <p/> Implements
+     * <code>ActionListener</code>.
+     * 
      * @param event - the <code>ActionEvent</code> that was invoked.
      */
     public void actionPerformed(ActionEvent event) {
@@ -418,17 +422,17 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
                 // Get the Image.
                 Image image = null;
                 Image[] array = (Image[]) getSelectedObjects();
-                if (array != null) image = array[0];
+                if (array != null)
+                    image = array[0];
 
                 // Create an ItemEvent for the change.
-                ItemEvent alert = new ItemEvent
-                        (this, event.getID(), image, ItemEvent.ITEM_STATE_CHANGED);
+                ItemEvent alert = new ItemEvent(this, event.getID(), image,
+                        ItemEvent.ITEM_STATE_CHANGED);
 
                 // Alert the listeners.
                 Enumeration<ItemListener> alerts = listeners.elements();
                 while (alerts.hasMoreElements()) {
-                    alerts.nextElement()
-                            .itemStateChanged(alert);
+                    alerts.nextElement().itemStateChanged(alert);
                 }
 
             } // End have-listeners
@@ -462,7 +466,8 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
                     }
                 }
             }
-            if (colorInd == -1) return;
+            if (colorInd == -1)
+                return;
             select.setIcon(null);
             select.setBackground(PlayerColors.getColor(colorInd));
             return;
@@ -490,28 +495,34 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         } catch (Exception err) {
             // Print the stack trace and display the message.
             err.printStackTrace();
-            JOptionPane.showMessageDialog(frame, err.getMessage(), Messages.getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            err.getMessage(),
+                            Messages
+                                    .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         }
     }
 
     /**
-     * Get the most recently selected (and confirmed) image.  The player
-     * must click the "select new camo" button to change this value.
-     * <p/>
-     * Implements <code>ItemSelectable</code>.
-     *
-     * @return If the player has selected from the "no camo" category,
-     *         or if an error occurs in getting the selected image,
-     *         a <code>null</code> is returned.  Otherwise, the array
-     *         will contain a single <code>Image</code>.
+     * Get the most recently selected (and confirmed) image. The player must
+     * click the "select new camo" button to change this value. <p/> Implements
+     * <code>ItemSelectable</code>.
+     * 
+     * @return If the player has selected from the "no camo" category, or if an
+     *         error occurs in getting the selected image, a <code>null</code>
+     *         is returned. Otherwise, the array will contain a single
+     *         <code>Image</code>.
      */
     public Object[] getSelectedObjects() {
 
         // Update the prev selection.
-        setPrevSelection((String) categories.getSelectedItem(), (String) items.getSelectedValue());
+        setPrevSelection((String) categories.getSelectedItem(), (String) items
+                .getSelectedValue());
 
         // Return a null if the "no camo" category is selected.
-        if (Player.NO_CAMO.equals(prevCat)) return null;
+        if (Player.NO_CAMO.equals(prevCat))
+            return null;
 
         // Try to get the selected camo's Image.
         // Don't forget to translate the ROOT_CAMO.
@@ -525,9 +536,15 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
         } catch (Exception err) {
             // Print the stack trace and display the message.
             err.printStackTrace();
-            JOptionPane.showMessageDialog(frame, err.getMessage(), Messages.getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            err.getMessage(),
+                            Messages
+                                    .getString("CamoChoiceDialog.error_getting_camo"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
         }
-        if (image == null) return null;
+        if (image == null)
+            return null;
 
         // Return an array containing the image.
         Image[] ret = new Image[1];
@@ -536,11 +553,9 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     }
 
     /**
-     * Add an <code>ItemListener</code> that wants to be alerted when a
-     * new camo is selected.
-     * <p/>
-     * Implements <code>ItemSelectable</code>.
-     *
+     * Add an <code>ItemListener</code> that wants to be alerted when a new
+     * camo is selected. <p/> Implements <code>ItemSelectable</code>.
+     * 
      * @param listener - the <code>ItemListener</code> to be alerted.
      */
     public void addItemListener(ItemListener listener) {
@@ -552,11 +567,9 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     }
 
     /**
-     * Remove an <code>ItemListener</code> that wants to stop be alerted
-     * when a new camo is selected.
-     * <p/>
-     * Implements <code>ItemSelectable</code>.
-     *
+     * Remove an <code>ItemListener</code> that wants to stop be alerted when
+     * a new camo is selected. <p/> Implements <code>ItemSelectable</code>.
+     * 
      * @param listener - the <code>ItemListener</code> to be alerted.
      */
     public void removeItemListener(ItemListener listener) {
@@ -565,21 +578,21 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
 
     /**
      * Get the selected category.
-     *
+     * 
      * @return the <code>String</code> name of the most recently selected
-     *         category.  This value will not be <code>null</code>.
+     *         category. This value will not be <code>null</code>.
      */
     public String getCategory() {
         return prevCat;
     }
 
     /**
-     * Get the selected item's name.  If the most recently selected category
-     * is <code>Player.NO_CAMO</code>, then the item named is a color from
+     * Get the selected item's name. If the most recently selected category is
+     * <code>Player.NO_CAMO</code>, then the item named is a color from
      * <code>Player.colorNames</code>.
-     *
+     * 
      * @return the <code>String</code> name of the most recently selected
-     *         item.  This value will not be <code>null</code>.
+     *         item. This value will not be <code>null</code>.
      */
     public String getItemName() {
         return prevItem;
@@ -587,10 +600,10 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
 
     /**
      * Set the selected category.
-     *
-     * @param category - the <code>String</code> name of the desired
-     *                 category.  This value may be <code>null</code>.  If no
-     *                 match is found, the category will not change.
+     * 
+     * @param category - the <code>String</code> name of the desired category.
+     *            This value may be <code>null</code>. If no match is found,
+     *            the category will not change.
      */
     public void setCategory(String category) {
 
@@ -625,10 +638,10 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
 
     /**
      * Set the selected item in the currently-selected category.
-     *
-     * @param item - the <code>String</code> name of the desired item.
-     *             This value may be <code>null</code>.  If no match is
-     *             found, the item selection will not change.
+     * 
+     * @param item - the <code>String</code> name of the desired item. This
+     *            value may be <code>null</code>. If no match is found, the
+     *            item selection will not change.
      */
     public void setItemName(String item) {
 
@@ -647,15 +660,14 @@ public class CamoChoiceDialog extends JDialog implements ActionListener,
     }
 
     /**
-     * Show the dialog.  Make sure that all selections have been applied.
-     * <p/>
+     * Show the dialog. Make sure that all selections have been applied. <p/>
      * Overrides <code>Dialog#setVisible(boolean)</code>.
      */
     public void setVisible(boolean visible) {
 
         // Make sure the "keep" button is set correctly.
-        setPrevSelection((String) categories.getSelectedItem(),
-                (String) items.getSelectedValue());
+        setPrevSelection((String) categories.getSelectedItem(), (String) items
+                .getSelectedValue());
 
         // Make sure the "select" button is set correctly.
         updateButton();

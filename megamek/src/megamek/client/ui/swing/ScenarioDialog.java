@@ -59,9 +59,12 @@ public class ScenarioDialog extends JDialog implements ActionListener {
             curPlayer.setColorIndex(x);
             m_labels[x] = new JLabel(pa[x].getName(), SwingConstants.LEFT);
             m_typeChoices[x] = new JComboBox();
-            m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.me")); //$NON-NLS-1$
-            m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.otherh")); //$NON-NLS-1$
-            m_typeChoices[x].addItem(Messages.getString("MegaMek.ScenarioDialog.bot")); //$NON-NLS-1$
+            m_typeChoices[x].addItem(Messages
+                    .getString("MegaMek.ScenarioDialog.me")); //$NON-NLS-1$
+            m_typeChoices[x].addItem(Messages
+                    .getString("MegaMek.ScenarioDialog.otherh")); //$NON-NLS-1$
+            m_typeChoices[x].addItem(Messages
+                    .getString("MegaMek.ScenarioDialog.bot")); //$NON-NLS-1$
             final Color defaultBackground = m_typeChoices[x].getBackground();
             m_camoButtons[x] = new JButton();
             final JButton curButton = m_camoButtons[x];
@@ -85,12 +88,14 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                     }
                     if (player.getCamoFileName() == null) {
                         dialog.setCategory(Player.NO_CAMO);
-                        dialog.setItemName(Player.colorNames[player.getColorIndex()]);
+                        dialog.setItemName(Player.colorNames[player
+                                .getColorIndex()]);
                     } else {
                         dialog.setCategory(player.getCamoCategory());
                         dialog.setItemName(player.getCamoFileName());
                     }
-                    prevListener = new CamoChoiceListener(dialog, button, background, player);
+                    prevListener = new CamoChoiceListener(dialog, button,
+                            background, player);
                     dialog.addItemListener(prevListener);
                     dialog.setVisible(true);
                 }
@@ -99,8 +104,10 @@ public class ScenarioDialog extends JDialog implements ActionListener {
         getContentPane().setLayout(new BorderLayout());
         JPanel choicePanel = new JPanel();
         choicePanel.setLayout(new GridLayout(pa.length + 1, 0));
-        choicePanel.add(new JLabel(Messages.getString("MegaMek.ScenarioDialog.pNameType"))); //$NON-NLS-1$
-        choicePanel.add(new JLabel(Messages.getString("MegaMek.ScenarioDialog.Camo"))); //$NON-NLS-1$
+        choicePanel.add(new JLabel(Messages
+                .getString("MegaMek.ScenarioDialog.pNameType"))); //$NON-NLS-1$
+        choicePanel.add(new JLabel(Messages
+                .getString("MegaMek.ScenarioDialog.Camo"))); //$NON-NLS-1$
         for (int x = 0; x < pa.length; x++) {
             JPanel typePanel = new JPanel();
             typePanel.setLayout(new GridLayout(0, 1));
@@ -123,8 +130,9 @@ public class ScenarioDialog extends JDialog implements ActionListener {
         getContentPane().add(butPanel, BorderLayout.SOUTH);
         pack();
         setResizable(false);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
-                frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2
+                - getSize().width / 2, frame.getLocation().y
+                + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -134,7 +142,14 @@ public class ScenarioDialog extends JDialog implements ActionListener {
                 playerTypes[x] = m_typeChoices[x].getSelectedIndex();
                 if (playerTypes[x] == T_ME) {
                     if (bMeSet) {
-                        JOptionPane.showMessageDialog(m_frame, Messages.getString("MegaMek.ScenarioErrorAllert.message"), Messages.getString("MegaMek.ScenarioErrorAllert.title"), JOptionPane.ERROR_MESSAGE);
+                        JOptionPane
+                                .showMessageDialog(
+                                        m_frame,
+                                        Messages
+                                                .getString("MegaMek.ScenarioErrorAllert.message"),
+                                        Messages
+                                                .getString("MegaMek.ScenarioErrorAllert.title"),
+                                        JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     bMeSet = true;

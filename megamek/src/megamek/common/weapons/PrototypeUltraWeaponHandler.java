@@ -28,27 +28,32 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class PrototypeUltraWeaponHandler extends UltraWeaponHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6441106275439235564L;
 
     /**
      * @param t
      * @param w
      * @param g
      */
-    public PrototypeUltraWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+    public PrototypeUltraWeaponHandler(ToHitData t, WeaponAttackAction w,
+            IGame g, Server s) {
         super(t, w, g, s);
     }
- 
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll <= 4 && howManyShots == 2) {
-            r = new Report(); 
+            r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
             if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {

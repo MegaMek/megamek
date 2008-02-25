@@ -18,25 +18,24 @@ package megamek.debug;
  * A set of assert methods.
  */
 public class Assert {
-    
+
     /**
      * Don't allow creating instances, since it's static class
-     *
      */
-    protected Assert() {    
+    protected Assert() {
     }
 
     /**
-     * Asserts that a condition is true. If it isn't it throws
-     * an AssertionFailedError.
+     * Asserts that a condition is true. If it isn't it throws an
+     * AssertionFailedError.
      */
     public static void assertTrue(boolean condition) {
         assertTrue(condition, null);
     }
 
     /**
-     * Asserts that a condition is true. If it isn't it throws
-     * an AssertionFailedError with the given message.
+     * Asserts that a condition is true. If it isn't it throws an
+     * AssertionFailedError with the given message.
      */
     public static void assertTrue(boolean condition, String message) {
         if (!condition)
@@ -57,5 +56,4 @@ public class Assert {
         throw new AssertionFailedError(message);
     }
 
-    
 }

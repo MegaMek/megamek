@@ -38,7 +38,7 @@ public class TintFilter extends RGBImageFilter {
         if (alpha != 0xff000000) {
             return 0;
         }
-        final int black = (RGB) & 0xff;  // assume black & white
+        final int black = (RGB) & 0xff; // assume black & white
         // alter pixel to tint
         int red = (int) Math.round(cred * black);
         int green = (int) Math.round(cgreen * black);

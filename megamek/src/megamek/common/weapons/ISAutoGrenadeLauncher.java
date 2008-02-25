@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISAutoGrenadeLauncher extends Weapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5514157095037913844L;
 
     public ISAutoGrenadeLauncher() {
         super();
@@ -48,7 +52,7 @@ public class ISAutoGrenadeLauncher extends Weapon {
         this.bv = 1;
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

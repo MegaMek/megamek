@@ -72,7 +72,7 @@ public class PMPicPolygonalArea extends PMGenericHotArea {
         }
     }
 
-    //PMElement interface methods
+    // PMElement interface methods
     public void translate(int x, int y) {
         areaShape.translate(x, y);
     }
@@ -82,7 +82,8 @@ public class PMPicPolygonalArea extends PMGenericHotArea {
     }
 
     public void drawInto(Graphics g) {
-        if ((g == null) || (!visible)) return;
+        if ((g == null) || (!visible))
+            return;
         Rectangle r = getBounds();
         if (selected) {
             g.drawImage(activeImage, r.x, r.y, null);
@@ -96,19 +97,21 @@ public class PMPicPolygonalArea extends PMGenericHotArea {
         visible = v;
     }
 
-    //PMHotArea interface methods
+    // PMHotArea interface methods
     public Shape getAreaShape() {
         return this.areaShape;
     }
 
     public void onMouseOver(MouseEvent e) {
-        if (highlight) selected = true;
+        if (highlight)
+            selected = true;
         super.onMouseOver(e);
 
     }
 
     public void onMouseExit(MouseEvent e) {
-        if (highlight) selected = false;
+        if (highlight)
+            selected = false;
         super.onMouseExit(e);
     }
 

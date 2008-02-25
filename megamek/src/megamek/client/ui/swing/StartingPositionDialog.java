@@ -46,7 +46,7 @@ import megamek.common.Player;
 
 /**
  * The starting position dialog allows the player to select a starting position.
- *
+ * 
  * @author Ben
  */
 public class StartingPositionDialog extends JDialog implements ActionListener {
@@ -71,7 +71,8 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
      * Creates a new instance of StartingPositionDialog
      */
     public StartingPositionDialog(ClientGUI clientgui) {
-        super(clientgui.frame, Messages.getString("StartingPositionDialog.title"), true); //$NON-NLS-1$
+        super(clientgui.frame, Messages
+                .getString("StartingPositionDialog.title"), true); //$NON-NLS-1$
         client = clientgui.getClient();
         this.clientgui = clientgui;
 
@@ -95,7 +96,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         c.weighty = 1.0;
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        JScrollPane sp = new JScrollPane(lisStartList); 
+        JScrollPane sp = new JScrollPane(lisStartList);
         gridbag.setConstraints(sp, c);
         getContentPane().add(sp);
 
@@ -111,13 +112,17 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(clientgui.frame.getLocation().x + clientgui.frame.getSize().width / 2 - getSize().width / 2,
-                clientgui.frame.getLocation().y + clientgui.frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(clientgui.frame.getLocation().x
+                + clientgui.frame.getSize().width / 2 - getSize().width / 2,
+                clientgui.frame.getLocation().y
+                        + clientgui.frame.getSize().height / 2
+                        - getSize().height / 2);
     }
 
     private void setupStartGrid() {
         for (int i = 0; i < 11; i++) {
-            butStartPos[i] = new JButton(IStartingPositions.START_LOCATION_NAMES[i]);
+            butStartPos[i] = new JButton(
+                    IStartingPositions.START_LOCATION_NAMES[i]);
             butStartPos[i].addActionListener(this);
         }
         panStartButtons.setLayout(new GridLayout(4, 3));
@@ -165,8 +170,10 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
-                ssb.append(IStartingPositions.START_LOCATION_NAMES[player.getStartingPos()]);
-                ((DefaultListModel) lisStartList.getModel()).addElement(ssb.toString());
+                ssb.append(IStartingPositions.START_LOCATION_NAMES[player
+                        .getStartingPos()]);
+                ((DefaultListModel) lisStartList.getModel()).addElement(ssb
+                        .toString());
             }
         }
     }
@@ -174,35 +181,46 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
     public void actionPerformed(ActionEvent ev) {
         for (int i = 0; i < 11; i++) {
             if (ev.getSource().equals(butStartPos[i])) {
-                if (client.game.getOptions().booleanOption("double_blind") &&
-                        client.game.getOptions().booleanOption("exclusive_db_deployment")) {
+                if (client.game.getOptions().booleanOption("double_blind")
+                        && client.game.getOptions().booleanOption(
+                                "exclusive_db_deployment")) {
                     if (i == 0) {
-                        clientgui.doAlertDialog("Starting Position not allowed", "In Double Blind play, you cannot choose 'Any' as starting position.");
+                        clientgui
+                                .doAlertDialog("Starting Position not allowed",
+                                        "In Double Blind play, you cannot choose 'Any' as starting position.");
                         return;
                     }
-                    for (Enumeration e = client.game.getPlayers(); e.hasMoreElements();) {
+                    for (Enumeration e = client.game.getPlayers(); e
+                            .hasMoreElements();) {
                         Player player = (Player) e.nextElement();
                         if (player.getStartingPos() == 0) {
                             continue;
                         }
                         // check for overlapping starting directions
-                        if ((player.getStartingPos() == i ||
-                                player.getStartingPos() + 1 == i ||
-                                player.getStartingPos() - 1 == i) &&
-                                player.getId() != client.getLocalPlayer().getId()) {
-                            clientgui.doAlertDialog("Must choose exclusive deployment zone", "When using double blind, each player needs to have an exclusive deployment zone.");
+                        if ((player.getStartingPos() == i
+                                || player.getStartingPos() + 1 == i || player
+                                .getStartingPos() - 1 == i)
+                                && player.getId() != client.getLocalPlayer()
+                                        .getId()) {
+                            clientgui
+                                    .doAlertDialog(
+                                            "Must choose exclusive deployment zone",
+                                            "When using double blind, each player needs to have an exclusive deployment zone.");
                             return;
                         }
                     }
                 }
-                if (client.game.getOptions().booleanOption("deep_deployment") && i > 0 && i <= 9)
+                if (client.game.getOptions().booleanOption("deep_deployment")
+                        && i > 0 && i <= 9)
                     i += 10;
                 client.getLocalPlayer().setStartingPos(i);
                 client.sendPlayerInfo();
                 // If the gameoption set_arty_player_homeedge is set,
-                // set all the player's offboard arty units to be behind the newly
+                // set all the player's offboard arty units to be behind the
+                // newly
                 // selected home edge.
-                if (client.game.getOptions().booleanOption("set_arty_player_homeedge")) { //$NON-NLS-1$
+                if (client.game.getOptions().booleanOption(
+                        "set_arty_player_homeedge")) { //$NON-NLS-1$
                     int direction = IOffBoardDirections.NONE;
                     switch (i) {
                         case 0:
@@ -241,19 +259,24 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                             break;
                         default:
                     }
-                    Enumeration thisPlayerArtyUnits = client.game.getSelectedEntities
-                            (new EntitySelector() {
+                    Enumeration thisPlayerArtyUnits = client.game
+                            .getSelectedEntities(new EntitySelector() {
                                 public boolean accept(Entity entity) {
-                                    if (entity.getOwnerId() == client.getLocalPlayer().getId())
+                                    if (entity.getOwnerId() == client
+                                            .getLocalPlayer().getId())
                                         return true;
                                     return false;
                                 }
                             });
                     while (thisPlayerArtyUnits.hasMoreElements()) {
-                        Entity entity = (Entity) thisPlayerArtyUnits.nextElement();
+                        Entity entity = (Entity) thisPlayerArtyUnits
+                                .nextElement();
                         if (entity.getOffBoardDirection() != IOffBoardDirections.NONE) {
                             if (direction > IOffBoardDirections.NONE) {
-                                entity.setOffBoard(entity.getOffBoardDistance(), direction);
+                                entity
+                                        .setOffBoard(entity
+                                                .getOffBoardDistance(),
+                                                direction);
                             }
                         }
                     }

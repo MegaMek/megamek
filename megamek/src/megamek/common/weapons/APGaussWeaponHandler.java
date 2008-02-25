@@ -28,9 +28,12 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class APGaussWeaponHandler extends AmmoWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 859869643917346042L;
     Mounted ammo;
 
     /**
@@ -38,10 +41,11 @@ public class APGaussWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public APGaussWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public APGaussWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -50,9 +54,8 @@ public class APGaussWeaponHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             return Compute.d6(2);
-        }               
+        }
         return super.calcDamagePerHit();
     }
-
 
 }

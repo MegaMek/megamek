@@ -32,9 +32,13 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISPPCHandler extends EnergyWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5545991061428671743L;
+
     /**
      * @param t
      * @param w
@@ -47,13 +51,14 @@ public class ISPPCHandler extends EnergyWeaponHandler {
 
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         // Resolve roll for disengaged field inhibitors on PPCs, if needed
         if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")
-            && wtype.hasModes()
-            && weapon.curMode().equals("Field Inhibitor OFF") ) {
+                && wtype.hasModes()
+                && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;
             int dieRoll = Compute.d6(2);
             int distance = Compute.effectiveDistance(game, ae, target);
@@ -65,7 +70,7 @@ public class ISPPCHandler extends EnergyWeaponHandler {
             } else if (distance == 1) {
                 rollTarget = 10;
             }
-            //roll to avoid damage
+            // roll to avoid damage
             r = new Report(3175);
             r.subject = ae.getId();
             r.indent();
@@ -78,23 +83,24 @@ public class ISPPCHandler extends EnergyWeaponHandler {
             if (dieRoll < rollTarget) {
                 // Oops, we ruined our day...
                 int wlocation = weapon.getLocation();
-                weapon.setDestroyed (true);
-                for (int i=0; i<ae.getNumberOfCriticals(wlocation); i++) {
-                    CriticalSlot slot1 = ae.getCritical (wlocation, i);
-                    if (slot1 == null || slot1.getType() != CriticalSlot.TYPE_SYSTEM) {
+                weapon.setDestroyed(true);
+                for (int i = 0; i < ae.getNumberOfCriticals(wlocation); i++) {
+                    CriticalSlot slot1 = ae.getCritical(wlocation, i);
+                    if (slot1 == null
+                            || slot1.getType() != CriticalSlot.TYPE_SYSTEM) {
                         continue;
                     }
                     Mounted mounted = ae.getEquipment(slot1.getIndex());
                     if (mounted.equals(weapon)) {
-                        ae.hitAllCriticals(wlocation,i);
+                        ae.hitAllCriticals(wlocation, i);
                     }
                 }
                 // Bug 1066147 : damage is *not* like an ammo explosion,
-                //        but it *does* get applied directly to the IS.
+                // but it *does* get applied directly to the IS.
                 r.choose(false);
                 vPhaseReport.addElement(r);
-                vPhaseReport.addAll(server.damageEntity(ae, 
-                        new HitData(wlocation), 10, false, DamageType.NONE, true));
+                vPhaseReport.addAll(server.damageEntity(ae, new HitData(
+                        wlocation), 10, false, DamageType.NONE, true));
                 r = new Report(3185);
                 r.subject = ae.getId();
                 vPhaseReport.addElement(r);

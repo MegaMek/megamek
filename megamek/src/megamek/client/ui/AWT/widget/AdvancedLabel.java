@@ -14,8 +14,13 @@
 
 package megamek.client.ui.AWT.widget;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 /*
  * Author: Ryan McConnell (oscarmm)
@@ -54,7 +59,8 @@ public class AdvancedLabel extends Component {
         for (int i = 0; i < stringVector.size(); i++) {
             if (colorArray != null)
                 g.setColor(colorArray[i]);
-            g.drawString(stringVector.elementAt(i), leftMargin, lineHeight * (i + 1));
+            g.drawString(stringVector.elementAt(i), leftMargin, lineHeight
+                    * (i + 1));
         }
     }
 
@@ -73,9 +79,10 @@ public class AdvancedLabel extends Component {
         FontMetrics fm = getFontMetrics(getFont());
         lineHeight = fm.getHeight();
         for (int i = 0; i < stringVector.size(); i++) {
-            maxLineWidth = Math.max(maxLineWidth, fm.stringWidth(stringVector.elementAt(i)));
+            maxLineWidth = Math.max(maxLineWidth, fm.stringWidth(stringVector
+                    .elementAt(i)));
         }
-        //ascent = fm.getAscent(); //ascent is never used so I removed it.
+        // ascent = fm.getAscent(); //ascent is never used so I removed it.
         descent = fm.getDescent();
         sized = true;
     }
@@ -89,7 +96,8 @@ public class AdvancedLabel extends Component {
             getSizes();
         }
         int totalWidth = maxLineWidth + leftMargin + rightMargin;
-        int totalHeight = stringVector.size() * lineHeight + stringVector.size() * descent;
+        int totalHeight = stringVector.size() * lineHeight
+                + stringVector.size() * descent;
         Dimension d = new Dimension(totalWidth, totalHeight);
         return d;
     }

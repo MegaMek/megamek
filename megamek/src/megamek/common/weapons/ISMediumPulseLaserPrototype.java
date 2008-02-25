@@ -25,9 +25,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISMediumPulseLaserPrototype extends PulseLaserWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8402915088560062495L;
+
     /**
      * 
      */
@@ -55,7 +59,7 @@ public class ISMediumPulseLaserPrototype extends PulseLaserWeapon {
         this.bv = 48;
         this.cost = 60000;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

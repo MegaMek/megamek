@@ -17,12 +17,10 @@ package megamek.client.ui.swing;
 import javax.swing.JFrame;
 
 /**
- * A (somewhat primitive) dialog that asks a question and lets the user
- * select from the available choices.
- * The question string is tokenised on "\n".
- * <p/>
+ * A (somewhat primitive) dialog that asks a question and lets the user select
+ * from the available choices. The question string is tokenised on "\n". <p/>
  * Based on Confirm
- *
+ * 
  * @author suvarov454@sourceforge.net
  * @version $version: $
  */
@@ -33,26 +31,26 @@ public class SingleChoiceDialog extends ChoiceDialog {
     private static final long serialVersionUID = 3189147678153823244L;
 
     /**
-     * Create a choice dialog.  If no choices are passed in, this will be
-     * a very boring dialog, but it will not suffer an exception.
-     *
-     * @param parent   - the <code>Frame</code> that is locked by this dialog.
-     * @param title    - the title <code>String</code> for this dialog.
-     * @param question - <code>String</code> displayed above the choices.
-     *                 The question string is tokenised on "\n".
-     * @param choices  - an array of <code>String</code>s to be displayed.
+     * Create a choice dialog. If no choices are passed in, this will be a very
+     * boring dialog, but it will not suffer an exception.
+     * 
+     * @param parent - the <code>Frame</code> that is locked by this dialog.
+     * @param title - the title <code>String</code> for this dialog.
+     * @param question - <code>String</code> displayed above the choices. The
+     *            question string is tokenised on "\n".
+     * @param choices - an array of <code>String</code>s to be displayed.
      */
-    public SingleChoiceDialog(JFrame parent, String title,
-                              String question, String[] choices) {
+    public SingleChoiceDialog(JFrame parent, String title, String question,
+            String[] choices) {
         super(parent, title, question, choices, true);
     }
 
     /**
      * Which choice did the user select?
-     *
-     * @return If no choices were available, or if the user canceled the
-     *         choice, a value of -1 is returned, otherwise the index from
-     *         the input array that matches the selected choice is returned.
+     * 
+     * @return If no choices were available, or if the user canceled the choice,
+     *         a value of -1 is returned, otherwise the index from the input
+     *         array that matches the selected choice is returned.
      */
     public int getChoice() {
         int retval = -1;

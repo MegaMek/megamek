@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISLRT20OS extends LRTWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = -8753051336468930345L;
+
+    /**
+     * 
+     */
     public ISLRT20OS() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;
         this.name = "LRT 20 (OS)";
         this.setInternalName(this.name);

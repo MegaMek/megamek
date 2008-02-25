@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLMG extends MGWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2557643305248678454L;
 
     /**
      * 

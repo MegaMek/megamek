@@ -20,6 +20,25 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Component;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageObserver;
+import java.awt.image.ImageProducer;
+import java.awt.image.MemoryImageSource;
+import java.awt.image.PixelGrabber;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+
 import megamek.client.ui.swing.util.ImageFileFactory;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.client.ui.swing.util.RotateFilter;
@@ -37,29 +56,10 @@ import megamek.common.preference.PreferenceChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.DirectoryItems;
 
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-
-import java.awt.Component;
-import java.awt.Image;
-import java.awt.MediaTracker;
-import java.awt.image.FilteredImageSource;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
-import java.awt.image.MemoryImageSource;
-import java.awt.image.PixelGrabber;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * Handles loading and manipulating images from both the mech tileset and the
  * terrain tileset.
- *
+ * 
  * @author Ben
  */
 public class TilesetManager implements IPreferenceChangeListener {
@@ -76,7 +76,8 @@ public class TilesetManager implements IPreferenceChangeListener {
 
     // mech images
     private MechTileset mechTileset = new MechTileset("data/images/units/"); //$NON-NLS-1$
-    private MechTileset wreckTileset = new MechTileset("data/images/units/wrecks/"); //$NON-NLS-1$
+    private MechTileset wreckTileset = new MechTileset(
+            "data/images/units/wrecks/"); //$NON-NLS-1$
     private ArrayList<EntityImage> mechImageList = new ArrayList<EntityImage>();
     private HashMap<Integer, EntityImage> mechImages = new HashMap<Integer, EntityImage>();
 
@@ -112,8 +113,10 @@ public class TilesetManager implements IPreferenceChangeListener {
         }
         mechTileset.loadFromFile("mechset.txt"); //$NON-NLS-1$
         wreckTileset.loadFromFile("wreckset.txt"); //$NON-NLS-1$
-        hexTileset.loadFromFile(PreferenceManager.getClientPreferences().getMapTileset());
-        PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
+        hexTileset.loadFromFile(PreferenceManager.getClientPreferences()
+                .getMapTileset());
+        PreferenceManager.getClientPreferences().addPreferenceChangeListener(
+                this);
     }
 
     public void preferenceChange(PreferenceChangeEvent e) {
@@ -131,13 +134,15 @@ public class TilesetManager implements IPreferenceChangeListener {
     public Image iconFor(Entity entity) {
         EntityImage entityImage = mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
-            // probably double_blind.  Try to load on the fly
-            System.out.println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+            // probably double_blind. Try to load on the fly
+            System.out
+                    .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
-                System.out.println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                System.out
+                        .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
                 return null;
             }
         }
@@ -147,13 +152,15 @@ public class TilesetManager implements IPreferenceChangeListener {
     public Image wreckMarkerFor(Entity entity) {
         EntityImage entityImage = mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
-            // probably double_blind.  Try to load on the fly
-            System.out.println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+            // probably double_blind. Try to load on the fly
+            System.out
+                    .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
-                System.out.println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                System.out
+                        .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
                 return null;
             }
         }
@@ -168,19 +175,21 @@ public class TilesetManager implements IPreferenceChangeListener {
         if (entity instanceof Mech || entity instanceof Protomech) {
             return imageFor(entity, entity.getSecondaryFacing());
         }
-		return imageFor(entity, entity.getFacing());
+        return imageFor(entity, entity.getFacing());
     }
 
     public Image imageFor(Entity entity, int facing) {
         EntityImage entityImage = mechImages.get(new Integer(entity.getId()));
         if (entityImage == null) {
-            // probably double_blind.  Try to load on the fly
-            System.out.println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
+            // probably double_blind. Try to load on the fly
+            System.out
+                    .println("Loading image for " + entity.getShortNameRaw() + " on the fly."); //$NON-NLS-1$ //$NON-NLS-2$
             loadImage(entity);
             entityImage = mechImages.get(new Integer(entity.getId()));
             if (entityImage == null) {
                 // now it's a real problem
-                System.out.println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
+                System.out
+                        .println("Unable to load image for entity: " + entity.getShortNameRaw()); //$NON-NLS-1$
                 return null;
             }
         }
@@ -218,16 +227,20 @@ public class TilesetManager implements IPreferenceChangeListener {
             iMech = nightFog;
 
             int[] pMech = new int[EntityImage.IMG_SIZE];
-            PixelGrabber pgMech = new PixelGrabber(iMech, 0, 0, EntityImage.IMG_WIDTH, EntityImage.IMG_HEIGHT, pMech, 0, EntityImage.IMG_WIDTH);
+            PixelGrabber pgMech = new PixelGrabber(iMech, 0, 0,
+                    EntityImage.IMG_WIDTH, EntityImage.IMG_HEIGHT, pMech, 0,
+                    EntityImage.IMG_WIDTH);
 
             try {
                 pgMech.grabPixels();
             } catch (InterruptedException e) {
-                System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
+                System.err
+                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
                 return image;
             }
             if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
-                System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
+                System.err
+                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
                 return image;
             }
 
@@ -241,7 +254,9 @@ public class TilesetManager implements IPreferenceChangeListener {
                 }
             }
 
-            image = comp.createImage(new MemoryImageSource(EntityImage.IMG_WIDTH, EntityImage.IMG_HEIGHT, pMech, 0, EntityImage.IMG_WIDTH));
+            image = comp.createImage(new MemoryImageSource(
+                    EntityImage.IMG_WIDTH, EntityImage.IMG_HEIGHT, pMech, 0,
+                    EntityImage.IMG_WIDTH));
             ecmShades.put(new Integer(tint), image);
         }
         return image;
@@ -289,29 +304,32 @@ public class TilesetManager implements IPreferenceChangeListener {
                 loadHexImage(hex);
             }
         }
-        
+
         // load all mech images
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             loadImage(i.nextElement());
         }
-        
+
         // load minefield sign
         minefieldSign = comp.getToolkit().getImage(Minefield.IMAGE_FILE);
-        
+
         // load night overlay
         nightFog = comp.getToolkit().getImage(NIGHT_IMAGE_FILE);
-        
-        //load artillery targets
-        artilleryAutohit = comp.getToolkit().getImage(ARTILLERY_AUTOHIT_IMAGE_FILE);
-        artilleryAdjusted = comp.getToolkit().getImage(ARTILLERY_ADJUSTED_IMAGE_FILE);
-        artilleryIncoming = comp.getToolkit().getImage(ARTILLERY_INCOMING_IMAGE_FILE);
+
+        // load artillery targets
+        artilleryAutohit = comp.getToolkit().getImage(
+                ARTILLERY_AUTOHIT_IMAGE_FILE);
+        artilleryAdjusted = comp.getToolkit().getImage(
+                ARTILLERY_ADJUSTED_IMAGE_FILE);
+        artilleryIncoming = comp.getToolkit().getImage(
+                ARTILLERY_INCOMING_IMAGE_FILE);
 
         started = true;
     }
 
     /**
      * Loads the image(s) for this hex into the tracker.
-     *
+     * 
      * @param hex the hex to load
      */
     private synchronized void loadHexImage(IHex hex) {
@@ -321,7 +339,7 @@ public class TilesetManager implements IPreferenceChangeListener {
 
     /**
      * Removes the hex images from the cache.
-     *
+     * 
      * @param hex
      */
     public void clearHex(IHex hex) {
@@ -330,7 +348,7 @@ public class TilesetManager implements IPreferenceChangeListener {
 
     /**
      * Waits until a certain hex's images are done loading.
-     *
+     * 
      * @param hex the hex to wait for
      */
     public synchronized void waitForHex(IHex hex) {
@@ -350,8 +368,7 @@ public class TilesetManager implements IPreferenceChangeListener {
     }
 
     // Loads a preview image of the unit into the BufferedPanel.
-    public void loadPreviewImage(Entity entity, Image camo, int tint,
-                                 JLabel bp) {
+    public void loadPreviewImage(Entity entity, Image camo, int tint, JLabel bp) {
         Image base = mechTileset.imageFor(entity, comp);
         EntityImage entityImage = new EntityImage(base, tint, camo, bp);
         Image preview = entityImage.loadPreviewImage();
@@ -361,7 +378,7 @@ public class TilesetManager implements IPreferenceChangeListener {
         try {
             loadTracker.waitForID(0);
         } catch (InterruptedException e) {
-            //should never come here
+            // should never come here
 
         }
         bp.setIcon(new ImageIcon(preview));
@@ -369,17 +386,17 @@ public class TilesetManager implements IPreferenceChangeListener {
 
     /**
      * Get the camo pattern for the given player.
-     *
+     * 
      * @param player - the <code>Player</code> whose camo pattern is needed.
-     * @return The <code>Image</code> of the player's camo pattern.
-     *         This value will be <code>null</code> if the player has selected
-     *         no camo pattern or if there was an error loading it.
+     * @return The <code>Image</code> of the player's camo pattern. This value
+     *         will be <code>null</code> if the player has selected no camo
+     *         pattern or if there was an error loading it.
      */
     public Image getPlayerCamo(Player player) {
 
         // Return a null if the player has selected no camo file.
-        if (null == player.getCamoCategory() ||
-                Player.NO_CAMO.equals(player.getCamoCategory())) {
+        if (null == player.getCamoCategory()
+                || Player.NO_CAMO.equals(player.getCamoCategory())) {
             return null;
         }
 
@@ -389,7 +406,8 @@ public class TilesetManager implements IPreferenceChangeListener {
 
             // Translate the root camo directory name.
             String category = player.getCamoCategory();
-            if (Player.ROOT_CAMO.equals(category)) category = ""; //$NON-NLS-1$
+            if (Player.ROOT_CAMO.equals(category))
+                category = ""; //$NON-NLS-1$
             camo = (Image) camos.getItem(category, player.getCamoFileName());
 
         } catch (Exception err) {
@@ -466,7 +484,8 @@ public class TilesetManager implements IPreferenceChangeListener {
             this(base, null, tint, camo, comp);
         }
 
-        public EntityImage(Image base, Image wreck, int tint, Image camo, Component comp) {
+        public EntityImage(Image base, Image wreck, int tint, Image camo,
+                Component comp) {
             this.base = base;
             this.tint = tint;
             this.camo = camo;
@@ -479,14 +498,17 @@ public class TilesetManager implements IPreferenceChangeListener {
 
             icon = base.getScaledInstance(56, 48, Image.SCALE_SMOOTH);
             for (int i = 0; i < 6; i++) {
-                ImageProducer rotSource = new FilteredImageSource(base.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
+                ImageProducer rotSource = new FilteredImageSource(base
+                        .getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
                 facings[i] = parent.createImage(rotSource);
             }
 
             if (wreck != null) {
                 wreck = applyColor(wreck);
                 for (int i = 0; i < 6; i++) {
-                    ImageProducer rotSource = new FilteredImageSource(wreck.getSource(), new RotateFilter((Math.PI / 3) * (6 - i)));
+                    ImageProducer rotSource = new FilteredImageSource(wreck
+                            .getSource(), new RotateFilter((Math.PI / 3)
+                            * (6 - i)));
                     wreckFacings[i] = parent.createImage(rotSource);
                 }
             }
@@ -521,29 +543,35 @@ public class TilesetManager implements IPreferenceChangeListener {
 
             int[] pMech = new int[IMG_SIZE];
             int[] pCamo = new int[IMG_SIZE];
-            PixelGrabber pgMech = new PixelGrabber(iMech, 0, 0, IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH);
+            PixelGrabber pgMech = new PixelGrabber(iMech, 0, 0, IMG_WIDTH,
+                    IMG_HEIGHT, pMech, 0, IMG_WIDTH);
 
             try {
                 pgMech.grabPixels();
             } catch (InterruptedException e) {
-                System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
+                System.err
+                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image." + e.getMessage()); //$NON-NLS-1$
                 return image;
             }
             if ((pgMech.getStatus() & ImageObserver.ABORT) != 0) {
-                System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
+                System.err
+                        .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
                 return image;
             }
 
             if (useCamo) {
-                PixelGrabber pgCamo = new PixelGrabber(camo, 0, 0, IMG_WIDTH, IMG_HEIGHT, pCamo, 0, IMG_WIDTH);
+                PixelGrabber pgCamo = new PixelGrabber(camo, 0, 0, IMG_WIDTH,
+                        IMG_HEIGHT, pCamo, 0, IMG_WIDTH);
                 try {
                     pgCamo.grabPixels();
                 } catch (InterruptedException e) {
-                    System.err.println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage()); //$NON-NLS-1$
+                    System.err
+                            .println("EntityImage.applyColor(): Failed to grab pixels for camo image." + e.getMessage()); //$NON-NLS-1$
                     return image;
                 }
                 if ((pgCamo.getStatus() & ImageObserver.ABORT) != 0) {
-                    System.err.println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
+                    System.err
+                            .println("EntityImage.applyColor(): Failed to grab pixels for mech image. ImageObserver aborted."); //$NON-NLS-1$
                     return image;
                 }
             }
@@ -564,11 +592,13 @@ public class TilesetManager implements IPreferenceChangeListener {
                     int green2 = Math.round(green1 * black);
                     int blue2 = Math.round(blue1 * black);
 
-                    pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8) | blue2;
+                    pMech[i] = (alpha << 24) | (red2 << 16) | (green2 << 8)
+                            | blue2;
                 }
             }
 
-            image = parent.createImage(new MemoryImageSource(IMG_WIDTH, IMG_HEIGHT, pMech, 0, IMG_WIDTH));
+            image = parent.createImage(new MemoryImageSource(IMG_WIDTH,
+                    IMG_HEIGHT, pMech, 0, IMG_WIDTH));
             return image;
         }
     }

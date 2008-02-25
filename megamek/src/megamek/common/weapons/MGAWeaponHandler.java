@@ -34,9 +34,12 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class MGAWeaponHandler extends AmmoWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8675420566952393440L;
     int howManyShots;
     HitData hit;
 
@@ -45,8 +48,7 @@ public class MGAWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public MGAWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+    public MGAWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
 
@@ -125,18 +127,21 @@ public class MGAWeaponHandler extends AmmoWeaponHandler {
             super.addHeat();
         }
     }
-    
+
     /*
      * (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
+     *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-            Building bldg, int hits, int nCluster, int nDamPerHit,
-            int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget,
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int nDamPerHit, int bldgAbsorbs) {
         int nDamage;
         if (hit == null)
             hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+                    .getSideTable(), waa.getAimedLocation(), waa
+                    .getAimingMode());
 
         if (!bSalvo) {
             // Each hit in the salvo get's its own hit location.
@@ -162,8 +167,8 @@ public class MGAWeaponHandler extends AmmoWeaponHandler {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding( bldg, toBldg );
-            for (Report report: buildingReport) {
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg);
+            for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
             vPhaseReport.addAll(buildingReport);
@@ -181,9 +186,11 @@ public class MGAWeaponHandler extends AmmoWeaponHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
-            vPhaseReport.addAll(server.damageEntity(
-                    entityTarget, hit, nDamage, false, ae.getSwarmTargetId()==entityTarget.getId()?DamageType.IGNORE_PASSENGER:damageType, false, false,
-                    throughFront));
+            vPhaseReport
+                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                            false, ae.getSwarmTargetId() == entityTarget
+                                    .getId() ? DamageType.IGNORE_PASSENGER
+                                    : damageType, false, false, throughFront));
         }
     }
 }

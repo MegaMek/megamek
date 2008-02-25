@@ -17,21 +17,25 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISSRT2OS extends SRTWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = -1737331597344761915L;
+
+    /**
+     * 
+     */
     public ISSRT2OS() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;
         this.name = "SRT 2 (OS)";
         this.setInternalName("ISSRT2OS");
-        this.addLookupName("ISSRT2 (OS)"); //mtf
-        this.addLookupName("IS SRT 2 (OS)");  //tdb
-        this.addLookupName("OS SRT-2");  //mep
+        this.addLookupName("ISSRT2 (OS)"); // mtf
+        this.addLookupName("IS SRT 2 (OS)"); // tdb
+        this.addLookupName("OS SRT-2"); // mep
         this.heat = 2;
         this.rackSize = 2;
         this.shortRange = 3;

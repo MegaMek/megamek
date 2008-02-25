@@ -17,35 +17,35 @@ package megamek.client.bot.ga;
 import java.util.Arrays;
 
 public abstract class GA {
-    final double mutationProb; //probability of a mutation occuring during genetic
-    // mating. For example, 0.03 means 3% chance
-    final int maxGenerations; //maximum generations to evolve
+    final double mutationProb; // probability of a mutation occuring during
+                               // genetic mating. For example, 0.03 means 3% chance
+    final int maxGenerations; // maximum generations to evolve
     final double randomSelectionChance;
-    final double crossoverProb; //probability that a crossover will occur during
+    final double crossoverProb; // probability that a crossover will occur
+                                // during
     // genetic mating
-    final protected int chromosomeDim; //dimension of chromosome (number of genes)
-    final protected int populationDim; 
-    final protected Chromosome[] chromosomes; 
+    final protected int chromosomeDim; // dimension of chromosome (number of
+                                        // genes)
+    final protected int populationDim;
+    final protected Chromosome[] chromosomes;
     Chromosome[] chromNextGen;
-    double[] genAvgDeviation; //statistics--average deviation of current
-    double[] genAvgFitness; //statistics--average fitness of current
+    double[] genAvgDeviation; // statistics--average deviation of current
+    double[] genAvgFitness; // statistics--average fitness of current
     protected final int best;
 
     abstract protected void initPopulation();
+
     abstract protected void doRandomMutation(int index);
+
     abstract protected double getFitness(int index);
-    
+
     protected void doHeuristicPass() {
-        //no default
+        // no default
     }
 
-    public GA(
-        int chromosomeDim,
-        int populationDim,
-        double crossoverProb,
-        double randomSelectionChance,
-        int maxGenerations,
-        double mutationProb) {
+    public GA(int chromosomeDim, int populationDim, double crossoverProb,
+            double randomSelectionChance, int maxGenerations,
+            double mutationProb) {
         this.randomSelectionChance = randomSelectionChance;
         this.chromosomeDim = chromosomeDim;
         this.populationDim = populationDim;
@@ -83,7 +83,7 @@ public abstract class GA {
     }
 
     protected void doExhaustiveSearch() {
-        //TODO: add something here
+        // TODO: add something here
     }
 
     public int evolve() {
@@ -106,11 +106,11 @@ public abstract class GA {
                 this.doHeuristicPass();
             }
 
-            if (//test for improvement and convergence
-             (iGen > 5)
-                && (getESquared() - (genAvgFitness[iGen] * genAvgFitness[iGen])
-                    < .2 * genAvgFitness[iGen])
-                && (genAvgFitness[iGen] - genAvgFitness[iGen - 1] <= 0)) {
+            if (// test for improvement and convergence
+            (iGen > 5)
+                    && (getESquared()
+                            - (genAvgFitness[iGen] * genAvgFitness[iGen]) < .2 * genAvgFitness[iGen])
+                    && (genAvgFitness[iGen] - genAvgFitness[iGen - 1] <= 0)) {
                 converged = true;
             }
             iGen++;
@@ -131,7 +131,8 @@ public abstract class GA {
     protected double getESquared() {
         double square_sum = 0;
         for (int i = 0; i < populationDim; i++) {
-            square_sum += this.chromosomes[i].fitness * this.chromosomes[i].fitness;
+            square_sum += this.chromosomes[i].fitness
+                    * this.chromosomes[i].fitness;
         }
         return (square_sum / populationDim);
     }
@@ -148,7 +149,8 @@ public abstract class GA {
                 if (index == parents[0]) {
                     continue;
                 }
-                if (randomSelectionChance > getRandom(1.0) || index + 1 > getRandom(populationDim)) {
+                if (randomSelectionChance > getRandom(1.0)
+                        || index + 1 > getRandom(populationDim)) {
                     parents[i] = index;
                     found = true;
                 }
@@ -166,7 +168,7 @@ public abstract class GA {
 
     void doGeneticMating() {
         int max = populationDim - 1;
-        for (int i = 0; i < max; i+=2) {
+        for (int i = 0; i < max; i += 2) {
             int indexes[] = selectTwoParents();
 
             chromNextGen[i].copyChromGenes(chromosomes[indexes[0]]);
@@ -178,7 +180,7 @@ public abstract class GA {
         }
         chromNextGen[populationDim - 1].copyChromGenes(chromosomes[best]);
     }
-    
+
     void copyNextGenToThisGen() {
         for (int i = 0; i < populationDim; i++) {
             this.chromosomes[i].copyChromGenes(this.chromNextGen[i]);

@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class CLSRM6OS extends SRMWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = 5184043200202465163L;
+
+    /**
+     * 
+     */
     public CLSRM6OS() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_CLAN_LEVEL_2;
         this.name = "SRM 6 (OS)";
         this.setInternalName("CLSRM6 (OS)");

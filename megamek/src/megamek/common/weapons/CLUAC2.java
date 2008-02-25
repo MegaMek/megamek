@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLUAC2 extends UACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7982946203794957045L;
+
     /**
      * 
      */
@@ -40,7 +44,7 @@ public class CLUAC2 extends UACWeapon {
         this.shortRange = 9;
         this.mediumRange = 18;
         this.longRange = 27;
-        this.extremeRange = 36; 
+        this.extremeRange = 36;
         this.tonnage = 5.0f;
         this.criticals = 2;
         this.bv = 62;

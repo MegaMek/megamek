@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-
 import java.util.Vector;
 
 import megamek.common.BattleArmor;
@@ -31,39 +30,47 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class InfantryMGHandler extends InfantryWeaponHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1502160583884886059L;
 
     /**
      * @param t
      * @param w
      * @param g
      */
-    public InfantryMGHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public InfantryMGHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
-        damage = new int[] {1,1,2,2,3,3,4,4,5,6,6,7,7,8,8,9,10,10,11,11,12,12,13,13,14,15,15,16,16,17};
+        damage = new int[] { 1, 1, 2, 2, 3, 3, 4, 4, 5, 6, 6, 7, 7, 8, 8, 9,
+                10, 10, 11, 11, 12, 12, 13, 13, 14, 15, 15, 16, 16, 17 };
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets an extra d6 damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            int troopersHit =  Compute.missilesHit(((Infantry)ae).getShootingStrength());
+            int troopersHit = Compute.missilesHit(((Infantry) ae)
+                    .getShootingStrength());
             r = new Report(3325);
             r.subject = subjectId;
             r.add(troopersHit);
             r.add(" troopers ");
-            int toReturn = damage[troopersHit-1]+Compute.d6();
-            r.add(toHit.getTableDesc()+", causing "+toReturn+ "damage.");
+            int toReturn = damage[troopersHit - 1] + Compute.d6();
+            r.add(toHit.getTableDesc() + ", causing " + toReturn + "damage.");
             r.newlines = 0;
             vPhaseReport.addElement(r);
             return toReturn;
-        }
-        else return super.calcHits(vPhaseReport);
+        } else
+            return super.calcHits(vPhaseReport);
     }
 
 }

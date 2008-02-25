@@ -25,7 +25,6 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public abstract class VehicleFlamerWeapon extends AmmoWeapon {
     /**
@@ -44,8 +43,8 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
         if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())
                 .curMode().equals("Heat"))) {
             return new VehicleFlamerHeatHandler(toHit, waa, game, server);
-        } else if ((game.getEntity(waa.getEntityId()).getEquipment(waa.getWeaponId())
-                .curMode().equals("Cool"))) {
+        } else if ((game.getEntity(waa.getEntityId()).getEquipment(
+                waa.getWeaponId()).curMode().equals("Cool"))) {
             return new VehicleFlamerCoolHandler(toHit, waa, game, server);
         } else {
             return new VehicleFlamerHandler(toHit, waa, game, server);

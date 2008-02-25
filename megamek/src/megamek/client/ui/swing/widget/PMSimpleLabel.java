@@ -56,11 +56,11 @@ public class PMSimpleLabel implements PMLabel {
     public void setString(String s) {
         string = s;
         // The width use to just be the stringWidth, but this
-        //  sometimes caused cropping when setString was called.
-        //  The value of 140% was chosen by trial and error, and
-        //  may be incorrect.  In fact, this whole fix is
-        //  basically a kludge, since I don't know why it
-        //  is needed.
+        // sometimes caused cropping when setString was called.
+        // The value of 140% was chosen by trial and error, and
+        // may be incorrect. In fact, this whole fix is
+        // basically a kludge, since I don't know why it
+        // is needed.
         width = (int) Math.ceil(fm.stringWidth(string) * 1.4);
         height = fm.getHeight();
         descent = fm.getMaxDescent();
@@ -90,7 +90,8 @@ public class PMSimpleLabel implements PMLabel {
      * Draw the label.
      */
     public void drawInto(Graphics g) {
-        if (!visible) return;
+        if (!visible)
+            return;
         Font font = g.getFont();
         Color temp = g.getColor();
         g.setColor(color);

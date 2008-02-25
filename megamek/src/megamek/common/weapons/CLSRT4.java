@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class CLSRT4 extends SRTWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = 7390930190902369569L;
+
+    /**
+     * 
+     */
     public CLSRT4() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_CLAN_LEVEL_2;
         this.name = "SRT 4";
         this.setInternalName("CLSRT4");

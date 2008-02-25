@@ -27,9 +27,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISMineLauncher extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3445048091894801251L;
+
     /**
      * 
      */
@@ -54,7 +58,7 @@ public class ISMineLauncher extends Weapon {
         this.setModes(modes);
         this.flags |= F_DIRECT_FIRE | F_SOLO_ATTACK;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

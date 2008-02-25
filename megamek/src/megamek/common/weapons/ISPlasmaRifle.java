@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISPlasmaRifle extends AmmoWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7919371014161089388L;
 
     public ISPlasmaRifle() {
         this.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -50,7 +54,7 @@ public class ISPlasmaRifle extends AmmoWeapon {
         this.cost = 480000;
 
     }
-    
+
     /*
      * (non-Javadoc)
      * 

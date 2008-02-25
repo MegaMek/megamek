@@ -29,47 +29,52 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class SwarmAttackHandler extends WeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2439937071168853215L;
+
     /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public SwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+    public SwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+            Server s) {
         super(toHit, waa, g, s);
     }
 
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-            Building bldg, int hits, int nCluster, int nDamPerHit,
-            int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget,
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int nDamPerHit, int bldgAbsorbs) {
         Report r;
         // Is the target already swarmed?
-        if ( Entity.NONE != entityTarget.getSwarmAttackerId() ) {
+        if (Entity.NONE != entityTarget.getSwarmAttackerId()) {
             r = new Report(3265);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         }
         // Did the target get destroyed by weapons fire?
-        else if ( entityTarget.isDoomed() || entityTarget.isDestroyed() ||
-                  entityTarget.getCrew().isDead() ) {
+        else if (entityTarget.isDoomed() || entityTarget.isDestroyed()
+                || entityTarget.getCrew().isDead()) {
             r = new Report(3270);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
         } else {
-            //success
+            // success
             r = new Report(3275);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
-            ae.setSwarmTargetId( waa.getTargetId() );
-            entityTarget.setSwarmAttackerId( waa.getEntityId() );
+            ae.setSwarmTargetId(waa.getTargetId());
+            entityTarget.setSwarmAttackerId(waa.getEntityId());
         }
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {

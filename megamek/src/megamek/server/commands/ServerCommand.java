@@ -22,18 +22,17 @@ package megamek.server.commands;
 
 import java.util.Enumeration;
 
-import megamek.server.*;
 import megamek.common.Player;
+import megamek.server.Server;
 
 /**
- *
- * @author  Ben
- * @version 
+ * @author Ben
+ * @version
  */
 public abstract class ServerCommand {
-    
+
     protected Server server;
-    
+
     private String name;
     private String helpText;
 
@@ -43,15 +42,14 @@ public abstract class ServerCommand {
         this.name = name;
         this.helpText = helpText;
     }
-    
-    
+
     /**
      * Return the string trigger for this command
      */
     public String getName() {
         return name;
     }
-    
+
     /**
      * Returns some help text for this command
      */
@@ -65,22 +63,24 @@ public abstract class ServerCommand {
     public abstract void run(int connId, String[] args);
 
     /**
-     * Utility Function for "Restricted Commands."  Restricted commands are not
-     * password-protected, they are restricted to non-Observers.  In the case
+     * Utility Function for "Restricted Commands." Restricted commands are not
+     * password-protected, they are restricted to non-Observers. In the case
      * where there are only Ghosts and/or Observers, the Observers can run
      * restricted commands.
      */
     public boolean canRunRestrictedCommand(int connId) {
-        if (!server.getGame().getOptions().booleanOption("restrict_game_commands")) {
+        if (!server.getGame().getOptions().booleanOption(
+                "restrict_game_commands")) {
             return true;
         }
 
-        if (server.getPlayer(connId).isGhost()) 
+        if (server.getPlayer(connId).isGhost())
             return false; // Just in case something funky happens
 
         if (server.getPlayer(connId).isObserver()) {
-            for (Enumeration e = server.getGame().getPlayers(); e.hasMoreElements(); ) {
-                Player p = (Player)e.nextElement();
+            for (Enumeration e = server.getGame().getPlayers(); e
+                    .hasMoreElements();) {
+                Player p = (Player) e.nextElement();
 
                 if (!p.isObserver() && !p.isGhost()) {
                     // There are non-Observer, non-Ghosts in the game, so

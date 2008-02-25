@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLBALightMG extends BAMGWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1810341654439496432L;
 
     /**
      * 

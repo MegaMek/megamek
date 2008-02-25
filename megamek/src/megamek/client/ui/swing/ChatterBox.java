@@ -14,6 +14,20 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.BorderLayout;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.LinkedList;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 import megamek.client.Client;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.event.GameEntityNewEvent;
@@ -25,23 +39,9 @@ import megamek.common.event.GamePlayerChatEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.preference.PreferenceManager;
 
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JList;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import java.awt.BorderLayout;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.LinkedList;
-
 /**
- * ChatterBox keeps track of a player list and a (chat) message
- * buffer.  Although it is not an AWT component, it keeps
- * one that it will gladly supply.
+ * ChatterBox keeps track of a player list and a (chat) message buffer. Although
+ * it is not an AWT component, it keeps one that it will gladly supply.
  */
 public class ChatterBox implements KeyListener {
     private static final int MAX_HISTORY = 10;
@@ -52,7 +52,7 @@ public class ChatterBox implements KeyListener {
     JList playerList;
     private JTextField inputField;
     private JButton butDone;
-    
+
     private LinkedList<String> history;
     private int historyBookmark = -1;
 
@@ -79,7 +79,8 @@ public class ChatterBox implements KeyListener {
 
             public void gameEntityNew(GameEntityNewEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
-                if(PreferenceManager.getClientPreferences().getPrintEntityChange()) {
+                if (PreferenceManager.getClientPreferences()
+                        .getPrintEntityChange()) {
                     systemMessage(e.getNumberOfEntities() + " Entities added.");
                 }
             }
@@ -87,19 +88,22 @@ public class ChatterBox implements KeyListener {
             public void gameEntityRemove(GameEntityRemoveEvent e) {
                 PlayerListDialog.refreshPlayerList(playerList, client);
             }
-            
+
             public void gameEntityChange(GameEntityChangeEvent e) {
-                if(PreferenceManager.getClientPreferences().getPrintEntityChange()) {
+                if (PreferenceManager.getClientPreferences()
+                        .getPrintEntityChange()) {
                     systemMessage(e.toString());
                 }
             }
         });
         history = new LinkedList<String>();
 
-        chatArea = new JTextArea(" \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40); //$NON-NLS-1$
+        chatArea = new JTextArea(
+                " \n", GUIPreferences.getInstance().getInt("AdvancedChatboxSize"), 40); //$NON-NLS-1$
         chatArea.setEditable(false);
         playerList = new JList(new DefaultListModel());
-        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt("AdvancedChatboxSize"));
+        playerList.setVisibleRowCount(GUIPreferences.getInstance().getInt(
+                "AdvancedChatboxSize"));
         inputField = new JTextField();
         inputField.addKeyListener(this);
         butDone = new JButton(Messages.getString("ChatterBox.ImDone")); //$NON-NLS-1$
@@ -135,7 +139,7 @@ public class ChatterBox implements KeyListener {
 
     /**
      * Display a system message in the chat box.
-     *
+     * 
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
@@ -145,7 +149,7 @@ public class ChatterBox implements KeyListener {
 
     /**
      * Replace the "Done" button in the chat box.
-     *
+     * 
      * @param button the <code>JButton</code> that should be used for "Done".
      */
     public void setDoneButton(JButton button) {
@@ -161,15 +165,15 @@ public class ChatterBox implements KeyListener {
         if (ev.getKeyCode() == KeyEvent.VK_ENTER) {
             history.addFirst(inputField.getText());
             historyBookmark = -1;
-            
-            if(!inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
+
+            if (!inputField.getText().startsWith(Client.CLIENT_COMMAND)) {
                 client.sendChat(inputField.getText());
             } else {
                 systemMessage(client.runCommand(inputField.getText()));
             }
             inputField.setText(""); //$NON-NLS-1$
-            
-            if(history.size() > MAX_HISTORY) {
+
+            if (history.size() > MAX_HISTORY) {
                 history.removeLast();
             }
         } else if (ev.getKeyCode() == KeyEvent.VK_UP) {
@@ -188,7 +192,7 @@ public class ChatterBox implements KeyListener {
     private void fetchHistory() {
         try {
             inputField.setText(history.get(historyBookmark));
-        } catch(IndexOutOfBoundsException ioobe) {
+        } catch (IndexOutOfBoundsException ioobe) {
             inputField.setText(""); //$NON-NLS-1$
             historyBookmark = -1;
         }

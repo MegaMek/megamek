@@ -21,7 +21,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public abstract class MRMWeapon extends MissileWeapon {
 
@@ -33,7 +32,7 @@ public abstract class MRMWeapon extends MissileWeapon {
         this.ammoType = AmmoType.T_MRM;
         this.toHitModifier = 1;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

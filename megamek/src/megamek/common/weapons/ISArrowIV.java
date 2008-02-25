@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISArrowIV extends ArtilleryWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4495524659692575107L;
 
     /**
      * 

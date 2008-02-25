@@ -33,15 +33,14 @@ public class ClientDialog extends Dialog {
     private Frame owner = null;
 
     /**
-     * @param owner -
-     *            the <code>Frame</code> that owns this dialog.
-     * @param title -
-     *            the title of this Dialog window
+     * @param owner - the <code>Frame</code> that owns this dialog.
+     * @param title - the title of this Dialog window
      */
     public ClientDialog(Frame owner, String title) {
         super(owner, title);
         this.owner = owner;
     }
+
     public ClientDialog(Frame owner, String title, boolean modal) {
         super(owner, title, modal);
         this.owner = owner;
@@ -52,14 +51,12 @@ public class ClientDialog extends Dialog {
      * We try to fit the dialog in the middle of its owner, if it is smaller,
      * but allow it to eclipse the parent if it is larger, still keeping all on
      * the screen.
-     *
-     * @param desiredX
-     *            the desired width of this dialog (you might not get it)
-     * @param desiredY
-     *            the desired height of this dialog (you might not get it)
+     * 
+     * @param desiredX the desired width of this dialog (you might not get it)
+     * @param desiredY the desired height of this dialog (you might not get it)
      */
-    public void setLocationAndSize(int desiredX, int desiredY){
-        setLocationAndSize(new Dimension(desiredX,desiredY));
+    public void setLocationAndSize(int desiredX, int desiredY) {
+        setLocationAndSize(new Dimension(desiredX, desiredY));
     }
 
     /**
@@ -67,42 +64,42 @@ public class ClientDialog extends Dialog {
      * We try to fit the dialog in the middle of its owner, if it is smaller,
      * but allow it to eclipse the parent if it is larger, still keeping all on
      * the screen.
-     *
-     * @param desiredDimension
-     *            the desired dimension of this dialog (you might not get it)
+     * 
+     * @param desiredDimension the desired dimension of this dialog (you might
+     *            not get it)
      */
     protected void setLocationAndSize(Dimension desiredDimension) {
         int yLoc, xLoc, height, width;
 
         Dimension screenSize = owner.getToolkit().getScreenSize();
 
-        width = Math.min( desiredDimension.width + CONTAINER_BUFFER,
-                          screenSize.width );
-        height = Math.min( desiredDimension.height + CONTAINER_BUFFER,
-                           screenSize.height );
+        width = Math.min(desiredDimension.width + CONTAINER_BUFFER,
+                screenSize.width);
+        height = Math.min(desiredDimension.height + CONTAINER_BUFFER,
+                screenSize.height);
 
-        //Shrink the dialog if it will go bigger than page:
+        // Shrink the dialog if it will go bigger than page:
         // A border is used to account for things like the windows taskbar.
         // Sadly, the true size of the taskbar cannot be found without making
-        // a native call, so 5% is just a guess.  It should probably be
+        // a native call, so 5% is just a guess. It should probably be
         // a configuration setting so people can modify it according to
         // their OS setup.
-        int screenBorder = Math.max( (int)(screenSize.width * TASKBAR_SIZE),
-                                     (int)(screenSize.height * TASKBAR_SIZE));
+        int screenBorder = Math.max((int) (screenSize.width * TASKBAR_SIZE),
+                (int) (screenSize.height * TASKBAR_SIZE));
         if (height == screenSize.height)
-            height = screenSize.height - 2*screenBorder;
+            height = screenSize.height - 2 * screenBorder;
         if (width == screenSize.width)
-            width = screenSize.width - 2*screenBorder;
+            width = screenSize.width - 2 * screenBorder;
 
         Dimension ownerCenter = getOwnersCenter();
         yLoc = ownerCenter.height - height / 2;
         xLoc = ownerCenter.width - width / 2;
 
-        if (yLoc < screenBorder ||
-            yLoc + height > screenSize.height - screenBorder)
+        if (yLoc < screenBorder
+                || yLoc + height > screenSize.height - screenBorder)
             yLoc = screenBorder;
-        if (xLoc < screenBorder ||
-            xLoc + width > screenSize.width - screenBorder)
+        if (xLoc < screenBorder
+                || xLoc + width > screenSize.width - screenBorder)
             xLoc = screenBorder;
 
         setSize(width, height);
@@ -112,9 +109,9 @@ public class ClientDialog extends Dialog {
     private Dimension getOwnersCenter() {
         Dimension center = new Dimension();
         center.height = this.owner.getLocation().y
-            + this.owner.getSize().height / 2;
-        center.width = this.owner.getLocation().x
-            + this.owner.getSize().width / 2;
+                + this.owner.getSize().height / 2;
+        center.width = this.owner.getLocation().x + this.owner.getSize().width
+                / 2;
         return center;
     }
 

@@ -14,10 +14,13 @@
 
 package megamek.common.actions;
 
-public class UnjamTurretAction
-    extends AbstractEntityAction
-{
-    
+public class UnjamTurretAction extends AbstractEntityAction {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -872903980148938388L;
+
     public UnjamTurretAction(int entityId) {
         super(entityId);
     }

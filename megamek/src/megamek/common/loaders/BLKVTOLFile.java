@@ -20,39 +20,43 @@ package megamek.common.loaders;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.Tank;
-import megamek.common.VTOL;
 import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
+import megamek.common.VTOL;
 import megamek.common.util.BuildingBlock;
 
 /**
  * @author Andrew Hunter
- *
  */
 public class BLKVTOLFile extends BLKFile implements IMechLoader {
-    
-    private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled", "Hover","VTOL" };
-    
+
+    private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled",
+            "Hover", "VTOL" };
+
     public BLKVTOLFile(BuildingBlock bb) {
         dataFile = bb;
     }
-      
+
     public Entity getEntity() throws EntityLoadingException {
         VTOL t = new VTOL();
-        
-        if (!dataFile.exists("Name")) throw new EntityLoadingException("Could not find name block.");
+
+        if (!dataFile.exists("Name"))
+            throw new EntityLoadingException("Could not find name block.");
         t.setChassis(dataFile.getDataAsString("Name")[0]);
-        if (dataFile.exists("Model") && dataFile.getDataAsString("Model")[0] != null) {
-             t.setModel(dataFile.getDataAsString("Model")[0]);
+        if (dataFile.exists("Model")
+                && dataFile.getDataAsString("Model")[0] != null) {
+            t.setModel(dataFile.getDataAsString("Model")[0]);
         } else {
-             t.setModel("");
+            t.setModel("");
         }
-        
-        if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find year block.");
+
+        if (!dataFile.exists("year"))
+            throw new EntityLoadingException("Could not find year block.");
         t.setYear(dataFile.getDataAsInt("year")[0]);
-            
-        if (!dataFile.exists("type")) throw new EntityLoadingException("Could not find type block.");
-            
+
+        if (!dataFile.exists("type"))
+            throw new EntityLoadingException("Could not find type block.");
+
         if (dataFile.getDataAsString("type")[0].equals("IS")) {
             if (t.getYear() == 3025) {
                 t.setTechLevel(TechConstants.T_IS_LEVEL_1);
@@ -70,22 +74,28 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
-        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis)")) {
+        } else if (dataFile.getDataAsString("type")[0]
+                .equals("Mixed (IS Chassis)")) {
             t.setTechLevel(TechConstants.T_IS_LEVEL_3);
             t.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis)")) {
+        } else if (dataFile.getDataAsString("type")[0]
+                .equals("Mixed (Clan Chassis)")) {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
             t.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed")) {
-            throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+            throw new EntityLoadingException(
+                    "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
         } else {
-            throw new EntityLoadingException("Unsupported tech level: " + dataFile.getDataAsString("type")[0]);
+            throw new EntityLoadingException("Unsupported tech level: "
+                    + dataFile.getDataAsString("type")[0]);
         }
 
-        if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find weight block.");
+        if (!dataFile.exists("tonnage"))
+            throw new EntityLoadingException("Could not find weight block.");
         t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
-        
-        if (!dataFile.exists("motion_type")) throw new EntityLoadingException("Could not find movement block.");
+
+        if (!dataFile.exists("motion_type"))
+            throw new EntityLoadingException("Could not find movement block.");
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         int nMotion = -1;
         for (int x = 0; x < MOVES.length; x++) {
@@ -94,23 +104,24 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
                 break;
             }
         }
-        if (nMotion == -1) throw new EntityLoadingException("Invalid movment type: " + sMotion);
+        if (nMotion == -1)
+            throw new EntityLoadingException("Invalid movment type: " + sMotion);
         t.setMovementMode(nMotion);
 
-        if ( dataFile.exists("transporters")) {
-        String[] transporters = dataFile.getDataAsString("transporters");
-        // Walk the array of transporters.
-        for (int index = 0; index < transporters.length; index++) {
-        // TroopSpace:
-        if ( transporters[index].startsWith( "TroopSpace:", 0 ) ) {
-            // Everything after the ':' should be the space's size.
-                    Double fsize = new Double( transporters[index].substring(11) );
-                    t.addTransporter( new TroopSpace(fsize.doubleValue()) );
-        }
+        if (dataFile.exists("transporters")) {
+            String[] transporters = dataFile.getDataAsString("transporters");
+            // Walk the array of transporters.
+            for (int index = 0; index < transporters.length; index++) {
+                // TroopSpace:
+                if (transporters[index].startsWith("TroopSpace:", 0)) {
+                    // Everything after the ':' should be the space's size.
+                    Double fsize = new Double(transporters[index].substring(11));
+                    t.addTransporter(new TroopSpace(fsize.doubleValue()));
+                }
 
-        } // Handle the next transportation component.
+            } // Handle the next transportation component.
 
-    } // End has-transporters
+        } // End has-transporters
 
         int engineCode = BLKFile.FUSION;
         if (dataFile.exists("engine_type")) {
@@ -119,24 +130,26 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         int engineFlags = Engine.TANK_ENGINE;
         if (t.isClan())
             engineFlags |= Engine.CLAN_ENGINE;
-        if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");
-        int engineRating = dataFile.getDataAsInt("cruiseMP")[0] * (int)t.getWeight() - t.getSuspensionFactor();
-        t.setEngine(new Engine(engineRating,
-                               BLKFile.translateEngineCode(engineCode),
-                               engineFlags));
+        if (!dataFile.exists("cruiseMP"))
+            throw new EntityLoadingException("Could not find cruiseMP block.");
+        int engineRating = dataFile.getDataAsInt("cruiseMP")[0]
+                * (int) t.getWeight() - t.getSuspensionFactor();
+        t.setEngine(new Engine(engineRating, BLKFile
+                .translateEngineCode(engineCode), engineFlags));
 
         if (dataFile.exists("armor_type"))
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
         if (dataFile.exists("internal_type"))
             t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
-    
-        if (!dataFile.exists("armor") ) throw new EntityLoadingException("Could not find armor block.");
-        
+
+        if (!dataFile.exists("armor"))
+            throw new EntityLoadingException("Could not find armor block.");
+
         int[] armor = dataFile.getDataAsInt("armor");
-        
+
         if (armor.length < 4 || armor.length > 5) {
-            throw new EntityLoadingException("Incorrect armor array length");   
-        }        
+            throw new EntityLoadingException("Incorrect armor array length");
+        }
         // add the body to the armor array
         int[] fullArmor = new int[armor.length + 1];
         fullArmor[0] = 0;
@@ -144,17 +157,15 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         for (int x = 0; x < fullArmor.length; x++) {
             t.initializeArmor(fullArmor[x], x);
         }
-        
-        
-        
+
         t.autoSetInternal();
-        
+
         loadEquipment(t, "Front", Tank.LOC_FRONT);
         loadEquipment(t, "Right", Tank.LOC_RIGHT);
         loadEquipment(t, "Left", Tank.LOC_LEFT);
         loadEquipment(t, "Rear", Tank.LOC_REAR);
         loadEquipment(t, "Body", Tank.LOC_BODY);
-        return t;        
+        return t;
     }
 
 }

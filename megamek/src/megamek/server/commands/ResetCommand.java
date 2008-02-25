@@ -20,19 +20,20 @@
 
 package megamek.server.commands;
 
-import megamek.server.*;
+import megamek.server.Server;
 
 /**
  * Resets the server
- *
- * @author  Ben
- * @version 
+ * 
+ * @author Ben
+ * @version
  */
 public class ResetCommand extends ServerCommand {
 
     /** Creates new ResetCommand */
     public ResetCommand(Server server) {
-        super(server, "reset", "Resets the server back to the lobby.  Usage: /reset <password>");
+        super(server, "reset",
+                "Resets the server back to the lobby.  Usage: /reset <password>");
     }
 
     /**
@@ -40,19 +41,23 @@ public class ResetCommand extends ServerCommand {
      */
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
-            server.sendServerChat(connId, "Observers are restricted from resetting.");
+            server.sendServerChat(connId,
+                    "Observers are restricted from resetting.");
             return;
-        }                                                                                           
+        }
 
-        if (!server.isPassworded() || (args.length > 1 && server.isPassword(args[1]))) {
+        if (!server.isPassworded()
+                || (args.length > 1 && server.isPassword(args[1]))) {
             reset(connId);
         } else {
-            server.sendServerChat(connId, "The password is incorrect.  Usage: /reset <password>");
+            server.sendServerChat(connId,
+                    "The password is incorrect.  Usage: /reset <password>");
         }
     }
 
     private void reset(int connId) {
-        server.sendServerChat(server.getPlayer(connId).getName() + " reset the server.");
+        server.sendServerChat(server.getPlayer(connId).getName()
+                + " reset the server.");
         server.resetGame();
     }
 

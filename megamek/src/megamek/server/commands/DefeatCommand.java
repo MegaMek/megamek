@@ -20,20 +20,21 @@
 
 package megamek.server.commands;
 
-import megamek.server.*;
 import megamek.common.Player;
+import megamek.server.Server;
 
 /**
  * Acknowledges another players victory command.
- *
- * @author  Ben
- * @version 
+ * 
+ * @author Ben
+ * @version
  */
 public class DefeatCommand extends ServerCommand {
 
     /** Creates new DefeatCommand */
     public DefeatCommand(Server server) {
-        super(server, "defeat", "Acknowledges another players victory command.  Usage: /defeat");
+        super(server, "defeat",
+                "Acknowledges another players victory command.  Usage: /defeat");
     }
 
     /**
@@ -41,17 +42,18 @@ public class DefeatCommand extends ServerCommand {
      */
     public void run(int connId, String[] args) {
         if (!canRunRestrictedCommand(connId)) {
-            server.sendServerChat(connId, "Observers are restricted from declaring defeat.");
+            server.sendServerChat(connId,
+                    "Observers are restricted from declaring defeat.");
             return;
-        }                                                                                           
+        }
 
         Player player = server.getPlayer(connId);
         if (server.getGame().isForceVictory()) {
             server.sendServerChat(player.getName() + " admits defeat.");
             player.setAdmitsDefeat(true);
         } else {
-            server.sendServerChat(connId, "Nobody has declared victory, you can't declare a defeat.");
+            server.sendServerChat(connId,
+                    "Nobody has declared victory, you can't declare a defeat.");
         }
     }
 }
-

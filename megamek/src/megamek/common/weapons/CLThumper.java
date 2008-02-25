@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLThumper extends ArtilleryWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1816815968973747103L;
 
     /**
      * 
@@ -39,7 +43,7 @@ public class CLThumper extends ArtilleryWeapon {
         this.heat = 5;
         this.rackSize = 5;
         this.ammoType = AmmoType.T_THUMPER;
-        this.shortRange = 1;  //
+        this.shortRange = 1; //
         this.mediumRange = 2;
         this.longRange = 14;
         this.extremeRange = 14; // No extreme range.

@@ -35,8 +35,7 @@ import javax.swing.SwingConstants;
 // Allows the player to select the type of entity in the hexes used
 // by the LOS tool.
 
-public class LOSDialog
-        extends JDialog implements ActionListener {
+public class LOSDialog extends JDialog implements ActionListener {
     /**
      * 
      */
@@ -57,7 +56,8 @@ public class LOSDialog
         // closing the window is the same as hitting butOK
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                actionPerformed(new ActionEvent(butOK, ActionEvent.ACTION_PERFORMED, butOK.getText()));
+                actionPerformed(new ActionEvent(butOK,
+                        ActionEvent.ACTION_PERFORMED, butOK.getText()));
             }
         });
 
@@ -66,7 +66,8 @@ public class LOSDialog
 
         GridBagConstraints c = new GridBagConstraints();
 
-        JLabel labMessage = new JLabel(Messages.getString("LOSDialog.inFirstHex"), SwingConstants.LEFT); //$NON-NLS-1$
+        JLabel labMessage = new JLabel(Messages
+                .getString("LOSDialog.inFirstHex"), SwingConstants.LEFT); //$NON-NLS-1$
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 0;
@@ -77,21 +78,24 @@ public class LOSDialog
         ButtonGroup radioGroup1 = new ButtonGroup();
         checkboxes1 = new JCheckBox[2];
 
-        checkboxes1[0] = new JCheckBox(Messages.getString("LOSDialog.Mech"), mechInFirst); //$NON-NLS-1$
+        checkboxes1[0] = new JCheckBox(
+                Messages.getString("LOSDialog.Mech"), mechInFirst); //$NON-NLS-1$
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(checkboxes1[0], c);
         radioGroup1.add(checkboxes1[0]);
         getContentPane().add(checkboxes1[0]);
 
-        checkboxes1[1] = new JCheckBox(Messages.getString("LOSDialog.NonMech"), !mechInFirst); //$NON-NLS-1$
+        checkboxes1[1] = new JCheckBox(
+                Messages.getString("LOSDialog.NonMech"), !mechInFirst); //$NON-NLS-1$
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(checkboxes1[1], c);
         radioGroup1.add(checkboxes1[1]);
         getContentPane().add(checkboxes1[1]);
 
-        labMessage = new JLabel(Messages.getString("LOSDialog.InSecondHex"), SwingConstants.LEFT); //$NON-NLS-1$
+        labMessage = new JLabel(
+                Messages.getString("LOSDialog.InSecondHex"), SwingConstants.LEFT); //$NON-NLS-1$
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 0;
@@ -102,14 +106,16 @@ public class LOSDialog
         ButtonGroup radioGroup2 = new ButtonGroup();
         checkboxes2 = new JCheckBox[2];
 
-        checkboxes2[0] = new JCheckBox(Messages.getString("LOSDialog.Mech"), mechInSecond); //$NON-NLS-1$
+        checkboxes2[0] = new JCheckBox(
+                Messages.getString("LOSDialog.Mech"), mechInSecond); //$NON-NLS-1$
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(checkboxes2[0], c);
         radioGroup2.add(checkboxes2[0]);
         getContentPane().add(checkboxes2[0]);
 
-        checkboxes2[1] = new JCheckBox(Messages.getString("LOSDialog.NonMech"), !mechInSecond); //$NON-NLS-1$
+        checkboxes2[1] = new JCheckBox(
+                Messages.getString("LOSDialog.NonMech"), !mechInSecond); //$NON-NLS-1$
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(checkboxes2[1], c);
@@ -125,12 +131,16 @@ public class LOSDialog
 
         pack();
 
-        setLocation(parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
-                parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - getSize().width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - getSize().height / 2);
 
-        // we'd like the OK button to have focus, but that can only be done on displayed
-        // dialogs in Windows. So, this rather elaborate setup: as soon as the first focusable
-        // component receives the focus, it shunts the focus to the OK button, and then
+        // we'd like the OK button to have focus, but that can only be done on
+        // displayed
+        // dialogs in Windows. So, this rather elaborate setup: as soon as the
+        // first focusable
+        // component receives the focus, it shunts the focus to the OK button,
+        // and then
         // removes the FocusListener to prevent this happening again
         checkboxes1[0].addFocusListener(new FocusListener() {
             public void focusGained(FocusEvent e) {
@@ -138,7 +148,8 @@ public class LOSDialog
             }
 
             public void focusLost(FocusEvent e) {
-                checkboxes1[0].removeFocusListener(this); // refers to listener
+                checkboxes1[0].removeFocusListener(this); // refers to
+                                                            // listener
             }
         });
     }
@@ -154,4 +165,4 @@ public class LOSDialog
     public boolean getMechInSecond() {
         return checkboxes2[0].isSelected();
     }
-} 
+}

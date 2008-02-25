@@ -20,7 +20,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public abstract class MissileWeapon extends AmmoWeapon {
 
@@ -32,7 +31,7 @@ public abstract class MissileWeapon extends AmmoWeapon {
         this.damage = DAMAGE_MISSILE;
         this.flags |= F_MISSILE;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

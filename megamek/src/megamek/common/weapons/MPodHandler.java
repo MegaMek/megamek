@@ -30,9 +30,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class MPodHandler extends LBXHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1591751929178217495L;
+
     /**
      * @param t
      * @param w
@@ -46,7 +50,8 @@ public class MPodHandler extends LBXHandler {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report> vPhaseReport)
+     * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
+     *      vPhaseReport)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
@@ -62,10 +67,9 @@ public class MPodHandler extends LBXHandler {
         } else if (nRange == 4) {
             shots = 2;
         }
-        int shotsHit = allShotsHit() ? shots : Compute
-                .missilesHit(shots);
+        int shotsHit = allShotsHit() ? shots : Compute.missilesHit(shots);
         if (bGlancing) {
-            shotsHit = (int)Math.floor(shotsHit/2.0);
+            shotsHit = (int) Math.floor(shotsHit / 2.0);
         }
         r = new Report(3325);
         r.subject = subjectId;

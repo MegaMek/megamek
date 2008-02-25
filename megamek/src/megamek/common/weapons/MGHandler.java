@@ -31,10 +31,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class MGHandler extends AmmoWeaponHandler {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5635871269404561702L;
     private int nRapidDamHeatPerHit;
 
     /**
@@ -66,11 +69,12 @@ public class MGHandler extends AmmoWeaponHandler {
         }
         return nDamPerHit;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
-     */    
+     */
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (weapon.isRapidfire()) {
@@ -80,38 +84,41 @@ public class MGHandler extends AmmoWeaponHandler {
             }
         }
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     protected void reportMiss(Vector<Report> vPhaseReport) {
-        //Report the miss
+        // Report the miss
         r = new Report(3220);
-        if (weapon.isRapidfire()){
+        if (weapon.isRapidfire()) {
             r.messageId = 3225;
-            r.add(nDamPerHit*3);
+            r.add(nDamPerHit * 3);
         }
         vPhaseReport.add(r);
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#useAmmo()
      */
     protected void useAmmo() {
         if (weapon.isRapidfire()) {
             checkAmmo();
-            int ammoUsage = 3*nRapidDamHeatPerHit;
-            for (int i=0; i<ammoUsage; i++) {
+            int ammoUsage = 3 * nRapidDamHeatPerHit;
+            for (int i = 0; i < ammoUsage; i++) {
                 if (ammo.getShotsLeft() <= 0) {
                     ae.loadWeapon(weapon);
                     ammo = weapon.getLinked();
-                } 
-                ammo.setShotsLeft(ammo.getShotsLeft()-1);
+                }
+                ammo.setShotsLeft(ammo.getShotsLeft() - 1);
             }
             setDone();
-        } else super.useAmmo();
+        } else
+            super.useAmmo();
     }
 
 }

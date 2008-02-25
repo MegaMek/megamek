@@ -29,14 +29,14 @@ import javax.swing.SwingConstants;
 
 import megamek.client.ui.swing.widget.IndexedCheckbox;
 
-public class AimedShotDialog
-        extends JDialog {
+public class AimedShotDialog extends JDialog {
     /**
      * 
      */
     private static final long serialVersionUID = 6527374019085650613L;
 
-    private JButton butNoAim = new JButton(Messages.getString("AimedShotDialog.dontAim")); //$NON-NLS-1$
+    private JButton butNoAim = new JButton(Messages
+            .getString("AimedShotDialog.dontAim")); //$NON-NLS-1$
 
     /**
      * The checkboxes for available choices.
@@ -45,8 +45,8 @@ public class AimedShotDialog
     private boolean[] boxEnabled;
 
     public AimedShotDialog(JFrame parent, String title, String message,
-                           String[] choices, boolean[] enabled, int selectedIndex,
-                           boolean locked, ItemListener il, ActionListener al) {
+            String[] choices, boolean[] enabled, int selectedIndex,
+            boolean locked, ItemListener il, ActionListener al) {
         super(parent, title, false);
         super.setResizable(false);
 
@@ -70,7 +70,8 @@ public class AimedShotDialog
 
         for (int i = 0; i < choices.length; i++) {
             boolean even = (i & 1) == 0;
-            checkboxes[i] = new IndexedCheckbox(choices[i], i == selectedIndex, radioGroup, i);
+            checkboxes[i] = new IndexedCheckbox(choices[i], i == selectedIndex,
+                    radioGroup, i);
             checkboxes[i].addItemListener(il);
             checkboxes[i].setEnabled(enabled[i] && !locked);
             c.gridwidth = even ? 1 : GridBagConstraints.REMAINDER;
@@ -89,8 +90,9 @@ public class AimedShotDialog
         butNoAim.requestFocus();
 
         pack();
-        setLocation(parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
-                parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - getSize().width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - getSize().height / 2);
     }
 
     public void setEnableAll(boolean enableAll) {

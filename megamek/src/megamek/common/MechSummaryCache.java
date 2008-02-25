@@ -238,8 +238,17 @@ public class MechSummaryCache {
             m_nameMap.put(m_data[x].getName(), m_data[x]);
             if ( m_data[x].getEntryName() == null)
                 m_fileNameMap.put(m_data[x].getSourceFile().getName(), m_data[x]);
-            else
-                m_fileNameMap.put(m_data[x].getEntryName(), m_data[x]);
+            else {
+                String unitName = m_data[x].getEntryName();
+                
+                if ( unitName.indexOf("\\") > -1)
+                    unitName = unitName.substring(unitName.lastIndexOf("\\")+1);
+                
+                if ( unitName.indexOf("/") > -1)
+                    unitName = unitName.substring(unitName.lastIndexOf("/")+1);
+                
+                m_fileNameMap.put(unitName, m_data[x]);
+            }
         }
 
         // save updated cache back to disk

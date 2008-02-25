@@ -14,6 +14,20 @@
 
 package megamek.common;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Enumeration;
+import java.util.Vector;
+import java.util.zip.ZipFile;
+
 import megamek.common.loaders.BLKBattleArmorFile;
 import megamek.common.loaders.BLKGunEmplacementFile;
 import megamek.common.loaders.BLKInfantryFile;
@@ -31,35 +45,24 @@ import megamek.common.loaders.TdbFile;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BuildingBlock;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.zip.ZipFile;
-
- /*
-  * Switches between the various type-specific parsers depending on suffix
-  */
+/*
+ * Switches between the various type-specific parsers depending on suffix
+ */
 
 public class MechFileParser {
     private Entity m_entity = null;
     private static Vector<String> canonUnitNames = null;
-    private static final File ROOT = new File(PreferenceManager.getClientPreferences().getMechDirectory());
-    private static final File OFFICIALUNITS = new File(ROOT, "OfficialUnitList.txt");
+    private static final File ROOT = new File(PreferenceManager
+            .getClientPreferences().getMechDirectory());
+    private static final File OFFICIALUNITS = new File(ROOT,
+            "OfficialUnitList.txt");
 
     public MechFileParser(File f) throws EntityLoadingException {
         this(f, null);
     }
 
-    public MechFileParser(File f, String entryName) throws EntityLoadingException {
+    public MechFileParser(File f, String entryName)
+            throws EntityLoadingException {
         if (entryName == null) {
             // try normal file
             try {
@@ -67,29 +70,33 @@ public class MechFileParser {
             } catch (Exception ex) {
                 ex.printStackTrace();
                 if (ex instanceof EntityLoadingException) {
-                    throw new EntityLoadingException("While parsing file " + f.getName() + ", " + ex.getMessage());
+                    throw new EntityLoadingException("While parsing file "
+                            + f.getName() + ", " + ex.getMessage());
                 }
-                throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
+                throw new EntityLoadingException("Exception from "
+                        + ex.getClass() + ": " + ex.getMessage());
             }
         } else {
             // try zip file
             ZipFile zFile;
             try {
                 zFile = new ZipFile(f);
-                parse(zFile.getInputStream(zFile.getEntry(entryName)), entryName);
-            } catch(EntityLoadingException ele ){
+                parse(zFile.getInputStream(zFile.getEntry(entryName)),
+                        entryName);
+            } catch (EntityLoadingException ele) {
                 throw new EntityLoadingException(ele.getMessage());
-            } catch (NullPointerException npe){
+            } catch (NullPointerException npe) {
                 throw new NullPointerException();
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
-                throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
+                throw new EntityLoadingException("Exception from "
+                        + ex.getClass() + ": " + ex.getMessage());
             }
         }
     }
 
-    public MechFileParser(InputStream is, String fileName) throws EntityLoadingException {
+    public MechFileParser(InputStream is, String fileName)
+            throws EntityLoadingException {
         try {
             parse(is, fileName);
         } catch (Exception ex) {
@@ -97,13 +104,17 @@ public class MechFileParser {
             if (ex instanceof EntityLoadingException) {
                 throw new EntityLoadingException(ex.getMessage());
             }
-            throw new EntityLoadingException("Exception from " + ex.getClass() + ": " + ex.getMessage());
+            throw new EntityLoadingException("Exception from " + ex.getClass()
+                    + ": " + ex.getMessage());
         }
     }
 
-    public Entity getEntity() { return m_entity; }
+    public Entity getEntity() {
+        return m_entity;
+    }
 
-    public void parse(InputStream is, String fileName) throws EntityLoadingException {
+    public void parse(InputStream is, String fileName)
+            throws EntityLoadingException {
         String lowerName = fileName.toLowerCase();
         IMechLoader loader;
 
@@ -121,10 +132,8 @@ public class MechFileParser {
             BuildingBlock bb = new BuildingBlock(is);
             if (bb.exists("UnitType")) {
                 String sType = bb.getDataAsString("UnitType")[0];
-                if (sType.equals("Tank")
-                        || sType.equals("Naval")
-                        || sType.equals("Surface")
-                        || sType.equals("Hydrofoil")) {
+                if (sType.equals("Tank") || sType.equals("Naval")
+                        || sType.equals("Surface") || sType.equals("Hydrofoil")) {
                     loader = new BLKTankFile(bb);
                 } else if (sType.equals("Infantry")) {
                     loader = new BLKInfantryFile(bb);
@@ -139,13 +148,15 @@ public class MechFileParser {
                 } else if (sType.equals("GunEmplacement")) {
                     loader = new BLKGunEmplacementFile(bb);
                 } else {
-                    throw new EntityLoadingException("Unknown UnitType: " + sType);
+                    throw new EntityLoadingException("Unknown UnitType: "
+                            + sType);
                 }
             } else {
                 loader = new BLKMechFile(bb);
             }
         } else if (lowerName.endsWith(".dbm")) {
-            throw new EntityLoadingException("In order to use mechs from The Drawing Board with MegaMek, you must save your mech as an XML file (look in the 'File' menu of TDB.)  Then use the resulting '.xml' file instead of the '.dbm' file.  Note that only version 2.0.23 or later of TDB is compatible with MegaMek.");
+            throw new EntityLoadingException(
+                    "In order to use mechs from The Drawing Board with MegaMek, you must save your mech as an XML file (look in the 'File' menu of TDB.)  Then use the resulting '.xml' file instead of the '.dbm' file.  Note that only version 2.0.23 or later of TDB is compatible with MegaMek.");
         } else {
             throw new EntityLoadingException("Unsupported file suffix");
         }
@@ -164,11 +175,12 @@ public class MechFileParser {
         for (Mounted m : ent.getMisc()) {
 
             // Link Artemis IV fire-control systems to their missle racks.
-            if (m.getType().hasFlag(MiscType.F_ARTEMIS) && m.getLinked() == null) {
+            if (m.getType().hasFlag(MiscType.F_ARTEMIS)
+                    && m.getLinked() == null) {
 
                 // link up to a weapon in the same location
                 for (Mounted mWeapon : ent.getWeaponList()) {
-                    WeaponType wtype = (WeaponType)mWeapon.getType();
+                    WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     // only srm and lrm are valid for artemis
                     if (wtype.getAmmoType() != AmmoType.T_LRM
@@ -188,79 +200,85 @@ public class MechFileParser {
                         break;
                     }
                     // also, mechs have a special location rule
-                    else if (ent instanceof Mech && m.getLocation() == Mech.LOC_HEAD &&
-                                mWeapon.getLocation() == Mech.LOC_CT) {
+                    else if (ent instanceof Mech
+                            && m.getLocation() == Mech.LOC_HEAD
+                            && mWeapon.getLocation() == Mech.LOC_CT) {
                         m.setLinked(mWeapon);
                         break;
                     }
                 }
 
                 if (m.getLinked() == null) {
-                    // huh.  this shouldn't happen
-                    throw new EntityLoadingException("Unable to match Artemis to launcher");
+                    // huh. this shouldn't happen
+                    throw new EntityLoadingException(
+                            "Unable to match Artemis to launcher");
                 }
             } // End link-Artemis
-            else if ( Mech.STEALTH.equals(m.getType().getInternalName()) &&
-                      m.getLinked() == null ) {
+            else if (Mech.STEALTH.equals(m.getType().getInternalName())
+                    && m.getLinked() == null) {
                 // Find an ECM suite to link to the stealth system.
                 // Stop looking after we find the first ECM suite.
                 for (Mounted mEquip : ent.getMisc()) {
                     MiscType mtype = (MiscType) mEquip.getType();
-                    if ( mtype.hasFlag(MiscType.F_ECM) ) {
-                        m.setLinked( mEquip );
+                    if (mtype.hasFlag(MiscType.F_ECM)) {
+                        m.setLinked(mEquip);
                         break;
                     }
                 }
 
                 if (m.getLinked() == null) {
-                    // This mech has stealth armor but no ECM.  Probably
-                    //  an improperly created custom.
-                    throw new EntityLoadingException("Unable to find an ECM Suite.  Mechs with Stealth Armor must also be equipped with an ECM Suite.");
+                    // This mech has stealth armor but no ECM. Probably
+                    // an improperly created custom.
+                    throw new EntityLoadingException(
+                            "Unable to find an ECM Suite.  Mechs with Stealth Armor must also be equipped with an ECM Suite.");
                 }
             } // End link-Stealth
-             // Link PPC Capacitor to PPC it its location.
-            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR) && m.getLinked() == null) {
+            // Link PPC Capacitor to PPC it its location.
+            else if (m.getType().hasFlag(MiscType.F_PPC_CAPACITOR)
+                    && m.getLinked() == null) {
 
-                    // link up to a weapon in the same location
-                    for (Mounted mWeapon : ent.getWeaponList()) {
-                        WeaponType wtype = (WeaponType)mWeapon.getType();
+                // link up to a weapon in the same location
+                for (Mounted mWeapon : ent.getWeaponList()) {
+                    WeaponType wtype = (WeaponType) mWeapon.getType();
 
-                        // Only PPCS are Valid
-                        if (!wtype.hasFlag(WeaponType.F_PPC)) {
-                            continue;
-                        }
-
-                        // already linked?
-                        if (mWeapon.getLinkedBy() != null) {
-                            continue;
-                        }
-
-                        // check location
-                        if (mWeapon.getLocation() == m.getLocation()) {
-                            m.setLinked(mWeapon);
-                            break;
-                        }
+                    // Only PPCS are Valid
+                    if (!wtype.hasFlag(WeaponType.F_PPC)) {
+                        continue;
                     }
 
-                    if (m.getLinked() == null) {
-                        // huh.  this shouldn't happen
-                        throw new EntityLoadingException("Unable to match Capacitor to PPC");
+                    // already linked?
+                    if (mWeapon.getLinkedBy() != null) {
+                        continue;
                     }
-                } // End link-PPC Capacitor
 
-            if(ent instanceof Mech 
-                    && ( m.getType().hasFlag(MiscType.F_CASE) || m.getType().hasFlag(MiscType.F_CASEII)) ) {
-                ((Mech)ent).setAutoEject(false);
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+                        m.setLinked(mWeapon);
+                        break;
+                    }
+                }
+
+                if (m.getLinked() == null) {
+                    // huh. this shouldn't happen
+                    throw new EntityLoadingException(
+                            "Unable to match Capacitor to PPC");
+                }
+            } // End link-PPC Capacitor
+
+            if (ent instanceof Mech
+                    && (m.getType().hasFlag(MiscType.F_CASE) || m.getType()
+                            .hasFlag(MiscType.F_CASEII))) {
+                ((Mech) ent).setAutoEject(false);
             }
 
         } // Check the next piece of equipment.
-        
-        //Check if it's canon; if it is, mark it as such.
-        ent.setCanon(false);//Guilty until proven innocent
+
+        // Check if it's canon; if it is, mark it as such.
+        ent.setCanon(false);// Guilty until proven innocent
         try {
-            if (canonUnitNames==null) {
-                canonUnitNames=new Vector<String>();
-                //init the list.
+            if (canonUnitNames == null) {
+                canonUnitNames = new Vector<String>();
+                // init the list.
                 BufferedReader br = null;
                 try {
                     br = new BufferedReader(new FileReader(OFFICIALUNITS));
@@ -268,7 +286,7 @@ public class MechFileParser {
                     String name;
                     while ((s = br.readLine()) != null) {
                         int nIndex1 = s.indexOf('|');
-                        name=s.substring(0, nIndex1);
+                        name = s.substring(0, nIndex1);
                         canonUnitNames.addElement(name);
                     }
                 } catch (FileNotFoundException e) {
@@ -277,8 +295,8 @@ public class MechFileParser {
         } catch (IOException e) {
         }
         for (Enumeration i = canonUnitNames.elements(); i.hasMoreElements();) {
-            String s = (String)i.nextElement();
-            if(s.equals(ent.getShortNameRaw())) {
+            String s = (String) i.nextElement();
+            if (s.equals(ent.getShortNameRaw())) {
                 ent.setCanon(true);
                 break;
             }
@@ -287,39 +305,46 @@ public class MechFileParser {
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            System.out.println("Files in a supported MegaMek file format can be specified on");
-            System.out.println("the command line.  Multiple files may be processed at once.");
+            System.out
+                    .println("Files in a supported MegaMek file format can be specified on");
+            System.out
+                    .println("the command line.  Multiple files may be processed at once.");
             System.out.println("The supported formats are:");
-            System.out.println("\t.mtf    The native MegaMek format that your file will be converted into");
+            System.out
+                    .println("\t.mtf    The native MegaMek format that your file will be converted into");
             System.out.println("\t.blk    Another native MegaMek format");
             System.out.println("\t.hmp    Heavy Metal Pro (c)RCW Enterprises");
-            System.out.println("\t.mep    MechEngineer Pro (c)Howling Moon SoftWorks");
-            System.out.println("\t.xml    The Drawing Board (c)Blackstone Interactive");
-            System.out.println("Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
+            System.out
+                    .println("\t.mep    MechEngineer Pro (c)Howling Moon SoftWorks");
+            System.out
+                    .println("\t.xml    The Drawing Board (c)Blackstone Interactive");
+            System.out
+                    .println("Note: If you are using the MtfConvert utility, you may also drag and drop files onto it for conversion.");
             MechFileParser.getResponse("Press <enter> to exit...");
             return;
         }
         for (int i = 0; i < args.length; i++) {
             String filename = args[i];
             File file = new File(filename);
-            String outFilename = filename.substring(0, filename.lastIndexOf("."));
+            String outFilename = filename.substring(0, filename
+                    .lastIndexOf("."));
             BufferedWriter out = null;
             try {
                 MechFileParser mfp = new MechFileParser(file);
                 Entity e = mfp.getEntity();
-                if(e instanceof Mech) {
+                if (e instanceof Mech) {
                     outFilename += ".mtf";
                     File outFile = new File(outFilename);
                     if (outFile.exists()) {
-                        if (!MechFileParser.getResponse("File already exists, overwrite? "))
+                        if (!MechFileParser
+                                .getResponse("File already exists, overwrite? "))
                             return;
                     }
                     out = new BufferedWriter(new FileWriter(outFile));
-                    out.write(((Mech)e).getMtf());
-                }
-                else if (e instanceof Tank) {
+                    out.write(((Mech) e).getMtf());
+                } else if (e instanceof Tank) {
                     outFilename += ".blk";
-                    BLKTankFile.encode(outFilename, (Tank)e);
+                    BLKTankFile.encode(outFilename, (Tank) e);
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -329,7 +354,7 @@ public class MechFileParser {
                     try {
                         out.close();
                     } catch (IOException ex) {
-                        //ignore
+                        // ignore
                     }
                 }
             }
@@ -348,7 +373,7 @@ public class MechFileParser {
             return true;
         return false;
     }
-    
+
     public static void dispose() {
         canonUnitNames = null;
     }

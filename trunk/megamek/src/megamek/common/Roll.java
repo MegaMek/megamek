@@ -20,13 +20,12 @@
 
 package megamek.common;
 
-
 /**
- * Encapsulate all information known about a requested roll.  This information
- * can be logged for full statistical analysis and auditing, so hopefully
- * people will <b>finally</b> stop questioning whether the RNG is any good.
- *
- * @author  Suvarov454
+ * Encapsulate all information known about a requested roll. This information
+ * can be logged for full statistical analysis and auditing, so hopefully people
+ * will <b>finally</b> stop questioning whether the RNG is any good.
+ * 
+ * @author Suvarov454
  */
 public abstract class Roll {
 
@@ -37,16 +36,19 @@ public abstract class Roll {
 
     /**
      * Get the next unique identifier.
-     *
-     * @return  the next unique <code>long</code> identifier.
+     * 
+     * @return the next unique <code>long</code> identifier.
      */
-    private static long getNextId() { return nextId++; }
+    private static long getNextId() {
+        return nextId++;
+    }
 
     /**
      * No one should call the default constructor.
      */
     private Roll() {
-        throw new UnsupportedOperationException("Default Roll constructor called.");
+        throw new UnsupportedOperationException(
+                "Default Roll constructor called.");
     }
 
     /**
@@ -66,55 +68,56 @@ public abstract class Roll {
 
     /**
      * Store the configuration information for this roll.
-     *
-     * @param   count - the <code>int</code> number of results possible on
-     *          each virtual die.
-     * @param   start - the <code>int</code> value that is the start of the
-     *          value set of each virtual die.
+     * 
+     * @param count - the <code>int</code> number of results possible on each
+     *            virtual die.
+     * @param start - the <code>int</code> value that is the start of the
+     *            value set of each virtual die.
      */
-    protected Roll( int count, int start ) {
+    protected Roll(int count, int start) {
         this.id = Roll.getNextId();
         this.faces = count;
         this.min = start;
     }
 
     /**
-     * Get the value of the roll.  This is the total of each of the rolls of
-     * each virtual die.
-     *
-     * @return  the <code>int</code> value of the roll.
+     * Get the value of the roll. This is the total of each of the rolls of each
+     * virtual die.
+     * 
+     * @return the <code>int</code> value of the roll.
      */
     public abstract int getIntValue();
 
     /**
      * Get a <code>String</code> containing the roll for each of the virtual
      * dice.
-     *
-     * @return  the <code>String</code> value of the roll.
+     * 
+     * @return the <code>String</code> value of the roll.
      */
     public abstract String toString();
 
     /**
-     * Get a <code>String</code> report that can be parsed to analyse the roll.
-     *
-     * @return  the <code>String</code> details of the roll.
+     * Get a <code>String</code> report that can be parsed to analyse the
+     * roll.
+     * 
+     * @return the <code>String</code> details of the roll.
      */
     public abstract String getReport();
 
     /**
      * Formats <code>Roll</code> output for test harnesses.
-     *
-     * @param   roll - the <code>Roll</code> to be reported.
+     * 
+     * @param roll - the <code>Roll</code> to be reported.
      */
-    protected static void output (Roll roll) {
-        System.out.print ("The integer total is ");
-        System.out.print (roll.getIntValue());
-        System.out.println (".");
-        System.out.print ("The string total is ");
-        System.out.print (roll.toString());
-        System.out.println (".");
-        System.out.print ("The string report is ");
-        System.out.print (roll.getReport());
-        System.out.println (".");
+    protected static void output(Roll roll) {
+        System.out.print("The integer total is ");
+        System.out.print(roll.getIntValue());
+        System.out.println(".");
+        System.out.print("The string total is ");
+        System.out.print(roll.toString());
+        System.out.println(".");
+        System.out.print("The string report is ");
+        System.out.print(roll.getReport());
+        System.out.println(".");
     }
 }

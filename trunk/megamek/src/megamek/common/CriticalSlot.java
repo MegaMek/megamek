@@ -14,42 +14,39 @@
 
 package megamek.common;
 
-import java.io.*;
+import java.io.Serializable;
 
-public class CriticalSlot
-    implements Serializable
-{
+public class CriticalSlot implements Serializable {
     /**
      * 
      */
     private static final long serialVersionUID = -8744251501251495923L;
-    public final static int        TYPE_SYSTEM       = 0;
-    public final static int        TYPE_EQUIPMENT    = 1;
-    
-    private int                    type;
-    private int                    index;
-    private boolean                hit; // hit
-    private boolean                missing; // location destroyed
-    private boolean                destroyed;
-    private boolean                hittable; // false = hits rerolled
-    private boolean                breached; //true = breached
-    private boolean                repairing = false; //true = currently being repaired
-    
-    
+    public final static int TYPE_SYSTEM = 0;
+    public final static int TYPE_EQUIPMENT = 1;
+
+    private int type;
+    private int index;
+    private boolean hit; // hit
+    private boolean missing; // location destroyed
+    private boolean destroyed;
+    private boolean hittable; // false = hits rerolled
+    private boolean breached; // true = breached
+    private boolean repairing = false; // true = currently being repaired
+
     public CriticalSlot(int type, int index) {
         this(type, index, true);
     }
-    
+
     public CriticalSlot(int type, int index, boolean hittable) {
         this.type = type;
         this.index = index;
         this.hittable = hittable;
     }
-    
+
     public int getType() {
         return type;
     }
-    
+
     public int getIndex() {
         return index;
     }
@@ -57,27 +54,27 @@ public class CriticalSlot
     public void setIndex(int i) {
         index = i;
     }
-    
+
     public boolean isHit() {
         return hit;
     }
-    
+
     public void setHit(boolean hit) {
         this.hit = hit;
     }
-    
+
     public boolean isDestroyed() {
         return destroyed;
     }
-    
+
     public void setDestroyed(boolean destroyed) {
         this.destroyed = destroyed;
     }
-    
+
     public boolean isMissing() {
         return missing;
     }
-    
+
     public void setMissing(boolean missing) {
         this.missing = missing;
     }
@@ -96,31 +93,32 @@ public class CriticalSlot
     public boolean isDamaged() {
         return hit || missing || destroyed;
     }
-    
+
     /**
      * Can this slot be hit by a critical hit roll?
      */
     public boolean isHittable() {
         return hittable && !hit && !destroyed;
     }
-    
+
     /**
      * Was this critical slot ever hittable?
      */
     public boolean isEverHittable() {
         return hittable;
     }
-    
+
     /**
-    * is the slot being repaired?
-    */
+     * is the slot being repaired?
+     */
     public boolean isRepairing() {
         return this.repairing;
     }
+
     public void setRepairing(boolean repairing) {
         this.repairing = repairing;
     }
-    
+
     /**
      * Two CriticalSlots are equal if their type and index are equal
      */
@@ -130,7 +128,7 @@ public class CriticalSlot
         } else if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        CriticalSlot other = (CriticalSlot)object;
+        CriticalSlot other = (CriticalSlot) object;
         return other.getType() == this.type && other.getIndex() == this.index;
     }
 }

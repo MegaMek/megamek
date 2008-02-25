@@ -37,9 +37,8 @@ import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 
 /**
- * Cache of the Mech summary information.
- * Implemented as Singleton so a client and server running in the same
- * process can share it
+ * Cache of the Mech summary information. Implemented as Singleton so a client
+ * and server running in the same process can share it
  */
 public class MechSummaryCache {
 
@@ -54,12 +53,15 @@ public class MechSummaryCache {
     private ArrayList<Listener> listeners = new ArrayList<Listener>();
 
     private StringBuffer loadReport = new StringBuffer();
-    private final static String CONFIG_FILENAME = "data/mechfiles/UnitVerifierOptions.xml"; //should be a client option?
+    private final static String CONFIG_FILENAME = "data/mechfiles/UnitVerifierOptions.xml"; // should
+                                                                                            // be a
+                                                                                            // client
+                                                                                            // option?
     private EntityVerifier entityVerifier = null;
     private Thread loader;
 
     public static synchronized MechSummaryCache getInstance() {
-        if(m_instance == null)
+        if (m_instance == null)
             m_instance = new MechSummaryCache();
         if (!m_instance.initialized && !m_instance.initializing) {
             m_instance.initializing = true;
@@ -73,10 +75,10 @@ public class MechSummaryCache {
         }
         return m_instance;
     }
-    
+
     public static void dispose() {
-        if(m_instance != null) {
-            synchronized(m_instance) {
+        if (m_instance != null) {
+            synchronized (m_instance) {
                 m_instance.loader.interrupt();
                 m_instance = null;
             }
@@ -100,20 +102,21 @@ public class MechSummaryCache {
     }
 
     private MechSummary[] m_data;
-    private Map<String,MechSummary> m_nameMap;
-    private Map<String,MechSummary> m_fileNameMap;
-    private Map<String,String> hFailedFiles;
+    private Map<String, MechSummary> m_nameMap;
+    private Map<String, MechSummary> m_fileNameMap;
+    private Map<String, String> hFailedFiles;
     private int cacheCount;
     private int fileCount;
     private int zipCount;
 
     private static final char SEPARATOR = '|';
-    private static final File ROOT = new File(PreferenceManager.getClientPreferences().getMechDirectory());
+    private static final File ROOT = new File(PreferenceManager
+            .getClientPreferences().getMechDirectory());
     private static final File CACHE = new File(ROOT, "units.cache");
 
     private MechSummaryCache() {
-        m_nameMap = new HashMap<String,MechSummary>();
-        m_fileNameMap = new HashMap<String,MechSummary>();
+        m_nameMap = new HashMap<String, MechSummary>();
+        m_fileNameMap = new HashMap<String, MechSummary>();
     }
 
     public MechSummary[] getAllMechs() {
@@ -135,12 +138,12 @@ public class MechSummaryCache {
 
     public MechSummary getMech(String sRef) {
         block();
-        if ( m_nameMap.containsKey(sRef))
+        if (m_nameMap.containsKey(sRef))
             return m_nameMap.get(sRef);
         return m_fileNameMap.get(sRef);
     }
 
-    public Map<String,String> getFailedFiles() {
+    public Map<String, String> getFailedFiles() {
         block();
         return hFailedFiles;
     }
@@ -150,7 +153,7 @@ public class MechSummaryCache {
         Set<String> sKnownFiles = new HashSet<String>();
         long lLastCheck = 0;
         entityVerifier = new EntityVerifier(new File(CONFIG_FILENAME));
-        hFailedFiles = new HashMap<String,String>();
+        hFailedFiles = new HashMap<String, String>();
 
         EquipmentType.initializeTypes(); // load master equipment lists
 
@@ -159,18 +162,19 @@ public class MechSummaryCache {
 
         // check the cache
         try {
-            if (CACHE.exists() && CACHE.lastModified() >= megamek.MegaMek.TIMESTAMP) {
+            if (CACHE.exists()
+                    && CACHE.lastModified() >= megamek.MegaMek.TIMESTAMP) {
                 loadReport.append("  Reading from unit cache file...\n");
                 lLastCheck = CACHE.lastModified();
                 BufferedReader br = new BufferedReader(new FileReader(CACHE));
                 String s;
                 while ((s = br.readLine()) != null) {
-                    if(Thread.interrupted()) {
+                    if (Thread.interrupted()) {
                         done();
                         return;
                     }
                     MechSummary ms = new MechSummary();
-                    // manually do a string tokenizer.  Much faster
+                    // manually do a string tokenizer. Much faster
                     int nIndex1 = s.indexOf(SEPARATOR);
                     ms.setName(s.substring(0, nIndex1));
                     int nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
@@ -183,7 +187,9 @@ public class MechSummaryCache {
                     ms.setUnitType(s.substring(nIndex1 + 1, nIndex2));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setSourceFile(new File(s.substring(nIndex1 + 1, nIndex2)));
+                    ms
+                            .setSourceFile(new File(s.substring(nIndex1 + 1,
+                                    nIndex2)));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setEntryName(s.substring(nIndex1 + 1, nIndex2));
@@ -193,26 +199,32 @@ public class MechSummaryCache {
                     }
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setYear(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+                    ms.setYear(Integer.parseInt(s.substring(nIndex1 + 1,
+                            nIndex2)));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setType(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+                    ms.setType(Integer.parseInt(s.substring(nIndex1 + 1,
+                            nIndex2)));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setTons(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+                    ms.setTons(Integer.parseInt(s.substring(nIndex1 + 1,
+                            nIndex2)));
                     nIndex1 = nIndex2;
                     nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
-                    ms.setBV(Integer.parseInt(s.substring(nIndex1 + 1, nIndex2)));
+                    ms.setBV(Integer
+                            .parseInt(s.substring(nIndex1 + 1, nIndex2)));
                     nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 +1);
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
                     ms.setLevel(s.substring(nIndex1 + 1, nIndex2));
                     nIndex1 = nIndex2;
-                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 +1);
-                    ms.setCost(Integer.parseInt(s.substring(nIndex1 + 1,nIndex2)));
-                    ms.setCanon(s.substring(nIndex2+1).equals("T")? true : false);
+                    nIndex2 = s.indexOf(SEPARATOR, nIndex1 + 1);
+                    ms.setCost(Integer.parseInt(s.substring(nIndex1 + 1,
+                            nIndex2)));
+                    ms.setCanon(s.substring(nIndex2 + 1).equals("T") ? true
+                            : false);
 
                     // Verify that this file still exists and is older than
-                    //  the cache.
+                    // the cache.
                     File fSource = ms.getSourceFile();
                     if (fSource.exists() && fSource.lastModified() < lLastCheck) {
                         vMechs.addElement(ms);
@@ -222,12 +234,13 @@ public class MechSummaryCache {
                 }
             }
         } catch (Exception e) {
-            loadReport.append("  Unable to load unit cache: ")
-                .append(e.getMessage()).append("\n");
+            loadReport.append("  Unable to load unit cache: ").append(
+                    e.getMessage()).append("\n");
         }
 
         // load any changes since the last check time
-        boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, ROOT);
+        boolean bNeedsUpdate = loadMechsFromDirectory(vMechs, sKnownFiles,
+                lLastCheck, ROOT);
 
         // convert to array
         m_data = new MechSummary[vMechs.size()];
@@ -236,17 +249,20 @@ public class MechSummaryCache {
         // store map references
         for (int x = 0; x < m_data.length; x++) {
             m_nameMap.put(m_data[x].getName(), m_data[x]);
-            if ( m_data[x].getEntryName() == null)
-                m_fileNameMap.put(m_data[x].getSourceFile().getName(), m_data[x]);
+            if (m_data[x].getEntryName() == null)
+                m_fileNameMap.put(m_data[x].getSourceFile().getName(),
+                        m_data[x]);
             else {
                 String unitName = m_data[x].getEntryName();
-                
-                if ( unitName.indexOf("\\") > -1)
-                    unitName = unitName.substring(unitName.lastIndexOf("\\")+1);
-                
-                if ( unitName.indexOf("/") > -1)
-                    unitName = unitName.substring(unitName.lastIndexOf("/")+1);
-                
+
+                if (unitName.indexOf("\\") > -1)
+                    unitName = unitName
+                            .substring(unitName.lastIndexOf("\\") + 1);
+
+                if (unitName.indexOf("/") > -1)
+                    unitName = unitName
+                            .substring(unitName.lastIndexOf("/") + 1);
+
                 m_fileNameMap.put(unitName, m_data[x]);
             }
         }
@@ -263,19 +279,17 @@ public class MechSummaryCache {
         loadReport.append(m_data.length).append(" units loaded.\n");
 
         if (hFailedFiles.size() > 0) {
-            loadReport.append("  ").append(hFailedFiles.size())
-                .append(" units failed to load...\n");
+            loadReport.append("  ").append(hFailedFiles.size()).append(
+                    " units failed to load...\n");
         }
         /*
-        Enumeration failedUnits = hFailedFiles.keys();
-        Enumeration failedUnitsDesc = hFailedFiles.elements();
-        while (failedUnits.hasMoreElements()) {
-            loadReport.append("    ").append(failedUnits.nextElement())
-                .append("\n");
-            loadReport.append("    --")
-                .append(failedUnitsDesc.nextElement()).append("\n");
-        }
-        */
+         * Enumeration failedUnits = hFailedFiles.keys(); Enumeration
+         * failedUnitsDesc = hFailedFiles.elements(); while
+         * (failedUnits.hasMoreElements()) { loadReport.append("
+         * ").append(failedUnits.nextElement()) .append("\n");
+         * loadReport.append(" --")
+         * .append(failedUnitsDesc.nextElement()).append("\n"); }
+         */
 
         System.out.print(loadReport.toString());
 
@@ -298,33 +312,16 @@ public class MechSummaryCache {
         loadReport.append("Saving unit cache.\n");
         FileWriter wr = new FileWriter(CACHE);
         for (int x = 0; x < m_data.length; x++) {
-            wr.write(
-                m_data[x].getName()
-                    + SEPARATOR
-                    + m_data[x].getChassis()
-                    + SEPARATOR
-                    + m_data[x].getModel()
-                    + SEPARATOR
-                    + m_data[x].getUnitType()
-                    + SEPARATOR
-                    + m_data[x].getSourceFile().getPath()
-                    + SEPARATOR
-                    + m_data[x].getEntryName()
-                    + SEPARATOR
-                    + m_data[x].getYear()
-                    + SEPARATOR
-                    + m_data[x].getType()
-                    + SEPARATOR
-                    + m_data[x].getTons()
-                    + SEPARATOR
-                    + m_data[x].getBV()
-                    + SEPARATOR
-                    + m_data[x].getLevel()
-                    + SEPARATOR
-                    + m_data[x].getCost()
-                    + SEPARATOR
-                    + (m_data[x].isCanon()? 'T' : 'F')
-                    + "\r\n");
+            wr.write(m_data[x].getName() + SEPARATOR + m_data[x].getChassis()
+                    + SEPARATOR + m_data[x].getModel() + SEPARATOR
+                    + m_data[x].getUnitType() + SEPARATOR
+                    + m_data[x].getSourceFile().getPath() + SEPARATOR
+                    + m_data[x].getEntryName() + SEPARATOR
+                    + m_data[x].getYear() + SEPARATOR + m_data[x].getType()
+                    + SEPARATOR + m_data[x].getTons() + SEPARATOR
+                    + m_data[x].getBV() + SEPARATOR + m_data[x].getLevel()
+                    + SEPARATOR + m_data[x].getCost() + SEPARATOR
+                    + (m_data[x].isCanon() ? 'T' : 'F') + "\r\n");
         }
         wr.flush();
         wr.close();
@@ -343,15 +340,17 @@ public class MechSummaryCache {
         ms.setTons((int) e.getWeight());
         ms.setBV(e.calculateBattleValue());
         ms.setLevel(TechConstants.T_SIMPLE_LEVEL[e.getTechLevel()]);
-        ms.setCost((int)e.getCost());
+        ms.setCost((int) e.getCost());
         ms.setCanon(e.isCanon());
         // we can only test meks and vehicles right now
         if (e instanceof Mech || e instanceof Tank) {
             TestEntity testEntity = null;
             if (e instanceof Mech)
-                testEntity = new TestMech((Mech)e, entityVerifier.mechOption, null);
+                testEntity = new TestMech((Mech) e, entityVerifier.mechOption,
+                        null);
             else
-                testEntity = new TestTank((Tank)e, entityVerifier.tankOption, null);
+                testEntity = new TestTank((Tank) e, entityVerifier.tankOption,
+                        null);
             if (!testEntity.correctEntity(new StringBuffer())) {
                 ms.setLevel("F");
             }
@@ -359,18 +358,19 @@ public class MechSummaryCache {
         return ms;
     }
 
-    // Loading a complete mech object for each summary is a bear and should be 
+    // Loading a complete mech object for each summary is a bear and should be
     // changed, but it lets me use the existing parsers
-    private boolean loadMechsFromDirectory(Vector<MechSummary> vMechs, Set<String> sKnownFiles, long lLastCheck, File fDir) {
+    private boolean loadMechsFromDirectory(Vector<MechSummary> vMechs,
+            Set<String> sKnownFiles, long lLastCheck, File fDir) {
         boolean bNeedsUpdate = false;
-        loadReport.append("  Looking in ").append(fDir.getPath())
-            .append("...\n");
+        loadReport.append("  Looking in ").append(fDir.getPath()).append(
+                "...\n");
         int thisDirectoriesFileCount = 0;
         String[] sa = fDir.list();
 
         if (sa != null) {
             for (int x = 0; x < sa.length; x++) {
-                if(Thread.interrupted()) {
+                if (Thread.interrupted()) {
                     done();
                     return false;
                 }
@@ -381,14 +381,15 @@ public class MechSummaryCache {
                 if (f.isDirectory()) {
                     if (f.getName().toLowerCase().equals("unsupported")) {
                         // Mechs in this directory are ignored because
-                        //  they have features not implemented in MM yet.
+                        // they have features not implemented in MM yet.
                         continue;
                     } else if (f.getName().toLowerCase().equals("_svn")) {
-                        // This is a Subversion work directory.  Lets ignore it.
+                        // This is a Subversion work directory. Lets ignore it.
                         continue;
                     }
                     // recursion is fun
-                    bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles, lLastCheck, f);
+                    bNeedsUpdate |= loadMechsFromDirectory(vMechs, sKnownFiles,
+                            lLastCheck, f);
                     continue;
                 }
                 if (f.getName().indexOf('.') == -1) {
@@ -410,10 +411,12 @@ public class MechSummaryCache {
                     continue;
                 }
                 if (f.getName().toLowerCase().endsWith(".zip")) {
-                    bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles, lLastCheck, f);
+                    bNeedsUpdate |= loadMechsFromZipFile(vMechs, sKnownFiles,
+                            lLastCheck, f);
                     continue;
                 }
-                if (f.lastModified() < lLastCheck && sKnownFiles.contains(f.toString())) {
+                if (f.lastModified() < lLastCheck
+                        && sKnownFiles.contains(f.toString())) {
                     continue;
                 }
                 try {
@@ -428,18 +431,18 @@ public class MechSummaryCache {
                     Iterator<String> failedEquipment = e.getFailedEquipment();
                     if (failedEquipment.hasNext()) {
                         loadReport.append("    Loading from ").append(f)
-                            .append("\n");
-                        while (failedEquipment.hasNext()) {
-                            loadReport.append("      Failed to load equipment: ")
-                                .append(failedEquipment.next())
                                 .append("\n");
+                        while (failedEquipment.hasNext()) {
+                            loadReport.append(
+                                    "      Failed to load equipment: ").append(
+                                    failedEquipment.next()).append("\n");
                         }
                     }
                 } catch (EntityLoadingException ex) {
-                    loadReport.append("    Loading from ")
-                        .append(f).append("\n");
-                    loadReport.append("***   Unable to load file: ")
-                        .append(ex.getMessage()).append("\n");
+                    loadReport.append("    Loading from ").append(f).append(
+                            "\n");
+                    loadReport.append("***   Unable to load file: ").append(
+                            ex.getMessage()).append("\n");
                     hFailedFiles.put(f.toString(), ex.getMessage());
                     continue;
                 }
@@ -447,28 +450,29 @@ public class MechSummaryCache {
         }
 
         loadReport.append("  ...loaded ").append(thisDirectoriesFileCount)
-            .append(" files.\n");
+                .append(" files.\n");
 
         return bNeedsUpdate;
     }
 
-    private boolean loadMechsFromZipFile(Vector<MechSummary> vMechs, Set<String> sKnownFiles, long lLastCheck, File fZipFile) {
+    private boolean loadMechsFromZipFile(Vector<MechSummary> vMechs,
+            Set<String> sKnownFiles, long lLastCheck, File fZipFile) {
         boolean bNeedsUpdate = false;
         ZipFile zFile;
         int thisZipFileCount = 0;
         try {
             zFile = new ZipFile(fZipFile);
         } catch (Exception ex) {
-            loadReport.append("  Unable to load file ")
-                .append(fZipFile.getName()).append(": ")
-                .append(ex.getMessage()).append("\n");
+            loadReport.append("  Unable to load file ").append(
+                    fZipFile.getName()).append(": ").append(ex.getMessage())
+                    .append("\n");
             return false;
         }
-        loadReport.append("  Looking in zip file ")
-            .append(fZipFile.getPath()).append("...\n");
+        loadReport.append("  Looking in zip file ").append(fZipFile.getPath())
+                .append("...\n");
 
         for (Enumeration<?> i = zFile.entries(); i.hasMoreElements();) {
-            if(Thread.interrupted()) {
+            if (Thread.interrupted()) {
                 done();
                 return false;
             }
@@ -476,7 +480,8 @@ public class MechSummaryCache {
 
             if (zEntry.isDirectory()) {
                 if (zEntry.getName().toLowerCase().equals("unsupported")) {
-                    loadReport.append("  Do not place special 'unsupported' type folders in zip files, they must\n    be uncompressed directories to work properly.  Note that you may place\n    zip files inside of 'unsupported' type folders, though.\n");
+                    loadReport
+                            .append("  Do not place special 'unsupported' type folders in zip files, they must\n    be uncompressed directories to work properly.  Note that you may place\n    zip files inside of 'unsupported' type folders, though.\n");
                 }
                 continue;
             }
@@ -484,12 +489,13 @@ public class MechSummaryCache {
                 continue;
             }
             if (Math.max(fZipFile.lastModified(), zEntry.getTime()) < lLastCheck
-                && sKnownFiles.contains(fZipFile.toString())) {
+                    && sKnownFiles.contains(fZipFile.toString())) {
                 continue;
             }
 
             try {
-                MechFileParser mfp = new MechFileParser(zFile.getInputStream(zEntry), zEntry.getName());
+                MechFileParser mfp = new MechFileParser(zFile
+                        .getInputStream(zEntry), zEntry.getName());
                 Entity e = mfp.getEntity();
                 MechSummary ms = getSummary(e, fZipFile, zEntry.getName());
                 vMechs.addElement(ms);
@@ -499,19 +505,18 @@ public class MechSummaryCache {
                 zipCount++;
                 Iterator<String> failedEquipment = e.getFailedEquipment();
                 if (failedEquipment.hasNext()) {
-                    loadReport.append("    Loading from zip file")
-                        .append(" >> ").append(zEntry.getName()).append("\n");
+                    loadReport.append("    Loading from zip file").append(
+                            " >> ").append(zEntry.getName()).append("\n");
                     while (failedEquipment.hasNext()) {
                         loadReport.append("      Failed to load equipment: ")
-                            .append(failedEquipment.next())
-                            .append("\n");
+                                .append(failedEquipment.next()).append("\n");
                     }
                 }
             } catch (Exception ex) {
-                loadReport.append("    Loading from zip file")
-                    .append(" >> ").append(zEntry.getName()).append("\n");
-                loadReport.append("      Unable to load file: ")
-                    .append(ex.getMessage()).append("\n");
+                loadReport.append("    Loading from zip file").append(" >> ")
+                        .append(zEntry.getName()).append("\n");
+                loadReport.append("      Unable to load file: ").append(
+                        ex.getMessage()).append("\n");
                 if (!(ex.getMessage() == null))
                     hFailedFiles.put(zEntry.getName(), ex.getMessage());
                 continue;
@@ -524,8 +529,8 @@ public class MechSummaryCache {
             // whatever.
         }
 
-        loadReport.append("  ...loaded ").append(thisZipFileCount)
-            .append(" files.\n");
+        loadReport.append("  ...loaded ").append(thisZipFileCount).append(
+                " files.\n");
 
         return bNeedsUpdate;
     }

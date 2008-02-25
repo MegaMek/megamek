@@ -20,89 +20,91 @@
 
 package megamek.common;
 
-import java.util.ArrayList;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
- * Keeps track of a target for a roll.  Allows adding modifiers with 
+ * Keeps track of a target for a roll. Allows adding modifiers with
  * descriptions, including appending the modifiers in another TargetRoll.
  * Intended for rolls like a to-hit roll or a piloting skill check.
- *
- * @author  Ben
- * @version 
+ * 
+ * @author Ben
+ * @version
  */
 public class TargetRoll implements Serializable {
-    
+
     /**
      * 
      */
     private static final long serialVersionUID = -7453086182585457422L;
-    public final static int IMPOSSIBLE          = Integer.MAX_VALUE;
-    public final static int AUTOMATIC_FAIL      = Integer.MAX_VALUE - 1;
-    public final static int AUTOMATIC_SUCCESS   = Integer.MIN_VALUE;
-    /* The CHECK_FALSE value is returned when a function that normally
-       would return a target roll number determines that the roll
-       wasn't needed after all. */
-    public final static int CHECK_FALSE         = Integer.MIN_VALUE + 1;
-    
+    public final static int IMPOSSIBLE = Integer.MAX_VALUE;
+    public final static int AUTOMATIC_FAIL = Integer.MAX_VALUE - 1;
+    public final static int AUTOMATIC_SUCCESS = Integer.MIN_VALUE;
+    /*
+     * The CHECK_FALSE value is returned when a function that normally would
+     * return a target roll number determines that the roll wasn't needed after
+     * all.
+     */
+    public final static int CHECK_FALSE = Integer.MIN_VALUE + 1;
+
     private ArrayList<Modifier> modifiers = new ArrayList<Modifier>();
-    
+
     private int total;
 
     /** Creates new TargetRoll */
     public TargetRoll() {
 
     }
-    
-    /** 
+
+    /**
      * Creates a new TargetRoll with a base value & desc
      */
     public TargetRoll(int value, String desc) {
         addModifier(value, desc);
     }
-    
+
     /**
      * Returns the total value of all modifiers
      */
     public int getValue() {
         return total;
     }
-    
+
     /**
      * Returns the total value of all modifiers
      */
     public String getValueAsString() {
         switch (total) {
-            case IMPOSSIBLE : 
+            case IMPOSSIBLE:
                 return "Impossible";
-            case AUTOMATIC_FAIL :
+            case AUTOMATIC_FAIL:
                 return "Automatic Failure";
-            case AUTOMATIC_SUCCESS :
+            case AUTOMATIC_SUCCESS:
                 return "Automatic Success";
-            case CHECK_FALSE :
+            case CHECK_FALSE:
                 return "Did not need to roll";
-            default :
+            default:
                 return Integer.toString(total);
         }
     }
-    
+
     /**
      * Returns a description of all applicable modifiers
      */
     public String getDesc() {
         boolean first = true;
         StringBuffer allDesc = new StringBuffer();
-        
+
         for (Modifier modifier : modifiers) {
 
             // check for break condition
             if (modifier.value == IMPOSSIBLE
-                || modifier.value == AUTOMATIC_FAIL 
-                || modifier.value == AUTOMATIC_SUCCESS
-                || modifier.value == CHECK_FALSE) {
+                    || modifier.value == AUTOMATIC_FAIL
+                    || modifier.value == AUTOMATIC_SUCCESS
+                    || modifier.value == CHECK_FALSE) {
                 return modifier.desc;
             }
-            
+
             // add desc
             if (first) {
                 first = false;
@@ -114,17 +116,17 @@ public class TargetRoll implements Serializable {
             allDesc.append(modifier.desc);
             allDesc.append(")");
         }
-        
+
         return allDesc.toString();
     }
-    
+
     /**
      * Returns the first description found
      */
     public String getPlainDesc() {
         return modifiers.get(0).desc;
     }
-    
+
     /**
      * Returns the last description found
      */
@@ -133,7 +135,6 @@ public class TargetRoll implements Serializable {
         return last.desc;
     }
 
-    
     public void addModifier(int value, String desc) {
         addModifier(new Modifier(value, desc));
     }
@@ -145,7 +146,7 @@ public class TargetRoll implements Serializable {
         modifiers.add(modifier);
         recalculate();
     }
-    
+
     /**
      * Append another TargetRoll to the end of this one
      */
@@ -153,66 +154,68 @@ public class TargetRoll implements Serializable {
         if (other == null) {
             return;
         }
-        for (Modifier modifier:other.modifiers) {
+        for (Modifier modifier : other.modifiers) {
             addModifier(modifier);
         }
     }
-    
+
     /**
      * Remove all automatic failures or successes, but leave impossibles intact
      */
-    
+
     public void removeAutos() {
         removeAutos(false);
     }
-    
+
     /**
      * Remove all automatic failures or successes, and possibly also remove
      * impossibles
-     * @param removeImpossibles <code>boolean</code> value wether or not 
-     *                          impossibles should be removed
+     * 
+     * @param removeImpossibles <code>boolean</code> value wether or not
+     *            impossibles should be removed
      */
-    
+
     public void removeAutos(boolean removeImpossibles) {
         ArrayList<Modifier> toKeep = new ArrayList<Modifier>();
-        for (Modifier modifier:modifiers) {
+        for (Modifier modifier : modifiers) {
             if (!removeImpossibles) {
-                if (modifier.value != AUTOMATIC_FAIL && modifier.value != AUTOMATIC_SUCCESS) {
+                if (modifier.value != AUTOMATIC_FAIL
+                        && modifier.value != AUTOMATIC_SUCCESS) {
                     toKeep.add(modifier);
                 }
-            } else if (modifier.value != AUTOMATIC_FAIL &&
-                       modifier.value != AUTOMATIC_SUCCESS &&
-                       modifier.value != IMPOSSIBLE) {
+            } else if (modifier.value != AUTOMATIC_FAIL
+                    && modifier.value != AUTOMATIC_SUCCESS
+                    && modifier.value != IMPOSSIBLE) {
                 toKeep.add(modifier);
             }
         }
         modifiers = toKeep;
         recalculate();
     }
-    
+
     /**
-     * Recalculate the target number & desc for all modifiers.  If any of them
-     * indicates an automatic result, stop and just return that modifier.  Treat
+     * Recalculate the target number & desc for all modifiers. If any of them
+     * indicates an automatic result, stop and just return that modifier. Treat
      * the first modifier listed as a base
      */
     private void recalculate() {
         total = 0;
-        
-        for (Modifier modifier:modifiers) {
+
+        for (Modifier modifier : modifiers) {
             // check for break condition
             if (modifier.value == IMPOSSIBLE
-                || modifier.value == AUTOMATIC_FAIL 
-                || modifier.value == AUTOMATIC_SUCCESS
-                || modifier.value == CHECK_FALSE) {
+                    || modifier.value == AUTOMATIC_FAIL
+                    || modifier.value == AUTOMATIC_SUCCESS
+                    || modifier.value == CHECK_FALSE) {
                 total = modifier.value;
                 break;
             }
-            
+
             // add modifier
             total += modifier.value;
         }
     }
-    
+
     private class Modifier implements Serializable {
         /**
          * 
@@ -220,7 +223,7 @@ public class TargetRoll implements Serializable {
         private static final long serialVersionUID = -7228584817530534507L;
         int value;
         String desc;
-        
+
         public Modifier(int value, String desc) {
             this.value = value;
             this.desc = desc;

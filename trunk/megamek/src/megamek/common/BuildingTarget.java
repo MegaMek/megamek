@@ -14,132 +14,135 @@
 
 package megamek.common;
 
-
 /**
- * This class represents a single, targetable hex of a building.  The building
+ * This class represents a single, targetable hex of a building. The building
  * itself may occupy multiple hexex.
- *
- * @author  Suvarov454@sourceforge.net (James A. Damour )
+ * 
+ * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $Revision$
  */
 public class BuildingTarget implements Targetable {
 
     /**
+     * 
+     */
+    private static final long serialVersionUID = 6432766092407639630L;
+
+    /**
      * The coordinates of the hex being targeted.
      */
-    private Coords      position = null;
+    private Coords position = null;
 
     /**
      * Flag that indicates an attempt to ignite the building.
      */
-    private boolean     isIgnite  = false;
+    private boolean isIgnite = false;
 
     /**
      * The ID of the building being targeted.
      */
-    private int         id = Building.UNKNOWN;
+    private int id = Building.UNKNOWN;
 
     /**
      * The height of the building at the targeted position.
      */
-    private int         height = Building.UNKNOWN;
+    private int height = Building.UNKNOWN;
 
     /**
      * The elevation of the building at the targeted position.
      */
-    private int         elevation = Building.UNKNOWN;
+    private int elevation = Building.UNKNOWN;
 
     /**
      * The name of this hex of the building.
      */
-    private String      name = null;
+    private String name = null;
 
     /**
      * Initialize this object from the input.
-     *
-     * @param   coords - the <code>Coords</code> of the hext being targeted.
-     * @param   board - the game's <code>Board</code> object.
-     * @param   ignite - a <code>boolean</code> flag that indicates whether
-     *          the player is attempting to set the building on fire, or not.
+     * 
+     * @param coords - the <code>Coords</code> of the hext being targeted.
+     * @param board - the game's <code>Board</code> object.
+     * @param ignite - a <code>boolean</code> flag that indicates whether the
+     *            player is attempting to set the building on fire, or not.
      * @exception an <code>IllegalArgumentException</code> will be thrown if
-     *          the given coordinates do not contain a building.
+     *                the given coordinates do not contain a building.
      */
-    protected void init( Coords coords, IBoard board, boolean ignite ) {
+    protected void init(Coords coords, IBoard board, boolean ignite) {
         this.position = coords;
         this.isIgnite = ignite;
 
         // Get the building at the given coordinates.
-        Building bldg = board.getBuildingAt( this.position );
-        if ( bldg == null ) {
-            throw new IllegalArgumentException( "The coordinates, " +
-                                                this.position.getBoardNum() +
-                                                ", do not contain a building."
-                                                );
+        Building bldg = board.getBuildingAt(this.position);
+        if (bldg == null) {
+            throw new IllegalArgumentException("The coordinates, "
+                    + this.position.getBoardNum()
+                    + ", do not contain a building.");
         }
 
         // Save the building's ID.
-        this.id = coordsToId( coords );
+        this.id = coordsToId(coords);
 
         // Generate a name.
         StringBuffer buff = new StringBuffer();
-        buff.append( "Hex " )
-            .append( this.position.getBoardNum() )
-            .append( " of " )
-            .append( bldg.getName() );
-        if ( this.isIgnite ) {
-            buff.append( " (Ignite)" );
+        buff.append("Hex ").append(this.position.getBoardNum()).append(" of ")
+                .append(bldg.getName());
+        if (this.isIgnite) {
+            buff.append(" (Ignite)");
         } else {
-            buff.append( " (Collapse)" );
+            buff.append(" (Collapse)");
         }
         this.name = buff.toString();
 
-        //Bottom of building is at ground level, top of building is at BLDG_ELEV.
-        //Note that height of 0 is a single story building.
-        //Bridges are always height 0, and the BRIDGE_ELEV indicates the elevation
-        IHex targetHex = board.getHex( this.position );
-        elevation = Math.max(-targetHex.depth(), targetHex.terrainLevel(Terrains.BRIDGE_ELEV));
-        height = targetHex.terrainLevel( Terrains.BLDG_ELEV );
-        if(height <= 0)
+        // Bottom of building is at ground level, top of building is at
+        // BLDG_ELEV.
+        // Note that height of 0 is a single story building.
+        // Bridges are always height 0, and the BRIDGE_ELEV indicates the
+        // elevation
+        IHex targetHex = board.getHex(this.position);
+        elevation = Math.max(-targetHex.depth(), targetHex
+                .terrainLevel(Terrains.BRIDGE_ELEV));
+        height = targetHex.terrainLevel(Terrains.BLDG_ELEV);
+        if (height <= 0)
             height = 0;
         else
             height--;
     }
 
-
     /**
      * Target a single hex of a building.
-     *
-     * @param   coords - the <code>Coords</code> of the hext being targeted.
-     * @param   board - the game's <code>Board</code> object.
-     * @param   type - an <code>int</code> value that indicates whether
-     *          the player is attempting to set the building on fire, or not.
+     * 
+     * @param coords - the <code>Coords</code> of the hext being targeted.
+     * @param board - the game's <code>Board</code> object.
+     * @param type - an <code>int</code> value that indicates whether the
+     *            player is attempting to set the building on fire, or not.
      * @exception an <code>IllegalArgumentException</code> will be thrown if
-     *          the given coordinates do not contain a building.
+     *                the given coordinates do not contain a building.
      */
-    public BuildingTarget( Coords coords, IBoard board, int nType ) {
+    public BuildingTarget(Coords coords, IBoard board, int nType) {
         boolean ignite = (nType == Targetable.TYPE_BLDG_IGNITE);
-        this.init( coords, board, ignite );
+        this.init(coords, board, ignite);
     }
 
     /**
      * Target a single hex of a building.
-     *
-     * @param   coords - the <code>Coords</code> of the hext being targeted.
-     * @param   board - the game's <code>Board</code> object.
-     * @param   ignite - a <code>boolean</code> flag that indicates whether
-     *          the player is attempting to set the building on fire, or not.
+     * 
+     * @param coords - the <code>Coords</code> of the hext being targeted.
+     * @param board - the game's <code>Board</code> object.
+     * @param ignite - a <code>boolean</code> flag that indicates whether the
+     *            player is attempting to set the building on fire, or not.
      * @exception an <code>IllegalArgumentException</code> will be thrown if
-     *          the given coordinates do not contain a building.
+     *                the given coordinates do not contain a building.
      */
-    public BuildingTarget( Coords coords, IBoard board, boolean ignite ) {
-        this.init( coords, board, ignite );
+    public BuildingTarget(Coords coords, IBoard board, boolean ignite) {
+        this.init(coords, board, ignite);
     }
 
     // Implementation of Targetable
 
     public int getTargetType() {
         int retval = Targetable.TYPE_BUILDING;
-        if ( this.isIgnite ) {
+        if (this.isIgnite) {
             retval = Targetable.TYPE_BLDG_IGNITE;
         }
         return retval;
@@ -172,23 +175,24 @@ public class BuildingTarget implements Targetable {
     public String getDisplayName() {
         return this.name;
     }
+
     /**
      * The transformation encodes the y value in the top 5 decimal digits and
-     * the x value in the bottom 5.  Could more efficiently encode this by
+     * the x value in the bottom 5. Could more efficiently encode this by
      * partitioning the binary representation, but this is more human readable
      * and still allows for a 99999x99999 hex map.
      */
-     
+
     // encode 2 numbers into 1
     public static int coordsToId(Coords c) {
         return c.y * 100000 + c.x;
     }
-    
+
     // decode 1 number into 2
     public static Coords idToCoords(int id) {
         int y = id / 100000;
         return new Coords(id - (y * 100000), y);
-    }    
+    }
 
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;

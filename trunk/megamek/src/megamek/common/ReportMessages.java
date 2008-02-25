@@ -25,7 +25,8 @@ public class ReportMessages {
     private static final String BUNDLE_NAME = "megamek.common.report-messages";//$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences().getLocale());
+            .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences()
+                    .getLocale());
 
     private ReportMessages() {
     }
@@ -39,18 +40,17 @@ public class ReportMessages {
     }
 
     /**
-     * Returns the formatted message for the given key in
-     * the resource bundle. 
-     *
+     * Returns the formatted message for the given key in the resource bundle.
+     * 
      * @param key the resource name
      * @param args the message arguments
      * @return the string
-     */ 
+     */
     public static String getString(String key, Object[] args) {
         String s = getString(key);
-        if (s!=null)
-            return MessageFormat.format(getString(key),args);
+        if (s != null)
+            return MessageFormat.format(getString(key), args);
         return null;
     }
-    
+
 }

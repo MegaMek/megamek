@@ -14,7 +14,7 @@
 
 package megamek.common;
 
-import java.io.*;
+import java.io.Serializable;
 
 public class Minefield implements Serializable, Cloneable {
 
@@ -35,8 +35,8 @@ public class Minefield implements Serializable, Cloneable {
     public static final int CLEAR_NUMBER_WEAPON = 5;
     public static final int CLEAR_NUMBER_INFANTRY = 10;
     public static final int CLEAR_NUMBER_INFANTRY_ACCIDENT = 5;
-    public static final int CLEAR_NUMBER_SWEEPER[] = {6,9};
-    public static final int CLEAR_NUMBER_SWEEPER_ACCIDENT[] = {2,3};
+    public static final int CLEAR_NUMBER_SWEEPER[] = { 6, 9 };
+    public static final int CLEAR_NUMBER_SWEEPER_ACCIDENT[] = { 2, 3 };
 
     public static final int TO_HIT_SIDE = ToHitData.SIDE_FRONT;
     public static final int TO_HIT_TABLE = ToHitData.HIT_KICK;
@@ -45,8 +45,10 @@ public class Minefield implements Serializable, Cloneable {
 
     public static final String IMAGE_FILE = "data/images/hexes/minefieldsign.gif";
 
-    private static String[] names = {"Conventional", "Command-detonated", "Vibrabomb", "Thunder", "Thunder-Inferno", "Thunder-Active", "Thunder-Vibrabomb"};
-    
+    private static String[] names = { "Conventional", "Command-detonated",
+            "Vibrabomb", "Thunder", "Thunder-Inferno", "Thunder-Active",
+            "Thunder-Vibrabomb" };
+
     private Coords coords = null;
     private int playerId = Player.PLAYER_NONE;
     private int damage = 0;
@@ -73,7 +75,7 @@ public class Minefield implements Serializable, Cloneable {
 
     public static Minefield createCommandDetonatedMF(Coords coords, int playerId) {
         Minefield mf = new Minefield();
-        
+
         mf.damage = 10;
         mf.secondaryDamage = 4;
         mf.areaEffect = true;
@@ -84,9 +86,10 @@ public class Minefield implements Serializable, Cloneable {
         return mf;
     }
 
-    public static Minefield createVibrabombMF(Coords coords, int playerId, int setting) {
+    public static Minefield createVibrabombMF(Coords coords, int playerId,
+            int setting) {
         Minefield mf = new Minefield();
-        
+
         mf.damage = 10;
         mf.areaEffect = true;
         mf.oneUse = true;
@@ -96,10 +99,11 @@ public class Minefield implements Serializable, Cloneable {
         mf.playerId = playerId;
         return mf;
     }
-    
-    public static Minefield createThunderVibrabombMF(Coords coords, int playerId, int damage, int setting) {
+
+    public static Minefield createThunderVibrabombMF(Coords coords,
+            int playerId, int damage, int setting) {
         Minefield mf = new Minefield();
-        
+
         mf.damage = damage;
         mf.areaEffect = true;
         mf.oneUse = true;
@@ -109,10 +113,11 @@ public class Minefield implements Serializable, Cloneable {
         mf.playerId = playerId;
         return mf;
     }
-    
-    public static Minefield createThunderMF(Coords coords, int playerId, int damage) {
+
+    public static Minefield createThunderMF(Coords coords, int playerId,
+            int damage) {
         Minefield mf = new Minefield();
-        
+
         mf.damage = damage;
         mf.type = TYPE_THUNDER;
         mf.trigger = 7;
@@ -120,10 +125,11 @@ public class Minefield implements Serializable, Cloneable {
         mf.playerId = playerId;
         return mf;
     }
-    
-    public static Minefield createThunderInfernoMF(Coords coords, int playerId, int damage) {
+
+    public static Minefield createThunderInfernoMF(Coords coords, int playerId,
+            int damage) {
         Minefield mf = new Minefield();
-        
+
         mf.damage = damage;
         mf.type = TYPE_THUNDER_INFERNO;
         mf.trigger = 7;
@@ -131,10 +137,11 @@ public class Minefield implements Serializable, Cloneable {
         mf.playerId = playerId;
         return mf;
     }
-    
-    public static Minefield createThunderActiveMF(Coords coords, int playerId, int damage) {
+
+    public static Minefield createThunderActiveMF(Coords coords, int playerId,
+            int damage) {
         Minefield mf = new Minefield();
-        
+
         mf.damage = damage;
         mf.type = TYPE_THUNDER_ACTIVE;
         mf.trigger = 7;
@@ -142,10 +149,10 @@ public class Minefield implements Serializable, Cloneable {
         mf.playerId = playerId;
         return mf;
     }
-    
+
     public Object clone() {
         Minefield mf = new Minefield();
-        
+
         mf.playerId = playerId;
         mf.coords = coords;
         mf.damage = damage;
@@ -154,7 +161,7 @@ public class Minefield implements Serializable, Cloneable {
         mf.oneUse = oneUse;
         mf.setting = setting;
         mf.type = type;
-        
+
         return mf;
     }
 
@@ -165,20 +172,18 @@ public class Minefield implements Serializable, Cloneable {
         } catch (Exception e) {
             return false;
         }
-        
-        if (
-            mf.playerId == this.playerId &&
-            mf.coords.equals(coords) &&
-            mf.type == this.type) {
+
+        if (mf.playerId == this.playerId && mf.coords.equals(coords)
+                && mf.type == this.type) {
             return true;
         }
-		return false;
+        return false;
     }
-    
+
     public void setDamage(int damage) {
         this.damage = damage;
     }
-    
+
     public Coords getCoords() {
         return coords;
     }

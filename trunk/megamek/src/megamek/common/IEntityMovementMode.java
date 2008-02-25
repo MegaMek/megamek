@@ -15,11 +15,11 @@
 package megamek.common;
 
 /**
- * This interface represents the Entity Movement Types 
+ * This interface represents the Entity Movement Types
  */
 public interface IEntityMovementMode {
-    
-    public static final int NONE = 0; //Future expansion. Turrets?
+
+    public static final int NONE = 0; // Future expansion. Turrets?
     public static final int BIPED = 1;
     public static final int QUAD = 2;
     public static final int TRACKED = 3;
@@ -39,5 +39,6 @@ public interface IEntityMovementMode {
     public static final int SPHEROID = 17;
     public static final int INF_UMU = 18;
     public static final int AIRMECH = 19;
-    public static final int AREOSPACE = 20; //this might be a synonym for AERODYNE.
+    public static final int AREOSPACE = 20; // this might be a synonym for
+                                            // AERODYNE.
 }

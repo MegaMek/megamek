@@ -27,8 +27,7 @@ import java.io.Serializable;
 /**
  * A simple class to specify a location and facing for a unit.
  */
-public class UnitLocation implements Serializable
-{
+public class UnitLocation implements Serializable {
     /**
      * 
      */
@@ -45,12 +44,12 @@ public class UnitLocation implements Serializable
 
     /**
      * Create a new location object.
-     *
-     * @param   id the unit's <code>int</code> ID number.
-     * @param   coords the <code>Coords</code> of this location.
-     * @param   facing the unit's <code>int</code> facing at this location.
+     * 
+     * @param id the unit's <code>int</code> ID number.
+     * @param coords the <code>Coords</code> of this location.
+     * @param facing the unit's <code>int</code> facing at this location.
      */
-    public UnitLocation (int id, Coords coords, int facing) {
+    public UnitLocation(int id, Coords coords, int facing) {
         this.entityId = id;
         this.coords = coords;
         this.facing = facing;
@@ -58,7 +57,7 @@ public class UnitLocation implements Serializable
 
     /**
      * Get the ID number of the entity at this location.
-     *
+     * 
      * @return the <code>int</code> ID of the entity.
      */
     public int getId() {
@@ -67,7 +66,7 @@ public class UnitLocation implements Serializable
 
     /**
      * Get the coordinates of this location.
-     *
+     * 
      * @return the <code>Coords</code> coordinates of the location.
      */
     public Coords getCoords() {
@@ -76,7 +75,7 @@ public class UnitLocation implements Serializable
 
     /**
      * Get the facing of the entity at this location.
-     *
+     * 
      * @return the <code>int</code> facing of the entity.
      */
     public int getFacing() {

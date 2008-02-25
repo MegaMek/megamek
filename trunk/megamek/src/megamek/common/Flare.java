@@ -13,13 +13,12 @@
  */
 
 package megamek.common;
+
 import java.io.Serializable;
 
-//This class represents parachute flares deployed by flare LRM
-//or illumination artillery.
-public class Flare 
-implements Serializable
-{
+// This class represents parachute flares deployed by flare LRM
+// or illumination artillery.
+public class Flare implements Serializable {
     /**
      * 
      */
@@ -27,15 +26,12 @@ implements Serializable
     public Coords position;
     public int turnsToBurn;
     public int radius;
-    public int flags = 0; 
+    public int flags = 0;
 
     public static int F_IGNITED = 1;
     public static int F_DRIFTING = 2;
 
-    public Flare(Coords position,
-                   int turnsToBurn,
-                   int radius,
-                   int flags) {
+    public Flare(Coords position, int turnsToBurn, int radius, int flags) {
         this.position = position;
         this.turnsToBurn = turnsToBurn;
         this.radius = radius;

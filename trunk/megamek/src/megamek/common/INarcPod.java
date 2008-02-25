@@ -16,66 +16,62 @@ package megamek.common;
 import java.io.Serializable;
 
 /**
- * @author Sebastian Brocks
- *
- * This class represents an iNarc pod attached to an entity.
- * This class is immutable.  Once it is created, it can not be changed.
- * An iNarc pod can be targeted for a "brush off" attack.
+ * @author Sebastian Brocks This class represents an iNarc pod attached to an
+ *         entity. This class is immutable. Once it is created, it can not be
+ *         changed. An iNarc pod can be targeted for a "brush off" attack.
  */
 
 public class INarcPod implements Serializable, Targetable {
-    
+
     /**
      * 
      */
     private static final long serialVersionUID = -3566809840132774242L;
-    public static final int HOMING  = 1;
-    public static final int ECM     = 2;
+    public static final int HOMING = 1;
+    public static final int ECM = 2;
     public static final int HAYWIRE = 4;
     public static final int NEMESIS = 8;
-    
+
     private int team;
     private int type;
     private int location;
-    
+
     /**
-     * Creates a new <code>INarcPod</code>,
-     * from the team and of the type specified.
+     * Creates a new <code>INarcPod</code>, from the team and of the type
+     * specified.
      */
     public INarcPod(int team, int type, int location) {
         this.team = team;
         this.type = type;
         this.location = location;
     }
-    
+
     public int getTeam() {
         return team;
     }
-    
+
     public int getType() {
         return type;
     }
-    
+
     public int getLocation() {
         return location;
     }
-    
+
     /**
-     * Determine if the other object is an equivalent INarc pod.
-     * <p/>
-     * Overrides <code>Object#equals(Object)</code>.
-     *
-     * @param   other the other <code>Object</code> which may be
-     *          an equivalent INarc pod.
-     * @return  <code>true</code> if the other object matches this
-     *          one, <code>false</code> otherwise.
+     * Determine if the other object is an equivalent INarc pod. <p/> Overrides
+     * <code>Object#equals(Object)</code>.
+     * 
+     * @param other the other <code>Object</code> which may be an equivalent
+     *            INarc pod.
+     * @return <code>true</code> if the other object matches this one,
+     *         <code>false</code> otherwise.
      */
-    public boolean equals (Object other) {
+    public boolean equals(Object other) {
         boolean equal = false;
         if (other instanceof INarcPod) {
             INarcPod pod = (INarcPod) other;
-            if (this.type == pod.type
-                && this.team == pod.team) {
+            if (this.type == pod.type && this.team == pod.team) {
                 equal = true;
             }
         }
@@ -83,41 +79,41 @@ public class INarcPod implements Serializable, Targetable {
     }
 
     /**
-     * Get a <code>String</code> representing this INarc pod.
-     * <p/>
-     * Overrides <code>Object#toString()</code>.
-     *
-     * @return  a <code>String</code> that represents this INarc pod.
+     * Get a <code>String</code> representing this INarc pod. <p/> Overrides
+     * <code>Object#toString()</code>.
+     * 
+     * @return a <code>String</code> that represents this INarc pod.
      */
     public String toString() {
         StringBuffer buf = new StringBuffer();
         switch (type) {
-        case HOMING :
-            buf.append( "Homing" ); break;
-        case ECM    :
-            buf.append( "ECM" ); break;
-        case HAYWIRE:
-            buf.append( "Haywire" ); break;
-        case NEMESIS:
-            buf.append( "Nemesis" ); break;
+            case HOMING:
+                buf.append("Homing");
+                break;
+            case ECM:
+                buf.append("ECM");
+                break;
+            case HAYWIRE:
+                buf.append("Haywire");
+                break;
+            case NEMESIS:
+                buf.append("Nemesis");
+                break;
         }
-        buf.append( " iNarc pod from Team #" )
-            .append( team );
+        buf.append(" iNarc pod from Team #").append(team);
         return buf.toString();
     }
 
     /**
      * Create a new iNarc pod that is equivalent to the given ID.
-     *
-     * @param   id the <code>int</code> ID of the iNarc pod.
-     * @return  a new <code>INarcPod</code> that matches the ID.
+     * 
+     * @param id the <code>int</code> ID of the iNarc pod.
+     * @return a new <code>INarcPod</code> that matches the ID.
      */
-    public static INarcPod idToInstance (int id) {
+    public static INarcPod idToInstance(int id) {
         // Fun games with bitmasks.
         // TODO : test the @#$% out of this!!
-        return new INarcPod( (id & 0xFFF0) >>> 4,
-                             (id & 0x000F),
-                             0);
+        return new INarcPod((id & 0xFFF0) >>> 4, (id & 0x000F), 0);
     }
 
     // Implementation of Targetable interface.
@@ -134,8 +130,8 @@ public class INarcPod implements Serializable, Targetable {
 
     public Coords getPosition() {
         // Hopefully, this will **never** get called.
-        throw new IllegalStateException
-            ( "Never ask for the coords of an INarcPod." );
+        throw new IllegalStateException(
+                "Never ask for the coords of an INarcPod.");
     }
 
     public int absHeight() {

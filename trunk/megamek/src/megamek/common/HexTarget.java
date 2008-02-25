@@ -14,8 +14,11 @@
 
 package megamek.common;
 
-public class HexTarget implements Targetable
-{
+public class HexTarget implements Targetable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5742445409423125942L;
     private Coords m_coords;
     private boolean m_bIgnite;
     private int m_elev;
@@ -53,34 +56,33 @@ public class HexTarget implements Targetable
     }
 
     public boolean isImmobile() {
-        return (m_type != Targetable.TYPE_MINEFIELD_DELIVER &&
-                    m_type != Targetable.TYPE_HEX_BOMB);
+        return (m_type != Targetable.TYPE_MINEFIELD_DELIVER && m_type != Targetable.TYPE_HEX_BOMB);
     }
 
     public String getDisplayName() {
         String name = "";
         switch (m_type) {
-        case (Targetable.TYPE_FLARE_DELIVER) :
-            name = Messages.getString("HexTarget.DeliverFlare");
-            break;
-        case (Targetable.TYPE_MINEFIELD_DELIVER) :
-            name = Messages.getString("HexTarget.DeliverMinefield");
-            break;
-        case (Targetable.TYPE_HEX_BOMB) :
-            name = Messages.getString("HexTarget.Bomb");
-            break;
-        case (Targetable.TYPE_HEX_CLEAR) :
-            name = Messages.getString("HexTarget.Clear");
-            break;
-        case (Targetable.TYPE_HEX_IGNITE) :
-            name = Messages.getString("HexTarget.Ignite");
-            break;
-        case (Targetable.TYPE_HEX_ARTILLERY) :
-            name = Messages.getString("HexTarget.Artillery");
-            break;
-        case Targetable.TYPE_HEX_EXTINGUISH:
-            name = Messages.getString("HexTarget.Extinguish");
-            break;
+            case (Targetable.TYPE_FLARE_DELIVER):
+                name = Messages.getString("HexTarget.DeliverFlare");
+                break;
+            case (Targetable.TYPE_MINEFIELD_DELIVER):
+                name = Messages.getString("HexTarget.DeliverMinefield");
+                break;
+            case (Targetable.TYPE_HEX_BOMB):
+                name = Messages.getString("HexTarget.Bomb");
+                break;
+            case (Targetable.TYPE_HEX_CLEAR):
+                name = Messages.getString("HexTarget.Clear");
+                break;
+            case (Targetable.TYPE_HEX_IGNITE):
+                name = Messages.getString("HexTarget.Ignite");
+                break;
+            case (Targetable.TYPE_HEX_ARTILLERY):
+                name = Messages.getString("HexTarget.Artillery");
+                break;
+            case Targetable.TYPE_HEX_EXTINGUISH:
+                name = Messages.getString("HexTarget.Extinguish");
+                break;
         }
         return "Hex: " + m_coords.getBoardNum() + name;
     }
@@ -91,7 +93,7 @@ public class HexTarget implements Targetable
 
     /**
      * The transformation encodes the y value in the top 5 decimal digits and
-     * the x value in the bottom 5.  Could more efficiently encode this by
+     * the x value in the bottom 5. Could more efficiently encode this by
      * partitioning the binary representation, but this is more human readable
      * and still allows for a 99999x99999 hex map.
      */
@@ -106,7 +108,7 @@ public class HexTarget implements Targetable
         int y = id / 100000;
         return new Coords(id - (y * 100000), y);
     }
-    
+
     public int sideTable(Coords src) {
         return ToHitData.SIDE_FRONT;
     }

@@ -14,24 +14,23 @@
 
 package megamek.common;
 
-public class PilotingRollData extends TargetRoll
-{
-	private static final long serialVersionUID = -8965684775619336323L;
-	private int entityId;
+public class PilotingRollData extends TargetRoll {
+    private static final long serialVersionUID = -8965684775619336323L;
+    private int entityId;
     private boolean m_bCumulative = true;
-    
+
     public PilotingRollData(int entityId) {
         this.entityId = entityId;
     }
-    
+
     public PilotingRollData(int entityId, int value, String desc) {
         super(value, desc);
         this.entityId = entityId;
     }
-    
+
     /**
      * Double-logging style for situations where the mech automatically falls,
-     * but the pilot can still save to avoid damage.  The game will later strip
+     * but the pilot can still save to avoid damage. The game will later strip
      * out any automatic rolls when it lets the pilot roll to save.
      */
     public PilotingRollData(int entityId, int value, int pilotValue, String desc) {
@@ -39,15 +38,15 @@ public class PilotingRollData extends TargetRoll
         addModifier(pilotValue, desc);
         this.entityId = entityId;
     }
-    
+
     public int getEntityId() {
         return entityId;
     }
-    
+
     public void setCumulative(boolean b) {
         m_bCumulative = b;
     }
-    
+
     public boolean isCumulative() {
         return m_bCumulative;
     }

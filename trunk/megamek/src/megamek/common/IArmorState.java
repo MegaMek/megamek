@@ -19,8 +19,8 @@ package megamek.common;
  */
 public interface IArmorState {
 
-    public static final int        ARMOR_NA            = -1;
-    public static final int        ARMOR_DOOMED        = -2;
-    public static final int        ARMOR_DESTROYED     = -3;
+    public static final int ARMOR_NA = -1;
+    public static final int ARMOR_DOOMED = -2;
+    public static final int ARMOR_DESTROYED = -3;
 
 }

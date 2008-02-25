@@ -27,21 +27,25 @@ public class UnitType {
     public static final int VTOL = 5;
     public static final int NAVAL = 6;
     public static final int GUN_EMPLACEMENT = 7;
-    
-    private static String[] names = {"Mek", "Tank", "BattleArmor", "Infantry", "ProtoMek", "VTOL", "Naval", "Gun Emplacement"};
+
+    private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",
+            "ProtoMek", "VTOL", "Naval", "Gun Emplacement" };
 
     public static final int SIZE = names.length;
 
     public static String determineUnitType(Entity e) {
         return names[determineUnitTypeCode(e)];
     }
+
     public static int determineUnitTypeCode(Entity e) {
         int mm = e.getMovementMode();
         if (e instanceof Infantry) {
             return INFANTRY;
         } else if (e instanceof VTOL) {
             return VTOL;
-        } else if ((mm == IEntityMovementMode.NAVAL) || (mm == IEntityMovementMode.HYDROFOIL) || (mm == IEntityMovementMode.SUBMARINE)) {
+        } else if ((mm == IEntityMovementMode.NAVAL)
+                || (mm == IEntityMovementMode.HYDROFOIL)
+                || (mm == IEntityMovementMode.SUBMARINE)) {
             return NAVAL;
         } else if (e instanceof Tank) {
             return TANK;
@@ -65,9 +69,9 @@ public class UnitType {
 
     public static String getTypeDisplayableName(int type) {
         if (type >= 0 && type < SIZE) {
-            return Messages.getString("UnitType."+names[type]);
+            return Messages.getString("UnitType." + names[type]);
         }
         throw new IllegalArgumentException("Unknown unit type");
     }
-    
+
 }

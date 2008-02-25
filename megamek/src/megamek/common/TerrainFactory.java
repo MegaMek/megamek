@@ -16,28 +16,37 @@ package megamek.common;
 
 public class TerrainFactory implements ITerrainFactory {
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.ITerrainFactory#createTerrain(int, int)
      */
     public ITerrain createTerrain(int type, int level) {
         return new Terrain(type, level);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.ITerrainFactory#createTerrain(int, int, boolean, int)
      */
-    public ITerrain createTerrain(int type, int level, boolean exitsSpecified, int exits) {
+    public ITerrain createTerrain(int type, int level, boolean exitsSpecified,
+            int exits) {
         return new Terrain(type, level, exitsSpecified, exits);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.ITerrainFactory#createTerrain(java.lang.String)
      */
     public ITerrain createTerrain(String terrain) {
         return new Terrain(terrain);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.ITerrainFactory#createTerrain(megamek.common.ITerrain)
      */
     public ITerrain createTerrain(ITerrain other) {

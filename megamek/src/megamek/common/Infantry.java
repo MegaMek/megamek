@@ -19,24 +19,20 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 /**
- * This class represents the lowest of the low, the ground pounders, 
- * the city rats, the PBI (Poor Bloody Infantry).  
- * <p/>
- * PLEASE NOTE!!!  This class just represents unarmored infantry platoons
- * as described by CitiTech (c) 1986.  I've never seen the rules for
- * powered armor, "anti-mech" troops, or Immortals.
- *
- * @author  Suvarov454@sourceforge.net (James A. Damour )
+ * This class represents the lowest of the low, the ground pounders, the city
+ * rats, the PBI (Poor Bloody Infantry). <p/> PLEASE NOTE!!! This class just
+ * represents unarmored infantry platoons as described by CitiTech (c) 1986.
+ * I've never seen the rules for powered armor, "anti-mech" troops, or
+ * Immortals.
+ * 
+ * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $revision:$
  */
 /*
- *   PLEASE NOTE!!!  My programming style is to put constants first in
- *                   tests so the compiler catches my "= for ==" errors.
+ * PLEASE NOTE!!! My programming style is to put constants first in tests so the
+ * compiler catches my "= for ==" errors.
  */
-public class Infantry
-    extends Entity
-    implements Serializable
-{
+public class Infantry extends Entity implements Serializable {
     // Private attributes and helper functions.
 
     /**
@@ -47,40 +43,42 @@ public class Infantry
     /**
      * The number of men originally in this platoon.
      */
-    private int         menStarting = 0;
- 
+    private int menStarting = 0;
+
     /**
      * The number of men alive in this platoon at the beginning of the phase,
      * before it begins to take damage.
      */
-    private int         menShooting = 0;
+    private int menShooting = 0;
 
     /**
      * The number of men left alive in this platoon.
      */
-    private int         men     = 0;
+    private int men = 0;
 
     /**
      * Infantry have no critical slot limitations or locations.
      */
-    private static final int[]  NUM_OF_SLOTS    = {0};
-    private static final String[] LOCATION_ABBRS= { "Men" };
-    private static final String[] LOCATION_NAMES= { "Men" };
+    private static final int[] NUM_OF_SLOTS = { 0 };
+    private static final String[] LOCATION_ABBRS = { "Men" };
+    private static final String[] LOCATION_NAMES = { "Men" };
 
     /**
      * Identify this platoon as anti-mek trained.
      */
-    private boolean     antiMek = false;
-    
-    protected int       runMP = 1;
+    private boolean antiMek = false;
 
-    public int turnsLayingExplosives = -1;    
-    
+    protected int runMP = 1;
+
+    public int turnsLayingExplosives = -1;
+
     public static final int DUG_IN_NONE = 0;
-    public static final int DUG_IN_WORKING = 1; //no protection, can't attack
-    public static final int DUG_IN_COMPLETE = 2; //protected, restricted arc
-    public static final int DUG_IN_FORTIFYING1 = 3; //no protection, can't attack
-    public static final int DUG_IN_FORTIFYING2 = 4; //no protection, can't attack
+    public static final int DUG_IN_WORKING = 1; // no protection, can't attack
+    public static final int DUG_IN_COMPLETE = 2; // protected, restricted arc
+    public static final int DUG_IN_FORTIFYING1 = 3; // no protection, can't
+                                                    // attack
+    public static final int DUG_IN_FORTIFYING2 = 4; // no protection, can't
+                                                    // attack
     private int dugIn = DUG_IN_NONE;
 
     // Public and Protected constants, constructors, and methods.
@@ -88,62 +86,67 @@ public class Infantry
     /**
      * The maximum number of men in an infantry platoon.
      */
-    public static final int     INF_PLT_MAX_MEN = 30;
+    public static final int INF_PLT_MAX_MEN = 30;
 
     /**
      * The maximum number of men in an infantry platoon.
      */
-    public static final int     INF_PLT_FOOT_MAX_MEN = 21;
+    public static final int INF_PLT_FOOT_MAX_MEN = 21;
 
     /**
      * The maximum number of men in an infantry platoon.
      */
-    public static final int     INF_PLT_JUMP_MAX_MEN = 21;
+    public static final int INF_PLT_JUMP_MAX_MEN = 21;
 
     /**
      * The maximum number of men in an infantry platoon.
      */
-    public static final int     INF_PLT_CLAN_MAX_MEN = 25;   
+    public static final int INF_PLT_CLAN_MAX_MEN = 25;
 
     /*
-     * The kinds of weapons available to the PBI.
-     *
-     * By incredible luck, the AmmoType and WeaponType constants
-     * do not overlap for these six weapons.
+     * The kinds of weapons available to the PBI. By incredible luck, the
+     * AmmoType and WeaponType constants do not overlap for these six weapons.
      */
-    public static final int     INF_UNKNOWN     = -1;// T_NA
-    public static final int     INF_RIFLE       = AmmoType.T_AC;
-    public static final int     INF_MG          = AmmoType.T_MG;
-    public static final int     INF_FLAMER      = (int)WeaponType.F_FLAMER; 
-    public static final int     INF_LASER       = (int)WeaponType.F_LASER;
-    public static final int     INF_SRM         = AmmoType.T_SRM;
-    public static final int     INF_LRM         = AmmoType.T_LRM;
-    
-    public static final int     INF_INFERNO_SRM = (int)WeaponType.F_INFERNO;
+    public static final int INF_UNKNOWN = -1;// T_NA
+    public static final int INF_RIFLE = AmmoType.T_AC;
+    public static final int INF_MG = AmmoType.T_MG;
+    public static final int INF_FLAMER = (int) WeaponType.F_FLAMER;
+    public static final int INF_LASER = (int) WeaponType.F_LASER;
+    public static final int INF_SRM = AmmoType.T_SRM;
+    public static final int INF_LRM = AmmoType.T_LRM;
+
+    public static final int INF_INFERNO_SRM = (int) WeaponType.F_INFERNO;
 
     /**
      * The location for infantry equipment.
      */
-    public static final int     LOC_INFANTRY    = 0;
+    public static final int LOC_INFANTRY = 0;
 
     /**
      * The internal names of the anti-Mek attacks.
      */
-    public static final String  LEG_ATTACK      = "LegAttack";
-    public static final String  SWARM_MEK       = "SwarmMek";
-    public static final String  STOP_SWARM      = "StopSwarm";
+    public static final String LEG_ATTACK = "LegAttack";
+    public static final String SWARM_MEK = "SwarmMek";
+    public static final String STOP_SWARM = "StopSwarm";
 
-    public String[] getLocationAbbrs() { return LOCATION_ABBRS; }
-    public String[] getLocationNames() { return LOCATION_NAMES; }
+    public String[] getLocationAbbrs() {
+        return LOCATION_ABBRS;
+    }
+
+    public String[] getLocationNames() {
+        return LOCATION_NAMES;
+    }
 
     /**
      * Returns the number of locations in this platoon (i.e. one).
      */
-    public int locations() { return 1; }
+    public int locations() {
+        return 1;
+    }
 
     /**
-     * Generate a new, blank, infantry platoon.  
-     * Hopefully, we'll be loaded from somewhere.
+     * Generate a new, blank, infantry platoon. Hopefully, we'll be loaded from
+     * somewhere.
      */
     public Infantry() {
         // Instantiate the superclass.
@@ -160,26 +163,32 @@ public class Infantry
     /**
      * Infantry can face freely (except when dug in)
      */
-    public boolean canChangeSecondaryFacing() { return (dugIn == DUG_IN_NONE); }
+    public boolean canChangeSecondaryFacing() {
+        return (dugIn == DUG_IN_NONE);
+    }
 
     /**
      * Infantry can face freely
      */
-    public boolean isValidSecondaryFacing( int dir ) { return true; }
+    public boolean isValidSecondaryFacing(int dir) {
+        return true;
+    }
 
     /**
      * Infantry can face freely
      */
-    public int clipSecondaryFacing( int dir ) { return dir; }
-    
+    public int clipSecondaryFacing(int dir) {
+        return dir;
+    }
+
     /**
      * Return this Infantry's run MP.
      */
     public int getRunMP(boolean gravity, boolean ignoreheat) {
-        if (gravity) return applyGravityEffectsOnMP(this.getOriginalRunMP());
+        if (gravity)
+            return applyGravityEffectsOnMP(this.getOriginalRunMP());
         return this.getOriginalRunMP();
     }
-
 
     /**
      * Infantry don't have MASC
@@ -198,12 +207,14 @@ public class Infantry
     /**
      * Infantry can not enter water unless they have UMU mp or hover.
      */
-    public boolean isHexProhibited( IHex hex ) {
-        if(hex.containsTerrain(Terrains.IMPASSABLE)) return true;
-        if(hex.containsTerrain(Terrains.MAGMA))
+    public boolean isHexProhibited(IHex hex) {
+        if (hex.containsTerrain(Terrains.IMPASSABLE))
             return true;
-        if(hex.terrainLevel(Terrains.WATER) > 0 && !hex.containsTerrain(Terrains.ICE)) {
-            if(getMovementMode() == IEntityMovementMode.HOVER
+        if (hex.containsTerrain(Terrains.MAGMA))
+            return true;
+        if (hex.terrainLevel(Terrains.WATER) > 0
+                && !hex.containsTerrain(Terrains.ICE)) {
+            if (getMovementMode() == IEntityMovementMode.HOVER
                     || getMovementMode() == IEntityMovementMode.INF_UMU)
                 return false;
             return true;
@@ -212,83 +223,83 @@ public class Infantry
     }
 
     /**
-     * Returns the name of the type of movement used.
-     * This is Infantry-specific.
+     * Returns the name of the type of movement used. This is Infantry-specific.
      */
     public String getMovementString(int mtype) {
-        switch(mtype) {
-        case IEntityMovementType.MOVE_NONE :
-            return "None";
-        case IEntityMovementType.MOVE_WALK :
-        case IEntityMovementType.MOVE_RUN :
-            switch (this.getMovementMode()) {
-            case IEntityMovementMode.INF_LEG:
-                return "Walked";
-            case IEntityMovementMode.INF_MOTORIZED:
-                return "Biked";
-            case IEntityMovementMode.HOVER:
-            case IEntityMovementMode.TRACKED:
-            case IEntityMovementMode.WHEELED:
-                return "Drove";
-            case IEntityMovementMode.INF_JUMP:
-            default :
+        switch (mtype) {
+            case IEntityMovementType.MOVE_NONE:
+                return "None";
+            case IEntityMovementType.MOVE_WALK:
+            case IEntityMovementType.MOVE_RUN:
+                switch (this.getMovementMode()) {
+                    case IEntityMovementMode.INF_LEG:
+                        return "Walked";
+                    case IEntityMovementMode.INF_MOTORIZED:
+                        return "Biked";
+                    case IEntityMovementMode.HOVER:
+                    case IEntityMovementMode.TRACKED:
+                    case IEntityMovementMode.WHEELED:
+                        return "Drove";
+                    case IEntityMovementMode.INF_JUMP:
+                    default:
+                        return "Unknown!";
+                }
+            case IEntityMovementType.MOVE_VTOL_WALK:
+            case IEntityMovementType.MOVE_VTOL_RUN:
+                return "Flew";
+            case IEntityMovementType.MOVE_JUMP:
+                return "Jumped";
+            default:
                 return "Unknown!";
-            }
-        case IEntityMovementType.MOVE_VTOL_WALK:
-        case IEntityMovementType.MOVE_VTOL_RUN:
-            return "Flew";
-        case IEntityMovementType.MOVE_JUMP :
-            return "Jumped";
-        default :
-            return "Unknown!";
         }
     }
 
     /**
-     * Returns the abbreviation of the type of movement used.
-     * This is Infantry-specific.
+     * Returns the abbreviation of the type of movement used. This is
+     * Infantry-specific.
      */
     public String getMovementAbbr(int mtype) {
-        switch(mtype) {
-        case IEntityMovementType.MOVE_NONE :
-            return "N";
-        case IEntityMovementType.MOVE_WALK :
-            return "W";
-        case IEntityMovementType.MOVE_RUN :
-            switch (this.getMovementMode()) {
-            case IEntityMovementMode.INF_LEG:
-                return "R";
-            case IEntityMovementMode.INF_MOTORIZED:
-                return "B";
-            case IEntityMovementMode.HOVER:
-            case IEntityMovementMode.TRACKED:
-            case IEntityMovementMode.WHEELED:
-                return "D";
-            default :
+        switch (mtype) {
+            case IEntityMovementType.MOVE_NONE:
+                return "N";
+            case IEntityMovementType.MOVE_WALK:
+                return "W";
+            case IEntityMovementType.MOVE_RUN:
+                switch (this.getMovementMode()) {
+                    case IEntityMovementMode.INF_LEG:
+                        return "R";
+                    case IEntityMovementMode.INF_MOTORIZED:
+                        return "B";
+                    case IEntityMovementMode.HOVER:
+                    case IEntityMovementMode.TRACKED:
+                    case IEntityMovementMode.WHEELED:
+                        return "D";
+                    default:
+                        return "?";
+                }
+            case IEntityMovementType.MOVE_JUMP:
+                return "J";
+            default:
                 return "?";
-            }
-        case IEntityMovementType.MOVE_JUMP :
-            return "J";
-        default :
-            return "?";
         }
     }
 
     /**
      * Infantry only have one hit location.
      */
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation,
+            int aimingMode) {
         return rollHitLocation(table, side);
-    }     
-     
-    public HitData rollHitLocation( int table, int side ) {
-        return new HitData( 0 );
+    }
+
+    public HitData rollHitLocation(int table, int side) {
+        return new HitData(0);
     }
 
     /**
      * Infantry only have one hit location.
      */
-    public HitData getTransferLocation(HitData hit) { 
+    public HitData getTransferLocation(HitData hit) {
         return new HitData(Entity.LOC_DESTROYED);
     }
 
@@ -307,29 +318,32 @@ public class Infantry
     }
 
     /**
-     * Infantry platoons do wierd and wacky things with armor
-     * and internals, but not all Infantry objects are platoons.
-     *
-     * @see     megamek.common.BattleArmor#isPlatoon()
+     * Infantry platoons do wierd and wacky things with armor and internals, but
+     * not all Infantry objects are platoons.
+     * 
+     * @see megamek.common.BattleArmor#isPlatoon()
      */
-    protected boolean isPlatoon() { return true; }
+    protected boolean isPlatoon() {
+        return true;
+    }
 
     /**
-     * Returns the number of men left in the platoon, or IArmorState.ARMOR_DESTROYED.
+     * Returns the number of men left in the platoon, or
+     * IArmorState.ARMOR_DESTROYED.
      */
-    public int getInternal( int loc ) {
-        if ( !this.isPlatoon() ) {
-            return super.getInternal( loc );
+    public int getInternal(int loc) {
+        if (!this.isPlatoon()) {
+            return super.getInternal(loc);
         }
-        return ( this.men > 0 ? this.men : IArmorState.ARMOR_DESTROYED );
+        return (this.men > 0 ? this.men : IArmorState.ARMOR_DESTROYED);
     }
 
     /**
      * Returns the number of men originally the platoon.
      */
-    public int getOInternal( int loc ) {
-        if ( !this.isPlatoon() ) {
-            return super.getOInternal( loc );
+    public int getOInternal(int loc) {
+        if (!this.isPlatoon()) {
+            return super.getOInternal(loc);
         }
         return this.menStarting;
     }
@@ -338,7 +352,7 @@ public class Infantry
      * Sets the amount of men remaining in the platoon.
      */
     public void setInternal(int val, int loc) {
-    super.setInternal( val, loc );
+        super.setInternal(val, loc);
         this.men = val;
     }
 
@@ -346,52 +360,51 @@ public class Infantry
      * Returns the percent of the men remaining in the platoon.
      */
     public double getInternalRemainingPercent() {
-        if ( !this.isPlatoon() ) {
+        if (!this.isPlatoon()) {
             return super.getInternalRemainingPercent();
         }
-    int menTotal = this.men > 0 ? this.men : 0; // Handle "DESTROYED"
+        int menTotal = this.men > 0 ? this.men : 0; // Handle "DESTROYED"
         return ((double) menTotal / this.menStarting);
     }
 
     /**
      * Initializes the number of men in the platoon. Sets the original and
-     * starting  point of the platoon to the same number.
+     * starting point of the platoon to the same number.
      */
-      public void initializeInternal(int val, int loc) {
+    public void initializeInternal(int val, int loc) {
         this.menStarting = val;
         this.menShooting = val;
-        super.initializeInternal( val, loc );
-      }
-      
+        super.initializeInternal(val, loc);
+    }
+
     /**
-     * Set the men in the platoon to the appropriate value for the 
-     * platoon's movement type.
+     * Set the men in the platoon to the appropriate value for the platoon's
+     * movement type.
      */
     public void autoSetInternal() {
 
-    // Clan platoons have 25 men.
-    if ( this.isClan() ) {
-        this.initializeInternal( INF_PLT_CLAN_MAX_MEN,
-                     LOC_INFANTRY );
-        return;
-    }
-
-    // IS platoon strength is based upon movement type.
-        switch (this.getMovementMode()) {
-        case IEntityMovementMode.INF_LEG:
-        case IEntityMovementMode.INF_MOTORIZED:
-            this.initializeInternal( INF_PLT_FOOT_MAX_MEN, LOC_INFANTRY );
-            break;
-        case IEntityMovementMode.INF_JUMP:
-            this.initializeInternal( INF_PLT_JUMP_MAX_MEN, LOC_INFANTRY );
-            break;
-        default:
-            throw new IllegalArgumentException
-                ( "Unknown movement type: " + this.getMovementMode() );
+        // Clan platoons have 25 men.
+        if (this.isClan()) {
+            this.initializeInternal(INF_PLT_CLAN_MAX_MEN, LOC_INFANTRY);
+            return;
         }
-        
-        if(hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
-            initializeArmor( getOInternal(LOC_INFANTRY), LOC_INFANTRY );
+
+        // IS platoon strength is based upon movement type.
+        switch (this.getMovementMode()) {
+            case IEntityMovementMode.INF_LEG:
+            case IEntityMovementMode.INF_MOTORIZED:
+                this.initializeInternal(INF_PLT_FOOT_MAX_MEN, LOC_INFANTRY);
+                break;
+            case IEntityMovementMode.INF_JUMP:
+                this.initializeInternal(INF_PLT_JUMP_MAX_MEN, LOC_INFANTRY);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown movement type: "
+                        + this.getMovementMode());
+        }
+
+        if (hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR)) {
+            initializeArmor(getOInternal(LOC_INFANTRY), LOC_INFANTRY);
         }
         return;
     }
@@ -399,58 +412,55 @@ public class Infantry
     /**
      * Infantry weapons are dictated by their type.
      */
-    protected void addEquipment( Mounted mounted,
-                                 int loc,
-                                 boolean rearMounted )
-        throws LocationFullException 
-    {
+    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
+            throws LocationFullException {
         EquipmentType equip = mounted.getType();
 
         // If the infantry can swarm, they're anti-mek infantry.
-        if ( Infantry.SWARM_MEK.equals( equip.getInternalName() ) ) {
+        if (Infantry.SWARM_MEK.equals(equip.getInternalName())) {
             this.antiMek = true;
         }
         // N.B. Clan Undine BattleArmor can leg attack, but aren't
-        //          classified as "anti-mek" in the BMRr, pg. 155).
-        else if ( Infantry.LEG_ATTACK.equals( equip.getInternalName() ) ||
-                  Infantry.STOP_SWARM.equals( equip.getInternalName() ) ) {
+        // classified as "anti-mek" in the BMRr, pg. 155).
+        else if (Infantry.LEG_ATTACK.equals(equip.getInternalName())
+                || Infantry.STOP_SWARM.equals(equip.getInternalName())) {
             // Do nothing.
         }
         // Update our superclass.
-        super.addEquipment( mounted, loc, rearMounted );
+        super.addEquipment(mounted, loc, rearMounted);
     }
 
     /**
-     * Infantry can fire all around themselves.
-     * But field guns are set up to a facing
+     * Infantry can fire all around themselves. But field guns are set up to a
+     * facing
      */
-    public int getWeaponArc(int wn) { 
-        if(this instanceof BattleArmor && dugIn == DUG_IN_NONE)
-            return Compute.ARC_360; 
-        Mounted mounted = getEquipment(wn);
-        WeaponType wtype = (WeaponType)mounted.getType();
-        if((wtype.hasFlag(WeaponType.F_INFANTRY)
-             || wtype.hasFlag(WeaponType.F_EXTINGUISHER)
-             || wtype.getInternalName() == LEG_ATTACK
-             || wtype.getInternalName() == SWARM_MEK
-             || wtype.getInternalName() == STOP_SWARM)
-             && dugIn == DUG_IN_NONE)
+    public int getWeaponArc(int wn) {
+        if (this instanceof BattleArmor && dugIn == DUG_IN_NONE)
             return Compute.ARC_360;
-		return Compute.ARC_FORWARD;
+        Mounted mounted = getEquipment(wn);
+        WeaponType wtype = (WeaponType) mounted.getType();
+        if ((wtype.hasFlag(WeaponType.F_INFANTRY)
+                || wtype.hasFlag(WeaponType.F_EXTINGUISHER)
+                || wtype.getInternalName() == LEG_ATTACK
+                || wtype.getInternalName() == SWARM_MEK || wtype
+                .getInternalName() == STOP_SWARM)
+                && dugIn == DUG_IN_NONE)
+            return Compute.ARC_360;
+        return Compute.ARC_FORWARD;
     }
 
     /**
-     * Infantry can fire all around themselves.
-     * But field guns act like turret mounted on a tank
+     * Infantry can fire all around themselves. But field guns act like turret
+     * mounted on a tank
      */
-    public boolean isSecondaryArcWeapon(int wn) { 
+    public boolean isSecondaryArcWeapon(int wn) {
         if (this instanceof BattleArmor)
-            return false; 
+            return false;
         Mounted mounted = getEquipment(wn);
-        WeaponType wtype = (WeaponType)mounted.getType();
+        WeaponType wtype = (WeaponType) mounted.getType();
         if (wtype.hasFlag(WeaponType.F_INFANTRY))
             return false;
-		return true;
+        return true;
     }
 
     /**
@@ -477,12 +487,16 @@ public class Infantry
     /**
      * Infantry have no critical slots.
      */
-    protected int[] getNoOfSlots() { return NUM_OF_SLOTS; }
-    
+    protected int[] getNoOfSlots() {
+        return NUM_OF_SLOTS;
+    }
+
     /**
      * Infantry criticals can't be hit.
      */
-    public boolean hasHittableCriticals(int loc) { return false; }
+    public boolean hasHittableCriticals(int loc) {
+        return false;
+    }
 
     /**
      * Calculates the battle value of this platoon.
@@ -490,12 +504,14 @@ public class Infantry
     public int calculateBattleValue() {
         double dbv;
         dbv = this.getInternal(Entity.LOC_NONE) * 1.5;
-        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
-        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(), true, false).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false)
+                .getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(),
+                true, false).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
-        double tmmFactor = 1+(targetMovementModifier/10);
+        double tmmFactor = 1 + (targetMovementModifier / 10);
         dbv *= tmmFactor;
-        //double weaponbv;
+        // double weaponbv;
         double obv;
         // adjust further for speed factor
         // this is a bit weird, because the formula gives
@@ -503,17 +519,20 @@ public class Infantry
         // is handled differently (page 315, TM, compare
         // http://forums.classicbattletech.com/index.php/topic,20468.0.html
         double speedFactor;
-        double speedFactorTableLookup = this.getOriginalRunMP()+Math.round((double)this.getJumpMP()/2);
-        if (speedFactorTableLookup > 25) 
-            speedFactor = Math.pow(1+(((double)runMP+(Math.round((double)getJumpMP()/2))-5)/10), 1.2);
+        double speedFactorTableLookup = this.getOriginalRunMP()
+                + Math.round((double) this.getJumpMP() / 2);
+        if (speedFactorTableLookup > 25)
+            speedFactor = Math.pow(1 + (((double) runMP
+                    + (Math.round((double) getJumpMP() / 2)) - 5) / 10), 1.2);
         else
-            speedFactor = Math.pow(1+((speedFactorTableLookup-5)/10), 1.2);
+            speedFactor = Math
+                    .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
         ArrayList<Mounted> weapons = this.getWeaponList();
         double wbv = 0;
         for (Mounted weapon : weapons) {
-            WeaponType wtype = (WeaponType)weapon.getType();
-            if ( Infantry.SWARM_MEK.equals( wtype.getInternalName() ) ) {
+            WeaponType wtype = (WeaponType) weapon.getType();
+            if (Infantry.SWARM_MEK.equals(wtype.getInternalName())) {
                 continue;
             }
             // infantry weapons get counted multiple times
@@ -521,18 +540,19 @@ public class Infantry
                 // stupid assumption to at least get a value:
                 // each weapon is carried once by each platoon member
                 // if an antiMek platoon, count twice
-                wbv += wtype.getBV(this)*this.getInternal(Entity.LOC_NONE)*(antiMek?2:0);
+                wbv += wtype.getBV(this) * this.getInternal(Entity.LOC_NONE)
+                        * (antiMek ? 2 : 0);
             } else {
-                //field guns count only once
-                wbv += wtype.getBV(this);                
+                // field guns count only once
+                wbv += wtype.getBV(this);
             }
         }
         obv = wbv * speedFactor;
-        int bv  = (int)Math.round(obv + dbv);
+        int bv = (int) Math.round(obv + dbv);
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
-        return (int)Math.round((bv) * pilotFactor);
-        
+        return (int) Math.round((bv) * pilotFactor);
+
     } // End public int calculateBattleValue()
 
     public Vector<Report> victoryReport() {
@@ -551,13 +571,13 @@ public class Infantry
         r = new Report(7070, Report.PUBLIC);
         r.add(getKillNumber());
         vDesc.addElement(r);
-        
-        if(isDestroyed()) {
+
+        if (isDestroyed()) {
             Entity killer = game.getEntity(killerId);
-            if(killer == null) {
+            if (killer == null) {
                 killer = game.getOutOfGameEntity(killerId);
             }
-            if(killer != null) {
+            if (killer != null) {
                 r = new Report(7072, Report.PUBLIC);
                 r.addDesc(killer);
             } else {
@@ -573,23 +593,21 @@ public class Infantry
     /**
      * Infantry don't need piloting rolls.
      */
-    public PilotingRollData addEntityBonuses(PilotingRollData prd)
-    {
+    public PilotingRollData addEntityBonuses(PilotingRollData prd) {
         return prd;
     }
 
     /**
      * Infantry can only change 1 elevation level at a time.
      */
-    public int getMaxElevationChange()
-    {
+    public int getMaxElevationChange() {
         return 1;
     }
 
     /**
      * Update the platoon to reflect damages taken in this phase.
      */
-    public void applyDamage() { 
+    public void applyDamage() {
         super.applyDamage();
         menShooting = men;
     }
@@ -599,7 +617,9 @@ public class Infantry
     /**
      * Get the number of men in the platoon (before damage is applied).
      */
-    public int getShootingStrength() { return menShooting; }
+    public int getShootingStrength() {
+        return menShooting;
+    }
 
     public boolean canCharge() {
         // Infantry can't Charge
@@ -610,40 +630,45 @@ public class Infantry
         // Infantry can't DFA
         return false;
     }
-    
-    /** 
-     * Checks if the entity is moving into a swamp. If so, returns
-     *  the target roll for the piloting skill check.
-     *  now includes the level 3 terains which can bog down
+
+    /**
+     * Checks if the entity is moving into a swamp. If so, returns the target
+     * roll for the piloting skill check. now includes the level 3 terains which
+     * can bog down
      */
     public PilotingRollData checkSwampMove(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos, boolean isPavementStep) {
-        PilotingRollData roll = new PilotingRollData(this.getId(), 5, "entering boggy terrain");
-        //DO NOT add terrain modifier, or the example in maxtech would have the wrong target number
+        PilotingRollData roll = new PilotingRollData(this.getId(), 5,
+                "entering boggy terrain");
+        // DO NOT add terrain modifier, or the example in maxtech would have the
+        // wrong target number
 
         if (!lastPos.equals(curPos)
-            && step.getMovementType() != IEntityMovementType.MOVE_JUMP
-            && (this.getMovementMode() != IEntityMovementMode.HOVER) 
-            && (this.getMovementMode() != IEntityMovementMode.VTOL)
-            && step.getElevation() == 0
-            && !isPavementStep) {
+                && step.getMovementType() != IEntityMovementType.MOVE_JUMP
+                && (this.getMovementMode() != IEntityMovementMode.HOVER)
+                && (this.getMovementMode() != IEntityMovementMode.VTOL)
+                && step.getElevation() == 0 && !isPavementStep) {
             // non-hovers need a simple PSR
             if (curHex.containsTerrain(Terrains.SWAMP)) {
                 // append the reason modifier
                 roll.append(new PilotingRollData(getId(), 0, "entering Swamp"));
-            } else if (curHex.containsTerrain(Terrains.MAGMA) ||
-                    curHex.containsTerrain(Terrains.MUD) ||
-                    curHex.containsTerrain(Terrains.SNOW) ||
-                    curHex.containsTerrain(Terrains.TUNDRA)) {
-                roll.append(new PilotingRollData(getId(), -1, "avoid bogging down"));
+            } else if (curHex.containsTerrain(Terrains.MAGMA)
+                    || curHex.containsTerrain(Terrains.MUD)
+                    || curHex.containsTerrain(Terrains.SNOW)
+                    || curHex.containsTerrain(Terrains.TUNDRA)) {
+                roll.append(new PilotingRollData(getId(), -1,
+                        "avoid bogging down"));
             } else {
-                roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: no swamp-like terrain present");                
+                roll.addModifier(TargetRoll.CHECK_FALSE,
+                        "Check false: no swamp-like terrain present");
             }
         } else {
-            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Not entering swamp, or jumping/hovering over the swamp");
+            roll
+                    .addModifier(TargetRoll.CHECK_FALSE,
+                            "Check false: Not entering swamp, or jumping/hovering over the swamp");
         }
         return roll;
-    }    
+    }
 
     /**
      * Sets this entity's original walking movement points
@@ -652,95 +677,67 @@ public class Infantry
         this.runMP = runMP;
     }
 
-
     /**
      * @return The cost in C-Bills of the 'Mech in question.
      */
     public double getCost() {
         double cost = 0;
         double multiplier = 0;
-        
+
         int mm = this.getMovementMode();
-        
-        if(IEntityMovementMode.WHEELED == mm
+
+        if (IEntityMovementMode.WHEELED == mm
                 || IEntityMovementMode.TRACKED == mm
                 || IEntityMovementMode.HOVER == mm) {
-//          FIXME, when techmanual comes out
-            mm = IEntityMovementMode.INF_MOTORIZED; 
+            // FIXME, when techmanual comes out
+            mm = IEntityMovementMode.INF_MOTORIZED;
         }
 
-        if ( this.antiMek ) {
+        if (this.antiMek) {
             multiplier = 5;
         } else {
             multiplier = 1;
         }
-        
-        if(IEntityMovementMode.INF_UMU == mm) {
+
+        if (IEntityMovementMode.INF_UMU == mm) {
             mm = IEntityMovementMode.INF_LEG;
             multiplier *= 2;
         }/*
-        //TODO: fix me for new style of weapons
-        if (this.weapons == INF_RIFLE) {
-            if ( IEntityMovementMode.INF_LEG == mm )
-                cost = 600000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                cost = 960000;
-            else if ( IEntityMovementMode.INF_JUMP == mm )
-                cost = 1200000;
-            else throw new IllegalArgumentException
-                    ( "Unknown movement type: " + mm );
-        } else if (this.weapons == INF_MG) {
-            if ( IEntityMovementMode.INF_LEG == mm )
-                cost = 800000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                cost = 1280000;
-            else if ( IEntityMovementMode.INF_JUMP == mm )
-                cost = 1600000;
-            else throw new IllegalArgumentException
-                    ( "Unknown movement type: " + mm );
-        } else if (this.weapons == INF_FLAMER) {
-            if ( IEntityMovementMode.INF_LEG == mm )
-                cost = 800000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                cost = 1280000;
-            else if ( IEntityMovementMode.INF_JUMP == mm )
-                cost = 1600000;
-            else throw new IllegalArgumentException
-                    ( "Unknown movement type: " + mm );
-        } else if (this.weapons == INF_LASER) {
-            if ( IEntityMovementMode.INF_LEG == mm )
-                cost = 1200000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                cost = 1920000;
-            else if ( IEntityMovementMode.INF_JUMP == mm )
-                cost = 2400000;
-            else throw new IllegalArgumentException
-                    ( "Unknown movement type: " + mm );
-        } else if (this.weapons == INF_SRM || weapons == INF_INFERNO_SRM) {
-            if ( IEntityMovementMode.INF_LEG == mm )
-                cost = 1400000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                cost = 2240000;
-            else if ( IEntityMovementMode.INF_JUMP == mm )
-                cost = 2800000;
-            else
-                throw new IllegalArgumentException
-                    ( "Unknown movement type: " + mm );
-        } else if (this.weapons == INF_LRM) {
-            if ( IEntityMovementMode.INF_LEG == mm )
-                cost = 1400000;
-            else if ( IEntityMovementMode.INF_MOTORIZED == mm )
-                cost = 2240000;
-            else if ( IEntityMovementMode.INF_JUMP == mm )
-                cost = 2800000;
-            else
-                throw new IllegalArgumentException
-                    ( "Unknown movement type: " + mm );
-        } else throw new IllegalArgumentException
-                    ( "Unknown infantry weapon: " + this.weapons );
-        // End not-anti-Mek*/
+             * //TODO: fix me for new style of weapons if (this.weapons ==
+             * INF_RIFLE) { if ( IEntityMovementMode.INF_LEG == mm ) cost =
+             * 600000; else if ( IEntityMovementMode.INF_MOTORIZED == mm ) cost =
+             * 960000; else if ( IEntityMovementMode.INF_JUMP == mm ) cost =
+             * 1200000; else throw new IllegalArgumentException ( "Unknown
+             * movement type: " + mm ); } else if (this.weapons == INF_MG) { if (
+             * IEntityMovementMode.INF_LEG == mm ) cost = 800000; else if (
+             * IEntityMovementMode.INF_MOTORIZED == mm ) cost = 1280000; else if (
+             * IEntityMovementMode.INF_JUMP == mm ) cost = 1600000; else throw
+             * new IllegalArgumentException ( "Unknown movement type: " + mm ); }
+             * else if (this.weapons == INF_FLAMER) { if (
+             * IEntityMovementMode.INF_LEG == mm ) cost = 800000; else if (
+             * IEntityMovementMode.INF_MOTORIZED == mm ) cost = 1280000; else if (
+             * IEntityMovementMode.INF_JUMP == mm ) cost = 1600000; else throw
+             * new IllegalArgumentException ( "Unknown movement type: " + mm ); }
+             * else if (this.weapons == INF_LASER) { if (
+             * IEntityMovementMode.INF_LEG == mm ) cost = 1200000; else if (
+             * IEntityMovementMode.INF_MOTORIZED == mm ) cost = 1920000; else if (
+             * IEntityMovementMode.INF_JUMP == mm ) cost = 2400000; else throw
+             * new IllegalArgumentException ( "Unknown movement type: " + mm ); }
+             * else if (this.weapons == INF_SRM || weapons == INF_INFERNO_SRM) {
+             * if ( IEntityMovementMode.INF_LEG == mm ) cost = 1400000; else if (
+             * IEntityMovementMode.INF_MOTORIZED == mm ) cost = 2240000; else if (
+             * IEntityMovementMode.INF_JUMP == mm ) cost = 2800000; else throw
+             * new IllegalArgumentException ( "Unknown movement type: " + mm ); }
+             * else if (this.weapons == INF_LRM) { if (
+             * IEntityMovementMode.INF_LEG == mm ) cost = 1400000; else if (
+             * IEntityMovementMode.INF_MOTORIZED == mm ) cost = 2240000; else if (
+             * IEntityMovementMode.INF_JUMP == mm ) cost = 2800000; else throw
+             * new IllegalArgumentException ( "Unknown movement type: " + mm ); }
+             * else throw new IllegalArgumentException ( "Unknown infantry
+             * weapon: " + this.weapons ); // End not-anti-Mek
+             */
 
-        return cost*multiplier;
+        return cost * multiplier;
     }
 
     public boolean doomedInVacuum() {
@@ -756,75 +753,77 @@ public class Infantry
     }
 
     public boolean isEligibleFor(int phase) {
-        if(turnsLayingExplosives > 0 && phase != IGame.PHASE_PHYSICAL)
+        if (turnsLayingExplosives > 0 && phase != IGame.PHASE_PHYSICAL)
             return false;
-        if(dugIn != DUG_IN_COMPLETE
-        		&& dugIn != DUG_IN_NONE) {
-        	return false;
+        if (dugIn != DUG_IN_COMPLETE && dugIn != DUG_IN_NONE) {
+            return false;
         }
         return super.isEligibleFor(phase);
     }
 
     public void newRound(int roundNumber) {
-        if(turnsLayingExplosives >= 0) {
+        if (turnsLayingExplosives >= 0) {
             turnsLayingExplosives++;
-            if(!(Compute.isInBuilding(game, this)))
-                turnsLayingExplosives = -1; //give up if no longer in a building
+            if (!(Compute.isInBuilding(game, this)))
+                turnsLayingExplosives = -1; // give up if no longer in a
+                                            // building
         }
-        if(dugIn != DUG_IN_COMPLETE
-        		&& dugIn != DUG_IN_NONE) {
-        	dugIn++;
-        	if(dugIn > DUG_IN_FORTIFYING2) {
-        		dugIn = DUG_IN_NONE;
-        	}
+        if (dugIn != DUG_IN_COMPLETE && dugIn != DUG_IN_NONE) {
+            dugIn++;
+            if (dugIn > DUG_IN_FORTIFYING2) {
+                dugIn = DUG_IN_NONE;
+            }
         }
         super.newRound(roundNumber);
     }
-        
+
     public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
-        if(!(this instanceof BattleArmor)) {
-            //field guns don't share ammo, and infantry weapons dont have ammo
-            if(mounted.getLinked() != null || mountedAmmo.getLinkedBy() != null)
+        if (!(this instanceof BattleArmor)) {
+            // field guns don't share ammo, and infantry weapons dont have ammo
+            if (mounted.getLinked() != null
+                    || mountedAmmo.getLinkedBy() != null)
                 return false;
         }
         return super.loadWeapon(mounted, mountedAmmo);
     }
 
     public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo) {
-        if(!(this instanceof BattleArmor)) {
-            //field guns don't share ammo, and infantry weapons dont have ammo
-            if(mounted.getLinked() != null || mountedAmmo.getLinkedBy() != null)
+        if (!(this instanceof BattleArmor)) {
+            // field guns don't share ammo, and infantry weapons dont have ammo
+            if (mounted.getLinked() != null
+                    || mountedAmmo.getLinkedBy() != null)
                 return false;
         }
         return super.loadWeaponWithSameAmmo(mounted, mountedAmmo);
     }
 
     public void setDugIn(int i) {
-    	dugIn = i;
+        dugIn = i;
     }
-    
+
     public int getDugIn() {
-    	return dugIn;
+        return dugIn;
     }
 
     public boolean isNuclearHardened() {
         return false;
     }
-    
+
     /**
-     * This function is called when loading a unit into a transport.
+     * This function is called when loading a unit into a transport. This is
+     * overridden to ensure infantry are no longer considered dug in when they
+     * are being transported.
      * 
-     * This is overridden to ensure infantry are no longer considered dug in when they are being transported.
      * @param transportID
      */
     public void setTransportID(int transportID) {
         super.setTransportId(transportID);
-        
+
         setDugIn(DUG_IN_NONE);
     }
-    
-    public boolean isAntiMek(){
+
+    public boolean isAntiMek() {
         return antiMek;
     }
-    
+
 } // End class Infantry

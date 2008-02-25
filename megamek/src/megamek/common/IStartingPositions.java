@@ -16,7 +16,9 @@ package megamek.common;
 
 public interface IStartingPositions {
 
-    public static final String START_LOCATION_NAMES[] = { "Any", "NW", "N", "NE", "E", "SE", "S", "SW", "W", "EDG", "CTR",
-        "NW (deep)", "N (deep)", "NE (deep)", "E (deep)", "SE (deep)", "S (deep)", "SW (deep)", "W (deep)"};
+    public static final String START_LOCATION_NAMES[] = { "Any", "NW", "N",
+            "NE", "E", "SE", "S", "SW", "W", "EDG", "CTR", "NW (deep)",
+            "N (deep)", "NE (deep)", "E (deep)", "SE (deep)", "S (deep)",
+            "SW (deep)", "W (deep)" };
 
 }

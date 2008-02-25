@@ -14,12 +14,9 @@
 
 package megamek.common;
 
-/* Do not use the Sun collections (com.sun.java.util.collections.*) framework
- * in this class until Java 1.1 compatibility is abandoned or a
- * non-serialization based save feature is implemented.
- */
-import java.util.Vector;
+
 import java.io.Serializable;
+import java.util.Vector;
 
 /**
  * This class is a container for the various reports created by the server
@@ -39,38 +36,46 @@ public class GameReports implements Serializable {
 
     public void add(int round, Vector<Report> v) {
         if (round == 0) {
-            //Combine round 0 (deployment) with round one's reports.
+            // Combine round 0 (deployment) with round one's reports.
             round = 1;
         }
         if (round > reports.size()) {
-            //First reports for the round.
-            reports.addElement((Vector<Report>) v.clone());
+            // First reports for the round.
+            reports.addElement(new Vector<Report>(v));
         } else {
-            //Already have some reports for this round, so we'll append these
+            // Already have some reports for this round, so we'll append these
             // new ones.
-            reports.elementAt(round - 1).addAll((Vector<Report>)v.clone());
+            reports.elementAt(round - 1).addAll(new Vector<Report>(v));
         }
     }
 
-    //Get a single round's reports.
+    /**
+     *  Get a single round's reports.
+     */
     public Vector<Report> get(int round) {
         if (round == 0) {
-            //Round 0 (deployment) reports are lumped in with round one.
+            // Round 0 (deployment) reports are lumped in with round one.
             round = 1;
         }
         if (round <= reports.size()) {
             return reports.elementAt(round - 1);
         }
-		System.err.println("ERROR: GameReports.get() was asked for reports of a round which it does not posses.");
-		return null;
+        System.err
+                .println("ERROR: GameReports.get() was asked for reports of a round which it does not posses.");
+        return null;
     }
 
-    //Get all the reports.
+    /**
+     *  Get all the reports.
+     */
     public Vector<Vector<Report>> get() {
         return reports;
     }
 
-    //Set the reports vector from outside all at once.
+    /**
+     * Set the reports vector from outside all at once.
+     * @param v
+     */
     public void set(Vector<Vector<Report>> v) {
         reports = v;
     }

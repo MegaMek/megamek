@@ -15,18 +15,18 @@
 package megamek.common;
 
 /**
- * Implementing classes perform a test to determine if an
- * <code>Entity</code> meets the selection criteria.
- *
- * @author      James Damour (suvarov454@users.sourceforge.net)
+ * Implementing classes perform a test to determine if an <code>Entity</code>
+ * meets the selection criteria.
+ * 
+ * @author James Damour (suvarov454@users.sourceforge.net)
  */
 public interface EntitySelector {
     /**
-     * Determine if the given <code>Entity</code> meets the
-     * selection criteria.
-     *
-     * @param   entity the <code>Entity</code> being tested.
-     * @return  <code>true</code> if the entity meets the criteria.
+     * Determine if the given <code>Entity</code> meets the selection
+     * criteria.
+     * 
+     * @param entity the <code>Entity</code> being tested.
+     * @return <code>true</code> if the entity meets the criteria.
      */
-    public boolean accept( Entity entity );
+    public boolean accept(Entity entity);
 }

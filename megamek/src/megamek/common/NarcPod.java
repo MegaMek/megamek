@@ -30,14 +30,13 @@ public class NarcPod implements Serializable {
     public int getTeam() {
         return team;
     }
-    
+
     public int getLocation() {
         return location;
     }
 
-    public boolean equals (NarcPod other) {
-        if (this.location == other.location
-            && this.team == other.team) {
+    public boolean equals(NarcPod other) {
+        if (this.location == other.location && this.team == other.team) {
             return true;
         }
         return false;

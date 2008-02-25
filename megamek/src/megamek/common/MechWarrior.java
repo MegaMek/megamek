@@ -14,12 +14,12 @@
 package megamek.common;
 
 /**
- * @author Sebastian Brocks
- * This class describes a MechWarrior that has ejected from its ride.
+ * @author Sebastian Brocks This class describes a MechWarrior that has ejected
+ *         from its ride.
  */
 
 public class MechWarrior extends Infantry {
-    
+
     private static final long serialVersionUID = 6227549671448329770L;
     private int originalRideId;
     private int originalRideExternalId;
@@ -28,7 +28,9 @@ public class MechWarrior extends Infantry {
 
     /**
      * Create a new MechWarrior
-     * @param originalRide the <code>Entity</code> that was this MW's original ride
+     * 
+     * @param originalRide the <code>Entity</code> that was this MW's original
+     *            ride
      */
     public MechWarrior(Entity originalRide) {
         super();
@@ -38,9 +40,8 @@ public class MechWarrior extends Infantry {
         setWeight(1);
 
         // Generate the display name, then add the original ride's name.
-        StringBuffer newName = new StringBuffer( this.getDisplayName() );
-        newName.append( " of " )
-            .append( originalRide.getDisplayName() );
+        StringBuffer newName = new StringBuffer(this.getDisplayName());
+        newName.append(" of ").append(originalRide.getDisplayName());
         this.displayName = newName.toString();
 
         // Finish initializing this unit.
@@ -49,22 +50,24 @@ public class MechWarrior extends Infantry {
         setOriginalRideId(originalRide.getId());
         setOriginalRideExternalId(originalRide.getExternalId());
         IGame tmpGame = originalRide.getGame();
-        if(tmpGame != null && tmpGame.getOptions().booleanOption("armed_mechwarriors")) {
+        if (tmpGame != null
+                && tmpGame.getOptions().booleanOption("armed_mechwarriors")) {
             try {
-                addEquipment(EquipmentType.get("InfantryRifle"), Infantry.LOC_INFANTRY);
-            } 
-            catch(Exception ex) {
+                addEquipment(EquipmentType.get("InfantryRifle"),
+                        Infantry.LOC_INFANTRY);
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.Entity#isSelectableThisTurn()
      */
     public boolean isSelectableThisTurn() {
-        return (pickedUpById == Entity.NONE)
-            && super.isSelectableThisTurn();
+        return (pickedUpById == Entity.NONE) && super.isSelectableThisTurn();
     }
 
     /**
@@ -73,42 +76,50 @@ public class MechWarrior extends Infantry {
     public int getOriginalRideId() {
         return originalRideId;
     }
+
     /**
      * set the <code>int</code> id of this MW's original ride
      */
     public void setOriginalRideId(int originalRideId) {
         this.originalRideId = originalRideId;
     }
+
     /**
      * @return the <code>int</code> external id of this MW's original ride
      */
     public int getOriginalRideExternalId() {
         return originalRideExternalId;
     }
+
     /**
      * set the <code>int</code> external id of this MW's original ride
      */
     public void setOriginalRideExternalId(int originalRideExternalId) {
         this.originalRideExternalId = originalRideExternalId;
     }
+
     /**
-     * @return the <code>int</code> external id of the unit that picked up this MW
+     * @return the <code>int</code> external id of the unit that picked up
+     *         this MW
      */
     public int getPickedUpByExternalId() {
         return pickedUpByExternalId;
     }
+
     /**
      * set the <code>int</code> external id of the unit that picked up this MW
      */
     public void setPickedUpByExternalId(int pickedUpByExternalId) {
         this.pickedUpByExternalId = pickedUpByExternalId;
     }
+
     /**
      * @return the <code>int</code> id of the unit that picked up this MW
      */
     public int getPickedUpById() {
         return pickedUpById;
     }
+
     /**
      * set the <code>int</code> id of the unit that picked up this MW
      */
@@ -116,7 +127,9 @@ public class MechWarrior extends Infantry {
         this.pickedUpById = pickedUpById;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.Infantry#calculateBattleValue()
      */
     public int calculateBattleValue() {

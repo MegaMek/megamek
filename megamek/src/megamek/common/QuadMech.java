@@ -27,11 +27,11 @@ public class QuadMech extends Mech {
     private static final long serialVersionUID = 7183093787457804717L;
 
     public static final String[] LOCATION_NAMES = { "Head", "Center Torso",
-        "Right Torso", "Left Torso", "Front Right Leg", "Front Left Leg",
-        "Rear Right Leg", "Rear Left Leg" };
+            "Right Torso", "Left Torso", "Front Right Leg", "Front Left Leg",
+            "Rear Right Leg", "Rear Left Leg" };
 
     public static final String[] LOCATION_ABBRS = { "HD", "CT", "RT", "LT",
-        "FRL", "FLL", "RRL", "RLL" };
+            "FRL", "FLL", "RRL", "RLL" };
 
     private static final int[] NUM_OF_SLOTS = { 6, 12, 12, 12, 6, 6, 6, 6 };
 
@@ -72,12 +72,16 @@ public class QuadMech extends Mech {
      * Returns true if the Mech cannot stand up any longer.
      */
     public boolean cannotStandUp() {
-        int i=0;
-        if (isLocationBad(LOC_LARM)) i++;
-        if (isLocationBad(LOC_RARM)) i++;
-        if (isLocationBad(LOC_LLEG)) i++;
-        if (isLocationBad(LOC_RLEG)) i++;
-        return i>=3;
+        int i = 0;
+        if (isLocationBad(LOC_LARM))
+            i++;
+        if (isLocationBad(LOC_RARM))
+            i++;
+        if (isLocationBad(LOC_LLEG))
+            i++;
+        if (isLocationBad(LOC_RLEG))
+            i++;
+        return i >= 3;
     }
 
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
@@ -93,7 +97,7 @@ public class QuadMech extends Mech {
                         hipHits++;
                         if (game == null
                                 || !game.getOptions().booleanOption(
-                                "maxtech_leg_damage")) {
+                                        "maxtech_leg_damage")) {
                             continue;
                         }
                     }
@@ -116,7 +120,7 @@ public class QuadMech extends Mech {
             if (hipHits > 0) {
                 if (game != null
                         && game.getOptions()
-                        .booleanOption("maxtech_leg_damage")) {
+                                .booleanOption("maxtech_leg_damage")) {
                     wmp = wmp - (2 * hipHits);
                 } else {
                     for (int i = 0; i < hipHits; i++) {
@@ -129,15 +133,15 @@ public class QuadMech extends Mech {
         if (!ignoreheat) {
             // factor in heat
             if (game != null && game.getOptions().booleanOption("maxtech_heat")) {
-                if (heat<30) {
-                    wmp -= (heat / 5); 
-                } else if (heat>=49) {
+                if (heat < 30) {
+                    wmp -= (heat / 5);
+                } else if (heat >= 49) {
                     wmp -= 9;
-                } else if (heat>=43) {
+                } else if (heat >= 43) {
                     wmp -= 8;
-                } else if (heat>=37) {
+                } else if (heat >= 37) {
                     wmp -= 7;
-                } else if (heat>=31) {
+                } else if (heat >= 31) {
                     wmp -= 6;
                 } else {
                     wmp -= 5;
@@ -219,16 +223,11 @@ public class QuadMech extends Mech {
     /**
      * Sets the internal structure for the mech.
      * 
-     * @param head
-     *            head
-     * @param ct
-     *            center torso
-     * @param t
-     *            right/left torso
-     * @param arm
-     *            right/left arm
-     * @param leg
-     *            right/left leg
+     * @param head head
+     * @param ct center torso
+     * @param t right/left torso
+     * @param arm right/left arm
+     * @param leg right/left leg
      */
     public void setInternal(int head, int ct, int t, int arm, int leg) {
         initializeInternal(head, LOC_HEAD);
@@ -373,7 +372,7 @@ public class QuadMech extends Mech {
                 roll = Compute.d6(2);
                 try {
                     PrintWriter pw = PreferenceManager.getClientPreferences()
-                    .getMekHitLocLog();
+                            .getMekHitLocLog();
                     if (pw != null) {
                         pw.print(table);
                         pw.print("\t");
@@ -440,7 +439,7 @@ public class QuadMech extends Mech {
             roll = Compute.d6();
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences()
-                .getMekHitLocLog();
+                        .getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -479,11 +478,14 @@ public class QuadMech extends Mech {
                     case 5:
                         return new HitData(Mech.LOC_RLEG, true);
                     case 6:
-                        if (crew.hasEdgeRemaining() 
-                                && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        if (crew.hasEdgeRemaining()
+                                && crew.getOptions().booleanOption(
+                                        "edge_when_headhit")) {
                             crew.decreaseEdge();
-                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                            HitData result = rollHitLocation(table, side,
+                                    aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
+                                    true));
                             return result;
                         } // if
                         return new HitData(Mech.LOC_HEAD, true);
@@ -500,11 +502,14 @@ public class QuadMech extends Mech {
                     case 5:
                         return new HitData(Mech.LOC_LLEG);
                     case 6:
-                        if (crew.hasEdgeRemaining() 
-                                && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        if (crew.hasEdgeRemaining()
+                                && crew.getOptions().booleanOption(
+                                        "edge_when_headhit")) {
                             crew.decreaseEdge();
-                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                            HitData result = rollHitLocation(table, side,
+                                    aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
+                                    true));
                             return result;
                         } // if
                         return new HitData(Mech.LOC_HEAD);
@@ -521,11 +526,14 @@ public class QuadMech extends Mech {
                     case 5:
                         return new HitData(Mech.LOC_RLEG);
                     case 6:
-                        if (crew.hasEdgeRemaining() 
-                                && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        if (crew.hasEdgeRemaining()
+                                && crew.getOptions().booleanOption(
+                                        "edge_when_headhit")) {
                             crew.decreaseEdge();
-                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                            HitData result = rollHitLocation(table, side,
+                                    aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
+                                    true));
                             return result;
                         } // if
                         return new HitData(Mech.LOC_HEAD);
@@ -535,7 +543,7 @@ public class QuadMech extends Mech {
             roll = Compute.d6(1);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences()
-                .getMekHitLocLog();
+                        .getMekHitLocLog();
                 if (pw != null) {
                     pw.print(table);
                     pw.print("\t");
@@ -564,32 +572,36 @@ public class QuadMech extends Mech {
                     return new HitData(Mech.LOC_RARM);
                 return new HitData(Mech.LOC_RLEG);
             }
-        }
-        else if (table == ToHitData.HIT_SWARM) {
+        } else if (table == ToHitData.HIT_SWARM) {
             roll = Compute.d6(2);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
-                if ( pw != null ) {
-                    pw.print( table );
-                    pw.print( "\t" );
-                    pw.print( side );
-                    pw.print( "\t" );
-                    pw.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences()
+                        .getMekHitLocLog();
+                if (pw != null) {
+                    pw.print(table);
+                    pw.print("\t");
+                    pw.print(side);
+                    pw.print("\t");
+                    pw.println(roll);
                 }
-            } catch ( Throwable thrown ) {
+            } catch (Throwable thrown) {
                 thrown.printStackTrace();
             }
             // Swarm attack locations.
-            switch( roll ) {
+            switch (roll) {
                 case 2:
-                    if (crew.hasEdgeRemaining() 
-                            && crew.getOptions().booleanOption("edge_when_headhit")) {
+                    if (crew.hasEdgeRemaining()
+                            && crew.getOptions().booleanOption(
+                                    "edge_when_headhit")) {
                         crew.decreaseEdge();
-                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL));
+                        HitData result = rollHitLocation(table, side,
+                                aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
+                                false, HitData.EFFECT_CRITICAL));
                         return result;
                     } // if
-                    return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
+                    return new HitData(Mech.LOC_HEAD, false,
+                            HitData.EFFECT_CRITICAL);
                 case 3:
                     return new HitData(Mech.LOC_RT, false,
                             HitData.EFFECT_CRITICAL);
@@ -619,13 +631,17 @@ public class QuadMech extends Mech {
                             HitData.EFFECT_CRITICAL);
                 case 12:
                     if (crew.hasEdgeRemaining()
-                            && crew.getOptions().booleanOption("edge_when_headhit")) {
+                            && crew.getOptions().booleanOption(
+                                    "edge_when_headhit")) {
                         crew.decreaseEdge();
-                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL));
+                        HitData result = rollHitLocation(table, side,
+                                aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
+                                false, HitData.EFFECT_CRITICAL));
                         return result;
                     } // if
-                    return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
+                    return new HitData(Mech.LOC_HEAD, false,
+                            HitData.EFFECT_CRITICAL);
             }
         }
         return super.rollHitLocation(table, side, aimedLocation, aimingMode);
@@ -634,7 +650,7 @@ public class QuadMech extends Mech {
     public boolean removePartialCoverHits(int location, int cover, int side) {
         // treat front legs like legs not arms.
         if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER)
-                && (location==Mech.LOC_CT || location==Mech.LOC_HEAD))
+                && (location == Mech.LOC_CT || location == Mech.LOC_HEAD))
             return true;
         // left and right cover are from attacker's POV.
         // if hitting front arc, need to swap them
@@ -648,8 +664,7 @@ public class QuadMech extends Mech {
             if ((cover & LosEffects.COVER_RIGHT) != 0
                     && location == Mech.LOC_LT)
                 return true;
-            if ((cover & LosEffects.COVER_LEFT) != 0
-                    && location == Mech.LOC_RT)
+            if ((cover & LosEffects.COVER_LEFT) != 0 && location == Mech.LOC_RT)
                 return true;
         } else {
             if ((cover & LosEffects.COVER_LOWLEFT) != 0
@@ -658,8 +673,7 @@ public class QuadMech extends Mech {
             if ((cover & LosEffects.COVER_LOWRIGHT) != 0
                     && (location == Mech.LOC_RARM || location == Mech.LOC_RLEG))
                 return true;
-            if ((cover & LosEffects.COVER_LEFT) != 0
-                    && location == Mech.LOC_LT)
+            if ((cover & LosEffects.COVER_LEFT) != 0 && location == Mech.LOC_LT)
                 return true;
             if ((cover & LosEffects.COVER_RIGHT) != 0
                     && location == Mech.LOC_RT)

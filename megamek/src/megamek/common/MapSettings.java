@@ -18,16 +18,22 @@ import gd.xml.ParseException;
 import gd.xml.tiny.ParsedXML;
 import gd.xml.tiny.TinyParser;
 
-import java.util.*;
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Vector;
 
 import megamek.common.util.BuildingTemplate;
 
 /**
- * 
- * MapSettings.java
- * 
- * Created on March 27, 2002, 1:07 PM
+ * MapSettings.java Created on March 27, 2002, 1:07 PM
  * 
  * @author Ben
  */
@@ -209,14 +215,18 @@ public class MapSettings implements Serializable {
 
     /** Creates new MapSettings */
     public MapSettings() {
-        this(megamek.common.preference.PreferenceManager.getClientPreferences().getBoardWidth(),
-                megamek.common.preference.PreferenceManager.getClientPreferences().getBoardHeight(),
-                megamek.common.preference.PreferenceManager.getClientPreferences().getMapWidth(),
-                megamek.common.preference.PreferenceManager.getClientPreferences().getMapHeight());
+        this(megamek.common.preference.PreferenceManager.getClientPreferences()
+                .getBoardWidth(), megamek.common.preference.PreferenceManager
+                .getClientPreferences().getBoardHeight(),
+                megamek.common.preference.PreferenceManager
+                        .getClientPreferences().getMapWidth(),
+                megamek.common.preference.PreferenceManager
+                        .getClientPreferences().getMapHeight());
     }
 
     /** Create new MapSettings with all size settings specified */
-    public MapSettings(int boardWidth, int boardHeight, int mapWidth, int mapHeight) {
+    public MapSettings(int boardWidth, int boardHeight, int mapWidth,
+            int mapHeight) {
         setBoardSize(boardWidth, boardHeight);
         setMapSize(mapWidth, mapHeight);
     }
@@ -229,8 +239,10 @@ public class MapSettings implements Serializable {
         this.mapWidth = other.getMapWidth();
         this.mapHeight = other.getMapHeight();
 
-        this.boardsSelected = (ArrayList<String>) other.getBoardsSelectedVector().clone();
-        this.boardsAvailable = (ArrayList<String>) other.getBoardsAvailableVector().clone();
+        this.boardsSelected = (ArrayList<String>) other
+                .getBoardsSelectedVector().clone();
+        this.boardsAvailable = (ArrayList<String>) other
+                .getBoardsAvailableVector().clone();
 
         this.invertNegativeTerrain = other.getInvertNegativeTerrain();
         this.mountainHeightMin = other.getMountainHeightMin();
@@ -311,7 +323,8 @@ public class MapSettings implements Serializable {
 
     public void setBoardSize(int boardWidth, int boardHeight) {
         if (boardWidth <= 0 || boardHeight <= 0) {
-            throw new IllegalArgumentException("Total board area must be positive");
+            throw new IllegalArgumentException(
+                    "Total board area must be positive");
         }
 
         // change only if actually different
@@ -341,7 +354,8 @@ public class MapSettings implements Serializable {
 
     public void setMapSize(int mapWidth, int mapHeight) {
         if (mapWidth <= 0 || mapHeight <= 0) {
-            throw new IllegalArgumentException("Total map area must be positive");
+            throw new IllegalArgumentException(
+                    "Total map area must be positive");
         }
 
         this.mapWidth = mapWidth;
@@ -350,7 +364,7 @@ public class MapSettings implements Serializable {
         boardsSelected.clear();
         // TODO make sure that nobody actualyl depends on .size()...
         Vector<String> nullElements = new Vector<String>();
-        nullElements.setSize(mapWidth*mapHeight);
+        nullElements.setSize(mapWidth * mapHeight);
         boardsSelected.addAll(nullElements);
     }
 
@@ -402,7 +416,8 @@ public class MapSettings implements Serializable {
                     rindex = Compute.randomInt(boardsAvailable.size() - 3) + 3;
                 // Do a one pi rotation half of the time.
                 if (0 == Compute.randomInt(2)) {
-                    boardsSelected.set(i, Board.BOARD_REQUEST_ROTATION + boardsAvailable.get(rindex));
+                    boardsSelected.set(i, Board.BOARD_REQUEST_ROTATION
+                            + boardsAvailable.get(rindex));
                 } else {
                     boardsSelected.set(i, boardsAvailable.get(rindex));
                 }
@@ -616,25 +631,36 @@ public class MapSettings implements Serializable {
      * Returns true if the this Mapsetting has the same mapgenerator settings
      * and size as the parameter.
      * 
-     * @param other
-     *                The Mapsetting to which compare.
+     * @param other The Mapsetting to which compare.
      * @return True if settings are the same.
      */
     public boolean equalMapGenParameters(MapSettings other) {
-        if ((this.boardWidth != other.getBoardWidth()) || (this.boardHeight != other.getBoardHeight())
-                || (this.mapWidth != other.getMapWidth()) || (this.mapHeight != other.getMapHeight())
-                || (this.invertNegativeTerrain != other.getInvertNegativeTerrain())
-                || (this.hilliness != other.getHilliness()) || (this.cliffs != other.getCliffs())
-                || (this.range != other.getRange()) || (this.minWaterSpots != other.getMinWaterSpots())
-                || (this.maxWaterSpots != other.getMaxWaterSpots()) || (this.minWaterSize != other.getMinWaterSize())
-                || (this.maxWaterSize != other.getMaxWaterSize()) || (this.probDeep != other.getProbDeep())
+        if ((this.boardWidth != other.getBoardWidth())
+                || (this.boardHeight != other.getBoardHeight())
+                || (this.mapWidth != other.getMapWidth())
+                || (this.mapHeight != other.getMapHeight())
+                || (this.invertNegativeTerrain != other
+                        .getInvertNegativeTerrain())
+                || (this.hilliness != other.getHilliness())
+                || (this.cliffs != other.getCliffs())
+                || (this.range != other.getRange())
+                || (this.minWaterSpots != other.getMinWaterSpots())
+                || (this.maxWaterSpots != other.getMaxWaterSpots())
+                || (this.minWaterSize != other.getMinWaterSize())
+                || (this.maxWaterSize != other.getMaxWaterSize())
+                || (this.probDeep != other.getProbDeep())
                 || (this.minForestSpots != other.getMinForestSpots())
                 || (this.maxForestSpots != other.getMaxForestSpots())
-                || (this.minForestSize != other.getMinForestSize()) || (this.maxForestSize != other.getMaxForestSize())
-                || (this.probHeavy != other.getProbHeavy()) || (this.minRoughSpots != other.getMinRoughSpots())
-                || (this.maxRoughSpots != other.getMaxRoughSpots()) || (this.minRoughSize != other.getMinRoughSize())
-                || (this.maxRoughSize != other.getMaxRoughSize()) || (this.minSwampSpots != other.getMinSwampSpots())
-                || (this.maxSwampSpots != other.getMaxSwampSpots()) || (this.minSwampSize != other.getMinSwampSize())
+                || (this.minForestSize != other.getMinForestSize())
+                || (this.maxForestSize != other.getMaxForestSize())
+                || (this.probHeavy != other.getProbHeavy())
+                || (this.minRoughSpots != other.getMinRoughSpots())
+                || (this.maxRoughSpots != other.getMaxRoughSpots())
+                || (this.minRoughSize != other.getMinRoughSize())
+                || (this.maxRoughSize != other.getMaxRoughSize())
+                || (this.minSwampSpots != other.getMinSwampSpots())
+                || (this.maxSwampSpots != other.getMaxSwampSpots())
+                || (this.minSwampSize != other.getMinSwampSize())
                 || (this.maxSwampSize != other.getMaxSwampSize())
                 || (this.minPavementSpots != other.getMinPavementSpots())
                 || (this.maxPavementSpots != other.getMaxPavementSpots())
@@ -642,27 +668,42 @@ public class MapSettings implements Serializable {
                 || (this.maxPavementSize != other.getMaxPavementSize())
                 || (this.minRubbleSpots != other.getMinRubbleSpots())
                 || (this.maxRubbleSpots != other.getMaxRubbleSpots())
-                || (this.minRubbleSize != other.getMinRubbleSize()) || (this.maxRubbleSize != other.getMaxRubbleSize())
+                || (this.minRubbleSize != other.getMinRubbleSize())
+                || (this.maxRubbleSize != other.getMaxRubbleSize())
                 || (this.minFortifiedSpots != other.getMinFortifiedSpots())
                 || (this.maxFortifiedSpots != other.getMaxFortifiedSpots())
                 || (this.minFortifiedSize != other.getMinFortifiedSize())
                 || (this.maxFortifiedSize != other.getMaxFortifiedSize())
-                || (this.minIceSpots != other.getMinIceSpots()) || (this.maxIceSpots != other.getMaxIceSpots())
-                || (this.minIceSize != other.getMinIceSize()) || (this.maxIceSize != other.getMaxIceSize())
-                || (this.probRoad != other.getProbRoad()) || (this.probInvert != other.getProbInvert())
-                || (this.probRiver != other.getProbRiver()) || (this.probCrater != other.getProbCrater())
-                || (this.minRadius != other.getMinRadius()) || (this.maxRadius != other.getMaxRadius())
-                || (this.minCraters != other.getMinCraters()) || (this.maxCraters != other.getMaxCraters())
-                || (!this.theme.equals(other.getTheme())) || (this.fxMod != other.getFxMod())
-                || (this.cityBlocks != other.getCityBlocks()) || (this.cityType != other.getCityType())
-                || (this.cityMinCF != other.getCityMinCF()) || (this.cityMaxCF != other.getCityMaxCF())
-                || (this.cityMinFloors != other.getCityMinFloors()) || (this.cityMaxFloors != other.getCityMaxFloors())
-                || (this.cityDensity != other.getCityDensity()) || (this.probFlood != other.getProbFlood())
-                || (this.probForestFire != other.getProbForestFire()) || (this.probFreeze != other.getProbFreeze())
-                || (this.probDrought != other.getProbDrought()) || (this.algorithmToUse != other.getAlgorithmToUse())
+                || (this.minIceSpots != other.getMinIceSpots())
+                || (this.maxIceSpots != other.getMaxIceSpots())
+                || (this.minIceSize != other.getMinIceSize())
+                || (this.maxIceSize != other.getMaxIceSize())
+                || (this.probRoad != other.getProbRoad())
+                || (this.probInvert != other.getProbInvert())
+                || (this.probRiver != other.getProbRiver())
+                || (this.probCrater != other.getProbCrater())
+                || (this.minRadius != other.getMinRadius())
+                || (this.maxRadius != other.getMaxRadius())
+                || (this.minCraters != other.getMinCraters())
+                || (this.maxCraters != other.getMaxCraters())
+                || (!this.theme.equals(other.getTheme()))
+                || (this.fxMod != other.getFxMod())
+                || (this.cityBlocks != other.getCityBlocks())
+                || (this.cityType != other.getCityType())
+                || (this.cityMinCF != other.getCityMinCF())
+                || (this.cityMaxCF != other.getCityMaxCF())
+                || (this.cityMinFloors != other.getCityMinFloors())
+                || (this.cityMaxFloors != other.getCityMaxFloors())
+                || (this.cityDensity != other.getCityDensity())
+                || (this.probFlood != other.getProbFlood())
+                || (this.probForestFire != other.getProbForestFire())
+                || (this.probFreeze != other.getProbFreeze())
+                || (this.probDrought != other.getProbDrought())
+                || (this.algorithmToUse != other.getAlgorithmToUse())
                 || (this.mountainHeightMin != other.getMountainHeightMin())
                 || (this.mountainHeightMax != other.getMountainHeightMax())
-                || (this.mountainPeaks != other.getMountainPeaks()) || (this.mountainStyle != other.getMountainStyle())
+                || (this.mountainPeaks != other.getMountainPeaks())
+                || (this.mountainStyle != other.getMountainStyle())
                 || (this.mountainWidthMin != other.getMountainWidthMin())
                 || (this.mountainWidthMax != other.getMountainWidthMax())
                 || (this.boardBuildings != other.getBoardBuildings())) {
@@ -952,7 +993,8 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setWaterParams(int minSpots, int maxSpots, int minSize, int maxSize, int prob) {
+    public void setWaterParams(int minSpots, int maxSpots, int minSize,
+            int maxSize, int prob) {
         minWaterSpots = minSpots;
         maxWaterSpots = maxSpots;
         minWaterSize = minSize;
@@ -963,7 +1005,8 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setForestParams(int minSpots, int maxSpots, int minSize, int maxSize, int prob) {
+    public void setForestParams(int minSpots, int maxSpots, int minSize,
+            int maxSize, int prob) {
         minForestSpots = minSpots;
         maxForestSpots = maxSpots;
         minForestSize = minSize;
@@ -974,7 +1017,8 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setRoughParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+    public void setRoughParams(int minSpots, int maxSpots, int minSize,
+            int maxSize) {
         minRoughSpots = minSpots;
         maxRoughSpots = maxSpots;
         minRoughSize = minSize;
@@ -984,7 +1028,8 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setSwampParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+    public void setSwampParams(int minSpots, int maxSpots, int minSize,
+            int maxSize) {
         minSwampSpots = minSpots;
         maxSwampSpots = maxSpots;
         minSwampSize = minSize;
@@ -994,7 +1039,8 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setPavementParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+    public void setPavementParams(int minSpots, int maxSpots, int minSize,
+            int maxSize) {
         minPavementSpots = minSpots;
         maxPavementSpots = maxSpots;
         minPavementSize = minSize;
@@ -1004,7 +1050,8 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setRubbleParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+    public void setRubbleParams(int minSpots, int maxSpots, int minSize,
+            int maxSize) {
         minRubbleSpots = minSpots;
         maxRubbleSpots = maxSpots;
         minRubbleSize = minSize;
@@ -1014,7 +1061,8 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setFortifiedParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+    public void setFortifiedParams(int minSpots, int maxSpots, int minSize,
+            int maxSize) {
         minFortifiedSpots = minSpots;
         maxFortifiedSpots = maxSpots;
         minFortifiedSize = minSize;
@@ -1024,7 +1072,8 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setIceParams(int minSpots, int maxSpots, int minSize, int maxSize) {
+    public void setIceParams(int minSpots, int maxSpots, int minSize,
+            int maxSize) {
         minIceSpots = minSpots;
         maxIceSpots = maxSpots;
         minIceSize = minSize;
@@ -1055,7 +1104,8 @@ public class MapSettings implements Serializable {
     /**
      * set the Parameters for the Map Generator
      */
-    public void setCraterParam(int prob, int minCrat, int maxCrat, int minRad, int maxRad) {
+    public void setCraterParam(int prob, int minCrat, int maxCrat, int minRad,
+            int maxRad) {
 
         probCrater = prob;
         maxCraters = maxCrat;
@@ -1074,7 +1124,8 @@ public class MapSettings implements Serializable {
     /**
      * set Map generator parameters
      */
-    public void setSpecialFX(int modifier, int fire, int freeze, int flood, int drought) {
+    public void setSpecialFX(int modifier, int fire, int freeze, int flood,
+            int drought) {
         fxMod = modifier;
         probForestFire = fire;
         probFreeze = freeze;
@@ -1086,8 +1137,9 @@ public class MapSettings implements Serializable {
         algorithmToUse = alg;
     }
 
-    public void setCityParams(int cityBlocks, String cityType, int cityMinCF, int cityMaxCF, int cityMinFloors,
-            int cityMaxFloors, int cityDensity, int townSize) {
+    public void setCityParams(int cityBlocks, String cityType, int cityMinCF,
+            int cityMaxCF, int cityMinFloors, int cityMaxFloors,
+            int cityDensity, int townSize) {
         this.cityBlocks = cityBlocks;
         this.cityType = cityType;
         this.cityMinCF = cityMinCF;
@@ -1098,8 +1150,9 @@ public class MapSettings implements Serializable {
         this.townSize = townSize;
     }
 
-    public void setMountainParams(int mountainPeaks, int mountainWidthMin, int mountainWidthMax, int mountainHeightMin,
-            int mountainHeightMax, int mountainStyle) {
+    public void setMountainParams(int mountainPeaks, int mountainWidthMin,
+            int mountainWidthMax, int mountainHeightMin, int mountainHeightMax,
+            int mountainStyle) {
         this.mountainHeightMax = mountainHeightMax;
         this.mountainHeightMin = mountainHeightMin;
         this.mountainWidthMin = mountainWidthMin;
@@ -1123,7 +1176,8 @@ public class MapSettings implements Serializable {
             saveParameter(output, "THEME", theme);
 
             // elevation params
-            saveParameter(output, "INVERTNEGATIVETERRAIN", invertNegativeTerrain);
+            saveParameter(output, "INVERTNEGATIVETERRAIN",
+                    invertNegativeTerrain);
             saveParameter(output, "HILLYNESS", hilliness);
             saveParameter(output, "HILLELEVATIONRANGE", range);
             saveParameter(output, "HILLINVERTPROB", probInvert);
@@ -1229,7 +1283,8 @@ public class MapSettings implements Serializable {
         }
     }
 
-    private void saveParameter(Writer output, String name, Object value) throws IOException {
+    private void saveParameter(Writer output, String name, Object value)
+            throws IOException {
         output.write("    <");
         output.write(name);
         output.write(">");

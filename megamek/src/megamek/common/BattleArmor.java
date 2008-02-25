@@ -19,60 +19,37 @@ import java.util.Vector;
 
 /**
  * This class represents a squad or point of battle armor equiped infantry,
- * sometimes referred to as "Elementals".  Much of the behaviour of a
- * battle armor unit is identical to that of an infantry platoon, and is
- * rather different than that of a Mek or Tank.
- *
- * @author  Suvarov454@sourceforge.net (James A. Damour )
+ * sometimes referred to as "Elementals". Much of the behaviour of a battle
+ * armor unit is identical to that of an infantry platoon, and is rather
+ * different than that of a Mek or Tank.
+ * 
+ * @author Suvarov454@sourceforge.net (James A. Damour )
  * @version $revision:$
  */
 /*
- *   PLEASE NOTE!!!  My programming style is to put constants first in
- *                   tests so the compiler catches my "= for ==" errors.
+ * PLEASE NOTE!!! My programming style is to put constants first in tests so the
+ * compiler catches my "= for ==" errors.
  */
-public class BattleArmor
-    extends Infantry
-    implements Serializable
-{
+public class BattleArmor extends Infantry implements Serializable {
     /**
      * 
      */
     private static final long serialVersionUID = 4594311535026187825L;
     /*
-     * Infantry have no critical slot limitations.
-     * IS squads usually have 4 men, Clan points usually have 5.
-     * Have a location that represents the entire squad.
+     * Infantry have no critical slot limitations. IS squads usually have 4 men,
+     * Clan points usually have 5. Have a location that represents the entire
+     * squad.
      */
-    private static final int[]    IS_NUM_OF_SLOTS   = {7,2,2,2,2,2,2};
-    private static final String[] IS_LOCATION_ABBRS = { "Squad",
-                                                        "Trooper 1",
-                                                        "Trooper 2",
-                                                        "Trooper 3",
-                                                        "Trooper 4",
-                                                        "Trooper 5",
-                                                        "Trooper 6"};
-    private static final String[] IS_LOCATION_NAMES = { "Squad",
-                                                        "Trooper 1",
-                                                        "Trooper 2",
-                                                        "Trooper 3",
-                                                        "Trooper 4",
-                                                        "Trooper 5",
-                                                        "Trooper 6"};
-    private static final int[]    CLAN_NUM_OF_SLOTS   = {10,2,2,2,2,2,2};
-    private static final String[] CLAN_LOCATION_ABBRS = { "Point",
-                                                          "Trooper 1",
-                                                          "Trooper 2",
-                                                          "Trooper 3",
-                                                          "Trooper 4",
-                                                          "Trooper 5",
-                                                          "Trooper 6"};
-    private static final String[] CLAN_LOCATION_NAMES = { "Point",
-                                                          "Trooper 1",
-                                                          "Trooper 2",
-                                                          "Trooper 3",
-                                                          "Trooper 4",
-                                                          "Trooper 5",
-                                                          "Trooper 6" };
+    private static final int[] IS_NUM_OF_SLOTS = { 7, 2, 2, 2, 2, 2, 2 };
+    private static final String[] IS_LOCATION_ABBRS = { "Squad", "Trooper 1",
+            "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
+    private static final String[] IS_LOCATION_NAMES = { "Squad", "Trooper 1",
+            "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
+    private static final int[] CLAN_NUM_OF_SLOTS = { 10, 2, 2, 2, 2, 2, 2 };
+    private static final String[] CLAN_LOCATION_ABBRS = { "Point", "Trooper 1",
+            "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
+    private static final String[] CLAN_LOCATION_NAMES = { "Point", "Trooper 1",
+            "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
 
     public static final int MANIPULATOR_NONE = 0;
     public static final int MANIPULATOR_ARMORED_GLOVE = 1;
@@ -87,29 +64,22 @@ public class BattleArmor
     public static final int MANIPULATOR_CARGO_LIFTER = 10;
     public static final int MANIPULATOR_INDUSTRIAL_DRILL = 11;
 
-    public static final String[] MANIPULATOR_TYPE_STRINGS = {"None",
-                                                              "Armored Glove",
-                                                              "Basic Manipulator",
-                                                              "Basic Manipulator (Mine Clearance)",
-                                                              "Battle Claw",
-                                                              "Battle Claw (Magnets)",
-                                                              "Battle Claw (Vibro-Claws)",
-                                                              "Heavy Battle Claw",
-                                                              "Heavy Battle Claw (Vibro-Claws)",
-                                                              "Salvage Arm",
-                                                              "Cargo Lifter",
-                                                              "Industrial Drill"};
-
+    public static final String[] MANIPULATOR_TYPE_STRINGS = { "None",
+            "Armored Glove", "Basic Manipulator",
+            "Basic Manipulator (Mine Clearance)", "Battle Claw",
+            "Battle Claw (Magnets)", "Battle Claw (Vibro-Claws)",
+            "Heavy Battle Claw", "Heavy Battle Claw (Vibro-Claws)",
+            "Salvage Arm", "Cargo Lifter", "Industrial Drill" };
 
     /**
      * The number of men alive in this unit at the beginning of the phase,
      * before it begins to take damage.
      */
-    private int         troopersShooting = 0;
+    private int troopersShooting = 0;
 
     /**
-     * The battle value of this unit.  This value should
-     * be set when the unit's file is read.
+     * The battle value of this unit. This value should be set when the unit's
+     * file is read.
      */
     private int myBV = 0;
     private int myCost = -1;
@@ -117,51 +87,49 @@ public class BattleArmor
     private int chassisType = -1;
 
     /**
-     * Flag that is <code>true</code> when this
-     * object's constructor has completed.
+     * Flag that is <code>true</code> when this object's constructor has
+     * completed.
      */
-    private boolean     isInitialized = false;
+    private boolean isInitialized = false;
 
     /**
      * Flag that is <code>true</code> when this unit is equipped with stealth.
      */
-    private boolean     isStealthy = false;
+    private boolean isStealthy = false;
 
     /**
      * Flag that is <code>true</code> when this unit is equipped with mimetic
      * Camo.
      */
-    private boolean     isMimetic = false;
+    private boolean isMimetic = false;
 
     /**
      * Flag that is <code>true</code> when this unit is equipped with simple
      * Camo.
      */
-    private boolean     isSimpleCamo = false;
+    private boolean isSimpleCamo = false;
 
     /**
      * Modifiers to <code>ToHitData</code> for stealth.
      */
-    private int         shortStealthMod = 0;
-    private int         mediumStealthMod = 0;
-    private int         longStealthMod = 0;
-    private String      stealthName = null;
+    private int shortStealthMod = 0;
+    private int mediumStealthMod = 0;
+    private int longStealthMod = 0;
+    private String stealthName = null;
 
-    private int         vibroClawDamage = -1;
-    
+    private int vibroClawDamage = -1;
+
     // Public and Protected constants, constructors, and methods.
 
     /**
      * Internal name of the Inner Sphere's disposable SRM2 ammo pack.
      */
-    public static final String IS_DISPOSABLE_SRM2_AMMO =
-        "BA-SRM2 (one shot) Ammo";
+    public static final String IS_DISPOSABLE_SRM2_AMMO = "BA-SRM2 (one shot) Ammo";
 
     /**
      * Internal name of the Inner Sphere's disposable NARC ammo pack.
      */
-    public static final String IS_DISPOSABLE_NARC_AMMO =
-        "BA-Compact Narc Ammo";
+    public static final String IS_DISPOSABLE_NARC_AMMO = "BA-Compact Narc Ammo";
 
     /**
      * The internal name for Boarding Claw equipment.
@@ -231,39 +199,40 @@ public class BattleArmor
     /**
      * The maximum number of men in a battle armor squad.
      */
-    public static final int     BA_MAX_MEN = 6;
+    public static final int BA_MAX_MEN = 6;
 
     /**
      * The location for infantry equipment.
      */
-    public static final int     LOC_SQUAD       = 0;
+    public static final int LOC_SQUAD = 0;
 
     // The next few things are never referenced!
     // Why do we even have them?...
     // This looks like the beginnings of implementing 6-man squads, though.
     // Which we DO want.
-    //FIXME
-    public static final int     LOC_IS_1        = 1;
-    public static final int     LOC_IS_2        = 2;
-    public static final int     LOC_IS_3        = 3;
-    public static final int     LOC_IS_4        = 4;
-    public static final int     LOC_IS_5        = 5;
-    public static final int     LOC_IS_6        = 6;
-    public static final int     LOC_CLAN_1      = 1;
-    public static final int     LOC_CLAN_2      = 2;
-    public static final int     LOC_CLAN_3      = 3;
-    public static final int     LOC_CLAN_4      = 4;
-    public static final int     LOC_CLAN_5      = 5;
-    public static final int     LOC_CLAN_6      = 6;
+    // FIXME
+    public static final int LOC_IS_1 = 1;
+    public static final int LOC_IS_2 = 2;
+    public static final int LOC_IS_3 = 3;
+    public static final int LOC_IS_4 = 4;
+    public static final int LOC_IS_5 = 5;
+    public static final int LOC_IS_6 = 6;
+    public static final int LOC_CLAN_1 = 1;
+    public static final int LOC_CLAN_2 = 2;
+    public static final int LOC_CLAN_3 = 3;
+    public static final int LOC_CLAN_4 = 4;
+    public static final int LOC_CLAN_5 = 5;
+    public static final int LOC_CLAN_6 = 6;
 
     public String[] getLocationAbbrs() {
-        if ( !this.isInitialized || this.isClan() ) {
+        if (!this.isInitialized || this.isClan()) {
             return CLAN_LOCATION_ABBRS;
         }
         return IS_LOCATION_ABBRS;
     }
+
     public String[] getLocationNames() {
-        if ( !this.isInitialized || this.isClan() ) {
+        if (!this.isInitialized || this.isClan()) {
             return CLAN_LOCATION_NAMES;
         }
         return IS_LOCATION_NAMES;
@@ -276,12 +245,12 @@ public class BattleArmor
         int retVal = Math.round(getWeight());
         if (retVal == 0) {
             // Return one more than the maximum number of men in the unit.
-            if ( !this.isInitialized) {
-                retVal =  6 + 1;
-            } else if(this.isClan() ) {
-                retVal =  5 + 1;
+            if (!this.isInitialized) {
+                retVal = 6 + 1;
+            } else if (this.isClan()) {
+                retVal = 5 + 1;
             }
-            retVal =  4 + 1;
+            retVal = 4 + 1;
         } else {
             retVal++;
         }
@@ -289,15 +258,15 @@ public class BattleArmor
     }
 
     /**
-     * Generate a new, blank, battle armor unit.
-     * Hopefully, we'll be loaded from somewhere.
+     * Generate a new, blank, battle armor unit. Hopefully, we'll be loaded from
+     * somewhere.
      */
     public BattleArmor() {
         // Instantiate the superclass.
         super();
 
         // All Battle Armor squads are Clan until specified otherwise.
-        this.setTechLevel( TechConstants.T_CLAN_LEVEL_2 );
+        this.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
 
         // Construction complete.
         this.isInitialized = true;
@@ -311,9 +280,9 @@ public class BattleArmor
     }
 
     /**
-    * Returns this entity's walking mp, factored
-    * for extreme temperatures and gravity.
-    */
+     * Returns this entity's walking mp, factored for extreme temperatures and
+     * gravity.
+     */
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int i;
         int j = getOriginalWalkMP();
@@ -327,8 +296,8 @@ public class BattleArmor
     }
 
     /**
-    * Returns this entity's running mp, factored
-    * for extreme temperatures and gravity.
+     * Returns this entity's running mp, factored for extreme temperatures and
+     * gravity.
      */
     public int getRunMP(boolean gravity, boolean ignoreheat) {
         int i;
@@ -341,96 +310,97 @@ public class BattleArmor
         }
         return j;
     }
-    
+
     /**
      * Returns this entity's current jumping MP, not effected by terrain,
-     * factored for Gravity.
-     * Certain types of equipment prevent a squad from jumping.
+     * factored for Gravity. Certain types of equipment prevent a squad from
+     * jumping.
      */
     public int getJumpMP() {
-        if ( this.isBurdened() ) {
+        if (this.isBurdened()) {
             return 0;
         }
         return super.getJumpMP();
     }
 
     /**
-     * Returns the name of the type of movement used.
-     * This is Infantry-specific.
+     * Returns the name of the type of movement used. This is Infantry-specific.
      */
     public String getMovementString(int mtype) {
-        switch(mtype) {
-        case IEntityMovementType.MOVE_NONE :
-            return "None";
-        case IEntityMovementType.MOVE_WALK :
-        case IEntityMovementType.MOVE_RUN :
-            return "Walked";
-        case IEntityMovementType.MOVE_VTOL_WALK :
-        case IEntityMovementType.MOVE_VTOL_RUN :
-            return "Flew";
-        case IEntityMovementType.MOVE_JUMP :
-            return "Jumped";
-        default :
-            return "Unknown!";
+        switch (mtype) {
+            case IEntityMovementType.MOVE_NONE:
+                return "None";
+            case IEntityMovementType.MOVE_WALK:
+            case IEntityMovementType.MOVE_RUN:
+                return "Walked";
+            case IEntityMovementType.MOVE_VTOL_WALK:
+            case IEntityMovementType.MOVE_VTOL_RUN:
+                return "Flew";
+            case IEntityMovementType.MOVE_JUMP:
+                return "Jumped";
+            default:
+                return "Unknown!";
         }
     }
 
     /**
-     * Returns the abbreviation of the type of movement used.
-     * This is Infantry-specific.
+     * Returns the abbreviation of the type of movement used. This is
+     * Infantry-specific.
      */
     public String getMovementAbbr(int mtype) {
-        switch(mtype) {
-        case IEntityMovementType.MOVE_NONE :
-            return "N";
-        case IEntityMovementType.MOVE_WALK :
-            return "W";
-        case IEntityMovementType.MOVE_RUN :
-            return "R";
-        case IEntityMovementType.MOVE_JUMP :
-            return "J";
-        case IEntityMovementType.MOVE_VTOL_WALK :
-        case IEntityMovementType.MOVE_VTOL_RUN :
-            return "F";
-        default :
-            return "?";
+        switch (mtype) {
+            case IEntityMovementType.MOVE_NONE:
+                return "N";
+            case IEntityMovementType.MOVE_WALK:
+                return "W";
+            case IEntityMovementType.MOVE_RUN:
+                return "R";
+            case IEntityMovementType.MOVE_JUMP:
+                return "J";
+            case IEntityMovementType.MOVE_VTOL_WALK:
+            case IEntityMovementType.MOVE_VTOL_RUN:
+                return "F";
+            default:
+                return "?";
         }
     }
 
     /**
      * Battle Armor units can only get hit in undestroyed troopers.
      */
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation,
+            int aimingMode) {
         return rollHitLocation(table, side);
-    }     
-     
-    public HitData rollHitLocation( int table, int side ) {
+    }
+
+    public HitData rollHitLocation(int table, int side) {
 
         // If this squad was killed, target trooper 1 (just because).
-        if ( this.isDoomed() ) return new HitData( 1 );
+        if (this.isDoomed())
+            return new HitData(1);
 
         // Pick a random number between 1 and 6.
         int loc = Compute.d6();
 
-        if(game.getOptions().booleanOption("ba_criticals")
-           && loc == 6) {
-           return new HitData( Compute.d6(), false, HitData.EFFECT_CRITICAL );
+        if (game.getOptions().booleanOption("ba_criticals") && loc == 6) {
+            return new HitData(Compute.d6(), false, HitData.EFFECT_CRITICAL);
         }
 
         // Pick a new random number if that trooper is dead or never existed.
         // Remember that there's one more location than the number of troopers.
         // In http://forums.classicbattletech.com/index.php/topic,43203.0.html,
-        // "previously destroyed includes the current phase" for rolling hits on a squad,
+        // "previously destroyed includes the current phase" for rolling hits on
+        // a squad,
         // modifying previous ruling in the AskThePM FAQ.
-        while ( loc >= this.locations() ||
-                IArmorState.ARMOR_NA == this.getInternal(loc) ||
-                IArmorState.ARMOR_DESTROYED == this.getInternal(loc) ||
-                (IArmorState.ARMOR_DOOMED == this.getInternal(loc) && !isDoomed())) {
+        while (loc >= this.locations()
+                || IArmorState.ARMOR_NA == this.getInternal(loc)
+                || IArmorState.ARMOR_DESTROYED == this.getInternal(loc)
+                || (IArmorState.ARMOR_DOOMED == this.getInternal(loc) && !isDoomed())) {
             loc = Compute.d6();
         }
 
         // Hit that trooper.
-        return new HitData( loc );
+        return new HitData(loc);
     }
 
     /**
@@ -438,66 +408,65 @@ public class BattleArmor
      * precondition: hit is a location covered by BA
      */
     public HitData getTrooperAtLocation(HitData hit, Entity transport) {
-        if(transport instanceof Mech) {
+        if (transport instanceof Mech) {
             int loc = 99;
-            switch(hit.getLocation()) {
+            switch (hit.getLocation()) {
                 case Mech.LOC_RT:
-                    if(hit.isRear())
+                    if (hit.isRear())
                         loc = 3;
                     else
                         loc = 1;
                     break;
                 case Mech.LOC_LT:
-                    if(hit.isRear())
+                    if (hit.isRear())
                         loc = 4;
                     else
                         loc = 2;
                     break;
                 case Mech.LOC_CT:
-                    if(hit.isRear())
+                    if (hit.isRear())
                         loc = 5;
                     else
                         loc = 6;
                     break;
             }
-            if(loc < locations())
+            if (loc < locations())
                 return new HitData(loc);
-        }
-        else if (transport instanceof Tank) {
+        } else if (transport instanceof Tank) {
             int loc = 99;
-            switch(hit.getLocation()) {
+            switch (hit.getLocation()) {
                 case Tank.LOC_RIGHT:
-                    //There are 2 troopers on each location, so pick
-                    //one randomly if both are alive.
-                    if(getInternal(1) > 0 && getInternal(2) > 0)
+                    // There are 2 troopers on each location, so pick
+                    // one randomly if both are alive.
+                    if (getInternal(1) > 0 && getInternal(2) > 0)
                         loc = Compute.randomInt(2) + 1;
-                    else if(getInternal(1) > 0)
+                    else if (getInternal(1) > 0)
                         loc = 1;
                     else
                         loc = 2;
                     break;
                 case Tank.LOC_LEFT:
-                    if(getInternal(3) > 0 && getInternal(4) > 0)
+                    if (getInternal(3) > 0 && getInternal(4) > 0)
                         loc = Compute.randomInt(2) + 3;
-                    else if(getInternal(3) > 0)
+                    else if (getInternal(3) > 0)
                         loc = 3;
                     else
                         loc = 4;
                     break;
                 case Tank.LOC_REAR:
-                    if(getInternal(5) > 0 && getInternal(6) > 0)
+                    if (getInternal(5) > 0 && getInternal(6) > 0)
                         loc = Compute.randomInt(2) + 5;
-                    else if(getInternal(5) > 0)
+                    else if (getInternal(5) > 0)
                         loc = 5;
                     else
                         loc = 6;
                     break;
             }
-            if(loc < locations())
+            if (loc < locations())
                 return new HitData(loc);
         }
-        //otherwise roll a random location
-        return rollHitLocation( ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT );
+        // otherwise roll a random location
+        return rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
     }
 
     /**
@@ -506,8 +475,8 @@ public class BattleArmor
     public HitData getTransferLocation(HitData hit) {
 
         // If any trooper lives, the unit isn't destroyed.
-        for ( int loop = 1; loop < this.locations(); loop++ ) {
-            if ( 0 < this.getInternal(loop) ) {
+        for (int loop = 1; loop < this.locations(); loop++) {
+            if (0 < this.getInternal(loop)) {
                 return new HitData(Entity.LOC_NONE);
             }
         }
@@ -518,55 +487,57 @@ public class BattleArmor
 
     /**
      * Battle Armor units use default behavior for armor and internals.
-     *
-     * @see     megamek.common.Infantry#isPlatoon()
+     * 
+     * @see megamek.common.Infantry#isPlatoon()
      */
-    protected boolean isPlatoon() { return false; }
+    protected boolean isPlatoon() {
+        return false;
+    }
 
     /**
      * Battle Armor units have no armor on their squad location.
-     *
-     * @see     megamek.common.Infantry#getArmor( int, boolean )
+     * 
+     * @see megamek.common.Infantry#getArmor( int, boolean )
      */
-    public int getArmor( int loc, boolean rear ) {
-        if ( BattleArmor.LOC_SQUAD != loc ) {
-            return super.getArmor( loc, rear );
+    public int getArmor(int loc, boolean rear) {
+        if (BattleArmor.LOC_SQUAD != loc) {
+            return super.getArmor(loc, rear);
         }
         return IArmorState.ARMOR_NA;
     }
 
     /**
      * Battle Armor units have no armor on their squad location.
-     *
-     * @see     megamek.common.Infantry#getOArmor( int, boolean )
+     * 
+     * @see megamek.common.Infantry#getOArmor( int, boolean )
      */
-    public int getOArmor( int loc, boolean rear ) {
-        if ( BattleArmor.LOC_SQUAD != loc ) {
-            return super.getOArmor( loc, rear );
+    public int getOArmor(int loc, boolean rear) {
+        if (BattleArmor.LOC_SQUAD != loc) {
+            return super.getOArmor(loc, rear);
         }
         return IArmorState.ARMOR_NA;
     }
 
     /**
      * Battle Armor units have no internals on their squad location.
-     *
-     * @see     megamek.common.Infantry#getInternal( int )
+     * 
+     * @see megamek.common.Infantry#getInternal( int )
      */
-    public int getInternal( int loc ) {
-        if ( BattleArmor.LOC_SQUAD != loc ) {
-            return super.getInternal( loc );
+    public int getInternal(int loc) {
+        if (BattleArmor.LOC_SQUAD != loc) {
+            return super.getInternal(loc);
         }
         return IArmorState.ARMOR_NA;
     }
 
     /**
      * Battle Armor units have no internals on their squad location.
-     *
-     * @see     megamek.common.Infantry#getOInternal( int )
+     * 
+     * @see megamek.common.Infantry#getOInternal( int )
      */
-    public int getOInternal( int loc ) {
-        if ( BattleArmor.LOC_SQUAD != loc ) {
-            return super.getOInternal( loc );
+    public int getOInternal(int loc) {
+        if (BattleArmor.LOC_SQUAD != loc) {
+            return super.getOInternal(loc);
         }
         return IArmorState.ARMOR_NA;
     }
@@ -587,40 +558,39 @@ public class BattleArmor
         // to one less than the number of locations in the unit.
         this.troopersShooting = this.locations() - 1;
     }
-    
+
     /**
      * Mounts the specified equipment in the specified location.
      */
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
-        throws LocationFullException {
+            throws LocationFullException {
         // Implement parent's behavior.
         super.addEquipment(mounted, loc, rearMounted);
 
         // Add the piece equipment to our slots.
         addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT,
-                                           getEquipmentNum(mounted),
-                                           true));
+                getEquipmentNum(mounted), true));
 
         // Is the item a stealth equipment?
         // TODO: what's the *real* extreme range modifier?
         String name = mounted.getType().getInternalName();
         if (BattleArmor.STEALTH.equals(name)) {
             this.isStealthy = true;
-            this.shortStealthMod  = 0;
+            this.shortStealthMod = 0;
             this.mediumStealthMod = 1;
-            this.longStealthMod   = 2;
+            this.longStealthMod = 2;
             this.stealthName = "basic stealth";
         } else if (BattleArmor.ADVANCED_STEALTH.equals(name)) {
             this.isStealthy = true;
-            this.shortStealthMod  = 1;
+            this.shortStealthMod = 1;
             this.mediumStealthMod = 1;
-            this.longStealthMod   = 2;
+            this.longStealthMod = 2;
             this.stealthName = "standard stealth";
         } else if (BattleArmor.EXPERT_STEALTH.equals(name)) {
             this.isStealthy = true;
-            this.shortStealthMod  = 1;
+            this.shortStealthMod = 1;
             this.mediumStealthMod = 2;
-            this.longStealthMod   = 3;
+            this.longStealthMod = 3;
             this.stealthName = "improved stealth";
         } else if (BattleArmor.MIMETIC_CAMO.equals(name)) {
             this.isMimetic = true;
@@ -630,22 +600,23 @@ public class BattleArmor
     }
 
     /**
-     * Battle Armor units have as many critical slots as they need to
-     * hold their equipment.
+     * Battle Armor units have as many critical slots as they need to hold their
+     * equipment.
      */
     protected int[] getNoOfSlots() {
-        if ( !this.isInitialized || this.isClan() ) {
+        if (!this.isInitialized || this.isClan()) {
             return CLAN_NUM_OF_SLOTS;
         }
         return IS_NUM_OF_SLOTS;
     }
-    
+
     /**
      * Trooper's equipment dies when they do.
      */
     public boolean hasHittableCriticals(int loc) {
-        if ( LOC_SQUAD == loc ) return false;
-        return super.hasHittableCriticals( loc );
+        if (LOC_SQUAD == loc)
+            return false;
+        return super.hasHittableCriticals(loc);
     }
 
     /**
@@ -660,25 +631,24 @@ public class BattleArmor
         // Adjust BV for crew skills.
         double pilotFactor = crew.getBVSkillMultiplier();
 
-        int finalBV = (int)Math.round(bv);
+        int finalBV = (int) Math.round(bv);
 
-        int retVal = (int)Math.round(finalBV * pilotFactor);
+        int retVal = (int) Math.round(finalBV * pilotFactor);
         return retVal;
     }
 
     /**
      * Prepare the entity for a new round of action.
-     */    
-    public void newRound(int roundNumber)
-    {
+     */
+    public void newRound(int roundNumber) {
         // Perform all base-class behavior.
         super.newRound(roundNumber);
 
         // If we're equipped with a Magnetic Mine
         // launcher, turn it to single shot mode.
-        for (Mounted m:getMisc()) {
+        for (Mounted m : getMisc()) {
             EquipmentType equip = m.getType();
-            if ( BattleArmor.MINE_LAUNCHER.equals(equip.getInternalName()) ) {
+            if (BattleArmor.MINE_LAUNCHER.equals(equip.getInternalName())) {
                 m.setMode("Single");
             }
         }
@@ -694,33 +664,39 @@ public class BattleArmor
 
     /**
      * Get the number of men in the unit (before damage is applied).
-     *
-     * @see     megamek.common.Infantry#getShootingStrength
+     * 
+     * @see megamek.common.Infantry#getShootingStrength
      */
-    public int getShootingStrength() { return troopersShooting; }
+    public int getShootingStrength() {
+        return troopersShooting;
+    }
 
     /**
-     * Sets the battle value of this unit.  Please note that the BV
-     * of all Battle Armor units is dictated by the BMRr, page 155.
-     *
-     * @param   bv - the <code>int</code> battle value of this unit.
+     * Sets the battle value of this unit. Please note that the BV of all Battle
+     * Armor units is dictated by the BMRr, page 155.
+     * 
+     * @param bv - the <code>int</code> battle value of this unit.
      */
-    public void setBattleValue( int bv ) { myBV = bv; }
+    public void setBattleValue(int bv) {
+        myBV = bv;
+    }
 
-    public void setCost( int inC ) { myCost = inC; }    
+    public void setCost(int inC) {
+        myCost = inC;
+    }
 
     /**
      * Determines if the battle armor unit is burdened with un-jettisoned
-     * equipment.  This can prevent the unit from jumping or using their
-     * special Anti-Mek attacks.
-     *
-     * @return  <code>true</code> if the unit hasn't jettisoned its
-     *          equipment yet, <code>false</code> if it has.
+     * equipment. This can prevent the unit from jumping or using their special
+     * Anti-Mek attacks.
+     * 
+     * @return <code>true</code> if the unit hasn't jettisoned its equipment
+     *         yet, <code>false</code> if it has.
      */
     public boolean isBurdened() {
 
         // Clan Elemental points are never burdened by equipment.
-        if ( !this.isClan() ) {
+        if (!this.isClan()) {
 
             // As of 2006-10-10 any squad can be burdened.
 
@@ -730,9 +706,8 @@ public class BattleArmor
                 EquipmentType type = mounted.getType();
 
                 // Un-jettisoned ammo packs burden squads.
-                if ( mounted.getShotsLeft() > 0 &&
-                     (type.hasFlag(AmmoType.F_ENCUMBERING))
-                     ) {
+                if (mounted.getShotsLeft() > 0
+                        && (type.hasFlag(AmmoType.F_ENCUMBERING))) {
                     return true;
                 }
 
@@ -745,20 +720,20 @@ public class BattleArmor
     }
 
     /**
-     * Determine if this unit has an active stealth system.
-     * <p/>
-     * Sub-classes are encouraged to override this method.
-     *
-     * @return  <code>true</code> if this unit has a stealth system that
-     *          is currently active, <code>false</code> if there is no
-     *          stealth system or if it is inactive.
+     * Determine if this unit has an active stealth system. <p/> Sub-classes are
+     * encouraged to override this method.
+     * 
+     * @return <code>true</code> if this unit has a stealth system that is
+     *         currently active, <code>false</code> if there is no stealth
+     *         system or if it is inactive.
      */
     public boolean isStealthActive() {
         return (isStealthy || isMimetic || isSimpleCamo);
     }
-    
+
     /**
      * does this BA have fire resistant armor?
+     * 
      * @return
      */
     public boolean hasFireresistantArmor() {
@@ -766,40 +741,34 @@ public class BattleArmor
     }
 
     /**
-     * Determine the stealth modifier for firing at this unit from the
-     * given range.  If the value supplied for <code>range</code> is not
-     * one of the <code>Entity</code> class range constants, an
-     * <code>IllegalArgumentException</code> will be thrown.
-     * <p/>
-     * Sub-classes are encouraged to override this method.
-     *
-     * @param   range - an <code>int</code> value that must match one
-     *          of the <code>Compute</code> class range constants.
-     * @param   ae - the entity making the attack.
-     * @return  a <code>TargetRoll</code> value that contains the stealth
-     *          modifier for the given range.
+     * Determine the stealth modifier for firing at this unit from the given
+     * range. If the value supplied for <code>range</code> is not one of the
+     * <code>Entity</code> class range constants, an
+     * <code>IllegalArgumentException</code> will be thrown. <p/> Sub-classes
+     * are encouraged to override this method.
+     * 
+     * @param range - an <code>int</code> value that must match one of the
+     *            <code>Compute</code> class range constants.
+     * @param ae - the entity making the attack.
+     * @return a <code>TargetRoll</code> value that contains the stealth
+     *         modifier for the given range.
      */
     public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
-        
-        //Note: infantry are immune to stealth, but not camoflage
-        //or mimetic armor
 
-        //TODO: eliminate duplicate code
+        // Note: infantry are immune to stealth, but not camoflage
+        // or mimetic armor
+
+        // TODO: eliminate duplicate code
         if (armorType != -1) {
             /*
-            Here, in order, are the armor types used by custom Battle Armor at this point:
-            0: "Standard",
-            1: "Advanced",
-            2: "Prototype",
-            3: "Basic Stealth",
-            4: "Prototype Stealth",
-            5: "Standard Stealth",
-            6: "Improved Stealth",
-            7: "Fire Resistant",
-            8: "Mimetic"
-            */
-            if (armorType == 3 && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
+             * Here, in order, are the armor types used by custom Battle Armor
+             * at this point: 0: "Standard", 1: "Advanced", 2: "Prototype", 3:
+             * "Basic Stealth", 4: "Prototype Stealth", 5: "Standard Stealth",
+             * 6: "Improved Stealth", 7: "Fire Resistant", 8: "Mimetic"
+             */
+            if (armorType == 3
+                    && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
                 // Basic Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -807,19 +776,19 @@ public class BattleArmor
                         // At short range, basic stealth doesn't get a mod!
                         break;
                     case RangeType.RANGE_MEDIUM:
-                        result = new TargetRoll(+1,
-                                                "Basic Stealth Armor");
+                        result = new TargetRoll(+1, "Basic Stealth Armor");
                         break;
                     case RangeType.RANGE_LONG:
-                    case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
-                        result = new TargetRoll(+2,
-                                                "Basic Stealth Armor");
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                                                    // modifier?
+                        result = new TargetRoll(+2, "Basic Stealth Armor");
                         break;
                     default:
-                        throw new IllegalArgumentException
-                            ("Unknown range constant: " + range);
+                        throw new IllegalArgumentException(
+                                "Unknown range constant: " + range);
                 }
-            } else if (armorType == 4 && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
+            } else if (armorType == 4
+                    && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
                 // Prototype Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
@@ -827,106 +796,105 @@ public class BattleArmor
                         // At short range, prototype stealth doesn't get a mod!
                         break;
                     case RangeType.RANGE_MEDIUM:
-                        result = new TargetRoll(+1,
-                                                "Prototype Stealth Armor");
+                        result = new TargetRoll(+1, "Prototype Stealth Armor");
                         break;
                     case RangeType.RANGE_LONG:
-                    case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
-                        result = new TargetRoll(+2,
-                                                "Prototype Stealth Armor");
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                                                    // modifier?
+                        result = new TargetRoll(+2, "Prototype Stealth Armor");
                         break;
                     default:
-                        throw new IllegalArgumentException
-                            ("Unknown range constant: " + range);
+                        throw new IllegalArgumentException(
+                                "Unknown range constant: " + range);
                 }
-            } else if (armorType == 5 && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
+            } else if (armorType == 5
+                    && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
                 // Standard Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
                     case RangeType.RANGE_SHORT:
-                        result = new TargetRoll(+1,
-                                                "Standard Stealth Armor");
+                        result = new TargetRoll(+1, "Standard Stealth Armor");
                         break;
                     case RangeType.RANGE_MEDIUM:
-                        result = new TargetRoll(+1,
-                                                "Standard Stealth Armor");
+                        result = new TargetRoll(+1, "Standard Stealth Armor");
                         break;
                     case RangeType.RANGE_LONG:
-                    case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
-                        result = new TargetRoll(+2,
-                                                "Standard Stealth Armor");
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                                                    // modifier?
+                        result = new TargetRoll(+2, "Standard Stealth Armor");
                         break;
                     default:
-                        throw new IllegalArgumentException
-                            ("Unknown range constant: " + range);
+                        throw new IllegalArgumentException(
+                                "Unknown range constant: " + range);
                 }
-            } else if (armorType == 6 && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
+            } else if (armorType == 6
+                    && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
                 // Improved Stealth
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
                     case RangeType.RANGE_SHORT:
-                        result = new TargetRoll(+1,
-                                                "Improved Stealth Armor");
+                        result = new TargetRoll(+1, "Improved Stealth Armor");
                         break;
                     case RangeType.RANGE_MEDIUM:
-                        result = new TargetRoll(+2,
-                                                "Improved Stealth Armor");
+                        result = new TargetRoll(+2, "Improved Stealth Armor");
                         break;
                     case RangeType.RANGE_LONG:
-                    case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
-                        result = new TargetRoll(+3,
-                                                "Improved Stealth Armor");
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                                                    // modifier?
+                        result = new TargetRoll(+3, "Improved Stealth Armor");
                         break;
                     default:
-                        throw new IllegalArgumentException
-                            ("Unknown range constant: " + range);
+                        throw new IllegalArgumentException(
+                                "Unknown range constant: " + range);
                 }
             } else if (armorType == 8) {
                 int mmod = 3 - delta_distance;
-                mmod = Math.max(0,mmod);
+                mmod = Math.max(0, mmod);
                 result = new TargetRoll(mmod, "mimetic armor");
             }
         } else {
             // Mimetic armor modifier is based upon the number of hexes moved,
             // and adds to existing movement modifier (Total Warfare p228):
-            //      0 hexes moved   +3 movement modifier
-            //      1 hex moved     +2 movement modifier
-            //      2 hexes moved   +1 movement modifier
-            //      3+ hexes moved  +0 movement modifier
+            // 0 hexes moved +3 movement modifier
+            // 1 hex moved +2 movement modifier
+            // 2 hexes moved +1 movement modifier
+            // 3+ hexes moved +0 movement modifier
             if (isMimetic) {
                 int mmod = 3 - delta_distance;
-                mmod = Math.max(0,mmod);
+                mmod = Math.max(0, mmod);
                 result = new TargetRoll(mmod, "mimetic armor");
             }
-    
+
             // Stealthy units alreay have their to-hit mods defined.
-            if (isStealthy && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
+            if (isStealthy
+                    && !(ae instanceof Infantry && !(ae instanceof BattleArmor))) {
                 switch (range) {
                     case RangeType.RANGE_MINIMUM:
                     case RangeType.RANGE_SHORT:
                         result = new TargetRoll(this.shortStealthMod,
-                                                this.stealthName);
+                                this.stealthName);
                         break;
                     case RangeType.RANGE_MEDIUM:
                         result = new TargetRoll(this.mediumStealthMod,
-                                                this.stealthName);
+                                this.stealthName);
                         break;
                     case RangeType.RANGE_LONG:
-                    case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
+                    case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                                                    // modifier?
                         result = new TargetRoll(this.longStealthMod,
-                                                this.stealthName);
+                                this.stealthName);
                         break;
                     default:
-                        throw new IllegalArgumentException
-                            ("Unknown range constant: " + range);
+                        throw new IllegalArgumentException(
+                                "Unknown range constant: " + range);
                 }
             }
         }
 
         // Simple camo modifier is on top of the movement modifier
-        //      0 hexes moved   +2 movement modifier
-        //      1 hexes moved   +1 movement modifier
-        //      2+ hexes moved  no modifier
+        // 0 hexes moved +2 movement modifier
+        // 1 hexes moved +1 movement modifier
+        // 2+ hexes moved no modifier
         // This can also be in addition to any armor except Mimetic!
         if (isSimpleCamo && delta_distance < 2) {
             int mod = Math.max(2 - delta_distance, 0);
@@ -948,43 +916,63 @@ public class BattleArmor
             vibroClawDamage = 0;
             for (Mounted mounted : getWeaponList()) {
                 if (mounted.getType().hasFlag(WeaponType.F_BOOST_SWARM)) {
-                    vibroClawDamage = ((WeaponType)(mounted.getType())).getRackSize();
+                    vibroClawDamage = ((WeaponType) (mounted.getType()))
+                            .getRackSize();
                     break;
                 }
             }
         }
         return vibroClawDamage;
     }
-    
+
     public double getCost() {
         // Hopefully the cost is correctly set.
         if (myCost > 0)
             return myCost;
 
         // If it's not, I guess we default to the book values...
-        if (chassis.equals("Clan Elemental")) return 3500000;
-        if (chassis.equals("Clan Gnome")) return 5250000;
-        if (chassis.equals("Clan Salamander")) return 3325000;
-        if (chassis.equals("Clan Sylph")) return 3325000;
-        if (chassis.equals("Clan Undine")) return 3500000;
-        if (chassis.equals("IS Standard")) return 2400000;
-        if (chassis.equals("Achileus")) return 1920000;
-        if (chassis.equals("Cavalier")) return 2400000;
-        if (chassis.equals("Fa Shih")) return 2250000;
-        if (chassis.equals("Fenrir")) return 2250000;
-        if (chassis.equals("Gray Death Light Scout")) return 1650000;
-        if (chassis.equals("Gray Death Standard")) return 2400000;
+        if (chassis.equals("Clan Elemental"))
+            return 3500000;
+        if (chassis.equals("Clan Gnome"))
+            return 5250000;
+        if (chassis.equals("Clan Salamander"))
+            return 3325000;
+        if (chassis.equals("Clan Sylph"))
+            return 3325000;
+        if (chassis.equals("Clan Undine"))
+            return 3500000;
+        if (chassis.equals("IS Standard"))
+            return 2400000;
+        if (chassis.equals("Achileus"))
+            return 1920000;
+        if (chassis.equals("Cavalier"))
+            return 2400000;
+        if (chassis.equals("Fa Shih"))
+            return 2250000;
+        if (chassis.equals("Fenrir"))
+            return 2250000;
+        if (chassis.equals("Gray Death Light Scout"))
+            return 1650000;
+        if (chassis.equals("Gray Death Standard"))
+            return 2400000;
         if (chassis.equals("Infiltrator")) {
-            if (model.equals("Mk I")) return 1800000;
+            if (model.equals("Mk I"))
+                return 1800000;
             return 2400000; // Mk II
         }
-        if (chassis.equals("Kage")) return 1850000;
-        if (chassis.equals("Kanazuchi")) return 3300000;
-        if (chassis.equals("Longinus")) return 2550000;
-        if (chassis.equals("Purifier")) return 2400000;
-        if (chassis.equals("Raiden")) return 2400000;
-        if (chassis.equals("Sloth")) return 1800000;
-        
+        if (chassis.equals("Kage"))
+            return 1850000;
+        if (chassis.equals("Kanazuchi"))
+            return 3300000;
+        if (chassis.equals("Longinus"))
+            return 2550000;
+        if (chassis.equals("Purifier"))
+            return 2400000;
+        if (chassis.equals("Raiden"))
+            return 2400000;
+        if (chassis.equals("Sloth"))
+            return 1800000;
+
         return 0;
     }
 
@@ -1037,31 +1025,31 @@ public class BattleArmor
         int locInt = Compute.randomInt(activeTroops.size());
         return activeTroops.elementAt(locInt);
     }
-    
+
     public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
-        //BA must carry the ammo in same location as the weapon.
+        // BA must carry the ammo in same location as the weapon.
         // except for mine launcher mines
-        //This allows for squad weapons and individual trooper weapons
-        //such as NARC and the support weapons in TW/TO 
-        AmmoType at = (AmmoType)mountedAmmo.getType();
-        if (!(at.getAmmoType() == AmmoType.T_MINE) &&
-                mounted.getLocation() != mountedAmmo.getLocation())
+        // This allows for squad weapons and individual trooper weapons
+        // such as NARC and the support weapons in TW/TO
+        AmmoType at = (AmmoType) mountedAmmo.getType();
+        if (!(at.getAmmoType() == AmmoType.T_MINE)
+                && mounted.getLocation() != mountedAmmo.getLocation())
             return false;
         return super.loadWeapon(mounted, mountedAmmo);
     }
 
     public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo) {
-        //BA must carry the ammo in same location as the weapon.
+        // BA must carry the ammo in same location as the weapon.
         // except for mine launcher mines
-        //This allows for squad weapons and individual trooper weapons
-        //such as NARC and the support weapons in TW/TO
-        AmmoType at = (AmmoType)mountedAmmo.getType();
-        if (!(at.getAmmoType() == AmmoType.T_MINE) &&
-                mounted.getLocation() != mountedAmmo.getLocation())
+        // This allows for squad weapons and individual trooper weapons
+        // such as NARC and the support weapons in TW/TO
+        AmmoType at = (AmmoType) mountedAmmo.getType();
+        if (!(at.getAmmoType() == AmmoType.T_MINE)
+                && mounted.getLocation() != mountedAmmo.getLocation())
             return false;
         return super.loadWeaponWithSameAmmo(mounted, mountedAmmo);
     }
-    
+
     public final String getBLK() {
         String newline = "\r\n";
         StringBuffer buff = new StringBuffer();
@@ -1099,30 +1087,30 @@ public class BattleArmor
         buff.append(newline);
         buff.append("</year>");
         buff.append(newline);
-        
+
         buff.append("<type>");
         buff.append(newline);
-        switch(getTechLevel()) {
-        case TechConstants.T_IS_LEVEL_1:
-            buff.append("IS Level 1");
-            break;
-        case TechConstants.T_IS_LEVEL_2:
-            buff.append("IS Level 2");
-            break;
-        case TechConstants.T_IS_LEVEL_3:
-            buff.append("IS Level 3");
-            break;
-        case TechConstants.T_CLAN_LEVEL_2:
-            buff.append("Clan Level 2");
-            break;
-        case TechConstants.T_CLAN_LEVEL_3:
-            buff.append("Clan Level 3");
-            break;
+        switch (getTechLevel()) {
+            case TechConstants.T_IS_LEVEL_1:
+                buff.append("IS Level 1");
+                break;
+            case TechConstants.T_IS_LEVEL_2:
+                buff.append("IS Level 2");
+                break;
+            case TechConstants.T_IS_LEVEL_3:
+                buff.append("IS Level 3");
+                break;
+            case TechConstants.T_CLAN_LEVEL_2:
+                buff.append("Clan Level 2");
+                break;
+            case TechConstants.T_CLAN_LEVEL_3:
+                buff.append("Clan Level 3");
+                break;
         }
         buff.append(newline);
         buff.append("</type>");
         buff.append(newline);
-        
+
         buff.append("<tonnage>");
         buff.append(newline);
         buff.append(getWeight());
@@ -1139,19 +1127,19 @@ public class BattleArmor
 
         buff.append("<motion_type>");
         buff.append(newline);
-        switch(getMovementMode()) {
-        case IEntityMovementMode.INF_JUMP:
-            buff.append("jump");
-            break;
-        case IEntityMovementMode.INF_LEG:
-            buff.append("leg");
-            break;
-        case IEntityMovementMode.VTOL:
-            buff.append("vtol");
-            break;
-        case IEntityMovementMode.INF_UMU:
-            buff.append("submarine");
-            break;
+        switch (getMovementMode()) {
+            case IEntityMovementMode.INF_JUMP:
+                buff.append("jump");
+                break;
+            case IEntityMovementMode.INF_LEG:
+                buff.append("leg");
+                break;
+            case IEntityMovementMode.VTOL:
+                buff.append("vtol");
+                break;
+            case IEntityMovementMode.INF_UMU:
+                buff.append("submarine");
+                break;
         }
         buff.append(newline);
         buff.append("</motion_type>");
@@ -1177,12 +1165,12 @@ public class BattleArmor
         buff.append(newline);
         buff.append("</armor>");
         buff.append(newline);
-        
-        for(int i=0;i<locations();i++) {
+
+        for (int i = 0; i < locations(); i++) {
             boolean found = false;
-            for(Mounted m:getEquipment()) {
-                if(m.getLocation() == i) {
-                    if(!found) {
+            for (Mounted m : getEquipment()) {
+                if (m.getLocation() == i) {
+                    if (!found) {
                         found = true;
                         buff.append("<");
                         buff.append(getLocationName(i));
@@ -1193,7 +1181,7 @@ public class BattleArmor
                     buff.append(newline);
                 }
             }
-            if(found) {
+            if (found) {
                 buff.append("</");
                 buff.append(getLocationName(i));
                 buff.append(" equipment>");

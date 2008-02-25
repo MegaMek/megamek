@@ -23,32 +23,32 @@ public class EntityWeightClass {
     public static final int WEIGHT_MEDIUM = 1;
     public static final int WEIGHT_HEAVY = 2;
     public static final int WEIGHT_ASSAULT = 3;
-    
-    private static int[] weightLimits = {35, 55, 75, 100};
+
+    private static int[] weightLimits = { 35, 55, 75, 100 };
 
     public static final int SIZE = weightLimits.length;
 
     public static int getWeightClass(int tonnage) {
         int i;
-        for(i = 0; i<SIZE-1; i++) {
+        for (i = 0; i < SIZE - 1; i++) {
             if (tonnage <= weightLimits[i])
                 break;
         }
         return i;
-    }    
+    }
 
     public static int getClassLimit(int wClass) {
-        if (wClass >=0 && wClass < SIZE) {
+        if (wClass >= 0 && wClass < SIZE) {
             return weightLimits[wClass];
         }
-		throw new IllegalArgumentException("Unknown Weight Class");
+        throw new IllegalArgumentException("Unknown Weight Class");
     }
 
     public static String getClassName(int wClass) {
-        if (wClass >=0 && wClass < SIZE) {
-            return Messages.getString("EntityWeightClass."+wClass);
+        if (wClass >= 0 && wClass < SIZE) {
+            return Messages.getString("EntityWeightClass." + wClass);
         }
-		throw new IllegalArgumentException("Unknown Weight Class");
+        throw new IllegalArgumentException("Unknown Weight Class");
     }
-    
+
 }

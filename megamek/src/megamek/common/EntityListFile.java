@@ -35,18 +35,18 @@ import java.util.Vector;
 public class EntityListFile {
 
     /**
-     * Produce a string describing this armor value.  Valid output values
-     * are any integer from 0 to 100, N/A, or Destroyed.
-     *
-     * @param points - the <code>int</code> value of the armor.  This
-     *               value may be any valid value of entity armor (including
-     *               NA, DOOMED, and DESTROYED).
+     * Produce a string describing this armor value. Valid output values are any
+     * integer from 0 to 100, N/A, or Destroyed.
+     * 
+     * @param points - the <code>int</code> value of the armor. This value may
+     *            be any valid value of entity armor (including NA, DOOMED, and
+     *            DESTROYED).
      * @return a <code>String</code> that matches the armor value.
      */
     private static String formatArmor(int points) {
         // Is the armor destroyed or doomed?
-        if (points == IArmorState.ARMOR_DOOMED ||
-                points == IArmorState.ARMOR_DESTROYED) {
+        if (points == IArmorState.ARMOR_DOOMED
+                || points == IArmorState.ARMOR_DESTROYED) {
             return "Destroyed";
         }
 
@@ -61,23 +61,22 @@ public class EntityListFile {
 
     /**
      * Produce a string describing the equipment in a critical slot.
-     *
-     * @param index       - the <code>String</code> index of the slot.  This
-     *                    value should be a positive integer or "N/A".
-     * @param mount       - the <code>Mounted</code> object of the equipment.
-     *                    This value should be <code>null</code> for a slot with
-     *                    system equipment.
-     * @param isHit       - a <code>boolean</code> that identifies this slot
-     *                    as having taken a hit.
+     * 
+     * @param index - the <code>String</code> index of the slot. This value
+     *            should be a positive integer or "N/A".
+     * @param mount - the <code>Mounted</code> object of the equipment. This
+     *            value should be <code>null</code> for a slot with system
+     *            equipment.
+     * @param isHit - a <code>boolean</code> that identifies this slot as
+     *            having taken a hit.
      * @param isDestroyed - a <code>boolean</code> that identifies the
-     *                    equipment as having been destroyed.  Note that a single
-     *                    slot in a multi-slot piece of equipment can be destroyed
-     *                    but not hit; it is still available to absorb additional
-     *                    critical hits.
+     *            equipment as having been destroyed. Note that a single slot in
+     *            a multi-slot piece of equipment can be destroyed but not hit;
+     *            it is still available to absorb additional critical hits.
      * @return a <code>String</code> describing the slot.
      */
     private static String formatSlot(String index, Mounted mount,
-                                     boolean isHit, boolean isDestroyed) {
+            boolean isHit, boolean isDestroyed) {
         StringBuffer output = new StringBuffer();
 
         output.append("         <slot index=\"");
@@ -92,11 +91,10 @@ public class EntityListFile {
             }
             if (mount.getType() instanceof AmmoType) {
                 output.append("\" shots=\"");
-                output.append(String.valueOf
-                        (mount.getShotsLeft()));
+                output.append(String.valueOf(mount.getShotsLeft()));
             }
-            if (mount.getType() instanceof WeaponType &&
-                    (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+            if (mount.getType() instanceof WeaponType
+                    && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
                 output.append("\" munition=\"");
                 output.append(mount.getLinked().getType().getInternalName());
             }
@@ -115,9 +113,9 @@ public class EntityListFile {
     }
 
     /**
-     * Helper function that generates a string identifying the state of
-     * the locations for an entity.
-     *
+     * Helper function that generates a string identifying the state of the
+     * locations for an entity.
+     * 
      * @param entity - the <code>Entity</code> whose location state is needed
      */
     private static String getLocString(Entity entity) {
@@ -133,8 +131,8 @@ public class EntityListFile {
         for (int loc = 0; loc < entity.locations(); loc++) {
 
             // Record destroyed locations.
-            if (entity.getOInternal(loc) != IArmorState.ARMOR_NA &&
-                    entity.getInternal(loc) <= 0) {
+            if (entity.getOInternal(loc) != IArmorState.ARMOR_NA
+                    && entity.getInternal(loc) <= 0) {
                 isDestroyed = true;
             }
 
@@ -153,8 +151,9 @@ public class EntityListFile {
                     thisLoc.append("\" type=\"Internal\"/>");
                     thisLoc.append(CommonConstants.NL);
                 }
-                if (entity.hasRearArmor(loc) && entity.getOArmor(loc, true) !=
-                        entity.getArmor(loc, true)) {
+                if (entity.hasRearArmor(loc)
+                        && entity.getOArmor(loc, true) != entity.getArmor(loc,
+                                true)) {
                     thisLoc.append("         <armor points=\"");
                     thisLoc.append(formatArmor(entity.getArmor(loc, true)));
                     thisLoc.append("\" type=\"Rear\"/>");
@@ -163,8 +162,7 @@ public class EntityListFile {
             }
 
             // Walk through the slots in this location.
-            for (int loop = 0; loop < entity.getNumberOfCriticals(loc);
-                 loop++) {
+            for (int loop = 0; loop < entity.getNumberOfCriticals(loc); loop++) {
 
                 // Get this slot.
                 CriticalSlot slot = entity.getCritical(loc, loop);
@@ -172,10 +170,10 @@ public class EntityListFile {
                 // Did we get a slot?
                 if (null == slot) {
 
-                    // Nope.  Record missing actuators on Biped Mechs.
-                    if (isMech && !entity.entityIsQuad() &&
-                            (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM) &&
-                            (loop == 2 || loop == 3)) {
+                    // Nope. Record missing actuators on Biped Mechs.
+                    if (isMech && !entity.entityIsQuad()
+                            && (loc == Mech.LOC_RARM || loc == Mech.LOC_LARM)
+                            && (loop == 2 || loop == 3)) {
                         thisLoc.append("         <slot index=\"");
                         thisLoc.append(String.valueOf(loop + 1));
                         thisLoc.append("\" type=\"Empty\"/>");
@@ -185,7 +183,7 @@ public class EntityListFile {
 
                 } else {
 
-                    // Yup.  If the equipment isn't a system, get it.
+                    // Yup. If the equipment isn't a system, get it.
                     Mounted mount = null;
                     if (CriticalSlot.TYPE_EQUIPMENT == slot.getType()) {
                         mount = entity.getEquipment(slot.getIndex());
@@ -194,12 +192,10 @@ public class EntityListFile {
                     // Destroyed locations on Mechs that contain slots
                     // that are missing but not hit or destroyed must
                     // have been blown off.
-                    if (isDestroyed && isMech && slot.isMissing() &&
-                            !slot.isHit() && !slot.isDestroyed()) {
+                    if (isDestroyed && isMech && slot.isMissing()
+                            && !slot.isHit() && !slot.isDestroyed()) {
                         thisLoc.append(formatSlot(String.valueOf(loop + 1),
-                                mount,
-                                slot.isHit(),
-                                slot.isDestroyed()));
+                                mount, slot.isHit(), slot.isDestroyed()));
                         haveSlot = true;
                         blownOff = true;
                     }
@@ -207,16 +203,14 @@ public class EntityListFile {
                     // Record damaged slots in undestroyed locations.
                     else if (!isDestroyed && slot.isDamaged()) {
                         thisLoc.append(formatSlot(String.valueOf(loop + 1),
-                                mount,
-                                slot.isHit(),
-                                slot.isDestroyed()));
+                                mount, slot.isHit(), slot.isDestroyed()));
                         haveSlot = true;
                     }
 
                     // Record ammunition slots in undestroyed locations.
                     // N.B. the slot CAN\"T be damaged at this point.
-                    else if (!isDestroyed && mount != null &&
-                            mount.getType() instanceof AmmoType) {
+                    else if (!isDestroyed && mount != null
+                            && mount.getType() instanceof AmmoType) {
                         thisLoc.append("         <slot index=\"");
                         thisLoc.append(String.valueOf(loop + 1));
                         thisLoc.append("\" type=\"");
@@ -229,13 +223,11 @@ public class EntityListFile {
                     }
 
                     // Record the munition type of oneshot launchers
-                    else if (!isDestroyed && mount != null &&
-                            mount.getType() instanceof WeaponType &&
-                            (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
+                    else if (!isDestroyed && mount != null
+                            && mount.getType() instanceof WeaponType
+                            && (mount.getType()).hasFlag(WeaponType.F_ONESHOT)) {
                         thisLoc.append(formatSlot(String.valueOf(loop + 1),
-                                mount,
-                                slot.isHit(),
-                                slot.isDestroyed()));
+                                mount, slot.isHit(), slot.isDestroyed()));
                         haveSlot = true;
                     }
 
@@ -245,16 +237,12 @@ public class EntityListFile {
 
             // Tanks don't have slots, and Protomechs only have
             // system slots, so we have to handle the ammo specially.
-            if (entity instanceof Tank ||
-                    entity instanceof Protomech) {
+            if (entity instanceof Tank || entity instanceof Protomech) {
                 for (Mounted mount : entity.getAmmo()) {
 
                     // Is this ammo in the current location?
                     if (mount.getLocation() == loc) {
-                        thisLoc.append(formatSlot("N/A",
-                                mount,
-                                false,
-                                false));
+                        thisLoc.append(formatSlot("N/A", mount, false, false));
                         haveSlot = true;
                     }
 
@@ -316,13 +304,15 @@ public class EntityListFile {
         // If we recorded a slot, remind the player that slots start at 1.
         if (haveSlot) {
             output.insert(0, CommonConstants.NL);
-            output.insert
-                    (0, "      The first slot in a location is at index=\"1\".");
+            output.insert(0,
+                    "      The first slot in a location is at index=\"1\".");
 
             // Tanks do wierd things with ammo.
             if (entity instanceof Tank) {
                 output.insert(0, CommonConstants.NL);
-                output.insert(0, "      Tanks have special needs, so don't delete any ammo slots.");
+                output
+                        .insert(0,
+                                "      Tanks have special needs, so don't delete any ammo slots.");
             }
         }
 
@@ -332,29 +322,27 @@ public class EntityListFile {
     } // End private static String getLocString( Entity )
 
     /**
-     * Save the <code>Entity</code>s in the list to the given file.
-     * <p/>
-     * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
-     * other campaign-related information are retained but data specific to
-     * a particular game is ignored.
-     *
+     * Save the <code>Entity</code>s in the list to the given file. <p/> The
+     * <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
+     * other campaign-related information are retained but data specific to a
+     * particular game is ignored.
+     * 
      * @param file - The current contents of the file will be discarded and all
-     *             <code>Entity</code>s in the list will be written to the file.
+     *            <code>Entity</code>s in the list will be written to the
+     *            file.
      * @param list - a <code>Vector</code> containing <code>Entity</code>s
-     *             to be stored in a file.
+     *            to be stored in a file.
      * @throws IOException is thrown on any error.
      */
     public static void saveTo(File file, ArrayList<Entity> list)
             throws IOException {
 
-        // Open up the file.  Produce UTF-8 output.
-        Writer output = new BufferedWriter( new OutputStreamWriter
-            ( new FileOutputStream( file ),
-                                    "UTF-8" )
-            );
+        // Open up the file. Produce UTF-8 output.
+        Writer output = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream(file), "UTF-8"));
 
         // Output the doctype and header stuff.
-        output.write( "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" );
+        output.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         output.write(CommonConstants.NL);
         output.write(CommonConstants.NL);
         output.write("<unit>");
@@ -382,7 +370,7 @@ public class EntityListFile {
             output.write(crew.getName().replaceAll("\"", "&quot;"));
             output.write("\" gunnery=\"");
             output.write(String.valueOf(crew.getGunnery()));
-            if(entity.getGame().getOptions().booleanOption("rpg_gunnery")) {
+            if (entity.getGame().getOptions().booleanOption("rpg_gunnery")) {
                 output.write("\" gunneryL=\"");
                 output.write(String.valueOf(crew.getGunneryL()));
                 output.write("\" gunneryM=\"");
@@ -462,27 +450,24 @@ public class EntityListFile {
     }
 
     /**
-     * Load a list of <code>Entity</code>s from the given file.
-     * <p/>
-     * The <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
-     * other campaign-related information are retained but data specific to
-     * a particular game is ignored.
-     *
+     * Load a list of <code>Entity</code>s from the given file. <p/> The
+     * <code>Entity</code>s\" pilots, damage, ammo loads, ammo usage, and
+     * other campaign-related information are retained but data specific to a
+     * particular game is ignored.
+     * 
      * @param file - the <code>File</code> to load from.
-     * @return A <code>Vector</code> containing <code>Entity</code>s
-     *         loaded from the file.  This vector may be empty, but
-     *         it will not be <code>null</code>.
+     * @return A <code>Vector</code> containing <code>Entity</code>s loaded
+     *         from the file. This vector may be empty, but it will not be
+     *         <code>null</code>.
      * @throws IOException is thrown on any error.
      */
-    public static Vector<Entity> loadFrom(File file)
-            throws IOException {
+    public static Vector<Entity> loadFrom(File file) throws IOException {
 
         // Create an empty parser.
         XMLStreamParser parser = new XMLStreamParser();
 
         // Open up the file.
-        InputStream listStream = new FileInputStream
-                (file);
+        InputStream listStream = new FileInputStream(file);
 
         // Read a Vector from the file.
         try {

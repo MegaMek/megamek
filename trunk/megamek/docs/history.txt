@@ -25,6 +25,7 @@ v0.33.19-dev (SVN)
 + Bug: flechette ammo AC shots got their damage halved twice agains hardened
     units
 + Some code simplification in weapons firing code
++ Fixed a bug in MechSummaryCache for saving unit file name Used by MekWars 
 
 v0.33.18 (2008-02-14, 23:31 GMT+1)
 + Bug: Flechette and Frag ammo not doing full damage to Infantry

@@ -20,17 +20,15 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import megamek.common.Entity;
-
 /**
- * This class defines a single server report.  It holds information such
- * as the report ID, who the report is about, who should see the report,
- * and some formatting information.
+ * This class defines a single server report. It holds information such as the
+ * report ID, who the report is about, who should see the report, and some
+ * formatting information.
  * <p>
- * Typically, the report will be created by the relevant section in
- * the <code>Server</code>, and added to the phase report vector.  The
- * actual text of the report must also be added to the
- * <i>report-messages.properties</i> file.
+ * Typically, the report will be created by the relevant section in the
+ * <code>Server</code>, and added to the phase report vector. The actual text
+ * of the report must also be added to the <i>report-messages.properties</i>
+ * file.
  * <p>
  * Example:
  * <p>
@@ -44,26 +42,29 @@ import megamek.common.Entity;
  * <p>
  * Then the following line would be added to <i>report-messages.properties</i>:
  * <p>
- * 3455::&lt;data&gt; (&lt;data&gt;) does &lt;data&gt; damage to the &lt;msg:3456,3457&gt;.<br>
+ * 3455::&lt;data&gt; (&lt;data&gt;) does &lt;data&gt; damage to the
+ * &lt;msg:3456,3457&gt;.<br>
  * 3456::tank<br>
  * 3457::building
  * <p>
- * When the client parses the report, it will fill in the &lt;data&gt; tags
- * with the values that were given to the <code>add</code> methods called
- * on the report object.
+ * When the client parses the report, it will fill in the &lt;data&gt; tags with
+ * the values that were given to the <code>add</code> methods called on the
+ * report object.
  * <p>
- * The example above might produce a report such as this when the <code>getText</code> method was called:
- * <p>
- * "    Crusader (Bob) does 6 damage to the tank."
- *
+ * The example above might produce a report such as this when the
+ * <code>getText</code> method was called:
+ * <p> " Crusader (Bob) does 6 damage to the tank."
+ * 
  * @author Ryan McConnell (oscarmm)
  * @version $Revision$
  * @since 0.30
  */
 public class Report implements Serializable {
-    /* Note: some fields are marked transient because they are only
-       used by the server (or only the client).  This shaves a few
-       bytes off the packet size, helping the dial-up people :) */
+    /*
+     * Note: some fields are marked transient because they are only used by the
+     * server (or only the client). This shaves a few bytes off the packet size,
+     * helping the dial-up people :)
+     */
 
     private static final long serialVersionUID = -5586008091586682078L;
     /** Required - associates this object with its text. */
@@ -73,92 +74,104 @@ public class Report implements Serializable {
     /** The number of spaces this report should be indented. */
     private int indentation = 0;
 
-    /** The number of newlines to add at the end of this report.
-        Defaults to one. */
+    /**
+     * The number of newlines to add at the end of this report. Defaults to one.
+     */
     public int newlines = 1;
 
     /** The data values to fill in the report with. */
     private Vector<String> tagData = new Vector<String>();
 
-    /** How this report is handled when double-blind play is in effect.
-        See constants below for more details. */
-    //Maybe should be simple isPublic boolean?  Or do we want to ever mix
+    /**
+     * How this report is handled when double-blind play is in effect. See
+     * constants below for more details.
+     */
+    // Maybe should be simple isPublic boolean? Or do we want to ever mix
     // obscured and totally hidden reports?
     public transient int type = Report.HIDDEN;
     /** Report is visible to all players. */
     public static final int PUBLIC = 0;
-    /** Report is visible to all players, but all data marked for obscuration
-        remains hidden. Note: Not used at this time, since all reports are
-        considered <code>obscured</code> unless explicitly marked
-        <code>public</code>. */
+    /**
+     * Report is visible to all players, but all data marked for obscuration
+     * remains hidden. Note: Not used at this time, since all reports are
+     * considered <code>obscured</code> unless explicitly marked
+     * <code>public</code>.
+     */
     public static final int OBSCURED = 1;
-    /** Report is only visible to those players who can see the
-        subject.  Note: Not used at this time, since all reports are
-        considered <code>obscured</code> unless explicitly marked
-        <code>public</code>. */
+    /**
+     * Report is only visible to those players who can see the subject. Note:
+     * Not used at this time, since all reports are considered
+     * <code>obscured</code> unless explicitly marked <code>public</code>.
+     */
     public static final int HIDDEN = 2;
     /** Testing only - remove me later. */
-    //debugReport
+    // debugReport
     public static final int TESTING = 3;
-    /** messages which should be sent only to the player indicated
-        by "player"*/
-    public static final int PLAYER=4;
+    /**
+     * messages which should be sent only to the player indicated by "player"
+     */
+    public static final int PLAYER = 4;
 
-    /** The entity this report concerns, if applicable.  If this is
-        left blank, then the report will be considered
-        <code>public</code>. */
+    /**
+     * The entity this report concerns, if applicable. If this is left blank,
+     * then the report will be considered <code>public</code>.
+     */
     public transient int subject = Entity.NONE;
     /**
-     *  the player this report concerns, if applicable. This should be
-     *  filled in if this report is not public and still does not belong
-     *  to a specific visible entity
+     * the player this report concerns, if applicable. This should be filled in
+     * if this report is not public and still does not belong to a specific
+     * visible entity
      */
-    public transient int player= Player.PLAYER_NONE;
+    public transient int player = Player.PLAYER_NONE;
 
-    /** This hash table will store the tagData Vector indexes that are
-        supposed to be obscured before sending to clients.  This only
-        applies when the report type is "obscured". */
+    /**
+     * This hash table will store the tagData Vector indexes that are supposed
+     * to be obscured before sending to clients. This only applies when the
+     * report type is "obscured".
+     */
     private Hashtable<Integer, Boolean> obscuredIndexes = new Hashtable<Integer, Boolean>();
 
-    /** Vector to store the player names of those who received an
-        obscured version of this report.  Used to reconstruct
-        individual client's reports from the master copy stored by the
-        server. */
+    /**
+     * Vector to store the player names of those who received an obscured
+     * version of this report. Used to reconstruct individual client's reports
+     * from the master copy stored by the server.
+     */
     private Vector<String> obscuredRecipients = new Vector<String>();
 
     /** Keep track of what data we have already substituted for tags. */
     private transient int tagCounter = 0;
 
-    /** The string that appears in the report to obscure certain
-        information. */
+    /**
+     * The string that appears in the report to obscure certain information.
+     */
     public static final String OBSCURED_STRING = "????";
 
     /** Number of spaces to use per indentation level. */
     private static final int DEFAULT_INDENTATION = 4;
 
-    /** Default constructor, note that using this means the
-        <code>messageId</code> field must be explicitly set. */
+    /**
+     * Default constructor, note that using this means the
+     * <code>messageId</code> field must be explicitly set.
+     */
     public Report() {
     }
 
     /**
      * Create a new report associated with the given report text.
-     *
-     * @param id the int value of the report from
-     * <i>report-messages.properties</i>
+     * 
+     * @param id the int value of the report from <i>report-messages.properties</i>
      */
     public Report(int id) {
         this.messageId = id;
     }
 
     /**
-     * Create a new report associated with the given report text and
-     * having the given type.
-     *
-     * @param id the int value of the report from
-     * <i>report-messages.properties</i>
-     * @param type the constant specifying the visibility of the
-     * report (PUBLIC, OBSCURED, or HIDDEN)
+     * Create a new report associated with the given report text and having the
+     * given type.
+     * 
+     * @param id the int value of the report from <i>report-messages.properties</i>
+     * @param type the constant specifying the visibility of the report (PUBLIC,
+     *            OBSCURED, or HIDDEN)
      */
     public Report(int id, int type) {
         this.messageId = id;
@@ -167,7 +180,7 @@ public class Report implements Serializable {
 
     /**
      * Create a new report which is an exact copy of the given report.
-     *
+     * 
      * @param r the report to be copied
      */
     @SuppressWarnings("unchecked")
@@ -175,20 +188,20 @@ public class Report implements Serializable {
         this.messageId = r.messageId;
         this.indentation = r.indentation;
         this.newlines = r.newlines;
-        this.tagData = (Vector<String>)r.tagData.clone();
+        this.tagData = (Vector<String>) r.tagData.clone();
         this.type = r.type;
         this.subject = r.subject;
-        this.obscuredIndexes = (Hashtable<Integer, Boolean>)r.obscuredIndexes.clone();
-        this.obscuredRecipients = (Vector<String>)r.obscuredRecipients.clone();
+        this.obscuredIndexes = (Hashtable<Integer, Boolean>) r.obscuredIndexes
+                .clone();
+        this.obscuredRecipients = (Vector<String>) r.obscuredRecipients.clone();
         this.tagCounter = r.tagCounter;
     }
 
     /**
-     * Add the given int to the list of data that will be substituted
-     * for the &lt;data&gt; tags in the report.  The order in which
-     * items are added must match the order of the tags in the report
-     * text.
-     *
+     * Add the given int to the list of data that will be substituted for the
+     * &lt;data&gt; tags in the report. The order in which items are added must
+     * match the order of the tags in the report text.
+     * 
      * @param data the int to be substituted
      */
     public void add(int data) {
@@ -196,30 +209,29 @@ public class Report implements Serializable {
     }
 
     /**
-     * Add the given int to the list of data that will be substituted
-     * for the &lt;data&gt; tags in the report, and mark it as
-     * double-blind sensitive information if <code>obscure</code> is
-     * true.  The order in which items are added must match the order
-     * of the tags in the report text.
-     *
+     * Add the given int to the list of data that will be substituted for the
+     * &lt;data&gt; tags in the report, and mark it as double-blind sensitive
+     * information if <code>obscure</code> is true. The order in which items
+     * are added must match the order of the tags in the report text.
+     * 
      * @param data the int to be substituted
-     * @param obscure boolean indicating whether the data is
-     * double-blind sensitive
+     * @param obscure boolean indicating whether the data is double-blind
+     *            sensitive
      */
     public void add(int data, boolean obscure) {
         if (obscure) {
-            this.obscuredIndexes.put(new Integer(this.tagData.size()), new Boolean(true));
+            this.obscuredIndexes.put(new Integer(this.tagData.size()),
+                    new Boolean(true));
         }
 
         this.tagData.addElement(String.valueOf(data));
     }
 
     /**
-     * Add the given String to the list of data that will be substituted
-     * for the &lt;data&gt; tags in the report.  The order in which
-     * items are added must match the order of the tags in the report
-     * text.
-     *
+     * Add the given String to the list of data that will be substituted for the
+     * &lt;data&gt; tags in the report. The order in which items are added must
+     * match the order of the tags in the report text.
+     * 
      * @param data the String to be substituted
      */
     public void add(String data) {
@@ -227,27 +239,27 @@ public class Report implements Serializable {
     }
 
     /**
-     * Add the given String to the list of data that will be substituted
-     * for the &lt;data&gt; tags in the report, and mark it as
-     * double-blind sensitive information if <code>obscure</code> is
-     * true.  The order in which items are added must match the order
-     * of the tags in the report text.
-     *
+     * Add the given String to the list of data that will be substituted for the
+     * &lt;data&gt; tags in the report, and mark it as double-blind sensitive
+     * information if <code>obscure</code> is true. The order in which items
+     * are added must match the order of the tags in the report text.
+     * 
      * @param data the String to be substituted
-     * @param obscure boolean indicating whether the data is
-     * double-blind sensitive
+     * @param obscure boolean indicating whether the data is double-blind
+     *            sensitive
      */
     public void add(String data, boolean obscure) {
         if (obscure) {
-            this.obscuredIndexes.put(new Integer(this.tagData.size()), new Boolean(true));
+            this.obscuredIndexes.put(new Integer(this.tagData.size()),
+                    new Boolean(true));
         }
 
         this.tagData.addElement(data);
     }
 
     /**
-     * Indicate which of two possible messages should be substituted
-     * for the <code>&lt;msg:<i>n</i>,<i>m</i>&gt; tag.  An argument of
+     * Indicate which of two possible messages should be substituted for the
+     * <code>&lt;msg:<i>n</i>,<i>m</i>&gt; tag.  An argument of
      * <code>true</code> would select message <i>n</i> while an
      * argument of <code>false</code> would select <i>m</i>.  In the
      * future, this capability may be expanded to support more than
@@ -260,27 +272,27 @@ public class Report implements Serializable {
     }
 
     /**
-     * Shortcut method for adding entity name and owner data at the
-     * same time.  Assumes that the entity name should be obscured,
-     * but the owner should not.
-     *
+     * Shortcut method for adding entity name and owner data at the same time.
+     * Assumes that the entity name should be obscured, but the owner should
+     * not.
+     * 
      * @param entity the entity you wish to add
      */
     public void addDesc(Entity entity) {
-        if(entity != null) {
+        if (entity != null) {
             add(entity.getShortName(), true);
             add(entity.getOwner().getName());
         }
     }
 
     /**
-     * Internal method.  Not for typical use.
+     * Internal method. Not for typical use.
      * <p>
-     * Tests wheter the data value at the given index has been marked
-     * as obscured.
-     *
-     * @param index position of data value (indexes are chronological
-     * and start at zero)
+     * Tests wheter the data value at the given index has been marked as
+     * obscured.
+     * 
+     * @param index position of data value (indexes are chronological and start
+     *            at zero)
      * @return true if the data value was marked obscured
      */
     public boolean isValueObscured(int index) {
@@ -290,13 +302,12 @@ public class Report implements Serializable {
     }
 
     /**
-     * Internal method.  Not for typical use.
+     * Internal method. Not for typical use.
      * <p>
-     * Remove the data value from the report.  This operation is
-     * irreversible.
-     *
-     * @param index position of data value (indexes are chronological
-     * and start at zero
+     * Remove the data value from the report. This operation is irreversible.
+     * 
+     * @param index position of data value (indexes are chronological and start
+     *            at zero
      */
     public void hideData(int index) {
         this.tagData.setElementAt(null, index);
@@ -311,7 +322,7 @@ public class Report implements Serializable {
 
     /**
      * Indent the report <i>n</i> times.
-     *
+     * 
      * @param n the number of times to indent the report
      */
     public void indent(int n) {
@@ -319,12 +330,12 @@ public class Report implements Serializable {
     }
 
     /**
-     * Internal method.  Not for typical use.
+     * Internal method. Not for typical use.
      * <p>
-     * Get the total number of data values associated with this
-     * report.  Note that this includes the <code>true/false</code>
-     * values added for &lt;msg&gt; tags as well.
-     *
+     * Get the total number of data values associated with this report. Note
+     * that this includes the <code>true/false</code> values added for
+     * &lt;msg&gt; tags as well.
+     * 
      * @return the number of data values
      */
     public int dataCount() {
@@ -343,63 +354,76 @@ public class Report implements Serializable {
             }
             return value;
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("Error: Report#getText --> Array Index out of Bounds Exception (index: " + index + ") for a report with ID " + this.messageId + ".  Maybe Report#add wasn't called enough times for the amount of tags in the message?");
+            System.out
+                    .println("Error: Report#getText --> Array Index out of Bounds Exception (index: "
+                            + index
+                            + ") for a report with ID "
+                            + this.messageId
+                            + ".  Maybe Report#add wasn't called enough times for the amount of tags in the message?");
             return "[Reporting Error: see megameklog.txt for details]";
         }
     }
 
     /**
-     * Get the report in its final form, with all the necessary
-     * substitutions made.
-     *
+     * Get the report in its final form, with all the necessary substitutions
+     * made.
+     * 
      * @return a String with the final report
      */
     public String getText() {
-        //The raw text of the message, with tags.
+        // The raw text of the message, with tags.
         String raw = ReportMessages.getString(String.valueOf(this.messageId));
 
-        //This will be the finished product, with data substituted for tags.
+        // This will be the finished product, with data substituted for tags.
         StringBuffer text = new StringBuffer();
 
         if (raw == null) {
-            //Should we handle this better?  Check alternate language files?
-            System.out.println("Error: No message found for ID " + this.messageId);
-            text.append("[Reporting Error for message ID ")
-                .append(this.messageId).append("]");
+            // Should we handle this better? Check alternate language files?
+            System.out.println("Error: No message found for ID "
+                    + this.messageId);
+            text.append("[Reporting Error for message ID ").append(
+                    this.messageId).append("]");
         } else {
             int i = 0;
             int mark = 0;
             while (i < raw.length()) {
                 if (raw.charAt(i) == '<') {
-                    //find end of tag
+                    // find end of tag
                     int endTagIdx = raw.indexOf('>', i);
-                    if (raw.indexOf('<', i+1) != -1 && raw.indexOf('<', i+1) < endTagIdx) {
-                        //hmm...this must be a literal '<' character
+                    if (raw.indexOf('<', i + 1) != -1
+                            && raw.indexOf('<', i + 1) < endTagIdx) {
+                        // hmm...this must be a literal '<' character
                         i++;
                         continue;
                     }
-                    //copy the preceeding characters into the buffer
+                    // copy the preceeding characters into the buffer
                     text.append(raw.substring(mark, i));
-                    if (raw.substring(i+1, endTagIdx).equals("data")) {
+                    if (raw.substring(i + 1, endTagIdx).equals("data")) {
                         text.append(getTag());
-                        //                            System.out.println("Report-->getText(): " + this.tagData.elementAt(this.tagCounter));
+                        // System.out.println("Report-->getText(): " +
+                        // this.tagData.elementAt(this.tagCounter));
                         this.tagCounter++;
-                    } else if (raw.substring(i+1, endTagIdx).equals("list")) {
+                    } else if (raw.substring(i + 1, endTagIdx).equals("list")) {
                         for (int j = tagCounter; j < this.tagData.size(); j++) {
                             text.append(getTag(j)).append(", ");
                         }
                         text.setLength(text.length() - 2); // trim last comma
-                    } else if (raw.substring(i+1, endTagIdx).startsWith("msg:")) {
-                        boolean selector = Boolean.valueOf(getTag()).booleanValue();
+                    } else if (raw.substring(i + 1, endTagIdx).startsWith(
+                            "msg:")) {
+                        boolean selector = Boolean.valueOf(getTag())
+                                .booleanValue();
                         if (selector) {
-                            text.append(ReportMessages.getString(raw.substring(i+5, raw.indexOf(',', i))));
+                            text.append(ReportMessages.getString(raw.substring(
+                                    i + 5, raw.indexOf(',', i))));
                         } else {
-                            text.append(ReportMessages.getString(raw.substring(raw.indexOf(',', i)+1, endTagIdx)));
+                            text.append(ReportMessages.getString(raw.substring(
+                                    raw.indexOf(',', i) + 1, endTagIdx)));
                         }
-                    } else if (raw.substring(i+1, endTagIdx).equals("newline")) {
+                    } else if (raw.substring(i + 1, endTagIdx)
+                            .equals("newline")) {
                         text.append("\n");
                     } else {
-                        //not a special tag, so treat as literal text
+                        // not a special tag, so treat as literal text
                         text.append(raw.substring(i, endTagIdx + 1));
                     }
                     mark = endTagIdx + 1;
@@ -412,7 +436,7 @@ public class Report implements Serializable {
             text.append(getNewlines());
         }
         this.tagCounter = 0;
-        //debugReport
+        // debugReport
         if (this.type == Report.TESTING) {
             Report.mark(text);
         }
@@ -428,7 +452,7 @@ public class Report implements Serializable {
             if (i == sb.length())
                 continue;
         }
-        sb.insert(i,getSpaces());
+        sb.insert(i, getSpaces());
     }
 
     private String getSpaces() {
@@ -449,7 +473,7 @@ public class Report implements Serializable {
 
     /**
      * Adds a newline to the last report in the given Vector.
-     *
+     * 
      * @param v a Vector of Report objects
      */
     public static void addNewline(Vector<Report> v) {
@@ -457,12 +481,12 @@ public class Report implements Serializable {
     }
 
     /**
-     * Internal method.  Not for typical use.
+     * Internal method. Not for typical use.
      * <p>
-     * Adds the given player name to the report's list of players who
-     * received an obscured version of this report from the server at
-     * some time in the past.
-     *
+     * Adds the given player name to the report's list of players who received
+     * an obscured version of this report from the server at some time in the
+     * past.
+     * 
      * @param playerName the String containing the player's name
      */
     public void addObscuredRecipient(String playerName) {
@@ -470,12 +494,12 @@ public class Report implements Serializable {
     }
 
     /**
-     * Internal method.  Not for typical use.
+     * Internal method. Not for typical use.
      * <p>
-     * Tests whether the given player name is on the report's list of
-     * players who received an obscured version of this report from
-     * the server at some time in the past.
-     *
+     * Tests whether the given player name is on the report's list of players
+     * who received an obscured version of this report from the server at some
+     * time in the past.
+     * 
      * @param playerName the String containing the player's name
      * @return true if the player was sent an obscured version of this report
      */
@@ -491,7 +515,7 @@ public class Report implements Serializable {
 
     /**
      * Useful for debugging purposes.
-     *
+     * 
      * @return a String of the form "Report(messageId=n)"
      */
     public String toString() {
@@ -505,21 +529,21 @@ public class Report implements Serializable {
     /**
      * DEBUG method - do not use
      */
-    //debugReport method
+    // debugReport method
     public void markForTesting() {
         this.type = Report.TESTING;
     }
 
-    //debugReport method
+    // debugReport method
     private static StringBuffer mark(StringBuffer sb) {
-        sb.insert(0,"<hidden>");
+        sb.insert(0, "<hidden>");
         int i = sb.length() - 1;
         while (sb.charAt(i) == '\n') {
             i--;
             if (i == 0)
                 continue;
         }
-        sb.insert(i+1, "</hidden>");
+        sb.insert(i + 1, "</hidden>");
         return sb;
     }
 

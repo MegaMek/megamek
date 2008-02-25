@@ -17,21 +17,21 @@ package megamek.common;
 import java.util.Comparator;
 
 /**
- * Comparator for sorting Weapons (Mounteds that have WeaponTypes)
- * by BV, needed for BV calculation
- * Only pass Mounteds into this that are weapons
+ * Comparator for sorting Weapons (Mounteds that have WeaponTypes) by BV, needed
+ * for BV calculation Only pass Mounteds into this that are weapons
  * 
  * @author beerockxs
- * 
  */
 public class WeaponComparator implements Comparator<Mounted> {
-    
-    public WeaponComparator() {}
-    
+
+    public WeaponComparator() {
+    }
+
     public int compare(Mounted obj1, Mounted obj2) {
-        if (obj1.getType() instanceof WeaponType && obj2.getType() instanceof WeaponType) {
-            WeaponType weap1 = (WeaponType)obj1.getType();
-            WeaponType weap2 = (WeaponType)obj2.getType();
+        if (obj1.getType() instanceof WeaponType
+                && obj2.getType() instanceof WeaponType) {
+            WeaponType weap1 = (WeaponType) obj1.getType();
+            WeaponType weap2 = (WeaponType) obj2.getType();
             if (weap1 == weap2) {
                 if (obj1.isRearMounted())
                     return -1;

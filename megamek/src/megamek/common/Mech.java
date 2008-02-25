@@ -32,94 +32,70 @@ import megamek.common.util.StringUtil;
 /**
  * You know what mechs are, silly.
  */
-public abstract class Mech
-    extends Entity
-    implements Serializable
-{
-    public static final int      NUM_MECH_LOCATIONS = 8;
+public abstract class Mech extends Entity implements Serializable {
+    public static final int NUM_MECH_LOCATIONS = 8;
 
     // system designators for critical hits
-    public static final int        SYSTEM_LIFE_SUPPORT      = 0;
-    public static final int        SYSTEM_SENSORS           = 1;
-    public static final int        SYSTEM_COCKPIT           = 2;
-    public static final int        SYSTEM_ENGINE            = 3;
-    public static final int        SYSTEM_GYRO              = 4;
+    public static final int SYSTEM_LIFE_SUPPORT = 0;
+    public static final int SYSTEM_SENSORS = 1;
+    public static final int SYSTEM_COCKPIT = 2;
+    public static final int SYSTEM_ENGINE = 3;
+    public static final int SYSTEM_GYRO = 4;
 
     // actutors are systems too, for now
-    public static final int        ACTUATOR_SHOULDER        = 7;
-    public static final int        ACTUATOR_UPPER_ARM       = 8;
-    public static final int        ACTUATOR_LOWER_ARM       = 9;
-    public static final int        ACTUATOR_HAND            = 10;
-    public static final int        ACTUATOR_HIP             = 11;
-    public static final int        ACTUATOR_UPPER_LEG       = 12;
-    public static final int        ACTUATOR_LOWER_LEG       = 13;
-    public static final int        ACTUATOR_FOOT            = 14;
-    
-    public static final String systemNames[] = {"Life Support",
-                                                "Sensors",
-                                                "Cockpit",
-                                                "Engine",
-                                                "Gyro",
-                                                null,
-                                                null,
-                                                "Shoulder",
-                                                "Upper Arm",
-                                                "Lower Arm",
-                                                "Hand",
-                                                "Hip",
-                                                "Upper Leg",
-                                                "Lower Leg",
-                                                "Foot"};
+    public static final int ACTUATOR_SHOULDER = 7;
+    public static final int ACTUATOR_UPPER_ARM = 8;
+    public static final int ACTUATOR_LOWER_ARM = 9;
+    public static final int ACTUATOR_HAND = 10;
+    public static final int ACTUATOR_HIP = 11;
+    public static final int ACTUATOR_UPPER_LEG = 12;
+    public static final int ACTUATOR_LOWER_LEG = 13;
+    public static final int ACTUATOR_FOOT = 14;
+
+    public static final String systemNames[] = { "Life Support", "Sensors",
+            "Cockpit", "Engine", "Gyro", null, null, "Shoulder", "Upper Arm",
+            "Lower Arm", "Hand", "Hip", "Upper Leg", "Lower Leg", "Foot" };
 
     // locations
-    public static final int        LOC_HEAD                 = 0;
-    public static final int        LOC_CT                   = 1;
-    public static final int        LOC_RT                   = 2;
-    public static final int        LOC_LT                   = 3;
-    public static final int        LOC_RARM                 = 4;
-    public static final int        LOC_LARM                 = 5;
-    public static final int        LOC_RLEG                 = 6;
-    public static final int        LOC_LLEG                 = 7;
+    public static final int LOC_HEAD = 0;
+    public static final int LOC_CT = 1;
+    public static final int LOC_RT = 2;
+    public static final int LOC_LT = 3;
+    public static final int LOC_RARM = 4;
+    public static final int LOC_LARM = 5;
+    public static final int LOC_RLEG = 6;
+    public static final int LOC_LLEG = 7;
 
     // cockpit status
-    public static final int        COCKPIT_OFF              = 0;
-    public static final int        COCKPIT_ON               = 1;
-    public static final int        COCKPIT_AIMED_SHOT       = 2;
+    public static final int COCKPIT_OFF = 0;
+    public static final int COCKPIT_ON = 1;
+    public static final int COCKPIT_AIMED_SHOT = 2;
 
     // gyro types
-    public static final int         GYRO_UNKNOWN            = -1;
-    public static final int         GYRO_STANDARD           = 0;
-    public static final int         GYRO_XL                 = 1;
-    public static final int         GYRO_COMPACT            = 2;
-    public static final int         GYRO_HEAVY_DUTY         = 3;
+    public static final int GYRO_UNKNOWN = -1;
+    public static final int GYRO_STANDARD = 0;
+    public static final int GYRO_XL = 1;
+    public static final int GYRO_COMPACT = 2;
+    public static final int GYRO_HEAVY_DUTY = 3;
 
-    public static final String[]    GYRO_STRING = {"Standard Gyro",
-                                                   "XL Gyro",
-                                                   "Compact Gyro",
-                                                   "Heavy Duty Gyro"};
-    public static final String[]    GYRO_SHORT_STRING = {"Standard",
-                                                         "XL",
-                                                         "Compact",
-                                                        "Heavy Duty"};
+    public static final String[] GYRO_STRING = { "Standard Gyro", "XL Gyro",
+            "Compact Gyro", "Heavy Duty Gyro" };
+    public static final String[] GYRO_SHORT_STRING = { "Standard", "XL",
+            "Compact", "Heavy Duty" };
 
     // cockpit types
-    public static final int         COCKPIT_UNKNOWN             = -1;
-    public static final int         COCKPIT_STANDARD            = 0;
-    public static final int         COCKPIT_TORSO_MOUNTED       = 1;
-    public static final int         COCKPIT_SMALL               = 2;
-    public static final int         COCKPIT_COMMAND_CONSOLE     = 3;
-    public static final int         COCKPIT_DUAL                = 4;
+    public static final int COCKPIT_UNKNOWN = -1;
+    public static final int COCKPIT_STANDARD = 0;
+    public static final int COCKPIT_TORSO_MOUNTED = 1;
+    public static final int COCKPIT_SMALL = 2;
+    public static final int COCKPIT_COMMAND_CONSOLE = 3;
+    public static final int COCKPIT_DUAL = 4;
 
-    public static final String[]    COCKPIT_STRING = {"Standard Cockpit",
-                                                      "Torso-Mounted Cockpit",
-                                                      "Small Cockpit",
-                                                      "Command Console",
-                                                      "Dual Cockpit"};
-    public static final String[]    COCKPIT_SHORT_STRING = {"Standard",
-                                                            "Torso Mounted",
-                                                            "Small",
-                                                            "Command Console",
-                                                            "Dual"};
+    public static final String[] COCKPIT_STRING = { "Standard Cockpit",
+            "Torso-Mounted Cockpit", "Small Cockpit", "Command Console",
+            "Dual Cockpit" };
+    public static final String[] COCKPIT_SHORT_STRING = { "Standard",
+            "Torso Mounted", "Small", "Command Console", "Dual" };
 
     /**
      * The internal name for Mek Stealth systems.
@@ -127,24 +103,25 @@ public abstract class Mech
     public static final String STEALTH = "Stealth";
     public static final String NULLSIG = "Mek Null Signature System";
 
-    //jump types
-    public static final int         JUMP_UNKNOWN = -1;
-    public static final int         JUMP_NONE = 0;
-    public static final int         JUMP_STANDARD = 1;
-    public static final int         JUMP_IMPROVED = 2;
-    public static final int         JUMP_BOOSTER = 3;
-    public static final int         JUMP_DISPOSABLE = 4;
+    // jump types
+    public static final int JUMP_UNKNOWN = -1;
+    public static final int JUMP_NONE = 0;
+    public static final int JUMP_STANDARD = 1;
+    public static final int JUMP_IMPROVED = 2;
+    public static final int JUMP_BOOSTER = 3;
+    public static final int JUMP_DISPOSABLE = 4;
 
-    //Some "has" items only need be determined once
-    public static final int         HAS_FALSE = -1;
-    public static final int         HAS_UNKNOWN = 0;
-    public static final int         HAS_TRUE = 1;
+    // Some "has" items only need be determined once
+    public static final int HAS_FALSE = -1;
+    public static final int HAS_UNKNOWN = 0;
+    public static final int HAS_TRUE = 1;
     // rear armor
     private int[] rearArmor;
     private int[] orig_rearArmor;
 
-    private static int[] MASC_FAILURE = {2, 4, 6, 10, 12, 12, 12};
-    private int nMASCLevel = 0; // MASCLevel is the # of turns MASC has been used previously
+    private static int[] MASC_FAILURE = { 2, 4, 6, 10, 12, 12, 12 };
+    private int nMASCLevel = 0; // MASCLevel is the # of turns MASC has been
+                                // used previously
     private boolean bMASCWentUp = false;
     private boolean usedMASC = false; // Has masc been used?
     private int sinksOn = -1;
@@ -158,7 +135,7 @@ public abstract class Mech
     private boolean hasCowl = false;
     private int cowlArmor = 0;
     private int hasLaserHeatSinks = HAS_UNKNOWN;
-    
+
     // For grapple attacks
     private int grappled_id = Entity.NONE;
     private boolean isGrappleAttacker = false;
@@ -183,71 +160,83 @@ public abstract class Mech
 
         for (int i = 0; i < locations(); i++) {
             if (!hasRearArmor(i)) {
-              initializeRearArmor(IArmorState.ARMOR_NA, i);
+                initializeRearArmor(IArmorState.ARMOR_NA, i);
             }
         }
 
         // Standard leg crits
-        setCritical(LOC_RLEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
-        setCritical(LOC_RLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
-        setCritical(LOC_RLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
-        setCritical(LOC_RLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
+        setCritical(LOC_RLEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                ACTUATOR_HIP));
+        setCritical(LOC_RLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                ACTUATOR_UPPER_LEG));
+        setCritical(LOC_RLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                ACTUATOR_LOWER_LEG));
+        setCritical(LOC_RLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                ACTUATOR_FOOT));
 
-        setCritical(LOC_LLEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_HIP));
-        setCritical(LOC_LLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_UPPER_LEG));
-        setCritical(LOC_LLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_LOWER_LEG));
-        setCritical(LOC_LLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
+        setCritical(LOC_LLEG, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                ACTUATOR_HIP));
+        setCritical(LOC_LLEG, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                ACTUATOR_UPPER_LEG));
+        setCritical(LOC_LLEG, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                ACTUATOR_LOWER_LEG));
+        setCritical(LOC_LLEG, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                ACTUATOR_FOOT));
 
         // Player setting specify whether their Meks' automatic
         // ejection systems are disabled by default or not.
-        this.autoEject = !PreferenceManager.getClientPreferences().defaultAutoejectDisabled();
+        this.autoEject = !PreferenceManager.getClientPreferences()
+                .defaultAutoejectDisabled();
     }
 
     public boolean cannotStandUp() {
-        return isLocationBad(LOC_RARM) && isLocationBad(LOC_LARM) && 
-               (isLocationBad(LOC_LLEG) || isLocationBad(LOC_RLEG));
+        return isLocationBad(LOC_RARM) && isLocationBad(LOC_LARM)
+                && (isLocationBad(LOC_LLEG) || isLocationBad(LOC_RLEG));
     }
-    
-    public void setCowl (int armor) {
+
+    public void setCowl(int armor) {
         hasCowl = true;
         cowlArmor = armor;
     }
-    
-    public int getCowlArmor () {
-        if (hasCowl) return cowlArmor;
+
+    public int getCowlArmor() {
+        if (hasCowl)
+            return cowlArmor;
         return 0;
     }
-    
-    public boolean hasCowl () {
+
+    public boolean hasCowl() {
         return hasCowl;
     }
-    
+
     // Damage the cowl. Returns amount of excess damage
-    public int damageCowl (int amount) {
+    public int damageCowl(int amount) {
         if (hasCowl) {
-            if (amount<cowlArmor) {
+            if (amount < cowlArmor) {
                 cowlArmor -= amount;
                 return 0;
             }
-			amount -= cowlArmor;
-			cowlArmor = 0;
-			return amount;
+            amount -= cowlArmor;
+            cowlArmor = 0;
+            return amount;
         }
-		return amount; // No cowl - return full damage
+        return amount; // No cowl - return full damage
     }
+
     /**
-     * Returns the location that transferred damage or crits will go to from a given location.
+     * Returns the location that transferred damage or crits will go to from a
+     * given location.
      */
     public static int getInnerLocation(int location) {
-        switch(location) {
-            case Mech.LOC_RT :
-            case Mech.LOC_LT :
+        switch (location) {
+            case Mech.LOC_RT:
+            case Mech.LOC_LT:
                 return Mech.LOC_CT;
-            case Mech.LOC_LLEG :
-            case Mech.LOC_LARM :
+            case Mech.LOC_LLEG:
+            case Mech.LOC_LARM:
                 return Mech.LOC_LT;
-            case Mech.LOC_RLEG :
-            case Mech.LOC_RARM :
+            case Mech.LOC_RLEG:
+            case Mech.LOC_RARM:
                 return Mech.LOC_RT;
             default:
                 return location;
@@ -260,7 +249,8 @@ public abstract class Mech
     public static int mostRestrictiveLoc(int location1, int location2) {
         if (location1 == location2) {
             return location1;
-        } else if (Mech.restrictScore(location1) >= Mech.restrictScore(location2)) {
+        } else if (Mech.restrictScore(location1) >= Mech
+                .restrictScore(location2)) {
             return location1;
         } else {
             return location2;
@@ -268,75 +258,72 @@ public abstract class Mech
     }
 
     public static int leastRestrictiveLoc(int location1, int location2) {
-        if (location1==location2) {
+        if (location1 == location2) {
             return location2;
-        } else if (Mech.restrictScore(location1) >= Mech.restrictScore(location2)) {
+        } else if (Mech.restrictScore(location1) >= Mech
+                .restrictScore(location2)) {
             return location2;
         } else {
             return location1;
         }
     }
-    
+
     /**
      * Helper function designed to give relative restrictiveness of locations.
      * Used for finding the most restrictive firing arc for a weapon.
      */
     public static int restrictScore(int location) {
-        switch(location) {
-            case Mech.LOC_RARM :
-            case Mech.LOC_LARM :
+        switch (location) {
+            case Mech.LOC_RARM:
+            case Mech.LOC_LARM:
                 return 0;
-            case Mech.LOC_RT :
-            case Mech.LOC_LT :
+            case Mech.LOC_RT:
+            case Mech.LOC_LT:
                 return 1;
-            case Mech.LOC_CT :
+            case Mech.LOC_CT:
                 return 2;
-            default :
+            default:
                 return 3;
         }
     }
 
     /**
-     * Get the number of turns MASC has been used continuously.
-     * <p/>
-     * This method should <strong>only</strong> be used during serialization.
-     *
-     * @return  the <code>int</code> number of turns MASC has been used.
+     * Get the number of turns MASC has been used continuously. <p/> This method
+     * should <strong>only</strong> be used during serialization.
+     * 
+     * @return the <code>int</code> number of turns MASC has been used.
      */
     public int getMASCTurns() {
         return nMASCLevel;
     }
 
     /**
-     * Set the number of turns MASC has been used continuously.
-     * <p/>
-     * This method should <strong>only</strong> be used during deserialization.
-     *
-     * @param   turns The <code>int</code> number of turns MASC has been used.
+     * Set the number of turns MASC has been used continuously. <p/> This method
+     * should <strong>only</strong> be used during deserialization.
+     * 
+     * @param turns The <code>int</code> number of turns MASC has been used.
      */
-    public void setMASCTurns( int turns ) {
+    public void setMASCTurns(int turns) {
         nMASCLevel = turns;
     }
 
     /**
-     * Determine if MASC has been used this turn.
-     * <p/>
-     * This method should <strong>only</strong> be used during serialization.
-     *
-     * @return  <code>true</code> if MASC has been used.
+     * Determine if MASC has been used this turn. <p/> This method should
+     * <strong>only</strong> be used during serialization.
+     * 
+     * @return <code>true</code> if MASC has been used.
      */
     public boolean isMASCUsed() {
         return usedMASC;
     }
 
     /**
-     * Set whether MASC has been used.
-     * <p/>
-     * This method should <strong>only</strong> be used during deserialization.
-     *
-     * @param   used The <code>boolean</code> whether MASC has been used.
+     * Set whether MASC has been used. <p/> This method should <strong>only</strong>
+     * be used during deserialization.
+     * 
+     * @param used The <code>boolean</code> whether MASC has been used.
      */
-    public void setMASCUsed( boolean used ) {
+    public void setMASCUsed(boolean used) {
         usedMASC = used;
     }
 
@@ -346,18 +333,21 @@ public abstract class Mech
 
     /**
      * This function cheks for masc failure.
+     * 
      * @param md the movement path.
      * @param vDesc the description off the masc failure. used as output.
-     * @param vCriticals ontains tuple of intiger and critical slot. used as output.
+     * @param vCriticals ontains tuple of intiger and critical slot. used as
+     *            output.
      * @return true iff there was a masc failure.
      */
-    public boolean checkForMASCFailure(MovePath md, Vector<Report> vDesc, HashMap<Integer,CriticalSlot> vCriticals) {
+    public boolean checkForMASCFailure(MovePath md, Vector<Report> vDesc,
+            HashMap<Integer, CriticalSlot> vCriticals) {
         if (md.hasActiveMASC()) {
             Report r;
             boolean bFailure = false;
 
             // If usedMASC is already set, then we've already checked MASC
-            // this turn.  If we succeded before, return false.
+            // this turn. If we succeded before, return false.
             // If we failed before, the MASC was destroyed, and we wouldn't
             // have gotten here (hasActiveMASC would return false)
             if (!usedMASC) {
@@ -382,7 +372,8 @@ public abstract class Mech
                     r.choose(false);
                     vDesc.addElement(r);
 
-                    if(((MiscType)(equip.getType())).hasSubType(MiscType.S_SUPERCHARGER)) {
+                    if (((MiscType) (equip.getType()))
+                            .hasSubType(MiscType.S_SUPERCHARGER)) {
                         if (equip.getType().hasFlag(MiscType.F_MASC)) {
                             equip.setDestroyed(true);
                             equip.setMode("Off");
@@ -396,7 +387,7 @@ public abstract class Mech
                         r.newlines = 0;
                         vDesc.addElement(r);
                         if (roll <= 7) {
-                            //no effect
+                            // no effect
                             r = new Report(6005);
                             r.subject = getId();
                             r.newlines = 0;
@@ -420,27 +411,31 @@ public abstract class Mech
                             r.newlines = 0;
                             vDesc.addElement(r);
                         }
-                        for(int i=0;i<12 && hits > 0;i++) {
+                        for (int i = 0; i < 12 && hits > 0; i++) {
                             CriticalSlot cs = getCritical(LOC_CT, i);
-                            if(cs.getType() == CriticalSlot.TYPE_SYSTEM && cs.getIndex() == SYSTEM_ENGINE) {
-                                vCriticals.put(new Integer(LOC_CT),cs);
-                                //vDesc.addAll(server.applyCriticalHit(this, LOC_CT, cs, true));
+                            if (cs.getType() == CriticalSlot.TYPE_SYSTEM
+                                    && cs.getIndex() == SYSTEM_ENGINE) {
+                                vCriticals.put(new Integer(LOC_CT), cs);
+                                // vDesc.addAll(server.applyCriticalHit(this,
+                                // LOC_CT, cs, true));
                                 hits--;
                             }
                         }
                     } else {
                         // do the damage.
                         // random crit on each leg, but MASC is not destroyed
-                        for(int loc=0;loc<locations();loc++) {
-                            if(locationIsLeg(loc) && getHittableCriticals(loc) > 0) {
+                        for (int loc = 0; loc < locations(); loc++) {
+                            if (locationIsLeg(loc)
+                                    && getHittableCriticals(loc) > 0) {
                                 CriticalSlot slot = null;
                                 do {
-                                    int slotIndex = Compute.randomInt( getNumberOfCriticals(loc) );
+                                    int slotIndex = Compute
+                                            .randomInt(getNumberOfCriticals(loc));
                                     slot = getCritical(loc, slotIndex);
-                                } while(slot == null || !slot.isHittable());
-                                
-                                vCriticals.put(new Integer(loc),slot);
-                                
+                                } while (slot == null || !slot.isHittable());
+
+                                vCriticals.put(new Integer(loc), slot);
+
                             }
                         }
                     }
@@ -457,17 +452,16 @@ public abstract class Mech
     /**
      * OmniMechs have handles for Battle Armor squads to latch onto. Please
      * note, this method should only be called during this Mech's construction.
-     * <p/>
-     * Overrides <code>Entity#setOmni(boolean)</code>
+     * <p/> Overrides <code>Entity#setOmni(boolean)</code>
      */
-    public void setOmni( boolean omni ) {
+    public void setOmni(boolean omni) {
 
         // Perform the superclass' action.
-        super.setOmni( omni );
+        super.setOmni(omni);
 
         // Add BattleArmorHandles to OmniMechs.
-        if ( omni && !hasBattleArmorHandles()) {
-            this.addTransporter( new BattleArmorHandles() );
+        if (omni && !hasBattleArmorHandles()) {
+            this.addTransporter(new BattleArmorHandles());
         }
     }
 
@@ -477,7 +471,7 @@ public abstract class Mech
     public int locations() {
         return NUM_MECH_LOCATIONS;
     }
-    
+
     /**
      * Override Entity#newRound() method.
      */
@@ -498,7 +492,7 @@ public abstract class Mech
 
         super.newRound(roundNumber);
         // If MASC was used last turn, increment the counter,
-        // otherwise decrement.  Then, clear the counter 
+        // otherwise decrement. Then, clear the counter
         if (usedMASC) {
             nMASCLevel++;
             bMASCWentUp = true;
@@ -510,7 +504,7 @@ public abstract class Mech
             }
         }
 
-        // Clear the MASC flag 
+        // Clear the MASC flag
         usedMASC = false;
 
         setSecondaryFacing(getFacing());
@@ -528,14 +522,14 @@ public abstract class Mech
     public boolean locationIsTorso(int loc) {
         return loc == LOC_CT || loc == LOC_RT || loc == LOC_LT;
     }
-    
+
     /**
      * Returns true if the location in question is a leg
      */
     public boolean locationIsLeg(int loc) {
         return loc == LOC_LLEG || loc == LOC_RLEG;
     }
-                                    
+
     /**
      * Count the number of destroyed or breached legs on the mech
      */
@@ -553,8 +547,8 @@ public abstract class Mech
      * Returns true if the entity has a hip crit.
      */
     public boolean hasHipCrit() {
-        for ( int loc = 0; loc < NUM_MECH_LOCATIONS; loc++ ) {
-            if ( legHasHipCrit( loc ) ) {
+        for (int loc = 0; loc < NUM_MECH_LOCATIONS; loc++) {
+            if (legHasHipCrit(loc)) {
                 return true;
             }
         }
@@ -563,42 +557,44 @@ public abstract class Mech
 
     /**
      * Return true is the location is a leg and has a hip crit
-     */   
+     */
     public boolean legHasHipCrit(int loc) {
         if (isLocationBad(loc)) {
             return false;
         }
-          
+
         if (locationIsLeg(loc)) {
             return (getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
-                                     Mech.ACTUATOR_HIP, loc) == 0);
+                    Mech.ACTUATOR_HIP, loc) == 0);
         }
-        
+
         return false;
     }
-    
+
     /**
      * This function returns true iff the system is in perfect condition.
+     * 
      * @param system the system to check
      * @return false if the system is damaged.
      */
     public boolean isSystemIntact(int system) {
-        for(int loc = 0; loc < locations(); loc ++) {
+        for (int loc = 0; loc < locations(); loc++) {
             int numCrits = getNumberOfCriticals(loc);
             for (int i = 0; i < numCrits; i++) {
                 CriticalSlot ccs = getCritical(loc, i);
-    
-                if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM && ccs.getIndex() == system) {
+
+                if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM
+                        && ccs.getIndex() == system) {
                     if (ccs.isDamaged() || ccs.isBreached()) {
                         return false;
                     }
                 }
             }
         }
-        
+
         return true;
     }
-    
+
     /**
      * Count non-hip leg actuator crits
      */
@@ -606,17 +602,20 @@ public abstract class Mech
         if (isLocationBad(loc)) {
             return 0;
         }
-          
+
         int legCrits = 0;
-        
+
         if (locationIsLeg(loc)) {
-            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_UPPER_LEG, loc) == 0) {
+            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.ACTUATOR_UPPER_LEG, loc) == 0) {
                 legCrits++;
             }
-            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_LEG, loc) == 0) {
+            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.ACTUATOR_LOWER_LEG, loc) == 0) {
                 legCrits++;
             }
-            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT, loc) == 0) {
+            if (getGoodCriticals(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_FOOT,
+                    loc) == 0) {
                 legCrits++;
             }
         }
@@ -643,15 +642,16 @@ public abstract class Mech
     }
 
     public boolean hasJumpBoosters() {
-    	boolean jumpBoosters = false;
+        boolean jumpBoosters = false;
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if (mtype.hasFlag(MiscType.F_JUMP_BOOSTER) ) {
-            	
-            	//one crit destroyed they all all screwed
-            	// --Torren
-            	if ( mEquip.isBreached() || mEquip.isDestroyed() || mEquip.isMissing() )
-            		return false;
+            if (mtype.hasFlag(MiscType.F_JUMP_BOOSTER)) {
+
+                // one crit destroyed they all all screwed
+                // --Torren
+                if (mEquip.isBreached() || mEquip.isDestroyed()
+                        || mEquip.isMissing())
+                    return false;
                 jumpBoosters = true;
             }
         }
@@ -660,7 +660,7 @@ public abstract class Mech
 
     public Mounted getMASC() {
         for (Mounted m : getMisc()) {
-            MiscType mtype = (MiscType)m.getType();
+            MiscType mtype = (MiscType) m.getType();
             if (mtype.hasFlag(MiscType.F_MASC) && m.isReady()) {
                 return m;
             }
@@ -669,39 +669,41 @@ public abstract class Mech
     }
 
     /**
-     * Checks if a mech has an armed MASC system. Note
-     *  that the mech will have to exceed its normal run to actually
-     *  engage the MASC system
+     * Checks if a mech has an armed MASC system. Note that the mech will have
+     * to exceed its normal run to actually engage the MASC system
      */
     public boolean hasArmedMASC() {
-        for (Mounted m : getEquipment()){
-            if (!m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType &&
-                m.getType().hasFlag(MiscType.F_MASC)
-                && m.curMode().equals("Armed")) {
+        for (Mounted m : getEquipment()) {
+            if (!m.isDestroyed() && !m.isBreached()
+                    && m.getType() instanceof MiscType
+                    && m.getType().hasFlag(MiscType.F_MASC)
+                    && m.curMode().equals("Armed")) {
                 return true;
             }
         }
         return false;
     }
-    
+
     public boolean hasExtendedRetractableBlade() {
-        for (Mounted m : getEquipment()){
-            if (!m.isDestroyed() && !m.isBreached() && m.getType() instanceof MiscType &&
-                m.getType().hasFlag(MiscType.F_CLUB) &&
-                m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                && m.curMode().equals("extended")) {
+        for (Mounted m : getEquipment()) {
+            if (!m.isDestroyed() && !m.isBreached()
+                    && m.getType() instanceof MiscType
+                    && m.getType().hasFlag(MiscType.F_CLUB)
+                    && m.getType().hasSubType(MiscType.S_RETRACTABLE_BLADE)
+                    && m.curMode().equals("extended")) {
                 return true;
             }
         }
-        return false;        
+        return false;
     }
-    
+
     /**
      * Same
      */
     public boolean hasTSM() {
-        for (Mounted m : getEquipment()){
-            if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TSM)) {
+        for (Mounted m : getEquipment()) {
+            if (m.getType() instanceof MiscType
+                    && m.getType().hasFlag(MiscType.F_TSM)) {
                 return true;
             }
         }
@@ -711,7 +713,7 @@ public abstract class Mech
     public boolean hasStealth() {
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if ( mtype.hasFlag(MiscType.F_STEALTH) ) {
+            if (mtype.hasFlag(MiscType.F_STEALTH)) {
                 // The Mek has Stealth Armor or null signature system.
                 return true;
             }
@@ -734,7 +736,7 @@ public abstract class Mech
     }
 
     protected int calculateWalk() {
-        return getEngine().getRating() / (int)this.weight;
+        return getEngine().getRating() / (int) this.weight;
     }
 
     /**
@@ -747,23 +749,28 @@ public abstract class Mech
     /**
      * Potentially adjust runMP for MASC
      */
-    
+
     public int getRunMP(boolean gravity, boolean ignoreheat) {
         if (hasArmedMASC()) {
-            return (getWalkMP(gravity, ignoreheat) * 2)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
+            return (getWalkMP(gravity, ignoreheat) * 2)
+                    - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
         }
-        return super.getRunMP(gravity, ignoreheat)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
+        return super.getRunMP(gravity, ignoreheat)
+                - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
     }
 
     /**
      * Returns run MP without considering MASC
      */
-    
+
     public int getRunMPwithoutMASC(boolean gravity, boolean ignoreheat) {
-        return super.getRunMP(gravity, ignoreheat )-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
+        return super.getRunMP(gravity, ignoreheat)
+                - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
     }
+
     public int getOriginalRunMPwithoutMASC() {
-        return super.getRunMP(false, false)-(getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
+        return super.getRunMP(false, false)
+                - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
     }
 
     /**
@@ -784,27 +791,29 @@ public abstract class Mech
     }
 
     /**
-     * This mech's jumping MP modified for missing jump jets
-     * and gravity
+     * This mech's jumping MP modified for missing jump jets and gravity
      */
     public int getJumpMP() {
         return getJumpMP(true);
     }
-    
+
     /**
-     * This mech's jumping MP modified for missing jump jets
-     * and possibly gravity
+     * This mech's jumping MP modified for missing jump jets and possibly
+     * gravity
      */
     public int getJumpMP(boolean gravity) {
         int jump = 0;
 
-        if ( this.hasShield() && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
+        if (this.hasShield()
+                && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
             return 0;
 
         for (Mounted mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()) {
+            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)
+                    && !mounted.isDestroyed() && !mounted.isBreached()) {
                 jump++;
-            } else if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER) && !mounted.isDestroyed() && !mounted.isBreached()) {
+            } else if (mounted.getType().hasFlag(MiscType.F_JUMP_BOOSTER)
+                    && !mounted.isDestroyed() && !mounted.isBreached()) {
                 jump = getOriginalJumpMP();
                 break;
             }
@@ -821,11 +830,11 @@ public abstract class Mech
         if (jumpType == JUMP_UNKNOWN) {
             jumpType = JUMP_NONE;
             for (Object oMount : miscList) {
-                Mounted m = (Mounted)oMount;
+                Mounted m = (Mounted) oMount;
                 if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
                     if ((m.getType().getTechLevel() == TechConstants.T_IS_LEVEL_2)
-                        || (m.getType().getTechLevel() == TechConstants.T_IS_LEVEL_3)
-                        || (m.getType().getTechLevel() == TechConstants.T_CLAN_LEVEL_3)) {
+                            || (m.getType().getTechLevel() == TechConstants.T_IS_LEVEL_3)
+                            || (m.getType().getTechLevel() == TechConstants.T_CLAN_LEVEL_3)) {
                         jumpType = JUMP_IMPROVED;
                     } else {
                         jumpType = JUMP_STANDARD;
@@ -846,7 +855,7 @@ public abstract class Mech
     public int getJumpHeat(int movedMP) {
         switch (getJumpType()) {
             case JUMP_IMPROVED:
-                return engine.getJumpHeat(movedMP/2 + movedMP%2);
+                return engine.getJumpHeat(movedMP / 2 + movedMP % 2);
             case JUMP_BOOSTER:
             case JUMP_DISPOSABLE:
             case JUMP_NONE:
@@ -857,7 +866,8 @@ public abstract class Mech
     }
 
     /**
-     * Returns this mech's jumping MP, modified for missing & underwater jets and gravity.
+     * Returns this mech's jumping MP, modified for missing & underwater jets
+     * and gravity.
      */
     public int getJumpMPWithTerrain() {
         if (getPosition() == null || getJumpType() == JUMP_BOOSTER) {
@@ -865,8 +875,9 @@ public abstract class Mech
         }
         int waterLevel = 0;
         if (!isOffBoard()) {
-            waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(Terrains.WATER);
-        }        
+            waterLevel = game.getBoard().getHex(getPosition()).terrainLevel(
+                    Terrains.WATER);
+        }
         if (waterLevel <= 0 || getElevation() >= 0) {
             return getJumpMP();
         } else if (waterLevel > 1) {
@@ -875,26 +886,27 @@ public abstract class Mech
             return applyGravityEffectsOnMP(torsoJumpJets());
         }
     }
-    
+
     /**
      * Returns the number of (working) jump jets mounted in the torsos.
      */
     public int torsoJumpJets() {
         int jump = 0;
-        
+
         for (Mounted mounted : getMisc()) {
-            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET) && !mounted.isDestroyed() && !mounted.isBreached()
-            && locationIsTorso(mounted.getLocation())) {
+            if (mounted.getType().hasFlag(MiscType.F_JUMP_JET)
+                    && !mounted.isDestroyed() && !mounted.isBreached()
+                    && locationIsTorso(mounted.getLocation())) {
                 jump++;
             }
         }
-        
+
         return jump;
     }
-    
+
     /**
-     * Returns the elevation of this entity.  Mechs do funny stuff in the 
-     * middle of a DFA.
+     * Returns the elevation of this entity. Mechs do funny stuff in the middle
+     * of a DFA.
      */
     public int getElevation() {
         int cElev = super.getElevation();
@@ -903,146 +915,155 @@ public abstract class Mech
         }
         // otherwise, we are one elevation above our hex or the target's hex,
         // whichever is higher
-        int tElev = game.getBoard().getHex(displacementAttack.getTargetPos()).floor();
+        int tElev = game.getBoard().getHex(displacementAttack.getTargetPos())
+                .floor();
         return Math.max(cElev, tElev) + 1;
     }
-    
+
     /**
      * Return the height of this mech above the terrain.
      */
     public int height() {
         IHex posHex = game.getBoard().getHex(getPosition());
-        return (isProne() || ((posHex != null) && Compute.isInBuilding(game, this))) ? 0 : 1;
+        return (isProne() || ((posHex != null) && Compute.isInBuilding(game,
+                this))) ? 0 : 1;
     }
-    
+
     /**
-     * Adds heat sinks to the engine.  Uses clan/normal depending on the
+     * Adds heat sinks to the engine. Uses clan/normal depending on the
      * currently set techLevel
      */
     public void addEngineSinks(int totalSinks, boolean dblSinks) {
         addEngineSinks(totalSinks, dblSinks, isClan());
     }
-    
+
     /**
-     * Adds heat sinks to the engine.  Adds either the engine capacity, or
-     * the entire number of heat sinks, whichever is less
+     * Adds heat sinks to the engine. Adds either the engine capacity, or the
+     * entire number of heat sinks, whichever is less
      */
     public void addEngineSinks(int totalSinks, boolean dblSinks, boolean clan) {
         // this relies on these being the correct internalNames for these items
         EquipmentType sinkType;
         if (dblSinks) {
-            sinkType = EquipmentType.get(clan ? "CLDoubleHeatSink" : "ISDoubleHeatSink");
+            sinkType = EquipmentType.get(clan ? "CLDoubleHeatSink"
+                    : "ISDoubleHeatSink");
         } else {
             sinkType = EquipmentType.get("Heat Sink");
         }
-        
+
         if (sinkType == null) {
             System.out.println("Mech: can't find heat sink to add to engine");
         }
-        
-        int toAllocate = Math.min(totalSinks, getEngine().integralHeatSinkCapacity());
-        
+
+        int toAllocate = Math.min(totalSinks, getEngine()
+                .integralHeatSinkCapacity());
+
         if (toAllocate == 0 && getEngine().isFusion()) {
-            System.out.println("Mech: not putting any heat sinks in the engine?!?!");
+            System.out
+                    .println("Mech: not putting any heat sinks in the engine?!?!");
         }
-        
+
         for (int i = 0; i < toAllocate; i++) {
             try {
-                addEquipment(new Mounted(this, sinkType), Entity.LOC_NONE, false);
+                addEquipment(new Mounted(this, sinkType), Entity.LOC_NONE,
+                        false);
             } catch (LocationFullException ex) {
                 // um, that's impossible.
             }
         }
     }
-    
+
     /**
      * Returns extra heat generated by engine crits
      */
     public int getEngineCritHeat() {
         int engineCritHeat = 0;
         if (!isShutDown() && getEngine().isFusion()) {
-            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_CT);
-            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
-            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_RT);
+            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_ENGINE, Mech.LOC_CT);
+            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_ENGINE, Mech.LOC_LT);
+            engineCritHeat += 5 * getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_ENGINE, Mech.LOC_RT);
         }
         return engineCritHeat;
     }
-    
+
     /**
      * Returns the number of heat sinks, functional or not.
      */
     public int heatSinks() {
         int sinks = 0;
         for (Mounted mounted : getMisc()) {
-            EquipmentType etype= mounted.getType();
+            EquipmentType etype = mounted.getType();
             if (etype.hasFlag(MiscType.F_HEAT_SINK)
-            || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+                    || etype.hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 sinks++;
             }
         }
         return sinks;
     }
-    
+
     /**
-     * Returns the about of heat that the entity can sink each 
-     * turn.
+     * Returns the about of heat that the entity can sink each turn.
      */
     public int getHeatCapacity() {
         int capacity = 0;
         int activeCount = getActiveSinks();
-        
+
         for (Mounted mounted : getMisc()) {
-            if(activeCount <= 0) break;
+            if (activeCount <= 0)
+                break;
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 capacity++;
                 activeCount--;
-            } else if(mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 activeCount--;
                 capacity += 2;
             }
         }
-        
+
         return capacity;
     }
-    
+
     /**
-     * Returns the about of heat that the entity can sink each
-     * turn, factoring for water.
+     * Returns the about of heat that the entity can sink each turn, factoring
+     * for water.
      */
     public int getHeatCapacityWithWater() {
-        if(hasLaserHeatSinks()) {
+        if (hasLaserHeatSinks()) {
             return getHeatCapacity();
         }
         return getHeatCapacity() + Math.min(sinksUnderwater(), 6);
     }
-    
+
     /**
      * Gets the number of heat sinks that are underwater.
      */
     private int sinksUnderwater() {
-        if (getPosition() == null ||
-            isOffBoard()) {
+        if (getPosition() == null || isOffBoard()) {
             return 0;
         }
-        
+
         IHex curHex = game.getBoard().getHex(getPosition());
-        // are we even in water?  is it depth 1+
+        // are we even in water? is it depth 1+
         if (curHex.terrainLevel(Terrains.WATER) <= 0 || getElevation() >= 0) {
             return 0;
         }
-        
+
         // are we entirely underwater?
         if (isProne() || curHex.terrainLevel(Terrains.WATER) >= 2) {
             return getHeatCapacity();
         }
-        
+
         // okay, count leg sinks
         int sinksUnderwater = 0;
         for (Mounted mounted : getMisc()) {
-            if (mounted.isDestroyed() || mounted.isBreached() || !locationIsLeg(mounted.getLocation())) {
+            if (mounted.isDestroyed() || mounted.isBreached()
+                    || !locationIsLeg(mounted.getLocation())) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
@@ -1055,51 +1076,49 @@ public abstract class Mech
     }
 
     /**
-     * Returns the name of the type of movement used.
-     * This is mech-specific.
+     * Returns the name of the type of movement used. This is mech-specific.
      */
     public String getMovementString(int mtype) {
-        switch(mtype) {
-        case IEntityMovementType.MOVE_SKID :
-            return "Skidded";
-        case IEntityMovementType.MOVE_NONE :
-            return "None";
-        case IEntityMovementType.MOVE_WALK :
-            return "Walked";
-        case IEntityMovementType.MOVE_RUN :
-            return "Ran";
-        case IEntityMovementType.MOVE_JUMP :
-            return "Jumped";
-        default :
-            return "Unknown!";
+        switch (mtype) {
+            case IEntityMovementType.MOVE_SKID:
+                return "Skidded";
+            case IEntityMovementType.MOVE_NONE:
+                return "None";
+            case IEntityMovementType.MOVE_WALK:
+                return "Walked";
+            case IEntityMovementType.MOVE_RUN:
+                return "Ran";
+            case IEntityMovementType.MOVE_JUMP:
+                return "Jumped";
+            default:
+                return "Unknown!";
         }
     }
-    
+
     /**
-     * Returns the name of the type of movement used.
-     * This is mech-specific.
+     * Returns the name of the type of movement used. This is mech-specific.
      */
     public String getMovementAbbr(int mtype) {
-        switch(mtype) {
-        case IEntityMovementType.MOVE_SKID :
-            return "S";
-        case IEntityMovementType.MOVE_NONE :
-            return "N";
-        case IEntityMovementType.MOVE_WALK :
-            return "W";
-        case IEntityMovementType.MOVE_RUN :
-            return "R";
-        case IEntityMovementType.MOVE_JUMP :
-            return "J";
-        default :
-            return "?";
+        switch (mtype) {
+            case IEntityMovementType.MOVE_SKID:
+                return "S";
+            case IEntityMovementType.MOVE_NONE:
+                return "N";
+            case IEntityMovementType.MOVE_WALK:
+                return "W";
+            case IEntityMovementType.MOVE_RUN:
+                return "R";
+            case IEntityMovementType.MOVE_JUMP:
+                return "J";
+            default:
+                return "?";
         }
     }
-    
+
     public boolean canChangeSecondaryFacing() {
         return !isProne();
     }
-  
+
     /**
      * Can this mech torso twist in the given direction?
      */
@@ -1108,7 +1127,7 @@ public abstract class Mech
         if (canChangeSecondaryFacing()) {
             return rotate == 0 || rotate == 1 || rotate == -1 || rotate == -5;
         }
-		return rotate == 0;
+        return rotate == 0;
     }
 
     /**
@@ -1126,35 +1145,35 @@ public abstract class Mech
         final int rotate = (dir + (6 - getFacing())) % 6;
         return rotate >= 3 ? (getFacing() + 5) % 6 : (getFacing() + 1) % 6;
     }
-    
+
     public boolean hasRearArmor(int loc) {
         return loc == LOC_CT || loc == LOC_RT || loc == LOC_LT;
     }
-    
+
     /**
-     * Returns the amount of armor in the location specified.  Mech version,
+     * Returns the amount of armor in the location specified. Mech version,
      * handles rear armor.
      */
     public int getArmor(int loc, boolean rear) {
         if (rear && hasRearArmor(loc)) {
             return rearArmor[loc];
         }
-		return super.getArmor(loc, rear);
+        return super.getArmor(loc, rear);
     }
 
     /**
-     * Returns the original amount of armor in the location specified.  Mech version,
-     * handles rear armor.
+     * Returns the original amount of armor in the location specified. Mech
+     * version, handles rear armor.
      */
     public int getOArmor(int loc, boolean rear) {
         if (rear && hasRearArmor(loc)) {
             return orig_rearArmor[loc];
         }
-		return super.getOArmor(loc, rear);
+        return super.getOArmor(loc, rear);
     }
 
     /**
-     * Sets the amount of armor in the location specified.  Mech version, handles
+     * Sets the amount of armor in the location specified. Mech version, handles
      * rear armor.
      */
     public void setArmor(int val, int loc, boolean rear) {
@@ -1166,14 +1185,14 @@ public abstract class Mech
     }
 
     /**
-     * Initializes the rear armor on the mech. Sets the original and starting point
-     * of the armor to the same number.
+     * Initializes the rear armor on the mech. Sets the original and starting
+     * point of the armor to the same number.
      */
-      public void initializeRearArmor(int val, int loc) {
+    public void initializeRearArmor(int val, int loc) {
         orig_rearArmor[loc] = val;
         setArmor(val, loc, true);
-      }
-      
+    }
+
     /**
      * Returns the Compute.ARC that the weapon fires into.
      */
@@ -1184,309 +1203,356 @@ public abstract class Mech
             return Compute.ARC_REAR;
         }
         // front mounted
-        switch(mounted.getLocation()) {
-        case LOC_HEAD :
-        case LOC_CT :
-        case LOC_RT :
-        case LOC_LT :
-        case LOC_RLEG :
-        case LOC_LLEG :
-            return Compute.ARC_FORWARD;
-        case LOC_RARM :
-            return getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_RIGHTARM;
-        case LOC_LARM :
-            return getArmsFlipped() ? Compute.ARC_REAR : Compute.ARC_LEFTARM;
-        default :
-            return Compute.ARC_360;
+        switch (mounted.getLocation()) {
+            case LOC_HEAD:
+            case LOC_CT:
+            case LOC_RT:
+            case LOC_LT:
+            case LOC_RLEG:
+            case LOC_LLEG:
+                return Compute.ARC_FORWARD;
+            case LOC_RARM:
+                return getArmsFlipped() ? Compute.ARC_REAR
+                        : Compute.ARC_RIGHTARM;
+            case LOC_LARM:
+                return getArmsFlipped() ? Compute.ARC_REAR
+                        : Compute.ARC_LEFTARM;
+            default:
+                return Compute.ARC_360;
         }
     }
 
     /**
-     * Returns true if this weapon fires into the secondary facing arc.  If
+     * Returns true if this weapon fires into the secondary facing arc. If
      * false, assume it fires into the primary.
      */
     public boolean isSecondaryArcWeapon(int weaponId) {
         // leg-mounted weapons fire into the primary arc, always
-        if (getEquipment(weaponId).getLocation() == LOC_RLEG || getEquipment(weaponId).getLocation() == LOC_LLEG) {
+        if (getEquipment(weaponId).getLocation() == LOC_RLEG
+                || getEquipment(weaponId).getLocation() == LOC_LLEG) {
             return false;
         }
         // other weapons into the secondary
         return true;
     }
-    
+
     /**
      * Rolls up a hit location
      */
     public HitData rollHitLocation(int table, int side) {
-        return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
-    }     
+        return rollHitLocation(table, side, LOC_NONE,
+                IAimingModes.AIM_MODE_NONE);
+    }
 
-    public HitData rollHitLocation(int table, int side, int aimedLocation, int aimingMode) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation,
+            int aimingMode) {
         int roll = -1;
-        
-        if ((aimedLocation != LOC_NONE) &&
-            (aimingMode == IAimingModes.AIM_MODE_TARG_COMP)) {
-                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);               
+
+        if ((aimedLocation != LOC_NONE)
+                && (aimingMode == IAimingModes.AIM_MODE_TARG_COMP)) {
+            return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
         }
-        
-        if ((aimedLocation != LOC_NONE) &&
-            (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
+
+        if ((aimedLocation != LOC_NONE)
+                && (aimingMode == IAimingModes.AIM_MODE_IMMOBILE)) {
             roll = Compute.d6(2);
-            
+
             if ((5 < roll) && (roll < 9)) {
-                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR, true);
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
+                        true);
             }
         }
 
-        if(table == ToHitData.HIT_NORMAL || table == ToHitData.HIT_PARTIAL_COVER) {
+        if (table == ToHitData.HIT_NORMAL
+                || table == ToHitData.HIT_PARTIAL_COVER) {
             roll = Compute.d6(2);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
-                if ( pw != null ) {
-                    pw.print( table );
-                    pw.print( "\t" );
-                    pw.print( side );
-                    pw.print( "\t" );
-                    pw.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences()
+                        .getMekHitLocLog();
+                if (pw != null) {
+                    pw.print(table);
+                    pw.print("\t");
+                    pw.print(side);
+                    pw.print("\t");
+                    pw.println(roll);
                 }
-            } catch ( Throwable thrown ) {
+            } catch (Throwable thrown) {
                 thrown.printStackTrace();
             }
-            if(side == ToHitData.SIDE_FRONT) {
+            if (side == ToHitData.SIDE_FRONT) {
                 // normal front hits
-                if(game.getOptions().booleanOption("quad_hit_location")
+                if (game.getOptions().booleanOption("quad_hit_location")
                         && isProne()) {
-                    switch( roll ) {
-                    case 2:
-                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac")) 
-                            && !game.getOptions().booleanOption("no_tac")) {
-                            crew.decreaseEdge();
-                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, false));
-                            return result;
-                        } // if
-                        return tac(table, side, Mech.LOC_CT, false);
-                    case 3:
-                        return new HitData(Mech.LOC_RLEG);
-                    case 4:
-                    case 5:
-                        return new HitData(Mech.LOC_RARM);
-                    case 6:
-                        return new HitData(Mech.LOC_RT);
-                    case 7:
-                        return new HitData(Mech.LOC_CT);
-                    case 8:
-                        return new HitData(Mech.LOC_LT);
-                    case 9:
-                    case 10:
-                        return new HitData(Mech.LOC_LARM);
-                    case 11:
-                        return new HitData(Mech.LOC_LLEG);
-                    case 12:
-                        if (crew.hasEdgeRemaining()
-                                && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
-                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                            return result;
-                        } // if
-                        return new HitData(Mech.LOC_HEAD);
+                    switch (roll) {
+                        case 2:
+                            if ((crew.hasEdgeRemaining() && crew.getOptions()
+                                    .booleanOption("edge_when_tac"))
+                                    && !game.getOptions().booleanOption(
+                                            "no_tac")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side,
+                                        aimedLocation, aimingMode);
+                                result.setUndoneLocation(tac(table, side,
+                                        Mech.LOC_CT, false));
+                                return result;
+                            } // if
+                            return tac(table, side, Mech.LOC_CT, false);
+                        case 3:
+                            return new HitData(Mech.LOC_RLEG);
+                        case 4:
+                        case 5:
+                            return new HitData(Mech.LOC_RARM);
+                        case 6:
+                            return new HitData(Mech.LOC_RT);
+                        case 7:
+                            return new HitData(Mech.LOC_CT);
+                        case 8:
+                            return new HitData(Mech.LOC_LT);
+                        case 9:
+                        case 10:
+                            return new HitData(Mech.LOC_LARM);
+                        case 11:
+                            return new HitData(Mech.LOC_LLEG);
+                        case 12:
+                            if (crew.hasEdgeRemaining()
+                                    && crew.getOptions().booleanOption(
+                                            "edge_when_headhit")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side,
+                                        aimedLocation, aimingMode);
+                                result.setUndoneLocation(new HitData(
+                                        Mech.LOC_HEAD));
+                                return result;
+                            } // if
+                            return new HitData(Mech.LOC_HEAD);
                     }
                 } else {
-                    switch( roll ) {
-                    case 2: 
-                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac"))
-                                && !game.getOptions().booleanOption("no_tac")) {
-                            crew.decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, false));
-                            return result;
-                        } // if
-                        return tac(table, side, Mech.LOC_CT, false);
-                    case 3:
-                    case 4:
-                        return new HitData(Mech.LOC_RARM);
-                    case 5:
-                        return new HitData(Mech.LOC_RLEG);
-                    case 6:
-                        return new HitData(Mech.LOC_RT);
-                    case 7:
-                        return new HitData(Mech.LOC_CT);
-                    case 8:
-                        return new HitData(Mech.LOC_LT);
-                    case 9:
-                        return new HitData(Mech.LOC_LLEG);
-                    case 10:
-                    case 11:
-                        return new HitData(Mech.LOC_LARM);
-                    case 12:
-                        if (crew.hasEdgeRemaining()
-                                && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
-                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                            return result;
-                        } // if
-                        return new HitData(Mech.LOC_HEAD);
+                    switch (roll) {
+                        case 2:
+                            if ((crew.hasEdgeRemaining() && crew.getOptions()
+                                    .booleanOption("edge_when_tac"))
+                                    && !game.getOptions().booleanOption(
+                                            "no_tac")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side,
+                                        aimedLocation, aimingMode);
+                                result.setUndoneLocation(tac(table, side,
+                                        Mech.LOC_CT, false));
+                                return result;
+                            } // if
+                            return tac(table, side, Mech.LOC_CT, false);
+                        case 3:
+                        case 4:
+                            return new HitData(Mech.LOC_RARM);
+                        case 5:
+                            return new HitData(Mech.LOC_RLEG);
+                        case 6:
+                            return new HitData(Mech.LOC_RT);
+                        case 7:
+                            return new HitData(Mech.LOC_CT);
+                        case 8:
+                            return new HitData(Mech.LOC_LT);
+                        case 9:
+                            return new HitData(Mech.LOC_LLEG);
+                        case 10:
+                        case 11:
+                            return new HitData(Mech.LOC_LARM);
+                        case 12:
+                            if (crew.hasEdgeRemaining()
+                                    && crew.getOptions().booleanOption(
+                                            "edge_when_headhit")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side,
+                                        aimedLocation, aimingMode);
+                                result.setUndoneLocation(new HitData(
+                                        Mech.LOC_HEAD));
+                                return result;
+                            } // if
+                            return new HitData(Mech.LOC_HEAD);
                     }
                 }
-            }
-            else if(side == ToHitData.SIDE_LEFT) {
+            } else if (side == ToHitData.SIDE_LEFT) {
                 // normal left side hits
-                switch( roll ) {
-                case 2:
-                    if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac"))
-                            && !game.getOptions().booleanOption("no_tac")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(tac(table, side, Mech.LOC_LT, false));
-                        return result;
-                    } // if
-                    return tac(table, side, Mech.LOC_LT, false);
-                case 3:
-                    return new HitData(Mech.LOC_LLEG);
-                case 4:
-                case 5:
-                    return new HitData(Mech.LOC_LARM);
-                case 6:
-                    return new HitData(Mech.LOC_LLEG);
-                case 7:
-                    return new HitData(Mech.LOC_LT);
-                case 8:
-                    return new HitData(Mech.LOC_CT);
-                case 9:
-                    return new HitData(Mech.LOC_RT);
-                case 10:
-                    return new HitData(Mech.LOC_RARM);
-                case 11:
-                    return new HitData(Mech.LOC_RLEG);
-                case 12:
-                    if (crew.hasEdgeRemaining() 
-                            && crew.getOptions().booleanOption("edge_when_headhit") ) {
-                        crew.decreaseEdge();
-                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD);
-                }
-            }
-            else if(side == ToHitData.SIDE_RIGHT) {
-                // normal right side hits
-                switch( roll ) {
-                case 2:
-                    if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac"))
-                            && !game.getOptions().booleanOption("no_tac")) {
-                        crew.decreaseEdge();
-                        HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(tac(table, side, Mech.LOC_RT, false));
-                        return result;
-                    } // if
-                    return tac(table, side, Mech.LOC_RT, false);
-                case 3:
-                    return new HitData(Mech.LOC_RLEG);
-                case 4:
-                case 5:
-                    return new HitData(Mech.LOC_RARM);
-                case 6:
-                    return new HitData(Mech.LOC_RLEG);
-                case 7:
-                    return new HitData(Mech.LOC_RT);
-                case 8:
-                    return new HitData(Mech.LOC_CT);
-                case 9:
-                    return new HitData(Mech.LOC_LT);
-                case 10:
-                    return new HitData(Mech.LOC_LARM);
-                case 11:
-                    return new HitData(Mech.LOC_LLEG);
-                case 12:
-                    if (crew.hasEdgeRemaining() 
-                            && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD);
-                }
-            }
-            else if(side == ToHitData.SIDE_REAR) {
-                // normal rear hits
-                if(game.getOptions().booleanOption("quad_hit_location")
-                        && isProne()) {
-                    switch( roll ) {
+                switch (roll) {
                     case 2:
-                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac"))
+                        if ((crew.hasEdgeRemaining() && crew.getOptions()
+                                .booleanOption("edge_when_tac"))
                                 && !game.getOptions().booleanOption("no_tac")) {
                             crew.decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
+                            HitData result = rollHitLocation(table, side,
+                                    aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side,
+                                    Mech.LOC_LT, false));
                             return result;
                         } // if
-                        return tac(table, side, Mech.LOC_CT, true);
+                        return tac(table, side, Mech.LOC_LT, false);
                     case 3:
-                        return new HitData(Mech.LOC_RARM, true);
+                        return new HitData(Mech.LOC_LLEG);
                     case 4:
                     case 5:
-                        return new HitData(Mech.LOC_RLEG, true);
+                        return new HitData(Mech.LOC_LARM);
                     case 6:
-                        return new HitData(Mech.LOC_RT, true);
+                        return new HitData(Mech.LOC_LLEG);
                     case 7:
-                        return new HitData(Mech.LOC_CT, true);
+                        return new HitData(Mech.LOC_LT);
                     case 8:
-                        return new HitData(Mech.LOC_LT, true);
+                        return new HitData(Mech.LOC_CT);
                     case 9:
+                        return new HitData(Mech.LOC_RT);
                     case 10:
-                        return new HitData(Mech.LOC_LLEG, true);
+                        return new HitData(Mech.LOC_RARM);
                     case 11:
-                        return new HitData(Mech.LOC_LARM, true);
+                        return new HitData(Mech.LOC_RLEG);
                     case 12:
-                        if (crew.hasEdgeRemaining() 
-                                && crew.getOptions().booleanOption("edge_when_headhit")) {
+                        if (crew.hasEdgeRemaining()
+                                && crew.getOptions().booleanOption(
+                                        "edge_when_headhit")) {
                             crew.decreaseEdge();
-                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
+                            HitData result = rollHitLocation(table, side,
+                                    aimedLocation, aimingMode);
+                            result
+                                    .setUndoneLocation(new HitData(
+                                            Mech.LOC_HEAD));
                             return result;
                         } // if
-                        return new HitData(Mech.LOC_HEAD, true);
+                        return new HitData(Mech.LOC_HEAD);
+                }
+            } else if (side == ToHitData.SIDE_RIGHT) {
+                // normal right side hits
+                switch (roll) {
+                    case 2:
+                        if ((crew.hasEdgeRemaining() && crew.getOptions()
+                                .booleanOption("edge_when_tac"))
+                                && !game.getOptions().booleanOption("no_tac")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side,
+                                    aimedLocation, aimingMode);
+                            result.setUndoneLocation(tac(table, side,
+                                    Mech.LOC_RT, false));
+                            return result;
+                        } // if
+                        return tac(table, side, Mech.LOC_RT, false);
+                    case 3:
+                        return new HitData(Mech.LOC_RLEG);
+                    case 4:
+                    case 5:
+                        return new HitData(Mech.LOC_RARM);
+                    case 6:
+                        return new HitData(Mech.LOC_RLEG);
+                    case 7:
+                        return new HitData(Mech.LOC_RT);
+                    case 8:
+                        return new HitData(Mech.LOC_CT);
+                    case 9:
+                        return new HitData(Mech.LOC_LT);
+                    case 10:
+                        return new HitData(Mech.LOC_LARM);
+                    case 11:
+                        return new HitData(Mech.LOC_LLEG);
+                    case 12:
+                        if (crew.hasEdgeRemaining()
+                                && crew.getOptions().booleanOption(
+                                        "edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side,
+                                    aimedLocation, aimingMode);
+                            result
+                                    .setUndoneLocation(new HitData(
+                                            Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD);
+                }
+            } else if (side == ToHitData.SIDE_REAR) {
+                // normal rear hits
+                if (game.getOptions().booleanOption("quad_hit_location")
+                        && isProne()) {
+                    switch (roll) {
+                        case 2:
+                            if ((crew.hasEdgeRemaining() && crew.getOptions()
+                                    .booleanOption("edge_when_tac"))
+                                    && !game.getOptions().booleanOption(
+                                            "no_tac")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side,
+                                        aimedLocation, aimingMode);
+                                result.setUndoneLocation(tac(table, side,
+                                        Mech.LOC_CT, true));
+                                return result;
+                            } // if
+                            return tac(table, side, Mech.LOC_CT, true);
+                        case 3:
+                            return new HitData(Mech.LOC_RARM, true);
+                        case 4:
+                        case 5:
+                            return new HitData(Mech.LOC_RLEG, true);
+                        case 6:
+                            return new HitData(Mech.LOC_RT, true);
+                        case 7:
+                            return new HitData(Mech.LOC_CT, true);
+                        case 8:
+                            return new HitData(Mech.LOC_LT, true);
+                        case 9:
+                        case 10:
+                            return new HitData(Mech.LOC_LLEG, true);
+                        case 11:
+                            return new HitData(Mech.LOC_LARM, true);
+                        case 12:
+                            if (crew.hasEdgeRemaining()
+                                    && crew.getOptions().booleanOption(
+                                            "edge_when_headhit")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side,
+                                        aimedLocation, aimingMode);
+                                result.setUndoneLocation(new HitData(
+                                        Mech.LOC_HEAD, true));
+                                return result;
+                            } // if
+                            return new HitData(Mech.LOC_HEAD, true);
                     }
                 } else {
-                    switch( roll ) {
-                    case 2:
-                        if ((crew.hasEdgeRemaining() && crew.getOptions().booleanOption("edge_when_tac"))
-                                && !game.getOptions().booleanOption("no_tac")) {
-                            crew.decreaseEdge();
-                            HitData result = rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(tac(table, side, Mech.LOC_CT, true));
-                            return result;
-                        } // if
-                        return tac(table, side, Mech.LOC_CT, true);
-                    case 3:
-                    case 4:
-                        return new HitData(Mech.LOC_RARM, true);
-                    case 5:
-                        return new HitData(Mech.LOC_RLEG, true);
-                    case 6:
-                        return new HitData(Mech.LOC_RT, true);
-                    case 7:
-                        return new HitData(Mech.LOC_CT, true);
-                    case 8:
-                        return new HitData(Mech.LOC_LT, true);
-                    case 9:
-                        return new HitData(Mech.LOC_LLEG, true);
-                    case 10:
-                    case 11:
-                        return new HitData(Mech.LOC_LARM, true);
-                    case 12:
-                        if (crew.hasEdgeRemaining() 
-                                && crew.getOptions().booleanOption("edge_when_headhit")) {
-                            crew.decreaseEdge();
-                            HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
-                            return result;
-                        } // if
-                        return new HitData(Mech.LOC_HEAD, true);
+                    switch (roll) {
+                        case 2:
+                            if ((crew.hasEdgeRemaining() && crew.getOptions()
+                                    .booleanOption("edge_when_tac"))
+                                    && !game.getOptions().booleanOption(
+                                            "no_tac")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side,
+                                        aimedLocation, aimingMode);
+                                result.setUndoneLocation(tac(table, side,
+                                        Mech.LOC_CT, true));
+                                return result;
+                            } // if
+                            return tac(table, side, Mech.LOC_CT, true);
+                        case 3:
+                        case 4:
+                            return new HitData(Mech.LOC_RARM, true);
+                        case 5:
+                            return new HitData(Mech.LOC_RLEG, true);
+                        case 6:
+                            return new HitData(Mech.LOC_RT, true);
+                        case 7:
+                            return new HitData(Mech.LOC_CT, true);
+                        case 8:
+                            return new HitData(Mech.LOC_LT, true);
+                        case 9:
+                            return new HitData(Mech.LOC_LLEG, true);
+                        case 10:
+                        case 11:
+                            return new HitData(Mech.LOC_LARM, true);
+                        case 12:
+                            if (crew.hasEdgeRemaining()
+                                    && crew.getOptions().booleanOption(
+                                            "edge_when_headhit")) {
+                                crew.decreaseEdge();
+                                HitData result = rollHitLocation(table, side,
+                                        aimedLocation, aimingMode);
+                                result.setUndoneLocation(new HitData(
+                                        Mech.LOC_HEAD, true));
+                                return result;
+                            } // if
+                            return new HitData(Mech.LOC_HEAD, true);
                     }
                 }
             }
@@ -1494,137 +1560,154 @@ public abstract class Mech
         if (table == ToHitData.HIT_PUNCH) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
-                if ( pw!= null ) {
-                    pw.print( table );
-                    pw.print( "\t" );
-                    pw.print( side );
-                    pw.print( "\t" );
-                    pw.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences()
+                        .getMekHitLocLog();
+                if (pw != null) {
+                    pw.print(table);
+                    pw.print("\t");
+                    pw.print(side);
+                    pw.print("\t");
+                    pw.println(roll);
                 }
-            } catch ( Throwable thrown ) {
+            } catch (Throwable thrown) {
                 thrown.printStackTrace();
             }
             if (side == ToHitData.SIDE_FRONT) {
                 // front punch hits
-                switch( roll ) {
-                case 1:
-                    return new HitData(Mech.LOC_LARM);
-                case 2:
-                    return new HitData(Mech.LOC_LT);
-                case 3:
-                    return new HitData(Mech.LOC_CT);
-                case 4:
-                    return new HitData(Mech.LOC_RT);
-                case 5:
-                    return new HitData(Mech.LOC_RARM);
-                case 6:
-                    if (crew.hasEdgeRemaining()
-                            && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD);
+                switch (roll) {
+                    case 1:
+                        return new HitData(Mech.LOC_LARM);
+                    case 2:
+                        return new HitData(Mech.LOC_LT);
+                    case 3:
+                        return new HitData(Mech.LOC_CT);
+                    case 4:
+                        return new HitData(Mech.LOC_RT);
+                    case 5:
+                        return new HitData(Mech.LOC_RARM);
+                    case 6:
+                        if (crew.hasEdgeRemaining()
+                                && crew.getOptions().booleanOption(
+                                        "edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side,
+                                    aimedLocation, aimingMode);
+                            result
+                                    .setUndoneLocation(new HitData(
+                                            Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD);
                 }
             }
             if (side == ToHitData.SIDE_LEFT) {
                 // left side punch hits
-                switch( roll ) {
-                case 1:
-                case 2:
-                    return new HitData(Mech.LOC_LT);
-                case 3:
-                    return new HitData(Mech.LOC_CT);
-                case 4:
-                case 5:
-                    return new HitData(Mech.LOC_LARM);
-                case 6:
-                    if (crew.hasEdgeRemaining()
-                            && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD);
+                switch (roll) {
+                    case 1:
+                    case 2:
+                        return new HitData(Mech.LOC_LT);
+                    case 3:
+                        return new HitData(Mech.LOC_CT);
+                    case 4:
+                    case 5:
+                        return new HitData(Mech.LOC_LARM);
+                    case 6:
+                        if (crew.hasEdgeRemaining()
+                                && crew.getOptions().booleanOption(
+                                        "edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side,
+                                    aimedLocation, aimingMode);
+                            result
+                                    .setUndoneLocation(new HitData(
+                                            Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD);
                 }
             }
             if (side == ToHitData.SIDE_RIGHT) {
                 // right side punch hits
-                switch( roll ) {
-                case 1:
-                case 2:
-                    return new HitData(Mech.LOC_RT);
-                case 3:
-                    return new HitData(Mech.LOC_CT);
-                case 4:
-                case 5:
-                    return new HitData(Mech.LOC_RARM);
-                case 6:
-                    if (crew.hasEdgeRemaining() 
-                            && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD);
+                switch (roll) {
+                    case 1:
+                    case 2:
+                        return new HitData(Mech.LOC_RT);
+                    case 3:
+                        return new HitData(Mech.LOC_CT);
+                    case 4:
+                    case 5:
+                        return new HitData(Mech.LOC_RARM);
+                    case 6:
+                        if (crew.hasEdgeRemaining()
+                                && crew.getOptions().booleanOption(
+                                        "edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side,
+                                    aimedLocation, aimingMode);
+                            result
+                                    .setUndoneLocation(new HitData(
+                                            Mech.LOC_HEAD));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD);
                 }
             }
             if (side == ToHitData.SIDE_REAR) {
                 // rear punch hits
-                switch( roll ) {
-                case 1:
-                    return new HitData(Mech.LOC_LARM, true);
-                case 2:
-                    return new HitData(Mech.LOC_LT, true);
-                case 3:
-                    return new HitData(Mech.LOC_CT, true);
-                case 4:
-                    return new HitData(Mech.LOC_RT, true);
-                case 5:
-                    return new HitData(Mech.LOC_RARM, true);
-                case 6:
-                    if (crew.hasEdgeRemaining() 
-                            && crew.getOptions().booleanOption("edge_when_headhit")) {
-                        crew.decreaseEdge();
-                        HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD, true));
-                        return result;
-                    } // if
-                    return new HitData(Mech.LOC_HEAD, true);
+                switch (roll) {
+                    case 1:
+                        return new HitData(Mech.LOC_LARM, true);
+                    case 2:
+                        return new HitData(Mech.LOC_LT, true);
+                    case 3:
+                        return new HitData(Mech.LOC_CT, true);
+                    case 4:
+                        return new HitData(Mech.LOC_RT, true);
+                    case 5:
+                        return new HitData(Mech.LOC_RARM, true);
+                    case 6:
+                        if (crew.hasEdgeRemaining()
+                                && crew.getOptions().booleanOption(
+                                        "edge_when_headhit")) {
+                            crew.decreaseEdge();
+                            HitData result = rollHitLocation(table, side,
+                                    aimedLocation, aimingMode);
+                            result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
+                                    true));
+                            return result;
+                        } // if
+                        return new HitData(Mech.LOC_HEAD, true);
                 }
             }
         }
         if (table == ToHitData.HIT_KICK) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();                
-                if ( pw != null ) {
-                    pw.print( table );
-                    pw.print( "\t" );
-                    pw.print( side );
-                    pw.print( "\t" );
-                    pw.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences()
+                        .getMekHitLocLog();
+                if (pw != null) {
+                    pw.print(table);
+                    pw.print("\t");
+                    pw.print(side);
+                    pw.print("\t");
+                    pw.println(roll);
                 }
-            } catch ( Throwable thrown ) {
+            } catch (Throwable thrown) {
                 thrown.printStackTrace();
             }
             if (side == ToHitData.SIDE_FRONT || side == ToHitData.SIDE_REAR) {
                 // front/rear kick hits
-                switch( roll ) {
-                case 1:
-                case 2:
-                case 3:
-                    return new HitData(Mech.LOC_RLEG,
-                                       (side == ToHitData.SIDE_REAR));
-                case 4:
-                case 5:
-                case 6:
-                    return new HitData(Mech.LOC_LLEG,
-                                       (side == ToHitData.SIDE_REAR));
+                switch (roll) {
+                    case 1:
+                    case 2:
+                    case 3:
+                        return new HitData(Mech.LOC_RLEG,
+                                (side == ToHitData.SIDE_REAR));
+                    case 4:
+                    case 5:
+                    case 6:
+                        return new HitData(Mech.LOC_LLEG,
+                                (side == ToHitData.SIDE_REAR));
                 }
             }
             if (side == ToHitData.SIDE_LEFT) {
@@ -1639,150 +1722,165 @@ public abstract class Mech
         if (table == ToHitData.HIT_SWARM) {
             roll = Compute.d6(2);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
-                if ( pw != null ) {
-                    pw.print( table );
-                    pw.print( "\t" );
-                    pw.print( side );
-                    pw.print( "\t" );
-                    pw.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences()
+                        .getMekHitLocLog();
+                if (pw != null) {
+                    pw.print(table);
+                    pw.print("\t");
+                    pw.print(side);
+                    pw.print("\t");
+                    pw.println(roll);
                 }
-            } catch ( Throwable thrown ) {
+            } catch (Throwable thrown) {
                 thrown.printStackTrace();
             }
             // Swarm attack locations.
-            switch( roll ) {
-            case 2:
-                if (crew.hasEdgeRemaining() 
-                        && crew.getOptions().booleanOption("edge_when_headhit")) {
-                    crew.decreaseEdge();
-                    HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                    result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL));
-                    return result;
-                } // if
-                return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
-            case 3:
-                return new HitData(Mech.LOC_CT, true,
-                                   HitData.EFFECT_CRITICAL);
-            case 4:
-                return new HitData(Mech.LOC_RT, true,
-                                   HitData.EFFECT_CRITICAL);
-            case 5:
-                return new HitData(Mech.LOC_RT, false,
-                                   HitData.EFFECT_CRITICAL);
-            case 6:
-                return new HitData(Mech.LOC_RARM, false,
-                                   HitData.EFFECT_CRITICAL);
-            case 7:
-                return new HitData(Mech.LOC_CT, false,
-                                   HitData.EFFECT_CRITICAL);
-            case 8:
-                return new HitData(Mech.LOC_LARM, false,
-                                   HitData.EFFECT_CRITICAL);
-            case 9:
-                return new HitData(Mech.LOC_LT, false,
-                                   HitData.EFFECT_CRITICAL);
-            case 10:
-                return new HitData(Mech.LOC_LT, true,
-                                   HitData.EFFECT_CRITICAL);
-            case 11:
-                return new HitData(Mech.LOC_CT, true,
-                                   HitData.EFFECT_CRITICAL);
-            case 12:
-                if (crew.hasEdgeRemaining()
-                        && crew.getOptions().booleanOption("edge_when_headhit")) {
-                    crew.decreaseEdge();
-                    HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                    result.setUndoneLocation(new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL));
-                    return result;
-                } // if
-                return new HitData(Mech.LOC_HEAD, false, HitData.EFFECT_CRITICAL);
+            switch (roll) {
+                case 2:
+                    if (crew.hasEdgeRemaining()
+                            && crew.getOptions().booleanOption(
+                                    "edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result = rollHitLocation(table, side,
+                                aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
+                                false, HitData.EFFECT_CRITICAL));
+                        return result;
+                    } // if
+                    return new HitData(Mech.LOC_HEAD, false,
+                            HitData.EFFECT_CRITICAL);
+                case 3:
+                    return new HitData(Mech.LOC_CT, true,
+                            HitData.EFFECT_CRITICAL);
+                case 4:
+                    return new HitData(Mech.LOC_RT, true,
+                            HitData.EFFECT_CRITICAL);
+                case 5:
+                    return new HitData(Mech.LOC_RT, false,
+                            HitData.EFFECT_CRITICAL);
+                case 6:
+                    return new HitData(Mech.LOC_RARM, false,
+                            HitData.EFFECT_CRITICAL);
+                case 7:
+                    return new HitData(Mech.LOC_CT, false,
+                            HitData.EFFECT_CRITICAL);
+                case 8:
+                    return new HitData(Mech.LOC_LARM, false,
+                            HitData.EFFECT_CRITICAL);
+                case 9:
+                    return new HitData(Mech.LOC_LT, false,
+                            HitData.EFFECT_CRITICAL);
+                case 10:
+                    return new HitData(Mech.LOC_LT, true,
+                            HitData.EFFECT_CRITICAL);
+                case 11:
+                    return new HitData(Mech.LOC_CT, true,
+                            HitData.EFFECT_CRITICAL);
+                case 12:
+                    if (crew.hasEdgeRemaining()
+                            && crew.getOptions().booleanOption(
+                                    "edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result = rollHitLocation(table, side,
+                                aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
+                                false, HitData.EFFECT_CRITICAL));
+                        return result;
+                    } // if
+                    return new HitData(Mech.LOC_HEAD, false,
+                            HitData.EFFECT_CRITICAL);
             }
         }
         if (table == ToHitData.HIT_ABOVE) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
-                if ( pw != null ) {
-                    pw.print( table );
-                    pw.print( "\t" );
-                    pw.print( side );
-                    pw.print( "\t" );
-                    pw.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences()
+                        .getMekHitLocLog();
+                if (pw != null) {
+                    pw.print(table);
+                    pw.print("\t");
+                    pw.print(side);
+                    pw.print("\t");
+                    pw.println(roll);
                 }
-            } catch ( Throwable thrown ) {
+            } catch (Throwable thrown) {
                 thrown.printStackTrace();
             }
             // Hits from above.
-            switch( roll ) {
-            case 1:
-                return new HitData( Mech.LOC_LARM,
-                                    (side == ToHitData.SIDE_REAR)  );
-            case 2:
-                return new HitData( Mech.LOC_LT,
-                                    (side == ToHitData.SIDE_REAR) );
-            case 3:
-                return new HitData( Mech.LOC_CT,
-                                    (side == ToHitData.SIDE_REAR) );
-            case 4:
-                return new HitData( Mech.LOC_RT,
-                                    (side == ToHitData.SIDE_REAR) );
-            case 5:
-                return new HitData( Mech.LOC_RARM,
-                                    (side == ToHitData.SIDE_REAR)  );
-            case 6:
-                if (crew.hasEdgeRemaining() 
-                        && crew.getOptions().booleanOption("edge_when_headhit")) {
-                    crew.decreaseEdge();
-                    HitData result =  rollHitLocation(table, side, aimedLocation, aimingMode);
-                    result.setUndoneLocation(new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR)));
-                    return result;
-                } // if
-                return new HitData(Mech.LOC_HEAD, (side == ToHitData.SIDE_REAR));
+            switch (roll) {
+                case 1:
+                    return new HitData(Mech.LOC_LARM,
+                            (side == ToHitData.SIDE_REAR));
+                case 2:
+                    return new HitData(Mech.LOC_LT,
+                            (side == ToHitData.SIDE_REAR));
+                case 3:
+                    return new HitData(Mech.LOC_CT,
+                            (side == ToHitData.SIDE_REAR));
+                case 4:
+                    return new HitData(Mech.LOC_RT,
+                            (side == ToHitData.SIDE_REAR));
+                case 5:
+                    return new HitData(Mech.LOC_RARM,
+                            (side == ToHitData.SIDE_REAR));
+                case 6:
+                    if (crew.hasEdgeRemaining()
+                            && crew.getOptions().booleanOption(
+                                    "edge_when_headhit")) {
+                        crew.decreaseEdge();
+                        HitData result = rollHitLocation(table, side,
+                                aimedLocation, aimingMode);
+                        result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
+                                (side == ToHitData.SIDE_REAR)));
+                        return result;
+                    } // if
+                    return new HitData(Mech.LOC_HEAD,
+                            (side == ToHitData.SIDE_REAR));
             }
         }
         if (table == ToHitData.HIT_BELOW) {
             roll = Compute.d6(1);
             try {
-                PrintWriter pw = PreferenceManager.getClientPreferences().getMekHitLocLog();
-                if ( pw != null ) {
-                    pw.print( table );
-                    pw.print( "\t" );
-                    pw.print( side );
-                    pw.print( "\t" );
-                    pw.println( roll );
+                PrintWriter pw = PreferenceManager.getClientPreferences()
+                        .getMekHitLocLog();
+                if (pw != null) {
+                    pw.print(table);
+                    pw.print("\t");
+                    pw.print(side);
+                    pw.print("\t");
+                    pw.println(roll);
                 }
-            } catch ( Throwable thrown ) {
+            } catch (Throwable thrown) {
                 thrown.printStackTrace();
             }
             // Hits from below.
-            switch( roll ) {
-            case 1:
-                return new HitData( Mech.LOC_LLEG,
-                                    (side == ToHitData.SIDE_REAR)  );
-            case 2:
-                return new HitData( Mech.LOC_LLEG,
-                                    (side == ToHitData.SIDE_REAR)  );
-            case 3:
-                return new HitData( Mech.LOC_LT,
-                                    (side == ToHitData.SIDE_REAR) );
-            case 4:
-                return new HitData( Mech.LOC_RT,
-                                    (side == ToHitData.SIDE_REAR) );
-            case 5:
-                return new HitData( Mech.LOC_RLEG,
-                                    (side == ToHitData.SIDE_REAR)  );
-            case 6:
-                return new HitData( Mech.LOC_RLEG,
-                                    (side == ToHitData.SIDE_REAR)  );
+            switch (roll) {
+                case 1:
+                    return new HitData(Mech.LOC_LLEG,
+                            (side == ToHitData.SIDE_REAR));
+                case 2:
+                    return new HitData(Mech.LOC_LLEG,
+                            (side == ToHitData.SIDE_REAR));
+                case 3:
+                    return new HitData(Mech.LOC_LT,
+                            (side == ToHitData.SIDE_REAR));
+                case 4:
+                    return new HitData(Mech.LOC_RT,
+                            (side == ToHitData.SIDE_REAR));
+                case 5:
+                    return new HitData(Mech.LOC_RLEG,
+                            (side == ToHitData.SIDE_REAR));
+                case 6:
+                    return new HitData(Mech.LOC_RLEG,
+                            (side == ToHitData.SIDE_REAR));
             }
         }
         return null;
     }
-    
+
     /**
-     * Called when a thru-armor-crit is rolled.  Checks the game options and
-     * either returns no critical hit, rolls a floating crit, or returns a TAC 
+     * Called when a thru-armor-crit is rolled. Checks the game options and
+     * either returns no critical hit, rolls a floating crit, or returns a TAC
      * in the specified location.
      */
     protected HitData tac(int table, int side, int location, boolean rear) {
@@ -1790,57 +1888,58 @@ public abstract class Mech
             return new HitData(location, rear);
         } else if (game.getOptions().booleanOption("floating_crits")) {
             HitData hd = rollHitLocation(table, side);
-            return new HitData(hd.getLocation(), hd.isRear(), HitData.EFFECT_CRITICAL);
+            return new HitData(hd.getLocation(), hd.isRear(),
+                    HitData.EFFECT_CRITICAL);
         } else {
             return new HitData(location, rear, HitData.EFFECT_CRITICAL);
         }
     }
 
-    
     /**
      * Gets the location that excess damage transfers to
      */
     public HitData getTransferLocation(HitData hit) {
-        switch(hit.getLocation()) {
-        case LOC_RT :
-        case LOC_LT :
-            return new HitData(LOC_CT, hit.isRear());
-        case LOC_LLEG :
-        case LOC_LARM :
-            return new HitData(LOC_LT, hit.isRear());
-        case LOC_RLEG :
-        case LOC_RARM :
-            return new HitData(LOC_RT, hit.isRear());
-        case LOC_HEAD :
-            if (getCockpitType() == COCKPIT_TORSO_MOUNTED)
-                return new HitData(LOC_NONE); //not destroyed by head loss
-            return new HitData(LOC_DESTROYED);
-        case LOC_CT :
-        default:
-            return new HitData(LOC_DESTROYED);
+        switch (hit.getLocation()) {
+            case LOC_RT:
+            case LOC_LT:
+                return new HitData(LOC_CT, hit.isRear());
+            case LOC_LLEG:
+            case LOC_LARM:
+                return new HitData(LOC_LT, hit.isRear());
+            case LOC_RLEG:
+            case LOC_RARM:
+                return new HitData(LOC_RT, hit.isRear());
+            case LOC_HEAD:
+                if (getCockpitType() == COCKPIT_TORSO_MOUNTED)
+                    return new HitData(LOC_NONE); // not destroyed by head
+                                                    // loss
+                return new HitData(LOC_DESTROYED);
+            case LOC_CT:
+            default:
+                return new HitData(LOC_DESTROYED);
         }
     }
-    
+
     /**
      * Gets the location that is destroyed recursively
      */
     public int getDependentLocation(int loc) {
-        switch(loc) {
-        case LOC_RT :
-            return LOC_RARM;
-        case LOC_LT :
-            return LOC_LARM;
-        case LOC_LLEG :
-        case LOC_LARM :
-        case LOC_RLEG :
-        case LOC_RARM :
-        case LOC_HEAD :
-        case LOC_CT :
-        default:
-            return LOC_NONE;
+        switch (loc) {
+            case LOC_RT:
+                return LOC_RARM;
+            case LOC_LT:
+                return LOC_LARM;
+            case LOC_LLEG:
+            case LOC_LARM:
+            case LOC_RLEG:
+            case LOC_RARM:
+            case LOC_HEAD:
+            case LOC_CT:
+            default:
+                return LOC_NONE;
         }
     }
-    
+
     /**
      * Sets the internal structure for the mech.
      * 
@@ -1851,128 +1950,209 @@ public abstract class Mech
      * @param leg right/left leg
      */
     public abstract void setInternal(int head, int ct, int t, int arm, int leg);
-    
+
     /**
-     * Set the internal structure to the appropriate value for the mech's
-     * weight class
+     * Set the internal structure to the appropriate value for the mech's weight
+     * class
      */
     public void autoSetInternal() {
         // stupid irregular table... grr.
-        switch ((int)weight) {
-            //                     H, CT,TSO,ARM,LEG
-            case 10  : setInternal(3,  4,  3,  1,  2); break;
-            case 15  : setInternal(3,  5,  4,  2,  3); break;
-            case 20  : setInternal(3,  6,  5,  3,  4); break;
-            case 25  : setInternal(3,  8,  6,  4,  6); break;
-            case 30  : setInternal(3, 10,  7,  5,  7); break;
-            case 35  : setInternal(3, 11,  8,  6,  8); break;
-            case 40  : setInternal(3, 12, 10,  6, 10); break;
-            case 45  : setInternal(3, 14, 11,  7, 11); break;
-            case 50  : setInternal(3, 16, 12,  8, 12); break;
-            case 55  : setInternal(3, 18, 13,  9, 13); break;
-            case 60  : setInternal(3, 20, 14, 10, 14); break;
-            case 65  : setInternal(3, 21, 15, 10, 15); break;
-            case 70  : setInternal(3, 22, 15, 11, 15); break;
-            case 75  : setInternal(3, 23, 16, 12, 16); break;
-            case 80  : setInternal(3, 25, 17, 13, 17); break;
-            case 85  : setInternal(3, 27, 18, 14, 18); break;
-            case 90  : setInternal(3, 29, 19, 15, 19); break;
-            case 95  : setInternal(3, 30, 20, 16, 20); break;
-            case 100 : setInternal(3, 31, 21, 17, 21); break;
-            case 105 : setInternal(4, 32, 22, 17, 22); break;
-            case 110 : setInternal(4, 33, 23, 18, 23); break;
-            case 115 : setInternal(4, 35, 24, 19, 24); break;
-            case 120 : setInternal(4, 36, 25, 20, 25); break;
-            case 125 : setInternal(4, 38, 26, 21, 26); break;
-            case 130 : setInternal(4, 39, 27, 21, 27); break;
-            case 135 : setInternal(4, 41, 28, 22, 28); break;
-            case 140 : setInternal(4, 42, 29, 23, 29); break;
-            case 145 : setInternal(4, 44, 31, 24, 31); break;
-            case 150 : setInternal(4, 45, 32, 25, 32); break;
-            case 155 : setInternal(4, 47, 33, 26, 33); break;
-            case 160 : setInternal(4, 48, 34, 26, 34); break;
-            case 165 : setInternal(4, 50, 35, 27, 35); break;
-            case 170 : setInternal(4, 51, 36, 28, 36); break;
-            case 175 : setInternal(4, 53, 37, 29, 37); break;
-            case 180 : setInternal(4, 54, 38, 30, 38); break;
-            case 185 : setInternal(4, 56, 39, 31, 39); break;
-            case 190 : setInternal(4, 57, 40, 31, 40); break;
-            case 195 : setInternal(4, 59, 41, 32, 41); break;
-            case 200 : setInternal(4, 60, 42, 33, 42); break;
+        switch ((int) weight) {
+            // H, CT,TSO,ARM,LEG
+            case 10:
+                setInternal(3, 4, 3, 1, 2);
+                break;
+            case 15:
+                setInternal(3, 5, 4, 2, 3);
+                break;
+            case 20:
+                setInternal(3, 6, 5, 3, 4);
+                break;
+            case 25:
+                setInternal(3, 8, 6, 4, 6);
+                break;
+            case 30:
+                setInternal(3, 10, 7, 5, 7);
+                break;
+            case 35:
+                setInternal(3, 11, 8, 6, 8);
+                break;
+            case 40:
+                setInternal(3, 12, 10, 6, 10);
+                break;
+            case 45:
+                setInternal(3, 14, 11, 7, 11);
+                break;
+            case 50:
+                setInternal(3, 16, 12, 8, 12);
+                break;
+            case 55:
+                setInternal(3, 18, 13, 9, 13);
+                break;
+            case 60:
+                setInternal(3, 20, 14, 10, 14);
+                break;
+            case 65:
+                setInternal(3, 21, 15, 10, 15);
+                break;
+            case 70:
+                setInternal(3, 22, 15, 11, 15);
+                break;
+            case 75:
+                setInternal(3, 23, 16, 12, 16);
+                break;
+            case 80:
+                setInternal(3, 25, 17, 13, 17);
+                break;
+            case 85:
+                setInternal(3, 27, 18, 14, 18);
+                break;
+            case 90:
+                setInternal(3, 29, 19, 15, 19);
+                break;
+            case 95:
+                setInternal(3, 30, 20, 16, 20);
+                break;
+            case 100:
+                setInternal(3, 31, 21, 17, 21);
+                break;
+            case 105:
+                setInternal(4, 32, 22, 17, 22);
+                break;
+            case 110:
+                setInternal(4, 33, 23, 18, 23);
+                break;
+            case 115:
+                setInternal(4, 35, 24, 19, 24);
+                break;
+            case 120:
+                setInternal(4, 36, 25, 20, 25);
+                break;
+            case 125:
+                setInternal(4, 38, 26, 21, 26);
+                break;
+            case 130:
+                setInternal(4, 39, 27, 21, 27);
+                break;
+            case 135:
+                setInternal(4, 41, 28, 22, 28);
+                break;
+            case 140:
+                setInternal(4, 42, 29, 23, 29);
+                break;
+            case 145:
+                setInternal(4, 44, 31, 24, 31);
+                break;
+            case 150:
+                setInternal(4, 45, 32, 25, 32);
+                break;
+            case 155:
+                setInternal(4, 47, 33, 26, 33);
+                break;
+            case 160:
+                setInternal(4, 48, 34, 26, 34);
+                break;
+            case 165:
+                setInternal(4, 50, 35, 27, 35);
+                break;
+            case 170:
+                setInternal(4, 51, 36, 28, 36);
+                break;
+            case 175:
+                setInternal(4, 53, 37, 29, 37);
+                break;
+            case 180:
+                setInternal(4, 54, 38, 30, 38);
+                break;
+            case 185:
+                setInternal(4, 56, 39, 31, 39);
+                break;
+            case 190:
+                setInternal(4, 57, 40, 31, 40);
+                break;
+            case 195:
+                setInternal(4, 59, 41, 32, 41);
+                break;
+            case 200:
+                setInternal(4, 60, 42, 33, 42);
+                break;
         }
     }
-    
+
     /**
      * Adds clan CASE in every location
      */
     public void addClanCase() {
-        boolean explosiveFound=false;
+        boolean explosiveFound = false;
         EquipmentType clCase = EquipmentType.get("CLCASE");
         for (int i = 0; i < locations(); i++) {
-            explosiveFound=false;
-            for (Mounted m : getEquipment()){
-                if(m.getType().isExplosive() && m.getLocation()==i) {
-                    explosiveFound=true;
+            explosiveFound = false;
+            for (Mounted m : getEquipment()) {
+                if (m.getType().isExplosive() && m.getLocation() == i) {
+                    explosiveFound = true;
                 }
             }
-            if(explosiveFound) {
+            if (explosiveFound) {
                 try {
                     addEquipment(new Mounted(this, clCase), i, false);
-                    } catch (LocationFullException ex) {
-                        // um, that's impossible.
-                        }
-                    }
-         }            
-        
+                } catch (LocationFullException ex) {
+                    // um, that's impossible.
+                }
+            }
+        }
+
     }
-    
+
     /**
      * Mounts the specified weapon in the specified location.
      */
     public void addEquipment(Mounted mounted, int loc, boolean rearMounted)
-        throws LocationFullException 
-    {
+            throws LocationFullException {
         // if there's no actual location, then don't add criticals
         if (loc == LOC_NONE) {
             super.addEquipment(mounted, loc, rearMounted);
             return;
         }
-        
-        // spreadable or split equipment only gets added to 1 crit at a time, 
+
+        // spreadable or split equipment only gets added to 1 crit at a time,
         // since we don't know how many are in this location
         int slots = mounted.getType().getCriticals(this);
         if (mounted.getType().isSpreadable() || mounted.isSplitable()) {
             slots = 1;
         }
-        
+
         // check criticals for space
-        if(getEmptyCriticals(loc) < slots) {
-            throw new LocationFullException(mounted.getName() + " does not fit in " + getLocationAbbr(loc) + " on " + getDisplayName() + "\n        free criticals in location: " + getEmptyCriticals(loc) + ", criticals needed: " + slots);
+        if (getEmptyCriticals(loc) < slots) {
+            throw new LocationFullException(mounted.getName()
+                    + " does not fit in " + getLocationAbbr(loc) + " on "
+                    + getDisplayName()
+                    + "\n        free criticals in location: "
+                    + getEmptyCriticals(loc) + ", criticals needed: " + slots);
         }
         // add it
-        if (getEquipmentNum(mounted)==-1)
+        if (getEquipmentNum(mounted) == -1)
             super.addEquipment(mounted, loc, rearMounted);
 
         // add criticals
-        int num = getEquipmentNum(mounted);        
-        
-        for(int i = 0; i < slots; i++) {
-            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num, mounted.getType().isHittable()));
-        }        
-    }    
-  
+        int num = getEquipmentNum(mounted);
+
+        for (int i = 0; i < slots; i++) {
+            addCritical(loc, new CriticalSlot(CriticalSlot.TYPE_EQUIPMENT, num,
+                    mounted.getType().isHittable()));
+        }
+    }
+
     /**
      * Calculates the battle value of this mech
      */
     public int calculateBattleValue() {
         return calculateBattleValue(false);
     }
-  
+
     /**
-     * Calculates the battle value of this mech.
-     *  If the parameter is true, then the battle value for
-     *  c3 will be added whether the mech is currently part of
-     *  a network or not.
+     * Calculates the battle value of this mech. If the parameter is true, then
+     * the battle value for c3 will be added whether the mech is currently part
+     * of a network or not.
      */
     public int calculateBattleValue(boolean ignoreC3) {
         double dbv = 0; // defensive battle value
@@ -1990,7 +2170,8 @@ public abstract class Mech
         if (getStructureType() == EquipmentType.T_STRUCTURE_INDUSTRIAL)
             internalMultiplier = 0.5;
 
-        dbv += getTotalInternal() * internalMultiplier * 1.5 * getEngine().getBVMultiplier();
+        dbv += getTotalInternal() * internalMultiplier * 1.5
+                * getEngine().getBVMultiplier();
 
         // add gyro
         double gyroMultiplier = 0.5;
@@ -2000,7 +2181,7 @@ public abstract class Mech
 
         // add defensive equipment
         double dEquipmentBV = 0;
-        for (Mounted mounted : getEquipment()){
+        for (Mounted mounted : getEquipment()) {
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
@@ -2008,12 +2189,15 @@ public abstract class Mech
                 continue;
 
             if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
-                    || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
-                    || (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM)
-                                            || etype.hasFlag(MiscType.F_AP_POD)
-               // not yet coded:            || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                                            || etype.hasFlag(MiscType.F_BAP)
-                                            || etype.hasFlag(MiscType.F_B_POD)))) {
+                    || (etype instanceof AmmoType && ((AmmoType) etype)
+                            .getAmmoType() == AmmoType.T_AMS)
+                    || (etype instanceof MiscType && (etype
+                            .hasFlag(MiscType.F_ECM)
+                            || etype.hasFlag(MiscType.F_AP_POD)
+                            // not yet coded: ||
+                            // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
+                            || etype.hasFlag(MiscType.F_BAP) || etype
+                            .hasFlag(MiscType.F_B_POD)))) {
                 dEquipmentBV += etype.getBV(this);
             }
         }
@@ -2021,7 +2205,7 @@ public abstract class Mech
 
         // subtract for explosive ammo
         double ammoPenalty = 0;
-        for (Mounted mounted : getEquipment()){
+        for (Mounted mounted : getEquipment()) {
             int loc = mounted.getLocation();
             int toSubtract = 15;
             EquipmentType etype = mounted.getType();
@@ -2040,46 +2224,56 @@ public abstract class Mech
                 // Clan mechs only count ammo in ct, legs or head (per BMRr).
                 // Also count ammo in side torsos if mech has xxl engine
                 // (extrapolated from rule intent - not covered in rules)
-                if ((loc != LOC_CT && loc != LOC_RLEG && loc != LOC_LLEG
-                     && loc != LOC_HEAD) &&
-                    !((loc == LOC_RT || loc == LOC_LT) &&
-                      getEngine().getSideTorsoCriticalSlots().length > 2)) {
+                if ((loc != LOC_CT && loc != LOC_RLEG && loc != LOC_LLEG && loc != LOC_HEAD)
+                        && !((loc == LOC_RT || loc == LOC_LT) && getEngine()
+                                .getSideTorsoCriticalSlots().length > 2)) {
                     continue;
                 }
-             } else {
+            } else {
                 // inner sphere with XL or XXL counts everywhere
                 if (getEngine().getSideTorsoCriticalSlots().length <= 2) {
                     // without XL or XXL, only count torsos if not CASEed,
                     // and arms if arm & torso not CASEed
-                    if ((loc == LOC_RT || loc == LOC_LT) && (locationHasCase(loc) || hasCASEII(loc))) {
+                    if ((loc == LOC_RT || loc == LOC_LT)
+                            && (locationHasCase(loc) || hasCASEII(loc))) {
                         continue;
-                    } else if (loc == LOC_LARM && (locationHasCase(loc) || locationHasCase(LOC_LT) || hasCASEII(loc) || hasCASEII(LOC_LT))) {
+                    } else if (loc == LOC_LARM
+                            && (locationHasCase(loc) || locationHasCase(LOC_LT)
+                                    || hasCASEII(loc) || hasCASEII(LOC_LT))) {
                         continue;
-                    } else if (loc == LOC_RARM && (locationHasCase(loc) || locationHasCase(LOC_RT)) || hasCASEII(loc) || hasCASEII(LOC_RT)) {
+                    } else if (loc == LOC_RARM
+                            && (locationHasCase(loc) || locationHasCase(LOC_RT))
+                            || hasCASEII(loc) || hasCASEII(LOC_RT)) {
                         continue;
                     }
                 }
             }
-            
+
             // gauss rifles only subtract 1 point per slot
-            if (etype instanceof WeaponType && (etype.getName().indexOf("Gauss") != -1 || etype.getName().indexOf("HAG") != -1 || etype.getName().toLowerCase().indexOf("magshot") != -1)) {
+            if (etype instanceof WeaponType
+                    && (etype.getName().indexOf("Gauss") != -1
+                            || etype.getName().indexOf("HAG") != -1 || etype
+                            .getName().toLowerCase().indexOf("magshot") != -1)) {
                 toSubtract = 1;
             }
-             
+
             // RACs don't really count
-            if (etype instanceof WeaponType && ((WeaponType)etype).getAmmoType() == AmmoType.T_AC_ROTARY) {
+            if (etype instanceof WeaponType
+                    && ((WeaponType) etype).getAmmoType() == AmmoType.T_AC_ROTARY) {
                 toSubtract = 0;
             }
-            
+
             // empty ammo shouldn't count
             if (etype instanceof AmmoType && mounted.getShotsLeft() == 0) {
                 continue;
             }
-            // normal ACs only marked as explosive because they are when they just
-            // fired incendiary ammo, therefore they don't count for explosive BV
-            if (etype instanceof WeaponType 
-                    && (((WeaponType)etype).getAmmoType() == AmmoType.T_AC
-                       ||((WeaponType)etype).getAmmoType() == AmmoType.T_LAC)) {
+            // normal ACs only marked as explosive because they are when they
+            // just
+            // fired incendiary ammo, therefore they don't count for explosive
+            // BV
+            if (etype instanceof WeaponType
+                    && (((WeaponType) etype).getAmmoType() == AmmoType.T_AC || ((WeaponType) etype)
+                            .getAmmoType() == AmmoType.T_LAC)) {
                 toSubtract = 0;
             }
             // we subtract per critical slot
@@ -2087,27 +2281,32 @@ public abstract class Mech
             ammoPenalty += toSubtract;
         }
         dbv = Math.max(1, dbv - ammoPenalty);
-        
+
         // adjust for target movement modifier
         // we use full possible movement, ignoring gravity and heat
         // but taking into account hit actuators
-        int runMP = getRunMP(false, true)-getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0;
+        int runMP = getRunMP(false, true) - getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1
+                : 0;
         // factor in TSM or MASC
         if (hasTSM()) {
-            runMP = (int)Math.ceil((getWalkMP(false, true) +1) * 1.5) - getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0;
+            runMP = (int) Math.ceil((getWalkMP(false, true) + 1) * 1.5)
+                    - getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0;
         }
         if (hasMASC()) {
-            runMP = (getWalkMP(false, true) * 2)-getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0;
+            runMP = (getWalkMP(false, true) * 2) - getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1
+                    : 0;
         }
-        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false).getValue();
-        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false), true, false).getValue();
+        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false)
+                .getValue();
+        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false),
+                true, false).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
         // Try to find a Mek Stealth system.
         if (hasStealth())
             targetMovementModifier += 2;
-        double tmmFactor = 1+(targetMovementModifier/10);
+        double tmmFactor = 1 + (targetMovementModifier / 10);
         dbv *= tmmFactor;
-        
+
         // calculate heat efficiency
         int mechHeatEfficiency = 6 + this.getHeatCapacity();
         if (getJumpMP() > 0) {
@@ -2115,22 +2314,21 @@ public abstract class Mech
         } else {
             mechHeatEfficiency -= 2;
         }
-        
 
         // total up maximum heat generated
         // and add up BVs for ammo-using weapon types for excessive ammo rule
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
         double maximumHeat = 0;
         for (Mounted mounted : getWeaponList()) {
-            WeaponType wtype = (WeaponType)mounted.getType();
+            WeaponType wtype = (WeaponType) mounted.getType();
             double weaponHeat = wtype.getHeat();
-            
+
             // only count non-damaged equipment
-            if (mounted.isMissing() || mounted.isHit() ||
-            		mounted.isDestroyed() || mounted.isBreached()) {
-            	continue;
+            if (mounted.isMissing() || mounted.isHit() || mounted.isDestroyed()
+                    || mounted.isBreached()) {
+                continue;
             }
-            
+
             // one shot weapons count 1/4
             if (wtype.getAmmoType() == AmmoType.T_ROCKET_LAUNCHER
                     || wtype.hasFlag(WeaponType.F_ONESHOT)) {
@@ -2151,37 +2349,38 @@ public abstract class Mech
             // half heat for streaks
             if ((wtype.getAmmoType() == AmmoType.T_SRM_STREAK)
                     || (wtype.getAmmoType() == AmmoType.T_MRM_STREAK)
-                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)){
+                    || (wtype.getAmmoType() == AmmoType.T_LRM_STREAK)) {
                 weaponHeat *= 0.5;
             }
             maximumHeat += weaponHeat;
             // add up BV of ammo-using weapons for each type of weapon,
             // to compare with ammo BV later for excessive ammo BV rule
             if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA))
-                        || wtype.hasFlag(WeaponType.F_ONESHOT)
-                        || wtype.hasFlag(WeaponType.F_INFANTRY)
-                        || wtype.getAmmoType() == AmmoType.T_NA)) {
-                String key = wtype.getAmmoType()+":"+wtype.getRackSize();
+                    || wtype.hasFlag(WeaponType.F_ONESHOT)
+                    || wtype.hasFlag(WeaponType.F_INFANTRY) || wtype
+                    .getAmmoType() == AmmoType.T_NA)) {
+                String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
-                }
-                else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this)+weaponsForExcessiveAmmo.get(key));
+                } else {
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this)
+                            + weaponsForExcessiveAmmo.get(key));
                 }
             }
         }
-                
+
         double weaponBV = 0;
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
-        
+
         if (maximumHeat <= mechHeatEfficiency) {
-            //count all weapons equal, adjusting for rear-firing and excessive ammo
+            // count all weapons equal, adjusting for rear-firing and excessive
+            // ammo
             for (Mounted mounted : getWeaponList()) {
-                WeaponType wtype = (WeaponType)mounted.getType();
+                WeaponType wtype = (WeaponType) mounted.getType();
                 double dBV = wtype.getBV(this);
-                
+
                 // don't count destroyed equipment
                 if (mounted.isDestroyed())
                     continue;
@@ -2190,13 +2389,13 @@ public abstract class Mech
                 if (wtype.hasFlag(WeaponType.F_AMS)) {
                     continue;
                 }
-                
+
                 // and we'll add the tcomp here too
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
-                    if(hasTargComp)
+                    if (hasTargComp)
                         dBV *= 1.25;
                 }
-                
+
                 if (mounted.isRearMounted()) {
                     weaponsBVRear += dBV;
                 } else {
@@ -2204,12 +2403,13 @@ public abstract class Mech
                 }
             }
         } else {
-            // count weapons at full BV until heatefficiency is reached or passed with one weapon
+            // count weapons at full BV until heatefficiency is reached or
+            // passed with one weapon
             int heatAdded = 0;
             ArrayList<Mounted> weapons = this.getWeaponList();
             Collections.sort(weapons, new WeaponComparator());
             for (Mounted weapon : weapons) {
-                WeaponType wtype = (WeaponType)weapon.getType();
+                WeaponType wtype = (WeaponType) weapon.getType();
                 double dBV = wtype.getBV(this);
                 // don't count destroyed equipment
                 if (weapon.isDestroyed())
@@ -2222,11 +2422,13 @@ public abstract class Mech
                 if (wtype.hasFlag(WeaponType.F_MGA)) {
                     double mgaBV = 0;
                     for (Mounted possibleMG : this.getWeaponList()) {
-                        if (possibleMG.getType().hasFlag(WeaponType.F_MG) && possibleMG.getLocation() == weapon.getLocation()) {
+                        if (possibleMG.getType().hasFlag(WeaponType.F_MG)
+                                && possibleMG.getLocation() == weapon
+                                        .getLocation()) {
                             mgaBV += possibleMG.getType().getBV(this);
                         }
                     }
-                   dBV = mgaBV * 0.67;
+                    dBV = mgaBV * 0.67;
                 }
                 // and we'll add the tcomp here too
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
@@ -2235,11 +2437,11 @@ public abstract class Mech
                 // artemis bumps up the value
                 if (weapon.getLinkedBy() != null) {
                     Mounted mLinker = weapon.getLinkedBy();
-                    if (mLinker.getType() instanceof MiscType && 
-                            mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                    if (mLinker.getType() instanceof MiscType
+                            && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                         dBV *= 1.2;
                     }
-                } 
+                }
                 if (heatAdded >= mechHeatEfficiency && wtype.getHeat() > 0)
                     dBV /= 2;
                 if (weapon.isRearMounted()) {
@@ -2247,7 +2449,7 @@ public abstract class Mech
                 } else {
                     weaponsBVFront += dBV;
                 }
-                heatAdded += ((WeaponType)weapon.getType()).getHeat();
+                heatAdded += ((WeaponType) weapon.getType()).getHeat();
             }
         }
         if (weaponsBVFront > weaponsBVRear) {
@@ -2256,22 +2458,23 @@ public abstract class Mech
         } else {
             weaponBV += weaponsBVRear;
             weaponBV += (weaponsBVFront * 0.5);
-        }   
-        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
+        }
+        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
+        // BMR p152)
         double oEquipmentBV = 0;
         for (Mounted mounted : getMisc()) {
-            MiscType mtype = (MiscType)mounted.getType();
- 
+            MiscType mtype = (MiscType) mounted.getType();
+
             // don't count destroyed equipment
             if (mounted.isDestroyed())
                 continue;
 
-            if (mtype.hasFlag(MiscType.F_ECM)
-                    || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_AP_POD) 
+            if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP)
+                    || mtype.hasFlag(MiscType.F_AP_POD)
                     || mtype.hasFlag(MiscType.F_B_POD)
-//not yet coded:    || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) //targ counted with weapons 
+                    // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
+                    || mtype.hasFlag(MiscType.F_TARGCOMP)) // targ counted with
+                                                            // weapons
                 continue;
             oEquipmentBV += mtype.getBV(this);
             // need to do this here, a MiscType does not know the location
@@ -2290,12 +2493,13 @@ public abstract class Mech
 
         // add ammo bv
         double ammoBV = 0;
-        // extra BV for when we have semiguided LRMs and someone else has TAG on our team        
+        // extra BV for when we have semiguided LRMs and someone else has TAG on
+        // our team
         double tagBV = 0;
         Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>(); 
+        ArrayList<String> keys = new ArrayList<String>();
         for (Mounted mounted : getAmmo()) {
-            AmmoType atype = (AmmoType)mounted.getType();
+            AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
             if (mounted.getShotsLeft() == 0)
@@ -2314,39 +2518,41 @@ public abstract class Mech
             // semiguided ammo might count double
             if (atype.getMunitionType() == AmmoType.M_SEMIGUIDED) {
                 Player tmpP = getOwner();
-                
+
                 if (tmpP != null) {
-	                // Okay, actually check for friendly TAG.
-	                if (tmpP.hasTAG())
-	                    tagBV += atype.getBV(this);
-	                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-	                   for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements(); ) {
-	                        Team m = e.nextElement();
-	                        if (m.getId() == tmpP.getTeam()) {
-	                            if (m.hasTAG(game)) {
-	                                tagBV += atype.getBV(this);
-	                            }
-	                            // A player can't be on two teams.
-	                            // If we check his team and don't give the penalty, that's it.
-	                            break;
-	                        }
-	                    }
-	                }
+                    // Okay, actually check for friendly TAG.
+                    if (tmpP.hasTAG())
+                        tagBV += atype.getBV(this);
+                    else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+                        for (Enumeration<Team> e = game.getTeams(); e
+                                .hasMoreElements();) {
+                            Team m = e.nextElement();
+                            if (m.getId() == tmpP.getTeam()) {
+                                if (m.hasTAG(game)) {
+                                    tagBV += atype.getBV(this);
+                                }
+                                // A player can't be on two teams.
+                                // If we check his team and don't give the
+                                // penalty, that's it.
+                                break;
+                            }
+                        }
+                    }
                 }
             }
-            String key = atype.getAmmoType()+":"+atype.getRackSize();
+            String key = atype.getAmmoType() + ":" + atype.getRackSize();
             if (!keys.contains(key))
                 keys.add(key);
             if (!ammo.containsKey(key)) {
                 ammo.put(key, atype.getBV(this));
-            }
-            else {
-                ammo.put(key, atype.getBV(this)+ammo.get(key));
+            } else {
+                ammo.put(key, atype.getBV(this) + ammo.get(key));
             }
         }
 
         // Excessive ammo rule:
-        // Only count BV for ammo for a weapontype until the BV of all weapons of that 
+        // Only count BV for ammo for a weapontype until the BV of all weapons
+        // of that
         // type on the mech is reached.
         for (String key : keys) {
             if (weaponsForExcessiveAmmo.get(key) != null) {
@@ -2355,20 +2561,22 @@ public abstract class Mech
                 else
                     ammoBV += ammo.get(key);
             } else {
-                // Ammo with no matching weapons counts 0, unless it's a coolant pod
+                // Ammo with no matching weapons counts 0, unless it's a coolant
+                // pod
                 // because coolant pods have no matching weapon
-                if (key.equals(new Integer(AmmoType.T_COOLANT_POD).toString()+"1")) {
+                if (key.equals(new Integer(AmmoType.T_COOLANT_POD).toString()
+                        + "1")) {
                     ammoBV += ammo.get(key);
                 }
             }
         }
         weaponBV += ammoBV;
-        
+
         // add tonnage, adjusted for TSM
         if (hasTSM())
             weaponBV += getWeight() * 1.5;
-        else 
-            weaponBV += getWeight();        
+        else
+            weaponBV += getWeight();
 
         // adjust further for speed factor
         // this is a bit weird, because the formula gives
@@ -2376,49 +2584,52 @@ public abstract class Mech
         // is handled differently (page 315, TM, compare
         // http://forums.classicbattletech.com/index.php/topic,20468.0.html
         double speedFactor;
-        double speedFactorTableLookup = getOriginalRunMPwithoutMASC()+Math.round((double)this.getJumpMP()/2);
+        double speedFactorTableLookup = getOriginalRunMPwithoutMASC()
+                + Math.round((double) this.getJumpMP() / 2);
         if (hasMASC() || hasTSM())
             speedFactorTableLookup++;
-        if (speedFactorTableLookup > 25) 
-            speedFactor = Math.pow(1+(((double)runMP+(Math.round((double)getJumpMP()/2))-5)/10), 1.2);
+        if (speedFactorTableLookup > 25)
+            speedFactor = Math.pow(1 + (((double) runMP
+                    + (Math.round((double) getJumpMP() / 2)) - 5) / 10), 1.2);
         else
-            speedFactor = Math.pow(1+((speedFactorTableLookup-5)/10), 1.2);
+            speedFactor = Math
+                    .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
-        
+
         obv = weaponBV * speedFactor;
 
         // we get extra bv from some stuff
         double xbv = 0.0;
-        //extra BV for semi-guided lrm when TAG in our team
+        // extra BV for semi-guided lrm when TAG in our team
         xbv += tagBV;
         // extra from c3 networks. a valid network requires at least 2 members
-        // some hackery and magic numbers here.  could be better
-        // also, each 'has' loops through all equipment.  inefficient to do it 3 times
-        if (((hasC3MM() && calculateFreeC3MNodes() < 2) ||
-            (hasC3M() && calculateFreeC3Nodes() < 3) ||
-            (hasC3S() && C3Master > NONE) ||
-            (hasC3i() && calculateFreeC3Nodes() < 5)) &&
-            !ignoreC3 && (game != null)) {
+        // some hackery and magic numbers here. could be better
+        // also, each 'has' loops through all equipment. inefficient to do it 3
+        // times
+        if (((hasC3MM() && calculateFreeC3MNodes() < 2)
+                || (hasC3M() && calculateFreeC3Nodes() < 3)
+                || (hasC3S() && C3Master > NONE) || (hasC3i() && calculateFreeC3Nodes() < 5))
+                && !ignoreC3 && (game != null)) {
             int totalForceBV = 0;
             totalForceBV += this.calculateBattleValue(true);
             for (Entity e : game.getC3NetworkMembers(this)) {
                 if (!equals(e) && onSameC3NetworkAs(e)) {
-                    totalForceBV+=e.calculateBattleValue(true);
+                    totalForceBV += e.calculateBattleValue(true);
                 }
             }
             xbv += totalForceBV *= 0.05;
         }
 
-        int finalBV = (int)Math.round(dbv + obv + xbv);
+        int finalBV = (int) Math.round(dbv + obv + xbv);
 
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
-        
-        int retVal = (int)Math.round((finalBV) * pilotFactor);
-        
+
+        int retVal = (int) Math.round((finalBV) * pilotFactor);
+
         // don't factor pilot in if we are just calculating BV for C3 extra BV
         if (ignoreC3)
-        	return finalBV;
+            return finalBV;
         return retVal;
     }
 
@@ -2427,9 +2638,9 @@ public abstract class Mech
     }
 
     /**
-     * Calculate the C-bill cost of the mech.  Passing null as the
-     * argument will skip the detailed report processing.
-     *
+     * Calculate the C-bill cost of the mech. Passing null as the argument will
+     * skip the detailed report processing.
+     * 
      * @param detail buffer to append the detailed cost report to
      * @return The cost in C-Bills of the 'Mech in question.
      */
@@ -2441,7 +2652,7 @@ public abstract class Mech
         if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             cockpitCost = 750000;
         } else if (getCockpitType() == Mech.COCKPIT_DUAL) {
-            //FIXME
+            // FIXME
             cockpitCost = 0;
         } else if (getCockpitType() == Mech.COCKPIT_COMMAND_CONSOLE) {
             // Command Consoles are listed as a cost of 500,000.
@@ -2452,55 +2663,65 @@ public abstract class Mech
         } else {
             cockpitCost = 200000;
         }
-        if (hasEiCockpit()&&getCrew().getOptions().booleanOption("ei_implant"))
+        if (hasEiCockpit()
+                && getCrew().getOptions().booleanOption("ei_implant"))
             cockpitCost = 400000;
         costs[i++] = cockpitCost;
-        costs[i++] = 50000;//life support
-        costs[i++] = weight*2000;//sensors
-        int muscCost=this.hasTSM()? 16000 : 2000;
-        costs[i++] = muscCost*weight;//musculature
-        costs[i++] = EquipmentType.getStructureCost(structureType)*weight;//IS
-        costs[i++] = getActuatorCost();//arm and/or leg actuators
+        costs[i++] = 50000;// life support
+        costs[i++] = weight * 2000;// sensors
+        int muscCost = this.hasTSM() ? 16000 : 2000;
+        costs[i++] = muscCost * weight;// musculature
+        costs[i++] = EquipmentType.getStructureCost(structureType) * weight;// IS
+        costs[i++] = getActuatorCost();// arm and/or leg actuators
         Engine engine = getEngine();
         costs[i++] = engine.getBaseCost() * engine.getRating() * weight / 75.0;
         if (getGyroType() == Mech.GYRO_XL) {
-            costs[i++] = 750000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 0.5;
+            costs[i++] = 750000 * (int) Math.ceil(getOriginalWalkMP() * weight
+                    / 100f) * 0.5;
         } else if (getGyroType() == Mech.GYRO_COMPACT) {
-            costs[i++] = 400000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 1.5;
+            costs[i++] = 400000 * (int) Math.ceil(getOriginalWalkMP() * weight
+                    / 100f) * 1.5;
         } else if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
-            costs[i++] = 500000 * (int)Math.ceil(getOriginalWalkMP()*weight/100f) * 2;
+            costs[i++] = 500000 * (int) Math.ceil(getOriginalWalkMP() * weight
+                    / 100f) * 2;
         } else {
-            costs[i++] = 300000*(int)Math.ceil(getOriginalWalkMP()*weight/100f);
+            costs[i++] = 300000 * (int) Math.ceil(getOriginalWalkMP() * weight
+                    / 100f);
         }
         double jumpBaseCost = 200;
-        //You cannot have JJ's and UMU's on the same unit.
-        if (this.hasUMU()){
-            costs[i++] = Math.pow(getAllUMUCount(),2.0)*weight*jumpBaseCost;
+        // You cannot have JJ's and UMU's on the same unit.
+        if (this.hasUMU()) {
+            costs[i++] = Math.pow(getAllUMUCount(), 2.0) * weight
+                    * jumpBaseCost;
         } else {
             if (getJumpType() == Mech.JUMP_BOOSTER)
                 jumpBaseCost = 150;
             else if (getJumpType() == Mech.JUMP_IMPROVED)
                 jumpBaseCost = 500;
-            costs[i++] = Math.pow(getOriginalJumpMP(),2.0)*weight*jumpBaseCost;
+            costs[i++] = Math.pow(getOriginalJumpMP(), 2.0) * weight
+                    * jumpBaseCost;
         }
-        int freeSinks = hasDoubleHeatSinks()? 0 : 10;//num of sinks we don't pay for
-        int sinkCost = hasDoubleHeatSinks()? 6000: 2000;
-        costs[i++] = sinkCost*(heatSinks()-freeSinks);//cost of sinks
-        costs[i++] = getArmorWeight()*EquipmentType.getArmorCost(armorType);
+        int freeSinks = hasDoubleHeatSinks() ? 0 : 10;// num of sinks we don't
+                                                        // pay for
+        int sinkCost = hasDoubleHeatSinks() ? 6000 : 2000;
+        costs[i++] = sinkCost * (heatSinks() - freeSinks);// cost of sinks
+        costs[i++] = getArmorWeight() * EquipmentType.getArmorCost(armorType);
         costs[i++] = getWeaponsAndEquipmentCost();
 
-        double cost = 0; //calculate the total
-        for (int x = 0; x < i; x++) { cost += costs[x]; }
+        double cost = 0; // calculate the total
+        for (int x = 0; x < i; x++) {
+            cost += costs[x];
+        }
 
         double omniMultiplier = 0;
         if (isOmni()) {
             omniMultiplier = 1.25f;
-            cost*=omniMultiplier;
+            cost *= omniMultiplier;
         }
-        costs[i++] = - omniMultiplier; //negative just marks it as multiplier
+        costs[i++] = -omniMultiplier; // negative just marks it as multiplier
 
         double weightMultiplier = 1 + (weight / 100f);
-        costs[i++] = - weightMultiplier; //negative just marks it as multiplier
+        costs[i++] = -weightMultiplier; // negative just marks it as multiplier
         cost = Math.round(cost * weightMultiplier);
         if (detail != null)
             addCostDetails(cost, detail, costs);
@@ -2508,38 +2729,44 @@ public abstract class Mech
     }
 
     private void addCostDetails(double cost, StringBuffer detail, double[] costs) {
-        String[] left = {"Cockpit", "Life Support", "Sensors", "Myomer",
-                         "Structure", "Actuators", "Engine", "Gyro",
-                         "Jump Jets", "Heatsinks", "Armor", "Equipment",
-                         "Omni Multiplier", "Weight Multiplier"};
+        String[] left = { "Cockpit", "Life Support", "Sensors", "Myomer",
+                "Structure", "Actuators", "Engine", "Gyro", "Jump Jets",
+                "Heatsinks", "Armor", "Equipment", "Omni Multiplier",
+                "Weight Multiplier" };
         int maxLeft = 0;
         int maxRight = 0;
         int totalLineLength = 0;
-        //find the maximum length of the columns.
+        // find the maximum length of the columns.
         for (int l = 0; l < left.length; l++) {
             maxLeft = Math.max(maxLeft, left[l].length());
             maxRight = Math.max(maxRight, commafy.format(costs[l]).length());
         }
-        maxLeft += 5; //leave some padding in the middle
+        maxLeft += 5; // leave some padding in the middle
         maxRight = Math.max(maxRight, commafy.format(cost).length());
         for (int i = 0; i < left.length; i++) {
             String both;
-            if (costs[i] < 0) { //negative marks it as a multiplier
-                both = StringUtil.makeLength(left[i], maxLeft) +
-                    StringUtil.makeLength("x" + commafy.format(costs[i]*-1), maxRight, true);
+            if (costs[i] < 0) { // negative marks it as a multiplier
+                both = StringUtil.makeLength(left[i], maxLeft)
+                        + StringUtil
+                                .makeLength(
+                                        "x" + commafy.format(costs[i] * -1),
+                                        maxRight, true);
             } else if (costs[i] == 0) {
-                both = StringUtil.makeLength(left[i], maxLeft) +
-                    StringUtil.makeLength("N/A", maxRight, true);
+                both = StringUtil.makeLength(left[i], maxLeft)
+                        + StringUtil.makeLength("N/A", maxRight, true);
             } else {
-                both = StringUtil.makeLength(left[i], maxLeft) +
-                    StringUtil.makeLength(commafy.format(costs[i]), maxRight, true);
+                both = StringUtil.makeLength(left[i], maxLeft)
+                        + StringUtil.makeLength(commafy.format(costs[i]),
+                                maxRight, true);
             }
             detail.append(both + "\n");
             totalLineLength = both.length();
         }
-        for (int x = 0; x < totalLineLength; x++) { detail.append("-"); }
-        detail.append("\n" + StringUtil.makeLength("Total Cost:", maxLeft) +
-                      StringUtil.makeLength(commafy.format(cost), maxRight, true));
+        for (int x = 0; x < totalLineLength; x++) {
+            detail.append("-");
+        }
+        detail.append("\n" + StringUtil.makeLength("Total Cost:", maxLeft)
+                + StringUtil.makeLength(commafy.format(cost), maxRight, true));
     }
 
     protected double getActuatorCost() {
@@ -2566,13 +2793,13 @@ public abstract class Mech
         r = new Report(7070, Report.PUBLIC);
         r.add(getKillNumber());
         vDesc.addElement(r);
-        
-        if(isDestroyed()) {
+
+        if (isDestroyed()) {
             Entity killer = game.getEntity(killerId);
-            if(killer == null) {
+            if (killer == null) {
                 killer = game.getOutOfGameEntity(killerId);
             }
-            if(killer != null) {
+            if (killer != null) {
                 r = new Report(7072, Report.PUBLIC);
                 r.addDesc(killer);
             } else {
@@ -2584,21 +2811,22 @@ public abstract class Mech
 
         return vDesc;
     }
-  
+
     /**
      * Add in any piloting skill mods
      */
     public PilotingRollData addEntityBonuses(PilotingRollData roll) {
         // gyro hit?
-        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0) {
-            
-            if ( getGyroType() == Mech.GYRO_HEAVY_DUTY ){
-                if ( getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) == 1 )
+        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+                Mech.LOC_CT) > 0) {
+
+            if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
+                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+                        Mech.LOC_CT) == 1)
                     roll.addModifier(2, "HD Gyro damaged once");
                 else
                     roll.addModifier(3, "HD Gyro damaged twice");
-            }
-            else
+            } else
                 roll.addModifier(3, "Gyro damaged");
         }
 
@@ -2606,23 +2834,30 @@ public abstract class Mech
         if (hasActiveEiCockpit()) {
             roll.addModifier(-1, "Enhanced Imaging");
         }
-        
-//      VDNI bonus?
-        if(getCrew().getOptions().booleanOption("vdni") && !getCrew().getOptions().booleanOption("bvdni")) {
+
+        // VDNI bonus?
+        if (getCrew().getOptions().booleanOption("vdni")
+                && !getCrew().getOptions().booleanOption("bvdni")) {
             roll.addModifier(-1, "VDNI");
         }
-        
+
         // Small/torso-mounted cockpit penalty?
-        if (getCockpitType() == Mech.COCKPIT_SMALL && !getCrew().getOptions().booleanOption("bvdni")) {
+        if (getCockpitType() == Mech.COCKPIT_SMALL
+                && !getCrew().getOptions().booleanOption("bvdni")) {
             roll.addModifier(1, "Small Cockpit");
         } else if (getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             roll.addModifier(1, "Torso-Mounted Cockpit");
-            int sensorHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
-            int sensorHits2 = getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+            int sensorHits = getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
+            int sensorHits2 = getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                    Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if ((sensorHits + sensorHits2) == 3) {
-                roll.addModifier(4, "Sensors Completely Destroyed for Torso-Mounted Cockpit");
+                roll
+                        .addModifier(4,
+                                "Sensors Completely Destroyed for Torso-Mounted Cockpit");
             } else if (sensorHits == 2) {
-                roll.addModifier(4, "Head Sensors Destroyed for Torso-Mounted Cockpit");
+                roll.addModifier(4,
+                        "Head Sensors Destroyed for Torso-Mounted Cockpit");
             }
         }
 
@@ -2632,83 +2867,79 @@ public abstract class Mech
 
         return roll;
     }
-      
+
     public int getMaxElevationChange() {
         return 2;
     }
 
     /**
-     * Determine if this unit has an active stealth system.
-     * <p/>
-     * Sub-classes are encouraged to override this method.
-     *
-     * @return  <code>true</code> if this unit has a stealth system that
-     *          is currently active, <code>false</code> if there is no
-     *          stealth system or if it is inactive.
+     * Determine if this unit has an active stealth system. <p/> Sub-classes are
+     * encouraged to override this method.
+     * 
+     * @return <code>true</code> if this unit has a stealth system that is
+     *         currently active, <code>false</code> if there is no stealth
+     *         system or if it is inactive.
      */
     public boolean isStealthActive() {
         // Try to find a Mek Stealth system.
         for (Mounted mEquip : getMisc()) {
             MiscType mtype = (MiscType) mEquip.getType();
-            if ( Mech.STEALTH.equals(mtype.getInternalName()) ) {
-                if (mEquip.curMode().equals( "On" ) && hasActiveECM()) {
+            if (Mech.STEALTH.equals(mtype.getInternalName())) {
+                if (mEquip.curMode().equals("On") && hasActiveECM()) {
                     // Return true if the mode is "On" and ECM is working
                     return true;
                 }
-            }
-            else if (Mech.NULLSIG.equals(mtype.getInternalName())
-                    && mEquip.curMode().equals( "On" )
-                    && mEquip.isReady()) {
+            } else if (Mech.NULLSIG.equals(mtype.getInternalName())
+                    && mEquip.curMode().equals("On") && mEquip.isReady()) {
                 return true;
             }
         }
 
-        // No Mek Stealth or system inactive.  Return false.
+        // No Mek Stealth or system inactive. Return false.
         return false;
     }
 
     /**
-     * Determine the stealth modifier for firing at this unit from the
-     * given range.  If the value supplied for <code>range</code> is not
-     * one of the <code>Entity</code> class range constants, an
-     * <code>IllegalArgumentException</code> will be thrown.
-     * <p/>
-     * Sub-classes are encouraged to override this method.
-     *
-     * @param   range - an <code>int</code> value that must match one
-     *          of the <code>Compute</code> class range constants.
-     * @param   ae - entity making the attack
-     * @return  a <code>TargetRoll</code> value that contains the stealth
-     *          modifier for the given range.
+     * Determine the stealth modifier for firing at this unit from the given
+     * range. If the value supplied for <code>range</code> is not one of the
+     * <code>Entity</code> class range constants, an
+     * <code>IllegalArgumentException</code> will be thrown. <p/> Sub-classes
+     * are encouraged to override this method.
+     * 
+     * @param range - an <code>int</code> value that must match one of the
+     *            <code>Compute</code> class range constants.
+     * @param ae - entity making the attack
+     * @return a <code>TargetRoll</code> value that contains the stealth
+     *         modifier for the given range.
      */
-    public TargetRoll getStealthModifier( int range, Entity ae ) {
+    public TargetRoll getStealthModifier(int range, Entity ae) {
         TargetRoll result = null;
 
         // Stealth must be active.
-        if ( !isStealthActive() ) {
-            result = new TargetRoll( 0, "stealth not active"  );
-        }
-        else if (ae instanceof Infantry && !(ae instanceof BattleArmor)) {
-            result = new TargetRoll( 0, "infantry ignore stealth"  );
+        if (!isStealthActive()) {
+            result = new TargetRoll(0, "stealth not active");
+        } else if (ae instanceof Infantry && !(ae instanceof BattleArmor)) {
+            result = new TargetRoll(0, "infantry ignore stealth");
         }
 
         // Determine the modifier based upon the range.
         else {
-            switch ( range ) {
-            case RangeType.RANGE_MINIMUM:
-            case RangeType.RANGE_SHORT:
-                result = new TargetRoll( 0, "stealth" );
-                break;
-            case RangeType.RANGE_MEDIUM:
-                result = new TargetRoll( 1, "stealth" );
-                break;
-            case RangeType.RANGE_LONG:
-            case RangeType.RANGE_EXTREME: // TODO : what's the *real* modifier?
-                result = new TargetRoll( 2, "stealth" );
-                break;
-            default:
-                throw new IllegalArgumentException
-                    ( "Unknown range constant: " + range );
+            switch (range) {
+                case RangeType.RANGE_MINIMUM:
+                case RangeType.RANGE_SHORT:
+                    result = new TargetRoll(0, "stealth");
+                    break;
+                case RangeType.RANGE_MEDIUM:
+                    result = new TargetRoll(1, "stealth");
+                    break;
+                case RangeType.RANGE_LONG:
+                case RangeType.RANGE_EXTREME: // TODO : what's the *real*
+                                                // modifier?
+                    result = new TargetRoll(2, "stealth");
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                            "Unknown range constant: " + range);
             }
         }
 
@@ -2719,46 +2950,50 @@ public abstract class Mech
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.
-     *
-     * @return  A <code>boolean</code> that is <code>true</code> if the unit
-     *          can be repaired (given enough time and parts); if this value
-     *          is <code>false</code>, the unit is only a source of spares.
-     * @see     Entity#isSalvage()
+     * 
+     * @return A <code>boolean</code> that is <code>true</code> if the unit
+     *         can be repaired (given enough time and parts); if this value is
+     *         <code>false</code>, the unit is only a source of spares.
+     * @see Entity#isSalvage()
      */
     public boolean isRepairable() {
         // A Mech is repairable if it is salvageable,
         // and its CT internals are not gone.
-        int loc_is = this.getInternal( Mech.LOC_CT );
-        return this.isSalvage() &&
-            (loc_is != IArmorState.ARMOR_DOOMED) && (loc_is != IArmorState.ARMOR_DESTROYED);
+        int loc_is = this.getInternal(Mech.LOC_CT);
+        return this.isSalvage() && (loc_is != IArmorState.ARMOR_DOOMED)
+                && (loc_is != IArmorState.ARMOR_DESTROYED);
     }
 
     public boolean canCharge() {
-        // Mechs can charge, unless they are Clan and the "no clan physicals" option is set
-        return super.canCharge() && !(game.getOptions().booleanOption("no_clan_physical") && isClan());
+        // Mechs can charge, unless they are Clan and the "no clan physicals"
+        // option is set
+        return super.canCharge()
+                && !(game.getOptions().booleanOption("no_clan_physical") && isClan());
     }
 
     public boolean canDFA() {
-        // Mechs can DFA, unless they are Clan and the "no clan physicals" option is set
-        return super.canDFA() && !(game.getOptions().booleanOption("no_clan_physical") && isClan());
+        // Mechs can DFA, unless they are Clan and the "no clan physicals"
+        // option is set
+        return super.canDFA()
+                && !(game.getOptions().booleanOption("no_clan_physical") && isClan());
     }
-    
-    //gives total number of sinks
+
+    // gives total number of sinks
     public int getNumberOfSinks() {
-        int sinks=0;
+        int sinks = 0;
         for (Mounted mounted : getMisc()) {
             if (mounted.isDestroyed() || mounted.isBreached()) {
                 continue;
             }
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                 sinks++;
-            } else if(mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
+            } else if (mounted.getType().hasFlag(MiscType.F_DOUBLE_HEAT_SINK)) {
                 sinks++;
             }
         }
         return sinks;
     }
-    
+
     public boolean hasDoubleHeatSinks() {
         for (Mounted mounted : getMisc()) {
             if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
@@ -2769,27 +3004,29 @@ public abstract class Mech
         }
         return false;
     }
-    
+
     public boolean hasLaserHeatSinks() {
         if (hasLaserHeatSinks == HAS_UNKNOWN) {
             for (Mounted mounted : getMisc()) {
                 if (mounted.getType().hasFlag(MiscType.F_HEAT_SINK)) {
                     hasLaserHeatSinks = HAS_FALSE;
                     break;
-                } else if (mounted.getType().hasFlag(MiscType.F_LASER_HEAT_SINK)) {
+                } else if (mounted.getType()
+                        .hasFlag(MiscType.F_LASER_HEAT_SINK)) {
                     hasLaserHeatSinks = HAS_TRUE;
                     break;
                 }
             }
-            if (hasLaserHeatSinks == HAS_UNKNOWN) hasLaserHeatSinks = HAS_FALSE;
+            if (hasLaserHeatSinks == HAS_UNKNOWN)
+                hasLaserHeatSinks = HAS_FALSE;
         }
         return hasLaserHeatSinks == HAS_TRUE;
     }
-    
+
     public void setActiveSinksNextRound(int sinks) {
-        sinksOnNextRound=sinks;
+        sinksOnNextRound = sinks;
     }
-    
+
     public int getActiveSinks() {
         if (sinksOn < 0) {
             sinksOn = getNumberOfSinks();
@@ -2799,11 +3036,11 @@ public abstract class Mech
     }
 
     public int getActiveSinksNextRound() {
-        if(sinksOnNextRound < 0)
+        if (sinksOnNextRound < 0)
             return getActiveSinks();
         return sinksOnNextRound;
     }
-    
+
     /**
      * @return Returns the autoEject.
      */
@@ -2812,36 +3049,45 @@ public abstract class Mech
             return false;
         return autoEject;
     }
+
     /**
      * @param autoEject The autoEject to set.
      */
     public void setAutoEject(boolean autoEject) {
         this.autoEject = autoEject;
     }
-    
+
     public boolean removePartialCoverHits(int location, int cover, int side) {
-        //left and right cover are from attacker's POV.
-        //if hitting front arc, need to swap them
+        // left and right cover are from attacker's POV.
+        // if hitting front arc, need to swap them
         if (((cover & LosEffects.COVER_UPPER) == LosEffects.COVER_UPPER)
-                && (location==Mech.LOC_CT || location==Mech.LOC_HEAD))
-                return true;
+                && (location == Mech.LOC_CT || location == Mech.LOC_HEAD))
+            return true;
         if (side == ToHitData.SIDE_FRONT) {
-            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && location == Mech.LOC_LLEG)
+            if ((cover & LosEffects.COVER_LOWRIGHT) != 0
+                    && location == Mech.LOC_LLEG)
                 return true;
-            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && location == Mech.LOC_RLEG)
+            if ((cover & LosEffects.COVER_LOWLEFT) != 0
+                    && location == Mech.LOC_RLEG)
                 return true;
-            if ((cover & LosEffects.COVER_RIGHT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LT))
+            if ((cover & LosEffects.COVER_RIGHT) != 0
+                    && (location == Mech.LOC_LARM || location == Mech.LOC_LT))
                 return true;
-            if ((cover & LosEffects.COVER_LEFT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RT))
+            if ((cover & LosEffects.COVER_LEFT) != 0
+                    && (location == Mech.LOC_RARM || location == Mech.LOC_RT))
                 return true;
         } else {
-            if ((cover & LosEffects.COVER_LOWLEFT) != 0 && location == Mech.LOC_LLEG)
+            if ((cover & LosEffects.COVER_LOWLEFT) != 0
+                    && location == Mech.LOC_LLEG)
                 return true;
-            if ((cover & LosEffects.COVER_LOWRIGHT) != 0 && location == Mech.LOC_RLEG)
+            if ((cover & LosEffects.COVER_LOWRIGHT) != 0
+                    && location == Mech.LOC_RLEG)
                 return true;
-            if ((cover & LosEffects.COVER_LEFT) != 0 && (location == Mech.LOC_LARM || location == Mech.LOC_LT))
+            if ((cover & LosEffects.COVER_LEFT) != 0
+                    && (location == Mech.LOC_LARM || location == Mech.LOC_LT))
                 return true;
-            if ((cover & LosEffects.COVER_RIGHT) != 0 && (location == Mech.LOC_RARM || location == Mech.LOC_RT))
+            if ((cover & LosEffects.COVER_RIGHT) != 0
+                    && (location == Mech.LOC_RARM || location == Mech.LOC_RT))
                 return true;
         }
         return false;
@@ -2856,9 +3102,10 @@ public abstract class Mech
     }
 
     public boolean hasActiveEiCockpit() {
-        if(cockpitStatus == COCKPIT_OFF)
+        if (cockpitStatus == COCKPIT_OFF)
             return false;
-        if(getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS, Mech.LOC_HEAD) > 0)
+        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS,
+                Mech.LOC_HEAD) > 0)
             return false;
         return super.hasActiveEiCockpit();
     }
@@ -2873,8 +3120,8 @@ public abstract class Mech
 
     public void setCockpitStatus(int state) {
         cockpitStatusNextRound = state;
-        //on/off allowed only in end phase
-        if(state != COCKPIT_OFF && cockpitStatus != COCKPIT_OFF) {
+        // on/off allowed only in end phase
+        if (state != COCKPIT_OFF && cockpitStatus != COCKPIT_OFF) {
             cockpitStatus = state;
         }
     }
@@ -2904,49 +3151,44 @@ public abstract class Mech
     }
 
     public static String getGyroTypeString(int inGyroType) {
-        if ((inGyroType < 0)
-                || (inGyroType >= GYRO_STRING.length))
+        if ((inGyroType < 0) || (inGyroType >= GYRO_STRING.length))
             return "Unknown";
         return GYRO_STRING[inGyroType];
     }
 
     public static String getGyroTypeShortString(int inGyroType) {
-        if ((inGyroType < 0)
-                || (inGyroType >= GYRO_SHORT_STRING.length))
+        if ((inGyroType < 0) || (inGyroType >= GYRO_SHORT_STRING.length))
             return "Unknown";
         return GYRO_SHORT_STRING[inGyroType];
     }
 
     public static String getCockpitTypeString(int inCockpitType) {
-        if ((inCockpitType < 0)
-                || (inCockpitType >= COCKPIT_STRING.length))
+        if ((inCockpitType < 0) || (inCockpitType >= COCKPIT_STRING.length))
             return "Unknown";
         return COCKPIT_STRING[inCockpitType];
     }
 
     public static int getGyroTypeForString(String inType) {
-        if ((inType == null)
-                || (inType.length() < 1))
+        if ((inType == null) || (inType.length() < 1))
             return GYRO_UNKNOWN;
-        for (int x=0; x<GYRO_STRING.length; x++) {
+        for (int x = 0; x < GYRO_STRING.length; x++) {
             if ((inType.equals(GYRO_STRING[x]))
                     || (inType.equals(GYRO_SHORT_STRING[x])))
                 return x;
         }
         return GYRO_UNKNOWN;
-    }   
+    }
 
     public static int getCockpitTypeForString(String inType) {
-        if ((inType == null)
-                || (inType.length() < 1))
+        if ((inType == null) || (inType.length() < 1))
             return COCKPIT_UNKNOWN;
-        for (int x=0; x<COCKPIT_STRING.length; x++) {
+        for (int x = 0; x < COCKPIT_STRING.length; x++) {
             if ((inType.equals(COCKPIT_STRING[x]))
                     || (inType.equals(COCKPIT_SHORT_STRING[x])))
                 return x;
         }
         return COCKPIT_UNKNOWN;
-    }   
+    }
 
     public String getSystemName(int index) {
         if (index == SYSTEM_GYRO)
@@ -2974,7 +3216,8 @@ public abstract class Mech
             default:
                 inName = "GYRO_UNKNOWN";
         }
-        String result = EquipmentMessages.getString("SystemType.Gyro."+inName);
+        String result = EquipmentMessages
+                .getString("SystemType.Gyro." + inName);
         if (result != null)
             return result;
         return inName;
@@ -3001,7 +3244,8 @@ public abstract class Mech
             default:
                 inName = "GYRO_UNKNOWN";
         }
-        String result = EquipmentMessages.getString("SystemType.Cockpit."+inName);
+        String result = EquipmentMessages.getString("SystemType.Cockpit."
+                + inName);
         if (result != null)
             return result;
         return inName;
@@ -3012,115 +3256,116 @@ public abstract class Mech
     }
 
     public boolean isHexProhibited(IHex hex) {
-        if(hex.containsTerrain(Terrains.IMPASSABLE)) return true;
-        return hex.terrainLevel(Terrains.WOODS) > 2 || hex.terrainLevel(Terrains.JUNGLE) > 2;
+        if (hex.containsTerrain(Terrains.IMPASSABLE))
+            return true;
+        return hex.terrainLevel(Terrains.WOODS) > 2
+                || hex.terrainLevel(Terrains.JUNGLE) > 2;
     }
 
     /**
-     * Get an '.mtf' file representation of the mech.  This string can
-     * be directly written to disk as a file and later loaded by the
-     * MtfFile class.
+     * Get an '.mtf' file representation of the mech. This string can be
+     * directly written to disk as a file and later loaded by the MtfFile class.
      * Known missing level 3 features: mixed tech, laser heatsinks
      */
     public String getMtf() {
         StringBuffer sb = new StringBuffer();
-        String nl = "\r\n";  // DOS friendly
+        String nl = "\r\n"; // DOS friendly
 
-        boolean standard = getCockpitType() == Mech.COCKPIT_STANDARD &&
-            getGyroType() == Mech.GYRO_STANDARD;
+        boolean standard = getCockpitType() == Mech.COCKPIT_STANDARD
+                && getGyroType() == Mech.GYRO_STANDARD;
         if (standard) {
-            sb.append( "Version:1.0" ).append( nl );
+            sb.append("Version:1.0").append(nl);
         } else {
-            sb.append( "Version:1.1" ).append( nl );
+            sb.append("Version:1.1").append(nl);
         }
-        sb.append( chassis ).append( nl );
-        sb.append( model ).append( nl );
-        sb.append( nl );
+        sb.append(chassis).append(nl);
+        sb.append(model).append(nl);
+        sb.append(nl);
 
-        sb.append( "Config:" );
+        sb.append("Config:");
         if (this instanceof BipedMech)
-            sb.append( "Biped" );
+            sb.append("Biped");
         else if (this instanceof QuadMech)
-            sb.append( "Quad" );
-        sb.append( nl );
-        sb.append( "TechBase:" ).append(TechConstants.getTechName(techLevel));
-        sb.append( nl );
-        sb.append( "Era:" ).append( year ).append( nl );
-        sb.append( "Rules Level:" ).append(TechConstants.T_SIMPLE_LEVEL[techLevel] );
-        sb.append( nl );
-        sb.append( nl );
+            sb.append("Quad");
+        sb.append(nl);
+        sb.append("TechBase:").append(TechConstants.getTechName(techLevel));
+        sb.append(nl);
+        sb.append("Era:").append(year).append(nl);
+        sb.append("Rules Level:").append(
+                TechConstants.T_SIMPLE_LEVEL[techLevel]);
+        sb.append(nl);
+        sb.append(nl);
 
         Float tonnage = new Float(weight);
-        sb.append( "Mass:" ).append( tonnage.intValue()).append( nl );
-        sb.append( "Engine:" ).append(getEngine().getEngineName() )
-            .append( " Engine" );
+        sb.append("Mass:").append(tonnage.intValue()).append(nl);
+        sb.append("Engine:").append(getEngine().getEngineName()).append(
+                " Engine");
         sb.append(nl);
-        sb.append( "Structure:" );
-        sb.append( EquipmentType.getStructureTypeName(getStructureType()) );
+        sb.append("Structure:");
+        sb.append(EquipmentType.getStructureTypeName(getStructureType()));
         sb.append(nl);
 
-        sb.append( "Myomer:" );
+        sb.append("Myomer:");
         if (hasTSM())
-            sb.append( "Triple-Strength" );
+            sb.append("Triple-Strength");
         else
-            sb.append( "Standard" );
-        sb.append( nl );
+            sb.append("Standard");
+        sb.append(nl);
 
         if (!standard) {
-            sb.append( "Cockpit:" );
-            sb.append( getCockpitTypeString() );
-            sb.append( nl );
+            sb.append("Cockpit:");
+            sb.append(getCockpitTypeString());
+            sb.append(nl);
 
-            sb.append( "Gyro:" );
-            sb.append( getGyroTypeString() );
-            sb.append( nl );
+            sb.append("Gyro:");
+            sb.append(getGyroTypeString());
+            sb.append(nl);
         }
-        sb.append( nl );
+        sb.append(nl);
 
-        sb.append( "Heat Sinks:" ).append( heatSinks()).append( " " );
+        sb.append("Heat Sinks:").append(heatSinks()).append(" ");
         if (hasDoubleHeatSinks())
-            sb.append( "Double" );
+            sb.append("Double");
         else
-            sb.append( "Single" );
-        sb.append( nl );
-        sb.append( "Walk MP:" ).append( walkMP ).append(nl );
-        sb.append( "Jump MP:" ).append( jumpMP ).append(nl );
-        sb.append( nl );
+            sb.append("Single");
+        sb.append(nl);
+        sb.append("Walk MP:").append(walkMP).append(nl);
+        sb.append("Jump MP:").append(jumpMP).append(nl);
+        sb.append(nl);
 
-        sb.append( "Armor:" )
-            .append( EquipmentType.getArmorTypeName(getArmorType()) );
+        sb.append("Armor:").append(
+                EquipmentType.getArmorTypeName(getArmorType()));
         sb.append(nl);
 
         for (int x = 0; x < MtfFile.locationOrder.length; x++) {
-            sb.append( getLocationAbbr(MtfFile.locationOrder[x]) )
-                .append( " Armor:" );
-            sb.append( getOArmor(MtfFile.locationOrder[x], false) )
-                .append( nl );
+            sb.append(getLocationAbbr(MtfFile.locationOrder[x])).append(
+                    " Armor:");
+            sb.append(getOArmor(MtfFile.locationOrder[x], false)).append(nl);
         }
         for (int x = 0; x < MtfFile.rearLocationOrder.length; x++) {
-            sb.append( "RT" )
-                .append( getLocationAbbr(MtfFile.rearLocationOrder[x]).charAt(0) )
-                .append( " Armor:" );
-            sb.append( getOArmor(MtfFile.rearLocationOrder[x], true) ).append( nl );
+            sb.append("RT").append(
+                    getLocationAbbr(MtfFile.rearLocationOrder[x]).charAt(0))
+                    .append(" Armor:");
+            sb.append(getOArmor(MtfFile.rearLocationOrder[x], true)).append(nl);
         }
-        sb.append( nl );
+        sb.append(nl);
 
-        sb.append( "Weapons:" ).append( weaponList.size() ).append( nl );
+        sb.append("Weapons:").append(weaponList.size()).append(nl);
         for (int i = 0; i < weaponList.size(); i++) {
             Mounted m = weaponList.get(i);
-            sb.append( m.getName() ).append( ", " )
-                .append( getLocationName(m.getLocation()) ).append( nl );
+            sb.append(m.getName()).append(", ").append(
+                    getLocationName(m.getLocation())).append(nl);
         }
-        sb.append( nl );
+        sb.append(nl);
 
         for (int x = 0; x < MtfFile.locationOrder.length; x++) {
             int l = MtfFile.locationOrder[x];
             String locationName = getLocationName(l);
-            sb.append(locationName+":");
-            sb.append( nl );
+            sb.append(locationName + ":");
+            sb.append(nl);
             for (int y = 0; y < 12; y++) {
                 if (y < getNumberOfCriticals(l))
-                    sb.append(decodeCritical(getCritical(l,y))).append(nl);
+                    sb.append(decodeCritical(getCritical(l, y))).append(nl);
                 else
                     sb.append(MtfFile.EMPTY).append(nl);
             }
@@ -3136,10 +3381,10 @@ public abstract class Mech
         int type = cs.getType();
         int index = cs.getIndex();
         if (type == CriticalSlot.TYPE_SYSTEM) {
-            if (systemNames[index].indexOf("Upper") != -1 ||
-                systemNames[index].indexOf("Lower") != -1 ||
-                systemNames[index].indexOf("Hand") != -1 ||
-                systemNames[index].indexOf("Foot") != -1)
+            if (systemNames[index].indexOf("Upper") != -1
+                    || systemNames[index].indexOf("Lower") != -1
+                    || systemNames[index].indexOf("Hand") != -1
+                    || systemNames[index].indexOf("Foot") != -1)
                 return systemNames[index] + " Actuator";
             else if (systemNames[index].indexOf("Engine") != -1)
                 return "Fusion " + systemNames[index];
@@ -3154,77 +3399,94 @@ public abstract class Mech
     }
 
     /**
-     * Add the critical slots necessary for a standard cockpit.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
-     *
+     * Add the critical slots necessary for a standard cockpit. Note: This is
+     * part of the mek creation public API, and might not be referenced by any
+     * MegaMek code.
+     * 
      * @return false if insufficient critical space
      */
     public boolean addCockpit() {
         if (getEmptyCriticals(LOC_HEAD) < 5) {
             return false;
         }
-		addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-		addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-		addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-		addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-		setCockpitType(COCKPIT_STANDARD);
-		return true;
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        setCockpitType(COCKPIT_STANDARD);
+        return true;
     }
 
     /**
-     * Add the critical slots necessary for a small cockpit.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
-     *
+     * Add the critical slots necessary for a small cockpit. Note: This is part
+     * of the mek creation public API, and might not be referenced by any
+     * MegaMek code.
+     * 
      * @return false if insufficient critical space
      */
     public boolean addSmallCockpit() {
         if (getEmptyCriticals(LOC_HEAD) < 4) {
             return false;
         }
-		addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-		addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-		addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-		setCockpitType(COCKPIT_SMALL);
-		return true;
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        setCockpitType(COCKPIT_SMALL);
+        return true;
     }
 
     /**
-     * Dual Cockpits need to be implemented everywhere except here.
-     * FIXME
+     * Dual Cockpits need to be implemented everywhere except here. FIXME
      */
     public boolean addCommandConsole() {
-		addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-		addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-		addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-		setCockpitType(COCKPIT_COMMAND_CONSOLE);
-		return true;
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        setCockpitType(COCKPIT_COMMAND_CONSOLE);
+        return true;
     }
 
     /**
-     * Dual Cockpits need to be implemented everywhere except here.
-     * FIXME
+     * Dual Cockpits need to be implemented everywhere except here. FIXME
      */
     public boolean addDualCockpit() {
-		addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-		addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-		addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-		addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-		setCockpitType(COCKPIT_DUAL);
-		return true;
+        addCritical(LOC_HEAD, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_LIFE_SUPPORT));
+        addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 2, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_COCKPIT));
+        addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_SENSORS));
+        setCockpitType(COCKPIT_DUAL);
+        return true;
     }
 
     /**
-     * Add the critical slots necessary for a torso-mounted cockpit.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
-     *
+     * Add the critical slots necessary for a torso-mounted cockpit. Note: This
+     * is part of the mek creation public API, and might not be referenced by
+     * any MegaMek code.
+     * 
      * @return false if insufficient critical space
      */
     public boolean addTorsoMountedCockpit() {
@@ -3232,25 +3494,29 @@ public abstract class Mech
         if (getEmptyCriticals(LOC_HEAD) < 2) {
             success = false;
         } else {
-            addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-            addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            addCritical(LOC_HEAD, 1, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_SENSORS));
+            addCritical(LOC_HEAD, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_SENSORS));
         }
 
-        if (getEmptyCriticals(LOC_CT) < 2
-            || !success) {
+        if (getEmptyCriticals(LOC_CT) < 2 || !success) {
             success = false;
         } else {
-            addCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
-            addCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
+            addCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_COCKPIT));
+            addCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_SENSORS));
         }
 
-        if (getEmptyCriticals(LOC_LT) < 1
-            || getEmptyCriticals(LOC_RT) < 1
-            || !success) {
+        if (getEmptyCriticals(LOC_LT) < 1 || getEmptyCriticals(LOC_RT) < 1
+                || !success) {
             success = false;
         } else {
-            addCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-            addCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
+            addCritical(LOC_LT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_LIFE_SUPPORT));
+            addCritical(LOC_RT, 0, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_LIFE_SUPPORT));
         }
 
         if (success)
@@ -3259,67 +3525,69 @@ public abstract class Mech
     }
 
     /**
-     * Add the critical slots necessary for a standard gyro.  Also
-     * set the gyro type variable.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
-     *
+     * Add the critical slots necessary for a standard gyro. Also set the gyro
+     * type variable. Note: This is part of the mek creation public API, and
+     * might not be referenced by any MegaMek code.
+     * 
      * @return false if insufficient critical space
      */
     public boolean addGyro() {
         if (getEmptyCriticals(LOC_CT) < 4) {
             return false;
         }
-		addCompactGyro();
-		addCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-		addCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-		setGyroType(GYRO_STANDARD);
-		return true;
+        addCompactGyro();
+        addCritical(LOC_CT, 5, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_GYRO));
+        addCritical(LOC_CT, 6, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_GYRO));
+        setGyroType(GYRO_STANDARD);
+        return true;
     }
 
     /**
-     * Add the critical slots necessary for a compact gyro.  Also
-     * set the gyro type variable.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
-     *
+     * Add the critical slots necessary for a compact gyro. Also set the gyro
+     * type variable. Note: This is part of the mek creation public API, and
+     * might not be referenced by any MegaMek code.
+     * 
      * @return false if insufficient critical space
      */
     public boolean addCompactGyro() {
         if (getEmptyCriticals(LOC_CT) < 2) {
             return false;
         }
-		addCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-		addCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-		setGyroType(GYRO_COMPACT);
-		return true;
+        addCritical(LOC_CT, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_GYRO));
+        addCritical(LOC_CT, 4, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_GYRO));
+        setGyroType(GYRO_COMPACT);
+        return true;
     }
 
     /**
-     * Add the critical slots necessary for an extra-light gyro.  Also
-     * set the gyro type variable.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
-     *
+     * Add the critical slots necessary for an extra-light gyro. Also set the
+     * gyro type variable. Note: This is part of the mek creation public API,
+     * and might not be referenced by any MegaMek code.
+     * 
      * @return false if insufficient critical space
      */
     public boolean addXLGyro() {
         if (getEmptyCriticals(LOC_CT) < 6) {
             return false;
         }
-		addGyro();
-		addCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-		addCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
-		setGyroType(GYRO_XL);
-		return true;
+        addGyro();
+        addCritical(LOC_CT, 10, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_GYRO));
+        addCritical(LOC_CT, 11, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                SYSTEM_GYRO));
+        setGyroType(GYRO_XL);
+        return true;
     }
 
     /**
-     * Add the critical slots necessary for a heavy-duty gyro.  Also
-     * set the gyro type variable.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
-     *
+     * Add the critical slots necessary for a heavy-duty gyro. Also set the gyro
+     * type variable. Note: This is part of the mek creation public API, and
+     * might not be referenced by any MegaMek code.
+     * 
      * @return false if insufficient critical space
      */
     public boolean addHeavyDutyGyro() {
@@ -3327,16 +3595,15 @@ public abstract class Mech
             setGyroType(GYRO_HEAVY_DUTY);
             return true;
         }
-		return false;
+        return false;
     }
 
     /**
-     * Add the critical slots necessary for the mek's engine.  Calling
-     * this method before setting a mek's engine object will result
-     * in a NPE.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
-     *
+     * Add the critical slots necessary for the mek's engine. Calling this
+     * method before setting a mek's engine object will result in a NPE. Note:
+     * This is part of the mek creation public API, and might not be referenced
+     * by any MegaMek code.
+     * 
      * @return false if insufficient critical space
      */
     public boolean addEngineCrits() {
@@ -3347,19 +3614,21 @@ public abstract class Mech
             success = false;
         } else {
             for (int i = 0; i < centerSlots.length; i++) {
-                addCritical(LOC_CT, centerSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+                addCritical(LOC_CT, centerSlots[i], new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
             }
         }
 
         int sideSlots[] = getEngine().getSideTorsoCriticalSlots();
         if (getEmptyCriticals(LOC_LT) < sideSlots.length
-            || getEmptyCriticals(LOC_RT) < sideSlots.length
-            || !success) {
+                || getEmptyCriticals(LOC_RT) < sideSlots.length || !success) {
             success = false;
         } else {
             for (int i = 0; i < sideSlots.length; i++) {
-                addCritical(LOC_LT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
-                addCritical(LOC_RT, sideSlots[i], new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+                addCritical(LOC_LT, sideSlots[i], new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+                addCritical(LOC_RT, sideSlots[i], new CriticalSlot(
+                        CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
             }
         }
 
@@ -3367,163 +3636,175 @@ public abstract class Mech
     }
 
     /**
-     * Remove all engine critical slots from the mek.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
+     * Remove all engine critical slots from the mek. Note: This is part of the
+     * mek creation public API, and might not be referenced by any MegaMek code.
      */
     public void clearEngineCrits() {
         for (int i = 0; i < locations(); i++) {
-            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_ENGINE));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_ENGINE));
         }
     }
 
     /**
-     * Remove all cockpit critical slots from the mek.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
+     * Remove all cockpit critical slots from the mek. Note: This is part of the
+     * mek creation public API, and might not be referenced by any MegaMek code.
      */
     public void clearCockpitCrits() {
         for (int i = 0; i < locations(); i++) {
-            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_LIFE_SUPPORT));
-            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_SENSORS));
-            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_COCKPIT));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_LIFE_SUPPORT));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_SENSORS));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_COCKPIT));
         }
     }
 
     /**
-     * Remove all gyro critical slots from the mek.
-     * Note: This is part of the mek creation public API, and might not
-     * be referenced by any MegaMek code.
+     * Remove all gyro critical slots from the mek. Note: This is part of the
+     * mek creation public API, and might not be referenced by any MegaMek code.
      */
     public void clearGyroCrits() {
         for (int i = 0; i < locations(); i++) {
-            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, SYSTEM_GYRO));
+            removeCriticals(i, new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                    SYSTEM_GYRO));
         }
     }
-    
-    public int shieldAbsorptionDamage(int damage, int location, boolean rear){
+
+    public int shieldAbsorptionDamage(int damage, int location, boolean rear) {
         int damageAbsorption = damage;
-        if ( this.hasActiveShield(location,rear) ){
-            switch(location){
-            case Mech.LOC_CT:
-            case Mech.LOC_HEAD:
-                if ( this.hasActiveShield(Mech.LOC_RARM) )
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM,damageAbsorption);
-                if ( this.hasActiveShield(Mech.LOC_LARM) )
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM,damageAbsorption);
-                break;
-            case Mech.LOC_LARM:
-            case Mech.LOC_LT:
-            case Mech.LOC_LLEG:
-                if ( this.hasActiveShield(Mech.LOC_LARM) )
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM,damageAbsorption);
-                break;
-                default:
-                    if ( this.hasActiveShield(Mech.LOC_RARM) )
-                        damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM,damageAbsorption);
-                break;
-            }
-        }
-
-        if ( this.hasPassiveShield(location,rear) ){
-            switch(location){
-            case Mech.LOC_LARM:
-            case Mech.LOC_LT:
-                if ( this.hasPassiveShield(Mech.LOC_LARM) )
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM,damageAbsorption);
-                break;
-            case Mech.LOC_RARM:
-            case Mech.LOC_RT:
-                if ( this.hasPassiveShield(Mech.LOC_RARM) )
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM,damageAbsorption);
-                break;
-                default:
+        if (this.hasActiveShield(location, rear)) {
+            switch (location) {
+                case Mech.LOC_CT:
+                case Mech.LOC_HEAD:
+                    if (this.hasActiveShield(Mech.LOC_RARM))
+                        damageAbsorption = this.getAbsorptionRate(
+                                Mech.LOC_RARM, damageAbsorption);
+                    if (this.hasActiveShield(Mech.LOC_LARM))
+                        damageAbsorption = this.getAbsorptionRate(
+                                Mech.LOC_LARM, damageAbsorption);
                     break;
-            }
-        }
-        if ( this.hasNoDefenseShield(location) ){
-            switch(location){
-            case Mech.LOC_LARM:
-                if ( this.hasNoDefenseShield(Mech.LOC_LARM) )
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_LARM,damageAbsorption);
-                break;
-            case Mech.LOC_RARM:
-                if ( this.hasNoDefenseShield(Mech.LOC_RARM) )
-                    damageAbsorption = this.getAbsorptionRate(Mech.LOC_RARM,damageAbsorption);
-                break;
+                case Mech.LOC_LARM:
+                case Mech.LOC_LT:
+                case Mech.LOC_LLEG:
+                    if (this.hasActiveShield(Mech.LOC_LARM))
+                        damageAbsorption = this.getAbsorptionRate(
+                                Mech.LOC_LARM, damageAbsorption);
+                    break;
                 default:
+                    if (this.hasActiveShield(Mech.LOC_RARM))
+                        damageAbsorption = this.getAbsorptionRate(
+                                Mech.LOC_RARM, damageAbsorption);
                     break;
             }
         }
 
-        return Math.max(0,damageAbsorption);
+        if (this.hasPassiveShield(location, rear)) {
+            switch (location) {
+                case Mech.LOC_LARM:
+                case Mech.LOC_LT:
+                    if (this.hasPassiveShield(Mech.LOC_LARM))
+                        damageAbsorption = this.getAbsorptionRate(
+                                Mech.LOC_LARM, damageAbsorption);
+                    break;
+                case Mech.LOC_RARM:
+                case Mech.LOC_RT:
+                    if (this.hasPassiveShield(Mech.LOC_RARM))
+                        damageAbsorption = this.getAbsorptionRate(
+                                Mech.LOC_RARM, damageAbsorption);
+                    break;
+                default:
+                    break;
+            }
+        }
+        if (this.hasNoDefenseShield(location)) {
+            switch (location) {
+                case Mech.LOC_LARM:
+                    if (this.hasNoDefenseShield(Mech.LOC_LARM))
+                        damageAbsorption = this.getAbsorptionRate(
+                                Mech.LOC_LARM, damageAbsorption);
+                    break;
+                case Mech.LOC_RARM:
+                    if (this.hasNoDefenseShield(Mech.LOC_RARM))
+                        damageAbsorption = this.getAbsorptionRate(
+                                Mech.LOC_RARM, damageAbsorption);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return Math.max(0, damageAbsorption);
     }
 
-    private int getAbsorptionRate(int location, int damage){ 
+    private int getAbsorptionRate(int location, int damage) {
         int rate = damage;
-        
-        if ( location != Mech.LOC_RARM && location != Mech.LOC_LARM )
+
+        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM)
             return rate;
-        
-        if ( damage <= 0 )
+
+        if (damage <= 0)
             return 0;
-        
+
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = this.getCritical(location,slot);
-            
-            if ( cs == null )
+            CriticalSlot cs = this.getCritical(location, slot);
+
+            if (cs == null)
                 continue;
-            
-            if ( cs.getType() != CriticalSlot.TYPE_EQUIPMENT )
+
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
                 continue;
-            
-            if ( cs.isDamaged() )
+
+            if (cs.isDamaged())
                 continue;
-            
+
             Mounted m = this.getEquipment(cs.getIndex());
-            
+
             EquipmentType type = m.getType();
-            if (type instanceof MiscType && ((MiscType)type).isShield()) {
-                rate -= m.getDamageAbsorption(this,m.getLocation());
+            if (type instanceof MiscType && ((MiscType) type).isShield()) {
+                rate -= m.getDamageAbsorption(this, m.getLocation());
                 m.damageTaken++;
-                return Math.max(0,rate);
+                return Math.max(0, rate);
             }
         }
 
         return rate;
     }
-    
+
     /**
      * Does this mech have an undamaged HarJel system in this location?
+     * 
      * @param loc the <code>int</code> location to check
      * @return a <code>boolean</code> value indicating a present HarJel system
      */
     public boolean hasHarJelIn(int loc) {
-        if (loc == Mech.LOC_HEAD) return false;
-        for (Mounted mounted : getMisc()){
-            if (mounted.getLocation() == loc && mounted.isReady() &&
-                    mounted.getType().hasFlag(MiscType.F_HARJEL)) {
+        if (loc == Mech.LOC_HEAD)
+            return false;
+        for (Mounted mounted : getMisc()) {
+            if (mounted.getLocation() == loc && mounted.isReady()
+                    && mounted.getType().hasFlag(MiscType.F_HARJEL)) {
                 return true;
             }
         }
         return false;
     }
-    
+
     public void setGrappled(int id, boolean attacker) {
         grappled_id = id;
         isGrappleAttacker = attacker;
     }
-    
+
     public boolean isGrappleAttacker() {
         return isGrappleAttacker;
     }
-    
+
     public int getGrappled() {
         return grappled_id;
     }
-    
+
     public boolean isEligibleForMovement() {
-        if(grappled_id != Entity.NONE) {
+        if (grappled_id != Entity.NONE) {
             return false;
         }
         return super.isEligibleForMovement();
@@ -3532,24 +3813,25 @@ public abstract class Mech
     public boolean isNuclearHardened() {
         return true;
     }
-    
+
     public void destroyLocation(int loc) {
         super.destroyLocation(loc);
         // if it's a leg, the entity falls
         if (locationIsLeg(loc)) {
-            game.addPSR(new PilotingRollData(getId(), TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
+            game.addPSR(new PilotingRollData(getId(),
+                    TargetRoll.AUTOMATIC_FAIL, 5, "leg destroyed"));
         }
     }
-    
+
     public boolean hasCASEII(int location) {
-        
-        for ( Mounted mount : this.getEquipment() ) {
-            if ( mount.getLocation() == location
-                    && mount.getType() instanceof MiscType 
-                    && ((MiscType)mount.getType()).hasFlag(MiscType.F_CASEII) )
+
+        for (Mounted mount : this.getEquipment()) {
+            if (mount.getLocation() == location
+                    && mount.getType() instanceof MiscType
+                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_CASEII))
                 return true;
         }
-        
+
         return false;
     }
 }

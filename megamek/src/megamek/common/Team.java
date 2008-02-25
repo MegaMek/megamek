@@ -14,18 +14,16 @@
 
 package megamek.common;
 
-import java.util.*;
-import java.io.*;
-
+import java.io.Serializable;
+import java.util.Enumeration;
+import java.util.Vector;
 
 /**
-   The Team class holds a list of information about a team.  It holds the
-   initative for the team, and contains a list of players on that team.
-
-   It also implements functions that gather the number of units each team has.
-*/
-public final class Team extends TurnOrdered implements Serializable
-{
+ * The Team class holds a list of information about a team. It holds the
+ * initative for the team, and contains a list of players on that team. It also
+ * implements functions that gather the number of units each team has.
+ */
+public final class Team extends TurnOrdered implements Serializable {
     /**
      * 
      */
@@ -58,11 +56,11 @@ public final class Team extends TurnOrdered implements Serializable
      */
     public void clearInitiative() {
         this.getInitiative().clear();
-        TurnOrdered.rollInitiative( players );
+        TurnOrdered.rollInitiative(players);
     }
 
     public TurnVectors determineTeamOrder(IGame game) {
-        return TurnOrdered.generateTurnOrder( players , game);
+        return TurnOrdered.generateTurnOrder(players, game);
     }
 
     public int getId() {
@@ -70,13 +68,13 @@ public final class Team extends TurnOrdered implements Serializable
     }
 
     /**
-     * Return the number of "normal" turns that this item requires.
-     * This is normally the sum of multi-unit turns and the other turns.
-     * A team without any "normal" turns must return it's number of even
-     * turns to produce a fair distribution of moves.
-     *
-     * @return  the <code>int</code> number of "normal" turns this item
-     * should take in a phase.
+     * Return the number of "normal" turns that this item requires. This is
+     * normally the sum of multi-unit turns and the other turns. A team without
+     * any "normal" turns must return it's number of even turns to produce a
+     * fair distribution of moves.
+     * 
+     * @return the <code>int</code> number of "normal" turns this item should
+     *         take in a phase.
      */
     public int getNormalTurns(IGame game) {
         int normal = this.getMultiTurns(game) + this.getOtherTurns();
@@ -88,7 +86,8 @@ public final class Team extends TurnOrdered implements Serializable
     public int getEvenTurns() {
         // Sum the even turns of all Players in this Team.
         int sum = 0;
-        for (Enumeration<Player> loop = players.elements(); loop.hasMoreElements(); ) {
+        for (Enumeration<Player> loop = players.elements(); loop
+                .hasMoreElements();) {
             sum += loop.nextElement().getEvenTurns();
         }
         return sum;
@@ -97,7 +96,8 @@ public final class Team extends TurnOrdered implements Serializable
     public int getOtherTurns() {
         // Sum the other turns of all Players in this Team.
         int sum = 0;
-        for (Enumeration<Player> loop = players.elements(); loop.hasMoreElements(); ) {
+        for (Enumeration<Player> loop = players.elements(); loop
+                .hasMoreElements();) {
             sum += loop.nextElement().getOtherTurns();
         }
         return sum;
@@ -106,16 +106,16 @@ public final class Team extends TurnOrdered implements Serializable
     public int getMultiTurns(IGame game) {
         // Sum the multi turns of all Players in this Team.
         int sum = 0;
-        for (Enumeration<Player> loop = players.elements(); loop.hasMoreElements(); ) {
+        for (Enumeration<Player> loop = players.elements(); loop
+                .hasMoreElements();) {
             sum += loop.nextElement().getMultiTurns(game);
         }
         return sum;
     }
 
     /**
-     * Two teams are equal if their ids and players are equal.
-     * <p/>
-     * Override <code>java.lang.Object#equals(Object)
+     * Two teams are equal if their ids and players are equal. <p/> Override
+     * <code>java.lang.Object#equals(Object)
      */
     public boolean equals(Object object) {
         if (this == object) {
@@ -123,15 +123,14 @@ public final class Team extends TurnOrdered implements Serializable
         } else if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        Team other = (Team)object;
-        if ( other.getId() != this.getId() ||
-             other.getSize() != this.getSize() ) {
+        Team other = (Team) object;
+        if (other.getId() != this.getId() || other.getSize() != this.getSize()) {
             return false;
         }
         Enumeration<Player> thisPlayers = this.getPlayers();
         Enumeration<Player> otherPlayers = other.getPlayers();
-        while ( thisPlayers.hasMoreElements() ) {
-            if ( !thisPlayers.nextElement().equals(otherPlayers.nextElement()) ) {
+        while (thisPlayers.hasMoreElements()) {
+            if (!thisPlayers.nextElement().equals(otherPlayers.nextElement())) {
                 return false;
             }
         }
@@ -140,7 +139,7 @@ public final class Team extends TurnOrdered implements Serializable
     }
 
     public boolean hasTAG(IGame game) {
-       for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements(); ) {
+        for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
             Player m = e.nextElement();
             if (getId() == m.getTeam()) {
                 if (m.hasTAG()) {
@@ -150,26 +149,27 @@ public final class Team extends TurnOrdered implements Serializable
         }
         return false;
     }
-    
-    //cycle through players team and select the best initiative 
-    //take negatives only if the current bonus is zero
+
+    // cycle through players team and select the best initiative
+    // take negatives only if the current bonus is zero
     public int getTotalInitBonus() {
-            
+
         int constantb = 0;
-        //int turnb = 0;
-        
-        for (Enumeration<Player> p = getPlayers(); p.hasMoreElements(); ) {
+        // int turnb = 0;
+
+        for (Enumeration<Player> p = getPlayers(); p.hasMoreElements();) {
             Player player = p.nextElement();
-            if(player.getConstantInitBonus() > constantb && player.getConstantInitBonus() != 0) {
+            if (player.getConstantInitBonus() > constantb
+                    && player.getConstantInitBonus() != 0) {
                 constantb = player.getConstantInitBonus();
             }
-            //also accept it if it is negative and current bonus is zero
-            if(player.getConstantInitBonus() < 0 && constantb == 0) {
+            // also accept it if it is negative and current bonus is zero
+            if (player.getConstantInitBonus() < 0 && constantb == 0) {
                 constantb = player.getConstantInitBonus();
             }
-            
-        }   
+
+        }
         return constantb;
     }
-    
+
 }

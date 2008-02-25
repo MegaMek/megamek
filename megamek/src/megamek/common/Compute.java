@@ -20,7 +20,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
-import megamek.common.Coords;
 import megamek.common.actions.BreakGrappleAttackAction;
 import megamek.common.actions.BrushOffAttackAction;
 import megamek.common.actions.ClubAttackAction;
@@ -53,60 +52,57 @@ public class Compute {
     public static final int ARC_NORTH = 8;
     public static final int ARC_EAST = 9;
     public static final int ARC_WEST = 10;
-    
+
     public static final int TYPE_IS = 0;
     public static final int TYPE_CLAN = 1;
     public static final int TYPE_MD = 2;
-    
+
     public static final int LEVEL_GREEN = 0;
     public static final int LEVEL_REGULAR = 1;
     public static final int LEVEL_VETERAN = 2;
     public static final int LEVEL_ELITE = 3;
-    
+
     public static final int METHOD_TW = 0;
     public static final int METHOD_TAHARQA = 1;
     public static final int METHOD_CONSTANT = 2;
-    
 
     private static final int[][] skillLevels = new int[][] {
-        {7,6,5,4,4,3,2,1,0},
-        {7,7,6,6,5,4,3,2,1}      
-    };
-    
+            { 7, 6, 5, 4, 4, 3, 2, 1, 0 }, { 7, 7, 6, 6, 5, 4, 3, 2, 1 } };
+
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
-    
+
     private static final int[][] clusterHitsTable = new int[][] {
-        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-        { 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 },
-        { 3, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 },
-        { 4, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 },
-        { 5, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5 },
-        { 6, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 6 },
-        { 7, 2, 2, 3, 4, 4, 4, 4, 6, 6, 7, 7 },
-        { 8, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 8 },
-        { 9, 3, 3, 4, 5, 5, 5, 5, 7, 7, 9, 9 },
-        { 10, 3, 3, 4, 6, 6, 6, 6, 8, 8, 10, 10 },
-        { 11, 4, 4, 5, 7, 7, 7, 7, 9, 9, 11, 11 },
-        { 12, 4, 4, 5, 8, 8, 8, 8, 10, 10, 12, 12 },
-        { 13, 4, 4, 5, 8, 8, 8, 8, 11, 11, 13, 13 },
-        { 14, 5, 5, 6, 9, 9, 9, 9, 11, 11, 14, 14 },
-        { 15, 5, 5, 6, 9, 9, 9, 9, 12, 12, 15, 15 },
-        { 16, 5, 5, 7, 10, 10, 10, 10, 13, 13, 16, 16 },
-        { 17, 5, 5, 7, 10, 10, 10, 10, 14, 14, 17, 17 },
-        { 18, 6, 6, 8, 11, 11, 11, 11, 14, 14, 18, 18 },
-        { 19, 6, 6, 8, 11, 11, 11, 11, 15, 15, 19, 19 },
-        { 20, 6, 6, 9, 12, 12, 12, 12, 16, 16, 20, 20 },
-        { 21, 7, 7, 9, 13, 13, 13, 13, 17, 17, 21, 21 },
-        { 22, 7, 7, 9, 14, 14, 14, 14, 18, 18, 22, 22 },
-        { 23, 7, 7, 10, 15, 15, 15, 15, 19, 19, 23, 23 },
-        { 24, 8, 8, 10, 16, 16, 16, 16, 20, 20, 24, 24 },
-        { 25, 8, 8, 10, 16, 16, 16, 16, 21, 21, 25, 25 },
-        { 26, 9, 9, 11, 17, 17, 17, 17, 21, 21, 26, 26 },
-        { 27, 9, 9, 11, 17, 17, 17, 17, 22, 22, 27, 27 },
-        { 28, 9, 9, 11, 17, 17, 17, 17, 23, 23, 28, 28 },
-        { 29, 10, 10, 12, 18, 18, 18, 18, 23, 23, 29, 29},
-        { 30, 10, 10, 12, 18, 18, 18, 18, 24, 24, 30, 30},
-        { 40, 12, 12, 18, 24, 24, 24, 24, 32, 32, 40, 40} };
+            { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+            { 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 },
+            { 3, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 },
+            { 4, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 },
+            { 5, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5 },
+            { 6, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 6 },
+            { 7, 2, 2, 3, 4, 4, 4, 4, 6, 6, 7, 7 },
+            { 8, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 8 },
+            { 9, 3, 3, 4, 5, 5, 5, 5, 7, 7, 9, 9 },
+            { 10, 3, 3, 4, 6, 6, 6, 6, 8, 8, 10, 10 },
+            { 11, 4, 4, 5, 7, 7, 7, 7, 9, 9, 11, 11 },
+            { 12, 4, 4, 5, 8, 8, 8, 8, 10, 10, 12, 12 },
+            { 13, 4, 4, 5, 8, 8, 8, 8, 11, 11, 13, 13 },
+            { 14, 5, 5, 6, 9, 9, 9, 9, 11, 11, 14, 14 },
+            { 15, 5, 5, 6, 9, 9, 9, 9, 12, 12, 15, 15 },
+            { 16, 5, 5, 7, 10, 10, 10, 10, 13, 13, 16, 16 },
+            { 17, 5, 5, 7, 10, 10, 10, 10, 14, 14, 17, 17 },
+            { 18, 6, 6, 8, 11, 11, 11, 11, 14, 14, 18, 18 },
+            { 19, 6, 6, 8, 11, 11, 11, 11, 15, 15, 19, 19 },
+            { 20, 6, 6, 9, 12, 12, 12, 12, 16, 16, 20, 20 },
+            { 21, 7, 7, 9, 13, 13, 13, 13, 17, 17, 21, 21 },
+            { 22, 7, 7, 9, 14, 14, 14, 14, 18, 18, 22, 22 },
+            { 23, 7, 7, 10, 15, 15, 15, 15, 19, 19, 23, 23 },
+            { 24, 8, 8, 10, 16, 16, 16, 16, 20, 20, 24, 24 },
+            { 25, 8, 8, 10, 16, 16, 16, 16, 21, 21, 25, 25 },
+            { 26, 9, 9, 11, 17, 17, 17, 17, 21, 21, 26, 26 },
+            { 27, 9, 9, 11, 17, 17, 17, 17, 22, 22, 27, 27 },
+            { 28, 9, 9, 11, 17, 17, 17, 17, 23, 23, 28, 28 },
+            { 29, 10, 10, 12, 18, 18, 18, 18, 23, 23, 29, 29 },
+            { 30, 10, 10, 12, 18, 18, 18, 18, 24, 24, 30, 30 },
+            { 40, 12, 12, 18, 24, 24, 24, 24, 32, 32, 40, 40 } };
 
     /** Wrapper to random#d6(n) */
     public static int d6(int dice) {
@@ -149,9 +145,8 @@ public class Compute {
 
     /**
      * Returns an entity if the specified entity would cause a stacking
-     * violation entering a hex, or returns null if it would not.
-     * 
-     * The returned entity is the entity causing the violation.
+     * violation entering a hex, or returns null if it would not. The returned
+     * entity is the entity causing the violation.
      */
     public static Entity stackingViolation(IGame game, int enteringId,
             Coords coords) {
@@ -176,7 +171,8 @@ public class Compute {
         int thisHighStackingLevel = thisLowStackingLevel + entering.height();
 
         // Walk through the entities in the given hex.
-        for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
+        for (Enumeration<Entity> i = game.getEntities(coords); i
+                .hasMoreElements();) {
             final Entity inHex = i.nextElement();
 
             int lowStackinglevel = inHex.getElevation();
@@ -204,7 +200,8 @@ public class Compute {
                 // If the entering entity is a mech,
                 // then any other mech in the hex is a violation.
                 // Unless grappled
-                if (isMech && (inHex instanceof Mech) && ((Mech)inHex).getGrappled() != entering.getId()) {
+                if (isMech && (inHex instanceof Mech)
+                        && ((Mech) inHex).getGrappled() != entering.getId()) {
                     return inHex;
                 }
 
@@ -241,15 +238,15 @@ public class Compute {
     public static boolean isEnemyIn(IGame game, Entity entity, Coords coords,
             boolean onlyMechs, boolean ignoreInfantry, int enLowEl) {
         int enHighEl = enLowEl + entity.getHeight();
-        for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
+        for (Enumeration<Entity> i = game.getEntities(coords); i
+                .hasMoreElements();) {
             final Entity inHex = i.nextElement();
             int inHexEnLowEl = inHex.getElevation();
             int inHexEnHighEl = inHexEnLowEl + inHex.getHeight();
             if ((!onlyMechs || inHex instanceof Mech)
                     && !(ignoreInfantry && inHex instanceof Infantry)
-                    && inHex.isEnemyOf(entity)
-                    && !inHex.isMakingDfa() && (enLowEl <= inHexEnHighEl)
-                    && (enHighEl >= inHexEnLowEl)) {
+                    && inHex.isEnemyOf(entity) && !inHex.isMakingDfa()
+                    && (enLowEl <= inHexEnHighEl) && (enHighEl >= inHexEnLowEl)) {
                 return true;
             }
         }
@@ -313,11 +310,11 @@ public class Compute {
                 && !(entity.getElevation() > destHex.surface())
                 && !(entity.getMovementMode() == IEntityMovementMode.HOVER
                         || entity.getMovementMode() == IEntityMovementMode.NAVAL
-                        || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL 
+                        || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL
                         || entity.getMovementMode() == IEntityMovementMode.SUBMARINE
                         || entity.getMovementMode() == IEntityMovementMode.INF_UMU
-                        || entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM
-                        || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM)
+                        || entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM || entity
+                        .getMovementMode() == IEntityMovementMode.QUAD_SWIM)
                 && destHex.terrainLevel(Terrains.WATER) > 0 && !isPavementStep) {
             return true;
         }
@@ -331,8 +328,8 @@ public class Compute {
          * srcHex.contains(Terrain.PAVEMENT) || srcHex.contains(Terrain.ROAD) ||
          * srcHex.contains(Terrain.BRIDGE) )
          */
-        if (((prevStepIsOnPavement && movementType == IEntityMovementType.MOVE_RUN) 
-                || (srcHex.containsTerrain(Terrains.ICE)) 
+        if (((prevStepIsOnPavement && movementType == IEntityMovementType.MOVE_RUN) || (srcHex
+                .containsTerrain(Terrains.ICE))
                 && movementType != IEntityMovementType.MOVE_JUMP)
                 && entity.getMovementMode() != IEntityMovementMode.HOVER
                 && entity.getMovementMode() != IEntityMovementMode.WIGE
@@ -390,7 +387,7 @@ public class Compute {
             if (game.getOptions().booleanOption("push_off_board")) {
                 return true;
             }
-			return false;
+            return false;
         }
 
         // can't be displaced into prohibited terrain
@@ -529,22 +526,26 @@ public class Compute {
         Entity spotter = null;
         int taggedBy = -1;
         if (target instanceof Entity) {
-            taggedBy = ((Entity)target).getTaggedBy();
+            taggedBy = ((Entity) target).getTaggedBy();
         }
         ToHitData bestMods = new ToHitData(TargetRoll.IMPOSSIBLE, "");
 
-        for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+        for (java.util.Enumeration<Entity> i = game.getEntities(); i
+                .hasMoreElements();) {
             Entity other = i.nextElement();
-            if ( ((other.isSpotting() && other.getSpotTargetId() == target.getTargetId()) || taggedBy == other.getId() )
-                 && !attacker.isEnemyOf(other)) {
+            if (((other.isSpotting() && other.getSpotTargetId() == target
+                    .getTargetId()) || taggedBy == other.getId())
+                    && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
                 LosEffects los = LosEffects.calculateLos(game, other.getId(),
-                                                         target);
+                        target);
                 ToHitData mods = los.losModifiers(game);
                 los.setTargetCover(LosEffects.COVER_NONE);
                 mods.append(getAttackerMovementModifier(game, other.getId()));
                 if (other.isAttackingThisTurn())
-                	mods.addModifier(1, "spotter is making an attack this turn");
+                    mods
+                            .addModifier(1,
+                                    "spotter is making an attack this turn");
                 // is this guy a better spotter?
                 if (spotter == null || mods.getValue() < bestMods.getValue()) {
                     spotter = other;
@@ -557,15 +558,15 @@ public class Compute {
     }
 
     public static ToHitData getImmobileMod(Targetable target) {
-        return getImmobileMod(target, Entity.LOC_NONE, IAimingModes.AIM_MODE_NONE);
+        return getImmobileMod(target, Entity.LOC_NONE,
+                IAimingModes.AIM_MODE_NONE);
     }
 
     public static ToHitData getImmobileMod(Targetable target, int aimingAt,
             int aimingMode) {
         if (target.isImmobile()) {
-            if (target instanceof Mech &&
-                aimingAt == Mech.LOC_HEAD &&
-                aimingMode == IAimingModes.AIM_MODE_IMMOBILE) {
+            if (target instanceof Mech && aimingAt == Mech.LOC_HEAD
+                    && aimingMode == IAimingModes.AIM_MODE_IMMOBILE) {
                 return new ToHitData(3, "aiming at head");
             }
             return new ToHitData(-4, "target immobile");
@@ -590,8 +591,8 @@ public class Compute {
         boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM)
                 || (wtype.getAmmoType() == AmmoType.T_MML)
                 || (wtype.getAmmoType() == AmmoType.T_EXLRM)
-                || (wtype.getAmmoType() == AmmoType.T_TBOLT)
-                || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO))
+                || (wtype.getAmmoType() == AmmoType.T_TBOLT) || (wtype
+                .getAmmoType() == AmmoType.T_LRM_TORPEDO))
                 && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption(
                 "maxtech_range");
@@ -612,12 +613,12 @@ public class Compute {
         }
         if (wtype.getAmmoType() == AmmoType.T_MML) {
             AmmoType atype = (AmmoType) weapon.getLinked().getType();
-            if ( atype.hasFlag(AmmoType.F_MML_LRM) 
-                    || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO ) {
-                wtype.setRanges( 7, 14, 21, 28 );
+            if (atype.hasFlag(AmmoType.F_MML_LRM)
+                    || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO) {
+                wtype.setRanges(7, 14, 21, 28);
                 wtype.setMinimumRange(6);
             } else {
-                wtype.setRanges( 3, 6, 9, 12 );
+                wtype.setRanges(3, 6, 9, 12);
                 wtype.setMinimumRange(0);
             }
             weaponRanges = wtype.getRanges();
@@ -628,17 +629,18 @@ public class Compute {
         //
         if (wtype.hasFlag(WeaponType.F_PPC)) {
             if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")) {
-                if (weapon.curMode() != null && weapon.curMode().equals("Field Inhibitor OFF")) {
+                if (weapon.curMode() != null
+                        && weapon.curMode().equals("Field Inhibitor OFF")) {
                     weaponRanges[RangeType.RANGE_MINIMUM] = 0;
                 }
             }
         }
-        
-        //Hotloaded weapons
-        if ( weapon.isHotLoaded() 
-                && game.getOptions().booleanOption("maxtech_hotload") )
+
+        // Hotloaded weapons
+        if (weapon.isHotLoaded()
+                && game.getOptions().booleanOption("maxtech_hotload"))
             weaponRanges[RangeType.RANGE_MINIMUM] = 0;
-        
+
         // is water involved?
         IHex targHex = game.getBoard().getHex(target.getPosition());
         int targTop = 0;
@@ -669,14 +671,14 @@ public class Compute {
         }
         // allow naval units to target underwater units,
         // torpedo tubes are mounted underwater
-        if ((targetUnderwater || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO
-                || wtype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
+        if ((targetUnderwater || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO || wtype
+                .getAmmoType() == AmmoType.T_SRM_TORPEDO)
                 && UnitType.determineUnitTypeCode(ae) == UnitType.NAVAL) {
             weaponUnderwater = true;
             weaponRanges = wtype.getWRanges();
         }
         // allow ice to be cleared from below
-        if(targHex.containsTerrain(Terrains.WATER)
+        if (targHex.containsTerrain(Terrains.WATER)
                 && target.getTargetType() == Targetable.TYPE_HEX_CLEAR) {
             targetInPartialWater = true;
         }
@@ -684,20 +686,19 @@ public class Compute {
         if (weaponUnderwater) {
             weaponRanges = wtype.getWRanges();
             boolean MPM = false;
-            if(wtype.getAmmoType() == AmmoType.T_SRM
+            if (wtype.getAmmoType() == AmmoType.T_SRM
                     || wtype.getAmmoType() == AmmoType.T_MRM
                     || wtype.getAmmoType() == AmmoType.T_LRM
                     || wtype.getAmmoType() == AmmoType.T_MML) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
-                if(atype.getMunitionType() == AmmoType.M_TORPEDO) {
+                if (atype.getMunitionType() == AmmoType.M_TORPEDO) {
                     weaponRanges = wtype.getRanges();
-                }
-                else if(atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) {
+                } else if (atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE) {
                     weaponRanges = wtype.getRanges();
                     MPM = true;
                 }
             }
-            
+
             // HACK on ranges: for those without underwater range,
             // long == medium; iteration in rangeBracket() allows this
             if (weaponRanges[RangeType.RANGE_SHORT] == 0) {
@@ -738,8 +739,10 @@ public class Compute {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
                     "Target out of range");
         }
-        if (distance == 0 && !isAttackerInfantry
-                && !(ae instanceof Mech && target != null && ((Mech)ae).getGrappled() == target.getTargetId())) {
+        if (distance == 0
+                && !isAttackerInfantry
+                && !(ae instanceof Mech && target != null && ((Mech) ae)
+                        .getGrappled() == target.getTargetId())) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL,
                     "Only infantry shoot at zero range");
         }
@@ -809,7 +812,8 @@ public class Compute {
             }
         } else {
             // report c3 adjustment
-            if (c3range == RangeType.RANGE_SHORT || range == RangeType.RANGE_MINIMUM) {
+            if (c3range == RangeType.RANGE_SHORT
+                    || range == RangeType.RANGE_MINIMUM) {
                 mods.addModifier(ae.getShortRangeModifier(),
                         "short range due to C3 spotter" + targSysType);
             } else if (c3range == RangeType.RANGE_MEDIUM) {
@@ -832,7 +836,7 @@ public class Compute {
             } else if (wtype.getAmmoType() == AmmoType.T_SRM
                     || wtype.getAmmoType() == AmmoType.T_LRM) {
                 mods.addModifier(-1, "infantry missile assault");
-            } else  {
+            } else {
                 mods.addModifier(-2, "infantry assault");
             }
         }
@@ -846,9 +850,11 @@ public class Compute {
 
         // add any target stealth modifier
         if (target instanceof Entity) {
-            TargetRoll tmpTR = ((Entity)target).getStealthModifier(usingRange, ae);
+            TargetRoll tmpTR = ((Entity) target).getStealthModifier(usingRange,
+                    ae);
             if (tmpTR.getValue() != 0)
-                mods.append(((Entity)target).getStealthModifier(usingRange, ae));
+                mods.append(((Entity) target)
+                        .getStealthModifier(usingRange, ae));
         }
 
         return mods;
@@ -891,7 +897,8 @@ public class Compute {
         Entity c3spotter = attacker;
         int c3range = attacker.getPosition().distance(target.getPosition());
 
-        for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+        for (java.util.Enumeration<Entity> i = game.getEntities(); i
+                .hasMoreElements();) {
             Entity friend = i.nextElement();
 
             // TODO : can units being transported be used for C3 spotting?
@@ -1022,8 +1029,9 @@ public class Compute {
     private static boolean isFiringFromArmAlready(IGame game, int weaponId,
             final Entity attacker, int armLoc) {
         int torsoLoc = Mech.getInnerLocation(armLoc);
-        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
-        	EntityAction ea = i.nextElement();
+        for (Enumeration<EntityAction> i = game.getActions(); i
+                .hasMoreElements();) {
+            EntityAction ea = i.nextElement();
             if (!(ea instanceof WeaponAttackAction)) {
                 continue;
             }
@@ -1033,13 +1041,12 @@ public class Compute {
                     && prevAttack.getWeaponId() == weaponId) {
                 break;
             }
-            if ( (prevAttack.getEntityId() == attacker.getId()
-                    && attacker.getEquipment(prevAttack.getWeaponId())
-                            .getLocation() == armLoc) ||
-                 (prevAttack.getEntityId() == attacker.getId()
-                    && attacker.getEquipment(prevAttack.getWeaponId())
-                            .getLocation() == torsoLoc
-                    && attacker.getEquipment(prevAttack.getWeaponId()).isSplit())) {
+            if ((prevAttack.getEntityId() == attacker.getId() && attacker
+                    .getEquipment(prevAttack.getWeaponId()).getLocation() == armLoc)
+                    || (prevAttack.getEntityId() == attacker.getId()
+                            && attacker.getEquipment(prevAttack.getWeaponId())
+                                    .getLocation() == torsoLoc && attacker
+                            .getEquipment(prevAttack.getWeaponId()).isSplit())) {
                 return true;
             }
         }
@@ -1131,9 +1138,9 @@ public class Compute {
         int sensorHits = attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                 Mech.SYSTEM_SENSORS, Mech.LOC_HEAD);
         if ((attacker instanceof Mech)
-                && ((Mech)attacker).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
+                && ((Mech) attacker).getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED) {
             sensorHits += attacker.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                Mech.SYSTEM_SENSORS, Mech.LOC_CT);
+                    Mech.SYSTEM_SENSORS, Mech.LOC_CT);
             if (sensorHits > 1) {
                 mods.addModifier(4, "attacker sensors badly damaged");
             } else if (sensorHits > 0) {
@@ -1164,7 +1171,8 @@ public class Compute {
                 .getSecondaryFacing(), target.getPosition(), ARC_FORWARD);
 
         int primaryTarget = Entity.NONE;
-        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
+        for (Enumeration<EntityAction> i = game.getActions(); i
+                .hasMoreElements();) {
             Object o = i.nextElement();
             if (!(o instanceof WeaponAttackAction)) {
                 continue;
@@ -1222,7 +1230,7 @@ public class Compute {
         if (curInFrontArc) {
             return new ToHitData(1, "secondary target modifier");
         }
-		return new ToHitData(2, "secondary target modifier");
+        return new ToHitData(2, "secondary target modifier");
     }
 
     /**
@@ -1254,8 +1262,8 @@ public class Compute {
             return toHit;
         }
 
-        if ( entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM 
-                || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM )
+        if (entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM
+                || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM)
             return toHit;
 
         if (movement == IEntityMovementType.MOVE_WALK
@@ -1287,9 +1295,9 @@ public class Compute {
     public static ToHitData getSpotterMovementModifier(IGame game,
             int entityId, int movement) {
         ToHitData toHit = new ToHitData();
-        
+
         Entity e = game.getEntity(entityId);
-        if(e != null && e instanceof Infantry) {
+        if (e != null && e instanceof Infantry) {
             return toHit;
         }
 
@@ -1315,11 +1323,13 @@ public class Compute {
 
         if (attacker.getCrew().getOptions().booleanOption("melee_specialist")
                 && attacker instanceof Mech
-                && getAttackerMovementModifier(game, attacker.getId()).getValue() > 0) {
+                && getAttackerMovementModifier(game, attacker.getId())
+                        .getValue() > 0) {
             toHit.addModifier(-1, "melee specialist");
         }
 
-        if (attacker.getCrew().getOptions().booleanOption("clan_pilot_training")) {
+        if (attacker.getCrew().getOptions()
+                .booleanOption("clan_pilot_training")) {
             toHit.addModifier(1, "clan pilot training");
         }
 
@@ -1368,9 +1378,9 @@ public class Compute {
             toHit.addModifier(2, "target moved 5-6 hexes");
         } else if (distance >= 7 && distance <= 9) {
             toHit.addModifier(3, "target moved 7-9 hexes");
-        } else if (distance >= 10 && distance <=17) {
+        } else if (distance >= 10 && distance <= 17) {
             toHit.addModifier(4, "target moved 10-17 hexes");
-        } else if (distance >= 18 && distance <=24) {
+        } else if (distance >= 18 && distance <= 24) {
             toHit.addModifier(5, "target moved 18-24 hexes");
         } else if (distance >= 25) {
             toHit.addModifier(6, "target moved 25+ hexes");
@@ -1390,8 +1400,10 @@ public class Compute {
      * Modifier to attacks due to attacker terrain
      */
     public static ToHitData getAttackerTerrainModifier(IGame game, int entityId) {
-        /*final Entity attacker = game.getEntity(entityId);
-        final IHex hex = game.getBoard().getHex(attacker.getPosition());*/
+        /*
+         * final Entity attacker = game.getEntity(entityId); final IHex hex =
+         * game.getBoard().getHex(attacker.getPosition());
+         */
         ToHitData toHit = new ToHitData();
 
         return toHit;
@@ -1404,6 +1416,7 @@ public class Compute {
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t) {
         return getTargetTerrainModifier(game, t, 0);
     }
+
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t,
             int eistatus) {
         Entity entityTarget = null;
@@ -1418,19 +1431,20 @@ public class Compute {
             }
         }
 
-        boolean isVTOL = ((entityTarget != null) && (hex != null)) && (entityTarget.absHeight() >= 2);
-        
+        boolean isVTOL = ((entityTarget != null) && (hex != null))
+                && (entityTarget.absHeight() >= 2);
+
         ToHitData toHit = new ToHitData();
 
         // Smoke and woods. With L3, the effects STACK.
         int woodsLevel = hex.terrainLevel(Terrains.WOODS);
         int jungleLevel = hex.terrainLevel(Terrains.JUNGLE);
         String woodsText = "woods";
-        if(woodsLevel < jungleLevel) {
+        if (woodsLevel < jungleLevel) {
             woodsLevel = jungleLevel;
             woodsText = "jungle";
         }
-        if(woodsLevel == 1) {
+        if (woodsLevel == 1) {
             woodsText = "target in light " + woodsText;
         } else if (woodsLevel == 2) {
             woodsText = "target in heavy " + woodsText;
@@ -1449,14 +1463,14 @@ public class Compute {
                     toHit.addModifier(1, "target in erupting geyser");
                 } else {
                     toHit.addModifier(2, "target in erupting geyser");
-                }                
+                }
             } else {
                 if (!isVTOL
                         && !(t.getTargetType() == Targetable.TYPE_HEX_CLEAR
                                 || t.getTargetType() == Targetable.TYPE_HEX_IGNITE
                                 || t.getTargetType() == Targetable.TYPE_HEX_BOMB
-                                || t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY
-                                || t.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
+                                || t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY || t
+                                .getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
                     if (woodsLevel == 1 && eistatus != 2) {
                         toHit.addModifier(1, woodsText);
                     } else if (woodsLevel > 1) {
@@ -1489,8 +1503,8 @@ public class Compute {
                     && !(t.getTargetType() == Targetable.TYPE_HEX_CLEAR
                             || t.getTargetType() == Targetable.TYPE_HEX_IGNITE
                             || t.getTargetType() == Targetable.TYPE_HEX_BOMB
-                            || t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY
-                            || t.getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
+                            || t.getTargetType() == Targetable.TYPE_HEX_ARTILLERY || t
+                            .getTargetType() == Targetable.TYPE_MINEFIELD_DELIVER)) {
                 if (woodsLevel == 1 && eistatus != 2) {
                     toHit.addModifier(1, woodsText);
                 } else if (woodsLevel > 1) {
@@ -1513,7 +1527,7 @@ public class Compute {
             // flag for vtols and such
             return toHit;
         }
-        
+
         if (entityTarget.isStuck()) {
             toHit.addModifier(-2, "target stuck in swamp");
         }
@@ -1543,52 +1557,54 @@ public class Compute {
     private static float[] expectedHitsByRackSize = { 0.0f, 1.0f, 1.58f, 2.0f,
             2.63f, 3.17f, 4.0f, 4.49f, 4.98f, 5.47f, 6.31f, 7.23f, 8.14f,
             8.59f, 9.04f, 9.5f, 10.1f, 10.8f, 11.42f, 12.1f, 12.7f };
+
     /*
-    | No Modifier        | +2 (Artemis, Narc) | -2 (HAG, AMS v Art)|  -4 (AMS)          |
-    |          Avg       |          Avg       |          Avg       |          Avg       |  
-    |         Hits   Pct |         Hits   Pct |         Hits   Pct |         Hits   Pct |  
-    |   Avg    Per   vs  |   Avg    Per   vs  |   Avg    Per   vs  |   Avg    Per   vs  |  
-Size|  Hits   Size   Avg |  Hits   Size   Avg |  Hits   Size   Avg |  Hits   Size   Avg |  
-----+--------------------+--------------------+--------------------+--------------------+
- 2  |  1.42  0.708   9.1 |  1.72  0.861  10.3 |  1.17  0.583  10.7 |  1.03  0.514  21.9 |
- 3  |  2.00  0.667   2.7 |  2.39  0.796   2.0 |  1.61  0.537   2.0 |  1.28  0.426   1.0 |
- 4  |  2.64  0.660   1.6 |  3.11  0.778  -0.4 |  2.11  0.528   0.2 |  1.67  0.417  -1.2 |
- 5  |  3.17  0.633  -2.5 |  3.83  0.767  -1.8 |  2.50  0.500  -5.1 |  1.86  0.372 -11.7 |
- 6  |  4.00  0.667   2.7 |  4.78  0.796   2.0 |  3.22  0.537   2.0 |  2.58  0.431   2.1 |
- 7  |  4.39  0.627  -3.4 |  5.42  0.774  -0.9 |  3.47  0.496  -5.8 |  2.69  0.385  -8.7 |
- 8  |  5.08  0.635  -2.1 |  6.06  0.757  -3.0 |  4.22  0.528   0.2 |  3.58  0.448   6.2 |
- 9  |  5.47  0.608  -6.4 |  6.69  0.744  -4.7 |  4.47  0.497  -5.7 |  3.69  0.410  -2.7 |
-10  |  6.31  0.631  -2.9 |  7.67  0.767  -1.8 |  5.06  0.506  -4.0 |  3.97  0.397  -5.8 |
-11  |  7.31  0.664   2.3 |  8.67  0.788   0.9 |  6.06  0.551   4.5 |  4.97  0.452   7.2 |
-12  |  8.14  0.678   4.5 |  9.64  0.803   2.9 |  6.64  0.553   5.0 |  5.25  0.438   3.7 |
-13  |  8.42  0.647  -0.3 | 10.22  0.786   0.7 |  6.72  0.517  -1.8 |  5.25  0.404  -4.2 |
-14  |  9.22  0.659   1.5 | 10.92  0.780  -0.1 |  7.64  0.546   3.6 |  6.25  0.446   5.9 |
-15  |  9.50  0.633  -2.5 | 11.50  0.767  -1.8 |  7.72  0.515  -2.3 |  6.25  0.417  -1.2 |
-16  | 10.42  0.651   0.3 | 12.50  0.781   0.1 |  8.44  0.528   0.2 |  6.67  0.417  -1.2 |
-17  | 10.69  0.629  -3.1 | 13.08  0.770  -1.4 |  8.53  0.502  -4.8 |  6.67  0.392  -7.0 |
-18  | 11.50  0.639  -1.6 | 13.78  0.765  -1.9 |  9.44  0.525  -0.4 |  7.67  0.426   1.0 |
-19  | 11.78  0.620  -4.5 | 14.36  0.756  -3.2 |  9.53  0.501  -4.8 |  7.67  0.404  -4.3 |
-20  | 12.69  0.635  -2.2 | 15.36  0.768  -1.6 | 10.25  0.512  -2.7 |  8.08  0.404  -4.2 |
-21  | 13.61  0.648  -0.2 | 16.33  0.778  -0.4 | 11.11  0.529   0.4 |  8.94  0.426   1.0 |
-22  | 14.44  0.657   1.1 | 17.31  0.787   0.8 | 11.69  0.532   0.9 |  9.22  0.419  -0.6 |
-23  | 15.36  0.668   2.9 | 18.31  0.796   2.0 | 12.42  0.540   2.5 |  9.64  0.419  -0.6 |
-24  | 16.28  0.678   4.5 | 19.28  0.803   2.9 | 13.28  0.553   5.0 | 10.50  0.438   3.7 |
-25  | 16.56  0.662   2.0 | 19.86  0.794   1.8 | 13.36  0.534   1.5 | 10.50  0.420  -0.4 |
-26  | 17.36  0.668   2.8 | 20.56  0.791   1.3 | 14.28  0.549   4.2 | 11.50  0.442   4.9 |
-27  | 17.64  0.653   0.6 | 21.14  0.783   0.3 | 14.36  0.532   1.0 | 11.50  0.426   1.0 |
-28  | 17.92  0.640  -1.4 | 21.72  0.776  -0.6 | 14.44  0.516  -2.1 | 11.50  0.411  -2.6 |
-29  | 18.72  0.646  -0.6 | 22.42  0.773  -1.0 | 15.36  0.530   0.6 | 12.50  0.431   2.2 |
-30  | 19.00  0.633  -2.5 | 23.00  0.767  -1.8 | 15.44  0.515  -2.3 | 12.50  0.417  -1.2 |
-40  | 25.39  0.635  -2.2 | 30.72  0.768  -1.6 | 20.50  0.512  -2.7 | 16.17  0.404  -4.2 |
-             -----                -----                -----                -----           
-Average:     0.649                0.781                0.527                0.422           
-                                  1.202                0.811                0.649           */
+     * | No Modifier | +2 (Artemis, Narc) | -2 (HAG, AMS v Art)| -4 (AMS) | |
+     * Avg | Avg | Avg | Avg | | Hits Pct | Hits Pct | Hits Pct | Hits Pct | |
+     * Avg Per vs | Avg Per vs | Avg Per vs | Avg Per vs | Size| Hits Size Avg |
+     * Hits Size Avg | Hits Size Avg | Hits Size Avg |
+     * ----+--------------------+--------------------+--------------------+--------------------+
+     * 2 | 1.42 0.708 9.1 | 1.72 0.861 10.3 | 1.17 0.583 10.7 | 1.03 0.514 21.9 |
+     * 3 | 2.00 0.667 2.7 | 2.39 0.796 2.0 | 1.61 0.537 2.0 | 1.28 0.426 1.0 | 4 |
+     * 2.64 0.660 1.6 | 3.11 0.778 -0.4 | 2.11 0.528 0.2 | 1.67 0.417 -1.2 | 5 |
+     * 3.17 0.633 -2.5 | 3.83 0.767 -1.8 | 2.50 0.500 -5.1 | 1.86 0.372 -11.7 |
+     * 6 | 4.00 0.667 2.7 | 4.78 0.796 2.0 | 3.22 0.537 2.0 | 2.58 0.431 2.1 | 7 |
+     * 4.39 0.627 -3.4 | 5.42 0.774 -0.9 | 3.47 0.496 -5.8 | 2.69 0.385 -8.7 | 8 |
+     * 5.08 0.635 -2.1 | 6.06 0.757 -3.0 | 4.22 0.528 0.2 | 3.58 0.448 6.2 | 9 |
+     * 5.47 0.608 -6.4 | 6.69 0.744 -4.7 | 4.47 0.497 -5.7 | 3.69 0.410 -2.7 |
+     * 10 | 6.31 0.631 -2.9 | 7.67 0.767 -1.8 | 5.06 0.506 -4.0 | 3.97 0.397
+     * -5.8 | 11 | 7.31 0.664 2.3 | 8.67 0.788 0.9 | 6.06 0.551 4.5 | 4.97 0.452
+     * 7.2 | 12 | 8.14 0.678 4.5 | 9.64 0.803 2.9 | 6.64 0.553 5.0 | 5.25 0.438
+     * 3.7 | 13 | 8.42 0.647 -0.3 | 10.22 0.786 0.7 | 6.72 0.517 -1.8 | 5.25
+     * 0.404 -4.2 | 14 | 9.22 0.659 1.5 | 10.92 0.780 -0.1 | 7.64 0.546 3.6 |
+     * 6.25 0.446 5.9 | 15 | 9.50 0.633 -2.5 | 11.50 0.767 -1.8 | 7.72 0.515
+     * -2.3 | 6.25 0.417 -1.2 | 16 | 10.42 0.651 0.3 | 12.50 0.781 0.1 | 8.44
+     * 0.528 0.2 | 6.67 0.417 -1.2 | 17 | 10.69 0.629 -3.1 | 13.08 0.770 -1.4 |
+     * 8.53 0.502 -4.8 | 6.67 0.392 -7.0 | 18 | 11.50 0.639 -1.6 | 13.78 0.765
+     * -1.9 | 9.44 0.525 -0.4 | 7.67 0.426 1.0 | 19 | 11.78 0.620 -4.5 | 14.36
+     * 0.756 -3.2 | 9.53 0.501 -4.8 | 7.67 0.404 -4.3 | 20 | 12.69 0.635 -2.2 |
+     * 15.36 0.768 -1.6 | 10.25 0.512 -2.7 | 8.08 0.404 -4.2 | 21 | 13.61 0.648
+     * -0.2 | 16.33 0.778 -0.4 | 11.11 0.529 0.4 | 8.94 0.426 1.0 | 22 | 14.44
+     * 0.657 1.1 | 17.31 0.787 0.8 | 11.69 0.532 0.9 | 9.22 0.419 -0.6 | 23 |
+     * 15.36 0.668 2.9 | 18.31 0.796 2.0 | 12.42 0.540 2.5 | 9.64 0.419 -0.6 |
+     * 24 | 16.28 0.678 4.5 | 19.28 0.803 2.9 | 13.28 0.553 5.0 | 10.50 0.438
+     * 3.7 | 25 | 16.56 0.662 2.0 | 19.86 0.794 1.8 | 13.36 0.534 1.5 | 10.50
+     * 0.420 -0.4 | 26 | 17.36 0.668 2.8 | 20.56 0.791 1.3 | 14.28 0.549 4.2 |
+     * 11.50 0.442 4.9 | 27 | 17.64 0.653 0.6 | 21.14 0.783 0.3 | 14.36 0.532
+     * 1.0 | 11.50 0.426 1.0 | 28 | 17.92 0.640 -1.4 | 21.72 0.776 -0.6 | 14.44
+     * 0.516 -2.1 | 11.50 0.411 -2.6 | 29 | 18.72 0.646 -0.6 | 22.42 0.773 -1.0 |
+     * 15.36 0.530 0.6 | 12.50 0.431 2.2 | 30 | 19.00 0.633 -2.5 | 23.00 0.767
+     * -1.8 | 15.44 0.515 -2.3 | 12.50 0.417 -1.2 | 40 | 25.39 0.635 -2.2 |
+     * 30.72 0.768 -1.6 | 20.50 0.512 -2.7 | 16.17 0.404 -4.2 | ----- -----
+     * ----- ----- Average: 0.649 0.781 0.527 0.422 1.202 0.811 0.649
+     */
 
     /**
      * Determines the expected damage of a weapon attack, based on to-hit, salvo
      * sizes, etc.
      */
-    public static float getExpectedDamage(IGame g, WeaponAttackAction waa, boolean assumeHit) {
+    public static float getExpectedDamage(IGame g, WeaponAttackAction waa,
+            boolean assumeHit) {
         boolean use_table = false;
 
         AmmoType loaded_ammo = new AmmoType();
@@ -1610,17 +1626,17 @@ Average:     0.649                0.781                0.527                0.42
         }
 
         WeaponType wt = (WeaponType) weapon.getType();
-        
+
         float fDamage = 0.0f;
         float fChance = 0.0f;
-        if(assumeHit) {
+        if (assumeHit) {
             fChance = 1.0f;
         } else {
             if (hitData.getValue() == TargetRoll.IMPOSSIBLE
                     || hitData.getValue() == TargetRoll.AUTOMATIC_FAIL) {
                 return 0.0f;
             }
-    
+
             if (hitData.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
                 fChance = 1.0f;
             } else {
@@ -1684,8 +1700,8 @@ Average:     0.649                0.781                0.527                0.42
                 fHits = 2.0f * expectedHitsByRackSize[wt.getRackSize() / 2];
             }
             if ((wt.getAmmoType() == AmmoType.T_SRM_STREAK
-                    || wt.getAmmoType() == AmmoType.T_MRM_STREAK
-                    || wt.getAmmoType() == AmmoType.T_LRM_STREAK)
+                    || wt.getAmmoType() == AmmoType.T_MRM_STREAK || wt
+                    .getAmmoType() == AmmoType.T_LRM_STREAK)
                     && !Compute.isAffectedByAngelECM(attacker, attacker
                             .getPosition(), waa.getTarget(g).getPosition())) {
                 fHits = wt.getRackSize();
@@ -1772,8 +1788,8 @@ Average:     0.649                0.781                0.527                0.42
                         || g.getEntity(waa.getTargetId()).isINarcedBy(
                                 attacker.getOwner().getTeam())) {
                     if (((at.getAmmoType() == AmmoType.T_LRM)
-                            || (at.getAmmoType() == AmmoType.T_MML)
-                            || (at.getAmmoType() == AmmoType.T_SRM))
+                            || (at.getAmmoType() == AmmoType.T_MML) || (at
+                            .getAmmoType() == AmmoType.T_SRM))
                             && at.getMunitionType() == AmmoType.M_NARC_CAPABLE) {
                         fHits *= 1.2f;
                     }
@@ -1801,22 +1817,24 @@ Average:     0.649                0.781                0.527                0.42
                     || (wt.getAmmoType() == AmmoType.T_AC_ROTARY)) {
                 fDamage = fHits * wt.getDamage();
             }
-            
+
         } else {
             // Direct fire weapons (and LBX slug rounds) just do a single shot
             // so they don't use the missile hits table
             fDamage = wt.getDamage();
-            if ((attacker.getPosition() != null) && (g.getEntity(waa.getTargetId()).getPosition() != null)){
-                if (wt.getAmmoType() == AmmoType.T_GAUSS_HEAVY){
+            if ((attacker.getPosition() != null)
+                    && (g.getEntity(waa.getTargetId()).getPosition() != null)) {
+                if (wt.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
                     fDamage = 25.0f;
-                    int rtt = attacker.getPosition().distance(g.getEntity(waa.getTargetId()).getPosition());
-                    if (rtt > 13){
+                    int rtt = attacker.getPosition().distance(
+                            g.getEntity(waa.getTargetId()).getPosition());
+                    if (rtt > 13) {
                         fDamage = 10.0f;
                     } else if (rtt > 6) {
                         fDamage = 20.0f;
                     }
                 }
-            }            
+            }
 
             // Infantry follow some special rules, but do fixed amounts of
             // damage
@@ -1835,10 +1853,11 @@ Average:     0.649                0.781                0.527                0.42
                         if ((g.getEntity(waa.getTargetId())
                                 .getSwarmAttackerId() == Entity.NONE)
                                 && (g.getEntity(waa.getTargetId()) instanceof Mech)) {
-                            /*fDamage = 1.5f * inf_attacker
-                                    .getDamage(inf_attacker
-                                            .getShootingStrength());*/
-                            //TODO: Fix me
+                            /*
+                             * fDamage = 1.5f * inf_attacker
+                             * .getDamage(inf_attacker .getShootingStrength());
+                             */
+                            // TODO: Fix me
                             fDamage = 4;
                         }
                         // Otherwise, call it 0 damage
@@ -1850,9 +1869,11 @@ Average:     0.649                0.781                0.527                0.42
                     else {
                         // conventional weapons; field guns should be handled
                         // under the standard weapons section
-                        /*fDamage = 0.6f * inf_attacker.getDamage(inf_attacker
-                                .getShootingStrength());*/
-                        //TODO: Fix me
+                        /*
+                         * fDamage = 0.6f * inf_attacker.getDamage(inf_attacker
+                         * .getShootingStrength());
+                         */
+                        // TODO: Fix me
                         fDamage = 2;
                     }
 
@@ -1891,9 +1912,9 @@ Average:     0.649                0.781                0.527                0.42
                     && !e_hex.containsTerrain(Terrains.BUILDING)) {
                 fDamage *= 2.0f;
             }
-            
+
             // Cap damage to prevent run-away values
-            fDamage = Math.min(inf_attacker.getShootingStrength(),fDamage);
+            fDamage = Math.min(inf_attacker.getShootingStrength(), fDamage);
         }
         return fDamage;
     }
@@ -1980,222 +2001,223 @@ Average:     0.649                0.781                0.527                0.42
         if (no_bin) {
             return 0.0;
         }
-		// If multi_bin is true, then multiple ammo types are present and an
-		// appropriate type must be selected
-		// If multi_bin is false, then all bin types are the same; skip down
-		// to getting the expected damage
-		if (!multi_bin) {
-		    return getExpectedDamage(cgame, atk, false);
-		}
-		if (multi_bin) {
+        // If multi_bin is true, then multiple ammo types are present and an
+        // appropriate type must be selected
+        // If multi_bin is false, then all bin types are the same; skip down
+        // to getting the expected damage
+        if (!multi_bin) {
+            return getExpectedDamage(cgame, atk, false);
+        }
+        if (multi_bin) {
 
-		    // Set default max damage as 0, and the best bin as the first
-		    // bin
-		    max_damage = 0.0;
-		    best_bin = fabin;
+            // Set default max damage as 0, and the best bin as the first
+            // bin
+            max_damage = 0.0;
+            best_bin = fabin;
 
-		    // For each valid ammo bin
-		    for (Mounted abin : shooter.getAmmo()) {
-		        if (shooter.loadWeapon(shooter.getEquipment(atk
-		                .getWeaponId()), abin)) {
-		            if (abin.getShotsLeft() > 0) {
-		                abin_type = (AmmoType) abin.getType();
-		                if (!AmmoType.canDeliverMinefield(abin_type)) {
+            // For each valid ammo bin
+            for (Mounted abin : shooter.getAmmo()) {
+                if (shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()),
+                        abin)) {
+                    if (abin.getShotsLeft() > 0) {
+                        abin_type = (AmmoType) abin.getType();
+                        if (!AmmoType.canDeliverMinefield(abin_type)) {
 
-		                    // Load weapon with specified bin
-		                    shooter.loadWeapon(shooter.getEquipment(atk
-		                            .getWeaponId()), abin);
-		                    atk.setAmmoId(shooter.getEquipmentNum(abin));
+                            // Load weapon with specified bin
+                            shooter.loadWeapon(shooter.getEquipment(atk
+                                    .getWeaponId()), abin);
+                            atk.setAmmoId(shooter.getEquipmentNum(abin));
 
-		                    // Get expected damage
-		                    ex_damage = getExpectedDamage(cgame, atk, false);
+                            // Get expected damage
+                            ex_damage = getExpectedDamage(cgame, atk, false);
 
-		                    // Calculate any modifiers due to ammo type
-		                    ammo_multiple = 1.0;
+                            // Calculate any modifiers due to ammo type
+                            ammo_multiple = 1.0;
 
-		                    // Frag missiles, flechette AC rounds do double
-		                    // damage against conventional infantry
-		                    // and 0 damage against everything else
-		                    // Any further anti-personnel specialized rounds
-		                    // should be tested for here
-		                    if (((((abin_type.getAmmoType() == AmmoType.T_LRM)
-                                    || (abin_type.getAmmoType() == AmmoType.T_MML)
-                                    || (abin_type.getAmmoType() == AmmoType.T_SRM))) 
-                                    && (abin_type.getMunitionType() == AmmoType.M_FRAGMENTATION))
-		                            || ((abin_type.getAmmoType() == AmmoType.T_AC
-		                                    || abin_type.getAmmoType() == AmmoType.T_LAC) && 
-		                                    (abin_type.getMunitionType() == AmmoType.M_FLECHETTE))) {
-		                        ammo_multiple = 0.0;
-		                        if (target instanceof Infantry) {
-		                            if (!(target instanceof BattleArmor)) {
-		                                ammo_multiple = 2.0;
-		                            }
-		                        }
-		                    }
+                            // Frag missiles, flechette AC rounds do double
+                            // damage against conventional infantry
+                            // and 0 damage against everything else
+                            // Any further anti-personnel specialized rounds
+                            // should be tested for here
+                            if (((((abin_type.getAmmoType() == AmmoType.T_LRM)
+                                    || (abin_type.getAmmoType() == AmmoType.T_MML) || (abin_type
+                                    .getAmmoType() == AmmoType.T_SRM))) && (abin_type
+                                    .getMunitionType() == AmmoType.M_FRAGMENTATION))
+                                    || ((abin_type.getAmmoType() == AmmoType.T_AC || abin_type
+                                            .getAmmoType() == AmmoType.T_LAC) && (abin_type
+                                            .getMunitionType() == AmmoType.M_FLECHETTE))) {
+                                ammo_multiple = 0.0;
+                                if (target instanceof Infantry) {
+                                    if (!(target instanceof BattleArmor)) {
+                                        ammo_multiple = 2.0;
+                                    }
+                                }
+                            }
 
-		                    // LBX cluster rounds work better against units
-		                    // with little armor, vehicles, and Meks in
-		                    // partial cover
-		                    // Other ammo that deliver lots of small
-		                    // submunitions should be tested for here too
-		                    if (((abin_type.getAmmoType() == AmmoType.T_AC_LBX) || (abin_type
-		                            .getAmmoType() == AmmoType.T_AC_LBX_THB))
-		                            && abin_type.getMunitionType() == AmmoType.M_CLUSTER) {
-		                        if (target.getArmorRemainingPercent() <= 0.25) {
-		                            ammo_multiple = 1.0 + (wtype
-		                                    .getRackSize() / 10);
-		                        }
-		                        if (target instanceof Tank) {
-		                            ammo_multiple += 1.0;
-		                        }
-		                    }
+                            // LBX cluster rounds work better against units
+                            // with little armor, vehicles, and Meks in
+                            // partial cover
+                            // Other ammo that deliver lots of small
+                            // submunitions should be tested for here too
+                            if (((abin_type.getAmmoType() == AmmoType.T_AC_LBX) || (abin_type
+                                    .getAmmoType() == AmmoType.T_AC_LBX_THB))
+                                    && abin_type.getMunitionType() == AmmoType.M_CLUSTER) {
+                                if (target.getArmorRemainingPercent() <= 0.25) {
+                                    ammo_multiple = 1.0 + (wtype.getRackSize() / 10);
+                                }
+                                if (target instanceof Tank) {
+                                    ammo_multiple += 1.0;
+                                }
+                            }
 
-		                    // AP autocannon rounds work much better against
-		                    // Meks and vehicles than infantry,
-		                    // give a damage boost in proportion to calibre
-		                    // to reflect scaled crit chance
-		                    // Other armor-penetrating ammo types should be
-		                    // tested here, such as Tandem-charge SRMs
-		                    if ((abin_type.getAmmoType() == AmmoType.T_AC
-		                            || abin_type.getAmmoType() == AmmoType.T_LAC)
-		                            && abin_type.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
-		                        if ((target instanceof Mech)
-		                                || (target instanceof Tank)) {
-		                            ammo_multiple = 1.0 + (wtype
-		                                    .getRackSize() / 10);
-		                        }
-		                        if (target instanceof Infantry) {
-		                            ammo_multiple = 0.6;
-		                        }
-		                    }
+                            // AP autocannon rounds work much better against
+                            // Meks and vehicles than infantry,
+                            // give a damage boost in proportion to calibre
+                            // to reflect scaled crit chance
+                            // Other armor-penetrating ammo types should be
+                            // tested here, such as Tandem-charge SRMs
+                            if ((abin_type.getAmmoType() == AmmoType.T_AC || abin_type
+                                    .getAmmoType() == AmmoType.T_LAC)
+                                    && abin_type.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
+                                if ((target instanceof Mech)
+                                        || (target instanceof Tank)) {
+                                    ammo_multiple = 1.0 + (wtype.getRackSize() / 10);
+                                }
+                                if (target instanceof Infantry) {
+                                    ammo_multiple = 0.6;
+                                }
+                            }
 
-		                    // Inferno SRMs work better against overheating
-		                    // Meks that are not/almost not on fire,
-		                    // and against vehicles and protos if allowed by
-		                    // game option
-		                    if (((abin_type.getAmmoType() == AmmoType.T_SRM)
-                                    || (abin_type.getAmmoType() == AmmoType.T_MML))
-		                            && abin_type.getMunitionType() == AmmoType.M_INFERNO) {
-		                        ammo_multiple = 0.5;
-		                        if (target instanceof Mech) {
-		                            if ((target.infernos
-		                                    .getTurnsLeftToBurn() < 4)
-		                                    && (target.heat >= 5)) {
-		                                ammo_multiple = 1.1;
-		                            }
-		                        }
-		                        if ((target instanceof Tank)
-		                                && !(cgame.getOptions()
-		                                        .booleanOption("vehicles_safe_from_infernos"))) {
-		                            ammo_multiple = 1.1;
-		                        }
-		                        if ((target instanceof Protomech)
-		                                && !(cgame.getOptions()
-		                                        .booleanOption("protos_safe_from_infernos"))) {
-		                            ammo_multiple = 1.1;
-		                        }
-		                    }
+                            // Inferno SRMs work better against overheating
+                            // Meks that are not/almost not on fire,
+                            // and against vehicles and protos if allowed by
+                            // game option
+                            if (((abin_type.getAmmoType() == AmmoType.T_SRM) || (abin_type
+                                    .getAmmoType() == AmmoType.T_MML))
+                                    && abin_type.getMunitionType() == AmmoType.M_INFERNO) {
+                                ammo_multiple = 0.5;
+                                if (target instanceof Mech) {
+                                    if ((target.infernos.getTurnsLeftToBurn() < 4)
+                                            && (target.heat >= 5)) {
+                                        ammo_multiple = 1.1;
+                                    }
+                                }
+                                if ((target instanceof Tank)
+                                        && !(cgame.getOptions()
+                                                .booleanOption("vehicles_safe_from_infernos"))) {
+                                    ammo_multiple = 1.1;
+                                }
+                                if ((target instanceof Protomech)
+                                        && !(cgame.getOptions()
+                                                .booleanOption("protos_safe_from_infernos"))) {
+                                    ammo_multiple = 1.1;
+                                }
+                            }
 
-		                    // Narc beacon doesn't really do damage but if
-		                    // the target is not infantry and doesn't have
-		                    // one, give 'em one by making it an attractive
-		                    // option
-		                    if ((wtype.getAmmoType() == AmmoType.T_NARC)
-		                            && (abin_type.getMunitionType() == AmmoType.M_STANDARD)) {
-		                        if (!(target.isNarcedBy(shooter.getOwner()
-		                                .getTeam()))
-		                                && !(target instanceof Infantry)) {
-		                            ex_damage = 5.0;
-		                        } else {
-		                            ex_damage = 0.5;
-		                        }
-		                    }
+                            // Narc beacon doesn't really do damage but if
+                            // the target is not infantry and doesn't have
+                            // one, give 'em one by making it an attractive
+                            // option
+                            if ((wtype.getAmmoType() == AmmoType.T_NARC)
+                                    && (abin_type.getMunitionType() == AmmoType.M_STANDARD)) {
+                                if (!(target.isNarcedBy(shooter.getOwner()
+                                        .getTeam()))
+                                        && !(target instanceof Infantry)) {
+                                    ex_damage = 5.0;
+                                } else {
+                                    ex_damage = 0.5;
+                                }
+                            }
 
-		                    // iNarc beacon doesn't really do damage, but if
-		                    // the target is not infantry and doesn't have
-		                    // one, give 'em one by making it an attractive
-		                    // option
-		                    if (wtype.getAmmoType() == AmmoType.T_INARC) {
-		                        if ((abin_type.getMunitionType() == AmmoType.M_STANDARD)
-		                                && !(target instanceof Infantry)) {
-		                            if (!(target.isINarcedBy(shooter
-		                                    .getOwner().getTeam()))) {
-		                                ex_damage = 7.0;
-		                            } else {
-		                                ex_damage = 1.0;
-		                            }
-		                        }
+                            // iNarc beacon doesn't really do damage, but if
+                            // the target is not infantry and doesn't have
+                            // one, give 'em one by making it an attractive
+                            // option
+                            if (wtype.getAmmoType() == AmmoType.T_INARC) {
+                                if ((abin_type.getMunitionType() == AmmoType.M_STANDARD)
+                                        && !(target instanceof Infantry)) {
+                                    if (!(target.isINarcedBy(shooter.getOwner()
+                                            .getTeam()))) {
+                                        ex_damage = 7.0;
+                                    } else {
+                                        ex_damage = 1.0;
+                                    }
+                                }
 
-		                        // iNarc ECM doesn't really do damage, but
-		                        // if the target has a C3 link or missile
-		                        // launchers
-		                        // make it a priority
-		                        // Checking for actual ammo types carried
-		                        // would be nice, but can't be sure of exact
-		                        // loads
-		                        // when "true" double blind is implemented
-		                        if ((abin_type.getAmmoType() == AmmoType.T_INARC)
-		                                && (abin_type.getMunitionType() == AmmoType.M_ECM)
-		                                && !(target instanceof Infantry)) {
-		                            if (!target
-		                                    .isINarcedWith(AmmoType.M_ECM)) {
-		                                if (!(target.getC3MasterId() == Entity.NONE)
-		                                        || target.hasC3M()
-		                                        || target.hasC3MM()
-		                                        || target.hasC3i()) {
-		                                    ex_damage = 8.0;
-		                                } else {
-		                                    ex_damage = 0.5;
-		                                }
-		                                for (Mounted weapon : shooter.getWeaponList()) {
-		                                    target_weapon = (WeaponType) weapon.getType();
-		                                    if ((target_weapon.getAmmoType() == AmmoType.T_LRM)
-                                                    || (target_weapon.getAmmoType() == AmmoType.T_MML)
-		                                            || (target_weapon.getAmmoType() == AmmoType.T_SRM)) {
-		                                        ex_damage = ex_damage
-		                                                + (target_weapon.getRackSize() / 2);
-		                                    }
-		                                }
-		                            }
-		                        }
+                                // iNarc ECM doesn't really do damage, but
+                                // if the target has a C3 link or missile
+                                // launchers
+                                // make it a priority
+                                // Checking for actual ammo types carried
+                                // would be nice, but can't be sure of exact
+                                // loads
+                                // when "true" double blind is implemented
+                                if ((abin_type.getAmmoType() == AmmoType.T_INARC)
+                                        && (abin_type.getMunitionType() == AmmoType.M_ECM)
+                                        && !(target instanceof Infantry)) {
+                                    if (!target.isINarcedWith(AmmoType.M_ECM)) {
+                                        if (!(target.getC3MasterId() == Entity.NONE)
+                                                || target.hasC3M()
+                                                || target.hasC3MM()
+                                                || target.hasC3i()) {
+                                            ex_damage = 8.0;
+                                        } else {
+                                            ex_damage = 0.5;
+                                        }
+                                        for (Mounted weapon : shooter
+                                                .getWeaponList()) {
+                                            target_weapon = (WeaponType) weapon
+                                                    .getType();
+                                            if ((target_weapon.getAmmoType() == AmmoType.T_LRM)
+                                                    || (target_weapon
+                                                            .getAmmoType() == AmmoType.T_MML)
+                                                    || (target_weapon
+                                                            .getAmmoType() == AmmoType.T_SRM)) {
+                                                ex_damage = ex_damage
+                                                        + (target_weapon
+                                                                .getRackSize() / 2);
+                                            }
+                                        }
+                                    }
+                                }
 
-		                        // iNarc Nemesis doesn't really do damage,
-		                        // but if the target is not infantry and
-		                        // doesn't have
-		                        // one give it a try; make fast units a
-		                        // priority because they are usually out
-		                        // front
-		                        if ((abin_type.getAmmoType() == AmmoType.T_INARC)
-		                                && (abin_type.getMunitionType() == AmmoType.M_NEMESIS)
-		                                && !(target instanceof Infantry)) {
-		                            if (!target
-		                                    .isINarcedWith(AmmoType.M_NEMESIS)) {
-		                                ex_damage = (double) (target
-		                                        .getOriginalWalkMP() + target
-		                                        .getOriginalJumpMP()) / 2;
-		                            } else {
-		                                ex_damage = 0.5;
-		                            }
-		                        }
-		                    }
+                                // iNarc Nemesis doesn't really do damage,
+                                // but if the target is not infantry and
+                                // doesn't have
+                                // one give it a try; make fast units a
+                                // priority because they are usually out
+                                // front
+                                if ((abin_type.getAmmoType() == AmmoType.T_INARC)
+                                        && (abin_type.getMunitionType() == AmmoType.M_NEMESIS)
+                                        && !(target instanceof Infantry)) {
+                                    if (!target
+                                            .isINarcedWith(AmmoType.M_NEMESIS)) {
+                                        ex_damage = (double) (target
+                                                .getOriginalWalkMP() + target
+                                                .getOriginalJumpMP()) / 2;
+                                    } else {
+                                        ex_damage = 0.5;
+                                    }
+                                }
+                            }
 
-		                    // If the adjusted damage is highest, store the
-		                    // damage and bin
-		                    if ((ex_damage * ammo_multiple) > max_damage) {
-		                        max_damage = ex_damage * ammo_multiple;
-		                        best_bin = abin;
-		                    }
-		                }
-		            }
-		        }
-		    }
+                            // If the adjusted damage is highest, store the
+                            // damage and bin
+                            if ((ex_damage * ammo_multiple) > max_damage) {
+                                max_damage = ex_damage * ammo_multiple;
+                                best_bin = abin;
+                            }
+                        }
+                    }
+                }
+            }
 
-		    // Now that the best bin has been found, reload the weapon with
-		    // it
-		    shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()),
-		            best_bin);
-		    atk.setAmmoId(shooter.getEquipmentNum(best_bin));
-		}
+            // Now that the best bin has been found, reload the weapon with
+            // it
+            shooter.loadWeapon(shooter.getEquipment(atk.getWeaponId()),
+                    best_bin);
+            atk.setAmmoId(shooter.getEquipmentNum(best_bin));
+        }
         return max_damage;
     }
 
@@ -2279,7 +2301,7 @@ Average:     0.649                0.781                0.527                0.42
     public static boolean isInArc(IGame game, int attackerId, int weaponId,
             Targetable t) {
         Entity ae = game.getEntity(attackerId);
-        if(ae instanceof Mech && ((Mech)ae).getGrappled() == t.getTargetId())
+        if (ae instanceof Mech && ((Mech) ae).getGrappled() == t.getTargetId())
             return true;
         int facing = ae.isSecondaryArcWeapon(weaponId) ? ae
                 .getSecondaryFacing() : ae.getFacing();
@@ -2288,30 +2310,27 @@ Average:     0.649                0.781                0.527                0.42
     }
 
     /**
-     * Returns true if the line between source Coords and target goes through the hex
-     * in front of the attacker
+     * Returns true if the line between source Coords and target goes through
+     * the hex in front of the attacker
      */
-    public static boolean isThroughFrontHex (IGame game, Coords src, Entity t) {
+    public static boolean isThroughFrontHex(IGame game, Coords src, Entity t) {
         Coords dest = t.getPosition();
-        int fa = dest.degree(src) - t.getFacing()*60;
-        if (fa<0) fa += 360;
-        return (fa>330) || (fa<30);
+        int fa = dest.degree(src) - t.getFacing() * 60;
+        if (fa < 0)
+            fa += 360;
+        return (fa > 330) || (fa < 30);
     }
-    
+
     /**
      * Returns true if the target is in the specified arc.
      * 
-     * @param src
-     *            the attacker coordinate
-     * @param facing
-     *            the appropriate attacker sfacing
-     * @param dest
-     *            the target coordinate
-     * @param arc
-     *            the arc
+     * @param src the attacker coordinate
+     * @param facing the appropriate attacker sfacing
+     * @param dest the target coordinate
+     * @param arc the arc
      */
     public static boolean isInArc(Coords src, int facing, Coords dest, int arc) {
-        if(src == null || dest == null)
+        if (src == null || dest == null)
             return true;
         // calculate firing angle
         int fa = src.degree(dest) - facing * 60;
@@ -2359,17 +2378,18 @@ Average:     0.649                0.781                0.527                0.42
         }
         if (game.getOptions().intOption("visibility") < 999) {
             int visualRange = game.getOptions().intOption("visibility");
-            
-            if ( ae instanceof MechWarrior &&  game.getOptions().booleanOption("pilots_visual_range_one") )
+
+            if (ae instanceof MechWarrior
+                    && game.getOptions().booleanOption(
+                            "pilots_visual_range_one"))
                 visualRange = 1;
-            
-            if ( ae.hasBAP() )
-                visualRange = Math.max(ae.getBAPRange(), visualRange );
-            
-            if (ae.getPosition() != null &&
-                target.getPosition() != null &&
-                ae.getPosition().distance(target.getPosition())
-                > visualRange) {
+
+            if (ae.hasBAP())
+                visualRange = Math.max(ae.getBAPRange(), visualRange);
+
+            if (ae.getPosition() != null
+                    && target.getPosition() != null
+                    && ae.getPosition().distance(target.getPosition()) > visualRange) {
                 return false;
             }
         }
@@ -2388,54 +2408,56 @@ Average:     0.649                0.781                0.527                0.42
     /**
      * Maintain backwards compatability.
      * 
-     * @param missiles -
-     *            the <code>int</code> number of missiles in the pack.
+     * @param missiles - the <code>int</code> number of missiles in the pack.
      */
     public static int missilesHit(int missiles) {
         return missilesHit(missiles, 0);
     }
 
-    public static int missilesHit(int missiles, int nMod, boolean maxtech, boolean hotloaded) {
+    public static int missilesHit(int missiles, int nMod, boolean maxtech,
+            boolean hotloaded) {
         return missilesHit(missiles, nMod, maxtech, hotloaded, false);
     }
+
     /**
      * Roll the number of missiles (or whatever) on the missile hit table, with
      * the specified mod to the roll.
      * 
-     * @param maxtech - either maxtech glancing blows or maxtech missile hit penalties
-     *                  are in effect so it is possible to roll less than a 2
-     * @param missiles -
-     *            the <code>int</code> number of missiles in the pack.
-     * @param nMod -
-     *            the <code>int</code> modifier to the roll for number of
+     * @param maxtech - either maxtech glancing blows or maxtech missile hit
+     *            penalties are in effect so it is possible to roll less than a
+     *            2
+     * @param missiles - the <code>int</code> number of missiles in the pack.
+     * @param nMod - the <code>int</code> modifier to the roll for number of
      *            missiles that hit.
      * @param hotloaded - roll 3d6 take worst 2
      * @param streak - force a roll of 11 on the cluster table
      */
-     public static int missilesHit(int missiles, int nMod, boolean maxtech, boolean hotloaded, boolean streak) {
+    public static int missilesHit(int missiles, int nMod, boolean maxtech,
+            boolean hotloaded, boolean streak) {
         int nRoll = d6(2);
         int minimum = maxtech ? 1 : 2;
 
-        if (hotloaded ){
+        if (hotloaded) {
             int roll1 = d6();
             int roll2 = d6();
             int roll3 = d6();
             int lowRoll1 = 0;
             int lowRoll2 = 0;
-            
-            if ( roll1 <= roll2 && roll1 <= roll3){
+
+            if (roll1 <= roll2 && roll1 <= roll3) {
                 lowRoll1 = roll1;
                 lowRoll2 = Math.min(roll2, roll3);
-            } else if ( roll2 <= roll1 && roll2 <= roll3 ){
+            } else if (roll2 <= roll1 && roll2 <= roll3) {
                 lowRoll1 = roll2;
                 lowRoll2 = Math.min(roll1, roll3);
-            } else if ( roll3 <= roll1 && roll3 <= roll2 ){
+            } else if (roll3 <= roll1 && roll3 <= roll2) {
                 lowRoll1 = roll3;
-                lowRoll2 = Math.min(roll2,roll1);
+                lowRoll2 = Math.min(roll2, roll1);
             }
             nRoll = lowRoll1 + lowRoll2;
         }
-        if (streak) nRoll = 11;
+        if (streak)
+            nRoll = 11;
         nRoll += nMod;
         nRoll = Math.min(Math.max(nRoll, minimum), 12);
         if (maxtech && nRoll == 1) {
@@ -2450,11 +2472,14 @@ Average:     0.649                0.781                0.527                0.42
                 return clusterHitsTable[i][nRoll - 1];
             }
         }
-        // BA missiles may have larger number of missiles than max entry on the table
+        // BA missiles may have larger number of missiles than max entry on the
+        // table
         // if so, take largest, subtract value and try again
-        for (int i = clusterHitsTable.length-1; i >= 0; i--) {
+        for (int i = clusterHitsTable.length - 1; i >= 0; i--) {
             if (missiles > clusterHitsTable[i][0]) {
-                return clusterHitsTable[i][nRoll-1] + missilesHit(missiles-clusterHitsTable[i][0], nMod, maxtech, hotloaded, streak); 
+                return clusterHitsTable[i][nRoll - 1]
+                        + missilesHit(missiles - clusterHitsTable[i][0], nMod,
+                                maxtech, hotloaded, streak);
             }
         }
         throw new RuntimeException(
@@ -2472,9 +2497,8 @@ Average:     0.649                0.781                0.527                0.42
     /**
      * Returns the consciousness roll number
      * 
-     * @param hit -
-     *            the <code>int</code> number of the crew hit currently being
-     *            rolled.
+     * @param hit - the <code>int</code> number of the crew hit currently
+     *            being rolled.
      * @return The <code>int</code> number that must be rolled on 2d6 for the
      *         crew to stay conscious.
      */
@@ -2498,28 +2522,30 @@ Average:     0.649                0.781                0.527                0.42
     }
 
     /**
-     * This Method checks to see how many friendly ECCM fields Entity ae
-     * is effected by.
+     * This Method checks to see how many friendly ECCM fields Entity ae is
+     * effected by.
+     * 
      * @param ae
      * @param a
      * @param b
-     * @return count that shows the number of friendly Angel ECCM fields you are in.
+     * @return count that shows the number of friendly Angel ECCM fields you are
+     *         in.
      */
     public static int getFriendlyECCMFields(Entity ae, Coords a, Coords b) {
         if (a == null || b == null)
             return 0;
 
-        //Start at zero nothing protecting the mech.
+        // Start at zero nothing protecting the mech.
         int ECCMCount = 0;
 
-        if ( ae.hasActiveECCM() )
+        if (ae.hasActiveECCM())
             ECCMCount++;
 
         // Only grab enemies with active ECM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
         for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent =  e.nextElement();
+            Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null
                     && !ent.equals(ae)) {
@@ -2530,7 +2556,7 @@ Average:     0.649                0.781                0.527                0.42
             }
 
             // Check the ECM effects of the entity's passengers.
-            for(Entity other:ent.getLoadedUnits()) {
+            for (Entity other : ent.getLoadedUnits()) {
                 if (!other.isEnemyOf(ae) && other.hasActiveECCM()
                         && entPos != null && !other.equals(ae)) {
                     // TODO : only use the best ECM range in a given Coords.
@@ -2550,7 +2576,8 @@ Average:     0.649                0.781                0.527                0.42
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e
+                .hasMoreElements();) {
             Coords c = e.nextElement();
             int range = ranges.nextElement().intValue();
             int nLastDist = -1;
@@ -2560,7 +2587,7 @@ Average:     0.649                0.781                0.527                0.42
             for (int x = 0; x < coords.size(); x++) {
                 int nDist = c.distance(coords.get(x));
 
-                if (nDist <= range){
+                if (nDist <= range) {
                     ECCMCount++;
                     break;
                 }
@@ -2581,48 +2608,49 @@ Average:     0.649                0.781                0.527                0.42
     }
 
     /**
-     * This Methiod returns how many friendly Angel ECCM fields Entity AE is 
+     * This Methiod returns how many friendly Angel ECCM fields Entity AE is
      * protected by
+     * 
      * @param ae
      * @param a
      * @param b
-     * @return count that shows the number of friendly Angel ECCM fields you are in.
-     * 
+     * @return count that shows the number of friendly Angel ECCM fields you are
+     *         in.
      */
     public static int getFriendlyAngelECCMFields(Entity ae, Coords a, Coords b) {
         if (a == null || b == null)
             return 0;
 
-        //Start at zero nothing protecting the mech.
+        // Start at zero nothing protecting the mech.
         int ECCMCount = 0;
-        
-        //angel acts as two ECMS and has both ECM flags.
-        //So you get one from getFriendlyECCMFields
-        //and one from here.
-        if ( ae.hasActiveAngelECCM() )
+
+        // angel acts as two ECMS and has both ECM flags.
+        // So you get one from getFriendlyECCMFields
+        // and one from here.
+        if (ae.hasActiveAngelECCM())
             ECCMCount++;
-        
+
         // Only grab enemies with active ECM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
         for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
-            if (!ent.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null
-                    && !ent.equals(ae)) {
+            if (!ent.isEnemyOf(ae) && ent.hasActiveAngelECCM()
+                    && entPos != null && !ent.equals(ae)) {
                 // TODO : only use the best ECM range in a given Coords.
                 vEnemyCoords.addElement(entPos);
                 vECMRanges.addElement(new Integer(ent.getAngelECMRange()));
             }
 
             // Check the ECM effects of the entity's passengers.
-            for(Entity other:ent.getLoadedUnits()) {
+            for (Entity other : ent.getLoadedUnits()) {
                 if (!other.isEnemyOf(ae) && other.hasActiveAngelECCM()
-                        && entPos != null
-                        && !other.equals(ae)) {
+                        && entPos != null && !other.equals(ae)) {
                     // TODO : only use the best ECM range in a given Coords.
                     vEnemyCoords.addElement(entPos);
-                    vECMRanges.addElement(new Integer(other.getAngelECMRange()));
+                    vECMRanges
+                            .addElement(new Integer(other.getAngelECMRange()));
                 }
             }
 
@@ -2637,7 +2665,8 @@ Average:     0.649                0.781                0.527                0.42
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e
+                .hasMoreElements();) {
             Coords c = e.nextElement();
             int range = ranges.nextElement().intValue();
             int nLastDist = -1;
@@ -2647,7 +2676,7 @@ Average:     0.649                0.781                0.527                0.42
             for (int x = 0; x < coords.size(); x++) {
                 int nDist = c.distance(coords.get(x));
 
-                if (nDist <= range){
+                if (nDist <= range) {
                     ECCMCount++;
                     break;
                 }
@@ -2668,32 +2697,34 @@ Average:     0.649                0.781                0.527                0.42
 
     /**
      * This method checks to see if Entity ae is effeced by enemy ECM fields
+     * 
      * @param ae
      * @param a
      * @param b
-     * @return count that shows if you are in an friendly ECCM field
-     * positive number means you are in an friendly ECCM field
-     * Negative number means you are in a enemy ECM field
-     * 0 means you are not effect by enemy or friendly fields.
+     * @return count that shows if you are in an friendly ECCM field positive
+     *         number means you are in an friendly ECCM field Negative number
+     *         means you are in a enemy ECM field 0 means you are not effect by
+     *         enemy or friendly fields.
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
         if (a == null || b == null)
             return false;
 
-        //Start at zero nothing protecting the mech.
+        // Start at zero nothing protecting the mech.
         int ECCMCount = 0;
-        
-        ECCMCount += Compute.getFriendlyECCMFields(ae,a,b);
-        ECCMCount += Compute.getFriendlyAngelECCMFields(ae,a,b);
-        
+
+        ECCMCount += Compute.getFriendlyECCMFields(ae, a, b);
+        ECCMCount += Compute.getFriendlyAngelECCMFields(ae, a, b);
+
         if (ae.isINarcedWith(INarcPod.ECM)) {
             ECCMCount--;
         }
 
-        //before we go through all this iterations lets see if the NARC ECM Screwed the pooch
-        if ( ECCMCount < 0)
+        // before we go through all this iterations lets see if the NARC ECM
+        // Screwed the pooch
+        if (ECCMCount < 0)
             return true;
-        
+
         // Only grab enemies with active ECM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
@@ -2707,7 +2738,7 @@ Average:     0.649                0.781                0.527                0.42
             }
 
             // Check the ECM effects of the entity's passengers.
-            for(Entity other:ent.getLoadedUnits()) {
+            for (Entity other : ent.getLoadedUnits()) {
                 if (other.isEnemyOf(ae) && other.hasActiveECM()
                         && entPos != null) {
                     // TODO : only use the best ECM range in a given Coords.
@@ -2727,7 +2758,8 @@ Average:     0.649                0.781                0.527                0.42
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e
+                .hasMoreElements();) {
             Coords c = e.nextElement();
             int range = ranges.nextElement().intValue();
             int nLastDist = -1;
@@ -2737,7 +2769,7 @@ Average:     0.649                0.781                0.527                0.42
             for (int x = 0; x < coords.size(); x++) {
                 int nDist = c.distance(coords.get(x));
 
-                if (nDist <= range){
+                if (nDist <= range) {
                     ECCMCount--;
                     break;
                 }
@@ -2754,31 +2786,32 @@ Average:     0.649                0.781                0.527                0.42
                 }
             }
         }
-        //if your ECCMCount is less then Zero that means more ECMS 
-        //are effecting you then ECCM's if 0 means the same
-        //amount and everything is negated --Torren
+        // if your ECCMCount is less then Zero that means more ECMS
+        // are effecting you then ECCM's if 0 means the same
+        // amount and everything is negated --Torren
         return ECCMCount < 0;
     }
 
     /**
      * This method checks to see if Entity AE is effected by angel ECM
+     * 
      * @param ae
      * @param a
      * @param b
-     * @return count that shows if you are in an friendly ECCM field
-     * positive number means you are in an friendly ECCM field
-     * Negative number means you are in a enemy ECM field
-     * 0 means you are not effect by enemy or friendly fields.
+     * @return count that shows if you are in an friendly ECCM field positive
+     *         number means you are in an friendly ECCM field Negative number
+     *         means you are in a enemy ECM field 0 means you are not effect by
+     *         enemy or friendly fields.
      */
     public static boolean isAffectedByAngelECM(Entity ae, Coords a, Coords b) {
         if (a == null || b == null)
             return false;
-        
+
         int ECCMCount = 0;
-        
-        ECCMCount += Compute.getFriendlyECCMFields(ae,a,b);
-        ECCMCount += Compute.getFriendlyAngelECCMFields(ae,a,b);
-        
+
+        ECCMCount += Compute.getFriendlyECCMFields(ae, a, b);
+        ECCMCount += Compute.getFriendlyAngelECCMFields(ae, a, b);
+
         // Only grab enemies with active Angel ECM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
@@ -2821,8 +2854,8 @@ Average:     0.649                0.781                0.527                0.42
             for (int x = 0; x < coords.size(); x++) {
                 int nDist = c.distance(coords.get(x));
 
-                if (nDist <= range){
-                    ECCMCount -=2;
+                if (nDist <= range) {
+                    ECCMCount -= 2;
                     break;
                 }
 
@@ -2843,19 +2876,20 @@ Average:     0.649                0.781                0.527                0.42
 
     /**
      * This method checks to see if entity AE is in an enemy Angel ECCM field
+     * 
      * @param ae
      * @param a
      * @param b
-     * @return count that shows if you are in an enemy ECCM field
-     * positive number means you are in an enemy ECCM field
-     * Negative number means you are in a friendly ECM field
-     * 0 means you are not effect by enemy or friendly fields.
+     * @return count that shows if you are in an enemy ECCM field positive
+     *         number means you are in an enemy ECCM field Negative number means
+     *         you are in a friendly ECM field 0 means you are not effect by
+     *         enemy or friendly fields.
      */
     public static int getEnemyECCMFields(Entity ae, Coords a, Coords b) {
         if (a == null || b == null)
             return 0;
 
-        //Start at zero nothing protecting the mech.
+        // Start at zero nothing protecting the mech.
         int ECCMCount = 0;
 
         // Only grab enemies with active ECM
@@ -2893,7 +2927,8 @@ Average:     0.649                0.781                0.527                0.42
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e
+                .hasMoreElements();) {
             Coords c = e.nextElement();
             int range = ranges.nextElement().intValue();
             int nLastDist = -1;
@@ -2903,7 +2938,7 @@ Average:     0.649                0.781                0.527                0.42
             for (int x = 0; x < coords.size(); x++) {
                 int nDist = c.distance(coords.get(x));
 
-                if (nDist <= range){
+                if (nDist <= range) {
                     ECCMCount++;
                     break;
                 }
@@ -2925,21 +2960,22 @@ Average:     0.649                0.781                0.527                0.42
 
     /**
      * This method checks to see if entity AE is in an enemy Angel ECCM field
+     * 
      * @param ae
      * @param a
      * @param b
-     * @return count that shows if you are in an enemy Angel ECCM field
-     * positive number means you are in an enemy ECCM field
-     * Negative number means you are in a friendly ECM field
-     * 0 means you are not effect by enemy or friendly fields.
+     * @return count that shows if you are in an enemy Angel ECCM field positive
+     *         number means you are in an enemy ECCM field Negative number means
+     *         you are in a friendly ECM field 0 means you are not effect by
+     *         enemy or friendly fields.
      */
     public static int getEnemyAngelECCMFields(Entity ae, Coords a, Coords b) {
         if (a == null || b == null)
             return 0;
 
-        //Start at zero nothing protecting the mech.
+        // Start at zero nothing protecting the mech.
         int ECCMCount = 0;
-        
+
         // Only grab enemies with active ECCM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
@@ -2960,7 +2996,8 @@ Average:     0.649                0.781                0.527                0.42
                         && entPos != null) {
                     // TODO : only use the best ECM range in a given Coords.
                     vEnemyCoords.addElement(entPos);
-                    vECMRanges.addElement(new Integer(other.getAngelECMRange()));
+                    vECMRanges
+                            .addElement(new Integer(other.getAngelECMRange()));
                 }
             }
 
@@ -2975,7 +3012,8 @@ Average:     0.649                0.781                0.527                0.42
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e
+                .hasMoreElements();) {
             Coords c = e.nextElement();
             int range = ranges.nextElement().intValue();
             int nLastDist = -1;
@@ -2985,7 +3023,7 @@ Average:     0.649                0.781                0.527                0.42
             for (int x = 0; x < coords.size(); x++) {
                 int nDist = c.distance(coords.get(x));
 
-                if (nDist <= range){
+                if (nDist <= range) {
                     ECCMCount++;
                     break;
                 }
@@ -3005,8 +3043,9 @@ Average:     0.649                0.781                0.527                0.42
     }
 
     /**
-     * This method checks to see if you are protected by friendly ECM
-     * Used when checking if you are being hit with Artmis/ATM type weapons
+     * This method checks to see if you are protected by friendly ECM Used when
+     * checking if you are being hit with Artmis/ATM type weapons
+     * 
      * @param ae
      * @param a
      * @param b
@@ -3016,18 +3055,18 @@ Average:     0.649                0.781                0.527                0.42
         if (a == null || b == null)
             return false;
 
-        //Start at zero nothing effecting the mech.
+        // Start at zero nothing effecting the mech.
         int ECCMCount = 0;
-        
-        ECCMCount += Compute.getEnemyECCMFields(ae,a,b);
-        ECCMCount += Compute.getEnemyAngelECCMFields(ae,a,b);
-        
-        if ( ae.hasActiveECM() )
+
+        ECCMCount += Compute.getEnemyECCMFields(ae, a, b);
+        ECCMCount += Compute.getEnemyAngelECCMFields(ae, a, b);
+
+        if (ae.hasActiveECM())
             ECCMCount--;
-        
-        if ( ECCMCount < 0 )
+
+        if (ECCMCount < 0)
             return true;
-        
+
         // Only grab enemies with active ECM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
@@ -3064,7 +3103,8 @@ Average:     0.649                0.781                0.527                0.42
         ArrayList<Coords> coords = Coords.intervening(a, b);
         boolean bDivided = (a.degree(b) % 60 == 30);
         Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
+        for (Enumeration<Coords> e = vEnemyCoords.elements(); e
+                .hasMoreElements();) {
             Coords c = e.nextElement();
             int range = ranges.nextElement().intValue();
             int nLastDist = -1;
@@ -3074,7 +3114,7 @@ Average:     0.649                0.781                0.527                0.42
             for (int x = 0; x < coords.size(); x++) {
                 int nDist = c.distance(coords.get(x));
 
-                if (nDist <= range){
+                if (nDist <= range) {
                     ECCMCount--;
                     break;
                 }
@@ -3092,16 +3132,16 @@ Average:     0.649                0.781                0.527                0.42
             }
         }
 
-        
-        //if your ECCMCount is less then Zero that means more ECMS 
-        //are effecting you then ECCM's if 0 means the same
-        //amount and everything is negated --Torren
+        // if your ECCMCount is less then Zero that means more ECMS
+        // are effecting you then ECCM's if 0 means the same
+        // amount and everything is negated --Torren
         return ECCMCount < 0;
     }
 
     /**
-     * This method checks to see if you are protected by friendly Angel ECM
-     * Used when checking if you are being hit with Artmis/ATM/SSRM type weapons
+     * This method checks to see if you are protected by friendly Angel ECM Used
+     * when checking if you are being hit with Artmis/ATM/SSRM type weapons
+     * 
      * @param ae
      * @param a
      * @param b
@@ -3110,18 +3150,18 @@ Average:     0.649                0.781                0.527                0.42
     public static boolean isProtectedByAngelECM(Entity ae, Coords a, Coords b) {
         if (a == null || b == null)
             return false;
-        
-        int ECCMCount = 0;
-        
-        ECCMCount += Compute.getEnemyECCMFields(ae,a,b);
-        ECCMCount += Compute.getEnemyAngelECCMFields(ae,a,b);
 
-        if ( ae.hasActiveAngelECM() )
+        int ECCMCount = 0;
+
+        ECCMCount += Compute.getEnemyECCMFields(ae, a, b);
+        ECCMCount += Compute.getEnemyAngelECCMFields(ae, a, b);
+
+        if (ae.hasActiveAngelECM())
             ECCMCount -= 2;
-        
-        if ( ECCMCount < 0 )
+
+        if (ECCMCount < 0)
             return true;
-        
+
         // Only grab friendly with active Angel ECM
         Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
         Vector<Integer> vECMRanges = new Vector<Integer>(16);
@@ -3164,8 +3204,8 @@ Average:     0.649                0.781                0.527                0.42
             for (int x = 0; x < coords.size(); x++) {
                 int nDist = c.distance(coords.get(x));
 
-                if (nDist <= range){
-                    ECCMCount -=2;
+                if (nDist <= range) {
+                    ECCMCount -= 2;
                     break;
                 }
 
@@ -3188,10 +3228,8 @@ Average:     0.649                0.781                0.527                0.42
      * Get the base to-hit number of a Leg Attack by the given attacker upon the
      * given defender
      * 
-     * @param attacker -
-     *            the <code>Entity</code> conducting the leg attack.
-     * @param defender -
-     *            the <code>Entity</code> being attacked.
+     * @param attacker - the <code>Entity</code> conducting the leg attack.
+     * @param defender - the <code>Entity</code> being attacked.
      * @return The base <code>ToHitData</code> of the attack.
      */
     public static ToHitData getLegAttackBaseToHit(Entity attacker,
@@ -3255,7 +3293,7 @@ Average:     0.649                0.781                0.527                0.42
             reason.append(men);
             reason.append(" men alive");
         } else {
-        // No one else can conduct leg attacks.
+            // No one else can conduct leg attacks.
             reason.append("Attacker is not infantry.");
         }
 
@@ -3269,10 +3307,8 @@ Average:     0.649                0.781                0.527                0.42
      * Get the base to-hit number of a Swarm Mek by the given attacker upon the
      * given defender.
      * 
-     * @param attacker -
-     *            the <code>Entity</code> swarming.
-     * @param defender -
-     *            the <code>Entity</code> being swarmed.
+     * @param attacker - the <code>Entity</code> swarming.
+     * @param defender - the <code>Entity</code> being swarmed.
      * @return The base <code>ToHitData</code> of the mek.
      */
     public static ToHitData getSwarmMekBaseToHit(Entity attacker,
@@ -3282,8 +3318,7 @@ Average:     0.649                0.781                0.527                0.42
         StringBuffer reason = new StringBuffer();
 
         // Can only swarm a Mek.
-        if (!(defender instanceof Mech) &&
-                !(defender instanceof Tank)) {
+        if (!(defender instanceof Mech) && !(defender instanceof Tank)) {
             reason.append("Defender is not a Mek or vehicle.");
         }
 
@@ -3355,74 +3390,77 @@ Average:     0.649                0.781                0.527                0.42
     public static boolean canPhysicalTarget(IGame game, int entityId,
             Targetable target) {
 
-        if(PunchAttackAction.toHit(game, entityId, target,
+        if (PunchAttackAction.toHit(game, entityId, target,
                 PunchAttackAction.LEFT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(PunchAttackAction.toHit(game, entityId, target,
+        if (PunchAttackAction.toHit(game, entityId, target,
                 PunchAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(KickAttackAction.toHit(game, entityId, target,
+        if (KickAttackAction.toHit(game, entityId, target,
                 KickAttackAction.LEFT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(KickAttackAction.toHit(game, entityId, target,
+        if (KickAttackAction.toHit(game, entityId, target,
                 KickAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
         if (game.getEntity(entityId) instanceof QuadMech
                 && (KickAttackAction.toHit(game, entityId, target,
-                    KickAttackAction.LEFTMULE).getValue() != TargetRoll.IMPOSSIBLE
-                    || KickAttackAction.toHit(game, entityId, target,
-                       KickAttackAction.RIGHTMULE).getValue() != TargetRoll.IMPOSSIBLE))
-                       return true;
+                        KickAttackAction.LEFTMULE).getValue() != TargetRoll.IMPOSSIBLE || KickAttackAction
+                        .toHit(game, entityId, target,
+                                KickAttackAction.RIGHTMULE).getValue() != TargetRoll.IMPOSSIBLE))
+            return true;
 
-        if(BrushOffAttackAction.toHit(game, entityId, target,
+        if (BrushOffAttackAction.toHit(game, entityId, target,
                 BrushOffAttackAction.LEFT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(BrushOffAttackAction.toHit(game, entityId, target,
+        if (BrushOffAttackAction.toHit(game, entityId, target,
                 BrushOffAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(new ThrashAttackAction(entityId, target).toHit(game)
+        if (new ThrashAttackAction(entityId, target).toHit(game).getValue() != TargetRoll.IMPOSSIBLE)
+            return true;
+
+        if (ProtomechPhysicalAttackAction.toHit(game, entityId, target)
                 .getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(ProtomechPhysicalAttackAction.toHit(game, entityId, target)
-                .getValue() != TargetRoll.IMPOSSIBLE)
+        if (PushAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(PushAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
+        if (LayExplosivesAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(LayExplosivesAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
-            return true;
-        
-        if(TripAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
+        if (TripAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(GrappleAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
+        if (GrappleAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        if(BreakGrappleAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
+        if (BreakGrappleAttackAction.toHit(game, entityId, target).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
-        for(Iterator<Mounted> clubs = game.getEntity(entityId).getClubs().iterator();clubs.hasNext();) {
+        for (Iterator<Mounted> clubs = game.getEntity(entityId).getClubs()
+                .iterator(); clubs.hasNext();) {
             Mounted club = clubs.next();
             if (null != club) {
-                if(ClubAttackAction.toHit(game, entityId, target, club, ToHitData.HIT_NORMAL)
-                        .getValue() != TargetRoll.IMPOSSIBLE)
+                if (ClubAttackAction.toHit(game, entityId, target, club,
+                        ToHitData.HIT_NORMAL).getValue() != TargetRoll.IMPOSSIBLE)
                     return true;
             }
         }
 
-        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.BOTH).getValue() != TargetRoll.IMPOSSIBLE)
+        if (JumpJetAttackAction.toHit(game, entityId, target,
+                JumpJetAttackAction.BOTH).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
-        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.LEFT).getValue() != TargetRoll.IMPOSSIBLE)
+        if (JumpJetAttackAction.toHit(game, entityId, target,
+                JumpJetAttackAction.LEFT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
-        if(JumpJetAttackAction.toHit(game, entityId, target, JumpJetAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE)
+        if (JumpJetAttackAction.toHit(game, entityId, target,
+                JumpJetAttackAction.RIGHT).getValue() != TargetRoll.IMPOSSIBLE)
             return true;
 
         return false;
@@ -3433,12 +3471,9 @@ Average:     0.649                0.781                0.527                0.42
      * roads and bridges)? If so it will override prohibited terrain, it may
      * change movement costs, and it may lead to skids.
      * 
-     * @param game -
-     *            the <code>IGame</code> object.
-     * @param src -
-     *            the <code>Coords</code> being left.
-     * @param dest -
-     *            the <code>Coords</code> being entered.
+     * @param game - the <code>IGame</code> object.
+     * @param src - the <code>Coords</code> being left.
+     * @param dest - the <code>Coords</code> being entered.
      * @return <code>true</code> if movement between <code>src</code> and
      *         <code>dest</code> can be on pavement; <code>false</code>
      *         otherwise.
@@ -3472,11 +3507,12 @@ Average:     0.649                0.781                0.527                0.42
         // See if the source hex has a road or bridge that exits into the
         // destination hex, and the dest hex has pavement or a corresponding
         // exit to the src hex
-        else if ((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir)
-                || srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir))
+        else if ((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) || srcHex
+                .containsTerrainExit(Terrains.BRIDGE, src2destDir))
                 && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
-                        || destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir)
-                        || destHex.containsTerrain(Terrains.PAVEMENT))){
+                        || destHex.containsTerrainExit(Terrains.BRIDGE,
+                                dest2srcDir) || destHex
+                        .containsTerrain(Terrains.PAVEMENT))) {
             result = true;
         }
 
@@ -3510,12 +3546,10 @@ Average:     0.649                0.781                0.527                0.42
      * Determine if the given unit is inside of a building at the given
      * coordinates.
      * 
-     * @param game -
-     *            the <code>IGame</code> object. This value may be
+     * @param game - the <code>IGame</code> object. This value may be
      *            <code>null</code>.
-     * @param entity -
-     *            the <code>Entity</code> to be checked. This value may be
-     *            <code>null</code>.
+     * @param entity - the <code>Entity</code> to be checked. This value may
+     *            be <code>null</code>.
      * @return <code>true</code> if the entity is inside of the building at
      *         those coordinates. <code>false</code> if there is no building
      *         at those coordinates or if the entity is on the roof or in the
@@ -3542,15 +3576,12 @@ Average:     0.649                0.781                0.527                0.42
      * Determine if the given unit is inside of a building at the given
      * coordinates.
      * 
-     * @param game -
-     *            the <code>IGame</code> object. This value may be
+     * @param game - the <code>IGame</code> object. This value may be
      *            <code>null</code>.
-     * @param entity -
-     *            the <code>Entity</code> to be checked. This value may be
-     *            <code>null</code>.
-     * @param coords -
-     *            the <code>Coords</code> of the building hex. This value may
+     * @param entity - the <code>Entity</code> to be checked. This value may
      *            be <code>null</code>.
+     * @param coords - the <code>Coords</code> of the building hex. This value
+     *            may be <code>null</code>.
      * @return <code>true</code> if the entity is inside of the building at
      *         those coordinates. <code>false</code> if there is no building
      *         at those coordinates or if the entity is on the roof or in the
@@ -3597,8 +3628,7 @@ Average:     0.649                0.781                0.527                0.42
         }
 
         // Return true if the entity is in the range of building elevations.
-        if (entityElev >= (-basement)
-                && entityElev < (bldgHeight)) {
+        if (entityElev >= (-basement) && entityElev < (bldgHeight)) {
             return true;
         }
 
@@ -3615,43 +3645,40 @@ Average:     0.649                0.781                0.527                0.42
             scatterDistance = d6(1);
         }
 
-        return coords.translated(scatterDirection,scatterDistance);
+        return coords.translated(scatterDirection, scatterDistance);
     }
 
     /**
      * Gets a ring of hexes at a specified distance from the centre
+     * 
      * @param centre The centre point of the ring
      * @param range The radius of the ring
      */
     public static ArrayList<Coords> coordsAtRange(Coords centre, int range) {
         ArrayList<Coords> result = new ArrayList<Coords>(range * 6);
-        if(range < 1) {
+        if (range < 1) {
             result.add(centre);
             return result;
         }
-        for(int dir=0;dir<6;dir++) {
-            Coords corner = centre.translated(dir,range);
-            for(int count=0;count<range;count++) {
+        for (int dir = 0; dir < 6; dir++) {
+            Coords corner = centre.translated(dir, range);
+            for (int count = 0; count < range; count++) {
                 result.add(corner);
                 corner = corner.translated((dir + 2) % 6);
             }
         }
         return result;
     }
-    
+
     /**
      * Gets a new target for a flight of swarm missiles that was just shot at an
      * entity and has missiles left
      * 
      * @param game
-     * @param aeId
-     *            The attacking <code>Entity</code>
-     * @param te
-     *            The <code>Entity</code> that was shot at.
-     * @param weaponId
-     *            The <code>int</code> ID of the launcher used to fire this
-     *            volley
-     * 
+     * @param aeId The attacking <code>Entity</code>
+     * @param te The <code>Entity</code> that was shot at.
+     * @param weaponId The <code>int</code> ID of the launcher used to fire
+     *            this volley
      * @return the new target <code>Entity</code>. May return null if no new
      *         target available
      */
@@ -3681,7 +3708,7 @@ Average:     0.649                0.781                0.527                0.42
             }
             entities = game.getEnemyEntities(tempcoords, te);
             if (entities.hasMoreElements()) {
-                tempEntity = (Entity) entities.nextElement();
+                tempEntity = entities.nextElement();
                 if (!tempEntity.getTargetedBySwarm(aeId, weaponId)) {
                     // we found a target
                     return tempEntity;
@@ -3689,9 +3716,9 @@ Average:     0.649                0.781                0.527                0.42
             }
             entities = game.getFriendlyEntities(tempcoords, te);
             if (entities.hasMoreElements()) {
-                tempEntity = (Entity) entities.nextElement();
-                if (!tempEntity.getTargetedBySwarm(aeId, weaponId) &&
-                    !attacker.equals(tempEntity)) {
+                tempEntity = entities.nextElement();
+                if (!tempEntity.getTargetedBySwarm(aeId, weaponId)
+                        && !attacker.equals(tempEntity)) {
                     // we found a target
                     return tempEntity;
                 }
@@ -3700,46 +3727,48 @@ Average:     0.649                0.781                0.527                0.42
         return newTarget;
     }
 
-    public static int[] getRandomSkills(int method, int type, int level, boolean isVee) {
-        
-        int[] skills = {4,5};
-        
-        //constant is the easy one
-        if(method == METHOD_CONSTANT) {
-            if(level == LEVEL_GREEN) {
+    public static int[] getRandomSkills(int method, int type, int level,
+            boolean isVee) {
+
+        int[] skills = { 4, 5 };
+
+        // constant is the easy one
+        if (method == METHOD_CONSTANT) {
+            if (level == LEVEL_GREEN) {
                 skills[0] = 5;
                 skills[1] = 6;
             }
-            if(level == LEVEL_VETERAN) {
+            if (level == LEVEL_VETERAN) {
                 skills[0] = 3;
                 skills[1] = 4;
             }
-            if(level == LEVEL_ELITE) {
+            if (level == LEVEL_ELITE) {
                 skills[0] = 2;
                 skills[1] = 3;
             }
-            if(type == TYPE_CLAN || type == TYPE_MD) {
+            if (type == TYPE_CLAN || type == TYPE_MD) {
                 skills[0]--;
                 skills[1]--;
             }
             return skills;
         }
-        
-        //if using Taharqa's method, then the base skill level for each entity is determined 
-        //separately
-        if(method == METHOD_TAHARQA) {
+
+        // if using Taharqa's method, then the base skill level for each entity
+        // is determined
+        // separately
+        if (method == METHOD_TAHARQA) {
             int lbonus = 0;
-            if(level == LEVEL_GREEN)
+            if (level == LEVEL_GREEN)
                 lbonus -= 2;
-            if(level == LEVEL_VETERAN)
+            if (level == LEVEL_VETERAN)
                 lbonus += 2;
-            if(level == LEVEL_ELITE)
+            if (level == LEVEL_ELITE)
                 lbonus += 4;
-            
+
             int lvlroll = d6(2) + lbonus;
-            
-            //restate level based on roll
-            if(lvlroll < 6) {
+
+            // restate level based on roll
+            if (lvlroll < 6) {
                 level = LEVEL_GREEN;
             } else if (lvlroll < 10) {
                 level = LEVEL_REGULAR;
@@ -3749,55 +3778,55 @@ Average:     0.649                0.781                0.527                0.42
                 level = LEVEL_ELITE;
             }
         }
-        
-        //first get the bonus
+
+        // first get the bonus
         int bonus = 0;
-        if(type == TYPE_CLAN) {
-            if(isVee) {
+        if (type == TYPE_CLAN) {
+            if (isVee) {
                 bonus--;
             } else {
                 bonus++;
             }
         }
-        if(type == TYPE_MD) {
+        if (type == TYPE_MD) {
             bonus++;
         }
-        
+
         int gunroll = d6(1) + bonus;
         int pilotroll = d6(1) + bonus;
-        
+
         int glevel = 0;
         int plevel = 0;
-        
+
         switch (level) {
-        case LEVEL_REGULAR:
-            glevel = (int)Math.ceil(gunroll / 2.0) + 2;
-            plevel = (int)Math.ceil(pilotroll / 2.0) + 2;
-            break;
-        case LEVEL_VETERAN:
-            glevel = (int)Math.ceil(gunroll / 2.0) + 3;
-            plevel = (int)Math.ceil(pilotroll / 2.0) + 3;
-            break;
-        case LEVEL_ELITE:
-            glevel = (int)Math.ceil(gunroll / 2.0) + 4;
-            plevel = (int)Math.ceil(pilotroll / 2.0) + 4;
-            break;
-        default:    
-            glevel = (int)Math.ceil((gunroll + 0.5) / 2.0);
-            plevel = (int)Math.ceil((pilotroll + 0.5) / 2.0);
-            if(gunroll <= 0) {
-                glevel = 0;
-            }
-            if(pilotroll <= 0) {
-                plevel = 0;
-            }
+            case LEVEL_REGULAR:
+                glevel = (int) Math.ceil(gunroll / 2.0) + 2;
+                plevel = (int) Math.ceil(pilotroll / 2.0) + 2;
+                break;
+            case LEVEL_VETERAN:
+                glevel = (int) Math.ceil(gunroll / 2.0) + 3;
+                plevel = (int) Math.ceil(pilotroll / 2.0) + 3;
+                break;
+            case LEVEL_ELITE:
+                glevel = (int) Math.ceil(gunroll / 2.0) + 4;
+                plevel = (int) Math.ceil(pilotroll / 2.0) + 4;
+                break;
+            default:
+                glevel = (int) Math.ceil((gunroll + 0.5) / 2.0);
+                plevel = (int) Math.ceil((pilotroll + 0.5) / 2.0);
+                if (gunroll <= 0) {
+                    glevel = 0;
+                }
+                if (pilotroll <= 0) {
+                    plevel = 0;
+                }
         }
-        
+
         skills[0] = skillLevels[0][glevel];
         skills[1] = skillLevels[1][plevel];
-        
+
         return skills;
     }
-    
+
 } // End public class Compute
 

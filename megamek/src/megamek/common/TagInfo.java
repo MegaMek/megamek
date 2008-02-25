@@ -16,22 +16,18 @@ package megamek.common;
 
 import java.io.Serializable;
 
-public class TagInfo implements Serializable
-{
+public class TagInfo implements Serializable {
     /**
      * 
      */
     private static final long serialVersionUID = -8428068101269842100L;
-    public int attackerId; //who fired the TAG
-    public int targetId; //entity the tag was fired at
-    public int priority; //how many homing missiles to grab at a time
-    public boolean missed; //did the TAG hit?
-    public int shots = 0; //number of homing missiles allocated
+    public int attackerId; // who fired the TAG
+    public int targetId; // entity the tag was fired at
+    public int priority; // how many homing missiles to grab at a time
+    public boolean missed; // did the TAG hit?
+    public int shots = 0; // number of homing missiles allocated
 
-    public TagInfo(int attackerId,
-                   int targetId,
-                   int priority,
-                   boolean missed) {
+    public TagInfo(int attackerId, int targetId, int priority, boolean missed) {
         this.attackerId = attackerId;
         this.targetId = targetId;
         this.priority = priority;

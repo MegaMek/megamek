@@ -16,38 +16,51 @@ package megamek.common;
 
 import java.io.Serializable;
 
-public interface Targetable extends Serializable
-{
-    public static final int TYPE_ENTITY               = 0;
-    public static final int TYPE_HEX_CLEAR            = 1;
-    public static final int TYPE_HEX_IGNITE           = 2;
-    public static final int TYPE_BUILDING             = 3;
-    public static final int TYPE_BLDG_IGNITE          = 4;
-    public static final int TYPE_MINEFIELD_CLEAR      = 5;
-    public static final int TYPE_MINEFIELD_DELIVER    = 6;
-    public static final int TYPE_HEX_ARTILLERY        = 7;
-    public static final int TYPE_HEX_EXTINGUISH       = 8;
-    public static final int TYPE_INARC_POD            = 11;
-    public static final int TYPE_SEARCHLIGHT          = 12;
-    public static final int TYPE_FLARE_DELIVER        = 13;
-    public static final int TYPE_HEX_BOMB             = 14;
-    public static final int TYPE_FUEL_TANK            = 15;
-    public static final int TYPE_FUEL_TANK_IGNITE     = 16;
+public interface Targetable extends Serializable {
+    public static final int TYPE_ENTITY = 0;
+    public static final int TYPE_HEX_CLEAR = 1;
+    public static final int TYPE_HEX_IGNITE = 2;
+    public static final int TYPE_BUILDING = 3;
+    public static final int TYPE_BLDG_IGNITE = 4;
+    public static final int TYPE_MINEFIELD_CLEAR = 5;
+    public static final int TYPE_MINEFIELD_DELIVER = 6;
+    public static final int TYPE_HEX_ARTILLERY = 7;
+    public static final int TYPE_HEX_EXTINGUISH = 8;
+    public static final int TYPE_INARC_POD = 11;
+    public static final int TYPE_SEARCHLIGHT = 12;
+    public static final int TYPE_FLARE_DELIVER = 13;
+    public static final int TYPE_HEX_BOMB = 14;
+    public static final int TYPE_FUEL_TANK = 15;
+    public static final int TYPE_FUEL_TANK_IGNITE = 16;
 
     public int getTargetType();
+
     public int getTargetId();
+
     /** @return the coordinates of the hex containing the target */
     public Coords getPosition();
-    /** @return elevation of the top (e.g. torso) of the target relative to surface */
+
+    /**
+     * @return elevation of the top (e.g. torso) of the target relative to
+     *         surface
+     */
     public int absHeight();
+
     /** @return height of the target in elevation levels */
     public int getHeight();
-    /** @return elevation of the bottom (e.g. legs) of the target relative to surface */
+
+    /**
+     * @return elevation of the bottom (e.g. legs) of the target relative to
+     *         surface
+     */
     public int getElevation();
+
     /** @return true if the target is immobile (-4 to hit) */
     public boolean isImmobile();
+
     /** @return name of the target for ui purposes */
     public String getDisplayName();
+
     /** @return side hit from location */
     public int sideTable(Coords src);
 }

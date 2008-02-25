@@ -20,31 +20,31 @@
 
 package megamek.common;
 
-import java.util.*;
-import java.io.*;
+import java.io.Serializable;
+import java.util.Vector;
 
 /**
- * A roll, or sequence of rolls, made by the player to determine initiative 
- * order.  Also contains some methods for ordering players by initiative.
- *
- * @author  Ben
- * @version 
+ * A roll, or sequence of rolls, made by the player to determine initiative
+ * order. Also contains some methods for ordering players by initiative.
+ * 
+ * @author Ben
+ * @version
  */
 public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable {
-    
-	private static final long serialVersionUID = -1850190415242027657L;
-	private Vector<Integer> rolls = new Vector<Integer>();
+
+    private static final long serialVersionUID = -1850190415242027657L;
+    private Vector<Integer> rolls = new Vector<Integer>();
     private Vector<Integer> originalRolls = new Vector<Integer>();
-    private Vector<Boolean> wasRollReplaced = new Vector<Boolean>(); //booleans
+    private Vector<Boolean> wasRollReplaced = new Vector<Boolean>(); // booleans
 
     /** Creates new InitaitiveRoll */
     public InitiativeRoll() {
     }
 
     public void clear() {
-       rolls.removeAllElements();
-       originalRolls.removeAllElements();
-       wasRollReplaced.removeAllElements();
+        rolls.removeAllElements();
+        originalRolls.removeAllElements();
+        wasRollReplaced.removeAllElements();
     }
 
     public void addRoll(int bonus) {
@@ -54,10 +54,9 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         wasRollReplaced.addElement(new Boolean(false));
     }
 
-    /** 
-     * Replace the previous init roll with a new one, and make a note
-     * that it was replaced.  Used for Tactical Genius special
-     * pilot ability (lvl 3).
+    /**
+     * Replace the previous init roll with a new one, and make a note that it
+     * was replaced. Used for Tactical Genius special pilot ability (lvl 3).
      */
     public void replaceRoll(int bonus) {
         Integer roll = bonus + new Integer(Compute.d6(2));
@@ -68,12 +67,11 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
     public int size() {
         return rolls.size();
     }
-    
+
     public int getRoll(int index) {
         return rolls.elementAt(index).intValue();
     }
-    
-    
+
     /**
      * Two initiative rolls are equal if they match, roll by roll
      */
@@ -88,7 +86,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         }
         return true;
     }
-    
+
     public int compareTo(InitiativeRoll other) {
         int minSize = Math.min(size(), other.size());
         int compare = 0;
@@ -101,7 +99,7 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
         return compare;
     }
 
-    public String toString(){
+    public String toString() {
         StringBuffer buff = new StringBuffer();
 
         boolean tacticalGenius = false;
@@ -110,13 +108,14 @@ public class InitiativeRoll implements Comparable<InitiativeRoll>, Serializable 
             Integer o = originalRolls.elementAt(i);
 
             if (wasRollReplaced.elementAt(i).booleanValue()) {
-                buff.append(o.toString()).append("(").append(r.toString()).append(")");
+                buff.append(o.toString()).append("(").append(r.toString())
+                        .append(")");
                 tacticalGenius = true;
             } else {
-                buff.append( r.toString() );
+                buff.append(r.toString());
             }
             if (i != rolls.size() - 1) {
-                buff.append( " / " );
+                buff.append(" / ");
             }
         }
         if (tacticalGenius) {

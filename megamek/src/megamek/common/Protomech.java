@@ -36,10 +36,10 @@ public class Protomech extends Entity implements Serializable {
     public static final int NUM_PMECH_LOCATIONS = 6;
 
     public static final String[] LOCATION_NAMES = { "Head", "Torso",
-        "Right Arm", "Left Arm", "Legs", "Main Gun" };
+            "Right Arm", "Left Arm", "Legs", "Main Gun" };
 
     public static final String[] LOCATION_ABBRS = { "HD", "T", "RA", "LA", "L",
-    "MG" };
+            "MG" };
 
     // weapon bools
     private boolean bHasMainGun;
@@ -148,9 +148,8 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Get the weapon in the given torso location (if any).
      * 
-     * @param isTorsoA -
-     *            a <code>boolean</code> that is <code>true</code> if the
-     *            weapon in "Torso A" is needed; <code>false</code> if the
+     * @param isTorsoA - a <code>boolean</code> that is <code>true</code> if
+     *            the weapon in "Torso A" is needed; <code>false</code> if the
      *            weapon in "Torso B" is needed.
      * @return the <code>Mounted</code> weapon at the needed location. This
      *         value will be <code>null</code> if no weapon is in the
@@ -179,7 +178,7 @@ public class Protomech extends Entity implements Serializable {
      */
     public PilotingRollData getBasePilotingRoll() {
         return new PilotingRollData(this.getId(), TargetRoll.CHECK_FALSE,
-        "Protomeks never take PSRs.");
+                "Protomeks never take PSRs.");
     }
 
     /**
@@ -333,11 +332,9 @@ public class Protomech extends Entity implements Serializable {
     }
 
     /**
-     * Returns the amount of heat that the entity can sink each turn. Pmechs have
-     * no heat.
-     * //FIXME
-     * However, the number of heat sinks they have IS importnat...
-     * For cost and validation purposes.
+     * Returns the amount of heat that the entity can sink each turn. Pmechs
+     * have no heat. //FIXME However, the number of heat sinks they have IS
+     * importnat... For cost and validation purposes.
      */
     public int getHeatCapacity() {
 
@@ -481,7 +478,7 @@ public class Protomech extends Entity implements Serializable {
         roll = Compute.d6(2);
         try {
             PrintWriter pw = PreferenceManager.getClientPreferences()
-            .getMekHitLocLog();
+                    .getMekHitLocLog();
 
             if (pw != null) {
                 pw.print(table);
@@ -557,16 +554,11 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Sets the internal structure for the pmech.
      * 
-     * @param head
-     *            head
-     * @param torso
-     *            center torso
-     * @param arm
-     *            right/left arm
-     * @param legs
-     *            right/left leg
-     * @param mainGun
-     *            main gun
+     * @param head head
+     * @param torso center torso
+     * @param arm right/left arm
+     * @param legs right/left leg
+     * @param mainGun main gun
      */
     public void setInternal(int head, int torso, int arm, int legs, int mainGun) {
         initializeInternal(head, LOC_HEAD);
@@ -616,7 +608,7 @@ public class Protomech extends Entity implements Serializable {
      * Creates a new mount for this equipment and adds it in.
      */
     public Mounted addEquipment(EquipmentType etype, int loc)
-    throws LocationFullException {
+            throws LocationFullException {
         return addEquipment(etype, loc, false, -1);
     }
 
@@ -654,8 +646,9 @@ public class Protomech extends Entity implements Serializable {
                 case LOC_HEAD:
                 case LOC_LEG:
                 case LOC_NMISS:
-                    throw new LocationFullException("Weapon " + mounted.getName()
-                            + " can't be mounted in " + getLocationAbbr(loc));
+                    throw new LocationFullException("Weapon "
+                            + mounted.getName() + " can't be mounted in "
+                            + getLocationAbbr(loc));
                 case LOC_MAINGUN:
                     if (bHasMainGun) {
                         throw new LocationFullException("Already has Main Gun");
@@ -687,7 +680,7 @@ public class Protomech extends Entity implements Serializable {
                     if (bHasTorsoAGun) {
                         if (bHasTorsoBGun) {
                             throw new LocationFullException(
-                            "Already has both torso guns");
+                                    "Already has both torso guns");
                         }
                         bHasTorsoBGun = true;
                         mounted.setLocation(loc, rearMounted);
@@ -710,7 +703,6 @@ public class Protomech extends Entity implements Serializable {
 
     /**
      * Calculates the battle value of this pmech.
-     * 
      */
     public int calculateBattleValue() {
         double dbv = 0; // defensive battle value
@@ -719,12 +711,12 @@ public class Protomech extends Entity implements Serializable {
         // total armor points
         dbv += getTotalArmor() * 2.5;
 
-        // total internal structure        
+        // total internal structure
         dbv += getTotalInternal() * 1.5;
 
         // add defensive equipment
         double dEquipmentBV = 0;
-        for (Mounted mounted : getEquipment()){
+        for (Mounted mounted : getEquipment()) {
             EquipmentType etype = mounted.getType();
 
             // don't count destroyed equipment
@@ -732,17 +724,20 @@ public class Protomech extends Entity implements Serializable {
                 continue;
 
             if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS))
-                    || (etype instanceof AmmoType && ((AmmoType)etype).getAmmoType() == AmmoType.T_AMS)
-                    || (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM)
-                            || etype.hasFlag(MiscType.F_BAP)))) {
+                    || (etype instanceof AmmoType && ((AmmoType) etype)
+                            .getAmmoType() == AmmoType.T_AMS)
+                    || (etype instanceof MiscType && (etype
+                            .hasFlag(MiscType.F_ECM) || etype
+                            .hasFlag(MiscType.F_BAP)))) {
                 dEquipmentBV += etype.getBV(this);
             }
         }
         dbv += dEquipmentBV;
 
         // adjust for target movement modifier
-        double tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(), false, false).getValue();
-        double tmmFactor = 1+(tmmRan/10)+0.1;
+        double tmmRan = Compute.getTargetMovementModifier(getOriginalRunMP(),
+                false, false).getValue();
+        double tmmFactor = 1 + (tmmRan / 10) + 0.1;
         dbv *= tmmFactor;
 
         double weaponBV = 0;
@@ -752,7 +747,7 @@ public class Protomech extends Entity implements Serializable {
         // and add up BVs for ammo-using weapon types for excessive ammo rule
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
         for (Mounted mounted : getWeaponList()) {
-            WeaponType wtype = (WeaponType)mounted.getType();
+            WeaponType wtype = (WeaponType) mounted.getType();
             double dBV = wtype.getBV(this);
 
             // don't count destroyed equipment
@@ -767,11 +762,11 @@ public class Protomech extends Entity implements Serializable {
             // artemis bumps up the value
             if (mounted.getLinkedBy() != null) {
                 Mounted mLinker = mounted.getLinkedBy();
-                if (mLinker.getType() instanceof MiscType && 
-                        mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                if (mLinker.getType() instanceof MiscType
+                        && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
                 }
-            } 
+            }
 
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
@@ -782,26 +777,27 @@ public class Protomech extends Entity implements Serializable {
             // to compare with ammo BV later for excessive ammo BV rule
             if (!(wtype.hasFlag(WeaponType.F_ENERGY)
                     || wtype.hasFlag(WeaponType.F_ONESHOT)
-                    || wtype.hasFlag(WeaponType.F_INFANTRY)
-                    || wtype.getAmmoType() == AmmoType.T_NA)) {
-                String key = wtype.getAmmoType()+":"+wtype.getRackSize();
+                    || wtype.hasFlag(WeaponType.F_INFANTRY) || wtype
+                    .getAmmoType() == AmmoType.T_NA)) {
+                String key = wtype.getAmmoType() + ":" + wtype.getRackSize();
                 if (!weaponsForExcessiveAmmo.containsKey(key)) {
                     weaponsForExcessiveAmmo.put(key, wtype.getBV(this));
-                }
-                else {
-                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this)+weaponsForExcessiveAmmo.get(key));
+                } else {
+                    weaponsForExcessiveAmmo.put(key, wtype.getBV(this)
+                            + weaponsForExcessiveAmmo.get(key));
                 }
             }
         }
 
         // add ammo bv
         double ammoBV = 0;
-        // extra BV for when we have semiguided LRMs and someone else has TAG on our team        
+        // extra BV for when we have semiguided LRMs and someone else has TAG on
+        // our team
         double tagBV = 0;
         Map<String, Double> ammo = new HashMap<String, Double>();
-        ArrayList<String> keys = new ArrayList<String>(); 
+        ArrayList<String> keys = new ArrayList<String>();
         for (Mounted mounted : getAmmo()) {
-            AmmoType atype = (AmmoType)mounted.getType();
+            AmmoType atype = (AmmoType) mounted.getType();
 
             // don't count depleted ammo
             if (mounted.getShotsLeft() == 0)
@@ -824,44 +820,48 @@ public class Protomech extends Entity implements Serializable {
                 if (tmpP.hasTAG())
                     tagBV += atype.getBV(this);
                 else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-                    for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements(); ) {
+                    for (Enumeration<Team> e = game.getTeams(); e
+                            .hasMoreElements();) {
                         Team m = e.nextElement();
                         if (m.getId() == tmpP.getTeam()) {
                             if (m.hasTAG(game)) {
                                 tagBV += atype.getBV(this);
                             }
                             // A player can't be on two teams.
-                            // If we check his team and don't give the penalty, that's it.
+                            // If we check his team and don't give the penalty,
+                            // that's it.
                             break;
                         }
                     }
                 }
             }
-            String key = atype.getAmmoType()+":"+atype.getRackSize();
+            String key = atype.getAmmoType() + ":" + atype.getRackSize();
             if (!keys.contains(key))
                 keys.add(key);
             if (!ammo.containsKey(key)) {
                 ammo.put(key, atype.getProtoBV());
-            }
-            else {
-                ammo.put(key, atype.getProtoBV()+ammo.get(key));
+            } else {
+                ammo.put(key, atype.getProtoBV() + ammo.get(key));
             }
         }
         // excessive ammo rule:
-        // only count BV for ammo for a weapontype until the BV of all weapons of that 
+        // only count BV for ammo for a weapontype until the BV of all weapons
+        // of that
         // type on the mech is reached
         for (String key : keys) {
-            if ( weaponsForExcessiveAmmo.containsKey(key) && ammo.get(key) > weaponsForExcessiveAmmo.get(key))
+            if (weaponsForExcessiveAmmo.containsKey(key)
+                    && ammo.get(key) > weaponsForExcessiveAmmo.get(key))
                 ammoBV += weaponsForExcessiveAmmo.get(key);
             else
                 ammoBV += ammo.get(key);
         }
         weaponBV += ammoBV;
 
-        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM - BMR p152)
+        // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
+        // BMR p152)
         double oEquipmentBV = 0;
         for (Mounted mounted : getMisc()) {
-            MiscType mtype = (MiscType)mounted.getType();
+            MiscType mtype = (MiscType) mounted.getType();
 
             // don't count destroyed equipment
             if (mounted.isDestroyed())
@@ -871,7 +871,8 @@ public class Protomech extends Entity implements Serializable {
                     || mtype.hasFlag(MiscType.F_AP_POD)
                     || mtype.hasFlag(MiscType.F_BAP)
                     || mtype.hasFlag(MiscType.F_B_POD)
-                    || mtype.hasFlag(MiscType.F_TARGCOMP)) //targ counted with weapons 
+                    || mtype.hasFlag(MiscType.F_TARGCOMP)) // targ counted with
+                                                            // weapons
                 continue;
             oEquipmentBV += mtype.getBV(this);
         }
@@ -879,22 +880,23 @@ public class Protomech extends Entity implements Serializable {
         weaponBV += oEquipmentBV;
 
         // adjust further for speed factor
-        double speedFactor = Math.pow(1+(((double)getOriginalRunMP()+(Math.round((double)jumpMP/2))-5)/10), 1.2);
+        double speedFactor = Math.pow(1 + (((double) getOriginalRunMP()
+                + (Math.round((double) jumpMP / 2)) - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;
 
         // we get extra bv from some stuff
         double xbv = 0.0;
-        //extra BV for semi-guided lrm when TAG in our team
+        // extra BV for semi-guided lrm when TAG in our team
         xbv += tagBV;
 
-        int finalBV = (int)Math.round(dbv + obv + xbv);
+        int finalBV = (int) Math.round(dbv + obv + xbv);
 
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
 
-        int retVal = (int)Math.round((finalBV) * pilotFactor);
+        int retVal = (int) Math.round((finalBV) * pilotFactor);
         return retVal;
     }
 
@@ -915,12 +917,12 @@ public class Protomech extends Entity implements Serializable {
         r.add(getKillNumber());
         vDesc.addElement(r);
 
-        if(isDestroyed()) {
+        if (isDestroyed()) {
             Entity killer = game.getEntity(killerId);
-            if(killer == null) {
+            if (killer == null) {
                 killer = game.getOutOfGameEntity(killerId);
             }
-            if(killer != null) {
+            if (killer != null) {
                 r = new Report(7072, Report.PUBLIC);
                 r.addDesc(killer);
             } else {
@@ -1017,41 +1019,42 @@ public class Protomech extends Entity implements Serializable {
         retVal += 75000;
 
         // Sensor cost is based on tonnage.
-        retVal += 2000*weight;
+        retVal += 2000 * weight;
 
         // Musculature cost is based on tonnage.
-        retVal += 2000*weight;
+        retVal += 2000 * weight;
 
         // Internal Structure cost is based on tonnage.
-        retVal += 400*weight;
+        retVal += 400 * weight;
 
         // Arm actuators are based on tonnage.
         // Their cost is listed separately?
-        retVal += 2*180*weight;
+        retVal += 2 * 180 * weight;
 
         // Leg actuators are based on tonnage.
-        retVal += 540*weight;
+        retVal += 540 * weight;
 
         // Engine cost is based on tonnage and rating.
         if (getEngine() != null)
-            retVal += (5000*weight*getEngine().getRating())/75;
+            retVal += (5000 * weight * getEngine().getRating()) / 75;
 
         // Jump jet cost is based on tonnage and jump MP.
-        retVal += weight*getJumpMP()*getJumpMP()*200;
+        retVal += weight * getJumpMP() * getJumpMP() * 200;
 
         // Heat sinks is constant per sink.
-        //FIXME
-        // Protos in MM currently don't keep track of sinks, so we can't do this.
-        //retVal += 2000*getHeatCapacity();
+        // FIXME
+        // Protos in MM currently don't keep track of sinks, so we can't do
+        // this.
+        // retVal += 2000*getHeatCapacity();
 
         // Armor is linear on the armor value of the Protomech
-        retVal += getTotalArmor()*625;
+        retVal += getTotalArmor() * 625;
 
         // Add in equipment cost.
-        //FIXME
+        // FIXME
 
         // Finally, apply the Final ProtoMech Cost Multiplier
-        retVal *= 1+(weight/100.0);
+        retVal *= 1 + (weight / 100.0);
 
         return retVal;
     }

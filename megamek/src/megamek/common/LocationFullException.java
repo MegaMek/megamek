@@ -22,9 +22,9 @@ package megamek.common;
 
 /**
  * Thrown by Mech, if a location is too full for new equipment.
- *
- * @author  Ben
- * @version 
+ * 
+ * @author Ben
+ * @version
  */
 public class LocationFullException extends java.lang.Exception {
 
@@ -33,21 +33,19 @@ public class LocationFullException extends java.lang.Exception {
      */
     private static final long serialVersionUID = -8220621982313473559L;
 
-
     /**
      * Creates new <code>LocationFullExecption</code> without detail message.
      */
     public LocationFullException() {
     }
 
-
     /**
-     * Constructs an <code>LocationFullExecption</code> with the specified detail message.
+     * Constructs an <code>LocationFullExecption</code> with the specified
+     * detail message.
+     * 
      * @param msg the detail message.
      */
     public LocationFullException(String msg) {
         super(msg);
     }
 }
-
-

@@ -17,27 +17,30 @@ package megamek.common;
 public interface ITerrainFactory {
 
     /**
-     * Create terrain of cpecified type and level 
+     * Create terrain of cpecified type and level
+     * 
      * @param type terrain type
      * @param level level
      * @return new terrain
      */
     public abstract ITerrain createTerrain(int type, int level);
-    
+
     /**
-     * Create terrain of cpecified type, level , exitsSpecified 
-     * flag and exits,
+     * Create terrain of cpecified type, level , exitsSpecified flag and exits,
+     * 
      * @param type
      * @param level
      * @param exitsSpecified
      * @param exits
      * @return new terrain
      */
-    public abstract ITerrain createTerrain(int type, int level, boolean exitsSpecified, int exits);
+    public abstract ITerrain createTerrain(int type, int level,
+            boolean exitsSpecified, int exits);
 
     /**
-     * Create Terrain using  string containing terrain info
-     * TODO I think this shoul be removed. It's too much implementation specfic 
+     * Create Terrain using string containing terrain info TODO I think this
+     * shoul be removed. It's too much implementation specfic
+     * 
      * @param terrain
      * @return new terrain
      */
@@ -45,6 +48,7 @@ public interface ITerrainFactory {
 
     /**
      * Create terrain as copy of other
+     * 
      * @param other
      * @return new terrain
      */

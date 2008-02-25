@@ -23,7 +23,8 @@ public class ArmlessMech extends BipedMech {
     private static final long serialVersionUID = 1333922747670982513L;
 
     public ArmlessMech(String inGyroType, String inCockpitType) {
-        this(getGyroTypeForString(inGyroType), getCockpitTypeForString(inCockpitType));
+        this(getGyroTypeForString(inGyroType),
+                getCockpitTypeForString(inCockpitType));
     }
 
     public ArmlessMech() {
@@ -33,8 +34,8 @@ public class ArmlessMech extends BipedMech {
     public ArmlessMech(int inGyroType, int inCockpitType) {
         super(inGyroType, inCockpitType);
 
-        for(int i=0;i<4;i++) {
-            //remove arm actuators
+        for (int i = 0; i < 4; i++) {
+            // remove arm actuators
             setCritical(LOC_RARM, i, null);
             setCritical(LOC_LARM, i, null);
         }
@@ -49,7 +50,7 @@ public class ArmlessMech extends BipedMech {
 
     /**
      * Sets the internal structure for the mech.
-     *
+     * 
      * @param head head
      * @param ct center torso
      * @param t right/left torso
@@ -66,29 +67,28 @@ public class ArmlessMech extends BipedMech {
         initializeInternal(leg, LOC_RLEG);
         initializeInternal(leg, LOC_LLEG);
     }
-    
+
     protected double getArmActuatorCost() {
         return 0.0;
     }
-    
+
     /**
-     * Checks if the entity is getting up.  If so, returns the
-     *  target roll for the piloting skill check.
+     * Checks if the entity is getting up. If so, returns the target roll for
+     * the piloting skill check.
      */
     public PilotingRollData checkGetUp(MoveStep step) {
         PilotingRollData roll = super.checkGetUp(step);
         roll.addModifier(4, "armless Mech");
         return roll;
     }
-    
+
     /**
      * Gets the location that excess damage transfers to
      */
     public HitData getTransferLocation(HitData hit) {
-        if(hit.getLocation() == LOC_LARM
-                ||hit.getLocation() == LOC_RARM) {
+        if (hit.getLocation() == LOC_LARM || hit.getLocation() == LOC_RARM) {
             return new HitData(LOC_NONE);
         }
-		return super.getTransferLocation(hit);
+        return super.getTransferLocation(hit);
     }
 }

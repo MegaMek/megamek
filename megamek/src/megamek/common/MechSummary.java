@@ -11,18 +11,17 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
- 
- package megamek.common;
- 
- import java.io.File;
- import java.io.Serializable;
- 
- /* 
-  * Contains minimal information about a single entity
-  */
- 
- public class MechSummary implements Serializable
- {
+
+package megamek.common;
+
+import java.io.File;
+import java.io.Serializable;
+
+/*
+ * Contains minimal information about a single entity
+ */
+
+public class MechSummary implements Serializable {
     /**
      * 
      */
@@ -41,22 +40,38 @@
     private long m_lModified; // for comparison when loading
     private String m_sLevel;
     private boolean canon;
-    
-    public String getName() { return (this.m_sName); }
-    public String getChassis() { return (this.m_sChassis); }
-    public String getModel() { return (this.m_sModel); }
-    public String getUnitType() { return (this.m_sUnitType); }
-    public boolean isCanon() { return this.canon;}
-    
+
+    public String getName() {
+        return (this.m_sName);
+    }
+
+    public String getChassis() {
+        return (this.m_sChassis);
+    }
+
+    public String getModel() {
+        return (this.m_sModel);
+    }
+
+    public String getUnitType() {
+        return (this.m_sUnitType);
+    }
+
+    public boolean isCanon() {
+        return this.canon;
+    }
+
     public static String determineUnitType(Entity e) {
         int mm = e.getMovementMode();
         if (e instanceof BattleArmor) {
             return "BattleArmor";
-        }else if (e instanceof Infantry) {
+        } else if (e instanceof Infantry) {
             return "Infantry";
-        } else if (e instanceof VTOL) { //for now
+        } else if (e instanceof VTOL) { // for now
             return "VTOL";
-        } else if ((mm == IEntityMovementMode.NAVAL) || (mm == IEntityMovementMode.HYDROFOIL) || (mm == IEntityMovementMode.SUBMARINE)) {
+        } else if ((mm == IEntityMovementMode.NAVAL)
+                || (mm == IEntityMovementMode.HYDROFOIL)
+                || (mm == IEntityMovementMode.SUBMARINE)) {
             return "Naval";
         } else if (e instanceof Tank) {
             return "Tank";
@@ -67,35 +82,103 @@
         } else if (e instanceof GunEmplacement) {
             return "Gun Emplacement";
         } else {
-            //Hmm...this is not a good case, should throw excep. instead?
+            // Hmm...this is not a good case, should throw excep. instead?
             return "Unknown";
         }
     }
-    public File getSourceFile() { return (this.m_sSourceFile); }
-    public String getEntryName() { return (this.m_sEntryName); }
-    public int getYear() { return (this.m_nYear); }
-    public int getType() { return (this.m_nType); }
-    public int getTons() { return (this.m_nTons); }
-    public int getBV() { return (this.m_nBV); }
-    public int getCost() { return (this.m_nCost); }
-    public long getModified() { return (this.m_lModified); }
-    public String getLevel() { return (this.m_sLevel); }
-    
-    public void setName(String m_sName) { this.m_sName = m_sName; }
-    public void setChassis(String m_sChassis) { this.m_sChassis = m_sChassis; }
-    public void setModel(String m_sModel) { this.m_sModel = m_sModel; }
-    public void setUnitType(String m_sUnitType) { this.m_sUnitType = m_sUnitType; }
-    public void setSourceFile(File m_sSourceFile) { this.m_sSourceFile = m_sSourceFile; }
-    public void setEntryName(String m_sEntryName) { this.m_sEntryName = m_sEntryName; }
-    public void setYear(int m_nYear) { this.m_nYear = m_nYear; }
-    public void setType(int m_nType) { this.m_nType = m_nType; }
-    public void setTons(int m_nTons) { this.m_nTons = m_nTons; }
-    public void setCost(int m_nCost) { this.m_nCost = m_nCost; }
-    public void setBV(int m_nBV) { this.m_nBV = m_nBV; }
-    public void setModified(long m_lModified) { this.m_lModified = m_lModified; }
-    public void setLevel(String level) { this.m_sLevel = level; }
-    public void setCanon(boolean canon) { this.canon = canon; }
-    
+
+    public File getSourceFile() {
+        return (this.m_sSourceFile);
+    }
+
+    public String getEntryName() {
+        return (this.m_sEntryName);
+    }
+
+    public int getYear() {
+        return (this.m_nYear);
+    }
+
+    public int getType() {
+        return (this.m_nType);
+    }
+
+    public int getTons() {
+        return (this.m_nTons);
+    }
+
+    public int getBV() {
+        return (this.m_nBV);
+    }
+
+    public int getCost() {
+        return (this.m_nCost);
+    }
+
+    public long getModified() {
+        return (this.m_lModified);
+    }
+
+    public String getLevel() {
+        return (this.m_sLevel);
+    }
+
+    public void setName(String m_sName) {
+        this.m_sName = m_sName;
+    }
+
+    public void setChassis(String m_sChassis) {
+        this.m_sChassis = m_sChassis;
+    }
+
+    public void setModel(String m_sModel) {
+        this.m_sModel = m_sModel;
+    }
+
+    public void setUnitType(String m_sUnitType) {
+        this.m_sUnitType = m_sUnitType;
+    }
+
+    public void setSourceFile(File m_sSourceFile) {
+        this.m_sSourceFile = m_sSourceFile;
+    }
+
+    public void setEntryName(String m_sEntryName) {
+        this.m_sEntryName = m_sEntryName;
+    }
+
+    public void setYear(int m_nYear) {
+        this.m_nYear = m_nYear;
+    }
+
+    public void setType(int m_nType) {
+        this.m_nType = m_nType;
+    }
+
+    public void setTons(int m_nTons) {
+        this.m_nTons = m_nTons;
+    }
+
+    public void setCost(int m_nCost) {
+        this.m_nCost = m_nCost;
+    }
+
+    public void setBV(int m_nBV) {
+        this.m_nBV = m_nBV;
+    }
+
+    public void setModified(long m_lModified) {
+        this.m_lModified = m_lModified;
+    }
+
+    public void setLevel(String level) {
+        this.m_sLevel = level;
+    }
+
+    public void setCanon(boolean canon) {
+        this.canon = canon;
+    }
+
     public int getWeightClass() {
         return EntityWeightClass.getWeightClass(m_nTons);
     }

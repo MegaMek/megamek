@@ -21,9 +21,10 @@
 package megamek.common;
 
 /**
- * Subclass of the roll tracker for <code>Pool36Random</code> "entropy" sources
- *
- * @author  Suvarov454
+ * Subclass of the roll tracker for <code>Pool36Random</code> "entropy"
+ * sources
+ * 
+ * @author Suvarov454
  */
 public class MMShuffle extends Roll {
 
@@ -45,14 +46,14 @@ public class MMShuffle extends Roll {
 
     /**
      * Create a new "roll" for this shuffle.
-     *
-     * @param   shuffleId - the <code>long</code> id for this shuffle.
-     * @param   first - the first <code>int</code> "roll"
-     * @param   second - the second <code>int</code> "roll"
+     * 
+     * @param shuffleId - the <code>long</code> id for this shuffle.
+     * @param first - the first <code>int</code> "roll"
+     * @param second - the second <code>int</code> "roll"
      */
-    public MMShuffle (int first, int second) {
+    public MMShuffle(int first, int second) {
         // All shuffles are for 2d6.
-        super (6, 1);
+        super(6, 1);
 
         // Record our input.
         this.one = first;
@@ -62,74 +63,75 @@ public class MMShuffle extends Roll {
 
     /**
      * Record when this "roll" is delt.
-     *
-     * @param   delt - the <code>int</code> order of this "roll" in its shuffle
+     * 
+     * @param delt - the <code>int</code> order of this "roll" in its shuffle
      */
-    public void setDeal (int delt) { this.deal = delt; this.shuffle++; }
+    public void setDeal(int delt) {
+        this.deal = delt;
+        this.shuffle++;
+    }
 
     /**
-     * Get the value of the roll.  This is the total of each of the rolls of
-     * each virtual die.
-     *
-     * @return  the <code>int</code> value of the roll.
+     * Get the value of the roll. This is the total of each of the rolls of each
+     * virtual die.
+     * 
+     * @return the <code>int</code> value of the roll.
      */
-    public int getIntValue() { return this.one + this.two; }
+    public int getIntValue() {
+        return this.one + this.two;
+    }
 
     /**
      * Get a <code>String</code> containing the roll for each of the virtual
      * dice.
-     *
-     * @return  the <code>String</code> value of the roll.
+     * 
+     * @return the <code>String</code> value of the roll.
      */
     public String toString() {
         // Build a buffer as we go.
         StringBuffer buffer = new StringBuffer();
 
         // Start off the report (this is all the report a single die needs).
-        buffer.append (this.one + this.two);
+        buffer.append(this.one + this.two);
 
         // Add the two "dice".
-        buffer.append (" (");
-        buffer.append (this.one);
-        buffer.append ("+");
-        buffer.append (this.two);
-        buffer.append (")");
+        buffer.append(" (");
+        buffer.append(this.one);
+        buffer.append("+");
+        buffer.append(this.two);
+        buffer.append(")");
 
         // Return the string.
         return buffer.toString();
     }
 
     /**
-     * Get a <code>String</code> report that can be parsed to analyse the roll.
-     *
-     * @return  the <code>String</code> details of the roll.
+     * Get a <code>String</code> report that can be parsed to analyse the
+     * roll.
+     * 
+     * @return the <code>String</code> details of the roll.
      */
     public String getReport() {
-        
+
         // Build a buffer as we go.
         StringBuffer buffer = new StringBuffer();
 
         // Include the id.
-        buffer.append ("Roll #")
-            .append (this.id)
-            .append (" - range: [")
-            .append (1)
-            .append (",")
-            .append (6)
-            .append ("], result: ")
-            .append (this.one + this.two);
+        buffer.append("Roll #").append(this.id).append(" - range: [").append(1)
+                .append(",").append(6).append("], result: ").append(
+                        this.one + this.two);
 
         // Report the two "dice".
-        buffer.append (", rolls: ");
-        buffer.append (this.one);
-        buffer.append (", ");
-        buffer.append (this.two);
+        buffer.append(", rolls: ");
+        buffer.append(this.one);
+        buffer.append(", ");
+        buffer.append(this.two);
 
         // Now report the order of the shuffle.
-        buffer.append (", deal #");
-        buffer.append (this.deal);
-        buffer.append (" of shuffle #");
-        buffer.append (this.shuffle);
+        buffer.append(", deal #");
+        buffer.append(this.deal);
+        buffer.append(" of shuffle #");
+        buffer.append(this.shuffle);
 
         // Return the string.
         return buffer.toString();
@@ -138,24 +140,25 @@ public class MMShuffle extends Roll {
     /**
      * Test harness for this class.
      */
-    public static void main (String[] args) {
+    public static void main(String[] args) {
         int whichRNG = MMRandom.R_POOL36;
-        MMRandom rng = MMRandom.generate (whichRNG);
+        MMRandom rng = MMRandom.generate(whichRNG);
 
         // Roll and output the virtual dice.
-        Roll.output (rng.d6 (2));
+        Roll.output(rng.d6(2));
 
         // Get a second roll.
-        Roll.output (rng.d6 (2));
+        Roll.output(rng.d6(2));
 
         // Get a roll of a single die.
-        Roll.output (rng.d6 (1));
+        Roll.output(rng.d6(1));
 
         // Get a second roll of a single die.
-        Roll.output (rng.d6());
+        Roll.output(rng.d6());
 
         // Handle 36 more "rolls".
-        for (int loop = 0; loop < 36; loop++) Roll.output (rng.d6 (2));
+        for (int loop = 0; loop < 36; loop++)
+            Roll.output(rng.d6(2));
     }
 
 }

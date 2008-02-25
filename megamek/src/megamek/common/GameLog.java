@@ -21,42 +21,50 @@
 
 package megamek.common;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Date;
 
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 
 /**
- *
- * @author  Ben
- * @version 
+ * @author Ben
+ * @version
  */
 public class GameLog {
-    
-    public static final String LOG_DIR = PreferenceManager.getClientPreferences().getLogDirectory();
+
+    public static final String LOG_DIR = PreferenceManager
+            .getClientPreferences().getLogDirectory();
 
     public static final String LOG_FILE = "gamelog.txt"; //$NON-NLS-1$
-    
-    //private long maxFilesize = Long.MAX_VALUE;
+
+    // private long maxFilesize = Long.MAX_VALUE;
     private File logfile;
-    
+
     BufferedWriter writer;
 
-    /** Creates GameLog named @filename */
-    //public GameLog(String filename, boolean append, long maxSize) {
+    /**
+     * Creates GameLog named
+     * 
+     * @filename
+     */
+    // public GameLog(String filename, boolean append, long maxSize) {
     public GameLog(String filename) {
         try {
             File logDir = new File(LOG_DIR);
             if (!logDir.exists()) {
                 logDir.mkdir();
             }
-            //maxFilesize = maxSize;
+            // maxFilesize = maxSize;
             if (PreferenceManager.getClientPreferences().stampFilenames()) {
                 filename = StringUtil.addDateTimeStamp(filename);
             }
             logfile = new File(LOG_DIR + File.separator + filename);
-            //writer = new BufferedWriter(new FileWriter(LOG_DIR + File.separator + filename, append));
+            // writer = new BufferedWriter(new FileWriter(LOG_DIR +
+            // File.separator + filename, append));
             writer = new BufferedWriter(new FileWriter(logfile));
             append("Log file opened " + new Date().toString()); //$NON-NLS-1$
         } catch (IOException ex) {
@@ -64,14 +72,13 @@ public class GameLog {
             System.err.println("GameLog:" + ex.getMessage());
         }
     }
-    
-    /** Creates new GameLog */
-    //public GameLog() {
-    //this(LOG_FILE,false,Long.MAX_VALUE);
-    //}
 
+    /** Creates new GameLog */
+    // public GameLog() {
+    // this(LOG_FILE,false,Long.MAX_VALUE);
+    // }
     public void append(String toLog) {
-        //if (writer == null || logfile.length() > maxFilesize) {
+        // if (writer == null || logfile.length() > maxFilesize) {
         if (writer == null) {
             return;
         }
@@ -80,11 +87,11 @@ public class GameLog {
             writer.newLine();
             writer.flush();
         } catch (IOException ex) {
-            //duhhhh...
+            // duhhhh...
             writer = null;
         }
     }
-    
+
     public void close() throws java.io.IOException {
         writer.close();
     }

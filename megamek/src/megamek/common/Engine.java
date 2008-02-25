@@ -25,43 +25,41 @@ import megamek.common.verifier.TestEntity;
 
 /**
  * This class represents an engine, such as those driving mechs.
- *
  */
-public class Engine implements Serializable
-{
+public class Engine implements Serializable {
     /**
      * 
      */
     private static final long serialVersionUID = -246032529363109609L;
 
-    public final static float[] ENGINE_RATINGS = { 0.0f, 0.25f,
-        0.5f, 0.5f, 0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.5f, 1.5f, 1.5f,
-        2.0f, 2.0f, 2.0f, 2.5f, 2.5f, 3.0f, 3.0f, 3.0f, 3.5f, 3.5f, 4.0f,
-        4.0f, 4.0f, 4.5f, 4.5f, 5.0f, 5.0f, 5.5f, 5.5f, 6.0f, 6.0f, 6.0f,
-        7.0f, 7.0f, 7.5f, 7.5f, 8.0f, 8.5f,
+    public final static float[] ENGINE_RATINGS = { 0.0f, 0.25f, 0.5f, 0.5f,
+            0.5f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.5f, 1.5f, 1.5f, 2.0f, 2.0f,
+            2.0f, 2.5f, 2.5f, 3.0f, 3.0f, 3.0f, 3.5f, 3.5f, 4.0f, 4.0f, 4.0f,
+            4.5f, 4.5f, 5.0f, 5.0f, 5.5f, 5.5f, 6.0f, 6.0f, 6.0f, 7.0f, 7.0f,
+            7.5f, 7.5f, 8.0f, 8.5f,
 
-        8.5f, 9.0f, 9.5f, 10.0f, 10.0f, 10.5f, 11.0f, 11.5f, 12.0f, 12.5f,
-        13.0f, 13.5f, 14.0f, 14.5f, 15.5f, 16.0f, 16.5f, 17.5f, 18.0f,
-        19.0f, 19.5f, 10.5f, 21.5f, 22.5f, 23.5f, 24.5f, 25.5f, 27.0f,
-        28.5f, 29.5f, 31.5f, 33.0f, 34.5f, 36.5f, 38.5f, 41.0f, 43.5f,
-        46.0f, 49.0f, 52.5f,
+            8.5f, 9.0f, 9.5f, 10.0f, 10.0f, 10.5f, 11.0f, 11.5f, 12.0f, 12.5f,
+            13.0f, 13.5f, 14.0f, 14.5f, 15.5f, 16.0f, 16.5f, 17.5f, 18.0f,
+            19.0f, 19.5f, 10.5f, 21.5f, 22.5f, 23.5f, 24.5f, 25.5f, 27.0f,
+            28.5f, 29.5f, 31.5f, 33.0f, 34.5f, 36.5f, 38.5f, 41.0f, 43.5f,
+            46.0f, 49.0f, 52.5f,
 
-        56.5f, 61.0f, 66.5f, 72.5f, 79.5f, 87.5f, 97.0f, 107.5f, 119.5f,
-        133.5f, 150.0f, 168.5f, 190.0f, 214.5f, 243.0f, 275.5f, 313.0f,
-        356.0f, 405.5f, 462.5f };
+            56.5f, 61.0f, 66.5f, 72.5f, 79.5f, 87.5f, 97.0f, 107.5f, 119.5f,
+            133.5f, 150.0f, 168.5f, 190.0f, 214.5f, 243.0f, 275.5f, 313.0f,
+            356.0f, 405.5f, 462.5f };
 
-    //flags
-    public final static int CLAN_ENGINE =  0x1;
-    public final static int TANK_ENGINE =  0x2;
+    // flags
+    public final static int CLAN_ENGINE = 0x1;
+    public final static int TANK_ENGINE = 0x2;
     public final static int LARGE_ENGINE = 0x4;
 
-    //types
+    // types
     public final static int COMBUSTION_ENGINE = 0;
-    public final static int NORMAL_ENGINE =     1;
-    public final static int XL_ENGINE =         2;
-    public final static int LIGHT_ENGINE =      3;
-    public final static int XXL_ENGINE =        4;
-    public final static int COMPACT_ENGINE =    5;
+    public final static int NORMAL_ENGINE = 1;
+    public final static int XL_ENGINE = 2;
+    public final static int LIGHT_ENGINE = 3;
+    public final static int XXL_ENGINE = 4;
+    public final static int COMPACT_ENGINE = 5;
 
     public boolean engineValid;
     private int engineRating;
@@ -70,23 +68,23 @@ public class Engine implements Serializable
     public StringBuffer problem = new StringBuffer("Illegal engine: ");
 
     /**
-     * The constructor takes the rating of the engine, the type of engine and any flags.
-     * Engine ratings are divided by the weight of the mech to get they walk MP.
+     * The constructor takes the rating of the engine, the type of engine and
+     * any flags. Engine ratings are divided by the weight of the mech to get
+     * they walk MP.
      * 
      * @param engineRating the rating of the engine
-     * @param engineType the type of the engine, either combustion or a type of fusion engine.
-     * @param engineFlags Wether the engine is a tank engine, a clan engine, or large engine,
-     *  or any combination of those.
+     * @param engineType the type of the engine, either combustion or a type of
+     *            fusion engine.
+     * @param engineFlags Wether the engine is a tank engine, a clan engine, or
+     *            large engine, or any combination of those.
      */
-    public Engine(int engineRating, int engineType, int engineFlags)
-    {
+    public Engine(int engineRating, int engineType, int engineFlags) {
         this.engineValid = true;
         this.engineRating = engineRating;
         this.engineType = engineType;
         this.engineFlags = engineFlags;
 
-        if (!isValidEngine())
-        {
+        if (!isValidEngine()) {
             this.engineValid = false;
             this.engineRating = 0;
             this.engineType = -1;
@@ -100,9 +98,8 @@ public class Engine implements Serializable
      * @param flag the flag to check for.
      * @return true iff the flag is set.
      */
-    public boolean hasFlag(int flag)
-    {
-        if ((this.engineFlags & flag) !=0)
+    public boolean hasFlag(int flag) {
+        if ((this.engineFlags & flag) != 0)
             return true;
         return false;
     }
@@ -112,25 +109,21 @@ public class Engine implements Serializable
      * 
      * @return true if the engine is useable.
      */
-    private boolean isValidEngine()
-    {
-        if (hasFlag(~(CLAN_ENGINE|TANK_ENGINE|LARGE_ENGINE)))
-        {
+    private boolean isValidEngine() {
+        if (hasFlag(~(CLAN_ENGINE | TANK_ENGINE | LARGE_ENGINE))) {
             this.problem.append("Flags:" + this.engineFlags);
             return false;
         }
 
-        if ((int)Math.ceil(this.engineRating/5)>ENGINE_RATINGS.length ||
-                this.engineRating<0)
-        {
+        if ((int) Math.ceil(this.engineRating / 5) > ENGINE_RATINGS.length
+                || this.engineRating < 0) {
             this.problem.append("Rating:" + this.engineRating);
             return false;
         }
         if (this.engineRating > 400)
             this.engineFlags |= LARGE_ENGINE;
 
-        switch (this.engineType)
-        {
+        switch (this.engineType) {
             case COMBUSTION_ENGINE:
             case NORMAL_ENGINE:
             case XL_ENGINE:
@@ -138,17 +131,20 @@ public class Engine implements Serializable
                 break;
             case COMPACT_ENGINE:
                 if (hasFlag(TANK_ENGINE)) {
-                    this.problem.append(Messages.getString("Engine.invalidMechOnly"));
+                    this.problem.append(Messages
+                            .getString("Engine.invalidMechOnly"));
                     return false;
                 }
                 if (hasFlag(LARGE_ENGINE)) {
-                    this.problem.append(Messages.getString("Engine.invalidCompactLarge"));
+                    this.problem.append(Messages
+                            .getString("Engine.invalidCompactLarge"));
                     return false;
                 }
                 break;
             case LIGHT_ENGINE:
                 if (hasFlag(CLAN_ENGINE)) {
-                    this.problem.append(Messages.getString("Engine.invalidSphereOnly"));
+                    this.problem.append(Messages
+                            .getString("Engine.invalidSphereOnly"));
                     return false;
                 }
                 break;
@@ -156,7 +152,6 @@ public class Engine implements Serializable
                 this.problem.append("Type:" + this.engineType);
                 return false;
         }
-
 
         return true;
     }
@@ -186,35 +181,35 @@ public class Engine implements Serializable
 
     /**
      * returns true if and only if this engine is a fusion engine
+     * 
      * @return true if it is not an internal combustion engine.
      */
-    public boolean isFusion()
-    {
-        if (engineType==COMBUSTION_ENGINE)
+    public boolean isFusion() {
+        if (engineType == COMBUSTION_ENGINE)
             return false;
         return true;
     }
 
     /**
-     * Returns the weight of the enginein tons, 
-     * rounded to the next highest half ton.
+     * Returns the weight of the enginein tons, rounded to the next highest half
+     * ton.
+     * 
      * @return the weight of the engine.
      */
-    public float getWeightEngine()
-    {
+    public float getWeightEngine() {
         return getWeightEngine(TestEntity.CEIL_HALFTON);
     }
 
     /**
      * Returns the weight of the engine, rounded by roundWeight.
-     * @param roundWeight One of the rounding factors given in {@link megamek.common.verifier.TestEntity}.
+     * 
+     * @param roundWeight One of the rounding factors given in
+     *            {@link megamek.common.verifier.TestEntity}.
      * @return the weight of the engine in tons.
      */
-    public float getWeightEngine(float roundWeight)
-    {
-        float weight = ENGINE_RATINGS[(int)Math.ceil(engineRating/5)];
-        switch (engineType)
-        {
+    public float getWeightEngine(float roundWeight) {
+        float weight = ENGINE_RATINGS[(int) Math.ceil(engineRating / 5)];
+        switch (engineType) {
             case COMBUSTION_ENGINE:
                 weight *= 2.0f;
                 break;
@@ -241,22 +236,24 @@ public class Engine implements Serializable
     }
 
     /**
-     * Returns the minimum number of heat sinks that must be included in a mech with this type of engine.
+     * Returns the minimum number of heat sinks that must be included in a mech
+     * with this type of engine.
+     * 
      * @return The minimum number of heat sinks in a desing.
      */
-    public int getCountEngineHeatSinks()
-    {
+    public int getCountEngineHeatSinks() {
         if (!isFusion())
             return 0;
         return 10;
     }
 
     /**
-     * Returns the number of heat sinks which can be built into the engine and therefore don't require a critical slot.
+     * Returns the number of heat sinks which can be built into the engine and
+     * therefore don't require a critical slot.
+     * 
      * @return the maximum number of heat sinks built into the engine.
      */
-    public int integralHeatSinkCapacity()
-    {
+    public int integralHeatSinkCapacity() {
         if (!isFusion())
             return 0;
         return engineRating / 25;
@@ -265,48 +262,45 @@ public class Engine implements Serializable
     /**
      * Get the name of this engine, this is the localized name used in displays.
      * The name of an Engine is based on it's type.
+     * 
      * @return the engine name.
      */
-    public String getShortEngineName()
-    {
-        switch (engineType)
-        {
+    public String getShortEngineName() {
+        switch (engineType) {
             case COMBUSTION_ENGINE:
-                return Integer.toString(engineRating)+
-                    Messages.getString("Engine.ICE");
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.ICE");
             case NORMAL_ENGINE:
                 return Integer.toString(engineRating);
             case XL_ENGINE:
-                return Integer.toString(engineRating)+
-                    Messages.getString("Engine.XL");
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.XL");
             case LIGHT_ENGINE:
-                return Integer.toString(engineRating)+
-                    Messages.getString("Engine.Light");
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.Light");
             case XXL_ENGINE:
-                return Integer.toString(engineRating)+
-                    Messages.getString("Engine.XXL");
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.XXL");
             case COMPACT_ENGINE:
-                return Integer.toString(engineRating)+
-                    Messages.getString("Engine.Compact");
+                return Integer.toString(engineRating)
+                        + Messages.getString("Engine.Compact");
             default:
                 return Messages.getString("Engine.invalid");
         }
     }
 
     /**
-     * This returns a non-localized name of the engine, it's mnostly used to generate
-     * files.
+     * This returns a non-localized name of the engine, it's mnostly used to
+     * generate files.
      */
-     //Don't localize the marked strings below since they are used in mech
-     //file parsing.
-    public String getEngineName()
-    {
+    // Don't localize the marked strings below since they are used in mech
+    // file parsing.
+    public String getEngineName() {
         StringBuffer sb = new StringBuffer();
         sb.append(Integer.toString(engineRating));
         if (hasFlag(LARGE_ENGINE))
             sb.append(Messages.getString("Engine.Large"));
-        switch (engineType)
-        {
+        switch (engineType) {
             case COMBUSTION_ENGINE:
                 sb.append(" ICE"); //$NON-NLS-1$
                 break;
@@ -337,49 +331,49 @@ public class Engine implements Serializable
 
     /**
      * Returns the rating of the engine.
+     * 
      * @return
      */
-    public int getRating()
-    {
+    public int getRating() {
         return engineRating;
     }
 
     /**
      * returns the slots taken up by the engine in the center torso.
+     * 
      * @return
      */
     public int[] getCenterTorsoCriticalSlots() {
         if (this.engineType == COMPACT_ENGINE) {
-            int[] slots = {0, 1, 2};
+            int[] slots = { 0, 1, 2 };
             return slots;
         } else if (hasFlag(LARGE_ENGINE)) {
-            int[] slots = {0, 1, 2, 7, 8, 9, 10, 11};
+            int[] slots = { 0, 1, 2, 7, 8, 9, 10, 11 };
             return slots;
         } else {
-            int[] slots = {0, 1, 2, 7, 8, 9};
+            int[] slots = { 0, 1, 2, 7, 8, 9 };
             return slots;
         }
     }
 
     /**
      * Returns the engine criticals in the side torsos.
+     * 
      * @return
      */
     public int[] getSideTorsoCriticalSlots() {
         if (this.engineType == LIGHT_ENGINE
-            || (this.engineType == XL_ENGINE
-                && hasFlag(CLAN_ENGINE))) {
-            int[] slots = {0, 1};
+                || (this.engineType == XL_ENGINE && hasFlag(CLAN_ENGINE))) {
+            int[] slots = { 0, 1 };
             return slots;
         } else if (this.engineType == XL_ENGINE) {
-            int[] slots = {0, 1, 2};
+            int[] slots = { 0, 1, 2 };
             return slots;
-        } else if (this.engineType == XXL_ENGINE
-                   && hasFlag(CLAN_ENGINE)) {
-            int[] slots = {0, 1, 2, 3};
+        } else if (this.engineType == XXL_ENGINE && hasFlag(CLAN_ENGINE)) {
+            int[] slots = { 0, 1, 2, 3 };
             return slots;
         } else if (this.engineType == XXL_ENGINE) {
-            int[] slots = {0, 1, 2, 3, 4, 5};
+            int[] slots = { 0, 1, 2, 3, 4, 5 };
             return slots;
         } else {
             int[] slots = {};
@@ -389,6 +383,7 @@ public class Engine implements Serializable
 
     /**
      * Return the heat generated while the mech is standing still.
+     * 
      * @return
      */
     public int getStandingHeat() {
@@ -421,21 +416,21 @@ public class Engine implements Serializable
     public int getJumpHeat(int movedMP) {
         switch (engineType) {
             case XXL_ENGINE:
-                return Math.max(6,movedMP*2);
+                return Math.max(6, movedMP * 2);
             default:
-                return Math.max(3,movedMP);
+                return Math.max(3, movedMP);
         }
 
     }
 
     public double getBVMultiplier() {
         int sideCrits = getSideTorsoCriticalSlots().length;
-		if (sideCrits >=3)
-		    return 0.5; // IS XL, clan XXL
-		else if (sideCrits >0)
-		    return 0.75; // IS L, clan XL
-		else
-		    return 1; //standard, compact, ice, fuel cell, fission
+        if (sideCrits >= 3)
+            return 0.5; // IS XL, clan XXL
+        else if (sideCrits > 0)
+            return 0.75; // IS L, clan XL
+        else
+            return 1; // standard, compact, ice, fuel cell, fission
     }
 
     public int getBaseCost() {
@@ -482,11 +477,11 @@ public class Engine implements Serializable
         if (level == 3) {
             if (hasFlag(CLAN_ENGINE))
                 return TechConstants.T_CLAN_LEVEL_3;
-			return TechConstants.T_IS_LEVEL_3;
+            return TechConstants.T_IS_LEVEL_3;
         } else if (level == 2) {
             if (hasFlag(CLAN_ENGINE))
                 return TechConstants.T_CLAN_LEVEL_2;
-			return TechConstants.T_IS_LEVEL_2;
+            return TechConstants.T_IS_LEVEL_2;
         } else {
             return TechConstants.T_IS_LEVEL_1;
         }

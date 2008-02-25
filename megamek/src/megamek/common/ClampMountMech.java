@@ -14,19 +14,18 @@
 
 package megamek.common;
 
-
 /**
- * Represtents the space on an standard Mech (i.e. one that is not an
- * OmniMech) used by Battle Armor squads equiped with Magnetic Clamps to
- * attach themselves for transport.  This transporter gets assigned to
- * all of a player's standard Mechs in the Exchange Phase if any Battle
- * Armor squad equipped with a Magnetic Clamp is on that player's side.
- *
- * @see         megamek.server.Server#executePhase(int)
- * @see         megamek.server.Server#checkForMagneticClamp()
+ * Represtents the space on an standard Mech (i.e. one that is not an OmniMech)
+ * used by Battle Armor squads equiped with Magnetic Clamps to attach themselves
+ * for transport. This transporter gets assigned to all of a player's standard
+ * Mechs in the Exchange Phase if any Battle Armor squad equipped with a
+ * Magnetic Clamp is on that player's side.
+ * 
+ * @see megamek.server.Server#executePhase(int)
+ * @see megamek.server.Server#checkForMagneticClamp()
  */
 
-/* package */ class ClampMountMech extends BattleArmorHandles {
+/* package */class ClampMountMech extends BattleArmorHandles {
 
     // Private attributes, constants and helper functions.
 
@@ -49,30 +48,29 @@ package megamek.common;
 
     /**
      * Get the internal name of the equipment needed to board this transporter.
-     * <p/>
-     * Sub-classes are encouraged to override this method.
-     *
-     * @return  a <code>String</code> containing the internal name of the
-     *          <code>EquipmentType</code> needed to board this transporter.
+     * <p/> Sub-classes are encouraged to override this method.
+     * 
+     * @return a <code>String</code> containing the internal name of the
+     *         <code>EquipmentType</code> needed to board this transporter.
      */
     protected String getBoardingEquipment() {
         return BattleArmor.MAGNETIC_CLAMP;
     }
 
     /**
-     * Get the <code>String</code> to report the presence (or lack thereof)
-     * of a loaded squad of Battle Armor troopers.
-     * <p/>
-     * Sub-classes are encouraged to override this method.
-     *
-     * @param   isLoaded - a <code>boolean</code> that indicates that troopers
-     *          are currently loaded (if the value is <code>true</code>) or not
-     *          (if the value is <code>false</code>).
-     * @return  a <code>String</code> describing the occupancy state of this
-     *          transporter.
+     * Get the <code>String</code> to report the presence (or lack thereof) of
+     * a loaded squad of Battle Armor troopers. <p/> Sub-classes are encouraged
+     * to override this method.
+     * 
+     * @param isLoaded - a <code>boolean</code> that indicates that troopers
+     *            are currently loaded (if the value is <code>true</code>) or
+     *            not (if the value is <code>false</code>).
+     * @return a <code>String</code> describing the occupancy state of this
+     *         transporter.
      */
-    protected String getVacancyString( boolean isLoaded ) {
-        if ( isLoaded ) return ClampMountMech.NO_VACANCY_STRING;
+    protected String getVacancyString(boolean isLoaded) {
+        if (isLoaded)
+            return ClampMountMech.NO_VACANCY_STRING;
         return ClampMountMech.HAVE_VACANCY_STRING;
     }
 

@@ -17,10 +17,10 @@ package megamek.common.event;
 import megamek.common.Player;
 
 /**
- * Instances of this class are sent when some Player is changed    
+ * Instances of this class are sent when some Player is changed
  */
 public class GamePlayerChangeEvent extends GamePlayerEvent {
-    
+
     /**
      * 
      */
@@ -33,5 +33,5 @@ public class GamePlayerChangeEvent extends GamePlayerEvent {
     public GamePlayerChangeEvent(Object source, Player player) {
         super(source, player, GAME_PLAYER_CHANGE);
     }
-    
+
 }

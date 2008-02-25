@@ -17,17 +17,17 @@ package megamek.client.ui.AWT;
 import java.awt.Button;
 
 /**
- * Classes that implement this interface define a "Done" button that they
- * do not display.  Windows that show objects of this type should retrieve
- * this "Done" button and display it at an appropriate location.
+ * Classes that implement this interface define a "Done" button that they do not
+ * display. Windows that show objects of this type should retrieve this "Done"
+ * button and display it at an appropriate location.
  */
 public interface DoneButtoned {
 
     /**
      * Retrieve the "Done" button of this object.
-     *
-     * @return  the <code>java.awt.Button</code> that activates this
-     *          object's "Done" action.
+     * 
+     * @return the <code>java.awt.Button</code> that activates this object's
+     *         "Done" action.
      */
     public Button getDoneButton();
 }

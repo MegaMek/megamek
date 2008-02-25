@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISUAC5Prototype extends UACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2740269177146528640L;
+
     /**
      * 
      */
@@ -52,7 +56,7 @@ public class ISUAC5Prototype extends UACWeapon {
         this.bv = 112;
         this.cost = 200000;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

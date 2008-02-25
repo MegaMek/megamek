@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISAC10 extends ACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 814114264108820161L;
+
     /**
      * 
      */

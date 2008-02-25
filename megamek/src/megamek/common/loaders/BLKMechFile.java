@@ -36,11 +36,11 @@ import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
-import megamek.common.util.*;
+import megamek.common.util.BuildingBlock;
 
 public class BLKMechFile extends BLKFile implements IMechLoader {
 
-    //armor locatioms
+    // armor locatioms
     public static final int HD = 0;
     public static final int LA = 1;
     public static final int LF = 2;
@@ -56,11 +56,10 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
     public static final int CT = 4;
     public static final int RT = 6;
     public static final int LT = 2;
+
     //
 
-
-    public BLKMechFile(BuildingBlock bb)
-    {
+    public BLKMechFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
@@ -75,23 +74,27 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
 
         Mech mech = null;
 
-        if ( chassisType == 1 )
+        if (chassisType == 1)
             mech = new QuadMech();
         else
             mech = new BipedMech();
 
-        //Do I even write the year for these??
+        // Do I even write the year for these??
 
-        if (!dataFile.exists("name")) throw new EntityLoadingException("Could not find block.");
+        if (!dataFile.exists("name"))
+            throw new EntityLoadingException("Could not find block.");
         mech.setChassis(dataFile.getDataAsString("Name")[0]);
 
-        if (!dataFile.exists("model")) throw new EntityLoadingException("Could not find block.");
+        if (!dataFile.exists("model"))
+            throw new EntityLoadingException("Could not find block.");
         mech.setModel(dataFile.getDataAsString("Model")[0]);
 
-        if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find block.");
+        if (!dataFile.exists("year"))
+            throw new EntityLoadingException("Could not find block.");
         mech.setYear(dataFile.getDataAsInt("year")[0]);
 
-        if (!dataFile.exists("type")) throw new EntityLoadingException("Could not find block.");
+        if (!dataFile.exists("type"))
+            throw new EntityLoadingException("Could not find block.");
 
         if (dataFile.getDataAsString("type")[0].equals("IS")) {
             if (mech.getYear() == 3025) {
@@ -110,19 +113,24 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
         } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
             mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
-        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (IS Chassis)")) {
+        } else if (dataFile.getDataAsString("type")[0]
+                .equals("Mixed (IS Chassis)")) {
             mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
             mech.setMixedTech(true);
-        } else if (dataFile.getDataAsString("type")[0].equals("Mixed (Clan Chassis)")) {
+        } else if (dataFile.getDataAsString("type")[0]
+                .equals("Mixed (Clan Chassis)")) {
             mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
             mech.setMixedTech(true);
         } else if (dataFile.getDataAsString("type")[0].equals("Mixed")) {
-            throw new EntityLoadingException("Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
+            throw new EntityLoadingException(
+                    "Unsupported tech base: \"Mixed\" is no longer allowed by itself.  You must specify \"Mixed (IS Chassis)\" or \"Mixed (Clan Chassis)\".");
         } else {
-            throw new EntityLoadingException("Unsupported tech level: " + dataFile.getDataAsString("type")[0]);
+            throw new EntityLoadingException("Unsupported tech level: "
+                    + dataFile.getDataAsString("type")[0]);
         }
 
-        if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find block.");
+        if (!dataFile.exists("tonnage"))
+            throw new EntityLoadingException("Could not find block.");
         mech.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
 
         int engineCode = BLKFile.FUSION;
@@ -132,17 +140,20 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         int engineFlags = 0;
         if (mech.isClan())
             engineFlags = Engine.CLAN_ENGINE;
-        if (!dataFile.exists("walkingMP")) throw new EntityLoadingException("Could not find walkingMP block.");
-        int engineRating = dataFile.getDataAsInt("walkingMP")[0] * (int)mech.getWeight();
-        mech.setEngine(new Engine(engineRating,
-                                  BLKFile.translateEngineCode(engineCode),
-                                  engineFlags));
+        if (!dataFile.exists("walkingMP"))
+            throw new EntityLoadingException("Could not find walkingMP block.");
+        int engineRating = dataFile.getDataAsInt("walkingMP")[0]
+                * (int) mech.getWeight();
+        mech.setEngine(new Engine(engineRating, BLKFile
+                .translateEngineCode(engineCode), engineFlags));
 
-        if (!dataFile.exists("jumpingMP")) throw new EntityLoadingException("Could not find block.");
+        if (!dataFile.exists("jumpingMP"))
+            throw new EntityLoadingException("Could not find block.");
         mech.setOriginalJumpMP(dataFile.getDataAsInt("jumpingMP")[0]);
 
-        //I keep internal(integral) heat sinks seperate...
-        if (!dataFile.exists("heatsinks")) throw new EntityLoadingException("Could not find block.");
+        // I keep internal(integral) heat sinks seperate...
+        if (!dataFile.exists("heatsinks"))
+            throw new EntityLoadingException("Could not find block.");
         mech.addEngineSinks(dataFile.getDataAsInt("heatsinks")[0], false);
 
         if (dataFile.exists("internal_type"))
@@ -151,60 +162,73 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         if (dataFile.exists("armor_type"))
             mech.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
 
-        if (!dataFile.exists("armor") ) throw new EntityLoadingException("Could not find block.");
+        if (!dataFile.exists("armor"))
+            throw new EntityLoadingException("Could not find block.");
 
-        int [] armor = new int[11]; //only 11 locations...
+        int[] armor = new int[11]; // only 11 locations...
 
         if (dataFile.getDataAsInt("armor").length < 11) {
-            System.err.println("BLKMechFile->Read armor array doesn't match my armor array...");
+            System.err
+                    .println("BLKMechFile->Read armor array doesn't match my armor array...");
             throw new EntityLoadingException("Could not find block.");
 
         }
         armor = dataFile.getDataAsInt("Armor");
 
-        mech.initializeArmor(armor[BLKMechFile.HD],Mech.LOC_HEAD) ;
+        mech.initializeArmor(armor[BLKMechFile.HD], Mech.LOC_HEAD);
 
-        mech.initializeArmor( armor[BLKMechFile.LA], Mech.LOC_LARM );
-        mech.initializeArmor(armor[BLKMechFile.RA], Mech.LOC_RARM );
-        mech.initializeArmor(armor[BLKMechFile.LL], Mech.LOC_LLEG );
-        mech.initializeArmor(armor[BLKMechFile.RL], Mech.LOC_RLEG );
+        mech.initializeArmor(armor[BLKMechFile.LA], Mech.LOC_LARM);
+        mech.initializeArmor(armor[BLKMechFile.RA], Mech.LOC_RARM);
+        mech.initializeArmor(armor[BLKMechFile.LL], Mech.LOC_LLEG);
+        mech.initializeArmor(armor[BLKMechFile.RL], Mech.LOC_RLEG);
 
-        mech.initializeArmor(armor[BLKMechFile.CF],Mech.LOC_CT );
-        mech.initializeArmor( armor[BLKMechFile.LF],Mech.LOC_LT);
-        mech.initializeArmor(armor[BLKMechFile.RF],Mech.LOC_RT );
+        mech.initializeArmor(armor[BLKMechFile.CF], Mech.LOC_CT);
+        mech.initializeArmor(armor[BLKMechFile.LF], Mech.LOC_LT);
+        mech.initializeArmor(armor[BLKMechFile.RF], Mech.LOC_RT);
 
-        //changed...
-        mech.initializeRearArmor( armor[BLKMechFile.CB],Mech.LOC_CT);
-        mech.initializeRearArmor(armor[BLKMechFile.LB],Mech.LOC_LT);
-        mech.initializeRearArmor(armor[BLKMechFile.RB],Mech.LOC_RT);
+        // changed...
+        mech.initializeRearArmor(armor[BLKMechFile.CB], Mech.LOC_CT);
+        mech.initializeRearArmor(armor[BLKMechFile.LB], Mech.LOC_LT);
+        mech.initializeRearArmor(armor[BLKMechFile.RB], Mech.LOC_RT);
 
-        if (!dataFile.exists("internal armor") ) {
-            //try to guess...
-            mech.setInternal( 3, (armor[CF]+armor[CB])/2, (armor[LF]+armor[LB])/2, (armor[LA]/2), (armor[LL]/2) );
-        }else {
+        if (!dataFile.exists("internal armor")) {
+            // try to guess...
+            mech.setInternal(3, (armor[CF] + armor[CB]) / 2,
+                    (armor[LF] + armor[LB]) / 2, (armor[LA] / 2),
+                    (armor[LL] / 2));
+        } else {
             armor = dataFile.getDataAsInt("internal armor");
-            //all the locations should be about the same...
-            mech.setInternal( armor[HD], armor[CT], armor[LT], armor[LA], armor[LL] );
+            // all the locations should be about the same...
+            mech.setInternal(armor[HD], armor[CT], armor[LT], armor[LA],
+                    armor[LL]);
         }
 
-        //check for removed arm actuators...
+        // check for removed arm actuators...
 
-        //no lower right arm
-        if (!dataFile.getDataAsString("ra criticals")[2].trim().equalsIgnoreCase("Lower Arm Actuator"))
-            mech.removeCriticals(Mech.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM));
-        //no right hand
-        if (!dataFile.getDataAsString("ra criticals")[3].trim().equalsIgnoreCase("Hand Actuator"))
-            mech.removeCriticals(Mech.LOC_RARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
+        // no lower right arm
+        if (!dataFile.getDataAsString("ra criticals")[2].trim()
+                .equalsIgnoreCase("Lower Arm Actuator"))
+            mech.removeCriticals(Mech.LOC_RARM, new CriticalSlot(
+                    CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM));
+        // no right hand
+        if (!dataFile.getDataAsString("ra criticals")[3].trim()
+                .equalsIgnoreCase("Hand Actuator"))
+            mech.removeCriticals(Mech.LOC_RARM, new CriticalSlot(
+                    CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
 
-        //no lower left arm
-        if (!dataFile.getDataAsString("la criticals")[2].trim().equalsIgnoreCase("Lower Arm Actuator"))
-            mech.removeCriticals(Mech.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM));
-        //no left hand
-        if (!dataFile.getDataAsString("la criticals")[3].trim().equalsIgnoreCase("Hand Actuator"))
-            mech.removeCriticals(Mech.LOC_LARM, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
+        // no lower left arm
+        if (!dataFile.getDataAsString("la criticals")[2].trim()
+                .equalsIgnoreCase("Lower Arm Actuator"))
+            mech.removeCriticals(Mech.LOC_LARM, new CriticalSlot(
+                    CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_LOWER_ARM));
+        // no left hand
+        if (!dataFile.getDataAsString("la criticals")[3].trim()
+                .equalsIgnoreCase("Hand Actuator"))
+            mech.removeCriticals(Mech.LOC_LARM, new CriticalSlot(
+                    CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
 
-        //load equipment stuff...
-        Vector [] criticals = new Vector[8];
+        // load equipment stuff...
+        Vector[] criticals = new Vector[8];
 
         criticals[Mech.LOC_HEAD] = dataFile.getDataAsVector("hd criticals");
         criticals[Mech.LOC_LARM] = dataFile.getDataAsVector("la criticals");
@@ -215,9 +239,12 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         criticals[Mech.LOC_RT] = dataFile.getDataAsVector("rt criticals");
         criticals[Mech.LOC_CT] = dataFile.getDataAsVector("ct criticals");
 
-        //criticals[mech.LOC_LTR] = new com.sun.java.util.collections.Vector(0);
-        //criticals[mech.LOC_RTR] = new com.sun.java.util.collections.Vector(0);
-        //criticals[mech.LOC_CTR] = new com.sun.java.util.collections.Vector(0);
+        // criticals[mech.LOC_LTR] = new
+        // com.sun.java.util.collections.Vector(0);
+        // criticals[mech.LOC_RTR] = new
+        // com.sun.java.util.collections.Vector(0);
+        // criticals[mech.LOC_CTR] = new
+        // com.sun.java.util.collections.Vector(0);
 
         // prefix is "Clan " or "IS "
         String prefix;
@@ -227,7 +254,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
             prefix = "IS ";
         }
 
-        for (int loc = 0; loc < criticals.length; loc++ ) {
+        for (int loc = 0; loc < criticals.length; loc++) {
             for (int c = 0; c < criticals[loc].size(); c++) {
                 String critName = criticals[loc].get(c).toString().trim();
                 boolean rearMounted = false;
@@ -237,22 +264,29 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     critName = critName.substring(4);
                 }
                 if (critName.equalsIgnoreCase("Armored Cowl")) {
-                    mech.setCowl (5);
+                    mech.setCowl(5);
                 }
                 if (critName.indexOf("Engine") != -1) {
-                    mech.setCritical(loc,c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
+                    mech.setCritical(loc, c, new CriticalSlot(
+                            CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
                     continue;
                 } else if (critName.equalsIgnoreCase("Life Support")) {
-                    mech.setCritical(loc,c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_LIFE_SUPPORT));
+                    mech
+                            .setCritical(loc, c, new CriticalSlot(
+                                    CriticalSlot.TYPE_SYSTEM,
+                                    Mech.SYSTEM_LIFE_SUPPORT));
                     continue;
                 } else if (critName.equalsIgnoreCase("Sensors")) {
-                    mech.setCritical(loc,c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
+                    mech.setCritical(loc, c, new CriticalSlot(
+                            CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_SENSORS));
                     continue;
                 } else if (critName.equalsIgnoreCase("Cockpit")) {
-                    mech.setCritical(loc,c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
+                    mech.setCritical(loc, c, new CriticalSlot(
+                            CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_COCKPIT));
                     continue;
                 } else if (critName.equalsIgnoreCase("Gyro")) {
-                    mech.setCritical(loc,c, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
+                    mech.setCritical(loc, c, new CriticalSlot(
+                            CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO));
                     continue;
                 }
 
@@ -269,8 +303,8 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     }
                 }
 
-            }//end of specific location
-        }//end of all crits
+            }// end of specific location
+        }// end of all crits
 
         if (mech.isClan()) {
             mech.addClanCase();
@@ -280,4 +314,3 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
 
     }
 }
-

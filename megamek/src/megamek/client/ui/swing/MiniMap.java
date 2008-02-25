@@ -14,6 +14,34 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.InputEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StreamTokenizer;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.swing.JDialog;
+import javax.swing.SwingUtilities;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -45,51 +73,17 @@ import megamek.common.event.GameListenerAdapter;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 
-import javax.swing.JDialog;
-import javax.swing.SwingUtilities;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.awt.event.InputEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.util.Enumeration;
-import java.util.Vector;
-import java.util.Date;
-
 /**
- * Displays all the mapsheets in a scaled-down size.
- *
- *
- *  TBD refactorings:
- *  -make a real public API for this with interfaces
- *      -decouple rest of the application
- *  -use JPanel instead of canvas
- *  -move the buttons from graphics to real Swing buttons
- *  -clean up listenercode..
- *  -initializecolors is fugly
- *      -uses exception to return from method?
- *      -uses break-to-label
- *      -uses while-true
+ * Displays all the mapsheets in a scaled-down size. TBD refactorings: -make a
+ * real public API for this with interfaces -decouple rest of the application
+ * -use JPanel instead of canvas -move the buttons from graphics to real Swing
+ * buttons -clean up listenercode.. -initializecolors is fugly -uses exception
+ * to return from method? -uses break-to-label -uses while-true
  */
 public class MiniMap extends Canvas {
 
-    // these indices match those in Terrains.java, and are therefore sensitive to any changes there
+    // these indices match those in Terrains.java, and are therefore sensitive
+    // to any changes there
 
     /**
      * 
@@ -117,15 +111,16 @@ public class MiniMap extends Canvas {
     private static final int buttonHeight = 14;
     private boolean minimized = false;
     private int heightBufer;
-    private int unitSize = 6;//variable which define size of triangle for unit representation
+    private int unitSize = 6;// variable which define size of triangle for
+                                // unit representation
     private Vector<int[]> roadHexIndexes = new Vector<int[]>();
     private int zoom = GUIPreferences.getInstance().getMinimapZoom();
-    private int[] hexSide = {3, 5, 6, 8, 10, 12};
-    private int[] hexSideByCos30 = {3, 4, 5, 7, 9, 10};
-    private int[] hexSideBySin30 = {2, 2, 3, 4, 5, 6};
-    private int[] halfRoadWidthByCos30 = {0, 0, 1, 2, 2, 3};
-    private int[] halfRoadWidthBySin30 = {0, 0, 1, 1, 1, 2};
-    private int[] halfRoadWidth = {0, 0, 1, 2, 3, 3};
+    private int[] hexSide = { 3, 5, 6, 8, 10, 12 };
+    private int[] hexSideByCos30 = { 3, 4, 5, 7, 9, 10 };
+    private int[] hexSideBySin30 = { 2, 2, 3, 4, 5, 6 };
+    private int[] halfRoadWidthByCos30 = { 0, 0, 1, 2, 2, 3 };
+    private int[] halfRoadWidthBySin30 = { 0, 0, 1, 1, 1, 2 };
+    private int[] halfRoadWidth = { 0, 0, 1, 2, 3, 3 };
 
     private int heightDisplayMode = SHOW_NO_HEIGHT;
     Coords firstLOS;
@@ -134,8 +129,8 @@ public class MiniMap extends Canvas {
     private Client m_client;
 
     private ClientGUI clientgui;
-    
-    boolean dirtyMap=true;
+
+    boolean dirtyMap = true;
     boolean[][] dirty;
     private Image terrainBuffer;
 
@@ -169,7 +164,8 @@ public class MiniMap extends Canvas {
         if (updateSize) {
             setSize(size);
         }
-        setLocation(GUIPreferences.getInstance().getMinimapPosX(), GUIPreferences.getInstance().getMinimapPosY());
+        setLocation(GUIPreferences.getInstance().getMinimapPosX(),
+                GUIPreferences.getInstance().getMinimapPosY());
         d.pack();
     }
 
@@ -179,7 +175,7 @@ public class MiniMap extends Canvas {
 
         // this may come in useful later...
         m_client = c.getClient();
-        assert(m_client!=null);
+        assert (m_client != null);
     }
 
     public synchronized void update(Graphics g) {
@@ -189,7 +185,7 @@ public class MiniMap extends Canvas {
     public void paint(Graphics g) {
         if (m_mapImage != null) {
             g.drawImage(m_mapImage, 0, 0, this);
-            //drawBox(g); this would be a nice place to draw a visible-area box
+            // drawBox(g); this would be a nice place to draw a visible-area box
         }
     }
 
@@ -225,7 +221,8 @@ public class MiniMap extends Canvas {
         int green;
         int blue;
 
-        File coloursFile = new File("data/images/hexes/" + GUIPreferences.getInstance().getMinimapColours()); //$NON-NLS-1$
+        File coloursFile = new File(
+                "data/images/hexes/" + GUIPreferences.getInstance().getMinimapColours()); //$NON-NLS-1$
 
         // only while the defaults are hard-coded!
         if (!coloursFile.exists()) {
@@ -239,8 +236,7 @@ public class MiniMap extends Canvas {
         st.quoteChar('"');
         st.commentChar('#');
 
-        scan:
-        while (true) {
+        scan: while (true) {
             red = 0;
             green = 0;
             blue = 0;
@@ -300,19 +296,22 @@ public class MiniMap extends Canvas {
                         st.nextToken();
                         blue = (int) st.nval;
 
-                        m_terrainColors[Terrains.getType(key)] = new Color(red, green, blue);
+                        m_terrainColors[Terrains.getType(key)] = new Color(red,
+                                green, blue);
                     }
             }
         }
 
         cr.close();
     }
-    private void clean(){
-        dirtyMap=false;
-        for (int i=0;i<dirty.length;i++)
-        for (int j=0;j<dirty[i].length;j++)
-            dirty[i][j]=false;
+
+    private void clean() {
+        dirtyMap = false;
+        for (int i = 0; i < dirty.length; i++)
+            for (int j = 0; j < dirty[i].length; j++)
+                dirty[i][j] = false;
     }
+
     void initializeMap() {
 
         // sanity check (cfg file could be hosed)
@@ -328,104 +327,113 @@ public class MiniMap extends Canvas {
         int currentHexSideBySin30 = hexSideBySin30[zoom];
         topMargin = margin;
         leftMargin = margin;
-        requiredWidth = m_game.getBoard().getWidth() * (currentHexSide + currentHexSideBySin30) + currentHexSideBySin30 + 2 * margin;
-        requiredHeight = (2 * m_game.getBoard().getHeight() + 1) * currentHexSideByCos30 + 2 * margin + buttonHeight;
-        
-        dirty=new boolean[m_game.getBoard().getWidth()/10+1][m_game.getBoard().getHeight()/10+1];
-        dirtyMap=true;
-        
-        //ensure its on screen
+        requiredWidth = m_game.getBoard().getWidth()
+                * (currentHexSide + currentHexSideBySin30)
+                + currentHexSideBySin30 + 2 * margin;
+        requiredHeight = (2 * m_game.getBoard().getHeight() + 1)
+                * currentHexSideByCos30 + 2 * margin + buttonHeight;
+
+        dirty = new boolean[m_game.getBoard().getWidth() / 10 + 1][m_game
+                .getBoard().getHeight() / 10 + 1];
+        dirtyMap = true;
+
+        // ensure its on screen
         Rectangle virtualBounds = new Rectangle();
-        GraphicsEnvironment ge = GraphicsEnvironment.
-                getLocalGraphicsEnvironment();
-        GraphicsDevice[] gs =
-                ge.getScreenDevices();
-        for (int j = 0; j < gs.length; j++) { 
+        GraphicsEnvironment ge = GraphicsEnvironment
+                .getLocalGraphicsEnvironment();
+        GraphicsDevice[] gs = ge.getScreenDevices();
+        for (int j = 0; j < gs.length; j++) {
             GraphicsDevice gd = gs[j];
-            GraphicsConfiguration[] gc =
-                gd.getConfigurations();
-            for (int i=0; i < gc.length; i++) {
-                virtualBounds =
-                    virtualBounds.union(gc[i].getBounds());
+            GraphicsConfiguration[] gc = gd.getConfigurations();
+            for (int i = 0; i < gc.length; i++) {
+                virtualBounds = virtualBounds.union(gc[i].getBounds());
             }
-        } 
-        //zoom out if its too big for the screen
-        while(zoom>0 && (requiredWidth>virtualBounds.width || requiredHeight>virtualBounds.height)) {
+        }
+        // zoom out if its too big for the screen
+        while (zoom > 0
+                && (requiredWidth > virtualBounds.width || requiredHeight > virtualBounds.height)) {
             zoom--;
             currentHexSide = hexSide[zoom];
             currentHexSideByCos30 = hexSideByCos30[zoom];
             currentHexSideBySin30 = hexSideBySin30[zoom];
-            requiredWidth = m_game.getBoard().getWidth()*(currentHexSide + currentHexSideBySin30) + currentHexSideBySin30 + 2*margin;
-            requiredHeight = (2*m_game.getBoard().getHeight() + 1)*currentHexSideByCos30 + 2*margin + buttonHeight;
+            requiredWidth = m_game.getBoard().getWidth()
+                    * (currentHexSide + currentHexSideBySin30)
+                    + currentHexSideBySin30 + 2 * margin;
+            requiredHeight = (2 * m_game.getBoard().getHeight() + 1)
+                    * currentHexSideByCos30 + 2 * margin + buttonHeight;
         }
         int x = getParent().getLocation().x;
         int y = getParent().getLocation().y;
-        if(x + requiredWidth > virtualBounds.getMaxX()) {
-            x = (int)(virtualBounds.getMaxX() - requiredWidth);
+        if (x + requiredWidth > virtualBounds.getMaxX()) {
+            x = (int) (virtualBounds.getMaxX() - requiredWidth);
         }
-        if(x < virtualBounds.getMinX()) {
-            x = (int)(virtualBounds.getMinX());
+        if (x < virtualBounds.getMinX()) {
+            x = (int) (virtualBounds.getMinX());
         }
-        if(y + requiredHeight > virtualBounds.getMaxY()) {
-            y = (int)(virtualBounds.getMaxY() - requiredHeight);
+        if (y + requiredHeight > virtualBounds.getMaxY()) {
+            y = (int) (virtualBounds.getMaxY() - requiredHeight);
         }
-        if(y < virtualBounds.getMinY()) {
-            y = (int)(virtualBounds.getMinY());
+        if (y < virtualBounds.getMinY()) {
+            y = (int) (virtualBounds.getMinY());
         }
-        getParent().setLocation(x,y);
+        getParent().setLocation(x, y);
         setSize(requiredWidth, requiredHeight);
         m_dialog.pack();
-        //m_dialog.setVisible(true);
+        // m_dialog.setVisible(true);
         m_mapImage = createImage(getSize().width, getSize().height);
-        
-        terrainBuffer= createImage(getSize().width,getSize().height);
-        Graphics gg=terrainBuffer.getGraphics();
+
+        terrainBuffer = createImage(getSize().width, getSize().height);
+        Graphics gg = terrainBuffer.getGraphics();
         gg.setColor(BACKGROUND);
         gg.fillRect(0, 0, getSize().width, getSize().height);
-        
-        if (getSize().width > requiredWidth) leftMargin = ((getSize().width - requiredWidth) / 2) + margin;
-        if (getSize().height > requiredHeight) topMargin = ((getSize().height - requiredHeight) / 2) + margin;
+
+        if (getSize().width > requiredWidth)
+            leftMargin = ((getSize().width - requiredWidth) / 2) + margin;
+        if (getSize().height > requiredHeight)
+            topMargin = ((getSize().height - requiredHeight) / 2) + margin;
         drawMap();
     }
-    protected long lastDrawMapReq=0;
-    protected long lastDrawStarted=0;
-    protected Runnable drawMapable=new Runnable() {
-        protected final int redrawDelay=500;
+
+    protected long lastDrawMapReq = 0;
+    protected long lastDrawStarted = 0;
+    protected Runnable drawMapable = new Runnable() {
+        protected final int redrawDelay = 500;
+
         public void run() {
             try {
-                if ((System.currentTimeMillis()-MiniMap.this.lastDrawMapReq)>redrawDelay) {
+                if ((System.currentTimeMillis() - MiniMap.this.lastDrawMapReq) > redrawDelay) {
                     drawMapOrig();
                 } else {
                     try {
                         Thread.sleep(50);
-                    } catch(InterruptedException ie){
+                    } catch (InterruptedException ie) {
                     }
                     SwingUtilities.invokeLater(drawMapable);
                 }
-            } catch (Throwable t){
+            } catch (Throwable t) {
                 t.printStackTrace();
             }
         }
     };
-    
+
     /**
-     *  this replaces the original drawmap to speed up updates
-     *  this can be called any time necessary
+     * this replaces the original drawmap to speed up updates this can be called
+     * any time necessary
      */
-    public synchronized void drawMap() {        
-        lastDrawMapReq=System.currentTimeMillis();        
+    public synchronized void drawMap() {
+        lastDrawMapReq = System.currentTimeMillis();
         SwingUtilities.invokeLater(drawMapable);
     }
 
     /**
-     *  update the backbuffer and repaint..
-     *  should not require a synchronized but i left it there anyways
+     * update the backbuffer and repaint.. should not require a synchronized but
+     * i left it there anyways
      */
     protected synchronized void drawMapOrig() {
-        if(lastDrawStarted>lastDrawMapReq)  
+        if (lastDrawStarted > lastDrawMapReq)
             return;
-        lastDrawStarted=System.currentTimeMillis();
-        System.out.println("drawign map to backbuffer "+new Date());
+        lastDrawStarted = System.currentTimeMillis();
+        System.out.println("drawign map to backbuffer " + new Date());
         if (m_mapImage == null) {
             return;
         }
@@ -435,29 +443,32 @@ public class MiniMap extends Canvas {
 
         Graphics g = m_mapImage.getGraphics();
         Color oldColor = g.getColor();
-        //g.setColor(BACKGROUND);
-        //g.fillRect(0, 0, getSize().width, getSize().height);
+        // g.setColor(BACKGROUND);
+        // g.fillRect(0, 0, getSize().width, getSize().height);
         g.setColor(oldColor);
         if (!minimized) {
             roadHexIndexes.removeAllElements();
-            Graphics gg=terrainBuffer.getGraphics();            
+            Graphics gg = terrainBuffer.getGraphics();
             for (int j = 0; j < m_game.getBoard().getWidth(); j++) {
                 for (int k = 0; k < m_game.getBoard().getHeight(); k++) {
                     IHex h = m_game.getBoard().getHex(j, k);
-                    if(dirtyMap||dirty[j/10][k/10]) {
+                    if (dirtyMap || dirty[j / 10][k / 10]) {
                         gg.setColor(terrainColor(h, j, k));
                         paintCoord(gg, j, k, true);
                     }
-                    addRoadElements(h,j,k);
+                    addRoadElements(h, j, k);
                 }
             }
-            //draw backbuffer
-            g.drawImage(terrainBuffer,0,0,this);
-            
-            if (firstLOS != null) paintSingleCoordBorder(g, firstLOS.x, firstLOS.y, Color.red);
-            if (secondLOS != null) paintSingleCoordBorder(g, secondLOS.x, secondLOS.y, Color.red);
+            // draw backbuffer
+            g.drawImage(terrainBuffer, 0, 0, this);
 
-            if (!roadHexIndexes.isEmpty()) paintRoads(g);
+            if (firstLOS != null)
+                paintSingleCoordBorder(g, firstLOS.x, firstLOS.y, Color.red);
+            if (secondLOS != null)
+                paintSingleCoordBorder(g, secondLOS.x, secondLOS.y, Color.red);
+
+            if (!roadHexIndexes.isEmpty())
+                paintRoads(g);
 
             if (SHOW_NO_HEIGHT != heightDisplayMode) {
                 for (int j = 0; j < m_game.getBoard().getWidth(); j++) {
@@ -469,14 +480,19 @@ public class MiniMap extends Canvas {
             }
 
             // draw Drop Zone
-            if (null != m_client && null != m_game) {   // sanity check!
+            if (null != m_client && null != m_game) { // sanity check!
                 if (IGame.PHASE_DEPLOYMENT == m_game.getPhase()) {
                     GameTurn turn = m_game.getTurn();
-                    if (turn != null && turn.getPlayerNum() == m_client.getLocalPlayer().getId()) {
+                    if (turn != null
+                            && turn.getPlayerNum() == m_client.getLocalPlayer()
+                                    .getId()) {
                         for (int j = 0; j < m_game.getBoard().getWidth(); j++) {
                             for (int k = 0; k < m_game.getBoard().getHeight(); k++) {
-                                if (m_game.getBoard().isLegalDeployment(new Coords(j, k), m_client.getLocalPlayer())) {
-                                    paintSingleCoordBorder(g, j, k, Color.yellow);
+                                if (m_game.getBoard().isLegalDeployment(
+                                        new Coords(j, k),
+                                        m_client.getLocalPlayer())) {
+                                    paintSingleCoordBorder(g, j, k,
+                                            Color.yellow);
                                 }
                             }
                         }
@@ -485,8 +501,10 @@ public class MiniMap extends Canvas {
             }
 
             // draw declared fire
-            if (IGame.PHASE_FIRING == m_game.getPhase() || IGame.PHASE_PHYSICAL == m_game.getPhase()) {
-                for (Enumeration<EntityAction> iter = m_game.getActions(); iter.hasMoreElements();) {
+            if (IGame.PHASE_FIRING == m_game.getPhase()
+                    || IGame.PHASE_PHYSICAL == m_game.getPhase()) {
+                for (Enumeration<EntityAction> iter = m_game.getActions(); iter
+                        .hasMoreElements();) {
                     EntityAction action = iter.nextElement();
                     if (action instanceof AttackAction) {
                         paintAttack(g, (AttackAction) action);
@@ -494,20 +512,22 @@ public class MiniMap extends Canvas {
                 }
             }
 
-            for (Enumeration<Entity> iter = m_game.getEntities(); iter.hasMoreElements();) {
+            for (Enumeration<Entity> iter = m_game.getEntities(); iter
+                    .hasMoreElements();) {
                 Entity e = iter.nextElement();
-                if (e.getPosition() == null) continue;
+                if (e.getPosition() == null)
+                    continue;
                 paintUnit(g, e, true);
             }
             clean();
         }
 
-        if (m_client != null && m_client.getArtilleryAutoHit()!=null) {
-        	for (int i=0; i<m_client.getArtilleryAutoHit().size(); i++) {
-        		drawAutoHit(g, m_client.getArtilleryAutoHit().get(i));
-        	}
+        if (m_client != null && m_client.getArtilleryAutoHit() != null) {
+            for (int i = 0; i < m_client.getArtilleryAutoHit().size(); i++) {
+                drawAutoHit(g, m_client.getArtilleryAutoHit().get(i));
+            }
         }
-        
+
         drawBtn(g);
 
         repaint();
@@ -517,20 +537,24 @@ public class MiniMap extends Canvas {
      * Draws a red crosshair for artillery autohit hexes (predesignated only).
      */
     private void drawAutoHit(Graphics g, Coords hex) {
-        int baseX = hex.x *(hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + hexSide[zoom];
-        int baseY = (2*hex.y + 1 + hex.x%2)* hexSideByCos30[zoom] + topMargin;
-        Color alt=g.getColor();
+        int baseX = hex.x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
+                + hexSide[zoom];
+        int baseY = (2 * hex.y + 1 + hex.x % 2) * hexSideByCos30[zoom]
+                + topMargin;
+        Color alt = g.getColor();
         g.setColor(Color.RED);
-        g.drawOval(baseX-(unitSize-1), baseY-(unitSize-1), 
-        		   2*unitSize-2, 2*unitSize-2);
-        g.drawLine(baseX-unitSize-1, baseY, baseX-unitSize+3, baseY);
-        g.drawLine(baseX+unitSize+1, baseY, baseX+unitSize-3, baseY);
-        g.drawLine(baseX, baseY-unitSize-1, baseX, baseY-unitSize+3);
-        g.drawLine(baseX, baseY+unitSize+1, baseX, baseY+unitSize-3);
+        g.drawOval(baseX - (unitSize - 1), baseY - (unitSize - 1),
+                2 * unitSize - 2, 2 * unitSize - 2);
+        g.drawLine(baseX - unitSize - 1, baseY, baseX - unitSize + 3, baseY);
+        g.drawLine(baseX + unitSize + 1, baseY, baseX + unitSize - 3, baseY);
+        g.drawLine(baseX, baseY - unitSize - 1, baseX, baseY - unitSize + 3);
+        g.drawLine(baseX, baseY + unitSize + 1, baseX, baseY + unitSize - 3);
         g.setColor(alt);
     }
+
     /**
-     * Draws green JButton in the bottom to close and open mini map. Height of button is fixed to 14pix.
+     * Draws green JButton in the bottom to close and open mini map. Height of
+     * button is fixed to 14pix.
      */
     private void drawBtn(Graphics g) {
         int[] xPoints = new int[3];
@@ -554,23 +578,27 @@ public class MiniMap extends Canvas {
         g.setColor(Color.green.darker().darker());
         g.fillRect(0, getSize().height - 14, getSize().width, 14);
         g.setColor(Color.green.darker());
-        g.drawLine(0, getSize().height - 14, getSize().width, getSize().height - 14);
+        g.drawLine(0, getSize().height - 14, getSize().width,
+                getSize().height - 14);
         g.drawLine(0, getSize().height - 14, 0, getSize().height);
         g.setColor(Color.black);
-        g.drawLine(0, getSize().height - 1, getSize().width, getSize().height - 1);
-        g.drawLine(getSize().width - 1, getSize().height - 14, getSize().width - 1, getSize().height);
+        g.drawLine(0, getSize().height - 1, getSize().width,
+                getSize().height - 1);
+        g.drawLine(getSize().width - 1, getSize().height - 14,
+                getSize().width - 1, getSize().height);
         g.setColor(Color.yellow);
         g.fillPolygon(xPoints, yPoints, 3);
 
-
-        //drawing "+" and "-" buttons
+        // drawing "+" and "-" buttons
         if (!minimized) {
             g.setColor(Color.black);
             g.drawLine(14 - 1, getSize().height - 14, 14 - 1, getSize().height);
-            g.drawLine(getSize().width - 14 - 1, getSize().height - 14, getSize().width - 14 - 1, getSize().height);
+            g.drawLine(getSize().width - 14 - 1, getSize().height - 14,
+                    getSize().width - 14 - 1, getSize().height);
             g.setColor(Color.green.darker());
             g.drawLine(14, getSize().height - 14, 14, getSize().height);
-            g.drawLine(getSize().width - 14, getSize().height - 14, getSize().width - 14, getSize().height);
+            g.drawLine(getSize().width - 14, getSize().height - 14,
+                    getSize().width - 14, getSize().height);
             if (zoom == 0) {
                 g.setColor(Color.gray.brighter());
             } else {
@@ -582,13 +610,16 @@ public class MiniMap extends Canvas {
             } else {
                 g.setColor(Color.yellow);
             }
-            g.fillRect(getSize().width - 14 + 3, getSize().height - 14 + 6, 8, 2);
-            g.fillRect(getSize().width - 14 + 6, getSize().height - 14 + 3, 2, 8);
+            g.fillRect(getSize().width - 14 + 3, getSize().height - 14 + 6, 8,
+                    2);
+            g.fillRect(getSize().width - 14 + 6, getSize().height - 14 + 3, 2,
+                    8);
 
             if (zoom > 2) {
                 // JButton for displying heights.
                 g.setColor(Color.black);
-                g.drawLine(28 - 1, getSize().height - 14, 28 - 1, getSize().height);
+                g.drawLine(28 - 1, getSize().height - 14, 28 - 1,
+                        getSize().height);
                 g.setColor(Color.green.darker());
                 g.drawLine(28, getSize().height - 14, 28, getSize().height);
                 g.setColor(Color.yellow);
@@ -601,12 +632,13 @@ public class MiniMap extends Canvas {
                         label = Messages.getString("MiniMap.GroundHeightLabel"); //$NON-NLS-1$
                         break;
                     case SHOW_BUILDING_HEIGHT:
-                        label = Messages.getString("MiniMap.BuildingHeightLabel"); //$NON-NLS-1$
+                        label = Messages
+                                .getString("MiniMap.BuildingHeightLabel"); //$NON-NLS-1$
                         break;
                     case SHOW_TOTAL_HEIGHT:
                         label = Messages.getString("MiniMap.TotalHeightLabel"); //$NON-NLS-1$
                         break;
-                    default :
+                    default:
                         label = ""; //$NON-NLS-1$
                 }
                 g.drawString(label, 17, getSize().height - 14 + 12);
@@ -618,18 +650,22 @@ public class MiniMap extends Canvas {
     }
 
     private void paintHeight(Graphics g, IHex h, int x, int y) {
-        if (heightDisplayMode == SHOW_NO_HEIGHT) return;
+        if (heightDisplayMode == SHOW_NO_HEIGHT)
+            return;
         if (zoom > 2) {
             int baseX = x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin;
             int baseY = (2 * y + 1 + x % 2) * hexSideByCos30[zoom] + topMargin;
             g.setColor(Color.white);
             int height = 0;
-            if (h.getTerrain(Terrains.BUILDING) != null && heightDisplayMode == SHOW_BUILDING_HEIGHT) {
+            if (h.getTerrain(Terrains.BUILDING) != null
+                    && heightDisplayMode == SHOW_BUILDING_HEIGHT) {
                 height = h.ceiling();
             } else if (heightDisplayMode == SHOW_GROUND_HEIGHT) {
                 height = h.floor();
             } else if (heightDisplayMode == SHOW_TOTAL_HEIGHT) {
-                height = ((h.getTerrain(Terrains.BUILDING) != null) || (h.getTerrain(Terrains.FUEL_TANK) != null)) ? h.ceiling() : h.floor();
+                height = ((h.getTerrain(Terrains.BUILDING) != null) || (h
+                        .getTerrain(Terrains.FUEL_TANK) != null)) ? h.ceiling()
+                        : h.floor();
             }
             if (height != 0) {
                 g.drawString(height + "", baseX + 5, baseY + 5); //$NON-NLS-1$
@@ -689,20 +725,23 @@ public class MiniMap extends Canvas {
      */
     private void paintAttack(Graphics g, AttackAction attack) {
         Entity source = m_game.getEntity(attack.getEntityId());
-        Targetable target = m_game.getTarget(attack.getTargetType(), attack.getTargetId());
+        Targetable target = m_game.getTarget(attack.getTargetType(), attack
+                .getTargetId());
         // sanity check...
         if (null == source || null == target) {
             return;
         }
 
         if (attack.getTargetType() == Targetable.TYPE_INARC_POD) {
-            // iNarc pods don't have a position, so lets scrap this idea, shall we?
+            // iNarc pods don't have a position, so lets scrap this idea, shall
+            // we?
             return;
         }
         if (attack instanceof WeaponAttackAction) {
             WeaponAttackAction waa = (WeaponAttackAction) attack;
             if ((attack.getTargetType() == Targetable.TYPE_HEX_ARTILLERY)
-                    && waa.getEntity(m_game).getOwner().getId() != m_client.getLocalPlayer().getId()) {
+                    && waa.getEntity(m_game).getOwner().getId() != m_client
+                            .getLocalPlayer().getId()) {
                 return;
             }
         }
@@ -711,16 +750,22 @@ public class MiniMap extends Canvas {
         int[] xPoints = new int[4];
         int[] yPoints = new int[4];
 
-        xPoints[0] = source.getPosition().x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + (int) 1.5 * hexSide[zoom] - 2;
-        yPoints[0] = (2 * source.getPosition().y + 1 + source.getPosition().x % 2) * hexSideByCos30[zoom] + topMargin;
-        xPoints[1] = target.getPosition().x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + (int) 1.5 * hexSide[zoom] - 2;
-        yPoints[1] = (2 * target.getPosition().y + 1 + target.getPosition().x % 2) * hexSideByCos30[zoom] + topMargin;
+        xPoints[0] = source.getPosition().x
+                * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
+                + (int) 1.5 * hexSide[zoom] - 2;
+        yPoints[0] = (2 * source.getPosition().y + 1 + source.getPosition().x % 2)
+                * hexSideByCos30[zoom] + topMargin;
+        xPoints[1] = target.getPosition().x
+                * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
+                + (int) 1.5 * hexSide[zoom] - 2;
+        yPoints[1] = (2 * target.getPosition().y + 1 + target.getPosition().x % 2)
+                * hexSideByCos30[zoom] + topMargin;
         xPoints[2] = xPoints[1] + 2;
         xPoints[3] = xPoints[0] + 2;
-        if ((source.getPosition().x > target.getPosition().x
-                && source.getPosition().y < target.getPosition().y)
-                || (source.getPosition().x < target.getPosition().x
-                && source.getPosition().y > target.getPosition().y)) {
+        if ((source.getPosition().x > target.getPosition().x && source
+                .getPosition().y < target.getPosition().y)
+                || (source.getPosition().x < target.getPosition().x && source
+                        .getPosition().y > target.getPosition().y)) {
             yPoints[3] = yPoints[0] + 2;
             yPoints[2] = yPoints[1] + 2;
         } else {
@@ -732,17 +777,20 @@ public class MiniMap extends Canvas {
         g.setColor(Color.black);
         g.drawPolygon(xPoints, yPoints, 4);
 
-
         // if this is mutual fire, draw a half-and-half line
-        for (Enumeration<EntityAction> iter = m_game.getActions(); iter.hasMoreElements();) {
+        for (Enumeration<EntityAction> iter = m_game.getActions(); iter
+                .hasMoreElements();) {
             EntityAction action = iter.nextElement();
             if (action instanceof AttackAction) {
                 AttackAction otherAttack = (AttackAction) action;
                 if (attack.getEntityId() == otherAttack.getTargetId()
                         && otherAttack.getEntityId() == attack.getTargetId()) {
-                    // attackTarget _must_ be an entity since it's shooting back (?)
-                    Entity attackTarget = m_game.getEntity(otherAttack.getEntityId());
-                    g.setColor(PlayerColors.getColor(attackTarget.getOwner().getColorIndex()));
+                    // attackTarget _must_ be an entity since it's shooting back
+                    // (?)
+                    Entity attackTarget = m_game.getEntity(otherAttack
+                            .getEntityId());
+                    g.setColor(PlayerColors.getColor(attackTarget.getOwner()
+                            .getColorIndex()));
 
                     xPoints[0] = xPoints[3];
                     yPoints[0] = yPoints[3];
@@ -750,10 +798,10 @@ public class MiniMap extends Canvas {
                     yPoints[1] = yPoints[2];
                     xPoints[2] = xPoints[1] + 2;
                     xPoints[3] = xPoints[0] + 2;
-                    if ((source.getPosition().x > target.getPosition().x
-                            && source.getPosition().y < target.getPosition().y)
-                            || (source.getPosition().x < target.getPosition().x
-                            && source.getPosition().y > target.getPosition().y)) {
+                    if ((source.getPosition().x > target.getPosition().x && source
+                            .getPosition().y < target.getPosition().y)
+                            || (source.getPosition().x < target.getPosition().x && source
+                                    .getPosition().y > target.getPosition().y)) {
                         yPoints[3] = yPoints[0] + 2;
                         yPoints[2] = yPoints[1] + 2;
                     } else {
@@ -772,8 +820,11 @@ public class MiniMap extends Canvas {
     }
 
     private void paintUnit(Graphics g, Entity entity, boolean border) {
-        int baseX = entity.getPosition().x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + hexSide[zoom];
-        int baseY = (2 * entity.getPosition().y + 1 + entity.getPosition().x % 2) * hexSideByCos30[zoom] + topMargin;
+        int baseX = entity.getPosition().x
+                * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
+                + hexSide[zoom];
+        int baseY = (2 * entity.getPosition().y + 1 + entity.getPosition().x % 2)
+                * hexSideByCos30[zoom] + topMargin;
         int[] xPoints;
         int[] yPoints;
 
@@ -866,7 +917,8 @@ public class MiniMap extends Canvas {
         }
         g.fillPolygon(xPoints, yPoints, xPoints.length);
 
-        Entity se = clientgui == null ? null : m_game.getEntity(clientgui.getSelectedEntityNum());
+        Entity se = clientgui == null ? null : m_game.getEntity(clientgui
+                .getSelectedEntityNum());
         if (entity == se) {
             Color w = new Color(255, 255, 255);
             Color b = new Color(0, 0, 0);
@@ -890,11 +942,13 @@ public class MiniMap extends Canvas {
         int[] yPoints = new int[4];
         Color oldColor = g.getColor();
         g.setColor(m_terrainColors[Terrains.ROAD]);
-        for (Enumeration<int[]> iter = roadHexIndexes.elements(); iter.hasMoreElements();) {
+        for (Enumeration<int[]> iter = roadHexIndexes.elements(); iter
+                .hasMoreElements();) {
             int[] hex = iter.nextElement();
             x = hex[0];
             y = hex[1];
-            baseX = x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin + hexSide[zoom];
+            baseX = x * (hexSide[zoom] + hexSideBySin30[zoom]) + leftMargin
+                    + hexSide[zoom];
             baseY = (2 * y + 1 + x % 2) * hexSideByCos30[zoom] + topMargin;
             exits = hex[2];
             // Is there a North exit?
@@ -914,8 +968,10 @@ public class MiniMap extends Canvas {
             if (0 != (exits & 0x0002)) {
                 xPoints[0] = baseX - halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY - halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round(baseX + 3 * hexSide[zoom] / 4 - halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round(baseY - hexSideByCos30[zoom] / 2 - halfRoadWidthByCos30[zoom]);
+                xPoints[1] = Math.round(baseX + 3 * hexSide[zoom] / 4
+                        - halfRoadWidthBySin30[zoom]);
+                yPoints[1] = Math.round(baseY - hexSideByCos30[zoom] / 2
+                        - halfRoadWidthByCos30[zoom]);
                 xPoints[2] = xPoints[1] + 2 * halfRoadWidthBySin30[zoom];
                 yPoints[2] = yPoints[1] + 2 * halfRoadWidthByCos30[zoom];
                 xPoints[3] = baseX + halfRoadWidthBySin30[zoom];
@@ -927,8 +983,10 @@ public class MiniMap extends Canvas {
             if (0 != (exits & 0x0004)) {
                 xPoints[0] = baseX + halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY - halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round(baseX + 3 * hexSide[zoom] / 4 + halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round(baseY + hexSideByCos30[zoom] / 2 - halfRoadWidthByCos30[zoom]);
+                xPoints[1] = Math.round(baseX + 3 * hexSide[zoom] / 4
+                        + halfRoadWidthBySin30[zoom]);
+                yPoints[1] = Math.round(baseY + hexSideByCos30[zoom] / 2
+                        - halfRoadWidthByCos30[zoom]);
                 xPoints[2] = xPoints[1] - 2 * halfRoadWidthBySin30[zoom];
                 yPoints[2] = yPoints[1] + 2 * halfRoadWidthByCos30[zoom];
                 xPoints[3] = baseX - halfRoadWidthBySin30[zoom];
@@ -953,8 +1011,10 @@ public class MiniMap extends Canvas {
             if (0 != (exits & 0x0010)) {
                 xPoints[0] = baseX + halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY + halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round(baseX - 3 * hexSide[zoom] / 4 + halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round(baseY + hexSideByCos30[zoom] / 2 + halfRoadWidthByCos30[zoom]);
+                xPoints[1] = Math.round(baseX - 3 * hexSide[zoom] / 4
+                        + halfRoadWidthBySin30[zoom]);
+                yPoints[1] = Math.round(baseY + hexSideByCos30[zoom] / 2
+                        + halfRoadWidthByCos30[zoom]);
                 xPoints[2] = xPoints[1] - 2 * halfRoadWidthBySin30[zoom];
                 yPoints[2] = yPoints[1] - 2 * halfRoadWidthByCos30[zoom];
                 xPoints[3] = baseX - halfRoadWidthBySin30[zoom];
@@ -966,8 +1026,10 @@ public class MiniMap extends Canvas {
             if (0 != (exits & 0x0020)) {
                 xPoints[0] = baseX - halfRoadWidthBySin30[zoom];
                 yPoints[0] = baseY + halfRoadWidthByCos30[zoom];
-                xPoints[1] = Math.round(baseX - 3 * hexSide[zoom] / 4 - halfRoadWidthBySin30[zoom]);
-                yPoints[1] = Math.round(baseY - hexSideByCos30[zoom] / 2 + halfRoadWidthByCos30[zoom]);
+                xPoints[1] = Math.round(baseX - 3 * hexSide[zoom] / 4
+                        - halfRoadWidthBySin30[zoom]);
+                yPoints[1] = Math.round(baseY - hexSideByCos30[zoom] / 2
+                        + halfRoadWidthByCos30[zoom]);
                 xPoints[2] = xPoints[1] + 2 * halfRoadWidthBySin30[zoom];
                 yPoints[2] = yPoints[1] - 2 * halfRoadWidthByCos30[zoom];
                 xPoints[3] = baseX + halfRoadWidthBySin30[zoom];
@@ -979,19 +1041,20 @@ public class MiniMap extends Canvas {
         }
         g.setColor(oldColor);
     }
+
     /**
-     *  check if hex contains roadelements and if it does, add
-     *  to roadHexIndexes
+     * check if hex contains roadelements and if it does, add to roadHexIndexes
      */
-    private void addRoadElements(IHex x,int boardX,int boardY) {
-        final int[] roadTypes = new int[]{Terrains.ROAD,Terrains.BRIDGE};
-        for(int j:roadTypes) {
-            if(x.getTerrain(j)!=null&&m_terrainColors[j]!=null) {
-                int[] roadHex = {boardX, boardY, x.getTerrain(j).getExits()};
-                roadHexIndexes.addElement(roadHex);                
+    private void addRoadElements(IHex x, int boardX, int boardY) {
+        final int[] roadTypes = new int[] { Terrains.ROAD, Terrains.BRIDGE };
+        for (int j : roadTypes) {
+            if (x.getTerrain(j) != null && m_terrainColors[j] != null) {
+                int[] roadHex = { boardX, boardY, x.getTerrain(j).getExits() };
+                roadHexIndexes.addElement(roadHex);
             }
         }
     }
+
     private Color terrainColor(IHex x, int boardX, int boardY) {
         Color terrColor = m_terrainColors[0];
         if (x.getElevation() < 0) {
@@ -1008,7 +1071,8 @@ public class MiniMap extends Canvas {
                 terrColor = m_terrainColors[j];
                 terrain = j;
                 // make heavy woods darker
-                if ((j == Terrains.WOODS || j == Terrains.JUNGLE) && x.getTerrain(j).getLevel() > 1) {
+                if ((j == Terrains.WOODS || j == Terrains.JUNGLE)
+                        && x.getTerrain(j).getLevel() > 1) {
                     terrColor = HEAVY_WOODS;
                 }
                 // contains both smoke and fire
@@ -1031,43 +1095,47 @@ public class MiniMap extends Canvas {
             case Terrains.PAVEMENT:
             case Terrains.ICE:
                 level = Math.abs(x.floor());
-                // By experiment it is possible to make only 6 distinctive color steps
-                if (level > 10) level = 10;
+                // By experiment it is possible to make only 6 distinctive color
+                // steps
+                if (level > 10)
+                    level = 10;
                 r = terrColor.getRed() - level * 15;
                 g = terrColor.getGreen() - level * 15;
                 b = terrColor.getBlue() - level * 15;
-                if (r < 0) r = 0;
-                if (g < 0) g = 0;
-                if (b < 0) b = 0;
+                if (r < 0)
+                    r = 0;
+                if (g < 0)
+                    g = 0;
+                if (b < 0)
+                    b = 0;
                 return new Color(r, g, b);
             case Terrains.FUEL_TANK:
             case Terrains.BUILDING:
                 level = Math.abs(x.ceiling());
-                // By experiment it is possible to make only 6 distinctive color steps
-                if (level > 10) level = 10;
+                // By experiment it is possible to make only 6 distinctive color
+                // steps
+                if (level > 10)
+                    level = 10;
                 r = terrColor.getRed() - level * 15;
                 g = terrColor.getGreen() - level * 15;
                 b = terrColor.getBlue() - level * 15;
-                if (r < 0) r = 0;
-                if (g < 0) g = 0;
-                if (b < 0) b = 0;
+                if (r < 0)
+                    r = 0;
+                if (g < 0)
+                    g = 0;
+                if (b < 0)
+                    b = 0;
                 return new Color(r, g, b);
 
         }
         /*
-          if (terrain < 5){
-          level = (int) Math.abs(x.floor());
-          // By experiment it is possible to make only 6 distinctive color steps
-          if (level > 5) level = 5;
-          int r = terrColor.getRed()-level*30;
-          int g = terrColor.getGreen()-level*30;
-          int b = terrColor.getBlue()-level*30;
-          if (r < 0) r = 0;
-          if (g < 0) g = 0;
-          if (b < 0) b = 0;
-          return new Color(r, g, b);
-          }
-        */
+         * if (terrain < 5){ level = (int) Math.abs(x.floor()); // By experiment
+         * it is possible to make only 6 distinctive color steps if (level > 5)
+         * level = 5; int r = terrColor.getRed()-level*30; int g =
+         * terrColor.getGreen()-level*30; int b = terrColor.getBlue()-level*30;
+         * if (r < 0) r = 0; if (g < 0) g = 0; if (b < 0) b = 0; return new
+         * Color(r, g, b); }
+         */
         return terrColor;
     }
 
@@ -1081,7 +1149,8 @@ public class MiniMap extends Canvas {
 
         if (restY < hexSideByCos30[zoom]) {
             if (evenColumn) {
-                if (restX < ((restY - hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
+                if (restX < ((restY - hexSideByCos30[zoom])
+                        * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
                     gridX--;
                     gridY--;
                 }
@@ -1094,70 +1163,87 @@ public class MiniMap extends Canvas {
             }
         } else {
             if (evenColumn) {
-                if (restX < ((restY - hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom])) {
+                if (restX < ((restY - hexSideByCos30[zoom])
+                        * hexSideBySin30[zoom] / hexSideByCos30[zoom])) {
                     gridX--;
                 }
             } else {
-                if (restX < ((restY - 2 * hexSideByCos30[zoom]) * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
+                if (restX < ((restY - 2 * hexSideByCos30[zoom])
+                        * hexSideBySin30[zoom] / hexSideByCos30[zoom] * -1)) {
                     gridX--;
                 }
             }
         }
-        /*       restX = hexSideBySin30[zoom] + hexSide[zoom] - restX;
-                 restY -= hexSideByCos30[zoom];
-                 if (hexSideBySin30[zoom]*restX > hexSideByCos30[zoom]*restY) gridX ++;
-                 if (-hexSideBySin30[zoom]*restX > hexSideByCos30[zoom]*restY) gridY --;
-        */
-        if (gridX < 0) gridX = 0;
-        if (gridY < 0) gridY = 0;
+        /*
+         * restX = hexSideBySin30[zoom] + hexSide[zoom] - restX; restY -=
+         * hexSideByCos30[zoom]; if (hexSideBySin30[zoom]*restX >
+         * hexSideByCos30[zoom]*restY) gridX ++; if (-hexSideBySin30[zoom]*restX >
+         * hexSideByCos30[zoom]*restY) gridY --;
+         */
+        if (gridX < 0)
+            gridX = 0;
+        if (gridY < 0)
+            gridY = 0;
 
         return new Coords(gridX, gridY);
     }
+
     protected void zoomIn() {
-        if (zoom == 0) return;
+        if (zoom == 0)
+            return;
         zoom--;
-        initializeMap();    
+        initializeMap();
     }
+
     protected void zoomOut() {
-        if (zoom == (hexSide.length - 1)) return;
+        if (zoom == (hexSide.length - 1))
+            return;
         zoom++;
-        initializeMap();    
+        initializeMap();
     }
+
     void processMouseClick(int x, int y, MouseEvent me) {
         if (y > (getSize().height - 14)) {
 
             if (x < 14) {
                 zoomIn();
             } else if (x < 28 && zoom > 2) {
-                heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0 : heightDisplayMode;
+                heightDisplayMode = ((++heightDisplayMode) > NBR_MODES) ? 0
+                        : heightDisplayMode;
                 initializeMap();
             } else if (x > (getSize().width - 14)) {
                 zoomOut();
             } else {
                 if (minimized) {
-                    //m_dialog.setResizable(true);
+                    // m_dialog.setResizable(true);
                     setSize(getSize().width, heightBufer);
                     m_mapImage = createImage(getSize().width, heightBufer);
                 } else {
                     heightBufer = getSize().height;
                     setSize(getSize().width, 14);
                     m_mapImage = createImage(Math.max(1, getSize().width), 14);
-                    //m_dialog.setResizable(false);
+                    // m_dialog.setResizable(false);
                 }
                 minimized = !minimized;
                 m_dialog.pack();
                 drawMap();
             }
         } else {
-            if ((x < margin) || (x > (getSize().width - leftMargin)) || (y < topMargin) || (y > (getSize().height - topMargin - 14))) {
+            if ((x < margin) || (x > (getSize().width - leftMargin))
+                    || (y < topMargin)
+                    || (y > (getSize().height - topMargin - 14))) {
                 return;
             }
-			if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-			    //              m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
-			    m_bview.mouseAction(translateCoords(x - leftMargin, y - topMargin), IBoardView.BOARD_HEX_CLICK, me.getModifiers());
-			} else {
-			    m_bview.centerOnHex(translateCoords(x - leftMargin, y - topMargin));
-			}
+            if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+                // m_bview.checkLOS(translateCoords(x - leftMargin, y -
+                // topMargin));
+                m_bview.mouseAction(translateCoords(x - leftMargin, y
+                        - topMargin), IBoardView.BOARD_HEX_CLICK, me
+                        .getModifiers());
+            } else {
+                m_bview.centerOnHex(translateCoords(x - leftMargin, y
+                        - topMargin));
+            }
         }
     }
 
@@ -1169,22 +1255,24 @@ public class MiniMap extends Canvas {
         public void boardNewBoard(BoardEvent b) {
             initializeMap();
         }
+
         public void boardChangedHex(BoardEvent b) {
-            if(dirty==null)
-            {
-                dirtyMap=true;
-            } else{  
-                /*  this must be tolerant since it might be called 
-                    without  notifying us of the boardsize first*/
-                int x=b.getCoords().x;
-                int y=b.getCoords().y;
-                if(x>=dirty.length||y>=dirty[x].length) {
-                    dirtyMap=true;                    
+            if (dirty == null) {
+                dirtyMap = true;
+            } else {
+                /*
+                 * this must be tolerant since it might be called without
+                 * notifying us of the boardsize first
+                 */
+                int x = b.getCoords().x;
+                int y = b.getCoords().y;
+                if (x >= dirty.length || y >= dirty[x].length) {
+                    dirtyMap = true;
                     return;
                 }
-                dirty[x/10][y/10]=true;
+                dirty[x / 10][y / 10] = true;
             }
-            
+
         }
     };
 
@@ -1199,9 +1287,11 @@ public class MiniMap extends Canvas {
 
         public void gameBoardNew(GameBoardNewEvent e) {
             IBoard b = e.getOldBoard();
-            if (b != null) b.removeBoardListener(boardListener);
+            if (b != null)
+                b.removeBoardListener(boardListener);
             b = e.getNewBoard();
-            if (b != null) b.addBoardListener(boardListener);
+            if (b != null)
+                b.addBoardListener(boardListener);
             initializeMap();
         }
 

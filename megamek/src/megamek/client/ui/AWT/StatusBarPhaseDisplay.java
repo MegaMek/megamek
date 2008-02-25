@@ -14,17 +14,20 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import megamek.client.Client;
 
-public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay implements ActionListener
-{
-    
-  // displays
+public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
+        implements ActionListener {
+
+    // displays
     private Label labStatus;
     protected Panel panStatus;
 
@@ -32,30 +35,30 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
      * Sets up the status bar with toggle buttons for the mek display and map.
      */
     protected void setupStatusBar(String defStatus) {
-      panStatus = new Panel();
+        panStatus = new Panel();
 
-      labStatus = new Label(defStatus, Label.CENTER);
-      
-      // layout
-      GridBagLayout gridbag = new GridBagLayout();
-      GridBagConstraints c = new GridBagConstraints();
-      panStatus.setLayout(gridbag);
-          
-      c.insets = new Insets(0, 1, 0, 1);
-      c.fill = GridBagConstraints.HORIZONTAL;
+        labStatus = new Label(defStatus, Label.CENTER);
 
-      c.gridwidth = GridBagConstraints.REMAINDER;
-      c.weightx = 1.0;    c.weighty = 0.0;
-      gridbag.setConstraints(labStatus, c);
-      panStatus.add(labStatus);
+        // layout
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panStatus.setLayout(gridbag);
+
+        c.insets = new Insets(0, 1, 0, 1);
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(labStatus, c);
+        panStatus.add(labStatus);
     }
-    
+
     protected void setStatusBarText(String text) {
-      labStatus.setText(text);
+        labStatus.setText(text);
     }
-    
+
     protected boolean statusBarActionPerformed(ActionEvent ev, Client client) {
-      return false;
+        return false;
     }
 }
-

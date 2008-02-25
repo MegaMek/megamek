@@ -14,14 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.Client;
-import megamek.common.Player;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JList;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,13 +21,22 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 
-public class PlayerListDialog
-        extends JDialog implements ActionListener {
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JList;
+
+import megamek.client.Client;
+import megamek.common.Player;
+
+public class PlayerListDialog extends JDialog implements ActionListener {
     /**
      * 
      */
     private static final long serialVersionUID = 7270469195373150106L;
-    private JButton butClose = new JButton(Messages.getString("PlayerListDialog.Close")); //$NON-NLS-1$
+    private JButton butClose = new JButton(Messages
+            .getString("PlayerListDialog.Close")); //$NON-NLS-1$
     private JList playerList = new JList(new DefaultListModel());
 
     private Client client;
@@ -45,7 +46,7 @@ public class PlayerListDialog
         this.client = client;
 
         butClose.addActionListener(this);
-        
+
         // layout
         getContentPane().setLayout(new BorderLayout());
 
@@ -62,8 +63,9 @@ public class PlayerListDialog
 
         pack();
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
-                parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - getSize().width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -71,8 +73,8 @@ public class PlayerListDialog
     }
 
     /**
-     * Refreshes the player list component with information
-     * from the game object.
+     * Refreshes the player list component with information from the game
+     * object.
      */
     public static void refreshPlayerList(JList playerList, Client client) {
         ((DefaultListModel) playerList.getModel()).removeAllElements();
@@ -81,18 +83,22 @@ public class PlayerListDialog
             StringBuffer playerDisplay = new StringBuffer(player.getName());
             if (player.isGhost()) {
                 playerDisplay.append(" ["); //$NON-NLS-1$
-                playerDisplay.append(Messages.getString("PlayerListDialog.player_ghost")); //$NON-NLS-1$
+                playerDisplay.append(Messages
+                        .getString("PlayerListDialog.player_ghost")); //$NON-NLS-1$
                 playerDisplay.append(']'); //$NON-NLS-1$
             } else if (player.isObserver()) {
-                playerDisplay.append(" [");                 //$NON-NLS-1$
-                playerDisplay.append(Messages.getString("PlayerListDialog.player_observer")); //$NON-NLS-1$
+                playerDisplay.append(" ["); //$NON-NLS-1$
+                playerDisplay.append(Messages
+                        .getString("PlayerListDialog.player_observer")); //$NON-NLS-1$
                 playerDisplay.append(']'); //$NON-NLS-1$
             } else if (player.isDone()) {
-                playerDisplay.append(" (");                 //$NON-NLS-1$
-                playerDisplay.append(Messages.getString("PlayerListDialog.player_done")); //$NON-NLS-1$
+                playerDisplay.append(" ("); //$NON-NLS-1$
+                playerDisplay.append(Messages
+                        .getString("PlayerListDialog.player_done")); //$NON-NLS-1$
                 playerDisplay.append(')'); //$NON-NLS-1$
             }
-            ((DefaultListModel) playerList.getModel()).addElement(playerDisplay.toString());
+            ((DefaultListModel) playerList.getModel()).addElement(playerDisplay
+                    .toString());
         }
     }
 

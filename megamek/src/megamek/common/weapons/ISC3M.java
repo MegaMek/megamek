@@ -21,10 +21,14 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISC3M extends TAGWeapon {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8367068184993071837L;
+
     public ISC3M() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -38,7 +42,7 @@ public class ISC3M extends TAGWeapon {
         this.spreadable = false;
         this.cost = 1500000;
         this.bv = 0;
-        this.flags |= F_C3M ;
+        this.flags |= F_C3M;
         this.heat = 0;
         this.damage = 0;
         this.shortRange = 5;

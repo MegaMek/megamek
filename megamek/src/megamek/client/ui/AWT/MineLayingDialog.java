@@ -14,11 +14,6 @@
 
 package megamek.client.ui.AWT;
 
-import megamek.client.ui.AWT.widget.AdvancedLabel;
-import megamek.common.Entity;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-
 import java.awt.Button;
 import java.awt.Choice;
 import java.awt.Dialog;
@@ -33,13 +28,16 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Vector;
 
+import megamek.client.ui.AWT.widget.AdvancedLabel;
+import megamek.common.Entity;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+
 /**
- * A dialog displayed to the player when they 
- * want to lay mines with their BA unit.
+ * A dialog displayed to the player when they want to lay mines with their BA
+ * unit.
  */
-public class MineLayingDialog
-    extends Dialog implements ActionListener
-{
+public class MineLayingDialog extends Dialog implements ActionListener {
     /**
      * 
      */
@@ -55,31 +53,34 @@ public class MineLayingDialog
     private Vector<Integer> vMines = new Vector<Integer>();
 
     /**
-     * Display a dialog that shows the mines on the entity, and allows
-     * the player to choose one.
-     *
-     * @param   parent the <code>Frame</code> parent of this dialog
-     * @param   entity the <code>Entity</code> that carries the mines.
+     * Display a dialog that shows the mines on the entity, and allows the
+     * player to choose one.
+     * 
+     * @param parent the <code>Frame</code> parent of this dialog
+     * @param entity the <code>Entity</code> that carries the mines.
      */
-    public MineLayingDialog( Frame parent, Entity entity ) {
+    public MineLayingDialog(Frame parent, Entity entity) {
         super(parent, Messages.getString("MineLayingDialog.title"), true); //$NON-NLS-1$
         this.entity = entity;
 
-        labMessage = new AdvancedLabel(Messages.getString("MineLayingDialog.selectMineToLay",new Object[]{entity.getDisplayName()})); //$NON-NLS-1$ 
+        labMessage = new AdvancedLabel(
+                Messages
+                        .getString(
+                                "MineLayingDialog.selectMineToLay", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$ 
 
         // Walk through the entity's misc equipment, looking for mines.
         for (Mounted mount : entity.getMisc()) {
 
             // Is this a Mine that can be layed?
-            if ( mount.getType().hasFlag(MiscType.F_MINE) && mount.canFire() ) {
+            if (mount.getType().hasFlag(MiscType.F_MINE) && mount.canFire()) {
 
                 StringBuffer message = new StringBuffer();
-                message.append( entity.getLocationName(mount.getLocation()) )
-                    .append( " " ) //$NON-NLS-1$
-                    .append( mount.getDesc() );
+                message.append(entity.getLocationName(mount.getLocation()))
+                        .append(" ") //$NON-NLS-1$
+                        .append(mount.getDesc());
                 chMines.add(message.toString());
                 vMines.addElement(entity.getEquipmentNum(mount));
-                
+
             } // End found-mine
 
         } // Look at the next piece of equipment.
@@ -87,19 +88,20 @@ public class MineLayingDialog
         // buttons
         butOkay.addActionListener(this);
         butCancel.addActionListener(this);
-        
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(10, 10, 10, 10);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
         add(labMessage);
-            
+
         gridbag.setConstraints(chMines, c);
         add(chMines);
 
@@ -107,43 +109,47 @@ public class MineLayingDialog
         add(butOkay);
         add(butCancel);
         butOkay.requestFocus();
-        
+
         addWindowListener(new WindowAdapter() {
-        public void windowClosing(WindowEvent e) { setVisible(false); }
-    });
-        
+            public void windowClosing(WindowEvent e) {
+                setVisible(false);
+            }
+        });
+
         pack();
         Dimension size = getSize();
         boolean updateSize = false;
-        if ( size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
+        if (size.width < GUIPreferences.getInstance().getMinimumSizeWidth()) {
             size.width = GUIPreferences.getInstance().getMinimumSizeWidth();
         }
-        if ( size.height < GUIPreferences.getInstance().getMinimumSizeHeight() ) {
+        if (size.height < GUIPreferences.getInstance().getMinimumSizeHeight()) {
             size.height = GUIPreferences.getInstance().getMinimumSizeHeight();
         }
-        if ( updateSize ) {
-            setSize( size );
+        if (updateSize) {
+            setSize(size);
             size = getSize();
         }
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width/2 - size.width/2,
-                    parent.getLocation().y + parent.getSize().height/2 - size.height/2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - size.width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - size.height / 2);
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == butCancel) {
             okay = false;
         }
         this.setVisible(false);
     }
+
     public boolean getAnswer() {
         return (okay);
     }
 
     /**
      * Get the id of the mine the player wants to use.
-     *
-     * @return  the <code>int</code> id of the mine to lay
+     * 
+     * @return the <code>int</code> id of the mine to lay
      */
     public int getMine() {
         Integer equipnr = vMines.elementAt(chMines.getSelectedIndex());

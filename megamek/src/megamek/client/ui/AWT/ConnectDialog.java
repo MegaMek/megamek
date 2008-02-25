@@ -1,17 +1,17 @@
 package megamek.client.ui.AWT;
 
-import megamek.common.preference.PreferenceManager;
-
+import java.awt.Button;
 import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Label;
 import java.awt.TextField;
-import java.awt.Button;
-import java.awt.Frame;
-import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import megamek.common.preference.PreferenceManager;
 
 /**
  * here's a quick class for the connect to game diaglogue box
@@ -31,15 +31,21 @@ public class ConnectDialog extends Dialog implements ActionListener {
     public ConnectDialog(Frame frame) {
         super(frame, Messages.getString("MegaMek.ConnectDialog.title"), true); //$NON-NLS-1$
 
-        yourNameL = new Label(Messages.getString("MegaMek.yourNameL"), Label.RIGHT); //$NON-NLS-1$
-        serverAddrL = new Label(Messages.getString("MegaMek.serverAddrL"), Label.RIGHT); //$NON-NLS-1$
+        yourNameL = new Label(
+                Messages.getString("MegaMek.yourNameL"), Label.RIGHT); //$NON-NLS-1$
+        serverAddrL = new Label(
+                Messages.getString("MegaMek.serverAddrL"), Label.RIGHT); //$NON-NLS-1$
         portL = new Label(Messages.getString("MegaMek.portL"), Label.RIGHT); //$NON-NLS-1$
 
-        yourNameF = new TextField(PreferenceManager.getClientPreferences().getLastPlayerName(), 16);
+        yourNameF = new TextField(PreferenceManager.getClientPreferences()
+                .getLastPlayerName(), 16);
         yourNameF.addActionListener(this);
-        serverAddrF = new TextField(PreferenceManager.getClientPreferences().getLastConnectAddr(), 16);
+        serverAddrF = new TextField(PreferenceManager.getClientPreferences()
+                .getLastConnectAddr(), 16);
         serverAddrF.addActionListener(this);
-        portF = new TextField(PreferenceManager.getClientPreferences().getLastConnectPort() + "", 4); //$NON-NLS-1$
+        portF = new TextField(PreferenceManager.getClientPreferences()
+                .getLastConnectPort()
+                + "", 4); //$NON-NLS-1$
         portF.addActionListener(this);
 
         okayB = new Button(Messages.getString("Okay")); //$NON-NLS-1$
@@ -104,9 +110,9 @@ public class ConnectDialog extends Dialog implements ActionListener {
 
         pack();
         setResizable(false);
-        setLocation(
-            frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
-            frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2
+                - getSize().width / 2, frame.getLocation().y
+                + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -122,7 +128,8 @@ public class ConnectDialog extends Dialog implements ActionListener {
 
             // update settings
             PreferenceManager.getClientPreferences().setLastPlayerName(name);
-            PreferenceManager.getClientPreferences().setLastConnectAddr(serverAddr);
+            PreferenceManager.getClientPreferences().setLastConnectAddr(
+                    serverAddr);
             PreferenceManager.getClientPreferences().setLastConnectPort(port);
         }
         setVisible(false);

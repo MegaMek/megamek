@@ -21,10 +21,14 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISTAG extends TAGWeapon {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2474477168563228542L;
+
     public ISTAG() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;

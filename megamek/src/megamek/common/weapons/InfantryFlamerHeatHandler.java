@@ -33,47 +33,56 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4808077901373647109L;
 
     /**
      * @param t
      * @param w
      * @param g
      */
-    public InfantryFlamerHeatHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public InfantryFlamerHeatHandler(ToHitData t, WeaponAttackAction w,
+            IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
-        int troopersHit =  Compute.missilesHit(((Infantry)ae).getShootingStrength());
+        int troopersHit = Compute.missilesHit(((Infantry) ae)
+                .getShootingStrength());
         r = new Report(3325);
         r.subject = subjectId;
         r.add(troopersHit);
         r.add(" troopers ");
-        r.add(toHit.getTableDesc()+", causing "+damage[troopersHit-1]+ "heat.");
+        r.add(toHit.getTableDesc() + ", causing " + damage[troopersHit - 1]
+                + "heat.");
         r.newlines = 0;
         vPhaseReport.addElement(r);
-        return damage[troopersHit-1];
+        return damage[troopersHit - 1];
     }
-    
+
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
         if (entityTarget instanceof Mech
                 && game.getOptions().booleanOption("flamer_heat")) {
             // heat
-            
-            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
-                    .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
 
-            if ( entityTarget.removePartialCoverHits(hit.getLocation(), toHit.getCover(),
-                    Compute.targetSideTable(ae, entityTarget)) ) {
+            HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
+                    toHit.getSideTable(), waa.getAimedLocation(), waa
+                            .getAimingMode());
+
+            if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
+                    .getCover(), Compute.targetSideTable(ae, entityTarget))) {
                 // Weapon strikes Partial Cover.
                 r = new Report(3460);
                 r.subject = subjectId;

@@ -14,9 +14,7 @@
 
 package megamek.common.actions;
 
-public class ClearMinefieldAction
-    extends AbstractEntityAction
-{
+public class ClearMinefieldAction extends AbstractEntityAction {
     /**
      * 
      */

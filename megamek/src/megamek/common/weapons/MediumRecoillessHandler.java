@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
@@ -28,16 +27,20 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class MediumRecoillessHandler extends WeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -917705988601664166L;
+
     /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public MediumRecoillessHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public MediumRecoillessHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
     }
 
@@ -49,6 +52,7 @@ public class MediumRecoillessHandler extends WeaponHandler {
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor))
             return Compute.d6(2);
-        else return super.calcDamagePerHit();
+        else
+            return super.calcDamagePerHit();
     }
 }

@@ -15,32 +15,30 @@
 package megamek.common.util;
 
 /**
- * This interface represents an event listener that can be "distracted"
- * so as to ignore any event notifications.
- *
- * Created on February 29, 2004
- *
- * @author  James Damour
+ * This interface represents an event listener that can be "distracted" so as to
+ * ignore any event notifications. Created on February 29, 2004
+ * 
+ * @author James Damour
  * @version 1
  */
 public interface Distractable extends java.util.EventListener {
 
     /**
      * Determine if the listener is currently distracted.
-     *
-     * @return  <code>true</code> if the listener is ignoring events.
+     * 
+     * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents();
 
     /**
      * Specify if the listener should be distracted.
-     *
-     * @param   distract <code>true</code> if the listener should ignore events
-     *          <code>false</code> if the listener should pay attention again.
-     *          Events that occured while the listener was distracted NOT
-     *          going to be processed.
+     * 
+     * @param distract <code>true</code> if the listener should ignore events
+     *            <code>false</code> if the listener should pay attention
+     *            again. Events that occured while the listener was distracted
+     *            NOT going to be processed.
      */
-    public void setIgnoringEvents( boolean distracted );
+    public void setIgnoringEvents(boolean distracted);
 
     /**
      * Stop just ignoring events and actually stop listening to them.

@@ -57,16 +57,19 @@ public abstract class PMGenericHotArea implements PMHotArea {
             command = PMHotArea.MOUSE_CLICK_RIGHT;
         }
 
-        if (e.getClickCount() > 1) command = PMHotArea.MOUSE_DOUBLE_CLICK;
+        if (e.getClickCount() > 1)
+            command = PMHotArea.MOUSE_DOUBLE_CLICK;
 
-        ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command, modifiers);
+        ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+                command, modifiers);
         dispatchEvent(ae);
     }
 
     public void onMouseOver(MouseEvent e) {
         int modifiers = e.getModifiers();
         String command = PMHotArea.MOUSE_OVER;
-        ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command, modifiers);
+        ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+                command, modifiers);
         dispatchEvent(ae);
 
     }
@@ -74,21 +77,24 @@ public abstract class PMGenericHotArea implements PMHotArea {
     public void onMouseExit(MouseEvent e) {
         int modifiers = e.getModifiers();
         String command = PMHotArea.MOUSE_EXIT;
-        ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command, modifiers);
+        ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+                command, modifiers);
         dispatchEvent(ae);
     }
 
     public void onMouseDown(MouseEvent e) {
         int modifiers = e.getModifiers();
         String command = PMHotArea.MOUSE_DOWN;
-        ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command, modifiers);
+        ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+                command, modifiers);
         dispatchEvent(ae);
     }
 
     public void onMouseUp(MouseEvent e) {
         int modifiers = e.getModifiers();
         String command = PMHotArea.MOUSE_UP;
-        ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, command, modifiers);
+        ActionEvent ae = new ActionEvent(this, ActionEvent.ACTION_PERFORMED,
+                command, modifiers);
         dispatchEvent(ae);
     }
 

@@ -13,7 +13,10 @@
  */
 package megamek.server.victory;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+
 import megamek.common.IGame;
 import megamek.common.Player;
 import megamek.common.Report;
@@ -22,12 +25,15 @@ import megamek.common.Report;
  * implements bv-ratio victory checking ratio is defined as
  * friendlybv/enemybv>(bvratiopercent/100)=>win so this comparison is valid for
  * 3 team combat , but you must drop ALL enemies combined to below given ratio.
- * 
  * if multiple players reach this goal at the same time, the result is declared
  * a draw NOTENOTE: this could be improved to take into account ratios which
  * exceed given ratio
  */
 public class BVRatioVictory extends AbstractBVVictory {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -6622529899835634696L;
     protected int ratio;
 
     public BVRatioVictory(int ratio) {

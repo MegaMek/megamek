@@ -31,9 +31,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brockxs
- * 
  */
 public class BAMGHandler extends WeaponHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4109377609879352900L;
 
     /**
      * @param t
@@ -51,19 +55,18 @@ public class BAMGHandler extends WeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        if (weapon.isRapidfire() &&
-            !(target instanceof Infantry)) {
+        if (weapon.isRapidfire() && !(target instanceof Infantry)) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             nDamPerHit = Compute.d6();
         } else {
             if (target instanceof Infantry && !(target instanceof BattleArmor)) {
                 switch (wtype.getDamage()) {
                     case 1:
-                        nDamPerHit = (int)Math.ceil(Compute.d6()/2);
+                        nDamPerHit = (int) Math.ceil(Compute.d6() / 2);
                     case 2:
                         nDamPerHit = Compute.d6();
                     case 3:
-                        nDamPerHit = Compute.d6(2);                        
+                        nDamPerHit = Compute.d6(2);
                 }
             } else {
                 nDamPerHit = super.calcDamagePerHit();
@@ -71,11 +74,12 @@ public class BAMGHandler extends WeaponHandler {
         }
         return nDamPerHit;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#addHeat()
-     */    
+     */
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             if (weapon.isRapidfire()) {
@@ -85,19 +89,19 @@ public class BAMGHandler extends WeaponHandler {
             }
         }
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     protected void reportMiss(Vector<Report> vPhaseReport) {
-        //Report the miss
+        // Report the miss
         r = new Report(3220);
-        if (weapon.isRapidfire() &&
-                !(target instanceof Infantry &&
-                !(target instanceof BattleArmor)) ){
-              r.messageId = 3225;
-              r.add(nDamPerHit*3);
+        if (weapon.isRapidfire()
+                && !(target instanceof Infantry && !(target instanceof BattleArmor))) {
+            r.messageId = 3225;
+            r.add(nDamPerHit * 3);
         }
         vPhaseReport.add(r);
     }

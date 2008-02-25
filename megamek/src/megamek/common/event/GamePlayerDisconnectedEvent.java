@@ -20,7 +20,7 @@ import megamek.common.Player;
  * Instances of this class are sent when some Player disconnected
  */
 public class GamePlayerDisconnectedEvent extends GamePlayerEvent {
-    
+
     /**
      * 
      */
@@ -33,5 +33,5 @@ public class GamePlayerDisconnectedEvent extends GamePlayerEvent {
     public GamePlayerDisconnectedEvent(Object source, Player player) {
         super(source, player, GAME_PLAYER_DISCONNECTED);
     }
-    
+
 }

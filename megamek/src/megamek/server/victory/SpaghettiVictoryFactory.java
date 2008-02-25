@@ -20,6 +20,11 @@ import java.io.Serializable;
  */
 public class SpaghettiVictoryFactory implements VictoryFactory, Serializable {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 3401309900972098765L;
+
+    /**
      * This is a really nasty implementation
      */
     public Victory createVictory(String victory) {

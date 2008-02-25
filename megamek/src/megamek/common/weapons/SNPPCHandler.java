@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class SNPPCHandler extends ISPPCHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2107847606508556295L;
 
     /**
      * @param t
@@ -57,6 +61,6 @@ public class SNPPCHandler extends ISPPCHandler {
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor))
             toReturn /= 10;
-        return (int)Math.ceil(toReturn);
+        return (int) Math.ceil(toReturn);
     }
 }

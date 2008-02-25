@@ -28,9 +28,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class StopSwarmAttackHandler extends WeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7078803294398264979L;
+
     /**
      * @param toHit
      * @param waa

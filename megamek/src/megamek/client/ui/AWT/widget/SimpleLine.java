@@ -14,27 +14,29 @@
 
 package megamek.client.ui.AWT.widget;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Graphics;
 
 public class SimpleLine extends Canvas {
-    
+
     /**
      * 
      */
     private static final long serialVersionUID = 8615969226702396249L;
     private int h = 2;
     private int w;
-    
+
     public SimpleLine(int width) {
         w = width;
         setSize(w, h);
     }
-    
+
     public void paint(Graphics g) {
         g.setColor(Color.gray);
         g.drawLine(0, 0, w, 0);
         g.setColor(Color.white);
         g.drawLine(0, 1, w, 1);
     }
-    
+
 }

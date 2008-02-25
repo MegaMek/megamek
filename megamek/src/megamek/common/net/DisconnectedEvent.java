@@ -18,7 +18,7 @@ package megamek.common.net;
  * Instances of this class are sent when Connection closed
  */
 public class DisconnectedEvent extends ConnectionEvent {
-    
+
     /**
      * 
      */
@@ -26,10 +26,11 @@ public class DisconnectedEvent extends ConnectionEvent {
 
     /**
      * Constructs connection event
+     * 
      * @param source The object on which the Event initially occurred.
      */
     public DisconnectedEvent(Object source) {
         super(source, DISCONNECTED);
     }
-    
+
 }

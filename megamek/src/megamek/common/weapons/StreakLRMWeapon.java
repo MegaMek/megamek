@@ -21,7 +21,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 
 public abstract class StreakLRMWeapon extends LRMWeapon {

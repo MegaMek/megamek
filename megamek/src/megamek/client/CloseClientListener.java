@@ -16,7 +16,6 @@ package megamek.client;
 
 /**
  * @author Helge Richter
- *
  */
 public interface CloseClientListener {
     public void clientClosed();

@@ -27,9 +27,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class RACHandler extends UltraWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4859480151505343638L;
+
     /**
      * @param t
      * @param w
@@ -42,6 +46,7 @@ public class RACHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {

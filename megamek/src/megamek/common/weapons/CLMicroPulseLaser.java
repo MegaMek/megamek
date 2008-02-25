@@ -25,9 +25,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLMicroPulseLaser extends PulseLaserWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3335298535182304490L;
+
     /**
      * 
      */
@@ -54,7 +58,7 @@ public class CLMicroPulseLaser extends PulseLaserWeapon {
         this.bv = 12;
         this.cost = 12500;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

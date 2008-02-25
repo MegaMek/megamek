@@ -14,45 +14,40 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Color;
+
+import javax.swing.ToolTipManager;
+
 import megamek.client.ui.swing.util.ColorParser;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.preference.PreferenceStoreProxy;
 
-import javax.swing.ToolTipManager;
-import java.awt.Color;
-
 public class GUIPreferences extends PreferenceStoreProxy {
 
-    /* --Begin advanced settings section--
-    Options with the "ADVANCED" prefix are treated specially.  They
-    are quick and easy to add, at the expense of some
-    user-friendliness (that's why they are "advanced"<grin>).  Only the
-    appropriate declaration below and the default value (further down
-    in this file) need be added.  The code will then automatically add
-    the option to the advanced tab of the client settings.  In order
-    to retrieve one of these settings, use a line like:
-    GUIPreferences.getInstance().getInt("AdvancedWhateverOption"),
-    where getInt is replaced with getBoolean, getString, etc as
-    necessary.  The reason these options were made this way is that
-    GUI options have a way of quickly multiplying and we need a quick
-    and dirty way of adding them without having to code too many new
-    lines.  In addition, keeping them seperated in the settings dialog
-    shields new users from unecessary complication.
-    */
+    /*
+     * --Begin advanced settings section-- Options with the "ADVANCED" prefix
+     * are treated specially. They are quick and easy to add, at the expense of
+     * some user-friendliness (that's why they are "advanced"<grin>). Only the
+     * appropriate declaration below and the default value (further down in this
+     * file) need be added. The code will then automatically add the option to
+     * the advanced tab of the client settings. In order to retrieve one of
+     * these settings, use a line like:
+     * GUIPreferences.getInstance().getInt("AdvancedWhateverOption"), where
+     * getInt is replaced with getBoolean, getString, etc as necessary. The
+     * reason these options were made this way is that GUI options have a way of
+     * quickly multiplying and we need a quick and dirty way of adding them
+     * without having to code too many new lines. In addition, keeping them
+     * seperated in the settings dialog shields new users from unecessary
+     * complication.
+     */
     public static final String ADVANCED_CHATBOX_SIZE = "AdvancedChatboxSize";
     public static final String ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE = "AdvancedChatLoungeTabFontSize";
-    public static final String ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE =
-            "AdvancedMechDisplayArmorLargeFontSize";
-    public static final String ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE =
-            "AdvancedMechDisplayArmorMediumFontSize";
-    public static final String ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE =
-            "AdvancedMechDisplayArmorSmallFontSize";
-    public static final String ADVANCED_MECH_DISPLAY_LARGE_FONT_SIZE =
-            "AdvancedMechDisplayLargeFontSize";
-    public static final String ADVANCED_MECH_DISPLAY_MEDIUM_FONT_SIZE =
-            "AdvancedMechDisplayMediumFontSize";
-    public static final String ADVANCED_MECH_DISPLAY_WRAP_LENGTH =
-            "AdvancedMechDisplayWrapLength";
+    public static final String ADVANCED_MECH_DISPLAY_ARMOR_LARGE_FONT_SIZE = "AdvancedMechDisplayArmorLargeFontSize";
+    public static final String ADVANCED_MECH_DISPLAY_ARMOR_MEDIUM_FONT_SIZE = "AdvancedMechDisplayArmorMediumFontSize";
+    public static final String ADVANCED_MECH_DISPLAY_ARMOR_SMALL_FONT_SIZE = "AdvancedMechDisplayArmorSmallFontSize";
+    public static final String ADVANCED_MECH_DISPLAY_LARGE_FONT_SIZE = "AdvancedMechDisplayLargeFontSize";
+    public static final String ADVANCED_MECH_DISPLAY_MEDIUM_FONT_SIZE = "AdvancedMechDisplayMediumFontSize";
+    public static final String ADVANCED_MECH_DISPLAY_WRAP_LENGTH = "AdvancedMechDisplayWrapLength";
     public static final String ADVANCED_MOVE_DEFAULT_COLOR = "AdvancedMoveDefaultColor";
     public static final String ADVANCED_MOVE_ILLEGAL_COLOR = "AdvancedMoveIllegalColor";
     public static final String ADVANCED_MOVE_JUMP_COLOR = "AdvancedMoveJumpColor";
@@ -89,8 +84,10 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public static final String MECH_SELECTOR_INCLUDE_LEVEL = "MechSelectorIncludeLevel";
     public static final String MECH_SELECTOR_INCLUDE_COST = "MechSelectorIncludeCost";
     public static final String MECH_SELECTOR_SHOW_ADVANCED = "MechSelectorShowAdvanced";
-    //public static final String MECH_SELECTOR_SIZE_HEIGHT = "MechSelectorSizeHeight";
-    //public static final String MECH_SELECTOR_SIZE_WIDTH = "MechSelectorSizeWidth";
+    // public static final String MECH_SELECTOR_SIZE_HEIGHT =
+    // "MechSelectorSizeHeight";
+    // public static final String MECH_SELECTOR_SIZE_WIDTH =
+    // "MechSelectorSizeWidth";
     public static final String MINI_REPORT_POS_X = "MiniReportPosX";
     public static final String MINI_REPORT_POS_Y = "MiniReportPosY";
     public static final String MINI_REPORT_SIZE_HEIGHT = "MiniReportSizeHeight";
@@ -139,7 +136,8 @@ public class GUIPreferences extends PreferenceStoreProxy {
 
     protected GUIPreferences() {
 
-        store = PreferenceManager.getInstance().getPreferenceStore(getClass().getName());
+        store = PreferenceManager.getInstance().getPreferenceStore(
+                getClass().getName());
 
         store.setDefault(ADVANCED_CHATBOX_SIZE, 5);
         store.setDefault(ADVANCED_CHAT_LOUNGE_TAB_FONT_SIZE, 16);
@@ -307,14 +305,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     /*
-    public int getMechSelectorSizeHeight() {
-        return store.getInt(MECH_SELECTOR_SIZE_HEIGHT);
-    }
-
-    public int getMechSelectorSizeWidth() {
-        return store.getInt(MECH_SELECTOR_SIZE_WIDTH);
-    }
-    */
+     * public int getMechSelectorSizeHeight() { return
+     * store.getInt(MECH_SELECTOR_SIZE_HEIGHT); } public int
+     * getMechSelectorSizeWidth() { return
+     * store.getInt(MECH_SELECTOR_SIZE_WIDTH); }
+     */
     public String getMinimapColours() {
         return store.getString(MINIMAP_COLOURS);
     }
@@ -362,7 +357,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public boolean getMouseWheelZoom() {
         return store.getBoolean(MOUSE_WHEEL_ZOOM);
     }
-    
+
     public boolean getNagForBotReadme() {
         return store.getBoolean(NAG_FOR_BOT_README);
     }
@@ -556,14 +551,11 @@ public class GUIPreferences extends PreferenceStoreProxy {
     }
 
     /*
-    public void setMechSelectorSizeHeight(int i) {
-        store.setValue(MECH_SELECTOR_SIZE_HEIGHT, i);
-    }
-
-    public void setMechSelectorSizeWidth(int i) {
-        store.setValue(MECH_SELECTOR_SIZE_WIDTH, i);
-    }
-    */
+     * public void setMechSelectorSizeHeight(int i) {
+     * store.setValue(MECH_SELECTOR_SIZE_HEIGHT, i); } public void
+     * setMechSelectorSizeWidth(int i) {
+     * store.setValue(MECH_SELECTOR_SIZE_WIDTH, i); }
+     */
     public void setMinimapEnabled(boolean b) {
         store.setValue(MINIMAP_ENABLED, b);
     }
@@ -595,7 +587,7 @@ public class GUIPreferences extends PreferenceStoreProxy {
     public void setMiniReportSizeWidth(int i) {
         store.setValue(MINI_REPORT_SIZE_WIDTH, i);
     }
-    
+
     public void setMouseWheelZoom(boolean b) {
         store.setValue(MOUSE_WHEEL_ZOOM, b);
     }

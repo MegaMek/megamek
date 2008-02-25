@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -25,18 +24,24 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class InfantryLRMHandler extends InfantryWeaponHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 234646912767994265L;
 
     /**
      * @param t
      * @param w
      * @param g
      */
-    public InfantryLRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public InfantryLRMHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
-        damage = new int[] {0,1,1,2,2,3,3,3,4,4,5,5,6,6,6,7,7,8,8,9,9,9,10,10,11,11,11,12,12,13};
+        damage = new int[] { 0, 1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 6, 6, 6, 7, 7,
+                8, 8, 9, 9, 9, 10, 10, 11, 11, 11, 12, 12, 13 };
     }
 
 }

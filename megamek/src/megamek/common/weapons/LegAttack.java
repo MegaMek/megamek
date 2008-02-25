@@ -25,16 +25,20 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class LegAttack extends InfantryAttack {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5647733828977232900L;
+
     public LegAttack() {
         super();
         this.name = "Leg Attack";
         this.setInternalName(Infantry.LEG_ATTACK);
     }
-    
+
     /*
      * (non-Javadoc)
      * 

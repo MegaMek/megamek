@@ -15,12 +15,6 @@
 
 package megamek.client.ui.swing.widget;
 
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.Messages;
-import megamek.common.Entity;
-import megamek.common.GunEmplacement;
-
-import javax.swing.JComponent;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -28,9 +22,16 @@ import java.awt.Image;
 import java.awt.Polygon;
 import java.util.Vector;
 
+import javax.swing.JComponent;
+
+import megamek.client.ui.swing.GUIPreferences;
+import megamek.client.ui.swing.Messages;
+import megamek.common.Entity;
+import megamek.common.GunEmplacement;
+
 /**
- * Class which keeps set of all areas required to
- * represent GunEmplacement unit in MechDsiplay.ArmorPanel class.
+ * Class which keeps set of all areas required to represent GunEmplacement unit
+ * in MechDsiplay.ArmorPanel class.
  */
 public class GunEmplacementMapSet implements DisplayMapSet {
 
@@ -42,17 +43,16 @@ public class GunEmplacementMapSet implements DisplayMapSet {
     private PMAreasGroup content = new PMAreasGroup();
 
     private static final String IMAGE_DIR = "data/images/widgets";
-    private static final Polygon BUILDING_CF =
-            new Polygon(new int[]{0, 0, 40, 40},
-                    new int[]{0, 160, 160, 0}, 4);
-    private static final Polygon TURRET_ARMOR =
-            new Polygon(new int[]{0, 0, 80, 80, 90, 150, 160,
-                                  160, 150, 110, 80, 80},
-                    new int[]{20, 25, 25, 30, 35, 35, 30,
-                              15, 0, 0, 15, 20}, 12);
+    private static final Polygon BUILDING_CF = new Polygon(new int[] { 0, 0,
+            40, 40 }, new int[] { 0, 160, 160, 0 }, 4);
+    private static final Polygon TURRET_ARMOR = new Polygon(new int[] { 0, 0,
+            80, 80, 90, 150, 160, 160, 150, 110, 80, 80 }, new int[] { 20, 25,
+            25, 30, 35, 35, 30, 15, 0, 0, 15, 20 }, 12);
 
-    private static final Font FONT_LABEL = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
-    private static final Font FONT_VALUE = new Font("SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
+    private static final Font FONT_LABEL = new Font(
+            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorSmallFontSize")); //$NON-NLS-1$
+    private static final Font FONT_VALUE = new Font(
+            "SansSerif", Font.PLAIN, GUIPreferences.getInstance().getInt("AdvancedMechDisplayArmorLargeFontSize")); //$NON-NLS-1$
 
     public GunEmplacementMapSet(JComponent c) {
         comp = c;
@@ -78,16 +78,14 @@ public class GunEmplacementMapSet implements DisplayMapSet {
         GunEmplacement ge = (GunEmplacement) e;
         int loc = GunEmplacement.LOC_BUILDING;
         vLabels[loc].setValue(ge.getArmorString(loc));
-        WidgetUtils.setAreaColor(areas[loc], vLabels[loc],
-                (double) ge.getArmor(loc) /
-                (double) ge.getOArmor(loc));
+        WidgetUtils.setAreaColor(areas[loc], vLabels[loc], (double) ge
+                .getArmor(loc)
+                / (double) ge.getOArmor(loc));
         loc = GunEmplacement.LOC_TURRET;
         vLabels[loc].setValue(ge.getArmorString(loc));
-        WidgetUtils.setAreaColor
-                (areas[loc], vLabels[loc],
-                        ge.hasTurret()
-                ? (double) ge.getArmor(loc) / (double) ge.getOArmor(loc)
-                : 0);
+        WidgetUtils.setAreaColor(areas[loc], vLabels[loc],
+                ge.hasTurret() ? (double) ge.getArmor(loc)
+                        / (double) ge.getOArmor(loc) : 0);
 
     }
 
@@ -101,21 +99,29 @@ public class GunEmplacementMapSet implements DisplayMapSet {
     }
 
     private void setAreas() {
-        areas[GunEmplacement.LOC_BUILDING] = new PMSimplePolygonArea(BUILDING_CF);
+        areas[GunEmplacement.LOC_BUILDING] = new PMSimplePolygonArea(
+                BUILDING_CF);
         areas[GunEmplacement.LOC_TURRET] = new PMSimplePolygonArea(TURRET_ARMOR);
     }
 
     private void setLabels() {
         FontMetrics fm = comp.getFontMetrics(FONT_LABEL);
 
-        //Labels for Front view
-        labels[GunEmplacement.LOC_BUILDING] = WidgetUtils.createLabel(Messages.getString("GunEmplacementMapSet.ConstructionFactor"), fm, Color.white, 90, 200); //$NON-NLS-1$
-        labels[GunEmplacement.LOC_TURRET] = WidgetUtils.createLabel(Messages.getString("GunEmplacementMapSet.TurretArmor"), fm, Color.white, 90, -25); //$NON-NLS-1$
+        // Labels for Front view
+        labels[GunEmplacement.LOC_BUILDING] = WidgetUtils
+                .createLabel(
+                        Messages
+                                .getString("GunEmplacementMapSet.ConstructionFactor"), fm, Color.white, 90, 200); //$NON-NLS-1$
+        labels[GunEmplacement.LOC_TURRET] = WidgetUtils
+                .createLabel(
+                        Messages.getString("GunEmplacementMapSet.TurretArmor"), fm, Color.white, 90, -25); //$NON-NLS-1$
 
-        //Value labels for all parts of mek
+        // Value labels for all parts of mek
         fm = comp.getFontMetrics(FONT_VALUE);
-        vLabels[GunEmplacement.LOC_BUILDING] = WidgetUtils.createValueLabel(90, 90, "", fm); //$NON-NLS-1$
-        vLabels[GunEmplacement.LOC_TURRET] = WidgetUtils.createValueLabel(90, 10, "", fm); //$NON-NLS-1$
+        vLabels[GunEmplacement.LOC_BUILDING] = WidgetUtils.createValueLabel(90,
+                90, "", fm); //$NON-NLS-1$
+        vLabels[GunEmplacement.LOC_TURRET] = WidgetUtils.createValueLabel(90,
+                10, "", fm); //$NON-NLS-1$
     }
 
     private void setBackGround() {
@@ -124,54 +130,46 @@ public class GunEmplacementMapSet implements DisplayMapSet {
         int b = BackGroundDrawer.TILING_BOTH;
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_HORIZONTAL |
-                BackGroundDrawer.VALIGN_TOP;
+        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_TOP;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_HORIZONTAL |
-                BackGroundDrawer.VALIGN_BOTTOM;
+        b = BackGroundDrawer.TILING_HORIZONTAL | BackGroundDrawer.VALIGN_BOTTOM;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/h_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_VERTICAL |
-                BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.TILING_VERTICAL |
-                BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.TILING_VERTICAL | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/v_line.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING |
-                BackGroundDrawer.VALIGN_TOP |
-                BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
+                | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING |
-                BackGroundDrawer.VALIGN_BOTTOM |
-                BackGroundDrawer.HALIGN_LEFT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
+                | BackGroundDrawer.HALIGN_LEFT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/bl_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING |
-                BackGroundDrawer.VALIGN_TOP |
-                BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_TOP
+                | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/tr_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));
 
-        b = BackGroundDrawer.NO_TILING |
-                BackGroundDrawer.VALIGN_BOTTOM |
-                BackGroundDrawer.HALIGN_RIGHT;
+        b = BackGroundDrawer.NO_TILING | BackGroundDrawer.VALIGN_BOTTOM
+                | BackGroundDrawer.HALIGN_RIGHT;
         tile = comp.getToolkit().getImage(IMAGE_DIR + "/br_corner.gif"); //$NON-NLS-1$
         PMUtil.setImage(tile, comp);
         bgDrawers.addElement(new BackGroundDrawer(tile, b));

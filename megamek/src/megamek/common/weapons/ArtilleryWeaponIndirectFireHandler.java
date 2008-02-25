@@ -22,13 +22,10 @@ import java.util.Vector;
 
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
-import megamek.common.HitData;
-import megamek.common.IEntityMovementMode;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
@@ -42,11 +39,9 @@ import megamek.common.VTOL;
 import megamek.common.actions.ArtilleryAttackAction;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
@@ -56,14 +51,13 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
     private static final long serialVersionUID = -1277649123562229298L;
     boolean handledAmmoAndReport = false;
 
-    
     /**
      * This consructor may only be used for deserialization.
-     *
      */
     protected ArtilleryWeaponIndirectFireHandler() {
         super();
     }
+
     /**
      * @param t
      * @param w
@@ -110,9 +104,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
                 handledAmmoAndReport = true;
-                game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
-                        new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILERY_INCOMING,
-                                game.getTurnIndex() + aaa.turnsTilHit,
+                game.getBoard().addSpecialHexDisplay(
+                        aaa.getCoords(),
+                        new SpecialHexDisplay(
+                                SpecialHexDisplay.Type.ARTILERY_INCOMING, game
+                                        .getTurnIndex()
+                                        + aaa.turnsTilHit,
                                 "Artilery Incoming. Better text later."));
             }
             // if this is the last targeting phase before we hit,
@@ -193,10 +190,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             if (roll >= toHit.getValue()) {
                 artyAttacker.aTracker.setModifier(weapon,
                         ToHitData.AUTOMATIC_SUCCESS, targetPos);
-                
-                game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
-                        new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
-                                game.getTurnIndex(),
+
+                game.getBoard().addSpecialHexDisplay(
+                        aaa.getCoords(),
+                        new SpecialHexDisplay(
+                                SpecialHexDisplay.Type.ARTILLERY_AUTOHIT, game
+                                        .getTurnIndex(),
                                 "Artilery AutoHit. Better text later."));
             }
             // If the shot missed, but was adjusted by a
@@ -204,10 +203,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             else if (null != bestSpotter) {
                 artyAttacker.aTracker.setModifier(weapon, artyAttacker.aTracker
                         .getModifier(weapon, targetPos) - 1, targetPos);
-                
-                game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
-                        new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_ADJUSTED,
-                                game.getTurnIndex(),
+
+                game.getBoard().addSpecialHexDisplay(
+                        aaa.getCoords(),
+                        new SpecialHexDisplay(
+                                SpecialHexDisplay.Type.ARTILLERY_ADJUSTED, game
+                                        .getTurnIndex(),
                                 "Artilery toHit Adjusted. Better text later."));
             }
 
@@ -218,7 +219,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         r.indent();
         r.newlines = 0;
         r.subject = subjectId;
-        if(wtype != null) {
+        if (wtype != null) {
             r.add(wtype.getName());
         } else {
             r.add("Error: From Nowhwere");
@@ -258,14 +259,16 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         r.subject = subjectId;
         r.add(roll);
         vPhaseReport.addElement(r);
-        
+
         if (!isFlak) {
-            game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
-                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILEY_TARGET,
-                            game.getTurnIndex(),
+            game.getBoard().addSpecialHexDisplay(
+                    aaa.getCoords(),
+                    new SpecialHexDisplay(
+                            SpecialHexDisplay.Type.ARTILEY_TARGET, game
+                                    .getTurnIndex(),
                             "Artilery Target. Better text later."));
         }
-        
+
         // do we hit?
         bMissed = roll < toHit.getValue();
 
@@ -279,9 +282,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (!bMissed) {
             if (!isFlak) {
                 r = new Report(3190);
-                game.getBoard().addSpecialHexDisplay(aaa.getCoords(), 
-                        new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILERY_HIT,
-                                game.getTurnIndex(),
+                game.getBoard().addSpecialHexDisplay(
+                        aaa.getCoords(),
+                        new SpecialHexDisplay(
+                                SpecialHexDisplay.Type.ARTILERY_HIT, game
+                                        .getTurnIndex(),
                                 "Artilery Hit. Better text later."));
             } else {
                 r = new Report(3191);
@@ -297,13 +302,17 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 // misses and scatters to another hex
                 if (!isFlak) {
                     r = new Report(3195);
-                    game.getBoard().addSpecialHexDisplay(coords, 
-                            new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILERY_HIT,
-                                    game.getTurnIndex(),
-                                    "Artilery Scatered Here. Better text later."));
+                    game
+                            .getBoard()
+                            .addSpecialHexDisplay(
+                                    coords,
+                                    new SpecialHexDisplay(
+                                            SpecialHexDisplay.Type.ARTILERY_HIT,
+                                            game.getTurnIndex(),
+                                            "Artilery Scatered Here. Better text later."));
                 } else {
                     r = new Report(3192);
-                }                
+                }
                 r.subject = subjectId;
                 r.add(coords.getBoardNum());
                 vPhaseReport.addElement(r);
@@ -355,16 +364,17 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
         int altitude = 0;
         if (isFlak) {
-            altitude = ((VTOL)target).getElevation();
+            altitude = ((VTOL) target).getElevation();
         }
-        server.artilleryDamageArea(coords, artyAttacker.getPosition(), atype, subjectId, artyAttacker, isFlak, altitude);
+        server.artilleryDamageArea(coords, artyAttacker.getPosition(), atype,
+                subjectId, artyAttacker, isFlak, altitude);
 
-        
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
@@ -373,11 +383,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor))
             toReturn /= 0.5;
         if (bGlancing) {
-            toReturn/=2;
+            toReturn /= 2;
         }
-        
+
         System.err.println("Attack is doing " + toReturn + " damage.");
-        
-        return (int)Math.ceil(toReturn);
+
+        return (int) Math.ceil(toReturn);
     }
 }

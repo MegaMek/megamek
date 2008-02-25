@@ -48,7 +48,8 @@ public class PMValueLabel extends PMSimpleLabel {
      * Draw the label.
      */
     public void drawInto(Graphics g) {
-        if (!visible) return;
+        if (!visible)
+            return;
         Color temp = g.getColor();
         g.setColor(color);
         g.drawString(string, x - width / 2, y - fm.getMaxDescent());

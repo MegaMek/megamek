@@ -1,7 +1,5 @@
 package megamek.client.ui.swing.widget;
 
-import megamek.client.ui.swing.MechDisplay;
-
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.MediaTracker;
@@ -9,6 +7,8 @@ import java.awt.Polygon;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
+import megamek.client.ui.swing.MechDisplay;
 
 public class MechPanelTabStrip extends PicMap {
 
@@ -26,10 +26,10 @@ public class MechPanelTabStrip extends PicMap {
     private int activeTab = 0;
     MechDisplay md;
 
-    private Polygon firstTab = new Polygon(new int[]{0, 43, 59, 59, 0},
-            new int[]{0, 0, 16, 17, 17}, 5);
-    private int[] pointsX = new int[]{0, 43, 59, 59, 13, 0};
-    private int[] pointsY = new int[]{0, 0, 16, 17, 17, 4};
+    private Polygon firstTab = new Polygon(new int[] { 0, 43, 59, 59, 0 },
+            new int[] { 0, 0, 16, 17, 17 }, 5);
+    private int[] pointsX = new int[] { 0, 43, 59, 59, 13, 0 };
+    private int[] pointsY = new int[] { 0, 0, 16, 17, 17, 4 };
 
     public MechPanelTabStrip(MechDisplay md) {
         super();
@@ -37,7 +37,8 @@ public class MechPanelTabStrip extends PicMap {
     }
 
     public void setTab(int i) {
-        if (i > 4) i = 4;
+        if (i > 4)
+            i = 4;
         activeTab = i;
         redrawImages();
         update();
@@ -87,8 +88,7 @@ public class MechPanelTabStrip extends PicMap {
 
         int stepX = 47;
 
-        tabs[0] = new PMPicPolygonalArea(firstTab,
-                createImage(47, 18));
+        tabs[0] = new PMPicPolygonalArea(firstTab, createImage(47, 18));
         for (int i = 1; i < 4; i++) {
             tabs[i] = new PMPicPolygonalArea(new Polygon(pointsX, pointsY, 6),
                     createImage(47, 18));

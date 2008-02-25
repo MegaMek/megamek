@@ -19,7 +19,7 @@ import java.util.Vector;
 import megamek.common.Entity;
 
 /**
- * Instances of this class are sent when entity is added to game 
+ * Instances of this class are sent when entity is added to game
  */
 public class GameEntityNewEvent extends GameEvent {
 
@@ -27,34 +27,32 @@ public class GameEntityNewEvent extends GameEvent {
      * 
      */
     private static final long serialVersionUID = -1223834507320730181L;
-    protected Vector<Entity> entities; 
+    protected Vector<Entity> entities;
 
     /**
-     * 
      * @param source
      * @param entity
      */
     public GameEntityNewEvent(Object source, Entity entity) {
-        super(source,GAME_ENTITY_NEW);
+        super(source, GAME_ENTITY_NEW);
         entities = new Vector<Entity>();
         entities.addElement(entity);
     }
 
     /**
-     * 
      * @param source
      * @param entities
      */
     public GameEntityNewEvent(Object source, Vector<Entity> entities) {
-        super(source,GAME_ENTITY_NEW);
+        super(source, GAME_ENTITY_NEW);
         this.entities = entities;
     }
-    
-    public Vector<Entity> GetEntities(){
+
+    public Vector<Entity> GetEntities() {
         return entities;
     }
-    
-    public int getNumberOfEntities(){
+
+    public int getNumberOfEntities() {
         return entities.size();
     }
 }

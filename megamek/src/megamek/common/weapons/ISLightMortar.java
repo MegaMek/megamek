@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISLightMortar extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -141763207003813118L;
+
     /**
      * 
      */
@@ -48,7 +52,7 @@ public class ISLightMortar extends Weapon {
         this.bv = 9;
         this.flags |= F_BALLISTIC;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

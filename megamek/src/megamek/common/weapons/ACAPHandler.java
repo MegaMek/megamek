@@ -32,7 +32,6 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ACAPHandler extends AmmoWeaponHandler {
     /**
@@ -80,19 +79,19 @@ public class ACAPHandler extends AmmoWeaponHandler {
         nDamage = nDamPerHit * Math.min(nCluster, hits);
 
         // A building may be damaged, even if the squad is not.
-        if ( bldgAbsorbs > 0 ) {
-            int toBldg = Math.min( bldgAbsorbs, nDamage );
+        if (bldgAbsorbs > 0) {
+            int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding( bldg, toBldg );
-            for (Report report: buildingReport) {
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg);
+            for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
             vPhaseReport.addAll(buildingReport);
         }
 
         // A building may absorb the entire shot.
-        if ( nDamage == 0 ) {
+        if (nDamage == 0) {
             r = new Report(3415);
             r.subject = subjectId;
             r.indent(2);
@@ -104,9 +103,11 @@ public class ACAPHandler extends AmmoWeaponHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
-            vPhaseReport.addAll(server.damageEntity(
-                    entityTarget, hit, nDamage, false, ae.getSwarmTargetId()==entityTarget.getId()?DamageType.IGNORE_PASSENGER:damageType, false, false,
-                            throughFront));
+            vPhaseReport
+                    .addAll(server.damageEntity(entityTarget, hit, nDamage,
+                            false, ae.getSwarmTargetId() == entityTarget
+                                    .getId() ? DamageType.IGNORE_PASSENGER
+                                    : damageType, false, false, throughFront));
         }
     }
 }

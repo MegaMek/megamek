@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISHeavyFlamer extends VehicleFlamerWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3957472644909347725L;
+
     /**
      * 
      */

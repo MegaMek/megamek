@@ -14,17 +14,18 @@
 
 package megamek.client.ui.swing;
 
-import megamek.common.preference.PreferenceManager;
-
 import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import megamek.common.preference.PreferenceManager;
 
 public class Messages {
     private static final String BUNDLE_NAME = "megamek.client.messages";//$NON-NLS-1$
 
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
-            .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences().getLocale());
+            .getBundle(BUNDLE_NAME, PreferenceManager.getClientPreferences()
+                    .getLocale());
 
     private Messages() {
     }
@@ -38,10 +39,9 @@ public class Messages {
     }
 
     /**
-     * Returns the formatted message for the given key in
-     * the resource bundle.
-     *
-     * @param key  the resource name
+     * Returns the formatted message for the given key in the resource bundle.
+     * 
+     * @param key the resource name
      * @param args the message arguments
      * @return the string
      */

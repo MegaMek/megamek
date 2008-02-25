@@ -86,9 +86,8 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.StringUtil;
 
-public class ClientGUI
-        extends Panel
-        implements MouseListener, WindowListener, ActionListener, KeyListener {
+public class ClientGUI extends Panel implements MouseListener, WindowListener,
+        ActionListener, KeyListener {
     /**
      * 
      */
@@ -119,7 +118,8 @@ public class ClientGUI
     public MechDisplay mechD;
     public Dialog minimapW;
     public MiniMap minimap;
-    public PopupMenu popup = new PopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
+    public PopupMenu popup = new PopupMenu(Messages
+            .getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
     private UnitOverview uo;
     public Ruler ruler; // added by kenn
     protected Component curPanel;
@@ -152,7 +152,7 @@ public class ClientGUI
     /**
      * Map each phase to the name of the card for the main display area.
      */
-    private HashMap<String,String> mainNames = new HashMap<String,String>();
+    private HashMap<String, String> mainNames = new HashMap<String, String>();
 
     /**
      * The <code>Panel</code> containing the main display area.
@@ -167,7 +167,7 @@ public class ClientGUI
     /**
      * Map each phase to the name of the card for the secondary area.
      */
-    private HashMap<String,String> secondaryNames = new HashMap<String,String>();
+    private HashMap<String, String> secondaryNames = new HashMap<String, String>();
 
     /**
      * The <code>Panel</code> containing the secondary display area.
@@ -182,10 +182,11 @@ public class ClientGUI
     /**
      * Map phase component names to phase component objects.
      */
-    HashMap<String,Component> phaseComponents = new HashMap<String,Component>();
+    HashMap<String, Component> phaseComponents = new HashMap<String, Component>();
 
-    //TODO: there's a better place for this
-    private Map<String,Client> bots = new TreeMap<String,Client>(StringUtil.stringComparator());
+    // TODO: there's a better place for this
+    private Map<String, Client> bots = new TreeMap<String, Client>(StringUtil
+            .stringComparator());
 
     /**
      * Current Selected entity
@@ -193,9 +194,9 @@ public class ClientGUI
     int selectedEntityNum = Entity.NONE;
 
     /**
-     * Construct a client which will display itself in a new frame.  It will
-     * not try to connect to a server yet.  When the frame closes, this client
-     * will clean up after itself as much as possible, but will not call
+     * Construct a client which will display itself in a new frame. It will not
+     * try to connect to a server yet. When the frame closes, this client will
+     * clean up after itself as much as possible, but will not call
      * System.exit().
      */
     public ClientGUI(Client client) {
@@ -221,9 +222,11 @@ public class ClientGUI
         if (GUIPreferences.getInstance().getSoundBingFilename() == null)
             return;
         try {
-            File file = new File(GUIPreferences.getInstance().getSoundBingFilename());
+            File file = new File(GUIPreferences.getInstance()
+                    .getSoundBingFilename());
             if (!file.exists()) {
-                System.err.println("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename()); //$NON-NLS-1$
+                System.err
+                        .println("Failed to load audio file: " + GUIPreferences.getInstance().getSoundBingFilename()); //$NON-NLS-1$
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURI().toURL());
@@ -251,7 +254,7 @@ public class ClientGUI
 
     /**
      * Display a system message in the chat box.
-     *
+     * 
      * @param message the <code>String</code> message to be shown.
      */
     public void systemMessage(String message) {
@@ -266,32 +269,29 @@ public class ClientGUI
         menuBar.setGame(client.game);
         frame.setMenuBar(menuBar);
         Rectangle virtualBounds = new Rectangle();
-        GraphicsEnvironment ge = GraphicsEnvironment.
-                getLocalGraphicsEnvironment();
-        GraphicsDevice[] gs =
-                ge.getScreenDevices();
-        for (int j = 0; j < gs.length; j++) { 
+        GraphicsEnvironment ge = GraphicsEnvironment
+                .getLocalGraphicsEnvironment();
+        GraphicsDevice[] gs = ge.getScreenDevices();
+        for (int j = 0; j < gs.length; j++) {
             GraphicsDevice gd = gs[j];
-            GraphicsConfiguration[] gc =
-                gd.getConfigurations();
-            for (int i=0; i < gc.length; i++) {
-                virtualBounds =
-                    virtualBounds.union(gc[i].getBounds());
+            GraphicsConfiguration[] gc = gd.getConfigurations();
+            for (int i = 0; i < gc.length; i++) {
+                virtualBounds = virtualBounds.union(gc[i].getBounds());
             }
-        } 
+        }
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
             int x = GUIPreferences.getInstance().getWindowPosX();
             int y = GUIPreferences.getInstance().getWindowPosY();
             int w = GUIPreferences.getInstance().getWindowSizeWidth();
             int h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if (x < virtualBounds.getMinX() || x + w >virtualBounds.getMaxX())
+            if (x < virtualBounds.getMinX() || x + w > virtualBounds.getMaxX())
                 x = 0;
-            if (y < virtualBounds.getMinY() || y + h >virtualBounds.getMaxY())
+            if (y < virtualBounds.getMinY() || y + h > virtualBounds.getMaxY())
                 y = 0;
-            if(w > virtualBounds.getWidth())
-                w = (int)virtualBounds.getWidth();
-            if(h > virtualBounds.getHeight())
-                h = (int)virtualBounds.getHeight();
+            if (w > virtualBounds.getWidth())
+                w = (int) virtualBounds.getWidth();
+            if (h > virtualBounds.getHeight())
+                h = (int) virtualBounds.getHeight();
             frame.setLocation(x, y);
             frame.setSize(w, h);
         } else {
@@ -301,7 +301,8 @@ public class ClientGUI
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
 
-        frame.setIconImage(frame.getToolkit().getImage("data/images/misc/megamek-icon.gif")); //$NON-NLS-1$
+        frame.setIconImage(frame.getToolkit().getImage(
+                "data/images/misc/megamek-icon.gif")); //$NON-NLS-1$
     }
 
     /**
@@ -309,19 +310,20 @@ public class ClientGUI
      * frame display area.
      */
     private void layoutFrame() {
-        frame.setTitle(client.getName() + Messages.getString("ClientGUI.clientTitleSuffix")); //$NON-NLS-1$
+        frame.setTitle(client.getName()
+                + Messages.getString("ClientGUI.clientTitleSuffix")); //$NON-NLS-1$
         frame.setLayout(new BorderLayout());
         frame.add(this, BorderLayout.CENTER);
         frame.validate();
     }
 
     /**
-     * Have the client register itself as a listener wherever it's needed.
-     * <p/>
-     * According to http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html
-     * it is a major bad no-no to perform these registrations before the
-     * constructor finishes, so this function has to be called after the
-     * <code>Client</code> is created.
+     * Have the client register itself as a listener wherever it's needed. <p/>
+     * According to
+     * http://www-106.ibm.com/developerworks/java/library/j-jtp0618.html it is a
+     * major bad no-no to perform these registrations before the constructor
+     * finishes, so this function has to be called after the <code>Client</code>
+     * is created.
      */
     public void initialize() {
         menuBar = new CommonMenuBar(this.getClient());
@@ -339,8 +341,8 @@ public class ClientGUI
             Scrollbar horizontal = new Scrollbar(Scrollbar.HORIZONTAL);
             scroller.add(bv, BorderLayout.CENTER);
             // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
-            if (System.getProperty
-                    ("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
+            if (System.getProperty(
+                    "megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
                     ("false")) { //$NON-NLS-1$
                 // Assign the scrollbars to the board viewer.
                 scroller.add(vertical, BorderLayout.EAST);
@@ -349,7 +351,8 @@ public class ClientGUI
             }
 
         } catch (IOException e) {
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
+            doAlertDialog(
+                    Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
         }
 
@@ -384,7 +387,8 @@ public class ClientGUI
         Dimension screenSize = frame.getToolkit().getScreenSize();
         int x, y, h, w;
 
-        mechW = new Dialog(frame, Messages.getString("ClientGUI.MechDisplay"), false); //$NON-NLS-1$
+        mechW = new Dialog(frame,
+                Messages.getString("ClientGUI.MechDisplay"), false); //$NON-NLS-1$
         x = GUIPreferences.getInstance().getDisplayPosX();
         y = GUIPreferences.getInstance().getDisplayPosY();
         h = GUIPreferences.getInstance().getDisplaySizeHeight();
@@ -427,13 +431,15 @@ public class ClientGUI
         // end kenn
 
         // minimap
-        minimapW = new Dialog(frame, Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
+        minimapW = new Dialog(frame,
+                Messages.getString("ClientGUI.MiniMap"), false); //$NON-NLS-1$
         x = GUIPreferences.getInstance().getMinimapPosX();
         y = GUIPreferences.getInstance().getMinimapPosY();
         try {
             minimap = new MiniMap(minimapW, this, bv);
         } catch (IOException e) {
-            doAlertDialog(Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message1") + e); //$NON-NLS-1$ //$NON-NLS-2$
+            doAlertDialog(
+                    Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message1") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
         }
         minimap.addKeyListener(this);
@@ -442,7 +448,7 @@ public class ClientGUI
         if ((x + 10) >= screenSize.width || (x + w) < 10) {
             x = screenSize.width - w;
         }
-        if ((y +10 ) > screenSize.height || (y + h)  < 10 ) {
+        if ((y + 10) > screenSize.height || (y + h) < 10) {
             y = screenSize.height - h;
         }
         minimapW.setLocation(x, y);
@@ -464,7 +470,7 @@ public class ClientGUI
 
     /**
      * Get the menu bar for this client.
-     *
+     * 
      * @return the <code>CommonMenuBar</code> of this client.
      */
     public CommonMenuBar getMenuBar() {
@@ -485,14 +491,12 @@ public class ClientGUI
     }
 
     /**
-     * Change the default help file name for this client.
-     * <p/>
-     * This method should only be called by the constructor
-     * of subclasses.
-     *
-     * @param fileName the <code>String</code> name of the help file
-     *                 for this <code>Client</code> subclass.  This value should
-     *                 not be <code>null</code>.
+     * Change the default help file name for this client. <p/> This method
+     * should only be called by the constructor of subclasses.
+     * 
+     * @param fileName the <code>String</code> name of the help file for this
+     *            <code>Client</code> subclass. This value should not be
+     *            <code>null</code>.
      */
     protected void setHelpFileName(String fileName) {
         if (null != fileName) {
@@ -501,9 +505,8 @@ public class ClientGUI
     }
 
     /**
-     * Called when the user selects the "Help->Contents" menu item.
-     * <p/>
-     * This method can be called by subclasses.
+     * Called when the user selects the "Help->Contents" menu item. <p/> This
+     * method can be called by subclasses.
      */
     public void showHelp() {
         // Do we need to create the "help" dialog?
@@ -563,7 +566,9 @@ public class ClientGUI
      */
     public void actionPerformed(ActionEvent event) {
         if (event.getActionCommand().equalsIgnoreCase("fileGameSave")) { //$NON-NLS-1$
-            FileDialog fd = new FileDialog(frame, Messages.getString("ClientGUI.FileSaveDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
+            FileDialog fd = new FileDialog(
+                    frame,
+                    Messages.getString("ClientGUI.FileSaveDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
             fd.setDirectory("."); //$NON-NLS-1$
             // limit file-list to savedgames only
             fd.setFilenameFilter(new FilenameFilter() {
@@ -571,10 +576,10 @@ public class ClientGUI
                     return (null != name && name.endsWith(".sav")); //$NON-NLS-1$
                 }
             });
-            //Using the FilenameFilter class would be the appropriate way to
-            // filter for certain extensions, but it's broken under windoze.  See
+            // Using the FilenameFilter class would be the appropriate way to
+            // filter for certain extensions, but it's broken under windoze. See
             // http://developer.java.sun.com/developer/bugParade/bugs/4031440.html
-            // for details.  The hack below is better than nothing.
+            // for details. The hack below is better than nothing.
             fd.setFile("*.sav"); //$NON-NLS-1$
 
             fd.setVisible(true);
@@ -625,30 +630,40 @@ public class ClientGUI
         GUIPreferences.getInstance().setWindowPosX(frame.getLocation().x);
         GUIPreferences.getInstance().setWindowPosY(frame.getLocation().y);
         GUIPreferences.getInstance().setWindowSizeWidth(frame.getSize().width);
-        GUIPreferences.getInstance().setWindowSizeHeight(frame.getSize().height);
+        GUIPreferences.getInstance()
+                .setWindowSizeHeight(frame.getSize().height);
 
         // also minimap
-        if (minimapW != null && (minimapW.getSize().width * minimapW.getSize().height) > 0) {
-            GUIPreferences.getInstance().setMinimapPosX(minimapW.getLocation().x);
-            GUIPreferences.getInstance().setMinimapPosY(minimapW.getLocation().y);
+        if (minimapW != null
+                && (minimapW.getSize().width * minimapW.getSize().height) > 0) {
+            GUIPreferences.getInstance().setMinimapPosX(
+                    minimapW.getLocation().x);
+            GUIPreferences.getInstance().setMinimapPosY(
+                    minimapW.getLocation().y);
             GUIPreferences.getInstance().setMinimapZoom(minimap.getZoom());
         }
 
         // also mech display
-        if (mechW != null && (mechW.getSize().width * mechW.getSize().height) > 0) {
+        if (mechW != null
+                && (mechW.getSize().width * mechW.getSize().height) > 0) {
             GUIPreferences.getInstance().setDisplayPosX(mechW.getLocation().x);
             GUIPreferences.getInstance().setDisplayPosY(mechW.getLocation().y);
-            GUIPreferences.getInstance().setDisplaySizeWidth(mechW.getSize().width);
-            GUIPreferences.getInstance().setDisplaySizeHeight(mechW.getSize().height);
+            GUIPreferences.getInstance().setDisplaySizeWidth(
+                    mechW.getSize().width);
+            GUIPreferences.getInstance().setDisplaySizeHeight(
+                    mechW.getSize().height);
         }
 
         // added by kenn
         // also ruler display
-        if (ruler != null && ruler.getSize().width != 0 && ruler.getSize().height != 0) {
+        if (ruler != null && ruler.getSize().width != 0
+                && ruler.getSize().height != 0) {
             GUIPreferences.getInstance().setRulerPosX(ruler.getLocation().x);
             GUIPreferences.getInstance().setRulerPosY(ruler.getLocation().y);
-            GUIPreferences.getInstance().setRulerSizeWidth(ruler.getSize().width);
-            GUIPreferences.getInstance().setRulerSizeHeight(ruler.getSize().height);
+            GUIPreferences.getInstance().setRulerSizeWidth(
+                    ruler.getSize().width);
+            GUIPreferences.getInstance().setRulerSizeHeight(
+                    ruler.getSize().height);
         }
         // end kenn
     }
@@ -657,9 +672,9 @@ public class ClientGUI
      * Shuts down threads and sockets
      */
     public void die() {
-        //Tell all the displays to remove themselves as listeners.
+        // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
-        for(Component component:phaseComponents.values()) {
+        for (Component component : phaseComponents.values()) {
             if (component instanceof ReportDisplay) {
                 if (reportHandled) {
                     continue;
@@ -680,11 +695,11 @@ public class ClientGUI
             error.printStackTrace();
         }
 
-        client.die();        
-        
-        //TODO Is there a better solution?
-        //This is required because the ChatLounge adds the listener to the
-        //MechSummaryCache that must be removed explicitly.
+        client.die();
+
+        // TODO Is there a better solution?
+        // This is required because the ChatLounge adds the listener to the
+        // MechSummaryCache that must be removed explicitly.
         if (chatlounge != null) {
             chatlounge.die();
         }
@@ -728,7 +743,7 @@ public class ClientGUI
         }
         return initDialog;
     }
-    
+
     void switchPanel(int phase) {
 
         // Clear the old panel's listeners.
@@ -768,7 +783,9 @@ public class ClientGUI
         }
 
         // Make the new panel the focus, if the Client option says so
-        if (GUIPreferences.getInstance().getFocus() && !(client instanceof megamek.client.bot.TestBot)) curPanel.requestFocus();
+        if (GUIPreferences.getInstance().getFocus()
+                && !(client instanceof megamek.client.bot.TestBot))
+            curPanel.requestFocus();
     }
 
     private Component initializePanel(int phase) {
@@ -785,17 +802,20 @@ public class ClientGUI
                 main = "ChatLounge"; //$NON-NLS-1$
                 secondary = main;
                 panMain.add(main, component);
-                panSecondary.add(secondary, ((ChatLounge) component).getSecondaryDisplay());
+                panSecondary.add(secondary, ((ChatLounge) component)
+                        .getSecondaryDisplay());
                 break;
             case IGame.PHASE_STARTING_SCENARIO:
-                component = new Label(Messages.getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
+                component = new Label(Messages
+                        .getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
                 main = "Label-StartingScenario"; //$NON-NLS-1$
                 secondary = main;
                 panMain.add(main, component);
                 panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
                 break;
             case IGame.PHASE_EXCHANGE:
-                component = new Label(Messages.getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
+                component = new Label(Messages
+                        .getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
                 main = "Label-Exchange"; //$NON-NLS-1$
                 secondary = main;
                 panMain.add(main, component);
@@ -882,9 +902,10 @@ public class ClientGUI
                 main = "ReportDisplay"; //$NON-NLS-1$
                 secondary = main;
                 panMain.add(main, component);
-                panSecondary.add(secondary, ((ReportDisplay) component).getSecondaryDisplay());
+                panSecondary.add(secondary, ((ReportDisplay) component)
+                        .getSecondaryDisplay());
                 break;
-            case IGame.PHASE_TARGETING_REPORT :
+            case IGame.PHASE_TARGETING_REPORT:
             case IGame.PHASE_MOVEMENT_REPORT:
             case IGame.PHASE_OFFBOARD_REPORT:
             case IGame.PHASE_FIRING_REPORT:
@@ -892,7 +913,8 @@ public class ClientGUI
             case IGame.PHASE_END_REPORT:
             case IGame.PHASE_VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
-                component = phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
+                component = phaseComponents.get(String
+                        .valueOf(IGame.PHASE_INITIATIVE_REPORT));
                 if (null == component) {
                     // no ReportDisplay to reuse -- get a new one
                     component = initializePanel(IGame.PHASE_INITIATIVE_REPORT);
@@ -900,8 +922,9 @@ public class ClientGUI
                 main = "ReportDisplay"; //$NON-NLS-1$
                 secondary = main;
                 break;
-            default :
-                component = new Label(Messages.getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
+            default:
+                component = new Label(Messages
+                        .getString("ClientGUI.waitingOnTheServer")); //$NON-NLS-1$
                 main = "Label-Default"; //$NON-NLS-1$
                 secondary = main;
                 panMain.add(main, component);
@@ -914,7 +937,8 @@ public class ClientGUI
         return component;
     }
 
-    protected void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+    protected void addBag(Component comp, GridBagLayout gridbag,
+            GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
     }
@@ -932,16 +956,14 @@ public class ClientGUI
     private boolean canTargetEntities() {
         return client.isMyTurn()
                 && (curPanel instanceof FiringDisplay
-                || curPanel instanceof PhysicalDisplay
-                || curPanel instanceof TargetingPhaseDisplay);
+                        || curPanel instanceof PhysicalDisplay || curPanel instanceof TargetingPhaseDisplay);
     }
 
     private boolean canSelectEntities() {
         return client.isMyTurn()
                 && (curPanel instanceof FiringDisplay
-                || curPanel instanceof PhysicalDisplay
-                || curPanel instanceof MovementDisplay
-                || curPanel instanceof TargetingPhaseDisplay);
+                        || curPanel instanceof PhysicalDisplay
+                        || curPanel instanceof MovementDisplay || curPanel instanceof TargetingPhaseDisplay);
     }
 
     /**
@@ -970,8 +992,7 @@ public class ClientGUI
     }
 
     /**
-     * Toggles the minimap window
-     * Also, toggles the minimap enabled setting
+     * Toggles the minimap window Also, toggles the minimap enabled setting
      */
     public void toggleMap() {
         if (minimapW.isVisible()) {
@@ -1000,7 +1021,8 @@ public class ClientGUI
 
         // add select options
         if (canSelectEntities()) {
-            for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+            for (Enumeration<Entity> i = client.game.getEntities(coords); i
+                    .hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 if (client.game.getTurn().isValidEntity(entity, client.game)) {
                     popup.add(new SelectMenuItem(entity));
@@ -1013,7 +1035,8 @@ public class ClientGUI
         }
 
         // add view options
-        for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+        for (Enumeration<Entity> i = client.game.getEntities(coords); i
+                .hasMoreElements();) {
             final Entity entity = i.nextElement();
             popup.add(new ViewMenuItem(entity));
         }
@@ -1023,7 +1046,8 @@ public class ClientGUI
             if (popup.getItemCount() > 0) {
                 popup.addSeparator();
             }
-            for (Enumeration<Entity> i = client.game.getEntities(coords); i.hasMoreElements();) {
+            for (Enumeration<Entity> i = client.game.getEntities(coords); i
+                    .hasMoreElements();) {
                 final Entity entity = i.nextElement();
                 popup.add(new TargetMenuItem(entity));
             }
@@ -1034,56 +1058,78 @@ public class ClientGUI
                     || curPanel instanceof TargetingPhaseDisplay) {
                 IHex h = client.game.getBoard().getHex(coords);
                 if (h != null && curPanel instanceof FiringDisplay) {
-                    popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_CLEAR)));
+                    popup
+                            .add(new TargetMenuItem(new HexTarget(coords,
+                                    client.game.getBoard(),
+                                    Targetable.TYPE_HEX_CLEAR)));
                     if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
-                        popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_IGNITE)));
+                        popup.add(new TargetMenuItem(new HexTarget(coords,
+                                client.game.getBoard(),
+                                Targetable.TYPE_HEX_IGNITE)));
                     }
                 } else if (h != null && h.containsTerrain(Terrains.FUEL_TANK)) {
-                    popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.getBoard(), false)));
+                    popup.add(new TargetMenuItem(new BuildingTarget(coords,
+                            client.game.getBoard(), false)));
                     if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
-                        popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.getBoard(), true)));
+                        popup.add(new TargetMenuItem(new BuildingTarget(coords,
+                                client.game.getBoard(), true)));
                     }
                 } else if (h != null && h.containsTerrain(Terrains.BUILDING)) {
-                    popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.getBoard(), false)));
+                    popup.add(new TargetMenuItem(new BuildingTarget(coords,
+                            client.game.getBoard(), false)));
                     if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
-                        popup.add(new TargetMenuItem(new BuildingTarget(coords, client.game.getBoard(), true)));
+                        popup.add(new TargetMenuItem(new BuildingTarget(coords,
+                                client.game.getBoard(), true)));
                     }
                 }
-                if (h != null && client.game.containsMinefield(coords) && curPanel instanceof FiringDisplay) {
-                    popup.add(new TargetMenuItem(new MinefieldTarget(coords, client.game.getBoard())));
+                if (h != null && client.game.containsMinefield(coords)
+                        && curPanel instanceof FiringDisplay) {
+                    popup.add(new TargetMenuItem(new MinefieldTarget(coords,
+                            client.game.getBoard())));
                 }
                 if (h != null && curPanel instanceof FiringDisplay) {
-                    popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_MINEFIELD_DELIVER)));
-                    popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_FLARE_DELIVER)));
-                    popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_BOMB)));
-                    popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_ARTILLERY)));
+                    popup.add(new TargetMenuItem(new HexTarget(coords,
+                            client.game.getBoard(),
+                            Targetable.TYPE_MINEFIELD_DELIVER)));
+                    popup.add(new TargetMenuItem(new HexTarget(coords,
+                            client.game.getBoard(),
+                            Targetable.TYPE_FLARE_DELIVER)));
+                    popup.add(new TargetMenuItem(new HexTarget(coords,
+                            client.game.getBoard(), Targetable.TYPE_HEX_BOMB)));
+                    popup.add(new TargetMenuItem(new HexTarget(coords,
+                            client.game.getBoard(),
+                            Targetable.TYPE_HEX_ARTILLERY)));
                     if (client.game.getOptions().booleanOption("fire")
                             && h.containsTerrain(Terrains.FIRE)) {
-                        popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_EXTINGUISH)));
+                        popup.add(new TargetMenuItem(new HexTarget(coords,
+                                client.game.getBoard(),
+                                Targetable.TYPE_HEX_EXTINGUISH)));
                     }
                 }
                 if (h != null && curPanel instanceof TargetingPhaseDisplay) {
-                    popup.add(new TargetMenuItem(new HexTarget(coords, client.game.getBoard(), Targetable.TYPE_HEX_ARTILLERY)));
+                    popup.add(new TargetMenuItem(new HexTarget(coords,
+                            client.game.getBoard(),
+                            Targetable.TYPE_HEX_ARTILLERY)));
                 }
             }
         }
     }
 
     /**
-     * Pops up a dialog box giving the player a series of choices that
-     * are not mutually exclusive.
-     *
-     * @param title    the <code>String</code> title of the dialog box.
-     * @param question the <code>String</code> question that has a
-     *                 "Yes" or "No" answer.  The question will be split across
-     *                 multiple line on the '\n' characters.
-     * @param choices  the array of <code>String</code> choices that
-     *                 the player can select from.
-     * @return The array of the <code>int</code> indexes of the from the
-     *         input array that match the selected choices.  If no choices
-     *         were available, if the player did not select a choice, or
-     *         if the player canceled the choice, a <code>null</code> value
-     *         is returned.
+     * Pops up a dialog box giving the player a series of choices that are not
+     * mutually exclusive.
+     * 
+     * @param title the <code>String</code> title of the dialog box.
+     * @param question the <code>String</code> question that has a "Yes" or
+     *            "No" answer. The question will be split across multiple line
+     *            on the '\n' characters.
+     * @param choices the array of <code>String</code> choices that the player
+     *            can select from.
+     * @return The array of the <code>int</code> indexes of the from the input
+     *         array that match the selected choices. If no choices were
+     *         available, if the player did not select a choice, or if the
+     *         player canceled the choice, a <code>null</code> value is
+     *         returned.
      */
     public int[] doChoiceDialog(String title, String question, String[] choices) {
         ChoiceDialog choice = new ChoiceDialog(frame, title, question, choices);
@@ -1101,11 +1147,11 @@ public class ClientGUI
 
     /**
      * Pops up a dialog box asking a yes/no question
-     *
-     * @param title    the <code>String</code> title of the dialog box.
-     * @param question the <code>String</code> question that has a
-     *                 "Yes" or "No" answer.  The question will be split across
-     *                 multiple line on the '\n' characters.
+     * 
+     * @param title the <code>String</code> title of the dialog box.
+     * @param question the <code>String</code> question that has a "Yes" or
+     *            "No" answer. The question will be split across multiple line
+     *            on the '\n' characters.
      * @return <code>true</code> if yes
      */
     public boolean doYesNoDialog(String title, String question) {
@@ -1115,19 +1161,18 @@ public class ClientGUI
     }
 
     /**
-     * Pops up a dialog box asking a yes/no question
-     * <p/>
-     * The player will be given a chance to not show the dialog again.
-     *
-     * @param title    the <code>String</code> title of the dialog box.
-     * @param question the <code>String</code> question that has a
-     *                 "Yes" or "No" answer.  The question will be split across
-     *                 multiple line on the '\n' characters.
+     * Pops up a dialog box asking a yes/no question <p/> The player will be
+     * given a chance to not show the dialog again.
+     * 
+     * @param title the <code>String</code> title of the dialog box.
+     * @param question the <code>String</code> question that has a "Yes" or
+     *            "No" answer. The question will be split across multiple line
+     *            on the '\n' characters.
      * @return the <code>ConfirmDialog</code> containing the player's
-     *         responses.  The dialog will already have been shown to
-     *         the player, and is only being returned so the calling
-     *         function can see the answer to the question and the state
-     *         of the "Show again?" question.
+     *         responses. The dialog will already have been shown to the player,
+     *         and is only being returned so the calling function can see the
+     *         answer to the question and the state of the "Show again?"
+     *         question.
      */
     public ConfirmDialog doYesNoBotherDialog(String title, String question) {
         ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
@@ -1157,18 +1202,20 @@ public class ClientGUI
     }
 
     /**
-     * Allow the player to select a MegaMek Unit List file to load.  The
-     * <code>Entity</code>s in the file will replace any that the player
-     * has already selected.  As such, this method should only be called
-     * in the chat lounge.  The file can record damage sustained, non-
-     * standard munitions selected, and ammunition expended in a prior
-     * engagement.
+     * Allow the player to select a MegaMek Unit List file to load. The
+     * <code>Entity</code>s in the file will replace any that the player has
+     * already selected. As such, this method should only be called in the chat
+     * lounge. The file can record damage sustained, non- standard munitions
+     * selected, and ammunition expended in a prior engagement.
      */
     protected void loadListFile() {
 
         // Build the "load unit" dialog, if necessary.
         if (null == dlgLoadList) {
-            dlgLoadList = new FileDialog(frame, Messages.getString("ClientGUI.openUnitListFileDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
+            dlgLoadList = new FileDialog(
+                    frame,
+                    Messages
+                            .getString("ClientGUI.openUnitListFileDialog.title"), FileDialog.LOAD); //$NON-NLS-1$
 
             // Add a filter for MUL files
             dlgLoadList.setFilenameFilter(new FilenameFilter() {
@@ -1181,9 +1228,9 @@ public class ClientGUI
             dlgLoadList.setDirectory("."); //$NON-NLS-1$
 
             // Default to the player's name.
-            //dlgLoadList.setFile( getLocalPlayer().getName() + ".mul" );
+            // dlgLoadList.setFile( getLocalPlayer().getName() + ".mul" );
             // Instead, use setFile as a windoze hack, see Server.java
-            //  (search for "setFile") for details.
+            // (search for "setFile") for details.
             dlgLoadList.setFile("*.mul"); //$NON-NLS-1$
         }
 
@@ -1196,32 +1243,35 @@ public class ClientGUI
         if (null != unitFile) {
             try {
                 // Read the units from the file.
-                Vector<Entity> loadedUnits = EntityListFile.loadFrom(new File(unitPath, unitFile));
+                Vector<Entity> loadedUnits = EntityListFile.loadFrom(new File(
+                        unitPath, unitFile));
 
                 // Add the units from the file.
-                for (Enumeration<Entity> iter = loadedUnits.elements(); iter.hasMoreElements();) {
+                for (Enumeration<Entity> iter = loadedUnits.elements(); iter
+                        .hasMoreElements();) {
                     final Entity entity = iter.nextElement();
                     entity.setOwner(client.getLocalPlayer());
                     client.sendAddEntity(entity);
                 }
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
+                doAlertDialog(
+                        Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
             }
         }
     }
 
     /**
-     * Allow the player to save a list of entities to a MegaMek Unit List
-     * file.  A "Save As" dialog will be displayed that allows the user to
-     * select the file's name and directory. The player can later load this
-     * file to quickly select the units for a new game.  The file will record
-     * damage sustained, non-standard munitions selected, and ammunition
-     * expended during the course of the current engagement.
-     *
-     * @param unitList - the <code>Vector</code> of <code>Entity</code>s
-     *                 to be saved to a file.  If this value is <code>null</code>
-     *                 or empty, the "Save As" dialog will not be displayed.
+     * Allow the player to save a list of entities to a MegaMek Unit List file.
+     * A "Save As" dialog will be displayed that allows the user to select the
+     * file's name and directory. The player can later load this file to quickly
+     * select the units for a new game. The file will record damage sustained,
+     * non-standard munitions selected, and ammunition expended during the
+     * course of the current engagement.
+     * 
+     * @param unitList - the <code>Vector</code> of <code>Entity</code>s to
+     *            be saved to a file. If this value is <code>null</code> or
+     *            empty, the "Save As" dialog will not be displayed.
      */
     protected void saveListFile(ArrayList<Entity> unitList) {
 
@@ -1232,7 +1282,10 @@ public class ClientGUI
 
         // Build the "save unit" dialog, if necessary.
         if (null == dlgSaveList) {
-            dlgSaveList = new FileDialog(frame, Messages.getString("ClientGUI.saveUnitListFileDialog.title"), FileDialog.SAVE); //$NON-NLS-1$
+            dlgSaveList = new FileDialog(
+                    frame,
+                    Messages
+                            .getString("ClientGUI.saveUnitListFileDialog.title"), FileDialog.SAVE); //$NON-NLS-1$
 
             // Add a filter for MUL files
             dlgSaveList.setFilenameFilter(new FilenameFilter() {
@@ -1256,7 +1309,7 @@ public class ClientGUI
         String unitFile = dlgSaveList.getFile();
         if (null != unitFile) {
             if (!(unitFile.toLowerCase().endsWith(".mul") //$NON-NLS-1$
-                    || unitFile.toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
+            || unitFile.toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
                 unitFile += ".mul"; //$NON-NLS-1$
             }
             try {
@@ -1264,7 +1317,8 @@ public class ClientGUI
                 EntityListFile.saveTo(new File(unitPath, unitFile), unitList);
             } catch (IOException excep) {
                 excep.printStackTrace(System.err);
-                doAlertDialog(Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
+                doAlertDialog(
+                        Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
             }
         }
     }
@@ -1309,9 +1363,10 @@ public class ClientGUI
         Entity entity;
 
         public ViewMenuItem(Entity entity) {
-            super(Messages.getString("ClientGUI.viewMenuItem")
-                    + entity.getDisplayName()
-                    + (entity.isDone() ? " (" + Messages.getString("ClientGUI.doneMenuItem").trim() + ")" : "")); //$NON-NLS-1$
+            super(
+                    Messages.getString("ClientGUI.viewMenuItem")
+                            + entity.getDisplayName()
+                            + (entity.isDone() ? " (" + Messages.getString("ClientGUI.doneMenuItem").trim() + ")" : "")); //$NON-NLS-1$
             this.entity = entity;
             addActionListener(this);
         }
@@ -1323,9 +1378,9 @@ public class ClientGUI
     }
 
     /**
-     * A menu item that would really like to select an entity.  You can use
-     * this during movement, firing & physical phases.  (Deployment would
-     * just be silly.)
+     * A menu item that would really like to select an entity. You can use this
+     * during movement, firing & physical phases. (Deployment would just be
+     * silly.)
      */
     private class SelectMenuItem extends MenuItem implements ActionListener {
         /**
@@ -1335,7 +1390,8 @@ public class ClientGUI
         Entity entity;
 
         public SelectMenuItem(Entity entity) {
-            super(Messages.getString("ClientGUI.selectMenuItem") + entity.getDisplayName()); //$NON-NLS-1$
+            super(
+                    Messages.getString("ClientGUI.selectMenuItem") + entity.getDisplayName()); //$NON-NLS-1$
             this.entity = entity;
             addActionListener(this);
         }
@@ -1352,8 +1408,8 @@ public class ClientGUI
     }
 
     /**
-     * A menu item that will target an entity, provided that it's sensible to
-     * do so
+     * A menu item that will target an entity, provided that it's sensible to do
+     * so
      */
     private class TargetMenuItem extends MenuItem implements ActionListener {
         /**
@@ -1363,7 +1419,8 @@ public class ClientGUI
         Targetable target;
 
         public TargetMenuItem(Targetable t) {
-            super(Messages.getString("ClientGUI.targetMenuItem") + t.getDisplayName()); //$NON-NLS-1$
+            super(
+                    Messages.getString("ClientGUI.targetMenuItem") + t.getDisplayName()); //$NON-NLS-1$
             target = t;
             addActionListener(this);
         }
@@ -1390,7 +1447,8 @@ public class ClientGUI
     // used in the LOS tool.
     public void showLOSSettingDialog() {
         GUIPreferences gp = GUIPreferences.getInstance();
-        LOSDialog ld = new LOSDialog(frame, gp.getMechInFirst(), gp.getMechInSecond());
+        LOSDialog ld = new LOSDialog(frame, gp.getMechInFirst(), gp
+                .getMechInSecond());
         ld.setVisible(true);
 
         gp.setMechInFirst(ld.getMechInFirst());
@@ -1413,8 +1471,7 @@ public class ClientGUI
      * Make a "bing" sound.
      */
     public void bing() {
-        if (!GUIPreferences.getInstance().getSoundMute()
-                && null != bingClip) {
+        if (!GUIPreferences.getInstance().getSoundMute() && null != bingClip) {
             bingClip.play();
         }
     }
@@ -1422,7 +1479,9 @@ public class ClientGUI
     protected GameListener gameListener = new GameListenerAdapter() {
 
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
-            AlertDialog alert = new AlertDialog(frame, Messages.getString("ClientGUI.Disconnected.title"), Messages.getString("ClientGUI.Disconnected.message")); //$NON-NLS-1$ //$NON-NLS-2$
+            AlertDialog alert = new AlertDialog(
+                    frame,
+                    Messages.getString("ClientGUI.Disconnected.title"), Messages.getString("ClientGUI.Disconnected.message")); //$NON-NLS-1$ //$NON-NLS-2$
             alert.setVisible(true);
             frame.setVisible(false);
             die();
@@ -1433,24 +1492,26 @@ public class ClientGUI
         }
 
         public void gamePhaseChange(GamePhaseChangeEvent e) {
-            //This is a really lame place for this, but I couldn't find a
-            //better one without making massive changes (which didn't seem
-            //worth it for one little feature).
+            // This is a really lame place for this, but I couldn't find a
+            // better one without making massive changes (which didn't seem
+            // worth it for one little feature).
             if (bv.getLocalPlayer() == null) {
                 bv.setLocalPlayer(client.getLocalPlayer());
             }
-            
+
             // Swap to this phase's panel.
             switchPanel(client.game.getPhase());
-            
-            // Hide tooltip (thanks Thrud Cowslayer, C.O.R.E, and others for helping test this! :)
+
+            // Hide tooltip (thanks Thrud Cowslayer, C.O.R.E, and others for
+            // helping test this! :)
             bv.hideTooltip();
-            
+
             // Handle phase-specific items.
             switch (e.getNewPhase()) {
                 case IGame.PHASE_LOUNGE:
-                    //this will get rid of old report tabs
-                    ReportDisplay rD = (ReportDisplay) phaseComponents.get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
+                    // this will get rid of old report tabs
+                    ReportDisplay rD = (ReportDisplay) phaseComponents
+                            .get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
                     if (rD != null)
                         rD.resetTabs();
                     break;
@@ -1461,12 +1522,13 @@ public class ClientGUI
                 case IGame.PHASE_OFFBOARD:
                 case IGame.PHASE_FIRING:
                 case IGame.PHASE_PHYSICAL:
-                    if (GUIPreferences.getInstance().getMinimapEnabled() && !minimapW.isVisible()) {
+                    if (GUIPreferences.getInstance().getMinimapEnabled()
+                            && !minimapW.isVisible()) {
                         setMapVisible(true);
                     }
                     break;
                 case IGame.PHASE_INITIATIVE_REPORT:
-                case IGame.PHASE_TARGETING_REPORT :
+                case IGame.PHASE_TARGETING_REPORT:
                 case IGame.PHASE_MOVEMENT_REPORT:
                 case IGame.PHASE_OFFBOARD_REPORT:
                 case IGame.PHASE_FIRING_REPORT:
@@ -1494,15 +1556,15 @@ public class ClientGUI
                 System.err.flush();
             }
         }
-        
+
         public void gameReport(GameReportEvent e) {
             // Normally the Report Display is updated when the panel is
-            //  switched during a phase change.
+            // switched during a phase change.
             // This update is for reports that get sent at odd times,
-            //  currently Tactical Genius reroll requests and when
-            //  a player wishes to continue moving after a fall.
+            // currently Tactical Genius reroll requests and when
+            // a player wishes to continue moving after a fall.
             if (e.getReport() == null && curPanel instanceof ReportDisplay) {
-                //Tactical Genius
+                // Tactical Genius
                 ((ReportDisplay) curPanel).appendReportTab(client.phaseReport);
                 ((ReportDisplay) curPanel).resetReadyButton();
                 // Check if the player deserves an active reroll button
@@ -1514,7 +1576,7 @@ public class ClientGUI
                     }
                 }
             } else {
-                //Continued movement after getting up
+                // Continued movement after getting up
                 if (!(client instanceof megamek.client.bot.TestBot))
                     doAlertDialog("Movement Report", e.getReport());
             }
@@ -1523,25 +1585,31 @@ public class ClientGUI
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
 
-            for (Iterator<Client> i = getBots().values().iterator(); i.hasNext();) {
+            for (Iterator<Client> i = getBots().values().iterator(); i
+                    .hasNext();) {
                 i.next().die();
             }
             getBots().clear();
-            
+
             // Make a list of the player's living units.
-            ArrayList<Entity> living = client.game.getPlayerEntities(client.getLocalPlayer());
-            
+            ArrayList<Entity> living = client.game.getPlayerEntities(client
+                    .getLocalPlayer());
+
             // Be sure to include all units that have retreated.
-            for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter.hasMoreElements();) {
+            for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter
+                    .hasMoreElements();) {
                 living.add(iter.nextElement());
             }
-            
+
             // Allow players to save their living units to a file.
             // Don't bother asking if none survived.
             if (!living.isEmpty()
-                    && doYesNoDialog(Messages.getString("ClientGUI.SaveUnitsDialog.title"), //$NON-NLS-1$
-                            Messages.getString("ClientGUI.SaveUnitsDialog.message"))) { //$NON-NLS-1$
-                
+                    && doYesNoDialog(
+                            Messages
+                                    .getString("ClientGUI.SaveUnitsDialog.title"), //$NON-NLS-1$
+                            Messages
+                                    .getString("ClientGUI.SaveUnitsDialog.message"))) { //$NON-NLS-1$
+
                 // Allow the player to save the units to a file.
                 saveListFile(living);
 
@@ -1549,7 +1617,8 @@ public class ClientGUI
         }
 
         public void gameSettingsChange(GameSettingsChangeEvent e) {
-            if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
+            if (boardSelectionDialog != null
+                    && boardSelectionDialog.isVisible()) {
                 boardSelectionDialog.update(client.getMapSettings(), true);
             }
             if (gameOptionsDialog != null && gameOptionsDialog.isVisible()) {
@@ -1557,7 +1626,8 @@ public class ClientGUI
             }
             if (curPanel instanceof ChatLounge) {
                 ChatLounge cl = (ChatLounge) curPanel;
-                boolean useMinefields = client.game.getOptions().booleanOption("minefields"); //$NON-NLS-1$
+                boolean useMinefields = client.game.getOptions().booleanOption(
+                        "minefields"); //$NON-NLS-1$
                 cl.enableMinefields(useMinefields);
 
                 if (!useMinefields) {
@@ -1570,7 +1640,8 @@ public class ClientGUI
         }
 
         public void gameMapQuery(GameMapQueryEvent e) {
-            if (boardSelectionDialog != null && boardSelectionDialog.isVisible()) {
+            if (boardSelectionDialog != null
+                    && boardSelectionDialog.isVisible()) {
                 boardSelectionDialog.update(e.getSettings(), false);
             }
         }
@@ -1581,7 +1652,7 @@ public class ClientGUI
         return client;
     }
 
-    public Map<String,Client> getBots() {
+    public Map<String, Client> getBots() {
         return bots;
     }
 
@@ -1602,7 +1673,7 @@ public class ClientGUI
     public RandomArmyDialog getRandomArmyDialog() {
         return randomArmyDialog;
     }
-    
+
     public RandomSkillDialog getRandomSkillDialog() {
         return randomSkillDialog;
     }

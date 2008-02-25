@@ -21,10 +21,14 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISSingleBASmallLaser extends LaserWeapon {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6045377097773851560L;
+
     public ISSingleBASmallLaser() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;

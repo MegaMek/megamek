@@ -14,51 +14,49 @@
 
 /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
 package megamek.common.loaders;
+
 /* BLOCK_END */
 
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.IOException;
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
-
 import java.util.Hashtable;
 import java.util.Vector;
 
-/* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
 import megamek.common.ArmlessMech;
 import megamek.common.BipedMech;
 import megamek.common.CriticalSlot;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.IEntityMovementMode;
 import megamek.common.LocationFullException;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
-import megamek.common.IEntityMovementMode;
 import megamek.common.QuadMech;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
+
 /* BLOCK_END */
 
 /**
- * Based on the hmpread.c program and the MtfFile object.
- * 
- * Note that this class doubles as both a MM Heavy Metal Pro parser and a HMP to
- * MTF file converter (when the "main" method is used).
+ * Based on the hmpread.c program and the MtfFile object. Note that this class
+ * doubles as both a MM Heavy Metal Pro parser and a HMP to MTF file converter
+ * (when the "main" method is used).
  * 
  * @author <a href="mailto:mnewcomb@sourceforge.net">Michael Newcomb</a>
- * @version $Revision$
- *          Modified by Ryan McConnell (oscarmm) with lots of
+ * @version $Revision$ Modified by Ryan McConnell (oscarmm) with lots of
  *          help from Ian Hamilton.
  */
 public class HmpFile
 /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
-    implements IMechLoader
+implements IMechLoader
 /* BLOCK_END */
 {
     private String name;
@@ -142,13 +140,13 @@ public class HmpFile
     private int cockpitType = Mech.COCKPIT_STANDARD;
     private int targSys = 0;
     private int jjType;
-    
+
     private int atmCounter = 0;
     private int lbxCounter = 0;
 
     public HmpFile(InputStream is)
     /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
-        throws EntityLoadingException
+    throws EntityLoadingException
     /* BLOCK_END */
     {
         try {
@@ -156,10 +154,11 @@ public class HmpFile
 
             byte[] buffer = new byte[5];
             dis.read(buffer);
-            //String version = new String(buffer); //never used
+            // String version = new String(buffer); //never used
 
             // this next one no longer seems accurate...
-            DesignType designType = DesignType.getType(readUnsignedByte(dis));
+            //DesignType designType = DesignType.getType(readUnsignedByte(dis));
+            readUnsignedByte(dis);
 
             // ??
             dis.skipBytes(3);
@@ -190,7 +189,8 @@ public class HmpFile
 
             rulesLevel = readUnsignedShort(dis);
 
-            long cost = readUnsignedInt(dis);
+            //long cost = readUnsignedInt(dis);
+            readUnsignedInt(dis);
 
             // ??
             dis.skipBytes(22);
@@ -377,7 +377,7 @@ public class HmpFile
             dis.skipBytes(readUnsignedShort(dis));
 
             dis.skipBytes(8); // mechs with supercharger have an 01 in here,
-                                // but we can identify from the criticals
+            // but we can identify from the criticals
 
             // Get cockpit and gyro type, if any.
             if (rulesLevel > 2) {
@@ -433,13 +433,13 @@ public class HmpFile
     public Entity getEntity() throws EntityLoadingException {
         try {
             Mech mech = null;
-            if(chassisType == ChassisType.QUADRAPED_OMNI
-                    ||chassisType == ChassisType.QUADRAPED) {
-                mech =  new QuadMech(gyroType, cockpitType);
+            if (chassisType == ChassisType.QUADRAPED_OMNI
+                    || chassisType == ChassisType.QUADRAPED) {
+                mech = new QuadMech(gyroType, cockpitType);
             } else if (chassisType == ChassisType.ARMLESS) {
-                mech =  new ArmlessMech(gyroType, cockpitType);
+                mech = new ArmlessMech(gyroType, cockpitType);
             } else {
-                mech =  new BipedMech(gyroType, cockpitType);
+                mech = new BipedMech(gyroType, cockpitType);
             }
 
             mech.setChassis(name);
@@ -452,30 +452,30 @@ public class HmpFile
 
             if (techType == TechType.INNER_SPHERE) {
                 switch (rulesLevel) {
-                case 1:
-                    mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
-                    break;
-                case 2:
-                    mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
-                    break;
-                case 3:
-                    mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
-                    break;
-                default:
-                    throw new EntityLoadingException("Unsupported tech level: "
-                            + rulesLevel);
+                    case 1:
+                        mech.setTechLevel(TechConstants.T_IS_LEVEL_1);
+                        break;
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_IS_LEVEL_2);
+                        break;
+                    case 3:
+                        mech.setTechLevel(TechConstants.T_IS_LEVEL_3);
+                        break;
+                    default:
+                        throw new EntityLoadingException(
+                                "Unsupported tech level: " + rulesLevel);
                 }
             } else if (techType == TechType.CLAN) {
                 switch (rulesLevel) {
-                case 2:
-                    mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
-                    break;
-                case 3:
-                    mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
-                    break;
-                default:
-                    throw new EntityLoadingException("Unsupported tech level: "
-                            + rulesLevel);
+                    case 2:
+                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_2);
+                        break;
+                    case 3:
+                        mech.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
+                        break;
+                    default:
+                        throw new EntityLoadingException(
+                                "Unsupported tech level: " + rulesLevel);
                 }
             } else if (techType == TechType.MIXED
                     && mixedBaseTechType == TechType.INNER_SPHERE) {
@@ -495,9 +495,10 @@ public class HmpFile
             int engineFlags = 0;
             if (techType == TechType.CLAN || engineTechType == TechType.CLAN)
                 engineFlags = Engine.CLAN_ENGINE;
-            mech.setEngine(new Engine(engineRating, Engine
-                    .getEngineTypeByString(engineType.toString())
-                    ,engineFlags));
+            mech
+                    .setEngine(new Engine(engineRating, Engine
+                            .getEngineTypeByString(engineType.toString()),
+                            engineFlags));
 
             mech.setOriginalJumpMP(jumpMP);
 
@@ -568,8 +569,8 @@ public class HmpFile
         setupCriticals(mech, rlCriticals, Mech.LOC_RLEG);
         compactCriticals(llCriticals);
         setupCriticals(mech, llCriticals, Mech.LOC_LLEG);
-        if(chassisType != ChassisType.ARMLESS) {
-            //HMP helpfully includes arm actuators in armless mechs
+        if (chassisType != ChassisType.ARMLESS) {
+            // HMP helpfully includes arm actuators in armless mechs
             compactCriticals(raCriticals);
             setupCriticals(mech, raCriticals, Mech.LOC_RARM);
             compactCriticals(laCriticals);
@@ -583,26 +584,25 @@ public class HmpFile
         setupCriticals(mech, ctCriticals, Mech.LOC_CT);
         setupCriticals(mech, headCriticals, Mech.LOC_HEAD);
     }
-    
+
     private String mutateLBXAmmo(String crit) {
-        if((crit.startsWith("CLLBX") || crit.startsWith("ISLBX"))
+        if ((crit.startsWith("CLLBX") || crit.startsWith("ISLBX"))
                 && crit.endsWith("Ammo")) {
-            lbxCounter ++;
-            if(lbxCounter % 2 == 1) {
-                return crit.substring(0,crit.indexOf("Ammo")) + "CL Ammo";
+            lbxCounter++;
+            if (lbxCounter % 2 == 1) {
+                return crit.substring(0, crit.indexOf("Ammo")) + "CL Ammo";
             }
         }
         return crit;
     }
 
     private String mutateATMAmmo(String crit) {
-        if(crit.startsWith("CLATM") && crit.endsWith("Ammo")) {
-            atmCounter ++;
-            if(atmCounter % 3 == 2) {
-                return crit.substring(0,crit.indexOf("Ammo")) + "HE Ammo";
-            }
-            else if(atmCounter % 3 == 0) {
-                return crit.substring(0,crit.indexOf("Ammo")) + "ER Ammo";
+        if (crit.startsWith("CLATM") && crit.endsWith("Ammo")) {
+            atmCounter++;
+            if (atmCounter % 3 == 2) {
+                return crit.substring(0, crit.indexOf("Ammo")) + "HE Ammo";
+            } else if (atmCounter % 3 == 0) {
+                return crit.substring(0, crit.indexOf("Ammo")) + "ER Ammo";
             }
         }
         return crit;
@@ -618,7 +618,7 @@ public class HmpFile
             if (mech.getCritical(location, i) == null) {
                 long critical = crits[i];
                 String criticalName = getCriticalName(critical);
-                
+
                 if (isFusionEngine(critical)) {
                     mech.setCritical(location, i, new CriticalSlot(
                             CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE));
@@ -662,8 +662,7 @@ public class HmpFile
                             boolean rearMounted = equipment instanceof WeaponType
                                     && isRearMounted(critical);
                             if (equipment.isSpreadable()) {
-                                Mounted m = spreadEquipment
-                                        .get(equipment);
+                                Mounted m = spreadEquipment.get(equipment);
                                 if (m != null) {
                                     CriticalSlot criticalSlot = new CriticalSlot(
                                             CriticalSlot.TYPE_EQUIPMENT, mech
@@ -673,7 +672,7 @@ public class HmpFile
                                     if (criticalName
                                             .equalsIgnoreCase("Armored Cowl")) {
                                         mech.setCowl(5); // Initialize
-                                                            // armored cowl
+                                        // armored cowl
                                     }
 
                                 } else {
@@ -711,12 +710,13 @@ public class HmpFile
                                     }
                                     // give the most restrictive location for
                                     // arcs
-                                    int help=m.getLocation();
+                                    int help = m.getLocation();
                                     m.setLocation(Mech.mostRestrictiveLoc(
                                             location, help));
-                                    if (location!=help) {
-                                        m.setSecondLocation(Mech.leastRestrictiveLoc(
-                                            location, help));
+                                    if (location != help) {
+                                        m.setSecondLocation(Mech
+                                                .leastRestrictiveLoc(location,
+                                                        help));
                                     }
                                 } else {
                                     // make a new one
@@ -758,6 +758,7 @@ public class HmpFile
             }
         }
     }
+
     /* BLOCK_END */
 
     private boolean isLowerArmActuator(long critical) {
@@ -1006,13 +1007,16 @@ public class HmpFile
         isCriticals.put(new Long(0x50), "ISLAC2");
         isCriticals.put(new Long(0x51), "ISLAC5");
         isCriticals.put(new Long(0x52), "ISHeavyFlamer");
-        isCriticals.put(new Long(0x53), "ISPPCCapacitor"); //HMP uses this code for ERPPC
+        isCriticals.put(new Long(0x53), "ISPPCCapacitor"); // HMP uses this
+                                                            // code for ERPPC
         isCriticals.put(new Long(0x54), "ISUltraAC2");
         isCriticals.put(new Long(0x55), "ISUltraAC5");
         isCriticals.put(new Long(0x56), "ISUltraAC10");
         isCriticals.put(new Long(0x57), "ISUltraAC20");
         isCriticals.put(new Long(0x58), "CLERMicroLaser");
-        isCriticals.put(new Long(0x59), "ISPPCCapacitor"); //HMP uses this code for standard PPC
+        isCriticals.put(new Long(0x59), "ISPPCCapacitor"); // HMP uses this
+                                                            // code for standard
+                                                            // PPC
         isCriticals.put(new Long(0x5A), "ISERMediumLaser");
         isCriticals.put(new Long(0x5B), "ISERSmallLaser");
         isCriticals.put(new Long(0x5C), "ISAntiPersonnelPod");
@@ -1410,13 +1414,16 @@ public class HmpFile
         clanCriticals.put(new Long(0xA0), "ISLAC2");
         clanCriticals.put(new Long(0xA1), "ISLAC5");
 
-        clanCriticals.put(new Long(0xA3), "ISPPCCapacitor"); //HMP uses this code for ERPPC
+        clanCriticals.put(new Long(0xA3), "ISPPCCapacitor"); // HMP uses this
+                                                                // code for
+                                                                // ERPPC
         clanCriticals.put(new Long(0xA4), "ISUltraAC2");
         clanCriticals.put(new Long(0xA5), "ISUltraAC5");
         clanCriticals.put(new Long(0xA6), "ISUltraAC10");
         clanCriticals.put(new Long(0xA7), "ISUltraAC20");
         clanCriticals.put(new Long(0xA8), "CLMicroPulseLaser");
-        clanCriticals.put(new Long(0xA9), "ISPPCCapacitor"); //HMP uses this code for PPC
+        clanCriticals.put(new Long(0xA9), "ISPPCCapacitor"); // HMP uses this
+                                                                // code for PPC
 
         clanCriticals.put(new Long(0xAA), "ISERMediumLaser");
         clanCriticals.put(new Long(0xAB), "ISERSmallLaser");
@@ -1602,7 +1609,6 @@ public class HmpFile
         clanCriticals.put(new Long(0x026B), "ISMRM30 Ammo");
         clanCriticals.put(new Long(0x026C), "ISMRM40 Ammo");
 
-
         clanCriticals.put(new Long(0x0272), "ISLRTorpedo15 Ammo");
         clanCriticals.put(new Long(0x0273), "ISLRTorpedo20 Ammo");
         clanCriticals.put(new Long(0x0274), "ISLRTorpedo5 Ammo");
@@ -1610,9 +1616,9 @@ public class HmpFile
         clanCriticals.put(new Long(0x0276), "ISSRTorpedo4 Ammo");
         clanCriticals.put(new Long(0x0277), "ISSRTorpedo2 Ammo");
         clanCriticals.put(new Long(0x0278), "ISSRTorpedo6 Ammo");
-        
-        //special for ammo mutator
-        //28c-28f = atm
+
+        // special for ammo mutator
+        // 28c-28f = atm
         criticals.put(new Long(0x10000028cL), "CLATM3 ER Ammo");
         criticals.put(new Long(0x20000028cL), "CLATM3 HE Ammo");
         criticals.put(new Long(0x10000028dL), "CLATM6 ER Ammo");
@@ -1621,11 +1627,11 @@ public class HmpFile
         criticals.put(new Long(0x20000028eL), "CLATM9 HE Ammo");
         criticals.put(new Long(0x10000028fL), "CLATM12 ER Ammo");
         criticals.put(new Long(0x20000028fL), "CLATM12 HE Ammo");
-        //1db-1de = is
-        //1d2-1d5 = cl
-        //298-299 = thb
-        //22B-22E = IS on clan
-        //246-249 = clan on IS
+        // 1db-1de = is
+        // 1d2-1d5 = cl
+        // 298-299 = thb
+        // 22B-22E = IS on clan
+        // 246-249 = clan on IS
         isCriticals.put(new Long(0x1000001dbL), "ISLBXAC2 CL Ammo");
         isCriticals.put(new Long(0x1000001dcL), "ISLBXAC5 CL Ammo");
         isCriticals.put(new Long(0x1000001ddL), "ISLBXAC10 CL Ammo");
@@ -1716,8 +1722,8 @@ public class HmpFile
 
         if (critName == null && critical.longValue() == 0)
             return "-Empty-";
-        
-        if(ammoCount > 0) {
+
+        if (ammoCount > 0) {
             critName = mutateLBXAmmo(critName);
             critName = mutateATMAmmo(critName);
         }
@@ -1728,11 +1734,10 @@ public class HmpFile
     /* OMIT_FOR_JHMPREAD_COMPILATION BLOCK_BEGIN */
     /**
      * This function moves all "empty" slots to the end of a location's critical
-     * list.
-     * 
-     * MegaMek adds equipment to the first empty slot available in a location.
-     * This means that any "holes" (empty slots not at the end of a location),
-     * will cause the file crits and MegaMek's crits to become out of sync.
+     * list. MegaMek adds equipment to the first empty slot available in a
+     * location. This means that any "holes" (empty slots not at the end of a
+     * location), will cause the file crits and MegaMek's crits to become out of
+     * sync.
      */
     private void compactCriticals(long[] criticals) {
         for (int x = 0; x < criticals.length; x++) {
@@ -1753,6 +1758,7 @@ public class HmpFile
             }
         }
     }
+
     /* BLOCK_END */
 
     public String getMtf() {
@@ -1972,26 +1978,26 @@ public class HmpFile
 
     private int getTargSys() {
         switch (targSys) {
-        case 0:
-            return MiscType.T_TARGSYS_STANDARD;
-        case 1:
-            return MiscType.T_TARGSYS_TARGCOMP;
-        case 2:
-            return MiscType.T_TARGSYS_VARIABLE_RANGE;
-        case 3:
-            return MiscType.T_TARGSYS_MULTI_TRAC_II;
-        case 4:
-            return MiscType.T_TARGSYS_LONGRANGE;
-        case 5:
-            return MiscType.T_TARGSYS_SHORTRANGE;
-        case 6:
-            return MiscType.T_TARGSYS_ANTI_AIR;
-        case 7:
-            return MiscType.T_TARGSYS_MULTI_TRAC;
-        case 8:
-            return MiscType.T_TARGSYS_HEAT_SEEKING_THB;
-        default:
-            return MiscType.T_TARGSYS_UNKNOWN;
+            case 0:
+                return MiscType.T_TARGSYS_STANDARD;
+            case 1:
+                return MiscType.T_TARGSYS_TARGCOMP;
+            case 2:
+                return MiscType.T_TARGSYS_VARIABLE_RANGE;
+            case 3:
+                return MiscType.T_TARGSYS_MULTI_TRAC_II;
+            case 4:
+                return MiscType.T_TARGSYS_LONGRANGE;
+            case 5:
+                return MiscType.T_TARGSYS_SHORTRANGE;
+            case 6:
+                return MiscType.T_TARGSYS_ANTI_AIR;
+            case 7:
+                return MiscType.T_TARGSYS_MULTI_TRAC;
+            case 8:
+                return MiscType.T_TARGSYS_HEAT_SEEKING_THB;
+            default:
+                return MiscType.T_TARGSYS_UNKNOWN;
         }
     }
 }
@@ -2143,17 +2149,21 @@ class InternalStructureType extends HMPType {
     public static final Hashtable<Integer, InternalStructureType> types = new Hashtable<Integer, InternalStructureType>();
 
     public static final InternalStructureType STANDARD = new InternalStructureType(
-            EquipmentType.getStructureTypeName(
-                    EquipmentType.T_STRUCTURE_STANDARD),0);
+            EquipmentType
+                    .getStructureTypeName(EquipmentType.T_STRUCTURE_STANDARD),
+            0);
     public static final InternalStructureType ENDO_STEEL = new InternalStructureType(
-            EquipmentType.getStructureTypeName(
-                    EquipmentType.T_STRUCTURE_ENDO_STEEL),1);
+            EquipmentType
+                    .getStructureTypeName(EquipmentType.T_STRUCTURE_ENDO_STEEL),
+            1);
     public static final InternalStructureType COMPOSITE = new InternalStructureType(
-            EquipmentType.getStructureTypeName(
-                    EquipmentType.T_STRUCTURE_COMPOSITE),2);
+            EquipmentType
+                    .getStructureTypeName(EquipmentType.T_STRUCTURE_COMPOSITE),
+            2);
     public static final InternalStructureType REINFORCED = new InternalStructureType(
-            EquipmentType.getStructureTypeName(
-                    EquipmentType.T_STRUCTURE_REINFORCED),3);
+            EquipmentType
+                    .getStructureTypeName(EquipmentType.T_STRUCTURE_REINFORCED),
+            3);
     public static final InternalStructureType UTILITY = new InternalStructureType(
             "Utility", 4);
 

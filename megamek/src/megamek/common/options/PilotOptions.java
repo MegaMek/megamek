@@ -19,49 +19,51 @@ import java.util.Vector;
 
 /**
  * Contains the options determining abilities of the pilot
- *
+ * 
  * @author Cord
  */
 public class PilotOptions extends AbstractOptions implements Serializable {
-	private static final long serialVersionUID = 6628080570425023949L;
-	public static final String LVL3_ADVANTAGES = "lvl3Advantages"; //$NON-NLS-1$
+    private static final long serialVersionUID = 6628080570425023949L;
+    public static final String LVL3_ADVANTAGES = "lvl3Advantages"; //$NON-NLS-1$
     public static final String MD_ADVANTAGES = "MDAdvantages"; //$NON-NLS-1$
 
     public PilotOptions() {
         super();
     }
-    
+
     public void initialize() {
         IBasicOptionGroup adv = addGroup("adv", LVL3_ADVANTAGES); //$NON-NLS-1$
-        addOption(adv,"dodge_maneuver", false); //$NON-NLS-1$
-        addOption(adv,"maneuvering_ace", false); //$NON-NLS-1$
-        addOption(adv,"melee_specialist", false); //$NON-NLS-1$
-        addOption(adv,"pain_resistance", false); //$NON-NLS-1$
-        addOption(adv,"tactical_genius", false); //$NON-NLS-1$
-        addOption(adv,"weapon_specialist", new Vector()); //$NON-NLS-1$
-        addOption(adv,"gunnery_laser", false); //$NON-NLS-1$
-        addOption(adv,"gunnery_missile", false); //$NON-NLS-1$
-        addOption(adv,"gunnery_ballistic", false); //$NON-NLS-1$
-        addOption(adv,"iron_man", false); //$NON-NLS-1$
-        addOption(adv,"ei_implant", false); //$NON-NLS-1$
-        addOption(adv,"clan_pilot_training",false); //$NON-NLS-1$
-        addOption(adv,"edge", 0); //$NON-NLS-1$
-        
+        addOption(adv, "dodge_maneuver", false); //$NON-NLS-1$
+        addOption(adv, "maneuvering_ace", false); //$NON-NLS-1$
+        addOption(adv, "melee_specialist", false); //$NON-NLS-1$
+        addOption(adv, "pain_resistance", false); //$NON-NLS-1$
+        addOption(adv, "tactical_genius", false); //$NON-NLS-1$
+        addOption(adv, "weapon_specialist", new Vector()); //$NON-NLS-1$
+        addOption(adv, "gunnery_laser", false); //$NON-NLS-1$
+        addOption(adv, "gunnery_missile", false); //$NON-NLS-1$
+        addOption(adv, "gunnery_ballistic", false); //$NON-NLS-1$
+        addOption(adv, "iron_man", false); //$NON-NLS-1$
+        addOption(adv, "ei_implant", false); //$NON-NLS-1$
+        addOption(adv, "clan_pilot_training", false); //$NON-NLS-1$
+        addOption(adv, "edge", 0); //$NON-NLS-1$
+
         /* different edge triggers */
         addOption(adv, "edge_when_headhit", false); //$NON-NLS-1$
         addOption(adv, "edge_when_tac", false); //$NON-NLS-1$
         addOption(adv, "edge_when_ko", false); //$NON-NLS-1$
         addOption(adv, "edge_when_explosion", false); //$NON-NLS-1$
-        
-        //manei domini
+
+        // manei domini
         IBasicOptionGroup md = addGroup("md", MD_ADVANTAGES); //$NON-NLS-1$
-        addOption(md,"vdni", false); //$NON-NLS-1$
-        addOption(md,"bvdni", false); //$NON-NLS-1$
-        addOption(md,"pain_shunt", false); //$NON-NLS-1$
-           
+        addOption(md, "vdni", false); //$NON-NLS-1$
+        addOption(md, "bvdni", false); //$NON-NLS-1$
+        addOption(md, "pain_shunt", false); //$NON-NLS-1$
+
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.options.AbstractOptions#getOptionsInfoImp()
      */
     protected AbstractOptionsInfo getOptionsInfoImp() {
@@ -69,11 +71,12 @@ public class PilotOptions extends AbstractOptions implements Serializable {
     }
 
     private static class PilotOptionsInfo extends AbstractOptionsInfo {
-        private static AbstractOptionsInfo instance = new PilotOptionsInfo(); 
+        private static AbstractOptionsInfo instance = new PilotOptionsInfo();
 
         public static AbstractOptionsInfo getInstance() {
             return instance;
         }
+
         protected PilotOptionsInfo() {
             super("PilotOptionsInfo"); //$NON-NLS-1$
         }

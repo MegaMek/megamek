@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISFiredrakeNeedler extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8852176757815947141L;
+
     /**
      * 
      */
@@ -47,7 +51,7 @@ public class ISFiredrakeNeedler extends Weapon {
         this.bv = 2;
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_INCENDIARY_NEEDLES;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

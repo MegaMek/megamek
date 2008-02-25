@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLMPod extends MPodWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1428507917582780048L;
 
     /**
      * 

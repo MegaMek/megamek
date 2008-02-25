@@ -24,9 +24,9 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
-public class ArtilleryWeaponDirectFireHandler extends ArtilleryWeaponIndirectFireHandler {
+public class ArtilleryWeaponDirectFireHandler extends
+        ArtilleryWeaponIndirectFireHandler {
 
     /**
      * 
@@ -38,13 +38,15 @@ public class ArtilleryWeaponDirectFireHandler extends ArtilleryWeaponIndirectFir
      * @param w
      * @param g
      */
-    public ArtilleryWeaponDirectFireHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public ArtilleryWeaponDirectFireHandler(ToHitData t, WeaponAttackAction w,
+            IGame g, Server s) {
         super(t, w, g, s);
 
     }
 
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
     public boolean cares(int phase) {

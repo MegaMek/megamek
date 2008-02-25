@@ -27,7 +27,7 @@ import megamek.common.actions.WeaponAttackAction;
  *         an attack from some weapon.
  */
 public interface AttackHandler {
-    
+
     // Does it care?
     public boolean cares(int phase);
 
@@ -38,11 +38,11 @@ public interface AttackHandler {
     // Frankly, wish I could get rid of this, but I think certain things
     // occaisonly need to know the firer.
     public int getAttackerId();
-    
+
     public boolean announcedEntityFiring();
-    
+
     public void setAnnouncedEntityFiring(boolean announcedEntityFiring);
-    
+
     public WeaponAttackAction getWaa();
-    
+
 }

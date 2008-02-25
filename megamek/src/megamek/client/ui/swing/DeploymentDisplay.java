@@ -13,6 +13,23 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.Enumeration;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
@@ -28,26 +45,9 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.Enumeration;
-import java.util.Vector;
-
-public class DeploymentDisplay
-        extends StatusBarPhaseDisplay
-        implements BoardViewListener, ActionListener, DoneButtoned,
-        KeyListener, GameListener, Distractable {
+public class DeploymentDisplay extends StatusBarPhaseDisplay implements
+        BoardViewListener, ActionListener, DoneButtoned, KeyListener,
+        GameListener, Distractable {
     /**
      * 
      */
@@ -68,42 +68,43 @@ public class DeploymentDisplay
     private JPanel panButtons;
     private JButton butNext;
     private JButton butTurn;
-//     private JButton            butSpace;
-//     private JButton            butSpace2;
-//     private JButton            butSpace3;
+    // private JButton butSpace;
+    // private JButton butSpace2;
+    // private JButton butSpace3;
     private JButton butLoad;
     private JButton butUnload;
     private JButton butRemove;
     private JButton butAssaultDrop;
     private JButton butDone;
-    private int cen = Entity.NONE;    // current entity number
+    private int cen = Entity.NONE; // current entity number
     // is the shift key held?
     private boolean turnMode = false;
     private boolean assaultDropPreference = false;
 
     /**
-     * Creates and lays out a new deployment phase display
-     * for the specified client.
+     * Creates and lays out a new deployment phase display for the specified
+     * client.
      */
     public DeploymentDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
         client = clientgui.getClient();
         client.game.addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
-        setupStatusBar(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
+        setupStatusBar(Messages
+                .getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         butTurn = new JButton(Messages.getString("DeploymentDisplay.Turn")); //$NON-NLS-1$
         butTurn.addActionListener(this);
         butTurn.setActionCommand(DEPLOY_TURN);
         butTurn.setEnabled(false);
-                        
-//         butSpace = new JButton(".");
-//         butSpace.setEnabled(false);
 
-//         butSpace2 = new JButton(".");
-//         butSpace2.setEnabled(false);
+        // butSpace = new JButton(".");
+        // butSpace.setEnabled(false);
 
-//         butSpace3 = new JButton(".");
-//         butSpace3.setEnabled(false);
+        // butSpace2 = new JButton(".");
+        // butSpace2.setEnabled(false);
+
+        // butSpace3 = new JButton(".");
+        // butSpace3.setEnabled(false);
 
         butLoad = new JButton(Messages.getString("DeploymentDisplay.Load")); //$NON-NLS-1$
         butLoad.addActionListener(this);
@@ -121,7 +122,8 @@ public class DeploymentDisplay
         butRemove.addActionListener(this);
         butRemove.setActionCommand(DEPLOY_REMOVE);
         setRemoveEnabled(true);
-        butAssaultDrop = new JButton(Messages.getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
+        butAssaultDrop = new JButton(Messages
+                .getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
         butAssaultDrop.addActionListener(this);
         butAssaultDrop.setActionCommand(DEPLOY_ASSAULTDROP);
         butAssaultDrop.setEnabled(false);
@@ -138,10 +140,10 @@ public class DeploymentDisplay
         panButtons.add(butUnload);
         panButtons.add(butRemove);
         panButtons.add(butAssaultDrop);
-//         panButtons.add(butSpace);
-//         panButtons.add(butSpace2);
-//         panButtons.add(butSpace3);
-//         panButtons.add(butDone);
+        // panButtons.add(butSpace);
+        // panButtons.add(butSpace2);
+        // panButtons.add(butSpace3);
+        // panButtons.add(butDone);
 
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -151,12 +153,12 @@ public class DeploymentDisplay
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
-//         c.gridwidth = GridBagConstraints.REMAINDER;
-//         addBag(clientgui.bv, gridbag, c);
+        // c.gridwidth = GridBagConstraints.REMAINDER;
+        // addBag(clientgui.bv, gridbag, c);
 
-//         c.weightx = 1.0;    c.weighty = 0;
-//         c.gridwidth = 1;
-//         addBag(client.cb.getComponent(), gridbag, c);
+        // c.weightx = 1.0; c.weighty = 0;
+        // c.gridwidth = 1;
+        // addBag(client.cb.getComponent(), gridbag, c);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.weightx = 0.0;
@@ -170,7 +172,8 @@ public class DeploymentDisplay
         addKeyListener(this);
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag,
+            GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -182,7 +185,8 @@ public class DeploymentDisplay
     public void selectEntity(int en) {
         // hmm, sometimes this gets called when there's no ready entities?
         if (client.game.getEntity(en) == null) {
-            System.err.println("DeploymentDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
+            System.err
+                    .println("DeploymentDisplay: tried to select non-existant entity: " + en); //$NON-NLS-1$
             return;
         }
 
@@ -240,15 +244,19 @@ public class DeploymentDisplay
                     break;
             }
             setAssaultDropEnabled(ce().canAssaultDrop()
-                    && ce().getGame().getOptions().booleanOption("assault_drop"));
-            if (!ce().canAssaultDrop()  && ce().getGame().getOptions().booleanOption("assault_drop")) {
-                butAssaultDrop.setText(Messages.getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
+                    && ce().getGame().getOptions()
+                            .booleanOption("assault_drop"));
+            if (!ce().canAssaultDrop()
+                    && ce().getGame().getOptions()
+                            .booleanOption("assault_drop")) {
+                butAssaultDrop.setText(Messages
+                        .getString("DeploymentDisplay.AssaultDropOn")); //$NON-NLS-1$
                 assaultDropPreference = false;
             }
-            
+
             clientgui.mechD.displayEntity(ce());
             clientgui.mechD.showPanel("movement"); //$NON-NLS-1$
-        
+
             // Update the menu bar.
             clientgui.getMenuBar().setEntity(ce());
         }
@@ -274,10 +282,8 @@ public class DeploymentDisplay
         // end my turn, then.
         disableButtons();
         Entity next = client.game.getNextEntity(client.game.getTurnIndex());
-        if (IGame.PHASE_DEPLOYMENT == client.game.getPhase()
-                && null != next
-                && null != ce()
-                && next.getOwnerId() != ce().getOwnerId()) {
+        if (IGame.PHASE_DEPLOYMENT == client.game.getPhase() && null != next
+                && null != ce() && next.getOwnerId() != ce().getOwnerId()) {
             clientgui.setDisplayVisible(false);
         }
         cen = Entity.NONE;
@@ -305,7 +311,8 @@ public class DeploymentDisplay
     private void deploy() {
         disableButtons();
         Entity en = ce();
-        client.deploy(cen, en.getPosition(), en.getFacing(), en.getLoadedUnits(), assaultDropPreference);
+        client.deploy(cen, en.getPosition(), en.getFacing(), en
+                .getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);
     }
 
@@ -342,10 +349,13 @@ public class DeploymentDisplay
         }
         if (client.isMyTurn()) {
             beginMyTurn();
-            setStatusBarText(Messages.getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
+            setStatusBarText(Messages
+                    .getString("DeploymentDisplay.its_your_turn")); //$NON-NLS-1$
         } else {
             endMyTurn();
-            setStatusBarText(Messages.getString("DeploymentDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
+            setStatusBarText(Messages
+                    .getString(
+                            "DeploymentDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
         }
     }
 
@@ -356,7 +366,8 @@ public class DeploymentDisplay
             return;
         }
         if (client.game.getPhase() == IGame.PHASE_DEPLOYMENT) {
-            setStatusBarText(Messages.getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
+            setStatusBarText(Messages
+                    .getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         }
     }
 
@@ -371,21 +382,23 @@ public class DeploymentDisplay
         if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
             return;
         }
-        
+
         // ignore buttons other than 1
-        if (!client.isMyTurn() || ce() == null || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn() || ce() == null
+                || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
 
         // control pressed means a line of sight check.
         // added ALT_MASK by kenn
-        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0 || (b.getModifiers() & InputEvent.ALT_MASK) != 0) {
+        if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0
+                || (b.getModifiers() & InputEvent.ALT_MASK) != 0) {
             return;
         }
 
         // check for shifty goodness
         boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
-        
+
         // check for a deployment
         Coords moveto = b.getCoords();
         if (ce().getPosition() != null && (shiftheld || turnMode)) { // turn
@@ -393,12 +406,16 @@ public class DeploymentDisplay
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.bv.redrawEntity(ce());
             turnMode = false;
-        } else if (!(client.game.getBoard().isLegalDeployment(moveto, ce().getOwner())
-                || assaultDropPreference)
+        } else if (!(client.game.getBoard().isLegalDeployment(moveto,
+                ce().getOwner()) || assaultDropPreference)
                 || ce().isHexProhibited(client.game.getBoard().getHex(moveto))) {
-            JOptionPane.showMessageDialog(clientgui.frame,
-                    Messages.getString("DeploymentDisplay.cantDeployInto", new Object[]{ce().getShortName(), moveto.getBoardNum()}), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
-                    , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            JOptionPane
+                    .showMessageDialog(
+                            clientgui.frame,
+                            Messages
+                                    .getString(
+                                            "DeploymentDisplay.cantDeployInto", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
+                            , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             return;
         } else if (Compute.stackingViolation(client.game, ce().getId(), moveto) != null) {
             // check if deployed unit violates stacking
@@ -449,8 +466,7 @@ public class DeploymentDisplay
             Entity other;
             while (entities.hasMoreElements()) {
                 other = entities.nextElement();
-                if (other.isSelectableThisTurn()
-                        && ce().canLoad(other)) {
+                if (other.isSelectableThisTurn() && ce().canLoad(other)) {
                     choices.addElement(other);
                 }
             }
@@ -461,11 +477,14 @@ public class DeploymentDisplay
                 for (int loop = 0; loop < names.length; loop++) {
                     names[loop] = choices.elementAt(loop).getShortName();
                 }
-                SingleChoiceDialog choiceDialog =
-                        new SingleChoiceDialog(clientgui.frame,
-                                Messages.getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
-                                Messages.getString("DeploymentDisplay.loadUnitDialog.message", new Object[]{ce().getShortName(), ce().getUnusedString()}), //$NON-NLS-1$
-                                names);
+                SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
+                        clientgui.frame,
+                        Messages
+                                .getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
+                        Messages
+                                .getString(
+                                        "DeploymentDisplay.loadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
+                        names);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer()) {
                     other = choices.elementAt(choiceDialog.getChoice());
@@ -476,9 +495,13 @@ public class DeploymentDisplay
                 }
             } // End have-choices
             else {
-                JOptionPane.showMessageDialog(clientgui.frame,
-                        Messages.getString("DeploymentDisplay.allertDialog1.message", new Object[]{ce().getShortName()}), Messages.getString("DeploymentDisplay.allertDialog1.title") //$NON-NLS-1$
-                        , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                JOptionPane
+                        .showMessageDialog(
+                                clientgui.frame,
+                                Messages
+                                        .getString(
+                                                "DeploymentDisplay.allertDialog1.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.allertDialog1.title") //$NON-NLS-1$
+                                , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         } // End load-unit
         else if (ev.getActionCommand().equals(DEPLOY_UNLOAD)) {
@@ -490,11 +513,14 @@ public class DeploymentDisplay
                 for (int loop = 0; loop < names.length; loop++) {
                     names[loop] = choices.elementAt(loop).getShortName();
                 }
-                SingleChoiceDialog choiceDialog =
-                        new SingleChoiceDialog(clientgui.frame,
-                                Messages.getString("DeploymentDisplay.unloadUnitDialog.title"), //$NON-NLS-1$
-                                Messages.getString("DeploymentDisplay.unloadUnitDialog.message", new Object[]{ce().getShortName(), ce().getUnusedString()}), //$NON-NLS-1$
-                                names);
+                SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
+                        clientgui.frame,
+                        Messages
+                                .getString("DeploymentDisplay.unloadUnitDialog.title"), //$NON-NLS-1$
+                        Messages
+                                .getString(
+                                        "DeploymentDisplay.unloadUnitDialog.message", new Object[] { ce().getShortName(), ce().getUnusedString() }), //$NON-NLS-1$
+                        names);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer()) {
                     other = choices.elementAt(choiceDialog.getChoice());
@@ -505,13 +531,18 @@ public class DeploymentDisplay
                         clientgui.mechD.displayEntity(ce());
                     } else {
                         System.out.println("Could not unload " + //$NON-NLS-1$
-                                other.getShortName() +
-                                " from " + ce().getShortName()); //$NON-NLS-1$
+                                other.getShortName()
+                                + " from " + ce().getShortName()); //$NON-NLS-1$
                     }
                 }
             } // End have-choices
             else {
-                JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("DeploymentDisplay.allertDialog2.message", new Object[]{ce().getShortName()}), Messages.getString("DeploymentDisplay.allertDialog2.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                JOptionPane
+                        .showMessageDialog(
+                                clientgui.frame,
+                                Messages
+                                        .getString(
+                                                "DeploymentDisplay.allertDialog2.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.allertDialog2.title"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             }
         } // End unload-unit
         else if (ev.getActionCommand().equals(DEPLOY_REMOVE)) {
@@ -519,9 +550,11 @@ public class DeploymentDisplay
         } else if (ev.getActionCommand().equals(DEPLOY_ASSAULTDROP)) {
             assaultDropPreference = !assaultDropPreference;
             if (assaultDropPreference) {
-                butAssaultDrop.setText(Messages.getString("DeploymentDisplay.AssaultDropOff"));
+                butAssaultDrop.setText(Messages
+                        .getString("DeploymentDisplay.AssaultDropOff"));
             } else {
-                butAssaultDrop.setText(Messages.getString("DeploymentDisplay.AssaultDropOn"));
+                butAssaultDrop.setText(Messages
+                        .getString("DeploymentDisplay.AssaultDropOn"));
             }
         }
     } // End public void actionPerformed(ActionEvent ev)
@@ -563,7 +596,8 @@ public class DeploymentDisplay
                     Enumeration<Entity> iter = ce().getLoadedUnits().elements();
                     while (iter.hasMoreElements()) {
                         Entity other = iter.nextElement();
-                        // Please note, the Server never got this unit's load orders.
+                        // Please note, the Server never got this unit's load
+                        // orders.
                         ce().unload(other);
                         other.setTransportId(Entity.NONE);
                         other.newRound(client.game.getRoundCount());
@@ -615,7 +649,7 @@ public class DeploymentDisplay
 
     /**
      * Determine if the listener is currently distracted.
-     *
+     * 
      * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
@@ -624,11 +658,11 @@ public class DeploymentDisplay
 
     /**
      * Specify if the listener should be distracted.
-     *
-     * @param distracted <code>true</code> if the listener should ignore events
-     *                   <code>false</code> if the listener should pay attention again.
-     *                   Events that occured while the listener was distracted NOT
-     *                   going to be processed.
+     * 
+     * @param distracted <code>true</code> if the listener should ignore
+     *            events <code>false</code> if the listener should pay
+     *            attention again. Events that occured while the listener was
+     *            distracted NOT going to be processed.
      */
     public void setIgnoringEvents(boolean distracted) {
         this.distracted.setIgnoringEvents(distracted);
@@ -636,7 +670,7 @@ public class DeploymentDisplay
 
     /**
      * Retrieve the "Done" button of this object.
-     *
+     * 
      * @return the <code>javax.swing.JButton</code> that activates this
      *         object's "Done" action.
      */

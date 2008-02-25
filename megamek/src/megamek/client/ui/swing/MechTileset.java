@@ -20,6 +20,15 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Component;
+import java.awt.Image;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StreamTokenizer;
+import java.util.HashMap;
+
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
@@ -30,20 +39,11 @@ import megamek.common.Mech;
 import megamek.common.Protomech;
 import megamek.common.Tank;
 
-import java.awt.Component;
-import java.awt.Image;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StreamTokenizer;
-import java.util.HashMap;
-
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
- * with the appropriate image.  It requires data/images/units/mechset.txt,
- * the format of which is explained in that file.
- *
+ * with the appropriate image. It requires data/images/units/mechset.txt, the
+ * format of which is explained in that file.
+ * 
  * @author Ben
  */
 public class MechTileset {
@@ -99,13 +99,17 @@ public class MechTileset {
 
     public Image imageFor(Entity entity, Component comp) {
         MechEntry entry = entryFor(entity);
-        
-        if ( entry == null ) {
-            System.err.println("Entry is null make sure that their is a default entry for "+entity.getShortNameRaw()+" in both mechset.txt and wreckset.txt.  Default to "+LIGHT_STRING);
+
+        if (entry == null) {
+            System.err
+                    .println("Entry is null make sure that their is a default entry for "
+                            + entity.getShortNameRaw()
+                            + " in both mechset.txt and wreckset.txt.  Default to "
+                            + LIGHT_STRING);
             System.err.flush();
             entry = default_light;
         }
-        
+
         if (entry.getImage() == null) {
             entry.loadImage(comp);
         }
@@ -120,12 +124,12 @@ public class MechTileset {
         if (exact.containsKey(entity.getShortNameRaw().toUpperCase())) {
             return exact.get(entity.getShortNameRaw().toUpperCase());
         }
-        
+
         // next, chassis matches
         if (chassis.containsKey(entity.getChassis().toUpperCase())) {
             return chassis.get(entity.getChassis().toUpperCase());
         }
-        
+
         // last, the generic model
         return genericFor(entity);
     }
@@ -175,7 +179,7 @@ public class MechTileset {
                 if (entity.getWeightClass() == EntityWeightClass.WEIGHT_HEAVY) {
                     return default_wheeled_heavy;
                 }
-				return default_wheeled;
+                return default_wheeled;
             }
             if (entity.getMovementMode() == IEntityMovementMode.HOVER) {
                 return default_hover;
@@ -187,8 +191,8 @@ public class MechTileset {
         if (entity instanceof GunEmplacement) {
             return default_gun_emplacement;
         }
-        
-        //TODO: better exception?
+
+        // TODO: better exception?
         throw new IndexOutOfBoundsException("can't find an image for that mech"); //$NON-NLS-1$
     }
 
@@ -248,7 +252,8 @@ public class MechTileset {
         default_quad = exact.get(QUAD_STRING.toUpperCase());
         default_tracked = exact.get(TRACKED_STRING.toUpperCase());
         default_tracked_heavy = exact.get(TRACKED_HEAVY_STRING.toUpperCase());
-        default_tracked_assault = exact.get(TRACKED_ASSAULT_STRING.toUpperCase());
+        default_tracked_assault = exact.get(TRACKED_ASSAULT_STRING
+                .toUpperCase());
         default_wheeled = exact.get(WHEELED_STRING.toUpperCase());
         default_wheeled_heavy = exact.get(WHEELED_HEAVY_STRING.toUpperCase());
         default_hover = exact.get(HOVER_STRING.toUpperCase());
@@ -258,7 +263,8 @@ public class MechTileset {
         default_inf = exact.get(INF_STRING.toUpperCase());
         default_ba = exact.get(BA_STRING.toUpperCase());
         default_proto = exact.get(PROTO_STRING.toUpperCase());
-        default_gun_emplacement = exact.get(GUN_EMPLACEMENT_STRING.toUpperCase());
+        default_gun_emplacement = exact.get(GUN_EMPLACEMENT_STRING
+                .toUpperCase());
     }
 
     /**
@@ -285,7 +291,7 @@ public class MechTileset {
         }
 
         public void loadImage(Component comp) {
-            //            System.out.println("loading mech image...");
+            // System.out.println("loading mech image...");
             image = comp.getToolkit().getImage(dir + imageFile);
         }
     }

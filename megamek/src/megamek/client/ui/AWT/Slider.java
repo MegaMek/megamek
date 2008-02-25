@@ -30,7 +30,8 @@ import java.awt.event.AdjustmentListener;
 /**
  * A simple prompt.
  */
-public class Slider extends Dialog implements ActionListener, AdjustmentListener {
+public class Slider extends Dialog implements ActionListener,
+        AdjustmentListener {
 
     /**
      * 
@@ -41,13 +42,16 @@ public class Slider extends Dialog implements ActionListener, AdjustmentListener
     private Scrollbar value;
     private Label lblText = new Label();
     private boolean ok = false;
-    private Label minText = new Label(), maxText = new Label(), curText = new Label();
+    private Label minText = new Label(), maxText = new Label(),
+            curText = new Label();
 
-    public Slider(Frame parent, String title, String question, int defaultValue, int min, int max) {
+    public Slider(Frame parent, String title, String question,
+            int defaultValue, int min, int max) {
         super(parent, title, true);
         super.setResizable(false);
 
-        value = new Scrollbar (Scrollbar.HORIZONTAL, defaultValue, 1, min, max+1);
+        value = new Scrollbar(Scrollbar.HORIZONTAL, defaultValue, 1, min,
+                max + 1);
         value.addAdjustmentListener(this);
 
         setLayout(new BorderLayout());
@@ -62,11 +66,11 @@ public class Slider extends Dialog implements ActionListener, AdjustmentListener
         minText.setText(String.valueOf(min));
         maxText.setText(String.valueOf(max));
         curText.setText(String.valueOf(defaultValue));
-        sp1.add (minText);
-        sp1.add (value);
-        sp1.add (maxText);
-        sp1.add (curText);
-        add (sp1, BorderLayout.CENTER);
+        sp1.add(minText);
+        sp1.add(value);
+        sp1.add(maxText);
+        sp1.add(curText);
+        add(sp1, BorderLayout.CENTER);
 
         Panel p = new Panel();
         p.setLayout(new FlowLayout());
@@ -76,11 +80,11 @@ public class Slider extends Dialog implements ActionListener, AdjustmentListener
         p.add(butCancel);
         add(p, BorderLayout.SOUTH);
         pack();
-        setLocation(
-            parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
-            parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - getSize().width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - getSize().height / 2);
     }
-    
+
     public boolean showDialog() {
         setVisible(true);
         return ok;
@@ -96,7 +100,9 @@ public class Slider extends Dialog implements ActionListener, AdjustmentListener
         return value.getValue();
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.awt.event.AdjustmentListener#adjustmentValueChanged(java.awt.event.AdjustmentEvent)
      */
     public void adjustmentValueChanged(AdjustmentEvent arg0) {

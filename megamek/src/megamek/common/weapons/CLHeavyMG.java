@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLHeavyMG extends MGWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3031880020233816652L;
 
     /**
      * 

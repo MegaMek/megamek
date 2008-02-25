@@ -28,25 +28,24 @@ import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
-import javax.swing.JTextArea;
-
-
-
-import megamek.client.Client;
-import megamek.client.ui.swing.ClientGUI;
-import megamek.common.*;
-
 import java.util.Iterator;
 
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
 
-public class RandomSkillDialog extends JDialog implements ActionListener, ItemListener {
+import megamek.client.Client;
+import megamek.common.Compute;
+import megamek.common.Entity;
+import megamek.common.Tank;
+import megamek.common.VTOL;
+
+public class RandomSkillDialog extends JDialog implements ActionListener,
+        ItemListener {
 
     /**
      * 
@@ -59,54 +58,62 @@ public class RandomSkillDialog extends JDialog implements ActionListener, ItemLi
     private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
     private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
-    private JLabel labelMethod = new JLabel(Messages.getString("RandomSkillDialog.labelMethod"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labelMethod = new JLabel(Messages
+            .getString("RandomSkillDialog.labelMethod"), JLabel.RIGHT); //$NON-NLS-1$
     private JComboBox chMethod = new JComboBox();
-    private JLabel labelType = new JLabel(Messages.getString("RandomSkillDialog.labelType"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labelType = new JLabel(Messages
+            .getString("RandomSkillDialog.labelType"), JLabel.RIGHT); //$NON-NLS-1$
     private JComboBox chType = new JComboBox();
-    private JLabel labelLevel = new JLabel(Messages.getString("RandomSkillDialog.labelLevel"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labelLevel = new JLabel(Messages
+            .getString("RandomSkillDialog.labelLevel"), JLabel.RIGHT); //$NON-NLS-1$
     private JComboBox chLevel = new JComboBox();
 
-    private JLabel labelPlayer = new JLabel(Messages.getString("MechSelectorDialog.m_labelPlayer"), JLabel.RIGHT); //$NON-NLS-1$
+    private JLabel labelPlayer = new JLabel(Messages
+            .getString("MechSelectorDialog.m_labelPlayer"), JLabel.RIGHT); //$NON-NLS-1$
     private JComboBox chPlayer = new JComboBox();
-    
-    private JTextArea texDesc = new JTextArea(Messages.getString("CustomMechDialog.texDesc"), 3, 35); //$NON-NLS-1$
-    
-    private JCheckBox cForceClose = new JCheckBox(Messages.getString("RandomSkillDialog.cForceClose"));
-    
+
+    private JTextArea texDesc = new JTextArea(Messages
+            .getString("CustomMechDialog.texDesc"), 3, 35); //$NON-NLS-1$
+
+    private JCheckBox cForceClose = new JCheckBox(Messages
+            .getString("RandomSkillDialog.cForceClose"));
+
     /** Creates a new instance of StartingPositionDialog */
     public RandomSkillDialog(ClientGUI clientgui) {
-        super(clientgui.frame, Messages.getString("RandomSkillDialog.title"), true); //$NON-NLS-1$
+        super(clientgui.frame,
+                Messages.getString("RandomSkillDialog.title"), true); //$NON-NLS-1$
         this.client = clientgui.getClient();
         this.clientgui = clientgui;
 
         updatePlayerChoice();
-        
+
         cForceClose.setSelected(false);
-        
+
         texDesc.setLineWrap(true);
         texDesc.setEnabled(true);
-        
+
         chMethod.addItem(Messages.getString("RandomSkillDialog.MethodTW")); //$NON-NLS-1$
         chMethod.addItem(Messages.getString("RandomSkillDialog.MethodTaharqa")); //$NON-NLS-1$
-        chMethod.addItem(Messages.getString("RandomSkillDialog.MethodConstant")); //$NON-NLS-1$
-        
+        chMethod
+                .addItem(Messages.getString("RandomSkillDialog.MethodConstant")); //$NON-NLS-1$
+
         chMethod.setSelectedIndex(Compute.METHOD_TW);
         chMethod.addItemListener(this);
         texDesc.setText(Messages.getString("RandomSkillDialog.descTW"));
-        
+
         chType.addItem(Messages.getString("RandomSkillDialog.InnerSphere")); //$NON-NLS-1$
         chType.addItem(Messages.getString("RandomSkillDialog.Clan")); //$NON-NLS-1$
         chType.addItem(Messages.getString("RandomSkillDialog.ManeiDomini")); //$NON-NLS-1$
-        
+
         chType.setSelectedIndex(Compute.TYPE_IS);
-        
+
         chLevel.addItem(Messages.getString("RandomSkillDialog.Green")); //$NON-NLS-1$
         chLevel.addItem(Messages.getString("RandomSkillDialog.Regular")); //$NON-NLS-1$
         chLevel.addItem(Messages.getString("RandomSkillDialog.Veteran")); //$NON-NLS-1$
         chLevel.addItem(Messages.getString("RandomSkillDialog.Elite")); //$NON-NLS-1$
-        
+
         chLevel.setSelectedIndex(Compute.LEVEL_REGULAR);
-        
+
         setupButtons();
 
         // layout
@@ -127,7 +134,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener, ItemLi
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(chMethod, c);
         this.add(chMethod);
-        
+
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labelType, c);
@@ -137,7 +144,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener, ItemLi
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(chType, c);
         this.add(chType);
-        
+
         c.gridwidth = 1;
         c.anchor = GridBagConstraints.EAST;
         gridbag.setConstraints(labelLevel, c);
@@ -147,17 +154,17 @@ public class RandomSkillDialog extends JDialog implements ActionListener, ItemLi
         c.anchor = GridBagConstraints.WEST;
         gridbag.setConstraints(chLevel, c);
         this.add(chLevel);
-           
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.CENTER;
         gridbag.setConstraints(cForceClose, c);
         this.add(cForceClose);
-        
+
         c.weightx = 1.0;
         c.weighty = 0.0;
         gridbag.setConstraints(texDesc, c);
         this.add(texDesc);
-        
+
         c.fill = GridBagConstraints.VERTICAL;
         gridbag.setConstraints(panButtons, c);
         this.add(panButtons);
@@ -167,12 +174,14 @@ public class RandomSkillDialog extends JDialog implements ActionListener, ItemLi
                 setVisible(false);
             }
         });
-        
+
         pack();
         setResizable(false);
-        setLocation(
-            clientgui.frame.getLocation().x + clientgui.frame.getSize().width / 2 - getSize().width / 2,
-            clientgui.frame.getLocation().y + clientgui.frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(clientgui.frame.getLocation().x
+                + clientgui.frame.getSize().width / 2 - getSize().width / 2,
+                clientgui.frame.getLocation().y
+                        + clientgui.frame.getSize().height / 2
+                        - getSize().height / 2);
     }
 
     private void setupButtons() {
@@ -206,11 +215,11 @@ public class RandomSkillDialog extends JDialog implements ActionListener, ItemLi
     }
 
     public void update() {
-      
+
     }
-    
+
     private void updatePlayerChoice() {
-        String lastChoice = (String)chPlayer.getSelectedItem();
+        String lastChoice = (String) chPlayer.getSelectedItem();
         String clientName = clientgui.getClient().getName();
         chPlayer.removeAllItems();
         chPlayer.setEnabled(true);
@@ -223,19 +232,21 @@ public class RandomSkillDialog extends JDialog implements ActionListener, ItemLi
             chPlayer.setEnabled(false);
         }
         chPlayer.setSelectedItem(lastChoice);
-        if (chPlayer.getSelectedIndex()<0) chPlayer.setSelectedIndex(0);
+        if (chPlayer.getSelectedIndex() < 0)
+            chPlayer.setSelectedIndex(0);
     }
 
     public void setVisible(boolean show) {
-        if(show) {
+        if (show) {
             updatePlayerChoice();
         }
         super.setVisible(show);
     }
-    
+
     public void actionPerformed(java.awt.event.ActionEvent ev) {
-        if(ev.getSource() == butOkay) {
-            //go through all of the units for this player and assign random skill levels
+        if (ev.getSource() == butOkay) {
+            // go through all of the units for this player and assign random
+            // skill levels
             Client c = null;
             if (chPlayer.getSelectedIndex() > 0) {
                 String name = (String) chPlayer.getSelectedItem();
@@ -244,12 +255,15 @@ public class RandomSkillDialog extends JDialog implements ActionListener, ItemLi
             if (c == null) {
                 c = client;
             }
-            for (Enumeration<Entity> e = c.game.getEntities(); e.hasMoreElements();) {
+            for (Enumeration<Entity> e = c.game.getEntities(); e
+                    .hasMoreElements();) {
                 Entity ent = e.nextElement();
-                if(ent.getOwnerId() == c.getLocalPlayer().getId()) {
-                    int skills[] = Compute.getRandomSkills(chMethod.getSelectedIndex(), chType.getSelectedIndex(), chLevel.getSelectedIndex(), 
-                            ent instanceof Tank || ent instanceof VTOL);
-                    if(cForceClose.isSelected()) {
+                if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
+                    int skills[] = Compute.getRandomSkills(chMethod
+                            .getSelectedIndex(), chType.getSelectedIndex(),
+                            chLevel.getSelectedIndex(), ent instanceof Tank
+                                    || ent instanceof VTOL);
+                    if (cForceClose.isSelected()) {
                         skills[1] = skills[0] + 1;
                     }
                     ent.getCrew().setGunnery(skills[0]);
@@ -259,32 +273,34 @@ public class RandomSkillDialog extends JDialog implements ActionListener, ItemLi
                     ent.getCrew().setPiloting(skills[1]);
                     c.sendUpdateEntity(ent);
                 }
-            }        
+            }
             clientgui.chatlounge.refreshEntities();
-            //need to notify about customization
-            //not updating entities in server
+            // need to notify about customization
+            // not updating entities in server
             this.setVisible(false);
         }
         if (ev.getSource() == butCancel) {
             this.setVisible(false);
         }
     }
-    
+
     public void itemStateChanged(ItemEvent ie) {
         if (ie.getSource().equals(chMethod)) {
-            if(chMethod.getSelectedIndex() == Compute.METHOD_TW) {
+            if (chMethod.getSelectedIndex() == Compute.METHOD_TW) {
                 texDesc.setText(Messages.getString("RandomSkillDialog.descTW"));
             }
-            if(chMethod.getSelectedIndex() == Compute.METHOD_TAHARQA) {
-                texDesc.setText(Messages.getString("RandomSkillDialog.descTaharqa"));
+            if (chMethod.getSelectedIndex() == Compute.METHOD_TAHARQA) {
+                texDesc.setText(Messages
+                        .getString("RandomSkillDialog.descTaharqa"));
             }
-            if(chMethod.getSelectedIndex() == Compute.METHOD_CONSTANT) {
-                texDesc.setText(Messages.getString("RandomSkillDialog.descConstant"));
+            if (chMethod.getSelectedIndex() == Compute.METHOD_CONSTANT) {
+                texDesc.setText(Messages
+                        .getString("RandomSkillDialog.descConstant"));
             }
-            
+
         }
     }
-    
+
     public void setClient(Client client) {
         this.client = client;
     }

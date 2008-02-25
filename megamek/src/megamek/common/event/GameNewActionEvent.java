@@ -18,7 +18,7 @@ import megamek.common.actions.EntityAction;
 
 /**
  * Instances of this class are sent when new Action added to the game
- *
+ * 
  * @see GameListener
  */
 public class GameNewActionEvent extends GameEvent {
@@ -27,10 +27,11 @@ public class GameNewActionEvent extends GameEvent {
      * 
      */
     private static final long serialVersionUID = 928848699583079097L;
-    protected EntityAction action; 
+    protected EntityAction action;
 
     /**
      * Cunstruct new GameNewActionEvent
+     * 
      * @param source sender
      * @param action
      */

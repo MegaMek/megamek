@@ -20,8 +20,7 @@ import java.util.Enumeration;
 import java.util.Vector;
 
 /**
- * PMAreasGroup allows to group handle PicMap elements as single
- * entity.
+ * PMAreasGroup allows to group handle PicMap elements as single entity.
  */
 
 public class PMAreasGroup implements PMElement {
@@ -72,7 +71,8 @@ public class PMAreasGroup implements PMElement {
         Enumeration<PMElement> iter = gr.elements();
         while (iter.hasMoreElements()) {
             PMElement pme = iter.nextElement();
-            if (pme != null) pme.translate(x, y);
+            if (pme != null)
+                pme.translate(x, y);
         }
     }
 
@@ -112,7 +112,8 @@ public class PMAreasGroup implements PMElement {
         Enumeration<PMElement> iter = gr.elements();
         while (iter.hasMoreElements()) {
             PMElement pme = iter.nextElement();
-            if (pme != null) pme.drawInto(g);
+            if (pme != null)
+                pme.drawInto(g);
         }
     }
 

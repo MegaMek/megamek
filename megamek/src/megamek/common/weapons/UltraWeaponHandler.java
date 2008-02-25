@@ -31,9 +31,12 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class UltraWeaponHandler extends AmmoWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7551194199079004134L;
     int howManyShots;
 
     /**
@@ -135,11 +138,12 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
 
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2 && howManyShots == 2) {
-            r = new Report(); 
+            r = new Report();
             r.subject = subjectId;
             weapon.setJammed(true);
             if (wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {

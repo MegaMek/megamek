@@ -25,14 +25,15 @@ public class BLKFile {
 
     BuildingBlock dataFile;
 
-    public static final int     FUSION             = 0;
-    public static final int     ICE                = 1;
-    public static final int     XL                 = 2;
-    public static final int     XXL                = 3; // don't ask
-    public static final int     LIGHT              = 4; // don't ask
-    public static final int     COMPACT            = 5; // don't ask
+    public static final int FUSION = 0;
+    public static final int ICE = 1;
+    public static final int XL = 2;
+    public static final int XXL = 3; // don't ask
+    public static final int LIGHT = 4; // don't ask
+    public static final int COMPACT = 5; // don't ask
 
-    protected void loadEquipment(Entity t, String sName, int nLoc) throws EntityLoadingException {
+    protected void loadEquipment(Entity t, String sName, int nLoc)
+            throws EntityLoadingException {
         String[] saEquip = dataFile.getDataAsString(sName + " Equipment");
         if (saEquip == null)
             return;
@@ -49,20 +50,19 @@ public class BLKFile {
             for (int x = 0; x < saEquip.length; x++) {
                 String equipName = saEquip[x].trim();
                 EquipmentType etype = EquipmentType.get(equipName);
-    
+
                 if (etype == null) {
                     // try w/ prefix
                     etype = EquipmentType.get(prefix + equipName);
                 }
-    
+
                 if (etype != null) {
                     try {
                         t.addEquipment(etype, nLoc);
                     } catch (LocationFullException ex) {
                         throw new EntityLoadingException(ex.getMessage());
                     }
-                }
-                else if(equipName != "0"){
+                } else if (equipName != "0") {
                     t.addFailedEquipment(equipName);
                 }
             }
@@ -70,11 +70,12 @@ public class BLKFile {
     }
 
     public boolean isMine() {
-    
-        if (dataFile.exists("blockversion") ) return true;
-        
+
+        if (dataFile.exists("blockversion"))
+            return true;
+
         return false;
-        
+
     }
 
     static int translateEngineCode(int code) {

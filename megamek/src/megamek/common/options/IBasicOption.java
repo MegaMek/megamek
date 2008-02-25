@@ -14,23 +14,24 @@
 
 package megamek.common.options;
 
-
 /**
- * Basic option.
- * It's just <code>String</code> name - <code>Object</code> value pair 
+ * Basic option. It's just <code>String</code> name - <code>Object</code>
+ * value pair
  */
 public interface IBasicOption {
 
     /**
-     * Returns the option name  
-     * @return name of the option 
+     * Returns the option name
+     * 
+     * @return name of the option
      */
     public abstract String getName();
 
     /**
      * Returns the option value
+     * 
      * @return option value
      */
     public abstract Object getValue();
-    
+
 }

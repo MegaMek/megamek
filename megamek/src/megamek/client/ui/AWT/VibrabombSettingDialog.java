@@ -14,16 +14,22 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
-import java.awt.event.*;
-
+import java.awt.Button;
+import java.awt.Dialog;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * Ask for the setting for a vibrabomb.
  */
-public class VibrabombSettingDialog
-    extends Dialog implements ActionListener {
-    
+public class VibrabombSettingDialog extends Dialog implements ActionListener {
+
     /**
      * 
      */
@@ -44,34 +50,38 @@ public class VibrabombSettingDialog
 
         butOk.addActionListener(this);
 
-        Label labMessage = new Label(Messages.getString("VibrabombSettingDialog.selectSetting")); //$NON-NLS-1$
+        Label labMessage = new Label(Messages
+                .getString("VibrabombSettingDialog.selectSetting")); //$NON-NLS-1$
         setLayout(gridbag);
 
         c.fill = GridBagConstraints.VERTICAL;
         c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(labMessage, c);
         add(labMessage);
-        
+
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         gridbag.setConstraints(fldSetting, c);
         add(fldSetting);
-            
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.CENTER;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         gridbag.setConstraints(butOk, c);
         add(butOk);
 
         pack();
-        setLocation(p.getLocation().x + p.getSize().width/2 - getSize().width/2,
-                    p.getLocation().y + p.getSize().height/2 - getSize().height/2);
+        setLocation(p.getLocation().x + p.getSize().width / 2 - getSize().width
+                / 2, p.getLocation().y + p.getSize().height / 2
+                - getSize().height / 2);
     }
 
-    
     public int getSetting() {
         return setting;
     }
@@ -79,22 +89,28 @@ public class VibrabombSettingDialog
     public void actionPerformed(ActionEvent actionEvent) {
         if (actionEvent.getSource() == butOk) {
             String s = fldSetting.getText();
-                try {
+            try {
                 if (s != null && s.length() != 0) {
-                        setting = Integer.parseInt(s);
+                    setting = Integer.parseInt(s);
                 }
             } catch (NumberFormatException e) {
-                AlertDialog ad = new AlertDialog(frame,
-                                                Messages.getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
-                                                Messages.getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
+                AlertDialog ad = new AlertDialog(
+                        frame,
+                        Messages
+                                .getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
+                        Messages
+                                .getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
                 ad.setVisible(true);
                 return;
             }
-            
+
             if ((setting < 20) || (setting > 100)) {
-                AlertDialog ad = new AlertDialog(frame,
-                                                Messages.getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
-                                                Messages.getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
+                AlertDialog ad = new AlertDialog(
+                        frame,
+                        Messages
+                                .getString("VibrabombSettingDialog.alert.Title"), //$NON-NLS-1$
+                        Messages
+                                .getString("VibrabombSettingDialog.alert.Message")); //$NON-NLS-1$
                 ad.setVisible(true);
                 return;
             }

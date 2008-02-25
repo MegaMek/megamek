@@ -98,7 +98,8 @@ public class UnitOverview implements Displayable {
         }
 
         graph.setFont(FONT);
-        ArrayList<Entity> v = clientgui.getClient().game.getPlayerEntities(clientgui.getClient().getLocalPlayer());
+        ArrayList<Entity> v = clientgui.getClient().game
+                .getPlayerEntities(clientgui.getClient().getLocalPlayer());
         unitIds = new int[v.size()];
 
         scroll = v.size() > unitsPerPage;
@@ -117,11 +118,14 @@ public class UnitOverview implements Displayable {
 
         if (scroll) {
             graph.drawImage(pageUp, x, y, clientgui.bv);
-            graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING, clientgui.bv);
-            y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING + BUTTON_PADDING;
+            graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                    clientgui.bv);
+            y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
+                    + BUTTON_PADDING;
         }
 
-        for (int i = scrollOffset; i < v.size() && i < actUnitsPerPage + scrollOffset; i++) {
+        for (int i = scrollOffset; i < v.size()
+                && i < actUnitsPerPage + scrollOffset; i++) {
             Entity e = v.get(i);
             unitIds[i] = e.getId();
             String name = getIconName(e, fm);
@@ -135,7 +139,8 @@ public class UnitOverview implements Displayable {
             graph.setColor(getFrameColor(e));
             graph.drawRect(x, y, ICON_WIDTH, ICON_HEIGHT);
 
-            Entity se = clientgui == null ? null : clientgui.getClient().getEntity(clientgui.getSelectedEntityNum());
+            Entity se = clientgui == null ? null : clientgui.getClient()
+                    .getEntity(clientgui.getSelectedEntityNum());
             if (e == se) {
                 graph.drawRect(x - 1, y - 1, ICON_WIDTH + 2, ICON_HEIGHT + 2);
             }
@@ -147,7 +152,8 @@ public class UnitOverview implements Displayable {
             y -= PADDING;
             y += BUTTON_PADDING;
             graph.drawImage(scrollDown, x, y, clientgui.bv);
-            graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING, clientgui.bv);
+            graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                    clientgui.bv);
         }
 
     }
@@ -167,36 +173,29 @@ public class UnitOverview implements Displayable {
         int xOffset = size.width - DIST_SIDE - ICON_WIDTH;
         int yOffset = DIST_TOP;
 
-        if (x < xOffset ||
-                x > xOffset + ICON_WIDTH ||
-                y < yOffset ||
-                y > yOffset + (unitsPerPage * (ICON_HEIGHT + PADDING))) {
+        if (x < xOffset || x > xOffset + ICON_WIDTH || y < yOffset
+                || y > yOffset + (unitsPerPage * (ICON_HEIGHT + PADDING))) {
             return false;
         }
 
         if (scroll) {
-            if (y > yOffset &&
-                    y < yOffset + BUTTON_HEIGHT) {
+            if (y > yOffset && y < yOffset + BUTTON_HEIGHT) {
                 pageUp();
                 return true;
             }
             yOffset += BUTTON_HEIGHT + BUTTON_PADDING;
-            if (y > yOffset &&
-                    y < yOffset + BUTTON_HEIGHT) {
+            if (y > yOffset && y < yOffset + BUTTON_HEIGHT) {
                 scrollUp();
                 return true;
             }
             yOffset += BUTTON_HEIGHT + BUTTON_PADDING;
         }
 
-        for (int i = scrollOffset;
-             i < unitIds.length && i < actUnits + scrollOffset; i++) {
-            if (y > yOffset &&
-                    y < yOffset + ICON_HEIGHT) {
-                clientgui.bv.processBoardViewEvent
-                        (new BoardViewEvent(clientgui.bv,
-                                BoardViewEvent.SELECT_UNIT,
-                                unitIds[i]));
+        for (int i = scrollOffset; i < unitIds.length
+                && i < actUnits + scrollOffset; i++) {
+            if (y > yOffset && y < yOffset + ICON_HEIGHT) {
+                clientgui.bv.processBoardViewEvent(new BoardViewEvent(
+                        clientgui.bv, BoardViewEvent.SELECT_UNIT, unitIds[i]));
                 isHit = true;
                 return true;
             }
@@ -206,14 +205,12 @@ public class UnitOverview implements Displayable {
         if (scroll) {
             yOffset -= PADDING;
             yOffset += BUTTON_PADDING;
-            if (y > yOffset &&
-                    y < yOffset + BUTTON_HEIGHT) {
+            if (y > yOffset && y < yOffset + BUTTON_HEIGHT) {
                 scrollDown();
                 return true;
             }
             yOffset += BUTTON_HEIGHT + BUTTON_PADDING;
-            if (y > yOffset &&
-                    y < yOffset + BUTTON_HEIGHT) {
+            if (y > yOffset && y < yOffset + BUTTON_HEIGHT) {
                 pageDown();
                 return true;
             }
@@ -268,7 +265,8 @@ public class UnitOverview implements Displayable {
         }
         boolean mtHeat = false;
         int mHeat = 30;
-        if (entity.getGame() != null && entity.getGame().getOptions().booleanOption("maxtech_heat")) {
+        if (entity.getGame() != null
+                && entity.getGame().getOptions().booleanOption("maxtech_heat")) {
             mHeat = 50;
             mtHeat = true;
         }
@@ -280,14 +278,15 @@ public class UnitOverview implements Displayable {
         graph.fillRect(x + 51, y + 3, 2, 30);
         graph.setColor(Color.red);
         if (mtHeat) {
-            graph.fillRect(x + 51, y + 3 + (30 - (int) (heat * 0.6)), 2, (int) (heat * 0.6));
+            graph.fillRect(x + 51, y + 3 + (30 - (int) (heat * 0.6)), 2,
+                    (int) (heat * 0.6));
         } else {
             graph.fillRect(x + 51, y + 3 + (30 - heat), 2, heat);
         }
     }
 
     private void drawBars(Graphics graph, Entity entity, int x, int y) {
-        //Lets draw our armor and internal status bars
+        // Lets draw our armor and internal status bars
         int baseBarLength = 23;
         int barLength = 0;
         double percentRemaining = 0.00;
@@ -340,31 +339,41 @@ public class UnitOverview implements Displayable {
         g.drawString(s, x, y);
     }
 
-    private void drawConditionStrings(Graphics graph, Entity entity, int x, int y) {
+    private void drawConditionStrings(Graphics graph, Entity entity, int x,
+            int y) {
         // draw condition strings
         if (entity.isImmobile() && !entity.isProne()) {
             // draw "IMMOB"
             graph.setColor(Color.darkGray);
-            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 11, y + 29); //$NON-NLS-1$
+            graph.drawString(
+                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 29); //$NON-NLS-1$
             graph.setColor(Color.red);
-            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 10, y + 28); //$NON-NLS-1$
+            graph.drawString(
+                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 28); //$NON-NLS-1$
         } else if (!entity.isImmobile() && entity.isProne()) {
             // draw "PRONE"
             graph.setColor(Color.darkGray);
-            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 11, y + 29); //$NON-NLS-1$
+            graph.drawString(
+                    Messages.getString("UnitOverview.PRONE"), x + 11, y + 29); //$NON-NLS-1$
             graph.setColor(Color.yellow);
-            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 10, y + 28); //$NON-NLS-1$
+            graph.drawString(
+                    Messages.getString("UnitOverview.PRONE"), x + 10, y + 28); //$NON-NLS-1$
         } else if (entity.isImmobile() && entity.isProne()) {
             // draw "IMMOB" and "PRONE"
             graph.setColor(Color.darkGray);
-            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24); //$NON-NLS-1$
-            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 11, y + 34); //$NON-NLS-1$
+            graph.drawString(
+                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24); //$NON-NLS-1$
+            graph.drawString(
+                    Messages.getString("UnitOverview.PRONE"), x + 11, y + 34); //$NON-NLS-1$
             graph.setColor(Color.red);
-            graph.drawString(Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23); //$NON-NLS-1$
+            graph.drawString(
+                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23); //$NON-NLS-1$
             graph.setColor(Color.yellow);
-            graph.drawString(Messages.getString("UnitOverview.PRONE"), x + 10, y + 33); //$NON-NLS-1$
+            graph.drawString(
+                    Messages.getString("UnitOverview.PRONE"), x + 10, y + 33); //$NON-NLS-1$
         } else if (!entity.isDeployed()) {
-            int roundsLeft = entity.getDeployRound() - clientgui.getClient().game.getRoundCount();
+            int roundsLeft = entity.getDeployRound()
+                    - clientgui.getClient().game.getRoundCount();
             if (roundsLeft > 0) {
                 printLine(graph, x + 25, y + 28, Integer.toString(roundsLeft));
             }
@@ -432,9 +441,8 @@ public class UnitOverview implements Displayable {
                 iconName = v.elementAt(0);
             }
             return adjustString(iconName, metrics);
-        } else if (e instanceof Infantry ||
-                e instanceof Mech ||
-                e instanceof GunEmplacement) {
+        } else if (e instanceof Infantry || e instanceof Mech
+                || e instanceof GunEmplacement) {
             String iconName = e.getModel();
             return adjustString(iconName, metrics);
         }

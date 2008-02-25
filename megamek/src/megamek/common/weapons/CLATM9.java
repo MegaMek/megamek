@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class CLATM9 extends ATMWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = -3779719958622540629L;
+
+    /**
+     * 
+     */
     public CLATM9() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_CLAN_LEVEL_2;
         this.name = "ATM 9";
         this.setInternalName("CLATM9");

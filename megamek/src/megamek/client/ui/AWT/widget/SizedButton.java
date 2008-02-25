@@ -11,7 +11,7 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
- 
+
 package megamek.client.ui.AWT.widget;
 
 import java.awt.Button;
@@ -19,10 +19,10 @@ import java.awt.Dimension;
 import java.io.Serializable;
 
 /**
- * This class implements buttons that have a preferred size that is
- * different than the smallest size needed to show its contents.
- *
- * @author      James Damour
+ * This class implements buttons that have a preferred size that is different
+ * than the smallest size needed to show its contents.
+ * 
+ * @author James Damour
  */
 public class SizedButton extends Button implements Serializable {
 
@@ -30,7 +30,8 @@ public class SizedButton extends Button implements Serializable {
      * 
      */
     private static final long serialVersionUID = -3034809147641614294L;
-    /** The preferred size of this button.
+    /**
+     * The preferred size of this button.
      */
     private Dimension prefSize = new Dimension();
 
@@ -39,102 +40,101 @@ public class SizedButton extends Button implements Serializable {
      */
     public SizedButton() {
         super();
-        setPreferredSize( super.getPreferredSize() );
+        setPreferredSize(super.getPreferredSize());
     }
 
     /**
-     * Construct a button with the given name that can have its
-     * preferred size set.
-     *
-     * @param   label - the <code>String</code> label for the button.
+     * Construct a button with the given name that can have its preferred size
+     * set.
+     * 
+     * @param label - the <code>String</code> label for the button.
      */
-    public SizedButton( String label ) {
-        super( label );
-        setPreferredSize( super.getPreferredSize() );
+    public SizedButton(String label) {
+        super(label);
+        setPreferredSize(super.getPreferredSize());
     }
 
     /**
      * Construct a button with the given preferred size.
-     *
-     * @param   size - the preferred <code>Dimension</code> for this button.
-     *          The input parameter can be safely reused after this call.
+     * 
+     * @param size - the preferred <code>Dimension</code> for this button. The
+     *            input parameter can be safely reused after this call.
      */
-    public SizedButton( Dimension size ) {
+    public SizedButton(Dimension size) {
         super();
-        setPreferredSize( size );
+        setPreferredSize(size);
     }
 
     /**
      * Construct a button with the given label and preferred size.
-     *
-     * @param   label - the <code>String</code> label for the button.
-     * @param   size - the preferred <code>Dimension</code> for this button.
-     *          The input parameter can be safely reused after this call.
+     * 
+     * @param label - the <code>String</code> label for the button.
+     * @param size - the preferred <code>Dimension</code> for this button. The
+     *            input parameter can be safely reused after this call.
      */
-    public SizedButton( String label, Dimension size ) {
-        super( label );
-        setPreferredSize( size );
+    public SizedButton(String label, Dimension size) {
+        super(label);
+        setPreferredSize(size);
     }
 
     /**
-     * Get the preferred size of this button.
-     * <p/>
-     * Overrides <code>java.awt.Component#getPreferredSize().
+     * Get the preferred size of this button. <p/> Overrides
+     * <code>java.awt.Component#getPreferredSize().
      *
      * @return  the <code>Dimension</code> preferred by this button.
      *          This object can be safely reused after this call.
      */
     public Dimension getPreferredSize() {
-        return new Dimension( prefSize );
+        return new Dimension(prefSize);
     }
 
-//      /**
-//       * Get the preferred size of this button.
-//       * <p/>
-//       * Overrides <code>java.awt.Component#preferredSize().
-//       *
-//       * @return  the <code>Dimension</code> preferred by this button.
-//       *          This object can be safely reused after this call.
-//       * @deprecated
-//       */
-//      public Dimension preferredSize() {
-//          return new Dimension( prefSize );
-//      }
+    // /**
+    // * Get the preferred size of this button.
+    // * <p/>
+    // * Overrides <code>java.awt.Component#preferredSize().
+    // *
+    // * @return the <code>Dimension</code> preferred by this button.
+    // * This object can be safely reused after this call.
+    // * @deprecated
+    // */
+    // public Dimension preferredSize() {
+    // return new Dimension( prefSize );
+    // }
 
     /**
-     * Set the preferred size of this button.  If the requested value is
-     * less than the minimum size of the button in either dimension, the
-     * minimum in that dimension will be used instead.
-     *
-     * @param   size - the <code>Dimension</code> preferred by this button.
-     *          This object can be safely reused after this call.
+     * Set the preferred size of this button. If the requested value is less
+     * than the minimum size of the button in either dimension, the minimum in
+     * that dimension will be used instead.
+     * 
+     * @param size - the <code>Dimension</code> preferred by this button. This
+     *            object can be safely reused after this call.
      */
-    public void setPreferredSize( Dimension size ) {
-        setPreferredSize( size.width, size.height );
+    public void setPreferredSize(Dimension size) {
+        setPreferredSize(size.width, size.height);
     }
 
     /**
-     * Set the preferred size of this button.  If the requested value is
-     * less than the minimum size of the button in either dimension, the
-     * minimum in that dimension will be used instead.
-     *
-     * @param   width - the <code>int</code> width preferred by this button.
-     * @param   height - the <code>int</code> height preferred by this button.
+     * Set the preferred size of this button. If the requested value is less
+     * than the minimum size of the button in either dimension, the minimum in
+     * that dimension will be used instead.
+     * 
+     * @param width - the <code>int</code> width preferred by this button.
+     * @param height - the <code>int</code> height preferred by this button.
      */
-    public void setPreferredSize( int width, int height ) {
+    public void setPreferredSize(int width, int height) {
 
         // Get the minimum size of this button.
         Dimension minimum = getMinimumSize();
 
         // Use the greater of the two widths.
-        if ( minimum.width > width ) {
+        if (minimum.width > width) {
             prefSize.width = minimum.width;
         } else {
             prefSize.width = width;
         }
 
         // Use the greater of the two heights.
-        if ( minimum.height > height ) {
+        if (minimum.height > height) {
             prefSize.height = minimum.height;
         } else {
             prefSize.height = height;

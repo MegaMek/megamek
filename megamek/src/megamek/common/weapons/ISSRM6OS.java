@@ -17,21 +17,25 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISSRM6OS extends SRMWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = -1926715836221080572L;
+
+    /**
+     * 
+     */
     public ISSRM6OS() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;
         this.name = "SRM 6 (OS)";
         this.setInternalName("ISSRM6OS");
-        this.addLookupName("ISSRM6 (OS)"); //mtf
-        this.addLookupName("IS SRM 6 (OS)");  //tdb
-        this.addLookupName("OS SRM-6");  //mep
+        this.addLookupName("ISSRM6 (OS)"); // mtf
+        this.addLookupName("IS SRM 6 (OS)"); // tdb
+        this.addLookupName("OS SRM-6"); // mep
         this.heat = 4;
         this.rackSize = 6;
         this.shortRange = 3;

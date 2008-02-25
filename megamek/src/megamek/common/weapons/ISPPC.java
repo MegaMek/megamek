@@ -25,9 +25,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISPPC extends PPCWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5775665622863346537L;
+
     /**
      * 
      */
@@ -49,13 +53,14 @@ public class ISPPC extends PPCWeapon {
         this.waterMediumRange = 7;
         this.waterLongRange = 10;
         this.waterExtremeRange = 14;
-        this.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
+        this.setModes(new String[] { "Field Inhibitor ON",
+                "Field Inhibitor OFF" });
         this.tonnage = 7.0f;
         this.criticals = 3;
         this.bv = 176;
         this.cost = 200000;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -67,5 +72,5 @@ public class ISPPC extends PPCWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new ISPPCHandler(toHit, waa, game, server);
     }
-    
+
 }

@@ -21,7 +21,6 @@ import megamek.common.AmmoType;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public abstract class LaserWeapon extends EnergyWeapon {
     public LaserWeapon() {

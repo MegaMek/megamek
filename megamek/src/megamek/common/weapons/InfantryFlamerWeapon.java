@@ -25,10 +25,14 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class InfantryFlamerWeapon extends InfantryWeapon {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5741978934100309295L;
+
     public InfantryFlamerWeapon() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;
@@ -39,13 +43,13 @@ public class InfantryFlamerWeapon extends InfantryWeapon {
         this.mediumRange = 2;
         this.longRange = 3;
         this.extremeRange = 3;
-        //Flamer (man-portable), TM p. 319
+        // Flamer (man-portable), TM p. 319
         this.bv = 0.36;
         this.flags |= F_DIRECT_FIRE | F_FLAMER | F_ENERGY;
         String modes[] = { "Damage", "Heat" };
         this.setModes(modes);
     }
-    
+
     /*
      * (non-Javadoc)
      * 

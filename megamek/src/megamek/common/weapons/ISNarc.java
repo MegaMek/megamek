@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISNarc extends NarcWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = 5562345335764812479L;
+
+    /**
+     * 
+     */
     public ISNarc() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
         this.name = "Narc";
         this.setInternalName("ISNarcBeacon");

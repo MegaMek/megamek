@@ -15,25 +15,23 @@
 package megamek.client.event;
 
 /**
- * Classes which implement this interface provide methods
- * that deal with the events that are generated when the
- * MechDisplay is changed.
+ * Classes which implement this interface provide methods that deal with the
+ * events that are generated when the MechDisplay is changed.
  * <p>
- * After creating an instance of a class that implements
- * this interface it can be added to a Board using the
- * <code>addMechDisplayListener</code> method and removed using
- * the <code>removeMechDisplayListener</code> method. 
- * When MechDisplay is changed the appropriate method will be invoked.
+ * After creating an instance of a class that implements this interface it can
+ * be added to a Board using the <code>addMechDisplayListener</code> method
+ * and removed using the <code>removeMechDisplayListener</code> method. When
+ * MechDisplay is changed the appropriate method will be invoked.
  * </p>
- *
+ * 
  * @see MechDisplayListenerAdapter
  * @see MechDisplayEvent
  */
-public interface MechDisplayListener extends java.util.EventListener
-{
-    
+public interface MechDisplayListener extends java.util.EventListener {
+
     /**
      * Sent when user selects a weapon in the weapon panel.
+     * 
      * @param b an event
      */
     public void WeaponSelected(MechDisplayEvent b);

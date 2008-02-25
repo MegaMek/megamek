@@ -15,13 +15,13 @@
 package megamek.common.net;
 
 /**
- * interface for connections between client and server
- *  refactored from the original Connection class which was moved to
- *  AbstractConnection
+ * interface for connections between client and server refactored from the
+ * original Connection class which was moved to AbstractConnection
  */
 public interface IConnection {
     /**
      * Opens the connection
+     * 
      * @return <code>true</code> on success, <code>false</code> otherwise
      */
     public boolean open();
@@ -33,75 +33,79 @@ public interface IConnection {
 
     /**
      * Returns the connection ID
+     * 
      * @return the connection ID
      */
     public int getId();
 
     /**
      * Sets the connection ID
-     * @param id new connection ID
-     * Be careful with this...
-     *  used by server only. 
-     *  cannot be moved to constructor,so should be moved to a 
-     *  separate interface
+     * 
+     * @param id new connection ID Be careful with this... used by server only.
+     *            cannot be moved to constructor,so should be moved to a
+     *            separate interface
      */
     public void setId(int id);
-    
+
     /**
-     *  @return what?
+     * @return what?
      */
     public String getInetAddress();
 
     /**
-     *  call this to update the connection state. should be called a few
-     *  times per second normally.
-     *  This method should not block for too long. Instead it should 
-     *  return 0 and hope to be called asap again. 
-     *
-     *  @return the amount of milliseconds it is approximately ok not 
-     *          to call this method. Must return >=0
+     * call this to update the connection state. should be called a few times
+     * per second normally. This method should not block for too long. Instead
+     * it should return 0 and hope to be called asap again.
+     * 
+     * @return the amount of milliseconds it is approximately ok not to call
+     *         this method. Must return >=0
      */
     public long update();
+
     /**
-     *  sibling of the update() method. will not read anything, will 
-     *  just flush the pending packets from the queue
+     * sibling of the update() method. will not read anything, will just flush
+     * the pending packets from the queue
      */
     public void flush();
+
     /**
      * Adds a packet to the send queue to be send on a seperate thread.
      */
-    public void send(Packet packet); 
+    public void send(Packet packet);
 
     /**
      * Returns <code>true</code> if there are (send)pending packets
+     * 
      * @return <code>true</code> if there are pending packets
      */
     public boolean hasPending();
 
     /**
      * Returns a very approximate count of how many bytes were sent
+     * 
      * @return a very approximate count of how many bytes were sent
      */
-    public  long bytesSent();
+    public long bytesSent();
 
     /**
      * Returns a very approximate count of how many bytes were received
+     * 
      * @return a very approximate count of how many bytes were received
      */
     public long bytesReceived();
 
     /**
-     * Adds the specified connection listener to receive
-     * connection events from connection.
-     *
+     * Adds the specified connection listener to receive connection events from
+     * connection.
+     * 
      * @param listener the connection listener.
      */
     public void addConnectionListener(ConnectionListener listener);
-    
+
     /**
      * Removes the specified connection listener.
-     *
+     * 
      * @param listener the connection listener.
      */
-    public void removeConnectionListener(ConnectionListener listener);    
+    public void removeConnectionListener(ConnectionListener listener);
 }

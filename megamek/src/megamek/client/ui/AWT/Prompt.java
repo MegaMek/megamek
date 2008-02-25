@@ -40,7 +40,8 @@ public class Prompt extends Dialog implements ActionListener {
     private Label lblText = new Label();
     private boolean ok = false;
 
-    public Prompt(Frame parent, String title, String question, String default_text, int size) {
+    public Prompt(Frame parent, String title, String question,
+            String default_text, int size) {
         super(parent, title, true);
         super.setResizable(false);
 
@@ -62,11 +63,11 @@ public class Prompt extends Dialog implements ActionListener {
         p.add(butCancel);
         add(p, BorderLayout.SOUTH);
         pack();
-        setLocation(
-            parent.getLocation().x + parent.getSize().width / 2 - getSize().width / 2,
-            parent.getLocation().y + parent.getSize().height / 2 - getSize().height / 2);
+        setLocation(parent.getLocation().x + parent.getSize().width / 2
+                - getSize().width / 2, parent.getLocation().y
+                + parent.getSize().height / 2 - getSize().height / 2);
     }
-    
+
     public boolean showDialog() {
         setVisible(true);
         return ok;

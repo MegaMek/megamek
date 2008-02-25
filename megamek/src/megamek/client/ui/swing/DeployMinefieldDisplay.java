@@ -42,10 +42,9 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
-public class DeployMinefieldDisplay
-        extends StatusBarPhaseDisplay
-        implements BoardViewListener, ActionListener, DoneButtoned,
-        KeyListener, GameListener, Distractable {
+public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
+        BoardViewListener, ActionListener, DoneButtoned, KeyListener,
+        GameListener, Distractable {
     private static final long serialVersionUID = -1243277953037374936L;
 
     // Distraction implementation.
@@ -65,10 +64,10 @@ public class DeployMinefieldDisplay
 
     private JButton butC;
     private JButton butM;
-//     private JButton            butSpace;
-//     private JButton            butSpace1;
-//     private JButton            butSpace2;
-//     private JButton            butSpace3;
+    // private JButton butSpace;
+    // private JButton butSpace1;
+    // private JButton butSpace2;
+    // private JButton butSpace3;
     private JButton butV;
     private JButton butUnload;
     private JButton butDone;
@@ -82,36 +81,43 @@ public class DeployMinefieldDisplay
     private Vector<Minefield> deployedMinefields = new Vector<Minefield>();
 
     /**
-     * Creates and lays out a new deployment phase display
-     * for the specified client.
+     * Creates and lays out a new deployment phase display for the specified
+     * client.
      */
     public DeployMinefieldDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
         client = clientgui.getClient();
         client.game.addGameListener(this);
 
-        //Listener is added in the ClientGUI#switchPanel
-        //clientgui.getBoardView().addBoardViewListener(this);
+        // Listener is added in the ClientGUI#switchPanel
+        // clientgui.getBoardView().addBoardViewListener(this);
 
-        setupStatusBar(Messages.getString("DeployMinefieldDisplay.waitingForDeployMinefieldPhase")); //$NON-NLS-1$
+        setupStatusBar(Messages
+                .getString("DeployMinefieldDisplay.waitingForDeployMinefieldPhase")); //$NON-NLS-1$
 
         p = client.getLocalPlayer();
 
-        butM = new JButton(Messages.getString("DeploymentDisplay.buttonMinefield", new Object[]{new Integer(p.getNbrMFConventional())})); //$NON-NLS-1$
+        butM = new JButton(
+                Messages
+                        .getString(
+                                "DeploymentDisplay.buttonMinefield", new Object[] { new Integer(p.getNbrMFConventional()) })); //$NON-NLS-1$
         butM.addActionListener(this);
         butM.setActionCommand(DEPLOY_MINE_CONV);
         butM.setEnabled(false);
 
-//         butSpace = new JButton(".");
-//         butSpace.setEnabled(false);
-//         butSpace1 = new JButton(".");
-//         butSpace1.setEnabled(false);
-//         butSpace2 = new JButton(".");
-//         butSpace2.setEnabled(false);
-//         butSpace3 = new JButton(".");
-//         butSpace3.setEnabled(false);
+        // butSpace = new JButton(".");
+        // butSpace.setEnabled(false);
+        // butSpace1 = new JButton(".");
+        // butSpace1.setEnabled(false);
+        // butSpace2 = new JButton(".");
+        // butSpace2.setEnabled(false);
+        // butSpace3 = new JButton(".");
+        // butSpace3.setEnabled(false);
 
-        butC = new JButton(Messages.getString("DeploymentDisplay.buttonCommand", new Object[]{new Integer(p.getNbrMFCommand())})); //$NON-NLS-1$
+        butC = new JButton(
+                Messages
+                        .getString(
+                                "DeploymentDisplay.buttonCommand", new Object[] { new Integer(p.getNbrMFCommand()) })); //$NON-NLS-1$
         butC.addActionListener(this);
         butC.setActionCommand(DEPLOY_MINE_COM);
         butC.setEnabled(false);
@@ -120,7 +126,10 @@ public class DeployMinefieldDisplay
         butUnload.addActionListener(this);
         butUnload.setEnabled(false);
 
-        butV = new JButton(Messages.getString("DeploymentDisplay.buttonVibrabomb", new Object[]{new Integer(p.getNbrMFVibra())})); //$NON-NLS-1$
+        butV = new JButton(
+                Messages
+                        .getString(
+                                "DeploymentDisplay.buttonVibrabomb", new Object[] { new Integer(p.getNbrMFVibra()) })); //$NON-NLS-1$
         butV.addActionListener(this);
         butV.setActionCommand(DEPLOY_MINE_VIBRA);
         butV.setEnabled(false);
@@ -135,11 +144,11 @@ public class DeployMinefieldDisplay
         panButtons.add(butM);
         panButtons.add(butC);
         panButtons.add(butV);
-//         panButtons.add(butSpace);
-//         panButtons.add(butSpace1);
-//         panButtons.add(butSpace2);
-//         panButtons.add(butSpace3);
-//         panButtons.add(butDone);
+        // panButtons.add(butSpace);
+        // panButtons.add(butSpace1);
+        // panButtons.add(butSpace2);
+        // panButtons.add(butSpace3);
+        // panButtons.add(butDone);
 
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
@@ -165,7 +174,8 @@ public class DeployMinefieldDisplay
         addKeyListener(this);
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag,
+            GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -175,7 +185,7 @@ public class DeployMinefieldDisplay
      * Enables relevant buttons and sets up for your turn.
      */
     private void beginMyTurn() {
-        p = client.getLocalPlayer();//necessary to make it work after resets.
+        p = client.getLocalPlayer();// necessary to make it work after resets.
         setConventionalEnabled(p.getNbrMFConventional());
         setCommandEnabled(p.getNbrMFCommand());
         setVibrabombEnabled(p.getNbrMFVibra());
@@ -250,11 +260,13 @@ public class DeployMinefieldDisplay
                 mf = Minefield.createCommandDetonatedMF(coords, p.getId());
                 p.setNbrMFCommand(p.getNbrMFCommand() - 1);
             } else if (deployV) {
-                VibrabombSettingDialog vsd = new VibrabombSettingDialog(clientgui.frame);
+                VibrabombSettingDialog vsd = new VibrabombSettingDialog(
+                        clientgui.frame);
                 vsd.setVisible(true);
 
                 // Hack warning...
-                mf = Minefield.createVibrabombMF(coords, p.getId(), vsd.getSetting());
+                mf = Minefield.createVibrabombMF(coords, p.getId(), vsd
+                        .getSetting());
                 p.setNbrMFVibra(p.getNbrMFVibra() - 1);
             } else {
                 return;
@@ -264,9 +276,8 @@ public class DeployMinefieldDisplay
             clientgui.bv.repaint();
         }
 
-        if (p.getNbrMFConventional() == 0 &&
-                p.getNbrMFCommand() == 0 &&
-                p.getNbrMFVibra() == 0) {
+        if (p.getNbrMFConventional() == 0 && p.getNbrMFCommand() == 0
+                && p.getNbrMFVibra() == 0) {
             butDone.setEnabled(true);
         }
 
@@ -299,12 +310,13 @@ public class DeployMinefieldDisplay
         if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
             return;
         }
-        
+
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn()
+                || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
-        
+
         // check for a deployment
         clientgui.getBoardView().select(b.getCoords());
         deployMinefield(b.getCoords());
@@ -324,9 +336,12 @@ public class DeployMinefieldDisplay
 
         if (client.isMyTurn()) {
             beginMyTurn();
-            setStatusBarText(Messages.getString("DeployMinefieldDisplay.its_your_turn")); //$NON-NLS-1$
+            setStatusBarText(Messages
+                    .getString("DeployMinefieldDisplay.its_your_turn")); //$NON-NLS-1$
         } else {
-            setStatusBarText(Messages.getString("DeployMinefieldDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
+            setStatusBarText(Messages
+                    .getString(
+                            "DeployMinefieldDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
         }
     }
 
@@ -337,12 +352,13 @@ public class DeployMinefieldDisplay
             return;
         }
 
-        if (client.isMyTurn() &&
-                client.game.getPhase() != IGame.PHASE_DEPLOY_MINEFIELDS) {
+        if (client.isMyTurn()
+                && client.game.getPhase() != IGame.PHASE_DEPLOY_MINEFIELDS) {
             endMyTurn();
         }
         if (client.game.getPhase() == IGame.PHASE_DEPLOY_MINEFIELDS) {
-            setStatusBarText(Messages.getString("DeployMinefieldDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
+            setStatusBarText(Messages
+                    .getString("DeployMinefieldDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         }
     }
 
@@ -399,26 +415,35 @@ public class DeployMinefieldDisplay
     }
 
     private void setConventionalEnabled(int nbr) {
-        butM.setText(Messages.getString("DeploymentDisplay.buttonMinefield", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
+        butM
+                .setText(Messages
+                        .getString(
+                                "DeploymentDisplay.buttonMinefield", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butM.setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployConventionalEnabled(nbr);
     }
 
     private void setCommandEnabled(int nbr) {
-        butC.setText(Messages.getString("DeploymentDisplay.buttonCommand", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
+        butC
+                .setText(Messages
+                        .getString(
+                                "DeploymentDisplay.buttonCommand", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butC.setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployCommandEnabled(nbr);
     }
 
     private void setVibrabombEnabled(int nbr) {
-        butV.setText(Messages.getString("DeploymentDisplay.buttonVibrabomb", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
+        butV
+                .setText(Messages
+                        .getString(
+                                "DeploymentDisplay.buttonVibrabomb", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butV.setEnabled(nbr > 0);
         clientgui.getMenuBar().setDeployVibrabombEnabled(nbr);
     }
 
     /**
      * Determine if the listener is currently distracted.
-     *
+     * 
      * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
@@ -427,11 +452,11 @@ public class DeployMinefieldDisplay
 
     /**
      * Specify if the listener should be distracted.
-     *
-     * @param distracted <code>true</code> if the listener should ignore events
-     *                   <code>false</code> if the listener should pay attention again.
-     *                   Events that occured while the listener was distracted NOT
-     *                   going to be processed.
+     * 
+     * @param distracted <code>true</code> if the listener should ignore
+     *            events <code>false</code> if the listener should pay
+     *            attention again. Events that occured while the listener was
+     *            distracted NOT going to be processed.
      */
     public void setIgnoringEvents(boolean distracted) {
         this.distracted.setIgnoringEvents(distracted);
@@ -439,7 +464,7 @@ public class DeployMinefieldDisplay
 
     /**
      * Retrieve the "Done" button of this object.
-     *
+     * 
      * @return the <code>javax.swing.JButton</code> that activates this
      *         object's "Done" action.
      */

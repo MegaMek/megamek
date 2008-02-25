@@ -14,20 +14,24 @@ public class MechSlotLabel extends PicMap {
      */
     private static final long serialVersionUID = 5601930871313914270L;
 
-    //Margins - used to draw 3D box
+    // Margins - used to draw 3D box
     private static final int MARGIN_WIDTH = 2;
 
     private BackGroundDrawer bgd = new BackGroundDrawer(null);
 
-    public MechSlotLabel(String s, FontMetrics fm, Image im, Color textColor, Color bgColor) {
+    public MechSlotLabel(String s, FontMetrics fm, Image im, Color textColor,
+            Color bgColor) {
         super();
         PMPicArea pa = new PMPicArea(im);
         pa.setCursor(Cursor.getDefaultCursor());
         addElement(pa);
         PMSimpleLabel l = new PMSimpleLabel(s, fm, textColor);
         addElement(l);
-        l.moveTo(pa.getBounds().width + 5, (pa.getBounds().height - l.getBounds().height) / 2 + l.getSize().height - l.getDescent());
-        setContentMargins(MARGIN_WIDTH, MARGIN_WIDTH, MARGIN_WIDTH, MARGIN_WIDTH);
+        l.moveTo(pa.getBounds().width + 5, (pa.getBounds().height - l
+                .getBounds().height)
+                / 2 + l.getSize().height - l.getDescent());
+        setContentMargins(MARGIN_WIDTH, MARGIN_WIDTH, MARGIN_WIDTH,
+                MARGIN_WIDTH);
         setBackground(bgColor);
         addBgDrawer(bgd);
         drawBGImage();
@@ -38,7 +42,8 @@ public class MechSlotLabel extends PicMap {
         int w = d.width;
         int h = d.height;
         Image BGImage = createImage(w, h);
-        if (BGImage == null) return;
+        if (BGImage == null)
+            return;
         Graphics g = BGImage.getGraphics();
         g.setColor(Color.green.darker().darker());
         g.fillRect(0, 0, w, h);

@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLFlamer extends FlamerWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8782512971175525221L;
+
     /**
      * 
      */

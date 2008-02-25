@@ -26,35 +26,42 @@ import megamek.server.Server;
 
 public class PlasmaMFUKWeaponHandler extends EnergyWeaponHandler {
     /**
+     * 
+     */
+    private static final long serialVersionUID = -6816799343788643259L;
+
+    /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public PlasmaMFUKWeaponHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public PlasmaMFUKWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity, java.util.Vector, megamek.common.Building, int, int, int, int)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleEntityDamage(megamek.common.Entity,
+     *      java.util.Vector, megamek.common.Building, int, int, int, int)
      */
     protected void handleEntityDamage(Entity entityTarget,
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
         if (entityTarget instanceof Mech) {
             if (!bSalvo) {
-                //hits
+                // hits
                 r = new Report(3390);
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);
             }
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, 0, bldgAbsorbs);
-            
-            if ( missed )
+
+            if (missed)
                 return;
-            
+
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);

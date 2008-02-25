@@ -17,7 +17,6 @@
  */
 package megamek.common.weapons;
 
-
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -33,9 +32,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class MicroBombHandler extends AmmoWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2995118961278208244L;
+
     /**
      * @param toHit
      * @param waa
@@ -45,37 +48,40 @@ public class MicroBombHandler extends AmmoWeaponHandler {
             Server s) {
         super(toHit, waa, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector, megamek.common.Entity, boolean)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#specialResolution(java.util.Vector,
+     *      megamek.common.Entity, boolean)
      */
     protected boolean specialResolution(Vector<Report> vPhaseReport,
             Entity entityTarget, boolean bMissed) {
         Coords coords = target.getPosition();
         if (!bMissed) {
-                r = new Report(3190);
+            r = new Report(3190);
+            r.subject = subjectId;
+            r.add(coords.getBoardNum());
+            vPhaseReport.add(r);
+        } else {
+            coords = Compute.scatter(coords, 1);
+            if (game.getBoard().contains(coords)) {
+                r = new Report(3195);
                 r.subject = subjectId;
                 r.add(coords.getBoardNum());
                 vPhaseReport.add(r);
-        } else {
-                coords = Compute.scatter(coords, 1);
-                if (game.getBoard().contains(coords)) {
-                        r = new Report(3195);
-                        r.subject = subjectId;
-                        r.add(coords.getBoardNum());
-                        vPhaseReport.add(r);
-                } else {
-                        r = new Report(3200);
-                        r.subject = subjectId;
-                        vPhaseReport.add(r);
-                        return !bMissed;
-                }
+            } else {
+                r = new Report(3200);
+                r.subject = subjectId;
+                vPhaseReport.add(r);
+                return !bMissed;
+            }
         }
         Infantry ba = (Infantry) ae;
         int ratedDamage = ba.getShootingStrength();
-        server.artilleryDamageArea(coords, ae.getPosition(), (AmmoType)ammo.getType(),
-                        subjectId, ae, ratedDamage * 2, ratedDamage, false, 0);
+        server.artilleryDamageArea(coords, ae.getPosition(), (AmmoType) ammo
+                .getType(), subjectId, ae, ratedDamage * 2, ratedDamage, false,
+                0);
         return true;
     }
 }

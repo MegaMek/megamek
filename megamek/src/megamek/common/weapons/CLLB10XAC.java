@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLLB10XAC extends LBXACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3315625878431308444L;
+
     /**
      * 
      */

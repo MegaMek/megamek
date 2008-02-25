@@ -34,9 +34,12 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class RapidfireACWeaponHandler extends UltraWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1770392652874842106L;
     int howManyShots;
 
     /**
@@ -94,7 +97,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
         // conventional infantry gets hit in one lump
-        // BAs can't mount ACs        
+        // BAs can't mount ACs
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             return 1;
         }
@@ -138,6 +141,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
 
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
@@ -170,8 +174,9 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
                 }
                 r.choose(false);
                 vPhaseReport.addElement(r);
-                vPhaseReport.addAll(server.damageEntity(ae, new HitData(wlocation),
-                        wtype.getDamage(), false, DamageType.NONE, true));
+                vPhaseReport.addAll(server.damageEntity(ae, new HitData(
+                        wlocation), wtype.getDamage(), false, DamageType.NONE,
+                        true));
             }
             return true;
         }

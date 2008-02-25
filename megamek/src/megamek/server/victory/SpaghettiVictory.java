@@ -23,6 +23,10 @@ import megamek.common.IGame;
  * infrastructure
  */
 public class SpaghettiVictory implements Victory, Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -7901479121287053964L;
     protected Victory force = new ForceVictory();
     protected Victory lastMan = new LastManStandingVictory();
     protected Victory check = new CheckVictory(new NoodleVictory());

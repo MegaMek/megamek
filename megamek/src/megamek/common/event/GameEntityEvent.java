@@ -17,9 +17,9 @@ package megamek.common.event;
 import megamek.common.Entity;
 
 /**
- * Instances of descendant classes are sent as a result of Game changes
- * related to entities such as addind/removing/changing
- *
+ * Instances of descendant classes are sent as a result of Game changes related
+ * to entities such as addind/removing/changing
+ * 
  * @see GameEntityChangeEvent
  * @see GameEntityNewEvent
  * @see GameListener
@@ -30,12 +30,13 @@ public abstract class GameEntityEvent extends GameEvent {
 
     /**
      * Constructs new GameEntityEvent
+     * 
      * @param source
      * @param entity
      * @param type
      */
     public GameEntityEvent(Object source, Entity entity, int type) {
-        super(source,type);
+        super(source, type);
         this.entity = entity;
     }
 

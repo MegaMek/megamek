@@ -18,26 +18,24 @@ import megamek.common.Entity;
 import megamek.common.Mounted;
 
 /**
- * Instances of this class are sent as a result of changes 
- * in MechDisplay
- *
+ * Instances of this class are sent as a result of changes in MechDisplay
+ * 
  * @see MechDisplayListener
  */
-public class MechDisplayEvent extends java.util.EventObject
-{
+public class MechDisplayEvent extends java.util.EventObject {
     /**
      * 
      */
     private static final long serialVersionUID = -932419778029797238L;
 
     public static final int WEAPON_SELECTED = 0;
-    
+
     private int entityId = megamek.common.Entity.NONE;
     private int weaponId = megamek.common.Entity.NONE;
     private Entity entity = null;
     private Mounted equip = null;
     private int type;
-    
+
     public MechDisplayEvent(Object source, Entity entity, Mounted weapon) {
         super(source);
         this.entity = entity;
@@ -51,25 +49,25 @@ public class MechDisplayEvent extends java.util.EventObject
         super(source);
         this.type = type;
     }
-    
+
     /**
      * Returns the type of event that this is
      */
     public int getType() {
         return type;
     }
-        
+
     /**
-     * @return the entity ID associated with this event, if
-     *         applicable; -1 otherwise.
+     * @return the entity ID associated with this event, if applicable; -1
+     *         otherwise.
      */
     public int getEntityId() {
         return entityId;
     }
 
     /**
-     * @return the weapon ID associated with this event, if
-     *         applicable; -1 otherwise.
+     * @return the weapon ID associated with this event, if applicable; -1
+     *         otherwise.
      */
     public int getWeaponId() {
         return weaponId;

@@ -22,10 +22,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLHeavyMGA extends AmmoWeapon {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7515050923963957889L;
 
     public CLHeavyMGA() {
         super();
@@ -43,16 +46,16 @@ public class CLHeavyMGA extends AmmoWeapon {
         this.extremeRange = 4;
         this.tonnage = 0.25f;
         this.criticals = 1;
-        this.bv = 0; //we'll have to calculate this in calculateBV(),
-                       //because it depends on the number of MGs linked to
-                       //the MGA
+        this.bv = 0; // we'll have to calculate this in calculateBV(),
+        // because it depends on the number of MGs linked to
+        // the MGA
         this.flags |= F_BALLISTIC | F_BURST_FIRE | F_MGA;
         this.cost = 5000;
-        String[] modes = {"Linked","Off"};
+        String[] modes = { "Linked", "Off" };
         this.setModes(modes);
         this.instantModeSwitch = false;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

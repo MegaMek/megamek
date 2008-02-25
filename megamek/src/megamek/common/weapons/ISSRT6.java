@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISSRT6 extends SRTWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = -4514118891263321430L;
+
+    /**
+     * 
+     */
     public ISSRT6() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_1;
         this.name = "SRT 6";
         this.setInternalName(this.name);

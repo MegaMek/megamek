@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ISMML9 extends MMLWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = -6856580158397507743L;
+
+    /**
+     * 
+     */
     public ISMML9() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
         this.name = "MML 9";
         this.setInternalName("ISMML9");

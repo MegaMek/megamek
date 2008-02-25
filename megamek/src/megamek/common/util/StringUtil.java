@@ -14,10 +14,10 @@
 
 package megamek.common.util;
 
-import java.util.Vector;
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
-import java.text.SimpleDateFormat;
+import java.util.Vector;
 
 import megamek.common.preference.PreferenceManager;
 
@@ -57,15 +57,14 @@ public class StringUtil {
 
     /**
      * Determine the <code>boolean</code> value of the given
-     * <code>String</code>.  Treat all <code>null</code> values
-     * as <code>false</code>.  The default is <code>false</code>.
-     *
-     * This ensures the <code>String</code> will always be 
-     * parsed against the English "true"
-     *
-     * @param   input - the <code>String</code> to be evaluated.
-     *          This value may be <code>null</code>.
-     * @return  The <code>boolean</code> equivalent of the input.
+     * <code>String</code>. Treat all <code>null</code> values as
+     * <code>false</code>. The default is <code>false</code>. This ensures
+     * the <code>String</code> will always be parsed against the English
+     * "true"
+     * 
+     * @param input - the <code>String</code> to be evaluated. This value may
+     *            be <code>null</code>.
+     * @return The <code>boolean</code> equivalent of the input.
      */
     public static boolean parseBoolean(String input) {
         if (null == input) {
@@ -76,21 +75,19 @@ public class StringUtil {
         return false;
     }
 
-    private static final String SPACES =
-       "                                                                     ";
+    private static final String SPACES = "                                                                     ";
 
     public static String makeLength(String s, int n) {
         return makeLength(s, n, false);
     }
 
-    public static String makeLength(int s, int n)
-    {
+    public static String makeLength(int s, int n) {
         return makeLength(Integer.toString(s), n, true);
     }
 
     /**
      * A utility for padding out a string with spaces.
-     *
+     * 
      * @param s the string to pad
      * @param n the desired length of the resultant string
      * @param bRightJustify true if the string should be right justified
@@ -99,36 +96,36 @@ public class StringUtil {
         int l = s.length();
         if (l == n) {
             return s;
-        }
-        else if (l < n) {
+        } else if (l < n) {
             if (bRightJustify) {
                 return SPACES.substring(0, n - l) + s;
             }
-			return s + SPACES.substring(0, n - l);
-        }
-        else {
+            return s + SPACES.substring(0, n - l);
+        } else {
             return s.substring(0, n - 2) + "..";
         }
     }
 
     /**
-     * Inserts a date/time stamp into the given filename string just
-     * before the last period.  If there is no period in the filename,
-     * the stamp is added to the end.  The format of the stamp is dictated
-     * by the client option "StampFormat", which must use the same
-     * formatting as Java's SimpleDateFormat class.
-     *
+     * Inserts a date/time stamp into the given filename string just before the
+     * last period. If there is no period in the filename, the stamp is added to
+     * the end. The format of the stamp is dictated by the client option
+     * "StampFormat", which must use the same formatting as Java's
+     * SimpleDateFormat class.
+     * 
      * @param filename the String containing the filename (with extension)
      * @return the filname with date/time stamp added
      */
     public static String addDateTimeStamp(String filename) {
-        SimpleDateFormat formatter =
-            new SimpleDateFormat(PreferenceManager.getClientPreferences().getStampFormat());
+        SimpleDateFormat formatter = new SimpleDateFormat(PreferenceManager
+                .getClientPreferences().getStampFormat());
         Date current = new Date();
         if (filename.lastIndexOf(".") == -1) {
             return filename + formatter.format(current);
         }
-		return filename.substring(0, filename.lastIndexOf(".")) + formatter.format(current) + filename.substring(filename.lastIndexOf("."));
+        return filename.substring(0, filename.lastIndexOf("."))
+                + formatter.format(current)
+                + filename.substring(filename.lastIndexOf("."));
     }
 
 }

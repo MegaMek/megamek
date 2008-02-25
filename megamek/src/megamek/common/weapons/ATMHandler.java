@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class ATMHandler extends MissileWeaponHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -2536312899803153911L;
 
     /**
      * @param t
@@ -39,14 +43,15 @@ public class ATMHandler extends MissileWeaponHandler {
     public ATMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
         float toReturn;
-        AmmoType atype = (AmmoType)ammo.getType();
+        AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
             sSalvoType = " high-explosive missile(s) ";
             toReturn = 3;
@@ -57,19 +62,22 @@ public class ATMHandler extends MissileWeaponHandler {
             toReturn = 2;
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return (int)Math.ceil(toReturn * wtype.getRackSize()/5);
+            return (int) Math.ceil(toReturn * wtype.getRackSize() / 5);
         return Math.round(toReturn);
     }
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
         return 5;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {

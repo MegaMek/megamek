@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLBearhunterSuperheavyAC extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1042154309245048380L;
+
     /**
      * 
      */
@@ -51,7 +55,7 @@ public class CLBearhunterSuperheavyAC extends Weapon {
         this.bv = 8;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

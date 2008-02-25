@@ -1,3 +1,17 @@
+/*
+ * MegaMek -
+ * Copyright (C) 2007 Ben Mazur (bmazur@sev.org)
+ * 
+ *  This program is free software; you can redistribute it and/or modify it
+ *  under the terms of the GNU General Public License as published by the Free
+ *  Software Foundation; either version 2 of the License, or (at your option)
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful, but
+ *  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+ *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+ *  for more details.
+ */
 package megamek.client.bot.ui.AWT;
 
 import java.awt.Dimension;
@@ -10,7 +24,6 @@ import megamek.client.ui.AWT.CommonHelpDialog;
 import megamek.client.ui.AWT.ConfirmDialog;
 import megamek.client.ui.AWT.GUIPreferences;
 import megamek.common.IGame;
-import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GameBoardChangeEvent;
 import megamek.common.event.GameBoardNewEvent;
 import megamek.common.event.GameEndEvent;
@@ -20,6 +33,7 @@ import megamek.common.event.GameEntityNewOffboardEvent;
 import megamek.common.event.GameEntityRemoveEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameMapQueryEvent;
+import megamek.common.event.GameNewActionEvent;
 import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GamePlayerChangeEvent;
 import megamek.common.event.GamePlayerChatEvent;
@@ -39,11 +53,14 @@ public class BotGUI implements GameListener {
         this.bot = bot;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.common.GameListener#gamePhaseChange(megamek.common.GamePhaseChangeEvent)
      */
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-        if (bot.game.getPhase() == IGame.PHASE_LOUNGE || bot.game.getPhase() == IGame.PHASE_STARTING_SCENARIO) {
+        if (bot.game.getPhase() == IGame.PHASE_LOUNGE
+                || bot.game.getPhase() == IGame.PHASE_STARTING_SCENARIO) {
             notifyOfBot();
         }
     }
@@ -55,9 +72,8 @@ public class BotGUI implements GameListener {
             String body = Messages.getString("BotGUI.notifyOfBot.message"); //$NON-NLS-1$
             Dimension screenSize = frame.getToolkit().getScreenSize();
             frame.pack();
-            frame.setLocation(
-                screenSize.width / 2 - frame.getSize().width / 2,
-                screenSize.height / 2 - frame.getSize().height / 2);
+            frame.setLocation(screenSize.width / 2 - frame.getSize().width / 2,
+                    screenSize.height / 2 - frame.getSize().height / 2);
             ConfirmDialog confirm = new ConfirmDialog(frame, title, body, true);
             confirm.setVisible(true);
 

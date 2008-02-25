@@ -21,6 +21,11 @@ import megamek.common.TechConstants;
 
 public class ISLAC2 extends LACWeapon {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3128546525878614842L;
+
     public ISLAC2() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;

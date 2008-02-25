@@ -20,15 +20,18 @@
 
 package megamek.client.ui.AWT;
 
-import java.awt.*;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Panel;
+import java.awt.Scrollbar;
 
 /**
- *
- * @author  Ben
- * @version 
+ * @author Ben
+ * @version
  */
 public class BoardComponent extends Panel {
-    
+
     /**
      * 
      */
@@ -36,35 +39,37 @@ public class BoardComponent extends Panel {
     private Scrollbar scrVertical = new Scrollbar(Scrollbar.VERTICAL);
     private Scrollbar scrHorizontal = new Scrollbar(Scrollbar.HORIZONTAL);
     private Panel panBlank = new Panel();
-    
+
     /** Creates new BoardComponent */
     public BoardComponent(BoardView1 bv) {
-         
+
         // layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
-            
+
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(0, 0, 0, 0);
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.gridwidth = 1;
         gridbag.setConstraints(bv, c);
         add(bv);
-            
+
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         gridbag.setConstraints(scrVertical, c);
         add(scrVertical);
-            
+
         c.gridwidth = 1;
         gridbag.setConstraints(scrHorizontal, c);
         add(scrHorizontal);
-        
+
         c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(panBlank, c);
         add(panBlank);
-            
+
     }
 
 }

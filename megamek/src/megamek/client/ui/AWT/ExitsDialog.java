@@ -1,41 +1,40 @@
 package megamek.client.ui.AWT;
 
-import java.awt.Dialog;
-import java.awt.Checkbox;
-import java.awt.Label;
-import java.awt.Panel;
-import java.awt.GridBagLayout;
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Checkbox;
+import java.awt.Dialog;
 import java.awt.Frame;
+import java.awt.GridBagLayout;
+import java.awt.Label;
+import java.awt.Panel;
 import java.awt.event.ActionListener;
 
 /**
  * A dialog of which exits are connected for terrain.
  */
-public class ExitsDialog extends Dialog implements ActionListener
-{
+public class ExitsDialog extends Dialog implements ActionListener {
     /**
      * 
      */
     private static final long serialVersionUID = 3877195794958147600L;
-    private Checkbox    cheExit0 = new Checkbox("0"); //$NON-NLS-1$
-    private Checkbox    cheExit1 = new Checkbox("1"); //$NON-NLS-1$
-    private Checkbox    cheExit2 = new Checkbox("2"); //$NON-NLS-1$
-    private Checkbox    cheExit3 = new Checkbox("3"); //$NON-NLS-1$
-    private Checkbox    cheExit4 = new Checkbox("4"); //$NON-NLS-1$
-    private Checkbox    cheExit5 = new Checkbox("5"); //$NON-NLS-1$
+    private Checkbox cheExit0 = new Checkbox("0"); //$NON-NLS-1$
+    private Checkbox cheExit1 = new Checkbox("1"); //$NON-NLS-1$
+    private Checkbox cheExit2 = new Checkbox("2"); //$NON-NLS-1$
+    private Checkbox cheExit3 = new Checkbox("3"); //$NON-NLS-1$
+    private Checkbox cheExit4 = new Checkbox("4"); //$NON-NLS-1$
+    private Checkbox cheExit5 = new Checkbox("5"); //$NON-NLS-1$
 
-    private Label       labBlank = new Label(""); //$NON-NLS-1$
+    private Label labBlank = new Label(""); //$NON-NLS-1$
 
-    private Panel       panNorth = new Panel(new GridBagLayout());
-    private Panel       panSouth = new Panel(new GridBagLayout());
-    private Panel       panWest = new Panel(new BorderLayout());
-    private Panel       panEast = new Panel(new BorderLayout());
+    private Panel panNorth = new Panel(new GridBagLayout());
+    private Panel panSouth = new Panel(new GridBagLayout());
+    private Panel panWest = new Panel(new BorderLayout());
+    private Panel panEast = new Panel(new BorderLayout());
 
-    private Panel       panExits = new Panel(new BorderLayout());
+    private Panel panExits = new Panel(new BorderLayout());
 
-    private Button      butDone = new Button(Messages.getString("BoardEditor.Done")); //$NON-NLS-1$
+    private Button butDone = new Button(Messages.getString("BoardEditor.Done")); //$NON-NLS-1$
 
     public ExitsDialog(Frame frame) {
         super(frame, Messages.getString("BoardEditor.SetExits"), true); //$NON-NLS-1$
@@ -64,8 +63,9 @@ public class ExitsDialog extends Dialog implements ActionListener
         add(butDone, BorderLayout.SOUTH);
 
         pack();
-        setLocation(frame.getLocation().x + frame.getSize().width/2 - getSize().width/2,
-                    frame.getLocation().y + frame.getSize().height/2 - getSize().height/2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2
+                - getSize().width / 2, frame.getLocation().y
+                + frame.getSize().height / 2 - getSize().height / 2);
     }
 
     public void setExits(int exits) {

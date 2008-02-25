@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLUAC20 extends UACWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2630276807984380743L;
+
     /**
      * 
      */

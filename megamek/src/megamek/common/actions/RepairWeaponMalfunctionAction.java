@@ -14,17 +14,19 @@
 
 package megamek.common.actions;
 
-public class RepairWeaponMalfunctionAction
-    extends AbstractEntityAction
-{
-    
+public class RepairWeaponMalfunctionAction extends AbstractEntityAction {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7947928598199505776L;
     private int weaponId;
-    
+
     public RepairWeaponMalfunctionAction(int entityId, int weaponId) {
         super(entityId);
         this.weaponId = weaponId;
     }
-    
+
     public int getWeaponId() {
         return weaponId;
     }

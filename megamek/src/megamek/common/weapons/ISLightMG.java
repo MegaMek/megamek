@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISLightMG extends MGWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8148848145274790948L;
 
     /**
      * 

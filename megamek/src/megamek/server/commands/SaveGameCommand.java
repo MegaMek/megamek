@@ -20,19 +20,21 @@
 
 package megamek.server.commands;
 
-import megamek.server.*;
+import megamek.server.Server;
 
-/** Saves the current game.
- *
- * @author  Ben
+/**
+ * Saves the current game.
+ * 
+ * @author Ben
  */
 public class SaveGameCommand extends ServerCommand {
-    
+
     /** Creates a new instance of SaveGameCommand */
     public SaveGameCommand(Server server) {
-        super(server, "save", "Saves the game to a file.  Usage: /save [filename]");
+        super(server, "save",
+                "Saves the game to a file.  Usage: /save [filename]");
     }
-    
+
     /**
      * Run this command with the arguments supplied
      */

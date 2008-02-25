@@ -11,62 +11,67 @@
  *  or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License 
  *  for more details.
  */
- 
+
 package megamek.client.ui.AWT.widget;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Vector;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.LayoutManager;
+import java.awt.Panel;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.Enumeration;
+import java.util.Vector;
 
 /**
- * BufferedPanel required for use PicMap with AWT. To avoid
- * flicker.
- * It is possible to add set of Background Drawers to the Panel.
+ * BufferedPanel required for use PicMap with AWT. To avoid flicker. It is
+ * possible to add set of Background Drawers to the Panel.
  */
 
 public class BufferedPanel extends Panel implements ComponentListener {
 
-     /**
+    /**
      * 
      */
     private static final long serialVersionUID = -269285161007938633L;
-    //Vector of Background Drawers
-     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
-     private Dimension preferredSize = new Dimension();
+    // Vector of Background Drawers
+    private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
+    private Dimension preferredSize = new Dimension();
 
-     public BufferedPanel(){
-      super();
-      addComponentListener(this);
-     }
-     
-     public BufferedPanel(LayoutManager layout){
-      super(layout);
-      addComponentListener(this);
-     }
-     
-     /**
-     * Adds background drawer.
-     * Background drawers are drawn in order they added to the component.
-     */
-    
-    public void addBgDrawer(BackGroundDrawer bd){
-       bgDrawers.addElement(bd);      
+    public BufferedPanel() {
+        super();
+        addComponentListener(this);
     }
-    
+
+    public BufferedPanel(LayoutManager layout) {
+        super(layout);
+        addComponentListener(this);
+    }
+
+    /**
+     * Adds background drawer. Background drawers are drawn in order they added
+     * to the component.
+     */
+
+    public void addBgDrawer(BackGroundDrawer bd) {
+        bgDrawers.addElement(bd);
+    }
+
     /**
      * Removes Background drawer from panel.
      */
-    
-    public void removeBgDrawer(BackGroundDrawer bd){
+
+    public void removeBgDrawer(BackGroundDrawer bd) {
         bgDrawers.removeElement(bd);
     }
 
     /**
      * Removes all Background drawers from panel.
      */
-    
-    public void removeBgDrawers(){
+
+    public void removeBgDrawers() {
         bgDrawers.removeAllElements();
     }
 
@@ -78,12 +83,12 @@ public class BufferedPanel extends Panel implements ComponentListener {
     }
 
     /**
-     * Paint the panel. Must call super.paint() from any subclass that
-     * wished to override this to ensure any contained lightweight components
-     * get repainted.
-     *
-     * @param   g - the <code>Graphics</code> to draw onto.
-     *          This value may be <code>null</code>.
+     * Paint the panel. Must call super.paint() from any subclass that wished to
+     * override this to ensure any contained lightweight components get
+     * repainted.
+     * 
+     * @param g - the <code>Graphics</code> to draw onto. This value may be
+     *            <code>null</code>.
      */
     public void paint(Graphics g) {
         // No Graphics, no painting.
@@ -96,11 +101,11 @@ public class BufferedPanel extends Panel implements ComponentListener {
         Graphics offG = offScr.getGraphics();
         // set clipping to current size.
         offG.setClip(0, 0, getSize().width, getSize().height);
-        // Clear the panel as needed 
+        // Clear the panel as needed
         clearGraphics(offG);
-        //Draw background
+        // Draw background
         Enumeration<BackGroundDrawer> iter = bgDrawers.elements();
-        while(iter.hasMoreElements()){
+        while (iter.hasMoreElements()) {
             BackGroundDrawer bgd = iter.nextElement();
             bgd.drawInto(offG, getSize().width, getSize().height);
         }
@@ -109,7 +114,7 @@ public class BufferedPanel extends Panel implements ComponentListener {
         // draw the off-screen image to the sreen.
         g.drawImage(offScr, 0, 0, null);
 
-        //crean up the local graphics reference.
+        // crean up the local graphics reference.
         offG.dispose();
     }
 
@@ -145,6 +150,7 @@ public class BufferedPanel extends Panel implements ComponentListener {
     public void setPreferredSize(Dimension dimension) {
         preferredSize = dimension;
     }
+
     public void setPreferredSize(int width, int height) {
         setPreferredSize(new Dimension(width, height));
     }

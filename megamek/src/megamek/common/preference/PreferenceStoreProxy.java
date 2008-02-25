@@ -16,7 +16,7 @@ package megamek.common.preference;
 
 public abstract class PreferenceStoreProxy implements IPreferenceStore {
 
-    protected IPreferenceStore store;    
+    protected IPreferenceStore store;
 
     public boolean getDefaultBoolean(String name) {
         return store.getDefaultBoolean(name);
@@ -41,7 +41,7 @@ public abstract class PreferenceStoreProxy implements IPreferenceStore {
     public float getDefaultFloat(String name) {
         return store.getDefaultFloat(name);
     }
-    
+
     public boolean getBoolean(String name) {
         return store.getBoolean(name);
     }
@@ -89,7 +89,7 @@ public abstract class PreferenceStoreProxy implements IPreferenceStore {
     public void setDefault(String name, double value) {
         store.setDefault(name, value);
     }
-    
+
     public void setDefault(String name, String value) {
         store.setDefault(name, value);
     }
@@ -109,7 +109,7 @@ public abstract class PreferenceStoreProxy implements IPreferenceStore {
     public void setValue(String name, float value) {
         store.setValue(name, value);
     }
-    
+
     public void setValue(String name, double value) {
         store.setValue(name, value);
     }

@@ -14,10 +14,8 @@
 
 package megamek.common.actions;
 
-public class UnjamAction
-    extends AbstractEntityAction
-{
-    
+public class UnjamAction extends AbstractEntityAction {
+
     /**
      * 
      */
@@ -26,5 +24,5 @@ public class UnjamAction
     public UnjamAction(int entityId) {
         super(entityId);
     }
-    
+
 }

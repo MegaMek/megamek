@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLVehicleFlamer extends VehicleFlamerWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1550030929314637199L;
+
     /**
      * 
      */

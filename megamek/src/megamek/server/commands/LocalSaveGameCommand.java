@@ -20,25 +20,28 @@
 
 package megamek.server.commands;
 
-import megamek.server.*;
+import megamek.server.Server;
 
-/** Saves the current game.
- *
- * @author  Ben
+/**
+ * Saves the current game.
+ * 
+ * @author Ben
  */
 public class LocalSaveGameCommand extends ServerCommand {
-    
+
     /** Creates a new instance of SaveGameCommand */
     public LocalSaveGameCommand(Server server) {
-        super(server, "localsave", "Saves the game to a file on the client.  Usage: /localsave [filename]");
+        super(server, "localsave",
+                "Saves the game to a file on the client.  Usage: /localsave [filename]");
     }
-    
+
     /**
      * Run this command with the arguments supplied
      */
     public void run(int connId, String[] args) {
         if (server.getGame().getOptions().booleanOption("double_blind")) {
-            server.sendServerChat("Local Save only outside double blind games.");
+            server
+                    .sendServerChat("Local Save only outside double blind games.");
         } else {
             String fileName = "savegame.sav";
             if (args.length > 1) {

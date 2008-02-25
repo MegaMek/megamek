@@ -31,25 +31,28 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class VehicleFlamerCoolHandler extends AmmoWeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4856089237895318515L;
+
     /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public VehicleFlamerCoolHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
     }
 
     protected void handleEntityDamage(Entity entityTarget,
-                    Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
-                    int nDamPerHit, int bldgAbsorbs) {
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int nDamPerHit, int bldgAbsorbs) {
         if (entityTarget.infernos.isStillBurning()
-                        || (target instanceof Tank && ((Tank) target)
-                                        .isOnFire())) {
+                || (target instanceof Tank && ((Tank) target).isOnFire())) {
             r = new Report(3550);
             r.subject = subjectId;
             r.addDesc(entityTarget);

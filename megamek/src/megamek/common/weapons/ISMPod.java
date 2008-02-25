@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISMPod extends MPodWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7462050177159480L;
 
     /**
      * 

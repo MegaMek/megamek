@@ -40,11 +40,9 @@ import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
-public class SelectArtyAutoHitHexDisplay 
-    extends StatusBarPhaseDisplay
-    implements BoardViewListener,  ActionListener, DoneButtoned,
-               KeyListener, GameListener, Distractable
-{
+public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
+        implements BoardViewListener, ActionListener, DoneButtoned,
+        KeyListener, GameListener, Distractable {
     private static final long serialVersionUID = -6733665205235744376L;
 
     // Distraction implementation.
@@ -53,21 +51,21 @@ public class SelectArtyAutoHitHexDisplay
     // parent game
     public ClientGUI clientgui;
     private Client client;
-    
-    public static final String SET_HIT_HEX = "setAutoHitHex"; //$NON-NLS-1$
-    
-    // buttons
-    private Panel             panButtons;
-    
-    private Button            butA;
-    private Button            butDone;
 
-    private Player            p;
+    public static final String SET_HIT_HEX = "setAutoHitHex"; //$NON-NLS-1$
+
+    // buttons
+    private Panel panButtons;
+
+    private Button butA;
+    private Button butDone;
+
+    private Player p;
     private PlayerIDandList<Coords> artyAutoHitHexes = new PlayerIDandList<Coords>();
 
     /**
-     * Creates and lays out a new deployment phase display 
-     * for the specified client.
+     * Creates and lays out a new deployment phase display for the specified
+     * client.
      */
     public SelectArtyAutoHitHexDisplay(ClientGUI clientgui) {
         this.clientgui = clientgui;
@@ -76,18 +74,21 @@ public class SelectArtyAutoHitHexDisplay
 
         clientgui.getBoardView().addBoardViewListener(this);
 
-        setupStatusBar(Messages.getString("SelectArtyAutoHitHexDisplay.waitingArtillery")); //$NON-NLS-1$
+        setupStatusBar(Messages
+                .getString("SelectArtyAutoHitHexDisplay.waitingArtillery")); //$NON-NLS-1$
 
         p = client.getLocalPlayer();
-        
+
         artyAutoHitHexes.setPlayerID(p.getId());
-        
-        butA = new Button(Messages.getString("SelectArtyAutoHitHexDisplay.artilleryAutohithexes")); //$NON-NLS-1$
+
+        butA = new Button(Messages
+                .getString("SelectArtyAutoHitHexDisplay.artilleryAutohithexes")); //$NON-NLS-1$
         butA.addActionListener(this);
         butA.setActionCommand(SET_HIT_HEX);
         butA.setEnabled(false);
 
-        butDone = new Button(Messages.getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
+        butDone = new Button(Messages
+                .getString("SelectArtyAutoHitHexDisplay.Done")); //$NON-NLS-1$
         butDone.addActionListener(this);
         butDone.setEnabled(false);
 
@@ -95,29 +96,33 @@ public class SelectArtyAutoHitHexDisplay
         panButtons = new Panel();
         panButtons.setLayout(new GridLayout(0, 2));
         panButtons.add(butA);
-        
+
         // layout screen
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
-        c.weightx = 1.0;    c.weighty = 1.0;
+        c.weightx = 1.0;
+        c.weighty = 1.0;
         c.insets = new Insets(1, 1, 1, 1);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
-        c.weightx = 0.0;    c.weighty = 0.0;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
         addBag(panButtons, gridbag, c);
 
-        c.weightx = 1.0;    c.weighty = 0.0;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
 
-        clientgui.bv.addKeyListener( this );
+        clientgui.bv.addKeyListener(this);
         addKeyListener(this);
     }
-    
-    private void addBag(Component comp, GridBagLayout gridbag, GridBagConstraints c) {
+
+    private void addBag(Component comp, GridBagLayout gridbag,
+            GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
         comp.addKeyListener(this);
@@ -149,7 +154,7 @@ public class SelectArtyAutoHitHexDisplay
      */
     private void disableButtons() {
         setArtyEnabled(0);
-        
+
         butDone.setEnabled(false);
     }
 
@@ -157,15 +162,20 @@ public class SelectArtyAutoHitHexDisplay
         if (!client.game.getBoard().contains(coords)) {
             return;
         }
-        if (!artyAutoHitHexes.contains(coords) && artyAutoHitHexes.size() < 5
-             && clientgui.doYesNoDialog(Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
-                     Messages.getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[]{coords.getBoardNum()}))) { //$NON-NLS-1$
+        if (!artyAutoHitHexes.contains(coords)
+                && artyAutoHitHexes.size() < 5
+                && clientgui
+                        .doYesNoDialog(
+                                Messages
+                                        .getString("SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.title"), //$NON-NLS-1$
+                                Messages
+                                        .getString(
+                                                "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
-            setArtyEnabled( 5 - artyAutoHitHexes.size());
+            setArtyEnabled(5 - artyAutoHitHexes.size());
         }
-        
-    }
 
+    }
 
     //
     // BoardListener
@@ -173,19 +183,20 @@ public class SelectArtyAutoHitHexDisplay
     public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
+        if (this.isIgnoringEvents()) {
             return;
         }
 
         if (b.getType() != BoardViewEvent.BOARD_HEX_DRAGGED) {
             return;
         }
-        
+
         // ignore buttons other than 1
-        if (!client.isMyTurn() || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
+        if (!client.isMyTurn()
+                || (b.getModifiers() & InputEvent.BUTTON1_MASK) == 0) {
             return;
         }
-        
+
         // check for a deployment
         clientgui.getBoardView().select(b.getCoords());
         addArtyAutoHitHex(b.getCoords());
@@ -197,7 +208,7 @@ public class SelectArtyAutoHitHexDisplay
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
+        if (this.isIgnoringEvents()) {
             return;
         }
 
@@ -205,29 +216,34 @@ public class SelectArtyAutoHitHexDisplay
 
         if (client.isMyTurn()) {
             beginMyTurn();
-            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_your_turn")); //$NON-NLS-1$
-        } else {            
-            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.its_others_turn", new Object[]{e.getPlayer().getName()})); //$NON-NLS-1$
+            setStatusBarText(Messages
+                    .getString("SelectArtyAutoHitHexDisplay.its_your_turn")); //$NON-NLS-1$
+        } else {
+            setStatusBarText(Messages
+                    .getString(
+                            "SelectArtyAutoHitHexDisplay.its_others_turn", new Object[] { e.getPlayer().getName() })); //$NON-NLS-1$
         }
     }
 
     /**
-     * This function is called when the phase of the game changes,
-     * such as mine laying phase or deployment phase. I think.
+     * This function is called when the phase of the game changes, such as mine
+     * laying phase or deployment phase. I think.
+     * 
      * @param e Unused parameter.
      */
     public void gamePhaseChange(GamePhaseChangeEvent e) {
         // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
+        if (this.isIgnoringEvents()) {
             return;
         }
 
-        if ( client.isMyTurn() &&
-             client.game.getPhase() != IGame.PHASE_SET_ARTYAUTOHITHEXES ) {
+        if (client.isMyTurn()
+                && client.game.getPhase() != IGame.PHASE_SET_ARTYAUTOHITHEXES) {
             endMyTurn();
         }
         if (client.game.getPhase() == IGame.PHASE_SET_ARTYAUTOHITHEXES) {
-            setStatusBarText(Messages.getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
+            setStatusBarText(Messages
+                    .getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
         }
     }
 
@@ -237,25 +253,24 @@ public class SelectArtyAutoHitHexDisplay
     public void actionPerformed(ActionEvent ev) {
 
         // Are we ignoring events?
-        if ( this.isIgnoringEvents() ) {
+        if (this.isIgnoringEvents()) {
             return;
         }
 
-        if ( statusBarActionPerformed(ev, client) )
-          return;
-          
+        if (statusBarActionPerformed(ev, client))
+            return;
+
         if (!client.isMyTurn()) {
             // odd...
             return;
         }
-        
+
         if (ev.getSource().equals(butDone)) {
             endMyTurn();
             client.sendArtyAutoHitHexes(artyAutoHitHexes);
             client.sendPlayerInfo();
         }
     } // End public void actionPerformed(ActionEvent ev)
-    
 
     //
     // KeyListener
@@ -270,15 +285,18 @@ public class SelectArtyAutoHitHexDisplay
     }
 
     private void setArtyEnabled(int nbr) {
-        butA.setLabel(Messages.getString("SelectArtyAutoHitHexDisplay.designatedTargets", new Object[]{new Integer(nbr)})); //$NON-NLS-1$
+        butA
+                .setLabel(Messages
+                        .getString(
+                                "SelectArtyAutoHitHexDisplay.designatedTargets", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         butA.setEnabled(nbr > 0);
-//        clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
+        // clientgui.getMenuBar().setSelectArtyAutoHitHexEnabled(nbr);
     }
 
     /**
      * Determine if the listener is currently distracted.
-     *
-     * @return  <code>true</code> if the listener is ignoring events.
+     * 
+     * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
         return this.distracted.isIgnoringEvents();
@@ -286,26 +304,26 @@ public class SelectArtyAutoHitHexDisplay
 
     /**
      * Specify if the listener should be distracted.
-     *
-     * @param   distract <code>true</code> if the listener should ignore events
-     *          <code>false</code> if the listener should pay attention again.
-     *          Events that occured while the listener was distracted NOT
-     *          going to be processed.
+     * 
+     * @param distract <code>true</code> if the listener should ignore events
+     *            <code>false</code> if the listener should pay attention
+     *            again. Events that occured while the listener was distracted
+     *            NOT going to be processed.
      */
-    public void setIgnoringEvents( boolean distracted ) {
-        this.distracted.setIgnoringEvents( distracted );
+    public void setIgnoringEvents(boolean distracted) {
+        this.distracted.setIgnoringEvents(distracted);
     }
 
     /**
      * Retrieve the "Done" button of this object.
-     *
-     * @return  the <code>java.awt.Button</code> that activates this
-     *          object's "Done" action.
+     * 
+     * @return the <code>java.awt.Button</code> that activates this object's
+     *         "Done" action.
      */
     public Button getDoneButton() {
         return butDone;
     }
-    
+
     /**
      * Stop just ignoring events and actually stop listening to them.
      */

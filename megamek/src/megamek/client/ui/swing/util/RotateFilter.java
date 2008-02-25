@@ -24,11 +24,10 @@ import java.awt.image.ColorModel;
 import java.awt.image.RGBImageFilter;
 
 /**
- * Filters an image by rotating it.  The image is rotated around its center.
- * <p/>
- * TODO: This could be optimized... oh, um... everywhere.  It was pretty late
- * at night when I programmed most of this.
- *
+ * Filters an image by rotating it. The image is rotated around its center. <p/>
+ * TODO: This could be optimized... oh, um... everywhere. It was pretty late at
+ * night when I programmed most of this.
+ * 
  * @author Ben
  */
 public class RotateFilter extends RGBImageFilter {
@@ -83,7 +82,8 @@ public class RotateFilter extends RGBImageFilter {
         // filter everything
         rotate();
         // done!
-        consumer.setPixels(0, 0, width, height, ColorModel.getRGBdefault(), raster, 0, width);
+        consumer.setPixels(0, 0, width, height, ColorModel.getRGBdefault(),
+                raster, 0, width);
         consumer.imageComplete(status);
     }
 
@@ -120,7 +120,7 @@ public class RotateFilter extends RGBImageFilter {
         if (x < 0 || y < 0 || x >= width || y >= height) {
             return 0;
         }
-		return raster[y * width + x];
+        return raster[y * width + x];
     }
 
     private final int alpha(int pix) {
@@ -140,12 +140,13 @@ public class RotateFilter extends RGBImageFilter {
     }
 
     private final int combine(int alpha, int red, int green, int blue) {
-        return (alpha > ALPHA_CLIP ? 0xFF000000 : 0) | (red << 16) | (green << 8) | (blue);
+        return (alpha > ALPHA_CLIP ? 0xFF000000 : 0) | (red << 16)
+                | (green << 8) | (blue);
     }
 
     /**
-     * Get the bilinearly calculated pixel at the coordinates.
-     * Lazy black & white mode.
+     * Get the bilinearly calculated pixel at the coordinates. Lazy black &
+     * white mode.
      */
     private int pixelBilinear(double x, double y) {
         int fx = (int) Math.floor(x);
@@ -155,7 +156,7 @@ public class RotateFilter extends RGBImageFilter {
         int alpha1 = alpha(pixel(fx + 1, fy));
         int alpha2 = alpha(pixel(fx, fy + 1));
         int alpha3 = alpha(pixel(fx + 1, fy + 1));
-        
+
         // don't bother calculating transparent pixels
         if (alpha0 == 0 && alpha1 == 0 && alpha2 == 0 && alpha3 == 0) {
             return 0;
@@ -184,10 +185,14 @@ public class RotateFilter extends RGBImageFilter {
         double mul2 = (1.0 - xv) * yv;
         double mul3 = xv * yv;
 
-        int alpha = (int) Math.round(mul0 * alpha0 + mul1 * alpha1 + mul2 * alpha2 + mul3 * alpha3);
-        int blue = (int) Math.round(mul0 * blue0 + mul1 * blue1 + mul2 * blue2 + mul3 * blue3);
-        int red = (int) Math.round(mul0 * red0 + mul1 * red1 + mul2 * red2 + mul3 * red3);
-        int green = (int) Math.round(mul0 * green0 + mul1 * green1 + mul2 * green2 + mul3 * green3);
+        int alpha = (int) Math.round(mul0 * alpha0 + mul1 * alpha1 + mul2
+                * alpha2 + mul3 * alpha3);
+        int blue = (int) Math.round(mul0 * blue0 + mul1 * blue1 + mul2 * blue2
+                + mul3 * blue3);
+        int red = (int) Math.round(mul0 * red0 + mul1 * red1 + mul2 * red2
+                + mul3 * red3);
+        int green = (int) Math.round(mul0 * green0 + mul1 * green1 + mul2
+                * green2 + mul3 * green3);
 
         return combine(alpha, red, green, blue);
     }

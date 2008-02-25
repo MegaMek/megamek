@@ -23,15 +23,20 @@ import megamek.server.Server;
 
 public class AutoGrenadeLauncherHandler extends WeaponHandler {
     /**
+     * 
+     */
+    private static final long serialVersionUID = 6432873353297471441L;
+
+    /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public AutoGrenadeLauncherHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
-            Server s) {
+    public AutoGrenadeLauncherHandler(ToHitData toHit, WeaponAttackAction waa,
+            IGame g, Server s) {
         super(toHit, waa, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -39,7 +44,8 @@ public class AutoGrenadeLauncherHandler extends WeaponHandler {
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            return (int)Math.ceil(((double)Compute.d6())/2);
-        } else return super.calcDamagePerHit();
+            return (int) Math.ceil(((double) Compute.d6()) / 2);
+        } else
+            return super.calcDamagePerHit();
     }
 }

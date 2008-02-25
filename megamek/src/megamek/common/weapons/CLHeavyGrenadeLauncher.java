@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class CLHeavyGrenadeLauncher extends Weapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2728566278196446996L;
 
     public CLHeavyGrenadeLauncher() {
         super();
@@ -48,7 +52,7 @@ public class CLHeavyGrenadeLauncher extends Weapon {
         this.bv = 1;
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

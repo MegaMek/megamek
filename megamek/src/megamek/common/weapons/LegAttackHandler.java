@@ -29,34 +29,38 @@ import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class LegAttackHandler extends WeaponHandler {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4429993211361286138L;
+
     /**
      * @param toHit
      * @param waa
      * @param g
      */
-    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa,
-            IGame g, Server s) {
+    public LegAttackHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
+            Server s) {
         super(toHit, waa, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
         return 1;
     }
 
-    protected void handleEntityDamage(Entity entityTarget, Vector<Report> vPhaseReport,
-            Building bldg, int hits, int nCluster, int nDamPerHit,
-            int bldgAbsorbs) {
+    protected void handleEntityDamage(Entity entityTarget,
+            Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
+            int nDamPerHit, int bldgAbsorbs) {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
         // If a leg attacks hit a leg that isn't
@@ -72,8 +76,8 @@ public class LegAttackHandler extends WeaponHandler {
         if (ae instanceof BattleArmor)
             damage += ((BattleArmor) ae).getVibroClawDamage();
         // ASSUMPTION: buildings CAN'T absorb *this* damage.
-        vPhaseReport.addAll(server.damageEntity(entityTarget, hit,
-                damage, false, damageType, false, false, throughFront));
+        vPhaseReport.addAll(server.damageEntity(entityTarget, hit, damage,
+                false, damageType, false, false, throughFront));
         Report.addNewline(vPhaseReport);
         // Do criticals.
         vPhaseReport.addAll(server.criticalEntity(entityTarget, hit

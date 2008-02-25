@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class CLLRM10 extends LRMWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = -3159588360292537303L;
+
+    /**
+     * 
+     */
     public CLLRM10() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_CLAN_LEVEL_2;
         this.name = "LRM 10";
         this.setInternalName("CLLRM10");

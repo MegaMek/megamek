@@ -14,9 +14,10 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Dimension;
+
 import javax.swing.JDialog;
 import javax.swing.JFrame;
-import java.awt.Dimension;
 
 /**
  * A MegaMek Dialog box.
@@ -33,10 +34,8 @@ public class ClientDialog extends JDialog {
     private JFrame owner = null;
 
     /**
-     * @param owner -
-     *              the <code>Frame</code> that owns this dialog.
-     * @param title -
-     *              the title of this Dialog window
+     * @param owner - the <code>Frame</code> that owns this dialog.
+     * @param title - the title of this Dialog window
      */
     public ClientDialog(JFrame owner, String title) {
         super(owner, title);
@@ -53,7 +52,7 @@ public class ClientDialog extends JDialog {
      * We try to fit the dialog in the middle of its owner, if it is smaller,
      * but allow it to eclipse the parent if it is larger, still keeping all on
      * the screen.
-     *
+     * 
      * @param desiredX the desired width of this dialog (you might not get it)
      * @param desiredY the desired height of this dialog (you might not get it)
      */
@@ -66,8 +65,9 @@ public class ClientDialog extends JDialog {
      * We try to fit the dialog in the middle of its owner, if it is smaller,
      * but allow it to eclipse the parent if it is larger, still keeping all on
      * the screen.
-     *
-     * @param desiredDimension the desired dimension of this dialog (you might not get it)
+     * 
+     * @param desiredDimension the desired dimension of this dialog (you might
+     *            not get it)
      */
     protected void setLocationAndSize(Dimension desiredDimension) {
         int yLoc, xLoc, height, width;
@@ -79,10 +79,10 @@ public class ClientDialog extends JDialog {
         height = Math.min(desiredDimension.height + CONTAINER_BUFFER,
                 screenSize.height);
 
-        //Shrink the dialog if it will go bigger than page:
+        // Shrink the dialog if it will go bigger than page:
         // A border is used to account for things like the windows taskbar.
         // Sadly, the true size of the taskbar cannot be found without making
-        // a native call, so 5% is just a guess.  It should probably be
+        // a native call, so 5% is just a guess. It should probably be
         // a configuration setting so people can modify it according to
         // their OS setup.
         int screenBorder = Math.max((int) (screenSize.width * TASKBAR_SIZE),
@@ -96,11 +96,11 @@ public class ClientDialog extends JDialog {
         yLoc = ownerCenter.height - height / 2;
         xLoc = ownerCenter.width - width / 2;
 
-        if (yLoc < screenBorder ||
-                yLoc + height > screenSize.height - screenBorder)
+        if (yLoc < screenBorder
+                || yLoc + height > screenSize.height - screenBorder)
             yLoc = screenBorder;
-        if (xLoc < screenBorder ||
-                xLoc + width > screenSize.width - screenBorder)
+        if (xLoc < screenBorder
+                || xLoc + width > screenSize.width - screenBorder)
             xLoc = screenBorder;
 
         setSize(width, height);
@@ -111,8 +111,8 @@ public class ClientDialog extends JDialog {
         Dimension center = new Dimension();
         center.height = this.owner.getLocation().y
                 + this.owner.getSize().height / 2;
-        center.width = this.owner.getLocation().x
-                + this.owner.getSize().width / 2;
+        center.width = this.owner.getLocation().x + this.owner.getSize().width
+                / 2;
         return center;
     }
 

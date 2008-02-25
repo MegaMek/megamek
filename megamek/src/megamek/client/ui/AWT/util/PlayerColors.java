@@ -16,25 +16,26 @@ package megamek.client.ui.AWT.util;
 
 import java.awt.Color;
 
-import megamek.common.Player;
 import megamek.client.ui.AWT.GUIPreferences;
+import megamek.common.Player;
 
 public class PlayerColors {
-    
-    public static final String  colorNames[] = Player.colorNames;
 
-    protected static final int colorRGBs[] = {0x8686BF, 0xF2F261, 0xCC6666,
-            0x87BF86, 0xFFFFFF, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE, 0x98816B,
-            0x800080};
+    public static final String colorNames[] = Player.colorNames;
+
+    protected static final int colorRGBs[] = { 0x8686BF, 0xF2F261, 0xCC6666,
+            0x87BF86, 0xFFFFFF, 0x8FCCCC, 0xF29DC8, 0xF2AA61, 0xBEBEBE,
+            0x98816B, 0x800080 };
 
     public static Color getColor(int colorIndex) {
         int colour = colorRGBs[colorIndex];
-        int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+        int transparency = GUIPreferences.getInstance().getInt(
+                GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
         return new Color(colour | (transparency << 24), true);
     }
 
     public static int getColorRGB(int colorIndex) {
         return colorRGBs[colorIndex];
     }
-    
+
 }

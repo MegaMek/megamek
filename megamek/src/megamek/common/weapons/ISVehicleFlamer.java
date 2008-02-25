@@ -21,9 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISVehicleFlamer extends VehicleFlamerWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5209851790302913451L;
+
     /**
      * 
      */
@@ -40,7 +44,7 @@ public class ISVehicleFlamer extends VehicleFlamerWeapon {
         this.shortRange = 1;
         this.mediumRange = 2;
         this.longRange = 3;
-        this.extremeRange =4;
+        this.extremeRange = 4;
         this.tonnage = 0.5f;
         this.criticals = 1;
         this.bv = 5;

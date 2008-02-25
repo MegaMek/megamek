@@ -21,9 +21,8 @@ import java.net.Socket;
 
 /**
  * Implementation of the <code>Connection</code> that uses the
- * <code>ObjectInputStream</code> and <code>ObjectOutputStream</code>
- * to send/receive data.
- *
+ * <code>ObjectInputStream</code> and <code>ObjectOutputStream</code> to
+ * send/receive data.
  */
 class ObjectStreamConnection extends AbstractConnection {
 
@@ -31,7 +30,7 @@ class ObjectStreamConnection extends AbstractConnection {
      * Input stream
      */
     private ObjectInputStream in;
-    
+
     /**
      * Output stream
      */
@@ -39,6 +38,7 @@ class ObjectStreamConnection extends AbstractConnection {
 
     /**
      * Creates new server connection
+     * 
      * @param socket
      * @param id
      */
@@ -48,6 +48,7 @@ class ObjectStreamConnection extends AbstractConnection {
 
     /**
      * Creates new Client connection
+     * 
      * @param host
      * @param port
      * @param id
@@ -62,11 +63,12 @@ class ObjectStreamConnection extends AbstractConnection {
             in = new ObjectInputStream(getInputStream());
         }
 
-        packet = (NetworkPacket)in.readObject();
+        packet = (NetworkPacket) in.readObject();
         return packet;
     }
 
-    protected void sendNetworkPacket(byte[] data, boolean zipped) throws Exception {
+    protected void sendNetworkPacket(byte[] data, boolean zipped)
+            throws Exception {
         if (out == null) {
             out = new ObjectOutputStream(getOutputStream());
             out.flush();
@@ -76,8 +78,9 @@ class ObjectStreamConnection extends AbstractConnection {
         out.writeObject(new NetworkPacket(zipped, marshallingType, data));
         out.flush();
     }
-    private static class NetworkPacket  implements INetworkPacket, Serializable {
-        
+
+    private static class NetworkPacket implements INetworkPacket, Serializable {
+
         /**
          * 
          */
@@ -87,19 +90,20 @@ class ObjectStreamConnection extends AbstractConnection {
          * Is data compressed
          */
         private boolean compressed;
-        
+
         /**
          * Data marshalling type
          */
         private int marshallingType;
-        
+
         /**
          * Packet data
          */
         private byte[] data;
-        
+
         /**
          * Creates new packet
+         * 
          * @param compressed
          * @param marshallingType
          * @param data
@@ -109,18 +113,18 @@ class ObjectStreamConnection extends AbstractConnection {
             this.marshallingType = marshallingType;
             this.data = data;
         }
-        
+
         public int getMarshallingType() {
             return marshallingType;
         }
-        
+
         public byte[] getData() {
             return data;
         }
-        
+
         public boolean isCompressed() {
             return compressed;
         }
-    }    
+    }
 
 }

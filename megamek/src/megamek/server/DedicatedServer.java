@@ -29,13 +29,14 @@ public class DedicatedServer {
     public static void start(String[] args) {
         CommandLineParser cp = new CommandLineParser(args);
         try {
-            cp.parse(); 
+            cp.parse();
             String savegameFileName = cp.getGameFilename();
             int usePort;
-            if (cp.getPort()!= -1) {
-                usePort = cp.getPort();  
+            if (cp.getPort() != -1) {
+                usePort = cp.getPort();
             } else {
-                usePort = PreferenceManager.getClientPreferences().getLastServerPort();                
+                usePort = PreferenceManager.getClientPreferences()
+                        .getLastServerPort();
             }
 
             // kick off a RNG check
@@ -43,22 +44,25 @@ public class DedicatedServer {
             // start server
             Server dedicated;
             try {
-                dedicated = new Server(PreferenceManager.getClientPreferences().getLastServerPass(),usePort);
-            } catch(IOException ex) {
+                dedicated = new Server(PreferenceManager.getClientPreferences()
+                        .getLastServerPass(), usePort);
+            } catch (IOException ex) {
                 StringBuffer error = new StringBuffer();
                 error.append("Error: could not start server at localhost")
-                    .append(":").append(usePort).append(" (").append(ex.getMessage()).append(").");
+                        .append(":").append(usePort).append(" (").append(
+                                ex.getMessage()).append(").");
                 System.err.println(error.toString());
                 return;
             }
             if (null != savegameFileName) {
                 dedicated.loadGame(new File(savegameFileName));
             }
-            return;            
+            return;
         } catch (AbstractCommandLineParser.ParseException e) {
-            StringBuffer message = new StringBuffer(INCORRECT_ARGUMENTS_MESSAGE).append(e.getMessage()).append('\n');
+            StringBuffer message = new StringBuffer(INCORRECT_ARGUMENTS_MESSAGE)
+                    .append(e.getMessage()).append('\n');
             message.append(ARGUMENTS_DESCRIPTION_MESSAGE);
-            displayMessage(message.toString());                    
+            displayMessage(message.toString());
         }
     }
 
@@ -76,28 +80,28 @@ public class DedicatedServer {
         private String gameFilename;
         private int port;
 
-        //Options
+        // Options
         private static final String OPTION_PORT = "port"; //$NON-NLS-1$
 
         public CommandLineParser(String[] args) {
             super(args);
         }
-        
+
         /**
-         * Returns the port option value or <code>-1</code> if
-         * it wasn't set
-         * @return port option value or <code>-1</code> if
-         * it wasn't set
+         * Returns the port option value or <code>-1</code> if it wasn't set
+         * 
+         * @return port option value or <code>-1</code> if it wasn't set
          */
         public int getPort() {
             return port;
         }
 
         /**
-         * Returns the game file name option value or <code>null</code> if
-         * it wasn't set
-         * @return the game file name option value or <code>null</code> if
-         * it wasn't set
+         * Returns the game file name option value or <code>null</code> if it
+         * wasn't set
+         * 
+         * @return the game file name option value or <code>null</code> if it
+         *         wasn't set
          */
         public String getGameFilename() {
             return gameFilename;
@@ -121,8 +125,8 @@ public class DedicatedServer {
             if (getToken() == TOK_LITERAL) {
                 int port = -1;
                 try {
-                    port = Integer.decode(getTokenValue()).intValue();                    
-                } catch (NumberFormatException e) {                    
+                    port = Integer.decode(getTokenValue()).intValue();
+                } catch (NumberFormatException e) {
                 }
                 nextToken();
                 if (port < 0 || port > 65535) {
@@ -135,5 +139,5 @@ public class DedicatedServer {
         }
 
     }
-    
+
 }

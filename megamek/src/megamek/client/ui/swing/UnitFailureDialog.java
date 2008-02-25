@@ -38,22 +38,21 @@ import javax.swing.JTextArea;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public class UnitFailureDialog extends JDialog
-        implements ActionListener, ListSelectionListener, KeyListener {
+public class UnitFailureDialog extends JDialog implements ActionListener,
+        ListSelectionListener, KeyListener {
 
     /**
      * 
      */
     private static final long serialVersionUID = -7075012201265932299L;
 
-    private Map<String,String> hFailedFiles;
+    private Map<String, String> hFailedFiles;
 
     private JList failedList;
 
-    private JTextArea reasonTextArea =
-            new JTextArea("", 4, 40); //$NON-NLS-1$
+    private JTextArea reasonTextArea = new JTextArea("", 4, 40); //$NON-NLS-1$
 
-    public UnitFailureDialog(JFrame frame, Map<String,String> hff) {
+    public UnitFailureDialog(JFrame frame, Map<String, String> hff) {
         super(frame, Messages.getString("UnitFailureDialog.title")); //$NON-NLS-1$
 
         hFailedFiles = hff;
@@ -71,11 +70,13 @@ public class UnitFailureDialog extends JDialog
 
         getContentPane().setLayout(new BorderLayout());
         getContentPane().add(new JScrollPane(failedList), BorderLayout.NORTH);
-        getContentPane().add(new JScrollPane(reasonTextArea), BorderLayout.CENTER);
+        getContentPane().add(new JScrollPane(reasonTextArea),
+                BorderLayout.CENTER);
 
         setSize(400, 300);
-        setLocation(frame.getLocation().x + frame.getSize().width / 2 - getSize().width / 2,
-                frame.getLocation().y + frame.getSize().height / 2 - getSize().height / 2);
+        setLocation(frame.getLocation().x + frame.getSize().width / 2
+                - getSize().width / 2, frame.getLocation().y
+                + frame.getSize().height / 2 - getSize().height / 2);
 
         JButton okButton = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
         okButton.addActionListener(this);
@@ -84,7 +85,8 @@ public class UnitFailureDialog extends JDialog
 
         failedList.setSelectedIndex(0);
 
-        reasonTextArea.setText(hFailedFiles.get(failedList.getSelectedValue()).toString());
+        reasonTextArea.setText(hFailedFiles.get(failedList.getSelectedValue())
+                .toString());
 
         setVisible(true);
 
@@ -103,7 +105,8 @@ public class UnitFailureDialog extends JDialog
     }
 
     public void valueChanged(ListSelectionEvent ie) {
-        reasonTextArea.setText(hFailedFiles.get(failedList.getSelectedValue()).toString());
+        reasonTextArea.setText(hFailedFiles.get(failedList.getSelectedValue())
+                .toString());
     }
 
     public void keyPressed(KeyEvent ke) {

@@ -15,9 +15,9 @@
 package megamek.common.net;
 
 /**
- * Instances of descendant classes are sent as a result 
- * of changes of the Connection state or packet arrival.
- *
+ * Instances of descendant classes are sent as a result of changes of the
+ * Connection state or packet arrival.
+ * 
  * @see ConnectionListener
  */
 public abstract class ConnectionEvent extends java.util.EventObject {
@@ -30,16 +30,18 @@ public abstract class ConnectionEvent extends java.util.EventObject {
 
     /**
      * Constructs connection event
+     * 
      * @param source The object on which the Event initially occurred.
      * @param type event type
      */
-    protected ConnectionEvent(Object source, int type){
+    protected ConnectionEvent(Object source, int type) {
         super(source);
         this.type = type;
     }
 
     /**
      * Returns the type of the event
+     * 
      * @return the type of the event
      */
     public int getType() {
@@ -47,12 +49,13 @@ public abstract class ConnectionEvent extends java.util.EventObject {
     }
 
     /**
-     * Returns the connection on which the Event occured; Equivalent
-     * to the getSource() 
+     * Returns the connection on which the Event occured; Equivalent to the
+     * getSource()
+     * 
      * @return
      */
     public IConnection getConnection() {
-        return (IConnection)getSource();
+        return (IConnection) getSource();
     }
 
     public String toString() {

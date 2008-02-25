@@ -20,7 +20,6 @@ import megamek.server.Server;
 
 /**
  * @author Jason Tighe
- *
  */
 public class LRMDeadFireHandler extends LRMHandler {
 
@@ -35,13 +34,15 @@ public class LRMDeadFireHandler extends LRMHandler {
      * @param g
      * @param s
      */
-    public LRMDeadFireHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public LRMDeadFireHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
         sSalvoType = " dead fire missile(s) ";
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {
@@ -49,7 +50,8 @@ public class LRMDeadFireHandler extends LRMHandler {
     }
 
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {

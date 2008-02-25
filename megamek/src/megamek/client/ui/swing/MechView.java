@@ -58,19 +58,17 @@ public class MechView {
         isProto = entity instanceof Protomech;
         isGunEmplacement = entity instanceof GunEmplacement;
 
-        sLoadout.append(getWeapons())
-                .append("\r\n")//$NON-NLS-1$
-                .append(getAmmo())
-                .append("\r\n")//$NON-NLS-1$
-                .append(getMisc())//has to occur before basic is processed
+        sLoadout.append(getWeapons()).append("\r\n")//$NON-NLS-1$
+                .append(getAmmo()).append("\r\n")//$NON-NLS-1$
+                .append(getMisc())// has to occur before basic is processed
                 .append("\r\n")//$NON-NLS-1$
                 .append(getFailed());
 
         sBasic.append(mech.getShortNameRaw());
         sBasic.append("\r\n"); //$NON-NLS-1$
         if (!isInf) {
-            sBasic.append(Math.round(mech.getWeight()))
-                    .append(Messages.getString("MechView.tons")); //$NON-NLS-1$
+            sBasic.append(Math.round(mech.getWeight())).append(
+                    Messages.getString("MechView.tons")); //$NON-NLS-1$
         }
         if (mech.isMixedTech()) {
             if (mech.isClan()) {
@@ -79,15 +77,15 @@ public class MechView {
                 sBasic.append(Messages.getString("MechView.MixedIS"));
             }
         } else {
-            sBasic.append(TechConstants.getLevelDisplayableName(mech.getTechLevel()));
+            sBasic.append(TechConstants.getLevelDisplayableName(mech
+                    .getTechLevel()));
         }
         sBasic.append("\n"); //$NON-NLS-1$
-        
+
         if (!isGunEmplacement) {
             sBasic.append("\n"); //$NON-NLS-1$
             sBasic.append(Messages.getString("MechView.Movement"))//$NON-NLS-1$
-                    .append(mech.getWalkMP())
-                    .append("/")//$NON-NLS-1$
+                    .append(mech.getWalkMP()).append("/")//$NON-NLS-1$
                     .append(mech.getRunMPasString());
             if (mech.getJumpMP() > 0) {
                 sBasic.append("/")//$NON-NLS-1$
@@ -96,8 +94,7 @@ public class MechView {
         }
         if (isVehicle) {
             sBasic.append(" (")//$NON-NLS-1$
-                    .append(entity.getMovementModeAsString())
-                    .append(")"); //$NON-NLS-1$
+                    .append(entity.getMovementModeAsString()).append(")"); //$NON-NLS-1$
         }
         sBasic.append("\n"); //$NON-NLS-1$
         if (isMech || isVehicle) {
@@ -111,8 +108,7 @@ public class MechView {
                     .append(aMech.heatSinks());
             if (aMech.getHeatCapacity() > aMech.heatSinks()) {
                 sBasic.append(" [")//$NON-NLS-1$
-                        .append(aMech.getHeatCapacity())
-                        .append("]"); //$NON-NLS-1$
+                        .append(aMech.getHeatCapacity()).append("]"); //$NON-NLS-1$
             }
             if (aMech.getCockpitType() != Mech.COCKPIT_STANDARD) {
                 sBasic.append("\n"); //$NON-NLS-1$
@@ -131,13 +127,15 @@ public class MechView {
             sBasic.append(getInternalAndArmor());
         } else {
             sBasic.append(Messages.getString("MechView.ConstructionFactor"))
-                    .append(renderArmor
-                    (mech.getArmor(GunEmplacement.LOC_BUILDING)))
+                    .append(
+                            renderArmor(mech
+                                    .getArmor(GunEmplacement.LOC_BUILDING)))
                     .append('\n'); //$NON-NLS-1$
             if (((GunEmplacement) mech).hasTurret()) {
                 sBasic.append(Messages.getString("MechView.TurretArmor"))
-                        .append(renderArmor
-                        (mech.getArmor(GunEmplacement.LOC_TURRET)))
+                        .append(
+                                renderArmor(mech
+                                        .getArmor(GunEmplacement.LOC_TURRET)))
                         .append('\n'); //$NON-NLS-1$
             }
         }
@@ -159,7 +157,8 @@ public class MechView {
     }
 
     public String getMechReadout() {
-        return getMechReadoutBasic() + "\n" + getMechReadoutLoadout() + "\n" + getMechReadoutFluff(); //$NON-NLS-1$
+        return getMechReadoutBasic()
+                + "\n" + getMechReadoutLoadout() + "\n" + getMechReadoutFluff(); //$NON-NLS-1$
     }
 
     private String getInternalAndArmor() {
@@ -170,7 +169,8 @@ public class MechView {
                 .append(mech.getTotalInternal());
         if (isMech) {
             sIntArm.append(Messages.getString("MechView."
-                    + EquipmentType.getStructureTypeName(mech.getStructureType())));
+                    + EquipmentType.getStructureTypeName(mech
+                            .getStructureType())));
         }
         sIntArm.append("\n"); //$NON-NLS-1$
 
@@ -189,27 +189,24 @@ public class MechView {
         for (int loc = 0; loc < mech.locations(); loc++) {
 
             // Skip empty sections.
-            if (IArmorState.ARMOR_NA == mech.getInternal(loc) ||
-                    (isVehicle && ((loc == Tank.LOC_TURRET &&
-                    ((Tank) mech).hasNoTurret()) ||
-                    (loc == Tank.LOC_BODY)))) {
+            if (IArmorState.ARMOR_NA == mech.getInternal(loc)
+                    || (isVehicle && ((loc == Tank.LOC_TURRET && ((Tank) mech)
+                            .hasNoTurret()) || (loc == Tank.LOC_BODY)))) {
                 continue;
             }
 
             if (mech.getLocationAbbr(loc).length() < 2) {
                 sIntArm.append(" "); //$NON-NLS-1$
             }
-            sIntArm.append(mech.getLocationAbbr(loc))
-                    .append(": "); //$NON-NLS-1$
-            sIntArm.append(renderArmor(mech.getInternal(loc)))
-                    .append("   "); //$NON-NLS-1$
+            sIntArm.append(mech.getLocationAbbr(loc)).append(": "); //$NON-NLS-1$
+            sIntArm.append(renderArmor(mech.getInternal(loc))).append("   "); //$NON-NLS-1$
             if (IArmorState.ARMOR_NA != mech.getArmor(loc)) {
                 sIntArm.append(renderArmor(mech.getArmor(loc)));
             }
             if (mech.hasRearArmor(loc)) {
                 sIntArm.append(" (")//$NON-NLS-1$
-                        .append(renderArmor(mech.getArmor(loc, true)))
-                        .append(")"); //$NON-NLS-1$
+                        .append(renderArmor(mech.getArmor(loc, true))).append(
+                                ")"); //$NON-NLS-1$
             }
             sIntArm.append("\n"); //$NON-NLS-1$
         }
@@ -221,28 +218,31 @@ public class MechView {
         for (Mounted mounted : mech.getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
 
-            sWeapons.append(mounted.getDesc())
-                    .append("  [")//$NON-NLS-1$
+            sWeapons.append(mounted.getDesc()).append("  [")//$NON-NLS-1$
                     .append(mech.getLocationAbbr(mounted.getLocation()));
             if (mounted.isSplit()) {
                 sWeapons.append("/")// $NON-NLS-1$
-                        .append(mech.getLocationAbbr(mounted.getSecondLocation()));
+                        .append(
+                                mech.getLocationAbbr(mounted
+                                        .getSecondLocation()));
             }
             sWeapons.append("]"); //$NON-NLS-1$
-            if (mech.isClan() &&
-                    mounted.getType().getInternalName().substring(0, 2).equals("IS")) { //$NON-NLS-1$
+            if (mech.isClan()
+                    && mounted.getType().getInternalName().substring(0, 2)
+                            .equals("IS")) { //$NON-NLS-1$
                 sWeapons.append(Messages.getString("MechView.IS")); //$NON-NLS-1$
             }
-            if (!mech.isClan() &&
-                    mounted.getType().getInternalName().substring(0, 2).equals("CL")) { //$NON-NLS-1$
+            if (!mech.isClan()
+                    && mounted.getType().getInternalName().substring(0, 2)
+                            .equals("CL")) { //$NON-NLS-1$
                 sWeapons.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
             }
             if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
                 sWeapons.append(" <")//$NON-NLS-1$
-                        .append(mounted.getLinked().getDesc())
-                        .append(">"); //$NON-NLS-1$
+                        .append(mounted.getLinked().getDesc()).append(">"); //$NON-NLS-1$
             }
-            sWeapons.append(" ").append(wtype.getHeat()).append(Messages.getString("MechView.Heat")); //$NON-NLS-1$ //$NON-NLS-2$
+            sWeapons
+                    .append(" ").append(wtype.getHeat()).append(Messages.getString("MechView.Heat")); //$NON-NLS-1$ //$NON-NLS-2$
             sWeapons.append("\n"); //$NON-NLS-1$
         }
         return sWeapons.toString();
@@ -252,8 +252,7 @@ public class MechView {
         StringBuffer sAmmo = new StringBuffer();
         for (Mounted mounted : mech.getAmmo()) {
             if (mounted.getLocation() != Entity.LOC_NONE) {
-                sAmmo.append(mounted.getDesc())
-                        .append("  [")//$NON-NLS-1$
+                sAmmo.append(mounted.getDesc()).append("  [")//$NON-NLS-1$
                         .append(mech.getLocationAbbr(mounted.getLocation()))
                         .append("]\n"); //$NON-NLS-1$
             }
@@ -273,16 +272,17 @@ public class MechView {
                 // These items are displayed elsewhere, so skip them here.
                 continue;
             }
-            sMisc.append(mounted.getDesc())
-                    .append("  [")//$NON-NLS-1$
+            sMisc.append(mounted.getDesc()).append("  [")//$NON-NLS-1$
                     .append(mech.getLocationAbbr(mounted.getLocation()))
                     .append("]"); //$NON-NLS-1$
-            if (mech.isClan() &&
-                    mounted.getType().getInternalName().substring(0, 2).equals("IS")) { //$NON-NLS-1$
+            if (mech.isClan()
+                    && mounted.getType().getInternalName().substring(0, 2)
+                            .equals("IS")) { //$NON-NLS-1$
                 sMisc.append(Messages.getString("MechView.IS")); //$NON-NLS-1$
             }
-            if (!mech.isClan() &&
-                    mounted.getType().getInternalName().substring(0, 2).equals("CL")) { //$NON-NLS-1$
+            if (!mech.isClan()
+                    && mounted.getType().getInternalName().substring(0, 2)
+                            .equals("CL")) { //$NON-NLS-1$
                 sMisc.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
             }
             sMisc.append("\n"); //$NON-NLS-1$
@@ -291,8 +291,7 @@ public class MechView {
         String capacity = mech.getUnusedString();
         if (capacity != null && capacity.length() > 0) {
             sMisc.append(Messages.getString("MechView.CarringCapacity"))//$NON-NLS-1$
-                    .append(capacity)
-                    .append("\n"); //$NON-NLS-1$
+                    .append(capacity).append("\n"); //$NON-NLS-1$
         }
         return sMisc.toString();
     }
@@ -313,7 +312,7 @@ public class MechView {
         if (nArmor <= 0) {
             return "xx"; //$NON-NLS-1$
         }
-		return makeLength(String.valueOf(nArmor), 2, true);
+        return makeLength(String.valueOf(nArmor), 2, true);
     }
 
     private static final String SPACES = "                                   "; //$NON-NLS-1$
@@ -326,7 +325,7 @@ public class MechView {
             if (bRightJustify) {
                 return SPACES.substring(0, n - l) + s;
             }
-			return s + SPACES.substring(0, n - l);
+            return s + SPACES.substring(0, n - l);
         } else {
             return s.substring(0, n - 2) + ".."; //$NON-NLS-1$
         }

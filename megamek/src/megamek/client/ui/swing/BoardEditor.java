@@ -13,39 +13,6 @@
  */
 package megamek.client.ui.swing;
 
-import keypoint.PngEncoder;
-import megamek.client.event.BoardViewEvent;
-import megamek.client.event.BoardViewListenerAdapter;
-import megamek.common.Coords;
-import megamek.common.Game;
-import megamek.common.Hex;
-import megamek.common.IBoard;
-import megamek.common.IHex;
-import megamek.common.ITerrain;
-import megamek.common.MapSettings;
-import megamek.common.Terrains;
-import megamek.common.util.BoardUtilities;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileFilter;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -74,8 +41,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class BoardEditor extends JComponent implements ItemListener, ListSelectionListener,
-        ActionListener, DocumentListener, IMapSettingsObserver {
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+
+import keypoint.PngEncoder;
+import megamek.client.event.BoardViewEvent;
+import megamek.client.event.BoardViewListenerAdapter;
+import megamek.common.Coords;
+import megamek.common.Game;
+import megamek.common.Hex;
+import megamek.common.IBoard;
+import megamek.common.IHex;
+import megamek.common.ITerrain;
+import megamek.common.MapSettings;
+import megamek.common.Terrains;
+import megamek.common.util.BoardUtilities;
+
+public class BoardEditor extends JComponent implements ItemListener,
+        ListSelectionListener, ActionListener, DocumentListener,
+        IMapSettingsObserver {
     /**
      * 
      */
@@ -126,7 +128,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
     private MapSettings mapSettings = new MapSettings();
 
     Coords lastClicked;
-    
+
     /**
      * Creates and lays out a new Board Editor frame.
      */
@@ -134,28 +136,28 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         try {
             bv = new BoardView1(game);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(frame, Messages.getString("BoardEditor.CouldntInitialize") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            Messages.getString("BoardEditor.CouldntInitialize") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
         }
         bv.addBoardViewListener(new BoardViewListenerAdapter() {
             public void hexMoused(BoardViewEvent b) {
                 Coords c = b.getCoords();
-                if(c.equals(lastClicked))
+                if (c.equals(lastClicked))
                     return;
                 lastClicked = c;
                 bv.cursor(c);
-                if((b.getModifiers() & InputEvent.ALT_MASK) != 0) {
+                if ((b.getModifiers() & InputEvent.ALT_MASK) != 0) {
                     setCurrentHex(board.getHex(b.getCoords()));
-                }
-                else if((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-                    if(!board.getHex(b.getCoords()).equals(curHex)) {
+                } else if ((b.getModifiers() & InputEvent.CTRL_MASK) != 0) {
+                    if (!board.getHex(b.getCoords()).equals(curHex)) {
                         paintHex(b.getCoords());
                     }
-                }
-                else if((b.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
+                } else if ((b.getModifiers() & InputEvent.SHIFT_MASK) != 0) {
                     addToHex(b.getCoords());
-                }
-                else if((b.getModifiers() & InputEvent.BUTTON1_MASK) != 0){
+                } else if ((b.getModifiers() & InputEvent.BUTTON1_MASK) != 0) {
                     resurfaceHex(b.getCoords());
                 }
             }
@@ -187,12 +189,12 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
 
         // Create a scroll bars to surround the board view.
         Panel scrollPane = new Panel();
-        scrollPane.setLayout (new BorderLayout());
-        Scrollbar vertical = new Scrollbar (Scrollbar.VERTICAL);
-        Scrollbar horizontal = new Scrollbar (Scrollbar.HORIZONTAL);
-        scrollPane.add (bv, BorderLayout.CENTER);
-        scrollPane.add (vertical, BorderLayout.EAST);
-        scrollPane.add (horizontal, BorderLayout.SOUTH);
+        scrollPane.setLayout(new BorderLayout());
+        Scrollbar vertical = new Scrollbar(Scrollbar.VERTICAL);
+        Scrollbar horizontal = new Scrollbar(Scrollbar.HORIZONTAL);
+        scrollPane.add(bv, BorderLayout.CENTER);
+        scrollPane.add(vertical, BorderLayout.EAST);
+        scrollPane.add(horizontal, BorderLayout.SOUTH);
         frame.add(scrollPane, BorderLayout.CENTER);
 
         // Assign the scrollbars to the board viewer.
@@ -202,8 +204,10 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         frame.setBackground(SystemColor.menu);
         frame.setForeground(SystemColor.menuText);
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
-            frame.setLocation(GUIPreferences.getInstance().getWindowPosX(), GUIPreferences.getInstance().getWindowPosY());
-            frame.setSize(GUIPreferences.getInstance().getWindowSizeWidth(), GUIPreferences.getInstance().getWindowSizeHeight());
+            frame.setLocation(GUIPreferences.getInstance().getWindowPosX(),
+                    GUIPreferences.getInstance().getWindowPosY());
+            frame.setSize(GUIPreferences.getInstance().getWindowSizeWidth(),
+                    GUIPreferences.getInstance().getWindowSizeHeight());
         } else {
             frame.setSize(800, 600);
         }
@@ -223,7 +227,8 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
      */
     private void setupEditorPanel() {
         canHex = new HexCanvas();
-        labElev = new JLabel(Messages.getString("BoardEditor.labElev"), SwingConstants.RIGHT); //$NON-NLS-1$
+        labElev = new JLabel(
+                Messages.getString("BoardEditor.labElev"), SwingConstants.RIGHT); //$NON-NLS-1$
         texElev = new JTextField("0", 1); //$NON-NLS-1$
         texElev.addActionListener(this);
         texElev.getDocument().addDocumentListener(this);
@@ -231,12 +236,14 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         butElevUp.addActionListener(this);
         butElevDown = new JButton(Messages.getString("BoardEditor.butElevDown")); //$NON-NLS-1$
         butElevDown.addActionListener(this);
-        labTerrain = new JLabel(Messages.getString("BoardEditor.labTerrain"), SwingConstants.LEFT); //$NON-NLS-1$
+        labTerrain = new JLabel(
+                Messages.getString("BoardEditor.labTerrain"), SwingConstants.LEFT); //$NON-NLS-1$
         lisTerrain = new JList(new DefaultListModel());
         lisTerrain.addListSelectionListener(this);
         lisTerrain.setVisibleRowCount(6);
         refreshTerrainList();
-        butDelTerrain = new JButton(Messages.getString("BoardEditor.butDelTerrain")); //$NON-NLS-1$
+        butDelTerrain = new JButton(Messages
+                .getString("BoardEditor.butDelTerrain")); //$NON-NLS-1$
         butDelTerrain.addActionListener(this);
         String[] terrainArray = new String[Terrains.SIZE - 1];
         for (int i = 1; i < Terrains.SIZE; i++) {
@@ -245,7 +252,8 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         texTerrainLevel = new JTextField("0", 1); //$NON-NLS-1$
         choTerrainType = new JComboBox(terrainArray);
         texTerrainLevel = new JTextField("0", 1); //$NON-NLS-1$
-        butAddTerrain = new JButton(Messages.getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
+        butAddTerrain = new JButton(Messages
+                .getString("BoardEditor.butAddTerrain")); //$NON-NLS-1$
         butAddTerrain.addActionListener(this);
         butMiniMap = new JButton(Messages.getString("BoardEditor.butMiniMap")); //$NON-NLS-1$
         butMiniMap.setActionCommand("viewMiniMap"); //$NON-NLS-1$
@@ -253,8 +261,10 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         panTerrainType = new JPanel(new BorderLayout());
         panTerrainType.add(choTerrainType, BorderLayout.WEST);
         panTerrainType.add(texTerrainLevel, BorderLayout.CENTER);
-        cheTerrExitSpecified = new JCheckBox(Messages.getString("BoardEditor.cheTerrExitSpecified")); //$NON-NLS-1$
-        butTerrExits = new JButton(Messages.getString("BoardEditor.butTerrExits")); //$NON-NLS-1$
+        cheTerrExitSpecified = new JCheckBox(Messages
+                .getString("BoardEditor.cheTerrExitSpecified")); //$NON-NLS-1$
+        butTerrExits = new JButton(Messages
+                .getString("BoardEditor.butTerrExits")); //$NON-NLS-1$
         texTerrExits = new JTextField("0", 1); //$NON-NLS-1$
         butTerrExits.addActionListener(this);
         panTerrExits = new JPanel(new FlowLayout());
@@ -262,26 +272,33 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         panTerrExits.add(butTerrExits);
         panTerrExits.add(texTerrExits);
         panRoads = new JPanel(new FlowLayout());
-        cheRoadsAutoExit = new JCheckBox(Messages.getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
+        cheRoadsAutoExit = new JCheckBox(Messages
+                .getString("BoardEditor.cheRoadsAutoExit")); //$NON-NLS-1$
         cheRoadsAutoExit.addItemListener(this);
         panRoads.add(cheRoadsAutoExit);
-        labTheme = new JLabel(Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT); //$NON-NLS-1$
+        labTheme = new JLabel(
+                Messages.getString("BoardEditor.labTheme"), SwingConstants.LEFT); //$NON-NLS-1$
         texTheme = new JTextField("", 15); //$NON-NLS-1$
         texTheme.getDocument().addDocumentListener(this);
-        labBoard = new JLabel(Messages.getString("BoardEditor.labBoard"), SwingConstants.LEFT); //$NON-NLS-1$
+        labBoard = new JLabel(
+                Messages.getString("BoardEditor.labBoard"), SwingConstants.LEFT); //$NON-NLS-1$
         butBoardNew = new JButton(Messages.getString("BoardEditor.butBoardNew")); //$NON-NLS-1$
         butBoardNew.setActionCommand("fileBoardNew"); //$NON-NLS-1$
         butBoardNew.addActionListener(this);
-        butBoardLoad = new JButton(Messages.getString("BoardEditor.butBoardLoad")); //$NON-NLS-1$
+        butBoardLoad = new JButton(Messages
+                .getString("BoardEditor.butBoardLoad")); //$NON-NLS-1$
         butBoardLoad.setActionCommand("fileBoardOpen"); //$NON-NLS-1$
         butBoardLoad.addActionListener(this);
-        butBoardSave = new JButton(Messages.getString("BoardEditor.butBoardSave")); //$NON-NLS-1$
+        butBoardSave = new JButton(Messages
+                .getString("BoardEditor.butBoardSave")); //$NON-NLS-1$
         butBoardSave.setActionCommand("fileBoardSave"); //$NON-NLS-1$
         butBoardSave.addActionListener(this);
-        butBoardSaveAs = new JButton(Messages.getString("BoardEditor.butBoardSaveAs")); //$NON-NLS-1$
+        butBoardSaveAs = new JButton(Messages
+                .getString("BoardEditor.butBoardSaveAs")); //$NON-NLS-1$
         butBoardSaveAs.setActionCommand("fileBoardSaveAs"); //$NON-NLS-1$
         butBoardSaveAs.addActionListener(this);
-        butBoardSaveAsImage = new JButton(Messages.getString("BoardEditor.butBoardSaveAsImage")); //$NON-NLS-1$
+        butBoardSaveAsImage = new JButton(Messages
+                .getString("BoardEditor.butBoardSaveAsImage")); //$NON-NLS-1$
         butBoardSaveAsImage.setActionCommand("fileBoardSaveAsImage"); //$NON-NLS-1$
         butBoardSaveAsImage.addActionListener(this);
         panButtons = new JPanel(new GridLayout(3, 2, 2, 2));
@@ -323,39 +340,44 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         addBag(blankL, gridbag, c);
         c.weightx = 1.0;
         c.weighty = 0.0;
-        //        addBag(labBoard, gridbag, c);
+        // addBag(labBoard, gridbag, c);
         addBag(panButtons, gridbag, c);
-        minimapW = new JDialog(frame, Messages.getString("BoardEditor.minimapW"), false); //$NON-NLS-1$
-        minimapW.setLocation(GUIPreferences.getInstance().getMinimapPosX(), GUIPreferences.getInstance().getMinimapPosY());
+        minimapW = new JDialog(frame, Messages
+                .getString("BoardEditor.minimapW"), false); //$NON-NLS-1$
+        minimapW.setLocation(GUIPreferences.getInstance().getMinimapPosX(),
+                GUIPreferences.getInstance().getMinimapPosY());
         try {
             minimap = new MiniMap(minimapW, game, bv);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(frame, Messages.getString("BoardEditor.CouldNotInitialiseMinimap") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+            JOptionPane
+                    .showMessageDialog(
+                            frame,
+                            Messages
+                                    .getString("BoardEditor.CouldNotInitialiseMinimap") + e, Messages.getString("BoardEditor.FatalError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
             frame.dispose();
         }
         minimapW.add(minimap);
         setMapVisible(true);
     }
 
-    private void addBag(JComponent comp, GridBagLayout gridbag, GridBagConstraints c) {
+    private void addBag(JComponent comp, GridBagLayout gridbag,
+            GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
     }
 
     /**
-     * Apply the current Hex to the Board at the specified
-     * location.
+     * Apply the current Hex to the Board at the specified location.
      */
     void paintHex(Coords c) {
         board.setHex(c, curHex.duplicate());
     }
 
     /**
-     * Apply the current Hex to the Board at the specified
-     * location.
+     * Apply the current Hex to the Board at the specified location.
      */
     public void resurfaceHex(Coords c) {
-        if(board.contains(c)) {
+        if (board.contains(c)) {
             IHex newHex = curHex.duplicate();
             newHex.setElevation(board.getHex(c).getElevation());
             board.setHex(c, newHex);
@@ -363,17 +385,15 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
     }
 
     /**
-     * Apply the current Hex to the Board at the specified
-     * location.
+     * Apply the current Hex to the Board at the specified location.
      */
     public void addToHex(Coords c) {
-        if(board.contains(c)) {
+        if (board.contains(c)) {
             IHex newHex = curHex.duplicate();
             IHex oldHex = board.getHex(c);
             newHex.setElevation(oldHex.getElevation());
-            for(int i=0;i<Terrains.SIZE;i++) {
-                if(!newHex.containsTerrain(i)
-                        && oldHex.containsTerrain(i)) {
+            for (int i = 0; i < Terrains.SIZE; i++) {
+                if (!newHex.containsTerrain(i) && oldHex.containsTerrain(i)) {
                     newHex.addTerrain(oldHex.getTerrain(i));
                 }
             }
@@ -383,7 +403,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
 
     /**
      * Sets the current hex
-     *
+     * 
      * @param hex hex to set.
      */
     void setCurrentHex(IHex hex) {
@@ -406,7 +426,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         }
         canHex.repaint();
         lastClicked = null;
-   }
+    }
 
     /**
      * Refreshes the terrain list to match the current hex
@@ -416,7 +436,8 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         for (int i = 0; i < Terrains.SIZE; i++) {
             ITerrain terrain = curHex.getTerrain(i);
             if (terrain != null) {
-                ((DefaultListModel) lisTerrain.getModel()).addElement(terrain.toString());
+                ((DefaultListModel) lisTerrain.getModel()).addElement(terrain
+                        .toString());
             }
         }
     }
@@ -430,7 +451,8 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         int level = Integer.parseInt(texTerrainLevel.getText());
         boolean exitsSpecified = cheTerrExitSpecified.isSelected();
         int exits = Integer.parseInt(texTerrExits.getText());
-        return Terrains.getTerrainFactory().createTerrain(type, level, exitsSpecified, exits);
+        return Terrains.getTerrainFactory().createTerrain(type, level,
+                exitsSpecified, exits);
     }
 
     /**
@@ -448,8 +470,10 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
      * terrain in the list.
      */
     private void refreshTerrainFromList() {
-        if (lisTerrain.getSelectedIndex() == -1) return;
-        ITerrain terrain = Terrains.getTerrainFactory().createTerrain((String) lisTerrain.getSelectedValue());
+        if (lisTerrain.getSelectedIndex() == -1)
+            return;
+        ITerrain terrain = Terrains.getTerrainFactory().createTerrain(
+                (String) lisTerrain.getSelectedValue());
         terrain = curHex.getTerrain(terrain.getType());
         choTerrainType.setSelectedItem(Terrains.getName(terrain.getType()));
         texTerrainLevel.setText(Integer.toString(terrain.getLevel()));
@@ -473,11 +497,14 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
 
     public void boardLoad() {
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
-        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        fc
+                .setLocation(frame.getLocation().x + 150,
+                        frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.loadBoard"));
         fc.setFileFilter(new FileFilter() {
             public boolean accept(File dir) {
-                return null != dir.getName() && dir.getName().endsWith(".board"); //$NON-NLS-1$
+                return null != dir.getName()
+                        && dir.getName().endsWith(".board"); //$NON-NLS-1$
             }
 
             public String getDescription() {
@@ -485,7 +512,8 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
             }
         });
         int returnVal = fc.showOpenDialog(frame);
-        if (returnVal != JFileChooser.APPROVE_OPTION || fc.getSelectedFile() == null) {
+        if (returnVal != JFileChooser.APPROVE_OPTION
+                || fc.getSelectedFile() == null) {
             // I want a file, y'know!
             return;
         }
@@ -508,9 +536,8 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
     }
 
     /**
-     * Checks to see if there is already a path and name
-     * stored; if not, calls "save as"; otherwise, saves
-     * the board to the specified file.
+     * Checks to see if there is already a path and name stored; if not, calls
+     * "save as"; otherwise, saves the board to the specified file.
      */
     private void boardSave() {
         if (curfile == null) {
@@ -538,22 +565,24 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
             boardSaveAsImage();
             return;
         }
-        JDialog waitD = new JDialog(frame, Messages.getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
-        waitD.add(new JLabel(Messages.getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
+        JDialog waitD = new JDialog(frame, Messages
+                .getString("BoardEditor.waitDialog.title")); //$NON-NLS-1$
+        waitD.add(new JLabel(Messages
+                .getString("BoardEditor.waitDialog.message"))); //$NON-NLS-1$
         waitD.setSize(250, 130);
         // move to middle of screen
-        waitD.setLocation(frame.getSize().width / 2 - waitD.getSize().width / 2,
-                frame.getSize().height / 2 - waitD.getSize().height / 2);
+        waitD.setLocation(
+                frame.getSize().width / 2 - waitD.getSize().width / 2, frame
+                        .getSize().height
+                        / 2 - waitD.getSize().height / 2);
         waitD.setVisible(true);
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         waitD.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         // save!
-        int filter = 0; //0 - no filter; 1 - sub; 2 - up
+        int filter = 0; // 0 - no filter; 1 - sub; 2 - up
         int compressionLevel = 9; // 0 to 9 with 0 being no compression
         PngEncoder png = new PngEncoder(bv.getEntireBoardImage(),
-                PngEncoder.NO_ALPHA,
-                filter,
-                compressionLevel);
+                PngEncoder.NO_ALPHA, filter, compressionLevel);
         try {
             FileOutputStream outfile = new FileOutputStream(curfileImage);
             byte[] pngbytes;
@@ -573,16 +602,19 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
     }
 
     /**
-     * Opens a file dialog box to select a file to save as;
-     * saves the board to the file.
+     * Opens a file dialog box to select a file to save as; saves the board to
+     * the file.
      */
     private void boardSaveAs() {
         JFileChooser fc = new JFileChooser("data" + File.separator + "boards");
-        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        fc
+                .setLocation(frame.getLocation().x + 150,
+                        frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveBoardAs"));
         fc.setFileFilter(new FileFilter() {
             public boolean accept(File dir) {
-                return null != dir.getName() && dir.getName().endsWith(".board"); //$NON-NLS-1$
+                return null != dir.getName()
+                        && dir.getName().endsWith(".board"); //$NON-NLS-1$
             }
 
             public String getDescription() {
@@ -590,7 +622,8 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
             }
         });
         int returnVal = fc.showSaveDialog(frame);
-        if (returnVal != JFileChooser.APPROVE_OPTION || fc.getSelectedFile() == null) {
+        if (returnVal != JFileChooser.APPROVE_OPTION
+                || fc.getSelectedFile() == null) {
             // I want a file, y'know!
             return;
         }
@@ -601,7 +634,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
             try {
                 curfile = new File(curfile.getCanonicalPath() + ".board"); //$NON-NLS-1$
             } catch (IOException ie) {
-                //failure!
+                // failure!
                 return;
             }
         }
@@ -610,13 +643,14 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
     }
 
     /**
-     * Opens a file dialog box to select a file to save as;
-     * saves the board to the file as an image.  Useful
-     * for printing boards.
+     * Opens a file dialog box to select a file to save as; saves the board to
+     * the file as an image. Useful for printing boards.
      */
     private void boardSaveAsImage() {
         JFileChooser fc = new JFileChooser(".");
-        fc.setLocation(frame.getLocation().x + 150, frame.getLocation().y + 100);
+        fc
+                .setLocation(frame.getLocation().x + 150,
+                        frame.getLocation().y + 100);
         fc.setDialogTitle(Messages.getString("BoardEditor.saveAsImage"));
         fc.setFileFilter(new FileFilter() {
             public boolean accept(File dir) {
@@ -639,7 +673,8 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
             fc.setSelectedFile(new File(fileName));
         }
         int returnVal = fc.showSaveDialog(frame);
-        if (returnVal != JFileChooser.APPROVE_OPTION || fc.getSelectedFile() == null) {
+        if (returnVal != JFileChooser.APPROVE_OPTION
+                || fc.getSelectedFile() == null) {
             // I want a file, y'know!
             return;
         }
@@ -648,9 +683,10 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
         // make sure the file ends in png
         if (!curfileImage.getName().toLowerCase().endsWith(".png")) { //$NON-NLS-1$
             try {
-                curfileImage = new File(curfileImage.getCanonicalPath() + ".png"); //$NON-NLS-1$
+                curfileImage = new File(curfileImage.getCanonicalPath()
+                        + ".png"); //$NON-NLS-1$
             } catch (IOException ie) {
-                //failure!
+                // failure!
                 return;
             }
         }
@@ -745,18 +781,22 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
             boardSaveAs();
         } else if ("fileBoardSaveAsImage".equalsIgnoreCase(ae.getActionCommand())) { //$NON-NLS-1$
             boardSaveAsImage();
-        } else if (ae.getSource().equals(butDelTerrain) && lisTerrain.getSelectedValue() != null) {
-            ITerrain toRemove = Terrains.getTerrainFactory().createTerrain((String) lisTerrain.getSelectedValue());
+        } else if (ae.getSource().equals(butDelTerrain)
+                && lisTerrain.getSelectedValue() != null) {
+            ITerrain toRemove = Terrains.getTerrainFactory().createTerrain(
+                    (String) lisTerrain.getSelectedValue());
             curHex.removeTerrain(toRemove.getType());
             refreshTerrainList();
             repaintWorkingHex();
         } else if (ae.getSource().equals(butAddTerrain)) {
             addSetTerrain();
-        } else if (ae.getSource().equals(butElevUp) && curHex.getElevation() < 9) {
+        } else if (ae.getSource().equals(butElevUp)
+                && curHex.getElevation() < 9) {
             curHex.setElevation(curHex.getElevation() + 1);
             texElev.setText(Integer.toString(curHex.getElevation()));
             repaintWorkingHex();
-        } else if (ae.getSource().equals(butElevDown) && curHex.getElevation() > -5) {
+        } else if (ae.getSource().equals(butElevDown)
+                && curHex.getElevation() > -5) {
             curHex.setElevation(curHex.getElevation() - 1);
             texElev.setText(Integer.toString(curHex.getElevation()));
             repaintWorkingHex();
@@ -793,8 +833,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
     }
 
     /**
-     * Displays the currently selected hex picture, in
-     * component form
+     * Displays the currently selected hex picture, in component form
      */
     private class HexCanvas extends JPanel {
         /**
@@ -815,11 +854,14 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
                 if (tm.supersFor(curHex) != null) {
                     for (final Object newVar : tm.supersFor(curHex)) {
                         g.drawImage((Image) newVar, 0, 0, this);
-                        g.drawString(Messages.getString("BoardEditor.SUPER"), 0, 10); //$NON-NLS-1$
+                        g.drawString(
+                                Messages.getString("BoardEditor.SUPER"), 0, 10); //$NON-NLS-1$
                     }
                 }
                 g.setFont(new Font("SansSerif", Font.PLAIN, 9)); //$NON-NLS-1$
-                g.drawString(Messages.getString("BoardEditor.LEVEL") + curHex.getElevation(), 24, 70); //$NON-NLS-1$
+                g
+                        .drawString(
+                                Messages.getString("BoardEditor.LEVEL") + curHex.getElevation(), 24, 70); //$NON-NLS-1$
             } else {
                 g.clearRect(0, 0, 72, 72);
             }
@@ -834,8 +876,7 @@ public class BoardEditor extends JComponent implements ItemListener, ListSelecti
     }
 
     /**
-     * Toggles the minimap window
-     * Also, toggles the minimap enabled setting
+     * Toggles the minimap window Also, toggles the minimap enabled setting
      */
     private void toggleMap() {
         setMapVisible(!minimapW.isVisible());

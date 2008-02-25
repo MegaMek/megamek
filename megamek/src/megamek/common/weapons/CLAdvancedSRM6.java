@@ -17,15 +17,19 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class CLAdvancedSRM6 extends AdvancedSRMWeapon {
 
     /**
      * 
      */
+    private static final long serialVersionUID = -6710415894545970512L;
+
+    /**
+     * 
+     */
     public CLAdvancedSRM6() {
-        super(); 
+        super();
         this.techLevel = TechConstants.T_CLAN_LEVEL_2;
         this.name = "Advanced SRM 6";
         this.setInternalName("CLAdvancedSRM6");

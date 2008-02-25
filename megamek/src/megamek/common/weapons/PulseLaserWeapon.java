@@ -20,15 +20,19 @@ import megamek.server.Server;
 
 /**
  * @author beerockxs
- *
  */
 public class PulseLaserWeapon extends LaserWeapon {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -731162221147163665L;
+
     public PulseLaserWeapon() {
         super();
         this.flags |= F_PULSE;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

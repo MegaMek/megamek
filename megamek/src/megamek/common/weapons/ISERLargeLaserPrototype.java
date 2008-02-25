@@ -25,9 +25,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISERLargeLaserPrototype extends LaserWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4745756742469577788L;
 
     public ISERLargeLaserPrototype() {
         super();
@@ -52,7 +56,7 @@ public class ISERLargeLaserPrototype extends LaserWeapon {
         this.bv = 163;
         this.cost = 200000;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

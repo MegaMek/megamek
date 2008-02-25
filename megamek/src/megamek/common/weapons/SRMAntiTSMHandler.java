@@ -28,7 +28,6 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class SRMAntiTSMHandler extends SRMHandler {
 
@@ -43,14 +42,16 @@ public class SRMAntiTSMHandler extends SRMHandler {
      * @param g
      * @param s
      */
-    public SRMAntiTSMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public SRMAntiTSMHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
         sSalvoType = " anti-TSM missile(s) ";
         damageType = DamageType.ANTI_TSM;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
@@ -59,16 +60,17 @@ public class SRMAntiTSMHandler extends SRMHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor) {
                 bSalvo = true;
-                return ((BattleArmor)ae).getShootingStrength();
+                return ((BattleArmor) ae).getShootingStrength();
             }
             return 1;
         }
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
         boolean bWeather = false;
-        boolean maxtechmissiles = game.getOptions().booleanOption("maxtech_mslhitpen");
+        boolean maxtechmissiles = game.getOptions().booleanOption(
+                "maxtech_mslhitpen");
         if (maxtechmissiles) {
-            if (nRange<=1) {
+            if (nRange <= 1) {
                 nMissilesModifier += 1;
             } else if (nRange <= wtype.getShortRange()) {
                 nMissilesModifier += 0;
@@ -79,33 +81,38 @@ public class SRMAntiTSMHandler extends SRMHandler {
             }
         }
         if (bGlancing) {
-            nMissilesModifier -=4;
+            nMissilesModifier -= 4;
         }
-        
+
         // weather checks
-        if (game.getOptions().booleanOption("blizzard") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+        if (game.getOptions().booleanOption("blizzard")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
             nMissilesModifier -= 4;
             bWeather = true;
         }
 
-        if (game.getOptions().booleanOption("moderate_winds") && wtype.hasFlag(WeaponType.F_MISSILE)) {
+        if (game.getOptions().booleanOption("moderate_winds")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
             nMissilesModifier -= 2;
             bWeather = true;
         }
-        
-        if (game.getOptions().booleanOption("high_winds")  && wtype.hasFlag(WeaponType.F_MISSILE)) {
+
+        if (game.getOptions().booleanOption("high_winds")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
             nMissilesModifier -= 4;
             bWeather = true;
         }
-        
-        //Add ams mod
+
+        // Add ams mod
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
         if (allShotsHit()) {
             missilesHit = wtype.getRackSize();
         } else {
             // anti tsm hit with half the normal number, round up
-            missilesHit = Compute.missilesHit(wtype.getRackSize(), nMissilesModifier , bWeather || bGlancing || maxtechmissiles);
-            missilesHit = (int)Math.ceil((double)missilesHit/2);
+            missilesHit = Compute
+                    .missilesHit(wtype.getRackSize(), nMissilesModifier,
+                            bWeather || bGlancing || maxtechmissiles);
+            missilesHit = (int) Math.ceil((double) missilesHit / 2);
         }
         r = new Report(3325);
         r.subject = subjectId;

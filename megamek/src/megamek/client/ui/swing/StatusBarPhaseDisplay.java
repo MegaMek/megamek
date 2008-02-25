@@ -26,7 +26,8 @@ import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 
-public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay implements ActionListener {
+public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay
+        implements ActionListener {
 
     // displays
     private JLabel labStatus;
@@ -63,4 +64,3 @@ public abstract class StatusBarPhaseDisplay extends AbstractPhaseDisplay impleme
         return false;
     }
 }
-

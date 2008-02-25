@@ -20,51 +20,60 @@
 
 package megamek.server.commands;
 
-import java.util.*;
+import java.util.Enumeration;
 
-import megamek.server.*;
+import megamek.server.Server;
 
 /**
- * The help command lists the other commands when run without arguments.  When
- * run with another command name as an argument, it queries that command for
- * its help string and send that to the client.
- *
- * @author  Ben
- * @version 
+ * The help command lists the other commands when run without arguments. When
+ * run with another command name as an argument, it queries that command for its
+ * help string and send that to the client.
+ * 
+ * @author Ben
+ * @version
  */
 public class HelpCommand extends ServerCommand {
 
     /** Creates new HelpCommand */
     public HelpCommand(Server server) {
-        super(server, "help", "Lists all of the commands available, or gives help on a specific command.  Usage: /help [command]");
+        super(
+                server,
+                "help",
+                "Lists all of the commands available, or gives help on a specific command.  Usage: /help [command]");
     }
-    
+
     public void run(int connId, String[] args) {
         if (args.length == 1) {
             // no args
-            server.sendServerChat(connId, "Type /help [command] for help on a specific command.  Commands available: " + commandList());
+            server.sendServerChat(connId,
+                    "Type /help [command] for help on a specific command.  Commands available: "
+                            + commandList());
         } else {
             // argument
             ServerCommand command = server.getCommand(args[1]);
             if (command == null) {
-                server.sendServerChat(connId, "Command \"" + args[1] + "\" not recognized.  Commands available: " + commandList());
+                server.sendServerChat(connId, "Command \"" + args[1]
+                        + "\" not recognized.  Commands available: "
+                        + commandList());
             } else {
-                server.sendServerChat(connId, "/" + command.getName() + " : " + command.getHelp());
+                server.sendServerChat(connId, "/" + command.getName() + " : "
+                        + command.getHelp());
             }
         }
     }
-    
+
     private String commandList() {
-            StringBuffer commandList = new StringBuffer();
+        StringBuffer commandList = new StringBuffer();
 
-            for (Enumeration<String> i = server.getAllCommandNames(); i.hasMoreElements();) {
-                ServerCommand command = server.getCommand(i.nextElement());
-                if (commandList.length() > 0) {
-                    commandList.append(", ");
-                }
-                commandList.append(command.getName());
+        for (Enumeration<String> i = server.getAllCommandNames(); i
+                .hasMoreElements();) {
+            ServerCommand command = server.getCommand(i.nextElement());
+            if (commandList.length() > 0) {
+                commandList.append(", ");
             }
+            commandList.append(command.getName());
+        }
 
-            return commandList.toString();
-    }    
+        return commandList.toString();
+    }
 }

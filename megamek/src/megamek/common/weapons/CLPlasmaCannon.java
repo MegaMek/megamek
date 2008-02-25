@@ -26,9 +26,13 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLPlasmaCannon extends AmmoWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 322396740172378519L;
 
     public CLPlasmaCannon() {
         this.techLevel = TechConstants.T_CLAN_LEVEL_2;
@@ -45,11 +49,11 @@ public class CLPlasmaCannon extends AmmoWeapon {
         this.extremeRange = 24;
         this.tonnage = 3.0f;
         this.criticals = 1;
-        this.flags |= F_PLASMA | F_DIRECT_FIRE ;
+        this.flags |= F_PLASMA | F_DIRECT_FIRE;
         this.bv = 170;
         this.cost = 480000;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

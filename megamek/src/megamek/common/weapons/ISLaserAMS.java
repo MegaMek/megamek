@@ -1,4 +1,4 @@
-/**
+/*
  * MegaMek - Copyright (C) 2005 Ben Mazur (bmazur@sev.org)
  * 
  *  This program is free software; you can redistribute it and/or modify it 
@@ -13,7 +13,6 @@
  */
 /*
  * Created on Sep 25, 2004
- *
  */
 package megamek.common.weapons;
 
@@ -22,12 +21,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISLaserAMS extends LaserWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = -7448728413011101076L;
+
     public ISLaserAMS() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_3;
@@ -37,7 +37,7 @@ public class ISLaserAMS extends LaserWeapon {
         this.addLookupName("IS Laser AMS");
         this.heat = 2;
         this.rackSize = 2;
-        this.damage = 2;  // # of d6 of missiles affected
+        this.damage = 2; // # of d6 of missiles affected
         this.ammoType = AmmoType.T_NA;
         this.tonnage = 1.5f;
         this.criticals = 2;

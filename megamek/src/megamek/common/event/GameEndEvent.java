@@ -14,9 +14,11 @@
 
 package megamek.common.event;
 
+import megamek.common.IGame;
+
 /**
- * Instances of this class are sent when the game finished 
- *
+ * Instances of this class are sent when the game finished
+ * 
  * @see IGame#end(int, int)
  * @see GameListener
  */
@@ -33,5 +35,5 @@ public class GameEndEvent extends GameEvent {
     public GameEndEvent(Object source) {
         super(source, GAME_END);
     }
-    
+
 }

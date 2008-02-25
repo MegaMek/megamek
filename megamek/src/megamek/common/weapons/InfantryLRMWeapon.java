@@ -26,10 +26,14 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class InfantryLRMWeapon extends InfantryWeapon {
-    
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -966926675003846938L;
+
     public InfantryLRMWeapon() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
@@ -41,12 +45,12 @@ public class InfantryLRMWeapon extends InfantryWeapon {
         this.mediumRange = 6;
         this.longRange = 9;
         this.extremeRange = 12;
-        //corean farshot support lrm, TM, p. 319
+        // corean farshot support lrm, TM, p. 319
         this.bv = 1.15;
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_MISSILE;
-        this.setModes(new String[] {"", "Indirect"});
+        this.setModes(new String[] { "", "Indirect" });
     }
-    
+
     /*
      * (non-Javadoc)
      * 

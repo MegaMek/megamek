@@ -42,9 +42,13 @@ import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 
 /**
- * <p>Title: Ruler</p>
- * <p>Description: </p>
- *
+ * <p>
+ * Title: Ruler
+ * </p>
+ * <p>
+ * Description:
+ * </p>
+ * 
  * @author Ken Nguyen (kenn)
  * @version 1.0
  */
@@ -309,21 +313,25 @@ public class Ruler extends JDialog implements BoardViewListener {
         try {
             h1 = Integer.parseInt(height1.getText());
         } catch (NumberFormatException e) {
-            //leave at default value
+            // leave at default value
         }
 
         try {
             h2 = Integer.parseInt(height2.getText());
         } catch (NumberFormatException e) {
-            //leave at default value
+            // leave at default value
         }
 
         String toHit1 = "", toHit2 = ""; //$NON-NLS-1$ //$NON-NLS-2$
         ToHitData thd;
         if (flip) {
-            thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers(client.game);
+            thd = LosEffects.calculateLos(client.game,
+                    buildAttackInfo(start, end, h1, h2)).losModifiers(
+                    client.game);
         } else {
-            thd = LosEffects.calculateLos(client.game, buildAttackInfo(end, start, h2, h1)).losModifiers(client.game);
+            thd = LosEffects.calculateLos(client.game,
+                    buildAttackInfo(end, start, h2, h1)).losModifiers(
+                    client.game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit1 = thd.getValue() + " = "; //$NON-NLS-1$
@@ -331,9 +339,13 @@ public class Ruler extends JDialog implements BoardViewListener {
         toHit1 += thd.getDesc();
 
         if (flip) {
-            thd = LosEffects.calculateLos(client.game, buildAttackInfo(end, start, h2, h1)).losModifiers(client.game);
+            thd = LosEffects.calculateLos(client.game,
+                    buildAttackInfo(end, start, h2, h1)).losModifiers(
+                    client.game);
         } else {
-            thd = LosEffects.calculateLos(client.game, buildAttackInfo(start, end, h1, h2)).losModifiers(client.game);
+            thd = LosEffects.calculateLos(client.game,
+                    buildAttackInfo(start, end, h1, h2)).losModifiers(
+                    client.game);
         }
         if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
             toHit2 = thd.getValue() + " = "; //$NON-NLS-1$
@@ -344,22 +356,22 @@ public class Ruler extends JDialog implements BoardViewListener {
         tf_end.setText(end.toString());
         tf_distance.setText("" + distance); //$NON-NLS-1$
         tf_los1.setText(toHit1);
-        //      tf_los1.setCaretPosition(0);
+        // tf_los1.setCaretPosition(0);
         tf_los2.setText(toHit2);
-        //      tf_los2.setCaretPosition(0);
+        // tf_los2.setCaretPosition(0);
     }
 
     /**
-     * Ignores determining if the attack is on land or under
-     * water.
-     *
+     * Ignores determining if the attack is on land or under water.
+     * 
      * @param c1
      * @param c2
      * @param h1
      * @param h2
      * @return
      */
-    private LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1, int h2) {
+    private LosEffects.AttackInfo buildAttackInfo(Coords c1, Coords c2, int h1,
+            int h2) {
         LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
         ai.attackPos = c1;
         ai.targetPos = c2;
@@ -437,13 +449,17 @@ public class Ruler extends JDialog implements BoardViewListener {
         setVisible(true);
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.client.BoardViewListener#finishedMovingUnits(megamek.client.BoardViewEvent)
      */
     public void finishedMovingUnits(BoardViewEvent b) {
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see megamek.client.BoardViewListener#selectUnit(megamek.client.BoardViewEvent)
      */
     public void unitSelected(BoardViewEvent b) {

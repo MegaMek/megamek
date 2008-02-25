@@ -42,7 +42,8 @@ import megamek.common.TechConstants;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.util.RandomArmyCreator;
 
-public class RandomArmyDialog extends Dialog implements ActionListener, WindowListener {
+public class RandomArmyDialog extends Dialog implements ActionListener,
+        WindowListener {
 
     /**
      * 
@@ -57,23 +58,29 @@ public class RandomArmyDialog extends Dialog implements ActionListener, WindowLi
 
     private Choice m_chPlayer = new Choice();
     private Choice m_chType = new Choice();
-    
+
     private Panel m_pParameters = new Panel();
     private Panel m_pPreview = new Panel();
     private Panel m_pButtons = new Panel();
     private Button m_bOK = new Button(Messages.getString("Okay"));
     private Button m_bCancel = new Button(Messages.getString("Cancel"));
-    private Button m_bRoll = new Button(Messages.getString("RandomArmyDialog.Roll"));
-    
+    private Button m_bRoll = new Button(Messages
+            .getString("RandomArmyDialog.Roll"));
+
     private List m_lMechs = new List();
-    
+
     private Label m_labBV = new Label(Messages.getString("RandomArmyDialog.BV"));
-    private Label m_labYear = new Label(Messages.getString("RandomArmyDialog.Year"));
-    private Label m_labMechs = new Label(Messages.getString("RandomArmyDialog.Mechs"));
-    private Label m_labVees = new Label(Messages.getString("RandomArmyDialog.Vees"));
+    private Label m_labYear = new Label(Messages
+            .getString("RandomArmyDialog.Year"));
+    private Label m_labMechs = new Label(Messages
+            .getString("RandomArmyDialog.Mechs"));
+    private Label m_labVees = new Label(Messages
+            .getString("RandomArmyDialog.Vees"));
     private Label m_labBA = new Label(Messages.getString("RandomArmyDialog.BA"));
-    private Label m_labInfantry = new Label(Messages.getString("RandomArmyDialog.Infantry"));
-    private Label m_labTech = new Label(Messages.getString("RandomArmyDialog.Tech"));
+    private Label m_labInfantry = new Label(Messages
+            .getString("RandomArmyDialog.Infantry"));
+    private Label m_labTech = new Label(Messages
+            .getString("RandomArmyDialog.Tech"));
 
     private TextField m_tBVmin = new TextField(6);
     private TextField m_tBVmax = new TextField(6);
@@ -83,8 +90,10 @@ public class RandomArmyDialog extends Dialog implements ActionListener, WindowLi
     private TextField m_tVees = new TextField(3);
     private TextField m_tBA = new TextField(3);
     private TextField m_tInfantry = new TextField(3);
-    private Checkbox m_chkPad = new Checkbox(Messages.getString("RandomArmyDialog.Pad"));
-    private Checkbox m_chkCanon = new Checkbox(Messages.getString("RandomArmyDialog.Canon"));
+    private Checkbox m_chkPad = new Checkbox(Messages
+            .getString("RandomArmyDialog.Pad"));
+    private Checkbox m_chkCanon = new Checkbox(Messages
+            .getString("RandomArmyDialog.Canon"));
     private ArrayList<MechSummary> army = new ArrayList<MechSummary>(0);
 
     public RandomArmyDialog(ClientGUI cl) {
@@ -92,8 +101,8 @@ public class RandomArmyDialog extends Dialog implements ActionListener, WindowLi
         m_clientgui = cl;
         m_client = cl.getClient();
         updatePlayerChoice();
-        
-        //set defaults
+
+        // set defaults
         m_tMechs.setText("4");
         m_tBVmin.setText("5800");
         m_tBVmax.setText("6000");
@@ -102,10 +111,11 @@ public class RandomArmyDialog extends Dialog implements ActionListener, WindowLi
         m_tMinYear.setText("2500");
         m_tMaxYear.setText("3100");
         m_tInfantry.setText("0");
-        m_chkCanon.setState(m_client.game.getOptions().booleanOption("canon_only"));
+        m_chkCanon.setState(m_client.game.getOptions().booleanOption(
+                "canon_only"));
         updateTechChoice(true);
-        
-        //construct the buttons panel
+
+        // construct the buttons panel
         m_pButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
         m_pButtons.add(m_bOK);
         m_bOK.addActionListener(this);
@@ -115,8 +125,8 @@ public class RandomArmyDialog extends Dialog implements ActionListener, WindowLi
         m_bCancel.addActionListener(this);
         m_pButtons.add(m_labelPlayer);
         m_pButtons.add(m_chPlayer);
-        
-        //construct the parameters panel
+
+        // construct the parameters panel
         GridBagLayout layout = new GridBagLayout();
         m_pParameters.setLayout(layout);
         GridBagConstraints constraints = new GridBagConstraints();
@@ -177,12 +187,12 @@ public class RandomArmyDialog extends Dialog implements ActionListener, WindowLi
         m_pParameters.add(m_chkPad);
         layout.setConstraints(m_chkCanon, constraints);
         m_pParameters.add(m_chkCanon);
-        
-        //construct the preview panel
-        m_pPreview.setLayout(new GridLayout(1,1));
+
+        // construct the preview panel
+        m_pPreview.setLayout(new GridLayout(1, 1));
         m_pPreview.add(m_lMechs);
-        
-        //contruct the main dialog
+
+        // contruct the main dialog
         setLayout(new BorderLayout());
         add(m_pButtons, BorderLayout.SOUTH);
         add(m_pParameters, BorderLayout.WEST);
@@ -192,10 +202,11 @@ public class RandomArmyDialog extends Dialog implements ActionListener, WindowLi
     }
 
     public void actionPerformed(ActionEvent ev) {
-        if(ev.getSource().equals(m_bOK)) {
-            for(MechSummary ms : army) {
+        if (ev.getSource().equals(m_bOK)) {
+            for (MechSummary ms : army) {
                 try {
-                    Entity e = new MechFileParser(ms.getSourceFile(), ms.getEntryName()).getEntity();
+                    Entity e = new MechFileParser(ms.getSourceFile(), ms
+                            .getEntryName()).getEntity();
                     Client c = null;
                     if (m_chPlayer.getSelectedIndex() > 0) {
                         String name = m_chPlayer.getSelectedItem();
@@ -204,21 +215,20 @@ public class RandomArmyDialog extends Dialog implements ActionListener, WindowLi
                     if (c == null) {
                         c = m_client;
                     }
-//                    autoSetSkills(e);
+                    // autoSetSkills(e);
                     e.setOwner(c.getLocalPlayer());
                     c.sendAddEntity(e);
                 } catch (EntityLoadingException ex) {
-                    System.out.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                    System.out
+                            .println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     ex.printStackTrace();
                     return;
                 }
             }
             setVisible(false);
-        }
-        else if(ev.getSource().equals(m_bCancel)) {
+        } else if (ev.getSource().equals(m_bCancel)) {
             setVisible(false);
-        }
-        else if(ev.getSource().equals(m_bRoll)) {
+        } else if (ev.getSource().equals(m_bRoll)) {
             try {
                 RandomArmyCreator.Parameters p = new RandomArmyCreator.Parameters();
                 p.mechs = Integer.parseInt(m_tMechs.getText());
@@ -234,13 +244,13 @@ public class RandomArmyDialog extends Dialog implements ActionListener, WindowLi
                 p.maxYear = Integer.parseInt(m_tMaxYear.getText());
                 army = RandomArmyCreator.generateArmy(p);
                 m_lMechs.removeAll();
-                for(MechSummary m : army) {
+                for (MechSummary m : army) {
                     m_lMechs.add(m.getName());
                 }
                 m_lMechs.validate();
                 pack();
             } catch (NumberFormatException ex) {
-                
+
             }
         }
     }
@@ -284,17 +294,19 @@ public class RandomArmyDialog extends Dialog implements ActionListener, WindowLi
     }
 
     private void updateTechChoice(boolean force) {
-        boolean maxTechOption = m_client.game.getOptions().booleanOption("allow_level_3_units");
-        int maxTech = (maxTechOption ? TechConstants.SIZE : TechConstants.SIZE_LEVEL_2);
+        boolean maxTechOption = m_client.game.getOptions().booleanOption(
+                "allow_level_3_units");
+        int maxTech = (maxTechOption ? TechConstants.SIZE
+                : TechConstants.SIZE_LEVEL_2);
         if (includeMaxTech == maxTechOption && !force) {
             return;
         }
         includeMaxTech = maxTechOption;
         m_chType.removeAll();
-        for (int i=0; i<maxTech; i++) {
+        for (int i = 0; i < maxTech; i++) {
             m_chType.addItem(TechConstants.getLevelDisplayableName(i));
         }
-        if(maxTechOption) {
+        if (maxTechOption) {
             m_chType.select(TechConstants.T_IS_LEVEL_3);
         } else {
             m_chType.select(TechConstants.T_IS_LEVEL_2);
@@ -302,7 +314,7 @@ public class RandomArmyDialog extends Dialog implements ActionListener, WindowLi
     }
 
     public void setVisible(boolean show) {
-        if(show) {
+        if (show) {
             updatePlayerChoice();
             updateTechChoice(false);
         }

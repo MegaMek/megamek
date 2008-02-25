@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class CLAMS extends AmmoWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 7447941274169853546L;
+
     /**
      * 
      */

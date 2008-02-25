@@ -27,26 +27,32 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class PrototypeGaussHandler extends AmmoWeaponHandler {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -156828547249911617L;
 
     /**
      * @param t
      * @param w
      * @param g
      */
-    public PrototypeGaussHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public PrototypeGaussHandler(ToHitData t, WeaponAttackAction w, IGame g,
+            Server s) {
         super(t, w, g, s);
     }
-    
+
     /*
      * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#doChecks(java.util.Vector)
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         if (roll == 2) {
-            r = new Report(3165); 
+            r = new Report(3165);
             r.subject = subjectId;
             weapon.setJammed(true);
             weapon.setHit(true);
@@ -54,5 +60,5 @@ public class PrototypeGaussHandler extends AmmoWeaponHandler {
             return true;
         }
         return false;
-    }    
+    }
 }

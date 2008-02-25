@@ -14,9 +14,7 @@
 
 package megamek.common.actions;
 
-public class TriggerAPPodAction
-    extends AbstractEntityAction
-{
+public class TriggerAPPodAction extends AbstractEntityAction {
     /**
      * 
      */
@@ -26,9 +24,9 @@ public class TriggerAPPodAction
 
     /**
      * Trigger the indicated AP Pod on the entity with the given entity ID.
-     *
-     * @param   entityId the <code>int</code> ID of the triggering entity.
-     * @param   equipId the <code>int</code> ID of the triggered AP Pod.
+     * 
+     * @param entityId the <code>int</code> ID of the triggering entity.
+     * @param equipId the <code>int</code> ID of the triggered AP Pod.
      */
     public TriggerAPPodAction(int entityId, int equipId) {
         super(entityId);
@@ -37,8 +35,8 @@ public class TriggerAPPodAction
 
     /**
      * Get the equipment ID of the AP Pod being triggered.
-     *
-     * @return  the <code>int</code> equipment ID of the AP Pod.
+     * 
+     * @return the <code>int</code> equipment ID of the AP Pod.
      */
     public int getPodId() {
         return this.podId;

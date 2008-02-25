@@ -23,7 +23,6 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class SRMAXHandler extends SRMHandler {
 
@@ -44,14 +43,15 @@ public class SRMAXHandler extends SRMHandler {
         nSalvoBonus = -2;
         damageType = DamageType.ACID;
     }
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return (int)Math.ceil(((float)wtype.getRackSize())/5);
+            return (int) Math.ceil(((float) wtype.getRackSize()) / 5);
         return 1;
     }
 }

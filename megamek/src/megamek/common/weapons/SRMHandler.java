@@ -22,7 +22,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public class SRMHandler extends MissileWeaponHandler {
 
@@ -40,20 +39,21 @@ public class SRMHandler extends MissileWeaponHandler {
     public SRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
-    
+
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return (int)Math.ceil(((float)wtype.getRackSize()*2)/5);
+            return (int) Math.ceil(((float) wtype.getRackSize() * 2) / 5);
         return 2;
     }
 
     /*
-     *  (non-Javadoc)
+     * (non-Javadoc)
+     * 
      * @see megamek.common.weapons.WeaponHandler#calcnCluster()
      */
     protected int calcnCluster() {

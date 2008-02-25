@@ -17,9 +17,9 @@ package megamek.common.event;
 import megamek.common.Player;
 
 /**
- * Instances of descendant classes are sent as a result of Game changes
- * related to Players
- *
+ * Instances of descendant classes are sent as a result of Game changes related
+ * to Players
+ * 
  * @see GamePlayerChangeEvent
  * @see GamePlayerChatEvent
  * @see GameListener
@@ -27,9 +27,8 @@ import megamek.common.Player;
 public abstract class GamePlayerEvent extends GameEvent {
 
     protected Player player;
-    
+
     /**
-     * 
      * @param source
      * @param player
      * @param type
@@ -38,7 +37,7 @@ public abstract class GamePlayerEvent extends GameEvent {
         super(source, type);
         this.player = player;
     }
-    
+
     /**
      * @return the player.
      */

@@ -21,7 +21,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public abstract class NarcWeapon extends MissileWeapon {
 
@@ -33,7 +32,7 @@ public abstract class NarcWeapon extends MissileWeapon {
         this.flags |= F_NO_FIRES;
         this.ammoType = AmmoType.T_NARC;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -45,11 +44,11 @@ public abstract class NarcWeapon extends MissileWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
-        if (atype.getMunitionType() == AmmoType.M_NARC_EX ||
-                atype.getMunitionType() == AmmoType.M_EXPLOSIVE) {
+        if (atype.getMunitionType() == AmmoType.M_NARC_EX
+                || atype.getMunitionType() == AmmoType.M_EXPLOSIVE) {
             return new NarcExplosiveHandler(toHit, waa, game, server);
         } else {
             return new NarcHandler(toHit, waa, game, server);
-        }        
+        }
     }
 }

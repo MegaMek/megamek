@@ -20,21 +20,23 @@
 
 package megamek.server.commands;
 
-import megamek.common.*;
-import megamek.server.*;
-
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.server.Server;
+
 /**
  * @author fastsammy
- * @version 
+ * @version
  */
 public class ExportListCommand extends ServerCommand {
 
     /** Creates new RollCommand */
     public ExportListCommand(Server server) {
-        super(server, "exportlist", "Exports a unit list.  Usage: /exportlist <filename>");
+        super(server, "exportlist",
+                "Exports a unit list.  Usage: /exportlist <filename>");
     }
 
     /**
@@ -60,12 +62,14 @@ public class ExportListCommand extends ServerCommand {
             MechSummary[] msums = MechSummaryCache.getInstance().getAllMechs();
 
             for (MechSummary ms1 : msums) {
-                pw1.println(ms1.getChassis()+", "+ms1.getModel()+", "+ms1.getBV());
+                pw1.println(ms1.getChassis() + ", " + ms1.getModel() + ", "
+                        + ms1.getBV());
             }
 
             pw1.flush();
             pw1.close();
-            server.sendServerChat(server.getPlayer(connId).getName() + " has exported a unit list.");
+            server.sendServerChat(server.getPlayer(connId).getName()
+                    + " has exported a unit list.");
         } catch (Exception e) {
             server.sendServerChat(connId, "/exportlist: execution failed");
             server.sendServerChat(connId, e.toString());

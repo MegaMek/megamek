@@ -21,7 +21,6 @@ import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
- *
  */
 public abstract class ATMWeapon extends MissileWeapon {
 
@@ -32,7 +31,7 @@ public abstract class ATMWeapon extends MissileWeapon {
         super();
         this.ammoType = AmmoType.T_ATM;
     }
-    
+
     /*
      * (non-Javadoc)
      * 

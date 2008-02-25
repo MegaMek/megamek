@@ -22,9 +22,13 @@ import megamek.common.TechConstants;
 
 /**
  * @author Sebastian Brocks
- * 
  */
 public class ISLongTom extends ArtilleryWeapon {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 5323886711682442495L;
 
     /**
      * 

@@ -14,10 +14,9 @@
 
 package megamek.common.preference;
 
-import java.util.Properties;
 import java.util.Enumeration;
+import java.util.Properties;
 import java.util.Vector;
-
 
 class PreferenceStore implements IPreferenceStore {
 
@@ -25,9 +24,9 @@ class PreferenceStore implements IPreferenceStore {
 
     protected Properties properties;
     protected Properties defaultProperties;
-    
+
     protected Vector<IPreferenceChangeListener> listeners = new Vector<IPreferenceChangeListener>();
-    
+
     public PreferenceStore() {
         defaultProperties = new Properties();
         properties = new Properties(defaultProperties);
@@ -57,7 +56,6 @@ class PreferenceStore implements IPreferenceStore {
         return getFloat(defaultProperties, name);
     }
 
-
     public boolean getBoolean(String name) {
         return getBoolean(properties, name);
     }
@@ -70,7 +68,7 @@ class PreferenceStore implements IPreferenceStore {
             return true;
         return false;
     }
-    
+
     public double getDouble(String name) {
         return getDouble(properties, name);
     }
@@ -169,7 +167,7 @@ class PreferenceStore implements IPreferenceStore {
     public void setDefault(String name, boolean value) {
         setValue(defaultProperties, name, value);
     }
-    
+
     public void setValue(String name, double value) {
         double oldValue = getDouble(name);
         if (oldValue != value) {
@@ -222,7 +220,8 @@ class PreferenceStore implements IPreferenceStore {
         if (oldValue != value) {
             setValue(properties, name, value);
             dirty = true;
-            firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(value));
+            firePropertyChangeEvent(name, new Boolean(oldValue), new Boolean(
+                    value));
         }
     }
 
@@ -233,7 +232,7 @@ class PreferenceStore implements IPreferenceStore {
             dirty = true;
         }
     }
-    
+
     private void setValue(Properties p, String name, double value) {
         put(p, name, Double.toString(value));
     }
@@ -241,11 +240,11 @@ class PreferenceStore implements IPreferenceStore {
     private void setValue(Properties p, String name, float value) {
         put(p, name, Float.toString(value));
     }
-    
+
     private void setValue(Properties p, String name, int value) {
         put(p, name, Integer.toString(value));
     }
-    
+
     private void setValue(Properties p, String name, long value) {
         put(p, name, Long.toString(value));
     }
@@ -255,26 +254,31 @@ class PreferenceStore implements IPreferenceStore {
     }
 
     private void setValue(Properties p, String name, boolean value) {
-        put(p, name, value == true? IPreferenceStore.TRUE: IPreferenceStore.FALSE);
+        put(p, name, value == true ? IPreferenceStore.TRUE
+                : IPreferenceStore.FALSE);
     }
 
-    protected void put(Properties p , String name, String value) {
+    protected void put(Properties p, String name, String value) {
         p.put(name, value);
     }
-    
+
     public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
         if (!listeners.contains((listener))) {
             listeners.addElement(listener);
         }
     }
 
-    public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
+    public void removePreferenceChangeListener(
+            IPreferenceChangeListener listener) {
         listeners.removeElement(listener);
     }
 
-    protected void firePropertyChangeEvent(String name, Object oldValue, Object newValue) {
-        if (listeners.size() > 0 && (oldValue == null || !oldValue.equals(newValue))) {
-            final PreferenceChangeEvent pe = new PreferenceChangeEvent(this, name, oldValue, newValue);
+    protected void firePropertyChangeEvent(String name, Object oldValue,
+            Object newValue) {
+        if (listeners.size() > 0
+                && (oldValue == null || !oldValue.equals(newValue))) {
+            final PreferenceChangeEvent pe = new PreferenceChangeEvent(this,
+                    name, oldValue, newValue);
             for (int i = 0; i < listeners.size(); ++i) {
                 IPreferenceChangeListener l = listeners.elementAt(i);
                 l.preferenceChange(pe);
@@ -285,8 +289,8 @@ class PreferenceStore implements IPreferenceStore {
     public String[] getAdvancedProperties() {
         Vector<String> v = new Vector<String>();
         String s;
-        for (Enumeration e = properties.propertyNames(); e.hasMoreElements(); ) {
-            s = (String)e.nextElement();
+        for (Enumeration e = properties.propertyNames(); e.hasMoreElements();) {
+            s = (String) e.nextElement();
             if (s.startsWith("Advanced")) {
                 v.addElement(s);
             }

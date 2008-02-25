@@ -29,7 +29,6 @@ import megamek.server.Server.DamageType;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ACFlechetteHandler extends AmmoWeaponHandler {
     /**
@@ -55,21 +54,22 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
      */
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
-        
+
         if (bGlancing) {
-            toReturn/=2;
+            toReturn /= 2;
         }
-        
-        return (int)Math.ceil(toReturn);
+
+        return (int) Math.ceil(toReturn);
     }
 
-
     /*
-     *  (non-Javadoc)
-     * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector, megamek.common.Building, int, boolean)
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector,
+     *      megamek.common.Building, int, boolean)
      */
-    protected void handleClearDamage(Vector<Report> vPhaseReport, Building bldg,
-            int nDamage, boolean bSalvo) {
+    protected void handleClearDamage(Vector<Report> vPhaseReport,
+            Building bldg, int nDamage, boolean bSalvo) {
         if (!bSalvo) {
             // hits!
             r = new Report(2270);
@@ -77,9 +77,9 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        //Flechette weapons do double damage to woods
+        // Flechette weapons do double damage to woods
         nDamage *= 2;
-        
+
         // report that damage was "applied" to terrain
         r = new Report(3385);
         r.indent();

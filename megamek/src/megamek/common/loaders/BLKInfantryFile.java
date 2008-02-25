@@ -30,32 +30,38 @@ import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.MiscType;
 import megamek.common.TechConstants;
-import megamek.common.util.*;
+import megamek.common.util.BuildingBlock;
 
-public class BLKInfantryFile extends BLKFile implements IMechLoader {    
-    
-    // HACK!!!  Infantry movement reuses Mech and Vehicle movement.
-    private static final String[] MOVES = { "","","","Tracked", "Wheeled", "Hover","","","","", "Leg","Motorized","Jump","","","","","", "Submarine" };
-        
+public class BLKInfantryFile extends BLKFile implements IMechLoader {
+
+    // HACK!!! Infantry movement reuses Mech and Vehicle movement.
+    private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled",
+            "Hover", "", "", "", "", "Leg", "Motorized", "Jump", "", "", "",
+            "", "", "Submarine" };
+
     public BLKInfantryFile(BuildingBlock bb) {
         dataFile = bb;
     }
-      
+
     public Entity getEntity() throws EntityLoadingException {
-    
+
         Infantry t = new Infantry();
-        
-        if (!dataFile.exists("name")) throw new EntityLoadingException("Could not find name block.");
+
+        if (!dataFile.exists("name"))
+            throw new EntityLoadingException("Could not find name block.");
         t.setChassis(dataFile.getDataAsString("Name")[0]);
-        
-        if (!dataFile.exists("model")) throw new EntityLoadingException("Could not find model block.");
-            t.setModel(dataFile.getDataAsString("Model")[0]);
-        
-        if (!dataFile.exists("year")) throw new EntityLoadingException("Could not find year block.");
+
+        if (!dataFile.exists("model"))
+            throw new EntityLoadingException("Could not find model block.");
+        t.setModel(dataFile.getDataAsString("Model")[0]);
+
+        if (!dataFile.exists("year"))
+            throw new EntityLoadingException("Could not find year block.");
         t.setYear(dataFile.getDataAsInt("year")[0]);
-            
-        if (!dataFile.exists("type")) throw new EntityLoadingException("Could not find type block.");
-            
+
+        if (!dataFile.exists("type"))
+            throw new EntityLoadingException("Could not find type block.");
+
         if (dataFile.getDataAsString("type")[0].equals("IS")) {
             if (t.getYear() == 3025) {
                 t.setTechLevel(TechConstants.T_IS_LEVEL_1);
@@ -74,11 +80,13 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
         } else if (dataFile.getDataAsString("type")[0].equals("Clan Level 3")) {
             t.setTechLevel(TechConstants.T_CLAN_LEVEL_3);
         }
-        
-        if (!dataFile.exists("tonnage")) throw new EntityLoadingException("Could not find weight block.");
+
+        if (!dataFile.exists("tonnage"))
+            throw new EntityLoadingException("Could not find weight block.");
         t.setWeight(dataFile.getDataAsFloat("tonnage")[0]);
-            
-        if (!dataFile.exists("motion_type")) throw new EntityLoadingException("Could not find movement block.");
+
+        if (!dataFile.exists("motion_type"))
+            throw new EntityLoadingException("Could not find movement block.");
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         int nMotion = -1;
         for (int x = 0; x < MOVES.length; x++) {
@@ -87,10 +95,13 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
                 break;
             }
         }
-        if (nMotion == -1) throw new EntityLoadingException("Invalid movement type: " + sMotion);
+        if (nMotion == -1)
+            throw new EntityLoadingException("Invalid movement type: "
+                    + sMotion);
         t.setMovementMode(nMotion);
 
-        if (!dataFile.exists("cruiseMP")) throw new EntityLoadingException("Could not find cruiseMP block.");
+        if (!dataFile.exists("cruiseMP"))
+            throw new EntityLoadingException("Could not find cruiseMP block.");
         t.setOriginalRunMP(dataFile.getDataAsInt("cruiseMP")[0]);
 
         if (dataFile.exists("jumpingMP"))
@@ -98,17 +109,16 @@ public class BLKInfantryFile extends BLKFile implements IMechLoader {
 
         loadEquipment(t, "Platoon", Infantry.LOC_INFANTRY);
 
-        if(dataFile.exists("troopers")) {
+        if (dataFile.exists("troopers")) {
             int troopers = dataFile.getDataAsInt("troopers")[0];
             t.initializeInternal(troopers, Infantry.LOC_INFANTRY);
-            if(t.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR))
+            if (t.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_HEAVY_ARMOR))
                 t.initializeArmor(troopers, Infantry.LOC_INFANTRY);
         } else {
             t.autoSetInternal();
         }
-        
-        return t;        
-    }
-    
-}
 
+        return t;
+    }
+
+}

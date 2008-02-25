@@ -25,9 +25,13 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public class ISSnubNosePPC extends PPCWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -5650794792475465261L;
+
     /**
      * 
      */
@@ -52,10 +56,11 @@ public class ISSnubNosePPC extends PPCWeapon {
         this.tonnage = 6.0f;
         this.criticals = 2;
         this.bv = 165;
-        this.setModes(new String[] {"Field Inhibitor ON", "Field Inhibitor OFF"});
+        this.setModes(new String[] { "Field Inhibitor ON",
+                "Field Inhibitor OFF" });
         this.cost = 400000;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -67,5 +72,5 @@ public class ISSnubNosePPC extends PPCWeapon {
             WeaponAttackAction waa, IGame game, Server server) {
         return new SNPPCHandler(toHit, waa, game, server);
     }
-    
+
 }

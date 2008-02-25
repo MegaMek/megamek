@@ -19,19 +19,18 @@ import java.io.Serializable;
 /**
  * Abstract superclass for any action that an entity takes.
  */
-public abstract class AbstractEntityAction
-    implements Serializable, EntityAction
-{
+public abstract class AbstractEntityAction implements Serializable,
+        EntityAction {
     private int entityId;
-    
+
     public AbstractEntityAction(int entityId) {
         this.entityId = entityId;
     }
-    
+
     public int getEntityId() {
         return entityId;
     }
-    
+
     public void setEntityId(int entityId) {
         this.entityId = entityId;
     }

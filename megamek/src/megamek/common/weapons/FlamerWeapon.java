@@ -25,7 +25,6 @@ import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
- * 
  */
 public abstract class FlamerWeapon extends EnergyWeapon {
     /**

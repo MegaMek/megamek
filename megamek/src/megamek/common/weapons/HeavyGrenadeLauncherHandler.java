@@ -15,6 +15,7 @@ package megamek.common.weapons;
 
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.ToHitData;
@@ -44,7 +45,10 @@ public class HeavyGrenadeLauncherHandler extends WeaponHandler {
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            return Compute.d6();
+            int toReturn = Compute.d6();
+            if (bGlancing)
+                toReturn /= 2;
+            return toReturn;
         } else
             return super.calcDamagePerHit();
     }

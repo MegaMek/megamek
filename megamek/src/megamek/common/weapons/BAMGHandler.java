@@ -72,6 +72,8 @@ public class BAMGHandler extends WeaponHandler {
                 nDamPerHit = super.calcDamagePerHit();
             }
         }
+        if (bGlancing)
+            nDamPerHit /= 2;
         return nDamPerHit;
     }
 

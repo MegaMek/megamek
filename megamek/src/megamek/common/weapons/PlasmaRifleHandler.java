@@ -74,7 +74,10 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      */
     protected int calcDamagePerHit() {
         if (target instanceof Mech) {
-            return 10;
+            int toReturn = 10;
+            if (bGlancing)
+                toReturn /= 2;
+            return toReturn;
         } else {
             return 1;
         }
@@ -110,11 +113,6 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
-        // conventional infantry gets hit in one lump
-        // BAs can't mount Plasma Rifles
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            return 1;
-        }
         int toReturn;
         // against mechs, 1 hit with 10 damage, plus heat
         if (target instanceof Mech) {
@@ -127,6 +125,8 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                     && ((BattleArmor) target).hasFireresistantArmor())
                 toReturn = 10 / 2;
             toReturn = 10 + Compute.d6(2);
+            if (bGlancing)
+                toReturn /= 2;
         }
         return toReturn;
     }

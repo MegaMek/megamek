@@ -68,7 +68,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
             }
         }
         if (bGlancing) {
-            toReturn = toReturn /= 2;
+            toReturn /= 2;
         }
 
         if ((target instanceof Mech || target instanceof Tank)

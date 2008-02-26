@@ -266,11 +266,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        float toReturn;
+        double toReturn;
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = wtype.getRackSize();
             toReturn /= 5;
-            return (int) Math.ceil(toReturn);
+            toReturn = Math.ceil(toReturn);
+            if (bGlancing)
+                toReturn = ((int)toReturn)/2;
+            return (int)toReturn;
         }
         return 1;
     }

@@ -14951,7 +14951,7 @@ public class Server implements Runnable {
                 Coords curPos = entity.getPosition();
                 IHex entityHex = game.getBoard().getHex(curPos);
                 int curFacing = entity.getFacing();
-                while (iter.hasMoreElements()) {
+                while (transporter.hasMoreElements()) {
                     other = transporter.nextElement();
 
                     // Can the other unit survive?

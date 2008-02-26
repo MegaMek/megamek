@@ -60,7 +60,7 @@ public class TAGHandler extends WeaponHandler {
             int nDamPerHit, int bldgAbsorbs) {
         if (entityTarget == null) {
             r = new Report(3187);
-            r.subject = ae.getId();
+            r.subject = subjectId;
             vPhaseReport.addElement(r);
         } else {
             int priority = 1;
@@ -86,7 +86,7 @@ public class TAGHandler extends WeaponHandler {
             game.addTagInfo(info);
             entityTarget.setTaggedBy(ae.getId());
             r = new Report(3188);
-            r.subject = ae.getId();
+            r.subject = subjectId;
             vPhaseReport.addElement(r);
         }
     }

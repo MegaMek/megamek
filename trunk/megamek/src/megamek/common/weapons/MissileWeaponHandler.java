@@ -479,7 +479,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
                 r = new Report(3186);
-                r.subject = ae.getId();
+                r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             } else {

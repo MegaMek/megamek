@@ -72,11 +72,11 @@ public class ISPPCHandler extends EnergyWeaponHandler {
             }
             // roll to avoid damage
             r = new Report(3175);
-            r.subject = ae.getId();
+            r.subject = subjectId;
             r.indent();
             vPhaseReport.addElement(r);
             r = new Report(3180);
-            r.subject = ae.getId();
+            r.subject = subjectId;
             r.indent();
             r.add(rollTarget);
             r.add(dieRoll);
@@ -102,7 +102,7 @@ public class ISPPCHandler extends EnergyWeaponHandler {
                 vPhaseReport.addAll(server.damageEntity(ae, new HitData(
                         wlocation), 10, false, DamageType.NONE, true));
                 r = new Report(3185);
-                r.subject = ae.getId();
+                r.subject = subjectId;
                 vPhaseReport.addElement(r);
             } else {
                 r.choose(true);

@@ -1077,9 +1077,9 @@ implements IMechLoader
         isCriticals.put(new Long(0x93), "ISLRTorpedo10");
         isCriticals.put(new Long(0x94), "ISLRTorpedo15");
         isCriticals.put(new Long(0x95), "ISLRTorpedo20");
-        isCriticals.put(new Long(0x96), "ISSRTorpedo2");
-        isCriticals.put(new Long(0x97), "ISSRTorpedo4");
-        isCriticals.put(new Long(0x98), "ISSRTorpedo6");
+        isCriticals.put(new Long(0x96), "ISSRT2");
+        isCriticals.put(new Long(0x97), "ISSRT4");
+        isCriticals.put(new Long(0x98), "ISSRT6");
         isCriticals.put(new Long(0x99), "ISLRM5 (I-OS)");
         isCriticals.put(new Long(0x9A), "ISLRM10 (I-OS)");
         isCriticals.put(new Long(0x9B), "ISLRM15 (I-OS)");
@@ -1153,9 +1153,9 @@ implements IMechLoader
         isCriticals.put(new Long(0xDF), "CLLRTorpedo10");
         isCriticals.put(new Long(0xE0), "CLLRTorpedo15");
         isCriticals.put(new Long(0xE1), "CLLRTorpedo20");
-        isCriticals.put(new Long(0xE2), "CLSRTorpedo2");
-        isCriticals.put(new Long(0xE3), "CLSRTorpedo4");
-        isCriticals.put(new Long(0xE4), "CLSRTorpedo6");
+        isCriticals.put(new Long(0xE2), "CLSRT2");
+        isCriticals.put(new Long(0xE3), "CLSRT4");
+        isCriticals.put(new Long(0xE4), "CLSRT6");
         isCriticals.put(new Long(0xE5), "CLStreakLRM5");
         isCriticals.put(new Long(0xE6), "CLStreakLRM10");
         isCriticals.put(new Long(0xE7), "CLStreakLRM15");
@@ -1241,9 +1241,9 @@ implements IMechLoader
         isCriticals.put(new Long(0x0223), "ISLRTorpedo10 Ammo");
         isCriticals.put(new Long(0x0224), "ISLRTorpedo15 Ammo");
         isCriticals.put(new Long(0x0225), "ISLRTorpedo20 Ammo");
-        isCriticals.put(new Long(0x0226), "ISSRTorpedo2 Ammo");
-        isCriticals.put(new Long(0x0227), "ISSRTorpedo4 Ammo");
-        isCriticals.put(new Long(0x0228), "ISSRTorpedo6 Ammo");
+        isCriticals.put(new Long(0x0226), "ISSRT2 Ammo");
+        isCriticals.put(new Long(0x0227), "ISSRT4 Ammo");
+        isCriticals.put(new Long(0x0228), "ISSRT6 Ammo");
 
         isCriticals.put(new Long(0x0244), "CLAMS Ammo");
         isCriticals.put(new Long(0x0245), "CLGauss Ammo");
@@ -1278,9 +1278,9 @@ implements IMechLoader
         isCriticals.put(new Long(0x026F), "CLLRTorpedo10 Ammo");
         isCriticals.put(new Long(0x0270), "CLLRTorpedo15 Ammo");
         isCriticals.put(new Long(0x0271), "CLLRTorpedo20 Ammo");
-        isCriticals.put(new Long(0x0272), "CLSRTorpedo2 Ammo");
-        isCriticals.put(new Long(0x0273), "CLSRTorpedo4 Ammo");
-        isCriticals.put(new Long(0x0274), "CLSRTorpedo6 Ammo");
+        isCriticals.put(new Long(0x0272), "CLSRT2 Ammo");
+        isCriticals.put(new Long(0x0273), "CLSRT4 Ammo");
+        isCriticals.put(new Long(0x0274), "CLSRT6 Ammo");
         isCriticals.put(new Long(0x0275), "CLStreakLRM5 Ammo");
         isCriticals.put(new Long(0x0276), "CLStreakLRM10 Ammo");
         isCriticals.put(new Long(0x0277), "CLStreakLRM15 Ammo");
@@ -1360,9 +1360,9 @@ implements IMechLoader
         clanCriticals.put(new Long(0x6B), "CLLRTorpedo10");
         clanCriticals.put(new Long(0x6C), "CLLRTorpedo15");
         clanCriticals.put(new Long(0x6D), "CLLRTorpedo20");
-        clanCriticals.put(new Long(0x6E), "CLSRTorpedo2");
-        clanCriticals.put(new Long(0x6F), "CLSRTorpedo4");
-        clanCriticals.put(new Long(0x70), "CLSRTorpedo6");
+        clanCriticals.put(new Long(0x6E), "CLSRT2");
+        clanCriticals.put(new Long(0x6F), "CLSRT4");
+        clanCriticals.put(new Long(0x70), "CLSRT6");
 
         clanCriticals.put(new Long(0x71), "CLStreakLRM5");
         clanCriticals.put(new Long(0x72), "CLStreakLRM10");
@@ -1488,9 +1488,9 @@ implements IMechLoader
         clanCriticals.put(new Long(0xE3), "ISLRTorpedo10");
         clanCriticals.put(new Long(0xE4), "ISLRTorpedo15");
         clanCriticals.put(new Long(0xE5), "ISLRTorpedo20");
-        clanCriticals.put(new Long(0xE6), "ISSRTorpedo2");
-        clanCriticals.put(new Long(0xE7), "ISSRTorpedo4");
-        clanCriticals.put(new Long(0xE8), "ISSRTorpedo6");
+        clanCriticals.put(new Long(0xE6), "ISSRT2");
+        clanCriticals.put(new Long(0xE7), "ISSRT4");
+        clanCriticals.put(new Long(0xE8), "ISSRT6");
         clanCriticals.put(new Long(0xE9), "ISLRM5 (I-OS)");
         clanCriticals.put(new Long(0xEA), "ISLRM10 (I-OS)");
         clanCriticals.put(new Long(0xEB), "ISLRM15 (I-OS)");
@@ -1545,9 +1545,9 @@ implements IMechLoader
         clanCriticals.put(new Long(0x01fb), "CLLRTorpedo10 Ammo");
         clanCriticals.put(new Long(0x01fc), "CLLRTorpedo15 Ammo");
         clanCriticals.put(new Long(0x01fd), "CLLRTorpedo20 Ammo");
-        clanCriticals.put(new Long(0x01fe), "CLSRTorpedo2 Ammo");
-        clanCriticals.put(new Long(0x01ff), "CLSRTorpedo4 Ammo");
-        clanCriticals.put(new Long(0x0200), "CLSRTorpedo6 Ammo");
+        clanCriticals.put(new Long(0x01fe), "CLSRT2 Ammo");
+        clanCriticals.put(new Long(0x01ff), "CLSRT4 Ammo");
+        clanCriticals.put(new Long(0x0200), "CLSRT6 Ammo");
         clanCriticals.put(new Long(0x0201), "CLStreakLRM5 Ammo");
         clanCriticals.put(new Long(0x0202), "CLStreakLRM10 Ammo");
         clanCriticals.put(new Long(0x0203), "CLStreakLRM15 Ammo");
@@ -1613,9 +1613,9 @@ implements IMechLoader
         clanCriticals.put(new Long(0x0273), "ISLRTorpedo20 Ammo");
         clanCriticals.put(new Long(0x0274), "ISLRTorpedo5 Ammo");
         clanCriticals.put(new Long(0x0275), "ISLRTorpedo10 Ammo");
-        clanCriticals.put(new Long(0x0276), "ISSRTorpedo4 Ammo");
-        clanCriticals.put(new Long(0x0277), "ISSRTorpedo2 Ammo");
-        clanCriticals.put(new Long(0x0278), "ISSRTorpedo6 Ammo");
+        clanCriticals.put(new Long(0x0276), "ISSRT4 Ammo");
+        clanCriticals.put(new Long(0x0277), "ISSRT2 Ammo");
+        clanCriticals.put(new Long(0x0278), "ISSRT6 Ammo");
 
         // special for ammo mutator
         // 28c-28f = atm

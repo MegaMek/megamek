@@ -762,9 +762,9 @@ public class HmvFile implements IMechLoader {
         isEquipment.put(new Long(0x93), "ISLRTorpedo10");
         isEquipment.put(new Long(0x94), "ISLRTorpedo15");
         isEquipment.put(new Long(0x95), "ISLRTorpedo20");
-        isEquipment.put(new Long(0x96), "ISSRTorpedo2");
-        isEquipment.put(new Long(0x97), "ISSRTorpedo4");
-        isEquipment.put(new Long(0x98), "ISSRTorpedo6");
+        isEquipment.put(new Long(0x96), "ISSRT2");
+        isEquipment.put(new Long(0x97), "ISSRT4");
+        isEquipment.put(new Long(0x98), "ISSRT6");
         isEquipment.put(new Long(0x99), "ISLRM5 (I-OS)");
         isEquipment.put(new Long(0x9A), "ISLRM10 (I-OS)");
         isEquipment.put(new Long(0x9B), "ISLRM15 (I-OS)");
@@ -848,9 +848,9 @@ public class HmvFile implements IMechLoader {
         isAmmo.put(new Long(0x93), "ISLRTorpedo10 Ammo");
         isAmmo.put(new Long(0x94), "ISLRTorpedo15 Ammo");
         isAmmo.put(new Long(0x95), "ISLRTorpedo20 Ammo");
-        isAmmo.put(new Long(0x96), "ISSRTorpedo4 Ammo");
-        isAmmo.put(new Long(0x97), "ISSRTorpedo2 Ammo");
-        isAmmo.put(new Long(0x98), "ISSRTorpedo6 Ammo");
+        isAmmo.put(new Long(0x96), "ISSRT4 Ammo");
+        isAmmo.put(new Long(0x97), "ISSRT2 Ammo");
+        isAmmo.put(new Long(0x98), "ISSRT6 Ammo");
         isAmmo.put(new Long(0x108), "ISTHBLBXAC2 Ammo");
         isAmmo.put(new Long(0x109), "ISTHBLBXAC5 Ammo");
         isAmmo.put(new Long(0x10A), "ISTHBLBXAC20 Ammo");
@@ -930,9 +930,9 @@ public class HmvFile implements IMechLoader {
         clanEquipment.put(new Long(0x6B), "CLLRTorpedo10");
         clanEquipment.put(new Long(0x6C), "CLLRTorpedo15");
         clanEquipment.put(new Long(0x6D), "CLLRTorpedo20");
-        clanEquipment.put(new Long(0x6E), "CLSRTorpedo2");
-        clanEquipment.put(new Long(0x6F), "CLSRTorpedo4");
-        clanEquipment.put(new Long(0x70), "CLSRTorpedo6");
+        clanEquipment.put(new Long(0x6E), "CLSRT2");
+        clanEquipment.put(new Long(0x6F), "CLSRT4");
+        clanEquipment.put(new Long(0x70), "CLSRT6");
         clanEquipment.put(new Long(0x7B), "CLLRM5 (OS)");
         clanEquipment.put(new Long(0x7C), "CLLRM10 (OS)");
         clanEquipment.put(new Long(0x7D), "CLLRM15 (OS)");
@@ -946,9 +946,9 @@ public class HmvFile implements IMechLoader {
         clanEquipment.put(new Long(0x93), "CLLRTorpedo10");
         clanEquipment.put(new Long(0x94), "CLLRTorpedo15");
         clanEquipment.put(new Long(0x95), "CLLRTorpedo20");
-        clanEquipment.put(new Long(0x96), "CLSRTorpedo2");
-        clanEquipment.put(new Long(0x97), "CLSRTorpedo4");
-        clanEquipment.put(new Long(0x98), "CLSRTorpedo6");
+        clanEquipment.put(new Long(0x96), "CLSRT2");
+        clanEquipment.put(new Long(0x97), "CLSRT4");
+        clanEquipment.put(new Long(0x98), "CLSRT6");
         clanEquipment.put(new Long(0xA8), "CLMicroPulseLaser");
         clanEquipment.put(new Long(0xAD), "CLLightMG");
         clanEquipment.put(new Long(0xAE), "CLHeavyMG");
@@ -1075,9 +1075,9 @@ public class HmvFile implements IMechLoader {
         mixedEquipment.put(new Long(0xDF), "CLLRTorpedo10");
         mixedEquipment.put(new Long(0xE0), "CLLRTorpedo15");
         mixedEquipment.put(new Long(0xE1), "CLLRTorpedo20");
-        mixedEquipment.put(new Long(0xE2), "CLSRTorpedo2");
-        mixedEquipment.put(new Long(0xE3), "CLSRTorpedo4");
-        mixedEquipment.put(new Long(0xE4), "CLSRTorpedo6");
+        mixedEquipment.put(new Long(0xE2), "CLSRT2");
+        mixedEquipment.put(new Long(0xE3), "CLSRT4");
+        mixedEquipment.put(new Long(0xE4), "CLSRT6");
 
         mixedEquipment.put(new Long(0xF4), "CLHeavyLargeLaser");
         mixedEquipment.put(new Long(0xF5), "CLHeavyMediumLaser");
@@ -1124,9 +1124,9 @@ public class HmvFile implements IMechLoader {
         mixedAmmo.put(new Long(0xDF), "CLLRTorpedo10 Ammo");
         mixedAmmo.put(new Long(0xE0), "CLLRTorpedo15 Ammo");
         mixedAmmo.put(new Long(0xE1), "CLLRTorpedo20 Ammo");
-        mixedAmmo.put(new Long(0xE2), "CLSRTorpedo2 Ammo");
-        mixedAmmo.put(new Long(0xE3), "CLSRTorpedo4 Ammo");
-        mixedAmmo.put(new Long(0xE4), "CLSRTorpedo6 Ammo");
+        mixedAmmo.put(new Long(0xE2), "CLSRT2 Ammo");
+        mixedAmmo.put(new Long(0xE3), "CLSRT4 Ammo");
+        mixedAmmo.put(new Long(0xE4), "CLSRT6 Ammo");
 
     }
 

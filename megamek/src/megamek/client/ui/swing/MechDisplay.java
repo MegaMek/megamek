@@ -1248,7 +1248,6 @@ public class MechDisplay extends JPanel {
         public void itemStateChanged(ItemEvent ev) {
             if (ev.getItemSelectable().equals(m_chAmmo)
                     && m_chAmmo.getItemCount() > 0) {
-                System.out.println(m_chAmmo.getItemCount());
                 int n = weaponList.getSelectedIndex();
                 if (n == -1) {
                     return;

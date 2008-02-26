@@ -2532,6 +2532,8 @@ public class Compute {
      *         in.
      */
     public static int getFriendlyECCMFields(Entity ae, Coords a, Coords b) {
+        if (!ae.getGame().getOptions().booleanOption("maxtech_eccm"))
+            return 0;
         if (a == null || b == null)
             return 0;
 
@@ -2618,6 +2620,8 @@ public class Compute {
      *         in.
      */
     public static int getFriendlyAngelECCMFields(Entity ae, Coords a, Coords b) {
+        if (!ae.getGame().getOptions().booleanOption("maxtech_eccm"))
+            return 0;
         if (a == null || b == null)
             return 0;
 
@@ -2886,6 +2890,8 @@ public class Compute {
      *         enemy or friendly fields.
      */
     public static int getEnemyECCMFields(Entity ae, Coords a, Coords b) {
+        if (!ae.getGame().getOptions().booleanOption("maxtech_eccm"))
+            return 0;
         if (a == null || b == null)
             return 0;
 
@@ -2970,6 +2976,8 @@ public class Compute {
      *         enemy or friendly fields.
      */
     public static int getEnemyAngelECCMFields(Entity ae, Coords a, Coords b) {
+        if (!ae.getGame().getOptions().booleanOption("maxtech_eccm"))
+            return 0;
         if (a == null || b == null)
             return 0;
 

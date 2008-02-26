@@ -33,8 +33,8 @@ public class ISStreakSRM4 extends StreakSRMWeapon {
         this.techLevel = TechConstants.T_IS_LEVEL_2;
         this.name = "Streak SRM 4";
         this.setInternalName("ISStreakSRM4");
-        this.addLookupName("IS Streak SRM-2");
-        this.addLookupName("IS Streak SRM 2");
+        this.addLookupName("IS Streak SRM-4");
+        this.addLookupName("IS Streak SRM 4");
         this.heat = 3;
         this.rackSize = 4;
         this.shortRange = 3;

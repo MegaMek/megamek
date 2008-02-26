@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.19-dev (SVN)
+v0.33.19 (2008-02-26, 2:13 GMT+1)
 + Patch 1865696: Weather effects
 + Patch 1890761: RPG Skills
 + Bug 1890785: Fragmentation LRMs/SRMs not working right

@@ -18,6 +18,7 @@ package megamek.server;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -313,6 +314,9 @@ public class ScenarioLoader {
 
         // Read the external game id from the scenario file
         g.setExternalGameId(parseExternalGameId(p));
+        
+        g.setVictoryContext(new HashMap<String, Object>());
+        g.createVictoryConditions();
 
         return g;
     }

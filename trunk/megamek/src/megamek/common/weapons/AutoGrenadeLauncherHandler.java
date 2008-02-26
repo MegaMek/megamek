@@ -44,7 +44,10 @@ public class AutoGrenadeLauncherHandler extends WeaponHandler {
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            return (int) Math.ceil(((double) Compute.d6()) / 2);
+            int toReturn = (int) Math.ceil(((double) Compute.d6()) / 2);
+            if (bGlancing)
+                toReturn /=2;
+            return toReturn;
         } else
             return super.calcDamagePerHit();
     }

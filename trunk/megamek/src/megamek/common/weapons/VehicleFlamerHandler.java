@@ -51,17 +51,22 @@ public class VehicleFlamerHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        int toReturn = super.calcDamagePerHit();
+        int toReturn;
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             if (ae instanceof BattleArmor)
                 toReturn = Compute.d6(3);
             toReturn = Compute.d6(4);
+            // pain shunted infantry get half damage
+            if (target instanceof Infantry
+                    && ((Entity) target).getCrew().getOptions().booleanOption(
+                            "pain_shunt")) {
+                toReturn /= 2;
+            }
+            if (bGlancing)
+                toReturn /= 2;
         }
-        // pain shunted infantry get half damage
-        if (target instanceof Infantry
-                && ((Entity) target).getCrew().getOptions().booleanOption(
-                        "pain_shunt")) {
-            toReturn /= 2;
+        else {
+            toReturn = super.calcDamagePerHit();
         }
         return toReturn;
     }

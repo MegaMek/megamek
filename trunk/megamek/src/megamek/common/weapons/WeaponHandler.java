@@ -346,7 +346,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage();
+        double toReturn = wtype.getDamage();
         // during a swarm, all damage gets applied as one block to one location
         if (ae instanceof BattleArmor
                 && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
@@ -355,12 +355,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn /= 10;
+            toReturn = Math.ceil(toReturn/10);
         }
         if (bGlancing) {
-            toReturn /= 2;
+            toReturn = ((int)toReturn) / 2;
         }
-        return (int) Math.ceil(toReturn);
+        return (int) toReturn;
     }
 
     /**

@@ -32,7 +32,7 @@ public class CLLRM16 extends LRMWeapon {
         super();
         this.techLevel = TechConstants.T_CLAN_LEVEL_2;
         this.name = "LRM 16";
-        this.setInternalName("CLLRM15");
+        this.setInternalName("CLLRM16");
         this.heat = 0;
         this.rackSize = 16;
         this.minimumRange = WEAPON_NA;

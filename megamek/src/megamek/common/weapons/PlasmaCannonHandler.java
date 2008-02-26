@@ -112,6 +112,8 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
                             "pain_shunt")) {
                 toReturn = Math.max(toReturn / 2, 1);
             }
+            if (bGlancing)
+                toReturn /= 2;
             return toReturn;
         }
     }

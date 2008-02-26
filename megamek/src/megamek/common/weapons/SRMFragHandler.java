@@ -65,15 +65,13 @@ public class SRMFragHandler extends SRMHandler {
         // against infantry, we have 1 hit
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = wtype.getRackSize() * 2;
+            if (bGlancing)
+                toReturn /= 2;
         }
 
         if (target instanceof Entity && !(target instanceof Infantry)
                 || target instanceof BattleArmor)
             toReturn = 0;
-
-        if (bGlancing) {
-            toReturn /= 2;
-        }
         return (int) Math.ceil(toReturn);
     }
 

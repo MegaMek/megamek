@@ -70,8 +70,11 @@ public abstract class InfantryWeaponHandler extends WeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
+        int nHitMod = 0;
+        if (bGlancing)
+            nHitMod -= 4;
         int troopersHit = Compute.missilesHit(((Infantry) ae)
-                .getShootingStrength());
+                .getShootingStrength(), nHitMod, bGlancing);
         r = new Report(3325);
         r.subject = subjectId;
         r.add(troopersHit);

@@ -65,10 +65,13 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            float toReturn = wtype.getRackSize();
+            double toReturn = wtype.getRackSize();
             toReturn /= 10;
             toReturn += 1;
-            return (int) Math.ceil(toReturn);
+            toReturn = Math.ceil(toReturn);
+            if (bGlancing)
+                toReturn = Math.floor(toReturn/2);
+            return (int) toReturn;
         }
         return 1;
     }

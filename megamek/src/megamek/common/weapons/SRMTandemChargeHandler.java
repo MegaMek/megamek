@@ -186,8 +186,12 @@ public class SRMTandemChargeHandler extends SRMHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        if (target instanceof Infantry && !(target instanceof BattleArmor))
-            return (int) Math.ceil(((float) wtype.getRackSize()) / 5);
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            int toReturn = (int) Math.ceil(((float) wtype.getRackSize()) / 5);
+            if (bGlancing)
+                toReturn /= 2;
+            return toReturn;
+        }
         return 1;
     }
 

@@ -129,7 +129,7 @@ public class LRMSwarmHandler extends LRMHandler {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
                 r = new Report(3186);
-                r.subject = ae.getId();
+                r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
             } else {
@@ -236,7 +236,7 @@ public class LRMSwarmHandler extends LRMHandler {
                     entityTarget, waa.getWeaponId());
             if (swarmTarget != null) {
                 r = new Report(3420);
-                r.subject = ae.getId();
+                r.subject = subjectId;
                 r.indent();
                 r.add(swarmMissilesNowLeft);
                 vPhaseReport.addElement(r);
@@ -257,7 +257,7 @@ public class LRMSwarmHandler extends LRMHandler {
             } else {
                 r = new Report(3425);
                 r.add(swarmMissilesNowLeft);
-                r.subject = ae.getId();
+                r.subject = subjectId;
                 r.indent();
                 vPhaseReport.addElement(r);
             }
@@ -286,7 +286,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 entityTarget, waa.getWeaponId());
         if (swarmTarget != null) {
             r = new Report(3420);
-            r.subject = ae.getId();
+            r.subject = subjectId;
             r.indent();
             r.add(swarmMissilesNowLeft);
             vPhaseReport.addElement(r);
@@ -306,8 +306,9 @@ public class LRMSwarmHandler extends LRMHandler {
             wh.handle(phase, vPhaseReport);
         } else {
             r = new Report(3425);
-            r.subject = ae.getId();
+            r.subject = subjectId;
             r.indent();
+            r.add(swarmMissilesNowLeft);
             vPhaseReport.addElement(r);
         }
         return false;

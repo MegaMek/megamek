@@ -98,6 +98,7 @@ public class BAMGHandler extends WeaponHandler {
     protected void reportMiss(Vector<Report> vPhaseReport) {
         // Report the miss
         r = new Report(3220);
+        r.subject = subjectId;
         if (weapon.isRapidfire()
                 && !(target instanceof Infantry && !(target instanceof BattleArmor))) {
             r.messageId = 3225;

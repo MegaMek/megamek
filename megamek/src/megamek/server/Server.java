@@ -10695,7 +10695,7 @@ public class Server implements Runnable {
                 r.add(heatLimitDesc);
                 r.add(damageToCrew);
                 addReport(r);
-                damageCrew(entity, damageToCrew);
+                addReport(damageCrew(entity, damageToCrew));
             } else if (mtHeat && entity.heat >= 32 && !entity.crew.isDead()
                     && !entity.crew.isDoomed()
                     && !entity.crew.getOptions().booleanOption("pain_shunt")) {
@@ -10717,10 +10717,12 @@ public class Server implements Runnable {
                 if (heatroll >= avoidNumber) {
                     // damage avoided
                     r.choose(true);
+                    addReport(r);
                 } else {
                     r.choose(false);
-                }
-                addReport(r);
+                    addReport(r);
+                    addReport(damageCrew(entity, 1));
+                }                
             }
 
             // The pilot may have just expired.

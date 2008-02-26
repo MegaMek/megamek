@@ -93,6 +93,7 @@ public class MGHandler extends AmmoWeaponHandler {
     protected void reportMiss(Vector<Report> vPhaseReport) {
         // Report the miss
         r = new Report(3220);
+        r.subject = subjectId;
         if (weapon.isRapidfire()) {
             r.messageId = 3225;
             r.add(nDamPerHit * 3);

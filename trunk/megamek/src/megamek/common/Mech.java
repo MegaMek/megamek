@@ -2584,10 +2584,19 @@ public abstract class Mech extends Entity implements Serializable {
         // is handled differently (page 315, TM, compare
         // http://forums.classicbattletech.com/index.php/topic,20468.0.html
         double speedFactor;
-        double speedFactorTableLookup = getOriginalRunMPwithoutMASC()
-                + Math.round((double) this.getJumpMP() / 2);
-        if (hasMASC() || hasTSM())
-            speedFactorTableLookup++;
+        // but taking into account hit actuators
+        double speedFactorTableLookup = getRunMP(false, true) - getArmorType() == EquipmentType.T_ARMOR_HARDENED?1:0;
+        // factor in TSM (flat +1)
+        if (hasTSM()) {
+            speedFactorTableLookup += 1;
+        }
+        // factor in MASC
+        // recalculate normal run MP here, because we need normal run +1 for MASC,
+        // and MASC might be currently active, so we can't just use getRunMP
+        if (hasMASC()) {
+        	speedFactorTableLookup = getWalkMP(false, true) * 1.5 + 1 - getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0;
+        }
+        speedFactorTableLookup += Math.round((double)getJumpMP() / 2);
         if (speedFactorTableLookup > 25)
             speedFactor = Math.pow(1 + (((double) runMP
                     + (Math.round((double) getJumpMP() / 2)) - 5) / 10), 1.2);

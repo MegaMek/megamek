@@ -504,9 +504,9 @@ public class Infantry extends Entity implements Serializable {
     public int calculateBattleValue() {
         double dbv;
         dbv = this.getInternal(Entity.LOC_NONE) * 1.5;
-        int tmmRan = Compute.getTargetMovementModifier(runMP, false, false)
+        int tmmRan = Compute.getTargetMovementModifier(getRunMP(false, true), false, false)
                 .getValue();
-        int tmmJumped = Compute.getTargetMovementModifier(getOriginalJumpMP(),
+        int tmmJumped = Compute.getTargetMovementModifier(getJumpMP(false),
                 true, false).getValue();
         double targetMovementModifier = Math.max(tmmRan, tmmJumped);
         double tmmFactor = 1 + (targetMovementModifier / 10);
@@ -519,11 +519,11 @@ public class Infantry extends Entity implements Serializable {
         // is handled differently (page 315, TM, compare
         // http://forums.classicbattletech.com/index.php/topic,20468.0.html
         double speedFactor;
-        double speedFactorTableLookup = this.getOriginalRunMP()
-                + Math.round((double) this.getJumpMP() / 2);
+        double speedFactorTableLookup = getRunMP(false, true)
+                + Math.round((double) getJumpMP(false) / 2);
         if (speedFactorTableLookup > 25)
             speedFactor = Math.pow(1 + (((double) runMP
-                    + (Math.round((double) getJumpMP() / 2)) - 5) / 10), 1.2);
+                    + (Math.round((double) getJumpMP(false) / 2)) - 5) / 10), 1.2);
         else
             speedFactor = Math
                     .pow(1 + ((speedFactorTableLookup - 5) / 10), 1.2);

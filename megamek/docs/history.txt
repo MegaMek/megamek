@@ -7,6 +7,7 @@ v0.33.20-dev (SVN)
 + Bug 1902346: Clan LRM 16 has same internal name as Clan LRM 15 -> LRM 15 not working
 + Bug: glancing blows often not reducing damage by half
 + Bug: torpedoes not loading correctly from HMP/HMV
++ More fixes to calculate BV of damaged units correctly
 
 v0.33.19 (2008-02-26, 2:13 GMT+1)
 + Patch 1865696: Weather effects

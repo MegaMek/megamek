@@ -1402,6 +1402,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public int getJumpMP() {
         return applyGravityEffectsOnMP(getOriginalJumpMP());
     }
+    
+    public int getJumpMP(boolean gravity) {
+    	if (gravity) {
+    		return getJumpMP();
+    	}
+    	return getOriginalJumpMP();
+    }
 
     public int getJumpType() {
         return 0;

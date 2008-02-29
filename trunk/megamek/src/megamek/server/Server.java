@@ -5410,7 +5410,7 @@ public class Server implements Runnable {
      * 
      * @param coords the <code>Coords</code> where to deliver
      */
-    public void deliverArtillerySmoke(Coords coords) {
+    public void deliverArtillerySmoke(Coords coords, Vector<Report> vPhaseReport) {
         if (game.getOptions().booleanOption("maxtech_fire")) {
             IHex h = game.getBoard().getHex(coords);
             // Unless there is a heavy smoke in the hex already, add one.
@@ -5418,7 +5418,7 @@ public class Server implements Runnable {
                 Report r = new Report(5185, Report.PUBLIC);
                 r.indent(2);
                 r.add(coords.getBoardNum());
-                addReport(r);
+                vPhaseReport.add(r);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.SMOKE, 2));
                 sendChangedHex(coords);
@@ -5432,7 +5432,7 @@ public class Server implements Runnable {
      * @param coords the <code>Coords</code> where to deliver
      * @param subjectId the <code>int</code> id of the target
      */
-    public void deliverArtilleryInferno(Coords coords, int subjectId) {
+    public void deliverArtilleryInferno(Coords coords, int subjectId, Vector<Report> vPhaseReport) {
         IHex h = game.getBoard().getHex(coords);
         Report r;
         // Unless there is a fire in the hex already, start one.
@@ -5442,7 +5442,7 @@ public class Server implements Runnable {
             r.subject = subjectId;
             r.indent(2);
             r.add(coords.getBoardNum());
-            addReport(r);
+            vPhaseReport.add(r);
             h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                     Terrains.FIRE, 1));
         }
@@ -5459,7 +5459,7 @@ public class Server implements Runnable {
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(entity.infernos.getTurnsLeftToBurn());
-            addReport(r);
+            vPhaseReport.add(r);
         }
         for (int dir = 0; dir <= 5; dir++) {
             Coords tempcoords = coords.translated(dir);
@@ -5477,7 +5477,7 @@ public class Server implements Runnable {
                 r.subject = subjectId;
                 r.indent(2);
                 r.add(tempcoords.getBoardNum());
-                addReport(r);
+                vPhaseReport.add(r);
                 h.addTerrain(Terrains.getTerrainFactory().createTerrain(
                         Terrains.FIRE, 1));
             }
@@ -5494,7 +5494,7 @@ public class Server implements Runnable {
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.add(entity.infernos.getTurnsLeftToBurn());
-                addReport(r);
+                vPhaseReport.add(r);
             }
         }
     }
@@ -19489,7 +19489,7 @@ public class Server implements Runnable {
      */
     void artilleryDamageHex(Coords coords, Coords attackSource, int damage,
             AmmoType ammo, int subjectId, Entity killer, Entity exclude,
-            boolean flak, int altitude) {
+            boolean flak, int altitude, Vector<Report> vPhaseReport) {
 
         IHex hex = game.getBoard().getHex(coords);
         if (hex == null)
@@ -19514,7 +19514,7 @@ public class Server implements Runnable {
                 for (Report report : buildingReport) {
                     report.subject = subjectId;
                 }
-                addReport(buildingReport);
+                vPhaseReport.addAll(buildingReport);
                 addNewLines();
             }
         }
@@ -19553,13 +19553,13 @@ public class Server implements Runnable {
                     r = new Report(6426);
                     r.subject = subjectId;
                     r.addDesc(entity);
-                    addReport(r);
+                    vPhaseReport.add(r);
                     continue;
                 } else {
                     r = new Report(6425);
                     r.subject = subjectId;
                     r.add(bldgAbsorbs);
-                    addReport(r);
+                    vPhaseReport.add(r);
                 }
             }
 
@@ -19622,8 +19622,8 @@ public class Server implements Runnable {
                         r.addDesc(entity);
                         r.add(toHit.getTableDesc());
                         r.add(0);
-                        addReport(r);
-                        addReport(vehicleMotiveDamage((Tank) entity, 0));
+                        vPhaseReport.add(r);
+                        vPhaseReport.addAll(vehicleMotiveDamage((Tank) entity, 0));
                         continue;
                     }
                     // non infantry are immune
@@ -19639,19 +19639,18 @@ public class Server implements Runnable {
             }
 
             // Do the damage
-            addNewLines();
             r = new Report(6480);
             r.subject = entity.getId();
             r.addDesc(entity);
             r.add(toHit.getTableDesc());
             r.add(hits);
-            addReport(r);
+            vPhaseReport.add(r);
             if (entity instanceof BattleArmor) {
                 // BA take full damage to each trooper, ouch!
                 for (int loc = 0; loc < entity.locations(); loc++) {
                     if (entity.getInternal(loc) > 0) {
                         HitData hit = new HitData(loc);
-                        addReport(damageEntity(entity, hit, hits, false,
+                        vPhaseReport.addAll(damageEntity(entity, hit, hits, false,
                                 DamageType.NONE, false, true, false));
                     }
                 }
@@ -19660,7 +19659,7 @@ public class Server implements Runnable {
                     HitData hit = entity.rollHitLocation(toHit.getHitTable(),
                             toHit.getSideTable());
 
-                    addReport(damageEntity(entity, hit,
+                    vPhaseReport.addAll(damageEntity(entity, hit,
                             Math.min(cluster, hits), false, DamageType.NONE,
                             false, true, false));
                     hits -= Math.min(5, hits);
@@ -19669,7 +19668,6 @@ public class Server implements Runnable {
             if (killer != null) {
                 creditKill(entity, killer);
             }
-            addNewLines();
         }
     }
 
@@ -19686,7 +19684,7 @@ public class Server implements Runnable {
      */
     public void artilleryDamageArea(Coords centre, Coords attackSource,
             AmmoType ammo, int subjectId, Entity killer, boolean flak,
-            int altitude) {
+            int altitude, Vector<Report> vPhaseReport) {
         int damage;
         int falloff = 5;
         if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
@@ -19710,7 +19708,7 @@ public class Server implements Runnable {
             falloff = (damage + 1) / 2;
         }
         artilleryDamageArea(centre, attackSource, ammo, subjectId, killer,
-                damage, falloff, flak, altitude);
+                damage, falloff, flak, altitude, vPhaseReport);
     }
 
     /**
@@ -19729,12 +19727,12 @@ public class Server implements Runnable {
      */
     public void artilleryDamageArea(Coords centre, Coords attackSource,
             AmmoType ammo, int subjectId, Entity killer, int damage,
-            int falloff, boolean flak, int altitude) {
+            int falloff, boolean flak, int altitude, Vector<Report> vPhaseReport) {
         for (int ring = 0; damage > 0; ring++, damage -= falloff) {
             ArrayList<Coords> hexes = Compute.coordsAtRange(centre, ring);
             for (Coords c : hexes) {
                 artilleryDamageHex(c, attackSource, damage, ammo, subjectId,
-                        killer, null, flak, altitude);
+                        killer, null, flak, altitude, vPhaseReport);
             }
             attackSource = centre; // all splash comes from ground zero
         }

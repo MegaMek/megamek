@@ -38,10 +38,10 @@ public class ISSRT4 extends SRTWeapon {
         this.addLookupName("IS SRT 4");
         this.heat = 3;
         this.rackSize = 4;
-        this.shortRange = 3;
-        this.mediumRange = 6;
-        this.longRange = 9;
-        this.extremeRange = 12;
+        this.waterShortRange = 3;
+        this.waterMediumRange = 6;
+        this.waterLongRange = 9;
+        this.waterExtremeRange = 12;
         this.tonnage = 2.0f;
         this.criticals = 1;
         this.bv = 39;

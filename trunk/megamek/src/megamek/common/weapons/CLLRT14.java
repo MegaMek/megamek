@@ -36,10 +36,10 @@ public class CLLRT14 extends LRTWeapon {
         this.heat = 0;
         this.rackSize = 14;
         this.minimumRange = WEAPON_NA;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 21;
-        this.extremeRange = 28;
+        this.waterShortRange = 7;
+        this.waterMediumRange = 14;
+        this.waterLongRange = 21;
+        this.waterExtremeRange = 28;
         this.tonnage = 2.8f;
         this.criticals = 0;
         this.bv = 163;

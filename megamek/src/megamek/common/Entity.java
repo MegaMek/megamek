@@ -6323,8 +6323,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             setArmor(IArmorState.ARMOR_DOOMED, loc, true);
         }
         // equipment marked missing
-        for (Mounted mounted : getEquipment()) {
-            if (mounted.getLocation() == loc && mounted.getType().isHittable()) {
+        for (Mounted mounted : getEquipment()) {            
+            if (mounted.getLocation() == loc && mounted.getType().isHittable() ||
+                    (mounted.isSplit() && mounted.getSecondLocation() == loc)) {
                 mounted.setMissing(true);
             }
         }

@@ -39,10 +39,10 @@ public class ISLRT15 extends LRTWeapon {
         this.heat = 5;
         this.rackSize = 15;
         this.minimumRange = 6;
-        this.shortRange = 7;
-        this.mediumRange = 14;
-        this.longRange = 21;
-        this.extremeRange = 28;
+        this.waterShortRange = 7;
+        this.waterMediumRange = 14;
+        this.waterLongRange = 21;
+        this.waterExtremeRange = 28;
         this.tonnage = 7.0f;
         this.criticals = 3;
         this.bv = 136;

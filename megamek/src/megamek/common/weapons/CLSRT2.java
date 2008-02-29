@@ -37,10 +37,10 @@ public class CLSRT2 extends SRTWeapon {
         this.addLookupName("Clan SRT 2");
         this.heat = 2;
         this.rackSize = 2;
-        this.shortRange = 3;
-        this.mediumRange = 6;
-        this.longRange = 9;
-        this.extremeRange = 12;
+        this.waterShortRange = 3;
+        this.waterMediumRange = 6;
+        this.waterLongRange = 9;
+        this.waterExtremeRange = 12;
         this.tonnage = 0.5f;
         this.criticals = 1;
         this.bv = 21;

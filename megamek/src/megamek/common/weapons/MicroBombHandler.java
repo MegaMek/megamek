@@ -81,7 +81,7 @@ public class MicroBombHandler extends AmmoWeaponHandler {
         int ratedDamage = ba.getShootingStrength();
         server.artilleryDamageArea(coords, ae.getPosition(), (AmmoType) ammo
                 .getType(), subjectId, ae, ratedDamage * 2, ratedDamage, false,
-                0);
+                0, vPhaseReport);
         return true;
     }
 }

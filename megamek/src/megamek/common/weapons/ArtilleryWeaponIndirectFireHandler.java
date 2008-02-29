@@ -350,7 +350,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
-            server.deliverArtilleryInferno(coords, subjectId);
+            server.deliverArtilleryInferno(coords, subjectId, vPhaseReport);
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
@@ -359,7 +359,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_SMOKE) {
-            server.deliverArtillerySmoke(coords);
+            server.deliverArtillerySmoke(coords, vPhaseReport);
             return false;
         }
         int altitude = 0;
@@ -367,7 +367,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             altitude = ((VTOL) target).getElevation();
         }
         server.artilleryDamageArea(coords, artyAttacker.getPosition(), atype,
-                subjectId, artyAttacker, isFlak, altitude);
+                subjectId, artyAttacker, isFlak, altitude, vPhaseReport);
 
         return false;
     }

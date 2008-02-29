@@ -2285,16 +2285,15 @@ public abstract class Mech extends Entity implements Serializable {
         // adjust for target movement modifier
         // we use full possible movement, ignoring gravity and heat
         // but taking into account hit actuators
-        int runMP = getRunMP(false, true) - getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1
-                : 0;
+        int runMP = getRunMP(false, true);
         // factor in TSM or MASC
         if (hasTSM()) {
             runMP = (int) Math.ceil((getWalkMP(false, true) + 1) * 1.5)
-                    - getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0;
+                    - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1 : 0);
         }
         if (hasMASC()) {
-            runMP = (getWalkMP(false, true) * 2) - getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1
-                    : 0;
+            runMP = (getWalkMP(false, true) * 2) - (getArmorType() == EquipmentType.T_ARMOR_HARDENED ? 1
+                    : 0);
         }
         int tmmRan = Compute.getTargetMovementModifier(runMP, false, false)
                 .getValue();
@@ -2585,7 +2584,7 @@ public abstract class Mech extends Entity implements Serializable {
         // http://forums.classicbattletech.com/index.php/topic,20468.0.html
         double speedFactor;
         // but taking into account hit actuators
-        double speedFactorTableLookup = getRunMP(false, true) - getArmorType() == EquipmentType.T_ARMOR_HARDENED?1:0;
+        double speedFactorTableLookup = getRunMP(false, true);
         // factor in TSM (flat +1)
         if (hasTSM()) {
             speedFactorTableLookup += 1;
@@ -2594,7 +2593,7 @@ public abstract class Mech extends Entity implements Serializable {
         // recalculate normal run MP here, because we need normal run +1 for MASC,
         // and MASC might be currently active, so we can't just use getRunMP
         if (hasMASC()) {
-        	speedFactorTableLookup = getWalkMP(false, true) * 1.5 + 1 - getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0;
+            speedFactorTableLookup = getWalkMP(false, true) * 1.5 + 1 - (getArmorType()==EquipmentType.T_ARMOR_HARDENED?1:0);
         }
         speedFactorTableLookup += Math.round((double)getJumpMP() / 2);
         if (speedFactorTableLookup > 25)

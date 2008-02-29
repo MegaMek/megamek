@@ -881,7 +881,7 @@ public class Protomech extends Entity implements Serializable {
 
         // adjust further for speed factor
         double speedFactor = Math.pow(1 + (((double) getRunMP(false, true)
-                + (Math.round((double) jumpMP / 2)) - 5) / 10), 1.2);
+                + (Math.round((double) getJumpMP(false) / 2)) - 5) / 10), 1.2);
         speedFactor = Math.round(speedFactor * 100) / 100.0;
 
         obv = weaponBV * speedFactor;

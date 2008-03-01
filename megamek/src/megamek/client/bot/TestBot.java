@@ -446,7 +446,7 @@ public class TestBot extends BotClient {
                                 ToHitData toHit = null;
                                 double self_threat = 0;
                                 double damage = 0;
-                                if (option.isJumping()) {
+                                if (option.isJumping() && option.getEntity().canDFA()) {
                                     self.current.setState();
                                     toHit = DfaAttackAction.toHit(game, option
                                             .getEntity().getId(), target
@@ -473,7 +473,7 @@ public class TestBot extends BotClient {
                                                     ToHitData.SIDE_REAR);
                                     self_threat *= 100 / option.getCEntity()
                                             .getEntity().getWeight();
-                                } else {
+                                } else if (option.getEntity().canCharge()) {
                                     self.current.setState();
                                     toHit = new ChargeAttackAction(option
                                             .getEntity(), target.getEntity())

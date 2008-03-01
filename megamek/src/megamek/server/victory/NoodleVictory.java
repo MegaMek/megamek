@@ -35,7 +35,7 @@ public class NoodleVictory implements Victory, Serializable {
 
         // Commander killed victory condition
         if (game.getOptions().booleanOption("commander_killed")) {
-            victories.add(new LastCmdrStandingVictory());
+            victories.add(new EnemyCmdrDestroyedVictory());
         }
         // use a summing victory target to check if someone is winning
         v = new SummingThresholdVictory(game.getOptions().intOption(

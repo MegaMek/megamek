@@ -842,12 +842,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 if (spotter.isAttackingThisTurn())
                     toHit.addModifier(1,
                             "spotter is making an attack this turn");
-            } else {
-                if (spotter.isAttackingThisTurn())
-                    toHit.addModifier(1,
-                            "spotter is making an attack this turn");
             }
-
         }
 
         // attacker terrain

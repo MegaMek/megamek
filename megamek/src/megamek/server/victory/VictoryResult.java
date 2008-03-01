@@ -88,7 +88,6 @@ public class VictoryResult implements Victory.Result {
             if (d > hiScore)
                 hiScore = d;
         }
-
     }
 
     public void addPlayerScore(int id, double score) {

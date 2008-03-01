@@ -6346,6 +6346,23 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (getDependentLocation(loc) != Entity.LOC_NONE) {
             destroyLocation(getDependentLocation(loc));
         }
+        // remove any narc/inarc pods in this location
+        for (Iterator<INarcPod> i = pendingINarcPods.iterator(); i.hasNext();) {
+            if (i.next().getLocation() == loc)
+                i.remove();
+        }
+        for (Iterator<INarcPod> i = iNarcPods.iterator(); i.hasNext();) {
+            if (i.next().getLocation() == loc)
+                i.remove();
+        }
+        for (Iterator<NarcPod> i = pendingNarcPods.iterator(); i.hasNext();) {
+            if (i.next().getLocation() == loc)
+                i.remove();
+        }
+        for (Iterator<NarcPod> i = narcPods.iterator(); i.hasNext();) {
+            if (i.next().getLocation() == loc)
+                i.remove();
+        }
     }
 
     public PilotingRollData checkSideSlip(int moveType, IHex prevHex,

@@ -11725,40 +11725,17 @@ public class Server implements Runnable {
 
         // Allocate the damage
         while (damage > 0) {
-
             // let's resolve some damage!
-            
-            
-            if (reflectiveArmor
-                    && hit.getDamageType() == HitData.DAMAGE_PHYSICAL
-                    && te.getArmor(hit) > 0
-                    && !damageIS) {
-                r = new Report(6066);
-                r.subject = te_n;
-                r.indent(2);
-                r.newlines = 0;
-                vDesc.addElement(r);
-                
-                r = new Report(6065);
-                r.subject = te_n;
-                r.indent(2);
-                r.newlines = 0;
-                r.addDesc(te);
-                r.add(damage*2);
-                r.add(te.getLocationAbbr(hit));
-                vDesc.addElement(r);
-            }else {
-                r = new Report(6065);
-                r.subject = te_n;
-                r.indent(2);
-                r.newlines = 0;
-                r.addDesc(te);
-                r.add(damage);
-                if (damageIS)
-                    r.messageId = 6070;
-                r.add(te.getLocationAbbr(hit));
-                vDesc.addElement(r);
-            }
+            r = new Report(6065);
+            r.subject = te_n;
+            r.indent(2);
+            r.newlines = 0;
+            r.addDesc(te);
+            r.add(damage);
+            if (damageIS)
+                r.messageId = 6070;
+            r.add(te.getLocationAbbr(hit));
+            vDesc.addElement(r);
             // was the section destroyed earlier this phase?
             if (te.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
                 // cannot transfer a through armor crit if so
@@ -11978,6 +11955,12 @@ public class Server implements Runnable {
                 if (hardenedArmor) {
                     tmpDamageHold = damage;
                     damage /= 2;
+                    r = new Report(6069);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    r.add(damage);
+                    vDesc.addElement(r);
                     damage += tmpDamageHold % 2;
                 } else if (isPlatoon) {
                     // infantry armour works differently
@@ -11998,16 +11981,37 @@ public class Server implements Runnable {
                         && hit.getDamageType() == HitData.DAMAGE_PHYSICAL) {
                     tmpDamageHold = damage;
                     damage *= 2;
+                    r = new Report(6066);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    r.add(damage);
+                    vDesc.addElement(r);
                 } else if (reflectiveArmor
                         && hit.getDamageType() == HitData.DAMAGE_ENERGY) {
+                    vDesc.addElement(r);
                     tmpDamageHold = damage;
                     damage /= 2;
+                    r = new Report(6067);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    r.add(damage);
                     damage += tmpDamageHold % 2;
-
                 } else if (reactiveArmor
                         && hit.getDamageType() == HitData.DAMAGE_MISSLE) {
+                    r = new Report(6068);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
                     tmpDamageHold = damage;
                     damage /= 2;
+                    r = new Report(6067);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    r.add(damage);
                     damage += tmpDamageHold % 2;
                 }
 

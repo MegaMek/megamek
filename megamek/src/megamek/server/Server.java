@@ -11727,17 +11727,38 @@ public class Server implements Runnable {
         while (damage > 0) {
 
             // let's resolve some damage!
-            r = new Report(6065);
-            r.subject = te_n;
-            r.indent(2);
-            r.newlines = 0;
-            r.addDesc(te);
-            r.add(damage);
-            if (damageIS)
-                r.messageId = 6070;
-            r.add(te.getLocationAbbr(hit));
-            vDesc.addElement(r);
-
+            
+            
+            if (reflectiveArmor
+                    && hit.getDamageType() == HitData.DAMAGE_PHYSICAL
+                    && te.getArmor(hit) > 0
+                    && !damageIS) {
+                r = new Report(6066);
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                vDesc.addElement(r);
+                
+                r = new Report(6065);
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                r.addDesc(te);
+                r.add(damage*2);
+                r.add(te.getLocationAbbr(hit));
+                vDesc.addElement(r);
+            }else {
+                r = new Report(6065);
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                r.addDesc(te);
+                r.add(damage);
+                if (damageIS)
+                    r.messageId = 6070;
+                r.add(te.getLocationAbbr(hit));
+                vDesc.addElement(r);
+            }
             // was the section destroyed earlier this phase?
             if (te.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
                 // cannot transfer a through armor crit if so

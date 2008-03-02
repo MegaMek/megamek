@@ -52,6 +52,7 @@ v0.33.19 (2008-02-26, 2:13 GMT+1)
 + Bug: pilot damage from heat not applied correctly, and not reported correctly
     when MaxTech heat is used.
 + Bug: Fixed a few report errors.
++ Bug 1809070: ECM not breaking std C3 links
 
 v0.33.18 (2008-02-14, 23:31 GMT+1)
 + Bug: Flechette and Frag ammo not doing full damage to Infantry

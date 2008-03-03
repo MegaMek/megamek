@@ -53,6 +53,7 @@ v0.33.19 (2008-02-26, 2:13 GMT+1)
     when MaxTech heat is used.
 + Bug: Fixed a few report errors.
 + Bug 1809070: ECM not breaking std C3 links
++ Bug 1806961: C3i and ECM handling
 
 v0.33.18 (2008-02-14, 23:31 GMT+1)
 + Bug: Flechette and Frag ammo not doing full damage to Infantry

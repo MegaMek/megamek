@@ -1080,7 +1080,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         for (Iterator<C3Sprite> i = C3Sprites.iterator(); i.hasNext();) {
             final C3Sprite c3sprite = i.next();
-            if (c3sprite.entityId == entity.getId()) {
+            if (c3sprite.entityId == entity.getId()
+                    || c3sprite.masterId == entity.getId()) {
                 i.remove();
             }
         }
@@ -1220,7 +1221,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 final Entity fe = i.nextElement();
                 if (fe.getPosition() == null)
                     return;
-                if (e.onSameC3NetworkAs(fe) && !fe.equals(e)) {
+                if (e.onSameC3NetworkAs(fe) && !fe.equals(e) &&
+                        !Compute.isAffectedByECM(e, e.getPosition(), fe.getPosition())) {
                     C3Sprites.add(new C3Sprite(e, fe));
                 }
             }
@@ -3585,6 +3587,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         public void gameEntityChange(GameEntityChangeEvent e) {
             Vector<UnitLocation> mp = e.getMovePath();
             updateEcmList();
+            if (e.getEntity().hasActiveECM()) {
+                // this might disrupt c3/c3i lines, so redraw all
+                redrawAllEntities();
+            }
             if (mp != null && mp.size() > 0
                     && GUIPreferences.getInstance().getShowMoveStep()) {
                 addMovingUnit(e.getEntity(), mp);

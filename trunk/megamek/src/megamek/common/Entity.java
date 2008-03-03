@@ -3316,10 +3316,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         while ((master != null)
                 && !master.equals(m)
                 && master.hasC3()
-                && !(Compute.isAffectedByECM(m, m.getPosition(), master
-                        .getPosition()))
-                && !(Compute.isAffectedByECM(master, master.getPosition(),
-                        master.getPosition()))) {
+                //&& !(Compute.isAffectedByECM(m, m.getPosition(), master.getPosition()))
+                //&& !(Compute.isAffectedByECM(master, master.getPosition(),master.getPosition()))
+                  && !(Compute.isAffectedByECM(master, m.getPosition(),master.getPosition()))) {
             m = master;
             master = m.getC3Master();
         }
@@ -3514,13 +3513,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         // C3i is easy - if they both have C3i, and their net ID's match,
         // they're on the same network!
         if (hasC3i() && e.hasC3i() && getC3NetId().equals(e.getC3NetId())) {
-            // check for ECM interference
-            // TODO: lines passing through an ECM field when both units are not
-            // in ECM should cut off, too
-            return !(Compute.isAffectedByECM(e, e.getPosition(), e
-                    .getPosition()))
-                    && !(Compute.isAffectedByECM(this, getPosition(),
-                            getPosition()));
+            return true;
         }
 
         // simple sanity check - do they both have C3, and are they both on the

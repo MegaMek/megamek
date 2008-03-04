@@ -745,6 +745,7 @@ public class Compute {
      * @return A closer C3 spotter, or the attack if no spotters are found
      */
     private static Entity findC3Spotter(IGame game, Entity attacker, Targetable target) {
+        //TODO: underwater units can't spot for overwater units and vice versa
         if (!attacker.hasC3() && !attacker.hasC3i()) {
             return attacker;
         }
@@ -760,7 +761,7 @@ public class Compute {
             Entity friend = i.nextElement();
 
             // TODO : can units being transported be used for C3 spotting?
-            if (attacker.equals(friend) || !friend.isActive() || !attacker.onSameC3NetworkAs(friend) || !canSee(game, friend, target)) {
+            if (attacker.equals(friend) || !friend.isActive() || !attacker.onSameC3NetworkAs(friend)) {
                 continue; // useless to us...
             }
 
@@ -769,11 +770,18 @@ public class Compute {
                 c3range = buddyRange;
                 c3spotter = friend;
             }
-
         }
         return c3spotter;
     }
 
+    /**
+     * find a c3i spotter that is closer to the target than the
+     * attacker.
+     * @param game
+     * @param attacker
+     * @param target
+     * @return
+     */
     private static Entity findC3iSpotter(IGame game, Entity attacker, Targetable target) {
         if (!attacker.hasC3() && !attacker.hasC3i()) {
             return attacker;
@@ -785,7 +793,7 @@ public class Compute {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity friend = i.nextElement();
 
-            if (attacker.equals(friend) || !attacker.onSameC3NetworkAs(friend) ) {
+            if (attacker.equals(friend) || !attacker.onSameC3NetworkAs(friend, true) ) {
                 continue; // useless to us...
             }
 
@@ -807,11 +815,11 @@ public class Compute {
 
         int position = 0;
         for ( Entity spotter: network ) {
-            if ( !isAffectedByECM(spotter, spotter.getPosition(), attacker.getPosition()) ) {
+            if (!isAffectedByECM(spotter, spotter.getPosition(), attacker.getPosition())) {
                 return spotter;
             }
 
-            if ( isAffectedByECM(spotter, spotter.getPosition(), target.getPosition()) || !canSee(game, spotter, target) ) {
+            if (isAffectedByECM(spotter, spotter.getPosition(), target.getPosition())) {
                 position++;
                 continue;
             }
@@ -822,7 +830,6 @@ public class Compute {
                 }
             }
         }
-        
         return c3spotter;
     }
     
@@ -2248,273 +2255,125 @@ public class Compute {
     }
 
     /**
-     * This Method checks to see how many friendly ECCM fields Entity ae is
-     * effected by.
+     * This method checks to see if a line from a to b is affected by an ECM
+     * field of the enemy of ae
      * 
      * @param ae
      * @param a
      * @param b
-     * @return count that shows the number of friendly Angel ECCM fields you are
-     *         in.
-     */
-    public static int getFriendlyECCMFields(Entity ae, Coords a, Coords b) {
-        if (!ae.getGame().getOptions().booleanOption("maxtech_eccm"))
-            return 0;
-        if (a == null || b == null)
-            return 0;
-
-        // Start at zero nothing protecting the mech.
-        int ECCMCount = 0;
-
-        if (ae.hasActiveECCM())
-            ECCMCount++;
-
-        // Only grab enemies with active ECM
-        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
-        Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = e.nextElement();
-            Coords entPos = ent.getPosition();
-            if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null && !ent.equals(ae)) {
-                // TODO : only use the best ECM range in a given Coords.
-
-                vEnemyCoords.addElement(entPos);
-                vECMRanges.addElement(new Integer(ent.getECMRange()));
-            }
-
-            // Check the ECM effects of the entity's passengers.
-            for (Entity other : ent.getLoadedUnits()) {
-                if (!other.isEnemyOf(ae) && other.hasActiveECCM() && entPos != null && !other.equals(ae)) {
-                    // TODO : only use the best ECM range in a given Coords.
-                    vEnemyCoords.addElement(entPos);
-                    vECMRanges.addElement(new Integer(other.getECMRange()));
-                }
-            }
-
-        }
-
-        // none? get out of here
-        if (vEnemyCoords.size() == 0)
-            return ECCMCount;
-
-        // get intervening Coords. See the comments for intervening() and
-        // losDivided()
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-        boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = e.nextElement();
-            int range = ranges.nextElement().intValue();
-            int nLastDist = -1;
-
-            // loop through intervening hexes and see if any of them are within
-            // range
-            for (int x = 0; x < coords.size(); x++) {
-                int nDist = c.distance(coords.get(x));
-
-                if (nDist <= range) {
-                    ECCMCount++;
-                    break;
-                }
-
-                // optimization. if we're getting farther away, forget it
-                // but ignore the doubled-up hexes intervening() adds along
-                // hexlines
-                if (!bDivided || (x % 3 == 0)) {
-                    if (nLastDist == -1) {
-                        nLastDist = nDist;
-                    } else if (nDist > nLastDist) {
-                        break;
-                    }
-                }
-            }
-        }
-        return ECCMCount;
-    }
-
-    /**
-     * This Methiod returns how many friendly Angel ECCM fields Entity AE is
-     * protected by
-     * 
-     * @param ae
-     * @param a
-     * @param b
-     * @return count that shows the number of friendly Angel ECCM fields you are
-     *         in.
-     */
-    public static int getFriendlyAngelECCMFields(Entity ae, Coords a, Coords b) {
-        if (!ae.getGame().getOptions().booleanOption("maxtech_eccm"))
-            return 0;
-        if (a == null || b == null)
-            return 0;
-
-        // Start at zero nothing protecting the mech.
-        int ECCMCount = 0;
-
-        // angel acts as two ECMS and has both ECM flags.
-        // So you get one from getFriendlyECCMFields
-        // and one from here.
-        if (ae.hasActiveAngelECCM())
-            ECCMCount++;
-
-        // Only grab enemies with active ECM
-        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
-        Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = e.nextElement();
-            Coords entPos = ent.getPosition();
-            if (!ent.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null && !ent.equals(ae)) {
-                // TODO : only use the best ECM range in a given Coords.
-                vEnemyCoords.addElement(entPos);
-                vECMRanges.addElement(new Integer(ent.getAngelECMRange()));
-            }
-
-            // Check the ECM effects of the entity's passengers.
-            for (Entity other : ent.getLoadedUnits()) {
-                if (!other.isEnemyOf(ae) && other.hasActiveAngelECCM() && entPos != null && !other.equals(ae)) {
-                    // TODO : only use the best ECM range in a given Coords.
-                    vEnemyCoords.addElement(entPos);
-                    vECMRanges.addElement(new Integer(other.getAngelECMRange()));
-                }
-            }
-
-        }
-
-        // none? get out of here
-        if (vEnemyCoords.size() == 0)
-            return ECCMCount;
-
-        // get intervening Coords. See the comments for intervening() and
-        // losDivided()
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-        boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = e.nextElement();
-            int range = ranges.nextElement().intValue();
-            int nLastDist = -1;
-
-            // loop through intervening hexes and see if any of them are within
-            // range
-            for (int x = 0; x < coords.size(); x++) {
-                int nDist = c.distance(coords.get(x));
-
-                if (nDist <= range) {
-                    ECCMCount++;
-                    break;
-                }
-                // optimization. if we're getting farther away, forget it
-                // but ignore the doubled-up hexes intervening() adds along
-                // hexlines
-                if (!bDivided || (x % 3 == 0)) {
-                    if (nLastDist == -1) {
-                        nLastDist = nDist;
-                    } else if (nDist > nLastDist) {
-                        break;
-                    }
-                }
-            }
-        }
-        return ECCMCount;
-    }
-
-    /**
-     * This method checks to see if Entity ae is effeced by enemy ECM fields
-     * 
-     * @param ae
-     * @param a
-     * @param b
-     * @return count that shows if you are in an friendly ECCM field positive
-     *         number means you are in an friendly ECCM field Negative number
-     *         means you are in a enemy ECM field 0 means you are not effect by
-     *         enemy or friendly fields.
+     * @return
      */
     public static boolean isAffectedByECM(Entity ae, Coords a, Coords b) {
         if (a == null || b == null)
             return false;
 
-        // Start at zero nothing protecting the mech.
-        int ECCMCount = 0;
-
-        ECCMCount += Compute.getFriendlyECCMFields(ae, a, b);
-        ECCMCount += Compute.getFriendlyAngelECCMFields(ae, a, b);
-
-        if (ae.isINarcedWith(INarcPod.ECM)) {
-            ECCMCount--;
-        }
-
-        // before we go through all this iterations lets see if the NARC ECM
-        // Screwed the pooch
-        if (ECCMCount < 0)
-            return true;
-
         // Only grab enemies with active ECM
-        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
-        Vector<Integer> vECMRanges = new Vector<Integer>(16);
+        Vector<Coords> vEnemyECMCoords = new Vector<Coords>(16);
+        Vector<Integer> vEnemyECMRanges = new Vector<Integer>(16);
+        Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
+        Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
         for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
             if (ent.isEnemyOf(ae) && ent.hasActiveECM() && entPos != null) {
-                // TODO : only use the best ECM range in a given Coords.
-                vEnemyCoords.addElement(entPos);
-                vECMRanges.addElement(new Integer(ent.getECMRange()));
+                vEnemyECMCoords.addElement(entPos);
+                vEnemyECMRanges.addElement(new Integer(ent.getECMRange()));
+            }
+            // angel ECM gets added another time, to make it count as 2 ECMs,
+            // because it's already included above because it works as a normal
+            // ECM, too
+            if (ent.isEnemyOf(ae) && ent.hasActiveAngelECM() && entPos != null) {
+                vEnemyECMCoords.addElement(entPos);
+                vEnemyECMRanges.addElement(new Integer(ent.getECMRange()));
+            }
+            if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
+                vFriendlyECCMCoords.addElement(entPos);
+                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+            }
+            // angel ECCM gets added another time, to make it count as 2 ECMs,
+            // because it's already included above because it works as a normal
+            // ECM, too
+            if (!ent.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
+                vFriendlyECCMCoords.addElement(entPos);
+                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
             }
 
             // Check the ECM effects of the entity's passengers.
             for (Entity other : ent.getLoadedUnits()) {
                 if (other.isEnemyOf(ae) && other.hasActiveECM() && entPos != null) {
-                    // TODO : only use the best ECM range in a given Coords.
-                    vEnemyCoords.addElement(entPos);
-                    vECMRanges.addElement(new Integer(other.getECMRange()));
+                    vEnemyECMCoords.addElement(entPos);
+                    vEnemyECMRanges.addElement(new Integer(other.getECMRange()));
+                }
+                // angel ECM gets added another time, to make it count as 2 ECMs,
+                // because it's already included above because it works as a normal
+                // ECM, too
+                if (other.isEnemyOf(ae) && other.hasActiveAngelECM() && entPos != null) {
+                    vEnemyECMCoords.addElement(entPos);
+                    vEnemyECMRanges.addElement(new Integer(other.getECMRange()));
+                }
+                if (!other.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
+                    vFriendlyECCMCoords.addElement(entPos);
+                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                }
+                // angel ECCM gets added another time, to make it count as 2 ECMs,
+                // because it's already included above because it works as a normal
+                // ECM, too
+                if (!other.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
+                    vFriendlyECCMCoords.addElement(entPos);
+                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
                 }
             }
-
         }
 
         // none? get out of here
-        if (vEnemyCoords.size() == 0)
-            return ECCMCount < 0;
+        if (vEnemyECMCoords.size() == 0)
+            return false;
 
-        // get intervening Coords. See the comments for intervening() and
-        // losDivided()
+        // get intervening Coords.
         ArrayList<Coords> coords = Coords.intervening(a, b);
-        boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = e.nextElement();
-            int range = ranges.nextElement().intValue();
-            int nLastDist = -1;
-
-            // loop through intervening hexes and see if any of them are within
-            // range
-            for (int x = 0; x < coords.size(); x++) {
-                int nDist = c.distance(coords.get(x));
-
+        // loop through all intervening coords, check each if they are ECM
+        // affected
+        for (Coords c : coords) {
+            // > 0: in friendly ECCM
+            // 0: unaffected by enemy ECM
+            // <0: affected by enemy ECM
+            int ecmStatus = 0;
+            // if we're at ae's Position, figure in a possible
+            // iNarc ECM pod
+            if (c.equals(ae.getPosition()) && ae.isINarcedWith(INarcPod.ECM)) {
+                ecmStatus--;
+            }
+            // first, subtract 1 for each enemy ECM that affects us
+            Enumeration<Integer> ranges = vEnemyECMRanges.elements();
+            for (Enumeration<Coords> e = vEnemyECMCoords.elements(); e.hasMoreElements();) {
+                Coords enemyECMCoords = e.nextElement();
+                int range = ranges.nextElement().intValue();
+                int nDist = c.distance(enemyECMCoords);
                 if (nDist <= range) {
-                    ECCMCount--;
-                    break;
-                }
-
-                // optimization. if we're getting farther away, forget it
-                // but ignore the doubled-up hexes intervening() adds along
-                // hexlines
-                if (!bDivided || (x % 3 == 0)) {
-                    if (nLastDist == -1) {
-                        nLastDist = nDist;
-                    } else if (nDist > nLastDist) {
-                        break;
-                    }
+                    ecmStatus--;
                 }
             }
+            // now, add one for each friendly ECCM
+            ranges = vFriendlyECCMRanges.elements();
+            for (Enumeration<Coords> e = vFriendlyECCMCoords.elements(); e.hasMoreElements();) {
+                Coords friendlyECCMCoords = e.nextElement();
+                int range = ranges.nextElement().intValue();
+                int nDist = c.distance(friendlyECCMCoords);
+                if (nDist <= range) {
+                    ecmStatus++;
+                }
+            }
+            // if any coords in the line are affected, the whole line is
+            if (ecmStatus < 0) {
+                return true;
+            }
         }
-        // if your ECCMCount is less then Zero that means more ECMS
-        // are effecting you then ECCM's if 0 means the same
-        // amount and everything is negated --Torren
-        return ECCMCount < 0;
+        return false;
     }
 
     /**
-     * This method checks to see if Entity AE is effected by angel ECM
+     *  This method checks to see if a line from a to b is affected by an Angel
+     *  ECM field of the enemy of ae
      * 
      * @param ae
      * @param a
@@ -2528,415 +2387,90 @@ public class Compute {
         if (a == null || b == null)
             return false;
 
-        int ECCMCount = 0;
-
-        ECCMCount += Compute.getFriendlyECCMFields(ae, a, b);
-        ECCMCount += Compute.getFriendlyAngelECCMFields(ae, a, b);
-
-        // Only grab enemies with active Angel ECM
-        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
-        Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Object eEl : ae.game.getEntitiesVector()) {
-            Entity ent = (Entity) eEl;
+        // Only grab enemies with active angel ECM
+        Vector<Coords> vEnemyAngelECMCoords = new Vector<Coords>(16);
+        Vector<Integer> vEnemyAngelECMRanges = new Vector<Integer>(16);
+        Vector<Coords> vFriendlyECCMCoords = new Vector<Coords>(16);
+        Vector<Integer> vFriendlyECCMRanges = new Vector<Integer>(16);
+        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
+            Entity ent = e.nextElement();
             Coords entPos = ent.getPosition();
+            // add each angel ECM twice, because it needs 2 ECMs to be countered 
             if (ent.isEnemyOf(ae) && ent.hasActiveAngelECM() && entPos != null) {
-                // TODO : only use the best ECM range in a given Coords.
-                vEnemyCoords.addElement(entPos);
-                vECMRanges.addElement(ent.getAngelECMRange());
+                vEnemyAngelECMCoords.addElement(entPos);
+                vEnemyAngelECMRanges.addElement(new Integer(ent.getECMRange()));
+            }
+            if (!ent.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
+                vFriendlyECCMCoords.addElement(entPos);
+                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+            }
+            // angel ECCM gets added another time, to make it count as 2 ECMs,
+            // because it's already included above because it works as a normal
+            // ECM, too
+            if (!ent.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
+                vFriendlyECCMCoords.addElement(entPos);
+                vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
             }
 
-            // Check the ECM effects of the entity's passengers.
-            Vector<Entity> passengers = ent.getLoadedUnits();
-            for (Entity other : passengers) {
+            // Check the angel ECM effects of the entity's passengers.
+            for (Entity other : ent.getLoadedUnits()) {
                 if (other.isEnemyOf(ae) && other.hasActiveAngelECM() && entPos != null) {
-                    // TODO : only use the best ECM range in a given Coords.
-                    vEnemyCoords.addElement(entPos);
-                    vECMRanges.addElement(other.getAngelECMRange());
+                    vEnemyAngelECMCoords.addElement(entPos);
+                    vEnemyAngelECMRanges.addElement(new Integer(other.getECMRange()));
+                }
+                if (!other.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
+                    vFriendlyECCMCoords.addElement(entPos);
+                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
+                }
+                // angel ECCM gets added another time, to make it count as 2 ECMs,
+                // because it's already included above because it works as a normal
+                // ECM, too
+                if (!other.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
+                    vFriendlyECCMCoords.addElement(entPos);
+                    vFriendlyECCMRanges.addElement(new Integer(ent.getECMRange()));
                 }
             }
         }
 
         // none? get out of here
-        if (vEnemyCoords.size() == 0)
-            return ECCMCount < 0;
-
-        // get intervening Coords. See the comments for intervening() and
-        // losDivided()
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-        boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Coords c : vEnemyCoords) {
-            int range = ranges.nextElement();
-            int nLastDist = -1;
-
-            // loop through intervening hexes and see if any of them are within
-            // range
-            for (int x = 0; x < coords.size(); x++) {
-                int nDist = c.distance(coords.get(x));
-
-                if (nDist <= range) {
-                    ECCMCount -= 2;
-                    break;
-                }
-
-                // optimization. if we're getting farther away, forget it
-                // but ignore the doubled-up hexes intervening() adds along
-                // hexlines
-                if (!bDivided || (x % 3 == 0)) {
-                    if (nLastDist == -1) {
-                        nLastDist = nDist;
-                    } else if (nDist > nLastDist) {
-                        break;
-                    }
-                }
-            }
-        }
-        return ECCMCount < 0;
-    }
-
-    /**
-     * This method checks to see if entity AE is in an enemy Angel ECCM field
-     * 
-     * @param ae
-     * @param a
-     * @param b
-     * @return count that shows if you are in an enemy ECCM field positive
-     *         number means you are in an enemy ECCM field Negative number means
-     *         you are in a friendly ECM field 0 means you are not effect by
-     *         enemy or friendly fields.
-     */
-    public static int getEnemyECCMFields(Entity ae, Coords a, Coords b) {
-        if (!ae.getGame().getOptions().booleanOption("maxtech_eccm"))
-            return 0;
-        if (a == null || b == null)
-            return 0;
-
-        // Start at zero nothing protecting the mech.
-        int ECCMCount = 0;
-
-        // Only grab enemies with active ECM
-        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
-        Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = e.nextElement();
-            Coords entPos = ent.getPosition();
-            if (ent.isEnemyOf(ae) && ent.hasActiveECCM() && entPos != null) {
-                // TODO : only use the best ECM range in a given Coords.
-                vEnemyCoords.addElement(entPos);
-                vECMRanges.addElement(new Integer(ent.getECMRange()));
-            }
-
-            // Check the ECM effects of the entity's passengers.
-            Enumeration<Entity> iter = ent.getLoadedUnits().elements();
-            while (iter.hasMoreElements()) {
-                Entity other = iter.nextElement();
-                if (other.isEnemyOf(ae) && other.hasActiveECCM() && entPos != null) {
-                    // TODO : only use the best ECM range in a given Coords.
-                    vEnemyCoords.addElement(entPos);
-                    vECMRanges.addElement(new Integer(other.getECMRange()));
-                }
-            }
-
-        }
-
-        // none? get out of here
-        if (vEnemyCoords.size() == 0)
-            return ECCMCount;
-
-        // get intervening Coords. See the comments for intervening() and
-        // losDivided()
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-        boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = e.nextElement();
-            int range = ranges.nextElement().intValue();
-            int nLastDist = -1;
-
-            // loop through intervening hexes and see if any of them are within
-            // range
-            for (int x = 0; x < coords.size(); x++) {
-                int nDist = c.distance(coords.get(x));
-
-                if (nDist <= range) {
-                    ECCMCount++;
-                    break;
-                }
-
-                // optimization. if we're getting farther away, forget it
-                // but ignore the doubled-up hexes intervening() adds along
-                // hexlines
-                if (!bDivided || (x % 3 == 0)) {
-                    if (nLastDist == -1) {
-                        nLastDist = nDist;
-                    } else if (nDist > nLastDist) {
-                        break;
-                    }
-                }
-            }
-        }
-        return ECCMCount;
-    }
-
-    /**
-     * This method checks to see if entity AE is in an enemy Angel ECCM field
-     * 
-     * @param ae
-     * @param a
-     * @param b
-     * @return count that shows if you are in an enemy Angel ECCM field positive
-     *         number means you are in an enemy ECCM field Negative number means
-     *         you are in a friendly ECM field 0 means you are not effect by
-     *         enemy or friendly fields.
-     */
-    public static int getEnemyAngelECCMFields(Entity ae, Coords a, Coords b) {
-        if (!ae.getGame().getOptions().booleanOption("maxtech_eccm"))
-            return 0;
-        if (a == null || b == null)
-            return 0;
-
-        // Start at zero nothing protecting the mech.
-        int ECCMCount = 0;
-
-        // Only grab enemies with active ECCM
-        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
-        Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = e.nextElement();
-            Coords entPos = ent.getPosition();
-            if (ent.isEnemyOf(ae) && ent.hasActiveAngelECCM() && entPos != null) {
-                // TODO : only use the best ECM range in a given Coords.
-                vEnemyCoords.addElement(entPos);
-                vECMRanges.addElement(new Integer(ent.getAngelECMRange()));
-            }
-
-            // Check the ECCM effects of the entity's passengers.
-            Enumeration<Entity> iter = ent.getLoadedUnits().elements();
-            while (iter.hasMoreElements()) {
-                Entity other = iter.nextElement();
-                if (other.isEnemyOf(ae) && other.hasActiveAngelECCM() && entPos != null) {
-                    // TODO : only use the best ECM range in a given Coords.
-                    vEnemyCoords.addElement(entPos);
-                    vECMRanges.addElement(new Integer(other.getAngelECMRange()));
-                }
-            }
-
-        }
-
-        // none? get out of here
-        if (vEnemyCoords.size() == 0)
-            return ECCMCount;
-
-        // get intervening Coords. See the comments for intervening() and
-        // losDivided()
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-        boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = e.nextElement();
-            int range = ranges.nextElement().intValue();
-            int nLastDist = -1;
-
-            // loop through intervening hexes and see if any of them are within
-            // range
-            for (int x = 0; x < coords.size(); x++) {
-                int nDist = c.distance(coords.get(x));
-
-                if (nDist <= range) {
-                    ECCMCount++;
-                    break;
-                }
-                // optimization. if we're getting farther away, forget it
-                // but ignore the doubled-up hexes intervening() adds along
-                // hexlines
-                if (!bDivided || (x % 3 == 0)) {
-                    if (nLastDist == -1) {
-                        nLastDist = nDist;
-                    } else if (nDist > nLastDist) {
-                        break;
-                    }
-                }
-            }
-        }
-        return ECCMCount;
-    }
-
-    /**
-     * This method checks to see if you are protected by friendly ECM Used when
-     * checking if you are being hit with Artmis/ATM type weapons
-     * 
-     * @param ae
-     * @param a
-     * @param b
-     * @return true/false
-     */
-    public static boolean isProtectedByECM(Entity ae, Coords a, Coords b) {
-        if (a == null || b == null)
+        if (vEnemyAngelECMCoords.size() == 0)
             return false;
 
-        // Start at zero nothing effecting the mech.
-        int ECCMCount = 0;
-
-        ECCMCount += Compute.getEnemyECCMFields(ae, a, b);
-        ECCMCount += Compute.getEnemyAngelECCMFields(ae, a, b);
-
-        if (ae.hasActiveECM())
-            ECCMCount--;
-
-        if (ECCMCount < 0)
-            return true;
-
-        // Only grab enemies with active ECM
-        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
-        Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Enumeration<Entity> e = ae.game.getEntities(); e.hasMoreElements();) {
-            Entity ent = e.nextElement();
-            Coords entPos = ent.getPosition();
-            if (!ent.isEnemyOf(ae) && ent.hasActiveECM() && entPos != null && !ent.equals(ae)) {
-                // TODO : only use the best ECM range in a given Coords.
-                vEnemyCoords.addElement(entPos);
-                vECMRanges.addElement(new Integer(ent.getECMRange()));
-            }
-
-            // Check the ECM effects of the entity's passengers.
-            Enumeration<Entity> iter = ent.getLoadedUnits().elements();
-            while (iter.hasMoreElements()) {
-                Entity other = iter.nextElement();
-                if (!other.isEnemyOf(ae) && other.hasActiveECM() && entPos != null && !other.equals(ae)) {
-                    // TODO : only use the best ECM range in a given Coords.
-                    vEnemyCoords.addElement(entPos);
-                    vECMRanges.addElement(new Integer(other.getECMRange()));
-                }
-            }
-
-        }
-
-        // none? get out of here
-        if (vEnemyCoords.size() == 0)
-            return ECCMCount < 0;
-
-        // get intervening Coords. See the comments for intervening() and
-        // losDivided()
+        // get intervening Coords.
         ArrayList<Coords> coords = Coords.intervening(a, b);
-        boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Enumeration<Coords> e = vEnemyCoords.elements(); e.hasMoreElements();) {
-            Coords c = e.nextElement();
-            int range = ranges.nextElement().intValue();
-            int nLastDist = -1;
-
-            // loop through intervening hexes and see if any of them are within
-            // range
-            for (int x = 0; x < coords.size(); x++) {
-                int nDist = c.distance(coords.get(x));
-
+        // loop through all intervening coords, check each if they are ECM
+        // affected
+        for (Coords c : coords) {
+            // > 0: in friendly ECCM
+            // 0: unaffected by enemy ECM
+            // <0: affected by enemy angel ECM
+            int ecmStatus = 0;
+            // first, subtract 2 for each enemy angel ECM that affects us
+            Enumeration<Integer> ranges = vEnemyAngelECMRanges.elements();
+            for (Enumeration<Coords> e = vEnemyAngelECMCoords.elements(); e.hasMoreElements();) {
+                Coords enemyECMCoords = e.nextElement();
+                int range = ranges.nextElement().intValue();
+                int nDist = c.distance(enemyECMCoords);
                 if (nDist <= range) {
-                    ECCMCount--;
-                    break;
-                }
-
-                // optimization. if we're getting farther away, forget it
-                // but ignore the doubled-up hexes intervening() adds along
-                // hexlines
-                if (!bDivided || (x % 3 == 0)) {
-                    if (nLastDist == -1) {
-                        nLastDist = nDist;
-                    } else if (nDist > nLastDist) {
-                        break;
-                    }
+                    ecmStatus--;
                 }
             }
-        }
-
-        // if your ECCMCount is less then Zero that means more ECMS
-        // are effecting you then ECCM's if 0 means the same
-        // amount and everything is negated --Torren
-        return ECCMCount < 0;
-    }
-
-    /**
-     * This method checks to see if you are protected by friendly Angel ECM Used
-     * when checking if you are being hit with Artmis/ATM/SSRM type weapons
-     * 
-     * @param ae
-     * @param a
-     * @param b
-     * @return true/false
-     */
-    public static boolean isProtectedByAngelECM(Entity ae, Coords a, Coords b) {
-        if (a == null || b == null)
-            return false;
-
-        int ECCMCount = 0;
-
-        ECCMCount += Compute.getEnemyECCMFields(ae, a, b);
-        ECCMCount += Compute.getEnemyAngelECCMFields(ae, a, b);
-
-        if (ae.hasActiveAngelECM())
-            ECCMCount -= 2;
-
-        if (ECCMCount < 0)
-            return true;
-
-        // Only grab friendly with active Angel ECM
-        Vector<Coords> vEnemyCoords = new Vector<Coords>(16);
-        Vector<Integer> vECMRanges = new Vector<Integer>(16);
-        for (Object eEl : ae.game.getEntitiesVector()) {
-            Entity ent = (Entity) eEl;
-            Coords entPos = ent.getPosition();
-            if (!ent.isEnemyOf(ae) && ent.hasActiveAngelECM() && entPos != null) {
-                // TODO : only use the best ECM range in a given Coords.
-                vEnemyCoords.addElement(entPos);
-                vECMRanges.addElement(ent.getAngelECMRange());
-            }
-
-            // Check the ECM effects of the entity's passengers.
-            Vector<Entity> passengers = ent.getLoadedUnits();
-            for (Entity other : passengers) {
-                if (!other.isEnemyOf(ae) && other.hasActiveAngelECM() && entPos != null) {
-                    // TODO : only use the best ECM range in a given Coords.
-                    vEnemyCoords.addElement(entPos);
-                    vECMRanges.addElement(other.getAngelECMRange());
-                }
-            }
-        }
-
-        // none? get out of here
-        if (vEnemyCoords.size() == 0)
-            return ECCMCount < 0;
-
-        // get intervening Coords. See the comments for intervening() and
-        // losDivided()
-        ArrayList<Coords> coords = Coords.intervening(a, b);
-        boolean bDivided = (a.degree(b) % 60 == 30);
-        Enumeration<Integer> ranges = vECMRanges.elements();
-        for (Coords c : vEnemyCoords) {
-            int range = ranges.nextElement();
-            int nLastDist = -1;
-
-            // loop through intervening hexes and see if any of them are within
-            // range
-            for (int x = 0; x < coords.size(); x++) {
-                int nDist = c.distance(coords.get(x));
-
+            // now, add one for each friendly ECCM
+            ranges = vFriendlyECCMRanges.elements();
+            for (Enumeration<Coords> e = vFriendlyECCMCoords.elements(); e.hasMoreElements();) {
+                Coords friendlyECCMCoords = e.nextElement();
+                int range = ranges.nextElement().intValue();
+                int nDist = c.distance(friendlyECCMCoords);
                 if (nDist <= range) {
-                    ECCMCount -= 2;
-                    break;
-                }
-
-                // optimization. if we're getting farther away, forget it
-                // but ignore the doubled-up hexes intervening() adds along
-                // hexlines
-                if (!bDivided || (x % 3 == 0)) {
-                    if (nLastDist == -1) {
-                        nLastDist = nDist;
-                    } else if (nDist > nLastDist) {
-                        break;
-                    }
+                    ecmStatus++;
                 }
             }
+            // if any coords in the line are affected, the whole line is
+            if (ecmStatus < 0) {
+                return true;
+            }
         }
-        return ECCMCount < 0;
+        return false;
     }
 
     /**

@@ -27,6 +27,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 
 /**
  * The attacker kicks the target.
@@ -131,6 +132,7 @@ public class KickAttackAction extends PhysicalAttackAction {
         final int targetElevation = target.getElevation()
                 + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
+        final int attackerHeight = attackerElevation + ae.getHeight();
 
         int mule = 0;
         int[] kickLegs = new int[2];
@@ -190,7 +192,11 @@ public class KickAttackAction extends PhysicalAttackAction {
         final int range = ae.getPosition().distance(target.getPosition());
 
         // check elevation
-        if (attackerElevation < targetElevation
+        if (target instanceof VTOL && ((VTOL)target).isFlying()) {
+            if (targetElevation - attackerHeight != 0) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
+            }
+        } else if (attackerElevation < targetElevation
                 || attackerElevation > targetHeight) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target elevation not in range");

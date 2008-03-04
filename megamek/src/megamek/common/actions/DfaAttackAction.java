@@ -38,6 +38,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 
 /**
  * @author Ben
@@ -195,6 +196,19 @@ public class DfaAttackAction extends DisplacementAttackAction {
         }
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         ToHitData toHit = null;
+        
+        final int attackerElevation = ae.getElevation() + game.getBoard().getHex(ae.getPosition()).getElevation();
+        final int targetElevation = target.getElevation()
+                + game.getBoard().getHex(target.getPosition()).getElevation();
+        final int attackerHeight = attackerElevation + ae.getHeight();
+        
+        // check elevation of target flying VTOL
+        if (target instanceof VTOL && ((VTOL)target).isFlying()) {
+            if (targetElevation - attackerHeight > ae.getJumpMP()) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE,
+                    "Elevation difference to high");
+            }
+        }
 
         // can't target yourself
         if (ae.equals(te)) {

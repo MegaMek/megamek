@@ -7957,6 +7957,12 @@ public class Server implements Runnable {
             DamageType damageType = DamageType.NONE;
             addReport(damageEntity(te, hit, damage, false, damageType, false,
                     false, throughFront));
+            if (target instanceof VTOL) {
+                // destroy rotor
+                addReport(applyCriticalHit(te, VTOL.LOC_ROTOR,
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                                VTOL.CRIT_ROTOR_DESTROYED), false));
+            }
         }
 
         addNewLines();
@@ -8166,6 +8172,12 @@ public class Server implements Runnable {
             DamageType damageType = DamageType.NONE;
             addReport(damageEntity(te, hit, damage, false, damageType, false,
                     false, throughFront));
+            if (target instanceof VTOL) {
+                // destroy rotor
+                addReport(applyCriticalHit(te, VTOL.LOC_ROTOR,
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                                VTOL.CRIT_ROTOR_DESTROYED), false));
+            }
         }
 
         if (te.getMovementMode() == IEntityMovementMode.BIPED
@@ -9036,6 +9048,12 @@ public class Server implements Runnable {
             DamageType damageType = DamageType.NONE;
             addReport(damageEntity(te, hit, damage, false, damageType, false,
                     false, throughFront));
+            if (target instanceof VTOL) {
+                // destroy rotor
+                addReport(applyCriticalHit(te, VTOL.LOC_ROTOR,
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                                VTOL.CRIT_ROTOR_DESTROYED), false));
+            }
         }
 
         // On a roll of 10+ a lance hitting a mech/Vehicle can cause 1 point of
@@ -10172,6 +10190,12 @@ public class Server implements Runnable {
                             spikeDamage / 2, false, DamageType.NONE, false,
                             false, false));
                 }
+            }
+            if (target instanceof VTOL) {
+                // destroy rotor
+                addReport(applyCriticalHit(te, VTOL.LOC_ROTOR,
+                        new CriticalSlot(CriticalSlot.TYPE_SYSTEM,
+                                VTOL.CRIT_ROTOR_DESTROYED), false));
             }
         }
 

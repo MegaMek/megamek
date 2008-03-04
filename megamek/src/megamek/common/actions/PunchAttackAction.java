@@ -26,6 +26,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.VTOL;
 
 /**
  * The attacker punches the target.
@@ -151,7 +152,11 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // check elevation
-        if (attackerHeight < targetElevation || attackerHeight > targetHeight) {
+        if (target instanceof VTOL && ((VTOL)target).isFlying()) {
+            if (targetElevation - attackerHeight > 3 || targetElevation - attackerHeight < 1) {
+                return new ToHitData(TargetRoll.IMPOSSIBLE, "Target elevation not in range");
+            }
+        } else if (attackerHeight < targetElevation || attackerHeight > targetHeight) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target elevation not in range");
         }

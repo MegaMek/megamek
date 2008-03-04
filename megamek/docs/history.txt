@@ -1,6 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.33.21-dev (SVN)
++ Bug 1718067: Physical attack against VTOL does not destroy rotor
++ Fix elevation checks for physical attacks against flying VTOLs
 
 v0.33.20 (2008-03-04, 12:32 GMT+1)
 + Bug: Victory NPE in Scenario games

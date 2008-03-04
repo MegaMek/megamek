@@ -2897,11 +2897,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveAngelECM() {
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)
-                    && m.curMode().equals("ECM")) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+        if (game.getOptions().booleanOption("maxtech_angel_ecm")) {
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)
+                        && m.curMode().equals("ECM")) {
+                    return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+                }
             }
         }
         return false;
@@ -2916,12 +2918,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         or it is not in eccm mode or it is damaged.
      */
     public boolean hasActiveECCM() {
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
-                    && m.curMode().equals("ECCM")) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached()
-                        || isShutDown() || this.getCrew().isUnconscious());
+        if (game.getOptions().booleanOption("maxtech_eccm")) {
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
+                        && m.curMode().equals("ECCM")) {
+                    return !(m.isDestroyed() || m.isMissing() || m.isBreached()
+                            || isShutDown() || this.getCrew().isUnconscious());
+                }
             }
         }
         return false;
@@ -2936,31 +2940,17 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         or it is not in eccm mode or it is damaged.
      */
     public boolean hasActiveAngelECCM() {
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)
-                    && m.curMode().equals("ECCM")) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+        if (game.getOptions().booleanOption("maxtech_angel_ecm") &&
+                game.getOptions().booleanOption("maxtech_eccm")) {
+            for (Mounted m : getMisc()) {
+                EquipmentType type = m.getType();
+                if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)
+                        && m.curMode().equals("ECCM")) {
+                    return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
+                }
             }
         }
         return false;
-    }
-
-    /**
-     * What's the range of the ECM equipment?
-     * 
-     * @return the <code>int</code> range of this unit's ECM. This value will
-     *         be <code>Entity.NONE</code> if no ECM is active.
-     */
-    public int getAngelECMRange() {
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
-            if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
-                    && !m.isDestroyed() && !m.isMissing()) {
-                return 6;
-            }
-        }
-        return Entity.NONE;
     }
 
     /**
@@ -3310,15 +3300,20 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         return nodes;
     }
 
+    /** 
+     * @return the entity "above" this entity in our c3 network, or this entity
+     * itself, if none is above this
+     */
     public Entity getC3Top() {
         Entity m = this;
         Entity master = m.getC3Master();
         while ((master != null)
                 && !master.equals(m)
                 && master.hasC3()
-                //&& !(Compute.isAffectedByECM(m, m.getPosition(), master.getPosition()))
-                //&& !(Compute.isAffectedByECM(master, master.getPosition(),master.getPosition()))
-                  && !(Compute.isAffectedByECM(master, m.getPosition(),master.getPosition()))) {
+                && !(Compute.isAffectedByECM(m, m.getPosition(), master
+                        .getPosition()))
+                && !(Compute.isAffectedByECM(master, master.getPosition(),
+                        master.getPosition()))) {
             m = master;
             master = m.getC3Master();
         }
@@ -3399,7 +3394,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
     /**
      * Get the ID of the master unit in this unit's C3 network. If the master
-     * unit has dhut down, then the ID will still be returned. The only times
+     * unit has shut down, then the ID will still be returned. The only times
      * when the value, <code>Entity.NONE</code> is returned is when this unit
      * is permanently out of the C3 network, or when it was never in a C3
      * network.
@@ -3489,17 +3484,22 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             }
         }
     }
+    
+    public boolean onSameC3NetworkAs(Entity e) {
+        return onSameC3NetworkAs(e, false);
+    }
 
     /**
      * Checks if another entity is on the same c3 network as this entity
      * 
      * @param e The <code>Entity</code> to check against this entity
+     * @param ignoreECM a <code>boolean</code> indicating if ECM should
+     *          be ignored, we need this for c3i
      * @return a <code>boolean</code> that is <code>true</code> if the given
      *         entity is on the same network, <code>false</code> if not.
      */
-    public boolean onSameC3NetworkAs(Entity e) {
-        if (isEnemyOf(e) || isShutDown() || e.isShutDown()
-                || isINarcedWith(INarcPod.ECM)) {
+    public boolean onSameC3NetworkAs(Entity e, boolean ignoreECM) {
+        if (isEnemyOf(e) || isShutDown() || e.isShutDown()) {
             return false;
         }
 
@@ -3513,7 +3513,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         // C3i is easy - if they both have C3i, and their net ID's match,
         // they're on the same network!
         if (hasC3i() && e.hasC3i() && getC3NetId().equals(e.getC3NetId())) {
-            return true;
+            if (ignoreECM)
+                return true;
+            else {
+                return !(Compute.isAffectedByECM(e, e.getPosition(), e
+                        .getPosition()))
+                        && !(Compute.isAffectedByECM(this, getPosition(),
+                                getPosition()));
+            }
         }
 
         // simple sanity check - do they both have C3, and are they both on the

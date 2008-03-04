@@ -46,7 +46,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      * 
      */
     private static final long serialVersionUID = -4801130911083653548L;
-    boolean bECMAffected;
     String sSalvoType = " missile(s) ";
     boolean amsEnganged = false;
     int nSalvoBonus = 0;
@@ -60,21 +59,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     public MissileWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
             Server s) {
         super(t, w, g, s);
-        // if the attacker is effected by ECM or the target is protected by ECM
-        // then
-        // act as if effected.
-        if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition())
-                || Compute.isAffectedByAngelECM(ae, ae.getPosition(), target
-                        .getPosition())) {
-            bECMAffected = true;
-        } else if (target.getTargetType() == Targetable.TYPE_ENTITY
-                && (Compute.isProtectedByECM((Entity) target, target
-                        .getPosition(), ae.getPosition()) || Compute
-                        .isProtectedByAngelECM((Entity) target, target
-                                .getPosition(), ae.getPosition()))) {
-            bECMAffected = true;
-        } else
-            bECMAffected = false;
     }
 
     /*
@@ -131,6 +115,15 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         Mounted mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
+        // is any hex in the flight path of the missile ECM affected?
+        boolean bECMAffected = false;
+        // if the attacker is affected by ECM or the target is protected by ECM
+        // then
+        // act as if effected.
+        if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+            bECMAffected = true;
+        }
+        
         if ((mLinker != null && mLinker.getType() instanceof MiscType
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
@@ -158,13 +151,17 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         .isINarcedBy(ae.getOwner().getTeam()))) {
             // only apply Narc bonus if we're not suffering ECM effect
             // and we are using narc ammo, and we're not firing indirectly.
-            if (!bMekStealthActive
-                    && ((atype.getAmmoType() == AmmoType.T_LRM) || (atype
+            // narc capable missiles are only affected if the narc pod, which 
+            // sits on the target, is ECM affected
+            boolean bTargetECMAffected = false;
+            bTargetECMAffected = Compute.isAffectedByECM(ae, 
+                    target.getPosition(), target.getPosition());
+            if (((atype.getAmmoType() == AmmoType.T_LRM) || (atype
                             .getAmmoType() == AmmoType.T_SRM))
                     && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE
                     && (weapon.curMode() == null || !weapon.curMode().equals(
                             "Indirect"))) {
-                if (bECMAffected) {
+                if (bTargetECMAffected) {
                     // ECM prevents bonus
                     r = new Report(3330);
                     r.subject = subjectId;

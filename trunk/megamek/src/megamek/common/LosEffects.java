@@ -320,9 +320,7 @@ public class LosEffects {
                 && !(ai.targetInfantry && !(target instanceof BattleArmor) && probeRange != 8)
                 && !ai.underWaterCombat
                 && ae.getPosition().distance(ai.targetPos) <= probeRange
-                && !Compute.isAffectedByECM(ae, ae.getPosition(), ai.targetPos)
-                && !Compute.isAffectedByAngelECM(ae, ae.getPosition(),
-                        ai.targetPos)) {
+                && !Compute.isAffectedByECM(ae, ae.getPosition(), ai.targetPos)) {
             Entity te = (Entity) target;
             if (probeRange == 8 || !(te.isStealthActive()))
                 finalLoS.hasLoS = true;

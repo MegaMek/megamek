@@ -4,6 +4,10 @@ v0.33.21-dev (SVN)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor
 + Fix elevation checks for physical attacks against flying VTOLs
 + Bug 1748780: Glancing hit crit penalty not applied with transfered damage
++ Bug: don't grant +1 mp for tanks when skidding onto a road, and we didn't
+    start movement on pavement
++ Don't show "+" indicatin extra MPs for tanks when they don't actually get them
+     
 
 v0.33.20 (2008-03-04, 12:32 GMT+1)
 + Bug: Victory NPE in Scenario games

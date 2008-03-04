@@ -3963,7 +3963,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             costStringBuf.append(step.getMpUsed());
 
             // If the step is using a road bonus, mark it.
-            if (step.isPavementStep()
+            if (step.isOnlyPavement()
                     && step.getParent().getEntity() instanceof Tank) {
                 costStringBuf.append("+"); //$NON-NLS-1$
             }

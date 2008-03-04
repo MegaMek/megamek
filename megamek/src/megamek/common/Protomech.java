@@ -536,7 +536,10 @@ public class Protomech extends Entity implements Serializable {
             case LOC_RARM:
             case LOC_HEAD:
             case LOC_MAINGUN:
-                return new HitData(LOC_TORSO, hit.isRear());
+                return new HitData(LOC_TORSO, hit.isRear(), hit.getEffect(),
+                        hit.hitAimedLocation(), hit.getSpecCritMod(), hit
+                                .isFromFront(), hit.getDamageType(), hit
+                                .glancingMod());
             case LOC_TORSO:
             default:
                 return new HitData(LOC_DESTROYED);

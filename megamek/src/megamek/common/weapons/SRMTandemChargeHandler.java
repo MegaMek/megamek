@@ -95,13 +95,6 @@ public class SRMTandemChargeHandler extends SRMHandler {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-
-        if (hit.hitAimedLocation()) {
-            r = new Report(3410);
-            r.subject = subjectId;
-            r.newlines = 0;
-            vPhaseReport.addElement(r);
-        }
         // Resolve damage normally.
         nDamage = nDamPerHit * Math.min(nCluster, hits);
 

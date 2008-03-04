@@ -68,10 +68,17 @@ public class HitData {
                 HitData.DAMAGE_NONE);
 
     }
-
+    
     public HitData(int location, boolean rear, int effect,
             boolean hitAimedLocation, int specCrit, boolean fromWhere,
             int damageType) {
+        this(location, rear, effect, hitAimedLocation, specCrit, fromWhere,
+                damageType, 0);
+    }
+
+    public HitData(int location, boolean rear, int effect,
+            boolean hitAimedLocation, int specCrit, boolean fromWhere,
+            int damageType, int glancing) {
         this.location = location;
         this.rear = rear;
         this.effect = effect;
@@ -79,6 +86,7 @@ public class HitData {
         this.specCritMod = specCrit;
         this.fromFront = fromWhere;
         this.damageType = damageType;
+        this.glancing = glancing;
 
     }
 

@@ -582,6 +582,13 @@ public class MoveStep implements Serializable {
             if (curHex.hasPavement()) {
                 onlyPavement = true;
                 isPavementStep = true;
+                // if we previously moved, and didn't get a pavement bonus, we
+                // shouldn't now get one, either (this can happen when skidding
+                // onto a pavement hex
+                if (entity.gotPavementBonus == false
+                        && entity.delta_distance > 0) {
+                    onlyPavement = false;
+                }
             }
             // if entity already moved into water it can't run now
             if (curHex.containsTerrain(Terrains.WATER)

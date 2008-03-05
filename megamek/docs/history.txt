@@ -9,6 +9,7 @@ v0.33.21-dev (SVN)
 + Don't show "+" indicatin extra MPs for tanks when they don't actually get them
 + Bug 1784026: ECM,ECCM and C3 issues
 + Reworked how ECM/ECCM/Angel ECM calculations work
++ Added IS Medium Laser cost
 
 v0.33.20 (2008-03-04, 12:32 GMT+1)
 + Bug: Victory NPE in Scenario games

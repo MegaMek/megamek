@@ -4541,8 +4541,11 @@ public class Server implements Runnable {
                     addReport(r);
                     if (roll == 6) {
                         resolveIceBroken(curPos);
-                        doEntityFallsInto(entity, lastPos, curPos, entity
-                                .getBasePilotingRoll(), false);
+                        // non hovers fall
+                        if (entity.getMovementMode() != IEntityMovementMode.HOVER) {
+                            doEntityFallsInto(entity, lastPos, curPos, entity
+                                    .getBasePilotingRoll(), false);
+                        }
                     }
                 }
                 // or intersecting it

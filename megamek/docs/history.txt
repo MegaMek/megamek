@@ -10,6 +10,7 @@ v0.33.21-dev (SVN)
 + Bug 1784026: ECM,ECCM and C3 issues
 + Bug 1584013: Reworked how ECM/ECCM/Angel ECM calculations work
 + Added IS Medium Laser cost
++ Bug 1817504, 1785731: PSRs wrong when moving under bridges.
 
 v0.33.20 (2008-03-04, 12:32 GMT+1)
 + Bug: Victory NPE in Scenario games

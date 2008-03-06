@@ -234,7 +234,7 @@ public class Compute {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
         final boolean isInfantry = (entity instanceof Infantry);
-        final boolean isPavementStep = canMoveOnPavement(game, src, dest);
+        final boolean isPavementStep = canMoveOnPavement(game, src, dest, entity);
 
         // arguments valid?
         if (entity == null) {
@@ -2710,11 +2710,16 @@ public class Compute {
      *            the <code>Coords</code> being left.
      * @param dest -
      *            the <code>Coords</code> being entered.
+     * @param entity -
+     *            the <code>Entity</code> that is moving
      * @return <code>true</code> if movement between <code>src</code> and
      *         <code>dest</code> can be on pavement; <code>false</code>
      *         otherwise.
      */
-    public static boolean canMoveOnPavement(IGame game, Coords src, Coords dest) {
+    public static boolean canMoveOnPavement(IGame game, Coords src, Coords dest, Entity entity) {
+        // TODO: fix this to take into account a climb mode change in the entity
+        // in a previous movestep in this round, that has not actually happened
+        // yet
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
         final int src2destDir = src.direction(dest);
@@ -2728,15 +2733,25 @@ public class Compute {
 
         // If the source is a pavement hex, then see if the destination
         // hex is also a pavement hex or has a road or bridge that exits
-        // into the source hex.
-        else if (srcHex.containsTerrain(Terrains.PAVEMENT) && (destHex.containsTerrain(Terrains.PAVEMENT) || destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir) || destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir))) {
+        // into the source hex and the entity is climbing onto the bridge.
+        else if (srcHex.containsTerrain(Terrains.PAVEMENT)
+                && (destHex.containsTerrain(Terrains.PAVEMENT)
+                   || destHex.containsTerrainExit(Terrains.ROAD,dest2srcDir)
+                   || (destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir)
+                      && entity.climbMode()))) {
             result = true;
         }
 
-        // See if the source hex has a road or bridge that exits into the
-        // destination hex, and the dest hex has pavement or a corresponding
-        // exit to the src hex
-        else if ((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir) || srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir)) && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir) || destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir) || destHex.containsTerrain(Terrains.PAVEMENT))) {
+        // See if the source hex has a road or bridge (and the entity is on the 
+        // bridge) that exits into the destination hex, and the dest hex has
+        // pavement or a corresponding exit to the src hex
+        else if ((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir)
+                 || (srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir)
+                    && entity.getElevation() == srcHex.terrainLevel(Terrains.BRIDGE_ELEV)))
+                && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
+                   || (destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir)
+                      && entity.climbMode())
+                   || destHex.containsTerrain(Terrains.PAVEMENT))) {
             result = true;
         }
 

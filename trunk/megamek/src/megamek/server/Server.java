@@ -3646,7 +3646,7 @@ public class Server implements Runnable {
             // N.B. can skid along roads.
             if ((entity.isHexProhibited(curHex) || entity
                     .isHexProhibited(nextHex))
-                    && !Compute.canMoveOnPavement(game, curPos, nextPos, entity)) {
+                    && !Compute.canMoveOnPavement(game, curPos, nextPos, step.getParentUpToThisStep())) {
                 // Update report.
                 r = new Report(2040);
                 r.subject = entity.getId();
@@ -3717,7 +3717,7 @@ public class Server implements Runnable {
             // is the next hex a swamp?
             PilotingRollData rollTarget = entity.checkSwampMove(step, nextHex,
                     curPos, nextPos, Compute.canMoveOnPavement(game, curPos,
-                            nextPos, entity));
+                            nextPos, step.getParentUpToThisStep()));
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 if (0 < doSkillCheckWhileMoving(entity, curPos, nextPos,
                         rollTarget, false)) {

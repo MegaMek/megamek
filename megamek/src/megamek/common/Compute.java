@@ -229,12 +229,12 @@ public class Compute {
     /**
      * @return true if a piloting skill roll is needed to traverse the terrain
      */
-    public static boolean isPilotingSkillNeeded(IGame game, int entityId, Coords src, Coords dest, int movementType, boolean isTurning, boolean prevStepIsOnPavement, int srcElevation, int destElevation) {
+    public static boolean isPilotingSkillNeeded(IGame game, int entityId, Coords src, Coords dest, int movementType, boolean isTurning, boolean prevStepIsOnPavement, int srcElevation, int destElevation, MovePath path) {
         final Entity entity = game.getEntity(entityId);
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
         final boolean isInfantry = (entity instanceof Infantry);
-        final boolean isPavementStep = canMoveOnPavement(game, src, dest, entity);
+        final boolean isPavementStep = canMoveOnPavement(game, src, dest, path);
 
         // arguments valid?
         if (entity == null) {
@@ -2716,10 +2716,7 @@ public class Compute {
      *         <code>dest</code> can be on pavement; <code>false</code>
      *         otherwise.
      */
-    public static boolean canMoveOnPavement(IGame game, Coords src, Coords dest, Entity entity) {
-        // TODO: fix this to take into account a climb mode change in the entity
-        // in a previous movestep in this round, that has not actually happened
-        // yet
+    public static boolean canMoveOnPavement(IGame game, Coords src, Coords dest, MovePath movePath) {
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
         final int src2destDir = src.direction(dest);
@@ -2738,7 +2735,8 @@ public class Compute {
                 && (destHex.containsTerrain(Terrains.PAVEMENT)
                    || destHex.containsTerrainExit(Terrains.ROAD,dest2srcDir)
                    || (destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir)
-                      && entity.climbMode()))) {
+                      && ((movePath.getEntity().climbMode() && !movePath.contains(MovePath.STEP_CLIMB_MODE_OFF))
+                          || (!movePath.getEntity().climbMode() && movePath.contains(MovePath.STEP_CLIMB_MODE_ON)))))) {
             result = true;
         }
 
@@ -2747,10 +2745,11 @@ public class Compute {
         // pavement or a corresponding exit to the src hex
         else if ((srcHex.containsTerrainExit(Terrains.ROAD, src2destDir)
                  || (srcHex.containsTerrainExit(Terrains.BRIDGE, src2destDir)
-                    && entity.getElevation() == srcHex.terrainLevel(Terrains.BRIDGE_ELEV)))
+                    && movePath.getLastStep().getElevation() == srcHex.terrainLevel(Terrains.BRIDGE_ELEV)))
                 && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
                    || (destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir)
-                      && entity.climbMode())
+                      && ((movePath.getEntity().climbMode() && !movePath.contains(MovePath.STEP_CLIMB_MODE_OFF))
+                              || (!movePath.getEntity().climbMode() && movePath.contains(MovePath.STEP_CLIMB_MODE_ON))))
                    || destHex.containsTerrain(Terrains.PAVEMENT))) {
             result = true;
         }

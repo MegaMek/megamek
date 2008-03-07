@@ -24,6 +24,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.Vector;
 
 /**
  * A single step in the entity's movment.
@@ -211,6 +212,23 @@ public class MoveStep implements Serializable {
     public MovePath getParent() {
         return parent;
     }
+    
+    /**
+     * get a copy of this MoveStep's parent, but only upto this step
+     * @return
+     */
+    public MovePath getParentUpToThisStep() {
+        Vector<MoveStep> steps = new Vector<MoveStep>();
+        MovePath toReturn = new MovePath(parent.game, parent.getEntity());
+        for (Enumeration<MoveStep> e = parent.getSteps();; e.hasMoreElements()) {
+            MoveStep step = e.nextElement();
+            steps.add(step);
+            if (step.equals(this))
+                break;
+        }
+        toReturn.steps = steps;
+        return toReturn;
+    }
 
     /**
      * Set the target of the current step.
@@ -257,7 +275,7 @@ public class MoveStep implements Serializable {
         IHex destHex = game.getBoard().getHex(getPosition());
 
         // Check for pavement movement.
-        if (Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(), entity)) {
+        if (Compute.canMoveOnPavement(game, prev.getPosition(), getPosition(), getParentUpToThisStep())) {
             setPavementStep(true);
         } else {
             setPavementStep(false);
@@ -402,7 +420,7 @@ public class MoveStep implements Serializable {
             case MovePath.STEP_TURN_RIGHT:
                 // Check for pavement movement.
                 if (Compute.canMoveOnPavement(game, prev.getPosition(),
-                        getPosition(), entity)) {
+                        getPosition(), getParentUpToThisStep())) {
                     setPavementStep(true);
                 } else {
                     setPavementStep(false);
@@ -1326,7 +1344,7 @@ public class MoveStep implements Serializable {
         int prevEl = prev.getElevation();
         danger |= Compute.isPilotingSkillNeeded(game, entity.getId(), lastPos,
                 curPos, movementType, isTurning, prevStepOnPavement, prevEl,
-                getElevation());
+                getElevation(), getParentUpToThisStep());
 
         // getting up is also danger
         if (stepType == MovePath.STEP_GET_UP) {

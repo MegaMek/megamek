@@ -2735,8 +2735,7 @@ public class Compute {
                 && (destHex.containsTerrain(Terrains.PAVEMENT)
                    || destHex.containsTerrainExit(Terrains.ROAD,dest2srcDir)
                    || (destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir)
-                      && ((movePath.getEntity().climbMode() && !movePath.contains(MovePath.STEP_CLIMB_MODE_OFF))
-                          || (!movePath.getEntity().climbMode() && movePath.contains(MovePath.STEP_CLIMB_MODE_ON)))))) {
+                      && movePath.getFinalClimbMode()))) {
             result = true;
         }
 
@@ -2748,8 +2747,7 @@ public class Compute {
                     && movePath.getLastStep().getElevation() == srcHex.terrainLevel(Terrains.BRIDGE_ELEV)))
                 && (destHex.containsTerrainExit(Terrains.ROAD, dest2srcDir)
                    || (destHex.containsTerrainExit(Terrains.BRIDGE, dest2srcDir)
-                      && ((movePath.getEntity().climbMode() && !movePath.contains(MovePath.STEP_CLIMB_MODE_OFF))
-                              || (!movePath.getEntity().climbMode() && movePath.contains(MovePath.STEP_CLIMB_MODE_ON))))
+                      && movePath.getFinalClimbMode())
                    || destHex.containsTerrain(Terrains.PAVEMENT))) {
             result = true;
         }

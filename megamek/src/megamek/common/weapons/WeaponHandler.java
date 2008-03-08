@@ -249,7 +249,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
         nDamPerHit = calcDamagePerHit();
-        useAmmo();
         addHeat();
 
         // Any necessary PSRs, jam checks, etc.
@@ -574,6 +573,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
             throughFront = true;
         }
         roll = Compute.d6(2);
+        // use ammo when creating this, so it works when shooting the last shot
+        // a unit has and we fire multiple weapons of the same type
+        useAmmo();
     }
 
     protected void useAmmo() {

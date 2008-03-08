@@ -62,9 +62,8 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         }
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
         if (phase == IGame.PHASE_TARGETING) {
-            if (!handledAmmoAndReport) {
-                this.useAmmo();
-                this.addHeat();
+            if (!handledAmmotAndReport) {
+                addHeat();
                 // Report the firing itself
                 r = new Report(3121);
                 r.indent();
@@ -74,7 +73,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 r.add(aaa.turnsTilHit);
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
-                handledAmmoAndReport = true;
+                handledAmmotAndReport = true;
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -169,8 +168,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         }
 
         // we may still have to use ammo, if direct fire
-        if (!handledAmmoAndReport) {
-            useAmmo();
+        if (!handledAmmotAndReport) {
             addHeat();
         }
 

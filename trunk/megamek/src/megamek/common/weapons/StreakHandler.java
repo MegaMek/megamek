@@ -154,7 +154,7 @@ public class StreakHandler extends MissileWeaponHandler {
             System.out.println("Handler can't find any ammo!  Oh no!");
         }
         if (ammo.getShotsLeft() <= 0) {
-            ae.loadWeapon(weapon);
+            ae.loadWeaponWithSameAmmo(weapon);
             ammo = weapon.getLinked();
         }
         if (this.roll >= this.toHit.getValue()) {

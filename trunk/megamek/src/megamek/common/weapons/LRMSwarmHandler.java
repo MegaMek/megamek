@@ -39,7 +39,7 @@ public class LRMSwarmHandler extends LRMHandler {
      */
     private static final long serialVersionUID = 7962873403915683220L;
     int swarmMissilesNowLeft = 0;
-    boolean handledHeatAndAmmo = false;
+    boolean handledHeat = false;
 
     /**
      * @param t
@@ -141,10 +141,9 @@ public class LRMSwarmHandler extends LRMHandler {
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
-        if (!handledHeatAndAmmo) {
-            useAmmo();
+        if (!handledHeat) {
             addHeat();
-            handledHeatAndAmmo = true;
+            handledHeat = true;
         }
 
         // Any necessary PSRs, jam checks, etc.
@@ -250,9 +249,11 @@ public class LRMSwarmHandler extends LRMHandler {
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
                 AttackHandler ah = w.fire(newWaa, game, server);
+                // increase ammo by one, because we just incorrectly used one up
+                weapon.getLinked().setShotsLeft(weapon.getLinked().getShotsLeft()+1);
                 LRMSwarmHandler wh = (LRMSwarmHandler) ah;
                 // attack the new target
-                wh.handledHeatAndAmmo = true;
+                wh.handledHeat = true;
                 wh.handle(phase, vPhaseReport);
             } else {
                 r = new Report(3425);
@@ -302,7 +303,7 @@ public class LRMSwarmHandler extends LRMHandler {
             AttackHandler ah = w.fire(newWaa, game, server);
             LRMSwarmHandler wh = (LRMSwarmHandler) ah;
             // attack the new target
-            wh.handledHeatAndAmmo = true;
+            wh.handledHeat = true;
             wh.handle(phase, vPhaseReport);
         } else {
             r = new Report(3425);

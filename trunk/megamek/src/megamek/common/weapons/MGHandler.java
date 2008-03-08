@@ -58,8 +58,6 @@ public class MGHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         if (weapon.isRapidfire()) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
-            nDamPerHit = Compute.d6();
-            nRapidDamHeatPerHit = nDamPerHit;
             if (bGlancing)
                 nDamPerHit /= 2;
         } else {
@@ -112,6 +110,8 @@ public class MGHandler extends AmmoWeaponHandler {
      */
     protected void useAmmo() {
         if (weapon.isRapidfire()) {
+            nDamPerHit = Compute.d6();
+            nRapidDamHeatPerHit = nDamPerHit;
             checkAmmo();
             int ammoUsage = 3 * nRapidDamHeatPerHit;
             for (int i = 0; i < ammoUsage; i++) {

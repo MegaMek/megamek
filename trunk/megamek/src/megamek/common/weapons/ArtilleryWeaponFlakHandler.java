@@ -51,7 +51,7 @@ public class ArtilleryWeaponFlakHandler extends
      * 
      */
     private static final long serialVersionUID = 7795254956703302239L;
-    boolean handledAmmoAndReport = false;
+    boolean handledHeatAndReport = false;
 
     /**
      * @param t
@@ -86,9 +86,8 @@ public class ArtilleryWeaponFlakHandler extends
         }
         if (phase == IGame.PHASE_TARGETING) {
             ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-            if (!handledAmmoAndReport) {
-                this.useAmmo();
-                this.addHeat();
+            if (!handledHeatAndReport) {
+                addHeat();
                 // Report the firing itself
                 r = new Report(3121);
                 r.indent();
@@ -98,7 +97,7 @@ public class ArtilleryWeaponFlakHandler extends
                 r.add(aaa.turnsTilHit);
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
-                handledAmmoAndReport = true;
+                handledHeatAndReport = true;
             }
             // if this is the last targeting phase before we hit,
             // make it so the firing entity is announced in the
@@ -234,8 +233,7 @@ public class ArtilleryWeaponFlakHandler extends
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
-        if (!handledAmmoAndReport) {
-            useAmmo();
+        if (!handledHeatAndReport) {
             addHeat();
         }
         Coords coords = target.getPosition();

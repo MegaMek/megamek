@@ -63,7 +63,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
         }
 
         if (ammo.getShotsLeft() <= 0) {
-            ae.loadWeapon(weapon);
+            ae.loadWeaponWithSameAmmo(weapon);
             ammo = weapon.getLinked();
         }
         ammo.setShotsLeft(ammo.getShotsLeft() - 1);

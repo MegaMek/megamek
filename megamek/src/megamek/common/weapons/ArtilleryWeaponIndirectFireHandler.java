@@ -49,7 +49,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * 
      */
     private static final long serialVersionUID = -1277649123562229298L;
-    boolean handledAmmoAndReport = false;
+    boolean handledAmmotAndReport = false;
 
     /**
      * This consructor may only be used for deserialization.
@@ -91,9 +91,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
         if (phase == IGame.PHASE_TARGETING) {
-            if (!handledAmmoAndReport) {
-                this.useAmmo();
-                this.addHeat();
+            if (!handledAmmotAndReport) {
+                addHeat();
                 // Report the firing itself
                 r = new Report(3121);
                 r.indent();
@@ -103,7 +102,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 r.add(aaa.turnsTilHit);
                 vPhaseReport.addElement(r);
                 Report.addNewline(vPhaseReport);
-                handledAmmoAndReport = true;
+                handledAmmotAndReport = true;
                 game.getBoard().addSpecialHexDisplay(
                         aaa.getCoords(),
                         new SpecialHexDisplay(
@@ -274,8 +273,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
-        if (!handledAmmoAndReport) {
-            useAmmo();
+        if (!handledAmmotAndReport) {
             addHeat();
         }
         Coords coords = target.getPosition();

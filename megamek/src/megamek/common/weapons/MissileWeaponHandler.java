@@ -420,6 +420,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
                 AttackHandler ah = w.fire(newWaa, game, server);
+                // increase ammo by one, becaues we just incorrectly used one up
+                weapon.getLinked().setShotsLeft(weapon.getLinked().getShotsLeft()+1);
                 WeaponHandler wh = (WeaponHandler) ah;
                 // attack the new target, and if we hit it, return;
                 wh.handle(phase, vPhaseReport);
@@ -492,7 +494,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
         if (!shotAtNemesisTarget) {
-            useAmmo();
             addHeat();
         }
         // Any necessary PSRs, jam checks, etc.

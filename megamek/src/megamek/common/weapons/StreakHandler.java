@@ -16,7 +16,9 @@ package megamek.common.weapons;
 import java.util.Vector;
 
 import megamek.common.BattleArmor;
+import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Report;
@@ -198,5 +200,14 @@ public class StreakHandler extends MissileWeaponHandler {
      */
     protected boolean allShotsHit() {
         return super.allShotsHit() || !isAngelECMAffected;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.weapons.MissileWeaponHandler#handleSpecialMiss(megamek.common.Entity, boolean, megamek.common.Building, java.util.Vector)
+     */
+    protected boolean handleSpecialMiss(Entity entityTarget,
+            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+        return false;
     }
 }

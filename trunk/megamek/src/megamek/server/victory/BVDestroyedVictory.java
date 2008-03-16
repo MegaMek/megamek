@@ -57,7 +57,7 @@ public class BVDestroyedVictory extends AbstractBVVictory {
             ebv = getEnemyBV(game, player);
             eibv = getEnemyInitialBV(game, player);
 
-            if ((ebv * 100) / eibv <= 100 - destroyedPercent) {
+            if (eibv != 0 && (ebv * 100) / eibv <= 100 - destroyedPercent) {
                 Report r = new Report(7105, Report.PUBLIC);
                 victory = true;
                 if (team == Player.TEAM_NONE) {

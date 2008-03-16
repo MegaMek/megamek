@@ -16,6 +16,8 @@ v0.33.21-dev (SVN)
 + Bug 1908899: bug with climb mode and bridges in turn of mode change
 + Bug: multiple ammo weapons of the same type firing even when only one shot of
     ammo left
++ Bug 1915252: Kobold BA has weapon on whole squad instead of on single trooper
++ Bug: prevent division by zero in BV destroyed victory checking
 
 v0.33.20 (2008-03-04, 12:32 GMT+1)
 + Bug: Victory NPE in Scenario games

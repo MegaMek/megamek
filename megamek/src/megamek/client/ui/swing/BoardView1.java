@@ -2121,6 +2121,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 shortName = shortName.concat(" (FL: ").concat(
                         Integer.toString(entity.getElevation())).concat(")");
             }
+            if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
+                shortName = shortName.concat(" (Depth: ").concat(
+                        Integer.toString(entity.getElevation())).concat(")");
+            }
             int face = entity.isCommander() ? Font.ITALIC : Font.PLAIN;
             Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
             modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(

@@ -24,6 +24,7 @@ v0.33.21-dev (SVN)
     correctly
 + Show submarine depth next to unit name, like flight level for VTOLs
 + MASC weight and crits are rounded up to the ton or crit with TM
++ Bug 1897182: swing UI missing selected hex/unit cursors
 
 v0.33.20 (2008-03-04, 12:32 GMT+1)
 + Bug: Victory NPE in Scenario games

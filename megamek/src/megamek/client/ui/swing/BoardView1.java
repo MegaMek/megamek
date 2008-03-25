@@ -1132,6 +1132,22 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         scheduleRedraw();
     }
 
+    /**
+     * Moves the cursor to the new position, or hides it, if newPos is null
+     */
+    private void moveCursor(CursorSprite cursor, Coords newPos) {
+        final Rectangle oldBounds = new Rectangle(cursor.getBounds());
+        if (newPos != null) {
+            // cursor.setLocation(getHexLocation(newPos));
+            cursor.setHexLocation(newPos);
+        } else {
+            cursor.setOffScreen();
+        }
+        // repaint affected area
+        repaint(oldBounds);
+        repaint(cursor.getBounds());
+    }
+
     public void centerOnHex(Coords c) {
         if (null == c)
             return;
@@ -1354,6 +1370,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public void clearAllAttacks() {
         attackSprites.clear();
+    }
+
+    protected void firstLOSHex(Coords c) {
+        if (useLOSTool) {
+            moveCursor(secondLOSSprite, null);
+            moveCursor(firstLOSSprite, c);
+        }
     }
 
     protected void secondLOSHex(Coords c2, Coords c1) {
@@ -3435,6 +3458,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void select(Coords coords) {
         if (coords == null || game.getBoard().contains(coords)) {
             setSelected(coords);
+            moveCursor(selectedSprite, coords);
+            moveCursor(firstLOSSprite, null);
+            moveCursor(secondLOSSprite, null);
             processBoardViewEvent(new BoardViewEvent(this, coords, null,
                     BoardViewEvent.BOARD_HEX_SELECTED, 0));
         }
@@ -3459,6 +3485,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void highlight(Coords coords) {
         if (coords == null || game.getBoard().contains(coords)) {
             setHighlighted(coords);
+            moveCursor(highlightSprite, coords);
+            moveCursor(firstLOSSprite, null);
+            moveCursor(secondLOSSprite, null);
             processBoardViewEvent(new BoardViewEvent(this, coords, null,
                     BoardViewEvent.BOARD_HEX_HIGHLIGHTED, 0));
         }
@@ -3485,6 +3514,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (getLastCursor() == null || coords == null
                     || !coords.equals(getLastCursor())) {
                 setLastCursor(coords);
+                moveCursor(cursorSprite, coords);
+                moveCursor(firstLOSSprite, null);
+                moveCursor(secondLOSSprite, null);
                 processBoardViewEvent(new BoardViewEvent(this, coords, null,
                         BoardViewEvent.BOARD_HEX_CURSOR, 0));
             } else {
@@ -3507,6 +3539,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (c == null || game.getBoard().contains(c)) {
             if (getFirstLOS() == null) {
                 setFirstLOS(c);
+                firstLOSHex(c);
                 processBoardViewEvent(new BoardViewEvent(this, c, null,
                         BoardViewEvent.BOARD_FIRST_LOS_HEX, 0));
             } else {

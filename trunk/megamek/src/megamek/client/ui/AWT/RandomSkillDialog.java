@@ -219,8 +219,8 @@ public class RandomSkillDialog extends java.awt.Dialog implements
         chPlayer.removeAll();
         chPlayer.setEnabled(true);
         chPlayer.addItem(clientgui.getClient().getName());
-        for (Iterator i = clientgui.getBots().values().iterator(); i.hasNext();) {
-            chPlayer.addItem(((Client) i.next()).getName());
+        for (Iterator<Client> i = clientgui.getBots().values().iterator(); i.hasNext();) {
+            chPlayer.addItem(i.next().getName());
         }
         if (chPlayer.getItemCount() == 1) {
             chPlayer.setEnabled(false);

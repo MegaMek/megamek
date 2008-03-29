@@ -320,7 +320,7 @@ public class GameTurn implements Serializable {
          *                <code>null</code> or empty value is passed for
          *                entities.
          */
-        public UnloadStrandedTurn(Enumeration entities) {
+        public UnloadStrandedTurn(Enumeration<Entity> entities) {
             super(Player.PLAYER_NONE);
 
             // Validate input.
@@ -334,7 +334,7 @@ public class GameTurn implements Serializable {
             }
 
             // Get the first entity.
-            Entity entity = (Entity) entities.nextElement();
+            Entity entity = entities.nextElement();
 
             // Do we need to get more entities?
             if (entities.hasMoreElements()) {
@@ -350,7 +350,7 @@ public class GameTurn implements Serializable {
 
                 // Walk the list of remaining stranded entities.
                 while (entities.hasMoreElements()) {
-                    ids[length++] = ((Entity) entities.nextElement()).getId();
+                    ids[length++] = entities.nextElement().getId();
                 }
 
                 // Create an array that just holds the stranded entity ids.

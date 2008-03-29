@@ -66,10 +66,9 @@ public class MRMHandler extends MissileWeaponHandler {
                 vPhaseReport.addElement(r);
                 Coords coords = target.getPosition();
 
-                Enumeration minefields = game.getMinefields(coords).elements();
+                Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
                 while (minefields.hasMoreElements()) {
-                    Minefield mf = (Minefield) minefields.nextElement();
-
+                    Minefield mf = minefields.nextElement();
                     server.removeMinefield(mf);
                 }
             } else {

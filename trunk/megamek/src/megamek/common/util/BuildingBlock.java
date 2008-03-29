@@ -368,7 +368,7 @@ public class BuildingBlock {
      * @param blockName Name of the block to get data from.
      * @return Returns the data as a Vector.
      */
-    public Vector getDataAsVector(String blockName) {
+    public Vector<String> getDataAsVector(String blockName) {
 
         Vector<String> data;
         int startIndex = 0, endIndex = 0;
@@ -501,15 +501,12 @@ public class BuildingBlock {
      * @param blockData Data to be written inside the block.
      * @return Returns true on success.
      */
-    public boolean writeBlockData(String blockName, Vector blockData) {
+    public boolean writeBlockData(String blockName, Vector<String> blockData) {
 
         rawData.add(new String("<" + blockName + ">")); //$NON-NLS-1$ //$NON-NLS-2$
 
         for (int c = 0; c < blockData.size(); c++) {
-
-            //
-            rawData.add(new String(blockData.get(c).toString().trim()));
-
+            rawData.add(blockData.get(c).trim());
         }
 
         rawData.add(new String("</" + blockName + ">")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -633,7 +630,7 @@ public class BuildingBlock {
      * 
      * @return Returns the <CODE>rawData</CODE> Vector.
      */
-    public Vector getVector() {
+    public Vector<String> getVector() {
 
         return this.rawData;
 
@@ -664,9 +661,9 @@ public class BuildingBlock {
      * @see getVector ()
      * @return Returns the <CODE>rawData</CODE> Vector.
      */
-    public Vector getAllDataAsVector() {
+    public Vector<String> getAllDataAsVector() {
 
-        Vector theData = this.rawData; // can I jsut return this?
+        Vector<String> theData = this.rawData; // can I jsut return this?
 
         return theData;
 

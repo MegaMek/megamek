@@ -1604,9 +1604,9 @@ public class MechDisplay extends JPanel {
                     }
                     ((DefaultComboBoxModel) m_chMode.getModel())
                             .removeAllElements();
-                    for (Enumeration e = m.getType().getModes(); e
+                    for (Enumeration<EquipmentMode> e = m.getType().getModes(); e
                             .hasMoreElements();) {
-                        EquipmentMode em = (EquipmentMode) e.nextElement();
+                        EquipmentMode em = e.nextElement();
                         m_chMode.addItem(em.getDisplayableName());
                     }
                     m_chMode.setSelectedItem(m.curMode().getDisplayableName());

@@ -572,12 +572,11 @@ public class MegaMekGUI implements IMegaMekGUI {
         }
 
         // If he didn't have a name when hasSlot was set, then the host should
-        // be
-        // an observer.
+        // be an observer.
         if (!hasSlot) {
-            Enumeration pE = server.getGame().getPlayers();
+            Enumeration<Player> pE = server.getGame().getPlayers();
             while (pE.hasMoreElements()) {
-                Player tmpP = (Player) pE.nextElement();
+                Player tmpP = pE.nextElement();
                 if (tmpP.getName().equals(sd.localName))
                     tmpP.setObserver(true);
             }

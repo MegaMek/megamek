@@ -78,9 +78,9 @@ public abstract class ServerCommand {
             return false; // Just in case something funky happens
 
         if (server.getPlayer(connId).isObserver()) {
-            for (Enumeration e = server.getGame().getPlayers(); e
+            for (Enumeration<Player> e = server.getGame().getPlayers(); e
                     .hasMoreElements();) {
-                Player p = (Player) e.nextElement();
+                Player p = e.nextElement();
 
                 if (!p.isObserver() && !p.isGhost()) {
                     // There are non-Observer, non-Ghosts in the game, so

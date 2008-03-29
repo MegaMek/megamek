@@ -488,9 +488,9 @@ public class CustomBattleArmorDialog extends Dialog implements ActionListener,
         m_chPlayer.removeAll();
         m_chPlayer.setEnabled(true);
         m_chPlayer.addItem(m_clientgui.getClient().getName());
-        for (Iterator i = m_clientgui.getBots().values().iterator(); i
+        for (Iterator<Client> i = m_clientgui.getBots().values().iterator(); i
                 .hasNext();) {
-            m_chPlayer.addItem(((Client) i.next()).getName());
+            m_chPlayer.addItem(i.next().getName());
         }
         if (m_chPlayer.getItemCount() == 1) {
             m_chPlayer.setEnabled(false);

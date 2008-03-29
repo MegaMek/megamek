@@ -123,7 +123,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             aaa.turnsTilHit--;
             return true;
         }
-        final Vector spottersBefore = aaa.getSpotterIds();
+        final Vector<Integer> spottersBefore = aaa.getSpotterIds();
         final Targetable target = aaa.getTarget(game);
         final Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
@@ -138,7 +138,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         // Are there any valid spotters?
         if (null != spottersBefore && !isFlak) {
             // fetch possible spotters now
-            Enumeration spottersAfter = game
+            Enumeration<Entity> spottersAfter = game
                     .getSelectedEntities(new EntitySelector() {
                         public int player = playerId;
 
@@ -160,7 +160,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
             // Out of any valid spotters, pick the best.
             while (spottersAfter.hasMoreElements()) {
-                Entity ent = (Entity) spottersAfter.nextElement();
+                Entity ent = spottersAfter.nextElement();
                 if (bestSpotter == null
                         || ent.crew.getGunnery() < bestSpotter.crew
                                 .getGunnery()) {

@@ -644,9 +644,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                     ce().setPosition(null);
                     clientgui.bv.redrawEntity(ce());
                     // Unload any loaded units.
-                    Enumeration iter = ce().getLoadedUnits().elements();
+                    Enumeration<Entity> iter = ce().getLoadedUnits().elements();
                     while (iter.hasMoreElements()) {
-                        Entity other = (Entity) iter.nextElement();
+                        Entity other = iter.nextElement();
                         // Please note, the Server never got this unit's load
                         // orders.
                         ce().unload(other);

@@ -150,10 +150,10 @@ import java.util.Vector;
             // Walk through the unit's miscellaneous equipment.
             // Assume we don't find it.
             // Stop looking if we do find it.
-            Iterator equipment = unit.getMisc().iterator();
+            Iterator<Mounted> equipment = unit.getMisc().iterator();
             result = false;
             while (!result && equipment.hasNext()) {
-                Mounted mount = (Mounted) equipment.next();
+                Mounted mount = equipment.next();
                 EquipmentType equip = mount.getType();
                 result = equip.getInternalName().equals(
                         this.getBoardingEquipment())

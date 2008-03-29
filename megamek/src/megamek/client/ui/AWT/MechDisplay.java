@@ -253,10 +253,10 @@ public class MechDisplay extends BufferedPanel {
         public MovementPanel() {
             gi = new GeneralInfoMapSet(this);
             addElement(gi.getContentGroup());
-            Vector v = gi.getBackgroundDrawers();
-            Enumeration iter = v.elements();
+            Vector<BackGroundDrawer> v = gi.getBackgroundDrawers();
+            Enumeration<BackGroundDrawer> iter = v.elements();
             while (iter.hasMoreElements()) {
-                addBgDrawer((BackGroundDrawer) iter.nextElement());
+                addBgDrawer(iter.nextElement());
             }
             onResize();
         }
@@ -415,10 +415,10 @@ public class MechDisplay extends BufferedPanel {
             }
             ams.setEntity(en);
             this.addElement(ams.getContentGroup());
-            Vector v = ams.getBackgroundDrawers();
-            Enumeration iter = v.elements();
+            Vector<BackGroundDrawer> v = ams.getBackgroundDrawers();
+            Enumeration<BackGroundDrawer> iter = v.elements();
             while (iter.hasMoreElements()) {
-                addBgDrawer((BackGroundDrawer) iter.nextElement());
+                addBgDrawer(iter.nextElement());
             }
             onResize();
             update();
@@ -1542,9 +1542,9 @@ public class MechDisplay extends BufferedPanel {
                     }
                     modeLabel.setEnabled(true);
                     m_chMode.removeAll();
-                    for (Enumeration e = m.getType().getModes(); e
+                    for (Enumeration<EquipmentMode> e = m.getType().getModes(); e
                             .hasMoreElements();) {
-                        EquipmentMode em = (EquipmentMode) e.nextElement();
+                        EquipmentMode em = e.nextElement();
                         m_chMode.add(em.getDisplayableName());
                     }
                     m_chMode.select(m.curMode().getDisplayableName());
@@ -2078,11 +2078,11 @@ public class MechDisplay extends BufferedPanel {
             String unused = en.getUnusedString();
             if (unused.equals(""))unused = Messages.getString("MechDisplay.None"); //$NON-NLS-1$ //$NON-NLS-2$
             this.unusedR.setText(unused);
-            Enumeration iter = en.getLoadedUnits().elements();
+            Enumeration<Entity> iter = en.getLoadedUnits().elements();
             carrysR.setText(null);
             // boolean hasText = false;
             while (iter.hasMoreElements()) {
-                carrysR.append(((Entity) iter.nextElement()).getShortName());
+                carrysR.append(iter.nextElement().getShortName());
                 carrysR.append("\n"); //$NON-NLS-1$
             }
 

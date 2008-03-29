@@ -60,8 +60,8 @@ public class TeamCommand extends ServerCommand {
                 message.append(args[pos]);
             }
 
-            for (Enumeration i = server.getConnections(); i.hasMoreElements();) {
-                IConnection conn = (IConnection) i.nextElement();
+            for (Enumeration<IConnection> i = server.getConnections(); i.hasMoreElements();) {
+                IConnection conn = i.nextElement();
 
                 if (server.getPlayer(conn.getId()).getTeam() == team)
                     server.sendChat(conn.getId(), origin, message.toString());

@@ -256,9 +256,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         handleClearDamage(vPhaseReport, bldg, ratedDamage * 2, bSalvo);
         ratedDamage -= bldgAbsorbs;
         if (ratedDamage > 0) {
-            for (Enumeration impactHexHits = game.getEntities(coords); impactHexHits
+            for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits
                     .hasMoreElements();) {
-                Entity entity = (Entity) impactHexHits.nextElement();
+                Entity entity = impactHexHits.nextElement();
                 if (!bMissed) {
                     if (entity == entityTarget)
                         continue; // don't splash the target unless missile
@@ -299,9 +299,9 @@ public class ArtilleryWeaponIndirectHomingHandler extends
         for (int pass = 0; pass < 2; pass++) {
             int bestDistance = Integer.MAX_VALUE;
             int bestIndex = -1;
-            Vector v = game.getTagInfo();
+            Vector<TagInfo> v = game.getTagInfo();
             for (int i = 0; i < v.size(); i++) {
-                info = (TagInfo) v.elementAt(i);
+                info = v.elementAt(i);
                 tagger = game.getEntity(info.attackerId);
                 if (info.shots < info.priority && !ae.isEnemyOf(tagger)) {
                     entityTarget = game.getEntity(info.targetId);
@@ -320,7 +320,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
                 }
             }
             if (bestIndex != -1) {
-                info = (TagInfo) v.elementAt(bestIndex);
+                info = v.elementAt(bestIndex);
                 entityTarget = game.getEntity(info.targetId);
                 tagger = game.getEntity(info.attackerId);
                 info.shots++;

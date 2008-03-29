@@ -364,7 +364,7 @@ public class HexTileset {
         private String imageFile;
         private Image image;
         private Vector<Image> images;
-        private Vector filenames;
+        private Vector<String> filenames;
         private Random r;
 
         public HexEntry(IHex hex, String imageFile) {
@@ -400,7 +400,7 @@ public class HexTileset {
         public void loadImage(Component comp) {
             images = new Vector<Image>();
             for (int i = 0; i < filenames.size(); i++) {
-                String filename = (String) filenames.elementAt(i);
+                String filename = filenames.elementAt(i);
                 images.addElement(comp.getToolkit().getImage(
                         "data/images/hexes/" + filename)); //$NON-NLS-1$
             }

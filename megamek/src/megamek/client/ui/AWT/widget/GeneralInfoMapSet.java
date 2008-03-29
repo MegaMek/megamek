@@ -308,17 +308,17 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         }
         if (en.crew.countAdvantages() > 0 || en.crew.countMDImplants() > 0) {
             int i = 0;
-            for (Enumeration advantages = en.crew.getAdvantages(); advantages
+            for (Enumeration<IOption> advantages = en.crew.getAdvantages(); advantages
                     .hasMoreElements();) {
-                IOption option = (IOption) advantages.nextElement();
+                IOption option = advantages.nextElement();
                 if (option.booleanValue()) {
                     advantagesR[i++].setString(option
                             .getDisplayableNameWithValue());
                 }
             }
-            for (Enumeration implants = en.crew.getMDImplants(); implants
+            for (Enumeration<IOption> implants = en.crew.getMDImplants(); implants
                     .hasMoreElements();) {
-                IOption option = (IOption) implants.nextElement();
+                IOption option = implants.nextElement();
                 if (option.booleanValue()) {
                     advantagesR[i++].setString(option
                             .getDisplayableNameWithValue());

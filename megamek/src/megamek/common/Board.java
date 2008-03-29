@@ -932,7 +932,7 @@ public class Board implements Serializable, IBoard {
 
         // ASSUMPTION: it is better to use the Hashtable than the Vector.
         Building local = null;
-        Enumeration coords = other.getCoords();
+        Enumeration<Coords> coords = other.getCoords();
         if (coords.hasMoreElements()) {
             local = bldgByCoords.get(coords.nextElement());
             if (!other.equals(local)) {
@@ -953,9 +953,9 @@ public class Board implements Serializable, IBoard {
     public void collapseBuilding(Vector<Building> bldgs) {
 
         // Walk through the vector of buildings.
-        Enumeration loop = bldgs.elements();
+        Enumeration<Building> loop = bldgs.elements();
         while (loop.hasMoreElements()) {
-            final Building other = (Building) loop.nextElement();
+            final Building other = loop.nextElement();
 
             // Find the local object for the given building.
             Building bldg = this.getLocalBuilding(other);
@@ -1039,9 +1039,9 @@ public class Board implements Serializable, IBoard {
         this.buildings.removeElement(bldg);
 
         // Walk through the building's hexes.
-        Enumeration bldgCoords = bldg.getCoords();
+        Enumeration<Coords> bldgCoords = bldg.getCoords();
         while (bldgCoords.hasMoreElements()) {
-            final Coords coords = (Coords) bldgCoords.nextElement();
+            final Coords coords = bldgCoords.nextElement();
             collapseBuilding(coords);
         } // Handle the next building hex.
 
@@ -1056,9 +1056,9 @@ public class Board implements Serializable, IBoard {
     public void updateBuildingCF(Vector<Building> bldgs) {
 
         // Walk through the vector of buildings.
-        Enumeration loop = bldgs.elements();
+        Enumeration<Building> loop = bldgs.elements();
         while (loop.hasMoreElements()) {
-            final Building other = (Building) loop.nextElement();
+            final Building other = loop.nextElement();
 
             // Find the local object for the given building.
             Building bldg = this.getLocalBuilding(other);

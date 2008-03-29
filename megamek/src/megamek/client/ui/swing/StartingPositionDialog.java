@@ -165,8 +165,8 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
 
     public void update() {
         ((DefaultListModel) lisStartList.getModel()).removeAllElements();
-        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            Player player = (Player) i.nextElement();
+        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
+            Player player = i.nextElement();
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
@@ -190,9 +190,9 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                                         "In Double Blind play, you cannot choose 'Any' as starting position.");
                         return;
                     }
-                    for (Enumeration e = client.game.getPlayers(); e
+                    for (Enumeration<Player> e = client.game.getPlayers(); e
                             .hasMoreElements();) {
-                        Player player = (Player) e.nextElement();
+                        Player player = e.nextElement();
                         if (player.getStartingPos() == 0) {
                             continue;
                         }
@@ -259,7 +259,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                             break;
                         default:
                     }
-                    Enumeration thisPlayerArtyUnits = client.game
+                    Enumeration<Entity> thisPlayerArtyUnits = client.game
                             .getSelectedEntities(new EntitySelector() {
                                 public boolean accept(Entity entity) {
                                     if (entity.getOwnerId() == client
@@ -269,14 +269,11 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                                 }
                             });
                     while (thisPlayerArtyUnits.hasMoreElements()) {
-                        Entity entity = (Entity) thisPlayerArtyUnits
-                                .nextElement();
+                        Entity entity = thisPlayerArtyUnits.nextElement();
                         if (entity.getOffBoardDirection() != IOffBoardDirections.NONE) {
                             if (direction > IOffBoardDirections.NONE) {
-                                entity
-                                        .setOffBoard(entity
-                                                .getOffBoardDistance(),
-                                                direction);
+                                entity.setOffBoard(entity.getOffBoardDistance(),
+                                        direction);
                             }
                         }
                     }

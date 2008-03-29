@@ -29,8 +29,8 @@ public class CheckBVCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         server.sendServerChat(connId, "Remaining BV:");
-        for (Enumeration i = server.getGame().getPlayers(); i.hasMoreElements();) {
-            Player player = (Player) i.nextElement();
+        for (Enumeration<Player> i = server.getGame().getPlayers(); i.hasMoreElements();) {
+            Player player = i.nextElement();
             StringBuffer cb = new StringBuffer();
             cb.append(player.getName()).append(": ");
             cb.append(player.getBV()).append("/").append(player.getInitialBV());

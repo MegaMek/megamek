@@ -44,8 +44,8 @@ public class WhoCommand extends ServerCommand {
         server
                 .sendServerChat(connId,
                         "[id#] : [name], [address], [pending], [bytes sent], [bytes received]");
-        for (Enumeration i = server.getConnections(); i.hasMoreElements();) {
-            IConnection conn = (IConnection) i.nextElement();
+        for (Enumeration<IConnection> i = server.getConnections(); i.hasMoreElements();) {
+            IConnection conn = i.nextElement();
             StringBuffer cb = new StringBuffer();
             cb.append(conn.getId()).append(" : ");
             cb.append(server.getPlayer(conn.getId()).getName()).append(", ");

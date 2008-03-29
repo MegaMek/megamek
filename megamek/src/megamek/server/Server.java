@@ -5586,11 +5586,14 @@ public class Server implements Runnable {
                     if (missiles != m) {
                         r = new Report(3403);
                         r.add(m - missiles);
+                        r.indent(2);
+                        r.subject = te.getId();
                         vPhaseReport.add(r);
                     }
                     r = new Report(3400);
                     r.add(2 * missiles);
                     r.subject = te.getId();
+                    r.indent(2);
                     r.choose(true);
                     vPhaseReport.add(r);
                     te.heatFromExternal += 2 * missiles;

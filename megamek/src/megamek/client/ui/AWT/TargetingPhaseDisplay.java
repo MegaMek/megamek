@@ -606,7 +606,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         // remove attacks, set weapons available again
-        Enumeration i = attacks.elements();
+        Enumeration<EntityAction> i = attacks.elements();
         while (i.hasMoreElements()) {
             Object o = i.nextElement();
             if (o instanceof WeaponAttackAction) {

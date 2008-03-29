@@ -14,7 +14,6 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
@@ -110,10 +109,9 @@ public class ArtilleryTracker implements Serializable {
      * @return modifier with coords equals to the given on <code>null</code>
      *         if not found
      */
-    protected ArtilleryModifier getModifierByCoords(Vector modifiers,
+    protected ArtilleryModifier getModifierByCoords(Vector<ArtilleryModifier> modifiers,
             Coords coords) {
-        for (Enumeration i = modifiers.elements(); i.hasMoreElements();) {
-            ArtilleryModifier mod = (ArtilleryModifier) i.nextElement();
+        for (ArtilleryModifier mod : modifiers) {
             if (mod.getCoords().equals(coords)) {
                 return mod;
             }

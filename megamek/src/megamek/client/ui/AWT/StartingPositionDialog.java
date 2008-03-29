@@ -157,8 +157,8 @@ public class StartingPositionDialog extends java.awt.Dialog implements
 
     public void update() {
         lisStartList.removeAll();
-        for (Enumeration i = client.getPlayers(); i.hasMoreElements();) {
-            Player player = (Player) i.nextElement();
+        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
+            Player player = i.nextElement();
             if (player != null) {
                 StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
@@ -181,9 +181,9 @@ public class StartingPositionDialog extends java.awt.Dialog implements
                                         "In Double Blind play, you cannot choose 'Any' as starting position.");
                         return;
                     }
-                    for (Enumeration e = client.game.getPlayers(); e
+                    for (Enumeration<Player> e = client.game.getPlayers(); e
                             .hasMoreElements();) {
-                        Player player = (Player) e.nextElement();
+                        Player player = e.nextElement();
                         if (player.getStartingPos() == 0) {
                             continue;
                         }
@@ -249,7 +249,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements
                             direction = IOffBoardDirections.WEST;
                             break;
                     }
-                    Enumeration thisPlayerArtyUnits = client.game
+                    Enumeration<Entity> thisPlayerArtyUnits = client.game
                             .getSelectedEntities(new EntitySelector() {
                                 public boolean accept(Entity entity) {
                                     if (entity.getOwnerId() == client
@@ -259,8 +259,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements
                                 }
                             });
                     while (thisPlayerArtyUnits.hasMoreElements()) {
-                        Entity entity = (Entity) thisPlayerArtyUnits
-                                .nextElement();
+                        Entity entity = thisPlayerArtyUnits.nextElement();
                         if (entity.getOffBoardDirection() != IOffBoardDirections.NONE) {
                             if (direction > IOffBoardDirections.NONE) {
                                 entity

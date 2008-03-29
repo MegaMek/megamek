@@ -228,7 +228,7 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
                     CriticalSlot.TYPE_SYSTEM, Mech.ACTUATOR_HAND));
 
         // load equipment stuff...
-        Vector[] criticals = new Vector[8];
+        Vector<String>[] criticals = new Vector[8];
 
         criticals[Mech.LOC_HEAD] = dataFile.getDataAsVector("hd criticals");
         criticals[Mech.LOC_LARM] = dataFile.getDataAsVector("la criticals");
@@ -238,13 +238,6 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         criticals[Mech.LOC_LT] = dataFile.getDataAsVector("lt criticals");
         criticals[Mech.LOC_RT] = dataFile.getDataAsVector("rt criticals");
         criticals[Mech.LOC_CT] = dataFile.getDataAsVector("ct criticals");
-
-        // criticals[mech.LOC_LTR] = new
-        // com.sun.java.util.collections.Vector(0);
-        // criticals[mech.LOC_RTR] = new
-        // com.sun.java.util.collections.Vector(0);
-        // criticals[mech.LOC_CTR] = new
-        // com.sun.java.util.collections.Vector(0);
 
         // prefix is "Clan " or "IS "
         String prefix;

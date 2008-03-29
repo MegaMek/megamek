@@ -112,7 +112,7 @@ public class ArtilleryWeaponFlakHandler extends
             aaa.turnsTilHit--;
             return true;
         }
-        final Vector spottersBefore = aaa.getSpotterIds();
+        final Vector<Integer> spottersBefore = aaa.getSpotterIds();
         final Targetable target = aaa.getTarget(game);
         final Coords targetPos = target.getPosition();
         final int playerId = aaa.getPlayerId();
@@ -126,7 +126,7 @@ public class ArtilleryWeaponFlakHandler extends
         // Are there any valid spotters?
         if (null != spottersBefore) {
             // fetch possible spotters now
-            Enumeration spottersAfter = game
+            Enumeration<Entity> spottersAfter = game
                     .getSelectedEntities(new EntitySelector() {
                         public int player = playerId;
 
@@ -148,7 +148,7 @@ public class ArtilleryWeaponFlakHandler extends
 
             // Out of any valid spotters, pick the best.
             while (spottersAfter.hasMoreElements()) {
-                Entity ent = (Entity) spottersAfter.nextElement();
+                Entity ent = spottersAfter.nextElement();
                 if (bestSpotter == null
                         || ent.crew.getGunnery() < bestSpotter.crew
                                 .getGunnery()) {
@@ -296,9 +296,9 @@ public class ArtilleryWeaponFlakHandler extends
             vPhaseReport.addAll(buildingReport);
         }
 
-        for (Enumeration impactHexHits = game.getEntities(coords); impactHexHits
+        for (Enumeration<Entity> impactHexHits = game.getEntities(coords); impactHexHits
                 .hasMoreElements();) {
-            Entity entity = (Entity) impactHexHits.nextElement();
+            Entity entity = impactHexHits.nextElement();
             hits = ratedDamage;
 
             while (hits > 0) {
@@ -348,7 +348,7 @@ public class ArtilleryWeaponFlakHandler extends
                 vPhaseReport.addAll(buildingReport);
             }
 
-            Enumeration splashHexHits = game.getEntities(tempcoords);
+            Enumeration<Entity> splashHexHits = game.getEntities(tempcoords);
             if (splashHexHits.hasMoreElements()) {
                 r = new Report(3210);
                 r.newlines = 0;
@@ -358,7 +358,7 @@ public class ArtilleryWeaponFlakHandler extends
                 vPhaseReport.addElement(r);
             }
             for (; splashHexHits.hasMoreElements();) {
-                Entity entity = (Entity) splashHexHits.nextElement();
+                Entity entity = splashHexHits.nextElement();
                 hits = ratedDamage;
                 while (hits > 0) {
                     HitData hit = entity.rollHitLocation(toHit.getHitTable(),

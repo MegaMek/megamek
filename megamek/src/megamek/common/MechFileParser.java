@@ -294,8 +294,8 @@ public class MechFileParser {
             }
         } catch (IOException e) {
         }
-        for (Enumeration i = canonUnitNames.elements(); i.hasMoreElements();) {
-            String s = (String) i.nextElement();
+        for (Enumeration<String> i = canonUnitNames.elements(); i.hasMoreElements();) {
+            String s = i.nextElement();
             if (s.equals(ent.getShortNameRaw())) {
                 ent.setCanon(true);
                 break;

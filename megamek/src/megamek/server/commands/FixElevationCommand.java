@@ -42,13 +42,12 @@ public class FixElevationCommand extends ServerCommand {
      */
     public void run(int connId, String[] args) {
         int countbad = 0;
-        for (Enumeration e = server.getGame().getEntities(); e
+        for (Enumeration<Entity> e = server.getGame().getEntities(); e
                 .hasMoreElements();) {
-            Entity entity = (Entity) e.nextElement();
+            Entity entity = e.nextElement();
             if (entity.fixElevation()) {
-                server
-                        .sendServerChat(entity.getDisplayName()
-                                + " elevation fixed, see megameklog.txt for details & report a bug if you know how this happened");
+                server.sendServerChat(entity.getDisplayName()
+                        + " elevation fixed, see megameklog.txt for details & report a bug if you know how this happened");
                 countbad++;
             }
         }

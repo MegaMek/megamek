@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.21-dev (SVN)
+v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor
 + Fix elevation checks for physical attacks against flying VTOLs
 + Bug 1748780: Glancing hit crit penalty not applied with transfered damage

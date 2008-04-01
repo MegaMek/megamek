@@ -12159,6 +12159,30 @@ public class Server implements Runnable {
                         if (roll >= 8)
                             hit.setEffect(HitData.EFFECT_NO_CRITICALS);
                     }
+                    // check for tank CASE here: damage to rear armor, excess
+                    // dissipating, and a crew stunned crit
+                    if (ammoExplosion && te instanceof Tank && te.locationHasCase(Tank.LOC_BODY)) {
+                        if (damage > te.getArmor(Tank.LOC_REAR))
+                            te.setArmor(IArmorState.ARMOR_DESTROYED, hit
+                                    .getLocation());
+                        else
+                            te.setArmor(te.getArmor(Tank.LOC_REAR)
+                                    - damage, Tank.LOC_REAR);
+                        te.damageThisPhase += damage;
+                        r = new Report(6124);
+                        r.subject = te_n;
+                        r.indent(2);
+                        r.add(damage);
+                        vDesc.add(r);
+                        damage = 0;
+                        vDesc.addAll(applyCriticalHit(te, hit.getLocation(),
+                                new CriticalSlot(0, Tank.CRIT_CREW_STUNNED),
+                                true));
+                        r = new Report(6090);
+                        r.subject = te_n;
+                        r.newlines = 0;
+                        r.indent(2);
+                    }
                     // Now we need to consider alternate structure types!
                     int tmpDamageHold = -1;
                     if (te instanceof Mech
@@ -12389,7 +12413,6 @@ public class Server implements Runnable {
                                 if (game.getOptions().booleanOption(
                                         "auto_abandon_unit"))
                                     vDesc.addAll(abandonEntity(te));
-
                             }
                         }
 

@@ -46,7 +46,7 @@ public class PulseLaserWeaponHandler extends WeaponHandler {
         float toReturn = wtype.getDamage();
         // during a swarm, all damage gets applied as one block to one location
         if (ae instanceof BattleArmor
-                && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
+                && weapon.getLocation() == BattleArmor.LOC_SQUAD
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }

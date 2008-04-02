@@ -57,9 +57,6 @@ public class WeaponType extends EquipmentType {
     public static final long F_INFANTRY = 1l << 11; // small calibre weapon, no
                                                     // ammo, damage based on #
                                                     // men shooting
-    public static final long F_BATTLEARMOR = 1l << 12; // weapon is only for
-                                                        // one trooper of the
-                                                        // squad/point
     public static final long F_MISSILE_HITS = 1l << 13; // use missile rules or
                                                         // # of hits
     public static final long F_ONESHOT = 1l << 14; // weapon is oneShot.
@@ -588,10 +585,6 @@ public class WeaponType extends EquipmentType {
         addType(new CLMicroBomb());
         addType(new ISGrandMaulerGaussCannon());
         addType(new ISTsunamiGaussRifle());
-        addType(new ISSingleBAMG());
-        addType(new ISSingleBAFlamer());
-        addType(new ISSingleBASmallPulseLaser());
-        addType(new ISSingleBASmallLaser());
         addType(new ISBAMG());
         addType(new ISBALightMG());
         addType(new ISBAHeavyMG());

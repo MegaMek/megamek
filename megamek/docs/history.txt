@@ -4,6 +4,7 @@ v0.33.22-dev (SVN)
 + Better text for artillery adjust/autohit hex tooltip
 + Bug 1931634: Vehicle CASE has no effect
 + Bug: Fix Kobold single trooper weapons for real
++ Bug 1932743: Single trooper BA weapons unnecessary complicated
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

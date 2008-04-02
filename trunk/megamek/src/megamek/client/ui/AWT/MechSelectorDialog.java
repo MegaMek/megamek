@@ -518,8 +518,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
                 if (!(nUnitType == UnitType.SIZE)
                         && ((UnitType.getTypeName(nUnitType).equals("Mek") || UnitType
                                 .getTypeName(nUnitType).equals("Tank")) && (et
-                                .hasFlag(WeaponType.F_INFANTRY) || et
-                                .hasFlag(WeaponType.F_BATTLEARMOR)))) {
+                                .hasFlag(WeaponType.F_INFANTRY)))) {
                     continue;
                 }
                 weapons.add(et.getName());

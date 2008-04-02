@@ -141,12 +141,20 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // normal BA attacks (non-swarm, non single-trooper weapons)
         // do more than 1 hit
         if (ae instanceof BattleArmor
-                && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
+                && weapon.getLocation() == BattleArmor.LOC_SQUAD
                 && !(ae.getSwarmTargetId() == target.getTargetId())) {
             bSalvo = true;
-            return allShotsHit() ? ((BattleArmor) ae).getShootingStrength()
+            int toReturn = allShotsHit() ? ((BattleArmor) ae).getShootingStrength()
                     : Compute.missilesHit(((BattleArmor) ae)
-                            .getShootingStrength());
+                            .getShootingStrength()); 
+            r = new Report(3325);
+            r.subject = subjectId;
+            r.add(toReturn);
+            r.add(" troopers ");
+            r.add(toHit.getTableDesc());
+            r.newlines = 0;
+            vPhaseReport.add(r);
+            return toReturn;
         }
         return 1;
     }
@@ -348,7 +356,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         double toReturn = wtype.getDamage();
         // during a swarm, all damage gets applied as one block to one location
         if (ae instanceof BattleArmor
-                && !wtype.hasFlag(WeaponType.F_BATTLEARMOR)
+                && weapon.getLocation() == BattleArmor.LOC_SQUAD
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }

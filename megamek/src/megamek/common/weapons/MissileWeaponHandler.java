@@ -326,9 +326,11 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                         if (!(counter.getType() instanceof WeaponType)
                                 || !counter.isReady() || counter.isMissing()
                                 // no AMS when a shield in the AMS location
-                                || ae.hasShield()
-                                && ae.hasActiveShield(counter.getLocation(),
+                                || entityTarget.hasShield()
+                                && entityTarget.hasActiveShield(counter.getLocation(),
                                         false)
+                                // shutdown means no AMS
+                                || entityTarget.isShutDown()
                                 // AMS only fires against attacks coming into
                                 // the
                                 // arc the ams is covering

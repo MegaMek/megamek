@@ -13584,6 +13584,27 @@ public class Server implements Runnable {
                             t.setCommanderHit(true);
                         }
                     }
+                    // fall through here, because effects of crew stunned also apply
+                case Tank.CRIT_CREW_STUNNED:
+                    if (en.crew.getOptions().booleanOption("vdni")
+                            || en.crew.getOptions().booleanOption("bvdni")) {
+                        r = new Report(6191);
+                        r.subject = t.getId();
+                        vDesc.add(r);
+                        vDesc.addAll(damageCrew(en, 1));
+                    } else {
+                        if (en.crew.getOptions().booleanOption("pain_shunt")) {
+                            r = new Report(6186);
+                            r.subject = t.getId();
+                            vDesc.add(r);
+                        } else {
+                            t.stunCrew();
+                            r = new Report(6185);
+                            r.add(t.getStunnedTurns() - 1);
+                            r.subject = t.getId();
+                            vDesc.add(r);
+                        }
+                    }
                     break;
                 case Tank.CRIT_DRIVER:
                     if (en.crew.getOptions().booleanOption("vdni")
@@ -13626,27 +13647,6 @@ public class Server implements Runnable {
                             r.subject = t.getId();
                             vDesc.add(r);
                             t.getCrew().setDoomed(true);
-                        }
-                    }
-                    break;
-                case Tank.CRIT_CREW_STUNNED:
-                    if (en.crew.getOptions().booleanOption("vdni")
-                            || en.crew.getOptions().booleanOption("bvdni")) {
-                        r = new Report(6191);
-                        r.subject = t.getId();
-                        vDesc.add(r);
-                        vDesc.addAll(damageCrew(en, 1));
-                    } else {
-                        if (en.crew.getOptions().booleanOption("pain_shunt")) {
-                            r = new Report(6186);
-                            r.subject = t.getId();
-                            vDesc.add(r);
-                        } else {
-                            t.stunCrew();
-                            r = new Report(6185);
-                            r.add(t.getStunnedTurns() - 1);
-                            r.subject = t.getId();
-                            vDesc.add(r);
                         }
                     }
                     break;

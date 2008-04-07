@@ -429,8 +429,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server
-                    .damageBuilding(bldg, nDamage);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg);
             for (Report report : buildingReport) {
                 report.subject = subjectId;
             }

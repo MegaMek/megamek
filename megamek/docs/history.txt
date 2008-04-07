@@ -8,6 +8,7 @@ v0.33.22-dev (SVN)
 + Bug 1934051: AMS working on shutdown units
 + Bug: Tank crit "commander hit" should also cause effects of crew stunned
 + Bug 1936068: Buildings Damage Errors
++ Patch 1936898, Bug 1934990: Errors when loading HMV submarines 
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

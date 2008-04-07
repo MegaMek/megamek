@@ -478,7 +478,8 @@ public class HmvFile implements IMechLoader {
                     || movementType == HMVMovementType.WHEELED
                     || movementType == HMVMovementType.HOVER
                     || movementType == HMVMovementType.DISPLACEMENT_HULL
-                    || movementType == HMVMovementType.HYDROFOIL) {
+                    || movementType == HMVMovementType.HYDROFOIL
+                    || movementType == HMVMovementType.SUBMARINE) {
                 vehicle = new Tank();
             } else if (movementType == HMVMovementType.VTOL) {
                 vehicle = new VTOL();
@@ -513,6 +514,7 @@ public class HmvFile implements IMechLoader {
                                 : movementType == HMVMovementType.HYDROFOIL ? IEntityMovementMode.HYDROFOIL
                                         : movementType == HMVMovementType.HOVER ? IEntityMovementMode.HOVER
                                                 : movementType == HMVMovementType.WHEELED ? IEntityMovementMode.WHEELED
+                                                        : movementType == HMVMovementType.SUBMARINE ? IEntityMovementMode.SUBMARINE
                                                         : IEntityMovementMode.TRACKED);
             }
 
@@ -848,8 +850,8 @@ public class HmvFile implements IMechLoader {
         isAmmo.put(new Long(0x93), "ISLRTorpedo10 Ammo");
         isAmmo.put(new Long(0x94), "ISLRTorpedo15 Ammo");
         isAmmo.put(new Long(0x95), "ISLRTorpedo20 Ammo");
-        isAmmo.put(new Long(0x96), "ISSRT4 Ammo");
-        isAmmo.put(new Long(0x97), "ISSRT2 Ammo");
+        isAmmo.put(new Long(0x96), "ISSRT2 Ammo");
+        isAmmo.put(new Long(0x97), "ISSRT4 Ammo");
         isAmmo.put(new Long(0x98), "ISSRT6 Ammo");
         isAmmo.put(new Long(0x108), "ISTHBLBXAC2 Ammo");
         isAmmo.put(new Long(0x109), "ISTHBLBXAC5 Ammo");

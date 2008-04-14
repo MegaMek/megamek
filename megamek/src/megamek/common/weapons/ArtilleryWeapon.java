@@ -49,14 +49,14 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
         AmmoType atype = (AmmoType) game.getEntity(waa.getEntityId())
                 .getEquipment(waa.getWeaponId()).getLinked().getType();
         if (atype.getMunitionType() == AmmoType.M_HOMING) {
-            if (game.getPhase() == IGame.PHASE_FIRING) {
+            if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
                 return new ArtilleryWeaponDirectHomingHandler(toHit, waa, game,
                         server);
             } else {
                 return new ArtilleryWeaponIndirectHomingHandler(toHit, waa,
                         game, server);
             }
-        } else if (game.getPhase() == IGame.PHASE_FIRING) {
+        } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
             if (waa.getTargetType() == Targetable.TYPE_ENTITY
                     && atype.getMunitionType() == AmmoType.M_STANDARD
                     && ((Entity) waa.getTarget(game)).getMovementMode() == IEntityMovementMode.VTOL

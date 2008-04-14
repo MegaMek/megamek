@@ -752,8 +752,8 @@ public class Infantry extends Entity implements Serializable {
         return game.getOptions().booleanOption("paratroopers");
     }
 
-    public boolean isEligibleFor(int phase) {
-        if (turnsLayingExplosives > 0 && phase != IGame.PHASE_PHYSICAL)
+    public boolean isEligibleFor(IGame.Phase phase) {
+        if (turnsLayingExplosives > 0 && phase != IGame.Phase.PHASE_PHYSICAL)
             return false;
         if (dugIn != DUG_IN_COMPLETE && dugIn != DUG_IN_NONE) {
             return false;

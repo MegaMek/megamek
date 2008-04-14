@@ -49,6 +49,7 @@ import java.awt.image.ImageFilter;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -86,6 +87,7 @@ import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.Player;
 import megamek.common.Protomech;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -156,6 +158,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12); //$NON-NLS-1$
 
     Dimension hex_size = null;
+    private Font       font_note   = FONT_10;
 
     private Font font_hexnum = FONT_10;
     private Font font_elev = FONT_9;
@@ -328,6 +331,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(
                 this);
+        
+        SpecialHexDisplay.Type.ARTILERY_HIT.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILERY_INCOMING.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILEY_TARGET.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init(getToolkit());
     }
 
     protected final RedrawWorker redrawWorker = new RedrawWorker();
@@ -507,9 +516,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         offset.setLocation(getOptimalOffset(size));
 
         if (!this.isTileImagesLoaded()) {
-            g
-                    .drawString(
-                            Messages.getString("BoardView1.loadingImages"), 20, 50); //$NON-NLS-1$
+            g.drawString(
+                Messages.getString("BoardView1.loadingImages"), 20, 50); //$NON-NLS-1$
             if (!tileManager.isStarted()) {
                 System.out.println("boardview1: loading images for board"); //$NON-NLS-1$
                 tileManager.loadNeededImages(game);
@@ -532,6 +540,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
 
         // draw onto the back buffer:
+        
+        // redraw all the specials. This is an inneficient hack :/
+        for(Coords c : game.getBoard().getSpecialHexDisplayTable().keySet()) {
+            drawHex(c);
+        }
 
         // draw the board
         backGraph.drawImage(boardImage, 0, 0, this);
@@ -812,7 +825,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * Display artillery modifier in pretargeted hexes
      */
     private void drawArtilleryHexes() {
-        Mounted weapon = getSelectedArtilleryWeapon();
+    // handeled in special hex display.
+        /*Mounted weapon = getSelectedArtilleryWeapon();
 
         if (game.getArtillerySize() == 0 && weapon == null) {
             return; // nothing to do
@@ -880,7 +894,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     }
                 }
             }
-        }
+        }*/
     }
 
     private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(
@@ -1147,14 +1161,16 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      * it resets the clipping rectangle before drawing.
      */
     private void redrawAround(Coords c) {
-        boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
-        drawHex(c);
-        drawHex(c.translated(0));
-        drawHex(c.translated(1));
-        drawHex(c.translated(2));
-        drawHex(c.translated(3));
-        drawHex(c.translated(4));
-        drawHex(c.translated(5));
+        if(c != null) {
+            boardGraph.setClip(0, 0, boardRect.width, boardRect.height);
+            drawHex(c);
+            drawHex(c.translated(0));
+            drawHex(c.translated(1));
+            drawHex(c.translated(2));
+            drawHex(c.translated(3));
+            drawHex(c.translated(4));
+            drawHex(c.translated(5));
+        }
     }
 
     /**
@@ -1211,6 +1227,20 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
         boardGraph.setColor(GUIPreferences.getInstance().getMapTextColor());
 
+        //draw special stuff for the hex
+        final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(c);
+        if(shdList != null) {
+            for(SpecialHexDisplay shd : shdList)
+            {
+                if (shd.drawNow(game.getPhase(), game.getRoundCount())) {
+                    scaledImage = getScaledImage(shd.getType().getDefaultImage());
+                    if(scaledImage != null) {
+                        boardGraph.drawImage(scaledImage, drawX, drawY, this);
+                    }
+                }
+            }
+        }
+        
         // draw hex number
         if (scale >= 0.5) {
             drawCenteredString(c.getBoardNum(), drawX, drawY
@@ -1219,6 +1249,24 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // draw terrain level / water depth / building height
         if (zoomIndex > 3) {
             int ypos = 70;
+            if(null != shdList) {
+                Color oldColor = boardGraph.getColor();
+                boardGraph.setColor(Color.RED);
+                for(SpecialHexDisplay shd : shdList)
+                {
+                    if(SpecialHexDisplay.Type.PLAYER_NOTE == shd.getType()) {
+                        drawCenteredString(
+                                shd.getInfo(), //$NON-NLS-1$
+                                drawX,
+                                drawY + (int)(ypos*scale),
+                                font_note,
+                                boardGraph);
+                        ypos -= 10;
+                    }
+                }
+                
+                boardGraph.setColor(oldColor);
+            }
             if (level != 0) {
                 drawCenteredString(
                         Messages.getString("BoardView1.LEVEL") + level, //$NON-NLS-1$
@@ -1489,11 +1537,18 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         final Mounted curWeapon = getSelectedArtilleryWeapon();
         if (curWeapon != null)
             stringsSize++;
+        
+        /*
+         * Eventaul replacemtn for the artilery popup.
+         * 
+        final Collection<SpecialHexDisplay> specials = game.getBoard().getSpecialHexDisplay(mcoords);
+        if(specials != null)
+                stringsSize += specials.size();
 
         // if the size is zip, you must a'quit
         if (stringsSize == 0) {
             return null;
-        }
+        }*/
 
         // now we can allocate an array of strings
         String[] strings = new String[stringsSize];
@@ -2537,7 +2592,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
         if (!GUIPreferences.getInstance().getRightDragScroll()
                 && !GUIPreferences.getInstance().getAlwaysRightClickScroll()
-                && (game.getPhase() == IGame.PHASE_FIRING || game.getPhase() == IGame.PHASE_OFFBOARD)) {
+                && (game.getPhase() == IGame.Phase.PHASE_FIRING || game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
             // In the firing phase, also disable scrolling if
             // the right or middle buttons are clicked, since
             // this means the user wants to activate the
@@ -2635,7 +2690,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         if (!GUIPreferences.getInstance().getRightDragScroll()
                 && !GUIPreferences.getInstance().getAlwaysRightClickScroll()
-                && (game.getPhase() == IGame.PHASE_FIRING || game.getPhase() == IGame.PHASE_OFFBOARD)) {
+                && (game.getPhase() == IGame.Phase.PHASE_FIRING || game.getPhase() == IGame.Phase.PHASE_OFFBOARD)) {
             // In the firing phase, also disable scrolling if
             // the right or middle buttons are clicked, since
             // this means the user wants to activate the
@@ -4804,16 +4859,16 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             refreshAttacks();
             switch (e.getNewPhase()) {
-                case IGame.PHASE_MOVEMENT:
-                case IGame.PHASE_FIRING:
-                case IGame.PHASE_PHYSICAL:
+                case PHASE_MOVEMENT:
+                case PHASE_FIRING:
+                case PHASE_PHYSICAL:
                     refreshAttacks();
                     break;
-                case IGame.PHASE_INITIATIVE:
+                case PHASE_INITIATIVE:
                     clearAllAttacks();
                     break;
-                case IGame.PHASE_END:
-                case IGame.PHASE_VICTORY:
+                case PHASE_END:
+                case PHASE_VICTORY:
                     clearSprites();
             }
         }

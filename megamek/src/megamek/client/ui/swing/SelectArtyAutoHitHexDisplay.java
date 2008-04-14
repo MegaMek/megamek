@@ -239,10 +239,10 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
         }
 
         if (client.isMyTurn()
-                && client.game.getPhase() != IGame.PHASE_SET_ARTYAUTOHITHEXES) {
+                && client.game.getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
             endMyTurn();
         }
-        if (client.game.getPhase() == IGame.PHASE_SET_ARTYAUTOHITHEXES) {
+        if (client.game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
             setStatusBarText(Messages
                     .getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
         }

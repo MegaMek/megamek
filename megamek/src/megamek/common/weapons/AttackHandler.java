@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.IGame;
 import megamek.common.Report;
 import megamek.common.actions.WeaponAttackAction;
 
@@ -29,11 +30,11 @@ import megamek.common.actions.WeaponAttackAction;
 public interface AttackHandler {
 
     // Does it care?
-    public boolean cares(int phase);
+    public boolean cares(IGame.Phase phase);
 
     // If it cares, call this. If it needs to remain in queue, returns true,
     // else false.
-    public boolean handle(int phase, Vector<Report> vPhaseReports);
+    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReports);
 
     // Frankly, wish I could get rid of this, but I think certain things
     // occaisonly need to know the firer.

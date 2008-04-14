@@ -205,9 +205,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && (atype.getMunitionType() == AmmoType.M_INFERNO)
                 || isWeaponInfantry && (wtype.hasFlag(WeaponType.F_INFERNO));
         boolean isArtilleryDirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
-                && game.getPhase() == IGame.PHASE_FIRING;
+                && game.getPhase() == IGame.Phase.PHASE_FIRING;
         boolean isArtilleryIndirect = wtype.hasFlag(WeaponType.F_ARTILLERY)
-                && (game.getPhase() == IGame.PHASE_TARGETING || game.getPhase() == IGame.PHASE_OFFBOARD);// hack,
+                && (game.getPhase() == IGame.Phase.PHASE_TARGETING || game.getPhase() == IGame.Phase.PHASE_OFFBOARD);// hack,
                                                                                                             // otherwise
                                                                                                             // when
                                                                                                             // actually
@@ -1169,13 +1169,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                         .getMunitionType() == AmmoType.M_FLARE)) {
             return "Weapon can't deliver flares";
         }
-        if (game.getPhase() == IGame.PHASE_TARGETING && !isArtilleryIndirect) {
+        if (game.getPhase() == IGame.Phase.PHASE_TARGETING && !isArtilleryIndirect) {
             return "Only indirect artillery can be fired in the targeting phase";
         }
-        if (game.getPhase() == IGame.PHASE_OFFBOARD && !isTAG) {
+        if (game.getPhase() == IGame.Phase.PHASE_OFFBOARD && !isTAG) {
             return "Only TAG can be fired in the offboard attack phase";
         }
-        if (game.getPhase() != IGame.PHASE_OFFBOARD && isTAG) {
+        if (game.getPhase() != IGame.Phase.PHASE_OFFBOARD && isTAG) {
             return "TAG can only be fired in the offboard attack phase";
         }
 

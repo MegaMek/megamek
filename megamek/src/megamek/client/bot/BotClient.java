@@ -70,7 +70,7 @@ public abstract class BotClient extends Client {
             }
 
             public void gameReport(GameReportEvent e) {
-                if (game.getPhase() == IGame.PHASE_INITIATIVE_REPORT) {
+                if (game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT) {
                     // Opponent has used tactical genius, must press
                     // "Done" again to advance past initiative report.
                     sendDone(true);
@@ -130,18 +130,18 @@ public abstract class BotClient extends Client {
     }
 
     // TODO: move initMovement to be called on phase end
-    public void changePhase(int phase) {
+    public void changePhase(IGame.Phase phase) {
         super.changePhase(phase);
 
         try {
             switch (phase) {
-                case IGame.PHASE_LOUNGE:
+                case PHASE_LOUNGE:
                     sendChat(Messages.getString("BotClient.Hi")); //$NON-NLS-1$
                     break;
-                case IGame.PHASE_DEPLOYMENT:
+                case PHASE_DEPLOYMENT:
                     initialize();
                     break;
-                case IGame.PHASE_MOVEMENT:
+                case PHASE_MOVEMENT:
                     if (game.getEntitiesOwnedBy(this.getLocalPlayer()) == 0) {
                         sendChat(Messages.getString("BotClient.HowAbout")); //$NON-NLS-1$
                         this.die();
@@ -161,25 +161,25 @@ public abstract class BotClient extends Client {
                     }
                     initMovement();
                     break;
-                case IGame.PHASE_FIRING:
+                case PHASE_FIRING:
                     initFiring();
                     break;
-                case IGame.PHASE_PHYSICAL:
+                case PHASE_PHYSICAL:
                     break;
-                case IGame.PHASE_END_REPORT:
+                case PHASE_END_REPORT:
                     // Check if stealth armor should be switched on/off
                     // Kinda cheap leaving this until the end phase, players
                     // can't do this
                     toggleStealth();
-                case IGame.PHASE_INITIATIVE_REPORT:
-                case IGame.PHASE_TARGETING_REPORT:
-                case IGame.PHASE_MOVEMENT_REPORT:
-                case IGame.PHASE_OFFBOARD_REPORT:
-                case IGame.PHASE_FIRING_REPORT:
-                case IGame.PHASE_PHYSICAL_REPORT:
+                case PHASE_INITIATIVE_REPORT:
+                case PHASE_TARGETING_REPORT:
+                case PHASE_MOVEMENT_REPORT:
+                case PHASE_OFFBOARD_REPORT:
+                case PHASE_FIRING_REPORT:
+                case PHASE_PHYSICAL_REPORT:
                     sendDone(true);
                     break;
-                case IGame.PHASE_VICTORY:
+                case PHASE_VICTORY:
                     break;
             }
         } catch (Throwable t) {
@@ -189,7 +189,7 @@ public abstract class BotClient extends Client {
 
     protected void calculateMyTurn() {
         try {
-            if (game.getPhase() == IGame.PHASE_MOVEMENT) {
+            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 MovePath mp = null;
                 if (game.getTurn() instanceof GameTurn.SpecificEntityTurn) {
                     GameTurn.SpecificEntityTurn turn = (GameTurn.SpecificEntityTurn) game
@@ -200,9 +200,9 @@ public abstract class BotClient extends Client {
                     mp = calculateMoveTurn();
                 }
                 moveEntity(mp.getEntity().getId(), mp);
-            } else if (game.getPhase() == IGame.PHASE_FIRING) {
+            } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
                 calculateFiringTurn();
-            } else if (game.getPhase() == IGame.PHASE_PHYSICAL) {
+            } else if (game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
                 PhysicalOption po = calculatePhysicalTurn();
                 // Bug #1072137: don't crash if the bot can't find a physical.
                 if (null != po) {
@@ -212,21 +212,21 @@ public abstract class BotClient extends Client {
                     sendAttackData(getLocalPlayer().getId(),
                             new Vector<EntityAction>(0));
                 }
-            } else if (game.getPhase() == IGame.PHASE_DEPLOYMENT) {
+            } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
                 calculateDeployment();
-            } else if (game.getPhase() == IGame.PHASE_DEPLOY_MINEFIELDS) {
+            } else if (game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
                 Vector<Minefield> mines = calculateMinefieldDeployment();
                 for (int i = 0; i < mines.size(); i++) {
                     game.addMinefield(mines.get(i));
                 }
                 sendDeployMinefields(mines);
                 sendPlayerInfo();
-            } else if (game.getPhase() == IGame.PHASE_SET_ARTYAUTOHITHEXES) {
+            } else if (game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
                 // For now, declare no autohit hexes.
                 Vector<Coords> autoHitHexes = calculateArtyAutoHitHexes();
                 sendArtyAutoHitHexes(autoHitHexes);
-            } else if (game.getPhase() == IGame.PHASE_TARGETING
-                    || game.getPhase() == IGame.PHASE_OFFBOARD) {
+            } else if (game.getPhase() == IGame.Phase.PHASE_TARGETING
+                    || game.getPhase() == IGame.Phase.PHASE_OFFBOARD) {
                 // Send a "no attack" to clear the game turn, if any.
                 // TODO: Fix for real arty stuff
                 sendAttackData(game.getFirstEntityNum(),

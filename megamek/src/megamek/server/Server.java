@@ -28,6 +28,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -92,6 +94,7 @@ import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.Report;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -302,7 +305,7 @@ public class Server implements Runnable {
         game.getOptions().initialize();
         game.getOptions().loadOptions();
 
-        changePhase(IGame.PHASE_LOUNGE);
+        changePhase(IGame.Phase.PHASE_LOUNGE);
 
         // display server start text
         System.out.println("s: starting a new server...");
@@ -605,7 +608,7 @@ public class Server implements Runnable {
 
         // if it is not the lounge phase, this player becomes an observer
         Player player = getPlayer(connId);
-        if (game.getPhase() != IGame.PHASE_LOUNGE && null != player
+        if (game.getPhase() != IGame.Phase.PHASE_LOUNGE && null != player
                 && game.getEntitiesOwnedBy(player) < 1) {
             player.setObserver(true);
         }
@@ -671,11 +674,11 @@ public class Server implements Runnable {
                     .getMinefields()));
 
             switch (game.getPhase()) {
-                case IGame.PHASE_LOUNGE:
+                case PHASE_LOUNGE:
                     send(connId, createMapSettingsPacket());
                     // Send Entities *after* the Lounge Phase Change
                     send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE,
-                            new Integer(game.getPhase())));
+                            game.getPhase()));
                     if (doBlind()) {
                         send(connId, createFilteredFullEntitiesPacket(player));
                     } else {
@@ -697,13 +700,13 @@ public class Server implements Runnable {
                     player.setDone(game.getEntitiesOwnedBy(player) <= 0);
                     send(connId, createBoardPacket());
                     send(connId, new Packet(Packet.COMMAND_PHASE_CHANGE,
-                            new Integer(game.getPhase())));
+                            game.getPhase()));
                     break;
             }
-            if (game.getPhase() == IGame.PHASE_FIRING
-                    || game.getPhase() == IGame.PHASE_TARGETING
-                    || game.getPhase() == IGame.PHASE_OFFBOARD
-                    || game.getPhase() == IGame.PHASE_PHYSICAL) {
+            if (game.getPhase() == IGame.Phase.PHASE_FIRING
+                    || game.getPhase() == IGame.Phase.PHASE_TARGETING
+                    || game.getPhase() == IGame.Phase.PHASE_OFFBOARD
+                    || game.getPhase() == IGame.Phase.PHASE_PHYSICAL) {
                 // can't go above, need board to have been sent
                 send(connId, createAttackPacket(game.getActionsVector(), 0));
                 send(connId, createAttackPacket(game.getChargesVector(), 1));
@@ -717,7 +720,7 @@ public class Server implements Runnable {
 
             send(connId, createArtilleryPacket(player));
             send(connId, createFlarePacket());
-            send(connId, createSpecialHexDisplayPacket());
+            send(connId, createSpecialHexDisplayPacket(connId));
 
         } // Found the player.
 
@@ -778,10 +781,10 @@ public class Server implements Runnable {
      * Notifies the other players and does the appropriate housekeeping.
      */
     void disconnected(Player player) {
-        int phase = game.getPhase();
+        IGame.Phase phase = game.getPhase();
 
         // in the lounge, just remove all entities for that player
-        if (phase == IGame.PHASE_LOUNGE) {
+        if (phase == IGame.Phase.PHASE_LOUNGE) {
             removeAllEntitesOwnedBy(player);
         }
 
@@ -791,7 +794,7 @@ public class Server implements Runnable {
         // the COMMAND_END_OF_GAME command
         // see the Bug 1225949.
         // TODO Perhaps there is a better solution to handle the Bot disconnect
-        if (game.getEntitiesOwnedBy(player) > 0 && phase != IGame.PHASE_VICTORY) {
+        if (game.getEntitiesOwnedBy(player) > 0 && phase != IGame.Phase.PHASE_VICTORY) {
             player.setGhost(true);
             player.setDone(true);
             send(createPlayerUpdatePacket(player.getId()));
@@ -831,7 +834,7 @@ public class Server implements Runnable {
         for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
             Player p = e.nextElement();
             p.setObserver(game.getEntitiesOwnedBy(p) < 1
-                    && game.getPhase() != IGame.PHASE_LOUNGE);
+                    && game.getPhase() != IGame.Phase.PHASE_LOUNGE);
         }
     }
 
@@ -873,7 +876,7 @@ public class Server implements Runnable {
         System.out.print(format.format(new Date()));
         System.out.println(" END OF GAME");
 
-        changePhase(IGame.PHASE_LOUNGE);
+        changePhase(IGame.Phase.PHASE_LOUNGE);
     }
 
     /**
@@ -1065,7 +1068,7 @@ public class Server implements Runnable {
      * Called at the beginning of each phase. Sets and resets any entity
      * parameters that need to be reset.
      */
-    private void resetEntityPhase(int phase) {
+    private void resetEntityPhase(IGame.Phase phase) {
         // first, mark doomed entities as destroyed and flag them
         Vector<Entity> toRemove = new Vector<Entity>(0, 10);
         for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
@@ -1133,7 +1136,7 @@ public class Server implements Runnable {
 
             // reset done to false
 
-            if (phase == IGame.PHASE_DEPLOYMENT) {
+            if (phase == IGame.Phase.PHASE_DEPLOYMENT) {
                 entity.setDone(!entity.shouldDeploy(game.getRoundCount()));
             } else {
                 entity.setDone(false);
@@ -1152,11 +1155,11 @@ public class Server implements Runnable {
      */
     private boolean isReportingPhase() {
 
-        if (game.getPhase() == IGame.PHASE_FIRING_REPORT
-                || game.getPhase() == IGame.PHASE_INITIATIVE_REPORT
-                || game.getPhase() == IGame.PHASE_MOVEMENT_REPORT
-                || game.getPhase() == IGame.PHASE_OFFBOARD_REPORT
-                || game.getPhase() == IGame.PHASE_PHYSICAL_REPORT)
+        if (game.getPhase() == IGame.Phase.PHASE_FIRING_REPORT
+                || game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT
+                || game.getPhase() == IGame.Phase.PHASE_MOVEMENT_REPORT
+                || game.getPhase() == IGame.Phase.PHASE_OFFBOARD_REPORT
+                || game.getPhase() == IGame.Phase.PHASE_PHYSICAL_REPORT)
             return true;
 
         return false;
@@ -1418,7 +1421,7 @@ public class Server implements Runnable {
             resetActivePlayersDone();
             game.rollInitAndResolveTies();
 
-            determineTurnOrder(IGame.PHASE_INITIATIVE);
+            determineTurnOrder(IGame.Phase.PHASE_INITIATIVE);
             clearReports();
             writeInitiativeReport(true);
             sendReport(true);
@@ -1427,7 +1430,7 @@ public class Server implements Runnable {
 
         // need at least one entity in the game for the lounge phase to end
         if (!game.phaseHasTurns(game.getPhase())
-                && (game.getPhase() != IGame.PHASE_LOUNGE || game
+                && (game.getPhase() != IGame.Phase.PHASE_LOUNGE || game
                         .getNoOfEntities() > 0)) {
             endCurrentPhase();
         }
@@ -1453,7 +1456,7 @@ public class Server implements Runnable {
         boolean infMoved = entityUsed instanceof Infantry;
         boolean infMoveMulti = game.getOptions()
                 .booleanOption("inf_move_multi")
-                && (game.getPhase() == IGame.PHASE_MOVEMENT || game.getPhase() == IGame.PHASE_INITIATIVE);
+                && (game.getPhase() == IGame.Phase.PHASE_MOVEMENT || game.getPhase() == IGame.Phase.PHASE_INITIATIVE);
         boolean protosMoved = entityUsed instanceof Protomech;
         boolean protosMoveMulti = game.getOptions().booleanOption(
                 "protos_move_multi");
@@ -1470,7 +1473,7 @@ public class Server implements Runnable {
 
         // If a proto declared fire and protos don't move
         // multi, ignore whether infantry move or not.
-        else if (protosMoved && game.getPhase() == IGame.PHASE_FIRING) {
+        else if (protosMoved && game.getPhase() == IGame.Phase.PHASE_FIRING) {
             multiMask = 0;
         }
 
@@ -1557,7 +1560,7 @@ public class Server implements Runnable {
      * 
      * @param phase the <code>int</code> id of the phase to change to
      */
-    private void changePhase(int phase) {
+    private void changePhase(IGame.Phase phase) {
         game.setLastPhase(game.getPhase());
         game.setPhase(phase);
 
@@ -1566,7 +1569,7 @@ public class Server implements Runnable {
 
         if (isPhasePlayable(phase)) {
             // tell the players about the new phase
-            send(new Packet(Packet.COMMAND_PHASE_CHANGE, new Integer(phase)));
+            send(new Packet(Packet.COMMAND_PHASE_CHANGE, phase));
 
             // post phase change stuff
             executePhase(phase);
@@ -1582,16 +1585,16 @@ public class Server implements Runnable {
      * 
      * @param phase the <code>int</code> id of the phase to prepare for
      */
-    private void prepareForPhase(int phase) {
+    private void prepareForPhase(IGame.Phase phase) {
         switch (phase) {
-            case IGame.PHASE_LOUNGE:
+            case PHASE_LOUNGE:
                 clearReports();
                 mapSettings.setBoardsAvailableVector(scanForBoards(mapSettings
                         .getBoardWidth(), mapSettings.getBoardHeight()));
                 mapSettings.setNullBoards(DEFAULT_BOARD);
                 send(createMapSettingsPacket());
                 break;
-            case IGame.PHASE_INITIATIVE:
+            case PHASE_INITIATIVE:
                 // remove the last traces of last round
                 game.resetActions();
                 game.resetTagInfo();
@@ -1612,7 +1615,7 @@ public class Server implements Runnable {
                 System.out.println("Round " + game.getRoundCount()
                         + " memory usage: " + MegaMek.getMemoryUsed());
                 break;
-            case IGame.PHASE_DEPLOY_MINEFIELDS:
+            case PHASE_DEPLOY_MINEFIELDS:
                 checkForObservers();
                 resetActivePlayersDone();
                 setIneligible(phase);
@@ -1632,7 +1635,7 @@ public class Server implements Runnable {
                 // send turns to all players
                 send(createTurnVectorPacket());
                 break;
-            case IGame.PHASE_SET_ARTYAUTOHITHEXES:
+            case PHASE_SET_ARTYAUTOHITHEXES:
                 // place off board entities actually off-board
                 Enumeration<Entity> entities = game.getEntities();
                 while (entities.hasMoreElements()) {
@@ -1678,12 +1681,12 @@ public class Server implements Runnable {
                 // send turns to all players
                 send(createTurnVectorPacket());
                 break;
-            case IGame.PHASE_MOVEMENT:
-            case IGame.PHASE_DEPLOYMENT:
-            case IGame.PHASE_FIRING:
-            case IGame.PHASE_PHYSICAL:
-            case IGame.PHASE_TARGETING:
-            case IGame.PHASE_OFFBOARD:
+            case PHASE_MOVEMENT:
+            case PHASE_DEPLOYMENT:
+            case PHASE_FIRING:
+            case PHASE_PHYSICAL:
+            case PHASE_TARGETING:
+            case PHASE_OFFBOARD:
                 resetEntityPhase(phase);
                 checkForObservers();
                 setIneligible(phase);
@@ -1694,7 +1697,7 @@ public class Server implements Runnable {
                 clearReports();
                 doTryUnstuck();
                 break;
-            case IGame.PHASE_END:
+            case PHASE_END:
                 resetEntityPhase(phase);
                 clearReports();
                 resolveHeat();
@@ -1718,7 +1721,7 @@ public class Server implements Runnable {
                 checkForObservers();
                 entityAllUpdate();
                 break;
-            case IGame.PHASE_INITIATIVE_REPORT:
+            case PHASE_INITIATIVE_REPORT:
                 autoSave();
                 // Show player BVs
                 Enumeration<Player> players2 = game.getPlayers();
@@ -1736,18 +1739,18 @@ public class Server implements Runnable {
                     r.add(player.getInitialBV());
                     addReport(r);
                 }
-            case IGame.PHASE_TARGETING_REPORT:
-            case IGame.PHASE_MOVEMENT_REPORT:
-            case IGame.PHASE_OFFBOARD_REPORT:
-            case IGame.PHASE_FIRING_REPORT:
-            case IGame.PHASE_PHYSICAL_REPORT:
-            case IGame.PHASE_END_REPORT:
+            case PHASE_TARGETING_REPORT:
+            case PHASE_MOVEMENT_REPORT:
+            case PHASE_OFFBOARD_REPORT:
+            case PHASE_FIRING_REPORT:
+            case PHASE_PHYSICAL_REPORT:
+            case PHASE_END_REPORT:
                 resetActivePlayersDone();
                 sendReport();
                 if (game.getOptions().booleanOption("paranoid_autosave"))
                     autoSave();
                 break;
-            case IGame.PHASE_VICTORY:
+            case PHASE_VICTORY:
                 resetPlayersDone();
                 clearReports();
                 prepareVictoryReport();
@@ -1762,20 +1765,20 @@ public class Server implements Runnable {
     /**
      * Should we play this phase or skip it?
      */
-    private boolean isPhasePlayable(int phase) {
+    private boolean isPhasePlayable(IGame.Phase phase) {
         switch (phase) {
-            case IGame.PHASE_INITIATIVE:
-            case IGame.PHASE_END:
+            case PHASE_INITIATIVE:
+            case PHASE_END:
                 return false;
-            case IGame.PHASE_SET_ARTYAUTOHITHEXES:
-            case IGame.PHASE_DEPLOY_MINEFIELDS:
-            case IGame.PHASE_DEPLOYMENT:
-            case IGame.PHASE_MOVEMENT:
-            case IGame.PHASE_FIRING:
-            case IGame.PHASE_PHYSICAL:
-            case IGame.PHASE_TARGETING:
+            case PHASE_SET_ARTYAUTOHITHEXES:
+            case PHASE_DEPLOY_MINEFIELDS:
+            case PHASE_DEPLOYMENT:
+            case PHASE_MOVEMENT:
+            case PHASE_FIRING:
+            case PHASE_PHYSICAL:
+            case PHASE_TARGETING:
                 return game.hasMoreTurns();
-            case IGame.PHASE_OFFBOARD:
+            case PHASE_OFFBOARD:
                 return isOffboardPlayable();
             default:
                 return true;
@@ -1828,9 +1831,9 @@ public class Server implements Runnable {
      * Do anything we seed to start the new phase, such as give a turn to the
      * first player to play.
      */
-    private void executePhase(int phase) {
+    private void executePhase(IGame.Phase phase) {
         switch (phase) {
-            case IGame.PHASE_EXCHANGE:
+            case PHASE_EXCHANGE:
                 resetPlayersDone();
                 calculatePlayerBVs();
                 // Build teams vector
@@ -1848,16 +1851,16 @@ public class Server implements Runnable {
                 // transmit the board to everybody
                 send(createBoardPacket());
                 break;
-            case IGame.PHASE_MOVEMENT:
+            case PHASE_MOVEMENT:
                 // write Movement Phase header to report
                 addReport(new Report(2000, Report.PUBLIC));
-            case IGame.PHASE_SET_ARTYAUTOHITHEXES:
-            case IGame.PHASE_DEPLOY_MINEFIELDS:
-            case IGame.PHASE_DEPLOYMENT:
-            case IGame.PHASE_FIRING:
-            case IGame.PHASE_PHYSICAL:
-            case IGame.PHASE_TARGETING:
-            case IGame.PHASE_OFFBOARD:
+            case PHASE_SET_ARTYAUTOHITHEXES:
+            case PHASE_DEPLOY_MINEFIELDS:
+            case PHASE_DEPLOYMENT:
+            case PHASE_FIRING:
+            case PHASE_PHYSICAL:
+            case PHASE_TARGETING:
+            case PHASE_OFFBOARD:
                 changeToNextTurn();
                 if (game.getOptions().booleanOption("paranoid_autosave"))
                     autoSave();
@@ -1879,34 +1882,35 @@ public class Server implements Runnable {
      */
     private void endCurrentPhase() {
         switch (game.getPhase()) {
-            case IGame.PHASE_LOUNGE:
-                changePhase(IGame.PHASE_EXCHANGE);
+            case PHASE_LOUNGE:
+                changePhase(IGame.Phase.PHASE_EXCHANGE);
                 break;
-            case IGame.PHASE_EXCHANGE:
-                changePhase(IGame.PHASE_SET_ARTYAUTOHITHEXES);
+            case PHASE_EXCHANGE:
+                changePhase(IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES);
                 break;
-            case IGame.PHASE_STARTING_SCENARIO:
-                changePhase(IGame.PHASE_SET_ARTYAUTOHITHEXES);
+            case PHASE_STARTING_SCENARIO:
+                changePhase(IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES);
                 break;
-            case IGame.PHASE_SET_ARTYAUTOHITHEXES:
+            case PHASE_SET_ARTYAUTOHITHEXES:
+                sendSpecialHexDisplayPackets();
                 Enumeration<Player> e = game.getPlayers();
                 boolean mines = false;
-                while (e.hasMoreElements()) {
+                while (e.hasMoreElements() && !mines) {
                     Player p = e.nextElement();
                     if (p.hasMinefields()) {
                         mines = true;
                     }
                 }
                 if (mines) {
-                    changePhase(IGame.PHASE_DEPLOY_MINEFIELDS);
+                    changePhase(IGame.Phase.PHASE_DEPLOY_MINEFIELDS);
                 } else {
-                    changePhase(IGame.PHASE_INITIATIVE);
+                    changePhase(IGame.Phase.PHASE_INITIATIVE);
                 }
                 break;
-            case IGame.PHASE_DEPLOY_MINEFIELDS:
-                changePhase(IGame.PHASE_INITIATIVE);
+            case PHASE_DEPLOY_MINEFIELDS:
+                changePhase(IGame.Phase.PHASE_INITIATIVE);
                 break;
-            case IGame.PHASE_DEPLOYMENT:
+            case PHASE_DEPLOYMENT:
                 game.clearDeploymentThisRound();
                 game.checkForCompleteDeployment();
                 Enumeration<Player> pls = game.getPlayers();
@@ -1916,25 +1920,25 @@ public class Server implements Runnable {
                 }
 
                 if (game.getRoundCount() < 1) {
-                    changePhase(IGame.PHASE_INITIATIVE);
+                    changePhase(IGame.Phase.PHASE_INITIATIVE);
                 } else {
-                    changePhase(IGame.PHASE_TARGETING);
+                    changePhase(IGame.Phase.PHASE_TARGETING);
                 }
                 break;
-            case IGame.PHASE_INITIATIVE:
+            case PHASE_INITIATIVE:
                 game.addReports(vPhaseReport);
-                changePhase(IGame.PHASE_INITIATIVE_REPORT);
+                changePhase(IGame.Phase.PHASE_INITIATIVE_REPORT);
                 break;
-            case IGame.PHASE_INITIATIVE_REPORT:
+            case PHASE_INITIATIVE_REPORT:
                 // boolean doDeploy = game.shouldDeployThisRound() &&
-                // (game.getLastPhase() != IGame.PHASE_DEPLOYMENT);
+                // (game.getLastPhase() != IGame.Phase.PHASE_DEPLOYMENT);
                 if (game.shouldDeployThisRound()) {
-                    changePhase(IGame.PHASE_DEPLOYMENT);
+                    changePhase(IGame.Phase.PHASE_DEPLOYMENT);
                 } else {
-                    changePhase(IGame.PHASE_TARGETING);
+                    changePhase(IGame.Phase.PHASE_TARGETING);
                 }
                 break;
-            case IGame.PHASE_MOVEMENT:
+            case PHASE_MOVEMENT:
                 doAllAssaultDrops();
                 addMovementHeat();
                 applyBuildingDamage();
@@ -1944,19 +1948,19 @@ public class Server implements Runnable {
                 // check phase report
                 if (vPhaseReport.size() > 1) {
                     game.addReports(vPhaseReport);
-                    changePhase(IGame.PHASE_MOVEMENT_REPORT);
+                    changePhase(IGame.Phase.PHASE_MOVEMENT_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label
                     addReport(new Report(1205, Report.PUBLIC));
                     game.addReports(vPhaseReport);
                     sendReport();
-                    changePhase(IGame.PHASE_OFFBOARD);
+                    changePhase(IGame.Phase.PHASE_OFFBOARD);
                 }
                 break;
-            case IGame.PHASE_MOVEMENT_REPORT:
-                changePhase(IGame.PHASE_OFFBOARD);
+            case PHASE_MOVEMENT_REPORT:
+                changePhase(IGame.Phase.PHASE_OFFBOARD);
                 break;
-            case IGame.PHASE_FIRING:
+            case PHASE_FIRING:
                 resolveAllButWeaponAttacks();
                 resolveOnlyWeaponAttacks();
                 assignAMS();
@@ -1967,19 +1971,19 @@ public class Server implements Runnable {
                 // check phase report
                 if (vPhaseReport.size() > 1) {
                     game.addReports(vPhaseReport);
-                    changePhase(IGame.PHASE_FIRING_REPORT);
+                    changePhase(IGame.Phase.PHASE_FIRING_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label
                     addReport(new Report(1205, Report.PUBLIC));
                     sendReport();
                     game.addReports(vPhaseReport);
-                    changePhase(IGame.PHASE_PHYSICAL);
+                    changePhase(IGame.Phase.PHASE_PHYSICAL);
                 }
                 break;
-            case IGame.PHASE_FIRING_REPORT:
-                changePhase(IGame.PHASE_PHYSICAL);
+            case PHASE_FIRING_REPORT:
+                changePhase(IGame.Phase.PHASE_PHYSICAL);
                 break;
-            case IGame.PHASE_PHYSICAL:
+            case PHASE_PHYSICAL:
                 resolvePhysicalAttacks();
                 applyBuildingDamage();
                 checkFor20Damage();
@@ -1988,35 +1992,38 @@ public class Server implements Runnable {
                 // check phase report
                 if (vPhaseReport.size() > 1) {
                     game.addReports(vPhaseReport);
-                    changePhase(IGame.PHASE_PHYSICAL_REPORT);
+                    changePhase(IGame.Phase.PHASE_PHYSICAL_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label
                     addReport(new Report(1205, Report.PUBLIC));
                     game.addReports(vPhaseReport);
                     sendReport();
-                    changePhase(IGame.PHASE_END);
+                    changePhase(IGame.Phase.PHASE_END);
                 }
                 break;
-            case IGame.PHASE_PHYSICAL_REPORT:
-                changePhase(IGame.PHASE_END);
+            case PHASE_PHYSICAL_REPORT:
+                changePhase(IGame.Phase.PHASE_END);
                 break;
-            case IGame.PHASE_TARGETING:
+            case PHASE_TARGETING:
                 vPhaseReport.addElement(new Report(1035, Report.PUBLIC));
                 resolveOnlyWeaponAttacks();
                 handleAttacks();
                 // check reports
                 if (vPhaseReport.size() > 1) {
                     game.addReports(vPhaseReport);
-                    changePhase(IGame.PHASE_TARGETING_REPORT);
+                    changePhase(IGame.Phase.PHASE_TARGETING_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label
                     vPhaseReport.addElement(new Report(1205, Report.PUBLIC));
                     game.addReports(vPhaseReport);
                     sendReport();
-                    changePhase(IGame.PHASE_MOVEMENT);
+                    changePhase(IGame.Phase.PHASE_MOVEMENT);
                 }
+                
+                sendSpecialHexDisplayPackets();
+                
                 break;
-            case IGame.PHASE_OFFBOARD:
+            case PHASE_OFFBOARD:
                 // write Offboard Attack Phase header
                 addReport(new Report(1100, Report.PUBLIC));
                 resolveAllButWeaponAttacks(); // torso twist or flip arms
@@ -2033,38 +2040,39 @@ public class Server implements Runnable {
                 checkFor20Damage();
                 resolvePilotingRolls();
 
-                send(createSpecialHexDisplayPacket());
+                sendSpecialHexDisplayPackets();
 
                 // check reports
                 if (vPhaseReport.size() > 1) {
                     game.addReports(vPhaseReport);
-                    changePhase(IGame.PHASE_OFFBOARD_REPORT);
+                    changePhase(IGame.Phase.PHASE_OFFBOARD_REPORT);
                 } else {
                     // just the header, so we'll add the <nothing> label
                     addReport(new Report(1205, Report.PUBLIC));
                     game.addReports(vPhaseReport);
                     sendReport();
-                    changePhase(IGame.PHASE_FIRING);
+                    changePhase(IGame.Phase.PHASE_FIRING);
                 }
                 break;
-            case IGame.PHASE_OFFBOARD_REPORT:
-                changePhase(IGame.PHASE_FIRING);
+            case PHASE_OFFBOARD_REPORT:
+                sendSpecialHexDisplayPackets();
+                changePhase(IGame.Phase.PHASE_FIRING);
                 break;
-            case IGame.PHASE_TARGETING_REPORT:
-                changePhase(IGame.PHASE_MOVEMENT);
+            case PHASE_TARGETING_REPORT:
+                changePhase(IGame.Phase.PHASE_MOVEMENT);
                 break;
-            case IGame.PHASE_END:
+            case PHASE_END:
                 // remove any entities that died in the heat/end phase before
                 // check
                 // for victory
-                resetEntityPhase(IGame.PHASE_END);
+                resetEntityPhase(IGame.Phase.PHASE_END);
                 boolean victory = victory(); // note this may add reports
                 // check phase report
                 // HACK: hardcoded message ID check
                 if (vPhaseReport.size() > 3
                         || vPhaseReport.elementAt(1).messageId != 1205) {
                     game.addReports(vPhaseReport);
-                    changePhase(IGame.PHASE_END_REPORT);
+                    changePhase(IGame.Phase.PHASE_END_REPORT);
                 } else {
                     // just the heat and end headers, so we'll add
                     // the <nothing> label
@@ -2072,22 +2080,36 @@ public class Server implements Runnable {
                     game.addReports(vPhaseReport);
                     sendReport();
                     if (victory) {
-                        changePhase(IGame.PHASE_VICTORY);
+                        changePhase(IGame.Phase.PHASE_VICTORY);
                     } else {
-                        changePhase(IGame.PHASE_INITIATIVE);
+                        changePhase(IGame.Phase.PHASE_INITIATIVE);
                     }
                 }
                 break;
-            case IGame.PHASE_END_REPORT:
+            case PHASE_END_REPORT:
                 if (victory()) {
-                    changePhase(IGame.PHASE_VICTORY);
+                    changePhase(IGame.Phase.PHASE_VICTORY);
                 } else {
-                    changePhase(IGame.PHASE_INITIATIVE);
+                    changePhase(IGame.Phase.PHASE_INITIATIVE);
                 }
                 break;
-            case IGame.PHASE_VICTORY:
+            case PHASE_VICTORY:
                 resetGame();
                 break;
+        }
+    }
+
+    /**
+     * 
+     */
+    private void sendSpecialHexDisplayPackets() {
+        if (connections == null) {
+            return;
+        }
+        for (int i = 0; i < connections.size(); i++) {
+            if(connections.get(i) != null) {
+                connections.get(i).send(createSpecialHexDisplayPacket(i));
+            }
         }
     }
 
@@ -2128,8 +2150,8 @@ public class Server implements Runnable {
             sendGhostSkipMessage(player);
         } else if (null == game.getFirstEntity()
                 && null != player
-                && (game.getPhase() != IGame.PHASE_DEPLOY_MINEFIELDS && game
-                        .getPhase() != IGame.PHASE_SET_ARTYAUTOHITHEXES)) {
+                && (game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS && game
+                        .getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES)) {
             sendTurnErrorSkipMessage(player);
         }
     }
@@ -2177,21 +2199,21 @@ public class Server implements Runnable {
         Entity toSkip = game.getFirstEntity();
 
         switch (game.getPhase()) {
-            case IGame.PHASE_DEPLOYMENT:
+            case PHASE_DEPLOYMENT:
                 // allow skipping during deployment,
                 // we need that when someone removes a unit.
                 endCurrentTurn(null);
                 break;
-            case IGame.PHASE_MOVEMENT:
+            case PHASE_MOVEMENT:
                 if (toSkip != null) {
                     processMovement(toSkip, new MovePath(game, toSkip));
                 }
                 endCurrentTurn(toSkip);
                 break;
-            case IGame.PHASE_FIRING:
-            case IGame.PHASE_PHYSICAL:
-            case IGame.PHASE_TARGETING:
-            case IGame.PHASE_OFFBOARD:
+            case PHASE_FIRING:
+            case PHASE_PHYSICAL:
+            case PHASE_TARGETING:
+            case PHASE_OFFBOARD:
                 if (toSkip != null) {
                     processAttack(toSkip, new Vector<EntityAction>(0));
                 }
@@ -2317,7 +2339,7 @@ public class Server implements Runnable {
      * 
      * @param phase the <code>int</code> id of the phase
      */
-    private void determineTurnOrderIUI(int phase) {
+    private void determineTurnOrderIUI(IGame.Phase phase) {
         for (Enumeration<Entity> loop = game.getEntities(); loop
                 .hasMoreElements();) {
             final Entity entity = loop.nextElement();
@@ -2344,7 +2366,7 @@ public class Server implements Runnable {
         Vector<GameTurn> turns;
 
         if (strandedUnits.hasMoreElements()
-                && game.getPhase() == IGame.PHASE_MOVEMENT) {
+                && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
             // Add a game turn to unload stranded units, if this
             // is the movement phase.
             turns = new Vector<GameTurn>(team_order.getNormalTurns()
@@ -2377,7 +2399,7 @@ public class Server implements Runnable {
      * 
      * @param phase the <code>int</code> id of the phase
      */
-    private void determineTurnOrder(int phase) {
+    private void determineTurnOrder(IGame.Phase phase) {
 
         if (game.getOptions().booleanOption("individual_initiative")) {
             determineTurnOrderIUI(phase);
@@ -2385,20 +2407,20 @@ public class Server implements Runnable {
         }
         // and/or deploy even according to game options.
         boolean infMoveEven = game.getOptions().booleanOption("inf_move_even")
-                && (game.getPhase() == IGame.PHASE_INITIATIVE || game
-                        .getPhase() == IGame.PHASE_MOVEMENT)
+                && (game.getPhase() == IGame.Phase.PHASE_INITIATIVE || game
+                        .getPhase() == IGame.Phase.PHASE_MOVEMENT)
                 || game.getOptions().booleanOption("inf_deploy_even")
-                && game.getPhase() == IGame.PHASE_DEPLOYMENT;
+                && game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT;
         boolean infMoveMulti = game.getOptions()
                 .booleanOption("inf_move_multi")
-                && (game.getPhase() == IGame.PHASE_INITIATIVE || game
-                        .getPhase() == IGame.PHASE_MOVEMENT);
+                && (game.getPhase() == IGame.Phase.PHASE_INITIATIVE || game
+                        .getPhase() == IGame.Phase.PHASE_MOVEMENT);
         boolean protosMoveEven = game.getOptions().booleanOption(
                 "protos_move_even")
-                && (game.getPhase() == IGame.PHASE_INITIATIVE || game
-                        .getPhase() == IGame.PHASE_MOVEMENT)
+                && (game.getPhase() == IGame.Phase.PHASE_INITIATIVE || game
+                        .getPhase() == IGame.Phase.PHASE_MOVEMENT)
                 || game.getOptions().booleanOption("protos_deploy_even")
-                && game.getPhase() == IGame.PHASE_DEPLOYMENT;
+                && game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT;
         boolean protosMoveMulti = game.getOptions().booleanOption(
                 "protos_move_multi");
         boolean protosMoveByPoint = !protosMoveMulti;
@@ -2524,7 +2546,7 @@ public class Server implements Runnable {
         Vector<GameTurn> turns;
 
         if (strandedUnits.hasMoreElements()
-                && game.getPhase() == IGame.PHASE_MOVEMENT) {
+                && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
             // Add a game turn to unload stranded units, if this
             // is the movement phase.
             turns = new Vector<GameTurn>(team_order.getNormalTurns()
@@ -2642,7 +2664,7 @@ public class Server implements Runnable {
         if (!abbreviatedReport) {
             r = new Report(1210);
             r.type = Report.PUBLIC;
-            if (game.getLastPhase() == IGame.PHASE_DEPLOYMENT
+            if (game.getLastPhase() == IGame.Phase.PHASE_DEPLOYMENT
                     || game.isDeploymentComplete()
                     || !game.shouldDeployThisRound()) {
                 r.messageId = 1000;
@@ -2766,7 +2788,7 @@ public class Server implements Runnable {
                     r = new Report(1021, Report.PUBLIC);
                     if ((game.getOptions().booleanOption("inf_deploy_even") || game
                             .getOptions().booleanOption("protos_deploy_even"))
-                            && !(game.getLastPhase() == IGame.PHASE_END_REPORT))
+                            && !(game.getLastPhase() == IGame.Phase.PHASE_END_REPORT))
                         r.choose(true);
                     else
                         r.choose(false);
@@ -2799,7 +2821,7 @@ public class Server implements Runnable {
     /**
      * Marks ineligible entities as not ready for this phase
      */
-    private void setIneligible(int phase) {
+    private void setIneligible(IGame.Phase phase) {
         Vector<Entity> assistants = new Vector<Entity>();
         boolean assistable = false;
         for (Entity entity : game.getEntitiesVector()) {
@@ -3062,7 +3084,7 @@ public class Server implements Runnable {
         MovePath md = (MovePath) packet.getObject(1);
 
         // is this the right phase?
-        if (game.getPhase() != IGame.PHASE_MOVEMENT) {
+        if (game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
             System.err
                     .println("error: server got movement packet in wrong phase");
             return;
@@ -6607,7 +6629,7 @@ public class Server implements Runnable {
         }
 
         // is this the right phase?
-        if (game.getPhase() != IGame.PHASE_DEPLOYMENT) {
+        if (game.getPhase() != IGame.Phase.PHASE_DEPLOYMENT) {
             System.err
                     .println("error: server got deployment packet in wrong phase");
             return;
@@ -6724,12 +6746,23 @@ public class Server implements Runnable {
         int playerId = artyAutoHitHexes.getPlayerID();
 
         // is this the right phase?
-        if (game.getPhase() != IGame.PHASE_SET_ARTYAUTOHITHEXES) {
+        if (game.getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
             System.err
                     .println("error: server got set artyautohithexespacket in wrong phase");
             return;
         }
         game.getPlayer(playerId).setArtyAutoHitHexes(artyAutoHitHexes);
+        
+        for(Coords coord : artyAutoHitHexes) {
+            game.getBoard().addSpecialHexDisplay(coord,
+                    new SpecialHexDisplay(
+                            SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
+                            SpecialHexDisplay.NO_ROUND,
+                            playerId,
+                            "ArtyAutoHit Hex, better text later"
+                    )
+            );
+        }
         endCurrentTurn(null);
     }
 
@@ -6744,7 +6777,7 @@ public class Server implements Runnable {
         Vector<Minefield> minefields = (Vector<Minefield>) packet.getObject(0);
 
         // is this the right phase?
-        if (game.getPhase() != IGame.PHASE_DEPLOY_MINEFIELDS) {
+        if (game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
             System.err
                     .println("error: server got deploy minefields packet in wrong phase");
             return;
@@ -6811,10 +6844,10 @@ public class Server implements Runnable {
                 .getObject(1);
 
         // is this the right phase?
-        if (game.getPhase() != IGame.PHASE_FIRING
-                && game.getPhase() != IGame.PHASE_PHYSICAL
-                && game.getPhase() != IGame.PHASE_TARGETING
-                && game.getPhase() != IGame.PHASE_OFFBOARD) {
+        if (game.getPhase() != IGame.Phase.PHASE_FIRING
+                && game.getPhase() != IGame.Phase.PHASE_PHYSICAL
+                && game.getPhase() != IGame.Phase.PHASE_TARGETING
+                && game.getPhase() != IGame.Phase.PHASE_OFFBOARD) {
             System.err
                     .println("error: server got attack packet in wrong phase");
             return;
@@ -7042,7 +7075,7 @@ public class Server implements Runnable {
      * weapons fire that happens. Torso twists, for example.
      */
     private void resolveAllButWeaponAttacks() {
-        if (game.getPhase() == IGame.PHASE_FIRING) {
+        if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
             // Phase report header
             addReport(new Report(3000, Report.PUBLIC));
             Report r;
@@ -15914,7 +15947,7 @@ public class Server implements Runnable {
      */
     private boolean doBlind() {
         return game.getOptions().booleanOption("double_blind")
-                && game.getPhase() >= IGame.PHASE_DEPLOYMENT;
+                && game.getPhase().isDuringOrAfter(IGame.Phase.PHASE_DEPLOYMENT);
     }
 
     /**
@@ -16431,7 +16464,7 @@ public class Server implements Runnable {
             game.setEntity(entity.getId(), entity);
             entityUpdate(entity.getId());
             // In the chat lounge, notify players of customizing of unit
-            if (game.getPhase() == IGame.PHASE_LOUNGE) {
+            if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
                 StringBuffer message = new StringBuffer();
                 message.append("Unit ");
                 if (game.getOptions().booleanOption("blind_drop")
@@ -16455,7 +16488,7 @@ public class Server implements Runnable {
 
     private void receiveCustomInit(Packet c, int connIndex) {
         // In the chat lounge, notify players of customizing of unit
-        if (game.getPhase() == IGame.PHASE_LOUNGE) {
+        if (game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
             Player p = (Player) c.getObject(0);
             sendServerChat("" + p.getName() + " has customized initiative.");
         }
@@ -16675,7 +16708,7 @@ public class Server implements Runnable {
 
     private void receiveInitiativeRerollRequest(Packet pkt, int connIndex) {
         Player player = getPlayer(connIndex);
-        if (IGame.PHASE_INITIATIVE_REPORT != game.getPhase()) {
+        if (IGame.Phase.PHASE_INITIATIVE_REPORT != game.getPhase()) {
             StringBuffer message = new StringBuffer();
             if (null == player) {
                 message.append("Player #").append(connIndex);
@@ -17104,9 +17137,24 @@ public class Server implements Runnable {
     /**
      * 
      */
-    private Packet createSpecialHexDisplayPacket() {
-        return new Packet(Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, game
-                .getBoard().getSpecialHexDisplayTable());
+    private Packet createSpecialHexDisplayPacket(int toPlayer) {
+        Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable = game.getBoard().getSpecialHexDisplayTable();
+        Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable2 = new Hashtable<Coords, Collection<SpecialHexDisplay>>();
+        LinkedList<SpecialHexDisplay> tempList = null;
+        
+        for(Coords coord : shdTable.keySet()) {
+            tempList = new LinkedList<SpecialHexDisplay>();
+            for(SpecialHexDisplay shd : shdTable.get(coord)) {
+                if(!shd.isObscured() || shd.isOwner(toPlayer)) {
+                    tempList.push(shd);
+                }
+            }
+            if(!tempList.isEmpty()) {
+                shdTable2.put(coord, tempList);
+            }
+        }
+        
+        return new Packet(Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
     }
 
     /**
@@ -18162,7 +18210,7 @@ public class Server implements Runnable {
         Entity entity = null;
 
         // Is this the right phase?
-        if (game.getPhase() != IGame.PHASE_MOVEMENT) {
+        if (game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
             System.err
                     .println("error: server got unload stranded packet in wrong phase");
             return;
@@ -19066,7 +19114,7 @@ public class Server implements Runnable {
      * let all Entities make their "break-free-of-swamp-stickyness" PSR
      */
     private void doTryUnstuck() {
-        if (game.getPhase() != IGame.PHASE_MOVEMENT)
+        if (game.getPhase() != IGame.Phase.PHASE_MOVEMENT)
             return;
 
         Report r;

@@ -409,7 +409,7 @@ public class MiniMap extends Canvas {
 
             // draw Drop Zone
             if (null != m_client && null != m_game) { // sanity check!
-                if (IGame.PHASE_DEPLOYMENT == m_game.getPhase()) {
+                if (IGame.Phase.PHASE_DEPLOYMENT == m_game.getPhase()) {
                     GameTurn turn = m_game.getTurn();
                     if (turn != null
                             && turn.getPlayerNum() == m_client.getLocalPlayer()
@@ -429,8 +429,8 @@ public class MiniMap extends Canvas {
             }
 
             // draw declared fire
-            if (IGame.PHASE_FIRING == m_game.getPhase()
-                    || IGame.PHASE_PHYSICAL == m_game.getPhase()) {
+            if (IGame.Phase.PHASE_FIRING == m_game.getPhase()
+                    || IGame.Phase.PHASE_PHYSICAL == m_game.getPhase()) {
                 for (Enumeration<EntityAction> iter = m_game.getActions(); iter
                         .hasMoreElements();) {
                     EntityAction action = iter.nextElement();

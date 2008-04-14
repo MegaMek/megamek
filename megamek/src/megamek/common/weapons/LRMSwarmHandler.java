@@ -57,7 +57,7 @@ public class LRMSwarmHandler extends LRMHandler {
      * 
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
-    public boolean handle(int phase, Vector<Report> vPhaseReport) {
+    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
         }
@@ -274,7 +274,7 @@ public class LRMSwarmHandler extends LRMHandler {
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg,
-            Vector<Report> vPhaseReport, int phase) {
+            Vector<Report> vPhaseReport, IGame.Phase phase) {
         super.handleSpecialMiss(entityTarget, targetInBuilding, bldg,
                 vPhaseReport);
         int swarmMissilesNowLeft = waa.getSwarmMissiles();

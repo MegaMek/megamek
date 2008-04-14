@@ -366,38 +366,38 @@ public class Client implements IClientCommandHandler {
     /**
      * Changes the game phase, and the displays that go along with it.
      */
-    public void changePhase(int phase) {
+    public void changePhase(IGame.Phase phase) {
         game.setPhase(phase);
         // Handle phase-specific items.
         switch (phase) {
-            case IGame.PHASE_STARTING_SCENARIO:
+            case PHASE_STARTING_SCENARIO:
                 sendDone(true);
                 break;
-            case IGame.PHASE_EXCHANGE:
+            case PHASE_EXCHANGE:
                 sendDone(true);
                 break;
-            case IGame.PHASE_DEPLOYMENT:
+            case PHASE_DEPLOYMENT:
                 // free some memory thats only needed in lounge
                 MechSummaryCache.dispose();
                 MechFileParser.dispose();
                 memDump("entering deployment phase"); //$NON-NLS-1$
                 break;
-            case IGame.PHASE_TARGETING:
+            case PHASE_TARGETING:
                 memDump("entering targeting phase"); //$NON-NLS-1$
                 break;
-            case IGame.PHASE_MOVEMENT:
+            case PHASE_MOVEMENT:
                 memDump("entering movement phase"); //$NON-NLS-1$
                 break;
-            case IGame.PHASE_OFFBOARD:
+            case PHASE_OFFBOARD:
                 memDump("entering offboard phase"); //$NON-NLS-1$
                 break;
-            case IGame.PHASE_FIRING:
+            case PHASE_FIRING:
                 memDump("entering firing phase"); //$NON-NLS-1$
                 break;
-            case IGame.PHASE_PHYSICAL:
+            case PHASE_PHYSICAL:
                 memDump("entering physical phase"); //$NON-NLS-1$
                 break;
-            case IGame.PHASE_LOUNGE:
+            case PHASE_LOUNGE:
                 MechSummaryCache.getInstance();
                 duplicateNameHash.clear(); // reset this
                 break;
@@ -1011,7 +1011,7 @@ public class Client implements IClientCommandHandler {
                 receiveBuildingCollapse(c);
                 break;
             case Packet.COMMAND_PHASE_CHANGE:
-                changePhase(c.getIntValue(0));
+                changePhase((IGame.Phase) c.getObject(0));
                 break;
             case Packet.COMMAND_TURN:
                 changeTurnIndex(c.getIntValue(0));
@@ -1123,7 +1123,7 @@ public class Client implements IClientCommandHandler {
                 game.getBoard().setSpecialHexDisplayTable(
                         (Hashtable<Coords, Collection<SpecialHexDisplay>>) c
                                 .getObject(0));
-                System.err.println("Specials updated");
+                //System.err.println("Specials updated");
                 break;
         }
     }

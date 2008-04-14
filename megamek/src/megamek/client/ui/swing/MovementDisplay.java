@@ -654,7 +654,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         // end my turn, then.
         disableButtons();
         Entity next = client.game.getNextEntity(client.game.getTurnIndex());
-        if (IGame.PHASE_MOVEMENT == client.game.getPhase() && null != next
+        if (IGame.Phase.PHASE_MOVEMENT == client.game.getPhase() && null != next
                 && null != ce && next.getOwnerId() != ce.getOwnerId()) {
             clientgui.setDisplayVisible(false);
         }
@@ -1557,7 +1557,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (isIgnoringEvents()) {
             return;
         }
-        if (client.game.getPhase() != IGame.PHASE_MOVEMENT) {
+        if (client.game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
             // ignore
             return;
         }
@@ -1588,10 +1588,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if (isIgnoringEvents()) {
             return;
         }
-        if (client.isMyTurn() && client.game.getPhase() != IGame.PHASE_MOVEMENT) {
+        if (client.isMyTurn() && client.game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
             endMyTurn();
         }
-        if (client.game.getPhase() == IGame.PHASE_MOVEMENT) {
+        if (client.game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
             setStatusBarText(Messages
                     .getString("MovementDisplay.waitingForMovementPhase")); //$NON-NLS-1$
         }

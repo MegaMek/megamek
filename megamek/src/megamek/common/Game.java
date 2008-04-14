@@ -100,10 +100,10 @@ public class Game implements Serializable, IGame {
     private int turnIndex = 0;
 
     /** The present phase */
-    private int phase = PHASE_UNKNOWN;
+    private Phase phase = Phase.PHASE_UNKNOWN;
 
     /** The past phase */
-    private int lastPhase = PHASE_UNKNOWN;
+    private Phase lastPhase = Phase.PHASE_UNKNOWN;
 
     // phase state
     private Vector<EntityAction> actions = new Vector<EntityAction>();
@@ -585,7 +585,7 @@ public class Game implements Serializable, IGame {
      * Returns true if this phase has turns. If false, the phase is simply
      * waiting for everybody to declare "done".
      */
-    public boolean phaseHasTurns(int thisPhase) {
+    public boolean phaseHasTurns(IGame.Phase thisPhase) {
         switch (thisPhase) {
             case PHASE_SET_ARTYAUTOHITHEXES:
             case PHASE_DEPLOY_MINEFIELDS:
@@ -644,6 +644,7 @@ public class Game implements Serializable, IGame {
 
     /** Sets the current turn index */
     public void setTurnIndex(int turnIndex) {
+        //FIXME: occasionally getTurn() returns null. Handle that case inteligently.
         this.turnIndex = turnIndex;
         processGameEvent(new GameTurnChangeEvent(this, getPlayer(getTurn()
                 .getPlayerNum())));
@@ -659,35 +660,35 @@ public class Game implements Serializable, IGame {
         this.turnVector = turnVector;
     }
 
-    public int getPhase() {
+    public Phase getPhase() {
         return phase;
     }
 
-    public void setPhase(int phase) {
-        final int oldPhase = this.phase;
+    public void setPhase(Phase phase) {
+        final Phase oldPhase = this.phase;
         this.phase = phase;
         // Handle phase-specific items.
         switch (phase) {
             case PHASE_LOUNGE:
                 reset();
                 break;
-            case IGame.PHASE_MOVEMENT:
+            case PHASE_MOVEMENT:
                 resetActions();
                 break;
-            case IGame.PHASE_FIRING:
+            case PHASE_FIRING:
                 resetActions();
                 break;
-            case IGame.PHASE_PHYSICAL:
+            case PHASE_PHYSICAL:
                 resetActions();
                 break;
-            case IGame.PHASE_INITIATIVE:
+            case PHASE_INITIATIVE:
                 resetActions();
                 resetCharges();
                 resetLayMinefieldActions();
                 break;
             // TODO Is there better solution to handle charges?
-            case IGame.PHASE_PHYSICAL_REPORT:
-            case IGame.PHASE_END:
+            case PHASE_PHYSICAL_REPORT:
+            case PHASE_END:
                 resetCharges();
                 resetLayMinefieldActions();
                 break;
@@ -697,11 +698,11 @@ public class Game implements Serializable, IGame {
         processGameEvent(new GamePhaseChangeEvent(this, oldPhase, phase));
     }
 
-    public int getLastPhase() {
+    public Phase getLastPhase() {
         return lastPhase;
     }
 
-    public void setLastPhase(int lastPhase) {
+    public void setLastPhase(Phase lastPhase) {
         this.lastPhase = lastPhase;
     }
 
@@ -1739,7 +1740,7 @@ public class Game implements Serializable, IGame {
         // A turn only needs to be removed when going from 4 inf (2 turns) to
         // 3 inf (1 turn)
         if (getOptions().booleanOption("inf_move_multi")
-                && entity instanceof Infantry && phase == PHASE_MOVEMENT) {
+                && entity instanceof Infantry && phase == Phase.PHASE_MOVEMENT) {
             if ((getInfantryLeft(entity.getOwnerId()) % getOptions().intOption(
                     "inf_proto_move_multi")) != 1) {
                 // exception, if the _next_ turn is an infantry turn, remove
@@ -1761,7 +1762,7 @@ public class Game implements Serializable, IGame {
         }
         // Same thing but for protos
         if (getOptions().booleanOption("protos_move_multi")
-                && entity instanceof Protomech && phase == PHASE_MOVEMENT) {
+                && entity instanceof Protomech && phase == Phase.PHASE_MOVEMENT) {
             if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
                     .intOption("inf_proto_move_multi")) != 1) {
                 // exception, if the _next_ turn is an protomek turn, remove

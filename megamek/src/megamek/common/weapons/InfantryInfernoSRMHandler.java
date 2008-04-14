@@ -73,7 +73,7 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#handle(int, java.util.Vector)
      */
-    public boolean handle(int phase, Vector<Report> vPhaseReport) {
+    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
         }

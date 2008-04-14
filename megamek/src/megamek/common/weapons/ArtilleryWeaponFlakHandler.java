@@ -68,8 +68,8 @@ public class ArtilleryWeaponFlakHandler extends
      * 
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
-    public boolean cares(int phase) {
-        if (phase == IGame.PHASE_OFFBOARD || phase == IGame.PHASE_TARGETING) {
+    public boolean cares(IGame.Phase phase) {
+        if (phase == IGame.Phase.PHASE_OFFBOARD || phase == IGame.Phase.PHASE_TARGETING) {
             return true;
         }
         return false;
@@ -80,11 +80,11 @@ public class ArtilleryWeaponFlakHandler extends
      * 
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
-    public boolean handle(int phase, Vector<Report> vPhaseReport) {
+    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
         }
-        if (phase == IGame.PHASE_TARGETING) {
+        if (phase == IGame.Phase.PHASE_TARGETING) {
             ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
             if (!handledHeatAndReport) {
                 addHeat();

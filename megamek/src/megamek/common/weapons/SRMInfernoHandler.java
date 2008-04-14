@@ -85,7 +85,7 @@ public class SRMInfernoHandler extends SRMHandler {
         }
     }
 
-    public boolean handle(int phase, Vector<Report> vPhaseReport) {
+    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
         }

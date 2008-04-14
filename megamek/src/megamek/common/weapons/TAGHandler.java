@@ -123,8 +123,8 @@ public class TAGHandler extends WeaponHandler {
      * 
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
-    public boolean cares(int phase) {
-        if (phase == IGame.PHASE_OFFBOARD) {
+    public boolean cares(IGame.Phase phase) {
+        if (phase == IGame.Phase.PHASE_OFFBOARD) {
             return true;
         }
         return false;

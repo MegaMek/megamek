@@ -56,12 +56,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends
      * 
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
-    public boolean handle(int phase, Vector<Report> vPhaseReport) {
+    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
         }
         ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
-        if (phase == IGame.PHASE_TARGETING) {
+        if (phase == IGame.Phase.PHASE_TARGETING) {
             if (!handledAmmoAndReport) {
                 addHeat();
                 // Report the firing itself
@@ -88,7 +88,7 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             return true;
         }
         Entity entityTarget;
-        if (game.getPhase() == IGame.PHASE_OFFBOARD) {
+        if (game.getPhase() == IGame.Phase.PHASE_OFFBOARD) {
             convertHomingShotToEntityTarget();
             entityTarget = (aaa.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) aaa
                     .getTarget(game)

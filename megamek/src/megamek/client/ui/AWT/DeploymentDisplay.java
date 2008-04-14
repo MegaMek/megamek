@@ -304,7 +304,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         // end my turn, then.
         disableButtons();
         Entity next = client.game.getNextEntity(client.game.getTurnIndex());
-        if (IGame.PHASE_DEPLOYMENT == client.game.getPhase() && null != next
+        if (IGame.Phase.PHASE_DEPLOYMENT == client.game.getPhase() && null != next
                 && null != ce() && next.getOwnerId() != ce().getOwnerId()) {
             clientgui.setDisplayVisible(false);
         }
@@ -394,7 +394,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (client.game.getPhase() == IGame.PHASE_DEPLOYMENT) {
+        if (client.game.getPhase() == IGame.Phase.PHASE_DEPLOYMENT) {
             setStatusBarText(Messages
                     .getString("DeploymentDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         }

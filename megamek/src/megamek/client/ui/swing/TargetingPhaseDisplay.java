@@ -121,7 +121,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private boolean shiftheld;
     private boolean twisting;
 
-    private final int phase;
+    private final IGame.Phase phase;
 
     private Entity[] visibleTargets;
     private int lastTargetID = -1;
@@ -133,7 +133,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     public TargetingPhaseDisplay(ClientGUI clientgui, boolean offboard) {
         this.clientgui = clientgui;
         client = clientgui.getClient();
-        phase = offboard ? IGame.PHASE_OFFBOARD : IGame.PHASE_TARGETING;
+        phase = offboard ? IGame.Phase.PHASE_OFFBOARD : IGame.Phase.PHASE_TARGETING;
         shiftheld = false;
 
         // fire
@@ -887,7 +887,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
             if (shiftheld) {
                 updateFlipArms(false);
                 torsoTwist(b.getCoords());
-            } else if (phase == IGame.PHASE_TARGETING) {
+            } else if (phase == IGame.Phase.PHASE_TARGETING) {
                 target(new HexTarget(b.getCoords(), ce().getGame().getBoard(),
                         Targetable.TYPE_HEX_ARTILLERY));
             } else if (friendlyFire

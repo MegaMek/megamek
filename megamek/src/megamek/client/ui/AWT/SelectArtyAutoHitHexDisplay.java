@@ -33,6 +33,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.Player;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -173,6 +174,14 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
                                                 "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
             setArtyEnabled(5 - artyAutoHitHexes.size());
+            client.game.getBoard().addSpecialHexDisplay(coords,
+                    new SpecialHexDisplay(
+                            SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
+                            SpecialHexDisplay.NO_ROUND,
+                            p.getId(),
+                            "Artilery autohit, better text later"
+                    )
+            );
         }
 
     }
@@ -238,10 +247,10 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
         }
 
         if (client.isMyTurn()
-                && client.game.getPhase() != IGame.PHASE_SET_ARTYAUTOHITHEXES) {
+                && client.game.getPhase() != IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
             endMyTurn();
         }
-        if (client.game.getPhase() == IGame.PHASE_SET_ARTYAUTOHITHEXES) {
+        if (client.game.getPhase() == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES) {
             setStatusBarText(Messages
                     .getString("SelectArtyAutoHitHexDisplay.waitingMinefieldPhase")); //$NON-NLS-1$
         }

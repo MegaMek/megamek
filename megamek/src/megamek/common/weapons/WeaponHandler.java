@@ -79,8 +79,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
     /**
      * Do we care about the specified phase?
      */
-    public boolean cares(int phase) {
-        if (phase == IGame.PHASE_FIRING) {
+    public boolean cares(IGame.Phase phase) {
+        if (phase == IGame.Phase.PHASE_FIRING) {
             return true;
         }
         return false;
@@ -175,7 +175,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return a <code>boolean</code> value indicating wether this should be
      *         kept or not
      */
-    public boolean handle(int phase, Vector<Report> vPhaseReport) {
+    public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
         if (!this.cares(phase)) {
             return true;
         }

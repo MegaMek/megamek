@@ -353,10 +353,10 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
         }
 
         if (client.isMyTurn()
-                && client.game.getPhase() != IGame.PHASE_DEPLOY_MINEFIELDS) {
+                && client.game.getPhase() != IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
             endMyTurn();
         }
-        if (client.game.getPhase() == IGame.PHASE_DEPLOY_MINEFIELDS) {
+        if (client.game.getPhase() == IGame.Phase.PHASE_DEPLOY_MINEFIELDS) {
             setStatusBarText(Messages
                     .getString("DeployMinefieldDisplay.waitingForDeploymentPhase")); //$NON-NLS-1$
         }

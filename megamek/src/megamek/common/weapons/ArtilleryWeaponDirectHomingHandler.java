@@ -49,8 +49,8 @@ public class ArtilleryWeaponDirectHomingHandler extends
      * 
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
-    public boolean cares(int phase) {
-        if (phase == IGame.PHASE_FIRING) {
+    public boolean cares(IGame.Phase phase) {
+        if (phase == IGame.Phase.PHASE_FIRING) {
             return true;
         }
         return false;

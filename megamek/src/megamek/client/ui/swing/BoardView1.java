@@ -1697,7 +1697,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int mask = InputEvent.CTRL_MASK | InputEvent.ALT_MASK;
         if (!GUIPreferences.getInstance().getRightDragScroll()
                 && !GUIPreferences.getInstance().getAlwaysRightClickScroll()
-                && game.getPhase() == IGame.PHASE_FIRING) {
+                && game.getPhase() == IGame.Phase.PHASE_FIRING) {
             // In the firing phase, also disable scrolling if
             // the right or middle buttons are clicked, since
             // this means the user wants to activate the
@@ -3662,16 +3662,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             refreshAttacks();
             switch (e.getNewPhase()) {
-                case IGame.PHASE_MOVEMENT:
-                case IGame.PHASE_FIRING:
-                case IGame.PHASE_PHYSICAL:
+                case PHASE_MOVEMENT:
+                case PHASE_FIRING:
+                case PHASE_PHYSICAL:
                     refreshAttacks();
                     break;
-                case IGame.PHASE_INITIATIVE:
+                case PHASE_INITIATIVE:
                     clearAllAttacks();
                     break;
-                case IGame.PHASE_END:
-                case IGame.PHASE_VICTORY:
+                case PHASE_END:
+                case PHASE_VICTORY:
                     clearSprites();
             }
         }

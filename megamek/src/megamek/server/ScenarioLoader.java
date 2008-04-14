@@ -308,7 +308,7 @@ public class ScenarioLoader {
         // Set up the teams (for initiative)
         g.setupTeams();
 
-        g.setPhase(IGame.PHASE_STARTING_SCENARIO);
+        g.setPhase(IGame.Phase.PHASE_STARTING_SCENARIO);
 
         g.setupRoundDeployment();
 

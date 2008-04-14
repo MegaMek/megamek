@@ -28,21 +28,49 @@ public class SpecialHexDisplay implements Serializable {
     private static final long serialVersionUID = 2747079599332339492L;
 
     public enum Type {
-        ARTILLERY_AUTOHIT("data/images/hexes/artyauto.gif"), ARTILLERY_ADJUSTED(
-                "data/images/hexes/artyadj.gif"), ARTILERY_INCOMING(
-                "data/images/hexes/artyinc.gif"), ARTILEY_TARGET(
-                "data/images/hexes/artytarget.gif"), ARTILERY_HIT(
-                "data/images/hexes/artyhit.gif");
-
-        private Image defaultImage;
-        private String defaultImagePath;
+        ARTILLERY_AUTOHIT   ("data/images/hexes/artyauto.gif") {
+            public boolean drawBefore() {
+                return false;
+            }
+            
+            public boolean drawAfter() {
+                return true;
+            }
+        },
+        ARTILLERY_ADJUSTED  ("data/images/hexes/artyadj.gif") {
+            public boolean drawBefore() {
+                return false;
+            }
+            
+            public boolean drawAfter() {
+                return true;
+            }
+        },
+        ARTILERY_INCOMING   ("data/images/hexes/artyinc.gif"),
+        ARTILEY_TARGET      ("data/images/hexes/artytarget.gif"){
+            public boolean drawBefore() {
+                return false;
+            }
+        },
+        ARTILERY_HIT        ("data/images/hexes/artyhit.gif") {
+            public boolean drawBefore() {
+                return false;
+            }
+        },
+        PLAYER_NOTE         (null);
+    
+        private transient Image defaultImage;
+        private final String defaultImagePath;
 
         Type(String iconPath) {
             defaultImagePath = iconPath;
         }
 
         public void init(Toolkit toolkit) {
-            toolkit.getImage(defaultImagePath);
+            if(defaultImagePath != null) {
+                defaultImage = toolkit.getImage(defaultImagePath);
+            }
+
         }
 
         public Image getDefaultImage() {
@@ -52,14 +80,33 @@ public class SpecialHexDisplay implements Serializable {
         public void setDefaultImage(Image defaultImage) {
             this.defaultImage = defaultImage;
         }
+        
+        public boolean drawBefore() {
+            return true;
+        }
+        
+        public boolean drawAfter() {
+            return false;
+        }
     };
 
     private String info;
     private Type type;
     private int round;
 
+    private int owner = Player.PLAYER_NONE;
+    
+    private boolean obscured = true;
+    
     public static int NO_ROUND = -99;
 
+    /**
+     * Special constructor only for deserialization use.
+     *
+     */
+    private SpecialHexDisplay() {
+    }
+    
     public SpecialHexDisplay(Type type) {
         this.type = type;
         round = NO_ROUND;
@@ -77,6 +124,21 @@ public class SpecialHexDisplay implements Serializable {
         this.round = round;
     }
 
+    public SpecialHexDisplay(Type type, int round, int owner, String info) {
+        this.type = type;
+        this.info = info;
+        this.round = round;
+        this.owner = owner;
+    }
+    
+    public SpecialHexDisplay(Type type, int round, int owner, String info, boolean obscured) {
+        this.type = type;
+        this.info = info;
+        this.round = round;
+        this.owner = owner;
+        this.obscured = obscured; 
+    }
+
     public boolean thisRound(int round) {
         if (NO_ROUND == this.round) {
             return true;
@@ -84,6 +146,22 @@ public class SpecialHexDisplay implements Serializable {
         return round == this.round;
     }
 
+    /** Does this SpecialHexDisplayObjet concern a round in the future? */
+    public boolean futureRound(int round) {
+        if(NO_ROUND == this.round) {
+            return true;
+        }
+        return round > this.round;
+    }
+    
+    /** Does this SpecialHexDisplayObjet concern a round in the past? */
+    public boolean pastRound(int round) {
+        if(NO_ROUND == this.round) {
+            return true;
+        }
+        return round < this.round;
+    }
+    
     public String getInfo() {
         return info;
     }
@@ -106,5 +184,54 @@ public class SpecialHexDisplay implements Serializable {
 
     public void setType(Type type) {
         this.type = type;
+    }
+
+    public int getOwner() {
+        return owner;
+    }
+
+    public void setOwner(int owner) {
+        this.owner = owner;
+    }
+
+    public boolean isObscured() {
+        return obscured;
+    }
+
+    public void setObscured(boolean obscured) {
+        this.obscured = obscured;
+    }
+
+    /**
+     * @param phase
+     * @param round
+     * @return
+     */
+    public boolean drawNow(IGame.Phase phase, int round) {
+        boolean shouldDisplay = thisRound(round) || 
+            (pastRound(round) && type.drawBefore()) ||
+            (futureRound(round) && type.drawAfter());
+        if(phase.isBefore(IGame.Phase.PHASE_OFFBOARD) && 
+                (type == Type.ARTILEY_TARGET || type == Type.ARTILERY_HIT)
+        ) {
+            //hack to display atry targets the round after the hit.
+            shouldDisplay = shouldDisplay || thisRound(round-1);
+        }
+        
+        //System.err.println("turn: " + round + " Special type: " + type + " drawing: " + shouldDisplay + " details: " + info);
+            
+        return shouldDisplay;
+    }
+
+    /**
+     * @param toPlayer
+     * @return
+     */
+    public boolean isOwner(int toPlayer) {
+        if(owner == toPlayer || owner == Player.PLAYER_NONE) {
+            return true;
+        }
+        
+        return false;
     }
 }

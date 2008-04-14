@@ -922,7 +922,7 @@ public class MechDisplay extends BufferedPanel {
                 weaponList.add(wn.toString());
                 if (mounted.isUsedThisRound()
                         && game.getPhase() == mounted.usedInPhase()
-                        && game.getPhase() == IGame.PHASE_FIRING) {
+                        && game.getPhase() == IGame.Phase.PHASE_FIRING) {
                     // add heat from weapons fire to heat tracker
                     currentHeatBuildup += wtype.getHeat()
                             * mounted.howManyShots();
@@ -1491,7 +1491,7 @@ public class MechDisplay extends BufferedPanel {
                         && bOwner
                         && m.getType() instanceof AmmoType
                         && !(m.getType().hasInstantModeSwitch())
-                        && IGame.PHASE_DEPLOYMENT != clientgui.getClient().game
+                        && IGame.Phase.PHASE_DEPLOYMENT != clientgui.getClient().game
                                 .getPhase()
                         && m.getShotsLeft() > 0
                         && !m.isDumping()
@@ -1572,7 +1572,7 @@ public class MechDisplay extends BufferedPanel {
 
                         if (m.getType() instanceof MiscType
                                 && ((MiscType) m.getType()).isShield()
-                                && clientgui.getClient().game.getPhase() != IGame.PHASE_FIRING) {
+                                && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_FIRING) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.ShieldModePhase", null));//$NON-NLS-1$
                             return;
@@ -1580,7 +1580,7 @@ public class MechDisplay extends BufferedPanel {
 
                         if (m.getType() instanceof MiscType
                                 && ((MiscType) m.getType()).isVibroblade()
-                                && clientgui.getClient().game.getPhase() != IGame.PHASE_PHYSICAL) {
+                                && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_PHYSICAL) {
                             clientgui.systemMessage(Messages.getString(
                                     "MechDisplay.VibrobladeModePhase", null));//$NON-NLS-1$
                             return;
@@ -1589,7 +1589,7 @@ public class MechDisplay extends BufferedPanel {
                         if (m.getType() instanceof MiscType
                                 && ((MiscType) m.getType())
                                         .hasSubType(MiscType.S_RETRACTABLE_BLADE)
-                                && clientgui.getClient().game.getPhase() != IGame.PHASE_MOVEMENT) {
+                                && clientgui.getClient().game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
                             clientgui
                                     .systemMessage(Messages
                                             .getString(
@@ -1621,7 +1621,7 @@ public class MechDisplay extends BufferedPanel {
                                             .getString(
                                                     "MechDisplay.switched", new Object[] { m.getName(), m.curMode().getDisplayableName() }));//$NON-NLS-1$
                         } else {
-                            if (IGame.PHASE_DEPLOYMENT == clientgui.getClient().game
+                            if (IGame.Phase.PHASE_DEPLOYMENT == clientgui.getClient().game
                                     .getPhase()) {
                                 clientgui
                                         .systemMessage(Messages

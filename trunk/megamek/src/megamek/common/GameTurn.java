@@ -66,7 +66,7 @@ public class GameTurn implements Serializable {
                 && entity.isSelectableThisTurn()
                 // This next bit enforces the "A players Infantry/Protos
                 // move after that players other units" options.
-                && !(game.getPhase() == IGame.PHASE_MOVEMENT
+                && !(game.getPhase() == IGame.Phase.PHASE_MOVEMENT
                         && ((entity instanceof Infantry && game.getOptions()
                                 .booleanOption("inf_move_later")) || (entity instanceof Protomech && game
                                 .getOptions()

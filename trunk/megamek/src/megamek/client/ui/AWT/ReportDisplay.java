@@ -180,7 +180,7 @@ public class ReportDisplay extends StatusBarPhaseDisplay implements
 
     public void resetButtons() {
         resetReadyButton();
-        if (client.game.getPhase() == IGame.PHASE_INITIATIVE_REPORT
+        if (client.game.getPhase() == IGame.Phase.PHASE_INITIATIVE_REPORT
                 && client.game.hasTacticalGenius(client.getLocalPlayer())) {
             showRerollButton(true);
         } else {

@@ -2065,7 +2065,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                     && ((mounted.getLinked() == null) || (mounted.getLinked()
                             .getShotsLeft() > 0))) {
                 if (mounted.getType().hasFlag(WeaponType.F_TAG)
-                        && game.getPhase() == IGame.PHASE_FIRING) {
+                        && game.getPhase() == IGame.Phase.PHASE_FIRING) {
                     continue;
                 }
                 if (mounted.getType().hasFlag(WeaponType.F_MG)) {
@@ -5285,9 +5285,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     /**
      * Determines if an entity is eligible for a phase.
      */
-    public boolean isEligibleFor(int phase) {
+    public boolean isEligibleFor(IGame.Phase phase) {
         // only deploy in deployment phase
-        if ((phase == IGame.PHASE_DEPLOYMENT) == isDeployed()) {
+        if ((phase == IGame.Phase.PHASE_DEPLOYMENT) == isDeployed()) {
             return false;
         }
 
@@ -5302,15 +5302,15 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         }
 
         switch (phase) {
-            case IGame.PHASE_MOVEMENT:
+            case PHASE_MOVEMENT:
                 return isEligibleForMovement();
-            case IGame.PHASE_FIRING:
+            case PHASE_FIRING:
                 return isEligibleForFiring();
-            case IGame.PHASE_PHYSICAL:
+            case PHASE_PHYSICAL:
                 return isEligibleForPhysical();
-            case IGame.PHASE_TARGETING:
+            case PHASE_TARGETING:
                 return isEligibleForTargetingPhase();
-            case IGame.PHASE_OFFBOARD:
+            case PHASE_OFFBOARD:
                 return isEligibleForOffboard();
             default:
                 return true;
@@ -5324,9 +5324,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * played when not needed. However it could be used for other things in the
      * future
      */
-    public boolean canAssist(int phase) {
-        if (phase != IGame.PHASE_PHYSICAL && phase != IGame.PHASE_FIRING
-                && phase != IGame.PHASE_OFFBOARD) {
+    public boolean canAssist(IGame.Phase phase) {
+        if (phase != IGame.Phase.PHASE_PHYSICAL && phase != IGame.Phase.PHASE_FIRING
+                && phase != IGame.Phase.PHASE_OFFBOARD) {
             return false;
         }
         // if you're charging or finding a club, it's already declared

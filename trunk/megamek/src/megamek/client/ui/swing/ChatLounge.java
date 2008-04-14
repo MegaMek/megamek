@@ -1482,7 +1482,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         if (isIgnoringEvents()) {
             return;
         }
-        if (client.game.getPhase() == IGame.PHASE_LOUNGE) {
+        if (client.game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
             refreshDoneButton();
             refreshGameSettings();
             refreshPlayerInfo();

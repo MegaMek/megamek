@@ -41,51 +41,47 @@ import megamek.server.victory.Victory;
  */
 public interface IGame {
 
-    public static final int PHASE_UNKNOWN = -1;
+    public enum Phase {
+        PHASE_UNKNOWN,
+        PHASE_LOUNGE,
+        PHASE_SELECTION,
+        PHASE_EXCHANGE,
+        PHASE_DEPLOYMENT,
+        PHASE_INITIATIVE,
+        PHASE_INITIATIVE_REPORT,
+        PHASE_TARGETING,
+        PHASE_TARGETING_REPORT,
+        PHASE_MOVEMENT,
+        PHASE_MOVEMENT_REPORT,
+        PHASE_OFFBOARD,
+        PHASE_OFFBOARD_REPORT,
+        PHASE_FIRING,
+        PHASE_FIRING_REPORT,
+        PHASE_PHYSICAL,
+        PHASE_PHYSICAL_REPORT,
+        PHASE_END,
+        PHASE_END_REPORT,
+        PHASE_VICTORY,
+        PHASE_DEPLOY_MINEFIELDS,
+        PHASE_STARTING_SCENARIO,
+        PHASE_SET_ARTYAUTOHITHEXES;
 
-    public static final int PHASE_LOUNGE = 1;
+        /**
+         * @param phase_deployment2
+         * @return
+         */
+        public boolean isDuringOrAfter(Phase otherPhase) {
+            return compareTo(otherPhase) >= 0;
+        }
 
-    public static final int PHASE_SELECTION = 2;
-
-    public static final int PHASE_EXCHANGE = 3;
-
-    public static final int PHASE_DEPLOYMENT = 4;
-
-    public static final int PHASE_INITIATIVE = 5;
-
-    public static final int PHASE_INITIATIVE_REPORT = 6;
-
-    public static final int PHASE_TARGETING = 7;
-
-    public static final int PHASE_TARGETING_REPORT = 8;
-
-    public static final int PHASE_MOVEMENT = 9;
-
-    public static final int PHASE_MOVEMENT_REPORT = 10;
-
-    public static final int PHASE_OFFBOARD = 11;
-
-    public static final int PHASE_OFFBOARD_REPORT = 12;
-
-    public static final int PHASE_FIRING = 13;
-
-    public static final int PHASE_FIRING_REPORT = 14;
-
-    public static final int PHASE_PHYSICAL = 15;
-
-    public static final int PHASE_PHYSICAL_REPORT = 16;
-
-    public static final int PHASE_END = 17;
-
-    public static final int PHASE_END_REPORT = 18;
-
-    public static final int PHASE_VICTORY = 19;
-
-    public static final int PHASE_DEPLOY_MINEFIELDS = 20;
-
-    public static final int PHASE_STARTING_SCENARIO = 21;
-
-    public static final int PHASE_SET_ARTYAUTOHITHEXES = 22;
+        /**
+         * @param phase_offboard2
+         * @return
+         */
+        public boolean isBefore(Phase otherPhase) {
+            return compareTo(otherPhase) < 0;
+        }
+    }
 
     // New accessors for external game id
     public abstract int getExternalGameId();
@@ -350,7 +346,7 @@ public interface IGame {
      * Returns true if this phase has turns. If false, the phase is simply
      * waiting for everybody to declare "done".
      */
-    public abstract boolean phaseHasTurns(int phase);
+    public abstract boolean phaseHasTurns(IGame.Phase phase);
 
     /**
      * Returns the current GameTurn object
@@ -402,13 +398,13 @@ public interface IGame {
      */
     public abstract void setTurnVector(Vector<GameTurn> turnVector);
 
-    public abstract int getPhase();
+    public abstract IGame.Phase getPhase();
 
-    public abstract void setPhase(int phase);
+    public abstract void setPhase(IGame.Phase phase);
 
-    public abstract int getLastPhase();
+    public abstract IGame.Phase getLastPhase();
 
-    public abstract void setLastPhase(int lastPhase);
+    public abstract void setLastPhase(IGame.Phase lastPhase);
 
     public abstract void setDeploymentComplete(boolean deploymentComplete);
 

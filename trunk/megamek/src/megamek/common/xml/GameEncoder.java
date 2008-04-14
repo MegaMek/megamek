@@ -172,9 +172,9 @@ public class GameEncoder {
         out.write("\" roundCount=\"");
         out.write(game.getRoundCount());
         out.write("\" phase=\"");
-        out.write(game.getPhase());
+        out.write(game.getPhase().ordinal());
         out.write("\" lastPhase=\"");
-        out.write(game.getLastPhase());
+        out.write(game.getLastPhase().ordinal());
         out.write("\" forceVictory=\"");
         out.write(game.isForceVictory() ? "true" : "false");
         out.write("\" victoryPlayerId=\"");

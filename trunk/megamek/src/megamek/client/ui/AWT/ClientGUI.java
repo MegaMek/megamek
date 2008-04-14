@@ -458,7 +458,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
 
         cb = new ChatterBox(this);
         this.add(cb.getComponent(), BorderLayout.SOUTH);
-        client.changePhase(IGame.PHASE_UNKNOWN);
+        client.changePhase(IGame.Phase.PHASE_UNKNOWN);
 
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
@@ -534,7 +534,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
      * Called when the user selects the "View->Game Options" menu item.
      */
     private void showOptions() {
-        if (client.game.getPhase() == IGame.PHASE_LOUNGE) {
+        if (client.game.getPhase() == IGame.Phase.PHASE_LOUNGE) {
             getGameOptionsDialog().setEditable(true);
         } else {
             getGameOptionsDialog().setEditable(false);
@@ -744,7 +744,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
         return initDialog;
     }
 
-    void switchPanel(int phase) {
+    void switchPanel(IGame.Phase phase) {
 
         // Clear the old panel's listeners.
         if (curPanel instanceof BoardViewListener) {
@@ -788,7 +788,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
             curPanel.requestFocus();
     }
 
-    private Component initializePanel(int phase) {
+    private Component initializePanel(IGame.Phase phase) {
 
         // Create the components for this phase.
         String name = String.valueOf(phase);
@@ -796,7 +796,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
         String secondary = null;
         String main = null;
         switch (phase) {
-            case IGame.PHASE_LOUNGE:
+            case PHASE_LOUNGE:
                 component = new ChatLounge(this);
                 chatlounge = (ChatLounge) component;
                 main = "ChatLounge"; //$NON-NLS-1$
@@ -805,7 +805,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 panSecondary.add(secondary, ((ChatLounge) component)
                         .getSecondaryDisplay());
                 break;
-            case IGame.PHASE_STARTING_SCENARIO:
+            case PHASE_STARTING_SCENARIO:
                 component = new Label(Messages
                         .getString("ClientGUI.StartingScenario")); //$NON-NLS-1$
                 main = "Label-StartingScenario"; //$NON-NLS-1$
@@ -813,7 +813,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 panMain.add(main, component);
                 panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
                 break;
-            case IGame.PHASE_EXCHANGE:
+            case PHASE_EXCHANGE:
                 component = new Label(Messages
                         .getString("ClientGUI.TransmittingData")); //$NON-NLS-1$
                 main = "Label-Exchange"; //$NON-NLS-1$
@@ -821,7 +821,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 panMain.add(main, component);
                 panSecondary.add(secondary, new Label("")); //$NON-NLS-1$
                 break;
-            case IGame.PHASE_SET_ARTYAUTOHITHEXES:
+            case PHASE_SET_ARTYAUTOHITHEXES:
                 component = new SelectArtyAutoHitHexDisplay(this);
 
                 main = "BoardView"; //$NON-NLS-1$
@@ -831,7 +831,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 }
                 panSecondary.add(secondary, component);
                 break;
-            case IGame.PHASE_DEPLOY_MINEFIELDS:
+            case PHASE_DEPLOY_MINEFIELDS:
                 component = new DeployMinefieldDisplay(this);
 
                 main = "BoardView"; //$NON-NLS-1$
@@ -841,7 +841,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 }
                 panSecondary.add(secondary, component);
                 break;
-            case IGame.PHASE_DEPLOYMENT:
+            case PHASE_DEPLOYMENT:
                 component = new DeploymentDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "DeploymentDisplay"; //$NON-NLS-1$
@@ -850,7 +850,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 }
                 panSecondary.add(secondary, component);
                 break;
-            case IGame.PHASE_TARGETING:
+            case PHASE_TARGETING:
                 component = new TargetingPhaseDisplay(this, false);
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView"; //$NON-NLS-1$
@@ -860,7 +860,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 }
                 panSecondary.add(secondary, component);
                 break;
-            case IGame.PHASE_MOVEMENT:
+            case PHASE_MOVEMENT:
                 component = new MovementDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "MovementDisplay"; //$NON-NLS-1$
@@ -869,7 +869,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 }
                 panSecondary.add(secondary, component);
                 break;
-            case IGame.PHASE_OFFBOARD:
+            case PHASE_OFFBOARD:
                 component = new TargetingPhaseDisplay(this, true);
                 ((TargetingPhaseDisplay) component).initializeListeners();
                 main = "BoardView"; //$NON-NLS-1$
@@ -879,7 +879,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 }
                 panSecondary.add(secondary, component);
                 break;
-            case IGame.PHASE_FIRING:
+            case PHASE_FIRING:
                 component = new FiringDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "FiringDisplay"; //$NON-NLS-1$
@@ -888,7 +888,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 }
                 panSecondary.add(secondary, component);
                 break;
-            case IGame.PHASE_PHYSICAL:
+            case PHASE_PHYSICAL:
                 component = new PhysicalDisplay(this);
                 main = "BoardView"; //$NON-NLS-1$
                 secondary = "PhysicalDisplay"; //$NON-NLS-1$
@@ -897,7 +897,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 }
                 panSecondary.add(secondary, component);
                 break;
-            case IGame.PHASE_INITIATIVE_REPORT:
+            case PHASE_INITIATIVE_REPORT:
                 component = new ReportDisplay(client);
                 main = "ReportDisplay"; //$NON-NLS-1$
                 secondary = main;
@@ -905,19 +905,19 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
                 panSecondary.add(secondary, ((ReportDisplay) component)
                         .getSecondaryDisplay());
                 break;
-            case IGame.PHASE_TARGETING_REPORT:
-            case IGame.PHASE_MOVEMENT_REPORT:
-            case IGame.PHASE_OFFBOARD_REPORT:
-            case IGame.PHASE_FIRING_REPORT:
-            case IGame.PHASE_PHYSICAL_REPORT:
-            case IGame.PHASE_END_REPORT:
-            case IGame.PHASE_VICTORY:
+            case PHASE_TARGETING_REPORT:
+            case PHASE_MOVEMENT_REPORT:
+            case PHASE_OFFBOARD_REPORT:
+            case PHASE_FIRING_REPORT:
+            case PHASE_PHYSICAL_REPORT:
+            case PHASE_END_REPORT:
+            case PHASE_VICTORY:
                 // Try to reuse the ReportDisplay for other phases...
                 component = phaseComponents.get(String
-                        .valueOf(IGame.PHASE_INITIATIVE_REPORT));
+                        .valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
                 if (null == component) {
                     // no ReportDisplay to reuse -- get a new one
-                    component = initializePanel(IGame.PHASE_INITIATIVE_REPORT);
+                    component = initializePanel(IGame.Phase.PHASE_INITIATIVE_REPORT);
                 }
                 main = "ReportDisplay"; //$NON-NLS-1$
                 secondary = main;
@@ -1508,32 +1508,32 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
 
             // Handle phase-specific items.
             switch (e.getNewPhase()) {
-                case IGame.PHASE_LOUNGE:
+                case PHASE_LOUNGE:
                     // this will get rid of old report tabs
                     ReportDisplay rD = (ReportDisplay) phaseComponents
-                            .get(String.valueOf(IGame.PHASE_INITIATIVE_REPORT));
+                            .get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
                     if (rD != null)
                         rD.resetTabs();
                     break;
-                case IGame.PHASE_DEPLOY_MINEFIELDS:
-                case IGame.PHASE_DEPLOYMENT:
-                case IGame.PHASE_TARGETING:
-                case IGame.PHASE_MOVEMENT:
-                case IGame.PHASE_OFFBOARD:
-                case IGame.PHASE_FIRING:
-                case IGame.PHASE_PHYSICAL:
+                case PHASE_DEPLOY_MINEFIELDS:
+                case PHASE_DEPLOYMENT:
+                case PHASE_TARGETING:
+                case PHASE_MOVEMENT:
+                case PHASE_OFFBOARD:
+                case PHASE_FIRING:
+                case PHASE_PHYSICAL:
                     if (GUIPreferences.getInstance().getMinimapEnabled()
                             && !minimapW.isVisible()) {
                         setMapVisible(true);
                     }
                     break;
-                case IGame.PHASE_INITIATIVE_REPORT:
-                case IGame.PHASE_TARGETING_REPORT:
-                case IGame.PHASE_MOVEMENT_REPORT:
-                case IGame.PHASE_OFFBOARD_REPORT:
-                case IGame.PHASE_FIRING_REPORT:
-                case IGame.PHASE_END:
-                case IGame.PHASE_VICTORY:
+                case PHASE_INITIATIVE_REPORT:
+                case PHASE_TARGETING_REPORT:
+                case PHASE_MOVEMENT_REPORT:
+                case PHASE_OFFBOARD_REPORT:
+                case PHASE_FIRING_REPORT:
+                case PHASE_END:
+                case PHASE_VICTORY:
                     setMapVisible(false);
                     // nemchenk, 2004-01-01 -- hide MechDisplay at the end
                     mechW.setVisible(false);

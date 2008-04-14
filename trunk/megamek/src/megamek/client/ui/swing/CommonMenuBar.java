@@ -72,7 +72,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     /**
      * Record the current phase of the game.
      */
-    private int phase = IGame.PHASE_UNKNOWN;
+    private IGame.Phase phase = IGame.Phase.PHASE_UNKNOWN;
     private JMenuItem filePrint;
     private JMenuItem viewMiniMap;
     private JMenuItem viewMekDisplay;
@@ -610,11 +610,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
             fileGameConnectBot.setEnabled(false);
             fileGameConnect.setEnabled(false);
             // We can only save in certain phases of the game.
-            if (phase != IGame.PHASE_UNKNOWN && phase != IGame.PHASE_LOUNGE
-                    && phase != IGame.PHASE_SELECTION
-                    && phase != IGame.PHASE_EXCHANGE
-                    && phase != IGame.PHASE_VICTORY
-                    && phase != IGame.PHASE_STARTING_SCENARIO) {
+            if (phase != IGame.Phase.PHASE_UNKNOWN && phase != IGame.Phase.PHASE_LOUNGE
+                    && phase != IGame.Phase.PHASE_SELECTION
+                    && phase != IGame.Phase.PHASE_EXCHANGE
+                    && phase != IGame.Phase.PHASE_VICTORY
+                    && phase != IGame.Phase.PHASE_STARTING_SCENARIO) {
                 fileGameSave.setEnabled(true);
             } else {
                 fileGameSave.setEnabled(false);
@@ -679,14 +679,14 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         // If we have a unit list, and if we are in the lounge,
         // then we can still perform all unit list actions.
         if (hasUnitList) {
-            fileUnitsOpen.setEnabled(phase == IGame.PHASE_LOUNGE);
-            fileUnitsClear.setEnabled(phase == IGame.PHASE_LOUNGE);
-            fileUnitsSave.setEnabled(phase == IGame.PHASE_LOUNGE);
+            fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
+            fileUnitsClear.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
+            fileUnitsSave.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
         }
         // If we don't have a unit list, but we are in the lounge,
         // then we can open a unit list.
         else {
-            fileUnitsOpen.setEnabled(phase == IGame.PHASE_LOUNGE);
+            fileUnitsOpen.setEnabled(phase == IGame.Phase.PHASE_LOUNGE);
             fileUnitsClear.setEnabled(false);
             fileUnitsSave.setEnabled(false);
         }
@@ -709,13 +709,13 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
             viewPlayerList.setEnabled(false);
         }
         // We're in-game.
-        else if (phase == IGame.PHASE_SET_ARTYAUTOHITHEXES
-                || phase == IGame.PHASE_DEPLOY_MINEFIELDS
-                || phase == IGame.PHASE_MOVEMENT || phase == IGame.PHASE_FIRING
-                || phase == IGame.PHASE_PHYSICAL
-                || phase == IGame.PHASE_OFFBOARD
-                || phase == IGame.PHASE_TARGETING
-                || phase == IGame.PHASE_DEPLOYMENT) {
+        else if (phase == IGame.Phase.PHASE_SET_ARTYAUTOHITHEXES
+                || phase == IGame.Phase.PHASE_DEPLOY_MINEFIELDS
+                || phase == IGame.Phase.PHASE_MOVEMENT || phase == IGame.Phase.PHASE_FIRING
+                || phase == IGame.Phase.PHASE_PHYSICAL
+                || phase == IGame.Phase.PHASE_OFFBOARD
+                || phase == IGame.Phase.PHASE_TARGETING
+                || phase == IGame.Phase.PHASE_DEPLOYMENT) {
             viewLOSSetting.setEnabled(true);
             viewMiniMap.setEnabled(true);
             viewZoomIn.setEnabled(true);
@@ -734,11 +734,11 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         }
 
         // We can only view the round report in certain phases.
-        if (phase == IGame.PHASE_INITIATIVE || phase == IGame.PHASE_MOVEMENT
-                || phase == IGame.PHASE_FIRING || phase == IGame.PHASE_PHYSICAL
-                || phase == IGame.PHASE_OFFBOARD
-                || phase == IGame.PHASE_TARGETING || phase == IGame.PHASE_END
-                || phase == IGame.PHASE_DEPLOYMENT) {
+        if (phase == IGame.Phase.PHASE_INITIATIVE || phase == IGame.Phase.PHASE_MOVEMENT
+                || phase == IGame.Phase.PHASE_FIRING || phase == IGame.Phase.PHASE_PHYSICAL
+                || phase == IGame.Phase.PHASE_OFFBOARD
+                || phase == IGame.Phase.PHASE_TARGETING || phase == IGame.Phase.PHASE_END
+                || phase == IGame.Phase.PHASE_DEPLOYMENT) {
             viewRoundReport.setEnabled(true);
         } else {
             viewRoundReport.setEnabled(false);
@@ -746,7 +746,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
 
         // As of 2003-09-04, we can always at least look at the client settings.
         viewClientSettings.setEnabled(true);
-        if (phase != IGame.PHASE_FIRING || entity == null) {
+        if (phase != IGame.Phase.PHASE_FIRING || entity == null) {
             fireCancel.setEnabled(false);
         } else {
             fireCancel.setEnabled(true);
@@ -809,7 +809,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
      *            valid values for this argument are defined as constants in the
      *            <code>Game</code> class).
      */
-    public synchronized void setPhase(int current) {
+    public synchronized void setPhase(IGame.Phase current) {
         entity = null;
         phase = current;
         manageMenu();

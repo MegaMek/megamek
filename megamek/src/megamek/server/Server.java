@@ -17146,7 +17146,7 @@ public class Server implements Runnable {
             tempList = new LinkedList<SpecialHexDisplay>();
             for(SpecialHexDisplay shd : shdTable.get(coord)) {
                 if(!shd.isObscured() || shd.isOwner(toPlayer)) {
-                    tempList.push(shd);
+                    tempList.add(0,shd);
                 }
             }
             if(!tempList.isEmpty()) {

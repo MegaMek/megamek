@@ -55,16 +55,16 @@ public class BattleArmorHandlesTank extends BattleArmorHandles {
             int tloc2 = BattleArmor.LOC_SQUAD;
             switch (loc) {
                 case Tank.LOC_REAR:
-                    tloc = BattleArmor.LOC_CLAN_5;
-                    tloc2 = BattleArmor.LOC_CLAN_6;
+                    tloc = BattleArmor.LOC_TROOPER_5;
+                    tloc2 = BattleArmor.LOC_TROOPER_6;
                     break;
                 case Tank.LOC_LEFT:
-                    tloc = BattleArmor.LOC_CLAN_3;
-                    tloc2 = BattleArmor.LOC_CLAN_4;
+                    tloc = BattleArmor.LOC_TROOPER_3;
+                    tloc2 = BattleArmor.LOC_TROOPER_4;
                     break;
                 case Tank.LOC_RIGHT:
-                    tloc = BattleArmor.LOC_CLAN_1;
-                    tloc2 = BattleArmor.LOC_CLAN_2;
+                    tloc = BattleArmor.LOC_TROOPER_1;
+                    tloc2 = BattleArmor.LOC_TROOPER_2;
                     break;
             }
             if ((troopers.locations() > tloc && troopers.getInternal(tloc) > 0)

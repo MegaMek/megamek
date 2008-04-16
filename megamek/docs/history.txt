@@ -13,6 +13,7 @@ v0.33.22-dev (SVN)
 + Display artilery hits and targets for the turn after the effect.
 + Possibly fixed the first turn bug in mekwars.
 + Bug: createSpecialHexDisplayPacket trying to use a push() method
++ Bug 1941348: Targeting computers still follow BMR rules
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

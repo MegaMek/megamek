@@ -43,7 +43,7 @@ public class BattleArmor extends Infantry implements Serializable {
     private static final int[] IS_NUM_OF_SLOTS = { 7, 2, 2, 2, 2, 2, 2 };
     private static final String[] IS_LOCATION_ABBRS = { "Squad", "Trooper 1",
             "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
-    private static final String[] IS_LOCATION_NAMES = { "Squad", "Trooper 1",
+    public static final String[] IS_LOCATION_NAMES = { "Squad", "Trooper 1",
             "Trooper 2", "Trooper 3", "Trooper 4", "Trooper 5", "Trooper 6" };
     private static final int[] CLAN_NUM_OF_SLOTS = { 10, 2, 2, 2, 2, 2, 2 };
     private static final String[] CLAN_LOCATION_ABBRS = { "Point", "Trooper 1",
@@ -211,18 +211,12 @@ public class BattleArmor extends Infantry implements Serializable {
     // This looks like the beginnings of implementing 6-man squads, though.
     // Which we DO want.
     // FIXME
-    public static final int LOC_IS_1 = 1;
-    public static final int LOC_IS_2 = 2;
-    public static final int LOC_IS_3 = 3;
-    public static final int LOC_IS_4 = 4;
-    public static final int LOC_IS_5 = 5;
-    public static final int LOC_IS_6 = 6;
-    public static final int LOC_CLAN_1 = 1;
-    public static final int LOC_CLAN_2 = 2;
-    public static final int LOC_CLAN_3 = 3;
-    public static final int LOC_CLAN_4 = 4;
-    public static final int LOC_CLAN_5 = 5;
-    public static final int LOC_CLAN_6 = 6;
+    public static final int LOC_TROOPER_1 = 1;
+    public static final int LOC_TROOPER_2 = 2;
+    public static final int LOC_TROOPER_3 = 3;
+    public static final int LOC_TROOPER_4 = 4;
+    public static final int LOC_TROOPER_5 = 5;
+    public static final int LOC_TROOPER_6 = 6;
 
     public String[] getLocationAbbrs() {
         if (!this.isInitialized || this.isClan()) {
@@ -370,20 +364,38 @@ public class BattleArmor extends Infantry implements Serializable {
      */
     public HitData rollHitLocation(int table, int side, int aimedLocation,
             int aimingMode) {
-        return rollHitLocation(table, side);
-    }
-
-    public HitData rollHitLocation(int table, int side) {
 
         // If this squad was killed, target trooper 1 (just because).
         if (this.isDoomed())
             return new HitData(1);
+        
+        if ((aimedLocation != LOC_NONE)
+                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+            
+            int roll = Compute.d6(2);
+
+            if ((5 < roll) && (roll < 9)) {
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
+                        true);
+            }
+        }
 
         // Pick a random number between 1 and 6.
         int loc = Compute.d6();
 
         if (game.getOptions().booleanOption("ba_criticals") && loc == 6) {
             return new HitData(Compute.d6(), false, HitData.EFFECT_CRITICAL);
+        }
+        
+        if ((aimedLocation != LOC_NONE)
+                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+            
+            int roll = Compute.d6(2);
+
+            if ((5 < roll) && (roll < 9)) {
+                return new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
+                        true);
+            }
         }
 
         // Pick a new random number if that trooper is dead or never existed.
@@ -401,6 +413,11 @@ public class BattleArmor extends Infantry implements Serializable {
 
         // Hit that trooper.
         return new HitData(loc);
+
+    }
+
+    public HitData rollHitLocation(int table, int side) {
+        return rollHitLocation(table, side, LOC_NONE, IAimingModes.AIM_MODE_NONE);
     }
 
     /**
@@ -1161,7 +1178,7 @@ public class BattleArmor extends Infantry implements Serializable {
 
         buff.append("<armor>");
         buff.append(newline);
-        buff.append(getOArmor(LOC_CLAN_1));
+        buff.append(getOArmor(LOC_TROOPER_1));
         buff.append(newline);
         buff.append("</armor>");
         buff.append(newline);

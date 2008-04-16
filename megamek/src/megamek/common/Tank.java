@@ -73,7 +73,7 @@ public class Tank extends Entity implements Serializable {
 
     protected static String[] LOCATION_ABBRS = { "BD", "FR", "RS", "LS", "RR",
             "TU" };
-    protected static String[] LOCATION_NAMES = { "Body", "Front", "Right",
+    public static String[] LOCATION_NAMES = { "Body", "Front", "Right",
             "Left", "Rear", "Turret" };
 
     public String[] getLocationAbbrs() {
@@ -434,12 +434,9 @@ public class Tank extends Entity implements Serializable {
      */
     public HitData rollHitLocation(int table, int side, int aimedLocation,
             int aimingMode) {
-        return rollHitLocation(table, side);
-    }
-
-    public HitData rollHitLocation(int table, int side) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
+        boolean bRear = false;
         int motiveMod = 0;
         if (side == ToHitData.SIDE_FRONT && isHullDown() && !m_bHasNoTurret) {
             // on a hull down vee, all front hits go to turret if one exists.
@@ -456,9 +453,23 @@ public class Tank extends Entity implements Serializable {
         } else if (side == ToHitData.SIDE_REAR) {
             nArmorLoc = LOC_REAR;
             motiveMod = 1;
-        }
+            bRear = true;
+        }        
         HitData rv = new HitData(nArmorLoc);
-        switch (Compute.d6(2)) {
+        boolean bHitAimed = false;
+        if ((aimedLocation != LOC_NONE)
+                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+            
+            int roll = Compute.d6(2);
+
+            if ((5 < roll) && (roll < 9)) {
+                rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
+                        true);
+                bHitAimed = true;
+            }
+        }
+        if (!bHitAimed) {
+            switch (Compute.d6(2)) {
             case 2:
                 rv.setEffect(HitData.EFFECT_CRITICAL);
                 break;
@@ -474,8 +485,11 @@ public class Tank extends Entity implements Serializable {
                 if (bSide) {
                     rv = new HitData(LOC_FRONT, false,
                             HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                } else if (bRear) {
+                    rv = new HitData(LOC_LEFT, false,
+                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 } else {
-                    rv = new HitData(LOC_RIGHT, false,
+                    rv = new HitData(LOC_LEFT, false,
                             HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 }
                 rv.setMotiveMod(motiveMod);
@@ -491,6 +505,9 @@ public class Tank extends Entity implements Serializable {
             case 9:
                 if (bSide) {
                     rv = new HitData(LOC_REAR, false,
+                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                } else if (bRear) {
+                    rv = new HitData(LOC_RIGHT, false,
                             HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
                 } else {
                     rv = new HitData(LOC_LEFT, false,
@@ -514,10 +531,16 @@ public class Tank extends Entity implements Serializable {
                 } else {
                     rv = new HitData(LOC_TURRET, false, HitData.EFFECT_CRITICAL);
                 }
+            }
         }
         if (table == ToHitData.HIT_SWARM)
             rv.setEffect(rv.getEffect() | HitData.EFFECT_CRITICAL);
         return rv;
+    }
+
+    public HitData rollHitLocation(int table, int side) {
+        return rollHitLocation(table, side, LOC_NONE,
+                IAimingModes.AIM_MODE_NONE);
     }
 
     /**

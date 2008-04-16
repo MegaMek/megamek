@@ -14,6 +14,7 @@ v0.33.22-dev (SVN)
 + Possibly fixed the first turn bug in mekwars.
 + Bug: createSpecialHexDisplayPacket trying to use a push() method
 + Bug 1941348: Targeting computers still follow BMR rules
++ Bug 1941890: Infernos used up at double rate
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

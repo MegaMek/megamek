@@ -87,7 +87,6 @@ public class HitData {
         this.fromFront = fromWhere;
         this.damageType = damageType;
         this.glancing = glancing;
-
     }
 
     public void setFromFront(boolean dir) {

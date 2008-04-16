@@ -46,6 +46,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.widget.IndexedCheckbox;
 import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -55,6 +56,7 @@ import megamek.common.Entity;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IAimingModes;
+import megamek.common.IArmorState;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
@@ -1593,11 +1595,23 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     } else if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
                         aimingAt = Mech.LOC_CT;
                     }
+                } else if (target instanceof Tank) {
+                    options = Tank.LOCATION_NAMES;
+                    enabled = createEnabledMask(options.length);
+                    aimingAt = Tank.LOC_FRONT;
                 } else if (target instanceof GunEmplacement) {
                     options = GunEmplacement.HIT_LOCATION_NAMES;
                     enabled = new boolean[] { true,
                             ((GunEmplacement) target).hasTurret() };
                     aimingAt = GunEmplacement.LOC_BUILDING;
+                } else if (target instanceof Protomech) {
+                    options = Protomech.LOCATION_NAMES;
+                    enabled = createEnabledMask(options.length);
+                    aimingAt = Protomech.LOC_TORSO;
+                } else if (target instanceof BattleArmor) {
+                    options = BattleArmor.IS_LOCATION_NAMES;
+                    enabled = createEnabledMask(options.length);
+                    aimingAt = BattleArmor.LOC_TROOPER_1;
                 } else {
                     return;
                 }
@@ -1627,6 +1641,29 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
             int side = Compute.targetSideTable(ce(), target);
 
+            // on a tank, remove turret if its missing
+            // also, remove body
+            if (target instanceof Tank) {
+                mask[Tank.LOC_BODY] = false;
+                Tank tank = (Tank)target;
+                if (tank.hasNoTurret()) {
+                    mask[Tank.LOC_TURRET] = false;
+                }
+            }
+            
+            // remove main gun on protos that don't have one
+            if (target instanceof Protomech) {
+                if (!((Protomech)target).hasMainGun()) {
+                    mask[Protomech.LOC_MAINGUN] = false;
+                }
+            }
+            
+            // remove squad location on BAs
+            // also remove dead troopers
+            if (target instanceof BattleArmor) {
+                mask[BattleArmor.LOC_SQUAD] = false;
+            }
+            
             // remove locations hidden by partial cover
             if (side == ToHitData.SIDE_FRONT) {
                 if ((partialCover & LosEffects.COVER_LOWLEFT) != 0)

@@ -257,16 +257,16 @@ import java.util.Vector;
             int tloc = BattleArmor.LOC_SQUAD;
             switch (loc) {
                 case Mech.LOC_CT:
-                    tloc = isRear ? BattleArmor.LOC_CLAN_5
-                            : BattleArmor.LOC_CLAN_6;
+                    tloc = isRear ? BattleArmor.LOC_TROOPER_5
+                            : BattleArmor.LOC_TROOPER_6;
                     break;
                 case Mech.LOC_LT:
-                    tloc = isRear ? BattleArmor.LOC_CLAN_4
-                            : BattleArmor.LOC_CLAN_2;
+                    tloc = isRear ? BattleArmor.LOC_TROOPER_4
+                            : BattleArmor.LOC_TROOPER_2;
                     break;
                 case Mech.LOC_RT:
-                    tloc = isRear ? BattleArmor.LOC_CLAN_3
-                            : BattleArmor.LOC_CLAN_1;
+                    tloc = isRear ? BattleArmor.LOC_TROOPER_3
+                            : BattleArmor.LOC_TROOPER_1;
                     break;
             }
             if (troopers.locations() > tloc && troopers.getInternal(tloc) > 0)

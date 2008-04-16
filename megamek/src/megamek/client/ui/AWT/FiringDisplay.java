@@ -43,6 +43,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.AWT.widget.IndexedCheckbox;
 import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
@@ -52,6 +53,7 @@ import megamek.common.Entity;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IAimingModes;
+import megamek.common.IArmorState;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
@@ -1578,11 +1580,23 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     } else if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
                         aimingAt = Mech.LOC_CT;
                     }
-                } else if (target instanceof GunEmplacement) {
+                } else if (target instanceof Tank) {
+                    options = Tank.LOCATION_NAMES;
+                    enabled = createEnabledMask(options.length);
+                    aimingAt = Tank.LOC_FRONT;
+                } else if (target instanceof GunEmplacement) { 
                     options = GunEmplacement.HIT_LOCATION_NAMES;
                     enabled = new boolean[] { true,
                             ((GunEmplacement) target).hasTurret() };
                     aimingAt = GunEmplacement.LOC_BUILDING;
+                } else if (target instanceof Protomech) {
+                    options = Protomech.LOCATION_NAMES;
+                    enabled = createEnabledMask(options.length);
+                    aimingAt = Protomech.LOC_TORSO;
+                } else if (target instanceof BattleArmor) {
+                    options = ((BattleArmor)target).getLocationNames();
+                    enabled = createEnabledMask(options.length);
+                    aimingAt = BattleArmor.LOC_TROOPER_1;
                 } else {
                     return;
                 }
@@ -1611,55 +1625,79 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             }
 
             int side = Compute.targetSideTable(ce(), target);
-
-            // remove locations hidden by partial cover
-            if (side == ToHitData.SIDE_FRONT) {
-                if ((partialCover & LosEffects.COVER_LOWLEFT) != 0)
-                    mask[Mech.LOC_RLEG] = false;
-                if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0)
-                    mask[Mech.LOC_LLEG] = false;
-                if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                    mask[Mech.LOC_RARM] = false;
-                    mask[Mech.LOC_RT] = false;
-                }
-                if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                    mask[Mech.LOC_LARM] = false;
-                    mask[Mech.LOC_LT] = false;
-                }
-            } else {
-                if ((partialCover & LosEffects.COVER_LOWLEFT) != 0)
-                    mask[Mech.LOC_LLEG] = false;
-                if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0)
-                    mask[Mech.LOC_RLEG] = false;
-                if ((partialCover & LosEffects.COVER_LEFT) != 0) {
-                    mask[Mech.LOC_LARM] = false;
-                    mask[Mech.LOC_LT] = false;
-                }
-                if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
-                    mask[Mech.LOC_RARM] = false;
-                    mask[Mech.LOC_RT] = false;
+            
+            // on a tank, remove turret if its missing
+            // also, remove body
+            if (target instanceof Tank) {
+                mask[Tank.LOC_BODY] = false;
+                Tank tank = (Tank)target;
+                if (tank.hasNoTurret()) {
+                    mask[Tank.LOC_TURRET] = false;
                 }
             }
-
-            if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
-                // Can't target head with Clan targeting computer.
-                mask[Mech.LOC_HEAD] = false;
-
-                switch (side) {
-                    case (ToHitData.SIDE_RIGHT):
-                        // Can't target left side when on the right
-                        // with Clan targeting computer.
-                        mask[Mech.LOC_LARM] = false;
-                        mask[Mech.LOC_LT] = false;
+            
+            // remove main gun on protos that don't have one
+            if (target instanceof Protomech) {
+                if (!((Protomech)target).hasMainGun()) {
+                    mask[Protomech.LOC_MAINGUN] = false;
+                }
+            }
+            
+            // remove squad location on BAs
+            // also remove dead/non-existant troopers
+            if (target instanceof BattleArmor) {
+                mask[BattleArmor.LOC_SQUAD] = false;
+            }
+            if (target instanceof Mech) {
+                // remove locations hidden by partial cover
+                if (side == ToHitData.SIDE_FRONT) {
+                    if ((partialCover & LosEffects.COVER_LOWLEFT) != 0)
+                        mask[Mech.LOC_RLEG] = false;
+                    if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0)
                         mask[Mech.LOC_LLEG] = false;
-                        break;
-                    case (ToHitData.SIDE_LEFT):
-                        // Can't target right side when on the left
-                        // with Clan targeting computer.
+                    if ((partialCover & LosEffects.COVER_LEFT) != 0) {
                         mask[Mech.LOC_RARM] = false;
                         mask[Mech.LOC_RT] = false;
+                    }
+                    if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
+                        mask[Mech.LOC_LARM] = false;
+                        mask[Mech.LOC_LT] = false;
+                    }
+                } else {
+                    if ((partialCover & LosEffects.COVER_LOWLEFT) != 0)
+                        mask[Mech.LOC_LLEG] = false;
+                    if ((partialCover & LosEffects.COVER_LOWRIGHT) != 0)
                         mask[Mech.LOC_RLEG] = false;
-                        break;
+                    if ((partialCover & LosEffects.COVER_LEFT) != 0) {
+                        mask[Mech.LOC_LARM] = false;
+                        mask[Mech.LOC_LT] = false;
+                    }
+                    if ((partialCover & LosEffects.COVER_RIGHT) != 0) {
+                        mask[Mech.LOC_RARM] = false;
+                        mask[Mech.LOC_RT] = false;
+                    }
+                }
+
+                if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
+                    // Can't target head with Clan targeting computer.
+                    mask[Mech.LOC_HEAD] = false;
+
+                    switch (side) {
+                        case (ToHitData.SIDE_RIGHT):
+                            // Can't target left side when on the right
+                            // with Clan targeting computer.
+                            mask[Mech.LOC_LARM] = false;
+                            mask[Mech.LOC_LT] = false;
+                            mask[Mech.LOC_LLEG] = false;
+                            break;
+                        case (ToHitData.SIDE_LEFT):
+                            // Can't target right side when on the left
+                            // with Clan targeting computer.
+                            mask[Mech.LOC_RARM] = false;
+                            mask[Mech.LOC_RT] = false;
+                            mask[Mech.LOC_RLEG] = false;
+                            break;
+                    }
                 }
             }
             return mask;
@@ -1735,7 +1773,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             boolean allowAim;
 
             // TC against a mech
-            allowAim = ((target != null) && ce().hasAimModeTargComp() && target instanceof Mech);
+            allowAim = ((target != null) && ce().hasAimModeTargComp() &&
+                    (target instanceof Mech ||
+                     target instanceof Tank ||
+                     target instanceof BattleArmor ||
+                     target instanceof Protomech));
             if (allowAim) {
                 if (lockedLocation) {
                     allowAim = ((Entity) target).equals(lockedTarget);
@@ -1788,25 +1830,25 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 case (IAimingModes.AIM_MODE_IMMOBILE):
                     if (atype != null) {
                         switch (atype.getAmmoType()) {
-                            case (AmmoType.T_SRM_STREAK):
-                            case (AmmoType.T_LRM_STREAK):
-                            case (AmmoType.T_LRM):
-                            case (AmmoType.T_LRM_TORPEDO):
-                            case (AmmoType.T_SRM):
-                            case (AmmoType.T_SRM_TORPEDO):
-                            case (AmmoType.T_MRM):
-                            case (AmmoType.T_NARC):
-                            case (AmmoType.T_AMS):
-                            case (AmmoType.T_ARROW_IV):
-                            case (AmmoType.T_LONG_TOM):
-                            case (AmmoType.T_SNIPER):
-                            case (AmmoType.T_THUMPER):
-                            case (AmmoType.T_SRM_ADVANCED):
-                            case (AmmoType.T_LRM_TORPEDO_COMBO):
-                            case (AmmoType.T_ATM):
-                            case (AmmoType.T_MML):
-                            case (AmmoType.T_EXLRM):
-                            case (AmmoType.T_TBOLT):
+                            case AmmoType.T_SRM_STREAK:
+                            case AmmoType.T_LRM_STREAK:
+                            case AmmoType.T_LRM:
+                            case AmmoType.T_LRM_TORPEDO:
+                            case AmmoType.T_SRM:
+                            case AmmoType.T_SRM_TORPEDO:
+                            case AmmoType.T_MRM:
+                            case AmmoType.T_NARC:
+                            case AmmoType.T_AMS:
+                            case AmmoType.T_ARROW_IV:
+                            case AmmoType.T_LONG_TOM:
+                            case AmmoType.T_SNIPER:
+                            case AmmoType.T_THUMPER:
+                            case AmmoType.T_SRM_ADVANCED:
+                            case AmmoType.T_LRM_TORPEDO_COMBO:
+                            case AmmoType.T_ATM:
+                            case AmmoType.T_MML:
+                            case AmmoType.T_EXLRM:
+                            case AmmoType.T_TBOLT:
                             case AmmoType.T_PXLRM:
                             case AmmoType.T_HSRM:
                             case AmmoType.T_MRM_STREAK:

@@ -164,7 +164,6 @@ public class SRMInfernoHandler extends SRMHandler {
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
-        useAmmo();
         addHeat();
 
         // Any necessary PSRs, jam checks, etc.

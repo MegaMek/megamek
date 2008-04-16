@@ -215,7 +215,8 @@ public class Infantry extends Entity implements Serializable {
         if (hex.terrainLevel(Terrains.WATER) > 0
                 && !hex.containsTerrain(Terrains.ICE)) {
             if (getMovementMode() == IEntityMovementMode.HOVER
-                    || getMovementMode() == IEntityMovementMode.INF_UMU)
+                    || getMovementMode() == IEntityMovementMode.INF_UMU
+                    || getMovementMode() == IEntityMovementMode.VTOL)
                 return false;
             return true;
         }

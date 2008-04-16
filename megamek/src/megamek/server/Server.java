@@ -15867,16 +15867,16 @@ public class Server implements Runnable {
      * returns them.
      */
     private ArrayList<String> scanForBoardsInDir(String addPath,
-            String basePath, int w, int h, boolean subdirs) {
+            String basePath, int w, int h) {
         File dir = new File(addPath);
         String fileList[] = dir.list();
         ArrayList<String> tempList = new ArrayList<String>();
         for (int i = 0; i < fileList.length; i++) {
             File x = new File(addPath.concat("/").concat(fileList[i]));
-            if (x.isDirectory() && subdirs) {
+            if (x.isDirectory()) {
                 tempList.addAll(scanForBoardsInDir(addPath.concat("/").concat(
                         fileList[i]), basePath.concat("/").concat(fileList[i]),
-                        w, h, subdirs));
+                        w, h));
                 continue;
             }
             if (fileList[i].indexOf(".svn") != -1) {
@@ -15887,25 +15887,15 @@ public class Server implements Runnable {
             }
             if (Board.boardIsSize(basePath.concat("/").concat(fileList[i]), w,
                     h)) {
-                if (subdirs)
-                    tempList.add(basePath.concat("/").concat(
+                tempList.add(basePath.concat("/").concat(
                             fileList[i].substring(0, fileList[i]
                                     .lastIndexOf(".board"))));
-                else
-                    tempList.add(fileList[i].substring(0, fileList[i]
-                            .lastIndexOf(".board")));
             }
         }
         return tempList;
     }
 
     private ArrayList<String> scanForBoards(int boardWidth, int boardHeight) {
-        return scanForBoards(boardWidth, boardHeight, game.getOptions()
-                .booleanOption("maps_include_subdir"));
-    }
-
-    private ArrayList<String> scanForBoards(int boardWidth, int boardHeight,
-            boolean subdirs) {
         ArrayList<String> boards = new ArrayList<String>();
 
         File boardDir = new File("data/boards");
@@ -15919,7 +15909,7 @@ public class Server implements Runnable {
         ArrayList<String> tempList = new ArrayList<String>();
         Comparator<String> sortComp = StringUtil.stringComparator();
         tempList = scanForBoardsInDir("data/boards", "", boardWidth,
-                boardHeight, subdirs);
+                boardHeight);
         // if there are any boards, add these:
         if (tempList.size() > 0) {
             boards.add(MapSettings.BOARD_RANDOM);

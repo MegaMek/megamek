@@ -19,6 +19,7 @@ v0.33.22-dev (SVN)
 + Bug 1941589: MML Ammo gets no Narc bonus
 + Bug: Sylphs starting movement over water must incorrectly first move up to
     continue moving
++ Always search for boards in subdirectories, too
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

@@ -20,6 +20,7 @@ v0.33.22-dev (SVN)
 + Bug: Sylphs starting movement over water must incorrectly first move up to
     continue moving
 + Always search for boards in subdirectories, too
++ Bug with Artillery building damage report fixed
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

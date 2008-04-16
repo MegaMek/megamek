@@ -16,6 +16,7 @@ v0.33.22-dev (SVN)
 + Bug 1941348: Targeting computers still follow BMR rules
 + Bug 1941890: Infernos used up at double rate
 + Bug 1940670: Screwy vehicle criticals
++ Bug 1941589: MML Ammo gets no Narc bonus
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

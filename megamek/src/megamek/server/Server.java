@@ -13563,6 +13563,7 @@ public class Server implements Runnable {
                     int damage = 0;
                     for (Mounted m : t.getAmmo()) {
                         m.setHit(true);
+                        m.setShotsLeft(0);
                         // non-explosive ammo can't explode
                         if (!m.getType().isExplosive()) {
                             continue;
@@ -13687,14 +13688,7 @@ public class Server implements Runnable {
                     r = new Report(6210);
                     r.subject = t.getId();
                     vDesc.add(r);
-                    t.immobilize();
-                    t.lockTurret();
-                    for (Mounted m : t.getWeaponList()) {
-                        WeaponType wtype = (WeaponType) m.getType();
-                        if (wtype.hasFlag(WeaponType.F_ENERGY))
-                            m.setBreached(true); // not destroyed, just
-                                                    // unpowered
-                    }
+                    t.engineHit();
                     if (t instanceof VTOL) {
                         PilotingRollData psr = t.getBasePilotingRoll();
                         IHex hex = game.getBoard().getHex(t.getPosition());

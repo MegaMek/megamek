@@ -41,6 +41,7 @@ public class Tank extends Entity implements Serializable {
     protected int movementDamage = 0;
     private boolean infernoFire = false;
     private ArrayList<Mounted> jammedWeapons = new ArrayList<Mounted>();
+    protected boolean engineHit = false;
 
     // locations
     public static final int LOC_BODY = 0;
@@ -1205,8 +1206,14 @@ public class Tank extends Entity implements Serializable {
             if (loc == LOC_FRONT) {
                 switch (roll) {
                     case 6:
-                        if (!isDriverHit() && !crew.isDead())
-                            return CRIT_DRIVER;
+                        if (!crew.isDead()) {
+                            if (!isDriverHit()) {
+                                return CRIT_DRIVER;
+                            }
+                            else {
+                                return CRIT_CREW_STUNNED;
+                            }
+                        }
                     case 7:
                         for (Mounted m : getWeaponList()) {
                             if (m.getLocation() == loc && !m.isDestroyed()
@@ -1226,8 +1233,12 @@ public class Tank extends Entity implements Serializable {
                         if (getSensorHits() < 4)
                             return CRIT_SENSOR;
                     case 10:
-                        if (!isCommanderHit() && !crew.isDead())
-                            return CRIT_COMMANDER;
+                        if (!crew.isDead()) {
+                            if (!isCommanderHit()) {
+                                return CRIT_COMMANDER;
+                            }
+                            else return CRIT_CREW_STUNNED;
+                        }
                     case 11:
                         for (Mounted m : getWeaponList()) {
                             if (m.getLocation() == loc && !m.isDestroyed()
@@ -1267,7 +1278,7 @@ public class Tank extends Entity implements Serializable {
                             }
                         }
                     case 10:
-                        if (!isImmobile())
+                        if (!engineHit)
                             return CRIT_ENGINE;
                     case 11:
                         for (Mounted m : getAmmo()) {
@@ -1276,7 +1287,7 @@ public class Tank extends Entity implements Serializable {
                             }
                         }
                     case 12:
-                        if (getEngine().isFusion() && !isImmobile())
+                        if (getEngine().isFusion() && !engineHit)
                             return CRIT_ENGINE;
                         else if (!getEngine().isFusion())
                             return CRIT_FUEL_TANK;
@@ -1396,6 +1407,21 @@ public class Tank extends Entity implements Serializable {
 
     public ArrayList<Mounted> getJammedWeapons() {
         return jammedWeapons;
+    }
+    
+    /**
+     * apply the effects of an "engine hit" crit
+     */
+    public void engineHit() {
+        this.engineHit = true;
+        this.immobilize();
+        this.lockTurret();
+        for (Mounted m : this.getWeaponList()) {
+            WeaponType wtype = (WeaponType) m.getType();
+            if (wtype.hasFlag(WeaponType.F_ENERGY))
+                m.setBreached(true); // not destroyed, just
+                                        // unpowered
+        }
     }
 
 }

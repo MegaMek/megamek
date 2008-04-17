@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
@@ -37,6 +38,7 @@ public class ISThunderBolt15 extends ThunderBoltWeapon {
         this.addLookupName("ISThunderbolt15");
         this.addLookupName("IS Thunderbolt 15");
         this.addLookupName("ISTBolt15");
+        this.ammoType = AmmoType.T_TBOLT_15;
         this.heat = 7;
         this.minimumRange = 5;
         this.shortRange = 6;

@@ -60,7 +60,7 @@ public class AmmoType extends EquipmentType {
     public static final int     T_HEAVY_FLAMER      = 35;
     public static final int     T_COOLANT_POD       = 36; // not really ammo, but explodes and is depleted
     public static final int     T_EXLRM             = 37;
-    public static final int     T_TBOLT             = 38;
+    public static final int     T_APGAUSS           = 38;
     public static final int     T_MAGSHOT           = 39;
     public static final int     T_PXLRM             = 40;
     public static final int     T_HSRM              = 41;
@@ -71,8 +71,11 @@ public class AmmoType extends EquipmentType {
     public static final int     T_PLASMA            = 46;
     public static final int     T_SBGAUSS           = 47;
     public static final int     T_RAIL_GUN          = 48;
-    public static final int     T_APGAUSS           = 49;
-    public static final int     NUM_TYPES           = 50;
+    public static final int     T_TBOLT_5           = 49;
+    public static final int     T_TBOLT_10          = 50;
+    public static final int     T_TBOLT_15          = 51;
+    public static final int     T_TBOLT_20          = 52;
+    public static final int     NUM_TYPES           = 52;
     
 
     // ammo flags
@@ -5488,7 +5491,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISTBolt5 Ammo");
         ammo.damagePerShot = 5;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_TBOLT;
+        ammo.ammoType = AmmoType.T_TBOLT_5;
         ammo.shots = 12;
         ammo.bv = 8;
         ammo.cost = 50000;
@@ -5508,7 +5511,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISTBolt10 Ammo");
         ammo.damagePerShot = 10;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_TBOLT;
+        ammo.ammoType = AmmoType.T_TBOLT_10;
         ammo.shots = 6;
         ammo.bv = 16;
         ammo.cost = 50000;
@@ -5528,7 +5531,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISTBolt15 Ammo");
         ammo.damagePerShot = 15;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_TBOLT;
+        ammo.ammoType = AmmoType.T_TBOLT_15;
         ammo.shots = 4;
         ammo.bv = 26;
         ammo.cost = 50000;
@@ -5548,7 +5551,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("ISTBolt20 Ammo");
         ammo.damagePerShot = 20;
         ammo.rackSize = 1;
-        ammo.ammoType = AmmoType.T_TBOLT;
+        ammo.ammoType = AmmoType.T_TBOLT_20;
         ammo.shots = 3;
         ammo.bv = 35;
         ammo.cost = 50000;
@@ -5984,8 +5987,8 @@ public class AmmoType extends EquipmentType {
               at.getAmmoType() == T_MRM  ||
               at.getAmmoType() == T_MRM_STREAK) &&
                   at.getRackSize() >= 20) ||
-            (at.getAmmoType() == T_TBOLT && at.getDamagePerShot() == 20) &&
-             at.getMunitionType() == M_STANDARD)) {
+              at.getAmmoType() == T_TBOLT_20) &&
+             at.getMunitionType() == M_STANDARD) {
             return true;
         }
 

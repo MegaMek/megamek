@@ -302,6 +302,10 @@ public class BLKMechFile extends BLKFile implements IMechLoader {
         if (mech.isClan()) {
             mech.addClanCase();
         }
+        
+        if (dataFile.exists("omni")) {
+            mech.setOmni(true);
+        }
 
         return mech;
 

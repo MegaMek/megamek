@@ -131,6 +131,7 @@
      victor23
      beretboy <dp777@users.sourceforge.net>
      Walter Smith <walter_smith@users.sourceforge.net>
+     Shatara
 
   Translations
      Jörg Harder <joergharder@t-online.de>

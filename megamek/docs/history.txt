@@ -21,6 +21,8 @@ v0.33.22-dev (SVN)
     continue moving
 + Always search for boards in subdirectories, too
 + Bug with Artillery building damage report fixed
++ Added default image for submarines
++ Added image for Neptune Submarine
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

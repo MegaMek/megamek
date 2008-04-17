@@ -60,6 +60,7 @@ public class MechTileset {
     private String WHEELED_HEAVY_STRING = "default_wheeled_heavy"; //$NON-NLS-1$
     private String HOVER_STRING = "default_hover"; //$NON-NLS-1$
     private String NAVAL_STRING = "default_naval"; //$NON-NLS-1$
+    private String SUBMARINE_STRING = "default_submarine"; //$NON-NLS-1$
     private String HYDROFOIL_STRING = "default_hydrofoil"; //$NON-NLS-1$
     private String VTOL_STRING = "default_vtol"; //$NON-NLS-1$
     private String INF_STRING = "default_infantry"; //$NON-NLS-1$
@@ -79,6 +80,7 @@ public class MechTileset {
     private MechEntry default_wheeled_heavy;
     private MechEntry default_hover;
     private MechEntry default_naval;
+    private MechEntry default_submarine;
     private MechEntry default_hydrofoil;
     private MechEntry default_vtol;
     private MechEntry default_inf;
@@ -158,10 +160,11 @@ public class MechTileset {
                 return default_assault;
             }
         }
-        if (entity.getMovementMode() == IEntityMovementMode.NAVAL
-                || entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
+        if (entity.getMovementMode() == IEntityMovementMode.NAVAL) {
             return default_naval;
         }
+        if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE)
+            return default_submarine;
         if (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL) {
             return default_hydrofoil;
         }
@@ -257,6 +260,7 @@ public class MechTileset {
         default_wheeled_heavy = exact.get(WHEELED_HEAVY_STRING.toUpperCase());
         default_hover = exact.get(HOVER_STRING.toUpperCase());
         default_naval = exact.get(NAVAL_STRING.toUpperCase());
+        default_submarine = exact.get(SUBMARINE_STRING.toUpperCase());
         default_hydrofoil = exact.get(HYDROFOIL_STRING.toUpperCase());
         default_vtol = exact.get(VTOL_STRING.toUpperCase());
         default_inf = exact.get(INF_STRING.toUpperCase());

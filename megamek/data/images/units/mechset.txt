@@ -26,6 +26,7 @@
 # Carpe Mortis (Alan Bell)
 # victor23
 # hopalong
+# Shatara
 
 # The format goes as follows:
 # {chassis/exact} [model] [image filename]
@@ -57,6 +58,7 @@ exact "default_wheeled_heavy" "default_wheeled_heavy.gif"
 exact "default_hover" "default_hover.gif"
 exact "default_vtol" "default_vtol.gif"
 exact "default_naval" "default_naval.gif"
+exact "default_submarine" "default_submarine.gif"
 exact "default_hydrofoil" "default_hydrofoil.gif"
 exact "default_infantry" "default_infantry.gif"
 exact "default_ba" "default_ba.gif"
@@ -305,7 +307,7 @@ chassis "Morrigu Fire Support Vehicle" "morrigu.gif"
 #chassis "Musketeer Hover Tank" " .gif"
 chassis "Myrmidon Medium Tank" "myrmidon.gif"
 #chassis "NarcMaster" " .gif"
-#chassis "Neptune Submarine" " .gif"
+chassis "Neptune Submarine" "neptune.gif"
 #chassis "Nightshade" " .gif"
 chassis "Odin Scout Tank" "odin.gif"
 chassis "Ontos Heavy Tank" "ontos.gif"

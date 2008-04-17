@@ -23,6 +23,7 @@ v0.33.22-dev (SVN)
 + Bug with Artillery building damage report fixed
 + Added default image for submarines
 + Added image for Neptune Submarine
++ Bug 1944653: OmniVehicles missing battle armor handholds
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

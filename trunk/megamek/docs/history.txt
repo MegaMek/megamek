@@ -26,6 +26,8 @@ v0.33.22-dev (SVN)
 + Bug 1944653: OmniVehicles missing battle armor handholds
 + Bug 1944670: Hot-loaded Thunderbolts do only half damage at minimum range
 + Bug 1944667: Thunderbolt ammo wrong
++ Bug 1944653: Set OmniTanks and OmniVTOLs to actually be Omnis when loading from
+    BLK.
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

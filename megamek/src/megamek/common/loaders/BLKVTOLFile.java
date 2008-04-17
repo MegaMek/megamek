@@ -165,6 +165,11 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
         loadEquipment(t, "Left", Tank.LOC_LEFT);
         loadEquipment(t, "Rear", Tank.LOC_REAR);
         loadEquipment(t, "Body", Tank.LOC_BODY);
+        
+        if (dataFile.exists("omni")) {
+            t.setOmni(true);
+        }
+        
         return t;
     }
 

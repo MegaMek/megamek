@@ -1871,7 +1871,10 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                             case (AmmoType.T_ATM):
                             case (AmmoType.T_MML):
                             case (AmmoType.T_EXLRM):
-                            case AmmoType.T_TBOLT:
+                            case AmmoType.T_TBOLT_5:
+                            case AmmoType.T_TBOLT_10:
+                            case AmmoType.T_TBOLT_15:
+                            case AmmoType.T_TBOLT_20:
                             case AmmoType.T_PXLRM:
                             case AmmoType.T_HSRM:
                             case AmmoType.T_MRM_STREAK:

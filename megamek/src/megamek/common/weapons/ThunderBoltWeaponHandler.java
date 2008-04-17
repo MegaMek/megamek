@@ -50,7 +50,7 @@ public class ThunderBoltWeaponHandler extends MissileWeaponHandler {
     protected int calcDamagePerHit() {
         AmmoType atype = (AmmoType) ammo.getType();
         float toReturn = atype.getDamagePerShot();
-        if (nRange <= wtype.getMinimumRange()) {
+        if (nRange <= wtype.getMinimumRange() && !weapon.isHotLoaded()) {
             toReturn /= 2;
         }
         if (target instanceof Infantry && !(target instanceof BattleArmor))

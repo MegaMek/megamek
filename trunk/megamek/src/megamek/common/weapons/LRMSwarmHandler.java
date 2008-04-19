@@ -231,7 +231,7 @@ public class LRMSwarmHandler extends LRMHandler {
         } // Handle the next cluster.
         Report.addNewline(vPhaseReport);
         if (swarmMissilesNowLeft > 0) {
-            Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(),
+            Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),
                     entityTarget, waa.getWeaponId());
             if (swarmTarget != null) {
                 r = new Report(3420);
@@ -283,7 +283,7 @@ public class LRMSwarmHandler extends LRMHandler {
         }
         ae.setLastTarget(entityTarget.getId());
 
-        Entity swarmTarget = Compute.getSwarmTarget(game, ae.getId(),
+        Entity swarmTarget = Compute.getSwarmMissileTarget(game, ae.getId(),
                 entityTarget, waa.getWeaponId());
         if (swarmTarget != null) {
             r = new Report(3420);

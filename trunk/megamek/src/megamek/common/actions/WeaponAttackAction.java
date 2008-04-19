@@ -451,8 +451,14 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
             int side = te instanceof Tank ? ToHitData.SIDE_RANDOM
                     : ToHitData.SIDE_FRONT;
-            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
-                    "Attack during swarm.", ToHitData.HIT_SWARM, side);
+            if (ae instanceof BattleArmor) {
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
+                        "Attack during swarm.", ToHitData.HIT_SWARM, side);
+            } else {
+                return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS,
+                        "Attack during swarm.",
+                        ToHitData.HIT_SWARM_CONVENTIONAL, side);
+            }
         } else if (isArtilleryFLAK) {
             toHit = new ToHitData(9, "artillery FLAK");
         } else {

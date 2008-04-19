@@ -567,7 +567,12 @@ public class QuadMech extends Mech {
                     return new HitData(Mech.LOC_RARM);
                 return new HitData(Mech.LOC_RLEG);
             }
-        } else if (table == ToHitData.HIT_SWARM) {
+        } else if (table == ToHitData.HIT_SWARM || table == ToHitData.HIT_SWARM_CONVENTIONAL) {
+            int effects;
+            if (table == ToHitData.HIT_SWARM_CONVENTIONAL)
+                effects = HitData.EFFECT_NONE;
+            else
+                effects = HitData.EFFECT_CRITICAL;
             roll = Compute.d6(2);
             try {
                 PrintWriter pw = PreferenceManager.getClientPreferences()
@@ -592,38 +597,38 @@ public class QuadMech extends Mech {
                         HitData result = rollHitLocation(table, side,
                                 aimedLocation, aimingMode);
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
-                                false, HitData.EFFECT_CRITICAL));
+                                false, effects));
                         return result;
                     } // if
                     return new HitData(Mech.LOC_HEAD, false,
-                            HitData.EFFECT_CRITICAL);
+                            effects);
                 case 3:
                     return new HitData(Mech.LOC_RT, false,
-                            HitData.EFFECT_CRITICAL);
+                            effects);
                 case 4:
                     return new HitData(Mech.LOC_CT, true,
-                            HitData.EFFECT_CRITICAL);
+                            effects);
                 case 5:
                     return new HitData(Mech.LOC_RT, true,
-                            HitData.EFFECT_CRITICAL);
+                            effects);
                 case 6:
                     return new HitData(Mech.LOC_RT, false,
-                            HitData.EFFECT_CRITICAL);
+                            effects);
                 case 7:
                     return new HitData(Mech.LOC_CT, false,
-                            HitData.EFFECT_CRITICAL);
+                            effects);
                 case 8:
                     return new HitData(Mech.LOC_LT, false,
-                            HitData.EFFECT_CRITICAL);
+                            effects);
                 case 9:
                     return new HitData(Mech.LOC_LT, true,
-                            HitData.EFFECT_CRITICAL);
+                            effects);
                 case 10:
                     return new HitData(Mech.LOC_CT, true,
-                            HitData.EFFECT_CRITICAL);
+                            effects);
                 case 11:
                     return new HitData(Mech.LOC_LT, false,
-                            HitData.EFFECT_CRITICAL);
+                            effects);
                 case 12:
                     if (crew.hasEdgeRemaining()
                             && crew.getOptions().booleanOption(
@@ -632,11 +637,11 @@ public class QuadMech extends Mech {
                         HitData result = rollHitLocation(table, side,
                                 aimedLocation, aimingMode);
                         result.setUndoneLocation(new HitData(Mech.LOC_HEAD,
-                                false, HitData.EFFECT_CRITICAL));
+                                false, effects));
                         return result;
                     } // if
                     return new HitData(Mech.LOC_HEAD, false,
-                            HitData.EFFECT_CRITICAL);
+                            effects);
             }
         }
         return super.rollHitLocation(table, side, aimedLocation, aimingMode);

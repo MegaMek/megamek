@@ -39,6 +39,9 @@ public class Tank extends Entity implements Serializable {
     private boolean m_bImmobileHit = false;
     private int burningLocations = 0;
     protected int movementDamage = 0;
+    private boolean minorMovementDamage = false;
+    private boolean moderateMovementDamage = false;
+    private boolean heavyMovementDamage = false;
     private boolean infernoFire = false;
     private ArrayList<Mounted> jammedWeapons = new ArrayList<Mounted>();
     protected boolean engineHit = false;
@@ -1153,15 +1156,43 @@ public class Tank extends Entity implements Serializable {
         burningLocations &= flag;
     }
 
+    /**
+     * extinguish all inferno fire on this Tank
+     */
     public void extinguishAll() {
         burningLocations = 0;
         infernoFire = false;
         infernos.clear();
     }
 
+    /**
+     * adds minor, moderate or heavy movement system damage
+     * @param level a <code>int</code> representing minor damage (1),
+     * moderate damage (2), or heavy damage (3)
+     */
     public void addMovementDamage(int level) {
-        movementDamage += level;
+        switch (level) {
+        case 1:
+            if (!minorMovementDamage) {
+                minorMovementDamage = true;
+                movementDamage += level;
+            }
+            break;
+        case 2:
+            if (!moderateMovementDamage) {
+                moderateMovementDamage = true;
+                movementDamage += level;
+            }
+            break;
+        case 3:
+            if (!heavyMovementDamage) {
+                heavyMovementDamage = true;
+                movementDamage += level;
+            }
+        }
     }
+                    
+     
 
     public void setEngine(Engine e) {
         engine = e;

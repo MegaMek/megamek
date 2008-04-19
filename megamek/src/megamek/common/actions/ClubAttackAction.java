@@ -70,7 +70,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
     /**
      * Damage that the specified mech does with a club attack
      */
-    public static int getDamageFor(Entity entity, Mounted club) {
+    public static int getDamageFor(Entity entity, Mounted club,
+            boolean targetInfantry) {
         MiscType mType = (MiscType) (club.getType());
         int nDamage = (int) Math.floor(entity.getWeight() / 5.0);
         if (mType.hasSubType(MiscType.S_SWORD)) {
@@ -138,6 +139,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
         if (entity.getLocationStatus(clubLocation) == ILocationExposureStatus.WET) {
             nDamage /= 2.0f;
+        }
+        if (targetInfantry) {
+            nDamage = Math.max(1, nDamage / 10);
         }
 
         return nDamage

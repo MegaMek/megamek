@@ -17,7 +17,11 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
 
 /**
  * @author Sebastian Brocks
@@ -33,5 +37,16 @@ public class StopSwarmAttack extends InfantryAttack {
         super();
         this.name = "Stop Swarm Attack";
         this.setInternalName(Infantry.STOP_SWARM);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game)
+     */
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new StopSwarmAttackHandler(toHit, waa, game, server);
     }
 }

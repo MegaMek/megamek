@@ -436,7 +436,7 @@ public final class PhysicalCalculator {
             odds = ClubAttackAction.toHit(game, from.getId(), to, club,
                     ToHitData.HIT_NORMAL);
             if (odds.getValue() != TargetRoll.IMPOSSIBLE) {
-                damage = ClubAttackAction.getDamageFor(from, club);
+                damage = ClubAttackAction.getDamageFor(from, club, targetConvInfantry);
                 dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
                 // Adjust damage for targets armor
                 dmg *= punchThroughMod(to, location_table, target_arc, dmg, dmg);

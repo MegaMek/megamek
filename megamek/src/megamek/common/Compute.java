@@ -2926,7 +2926,7 @@ public class Compute {
      * @return the new target <code>Entity</code>. May return null if no new
      *         target available
      */
-    public static Entity getSwarmTarget(IGame game, int aeId, Entity te, int weaponId) {
+    public static Entity getSwarmMissileTarget(IGame game, int aeId, Entity te, int weaponId) {
         Coords coords = te.getPosition();
         Entity newTarget = null;
         Entity tempEntity = null;

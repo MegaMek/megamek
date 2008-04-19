@@ -30,6 +30,7 @@ v0.33.22-dev (SVN)
     BLK.
 + Bug 1946544: Too many driving skill penalties from mobility hits
 + Bug 1945587: Physical weapons do full damage vs. infantry
++ Bug 1946560: 'Stop Swarm Attack' not working
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

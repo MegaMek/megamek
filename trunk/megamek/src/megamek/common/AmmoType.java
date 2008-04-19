@@ -75,7 +75,7 @@ public class AmmoType extends EquipmentType {
     public static final int     T_TBOLT_10          = 50;
     public static final int     T_TBOLT_15          = 51;
     public static final int     T_TBOLT_20          = 52;
-    public static final int     NUM_TYPES           = 52;
+    public static final int     NUM_TYPES           = 53;
     
 
     // ammo flags

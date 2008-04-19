@@ -28,6 +28,7 @@ v0.33.22-dev (SVN)
 + Bug 1944667: Thunderbolt ammo wrong
 + Bug 1944653: Set OmniTanks and OmniVTOLs to actually be Omnis when loading from
     BLK.
++ Bug 1946544: Too many driving skill penalties from mobility hits
 
 v0.33.21 (2008-04-01, 00:47 GMT+2)
 + Bug 1718067: Physical attack against VTOL does not destroy rotor

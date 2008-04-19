@@ -18399,7 +18399,9 @@ public class Server implements Runnable {
         } else if (aaa instanceof ClubAttackAction) {
             ClubAttackAction caa = (ClubAttackAction) aaa;
             toHit = caa.toHit(game);
-            damage = ClubAttackAction.getDamageFor(ae, caa.getClub());
+            damage = ClubAttackAction.getDamageFor(ae, caa.getClub(),
+                    caa.getTarget(game) instanceof Infantry
+                            && !(caa.getTarget(game) instanceof BattleArmor));
         } else if (aaa instanceof DfaAttackAction) {
             DfaAttackAction daa = (DfaAttackAction) aaa;
             toHit = daa.toHit(game);

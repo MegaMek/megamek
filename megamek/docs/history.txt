@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.22-dev (SVN)
+v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Better text for artillery adjust/autohit hex tooltip
 + Bug 1931634: Vehicle CASE has no effect
 + Bug: Fix Kobold single trooper weapons for real

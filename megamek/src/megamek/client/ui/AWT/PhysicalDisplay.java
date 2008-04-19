@@ -819,7 +819,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                                 ClubAttackAction.toHit(client.game, cen,
                                         target, club, ash.getAimTable())
                                         .getValueAsString(),
-                                ClubAttackAction.getDamageFor(ce(), club) });
+                                ClubAttackAction.getDamageFor(ce(), club,
+                                        target instanceof Infantry && 
+                                        !(target instanceof BattleArmor)) });
             }
 
             SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
@@ -854,7 +856,9 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                         toHit.getValueAsString(),
                         new Double(Compute.oddsAbove(toHit.getValue())),
                         toHit.getDesc(),
-                        ClubAttackAction.getDamageFor(ce(), club)
+                        ClubAttackAction.getDamageFor(ce(), club,
+                                target instanceof Infantry && 
+                                !(target instanceof BattleArmor))
                                 + toHit.getTableDesc() });
         if (clientgui.doYesNoDialog(title, message)) {
             disableButtons();

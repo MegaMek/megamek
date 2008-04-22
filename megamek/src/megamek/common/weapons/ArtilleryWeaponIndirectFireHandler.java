@@ -339,9 +339,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             } else {
                 // misses and scatters off-board
                 if (isFlak) {
-                    r = new Report(3200);
-                } else {
                     r = new Report(3193);
+                } else {
+                    r = new Report(3200);
                 }
                 r.subject = subjectId;
                 vPhaseReport.addElement(r);

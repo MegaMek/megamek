@@ -4,6 +4,7 @@ v0.33.23-dev (SVN)
 + Bug 1947060: Leftover vehicle damage bugs
 + Bug 1947285: Aimed shot hit location oddities
 + Bug 1948927: Confusing report on Narc vs. Stealth
++ Bug 1947634: VTOLs at level 2 can pass through light woods
 
 v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Better text for artillery adjust/autohit hex tooltip

@@ -182,13 +182,10 @@ public class Hex implements IHex, Serializable {
     public int ceiling() {
         int maxFeature = 0;
 
-        // Account for woods.
+        // Account for woods. They are 2 levels high
         // N.B. VTOLs are allowed to enter smoke.
-        if (this.containsTerrain(Terrains.WOODS)) {
-            maxFeature = Math.min(2, terrainLevel(Terrains.WOODS));
-        }
-        if (this.containsTerrain(Terrains.JUNGLE)) {
-            maxFeature = Math.min(2, terrainLevel(Terrains.JUNGLE));
+        if (containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE)) {
+            maxFeature = 2;
         }
 
         // Account for buildings.

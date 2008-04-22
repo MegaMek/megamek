@@ -37,10 +37,10 @@ public class ISRL15 extends RLWeapon {
         this.addLookupName("IS RLauncher-15");
         this.heat = 5;
         this.rackSize = 15;
-        this.shortRange = 5;
-        this.mediumRange = 11;
-        this.longRange = 18;
-        this.extremeRange = 22;
+        this.shortRange = 4;
+        this.mediumRange = 9;
+        this.longRange = 15;
+        this.extremeRange = 18;
         this.tonnage = 1.0f;
         this.criticals = 2;
         this.bv = 23;

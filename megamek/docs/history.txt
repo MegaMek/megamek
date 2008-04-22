@@ -6,6 +6,7 @@ v0.33.23-dev (SVN)
 + Bug 1948927: Confusing report on Narc vs. Stealth
 + Bug 1947634: VTOLs at level 2 can pass through light woods
 + Bug 1947204: Hot-loading Thunderbolts no longer works
++ Bug 1947075: Sloth BA missing second laser
 
 v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Better text for artillery adjust/autohit hex tooltip

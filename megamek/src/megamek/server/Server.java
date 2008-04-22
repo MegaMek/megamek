@@ -11203,7 +11203,8 @@ public class Server implements Runnable {
                     && entity.getElevation() != -hex.depth()
                     && (entity.getElevation() < 0 || (entity.getElevation() == 0
                             && hex.terrainLevel(Terrains.BRIDGE_ELEV) != 0 && !hex
-                            .containsTerrain(Terrains.ICE)))) {
+                            .containsTerrain(Terrains.ICE)))
+                    && !entity.isMakingDfa()) {
                 // mech is floating in water....
                 if (entity.hasUMU())
                     return;

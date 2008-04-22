@@ -20008,6 +20008,9 @@ public class Server implements Runnable {
                     // report who is firing
                     r = new Report(3100);
                     r.subject = aId;
+                    Entity ae = game.getEntity(aId);
+                    if (ae == null)
+                        System.err.println("ae null in handleattacks, entityId "+aId);
                     r.addDesc(game.getEntity(aId));
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
@@ -20033,6 +20036,8 @@ public class Server implements Runnable {
                     // entities
                     if (ae == null)
                         ae = game.getOutOfGameEntity(aId);
+                    if (ae == null)
+                        System.err.println("ae null in handleattacks 2nd part, entityid "+aId);
                     r.addDesc(ae);
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);

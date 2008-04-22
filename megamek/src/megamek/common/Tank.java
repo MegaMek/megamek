@@ -1396,10 +1396,10 @@ public class Tank extends Entity implements Serializable {
                             }
                         }
                     case 11:
-                        if (!isImmobile())
+                        if (!engineHit)
                             return CRIT_ENGINE;
                     case 12:
-                        if (getEngine().isFusion() && !isImmobile())
+                        if (getEngine().isFusion() && !engineHit)
                             return CRIT_ENGINE;
                         else if (!getEngine().isFusion())
                             return CRIT_FUEL_TANK;

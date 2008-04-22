@@ -143,7 +143,8 @@ public class VTOL extends Tank {
     /*
      * (non-Javadoc) This really, really isn't right.
      */
-    public HitData rollHitLocation(int table, int side) {
+    public HitData rollHitLocation(int table, int side, int aimedLocation,
+            int aimingMode) {
         int nArmorLoc = LOC_FRONT;
         boolean bSide = false;
         if (side == ToHitData.SIDE_LEFT) {
@@ -156,7 +157,20 @@ public class VTOL extends Tank {
             nArmorLoc = LOC_REAR;
         }
         HitData rv = new HitData(nArmorLoc);
-        switch (Compute.d6(2)) {
+        boolean bHitAimed = false;
+        if ((aimedLocation != LOC_NONE)
+                && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
+            
+            int roll = Compute.d6(2);
+
+            if ((5 < roll) && (roll < 9)) {
+                rv = new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
+                        true);
+                bHitAimed = true;
+            }
+        }
+        if (!bHitAimed) {
+            switch (Compute.d6(2)) {
             case 2:
                 rv.setEffect(HitData.EFFECT_CRITICAL);
                 break;
@@ -192,6 +206,7 @@ public class VTOL extends Tank {
             case 12:
                 rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL
                         | HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+            }
         }
         if (table == ToHitData.HIT_SWARM)
             rv.setEffect(rv.getEffect() | HitData.EFFECT_CRITICAL);
@@ -348,7 +363,7 @@ public class VTOL extends Tank {
                             }
                         }
                     case 10:
-                        if (!isImmobile())
+                        if (!engineHit)
                             return CRIT_ENGINE;
                     case 11:
                         for (Mounted m : getAmmo()) {
@@ -357,7 +372,7 @@ public class VTOL extends Tank {
                             }
                         }
                     case 12:
-                        if (getEngine().isFusion() && !isImmobile())
+                        if (getEngine().isFusion() && !engineHit)
                             return CRIT_ENGINE;
                         else if (!getEngine().isFusion())
                             return CRIT_FUEL_TANK;

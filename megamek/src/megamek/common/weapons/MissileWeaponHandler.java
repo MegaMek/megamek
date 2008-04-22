@@ -135,12 +135,24 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
+            } else if (bMekStealthActive) {
+                // stealth prevents bonus
+                r = new Report(3335);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
             } else
                 nMissilesModifier += 2;
         } else if (atype.getAmmoType() == AmmoType.T_ATM) {
             if (bECMAffected) {
                 // ECM prevents bonus
                 r = new Report(3330);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else if (bMekStealthActive) {
+                // stealth prevents bonus
+                r = new Report(3335);
                 r.subject = subjectId;
                 r.newlines = 0;
                 vPhaseReport.addElement(r);
@@ -224,13 +236,6 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             r.add(toHit.getTableDesc());
             r.newlines = 0;
             vPhaseReport.addElement(r);
-            if (bMekStealthActive) {
-                // stealth prevents bonus
-                r = new Report(3335);
-                r.subject = subjectId;
-                r.newlines = 0;
-                vPhaseReport.addElement(r);
-            }
             if (nMissilesModifier != 0) {
                 if (nMissilesModifier > 0)
                     r = new Report(3340);

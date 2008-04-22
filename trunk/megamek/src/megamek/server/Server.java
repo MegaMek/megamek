@@ -13563,7 +13563,6 @@ public class Server implements Runnable {
                     int damage = 0;
                     for (Mounted m : t.getAmmo()) {
                         m.setHit(true);
-                        m.setShotsLeft(0);
                         // non-explosive ammo can't explode
                         if (!m.getType().isExplosive()) {
                             continue;
@@ -13571,6 +13570,7 @@ public class Server implements Runnable {
                         int tmp = m.getShotsLeft()
                                 * ((AmmoType) m.getType()).getDamagePerShot()
                                 * ((AmmoType) m.getType()).getRackSize();
+                        m.setShotsLeft(0);
                         damage += tmp;
                         r = new Report(6390);
                         r.subject = t.getId();
@@ -13785,7 +13785,8 @@ public class Server implements Runnable {
                     r.subject = t.getId();
                     ArrayList<Mounted> weapons = new ArrayList<Mounted>();
                     for (Mounted weap : t.getWeaponList()) {
-                        if (weap.getLocation() == loc) {
+                        if (weap.getLocation() == loc && !weap.isHit()
+                                && !weap.isDestroyed()) {
                             weapons.add(weap);
                         }
                     }

@@ -53,7 +53,6 @@ import megamek.common.Entity;
 import megamek.common.GameTurn;
 import megamek.common.GunEmplacement;
 import megamek.common.IAimingModes;
-import megamek.common.IArmorState;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
@@ -710,7 +709,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
 
         // close aimed shot display, if any
         ash.closeDialog();
-        ash.lockLocation(false);
     }
 
     private void doClearTurret() {
@@ -856,9 +854,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 && ash.isAimingAtLocation()) {
             waa.setAimedLocation(ash.getAimingAt());
             waa.setAimingMode(ash.getAimingMode());
-            if (ash.getAimingMode() == IAimingModes.AIM_MODE_TARG_COMP) {
-                ash.lockLocation(true);
-            }
         } else {
             waa.setAimedLocation(Entity.LOC_NONE);
             waa.setAimingMode(IAimingModes.AIM_MODE_NONE);
@@ -987,7 +982,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // restore any other movement to default
         ce().setSecondaryFacing(ce().getFacing());
         ce().setArmsFlipped(false);
-        ash.lockLocation(false);
     }
 
     /**
@@ -1547,10 +1541,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         private int aimingMode = IAimingModes.AIM_MODE_NONE;
         private int partialCover = LosEffects.COVER_NONE;
 
-        private boolean lockedLocation = false;
-        private int lockedLoc = Entity.LOC_NONE;
-        private Targetable lockedTarget = null;
-
         private AimedShotDialog asd;
 
         public AimedShotHandler() {
@@ -1601,16 +1591,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     return;
                 }
 
-                if (lockedLocation) {
-                    aimingAt = lockedLoc;
-                }
                 asd = new AimedShotDialog(
                         clientgui.frame,
                         Messages
                                 .getString("FiringDisplay.AimedShotDialog.title"), //$NON-NLS-1$
                         Messages
                                 .getString("FiringDisplay.AimedShotDialog.message"), //$NON-NLS-1$
-                        options, enabled, aimingAt, lockedLocation, this, this);
+                        options, enabled, aimingAt, this, this);
 
                 asd.setVisible(true);
                 updateTarget();
@@ -1679,25 +1666,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 }
 
                 if (aimingMode == IAimingModes.AIM_MODE_TARG_COMP) {
-                    // Can't target head with Clan targeting computer.
+                    // Can't target head withtargeting computer.
                     mask[Mech.LOC_HEAD] = false;
-
-                    switch (side) {
-                        case (ToHitData.SIDE_RIGHT):
-                            // Can't target left side when on the right
-                            // with Clan targeting computer.
-                            mask[Mech.LOC_LARM] = false;
-                            mask[Mech.LOC_LT] = false;
-                            mask[Mech.LOC_LLEG] = false;
-                            break;
-                        case (ToHitData.SIDE_LEFT):
-                            // Can't target right side when on the left
-                            // with Clan targeting computer.
-                            mask[Mech.LOC_RARM] = false;
-                            mask[Mech.LOC_RT] = false;
-                            mask[Mech.LOC_RLEG] = false;
-                            break;
-                    }
                 }
             }
             return mask;
@@ -1713,26 +1683,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             }
         }
 
-        // Enables the radiobuttons in the dialog.
+        /**
+         *  Enables the radiobuttons in the dialog.
+         */
         public void setEnableAll(boolean enableAll) {
-            if (asd != null && !lockedLocation) {
+            if (asd != null) {
                 asd.setEnableAll(enableAll);
-            }
-        }
-
-        // All aimed shots with a targeting computer
-        // must be at the same location.
-        public void lockLocation(boolean lock) {
-            if (lock) {
-                lockedTarget = target;
-                lockedLoc = aimingAt;
-                setEnableAll(false);
-                lockedLocation = true;
-            } else {
-                lockedTarget = null;
-                lockedLoc = Entity.LOC_NONE;
-                lockedLocation = false;
-                setEnableAll(true);
             }
         }
 
@@ -1748,7 +1704,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return aimingMode;
         }
 
-        // Returns the name of aimed location.
+        /**
+         * Returns the name of aimed location.
+         */ 
         public String getAimingLocation() {
             if (target != null && (aimingAt != Entity.LOC_NONE)
                     && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
@@ -1763,12 +1721,14 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return null;
         }
 
-        // Sets the aiming mode, depending on the target and
-        // the attacker. Against immobile mechs, targeting
-        // computer aiming mode will be used if turned on.
-        // (This is a hack, but it's the resolution suggested
-        // by the bug submitter, and I don't think it's half
-        // bad.
+        /**
+         * Sets the aiming mode, depending on the target and
+         * the attacker. Against immobile mechs, targeting
+         * computer aiming mode will be used if turned on.
+         * (This is a hack, but it's the resolution suggested
+         * by the bug submitter, and I don't think it's half
+         * bad.
+         */
         public void setAimingMode() {
             boolean allowAim;
 
@@ -1779,16 +1739,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                      target instanceof BattleArmor ||
                      target instanceof Protomech));
             if (allowAim) {
-                if (lockedLocation) {
-                    allowAim = ((Entity) target).equals(lockedTarget);
-                    if (allowAim) {
-                        aimingMode = IAimingModes.AIM_MODE_TARG_COMP;
-                        return;
-                    }
-                } else {
-                    aimingMode = IAimingModes.AIM_MODE_TARG_COMP;
-                    return;
-                }
+                aimingMode = IAimingModes.AIM_MODE_TARG_COMP;
+                return;
             }
             // immobile mech or gun emplacement
             allowAim = (target != null && ((target.isImmobile() && target instanceof Mech) || target instanceof GunEmplacement));
@@ -1799,18 +1751,24 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             aimingMode = IAimingModes.AIM_MODE_NONE;
         }
 
-        // If in aiming mode.
+        /**
+         * If in aiming mode.
+         */
         public boolean inAimingMode() {
             return aimingMode != IAimingModes.AIM_MODE_NONE;
         }
 
-        // If a hit location is currently selected.
+        /**
+         *  If a hit location is currently selected.
+         */
         public boolean isAimingAtLocation() {
             return aimingAt != Entity.LOC_NONE;
         }
 
-        // Determines if a certain weapon may aimed at a specific
-        // hit location.
+        /**
+         *  Determines if a certain weapon may aimed at a specific
+         *  hit location.
+         */
         public boolean allowAimedShotWith(Mounted weapon) {
             WeaponType wtype = (WeaponType) weapon.getType();
             boolean isWeaponInfantry = wtype.hasFlag(WeaponType.F_INFANTRY);
@@ -1883,12 +1841,16 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return true;
         }
 
-        // ActionListener, listens to the button in the dialog.
+        /**
+         * ActionListener, listens to the button in the dialog.
+         */
         public void actionPerformed(ActionEvent ev) {
             closeDialog();
         }
 
-        // ItemListener, listens to the radiobuttons in the dialog.
+        /**
+         * ItemListener, listens to the radiobuttons in the dialog.
+         */
         public void itemStateChanged(ItemEvent ev) {
             IndexedCheckbox icb = (IndexedCheckbox) ev.getSource();
             aimingAt = icb.getIndex();

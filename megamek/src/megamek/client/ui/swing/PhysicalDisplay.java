@@ -1650,8 +1650,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
 
         private int aimingMode = IAimingModes.AIM_MODE_NONE;
 
-        private boolean lockedLocation = false;
-
         private AimedShotDialog asd;
 
         private boolean canAim;
@@ -1705,7 +1703,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
                                     .getString("PhysicalDisplay.AimedShotDialog.title"), //$NON-NLS-1$
                             Messages
                                     .getString("PhysicalDisplay.AimedShotDialog.message"), //$NON-NLS-1$
-                            options, enabled, aimingAt, lockedLocation, this,
+                            options, enabled, aimingAt, this,
                             this);
 
                     asd.setVisible(true);

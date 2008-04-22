@@ -763,7 +763,9 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             }
             if (vTypes.size() < 2
                     && !client.game.getOptions().booleanOption(
-                            "lobby_ammo_dump")) { //$NON-NLS-1$
+                            "lobby_ammo_dump")
+                    && !client.game.getOptions().booleanOption(
+                            "maxtech_hotload")) { //$NON-NLS-1$
                 continue;
             }
 

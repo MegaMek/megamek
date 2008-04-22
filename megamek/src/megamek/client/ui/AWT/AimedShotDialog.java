@@ -44,7 +44,7 @@ public class AimedShotDialog extends Dialog {
 
     public AimedShotDialog(Frame parent, String title, String message,
             String[] choices, boolean[] enabled, int selectedIndex,
-            boolean locked, ItemListener il, ActionListener al) {
+            ItemListener il, ActionListener al) {
         super(parent, title, false);
         super.setResizable(false);
 
@@ -71,7 +71,7 @@ public class AimedShotDialog extends Dialog {
             checkboxes[i] = new IndexedCheckbox(choices[i],
                     (i == selectedIndex), radioGroup, i);
             checkboxes[i].addItemListener(il);
-            checkboxes[i].setEnabled(enabled[i] && !locked);
+            checkboxes[i].setEnabled(enabled[i]);
             c.gridwidth = even ? 1 : GridBagConstraints.REMAINDER;
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(checkboxes[i], c);

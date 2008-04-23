@@ -1858,7 +1858,7 @@ public class Game implements Serializable, IGame {
                     // Add the appropriate transporter to the unit.
                     if (!unit.isOmni() && unit instanceof Mech) {
                         unit.addTransporter(new ClampMountMech());
-                    } else if (unit instanceof Tank) {
+                    } else if (unit instanceof Tank && !(unit instanceof VTOL)) {
                         unit.addTransporter(new ClampMountTank());
                     }
 

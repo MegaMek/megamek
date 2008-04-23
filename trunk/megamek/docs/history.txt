@@ -15,6 +15,7 @@ v0.33.23-dev (SVN)
 + Bug 1949684: Fa Shih BA shouldn't ride non-Omni VTOLs
 + Bug 1949602: A couple more duplicate vehicle crits
 + Bug 1949558: Mechanized infantry should follow terrain restrictions
++ Bug 1949453: Inferno damage vs. infantry too low
 
 v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Better text for artillery adjust/autohit hex tooltip

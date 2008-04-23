@@ -1418,6 +1418,7 @@ public class MoveStep implements Serializable {
         final IHex srcHex = game.getBoard().getHex(prev);
         final IHex destHex = game.getBoard().getHex(getPosition());
         final boolean isInfantry = parent.getEntity() instanceof Infantry;
+        final boolean isMechanizedInfantry = isInfantry && ((Infantry)parent.getEntity()).isMechanized();
         final boolean isProto = parent.getEntity() instanceof Protomech;
         int nSrcEl = srcHex.getElevation() + prevEl;
         int nDestEl = destHex.getElevation() + elevation;
@@ -1474,13 +1475,18 @@ public class MoveStep implements Serializable {
         }
 
         // If we entering a building, all non-infantry pay additional MP.
-        if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV) && !(isInfantry)) {
-            if (!isProto) {
-                // non-protos pay extra according to the building type
-                Building bldg = game.getBoard().getBuildingAt(getPosition());
-                mp += bldg.getType();
-            } else {
-                // protos pay one extra
+        if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV)) {
+            if (!isInfantry) {
+                if (!isProto) {
+                    // non-protos pay extra according to the building type
+                    Building bldg = game.getBoard().getBuildingAt(getPosition());
+                    mp += bldg.getType();
+                } else {
+                    // protos pay one extra
+                    mp += 1;
+                }
+            } else if (isMechanizedInfantry) {
+                // mechanized infantry pays 1 extra
                 mp += 1;
             }
         }
@@ -1489,8 +1495,7 @@ public class MoveStep implements Serializable {
         // Assumption - this doesn't apply to jungle
         if (isInfantry
                 && destHex.containsTerrain(Terrains.WOODS)
-                && (moveType == IEntityMovementMode.INF_JUMP
-                        || moveType == IEntityMovementMode.INF_LEG || moveType == IEntityMovementMode.INF_MOTORIZED)) {
+                && !isMechanizedInfantry) {
             mp--;
         }
     }

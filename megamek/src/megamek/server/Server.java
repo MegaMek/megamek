@@ -12145,14 +12145,9 @@ public class Server implements Runnable {
 
             // is there damage remaining?
             if (damage > 0) {
-                tookInternalDamage = true;
 
                 // is there internal structure in the location hit?
                 if (te.getInternal(hit) > 0) {
-                    // Triggers a critical hit on Vehicles and Mechs.
-                    if (!isPlatoon && !isBattleArmor) {
-                        crits++;
-                    }
 
                     // Check for CASE II right away. if so reduce damage to 1
                     // and let it hit the IS.
@@ -12196,26 +12191,31 @@ public class Server implements Runnable {
                     // check for tank CASE here: damage to rear armor, excess
                     // dissipating, and a crew stunned crit
                     if (ammoExplosion && te instanceof Tank && te.locationHasCase(Tank.LOC_BODY)) {
-                        if (damage > te.getArmor(Tank.LOC_REAR))
-                            te.setArmor(IArmorState.ARMOR_DESTROYED, hit
-                                    .getLocation());
-                        else
-                            te.setArmor(te.getArmor(Tank.LOC_REAR)
-                                    - damage, Tank.LOC_REAR);
                         te.damageThisPhase += damage;
                         r = new Report(6124);
                         r.subject = te_n;
                         r.indent(2);
                         r.add(damage);
                         vDesc.add(r);
-                        damage = 0;
-                        vDesc.addAll(applyCriticalHit(te, hit.getLocation(),
-                                new CriticalSlot(0, Tank.CRIT_CREW_STUNNED),
-                                true));
-                        r = new Report(6090);
+                        if (damage > te.getArmor(Tank.LOC_REAR)) {
+                            te.setArmor(IArmorState.ARMOR_DESTROYED, hit
+                                    .getLocation());
+                            r = new Report(6090);
+                        }
+                        else {
+                            te.setArmor(te.getArmor(Tank.LOC_REAR)
+                                    - damage, Tank.LOC_REAR);
+                            r = new Report(6085);
+                            r.add(te.getArmor(Tank.LOC_REAR));
+                        }
                         r.subject = te_n;
                         r.newlines = 0;
                         r.indent(2);
+                        vDesc.add(r);
+                        damage = 0;
+                        vDesc.addAll(applyCriticalHit(te, Entity.NONE,
+                                new CriticalSlot(0, Tank.CRIT_CREW_STUNNED),
+                                true));
                     }
                     // Now we need to consider alternate structure types!
                     int tmpDamageHold = -1;
@@ -12231,9 +12231,14 @@ public class Server implements Runnable {
                         damage += tmpDamageHold % 2;
                     }
 
-                    if (te.getInternal(hit) > damage) {
+                    if (te.getInternal(hit) > damage && damage > 0) {
                         // internal structure absorbs all damage
                         te.setInternal(te.getInternal(hit) - damage, hit);
+                        // Triggers a critical hit on Vehicles and Mechs.
+                        if (!isPlatoon && !isBattleArmor) {
+                            crits++;
+                        }
+                        tookInternalDamage = true;
                         te.damageThisPhase += damage;
                         damage = 0;
                         r = new Report(1210);
@@ -12247,7 +12252,7 @@ public class Server implements Runnable {
                         }
                         r.add(te.getInternal(hit));
                         vDesc.addElement(r);
-                    } else {
+                    } else if (damage > 0) {
                         // damage transfers, maybe
                         int absorbed = Math.max(te.getInternal(hit), 0);
 
@@ -12560,9 +12565,7 @@ public class Server implements Runnable {
 
             // resolve special results
             if ((hit.getEffect() & HitData.EFFECT_VEHICLE_MOVE_DAMAGED) == HitData.EFFECT_VEHICLE_MOVE_DAMAGED) {
-                vDesc
-                        .addAll(vehicleMotiveDamage((Tank) te, hit
-                                .getMotiveMod()));
+                vDesc.addAll(vehicleMotiveDamage((Tank) te, hit.getMotiveMod()));
             } else if ((hit.getEffect() & HitData.EFFECT_GUN_EMPLACEMENT_WEAPONS) == HitData.EFFECT_GUN_EMPLACEMENT_WEAPONS) {
                 r = new Report(6146);
                 r.subject = te_n;

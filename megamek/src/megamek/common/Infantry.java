@@ -103,19 +103,6 @@ public class Infantry extends Entity implements Serializable {
      */
     public static final int INF_PLT_CLAN_MAX_MEN = 25;
 
-    /*
-     * The kinds of weapons available to the PBI. By incredible luck, the
-     * AmmoType and WeaponType constants do not overlap for these six weapons.
-     */
-    public static final int INF_UNKNOWN = -1;// T_NA
-    public static final int INF_RIFLE = AmmoType.T_AC;
-    public static final int INF_MG = AmmoType.T_MG;
-    public static final int INF_FLAMER = (int) WeaponType.F_FLAMER;
-    public static final int INF_LASER = (int) WeaponType.F_LASER;
-    public static final int INF_SRM = AmmoType.T_SRM;
-    public static final int INF_LRM = AmmoType.T_LRM;
-
-    public static final int INF_INFERNO_SRM = (int) WeaponType.F_INFERNO;
 
     /**
      * The location for infantry equipment.
@@ -825,6 +812,15 @@ public class Infantry extends Entity implements Serializable {
 
     public boolean isAntiMek() {
         return antiMek;
+    }
+    
+    public boolean isMechanized() {
+        if (getMovementMode() == IEntityMovementMode.WHEELED ||
+                getMovementMode() == IEntityMovementMode.HOVER ||
+                getMovementMode() == IEntityMovementMode.TRACKED) {
+            return true;
+        }
+        return false;
     }
 
 } // End class Infantry

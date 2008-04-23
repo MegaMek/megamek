@@ -15,14 +15,23 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.AmmoType;
+import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
 import megamek.common.Report;
+import megamek.common.Tank;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -204,5 +213,197 @@ public class SRMInfernoHandler extends SRMHandler {
         // light inferno missiles all at once
         server.deliverInfernoMissiles(ae, target, hits, vPhaseReport);
         return false;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.weapons.MissileWeaponHandler#calcHits(java.util.Vector)
+     */
+    protected int calcHits(Vector<Report> vPhaseReport) {
+        // conventional infantry gets hit with all missiles
+        // BAs do one lump of damage per BA suit
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            if (ae instanceof BattleArmor) {
+                bSalvo = true;
+                r = new Report(3325);
+                r.subject = subjectId;
+                r.add(wtype.getRackSize()
+                        * ((BattleArmor) ae).getShootingStrength());
+                r.add(sSalvoType);
+                r.add(toHit.getTableDesc());
+                r.newlines = 0;
+                vPhaseReport.add(r);
+                return ((BattleArmor) ae).getShootingStrength()*wtype.getRackSize();
+            }
+            r = new Report(3325);
+            r.subject = subjectId;
+            r.add(wtype.getRackSize());
+            r.add(sSalvoType);
+            r.add(toHit.getTableDesc());
+            r.newlines = 0;
+            vPhaseReport.add(r);
+            return wtype.getRackSize();
+        }
+        Entity entityTarget = (target.getTargetType() == Targetable.TYPE_ENTITY) ? (Entity) target
+                : null;
+        int missilesHit;
+        int nMissilesModifier = nSalvoBonus;
+        boolean bWeather = false;
+        boolean maxtechmissiles = game.getOptions().booleanOption(
+                "maxtech_mslhitpen");
+        if (maxtechmissiles) {
+            if (nRange <= 1) {
+                nMissilesModifier += 1;
+            } else if (nRange <= wtype.getShortRange()) {
+                nMissilesModifier += 0;
+            } else if (nRange <= wtype.getMediumRange()) {
+                nMissilesModifier -= 1;
+            } else {
+                nMissilesModifier -= 2;
+            }
+        }
+        boolean bMekStealthActive = false;
+        if (ae instanceof Mech) {
+            bMekStealthActive = ae.isStealthActive();
+        }
+        Mounted mLinker = weapon.getLinkedBy();
+        AmmoType atype = (AmmoType) ammo.getType();
+        // is any hex in the flight path of the missile ECM affected?
+        boolean bECMAffected = false;
+        // if the attacker is affected by ECM or the target is protected by ECM
+        // then
+        // act as if effected.
+        if (Compute.isAffectedByECM(ae, ae.getPosition(), target.getPosition())) {
+            bECMAffected = true;
+        }
+        
+        if ((mLinker != null && mLinker.getType() instanceof MiscType
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_ARTEMIS))
+                && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
+            if (bECMAffected) {
+                // ECM prevents bonus
+                r = new Report(3330);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else if (bMekStealthActive) {
+                // stealth prevents bonus
+                r = new Report(3335);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else
+                nMissilesModifier += 2;
+        } else if (atype.getAmmoType() == AmmoType.T_ATM) {
+            if (bECMAffected) {
+                // ECM prevents bonus
+                r = new Report(3330);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else if (bMekStealthActive) {
+                // stealth prevents bonus
+                r = new Report(3335);
+                r.subject = subjectId;
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            } else
+                nMissilesModifier += 2;
+        } else if (entityTarget != null
+                && (entityTarget.isNarcedBy(ae.getOwner().getTeam()) || entityTarget
+                        .isINarcedBy(ae.getOwner().getTeam()))) {
+            // only apply Narc bonus if we're not suffering ECM effect
+            // and we are using narc ammo, and we're not firing indirectly.
+            // narc capable missiles are only affected if the narc pod, which 
+            // sits on the target, is ECM affected
+            boolean bTargetECMAffected = false;
+            bTargetECMAffected = Compute.isAffectedByECM(ae, 
+                    target.getPosition(), target.getPosition());
+            if (((atype.getAmmoType() == AmmoType.T_LRM) ||
+                 (atype.getAmmoType() == AmmoType.T_SRM)) ||
+                 (atype.getAmmoType() == AmmoType.T_MML)
+                    && atype.getMunitionType() == AmmoType.M_NARC_CAPABLE
+                    && (weapon.curMode() == null || !weapon.curMode().equals(
+                            "Indirect"))) {
+                if (bTargetECMAffected) {
+                    // ECM prevents bonus
+                    r = new Report(3330);
+                    r.subject = subjectId;
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                } else
+                    nMissilesModifier += 2;
+            }
+        }
+        if (bGlancing) {
+            nMissilesModifier -= 4;
+        }
+
+        // weather checks
+        if (game.getOptions().booleanOption("blizzard")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 4;
+            bWeather = true;
+        }
+
+        if (game.getOptions().booleanOption("moderate_winds")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 2;
+            bWeather = true;
+        }
+
+        if (game.getOptions().booleanOption("high_winds")
+                && wtype.hasFlag(WeaponType.F_MISSILE)) {
+            nMissilesModifier -= 4;
+            bWeather = true;
+        }
+
+        // add AMS mods
+        nMissilesModifier += getAMSHitsMod(vPhaseReport);
+
+        if (allShotsHit())
+            missilesHit = wtype.getRackSize();
+        else {
+            if (ae instanceof BattleArmor)
+                missilesHit = Compute.missilesHit(wtype.getRackSize()
+                        * ((BattleArmor) ae).getShootingStrength(),
+                        nMissilesModifier, bWeather || bGlancing
+                                || maxtechmissiles, weapon.isHotLoaded());
+            else
+                missilesHit = Compute.missilesHit(wtype.getRackSize(),
+                        nMissilesModifier, bWeather || bGlancing
+                                || maxtechmissiles, weapon.isHotLoaded());
+        }
+
+        if ((target instanceof Mech || target instanceof Tank)
+                && ((Entity) target).getArmorType() == EquipmentType.T_ARMOR_REACTIVE)
+            missilesHit /= 2;
+
+        if (missilesHit > 0) {
+            r = new Report(3325);
+            r.subject = subjectId;
+            r.add(missilesHit);
+            r.add(sSalvoType);
+            r.add(toHit.getTableDesc());
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+            if (nMissilesModifier != 0) {
+                if (nMissilesModifier > 0)
+                    r = new Report(3340);
+                else
+                    r = new Report(3341);
+                r.subject = subjectId;
+                r.add(nMissilesModifier);
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
+        }
+        r = new Report(3345);
+        r.newlines = 0;
+        vPhaseReport.addElement(r);
+        bSalvo = true;
+        return missilesHit;
     }
 }

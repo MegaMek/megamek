@@ -199,10 +199,14 @@ public class Infantry extends Entity implements Serializable {
             return true;
         if (hex.containsTerrain(Terrains.MAGMA))
             return true;
-        if (hex.containsTerrain(Terrains.WOODS)
-                && (getMovementMode() == IEntityMovementMode.HOVER
-                        || getMovementMode() == IEntityMovementMode.WHEELED))
+        if (hex.terrainLevel(Terrains.WOODS) > 0) {
+            if (hex.terrainLevel(Terrains.WOODS) > 1 && getMovementMode() == IEntityMovementMode.TRACKED) {
+                return true;                
+            }
+            if (getMovementMode() == IEntityMovementMode.HOVER
+                    || getMovementMode() == IEntityMovementMode.WHEELED)
             return true;
+        }
         if (hex.terrainLevel(Terrains.WATER) > 0
                 && !hex.containsTerrain(Terrains.ICE)) {
             if (getMovementMode() == IEntityMovementMode.HOVER

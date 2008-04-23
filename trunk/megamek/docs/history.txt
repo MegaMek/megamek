@@ -9,6 +9,8 @@ v0.33.23-dev (SVN)
 + Bug 1947075: Sloth BA missing second laser
 + Bug 1935565: Death From Above with target in water automatically fails
 + Bug 1949088: Rocket Launcher 15 and 20 have wrong ranges
++ Bug 1949195: Damage vented by vehicle CASE shouldn't cause critical hits
++ Bug: Mechanized infantry should need 2 MP to enter buildings 
 
 v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Better text for artillery adjust/autohit hex tooltip
@@ -36,8 +38,8 @@ v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Bug 1944653: OmniVehicles missing battle armor handholds
 + Bug 1944670: Hot-loaded Thunderbolts do only half damage at minimum range
 + Bug 1944667: Thunderbolt ammo wrong
-+ Bug 1944653: Set OmniTanks and OmniVTOLs to actually be Omnis when loading from
-    BLK.
++ Bug 1944653: Set OmniTanks and OmniVTOLs to actually be Omnis when loading 
+    from BLK.
 + Bug 1946544: Too many driving skill penalties from mobility hits
 + Bug 1945587: Physical weapons do full damage vs. infantry
 + Bug 1946560: 'Stop Swarm Attack' not working

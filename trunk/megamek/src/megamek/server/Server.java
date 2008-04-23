@@ -13567,14 +13567,14 @@ public class Server implements Runnable {
                     int damage = 0;
                     for (Mounted m : t.getAmmo()) {
                         m.setHit(true);
-                        // non-explosive ammo can't explode
-                        if (!m.getType().isExplosive()) {
-                            continue;
-                        }
                         int tmp = m.getShotsLeft()
                                 * ((AmmoType) m.getType()).getDamagePerShot()
                                 * ((AmmoType) m.getType()).getRackSize();
                         m.setShotsLeft(0);
+                        // non-explosive ammo can't explode
+                        if (!m.getType().isExplosive()) {
+                            continue;
+                        }
                         damage += tmp;
                         r = new Report(6390);
                         r.subject = t.getId();

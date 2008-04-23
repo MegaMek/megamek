@@ -13657,12 +13657,12 @@ public class Server implements Runnable {
                             r = new Report(6601);
                             r.subject = t.getId();
                             vDesc.add(r);
-                            t.setDriverHit(true);
+                            t.setDriverHitPS(true);
                         } else {
                             r = new Report(6600);
                             r.subject = t.getId();
                             vDesc.add(r);
-                            t.setDriverHitPS(true);
+                            t.setDriverHit(true);
                         }
                     }
                     break;
@@ -13813,7 +13813,8 @@ public class Server implements Runnable {
                     r.subject = t.getId();
                     ArrayList<Mounted> weapons = new ArrayList<Mounted>();
                     for (Mounted weap : t.getWeaponList()) {
-                        if (weap.getLocation() == loc) {
+                        if (weap.getLocation() == loc && !weap.isJammed() &&
+                                !weap.isHit() && !weap.isDestroyed()) {
                             weapons.add(weap);
                         }
                     }

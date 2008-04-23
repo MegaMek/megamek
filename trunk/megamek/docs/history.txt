@@ -13,6 +13,7 @@ v0.33.23-dev (SVN)
 + Bug: Mechanized infantry should need 2 MP to enter buildings
 + Bug 1949421: Ammunition hits should destroy vehicle Gauss ammo
 + Bug 1949684: Fa Shih BA shouldn't ride non-Omni VTOLs
++ Bug 1949602: A couple more duplicate vehicle crits
 
 v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Better text for artillery adjust/autohit hex tooltip

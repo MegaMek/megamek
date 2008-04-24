@@ -12519,8 +12519,9 @@ public class Server implements Runnable {
                             // Only ammo explosions in the CT are devastating.
                             vDesc.addAll(destroyEntity(te, "damage",
                                     !ammoExplosion,
-                                    !((ammoExplosion || areaSatArty) && hit
-                                            .getLocation() == Mech.LOC_CT)));
+                                    !((ammoExplosion || areaSatArty) && 
+                                            (te instanceof Tank) || (te instanceof Mech && hit
+                                            .getLocation() == Mech.LOC_CT))));
                             // If the head is destroyed, kill the crew.
                             if (hit.getLocation() == Mech.LOC_HEAD
                                     || hit.getLocation() == Mech.LOC_CT

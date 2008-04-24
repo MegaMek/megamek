@@ -1635,6 +1635,13 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 if (tank.hasNoTurret()) {
                     mask[Tank.LOC_TURRET] = false;
                 }
+                // remove non-visible sides
+                if (side == ToHitData.SIDE_LEFT) {
+                    mask[Tank.LOC_RIGHT] = false;
+                }
+                if (side == ToHitData.SIDE_RIGHT) {
+                    mask[Tank.LOC_LEFT] = false;
+                }
             }
             
             // remove main gun on protos that don't have one

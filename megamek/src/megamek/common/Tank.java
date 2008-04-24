@@ -1237,7 +1237,7 @@ public class Tank extends Entity implements Serializable {
             if (loc == LOC_FRONT) {
                 switch (roll) {
                     case 6:
-                        if (!crew.isDead()) {
+                        if (!crew.isDead() && !crew.isDoomed()) {
                             if (!isDriverHit()) {
                                 return CRIT_DRIVER;
                             }
@@ -1266,7 +1266,7 @@ public class Tank extends Entity implements Serializable {
                         if (getSensorHits() < 4)
                             return CRIT_SENSOR;
                     case 10:
-                        if (!crew.isDead()) {
+                        if (!crew.isDead() && !crew.isDoomed()) {
                             if (!isCommanderHit()) {
                                 return CRIT_COMMANDER;
                             }
@@ -1285,7 +1285,7 @@ public class Tank extends Entity implements Serializable {
                             }
                         }
                     case 12:
-                        if (!crew.isDead())
+                        if (!crew.isDead() && !crew.isDoomed())
                             return CRIT_CREW_KILLED;
                 }
             } else if (loc == LOC_REAR) {
@@ -1382,7 +1382,7 @@ public class Tank extends Entity implements Serializable {
                             }
                         }
                     case 8:
-                        if (!crew.isDead()) {
+                        if (!crew.isDead() && !crew.isDoomed()) {
                             if (isCommanderHit() && isDriverHit())
                                 return CRIT_CREW_KILLED;
                             return CRIT_CREW_STUNNED;

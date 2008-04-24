@@ -12232,8 +12232,13 @@ public class Server implements Runnable {
                         r.indent(2);
                         vDesc.add(r);
                         damage = 0;
+                        int critIndex;
+                        if (((Tank)te).isCommanderHit() && ((Tank)te).isDriverHit()) {
+                            critIndex = Tank.CRIT_CREW_KILLED;
+                        }
+                        else critIndex = Tank.CRIT_CREW_STUNNED;
                         vDesc.addAll(applyCriticalHit(te, Entity.NONE,
-                                new CriticalSlot(0, Tank.CRIT_CREW_STUNNED),
+                                new CriticalSlot(0, critIndex),
                                 true));
                     }
                     // Now we need to consider alternate structure types!

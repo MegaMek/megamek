@@ -106,6 +106,7 @@ import megamek.common.TurnOrdered;
 import megamek.common.TurnVectors;
 import megamek.common.UnitLocation;
 import megamek.common.VTOL;
+import megamek.common.WeaponComparator;
 import megamek.common.WeaponType;
 import megamek.common.actions.AbstractAttackAction;
 import megamek.common.actions.ArtilleryAttackAction;
@@ -13819,12 +13820,18 @@ public class Server implements Runnable {
                             weapons.add(weap);
                         }
                     }
-                    // TODO: fix for new TW rules
-                    // roll 1d6, 1-3, defending player
-                    // chooses which weapon gets destroyed
-                    // 4-6: attacker chooses which weapon gets destroyed
-                    Mounted weapon = weapons.get(Compute.randomInt(weapons
-                            .size()));
+                    //sort weapons by BV
+                    Collections.sort(weapons, new WeaponComparator());
+                    int roll = Compute.d6();
+                    Mounted weapon;
+                    if (roll < 4) {
+                        //defender should choose, we'll just use the lowest BV
+                        //weapon
+                        weapon = weapons.get(weapons.size()-1);
+                    } else {
+                        //attacker chooses, we'll use the highest BV weapon
+                        weapon = weapons.get(0);
+                    }
                     weapon.setHit(true);
                     r.add(weapon.getName());
                     vDesc.add(r);

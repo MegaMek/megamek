@@ -1628,6 +1628,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 if (side == ToHitData.SIDE_RIGHT) {
                     mask[Tank.LOC_LEFT] = false;
                 }
+                if (side == ToHitData.SIDE_REAR) {
+                    mask[Tank.LOC_FRONT] = false;
+                }
+                if (side == ToHitData.SIDE_FRONT) {
+                    mask[Tank.LOC_REAR] = false;
+                }
             }
             
             // remove main gun on protos that don't have one

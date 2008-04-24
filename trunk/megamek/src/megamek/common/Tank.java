@@ -1241,8 +1241,10 @@ public class Tank extends Entity implements Serializable {
                             if (!isDriverHit()) {
                                 return CRIT_DRIVER;
                             }
-                            else {
+                            else if (!isCommanderHit()){
                                 return CRIT_CREW_STUNNED;
+                            } else {
+                                return CRIT_CREW_KILLED;
                             }
                         }
                     case 7:
@@ -1268,7 +1270,12 @@ public class Tank extends Entity implements Serializable {
                             if (!isCommanderHit()) {
                                 return CRIT_COMMANDER;
                             }
-                            else return CRIT_CREW_STUNNED;
+                            else if (!isDriverHit()) {
+                                return CRIT_CREW_STUNNED;
+                            }
+                            else {
+                                return CRIT_CREW_KILLED;
+                            }
                         }
                     case 11:
                         for (Mounted m : getWeaponList()) {

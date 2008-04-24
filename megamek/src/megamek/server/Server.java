@@ -5690,7 +5690,25 @@ public class Server implements Runnable {
                     }
                 } else if (te instanceof Infantry) {
                     HitData hit = new HitData(Infantry.LOC_INFANTRY);
-                    vPhaseReport.addAll(damageEntity(te, hit, 3 * missiles));
+                    if (te.getInternal(hit) > 3 * missiles) {
+                        // internal structure absorbs all damage
+                        te.setInternal(te.getInternal(hit) - 3 * missiles, hit);
+                        r = new Report(6065);
+                        r.addDesc(te);
+                        r.add(3*missiles);
+                        r.indent(2);
+                        r.add(te.getLocationAbbr(hit));
+                        r.newlines = 0;
+                        r.subject = te.getId();
+                        vPhaseReport.add(r);
+                        r = new Report(6095);
+                        r.add(te.getInternal(hit));
+                        r.subject = te.getId();
+                        r.indent(2);
+                        vPhaseReport.add(r);
+                    } else {
+                        vPhaseReport.addAll(destroyEntity(te, "damage", false));
+                    }                    
                 } else {
                     // gun emplacements
                     int direction = Compute.targetSideTable(ae, te);

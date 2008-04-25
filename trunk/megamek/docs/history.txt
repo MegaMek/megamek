@@ -20,6 +20,9 @@ v0.33.23-dev (SVN)
 + On weapon destroyed Tank crit, improve auto-choosing of weapon that's
     destroyed. When the attacker should choose, the highest BV weapon is chosen,
     when defender should choose, the lowest BV weapons is chosen.
++ Bug 1951149: melting ice -> units don't fall from ice to bottom of water
++ Bug: Fix NPE in WeaponAttackAction#toHit when targeting an ice/water hex for
+    clearing    
 
 v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Better text for artillery adjust/autohit hex tooltip

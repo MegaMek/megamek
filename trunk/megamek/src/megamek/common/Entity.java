@@ -2819,7 +2819,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * This method checks to see if a unit has Underwater Maneuvering Units Only
      * Battle Mechs may have UMU's
      * 
-     * @return <code>boolean</code> if the entity has usasble UMU crits.
+     * @return <code>boolean</code> if the entity has usable UMU crits.
      */
     public boolean hasUMU() {
         if (!(this instanceof Mech))

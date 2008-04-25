@@ -22,7 +22,6 @@ import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 import megamek.server.Server.DamageType;
@@ -112,7 +111,7 @@ public class LRMFragHandler extends LRMHandler {
             return;
         }
 
-        server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
         return;
     }
 

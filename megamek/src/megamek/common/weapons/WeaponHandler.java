@@ -515,7 +515,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                         9, vPhaseReport)) {
             return;
         }
-        server.tryClearHex(target.getPosition(), nDamage, subjectId);
+        vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
         return;
     }
 

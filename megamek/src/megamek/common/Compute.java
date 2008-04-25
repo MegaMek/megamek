@@ -556,7 +556,7 @@ public class Compute {
         boolean targetInPartialWater = false;
         boolean targetUnderwater = false;
         boolean weaponUnderwater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET);
-        if (targHex.containsTerrain(Terrains.WATER) && targBottom < 0) {
+        if (target.getTargetType() == Targetable.TYPE_ENTITY && targHex.containsTerrain(Terrains.WATER) && targBottom < 0) {
             if (targTop >= 0)
                 targetInPartialWater = true;
             else

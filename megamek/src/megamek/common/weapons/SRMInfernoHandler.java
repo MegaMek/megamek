@@ -88,9 +88,9 @@ public class SRMInfernoHandler extends SRMHandler {
             Building bldg, int hits, int nDamPerHit) {
         // Is the building hit by Inferno rounds?
         if (hits > 0) {
-            server.deliverInfernoMissiles(ae, new BuildingTarget(this.waa
+            vPhaseReport.addAll(server.deliverInfernoMissiles(ae, new BuildingTarget(this.waa
                     .getTarget(game).getPosition(), game.getBoard(), false),
-                    hits, vPhaseReport);
+                    hits));
         }
     }
 
@@ -211,7 +211,7 @@ public class SRMInfernoHandler extends SRMHandler {
         } // End missed-target
 
         // light inferno missiles all at once
-        server.deliverInfernoMissiles(ae, target, hits, vPhaseReport);
+        vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits));
         return false;
     }
     

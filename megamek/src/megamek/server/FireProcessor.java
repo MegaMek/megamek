@@ -196,9 +196,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                 // call the L3 method
                 if (currentHex.containsTerrain(Terrains.FIRE)
                         && !game.getOptions().booleanOption("maxtech_fire")) {
-                    server
-                            .addSmoke(currentXCoord, currentYCoord,
-                                    windDirection);
+                    server.addSmoke(currentXCoord, currentYCoord, windDirection);
                     server.addSmoke(currentXCoord, currentYCoord,
                             (windDirection + 1) % 6);
                     server.addSmoke(currentXCoord, currentYCoord,
@@ -227,7 +225,6 @@ public class FireProcessor extends DynamicTerrainProcessor {
     } // End the ResolveFire() method
 
     public void burnDownWoods(Coords coords) {
-
         /*
          * TODO Replace this code once Tactical ops is released. Players are now
          * allowed to set how much damage woods will burn down per round
@@ -239,45 +236,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        server.tryClearHex(coords, burnDamage, Entity.NONE);
-        /*
-         * IHex hex = game.getBoard().getHex(coords); int roll = Compute.d6(2);
-         * Report r; if(roll >= 11) { if(hex.terrainLevel(Terrains.WOODS) > 2) {
-         * hex.removeTerrain(Terrains.WOODS);
-         * hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS,
-         * 2)); //ultra heavy woods burned down to heavy woods r = new
-         * Report(5141, Report.PUBLIC); r.add(coords.getBoardNum());
-         * vPhaseReport.addElement(r); } else
-         * if(hex.terrainLevel(Terrains.WOODS) == 2) {
-         * hex.removeTerrain(Terrains.WOODS);
-         * hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.WOODS,
-         * 1)); //heavy woods burned down to light woods r = new Report(5140,
-         * Report.PUBLIC); r.add(coords.getBoardNum());
-         * vPhaseReport.addElement(r); } else
-         * if(hex.terrainLevel(Terrains.WOODS) == 1) {
-         * hex.removeTerrain(Terrains.WOODS);
-         * hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH,
-         * 1)); //light woods burns down, fire goes out r = new Report(5145,
-         * Report.PUBLIC); r.add(coords.getBoardNum());
-         * vPhaseReport.addElement(r); } if(hex.terrainLevel(Terrains.JUNGLE) >
-         * 2) { hex.removeTerrain(Terrains.JUNGLE);
-         * hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE,
-         * 2)); //ultra heavy jungle burned down to heavy jungle r = new
-         * Report(5143, Report.PUBLIC); r.add(coords.getBoardNum());
-         * vPhaseReport.addElement(r); } else
-         * if(hex.terrainLevel(Terrains.JUNGLE) == 2) {
-         * hex.removeTerrain(Terrains.JUNGLE);
-         * hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.JUNGLE,
-         * 1)); //heavy jungle burned down to light jungle r = new Report(5142,
-         * Report.PUBLIC); r.add(coords.getBoardNum());
-         * vPhaseReport.addElement(r); } else
-         * if(hex.terrainLevel(Terrains.JUNGLE) == 1) {
-         * hex.removeTerrain(Terrains.JUNGLE);
-         * hex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.ROUGH,
-         * 1)); //light jungle burns down, fire goes out r = new Report(5146,
-         * Report.PUBLIC); r.add(coords.getBoardNum());
-         * vPhaseReport.addElement(r); } server.sendChangedHex(coords); }
-         */
+        vPhaseReport.addAll(server.tryClearHex(coords, burnDamage, Entity.NONE));
     }
 
     /**

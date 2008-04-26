@@ -135,8 +135,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             ae = game.getOutOfGameEntity(aaa.getEntityId());
         }
         //TODO: Fix null pointer exception
-        if(ae == null || aaa == null) {
-            System.err.println("Artilery Action or Artilery Entity (or both) are null!");
+        if(ae == null) {
+            System.err.println("Artillery Entity is null!");
             return true;
         }
         Mounted ammo = ae.getEquipment(aaa.getAmmoId());

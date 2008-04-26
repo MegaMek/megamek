@@ -25,6 +25,7 @@ v0.33.23-dev (SVN)
     clearing    
 + Bug 1951620: Vehicle CASE blows off wrong armor on turret hits
 + Bug 1951811: PSRs due to damage not reported
++ Fix a whole lot of missing reports
 
 v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Better text for artillery adjust/autohit hex tooltip

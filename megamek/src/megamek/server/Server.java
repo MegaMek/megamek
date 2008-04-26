@@ -1944,7 +1944,7 @@ public class Server implements Runnable {
                 addMovementHeat();
                 applyBuildingDamage();
                 checkFor20Damage();
-                resolvePilotingRolls(); // Skids cause damage in movement phase
+                addReport(resolvePilotingRolls()); // Skids cause damage in movement phase
                 checkForFlamingDeath();
                 // check phase report
                 if (vPhaseReport.size() > 1) {
@@ -1968,7 +1968,7 @@ public class Server implements Runnable {
                 handleAttacks();
                 applyBuildingDamage();
                 checkFor20Damage();
-                resolvePilotingRolls();
+                addReport(resolvePilotingRolls());
                 // check phase report
                 if (vPhaseReport.size() > 1) {
                     game.addReports(vPhaseReport);
@@ -1988,7 +1988,7 @@ public class Server implements Runnable {
                 resolvePhysicalAttacks();
                 applyBuildingDamage();
                 checkFor20Damage();
-                resolvePilotingRolls();
+                addReport(resolvePilotingRolls());
                 resolveSinkVees();
                 // check phase report
                 if (vPhaseReport.size() > 1) {
@@ -2039,7 +2039,7 @@ public class Server implements Runnable {
                 }
                 applyBuildingDamage();
                 checkFor20Damage();
-                resolvePilotingRolls();
+                addReport(resolvePilotingRolls());
 
                 sendSpecialHexDisplayPackets();
 
@@ -3513,7 +3513,7 @@ public class Server implements Runnable {
                         // as if it still had his leg after
                         // getting skid-charged.
                         if (!target.isDone()) {
-                            resolvePilotingRolls(target);
+                            addReport(resolvePilotingRolls(target));
                             game.resetPSRs(target);
                             target.applyDamage();
                             addNewLines();
@@ -4047,7 +4047,7 @@ public class Server implements Runnable {
                         addReport(applyCriticalHit(entity, loc, cs, true));
                     }
                     // do any PSR immediately
-                    resolvePilotingRolls(entity);
+                    addReport(resolvePilotingRolls(entity));
                     game.resetPSRs(entity);
                     // let the player replot their move as MP might be changed
                     md.clear();
@@ -10660,7 +10660,7 @@ public class Server implements Runnable {
                     // add a piloting roll and resolve immediately
                     game.addPSR(new PilotingRollData(entity.getId(), 3,
                             "reactor shutdown"));
-                    resolvePilotingRolls();
+                    addReport(resolvePilotingRolls());
                     // okay, now mark shut down
                     entity.setShutDown(true);
                 } else if (entity.heat >= 14) {
@@ -10685,7 +10685,7 @@ public class Server implements Runnable {
                         // add a piloting roll and resolve immediately
                         game.addPSR(new PilotingRollData(entity.getId(), 3,
                                 "reactor shutdown"));
-                        resolvePilotingRolls();
+                        addReport(resolvePilotingRolls());
                         // okay, now mark shut down
                         entity.setShutDown(true);
                     }
@@ -11100,18 +11100,20 @@ public class Server implements Runnable {
      * Resolves all built up piloting skill rolls. Used at end of weapons,
      * physical phases.
      */
-    private void resolvePilotingRolls() {
+    private Vector<Report> resolvePilotingRolls() {
+        Vector<Report> vPhaseReport = new Vector<Report>();
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
-            resolvePilotingRolls(i.nextElement());
+            vPhaseReport.addAll(resolvePilotingRolls(i.nextElement()));
         }
         game.resetPSRs();
+        return vPhaseReport;
     }
 
     /**
      * Resolves and reports all piloting skill rolls for a single mech.
      */
-    void resolvePilotingRolls(Entity entity) {
-        resolvePilotingRolls(entity, false, entity.getPosition(), entity
+    Vector<Report> resolvePilotingRolls(Entity entity) {
+        return resolvePilotingRolls(entity, false, entity.getPosition(), entity
                 .getPosition());
     }
 
@@ -12221,8 +12223,7 @@ public class Server implements Runnable {
                         r.add(damage);
                         vDesc.add(r);
                         if (damage > te.getArmor(Tank.LOC_REAR)) {
-                            te.setArmor(IArmorState.ARMOR_DESTROYED, hit
-                                    .getLocation());
+                            te.setArmor(IArmorState.ARMOR_DESTROYED, Tank.LOC_REAR);
                             r = new Report(6090);
                         }
                         else {
@@ -14058,9 +14059,8 @@ public class Server implements Runnable {
                             // boink!
                             en.getCrew().setDoomed(true);
                             Report.addNewline(vDesc);
-                            vDesc
-                                    .addAll(destroyEntity(en, "pilot death",
-                                            true));
+                            vDesc.addAll(destroyEntity(en, "pilot death",
+                                    true));
                         }
                         break;
                     case Mech.SYSTEM_ENGINE:
@@ -14083,9 +14083,8 @@ public class Server implements Runnable {
                                 numEngineHits);
                         if (!engineExploded && numEngineHits > 2) {
                             // third engine hit
-                            vDesc
-                                    .addAll(destroyEntity(en,
-                                            "engine destruction"));
+                            vDesc.addAll(destroyEntity(en,
+                                    "engine destruction"));
                             if (game.getOptions().booleanOption(
                                     "auto_abandon_unit")) {
                                 vDesc.addAll(abandonEntity(en));

@@ -23,6 +23,8 @@ v0.33.23-dev (SVN)
 + Bug 1951149: melting ice -> units don't fall from ice to bottom of water
 + Bug: Fix NPE in WeaponAttackAction#toHit when targeting an ice/water hex for
     clearing    
++ Bug 1951620: Vehicle CASE blows off wrong armor on turret hits
++ Bug 1951811: PSRs due to damage not reported
 
 v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Better text for artillery adjust/autohit hex tooltip

@@ -2157,7 +2157,7 @@ public abstract class Mech extends Entity implements Serializable {
 
     /**
      * Calculates the battle value of this mech. If the parameter is true, then
-     * the battle value for c3 will be added whether the mech is currently part
+     * the battle value for c3 won't be added whether the mech is currently part
      * of a network or not.
      */
     public int calculateBattleValue(boolean ignoreC3) {

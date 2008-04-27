@@ -29,6 +29,7 @@ v0.33.23-dev (SVN)
 + Bug: Swarm missiles could cause a ClassCastException when firing the last shot
     of ammo in a ton.
 + Bug: Fix double blind report error
++ Bug: Fix report error when targeting a building with infernos
 
 v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Better text for artillery adjust/autohit hex tooltip

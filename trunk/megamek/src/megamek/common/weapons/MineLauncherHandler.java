@@ -75,6 +75,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
         r.newlines = 0;
         vPhaseReport.addElement(r);
         r = new Report(3345);
+        r.subject = subjectId;
         r.newlines = 0;
         vPhaseReport.addElement(r);
         return hits;

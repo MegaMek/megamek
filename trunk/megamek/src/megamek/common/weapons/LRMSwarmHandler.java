@@ -92,7 +92,6 @@ public class LRMSwarmHandler extends LRMHandler {
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-            return false;
         } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
@@ -236,7 +235,7 @@ public class LRMSwarmHandler extends LRMHandler {
             if (swarmTarget != null) {
                 r = new Report(3420);
                 r.subject = subjectId;
-                r.indent();
+                r.indent(2);
                 r.add(swarmMissilesNowLeft);
                 vPhaseReport.addElement(r);
                 weapon.setUsedThisRound(false);
@@ -248,9 +247,10 @@ public class LRMSwarmHandler extends LRMHandler {
                 newWaa.setAmmoId(waa.getAmmoId());
                 Mounted m = ae.getEquipment(waa.getWeaponId());
                 Weapon w = (Weapon) m.getType();
-                AttackHandler ah = w.fire(newWaa, game, server);
-                // increase ammo by one, because we just incorrectly used one up
+                // increase ammo by one, we'll use one that we shouldn't use
+                // in the next line
                 weapon.getLinked().setShotsLeft(weapon.getLinked().getShotsLeft()+1);
+                AttackHandler ah = w.fire(newWaa, game, server);
                 LRMSwarmHandler wh = (LRMSwarmHandler) ah;
                 // attack the new target
                 wh.handledHeat = true;
@@ -259,7 +259,7 @@ public class LRMSwarmHandler extends LRMHandler {
                 r = new Report(3425);
                 r.add(swarmMissilesNowLeft);
                 r.subject = subjectId;
-                r.indent();
+                r.indent(2);
                 vPhaseReport.addElement(r);
             }
         }
@@ -288,7 +288,7 @@ public class LRMSwarmHandler extends LRMHandler {
         if (swarmTarget != null) {
             r = new Report(3420);
             r.subject = subjectId;
-            r.indent();
+            r.indent(2);
             r.add(swarmMissilesNowLeft);
             vPhaseReport.addElement(r);
             weapon.setUsedThisRound(false);
@@ -300,6 +300,9 @@ public class LRMSwarmHandler extends LRMHandler {
             newWaa.setAmmoId(waa.getAmmoId());
             Mounted m = ae.getEquipment(waa.getWeaponId());
             Weapon w = (Weapon) m.getType();
+            // increase ammo by one, we'll use one that we shouldn't use
+            // in the next line
+            weapon.getLinked().setShotsLeft(weapon.getLinked().getShotsLeft()+1);
             AttackHandler ah = w.fire(newWaa, game, server);
             LRMSwarmHandler wh = (LRMSwarmHandler) ah;
             // attack the new target
@@ -308,7 +311,7 @@ public class LRMSwarmHandler extends LRMHandler {
         } else {
             r = new Report(3425);
             r.subject = subjectId;
-            r.indent();
+            r.indent(2);
             r.add(swarmMissilesNowLeft);
             vPhaseReport.addElement(r);
         }
@@ -404,6 +407,7 @@ public class LRMSwarmHandler extends LRMHandler {
         r.newlines = 0;
         vPhaseReport.addElement(r);
         r = new Report(3345);
+        r.subject = subjectId;
         r.newlines = 0;
         vPhaseReport.addElement(r);
         bSalvo = true;

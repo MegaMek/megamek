@@ -671,6 +671,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     waa2.setAimedLocation(waa.getAimedLocation());
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
+                    waa2.setAmmoId(waa.getAmmoId());
                     newAttacks.addElement(waa2);
                 }
             } else {
@@ -696,6 +697,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     waa2.setAimedLocation(waa.getAimedLocation());
                     waa2.setAimingMode(waa.getAimingMode());
                     waa2.setOtherAttackInfo(waa.getOtherAttackInfo());
+                    waa2.setAmmoId(waa.getAmmoId());
                     newAttacks.addElement(waa2);
                 }
             }

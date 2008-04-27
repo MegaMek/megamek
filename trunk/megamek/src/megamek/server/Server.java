@@ -5582,7 +5582,7 @@ public class Server implements Runnable {
                     if (e.getElevation() > hex.terrainLevel(Terrains.BLDG_ELEV))
                         continue;
                     int roll = Compute.d6();
-                    r = new Report(3560);
+                    r = new Report(3570);
                     r.subject = e.getId();
                     r.addDesc(e);
                     r.add(roll);

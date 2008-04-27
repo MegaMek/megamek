@@ -402,6 +402,7 @@ public class SRMInfernoHandler extends SRMHandler {
         }
         r = new Report(3345);
         r.newlines = 0;
+        r.subject = subjectId;
         vPhaseReport.addElement(r);
         bSalvo = true;
         return missilesHit;

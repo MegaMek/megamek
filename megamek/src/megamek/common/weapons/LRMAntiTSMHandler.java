@@ -144,6 +144,7 @@ public class LRMAntiTSMHandler extends LRMHandler {
             vPhaseReport.addElement(r);
         }
         r = new Report(3345);
+        r.subject = subjectId;
         r.newlines = 0;
         vPhaseReport.addElement(r);
         bSalvo = true;

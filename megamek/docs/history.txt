@@ -30,6 +30,7 @@ v0.33.23-dev (SVN)
     of ammo in a ton.
 + Bug: Fix double blind report error
 + Bug: Fix report error when targeting a building with infernos
++ Bug: correctly report remaining ammo in end-of-game unit status report
 
 v0.33.22 (2008-04-19, 23:30 GMT+2)
 + Better text for artillery adjust/autohit hex tooltip

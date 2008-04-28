@@ -86,12 +86,11 @@ public abstract class UnitStatusFormatter {
 
     private static String formatAmmo(Entity e) {
         StringBuffer sb = new StringBuffer(1024);
-        for (Mounted weap : e.getWeaponList()) {
-            sb.append(weap.getName());
-            sb.append(": ").append(weap.getShotsLeft()).append(
+        for (Mounted ammo : e.getAmmo()) {
+            sb.append(ammo.getName());
+            sb.append(": ").append(ammo.getShotsLeft()).append(
                     CommonConstants.NL);
         }
-
         return sb.toString();
     }
 

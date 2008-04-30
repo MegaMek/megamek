@@ -1,6 +1,8 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.33.24-dev (SVN)
++ TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for
+    gyro destroyed
 
 v0.33.23 (2008-04-30, 17:30 GMT+2)
 + Bug 1947060: Leftover vehicle damage bugs

@@ -14124,7 +14124,7 @@ public class Server implements Runnable {
 
                                 // gyro destroyed
                                 game.addPSR(new PilotingRollData(en.getId(),
-                                        TargetRoll.AUTOMATIC_FAIL, 6,
+                                        TargetRoll.AUTOMATIC_FAIL, 3,
                                         "gyro destroyed"));
                             } else if (gyroHits == 1) {
                                 // first gyro hit
@@ -15589,8 +15589,8 @@ public class Server implements Runnable {
         // an automatic fall, only unconsciousness should cause auto-damage
         roll.removeAutos();
 
-        if (height > 0) {
-            roll.addModifier(height, "height of fall");
+        if (height > 1) {
+            roll.addModifier(height-1, "height of fall");
         }
 
         entity.addPilotingModifierForTerrain(roll, fallPos);

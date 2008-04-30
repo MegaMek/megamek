@@ -102,10 +102,10 @@ x16) MASC Failure now results in an instant critical hit to each leg.  It no lon
    B-Pods (improved A-Pods for attacking Battle Armor.  20 damage attack in 5 point clusters against Battle Armor or       1D6 damage against Conventional Infanty, forces swarming infantry off of the 'Mech, may be used as a       direct attack against infantry units in the same hex as the 'Mech with reduced damage effects)
 x   Anti-Personnel Gauss Rifle (Clan Only, provides Burst Fire bonuses against Infantry)
 x   Hyper Assault Gauss Rifle (HAG) 20, 30, & 40 (Clan Only, fires 1 damage point shots that group in 5 point clusters       like LRMs, gain a +2 bonus on the Cluster Hits Table at Short Range and suffer a -2 penalty at Long       Range)
-   Machine Gun Array (Clan & IS.  Not so much a weapon as a new piece of equipment which allows Machine Guns of
+x   Machine Gun Array (Clan & IS.  Not so much a weapon as a new piece of equipment which allows Machine Guns of
       the same type; Light, Standard, or Heavy; to be fired in a group as a single Cluster Weapon, with each hit       impacting on the same location of the target if they hit.)
 x   Multi-Missile Launcher 3, 5, 7, & 9 (IS Only.  Launchers which can fire LRMs or SRMs, or the Torpedo versions of       either)
-   Retractable Blade (physical attack weapon which performs similarly to a sword, blocks use of the hand actuator       when extended)
+x   Retractable Blade (physical attack weapon which performs similarly to a sword, blocks use of the hand actuator       when extended)
 x   Plasma Cannon (IS only. It's ammo does not explode, and it generates a large amount of heat like an energy          weapon.  It inflicts only 2D6 Heat Damage to 'Mechs and ASFs, or 3D6 Damage in 5 point clusters to non-      heat tracking units.  Infantry with Flame Resistant Armor take no damage.)
 x   Plasma Rifle (Clan only.  It's ammo does not explode, and it generates a large amount of heat like an energy          weapon.  It inflicts 10 damage & 1D6 heat to 'Mechs & ASFs, or 10+2D6 Damage in 5 point clusters to       non-heat tracking units.  Infantry with Flame Resistant Armor take only half standard damage.)
 x   Light & Heavy Machine Gun (Now available for the Inner Sphere)
@@ -160,7 +160,7 @@ BUILDINGS
 
 2) Battle Armor with Jumping or VTOL MP may leave or enter buildings at levels higher than 0, but these require an Anti-Mech skill Roll to avoid taking damage.
 
-3) ProtoMechs may now enter and move within Buildings as infantry, except that they inflict 1 point of CF damage to the building when they enter
+x3) ProtoMechs may now enter and move within Buildings as infantry, except that they inflict 1 point of CF damage to the building when they enter
 
 4) Area-Effect attacks such as artillery do additional damage to buildings.  In the case of an attack which is a single hex in size, Area Effect attacks do double CF damage.  In the case of multi-hex attacks (central hex and six surrounding hexes)  Buildings in the surrounding hexes take double CF damage and buildings in the central hex take triple CF damage.  In addition, units in the levels above and below where the Area Effect attack hit suffer ½ damage from that attack.  Weapons which scatter do so in targeted building level in addition to hex of impact when striking buildings.
 
@@ -232,7 +232,7 @@ x9) Battle Armor weapons attacks, as with other multi-hit attacks, now are rolle
 
 11) Battle Armor may now make physical attacks with their Vibroclaws against other infantry in their hex in the Physical Attack phase, treating it as a standard attack, doing one damage per vibroclaw
 
-12) Battle Armor may now split their fire between different targets for a +1 to hit modifier, same as ‘Mechs and Vehicles.
+x12) Battle Armor may now split their fire between different targets for a +1 to hit modifier, same as ‘Mechs and Vehicles.
 
 x13) Area Effect Attacks inflict their full damage to each individual trooper in a Battle Armor Squad/Point
 

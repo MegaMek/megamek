@@ -53,7 +53,7 @@ become immobile unless the restricted terrain is water, in which case they are d
 
 x12) Sideslipping units now sideslip a distance equal to the Margin of Failure of the Driving/Piloting skill roll to avoid the Sideslip, or one less than the distance moved prior to the Sideslip, whichever is lower.
 
-13) Clarifies that the +1 modifier per level fallen for avoiding Mechwarrior Damage during a fall is per level
+x13) Clarifies that the +1 modifier per level fallen for avoiding Mechwarrior Damage during a fall is per level
 above one, not every level.
 
 AEROSPACE MOVEMENT

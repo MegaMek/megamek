@@ -3,6 +3,8 @@
 v0.33.24-dev (SVN)
 + TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for
     gyro destroyed
++ TW change: the +1 modifier per level fallen for avoiding Mechwarrior Damage
+    during a fall is per level above one, not every level.
 
 v0.33.23 (2008-04-30, 17:30 GMT+2)
 + Bug 1947060: Leftover vehicle damage bugs

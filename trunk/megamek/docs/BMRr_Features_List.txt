@@ -206,7 +206,7 @@ Clan Battle Armor Variants
 - Gnome				Yes		None
 - Salamander			Yes		None
 - Sylph				Yes		None
-- Undine			No		Waiting on underwater movement.
+- Undine			Yes		None
 
 Innersphere Battle Armor Variants
 

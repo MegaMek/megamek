@@ -14109,7 +14109,7 @@ public class Server implements Runnable {
                                     Mech.SYSTEM_GYRO, loc) > 1) {
                                 // gyro destroyed
                                 game.addPSR(new PilotingRollData(en.getId(),
-                                        TargetRoll.AUTOMATIC_FAIL, 3,
+                                        TargetRoll.AUTOMATIC_FAIL, 6,
                                         "gyro destroyed"));
                             } else {
                                 // first gyro hit
@@ -14124,7 +14124,7 @@ public class Server implements Runnable {
 
                                 // gyro destroyed
                                 game.addPSR(new PilotingRollData(en.getId(),
-                                        TargetRoll.AUTOMATIC_FAIL, 3,
+                                        TargetRoll.AUTOMATIC_FAIL, 6,
                                         "gyro destroyed"));
                             } else if (gyroHits == 1) {
                                 // first gyro hit

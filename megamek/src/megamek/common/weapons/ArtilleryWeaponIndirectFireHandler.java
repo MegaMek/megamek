@@ -405,7 +405,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         }
             
         if (bGlancing) {
-            toReturn /= 2;
+            toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
         System.err.println("Attack is doing " + toReturn + " damage.");

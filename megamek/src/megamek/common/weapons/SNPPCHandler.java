@@ -63,7 +63,7 @@ public class SNPPCHandler extends ISPPCHandler {
             toReturn /= 10;
         toReturn = Math.ceil(toReturn);
         if (bGlancing)
-            toReturn = ((int)toReturn)/2;
+            toReturn = (int) Math.floor(toReturn / 2.0);
         return (int)toReturn;
     }
 }

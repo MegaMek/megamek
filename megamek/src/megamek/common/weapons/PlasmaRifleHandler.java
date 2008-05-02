@@ -76,7 +76,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
         if (target instanceof Mech) {
             int toReturn = 10;
             if (bGlancing)
-                toReturn /= 2;
+                toReturn = (int) Math.floor(toReturn / 2.0);
             return toReturn;
         } else {
             return 1;
@@ -126,7 +126,7 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
                 toReturn = 10 / 2;
             toReturn = 10 + Compute.d6(2);
             if (bGlancing)
-                toReturn /= 2;
+                toReturn = (int) Math.floor(toReturn / 2.0);
         }
         return toReturn;
     }

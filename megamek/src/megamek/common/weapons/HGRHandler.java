@@ -94,7 +94,7 @@ public class HGRHandler extends AmmoWeaponHandler {
             toReturn /= 10;
         }
         if (bGlancing)
-            toReturn /= 2;
+            toReturn = (int) Math.floor(toReturn / 2.0);
         return (int) Math.ceil(toReturn);
     }
 }

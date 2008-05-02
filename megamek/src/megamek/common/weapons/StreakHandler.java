@@ -58,7 +58,7 @@ public class StreakHandler extends MissileWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             int toReturn = (int) Math.ceil(((float) wtype.getRackSize() * 2) / 5);
             if (bGlancing)
-                toReturn /= 2;
+                toReturn = (int) Math.floor(toReturn / 2.0);
             return toReturn;
         }
         return 2;

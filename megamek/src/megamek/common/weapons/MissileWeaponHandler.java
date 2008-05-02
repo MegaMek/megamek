@@ -276,7 +276,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             toReturn /= 5;
             toReturn = Math.ceil(toReturn);
             if (bGlancing)
-                toReturn = ((int)toReturn)/2;
+                toReturn = (int) Math.floor(toReturn / 2.0);
             return (int)toReturn;
         }
         return 1;

@@ -122,7 +122,7 @@ public class NarcExplosiveHandler extends MissileWeaponHandler {
             toReturn /= 10;
         toReturn = Math.ceil(toReturn);
         if (bGlancing)
-            return ((int)toReturn)/2;
+            return (int) Math.floor(toReturn / 2.0);
         return (int)toReturn;
     }
 }

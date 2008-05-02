@@ -73,7 +73,7 @@ public class BAMGHandler extends WeaponHandler {
             }
         }
         if (bGlancing)
-            nDamPerHit /= 2;
+            nDamPerHit =(int) Math.floor(nDamPerHit / 2.0);
         return nDamPerHit;
     }
 

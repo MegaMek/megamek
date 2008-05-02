@@ -59,12 +59,12 @@ public class MGHandler extends AmmoWeaponHandler {
         if (weapon.isRapidfire()) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             if (bGlancing)
-                nDamPerHit /= 2;
+                nDamPerHit = (int) Math.floor(nDamPerHit / 2.0);
         } else {
             if (target instanceof Infantry && !(target instanceof BattleArmor)) {
                 nDamPerHit = Compute.d6(wtype.getDamage());
                 if (bGlancing)
-                    nDamPerHit /= 2;
+                    nDamPerHit = (int) Math.floor(nDamPerHit / 2.0);
             } else {
                 nDamPerHit = super.calcDamagePerHit();
             }

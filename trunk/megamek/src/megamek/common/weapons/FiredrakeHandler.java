@@ -55,7 +55,7 @@ public class FiredrakeHandler extends WeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             int toReturn = Compute.d6(3);
             if (bGlancing)
-                toReturn /= 2;
+                toReturn = (int) Math.floor(toReturn / 2.0);
             return toReturn;
         }
         return super.calcDamagePerHit();

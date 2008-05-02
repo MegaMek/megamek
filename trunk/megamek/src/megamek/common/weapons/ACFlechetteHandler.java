@@ -56,7 +56,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         float toReturn = wtype.getDamage();
 
         if (bGlancing) {
-            toReturn /= 2;
+            toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
         return (int) Math.ceil(toReturn);

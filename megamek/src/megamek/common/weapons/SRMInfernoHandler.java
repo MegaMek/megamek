@@ -210,8 +210,10 @@ public class SRMInfernoHandler extends SRMHandler {
 
         } // End missed-target
 
-        // light inferno missiles all at once
-        vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits));
+        // light inferno missiles all at once, if not missed
+        if(!bMissed) {
+            vPhaseReport.addAll(server.deliverInfernoMissiles(ae, target, hits));
+        }
         return false;
     }
     

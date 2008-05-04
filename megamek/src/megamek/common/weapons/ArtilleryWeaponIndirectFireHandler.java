@@ -109,7 +109,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILERY_INCOMING,
                                 game.getRoundCount() + aaa.turnsTilHit,
-                                aaa.getPlayerId(),
+                                game.getPlayer(aaa.getPlayerId()).getName(),
                                 "Artilery Incoming. Better text later."));
             }
             // if this is the last targeting phase before we hit,
@@ -200,7 +200,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         new SpecialHexDisplay(
                                 SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
                                 game.getRoundCount(),
-                                aaa.getPlayerId(),
+                                game.getPlayer(aaa.getPlayerId()).getName(),
                                 "Artilery AutoHit. Better text later.",
                                 false
                         )
@@ -216,7 +216,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                         new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_ADJUSTED,
                             game.getRoundCount(),
-                            aaa.getPlayerId(),
+                            game.getPlayer(aaa.getPlayerId()).getName(),
                             "Artilery toHit Adjusted. Better text later.",
                             false
                         )
@@ -277,7 +277,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     targetPos, 
                     new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILEY_TARGET,
                             game.getRoundCount(),
-                            aaa.getPlayerId(),
+                            game.getPlayer(aaa.getPlayerId()).getName(),
                             "Artilery Target. Better text later.",
                             false
                     )

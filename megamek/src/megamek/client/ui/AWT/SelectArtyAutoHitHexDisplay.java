@@ -178,7 +178,7 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
                     new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
                             SpecialHexDisplay.NO_ROUND,
-                            p.getId(),
+                            client.getLocalPlayer().getName(),
                             "Artilery autohit, better text later"
                     )
             );

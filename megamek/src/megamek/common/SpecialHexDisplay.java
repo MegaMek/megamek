@@ -25,7 +25,7 @@ public class SpecialHexDisplay implements Serializable {
     /**
      * 
      */
-    private static final long serialVersionUID = 2747079599332339492L;
+    private static final long serialVersionUID = 27470795993329492L;
 
     public enum Type {
         ARTILLERY_AUTOHIT   ("data/images/hexes/artyauto.gif") {
@@ -94,7 +94,7 @@ public class SpecialHexDisplay implements Serializable {
     private Type type;
     private int round;
 
-    private int owner = Player.PLAYER_NONE;
+    private String owner = null;
     
     private boolean obscured = true;
     
@@ -124,14 +124,14 @@ public class SpecialHexDisplay implements Serializable {
         this.round = round;
     }
 
-    public SpecialHexDisplay(Type type, int round, int owner, String info) {
+    public SpecialHexDisplay(Type type, int round, String owner, String info) {
         this.type = type;
         this.info = info;
         this.round = round;
         this.owner = owner;
     }
     
-    public SpecialHexDisplay(Type type, int round, int owner, String info, boolean obscured) {
+    public SpecialHexDisplay(Type type, int round, String owner, String info, boolean obscured) {
         this.type = type;
         this.info = info;
         this.round = round;
@@ -186,11 +186,11 @@ public class SpecialHexDisplay implements Serializable {
         this.type = type;
     }
 
-    public int getOwner() {
+    public String getOwner() {
         return owner;
     }
 
-    public void setOwner(int owner) {
+    public void setOwner(String owner) {
         this.owner = owner;
     }
 
@@ -227,8 +227,8 @@ public class SpecialHexDisplay implements Serializable {
      * @param toPlayer
      * @return
      */
-    public boolean isOwner(int toPlayer) {
-        if(owner == toPlayer || owner == Player.PLAYER_NONE) {
+    public boolean isOwner(String toPlayer) {
+        if(owner == null || owner.equals(toPlayer)) {
             return true;
         }
         

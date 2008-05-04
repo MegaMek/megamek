@@ -6792,7 +6792,7 @@ public class Server implements Runnable {
                     new SpecialHexDisplay(
                             SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
                             SpecialHexDisplay.NO_ROUND,
-                            playerId,
+                            getPlayer(playerId).getName(),
                             "ArtyAutoHit Hex, better text later"
                     )
             );
@@ -7599,7 +7599,8 @@ public class Server implements Runnable {
         }
 
         // inferno always ignites
-        if (bInferno) {
+        // ERATA not if targeting clear hexes for ignition is disabled.
+        if (bInferno && !game.getOptions().booleanOption("no_ignite_clear")) {
             game.getBoard().addInfernoTo(c, InfernoTracker.STANDARD_ROUND, 1);
             nTargetRoll = 0;
             bAnyTerrain = true;
@@ -17178,12 +17179,13 @@ public class Server implements Runnable {
         Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable = game.getBoard().getSpecialHexDisplayTable();
         Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable2 = new Hashtable<Coords, Collection<SpecialHexDisplay>>();
         LinkedList<SpecialHexDisplay> tempList = null;
+        final String playerName = getPlayer(toPlayer).getName();
         
         for(Coords coord : shdTable.keySet()) {
             tempList = new LinkedList<SpecialHexDisplay>();
             for(SpecialHexDisplay shd : shdTable.get(coord)) {
-                if(!shd.isObscured() || shd.isOwner(toPlayer)) {
-                    tempList.add(0,shd);
+                if(!shd.isObscured() || shd.isOwner(playerName)) {
+                    tempList.add(0, shd);
                 }
             }
             if(!tempList.isEmpty()) {

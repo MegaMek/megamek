@@ -734,6 +734,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             int width = (int) (base.getWidth(null) * scale);
             int height = (int) (base.getHeight(null) * scale);
 
+            //TODO: insert a check that width and height are > 0.
+            
             scaled = scale(base, width, height);
             tracker.addImage(scaled, 1);
             // Wait for image to load
@@ -1229,16 +1231,28 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         //draw special stuff for the hex
         final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(c);
-        if(shdList != null) {
-            for(SpecialHexDisplay shd : shdList)
-            {
-                if (shd.drawNow(game.getPhase(), game.getRoundCount())) {
-                    scaledImage = getScaledImage(shd.getType().getDefaultImage());
-                    if(scaledImage != null) {
-                        boardGraph.drawImage(scaledImage, drawX, drawY, this);
+        try {
+            if(shdList != null) {
+                for(SpecialHexDisplay shd : shdList)
+                {
+                    if (shd.drawNow(game.getPhase(), game.getRoundCount())) {
+                        scaledImage = getScaledImage(shd.getType().getDefaultImage());
+                        if(scaledImage != null) {
+                            boardGraph.drawImage(scaledImage, drawX, drawY, this);
+                        }
                     }
                 }
             }
+        } catch (IllegalArgumentException e) {
+            System.err.println("Illegal argument exception, probably can't load file.");
+            e.printStackTrace();
+            drawCenteredString(
+                    "Loading Error",
+                    drawX,
+                    drawY + (int)(50*scale),
+                    font_note,
+                    boardGraph);
+            return;
         }
         
         // draw hex number

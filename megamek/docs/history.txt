@@ -9,6 +9,7 @@ v0.33.24-dev (SVN)
 + Attempt to fix some artilery bugs, and some inferno srm bugs.
 + Handle an exeption for missing files while drawing hexes.
 + Bug 1959257: IS light MG 'out of range' at long range
++ Bug: double PSRs when entering a minefield triggers a PSR
 
 v0.33.23 (2008-04-30, 17:30 GMT+2)
 + Bug 1947060: Leftover vehicle damage bugs

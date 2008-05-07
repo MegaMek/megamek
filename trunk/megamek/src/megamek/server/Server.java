@@ -5780,6 +5780,7 @@ public class Server implements Runnable {
 
                     if (resolvePSRNow) {
                         vPhaseReport.addAll(resolvePilotingRolls(entity, true, src, dest));
+                        game.resetPSRs(entity);
                     }
 
                     if (!mf.isOneUse()) {

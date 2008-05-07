@@ -47,7 +47,7 @@ public class ISLightMG extends MGWeapon {
         this.shortRange = 2;
         this.mediumRange = 4;
         this.longRange = 6;
-        this.extremeRange = 4;
+        this.extremeRange = 8;
         this.tonnage = 0.5f;
         this.criticals = 1;
         this.bv = 5;

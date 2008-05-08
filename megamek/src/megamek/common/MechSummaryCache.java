@@ -513,7 +513,6 @@ public class MechSummaryCache {
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
                 loadReport.append("    Loading from zip file").append(" >> ")
                         .append(zEntry.getName()).append("\n");
                 loadReport.append("      Unable to load file: ").append(

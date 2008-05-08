@@ -1484,7 +1484,8 @@ public class MoveStep implements Serializable {
             }
         } // End not-along-road
 
-        if (nSrcEl != nDestEl) {
+        // non-WIGEs pay for elevation differences
+        if (nSrcEl != nDestEl && moveType != IEntityMovementMode.WIGE) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
             // non-flying Infantry and ground vehicles are charged double.
             if ((isInfantry && !(moveType == IEntityMovementType.MOVE_VTOL_WALK 

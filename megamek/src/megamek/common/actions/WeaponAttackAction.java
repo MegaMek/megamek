@@ -1673,6 +1673,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 }
             }
         }
+        if (ae.getMovementMode() == IEntityMovementMode.WIGE &&
+                ae.getPosition() == target.getPosition()) {
+            return "WiGE may not attack target in same hex";
+        }
 
         return null;
     }

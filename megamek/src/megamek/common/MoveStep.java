@@ -477,10 +477,16 @@ public class MoveStep implements Serializable {
             case MovePath.STEP_UP:
                 setElevation(elevation + 1);
                 setMp(parent.isJumping() ? 0 : 1);
+                if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
+                    setMp(5);
+                }
                 break;
             case MovePath.STEP_DOWN:
                 setElevation(elevation - 1);
                 setMp(parent.isJumping() ? 0 : 1);
+                if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
+                    setMp(0);
+                }
                 break;
             case MovePath.STEP_HULL_DOWN:
                 setMp(2);
@@ -1068,6 +1074,12 @@ public class MoveStep implements Serializable {
             isDiggingIn = true;
             movementType = IEntityMovementType.MOVE_NONE;
         }
+        
+        // WIGEs can take off on their first step
+        if (isFirstStep() && type == MovePath.STEP_UP
+                && entity.getMovementMode() == IEntityMovementMode.WIGE) {
+            movementType = IEntityMovementType.MOVE_WALK;
+        }
 
         // check to see if it's trying to flee and can legally do so.
         if (type == MovePath.STEP_FLEE && entity.canFlee()) {
@@ -1149,6 +1161,13 @@ public class MoveStep implements Serializable {
                     && stepType != MovePath.STEP_UNLOAD
                     && stepType != MovePath.STEP_LOAD
                     && (isProne() || isHullDown())) {
+                movementType = IEntityMovementType.MOVE_ILLEGAL;
+                return;
+            }
+            // WiGEs on the ground can use only 1 MP / do just one step
+            if (!isFirstStep()
+                    && entity.getMovementMode() == IEntityMovementMode.WIGE
+                    && getElevation() == 0) {
                 movementType = IEntityMovementType.MOVE_ILLEGAL;
                 return;
             }
@@ -1438,7 +1457,8 @@ public class MoveStep implements Serializable {
         if (!isPavementStep) {
 
             if ((moveType != IEntityMovementMode.BIPED_SWIM)
-                    && (moveType != IEntityMovementMode.QUAD_SWIM))
+                    && (moveType != IEntityMovementMode.QUAD_SWIM)
+                    && (!(moveType == IEntityMovementMode.WIGE && this.getElevation() > 0)))
                 mp += destHex.movementCost(moveType);
 
             // non-hovers, non-navals and non-VTOLs check for water depth and
@@ -1450,7 +1470,8 @@ public class MoveStep implements Serializable {
                     && (moveType != IEntityMovementMode.INF_UMU)
                     && (moveType != IEntityMovementMode.VTOL)
                     && (moveType != IEntityMovementMode.BIPED_SWIM)
-                    && (moveType != IEntityMovementMode.QUAD_SWIM)) {
+                    && (moveType != IEntityMovementMode.QUAD_SWIM)
+                    && (moveType != IEntityMovementMode.WIGE)) {
                 // no additional cost when moving on surface of ice.
                 if (!destHex.containsTerrain(Terrains.ICE)
                         || nDestEl < destHex.surface()) {
@@ -1466,9 +1487,11 @@ public class MoveStep implements Serializable {
         if (nSrcEl != nDestEl) {
             int delta_e = Math.abs(nSrcEl - nDestEl);
             // non-flying Infantry and ground vehicles are charged double.
-            if ((isInfantry && !(moveType == IEntityMovementType.MOVE_VTOL_WALK || moveType == IEntityMovementType.MOVE_VTOL_RUN))
+            if ((isInfantry && !(moveType == IEntityMovementType.MOVE_VTOL_WALK 
+                    || moveType == IEntityMovementType.MOVE_VTOL_RUN))
                     || (moveType == IEntityMovementMode.TRACKED
-                            || moveType == IEntityMovementMode.WHEELED || moveType == IEntityMovementMode.HOVER)) {
+                            || moveType == IEntityMovementMode.WHEELED 
+                            || moveType == IEntityMovementMode.HOVER)) {
                 delta_e *= 2;
             }
             mp += delta_e;
@@ -1662,6 +1685,11 @@ public class MoveStep implements Serializable {
                     && destAlt != srcAlt)
                 return false;
         }
+        
+        // WiGEs can't move backwards
+        if (type == MovePath.STEP_BACKWARDS && nMove == IEntityMovementMode.WIGE) {
+            return false;
+        }
 
         // Can't run into water unless hovering, naval, first step, using a
         // bridge, or fly.
@@ -1672,6 +1700,7 @@ public class MoveStep implements Serializable {
                 && nMove != IEntityMovementMode.SUBMARINE
                 && nMove != IEntityMovementMode.INF_UMU
                 && nMove != IEntityMovementMode.VTOL
+                && nMove != IEntityMovementMode.WIGE
                 && destHex.terrainLevel(Terrains.WATER) > 0
                 && !(destHex.containsTerrain(Terrains.ICE) && elevation >= 0)
                 && !dest.equals(entity.getPosition())

@@ -41,7 +41,9 @@ public abstract class TestEntity implements TestEntityOption {
     public final static String[] MOVEMENT_CHASSIS_NAMES = { "Building",
             "Biped Mech", "Quad Mech", "Tracked Vehicle", "Wheeled Vehicle",
             "Hovercraft", "VTOL", "Naval Vehicle", "Hydrofoil Vehicle",
-            "Submarine" };
+            "Submarine", "Leg Infantry", "Motorized Infantry", "Jump Infantry",
+            "Biped Mech", "Quad Mech", "WIGE Vehicle", "Aerodyne Dropship",
+            "Spheroid Dropship", "UMU Infantry", "Airmech", "Aerospace"};
 
     protected Engine engine = null;
     protected Armor armor = null;

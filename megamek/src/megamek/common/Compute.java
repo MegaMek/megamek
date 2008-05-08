@@ -1221,6 +1221,9 @@ public class Compute {
         if (entity.moved == IEntityMovementType.MOVE_SKID) {
             toHit.addModifier(2, "target skidded");
         }
+        if (entity.getElevation() > 0 && entity.getMovementMode() == IEntityMovementMode.WIGE) {
+            toHit.addModifier(1, "target is a flying WiGE");
+        }
 
         return toHit;
     }

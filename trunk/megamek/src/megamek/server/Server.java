@@ -12573,8 +12573,8 @@ public class Server implements Runnable {
                             vDesc.addAll(destroyEntity(te, "damage",
                                     !ammoExplosion,
                                     !((ammoExplosion || areaSatArty) && 
-                                            (te instanceof Tank) || (te instanceof Mech && hit
-                                            .getLocation() == Mech.LOC_CT))));
+                                            ((te instanceof Tank) || (te instanceof Mech && hit
+                                            .getLocation() == Mech.LOC_CT)))));
                             // If the head is destroyed, kill the crew.
                             if (hit.getLocation() == Mech.LOC_HEAD
                                     || hit.getLocation() == Mech.LOC_CT

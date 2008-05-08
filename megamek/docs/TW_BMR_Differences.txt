@@ -190,7 +190,7 @@ x4) The new VTOL Hit Location Table has significantly less chances of Rotor hits
 
 5) Attacks against surface naval vessels on the main body (front, left, right, and rear sides, but not the turret) cause Hull Breach the same as the Underwater Operations rules on a roll of 12 on 2D6.
 
-6) The new unit type, the WiGE, is fleshed out, although most of this section is just minor clarifications (a.k.a., The WiGE uses the standard Ground Combat Unit Hit Location Table, not the VTOL Table, etc)
+x6) The new unit type, the WiGE, is fleshed out, although most of this section is just minor clarifications (a.k.a., The WiGE uses the standard Ground Combat Unit Hit Location Table, not the VTOL Table, etc)
 
 SUPPORT VEHICLES
 In this section, rules for Airships, Tractors, Trailers, & the support variations of the standard Combat Vehicle types are provided, more or less as they appear in Combat Equipment.  Someone with more experience with Support Vehicles than I is welcome to nitpick this section, but it is similar enough to Combat Equipment minus the construction rules in my eye to safely pass over it.

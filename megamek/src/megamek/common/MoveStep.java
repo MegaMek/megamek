@@ -367,7 +367,8 @@ public class MoveStep implements Serializable {
                                                                                                     // can't
                                                                                                     // flank
                                                                                                     // underwater
-                && entity.getMovementMode() != IEntityMovementMode.VTOL) {
+                && entity.getMovementMode() != IEntityMovementMode.VTOL
+                && entity.getMovementMode() != IEntityMovementMode.WIGE) {
             setRunProhibited(true);
         }
 

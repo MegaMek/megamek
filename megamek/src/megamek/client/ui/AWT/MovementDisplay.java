@@ -1034,6 +1034,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             } else if (level == 2 && entity.getElevation() == 0
                     && moveType != IEntityMovementType.MOVE_JUMP
                     && entity.getMovementMode() != IEntityMovementMode.HOVER
+                    && entity.getMovementMode() != IEntityMovementMode.WIGE
                     && !(curPos.equals(lastPos))) {
                 nagReport.append(Messages
                         .getString("MovementDisplay.MagmaLiquidMoving"));

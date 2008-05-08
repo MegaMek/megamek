@@ -255,7 +255,7 @@ public class Compute {
         }
 
         // check for swamp
-        if (destHex.containsTerrain(Terrains.SWAMP) && !(entity.getElevation() > destHex.getElevation()) && entity.getMovementMode() != IEntityMovementMode.HOVER && entity.getMovementMode() != IEntityMovementMode.VTOL && movementType != IEntityMovementType.MOVE_JUMP) {
+        if (destHex.containsTerrain(Terrains.SWAMP) && !(entity.getElevation() > destHex.getElevation()) && entity.getMovementMode() != IEntityMovementMode.HOVER && entity.getMovementMode() != IEntityMovementMode.VTOL && movementType != IEntityMovementType.MOVE_JUMP && entity.getMovementMode() != IEntityMovementMode.WIGE) {
             return true;
         }
 
@@ -266,7 +266,7 @@ public class Compute {
 
         // Check for water unless we're a hovercraft or naval or using a bridge
         // or flying.
-        if (movementType != IEntityMovementType.MOVE_JUMP && !(entity.getElevation() > destHex.surface()) && !(entity.getMovementMode() == IEntityMovementMode.HOVER || entity.getMovementMode() == IEntityMovementMode.NAVAL || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL || entity.getMovementMode() == IEntityMovementMode.SUBMARINE || entity.getMovementMode() == IEntityMovementMode.INF_UMU || entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM) && destHex.terrainLevel(Terrains.WATER) > 0 && !isPavementStep) {
+        if (movementType != IEntityMovementType.MOVE_JUMP && !(entity.getElevation() > destHex.surface()) && !(entity.getMovementMode() == IEntityMovementMode.HOVER || entity.getMovementMode() == IEntityMovementMode.NAVAL || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL || entity.getMovementMode() == IEntityMovementMode.SUBMARINE || entity.getMovementMode() == IEntityMovementMode.INF_UMU || entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM || entity.getMovementMode() == IEntityMovementMode.WIGE) && destHex.terrainLevel(Terrains.WATER) > 0 && !isPavementStep) {
             return true;
         }
 

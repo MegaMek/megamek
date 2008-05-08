@@ -19490,14 +19490,17 @@ public class Server implements Runnable {
         if (te.getOriginalWalkMP() == 0 || te.isImmobile()) {
             // Hovercraft reduced to 0MP over water sink
             if ((te.getMovementMode() == IEntityMovementMode.HOVER
-                    || te.getMovementMode() == IEntityMovementMode.WIGE)
+                    || (te.getMovementMode() == IEntityMovementMode.WIGE
+                            && te.getElevation() == 0))
                     && game.getBoard().getHex(te.getPosition()).terrainLevel(
                             Terrains.WATER) > 0
                     && !game.getBoard().getHex(te.getPosition())
                             .containsTerrain(Terrains.ICE)) {
                 vDesc.addAll(destroyEntity(te, "a watery grave", false));
             }
-            if (te instanceof VTOL) {
+            if (te instanceof VTOL 
+                    || (te.getMovementMode() == IEntityMovementMode.WIGE
+                            && te.getElevation() > 0)) {
                 // report problem: add tab
                 vDesc.addAll(crashVTOLorWiGE(te));
             }

@@ -25,7 +25,8 @@ v0.33.24-dev (SVN)
     you don't want to spend the extra 2 MPs per hex moved to keep the elevation
     anymore, click "climb mode" again to use the normal movement rules for 
     elevation and spend only 1 MP per hex moved.
-+ Bug: Shut down server correctly when savegame loading fails. 
++ Bug: Shut down server correctly when savegame loading fails.
++ Bug: WiGEs should crash when reduced to 0 MP while flying
     
     
     

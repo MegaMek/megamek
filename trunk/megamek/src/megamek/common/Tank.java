@@ -277,6 +277,9 @@ public class Tank extends Entity implements Serializable {
                         || hex.containsTerrain(Terrains.ICE);
             case IEntityMovementMode.SUBMARINE:
                 return (hex.terrainLevel(Terrains.WATER) <= 0);
+            case IEntityMovementMode.WIGE:
+                return (hex.containsTerrain(Terrains.WOODS)
+                        || hex.containsTerrain(Terrains.BUILDING));
             default:
                 return false;
         }
@@ -614,9 +617,8 @@ public class Tank extends Entity implements Serializable {
                 typeModifier = 0.8;
                 break;
             case IEntityMovementMode.HOVER:
-                typeModifier = 0.7;
-                break;
             case IEntityMovementMode.VTOL:
+            case IEntityMovementMode.WIGE:
                 typeModifier = 0.7;
                 break;
             case IEntityMovementMode.NAVAL:
@@ -962,9 +964,10 @@ public class Tank extends Entity implements Serializable {
     }
 
     public boolean canCharge() {
-        // Tanks can charge, except Hovers when the option is set
+        // Tanks can charge, except Hovers when the option is set, and WIGEs
         return super.canCharge()
-                && !(game.getOptions().booleanOption("no_hover_charge") && IEntityMovementMode.HOVER == getMovementMode());
+                && !(game.getOptions().booleanOption("no_hover_charge") && IEntityMovementMode.HOVER == getMovementMode())
+                && !(IEntityMovementMode.WIGE == getMovementMode());
     }
 
     public boolean canDFA() {
@@ -1036,6 +1039,15 @@ public class Tank extends Entity implements Serializable {
                 if (weight <= 20)
                     return 95;
                 return 140;
+            case IEntityMovementMode.WIGE:
+                if (weight <= 15)
+                    return 45;
+                if (weight <= 30)
+                    return 80;
+                if (weight <= 45)
+                    return 115;
+                if (weight <= 80)
+                    return 140;
         }
         return 0;
     }

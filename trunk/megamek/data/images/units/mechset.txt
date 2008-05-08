@@ -64,6 +64,7 @@ exact "default_infantry" "default_infantry.gif"
 exact "default_ba" "default_ba.gif"
 exact "default_proto" "default_proto.gif"
 exact "default_gun_emplacement" "default_gun_emplacement.gif"
+exact "default_wige" "default_light.gif"
 
 
 # Infantry

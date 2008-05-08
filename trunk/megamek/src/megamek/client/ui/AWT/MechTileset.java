@@ -67,6 +67,7 @@ public class MechTileset {
     private String BA_STRING = "default_ba"; //$NON-NLS-1$
     private String PROTO_STRING = "default_proto"; //$NON-NLS-1$
     private String GUN_EMPLACEMENT_STRING = "default_gun_emplacement"; //$NON-NLS-1$
+    private String WIGE_STRING = "default_wige"; //$NON-NLS-1$
 
     private MechEntry default_light;
     private MechEntry default_medium;
@@ -87,6 +88,7 @@ public class MechTileset {
     private MechEntry default_ba;
     private MechEntry default_proto;
     private MechEntry default_gun_emplacement;
+    private MechEntry default_wige;
 
     private HashMap<String, MechEntry> exact = new HashMap<String, MechEntry>();
     private HashMap<String, MechEntry> chassis = new HashMap<String, MechEntry>();
@@ -189,6 +191,9 @@ public class MechTileset {
             if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
                 return default_vtol;
             }
+            if (entity.getMovementMode() == IEntityMovementMode.WIGE) {
+                return default_wige;
+            }
         }
         if (entity instanceof GunEmplacement) {
             return default_gun_emplacement;
@@ -268,6 +273,7 @@ public class MechTileset {
         default_proto = exact.get(PROTO_STRING.toUpperCase());
         default_gun_emplacement = exact.get(GUN_EMPLACEMENT_STRING
                 .toUpperCase());
+        default_wige = exact.get(WIGE_STRING.toUpperCase());
     }
 
     /**

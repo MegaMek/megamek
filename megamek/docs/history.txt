@@ -15,7 +15,20 @@ v0.33.24-dev (SVN)
 + Bug: WiGE costs for moving up/down hills wrong
 + Bug: WiGEs should be able to go down as many levels as they want
 + Bug 1959563: 'Mechs misreported as unsalvageable
-+ Bug 1960001: Vulcan VT-6C - no Light Machine Gun Ammo 
++ Bug 1960001: Vulcan VT-6C - no Light Machine Gun Ammo
++ WiGEs can spend 2 MPs to stay at current flight level when moving over a down-
+    wards level change
+    WIGEs need to start their movement with a "Go Up" step to start, this costs
+    5 MPs. To use the "spend 2 MP to keep altitude when going over a cliff"
+    rule, climb mode needs to be activated and be in the "keep elev" setting.
+    In the hex before you again reach terrainof the original height and/or if
+    you don't want to spend the extra 2 MPs per hex moved to keep the elevation
+    anymore, click "climb mode" again to use the normal movement rules for 
+    elevation and spend only 1 MP per hex moved.
++ Bug: Shut down server correctly when savegame loading fails. 
+    
+    
+    
 
 v0.33.23 (2008-04-30, 17:30 GMT+2)
 + Bug 1947060: Leftover vehicle damage bugs

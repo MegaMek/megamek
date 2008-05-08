@@ -856,13 +856,18 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * to be at w/r/t it's new hex.
      */
     public int calcElevation(IHex current, IHex next, int assumedElevation,
-            boolean climb) {
+            boolean climb, boolean wigeEndClimbPrevious) {
         int retVal = assumedElevation;
         if ((getMovementMode() == IEntityMovementMode.SUBMARINE)
                 || (getMovementMode() == IEntityMovementMode.INF_UMU && (current
                         .containsTerrain(Terrains.WATER) || next
                         .containsTerrain(Terrains.WATER)))
                 || (getMovementMode() == IEntityMovementMode.VTOL)
+                // a WIGE in climb mode or that ended climb mode in the previous
+                // hex stays at the same flight level, like a VTOL
+                || (getMovementMode() == IEntityMovementMode.WIGE 
+                        && (climb || wigeEndClimbPrevious)
+                        && assumedElevation > 0)
                 || (getMovementMode() == IEntityMovementMode.QUAD_SWIM && hasUMU())
                 || (getMovementMode() == IEntityMovementMode.BIPED_SWIM && hasUMU())) {
             retVal += current.surface();
@@ -935,7 +940,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public int calcElevation(IHex current, IHex next) {
-        return calcElevation(current, next, elevation, false);
+        return calcElevation(current, next, elevation, false, false);
     }
 
     /**
@@ -1061,11 +1066,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 || getMovementMode() == IEntityMovementMode.NAVAL) {
             return altitude == hex.surface();
         } else if (getMovementMode() == IEntityMovementMode.WIGE) {
-            // WiGEs can be at elevation 1 or 0
-            // TODO: does this need adjusting for the "keep altitude for 2 extra
-            //       MP when flying over a 1 or more hexes of lower elevation
-            //       rule thing?
-            return (assumedElevation <= 1 && altitude >= hex.floor());
+            // WiGEs can possibly be at any location above or on the surface
+            return (altitude >= hex.floor());
         } else {
             // regular ground units
             if (hex.containsTerrain(Terrains.ICE)
@@ -1451,10 +1453,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (hex == null) {
             return 0;
         }
-        if (movementMode == IEntityMovementMode.VTOL) {
+        if (movementMode == IEntityMovementMode.VTOL
+                || movementMode == IEntityMovementMode.WIGE) {
             return hex.surface() + elevation;
         } else if (((movementMode == IEntityMovementMode.HOVER)
-                || (movementMode == IEntityMovementMode.WIGE)
                 || (movementMode == IEntityMovementMode.NAVAL)
                 || (movementMode == IEntityMovementMode.HYDROFOIL) || hex
                 .containsTerrain(Terrains.ICE))

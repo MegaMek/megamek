@@ -3927,7 +3927,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     break;
                 case MovePath.STEP_CLIMB_MODE_ON:
                     // draw climb mode indicator
-                    String climb = Messages.getString("BoardView1.Climb"); //$NON-NLS-1$
+                    String climb;
+                    if (step.getParent().getEntity().getMovementMode() == IEntityMovementMode.WIGE) {
+                        climb = Messages.getString("BoardView1.WIGEClimb"); //$NON-NLS-1$
+                    } else {
+                        climb = Messages.getString("BoardView1.Climb"); //$NON-NLS-1$
+                    }
                     if (step.isPastDanger()) {
                         climb = "(" + climb + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                     }
@@ -3943,7 +3948,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     break;
                 case MovePath.STEP_CLIMB_MODE_OFF:
                     // cancel climb mode indicator
-                    String climboff = Messages.getString("BoardView1.ClimbOff"); //$NON-NLS-1$
+                    String climboff;
+                    if (step.getParent().getEntity().getMovementMode() == IEntityMovementMode.WIGE) {
+                        climboff = Messages.getString("BoardView1.WIGEClimbOff"); //$NON-NLS-1$
+                    } else {
+                        climboff = Messages.getString("BoardView1.ClimbOff"); //$NON-NLS-1$
+                    }
                     if (step.isPastDanger()) {
                         climboff = "(" + climboff + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                     }

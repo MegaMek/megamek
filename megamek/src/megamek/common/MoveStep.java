@@ -344,12 +344,15 @@ public class MoveStep implements Serializable {
                 else
                     setElevation(entity.calcElevation(game.getBoard().getHex(
                             prev.getPosition()), game.getBoard().getHex(
-                            getPosition()), elevation, climbMode()));
+                            getPosition()), elevation, climbMode(),
+                            entity.getMovementMode() == IEntityMovementMode.WIGE
+                            && prev.getType() == MovePath.STEP_CLIMB_MODE_OFF));
             } else
                 setElevation(entity.calcElevation(game.getBoard().getHex(
                         prev.getPosition()), game.getBoard().getHex(
-                        getPosition()), elevation, climbMode()));
-
+                        getPosition()), elevation, climbMode(),
+                        entity.getMovementMode() == IEntityMovementMode.WIGE
+                        && prev.getType() == MovePath.STEP_CLIMB_MODE_OFF));
         }
 
         calcMovementCostFor(game, prev.getPosition(), prev.getElevation());
@@ -363,10 +366,8 @@ public class MoveStep implements Serializable {
                 && entity.getMovementMode() != IEntityMovementMode.NAVAL
                 && entity.getMovementMode() != IEntityMovementMode.HYDROFOIL
                 && entity.getMovementMode() != IEntityMovementMode.INF_UMU
-                && !(elevation == 0 && entity.getMovementMode() == IEntityMovementMode.SUBMARINE) // sub
-                                                                                                    // can't
-                                                                                                    // flank
-                                                                                                    // underwater
+                // sub can't flank underwater
+                && !(elevation == 0 && entity.getMovementMode() == IEntityMovementMode.SUBMARINE) 
                 && entity.getMovementMode() != IEntityMovementMode.VTOL
                 && entity.getMovementMode() != IEntityMovementMode.WIGE) {
             setRunProhibited(true);
@@ -1498,6 +1499,10 @@ public class MoveStep implements Serializable {
             }
             mp += delta_e;
         }
+        
+        // WiGEs in climb mode pay 2 extra MP to stay at the same flight level
+        if (moveType == IEntityMovementMode.WIGE && climbMode && elevation > 0)
+            mp += 2;
 
         // If we entering a building, all non-infantry pay additional MP.
         if (nDestEl < destHex.terrainLevel(Terrains.BLDG_ELEV)) {

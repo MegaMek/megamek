@@ -288,7 +288,7 @@ public class Terrain implements ITerrain, Serializable {
             case Terrains.ROUGH:
             case Terrains.RAPIDS:
             case Terrains.SWAMP:
-                if (moveType == IEntityMovementMode.HOVER)
+                if (moveType == IEntityMovementMode.HOVER || moveType == IEntityMovementMode.WIGE)
                     return 0;
                 return 1;
             case Terrains.RUBBLE:

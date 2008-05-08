@@ -870,7 +870,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         } else {
             if ((getMovementMode() != IEntityMovementMode.HOVER)
                     && (getMovementMode() != IEntityMovementMode.NAVAL)
-                    && (getMovementMode() != IEntityMovementMode.HYDROFOIL)) {
+                    && (getMovementMode() != IEntityMovementMode.HYDROFOIL)
+                    && (getMovementMode() != IEntityMovementMode.WIGE)) {
                 int prevWaterLevel = 0;
                 if (current.containsTerrain(Terrains.WATER)) {
                     prevWaterLevel = current.terrainLevel(Terrains.WATER);
@@ -1453,6 +1454,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (movementMode == IEntityMovementMode.VTOL) {
             return hex.surface() + elevation;
         } else if (((movementMode == IEntityMovementMode.HOVER)
+                || (movementMode == IEntityMovementMode.WIGE)
                 || (movementMode == IEntityMovementMode.NAVAL)
                 || (movementMode == IEntityMovementMode.HYDROFOIL) || hex
                 .containsTerrain(Terrains.ICE))
@@ -4262,6 +4264,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 && step.getMovementType() != IEntityMovementType.MOVE_JUMP
                 && (this.getMovementMode() != IEntityMovementMode.HOVER)
                 && (this.getMovementMode() != IEntityMovementMode.VTOL)
+                && (this.getMovementMode() != IEntityMovementMode.WIGE)
                 && step.getElevation() == 0 && !isPavementStep) {
             // non-hovers need a simple PSR
             if (curHex.containsTerrain(Terrains.SWAMP)) {
@@ -4305,6 +4308,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 && getMovementMode() != IEntityMovementMode.INF_UMU
                 && getMovementMode() != IEntityMovementMode.BIPED_SWIM
                 && getMovementMode() != IEntityMovementMode.QUAD_SWIM
+                && getMovementMode() != IEntityMovementMode.WIGE
                 && !isPavementStep) {
             return checkWaterMove(curHex.terrainLevel(Terrains.WATER));
         }

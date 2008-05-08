@@ -2943,6 +2943,7 @@ public class Server implements Runnable {
             unit.setElevation(elevation);
         } else if (hex.terrainLevel(Terrains.WATER) > 0) {
             if (unit.getMovementMode() == IEntityMovementMode.HOVER
+                    || unit.getMovementMode() == IEntityMovementMode.WIGE
                     || unit.getMovementMode() == IEntityMovementMode.HYDROFOIL
                     || unit.getMovementMode() == IEntityMovementMode.NAVAL
                     || unit.getMovementMode() == IEntityMovementMode.SUBMARINE
@@ -3224,7 +3225,8 @@ public class Server implements Runnable {
                     // Hovercraft can "skid" over water.
                     // all units can skid over ice.
                     if (entity instanceof Tank
-                            && entity.getMovementMode() == IEntityMovementMode.HOVER) {
+                            && (entity.getMovementMode() == IEntityMovementMode.HOVER
+                                    || entity.getMovementMode() == IEntityMovementMode.WIGE)) {
                         if (nextHex.containsTerrain(Terrains.WATER)) {
                             nextAltitude = nextHex.surface();
                         }
@@ -6770,6 +6772,7 @@ public class Server implements Runnable {
             // For now, pretend they're regular naval.
             entity.setElevation(0);
         } else if (entity.getMovementMode() == IEntityMovementMode.HOVER
+                || entity.getMovementMode() == IEntityMovementMode.WIGE
                 || entity.getMovementMode() == IEntityMovementMode.NAVAL
                 || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL) {
             // For now, assume they're on the surface.
@@ -19298,6 +19301,7 @@ public class Server implements Runnable {
                 // the hex
                 if (e.getElevation() == 0
                         && e.getMovementMode() != IEntityMovementMode.HOVER
+                        && e.getMovementMode() != IEntityMovementMode.WIGE
                         && e.getMovementMode() != IEntityMovementMode.INF_UMU
                         && !e.hasUMU()) {
                     vPhaseReport.addAll(doEntityFallsInto(e, c, c, new PilotingRollData(TargetRoll.AUTOMATIC_FAIL)));
@@ -19476,7 +19480,8 @@ public class Server implements Runnable {
         }
         if (te.getOriginalWalkMP() == 0 || te.isImmobile()) {
             // Hovercraft reduced to 0MP over water sink
-            if (te.getMovementMode() == IEntityMovementMode.HOVER
+            if ((te.getMovementMode() == IEntityMovementMode.HOVER
+                    || te.getMovementMode() == IEntityMovementMode.WIGE)
                     && game.getBoard().getHex(te.getPosition()).terrainLevel(
                             Terrains.WATER) > 0
                     && !game.getBoard().getHex(te.getPosition())
@@ -19485,7 +19490,7 @@ public class Server implements Runnable {
             }
             if (te instanceof VTOL) {
                 // report problem: add tab
-                vDesc.addAll(crashVTOLorWiGE((VTOL) te));
+                vDesc.addAll(crashVTOLorWiGE(te));
             }
         }
         return vDesc;
@@ -19661,7 +19666,8 @@ public class Server implements Runnable {
      */
     void doMagmaDamage(Entity en, boolean eruption) {
         if ((en.getMovementMode() == IEntityMovementMode.VTOL || en
-                .getMovementMode() == IEntityMovementMode.HOVER
+                .getMovementMode() == IEntityMovementMode.HOVER || en
+                .getMovementMode() == IEntityMovementMode.WIGE
                 && en.getOriginalWalkMP() > 0 && !eruption)
                 && !en.isImmobile()) {
             return;

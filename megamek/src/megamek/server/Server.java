@@ -3315,7 +3315,7 @@ public class Server implements Runnable {
                             break;
                     }
                     elevation = nextElevation;
-                    addReport(crashVTOL((VTOL) entity, true, distance, curPos,
+                    addReport(crashVTOLorWiGE((VTOL) entity, true, distance, curPos,
                             elevation, table));
 
                     if (nextHex.containsTerrain(Terrains.WATER)
@@ -3988,6 +3988,7 @@ public class Server implements Runnable {
         boolean wasProne;
         boolean fellDuringMovement = false;
         boolean turnOver;
+        boolean wigeStartedLanded = false;
         int prevFacing = curFacing;
         IHex prevHex = null;
         final boolean isInfantry = entity instanceof Infantry;
@@ -4037,6 +4038,11 @@ public class Server implements Runnable {
             // stop if the entity already killed itself
             if (entity.isDestroyed() || entity.isDoomed()) {
                 break;
+            }
+            
+            if (firstStep && entity.getMovementMode() == IEntityMovementMode.WIGE
+                    && entity.getElevation() == 0) {
+                wigeStartedLanded = true;
             }
 
             // check for MASC failure on first step
@@ -4824,6 +4830,28 @@ public class Server implements Runnable {
         entity.mpUsed = mpUsed;
         if (!sideslipped && !fellDuringMovement) {
             entity.setElevation(curVTOLElevation);
+        }
+        if (entity.getMovementMode() == IEntityMovementMode.WIGE
+                && !wigeStartedLanded && distance < 5
+                && entity.getElevation() == 1) {
+            // try to land safely
+            r = new Report(2123);
+            r.addDesc(entity);
+            r.subject = entity.getId();
+            vPhaseReport.add(r);
+            // when no clear or pavement, crash
+            if (!game.getBoard().getHex(curPos).hasPavement()
+                    || game.getBoard().getHex(curPos).terrainsPresent() > 0) {
+                // try to land safely
+                r = new Report(2124);
+                r.addDesc(entity);
+                r.subject = entity.getId();
+                vPhaseReport.add(r);
+                vPhaseReport.addAll(crashVTOLorWiGE((Tank)entity));
+            }
+            else {
+                entity.setElevation(0);
+            }
         }
         entity.setClimbMode(md.getFinalClimbMode());
 
@@ -12506,7 +12534,7 @@ public class Server implements Runnable {
                             // if rotor is destroyed, movement goes bleh.
                             // I think this will work?
                             te.setOriginalWalkMP(0);
-                            vDesc.addAll(crashVTOL((VTOL) te));
+                            vDesc.addAll(crashVTOLorWiGE((VTOL) te));
 
                         }
                     }
@@ -13772,14 +13800,14 @@ public class Server implements Runnable {
                                 if (diceRoll < psr.getValue()) {
                                     r.choose(false);
                                     vDesc.add(r);
-                                    vDesc.addAll(crashVTOL((VTOL) t));
+                                    vDesc.addAll(crashVTOLorWiGE((VTOL) t));
                                 } else {
                                     r.choose(true);
                                     vDesc.add(r);
                                     t.setElevation(elevation);
                                 }
                             } else {
-                                vDesc.addAll(crashVTOL((VTOL) t));
+                                vDesc.addAll(crashVTOLorWiGE((VTOL) t));
                             }
                         }
                     }
@@ -13896,7 +13924,7 @@ public class Server implements Runnable {
                             crash = !t.canGoDown();
                         }
                         if (crash) {
-                            vDesc.addAll(crashVTOL((VTOL) t));
+                            vDesc.addAll(crashVTOLorWiGE((VTOL) t));
                         }
                     }
                     break;
@@ -13915,7 +13943,7 @@ public class Server implements Runnable {
                         t.setOriginalWalkMP(mp - 1);
                     else if (mp == 1) {
                         t.setOriginalWalkMP(0);
-                        vDesc.addAll(crashVTOL((VTOL) t));
+                        vDesc.addAll(crashVTOLorWiGE((VTOL) t));
                     }
                     break;
                 }
@@ -13925,7 +13953,7 @@ public class Server implements Runnable {
                     vDesc.add(r);
                     t.immobilize();
                     t.destroyLocation(VTOL.LOC_ROTOR);
-                    vDesc.addAll(crashVTOL((VTOL) t));
+                    vDesc.addAll(crashVTOLorWiGE((VTOL) t));
                     break;
                 case VTOL.CRIT_FLIGHT_STABILIZER:
                     r = new Report(6665);
@@ -14274,8 +14302,8 @@ public class Server implements Runnable {
      * @param en the <code>VTOL</code> to be crashed
      * @return the <code>Vector<Report></code> containg phasereports
      */
-    private Vector<Report> crashVTOL(VTOL en) {
-        return crashVTOL(en, false, 0, en.getPosition(), en.getElevation(), 0);
+    private Vector<Report> crashVTOLorWiGE(Tank en) {
+        return crashVTOLorWiGE(en, false, 0, en.getPosition(), en.getElevation(), 0);
     }
 
     /**
@@ -14291,7 +14319,7 @@ public class Server implements Runnable {
      *            VTOL falls
      * @return a <code>Vector<Report></code> of Reports.
      */
-    private Vector<Report> crashVTOL(VTOL en, boolean sideSlipCrash,
+    private Vector<Report> crashVTOLorWiGE(Tank en, boolean sideSlipCrash,
             int hexesMoved, Coords crashPos, int crashElevation, int impactSide) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
@@ -14429,7 +14457,7 @@ public class Server implements Runnable {
                 r.subject = en.getId();
                 r.addDesc(en);
                 vDesc.addElement(r);
-                vDesc.addAll(explodeVTOL(en));
+                vDesc.addAll(explodeVTOLorWiGE(en));
             }
 
             // check for location exposure
@@ -14473,7 +14501,7 @@ public class Server implements Runnable {
                 r.subject = en.getId();
                 r.addDesc(en);
                 vDesc.addElement(r);
-                vDesc.addAll(explodeVTOL(en));
+                vDesc.addAll(explodeVTOLorWiGE(en));
             }
 
         }
@@ -14487,7 +14515,7 @@ public class Server implements Runnable {
      * @param en The <code>VTOL</code> to explode.
      * @return a <code>Vector</code> of reports
      */
-    private Vector<Report> explodeVTOL(VTOL en) {
+    private Vector<Report> explodeVTOLorWiGE(Tank en) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
@@ -18929,7 +18957,7 @@ public class Server implements Runnable {
         // Mark the entity's crew as "ejected".
         entity.getCrew().setEjected(true);
         if (entity instanceof VTOL) {
-            vDesc.addAll(crashVTOL((VTOL) entity));
+            vDesc.addAll(crashVTOLorWiGE((VTOL) entity));
         }
         vDesc.addAll(destroyEntity(entity, "ejection", true, true));
 
@@ -19383,7 +19411,7 @@ public class Server implements Runnable {
                     r = new Report(6670);
                     r.subject = te.getId();
                     vDesc.add(r);
-                    vDesc.addAll(crashVTOL((VTOL) te));
+                    vDesc.addAll(crashVTOLorWiGE((VTOL) te));
                 }
                 return vDesc;
         }
@@ -19457,7 +19485,7 @@ public class Server implements Runnable {
             }
             if (te instanceof VTOL) {
                 // report problem: add tab
-                vDesc.addAll(crashVTOL((VTOL) te));
+                vDesc.addAll(crashVTOLorWiGE((VTOL) te));
             }
         }
         return vDesc;

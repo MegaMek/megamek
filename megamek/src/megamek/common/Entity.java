@@ -981,6 +981,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 minAlt -= Math.max(0, hex.terrainLevel(Terrains.BLDG_BASEMENT));
                 break;
             case IEntityMovementMode.VTOL:
+            case IEntityMovementMode.WIGE:
                 minAlt = hex.ceiling();
                 if (inWaterOrWoods) {
                     minAlt++; // can't land here
@@ -1021,6 +1022,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             case IEntityMovementMode.QUAD_SWIM:
                 maxAlt = hex.surface();
                 break;
+            case IEntityMovementMode.WIGE:
+                maxAlt = hex.surface() + 1;
+                break;
             default:
                 return false;
         }
@@ -1055,6 +1059,12 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         } else if (getMovementMode() == IEntityMovementMode.HYDROFOIL
                 || getMovementMode() == IEntityMovementMode.NAVAL) {
             return altitude == hex.surface();
+        } else if (getMovementMode() == IEntityMovementMode.WIGE) {
+            // WiGEs can be at elevation 1 or 0
+            // TODO: does this need adjusting for the "keep altitude for 2 extra
+            //       MP when flying over a 1 or more hexes of lower elevation
+            //       rule thing?
+            return (assumedElevation <= 1 && altitude >= hex.floor());
         } else {
             // regular ground units
             if (hex.containsTerrain(Terrains.ICE)
@@ -3917,6 +3927,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 return "Motorized";
             case IEntityMovementMode.INF_JUMP:
                 return "Jump";
+            case IEntityMovementMode.WIGE:
+                return "WiGE";
             default:
                 return "ERROR";
         }

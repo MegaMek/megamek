@@ -3,7 +3,7 @@ Lines marked with a 'x' have been addressed in megamek
 COMPONENTS
 1) In addition to the units described in the BMRr, IndustrialMechs, Mechanized Infantry (as described in the Conventional Infantry Construction rules from Combat Operations) Conventional Fighters, Aerospace Fighters, Small Craft, Dropships, & numerous Support Vehicle types are described.
 
-2) Wing in Ground Effect (WiGE) Vehicles are introduced, which are like a cross between a Hovercraft and a VTOL, with a maximum tonnage of 80 tons.  WiGEs move like Hovercraft, but hover one level above the underlying terrain.  In order to remain in flight, WiGEs must move at least 5 hexes a turn.
+x2) Wing in Ground Effect (WiGE) Vehicles are introduced, which are like a cross between a Hovercraft and a VTOL, with a maximum tonnage of 80 tons.  WiGEs move like Hovercraft, but hover one level above the underlying terrain.  In order to remain in flight, WiGEs must move at least 5 hexes a turn.
 
 3) There is a brief list of other units which will appear in other books, and what books they will appear in, such as Warships. 
 
@@ -28,7 +28,7 @@ x2) Infantry, Except Mechanized Infantry, use 1 less MP to enter Woods Hexes
 
 x3) Hovercraft now Sideslip when Flanking, just like VTOLs.
 
-4) The whole section describing WiGE Movement in detail.  WiGEs, as I descried earlier, move more or less like Hovercraft only they maintain one level above the underlying terrain.  They do not pay any MP to go up or down in elevation provided that they only go up or down one level in accordance with their operational altitude (1 level higher than the underlying terrain).  As stated earlier, if they do not move more than 5 hexes in a turn, they must land, and may move around on the ground as a Hovercraft with 1 MP.
+x4) The whole section describing WiGE Movement in detail.  WiGEs, as I descried earlier, move more or less like Hovercraft only they maintain one level above the underlying terrain.  They do not pay any MP to go up or down in elevation provided that they only go up or down one level in accordance with their operational altitude (1 level higher than the underlying terrain).  As stated earlier, if they do not move more than 5 hexes in a turn, they must land, and may move around on the ground as a Hovercraft with 1 MP.
 
 x5) Modifiers have been added for when a Piloting Skill Roll is attempted to avoid damage to the Pilot when a 'Mech auto-falls. 
    +5 Modifier for Destroyed Leg when rolling to avoid pilot damage from an auto fall

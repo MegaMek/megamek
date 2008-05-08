@@ -139,6 +139,8 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
 
         if (dataFile.exists("armor_type"))
             t.setArmorType(dataFile.getDataAsInt("armor_type")[0]);
+        if (dataFile.exists("armor_tech"))
+            t.setArmorTechLevel(dataFile.getDataAsInt("armor_tech")[0]);
         if (dataFile.exists("internal_type"))
             t.setStructureType(dataFile.getDataAsInt("internal_type")[0]);
 
@@ -147,7 +149,7 @@ public class BLKVTOLFile extends BLKFile implements IMechLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        if (armor.length < 4 || armor.length > 5) {
+        if (armor.length != 5) {
             throw new EntityLoadingException("Incorrect armor array length");
         }
         // add the body to the armor array

@@ -13,6 +13,7 @@ v0.33.24-dev (SVN)
 + Initial WiGE implementation.
 + Added Hiryo WiGEs from Jihad Hotspots: 3072
 + Bug: WiGE costs for moving up/down hills wrong
++ Bug: WiGEs should be able to go down as many levels as they want
 
 v0.33.23 (2008-04-30, 17:30 GMT+2)
 + Bug 1947060: Leftover vehicle damage bugs

@@ -1670,11 +1670,12 @@ public class MoveStep implements Serializable {
         }
 
         if (movementType != IEntityMovementType.MOVE_JUMP
-                && (nMove != IEntityMovementMode.VTOL)
-                && (Math.abs(srcAlt - destAlt) > entity.getMaxElevationChange())) {
-            return false;
+                && (nMove != IEntityMovementMode.VTOL)) {
+            if ((srcAlt - destAlt > 0 && srcAlt - destAlt > entity.getMaxElevationDown()) ||
+                    (destAlt - srcAlt > 0 && destAlt - srcAlt > entity.getMaxElevationChange())) {
+                return false;
+            }
         }
-
         // Units moving backwards may not change elevation levels.
         // (Ben thinks this rule is dumb)
         if ((type == MovePath.STEP_BACKWARDS

@@ -933,6 +933,16 @@ public class Tank extends Entity implements Serializable {
     public int getMaxElevationChange() {
         return 1;
     }
+    
+    public int getMaxElevationDown() {
+        // WIGEs can go down as far as they want
+        // 50 is a pretty arbitrary max amount, but that's also the
+        // highest elevation for VTOLs, so I'll just use that
+        if (getElevation() > 0 && this.getMovementMode() == IEntityMovementMode.WIGE) {
+            return 50;
+        }
+        return super.getMaxElevationDown();
+    }
 
     /**
      * Determine if the unit can be repaired, or only harvested for spares.

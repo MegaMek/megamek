@@ -4506,6 +4506,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * The maximum elevation change the entity can cross
      */
     public abstract int getMaxElevationChange();
+    
+    /**
+     * by default, entities can move as far down as they can move up
+     */
+    public int getMaxElevationDown() {
+        return getMaxElevationChange();
+    }
 
     /**
      * Get a list of the class names of the <code>Transporter</code>s for the

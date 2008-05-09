@@ -27,6 +27,7 @@ v0.33.24-dev (SVN)
     elevation and spend only 1 MP per hex moved.
 + Bug: Shut down server correctly when savegame loading fails.
 + Bug: WiGEs should crash when reduced to 0 MP while flying
++ Bug 1960932: Incorrect PSR for pilot damage when being pushed down a chasm
     
     
     

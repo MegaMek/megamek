@@ -104,6 +104,7 @@ public class SpecialHexDisplay implements Serializable {
      * Special constructor only for deserialization use.
      *
      */
+    @SuppressWarnings("unused")
     private SpecialHexDisplay() {
     }
     

@@ -34,6 +34,7 @@ import megamek.client.event.BoardViewListener;
 import megamek.common.Coords;
 import megamek.common.IGame;
 import megamek.common.Player;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.containers.PlayerIDandList;
 import megamek.common.event.GameListener;
 import megamek.common.event.GamePhaseChangeEvent;
@@ -175,8 +176,15 @@ public class SelectArtyAutoHitHexDisplay extends StatusBarPhaseDisplay
                                                 "SelectArtyAutoHitHexDisplay.setArtilleryTargetDialog.message", new Object[] { coords.getBoardNum() }))) { //$NON-NLS-1$
             artyAutoHitHexes.addElement(coords);
             setArtyEnabled(5 - artyAutoHitHexes.size());
+            client.game.getBoard().addSpecialHexDisplay(coords,
+                    new SpecialHexDisplay(
+                            SpecialHexDisplay.Type.ARTILLERY_AUTOHIT,
+                            SpecialHexDisplay.NO_ROUND,
+                            client.getLocalPlayer().getName(),
+                            "Artilery autohit, better text later"
+                    )
+            );
         }
-
     }
 
     //

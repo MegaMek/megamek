@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.33.25-dev (SVN)
+
 v0.33.24 (2008-05-09, 22:36 GMT+2)
 + TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for
     gyro destroyed

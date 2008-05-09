@@ -35,7 +35,7 @@ import megamek.server.Server.DamageType;
 /**
  * @author Sebastian Brocks
  */
-public class MGAWeaponHandler extends AmmoWeaponHandler {
+public class MGAWeaponHandler extends MGHandler {
     /**
      * 
      */
@@ -88,11 +88,6 @@ public class MGAWeaponHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
-        // conventional infantry gets hit in one lump
-        // BAs can't mount MGAs
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            return 1;
-        }
         int shotsHit;
         switch (howManyShots) {
             case 1:

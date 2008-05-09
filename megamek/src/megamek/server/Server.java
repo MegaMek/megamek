@@ -9321,8 +9321,8 @@ public class Server implements Runnable {
         Coords src = te.getPosition();
         Coords dest = src.translated(direction);
 
-        PilotingRollData pushPRD = new PilotingRollData(te.getId(),
-                getKickPushPSRMod(ae, te, 0), "was pushed");
+        PilotingRollData pushPRD = te.getBasePilotingRoll();
+        pushPRD.addModifier(getKickPushPSRMod(ae, te, 0), "was pushed");
         pushPRD.setCumulative(false); // see Bug# 811987 for more info
 
         if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(),

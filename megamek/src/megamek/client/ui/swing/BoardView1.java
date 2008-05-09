@@ -22,6 +22,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.image.FilteredImageSource;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -65,6 +66,7 @@ import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.Player;
 import megamek.common.Protomech;
+import megamek.common.SpecialHexDisplay;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -124,6 +126,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     Dimension hex_size = null;
 
+    private Font font_note = FONT_10;
     private Font font_hexnum = FONT_10;
     private Font font_elev = FONT_9;
     private Font font_minefield = FONT_12;
@@ -244,6 +247,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(
                 this);
+        
+        SpecialHexDisplay.Type.ARTILERY_HIT.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILERY_INCOMING.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILEY_TARGET.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init(getToolkit());
     }
 
     protected final RedrawWorker redrawWorker = new RedrawWorker();
@@ -839,6 +848,28 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         boardGraph.setColor(GUIPreferences.getInstance().getMapTextColor());
 
+        //draw special stuff for the hex
+        final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(c);
+        try {
+            if(shdList != null) {
+                for(SpecialHexDisplay shd : shdList)
+                {
+                    if (shd.drawNow(game.getPhase(), game.getRoundCount())) {
+                        boardGraph.drawImage(shd.getType().getDefaultImage(),drawX, drawY, this);
+                    }
+                }
+            }
+        } catch (IllegalArgumentException e) {
+            System.err.println("Illegal argument exception, probably can't load file.");
+            e.printStackTrace();
+            drawCenteredString(
+                    "Loading Error",
+                    drawX,
+                    drawY + (int)(50*scale),
+                    font_note,
+                    boardGraph);
+            return;
+        }
         // draw hex number
         if (scale >= 0.5) {
             drawCenteredString(c.getBoardNum(), drawX, drawY

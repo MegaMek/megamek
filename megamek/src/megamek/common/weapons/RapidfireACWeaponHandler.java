@@ -87,7 +87,7 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
                         wlocation), wtype.getDamage(), false, DamageType.NONE,
                         true));
             }
-            return true;
+            return false;
         }
         return false;
     }

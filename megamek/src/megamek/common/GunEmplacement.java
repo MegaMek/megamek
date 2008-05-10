@@ -33,6 +33,7 @@ public class GunEmplacement extends Entity implements Serializable {
     private int height = 2; // default height is 2
     private boolean turretNotExists = false;
     private boolean turretLocked = false;
+    private int turretOffset = 0;
     private boolean burning = false;
 
     // locations
@@ -226,11 +227,18 @@ public class GunEmplacement extends Entity implements Serializable {
     public void setSecondaryFacing(int sec_facing) {
         if (!turretLocked) {
             super.setSecondaryFacing(sec_facing);
+            if (turretNotExists) {
+                turretOffset = sec_facing - getFacing();
+            }
         }
     }
 
     public void setFacing(int facing) {
-        super.setFacing(0);
+        super.setFacing(facing);
+        if (isTurretLocked()) {
+            int nTurretFacing = (facing + turretOffset + 6) % 6;
+            super.setSecondaryFacing(nTurretFacing);
+        }
     }
 
     public String[] getLocationAbbrs() {
@@ -349,13 +357,13 @@ public class GunEmplacement extends Entity implements Serializable {
      * Calculates the battle value of this emplacement
      */
     public int calculateBattleValue() {
-        return calculateBattleValue(false, false);
+        return calculateBattleValue(false);
     }
 
     /**
      * Calculates the battle value of this emplacement
      */
-    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
+    public int calculateBattleValue(boolean ignoreC3) {
         // using structures BV rules from MaxTech
 
         double dbv = 0; // defensive battle value
@@ -449,11 +457,18 @@ public class GunEmplacement extends Entity implements Serializable {
         // also, each 'has' loops through all equipment. inefficient to do it 3
         // times
         double xbv = 0.0;
-        if ((hasC3MM() && calculateFreeC3MNodes() < 2)
+        if (((hasC3MM() && calculateFreeC3MNodes() < 2)
                 || (hasC3M() && calculateFreeC3Nodes() < 3)
-                || (hasC3S() && C3Master > NONE)
-                || (hasC3i() && calculateFreeC3Nodes() < 5) || assumeLinkedC3) {
-            xbv = Math.round(0.35 * weaponBV);
+                || (hasC3S() && C3Master > NONE) || (hasC3i() && calculateFreeC3Nodes() < 5))
+                && !ignoreC3 && (game != null)) {
+            int totalForceBV = 0;
+            totalForceBV += this.calculateBattleValue(true);
+            for (Entity e : game.getC3NetworkMembers(this)) {
+                if (!equals(e) && onSameC3NetworkAs(e)) {
+                    totalForceBV += e.calculateBattleValue(true);
+                }
+            }
+            xbv += totalForceBV *= 0.05;
         }
 
         // and then factor in pilot

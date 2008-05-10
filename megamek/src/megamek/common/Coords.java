@@ -20,8 +20,16 @@ import java.util.ArrayList;
 /**
  * Coords stores x and y values. Since these are hexes, coordinates with odd x
  * values are a half-hex down. Directions work clockwise around the hex,
- * starting with zero at the top. -y 0 _____ 5 / \ 1 -x / \ +x \ / 4 \_____/ 2 3
- * +y
+ * starting with zero at the top. 
+ *      -y
+ *       0
+ *     _____
+ *  5 /     \ 1
+  -x /       \ +x 
+ *   \       / 
+ *  4 \_____/ 2 
+ *       3
+ *      +y
  */
 public class Coords implements Serializable {
     /**

@@ -78,7 +78,7 @@ public class RACHandler extends UltraWeaponHandler {
             r.add(" shot(s)");
             vPhaseReport.addElement(r);
             weapon.setJammed(true);
-            return true;
+            return false;
         }
         return false;
     }

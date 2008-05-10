@@ -492,15 +492,25 @@ public class LosEffects {
     /**
      * Returns LosEffects for a line that passes between two hexes at least
      * once. The rules say that this situation is resolved in favor of the
-     * defender. The intervening() function returns both hexes in these
+     * defender.
+     * 
+     * The intervening() function returns both hexes in these
      * circumstances, and, when they are in line order, it's not hard to figure
-     * out which hexes are split and which are not. The line always looks like:
-     * ___ ___ ___/ 1 \___/...\___ / 0 \___/ 3 \___/etc\ \___/ 2 \___/...\___/
-     * \___/ \___/ We go thru and figure out the modifiers for the non-split
-     * hexes first. Then we go to each of the two split hexes and determine
-     * which gives us the bigger modifier. We use the bigger modifier. This is
-     * not perfect as it takes partial cover as soon as it can, when perhaps
-     * later might be better. Also, it doesn't account for the fact that
+     * out which hexes are split and which are not.
+     * 
+     * The line always looks like:
+     *        ___     ___ 
+     *    ___/ 1 \___/...\___
+     *   / 0 \___/ 3 \___/etc\
+     *   \___/ 2 \___/...\___/
+     *       \___/   \___/ 
+     * We go thru and figure out the modifiers for the non-split hexes first. 
+     * Then we go to each of the two split hexes and determine
+     * which gives us the bigger modifier. We use the bigger modifier.
+     * 
+     * This is not perfect as it takes partial cover as soon as it can, when
+     * perhaps later might be better.
+     * Also, it doesn't account for the fact that
      * attacker partial cover blocks leg weapons, as we want to return the same
      * sequence regardless of what weapon is attacking.
      */

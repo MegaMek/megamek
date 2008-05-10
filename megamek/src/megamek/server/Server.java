@@ -6630,6 +6630,12 @@ public class Server implements Runnable {
         entity.setPosition(dest);
         entity.setElevation(entity.elevationOccupied(destHex)
                 - destHex.surface());
+        Building bldg = game.getBoard().getBuildingAt(dest);
+        if (bldg != null) {
+            //woops, into the building we go
+            passBuildingWall(entity, game.getBoard().getBuildingAt(dest),
+                    src, dest, 1, "displaced into", Math.abs(entity.getFacing() - src.direction(dest)) == 3);
+        }
         Entity violation = Compute
                 .stackingViolation(game, entity.getId(), dest);
         if (violation == null) {

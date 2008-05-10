@@ -107,7 +107,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 game.getBoard().addSpecialHexDisplay(
                         aaa.getTarget(game).getPosition(), 
                         new SpecialHexDisplay(
-                                SpecialHexDisplay.Type.ARTILERY_INCOMING,
+                                SpecialHexDisplay.Type.ARTILLERY_INCOMING,
                                 game.getRoundCount() + aaa.turnsTilHit,
                                 game.getPlayer(aaa.getPlayerId()).getName(),
                                 "Artilery Incoming. Better text later."));
@@ -275,7 +275,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (!isFlak) {
             game.getBoard().addSpecialHexDisplay(
                     targetPos, 
-                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILEY_TARGET,
+                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_TARGET,
                             game.getRoundCount(),
                             game.getPlayer(aaa.getPlayerId()).getName(),
                             "Artilery Target. Better text later.",
@@ -299,7 +299,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 game.getBoard().addSpecialHexDisplay(
                         aaa.getCoords(),
                         new SpecialHexDisplay(
-                                SpecialHexDisplay.Type.ARTILERY_HIT,
+                                SpecialHexDisplay.Type.ARTILLERY_HIT,
                                 game.getRoundCount(),
                                 "Artilery Hit. Better text later."));
             } else {
@@ -310,7 +310,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             vPhaseReport.addElement(r);
 
             game.getBoard().addSpecialHexDisplay(targetPos, 
-                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILERY_HIT,
+                    new SpecialHexDisplay(SpecialHexDisplay.Type.ARTILLERY_HIT,
                             game.getRoundCount(),
                             "Artilery Hit. Better text later."));
 
@@ -325,7 +325,7 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     game.getBoard().addSpecialHexDisplay(
                         coords,
                         new SpecialHexDisplay(
-                                SpecialHexDisplay.Type.ARTILERY_HIT,
+                                SpecialHexDisplay.Type.ARTILLERY_HIT,
                                 game.getRoundCount(),
                                 "Artilery Scatered Here. Better text later."
                         )

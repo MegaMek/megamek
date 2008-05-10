@@ -3,6 +3,7 @@
 v0.33.25-dev (SVN)
 + Bug 1961220: MG array damage vs. infantry too low
 + Bug 1961295: RACs and UACs should still fire for the turn that they jam
++ Bug 1947072: Direct-fire artillery timing
 
 v0.33.24 (2008-05-09, 22:36 GMT+2)
 + TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for
@@ -32,9 +33,6 @@ v0.33.24 (2008-05-09, 22:36 GMT+2)
 + Bug: Shut down server correctly when savegame loading fails.
 + Bug: WiGEs should crash when reduced to 0 MP while flying
 + Bug 1960932: Incorrect PSR for pilot damage when being pushed down a chasm
-    
-    
-    
 
 v0.33.23 (2008-04-30, 17:30 GMT+2)
 + Bug 1947060: Leftover vehicle damage bugs

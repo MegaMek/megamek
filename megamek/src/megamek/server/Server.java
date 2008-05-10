@@ -157,6 +157,7 @@ import megamek.common.verifier.TestEntity;
 import megamek.common.verifier.TestMech;
 import megamek.common.verifier.TestTank;
 import megamek.common.weapons.AttackHandler;
+import megamek.common.weapons.TAGHandler;
 import megamek.common.weapons.Weapon;
 import megamek.common.weapons.WeaponHandler;
 import megamek.server.commands.AddBotCommand;
@@ -20112,16 +20113,13 @@ public class Server implements Runnable {
     private void handleAttacks() {
         Report r;
         int lastAttackerId = -1;
-        Vector<AttackHandler> currentAttacks, keptAttacks, artyAttacks;
+        Vector<AttackHandler> currentAttacks, keptAttacks;
         currentAttacks = game.getAttacksVector();
         keptAttacks = new Vector<AttackHandler>();
-        artyAttacks = new Vector<AttackHandler>();
         Vector<Report> handleAttackReports = new Vector<Report>();
-        // first, do normal attacks
-        // we need to do this so TAG happens before homing arty shots
+        // first, do any TAGs, so homing arty will have TAG
         for (AttackHandler ah : currentAttacks) {
-            if (ah.getWaa() instanceof ArtilleryAttackAction) {
-                artyAttacks.add(ah);
+            if (!(ah instanceof TAGHandler)) {
                 continue;
             }
             if (ah.cares(game.getPhase())) {
@@ -20142,11 +20140,13 @@ public class Server implements Runnable {
                 if (keep) {
                     keptAttacks.add(ah);
                 }
-            } else
-                keptAttacks.add(ah);
+            }
         }
-        // now, do arty attacks
-        for (AttackHandler ah : artyAttacks) {
+        // now resolve everything but TAG
+        for (AttackHandler ah : currentAttacks) {
+            if (ah instanceof TAGHandler) {
+                continue;
+            }
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
                 if (aId != lastAttackerId && !ah.announcedEntityFiring()) {
@@ -20154,13 +20154,13 @@ public class Server implements Runnable {
                     r = new Report(3100);
                     r.subject = aId;
                     Entity ae = game.getEntity(aId);
-                    // attacker may be dead, or fled, so check out-of-game
-                    // entities
+                    // for arty, attacker may be dead, or fled, so check out-of-
+                    // game entities
                     if (ae == null)
                         ae = game.getOutOfGameEntity(aId);
                     if (ae == null)
-                        System.err.println("ae null in handleattacks 2nd part, entityid "+aId);
-                    r.addDesc(ae);
+                        System.err.println("ae null in handleattacks, entityId "+aId);
+                    r.addDesc(game.getEntity(aId));
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
                 }

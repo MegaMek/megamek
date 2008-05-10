@@ -154,7 +154,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                 r.messageId = 3170;
             }
             vPhaseReport.addElement(r);
-            return true;
+            return false;
         }
         return false;
     }

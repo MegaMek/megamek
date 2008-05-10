@@ -1196,7 +1196,6 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (model != null && model.length() > 0) {
             nbuf.append(" ").append(model);
         }
-
         return nbuf.toString();
     }
 
@@ -1248,19 +1247,6 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return the the closest valid secondary facing.
      */
     public abstract int clipSecondaryFacing(int dir);
-
-    /**
-     * Returns true if the entity has an RAC
-     */
-    public boolean hasRAC() {
-        for (Mounted mounted : getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     /**
      * Returns true if the entity has an RAC which is jammed and not destroyed
@@ -5630,6 +5616,18 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (0 != distance && IOffBoardDirections.NONE == direction) {
             throw new IllegalArgumentException(
                     "offboard unit was not given an offboard direction");
+        }
+        switch (direction) {
+            case IOffBoardDirections.NORTH:
+                setFacing(3);
+                break;
+            case IOffBoardDirections.SOUTH:
+                setFacing(0);
+                break;
+            case IOffBoardDirections.WEST:
+                setFacing(2);
+            case IOffBoardDirections.EAST:
+                setFacing(4);
         }
         offBoardDistance = distance;
         offBoardDirection = direction;

@@ -5,6 +5,8 @@ v0.33.25-dev (SVN)
 + Bug 1961295: RACs and UACs should still fire for the turn that they jam
 + Bug 1947072: Direct-fire artillery timing
 + Bug 1638857: displacement into building results in no damage
++ Bug 1890857: Off-Board Artillery Not Working for gunnery emplacement that need
+    to turret twist to shoot their target with arty
 
 v0.33.24 (2008-05-09, 22:36 GMT+2)
 + TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for

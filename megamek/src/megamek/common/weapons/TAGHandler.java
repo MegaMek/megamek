@@ -78,9 +78,7 @@ public class TAGHandler extends WeaponHandler {
             }
             if (priority < 1)
                 priority = 1;
-            // add even misses, as they waste homing missiles.
-            // it is possible for 2 or more tags to hit the same entity,
-            // but this only matters in the offboard phase
+            // it is possible for 2 or more tags to hit the same entity
             TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(),
                     priority, false);
             game.addTagInfo(info);
@@ -112,6 +110,7 @@ public class TAGHandler extends WeaponHandler {
                 priority = 4;
             }
         }
+        //add even misses, as they waste homing missiles.
         TagInfo info = new TagInfo(ae.getId(), entityTarget.getId(), priority,
                 true);
         game.addTagInfo(info);

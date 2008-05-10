@@ -248,9 +248,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         PreferenceManager.getClientPreferences().addPreferenceChangeListener(
                 this);
         
-        SpecialHexDisplay.Type.ARTILERY_HIT.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILERY_INCOMING.init(getToolkit());
-        SpecialHexDisplay.Type.ARTILEY_TARGET.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILLERY_HIT.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILLERY_INCOMING.init(getToolkit());
+        SpecialHexDisplay.Type.ARTILLERY_TARGET.init(getToolkit());
         SpecialHexDisplay.Type.ARTILLERY_ADJUSTED.init(getToolkit());
         SpecialHexDisplay.Type.ARTILLERY_AUTOHIT.init(getToolkit());
     }

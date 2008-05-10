@@ -57,12 +57,6 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
                         game, server);
             }
         } else if (game.getPhase() == IGame.Phase.PHASE_FIRING) {
-            if (waa.getTargetType() == Targetable.TYPE_ENTITY
-                    && atype.getMunitionType() == AmmoType.M_STANDARD
-                    && ((Entity) waa.getTarget(game)).getMovementMode() == IEntityMovementMode.VTOL
-                    && ((Entity) waa.getTarget(game)).getElevation() > 0) {
-                return new ArtilleryWeaponFlakHandler(toHit, waa, game, server);
-            }
             return new ArtilleryWeaponDirectFireHandler(toHit, waa, game,
                     server);
         } else {

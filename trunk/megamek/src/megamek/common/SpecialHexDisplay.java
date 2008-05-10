@@ -32,7 +32,7 @@ public class SpecialHexDisplay implements Serializable {
             public boolean drawBefore() {
                 return false;
             }
-            
+
             public boolean drawAfter() {
                 return true;
             }
@@ -41,18 +41,18 @@ public class SpecialHexDisplay implements Serializable {
             public boolean drawBefore() {
                 return false;
             }
-            
+
             public boolean drawAfter() {
                 return true;
             }
         },
-        ARTILERY_INCOMING   ("data/images/hexes/artyinc.gif"),
-        ARTILEY_TARGET      ("data/images/hexes/artytarget.gif"){
+        ARTILLERY_INCOMING   ("data/images/hexes/artyinc.gif"),
+        ARTILLERY_TARGET      ("data/images/hexes/artytarget.gif"){
             public boolean drawBefore() {
                 return false;
             }
         },
-        ARTILERY_HIT        ("data/images/hexes/artyhit.gif") {
+        ARTILLERY_HIT        ("data/images/hexes/artyhit.gif") {
             public boolean drawBefore() {
                 return false;
             }
@@ -213,7 +213,7 @@ public class SpecialHexDisplay implements Serializable {
             (pastRound(round) && type.drawBefore()) ||
             (futureRound(round) && type.drawAfter());
         if(phase.isBefore(IGame.Phase.PHASE_OFFBOARD) && 
-                (type == Type.ARTILEY_TARGET || type == Type.ARTILERY_HIT)
+                (type == Type.ARTILLERY_TARGET || type == Type.ARTILLERY_HIT)
         ) {
             //hack to display atry targets the round after the hit.
             shouldDisplay = shouldDisplay || thisRound(round-1);

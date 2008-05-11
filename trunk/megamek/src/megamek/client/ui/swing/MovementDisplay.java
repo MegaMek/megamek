@@ -878,7 +878,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             // Check for skid.
             rollTarget = entity.checkSkid(moveType, prevHex, overallMoveType,
                     prevStep, prevFacing, curFacing, lastPos, curPos,
-                    isInfantry, distance - 1);
+                    isInfantry, distance);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 // Have an entity-meaningful PSR message.
                 nagReport.append(addNag(rollTarget));

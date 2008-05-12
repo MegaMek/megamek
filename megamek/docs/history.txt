@@ -9,6 +9,9 @@ v0.33.25-dev (SVN)
     to turret twist to shoot their target with arty
 + Bug: PSRs needed for movement show wrong to-hit for skid PSRs
 + Bug 1962319: Clan LRT 16 shares internal name with LRT 15
++ Bug 1952416: 'Hunckback' typo
++ RFE 1961430: Artemis/Narc-equipped units lacking compatible ammo
++ Bug 1961368: PPC capacitor has no effect when firing
 
 v0.33.24 (2008-05-09, 22:36 GMT+2)
 + TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for

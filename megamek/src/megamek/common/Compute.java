@@ -42,53 +42,68 @@ import megamek.common.actions.WeaponAttackAction;
 public class Compute {
 
     public static final int ARC_360 = 0;
-
     public static final int ARC_FORWARD = 1;
-
     public static final int ARC_LEFTARM = 2;
-
     public static final int ARC_RIGHTARM = 3;
-
     public static final int ARC_REAR = 4;
-
     public static final int ARC_LEFTSIDE = 5;
-
     public static final int ARC_RIGHTSIDE = 6;
-
     public static final int ARC_MAINGUN = 7;
-
     public static final int ARC_NORTH = 8;
-
     public static final int ARC_EAST = 9;
-
     public static final int ARC_WEST = 10;
 
     public static final int TYPE_IS = 0;
-
     public static final int TYPE_CLAN = 1;
-
     public static final int TYPE_MD = 2;
 
     public static final int LEVEL_GREEN = 0;
-
     public static final int LEVEL_REGULAR = 1;
-
     public static final int LEVEL_VETERAN = 2;
-
     public static final int LEVEL_ELITE = 3;
 
     public static final int METHOD_TW = 0;
-
     public static final int METHOD_TAHARQA = 1;
-
     public static final int METHOD_CONSTANT = 2;
 
-    private static final int[][] skillLevels = new int[][] { { 7, 6, 5, 4, 4, 3, 2, 1, 0 }, { 7, 7, 6, 6, 5, 4, 3, 2, 1 } };
+    private static final int[][] skillLevels = new int[][] {
+        { 7, 6, 5, 4, 4, 3, 2, 1, 0 },
+        { 7, 7, 6, 6, 5, 4, 3, 2, 1 } };
 
     private static MMRandom random = MMRandom.generate(MMRandom.R_DEFAULT);
 
-    private static final int[][] clusterHitsTable = new int[][] { { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, { 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 }, { 3, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 }, { 4, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 }, { 5, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5 }, { 6, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 6 }, { 7, 2, 2, 3, 4, 4, 4, 4, 6, 6, 7, 7 }, { 8, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 8 }, { 9, 3, 3, 4, 5, 5, 5, 5, 7, 7, 9, 9 }, { 10, 3, 3, 4, 6, 6, 6, 6, 8, 8, 10, 10 }, { 11, 4, 4, 5, 7, 7, 7, 7, 9, 9, 11, 11 }, { 12, 4, 4, 5, 8, 8, 8, 8, 10, 10, 12, 12 }, { 13, 4, 4, 5, 8, 8, 8, 8, 11, 11, 13, 13 }, { 14, 5, 5, 6, 9, 9, 9, 9, 11, 11, 14, 14 }, { 15, 5, 5, 6, 9, 9, 9, 9, 12, 12, 15, 15 }, { 16, 5, 5, 7, 10, 10, 10, 10, 13, 13, 16, 16 }, { 17, 5, 5, 7, 10, 10, 10, 10, 14, 14, 17, 17 }, { 18, 6, 6, 8, 11, 11, 11, 11, 14, 14, 18, 18 }, { 19, 6, 6, 8, 11, 11, 11, 11, 15, 15, 19, 19 },
-            { 20, 6, 6, 9, 12, 12, 12, 12, 16, 16, 20, 20 }, { 21, 7, 7, 9, 13, 13, 13, 13, 17, 17, 21, 21 }, { 22, 7, 7, 9, 14, 14, 14, 14, 18, 18, 22, 22 }, { 23, 7, 7, 10, 15, 15, 15, 15, 19, 19, 23, 23 }, { 24, 8, 8, 10, 16, 16, 16, 16, 20, 20, 24, 24 }, { 25, 8, 8, 10, 16, 16, 16, 16, 21, 21, 25, 25 }, { 26, 9, 9, 11, 17, 17, 17, 17, 21, 21, 26, 26 }, { 27, 9, 9, 11, 17, 17, 17, 17, 22, 22, 27, 27 }, { 28, 9, 9, 11, 17, 17, 17, 17, 23, 23, 28, 28 }, { 29, 10, 10, 12, 18, 18, 18, 18, 23, 23, 29, 29 }, { 30, 10, 10, 12, 18, 18, 18, 18, 24, 24, 30, 30 }, { 40, 12, 12, 18, 24, 24, 24, 24, 32, 32, 40, 40 } };
+    private static final int[][] clusterHitsTable = new int[][] { 
+        { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+        { 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2 },
+        { 3, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3 },
+        { 4, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4 },
+        { 5, 1, 2, 2, 3, 3, 3, 3, 4, 4, 5, 5 },
+        { 6, 2, 2, 3, 3, 4, 4, 4, 5, 5, 6, 6 },
+        { 7, 2, 2, 3, 4, 4, 4, 4, 6, 6, 7, 7 },
+        { 8, 2, 3, 3, 4, 4, 5, 5, 6, 7, 8, 8 },
+        { 9, 3, 3, 4, 5, 5, 5, 5, 7, 7, 9, 9 },
+        { 10, 3, 3, 4, 6, 6, 6, 6, 8, 8, 10, 10 },
+        { 11, 4, 4, 5, 7, 7, 7, 7, 9, 9, 11, 11 },
+        { 12, 4, 4, 5, 8, 8, 8, 8, 10, 10, 12, 12 },
+        { 13, 4, 4, 5, 8, 8, 8, 8, 11, 11, 13, 13 },
+        { 14, 5, 5, 6, 9, 9, 9, 9, 11, 11, 14, 14 },
+        { 15, 5, 5, 6, 9, 9, 9, 9, 12, 12, 15, 15 },
+        { 16, 5, 5, 7, 10, 10, 10, 10, 13, 13, 16, 16 },
+        { 17, 5, 5, 7, 10, 10, 10, 10, 14, 14, 17, 17 },
+        { 18, 6, 6, 8, 11, 11, 11, 11, 14, 14, 18, 18 }, 
+        { 19, 6, 6, 8, 11, 11, 11, 11, 15, 15, 19, 19 }, 
+        { 20, 6, 6, 9, 12, 12, 12, 12, 16, 16, 20, 20 }, 
+        { 21, 7, 7, 9, 13, 13, 13, 13, 17, 17, 21, 21 }, 
+        { 22, 7, 7, 9, 14, 14, 14, 14, 18, 18, 22, 22 }, 
+        { 23, 7, 7, 10, 15, 15, 15, 15, 19, 19, 23, 23 }, 
+        { 24, 8, 8, 10, 16, 16, 16, 16, 20, 20, 24, 24 }, 
+        { 25, 8, 8, 10, 16, 16, 16, 16, 21, 21, 25, 25 }, 
+        { 26, 9, 9, 11, 17, 17, 17, 17, 21, 21, 26, 26 }, 
+        { 27, 9, 9, 11, 17, 17, 17, 17, 22, 22, 27, 27 }, 
+        { 28, 9, 9, 11, 17, 17, 17, 17, 23, 23, 28, 28 }, 
+        { 29, 10, 10, 12, 18, 18, 18, 18, 23, 23, 29, 29 }, 
+        { 30, 10, 10, 12, 18, 18, 18, 18, 24, 24, 30, 30 }, 
+        { 40, 12, 12, 18, 24, 24, 24, 24, 32, 32, 40, 40 } };
 
     /** Wrapper to random#d6(n) */
     public static int d6(int dice) {
@@ -148,7 +163,9 @@ public class Compute {
         int totalUnits = 1;
         int thisLowStackingLevel = entering.getElevation();
         if ((coords != null) && (entering.getPosition() != null))
-            thisLowStackingLevel = entering.calcElevation(game.getBoard().getHex(entering.getPosition()), game.getBoard().getHex(coords));
+            thisLowStackingLevel = entering.calcElevation(game.getBoard()
+                    .getHex(entering.getPosition()), game.getBoard().getHex(
+                    coords));
         int thisHighStackingLevel = thisLowStackingLevel + entering.height();
 
         // Walk through the entities in the given hex.
@@ -213,13 +230,17 @@ public class Compute {
      * in the specified hex. This is only called for stacking purposes, and so
      * does not return true if the enemy unit is currenly making a DFA.
      */
-    public static boolean isEnemyIn(IGame game, Entity entity, Coords coords, boolean onlyMechs, boolean ignoreInfantry, int enLowEl) {
+    public static boolean isEnemyIn(IGame game, Entity entity, Coords coords,
+            boolean onlyMechs, boolean ignoreInfantry, int enLowEl) {
         int enHighEl = enLowEl + entity.getHeight();
         for (Enumeration<Entity> i = game.getEntities(coords); i.hasMoreElements();) {
             final Entity inHex = i.nextElement();
             int inHexEnLowEl = inHex.getElevation();
             int inHexEnHighEl = inHexEnLowEl + inHex.getHeight();
-            if ((!onlyMechs || inHex instanceof Mech) && !(ignoreInfantry && inHex instanceof Infantry) && inHex.isEnemyOf(entity) && !inHex.isMakingDfa() && (enLowEl <= inHexEnHighEl) && (enHighEl >= inHexEnLowEl)) {
+            if ((!onlyMechs || inHex instanceof Mech)
+                    && !(ignoreInfantry && inHex instanceof Infantry)
+                    && inHex.isEnemyOf(entity) && !inHex.isMakingDfa()
+                    && (enLowEl <= inHexEnHighEl) && (enHighEl >= inHexEnLowEl)) {
                 return true;
             }
         }
@@ -229,7 +250,10 @@ public class Compute {
     /**
      * @return true if a piloting skill roll is needed to traverse the terrain
      */
-    public static boolean isPilotingSkillNeeded(IGame game, int entityId, Coords src, Coords dest, int movementType, boolean isTurning, boolean prevStepIsOnPavement, int srcElevation, int destElevation, MovePath path) {
+    public static boolean isPilotingSkillNeeded(IGame game, int entityId,
+            Coords src, Coords dest, int movementType, boolean isTurning,
+            boolean prevStepIsOnPavement, int srcElevation, int destElevation,
+            MovePath path) {
         final Entity entity = game.getEntity(entityId);
         final IHex srcHex = game.getBoard().getHex(src);
         final IHex destHex = game.getBoard().getHex(dest);
@@ -250,23 +274,45 @@ public class Compute {
         }
 
         // check for rubble
-        if (movementType != IEntityMovementType.MOVE_JUMP && destHex.terrainLevel(Terrains.RUBBLE) > 0 && entity.getMovementMode() != IEntityMovementMode.VTOL && !isInfantry) {
+        if (movementType != IEntityMovementType.MOVE_JUMP
+                && destHex.terrainLevel(Terrains.RUBBLE) > 0
+                && entity.getMovementMode() != IEntityMovementMode.VTOL
+                && !isInfantry) {
             return true;
         }
 
         // check for swamp
-        if (destHex.containsTerrain(Terrains.SWAMP) && !(entity.getElevation() > destHex.getElevation()) && entity.getMovementMode() != IEntityMovementMode.HOVER && entity.getMovementMode() != IEntityMovementMode.VTOL && movementType != IEntityMovementType.MOVE_JUMP && entity.getMovementMode() != IEntityMovementMode.WIGE) {
+        if (destHex.containsTerrain(Terrains.SWAMP)
+                && !(entity.getElevation() > destHex.getElevation())
+                && entity.getMovementMode() != IEntityMovementMode.HOVER
+                && entity.getMovementMode() != IEntityMovementMode.VTOL
+                && movementType != IEntityMovementType.MOVE_JUMP
+                && entity.getMovementMode() != IEntityMovementMode.WIGE) {
             return true;
         }
 
         // check for thin ice
-        if (destHex.containsTerrain(Terrains.ICE) && destHex.containsTerrain(Terrains.WATER) && !(entity.getElevation() > destHex.getElevation()) && !isPavementStep && movementType != IEntityMovementType.MOVE_JUMP) {
+        if (destHex.containsTerrain(Terrains.ICE)
+                && destHex.containsTerrain(Terrains.WATER)
+                && !(entity.getElevation() > destHex.getElevation())
+                && !isPavementStep
+                && movementType != IEntityMovementType.MOVE_JUMP) {
             return true;
         }
 
         // Check for water unless we're a hovercraft or naval or using a bridge
         // or flying.
-        if (movementType != IEntityMovementType.MOVE_JUMP && !(entity.getElevation() > destHex.surface()) && !(entity.getMovementMode() == IEntityMovementMode.HOVER || entity.getMovementMode() == IEntityMovementMode.NAVAL || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL || entity.getMovementMode() == IEntityMovementMode.SUBMARINE || entity.getMovementMode() == IEntityMovementMode.INF_UMU || entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM || entity.getMovementMode() == IEntityMovementMode.WIGE) && destHex.terrainLevel(Terrains.WATER) > 0 && !isPavementStep) {
+        if (movementType != IEntityMovementType.MOVE_JUMP
+                && !(entity.getElevation() > destHex.surface())
+                && !(entity.getMovementMode() == IEntityMovementMode.HOVER
+                        || entity.getMovementMode() == IEntityMovementMode.NAVAL
+                        || entity.getMovementMode() == IEntityMovementMode.HYDROFOIL
+                        || entity.getMovementMode() == IEntityMovementMode.SUBMARINE
+                        || entity.getMovementMode() == IEntityMovementMode.INF_UMU
+                        || entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM
+                        || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM || entity
+                        .getMovementMode() == IEntityMovementMode.WIGE)
+                && destHex.terrainLevel(Terrains.WATER) > 0 && !isPavementStep) {
             return true;
         }
 
@@ -279,19 +325,30 @@ public class Compute {
          * srcHex.contains(Terrain.PAVEMENT) || srcHex.contains(Terrain.ROAD) ||
          * srcHex.contains(Terrain.BRIDGE) )
          */
-        if (((prevStepIsOnPavement && movementType == IEntityMovementType.MOVE_RUN) || (srcHex.containsTerrain(Terrains.ICE)) && movementType != IEntityMovementType.MOVE_JUMP) && entity.getMovementMode() != IEntityMovementMode.HOVER && entity.getMovementMode() != IEntityMovementMode.WIGE && isTurning && !isInfantry) {
+        if (((prevStepIsOnPavement && movementType == IEntityMovementType.MOVE_RUN)
+                || (srcHex.containsTerrain(Terrains.ICE))
+                && movementType != IEntityMovementType.MOVE_JUMP)
+                && entity.getMovementMode() != IEntityMovementMode.HOVER
+                && entity.getMovementMode() != IEntityMovementMode.WIGE
+                && isTurning && !isInfantry) {
             return true;
         }
 
         // If we entering or leaving a building, all non-infantry
         // need to make a piloting check to avoid damage.
-        if ((srcElevation < srcHex.terrainLevel(Terrains.BLDG_ELEV) || destElevation < destHex.terrainLevel(Terrains.BLDG_ELEV)) && !(entity instanceof Infantry)) {
+        if ((srcElevation < srcHex.terrainLevel(Terrains.BLDG_ELEV)
+                || destElevation < destHex.terrainLevel(Terrains.BLDG_ELEV))
+                && !(entity instanceof Infantry)) {
             return true;
         }
 
         // check sideslips
-        if (entity instanceof VTOL || entity.getMovementMode() == IEntityMovementMode.HOVER || entity.getMovementMode() == IEntityMovementMode.WIGE) {
-            if (isTurning && ((movementType == IEntityMovementType.MOVE_RUN) || (movementType == IEntityMovementType.MOVE_VTOL_RUN)))
+        if (entity instanceof VTOL
+                || entity.getMovementMode() == IEntityMovementMode.HOVER
+                || entity.getMovementMode() == IEntityMovementMode.WIGE) {
+            if (isTurning
+                    && ((movementType == IEntityMovementType.MOVE_RUN)
+                            || (movementType == IEntityMovementType.MOVE_VTOL_RUN)))
                 return true;
         }
 
@@ -330,7 +387,11 @@ public class Compute {
 
         // can't be displaced into prohibited terrain
         // unless we're displacing a tracked or wheeled vee into water
-        if (entity.isHexProhibited(destHex) && !(entity instanceof Tank && destHex.containsTerrain(Terrains.WATER) && (entity.movementMode == IEntityMovementMode.TRACKED || entity.movementMode == IEntityMovementMode.WHEELED))) {
+        if (entity.isHexProhibited(destHex)
+                && !(entity instanceof Tank
+                        && destHex.containsTerrain(Terrains.WATER)
+                        && (entity.movementMode == IEntityMovementMode.TRACKED
+                                || entity.movementMode == IEntityMovementMode.WHEELED))) {
             return false;
         }
 
@@ -456,7 +517,8 @@ public class Compute {
 
         for (java.util.Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity other = i.nextElement();
-            if (((other.isSpotting() && other.getSpotTargetId() == target.getTargetId()) || taggedBy == other.getId()) && !attacker.isEnemyOf(other)) {
+            if (((other.isSpotting() && other.getSpotTargetId() == target.getTargetId())
+                    || taggedBy == other.getId()) && !attacker.isEnemyOf(other)) {
                 // what are this guy's mods to the attack?
                 LosEffects los = LosEffects.calculateLos(game, other.getId(), target);
                 ToHitData mods = los.losModifiers(game);
@@ -573,7 +635,9 @@ public class Compute {
         }
         // allow naval units to target underwater units,
         // torpedo tubes are mounted underwater
-        if ((targetUnderwater || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO || wtype.getAmmoType() == AmmoType.T_SRM_TORPEDO) && UnitType.determineUnitTypeCode(ae) == UnitType.NAVAL) {
+        if ((targetUnderwater || wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO
+                || wtype.getAmmoType() == AmmoType.T_SRM_TORPEDO)
+                && UnitType.determineUnitTypeCode(ae) == UnitType.NAVAL) {
             weaponUnderwater = true;
             weaponRanges = wtype.getWRanges();
         }
@@ -585,7 +649,10 @@ public class Compute {
         if (weaponUnderwater) {
             weaponRanges = wtype.getWRanges();
             boolean MPM = false;
-            if (wtype.getAmmoType() == AmmoType.T_SRM || wtype.getAmmoType() == AmmoType.T_MRM || wtype.getAmmoType() == AmmoType.T_LRM || wtype.getAmmoType() == AmmoType.T_MML) {
+            if (wtype.getAmmoType() == AmmoType.T_SRM
+                    || wtype.getAmmoType() == AmmoType.T_MRM
+                    || wtype.getAmmoType() == AmmoType.T_LRM
+                    || wtype.getAmmoType() == AmmoType.T_MML) {
                 AmmoType atype = (AmmoType) weapon.getLinked().getType();
                 if (atype.getMunitionType() == AmmoType.M_TORPEDO) {
                     weaponRanges = wtype.getRanges();
@@ -606,7 +673,9 @@ public class Compute {
             }
             // special case: mechs can only fire upper body weapons at surface
             // naval
-            if (te != null && UnitType.determineUnitTypeCode(te) == UnitType.NAVAL && ae instanceof Mech && ae.height() > 0 && ae.getElevation() == -1) {
+            if (te != null && UnitType.determineUnitTypeCode(te) == UnitType.NAVAL
+                    && ae instanceof Mech && ae.height() > 0
+                    && ae.getElevation() == -1) {
                 return new ToHitData(TargetRoll.IMPOSSIBLE, "Partially submerged mech cannot fire leg weapons at surface naval vessels.");
             }
         } else if (targetUnderwater) {
@@ -624,7 +693,8 @@ public class Compute {
         if (range == RangeType.RANGE_OUT) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
         }
-        if (distance == 0 && !isAttackerInfantry && !(ae instanceof Mech && target != null && ((Mech) ae).getGrappled() == target.getTargetId())) {
+        if (distance == 0 && !isAttackerInfantry
+                && !(ae instanceof Mech && target != null && ((Mech) ae).getGrappled() == target.getTargetId())) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Only infantry shoot at zero range");
         }
 
@@ -633,7 +703,9 @@ public class Compute {
         if (isIndirect) {
             c3spotter = ae; // no c3 when using indirect fire
         }
-        if (isIndirect && game.getOptions().booleanOption("indirect_fire") && !game.getOptions().booleanOption("indirect_always_possible") && LosEffects.calculateLos(game, ae.getId(), target).canSee()) {
+        if (isIndirect && game.getOptions().booleanOption("indirect_fire")
+                && !game.getOptions().booleanOption("indirect_always_possible")
+                && LosEffects.calculateLos(game, ae.getId(), target).canSee()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Indirect fire impossible with direct LOS");
         }
 

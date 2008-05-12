@@ -27,7 +27,7 @@ import megamek.server.Server;
 /**
  * @author Sebastian Brocks
  */
-public class SNPPCHandler extends ISPPCHandler {
+public class SNPPCHandler extends PPCHandler {
 
     /**
      * 

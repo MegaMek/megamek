@@ -493,12 +493,14 @@ public class Mounted implements Serializable, RoundUpdated {
 
     }
 
+    /**
+     * does this <code>Mounted</code> have a linked and charged PPC Capacitor?
+     */
     public boolean hasChargedCapacitor() {
         if (getLinkedBy() != null
                 && getLinkedBy().getType() instanceof MiscType
                 && !getLinkedBy().isDestroyed()) {
             MiscType cap = (MiscType) getLinkedBy().getType();
-
             if (cap.hasFlag(MiscType.F_PPC_CAPACITOR)
                     && getLinkedBy().curMode().equals("Charge"))
                 return true;

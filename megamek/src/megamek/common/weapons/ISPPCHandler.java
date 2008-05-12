@@ -19,12 +19,20 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
+import megamek.common.Entity;
+import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IGame;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Report;
+import megamek.common.Tank;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -48,6 +56,61 @@ public class ISPPCHandler extends EnergyWeaponHandler {
     public ISPPCHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#addHeat()
+     */
+    protected void addHeat() {
+        if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
+            ae.heatBuildup += (wtype.getHeat());
+            if (weapon.hasChargedCapacitor()) {
+                ae.heatBuildup += 5;
+            }
+        }
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.weapons.EnergyWeaponHandler#calcDamagePerHit()
+     */
+    protected int calcDamagePerHit() {
+        float toReturn = wtype.getDamage();
+        if (weapon.hasChargedCapacitor()) {
+            toReturn += 5;
+        }
+        // during a swarm, all damage gets applied as one block to one location
+        if (ae instanceof BattleArmor
+                && weapon.getLocation() == BattleArmor.LOC_SQUAD
+                && (ae.getSwarmTargetId() == target.getTargetId())) {
+            toReturn *= ((BattleArmor) ae).getShootingStrength();
+        }
+        // Check for Altered Damage from Energy Weapons (MTR, pg.22)
+        int nRange = ae.getPosition().distance(target.getPosition());
+        if (game.getOptions().booleanOption("maxtech_altdmg")) {
+            if (nRange <= 1) {
+                toReturn++;
+            } else if (nRange <= wtype.getMediumRange()) {
+                // Do Nothing for Short and Medium Range
+            } else if (nRange <= wtype.getLongRange()) {
+                toReturn--;
+            } else if (nRange <= wtype.getExtremeRange()) {
+                toReturn = (int) Math.floor(toReturn / 2.0);
+            }
+        }
+        if (bGlancing) {
+            toReturn = (int) Math.floor(toReturn / 2.0);
+        }
+
+        if ((target instanceof Mech || target instanceof Tank)
+                && ((Entity) target).getArmorType() == EquipmentType.T_ARMOR_REFLECTIVE)
+            toReturn /= 2;
+
+        if (target instanceof Infantry && !(target instanceof BattleArmor))
+            toReturn /= 10;
+        return (int) Math.ceil(toReturn);
+    }
+
 
     /*
      * (non-Javadoc)
@@ -108,6 +171,34 @@ public class ISPPCHandler extends EnergyWeaponHandler {
                 r.choose(true);
                 vPhaseReport.addElement(r);
             }
+        }
+        // resolve roll for charged capacitor
+        if (weapon.hasChargedCapacitor()) {
+            if (roll == 2) {
+                r = new Report(3178);
+                r.subject = ae.getId();
+                r.indent();
+                vPhaseReport.add(r);
+                // Oops, we ruined our day...
+                int wlocation = weapon.getLocation();
+                weapon.setDestroyed (true);
+                for (int i=0; i<ae.getNumberOfCriticals(wlocation); i++) {
+                    CriticalSlot slot = ae.getCritical (wlocation, i);
+                    if (slot == null || slot.getType() == CriticalSlot.TYPE_SYSTEM) {
+                        continue;
+                    }
+                    //Only one Crit needs to be damaged.
+                    Mounted mounted = ae.getEquipment(slot.getIndex());
+                    if (mounted.equals(weapon)) {
+                        slot.setDestroyed(true);
+                        break;
+                    }
+                }
+            }
+        }
+        // turn the capacitor off, if we have one
+        if (weapon.hasChargedCapacitor()) {
+            weapon.getLinkedBy().setMode("Off");
         }
         return false;
     }

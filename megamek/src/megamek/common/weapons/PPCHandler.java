@@ -28,7 +28,6 @@ import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
-import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.Tank;
@@ -41,7 +40,7 @@ import megamek.server.Server.DamageType;
 /**
  * @author Sebastian Brocks
  */
-public class ISPPCHandler extends EnergyWeaponHandler {
+public class PPCHandler extends EnergyWeaponHandler {
     /**
      * 
      */
@@ -53,7 +52,7 @@ public class ISPPCHandler extends EnergyWeaponHandler {
      * @param g
      * @param s
      */
-    public ISPPCHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public PPCHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
     

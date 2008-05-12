@@ -69,7 +69,7 @@ public class ISHeavyPPC extends PPCWeapon {
      */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new ISPPCHandler(toHit, waa, game, server);
+        return new PPCHandler(toHit, waa, game, server);
     }
 
 }

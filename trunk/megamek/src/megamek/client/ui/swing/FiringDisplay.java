@@ -1799,7 +1799,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 return;
             }
             // immobile mech or gun emplacement
-            allowAim = (target != null && ((target.isImmobile() && target instanceof Mech) || target instanceof GunEmplacement));
+            allowAim = (target != null && ((target.isImmobile() 
+                    && (target instanceof Mech || target instanceof Tank))
+                        || target instanceof GunEmplacement));
             if (allowAim) {
                 aimingMode = IAimingModes.AIM_MODE_IMMOBILE;
                 return;

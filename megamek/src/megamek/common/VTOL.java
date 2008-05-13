@@ -203,6 +203,7 @@ public class VTOL extends Tank {
             case 11:
                 rv = new HitData(LOC_ROTOR, false,
                         HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                break;
             case 12:
                 rv = new HitData(LOC_ROTOR, false, HitData.EFFECT_CRITICAL
                         | HitData.EFFECT_VEHICLE_MOVE_DAMAGED);

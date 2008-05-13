@@ -8308,8 +8308,7 @@ public class Server implements Runnable {
 
         if (te.getMovementMode() == IEntityMovementMode.BIPED
                 || te.getMovementMode() == IEntityMovementMode.QUAD) {
-            PilotingRollData kickPRD = new PilotingRollData(te.getId(),
-                    getKickPushPSRMod(ae, te, 0), "was kicked");
+            PilotingRollData kickPRD = getKickPushPSR(te, ae, te, "was kicked");
             kickPRD.setCumulative(false); // see Bug# 811987 for more info
             game.addPSR(kickPRD);
         }
@@ -9294,12 +9293,10 @@ public class Server implements Runnable {
                 r.add(targetPushResult.roll);
                 r.addDesc(ae);
                 addReport(r);
-                PilotingRollData targetPushPRD = new PilotingRollData(te
-                        .getId(), getKickPushPSRMod(ae, te, 0), "was pushed");
+                PilotingRollData targetPushPRD = getKickPushPSR(te, ae, te, "was pushed");
                 targetPushPRD.setCumulative(false); // see Bug# 811987 for more
                 // info
-                PilotingRollData pushPRD = new PilotingRollData(ae.getId(),
-                        getKickPushPSRMod(ae, te, 0), "was pushed");
+                PilotingRollData pushPRD = getKickPushPSR(ae, ae, te, "was pushed");
                 pushPRD.setCumulative(false); // see Bug# 811987 for more info
                 game.addPSR(pushPRD);
                 game.addPSR(targetPushPRD);
@@ -9330,8 +9327,7 @@ public class Server implements Runnable {
         Coords src = te.getPosition();
         Coords dest = src.translated(direction);
 
-        PilotingRollData pushPRD = te.getBasePilotingRoll();
-        pushPRD.addModifier(getKickPushPSRMod(ae, te, 0), "was pushed");
+        PilotingRollData pushPRD = getKickPushPSR(te, ae, te, "was pushed");
         pushPRD.setCumulative(false); // see Bug# 811987 for more info
 
         if (Compute.isValidDisplacement(game, te.getId(), te.getPosition(),
@@ -9423,8 +9419,7 @@ public class Server implements Runnable {
         }
 
         // we hit...
-        PilotingRollData pushPRD = new PilotingRollData(te.getId(),
-                getKickPushPSRMod(ae, te, 0), "was tripped");
+        PilotingRollData pushPRD = getKickPushPSR(te, ae, te, "was tripped");
         pushPRD.setCumulative(false); // see Bug# 811987 for more info
 
         game.addPSR(pushPRD);
@@ -10376,15 +10371,16 @@ public class Server implements Runnable {
     }
 
     /**
-     * Get the modifier for a Kick or Push PSR
+     * Get the Kick or Push PSR, modified by weight class
      * 
+     * @param psrEntity The <code>Entity</code> that should make a PSR
      * @param attacker The attacking <code>Entity></code>
      * @param target The target <code>Entity</code>
-     * @param def The <code>int</code> default modifier
-     * @return The <code>int</code> modifier to the PSR
+     * @return The <code>PilotingRollData</code>
      */
-    private int getKickPushPSRMod(Entity attacker, Entity target, int def) {
-        int mod = def;
+    private PilotingRollData getKickPushPSR(Entity psrEntity, Entity attacker,
+            Entity target, String reason) {
+        int mod = 0;
 
         if (game.getOptions().booleanOption("maxtech_physical_psr")) {
             int attackerMod = 0;
@@ -10420,7 +10416,15 @@ public class Server implements Runnable {
             }
             mod = attackerMod - targetMod;
         }
-        return mod;
+        StringBuffer reportStr = new StringBuffer();
+        reportStr.append(reason);
+        if (mod > 0)
+            reportStr.append(", weight class modifier +")
+                    .append(mod);
+        else
+            reportStr.append(", weight class modifier ")
+                    .append(mod);
+        return new PilotingRollData(psrEntity.getId(), mod, reportStr.toString());
     }
 
     /**
@@ -14212,7 +14216,7 @@ public class Server implements Runnable {
                         if (en.getGyroType() != Mech.GYRO_HEAVY_DUTY) {
                             if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
                                     Mech.SYSTEM_GYRO, loc) > 1) {
-                                // gyro destroyed
+                                // gyro destroyed 
                                 game.addPSR(new PilotingRollData(en.getId(),
                                         TargetRoll.AUTOMATIC_FAIL, 6,
                                         "gyro destroyed"));

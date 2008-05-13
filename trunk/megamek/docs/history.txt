@@ -20,6 +20,7 @@ v0.33.25-dev (SVN)
 + Bug 1949414: Noncritical rotor hits cause critical damage
 + Bug: When falling onto ice, fall elevation was calculated wrong
 + Bug 1961233: PSR for pilot damage counts gyro hits multiple times
++ Bug 1944667: Bad defaults when configuring some missile types
 
 v0.33.24 (2008-05-09, 22:36 GMT+2)
 + TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for

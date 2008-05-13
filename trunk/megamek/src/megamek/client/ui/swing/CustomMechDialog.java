@@ -853,7 +853,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             for (int x = 0; e.hasNext(); x++) {
                 AmmoType at = e.next();
                 m_choice.addItem(at.getName());
-                if (at.getMunitionType() == curType.getMunitionType()) {
+                if (at.getInternalName() == curType.getInternalName()) {
                     m_choice.setSelectedIndex(x);
                 }
             }

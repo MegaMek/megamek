@@ -72,6 +72,7 @@ public class LegAttackHandler extends WeaponHandler {
                 hit = new HitData(Mech.LOC_RLEG);
             }
         }
+        hit.setGeneralDamageType(generalDamageType);
         int damage = 4;
         if (ae instanceof BattleArmor)
             damage += ((BattleArmor) ae).getVibroClawDamage();

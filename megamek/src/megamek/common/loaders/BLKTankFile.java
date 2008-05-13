@@ -38,7 +38,7 @@ import megamek.common.util.BuildingBlock;
 
 public class BLKTankFile extends BLKFile implements IMechLoader {
 
-    private static final String[] MOVES = { "", "", "", "Tracked", "Wheeled",
+    protected static final String[] MOVES = { "", "", "", "Tracked", "Wheeled",
             "Hover", "", "Naval", "Hydrofoil", "Submarine", "", "", "", "", "",
             "WIGE"};
 

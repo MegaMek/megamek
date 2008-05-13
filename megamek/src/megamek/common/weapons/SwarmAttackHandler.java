@@ -21,6 +21,7 @@ import java.util.Vector;
 
 import megamek.common.Building;
 import megamek.common.Entity;
+import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -44,6 +45,7 @@ public class SwarmAttackHandler extends WeaponHandler {
     public SwarmAttackHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
             Server s) {
         super(toHit, waa, g, s);
+        generalDamageType = HitData.DAMAGE_NONE;
     }
 
     protected void handleEntityDamage(Entity entityTarget,

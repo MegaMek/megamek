@@ -97,6 +97,7 @@ public class MineLauncherHandler extends AmmoWeaponHandler {
         } else { // te instanceof Tank
             hit = new HitData(Tank.LOC_FRONT);
         }
+        hit.setGeneralDamageType(generalDamageType);
         // Do criticals.
         Vector<Report> specialDamageReport = server.criticalEntity(
                 entityTarget, hit.getLocation(), 0);

@@ -30,6 +30,8 @@ import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
+import megamek.common.SupportTank;
+import megamek.common.SupportVTOL;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
@@ -45,6 +47,8 @@ public class MechView {
     private boolean isVehicle;
     private boolean isProto;
     private boolean isGunEmplacement;
+    private boolean isSupportVehicle;
+    private boolean isSupportVTOL;
 
     StringBuffer sBasic = new StringBuffer();
     StringBuffer sLoadout = new StringBuffer();
@@ -57,6 +61,8 @@ public class MechView {
         isVehicle = entity instanceof Tank;
         isProto = entity instanceof Protomech;
         isGunEmplacement = entity instanceof GunEmplacement;
+        isSupportVehicle = entity instanceof SupportTank;
+        isSupportVTOL = entity instanceof SupportVTOL;
 
         sLoadout.append(getWeapons()).append("\r\n") //$NON-NLS-1$
                 .append(getAmmo()).append("\r\n") //$NON-NLS-1$
@@ -102,6 +108,17 @@ public class MechView {
             sBasic.append(mech.getEngine().getShortEngineName());
             sBasic.append("\n"); //$NON-NLS-1$
         }
+        if (isSupportVehicle) {
+            sBasic.append(Messages.getString("MechView.BARRating")); //$NON-NLS-1$
+            sBasic.append(((SupportTank)mech).getBARRating());
+            sBasic.append("\n"); //$NON-NLS-1$
+        }
+        if (isSupportVTOL) {
+            sBasic.append(Messages.getString("MechView.BARRating")); //$NON-NLS-1$
+            sBasic.append(((SupportVTOL)mech).getBARRating());
+            sBasic.append("\n"); //$NON-NLS-1$
+        }
+        
         if (isMech) {
             Mech aMech = (Mech) mech;
             sBasic.append(Messages.getString("MechView.HeatSinks")) //$NON-NLS-1$

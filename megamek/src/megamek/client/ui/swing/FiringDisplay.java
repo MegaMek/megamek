@@ -59,6 +59,7 @@ import megamek.common.IAimingModes;
 import megamek.common.IGame;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
+import megamek.common.LargeSupportTank;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
 import megamek.common.Mounted;
@@ -1588,9 +1589,14 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                         aimingAt = Mech.LOC_CT;
                     }
                 } else if (target instanceof Tank) {
-                    options = Tank.LOCATION_NAMES;
+                    if (target instanceof LargeSupportTank) {
+                        options = LargeSupportTank.LOCATION_NAMES;
+                        aimingAt = LargeSupportTank.LOC_FRONT;
+                    } else {
+                        options = Tank.LOCATION_NAMES;
+                        aimingAt = Tank.LOC_FRONT;
+                    }
                     enabled = createEnabledMask(options.length);
-                    aimingAt = Tank.LOC_FRONT;
                 } else if (target instanceof GunEmplacement) {
                     options = GunEmplacement.HIT_LOCATION_NAMES;
                     enabled = new boolean[] { true,
@@ -1638,17 +1644,40 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     mask[Tank.LOC_TURRET] = false;
                 }
                 // remove non-visible sides
-                if (side == ToHitData.SIDE_LEFT) {
-                    mask[Tank.LOC_RIGHT] = false;
-                }
-                if (side == ToHitData.SIDE_RIGHT) {
-                    mask[Tank.LOC_LEFT] = false;
-                }
-                if (side == ToHitData.SIDE_REAR) {
-                    mask[Tank.LOC_FRONT] = false;
-                }
-                if (side == ToHitData.SIDE_FRONT) {
-                    mask[Tank.LOC_REAR] = false;
+                if (target instanceof LargeSupportTank) {
+                    if (side == ToHitData.SIDE_FRONTLEFT) {
+                        mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
+                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
+                        mask[LargeSupportTank.LOC_REAR] = false;
+                    }
+                    if (side == ToHitData.SIDE_FRONTRIGHT) {
+                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
+                        mask[LargeSupportTank.LOC_REARLEFT] = false;
+                        mask[LargeSupportTank.LOC_REAR] = false;
+                    }
+                    if (side == ToHitData.SIDE_REARRIGHT) {
+                        mask[LargeSupportTank.LOC_FRONTLEFT] = false;
+                        mask[LargeSupportTank.LOC_REARLEFT] = false;
+                        mask[LargeSupportTank.LOC_FRONT] = false;
+                    }
+                    if (side == ToHitData.SIDE_REARLEFT) {
+                        mask[LargeSupportTank.LOC_REARRIGHT] = false;
+                        mask[LargeSupportTank.LOC_FRONTRIGHT] = false;
+                        mask[LargeSupportTank.LOC_FRONT] = false;
+                    }
+                } else {
+                    if (side == ToHitData.SIDE_LEFT) {
+                        mask[Tank.LOC_RIGHT] = false;
+                    }
+                    if (side == ToHitData.SIDE_RIGHT) {
+                        mask[Tank.LOC_LEFT] = false;
+                    }
+                    if (side == ToHitData.SIDE_REAR) {
+                        mask[Tank.LOC_FRONT] = false;
+                    }
+                    if (side == ToHitData.SIDE_FRONT) {
+                        mask[Tank.LOC_REAR] = false;
+                    }
                 }
             }
             

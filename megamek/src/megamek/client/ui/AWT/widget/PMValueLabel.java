@@ -19,19 +19,19 @@ import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-/*
+/**
  * A class for showing centered labels with desired value.
  */
 public class PMValueLabel extends PMSimpleLabel {
 
-    /*
+    /**
      * Create the label.
      */
     PMValueLabel(FontMetrics fm, Color c) {
         super("", fm, c); //$NON-NLS-1$
     }
 
-    /*
+    /**
      * Set/change the value displayed in the label.
      */
     void setValue(String v) {
@@ -43,7 +43,7 @@ public class PMValueLabel extends PMSimpleLabel {
         super.setVisible(v);
     }
 
-    /*
+    /**
      * Draw the label.
      */
     public void drawInto(Graphics g) {

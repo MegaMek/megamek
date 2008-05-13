@@ -29,7 +29,7 @@ public class HitData {
     public static final int DAMAGE_NONE = -1;
     public static final int DAMAGE_PHYSICAL = -2;
     public static final int DAMAGE_ENERGY = -3;
-    public static final int DAMAGE_MISSLE = -4;
+    public static final int DAMAGE_MISSILE = -4;
     public static final int DAMAGE_BALLISTIC = -5;
 
     private int location;
@@ -44,7 +44,7 @@ public class HitData {
     // in case of usage of Edge it is document what the previous location was
     private HitData undoneLocation = null;
     private boolean fallDamage = false; // did the damage come from a fall?
-    private int damageType = HitData.DAMAGE_NONE;
+    private int generalDamageType = HitData.DAMAGE_NONE;
 
     public HitData(int location) {
         this(location, false, EFFECT_NONE, false, 0);
@@ -85,7 +85,7 @@ public class HitData {
         this.hitAimedLocation = hitAimedLocation;
         this.specCritMod = specCrit;
         this.fromFront = fromWhere;
-        this.damageType = damageType;
+        this.generalDamageType = damageType;
         this.glancing = glancing;
     }
 
@@ -162,18 +162,18 @@ public class HitData {
 
     public void makeFallDamage(boolean fall) {
         this.fallDamage = fall;
-        this.damageType = HitData.DAMAGE_PHYSICAL;
+        this.generalDamageType = HitData.DAMAGE_PHYSICAL;
     }
 
     public boolean isFallDamage() {
         return fallDamage;
     }
 
-    public int getDamageType() {
-        return damageType;
+    public int getGeneralDamageType() {
+        return generalDamageType;
     }
 
-    public void setDamageType(int type) {
-        this.damageType = type;
+    public void setGeneralDamageType(int type) {
+        this.generalDamageType = type;
     }
 }

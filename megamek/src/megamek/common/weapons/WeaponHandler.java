@@ -68,6 +68,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean announcedEntityFiring = false;
     protected boolean missed = false;
     protected DamageType damageType;
+    protected int generalDamageType = HitData.DAMAGE_NONE;
 
     /**
      * return the <code>int</code> Id of the attacking <code>Entity</code>
@@ -389,6 +390,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+        hit.setGeneralDamageType(generalDamageType);
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget))) {

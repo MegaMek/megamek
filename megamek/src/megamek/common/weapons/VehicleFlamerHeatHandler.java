@@ -49,6 +49,7 @@ public class VehicleFlamerHeatHandler extends AmmoWeaponHandler {
     public VehicleFlamerHeatHandler(ToHitData toHit, WeaponAttackAction waa,
             IGame g, Server s) {
         super(toHit, waa, g, s);
+        generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
     /*

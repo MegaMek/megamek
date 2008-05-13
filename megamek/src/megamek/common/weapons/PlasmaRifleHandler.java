@@ -19,6 +19,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -41,6 +42,8 @@ public class PlasmaRifleHandler extends AmmoWeaponHandler {
     public PlasmaRifleHandler(ToHitData toHit, WeaponAttackAction waa, IGame g,
             Server s) {
         super(toHit, waa, g, s);
+        generalDamageType = HitData.DAMAGE_ENERGY;
+        
     }
 
     /*

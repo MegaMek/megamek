@@ -29,10 +29,10 @@ public class Tank extends Entity implements Serializable {
      * 
      */
     private static final long serialVersionUID = -857210851169206264L;
-    private boolean m_bHasNoTurret = false;
-    private boolean m_bTurretLocked = false;
-    private boolean m_bTurretJammed = false;
-    private boolean m_bTurretEverJammed = false;
+    protected boolean m_bHasNoTurret = false;
+    protected boolean m_bTurretLocked = false;
+    protected boolean m_bTurretJammed = false;
+    protected boolean m_bTurretEverJammed = false;
     private int m_nTurretOffset = 0;
     private int m_nStunnedTurns = 0;
     private boolean m_bImmobile = false;
@@ -333,28 +333,6 @@ public class Tank extends Entity implements Serializable {
         if (!m_bTurretLocked) {
             setSecondaryFacing(getFacing());
         }
-    }
-
-    /**
-     * This is only used for the 'main weapon' vehicle critical result. No
-     * standard for 'mainness' is given (although it's also described as the
-     * 'largest', so maybe it's tonnage). I'm going with the highest BV
-     * non-disabled weapon (even if it's out of ammo)
-     */
-    public Mounted getMainWeapon() {
-        double fBestBV = -1;
-        Mounted mBest = null;
-        for (Mounted m : getWeaponList()) {
-            if (m.isDestroyed())
-                continue;
-
-            double fValue = m.getType().getBV(this);
-            if (fValue > fBestBV) {
-                fBestBV = fValue;
-                mBest = m;
-            }
-        }
-        return mBest;
     }
 
     /**

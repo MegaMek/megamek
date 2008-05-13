@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.ToHitData;
@@ -47,6 +48,7 @@ public class AmmoWeaponHandler extends WeaponHandler {
     public AmmoWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
             Server s) {
         super(t, w, g, s);
+        this.generalDamageType = HitData.DAMAGE_BALLISTIC;
 
     }
 

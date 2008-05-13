@@ -33,6 +33,8 @@ import megamek.common.loaders.BLKGunEmplacementFile;
 import megamek.common.loaders.BLKInfantryFile;
 import megamek.common.loaders.BLKMechFile;
 import megamek.common.loaders.BLKProtoFile;
+import megamek.common.loaders.BLKSupportTankFile;
+import megamek.common.loaders.BLKSupportVTOLFile;
 import megamek.common.loaders.BLKTankFile;
 import megamek.common.loaders.BLKVTOLFile;
 import megamek.common.loaders.EntityLoadingException;
@@ -147,10 +149,13 @@ public class MechFileParser {
                     loader = new BLKVTOLFile(bb);
                 } else if (sType.equals("GunEmplacement")) {
                     loader = new BLKGunEmplacementFile(bb);
-                } else {
+                } else if (sType.equals("SupportTank")){
+                    loader = new BLKSupportTankFile(bb);
+                } else if (sType.equals("SupportVTOL")){
+                    loader = new BLKSupportVTOLFile(bb);
+                } else
                     throw new EntityLoadingException("Unknown UnitType: "
                             + sType);
-                }
             } else {
                 loader = new BLKMechFile(bb);
             }
@@ -344,7 +349,10 @@ public class MechFileParser {
                     out.write(((Mech) e).getMtf());
                 } else if (e instanceof Tank) {
                     outFilename += ".blk";
-                    BLKTankFile.encode(outFilename, (Tank) e);
+                    if (e instanceof SupportTank)
+                        BLKSupportTankFile.encode(outFilename, (SupportTank)e);
+                    else
+                        BLKTankFile.encode(outFilename, (Tank) e);
                 }
             } catch (Exception e) {
                 System.out.println(e.getMessage());

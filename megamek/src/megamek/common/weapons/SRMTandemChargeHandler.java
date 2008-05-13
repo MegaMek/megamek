@@ -70,7 +70,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
 
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
-
+        hit.setGeneralDamageType(generalDamageType);
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget))) {
             // Weapon strikes Partial Cover.

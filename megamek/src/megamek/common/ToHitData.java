@@ -35,6 +35,10 @@ public class ToHitData extends TargetRoll {
     public static final int SIDE_LEFT = 2;
     public static final int SIDE_RIGHT = 3;
     public static final int SIDE_RANDOM = 4;
+    public static final int SIDE_FRONTLEFT = 5;
+    public static final int SIDE_FRONTRIGHT = 6;
+    public static final int SIDE_REARLEFT = 7;
+    public static final int SIDE_REARRIGHT = 8;
 
     private int hitTable = HIT_NORMAL;
     private int sideTable = SIDE_FRONT;

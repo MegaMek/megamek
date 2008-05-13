@@ -1905,17 +1905,17 @@ public abstract class Mech extends Entity implements Serializable {
             case LOC_LT:
                 return new HitData(LOC_CT, hit.isRear(), hit.getEffect(), hit
                         .hitAimedLocation(), hit.getSpecCritMod(), hit
-                        .isFromFront(), hit.getDamageType(), hit.glancingMod());
+                        .isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_LLEG:
             case LOC_LARM:
                 return new HitData(LOC_LT, hit.isRear(), hit.getEffect(), hit
                         .hitAimedLocation(), hit.getSpecCritMod(), hit
-                        .isFromFront(), hit.getDamageType(), hit.glancingMod());
+                        .isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_RLEG:
             case LOC_RARM:
                 return new HitData(LOC_RT, hit.isRear(), hit.getEffect(), hit
                         .hitAimedLocation(), hit.getSpecCritMod(), hit
-                        .isFromFront(), hit.getDamageType(), hit.glancingMod());
+                        .isFromFront(), hit.getGeneralDamageType(), hit.glancingMod());
             case LOC_HEAD:
                 if (getCockpitType() == COCKPIT_TORSO_MOUNTED)
                     return new HitData(LOC_NONE); // not destroyed by head loss

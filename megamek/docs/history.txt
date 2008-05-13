@@ -13,6 +13,7 @@ v0.33.25-dev (SVN)
 + RFE 1961430: Artemis/Narc-equipped units lacking compatible ammo
 + Bug 1961368: PPC capacitor has no effect when firing
 + Start of Support Vehicle implementation
++ Bug: Don't halve missile damage twice for reactive armor
 
 v0.33.24 (2008-05-09, 22:36 GMT+2)
 + TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for

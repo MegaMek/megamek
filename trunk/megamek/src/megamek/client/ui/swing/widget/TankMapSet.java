@@ -26,6 +26,7 @@ import javax.swing.JComponent;
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.Messages;
 import megamek.common.Entity;
+import megamek.common.SupportTank;
 import megamek.common.Tank;
 
 /**
@@ -38,8 +39,8 @@ public class TankMapSet implements DisplayMapSet {
 
     private JComponent comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[12];
-    private PMSimpleLabel[] labels = new PMSimpleLabel[12];
-    private PMValueLabel[] vLabels = new PMValueLabel[12];
+    private PMSimpleLabel[] labels = new PMSimpleLabel[13];
+    private PMValueLabel[] vLabels = new PMValueLabel[13];
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
 
@@ -129,6 +130,10 @@ public class TankMapSet implements DisplayMapSet {
             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
                     / (double) a0);
         }
+        if (t instanceof SupportTank)
+            vLabels[12].setValue(String.valueOf(((SupportTank)t).getBARRating()));
+        else
+            labels[12].setVisible(false);
 
     }
 
@@ -143,6 +148,8 @@ public class TankMapSet implements DisplayMapSet {
             content.addArea(labels[i + INT_STR_OFFSET]);
             content.addArea(vLabels[i + INT_STR_OFFSET]);
         }
+        content.addArea(labels[12]);
+        content.addArea(vLabels[12]);
     }
 
     private void setAreas() {
@@ -188,6 +195,9 @@ public class TankMapSet implements DisplayMapSet {
         labels[Tank.LOC_TURRET + INT_STR_OFFSET] = WidgetUtils
                 .createLabel(
                         Messages.getString("TankMapSet.TurretIS"), fm, Color.black, 73, 173); //$NON-NLS-1$
+        labels[12] = WidgetUtils.createLabel(Messages
+                .getString("TankMapSet.BARRating"), fm, Color.white, 65, 280); //$NON-NLS-1$
+
 
         // Value labels for all parts of mek
         // front
@@ -209,6 +219,7 @@ public class TankMapSet implements DisplayMapSet {
                 .createValueLabel(73, 159, "", fm); //$NON-NLS-1$
         vLabels[Tank.LOC_TURRET + INT_STR_OFFSET] = WidgetUtils
                 .createValueLabel(73, 193, "", fm); //$NON-NLS-1$
+        vLabels[12] = WidgetUtils.createValueLabel(100, 280, "", fm); //$NON-NLS-1$        
     }
 
     private void setBackGround() {

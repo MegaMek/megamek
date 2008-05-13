@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -38,6 +39,7 @@ public class EnergyWeaponHandler extends WeaponHandler {
     public EnergyWeaponHandler(ToHitData toHit, WeaponAttackAction waa,
             IGame g, Server s) {
         super(toHit, waa, g, s);
+        generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
     /*
@@ -69,10 +71,6 @@ public class EnergyWeaponHandler extends WeaponHandler {
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
-
-        if ((target instanceof Mech || target instanceof Tank)
-                && ((Entity) target).getArmorType() == EquipmentType.T_ARMOR_REFLECTIVE)
-            toReturn /= 2;
 
         if (target instanceof Infantry && !(target instanceof BattleArmor))
             toReturn /= 10;

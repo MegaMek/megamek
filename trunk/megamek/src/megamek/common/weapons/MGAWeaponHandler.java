@@ -41,7 +41,6 @@ public class MGAWeaponHandler extends MGHandler {
      */
     private static final long serialVersionUID = 8675420566952393440L;
     int howManyShots;
-    HitData hit;
 
     /**
      * @param t
@@ -134,11 +133,10 @@ public class MGAWeaponHandler extends MGHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
         int nDamage;
-        if (hit == null)
-            hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
+        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                     .getSideTable(), waa.getAimedLocation(), waa
                     .getAimingMode());
-
+        hit.setGeneralDamageType(generalDamageType);
         if (!bSalvo) {
             // Each hit in the salvo get's its own hit location.
             r = new Report(3405);

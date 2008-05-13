@@ -25,6 +25,7 @@ import java.util.Vector;
 import megamek.client.ui.AWT.GUIPreferences;
 import megamek.client.ui.AWT.Messages;
 import megamek.common.Entity;
+import megamek.common.SupportVTOL;
 import megamek.common.VTOL;
 
 /**
@@ -38,8 +39,8 @@ public class VTOLMapSet implements DisplayMapSet {
 
     private Component comp;
     private PMSimplePolygonArea[] areas = new PMSimplePolygonArea[16];
-    private PMSimpleLabel[] labels = new PMSimpleLabel[22];
-    private PMValueLabel[] vLabels = new PMValueLabel[16];
+    private PMSimpleLabel[] labels = new PMSimpleLabel[23];
+    private PMValueLabel[] vLabels = new PMValueLabel[17];
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private PMAreasGroup content = new PMAreasGroup();
 
@@ -177,6 +178,10 @@ public class VTOLMapSet implements DisplayMapSet {
             WidgetUtils.setAreaColor(areas[i], vLabels[i], (double) a
                     / (double) a0);
         }
+        if (t instanceof SupportVTOL)
+            vLabels[16].setValue(String.valueOf(((SupportVTOL)t).getBARRating()));
+        else
+            labels[22].setVisible(false);
     }
 
     private void setContent() {
@@ -187,6 +192,8 @@ public class VTOLMapSet implements DisplayMapSet {
         for (int i = 1; i <= 21; i++) {
             content.addArea(labels[i]);
         }
+        content.addArea(vLabels[16]);
+        content.addArea(labels[22]);
     }
 
     private void setAreas() {
@@ -253,6 +260,9 @@ public class VTOLMapSet implements DisplayMapSet {
                 .getString("VTOLMapSet.RearIS2"), fm, Color.black, 76, 161); //$NON-NLS-1$
         labels[21] = WidgetUtils.createLabel(Messages
                 .getString("VTOLMapSet.RotorIS"), fm, Color.black, 73, 82); //$NON-NLS-1$
+        labels[22] = WidgetUtils.createLabel(Messages
+                .getString("VTOLMapSet.BARRating"), fm, Color.white, 65, 200); //$NON-NLS-1$
+        
 
         // Value labels for all parts of mek
         // front
@@ -272,6 +282,7 @@ public class VTOLMapSet implements DisplayMapSet {
         vLabels[13] = WidgetUtils.createValueLabel(84, 122, "", fm); //$NON-NLS-1$ RS
         vLabels[14] = WidgetUtils.createValueLabel(76, 172, "", fm); //$NON-NLS-1$ Rear
         vLabels[15] = WidgetUtils.createValueLabel(98, 83, "", fm); //$NON-NLS-1$ Rotor
+        vLabels[16] = WidgetUtils.createValueLabel(100, 200, "", fm); //$NON-NLS-1$
     }
 
     private void setBackGround() {

@@ -42,6 +42,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
     public PlasmaCannonHandler(ToHitData toHit, WeaponAttackAction waa,
             IGame g, Server s) {
         super(toHit, waa, g, s);
+        generalDamageType = HitData.DAMAGE_ENERGY;
     }
 
     /*
@@ -58,6 +59,7 @@ public class PlasmaCannonHandler extends AmmoWeaponHandler {
             HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(),
                     toHit.getSideTable(), waa.getAimedLocation(), waa
                             .getAimingMode());
+            hit.setGeneralDamageType(generalDamageType);
             if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                     .getCover(), Compute.targetSideTable(ae, entityTarget))) {
                 // Weapon strikes Partial Cover.

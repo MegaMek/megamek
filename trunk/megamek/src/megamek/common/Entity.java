@@ -81,7 +81,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     protected boolean doomed = false;
     protected boolean destroyed = false;
 
-    private Coords position = null;
+    protected Coords position = null;
 
     protected int facing = 0;
     protected int sec_facing = 0;

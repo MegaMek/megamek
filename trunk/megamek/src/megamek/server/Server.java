@@ -95,6 +95,8 @@ import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
+import megamek.common.SupportTank;
+import megamek.common.SupportVTOL;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -3543,7 +3545,7 @@ public class Server implements Runnable {
                         HitData hit = target.rollHitLocation(
                                 ToHitData.HIT_NORMAL, Compute.targetSideTable(
                                         entity, target));
-                        hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+                        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                         // Damage equals tonnage, divided by 5.
                         // ASSUMPTION: damage is applied in one hit.
                         addReport(damageEntity(target, hit, Math.round(entity
@@ -3621,7 +3623,7 @@ public class Server implements Runnable {
                             entity, bldg);
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                             entity.sideTable(nextPos));
-                    hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                     addReport(damageEntity(entity, hit, toAttacker));
                     addNewLines();
 
@@ -3834,7 +3836,7 @@ public class Server implements Runnable {
                 int cluster = Math.min(5, damage);
                 HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL,
                         ToHitData.SIDE_FRONT);
-                hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                 addReport(damageEntity(entity, hit, cluster));
                 damage -= cluster;
             }
@@ -6495,7 +6497,7 @@ public class Server implements Runnable {
                         int cluster = Math.min(5, damage);
                         HitData hit = affaTarget.rollHitLocation(
                                 ToHitData.HIT_PUNCH, ToHitData.SIDE_FRONT);
-                        hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+                        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                         vPhaseReport.addAll(damageEntity(affaTarget, hit, cluster));
                         damage -= cluster;
                     }
@@ -8026,7 +8028,7 @@ public class Server implements Runnable {
 
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable());
-        hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
         r = new Report(4045);
         r.subject = ae.getId();
         r.add(toHit.getTableDesc());
@@ -8224,7 +8226,7 @@ public class Server implements Runnable {
 
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable());
-        hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
         r = new Report(4045);
         r.subject = ae.getId();
         r.add(toHit.getTableDesc());
@@ -8461,7 +8463,7 @@ public class Server implements Runnable {
             }
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit
                     .getSideTable());
-            hit.setDamageType(HitData.DAMAGE_ENERGY);
+            hit.setGeneralDamageType(HitData.DAMAGE_ENERGY);
 
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
@@ -8617,7 +8619,7 @@ public class Server implements Runnable {
 
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable());
-        hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
 
         r = new Report(4045);
         r.subject = ae.getId();
@@ -8731,7 +8733,7 @@ public class Server implements Runnable {
             toHit.setSideTable(ToHitData.SIDE_FRONT);
             HitData hit = ae.rollHitLocation(toHit.getHitTable(), toHit
                     .getSideTable());
-            hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             r = new Report(4095);
             r.subject = ae.getId();
             r.addDesc(ae);
@@ -8749,7 +8751,7 @@ public class Server implements Runnable {
                 // Handle Entity targets.
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit
                         .getSideTable());
-                hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                 r = new Report(4045);
                 r.subject = ae.getId();
                 r.add(toHit.getTableDesc());
@@ -8875,7 +8877,7 @@ public class Server implements Runnable {
             hits -= damage;
             HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit
                     .getSideTable());
-            hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             r = new Report(4135);
             r.subject = ae.getId();
             r.add(te.getLocationAbbr(hit));
@@ -9114,7 +9116,7 @@ public class Server implements Runnable {
 
         HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable());
-        hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
         r = new Report(4045);
         r.subject = ae.getId();
         r.add(toHit.getTableDesc());
@@ -9852,7 +9854,7 @@ public class Server implements Runnable {
             int toAttacker = ChargeAttackAction.getDamageTakenBy(ae, bldg);
             HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ae
                     .sideTable(target.getPosition()));
-            hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             addReport(damageEntity(ae, hit, toAttacker, false, DamageType.NONE,
                     false, false, throughFront));
             addNewLines();
@@ -9932,7 +9934,7 @@ public class Server implements Runnable {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(toHit.getHitTable(), ae
                     .sideTable(te.getPosition()));
-            hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             if (spikes[hit.getLocation()] == 1) {
                 r = new Report(4335);
                 r.indent(2);
@@ -9992,7 +9994,7 @@ public class Server implements Runnable {
             } else {
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit
                         .getSideTable());
-                hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                 if (spikes[hit.getLocation()] == 1) {
                     r = new Report(4330);
                     r.indent(2);
@@ -10273,7 +10275,7 @@ public class Server implements Runnable {
                 int cluster = Math.min(5, damage);
                 HitData hit = te.rollHitLocation(toHit.getHitTable(), toHit
                         .getSideTable());
-                hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                 if (spikes[hit.getLocation()] == 1) {
                     r = new Report(4330);
                     r.indent(2);
@@ -10340,7 +10342,7 @@ public class Server implements Runnable {
             int cluster = Math.min(5, damageTaken);
             HitData hit = ae.rollHitLocation(ToHitData.HIT_KICK,
                     ToHitData.SIDE_FRONT);
-            hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+            hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             addReport(damageEntity(ae, hit, cluster));
             damageTaken -= cluster;
         }
@@ -12131,7 +12133,7 @@ public class Server implements Runnable {
                     }
 
                 } else if (reflectiveArmor
-                        && hit.getDamageType() == HitData.DAMAGE_PHYSICAL) {
+                        && hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) {
                     tmpDamageHold = damage;
                     damage *= 2;
                     r = new Report(6066);
@@ -12141,7 +12143,7 @@ public class Server implements Runnable {
                     r.add(damage);
                     vDesc.addElement(r);
                 } else if (reflectiveArmor
-                        && hit.getDamageType() == HitData.DAMAGE_ENERGY) {
+                        && hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY) {
                     vDesc.addElement(r);
                     tmpDamageHold = damage;
                     damage /= 2;
@@ -12152,7 +12154,7 @@ public class Server implements Runnable {
                     r.add(damage);
                     damage += tmpDamageHold % 2;
                 } else if (reactiveArmor
-                        && hit.getDamageType() == HitData.DAMAGE_MISSLE) {
+                        && hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE) {
                     r = new Report(6068);
                     r.subject = te_n;
                     r.indent(2);
@@ -12188,7 +12190,7 @@ public class Server implements Runnable {
                     // damage goes on to internal
                     int absorbed = Math.max(te.getArmor(hit), 0);
                     if (reflectiveArmor
-                            && hit.getDamageType() == HitData.DAMAGE_PHYSICAL) {
+                            && hit.getGeneralDamageType() == HitData.DAMAGE_PHYSICAL) {
                         absorbed = (int) Math.round(Math.ceil(absorbed / 2));
                         damage = tmpDamageHold;
                         tmpDamageHold = 0;
@@ -12216,6 +12218,60 @@ public class Server implements Runnable {
 
                         if (te.getTransferLocation(hit).getLocation() == Entity.LOC_DESTROYED) {
                             vDesc.addAll(destroyEntity(te, "damage", false));
+                        }
+                    }
+                }
+                
+                // Support Vees gets crits, depending on damage and BAR rating
+                if (te instanceof SupportTank || te instanceof SupportVTOL) {
+                    if (te instanceof SupportTank) {
+                        SupportTank ste = (SupportTank)te;
+                        if (damage > ste.getBARRating()) {
+                            if (hit.getSpecCritMod() < 0) {
+                                //this is from AP rounds, auto crit
+                                if (ste.getBARRating() < 10) {
+                                    //crit roll with +2 mod
+                                    criticalTank(ste, hit.getLocation(),
+                                            2 + hit.getSpecCritMod());
+                                } else {
+                                    criticalTank(ste, hit.getLocation(),
+                                            0 + hit.getSpecCritMod());
+                                }
+                            }
+                            if (ste.hasArmoredChassisAndControl()) {
+                                if (ste.getBARRating() < 10) {
+                                    //crit roll with -1 mod
+                                    criticalTank(ste, hit.getLocation(), 1);
+                                }
+                                // else no crit
+                            } else {
+                                criticalTank(ste, hit.getLocation(), 0);
+                            }
+                        }
+                    }
+                    else {
+                        SupportVTOL ste = (SupportVTOL)te;
+                        if (damage > ste.getBARRating()) {
+                            if (hit.getSpecCritMod() < 0) {
+                                //this is from AP rounds, auto crit
+                                if (ste.getBARRating() < 10) {
+                                    //crit roll with +2 mod
+                                    criticalTank(ste, hit.getLocation(),
+                                            2 + hit.getSpecCritMod());
+                                } else {
+                                    criticalTank(ste, hit.getLocation(),
+                                            0 + hit.getSpecCritMod());
+                                }
+                            }
+                            if (ste.hasArmoredChassisAndControl()) {
+                                if (ste.getBARRating() < 10) {
+                                    //crit roll with -1 mod
+                                    criticalTank(ste, hit.getLocation(), 1);
+                                }
+                                // else no crit
+                            } else {
+                                criticalTank(ste, hit.getLocation(), 0);
+                            }
                         }
                     }
                 }
@@ -14454,7 +14510,7 @@ public class Server implements Runnable {
             while (damage > 0) {
                 int cluster = Math.min(5, damage);
                 HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL, table);
-                hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                 int ISBefore[] = { en.getInternal(Tank.LOC_FRONT),
                         en.getInternal(Tank.LOC_RIGHT),
                         en.getInternal(Tank.LOC_LEFT),
@@ -14498,7 +14554,7 @@ public class Server implements Runnable {
                 int cluster = Math.min(5, damage);
                 HitData hit = en.rollHitLocation(ToHitData.HIT_NORMAL,
                         impactSide);
-                hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                 int ISBefore[] = { en.getInternal(Tank.LOC_FRONT),
                         en.getInternal(Tank.LOC_RIGHT),
                         en.getInternal(Tank.LOC_LEFT),
@@ -17680,7 +17736,7 @@ public class Server implements Runnable {
                     side = ToHitData.SIDE_REAR;
                 HitData hit = entity
                         .rollHitLocation(ToHitData.HIT_NORMAL, side);
-                hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+                hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                 addReport(damageEntity(entity, hit, damage));
             }
         }
@@ -18054,7 +18110,7 @@ public class Server implements Runnable {
 
                         HitData hit = entity.rollHitLocation(
                                 ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                        hit.setDamageType(HitData.DAMAGE_PHYSICAL);
+                        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                         addReport(damageEntity(entity, hit, next));
                         remaining -= next;
                     }

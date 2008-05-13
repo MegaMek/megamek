@@ -61,6 +61,7 @@ public class ACAPHandler extends AmmoWeaponHandler {
         int nDamage;
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
+        hit.setGeneralDamageType(generalDamageType);
 
         // Each hit in the salvo get's its own hit location.
         r = new Report(3405);

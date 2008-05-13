@@ -67,6 +67,7 @@ public class MiscType extends EquipmentType {
     public static final long F_REFLECTIVE = 0x2000000000L;
     public static final long F_REACTIVE = 0x4000000000L;
     public static final long F_CASEII = 0x8000000000L;
+    public static final long F_LIFTHOIST = 0x10000000000L;
 
     // Secondary Flags for Physical Weapons
     public static final int S_CLUB = 0x00000001; // BMR
@@ -426,6 +427,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createSword());
         EquipmentType.addType(createISPPCCapacitor());
         EquipmentType.addType(createRetractableBlade());
+        EquipmentType.addType(createLiftHoist());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
@@ -1091,6 +1093,21 @@ public class MiscType extends EquipmentType {
         misc.subType |= S_BACKHOE;
         misc.bv = 8;
 
+        return misc;
+    }
+    
+    public static MiscType createLiftHoist() {
+        MiscType misc = new MiscType();
+        
+        misc.techLevel = TechConstants.T_ALLOWED_ALL;
+        misc.name = "Lifthoist";
+        misc.setInternalName(misc.name);
+        misc.tonnage = 3;
+        misc.criticals = 3;
+        misc.cost = 50000;
+        misc.flags |= F_LIFTHOIST;        
+        misc.bv = 0;
+        
         return misc;
     }
 

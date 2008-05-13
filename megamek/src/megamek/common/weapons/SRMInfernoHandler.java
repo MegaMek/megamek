@@ -379,10 +379,6 @@ public class SRMInfernoHandler extends SRMHandler {
                                 || maxtechmissiles, weapon.isHotLoaded());
         }
 
-        if ((target instanceof Mech || target instanceof Tank)
-                && ((Entity) target).getArmorType() == EquipmentType.T_ARMOR_REACTIVE)
-            missilesHit /= 2;
-
         if (missilesHit > 0) {
             r = new Report(3325);
             r.subject = subjectId;

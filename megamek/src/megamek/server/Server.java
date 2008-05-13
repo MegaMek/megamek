@@ -14000,7 +14000,7 @@ public class Server implements Runnable {
                             crash = !t.canGoDown();
                         }
                         if (crash) {
-                            vDesc.addAll(crashVTOLorWiGE((VTOL) t));
+                            vDesc.addAll(crashVTOLorWiGE(t));
                         }
                     }
                     break;
@@ -14019,7 +14019,7 @@ public class Server implements Runnable {
                         t.setOriginalWalkMP(mp - 1);
                     else if (mp == 1) {
                         t.setOriginalWalkMP(0);
-                        vDesc.addAll(crashVTOLorWiGE((VTOL) t));
+                        vDesc.addAll(crashVTOLorWiGE(t));
                     }
                     break;
                 }
@@ -14029,7 +14029,7 @@ public class Server implements Runnable {
                     vDesc.add(r);
                     t.immobilize();
                     t.destroyLocation(VTOL.LOC_ROTOR);
-                    vDesc.addAll(crashVTOLorWiGE((VTOL) t));
+                    vDesc.addAll(crashVTOLorWiGE(t));
                     break;
                 case VTOL.CRIT_FLIGHT_STABILIZER:
                     r = new Report(6665);
@@ -14211,8 +14211,12 @@ public class Server implements Runnable {
                         break;
                     case Mech.SYSTEM_GYRO:
                         if (en.getGyroType() != Mech.GYRO_HEAVY_DUTY) {
-                            if (en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
-                                    Mech.SYSTEM_GYRO, loc) > 1) {
+                            int gyroHits = en.getHitCriticals(CriticalSlot.TYPE_SYSTEM,
+                                    Mech.SYSTEM_GYRO, loc); 
+                            // check for < 3 to make sure only one PSR gets scheduled,
+                            // otherwise the avoid pilot damage to-hit is too high
+                            // pilot value at 3 so we end up at a total of +6
+                            if (gyroHits > 1 && gyroHits < 3) {
                                 // gyro destroyed 
                                 game.addPSR(new PilotingRollData(en.getId(),
                                         TargetRoll.AUTOMATIC_FAIL, 3,
@@ -14226,11 +14230,13 @@ public class Server implements Runnable {
                             int gyroHits = en.getHitCriticals(
                                     CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
                                     loc);
-                            if (gyroHits > 2) {
-
+                            // check for < 4 to make sure only one PSR gets scheduled,
+                            // otherwise the avoid pilot damage to-hit is too high
+                            // pilot value at 3 so we end up at a total of +6
+                            if (gyroHits > 2 && gyroHits < 4) {
                                 // gyro destroyed
                                 game.addPSR(new PilotingRollData(en.getId(),
-                                        TargetRoll.AUTOMATIC_FAIL, 3,
+                                        TargetRoll.AUTOMATIC_FAIL, 1,
                                         "gyro destroyed"));
                             } else if (gyroHits == 1) {
                                 // first gyro hit
@@ -14773,13 +14779,9 @@ public class Server implements Runnable {
                             hex.addTerrain(Terrains.getTerrainFactory()
                                     .createTerrain(Terrains.ARMS, 1));
                         } else {
-                            hex
-                                    .addTerrain(Terrains
-                                            .getTerrainFactory()
-                                            .createTerrain(
-                                                    Terrains.ARMS,
-                                                    hex
-                                                            .terrainLevel(Terrains.ARMS) + 1));
+                            hex.addTerrain(Terrains.getTerrainFactory()
+                                    .createTerrain(Terrains.ARMS,
+                                            hex.terrainLevel(Terrains.ARMS) + 1));
                         }
                     }
                     sendChangedHex(en.getPosition());

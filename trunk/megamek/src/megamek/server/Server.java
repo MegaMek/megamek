@@ -3195,7 +3195,6 @@ public class Server implements Runnable {
             if (entity.getMovementMode() == IEntityMovementMode.VTOL) {
                 nextAltitude = Math.max(nextAltitude, curAltitude);
             } else {
-
                 // Is there a building to "catch" the unit?
                 if (nextHex.containsTerrain(Terrains.BLDG_ELEV)) {
                     // unit will land on the roof, if at a higher level,
@@ -3213,14 +3212,9 @@ public class Server implements Runnable {
                     exitDir = 1 << exitDir;
                     if ((nextHex.getTerrain(Terrains.BRIDGE).getExits() & exitDir) == exitDir) {
                         nextAltitude = Math
-                                .min(
-                                        curAltitude,
-                                        Math
-                                                .max(
-                                                        nextAltitude,
-                                                        nextHex.getElevation()
-                                                                + nextHex
-                                                                        .terrainLevel(Terrains.BRIDGE_ELEV)));
+                                .min(curAltitude, Math.max(nextAltitude,
+                                        nextHex.getElevation()
+                                        + nextHex.terrainLevel(Terrains.BRIDGE_ELEV)));
                     }
                 }
                 if (nextAltitude <= nextHex.surface()
@@ -4577,7 +4571,9 @@ public class Server implements Runnable {
                     r.subject = entity.getId();
                     addReport(r);
                     if (roll == 6) {
+                        entity.setPosition(curPos);
                         addReport(resolveIceBroken(curPos));
+                        curPos = entity.getPosition();
                     }
                 }
                 // or intersecting it
@@ -6425,7 +6421,8 @@ public class Server implements Runnable {
         final IHex destHex = game.getBoard().getHex(dest);
         final int srcHeightAboveFloor = entity.getElevation() + srcHex.depth();
         final int fallElevation = Math.max(0, srcHex.floor()
-                + srcHeightAboveFloor - destHex.floor());
+                + srcHeightAboveFloor - (destHex.containsTerrain(Terrains.ICE) ?
+                        destHex.surface():destHex.floor()));
         int direction;
         if (src.equals(dest))
             direction = Compute.d6() - 1;
@@ -14218,7 +14215,7 @@ public class Server implements Runnable {
                                     Mech.SYSTEM_GYRO, loc) > 1) {
                                 // gyro destroyed 
                                 game.addPSR(new PilotingRollData(en.getId(),
-                                        TargetRoll.AUTOMATIC_FAIL, 6,
+                                        TargetRoll.AUTOMATIC_FAIL, 3,
                                         "gyro destroyed"));
                             } else {
                                 // first gyro hit

@@ -19,6 +19,7 @@ v0.33.25-dev (SVN)
 + Bug: Report MaxTech weight class modifier for kick/push PSRs in phasereport
 + Bug 1949414: Noncritical rotor hits cause critical damage
 + Bug: When falling onto ice, fall elevation was calculated wrong
++ Bug 1961233: PSR for pilot damage counts gyro hits multiple times
 
 v0.33.24 (2008-05-09, 22:36 GMT+2)
 + TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for

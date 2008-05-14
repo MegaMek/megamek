@@ -24,6 +24,7 @@ import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IEntityMovementMode;
 import megamek.common.Mounted;
+import megamek.common.SupportTank;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.VTOL;
@@ -181,7 +182,7 @@ public class TestTank extends TestEntity {
     }
 
     public boolean correctEntity(StringBuffer buff, boolean ignoreAmmo) {
-        if (tank instanceof VTOL) {
+        if (tank instanceof VTOL || tank instanceof SupportTank) {
             return true;
         } // don't bother checking, won't work. Needs fixing (new class
             // needed.)

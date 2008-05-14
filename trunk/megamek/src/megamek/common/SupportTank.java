@@ -23,7 +23,6 @@ import java.io.Serializable;
 public class SupportTank extends Tank implements Serializable {
 
     private int barRating;
-    private boolean armoredChassisAndControl;
     
     public void setBARRating(int rating) {
         barRating = rating;
@@ -33,11 +32,66 @@ public class SupportTank extends Tank implements Serializable {
         return barRating;
     }
 
-    public boolean hasArmoredChassisAndControl() {
-        return armoredChassisAndControl;
+    public boolean hasArmoredChassis() {
+        for (Mounted misc : miscList) {
+            if (misc.getType().hasFlag(MiscType.F_ARMORED_CHASSIS)) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void setArmoredChassisAndControl(boolean armoredChassisAndControl) {
-        this.armoredChassisAndControl = armoredChassisAndControl;
+    /**
+     * Tanks have all sorts of prohibited terrain.
+     */
+    public boolean isHexProhibited(IHex hex) {
+        if (hex.containsTerrain(Terrains.IMPASSABLE))
+            return true;
+        switch (movementMode) {
+            case IEntityMovementMode.TRACKED:
+                return hex.terrainLevel(Terrains.WOODS) > 1
+                        || (hex.terrainLevel(Terrains.WATER) > 0
+                                && !hex.containsTerrain(Terrains.ICE)
+                                && !hasEnvironmentalSealing())
+                        || hex.containsTerrain(Terrains.JUNGLE)
+                        || hex.terrainLevel(Terrains.MAGMA) > 1;
+            case IEntityMovementMode.WHEELED:
+                return hex.containsTerrain(Terrains.WOODS)
+                        || hex.containsTerrain(Terrains.ROUGH)
+                        || (hex.terrainLevel(Terrains.WATER) > 0
+                                && !hex.containsTerrain(Terrains.ICE)
+                                && !hasEnvironmentalSealing())
+                        || hex.containsTerrain(Terrains.RUBBLE)
+                        || hex.containsTerrain(Terrains.MAGMA)
+                        || hex.containsTerrain(Terrains.JUNGLE)
+                        || hex.containsTerrain(Terrains.SNOW)
+                        || hex.terrainLevel(Terrains.GEYSER) == 2;
+            case IEntityMovementMode.HOVER:
+                return hex.containsTerrain(Terrains.WOODS)
+                        || hex.containsTerrain(Terrains.JUNGLE)
+                        || hex.terrainLevel(Terrains.MAGMA) > 1;
+            case IEntityMovementMode.NAVAL:
+            case IEntityMovementMode.HYDROFOIL:
+                return (hex.terrainLevel(Terrains.WATER) <= 0)
+                        || hex.containsTerrain(Terrains.ICE);
+            case IEntityMovementMode.SUBMARINE:
+                return (hex.terrainLevel(Terrains.WATER) <= 0);
+            case IEntityMovementMode.WIGE:
+                return (hex.containsTerrain(Terrains.WOODS)
+                        || hex.containsTerrain(Terrains.BUILDING));
+            default:
+                return false;
+        }
     }
+    
+    public boolean hasEnvironmentalSealing() {
+        for (Mounted misc : miscList) {
+            if (misc.getType().hasFlag(MiscType.F_ENVIRONMENTAL_SEALING)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    
 }

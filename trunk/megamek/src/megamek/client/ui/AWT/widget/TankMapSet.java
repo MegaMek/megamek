@@ -131,8 +131,10 @@ public class TankMapSet implements DisplayMapSet {
         }
         if (t instanceof SupportTank)
             vLabels[12].setValue(String.valueOf(((SupportTank)t).getBARRating()));
-        else
+        else {
             labels[12].setVisible(false);
+            vLabels[12].setVisible(false);
+        }
 
     }
 

@@ -30,25 +30,26 @@ import java.util.Vector;
 import megamek.common.Engine;
 import megamek.common.Entity;
 import megamek.common.Mounted;
-import megamek.common.SupportTank;
+import megamek.common.LargeSupportTank;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.TroopSpace;
+import megamek.common.VTOL;
 import megamek.common.util.BuildingBlock;
 
-public class BLKSupportTankFile extends BLKFile implements IMechLoader {
+public class BLKLargeSupportTankFile extends BLKFile implements IMechLoader {
     
     protected static final String[] MOVES = { "", "", "", "Tracked", "Wheeled",
         "Hover", "", "Naval", "Hydrofoil", "Submarine", "", "", "", "", "",
         "WIGE"};
 
-    public BLKSupportTankFile(BuildingBlock bb) {
+    public BLKLargeSupportTankFile(BuildingBlock bb) {
         dataFile = bb;
     }
 
     public Entity getEntity() throws EntityLoadingException {
 
-        SupportTank t = new SupportTank();
+        LargeSupportTank t = new LargeSupportTank();
         
         if (!dataFile.exists("barrating"))
             throw new EntityLoadingException("Could not find barrating block.");
@@ -164,11 +165,11 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
 
         int[] armor = dataFile.getDataAsInt("armor");
 
-        if (armor.length < 4 || armor.length > 5) {
+        if (armor.length < 6 || armor.length > 7) {
             throw new EntityLoadingException("Incorrect armor array length");
         }
 
-        t.setHasNoTurret(armor.length == 4);
+        t.setHasNoTurret(armor.length == 6);
 
         // add the body to the armor array
         int[] fullArmor = new int[armor.length + 1];
@@ -180,10 +181,12 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
 
         t.autoSetInternal();
 
-        loadEquipment(t, "Front", Tank.LOC_FRONT);
-        loadEquipment(t, "Right", Tank.LOC_RIGHT);
-        loadEquipment(t, "Left", Tank.LOC_LEFT);
-        loadEquipment(t, "Rear", Tank.LOC_REAR);
+        loadEquipment(t, "Front", LargeSupportTank.LOC_FRONT);
+        loadEquipment(t, "Front Right", LargeSupportTank.LOC_FRONTRIGHT);
+        loadEquipment(t, "Front Left", LargeSupportTank.LOC_FRONTLEFT);
+        loadEquipment(t, "Rear Right", LargeSupportTank.LOC_REARRIGHT);
+        loadEquipment(t, "Rear Left", LargeSupportTank.LOC_REARLEFT);
+        loadEquipment(t, "Rear", LargeSupportTank.LOC_REAR);
         if (!t.hasNoTurret()) {
             loadEquipment(t, "Turret", Tank.LOC_TURRET);
         }
@@ -195,10 +198,10 @@ public class BLKSupportTankFile extends BLKFile implements IMechLoader {
         return t;
     }
 
-    public static void encode(String fileName, SupportTank t) {
+    public static void encode(String fileName, LargeSupportTank t) {
         BuildingBlock blk = new BuildingBlock();
         blk.createNewBlock();
-        blk.writeBlockData("UnitType", "SupportTank");
+        blk.writeBlockData("UnitType", "LargeSupportTank");
         blk.writeBlockData("blockversion", 1);
         blk.writeBlockData("Name", t.getChassis());
         blk.writeBlockData("Model", t.getModel());

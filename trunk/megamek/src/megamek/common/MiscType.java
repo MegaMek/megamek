@@ -68,6 +68,9 @@ public class MiscType extends EquipmentType {
     public static final long F_REACTIVE = 0x4000000000L;
     public static final long F_CASEII = 0x8000000000L;
     public static final long F_LIFTHOIST = 0x10000000000L;
+    public static final long F_ENVIRONMENTAL_SEALING = 0x20000000000L;
+    public static final long F_ARMORED_CHASSIS = 0x40000000000L;
+    public static final long F_TRACTOR_MODIFICATION = 0x80000000000L;    
 
     // Secondary Flags for Physical Weapons
     public static final int S_CLUB = 0x00000001; // BMR
@@ -427,7 +430,6 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createSword());
         EquipmentType.addType(createISPPCCapacitor());
         EquipmentType.addType(createRetractableBlade());
-        EquipmentType.addType(createLiftHoist());
 
         // Start of level 3 stuff
         EquipmentType.addType(createImprovedJumpJet());
@@ -511,6 +513,12 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createBASearchlight());
         EquipmentType.addType(createISImprovedSensors());
         EquipmentType.addType(createCLImprovedSensors());
+        
+        //support vee stuff
+        EquipmentType.addType(createLiftHoist());
+        EquipmentType.addType(createEnvironmentalSealing());
+        EquipmentType.addType(createTractorModification());
+        EquipmentType.addType(createArmoredChassis());
     }
 
     public static MiscType createHeatSink() {
@@ -567,6 +575,20 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
         misc.flags |= F_JUMP_JET;
+        misc.bv = 0;
+
+        return misc;
+    }
+    
+    public static MiscType createTractorModification() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Tractor Modification";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags |= F_TRACTOR_MODIFICATION;
         misc.bv = 0;
 
         return misc;
@@ -1156,6 +1178,20 @@ public class MiscType extends EquipmentType {
         misc.flags |= F_CLUB;
         misc.subType |= S_CHAINSAW;
         misc.bv = 7;
+
+        return misc;
+    }
+    
+    public static MiscType createArmoredChassis() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Armored Chassis";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags |= F_ARMORED_CHASSIS;
+        misc.bv = 0;
 
         return misc;
     }
@@ -1927,6 +1963,20 @@ public class MiscType extends EquipmentType {
         misc.criticals = 0;
         misc.cost = 0;
         misc.flags |= F_VACUUM_PROTECTION;
+        misc.bv = 0;
+
+        return misc;
+    }
+    
+    public static MiscType createEnvironmentalSealing() {
+        MiscType misc = new MiscType();
+
+        misc.name = "Environmental Sealing";
+        misc.setInternalName(misc.name);
+        misc.tonnage = TONNAGE_VARIABLE;
+        misc.criticals = 0;
+        misc.cost = 0;
+        misc.flags |= F_VACUUM_PROTECTION | F_ENVIRONMENTAL_SEALING;
         misc.bv = 0;
 
         return misc;

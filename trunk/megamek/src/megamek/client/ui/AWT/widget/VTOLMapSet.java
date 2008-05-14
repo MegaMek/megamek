@@ -180,8 +180,10 @@ public class VTOLMapSet implements DisplayMapSet {
         }
         if (t instanceof SupportVTOL)
             vLabels[16].setValue(String.valueOf(((SupportVTOL)t).getBARRating()));
-        else
+        else {
+            vLabels[16].setVisible(false);
             labels[22].setVisible(false);
+        }
     }
 
     private void setContent() {

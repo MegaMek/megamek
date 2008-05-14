@@ -27,6 +27,7 @@ v0.33.25-dev (SVN)
 + Bug 1947673: Jumping onto bridges causes PSR
 + More work on Support Vehicles
 + Bug 1891505: Falling Damage Calculated Incorrectly
++ Bug 1963924: WiGE lands mid-turn on sideslip
 
 v0.33.24 (2008-05-09, 22:36 GMT+2)
 + TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for

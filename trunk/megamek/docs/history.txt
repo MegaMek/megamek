@@ -24,6 +24,7 @@ v0.33.25-dev (SVN)
 + Data 1947198: 3058U IS meks and vees
 + Bug 1963577: Reactive armor reporting error
 + Bug: Energy weapons should not be able to hit in blowing sand weather.
++ Bug 1947673: Jumping onto bridges causes PSR
 
 v0.33.24 (2008-05-09, 22:36 GMT+2)
 + TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for

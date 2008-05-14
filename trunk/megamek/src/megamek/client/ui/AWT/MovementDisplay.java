@@ -1203,11 +1203,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if (hex.containsTerrain(Terrains.ICE) && waterLevel > 0) {
                 nagReport.append(Messages
                         .getString("MovementDisplay.IceLanding"));
+            } else if (!(prevStep.climbMode() && hex.containsTerrain(Terrains.BRIDGE))){
+                rollTarget = entity.checkWaterMove(waterLevel);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    nagReport.append(addNag(rollTarget));
+                }
             }
-            rollTarget = entity.checkWaterMove(waterLevel);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                nagReport.append(addNag(rollTarget));
-            }
+            
         }
 
         return nagReport.toString();

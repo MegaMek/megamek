@@ -7648,7 +7648,7 @@ public class Server implements Runnable {
         }
 
         // inferno always ignites
-        // ERATA not if targeting clear hexes for ignition is disabled.
+        // ERRATA not if targeting clear hexes for ignition is disabled.
         if (bInferno && !game.getOptions().booleanOption("no_ignite_clear")) {
             game.getBoard().addInfernoTo(c, InfernoTracker.STANDARD_ROUND, 1);
             nTargetRoll = 0;
@@ -12234,7 +12234,7 @@ public class Server implements Runnable {
                                             0 + hit.getSpecCritMod());
                                 }
                             }
-                            if (ste.hasArmoredChassisAndControl()) {
+                            if (ste.hasArmoredChassis()) {
                                 if (ste.getBARRating() < 10) {
                                     //crit roll with -1 mod
                                     criticalTank(ste, hit.getLocation(), 1);

@@ -15557,10 +15557,14 @@ public class Server implements Runnable {
         int waterDepth = fallHex.terrainLevel(Terrains.WATER);
         int bridgeHeight = fallHex.terrainLevel(Terrains.BRIDGE_ELEV)
                 + fallHex.depth();
+        int buildingHeight = fallHex.terrainLevel(Terrains.BLDG_ELEV);
         int damageHeight = height;
         int newElevation;
 
-        if (height >= bridgeHeight && bridgeHeight >= 0) {
+        if (height >= buildingHeight && buildingHeight >= 0) {
+            damageHeight -= buildingHeight;
+            newElevation = buildingHeight;
+        } else if (height >= bridgeHeight && bridgeHeight >= 0) {
             damageHeight -= bridgeHeight;
             waterDepth = 0;
             newElevation = fallHex.terrainLevel(Terrains.BRIDGE_ELEV);

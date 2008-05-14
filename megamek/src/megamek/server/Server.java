@@ -4985,15 +4985,17 @@ public class Server implements Runnable {
                     // oops!
                     addReport(resolveIceBroken(curPos));
                 }
+            } else if (!(prevStep.climbMode() && curHex.containsTerrain(Terrains.BRIDGE))){
+                rollTarget = entity.checkWaterMove(waterLevel);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    doSkillCheckInPlace(entity, rollTarget);
+                }
+                if (waterLevel > 1) {
+                    // Any swarming infantry will be destroyed.
+                    drownSwarmer(entity, curPos);
+                }
             }
-            rollTarget = entity.checkWaterMove(waterLevel);
-            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-                doSkillCheckInPlace(entity, rollTarget);
-            }
-            if (waterLevel > 1) {
-                // Any swarming infantry will be destroyed.
-                drownSwarmer(entity, curPos);
-            }
+            
 
             // check for building collapse
             Building bldg = game.getBoard().getBuildingAt(curPos);

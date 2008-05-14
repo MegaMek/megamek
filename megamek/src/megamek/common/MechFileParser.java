@@ -31,6 +31,7 @@ import java.util.zip.ZipFile;
 import megamek.common.loaders.BLKBattleArmorFile;
 import megamek.common.loaders.BLKGunEmplacementFile;
 import megamek.common.loaders.BLKInfantryFile;
+import megamek.common.loaders.BLKLargeSupportTankFile;
 import megamek.common.loaders.BLKMechFile;
 import megamek.common.loaders.BLKProtoFile;
 import megamek.common.loaders.BLKSupportTankFile;
@@ -151,6 +152,8 @@ public class MechFileParser {
                     loader = new BLKGunEmplacementFile(bb);
                 } else if (sType.equals("SupportTank")){
                     loader = new BLKSupportTankFile(bb);
+                } else if (sType.equals("LargeSupportTank")){
+                    loader = new BLKLargeSupportTankFile(bb);
                 } else if (sType.equals("SupportVTOL")){
                     loader = new BLKSupportVTOLFile(bb);
                 } else
@@ -350,7 +353,9 @@ public class MechFileParser {
                 } else if (e instanceof Tank) {
                     outFilename += ".blk";
                     if (e instanceof SupportTank)
-                        BLKSupportTankFile.encode(outFilename, (SupportTank)e);
+                        if (e instanceof LargeSupportTank)
+                            BLKLargeSupportTankFile.encode(outFilename, (LargeSupportTank)e);
+                        else BLKSupportTankFile.encode(outFilename, (SupportTank)e);
                     else
                         BLKTankFile.encode(outFilename, (Tank) e);
                 }

@@ -36,6 +36,11 @@ public class LargeSupportTank extends SupportTank implements Serializable {
     public static String[] LOCATION_NAMES = { "Body", "Front", "Front Right",
         "Front Left", "Rear Right", "Rear Left", "Rear", "Turret" };
     
+    
+    public String[] getLocationAbbrs() {
+        return LOCATION_ABBRS;
+    }
+    
     /**
      * Rolls up a hit location
      */
@@ -171,5 +176,12 @@ public class LargeSupportTank extends SupportTank implements Serializable {
         } else {
             return ToHitData.SIDE_FRONT;
         }
+    }
+    
+    /**
+     * Returns the number of locations in the entity
+     */
+    public int locations() {
+        return m_bHasNoTurret ? 7 : 8;
     }
 }

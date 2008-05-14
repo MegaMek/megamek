@@ -4832,37 +4832,6 @@ public class Server implements Runnable {
         if (!sideslipped && !fellDuringMovement) {
             entity.setElevation(curVTOLElevation);
         }
-        if (entity.getMovementMode() == IEntityMovementMode.WIGE
-                && entity.getElevation() > 0) {
-            if (!wigeStartedLanded && distance < 5) {
-                // try to land safely
-                r = new Report(2123);
-                r.addDesc(entity);
-                r.subject = entity.getId();
-                vPhaseReport.add(r);
-                // when no clear or pavement, crash
-                IHex hex = game.getBoard().getHex(curPos);
-                if (!game.getBoard().getHex(curPos).hasPavement()
-                        && game.getBoard().getHex(curPos).terrainsPresent() > 0) {
-                    // crash
-                    r = new Report(2124);
-                    r.addDesc(entity);
-                    r.subject = entity.getId();
-                    vPhaseReport.add(r);
-                    vPhaseReport.addAll(crashVTOLorWiGE((Tank)entity));
-                }
-                else {
-                    entity.setElevation(0);
-                }
-            }
-            else {
-                // we didn't land, so we go to elevation 1
-                // it might have been higher than one due to the extra MPs 
-                // it can spend to stay higher during movement, but should
-                // end up at one
-                entity.setElevation(1);
-            }
-        }
         entity.setClimbMode(md.getFinalClimbMode());
 
         // if we ran with destroyed hip or gyro, we need a psr
@@ -5170,6 +5139,37 @@ public class Server implements Runnable {
             // let everyone know about what just happened
             send(entity.getOwner().getId(), createSpecialReportPacket());
         } else {
+            if (entity.getMovementMode() == IEntityMovementMode.WIGE
+                    && entity.getElevation() > 0) {
+                if (!wigeStartedLanded && entity.delta_distance < 5) {
+                    // try to land safely
+                    r = new Report(2123);
+                    r.addDesc(entity);
+                    r.subject = entity.getId();
+                    vPhaseReport.add(r);
+                    // when no clear or pavement, crash
+                    IHex hex = game.getBoard().getHex(curPos);
+                    if (!game.getBoard().getHex(curPos).hasPavement()
+                            && game.getBoard().getHex(curPos).terrainsPresent() > 0) {
+                        // crash
+                        r = new Report(2124);
+                        r.addDesc(entity);
+                        r.subject = entity.getId();
+                        vPhaseReport.add(r);
+                        vPhaseReport.addAll(crashVTOLorWiGE((Tank)entity));
+                    }
+                    else {
+                        entity.setElevation(0);
+                    }
+                }
+                else {
+                    // we didn't land, so we go to elevation 1
+                    // it might have been higher than one due to the extra MPs 
+                    // it can spend to stay higher during movement, but should
+                    // end up at one
+                    entity.setElevation(1);
+                }
+            }
             entity.setDone(true);
         }
 

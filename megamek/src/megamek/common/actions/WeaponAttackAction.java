@@ -1677,6 +1677,10 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 ae.getPosition() == target.getPosition()) {
             return "WiGE may not attack target in same hex";
         }
+        
+        if (wtype.hasFlag(WeaponType.F_ENERGY) && game.getOptions().booleanOption("blowing_sand")) {
+            return "Energy weapons can't hit in blowing sands";
+        }
 
         return null;
     }

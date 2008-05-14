@@ -12110,14 +12110,13 @@ public class Server implements Runnable {
                 // If the target has hardened armor, we need to adjust damage.
                 if (hardenedArmor) {
                     tmpDamageHold = damage;
-                    damage /= 2;
+                    damage = (int)Math.ceil(((double)damage)/ 2);
                     r = new Report(6069);
                     r.subject = te_n;
                     r.indent(2);
                     r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
-                    damage += tmpDamageHold % 2;
                 } else if (isPlatoon) {
                     // infantry armour works differently
                     int armor = te.getArmor(hit);
@@ -12145,30 +12144,24 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
                 } else if (reflectiveArmor
                         && hit.getGeneralDamageType() == HitData.DAMAGE_ENERGY) {
-                    vDesc.addElement(r);
                     tmpDamageHold = damage;
-                    damage /= 2;
+                    damage = (int)Math.ceil(((double)damage)/ 2);
                     r = new Report(6067);
                     r.subject = te_n;
                     r.indent(2);
                     r.newlines = 0;
                     r.add(damage);
-                    damage += tmpDamageHold % 2;
+                    vDesc.addElement(r);
                 } else if (reactiveArmor
                         && hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE) {
+                    tmpDamageHold = damage;
+                    damage = (int)Math.ceil(((double)damage)/ 2);
                     r = new Report(6068);
                     r.subject = te_n;
                     r.indent(2);
                     r.newlines = 0;
-                    vDesc.addElement(r);
-                    tmpDamageHold = damage;
-                    damage /= 2;
-                    r = new Report(6067);
-                    r.subject = te_n;
-                    r.indent(2);
-                    r.newlines = 0;
                     r.add(damage);
-                    damage += tmpDamageHold % 2;
+                    vDesc.addElement(r);
                 }
 
                 if (te.getArmor(hit) > damage) {

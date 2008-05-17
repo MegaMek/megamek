@@ -28,7 +28,8 @@ public class LargeSupportTank extends SupportTank implements Serializable {
     public static final int LOC_FRONTLEFT = 3;
     public static final int LOC_REARRIGHT = 4;
     public static final int LOC_REARLEFT = 5;
-    public static final int LOC_TURRET = 6;
+    public static final int LOC_REAR = 6;
+    public static final int LOC_TURRET = 7;
     
     protected static String[] LOCATION_ABBRS = { "BD", "FR", "FRRS", "FRLS",
         "RRRS", "RRLS", "RR", "TU" };
@@ -39,6 +40,10 @@ public class LargeSupportTank extends SupportTank implements Serializable {
     
     public String[] getLocationAbbrs() {
         return LOCATION_ABBRS;
+    }
+    
+    public String[] getLocationNames() {
+        return LOCATION_NAMES;
     }
     
     /**

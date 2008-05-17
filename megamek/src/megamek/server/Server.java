@@ -11740,11 +11740,10 @@ public class Server implements Runnable {
                     + te.getArmor(hit.getLocation()), damage);
         }
 
-        if (te != null
-                && te.getArmor(hit) > 0
+        if (te.getArmor(hit) > 0
                 && (te.getArmorType() == EquipmentType.T_ARMOR_FERRO_FIBROUS
-                        || te.getArmorType() == EquipmentType.T_ARMOR_LIGHT_FERRO || te
-                        .getArmorType() == EquipmentType.T_ARMOR_HEAVY_FERRO)) {
+                    || te.getArmorType() == EquipmentType.T_ARMOR_LIGHT_FERRO
+                    || te.getArmorType() == EquipmentType.T_ARMOR_HEAVY_FERRO)) {
             isFerroFibrousTarget = true;
         }
 
@@ -11787,40 +11786,29 @@ public class Server implements Runnable {
         // to not add another parameter.
         switch (bFrag) {
             case FRAGMENTATION:
-                if (te != null) {
-                    if (!isPlatoon) {
-                        damage = 0;
-                        r = new Report(6050);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    } else {
-                        damage *= 2;
-                        r = new Report(6045);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    }
+                if (!isPlatoon) {
+                    damage = 0;
+                    r = new Report(6050);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
                 }
                 break;
             case FLECHETTE:
-                if (te != null) {
-                    if (!isPlatoon && !isBattleArmor) {
-                        damage /= 2;
-                        r = new Report(6060);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    } else if (isPlatoon && !isBattleArmor) {
-                        r = new Report(6055);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-                    }
+                if (!isPlatoon && !isBattleArmor) {
+                    damage /= 2;
+                    r = new Report(6060);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
+                } else if (isPlatoon && !isBattleArmor) {
+                    r = new Report(6055);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
                 }
                 break;
             case ACID:
@@ -11832,7 +11820,7 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
-                } else if (te != null) {
+                } else {
                     r = new Report(6062);
                     r.subject = te_n;
                     r.indent(2);
@@ -11862,8 +11850,7 @@ public class Server implements Runnable {
                     vDesc.addElement(r);
                 }
             case ANTI_TSM:
-                if (te != null)
-                    te.hitThisRoundByAntiTSM = true;
+                te.hitThisRoundByAntiTSM = true;
             default:
                 // We can ignore this.
                 break;
@@ -11930,7 +11917,6 @@ public class Server implements Runnable {
                         specCrits = 0;
                         isHeadHit = false;
                     }
-
                 }
             }
 

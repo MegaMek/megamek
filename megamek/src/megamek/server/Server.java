@@ -12384,6 +12384,10 @@ public class Server implements Runnable {
                         r.add(te.getInternal(hit));
                         vDesc.addElement(r);
                     } else if (damage > 0) {
+                        // Triggers a critical hit on Vehicles and Mechs.
+                        if (!isPlatoon && !isBattleArmor) {
+                            crits++;
+                        }
                         // damage transfers, maybe
                         int absorbed = Math.max(te.getInternal(hit), 0);
 
@@ -12443,24 +12447,16 @@ public class Server implements Runnable {
                                     h.addTerrain(Terrains.getTerrainFactory()
                                             .createTerrain(Terrains.ARMS, 1));
                                 } else
-                                    h
-                                            .addTerrain(Terrains
-                                                    .getTerrainFactory()
-                                                    .createTerrain(
-                                                            Terrains.ARMS,
-                                                            h
-                                                                    .terrainLevel(Terrains.ARMS) + 1));
+                                    h.addTerrain(Terrains.getTerrainFactory()
+                                            .createTerrain(Terrains.ARMS,
+                                              h.terrainLevel(Terrains.ARMS) + 1));
                             } else if (!h.containsTerrain(Terrains.LEGS)) {
                                 h.addTerrain(Terrains.getTerrainFactory()
                                         .createTerrain(Terrains.LEGS, 1));
                             } else
-                                h
-                                        .addTerrain(Terrains
-                                                .getTerrainFactory()
-                                                .createTerrain(
-                                                        Terrains.LEGS,
-                                                        h
-                                                                .terrainLevel(Terrains.LEGS) + 1));
+                                h.addTerrain(Terrains.getTerrainFactory()
+                                                .createTerrain(Terrains.LEGS,
+                                                 h.terrainLevel(Terrains.LEGS) + 1));
                             sendChangedHex(te.getPosition());
                         }
 
@@ -12472,9 +12468,8 @@ public class Server implements Runnable {
                             if (null != passenger && !passenger.isDoomed()) {
                                 HitData passHit = passenger
                                         .getTrooperAtLocation(hit, te);
-                                passHit.setEffect(HitData.EFFECT_CRITICAL); // ensures
-                                // a
-                                // kill
+                                // ensures a kill
+                                passHit.setEffect(HitData.EFFECT_CRITICAL); 
                                 if (passenger.getInternal(passHit) > 0) {
                                     vDesc.addAll(damageEntity(passenger,
                                             passHit, damage));
@@ -12483,9 +12478,8 @@ public class Server implements Runnable {
                                         .isRear());
                                 passHit = passenger.getTrooperAtLocation(
                                         passHit, te);
-                                passHit.setEffect(HitData.EFFECT_CRITICAL); // ensures
-                                // a
-                                // kill
+                                // ensures a kill
+                                passHit.setEffect(HitData.EFFECT_CRITICAL);
                                 if (passenger.getInternal(passHit) > 0) {
                                     vDesc.addAll(damageEntity(passenger,
                                             passHit, damage));

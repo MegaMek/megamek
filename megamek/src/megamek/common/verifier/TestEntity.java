@@ -305,6 +305,8 @@ public abstract class TestEntity implements TestEntityOption {
                 && mt.hasSubType(MiscType.S_BACKHOE)) {
             return ceilMaxHalf(5, getWeightCeilingWeapons());
         } else if (mt.hasFlag(MiscType.F_MASC)) {
+            if (mt.hasSubType(MiscType.S_SUPERCHARGER))
+                return ceilMaxHalf(getWeightEngine() / 10.0f, TestEntity.CEIL_HALFTON);
             if (mt.getInternalName().equals("ISMASC"))
                 return Math.round(getWeight() / 20.0f);
             else if (mt.getInternalName().equals("CLMASC"))

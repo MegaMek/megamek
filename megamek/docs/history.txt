@@ -30,6 +30,8 @@ v0.33.25-dev (SVN)
 + Bug 1963924: WiGE lands mid-turn on sideslip
 + Bug: ATM 9 should cause 6 heat
 + Bug 1966165: Fragmentation missiles do too much (!) damage to infantry
++ Bug 1966086: No critical hits on just-destroyed locations
++ Bug 1965864: Supercharger weight not accounted for in verifier
 
 v0.33.24 (2008-05-09, 22:36 GMT+2)
 + TW changed avoid-damage-from-autofall mods to +5 for leg destroyed and +6 for

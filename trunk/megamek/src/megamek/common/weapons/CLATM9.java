@@ -34,7 +34,7 @@ public class CLATM9 extends ATMWeapon {
         this.name = "ATM 9";
         this.setInternalName("CLATM9");
         this.addLookupName("Clan ATM-9");
-        this.heat = 4;
+        this.heat = 6;
         this.rackSize = 9;
         this.minimumRange = 4;
         this.shortRange = 5;

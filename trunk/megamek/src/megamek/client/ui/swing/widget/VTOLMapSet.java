@@ -262,7 +262,7 @@ public class VTOLMapSet implements DisplayMapSet {
         labels[21] = WidgetUtils.createLabel(Messages
                 .getString("VTOLMapSet.RotorIS"), fm, Color.black, 73, 82); //$NON-NLS-1$
         labels[22] = WidgetUtils.createLabel(Messages
-                .getString("VTOLMapSet.BARRating"), fm, Color.white, 65, 200); //$NON-NLS-1$
+                .getString("VTOLMapSet.BARRating"), fm, Color.white, 65, 198); //$NON-NLS-1$
         
 
         // Value labels for all parts of mek

@@ -12302,6 +12302,8 @@ public class Server implements Runnable {
                     if (te.getInternal(hit) > 0) {
                         // Mek takes 1 point of IS damage
                         damage = 1;
+                    } else {
+                        damage = 0;
                     }
 
                     int roll = Compute.d6(2);

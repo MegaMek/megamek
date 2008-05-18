@@ -2394,11 +2394,31 @@ public abstract class Mech extends Entity implements Serializable {
                 if (wtype.hasFlag(WeaponType.F_AMS)) {
                     continue;
                 }
+                // calc MG Array here:
+                if (wtype.hasFlag(WeaponType.F_MGA)) {
+                    double mgaBV = 0;
+                    for (Mounted possibleMG : this.getWeaponList()) {
+                        if (possibleMG.getType().hasFlag(WeaponType.F_MG)
+                                && possibleMG.getLocation() == mounted
+                                        .getLocation()) {
+                            mgaBV += possibleMG.getType().getBV(this);
+                        }
+                    }
+                    dBV = mgaBV * 0.67;
+                }
 
                 // and we'll add the tcomp here too
                 if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE)) {
                     if (hasTargComp)
                         dBV *= 1.25;
+                }
+                // artemis bumps up the value
+                if (mounted.getLinkedBy() != null) {
+                    Mounted mLinker = mounted.getLinkedBy();
+                    if (mLinker.getType() instanceof MiscType
+                            && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
+                        dBV *= 1.2;
+                    }
                 }
 
                 if (mounted.isRearMounted()) {

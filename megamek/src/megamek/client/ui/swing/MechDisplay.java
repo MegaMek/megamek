@@ -53,6 +53,7 @@ import megamek.client.ui.swing.widget.DisplayMapSet;
 import megamek.client.ui.swing.widget.GeneralInfoMapSet;
 import megamek.client.ui.swing.widget.GunEmplacementMapSet;
 import megamek.client.ui.swing.widget.InfantryMapSet;
+import megamek.client.ui.swing.widget.LargeSupportTankMapSet;
 import megamek.client.ui.swing.widget.MechMapSet;
 import megamek.client.ui.swing.widget.MechPanelTabStrip;
 import megamek.client.ui.swing.widget.PMUtil;
@@ -76,6 +77,7 @@ import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
+import megamek.common.LargeSupportTank;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
@@ -299,6 +301,7 @@ public class MechDisplay extends JPanel {
         private QuadMapSet quad;
         private GunEmplacementMapSet gunEmplacement;
         private ArmlessMechMapSet armless;
+        private LargeSupportTankMapSet largeSupportTank;
         private int minTopMargin;
         private int minLeftMargin;
         private int minBottomMargin;
@@ -326,6 +329,7 @@ public class MechDisplay extends JPanel {
             quad = new QuadMapSet(this);
             gunEmplacement = new GunEmplacementMapSet(this);
             armless = new ArmlessMechMapSet(this);
+            largeSupportTank = new LargeSupportTankMapSet(this);
         }
 
         public void onResize() {
@@ -373,6 +377,12 @@ public class MechDisplay extends JPanel {
                 minTopMargin = minVTOLTopMargin;
                 minBottomMargin = minVTOLTopMargin;
                 minRightMargin = minVTOLLeftMargin;
+            } else if (en instanceof LargeSupportTank) {
+                ams = largeSupportTank;
+                minLeftMargin = minTankLeftMargin;
+                minTopMargin = minTankTopMargin;
+                minBottomMargin = minTankTopMargin;
+                minRightMargin = minTankLeftMargin;
             } else if (en instanceof Tank) {
                 ams = tank;
                 minLeftMargin = minTankLeftMargin;

@@ -1485,11 +1485,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Nearby terrain blocks front weapons.";
         }
 
-        // Weapon in arc?
-        if (!Compute.isInArc(game, attackerId, weaponId, target)) {
-            return "Target not in arc.";
-        }
-
         // BA Micro bombs only when flying
         if (atype != null && atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
             if (ae.getElevation() == 0) {
@@ -1568,6 +1563,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // if LOS is blocked, block the shot
         if (losMods.getValue() == TargetRoll.IMPOSSIBLE && !isArtilleryIndirect) {
             return losMods.getDesc();
+        }
+        
+        // Weapon in arc?
+        if (!Compute.isInArc(game, attackerId, weaponId, target)) {
+            return "Target not in arc.";
         }
 
         // Must target infantry in buildings from the inside.

@@ -2,6 +2,7 @@
 ----------------
 v0.33.26-dev (SVN)
 + Bug 1966400: Vehicle CASE/CASE II not working if attack destroys location
++ RFE 1941889: (i)Narc hit locations
 
 v0.33.25 (2008-05-18, 14:42 GMT+2)
 + Bug 1961220: MG array damage vs. infantry too low

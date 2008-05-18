@@ -1,5 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
+v0.33.26-dev (SVN)
+
 v0.33.25 (2008-05-18, 14:42 GMT+2)
 + Bug 1961220: MG array damage vs. infantry too low
 + Bug 1961295: RACs and UACs should still fire for the turn that they jam

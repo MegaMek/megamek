@@ -899,7 +899,6 @@ public class MiscType extends EquipmentType {
         misc.cost = 100000;
         misc.criticals = 1;
         misc.flags |= F_ARTEMIS;
-        misc.bv = 8;
 
         return misc;
     }

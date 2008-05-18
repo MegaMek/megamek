@@ -5,6 +5,7 @@ v0.33.26-dev (SVN)
 + RFE 1941889: (i)Narc hit locations
 + Correct missile ammo for artemis 3058U tanks
 + Bug: BV calculation on heat efficient mechs did not factor in Artemis IV
++ Bug 1966507: Support vehicle BAR not used in game
 
 v0.33.25 (2008-05-18, 14:42 GMT+2)
 + Bug 1961220: MG array damage vs. infantry too low

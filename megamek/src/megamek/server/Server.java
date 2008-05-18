@@ -12272,82 +12272,82 @@ public class Server implements Runnable {
 
             // is there damage remaining?
             if (damage > 0) {
+                
+                // Check for CASE II right away. if so reduce damage to 1
+                // and let it hit the IS.
+                // Also remove as much of the rear armor as allowed by the
+                // damage. If arm/leg/head
+                // Then they lose all their armor if its less then the
+                // explosion damage.
+                if (ammoExplosion && te.hasCASEII(hit.getLocation())) {
+                    te.damageThisPhase += damage;
+                    // 1 point of damage goes to IS
+                    damage--;
+                    // Remaining damage prevented by CASE II
+                    r = new Report(6126);
+                    r.subject = te_n;
+                    r.add(damage);
+                    r.indent(3);
+                    r.newlines = 0;
+                    vDesc.addElement(r);
+                    boolean rearArmor = te.hasRearArmor(hit.getLocation());
+                    if (damage > te.getArmor(hit.getLocation(), rearArmor))
+                        te.setArmor(IArmorState.ARMOR_DESTROYED, hit
+                                .getLocation(), rearArmor);
+                    else
+                        te.setArmor(te.getArmor(hit.getLocation(),
+                                rearArmor)
+                                - damage, hit.getLocation(), rearArmor);
+
+                    // Mek takes 1 point of IS damage
+                    damage = 1;
+
+                    int roll = Compute.d6(2);
+                    r = new Report(6127);
+                    r.subject = te.getId();
+                    r.add(roll);
+                    r.newlines = 0;
+                    vDesc.add(r);
+                    if (roll >= 8)
+                        hit.setEffect(HitData.EFFECT_NO_CRITICALS);
+                }
+                // check for tank CASE here: damage to rear armor, excess
+                // dissipating, and a crew stunned crit
+                if (ammoExplosion && te instanceof Tank && te.locationHasCase(Tank.LOC_BODY)) {
+                    te.damageThisPhase += damage;
+                    r = new Report(6124);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.add(damage);
+                    vDesc.add(r);
+                    if (damage > te.getArmor(Tank.LOC_REAR)) {
+                        te.setArmor(IArmorState.ARMOR_DESTROYED, Tank.LOC_REAR);
+                        r = new Report(6090);
+                    }
+                    else {
+                        te.setArmor(te.getArmor(Tank.LOC_REAR)
+                                - damage, Tank.LOC_REAR);
+                        r = new Report(6085);
+                        r.add(te.getArmor(Tank.LOC_REAR));
+                    }
+                    r.subject = te_n;
+                    r.newlines = 0;
+                    r.indent(2);
+                    vDesc.add(r);
+                    damage = 0;
+                    int critIndex;
+                    if (((Tank)te).isCommanderHit() && ((Tank)te).isDriverHit()) {
+                        critIndex = Tank.CRIT_CREW_KILLED;
+                    }
+                    else critIndex = Tank.CRIT_CREW_STUNNED;
+                    vDesc.addAll(applyCriticalHit(te, Entity.NONE,
+                            new CriticalSlot(0, critIndex),
+                            true));
+                }
 
                 // is there internal structure in the location hit?
                 if (te.getInternal(hit) > 0) {
-
-                    // Check for CASE II right away. if so reduce damage to 1
-                    // and let it hit the IS.
-                    // Also remove as much of the rear armor as allowed by the
-                    // damage. If arm/leg/head
-                    // Then they lose all their armor if its less then the
-                    // explosion damage.
-                    if (ammoExplosion && te.hasCASEII(hit.getLocation())) {
-                        // Remaining damage prevented by CASE II
-                        r = new Report(6126);
-                        r.subject = te_n;
-                        r.add(damage);
-                        r.indent(3);
-                        r.newlines = 0;
-                        vDesc.addElement(r);
-
-                        te.damageThisPhase += damage;
-                        // 1 point of damage goes to IS
-                        damage--;
-                        boolean rearArmor = te.hasRearArmor(hit.getLocation());
-                        if (damage > te.getArmor(hit.getLocation(), rearArmor))
-                            te.setArmor(IArmorState.ARMOR_DESTROYED, hit
-                                    .getLocation(), rearArmor);
-                        else
-                            te.setArmor(te.getArmor(hit.getLocation(),
-                                    rearArmor)
-                                    - damage, hit.getLocation(), rearArmor);
-
-                        // Mek takes 1 point of IS damage
-                        damage = 1;
-
-                        int roll = Compute.d6(2);
-                        r = new Report(6127);
-                        r.subject = te.getId();
-                        r.add(roll);
-                        r.newlines = 0;
-                        vDesc.add(r);
-                        if (roll >= 8)
-                            hit.setEffect(HitData.EFFECT_NO_CRITICALS);
-                    }
-                    // check for tank CASE here: damage to rear armor, excess
-                    // dissipating, and a crew stunned crit
-                    if (ammoExplosion && te instanceof Tank && te.locationHasCase(Tank.LOC_BODY)) {
-                        te.damageThisPhase += damage;
-                        r = new Report(6124);
-                        r.subject = te_n;
-                        r.indent(2);
-                        r.add(damage);
-                        vDesc.add(r);
-                        if (damage > te.getArmor(Tank.LOC_REAR)) {
-                            te.setArmor(IArmorState.ARMOR_DESTROYED, Tank.LOC_REAR);
-                            r = new Report(6090);
-                        }
-                        else {
-                            te.setArmor(te.getArmor(Tank.LOC_REAR)
-                                    - damage, Tank.LOC_REAR);
-                            r = new Report(6085);
-                            r.add(te.getArmor(Tank.LOC_REAR));
-                        }
-                        r.subject = te_n;
-                        r.newlines = 0;
-                        r.indent(2);
-                        vDesc.add(r);
-                        damage = 0;
-                        int critIndex;
-                        if (((Tank)te).isCommanderHit() && ((Tank)te).isDriverHit()) {
-                            critIndex = Tank.CRIT_CREW_KILLED;
-                        }
-                        else critIndex = Tank.CRIT_CREW_STUNNED;
-                        vDesc.addAll(applyCriticalHit(te, Entity.NONE,
-                                new CriticalSlot(0, critIndex),
-                                true));
-                    }
+                    
                     // Now we need to consider alternate structure types!
                     int tmpDamageHold = -1;
                     if (te instanceof Mech

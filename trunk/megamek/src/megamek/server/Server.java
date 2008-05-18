@@ -12094,6 +12094,7 @@ public class Server implements Runnable {
             // is there armor in the location hit?
             if (!ammoExplosion && te.getArmor(hit) > 0 && !damageIS) {
                 int tmpDamageHold = -1;
+                int origDamage = damage;
 
                 // If the target has hardened armor, we need to adjust damage.
                 if (hardenedArmor) {
@@ -12150,9 +12151,9 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
-                }
+                }               
 
-                if (te.getArmor(hit) > damage) {
+                if (te.getArmor(hit) >= damage) {
 
                     // armor absorbs all damage
                     te.setArmor(te.getArmor(hit) - damage, hit);
@@ -12208,51 +12209,63 @@ public class Server implements Runnable {
                 if (te instanceof SupportTank || te instanceof SupportVTOL) {
                     if (te instanceof SupportTank) {
                         SupportTank ste = (SupportTank)te;
-                        if (damage > ste.getBARRating()) {
+                        if (origDamage > ste.getBARRating()) {
                             if (hit.getSpecCritMod() < 0) {
                                 //this is from AP rounds, auto crit
                                 if (ste.getBARRating() < 10) {
                                     //crit roll with +2 mod
-                                    criticalTank(ste, hit.getLocation(),
-                                            2 + hit.getSpecCritMod());
+                                    Report.addNewline(vDesc);
+                                    vDesc.addAll(criticalTank(ste,
+                                            hit.getLocation(),
+                                            2 + hit.getSpecCritMod()));
                                 } else {
-                                    criticalTank(ste, hit.getLocation(),
-                                            0 + hit.getSpecCritMod());
+                                    Report.addNewline(vDesc);
+                                    vDesc.addAll(criticalTank(ste,
+                                            hit.getLocation(),
+                                            0 + hit.getSpecCritMod()));
                                 }
                             }
                             if (ste.hasArmoredChassis()) {
                                 if (ste.getBARRating() < 10) {
+                                    Report.addNewline(vDesc);
                                     //crit roll with -1 mod
-                                    criticalTank(ste, hit.getLocation(), 1);
+                                    vDesc.addAll(criticalTank(ste,
+                                            hit.getLocation(), 1));
                                 }
                                 // else no crit
                             } else {
-                                criticalTank(ste, hit.getLocation(), 0);
+                                Report.addNewline(vDesc);
+                                vDesc.addAll(criticalTank(ste,
+                                        hit.getLocation(), 0));
                             }
                         }
                     }
                     else {
                         SupportVTOL ste = (SupportVTOL)te;
-                        if (damage > ste.getBARRating()) {
+                        if (origDamage > ste.getBARRating()) {
                             if (hit.getSpecCritMod() < 0) {
                                 //this is from AP rounds, auto crit
                                 if (ste.getBARRating() < 10) {
                                     //crit roll with +2 mod
-                                    criticalTank(ste, hit.getLocation(),
-                                            2 + hit.getSpecCritMod());
+                                    vDesc.addAll(criticalTank(ste,
+                                            hit.getLocation(),
+                                            2 + hit.getSpecCritMod()));
                                 } else {
-                                    criticalTank(ste, hit.getLocation(),
-                                            0 + hit.getSpecCritMod());
+                                    vDesc.addAll(criticalTank(ste, 
+                                            hit.getLocation(),
+                                            0 + hit.getSpecCritMod()));
                                 }
                             }
                             if (ste.hasArmoredChassisAndControl()) {
                                 if (ste.getBARRating() < 10) {
                                     //crit roll with -1 mod
-                                    criticalTank(ste, hit.getLocation(), 1);
+                                    vDesc.addAll(criticalTank(ste,
+                                            hit.getLocation(), 1));
                                 }
                                 // else no crit
                             } else {
-                                criticalTank(ste, hit.getLocation(), 0);
+                                vDesc.addAll(criticalTank(ste, 
+                                        hit.getLocation(), 0));
                             }
                         }
                     }

@@ -12299,8 +12299,10 @@ public class Server implements Runnable {
                                 rearArmor)
                                 - damage, hit.getLocation(), rearArmor);
 
-                    // Mek takes 1 point of IS damage
-                    damage = 1;
+                    if (te.getInternal(hit) > 0) {
+                        // Mek takes 1 point of IS damage
+                        damage = 1;
+                    }
 
                     int roll = Compute.d6(2);
                     r = new Report(6127);

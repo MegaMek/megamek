@@ -37,11 +37,16 @@ public class AddBotCommand extends ServerCommand {
             server.sendServerChat(connId, "You must specify a player name.");
             return;
         }
+        String playerName = args[1];
+        for(int i = 2; i < args.length; i++) {
+            playerName = playerName + args[i];
+        }
+        
         Player target = null;
         for (Enumeration<Player> i = server.getGame().getPlayers(); i
                 .hasMoreElements();) {
             Player player = i.nextElement();
-            if (player.getName().equals(args[1])) {
+            if (player.getName().equals(playerName)) {
                 target = player;
             }
         }

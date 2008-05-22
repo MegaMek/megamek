@@ -879,6 +879,8 @@ base -1 "" "" "boring/beige_sinkhole_1.gif"
 base -2 "" "" "boring/beige_sinkhole_2.gif"
 base -3 "" "" "boring/beige_sinkhole_3.gif"
 
+base 0 "space:1" "" "boring/space.gif"
+
 base 0 "woods:1" "" "boring/light_forest_0.gif"
 base 1 "woods:1" "" "boring/light_forest_1.gif"
 base 2 "woods:1" "" "boring/light_forest_2.gif"

@@ -59,6 +59,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
+import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
 import megamek.common.Protomech;
@@ -115,6 +116,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     private Button butOptions;
 
+    private Label labMapType;
     private Label labBoardSize;
     private Label labMapSize;
     private List lisBoardsSelected;
@@ -511,6 +513,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Sets up the board settings panel
      */
     private void setupBoardSettings() {
+        labMapType = new Label(
+                Messages.getString("ChatLounge.labMapType"), Label.CENTER); //$NON-NLS-1$
         labBoardSize = new Label(
                 Messages.getString("ChatLounge.labBoardSize"), Label.CENTER); //$NON-NLS-1$
         labMapSize = new Label(
@@ -536,6 +540,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(labMapType, c);
+        panBoardSettings.add(labMapType);
+        
         gridbag.setConstraints(labBoardSize, c);
         panBoardSettings.add(labBoardSize);
 
@@ -556,6 +563,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     private void refreshBoardSettings() {
+        labMapType.setText(Messages.getString("ChatLounge.MapType") + " " + MapSettings.getMediumName(client.getMapSettings().getMedium()));
         labBoardSize.setText(Messages
                 .getString("ChatLounge.BoardSize", //$NON-NLS-1$
                         new Object[] {
@@ -570,9 +578,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         lisBoardsSelected.removeAll();
         int index = 0;
-        for (Iterator<String> i = client.getMapSettings().getBoardsSelected(); i
-                .hasNext();) {
-            lisBoardsSelected.add((index++) + ": " + i.next()); //$NON-NLS-1$
+        
+        for (Iterator<String> i = client.getMapSettings().getBoardsSelected(); i.hasNext();) {
+            if(client.getMapSettings().getMedium() == MapSettings.MEDIUM_SPACE) {
+              lisBoardsSelected.add((index++) + ": " + Messages.getString("ChatLounge.SPACE")); //$NON-NLS-1$
+              i.next();
+            } else {
+                lisBoardsSelected.add((index++) + ": " + i.next()); //$NON-NLS-1$
+            }
         }
     }
 

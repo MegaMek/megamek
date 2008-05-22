@@ -1711,6 +1711,12 @@ public class Server implements Runnable {
                 if (game.getOptions().booleanOption("vacuum")) {
                     checkForVacuumDeath();
                 }
+                if(game.getBoard().inAtmosphere()) {
+                    checkForAtmosphereDeath();
+                }
+                if(game.getBoard().inSpace()) {
+                    checkForSpaceDeath();
+                }
                 for (DynamicTerrainProcessor tp : terrainProcessors) {
                     tp.DoEndPhaseChanges(vPhaseReport);
                 }
@@ -2307,7 +2313,7 @@ public class Server implements Runnable {
                     isRotated = true;
                 name = name.substring(Board.BOARD_REQUEST_ROTATION.length());
             }
-            if (name.startsWith(MapSettings.BOARD_GENERATED)) {
+            if (name.startsWith(MapSettings.BOARD_GENERATED) || mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
                 sheetBoards[i] = BoardUtilities.generateRandom(mapSettings);
             } else {
                 sheetBoards[i].load(name + ".board");
@@ -2316,7 +2322,7 @@ public class Server implements Runnable {
         }
         IBoard newBoard = BoardUtilities.combine(mapSettings.getBoardWidth(),
                 mapSettings.getBoardHeight(), mapSettings.getMapWidth(),
-                mapSettings.getMapHeight(), sheetBoards);
+                mapSettings.getMapHeight(), sheetBoards, mapSettings.getMedium());
         if (game.getOptions().getOption("bridgeCF").intValue() > 0) {
             newBoard.setBridgeCF(game.getOptions().getOption("bridgeCF")
                     .intValue());
@@ -11138,6 +11144,52 @@ public class Server implements Runnable {
         }
     }
 
+    /**
+     * Check to see if anyone dies due to being in atmosphere.
+     */
+    private void checkForAtmosphereDeath() {
+        Report r;
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            final Entity entity = i.nextElement();
+            if (null == entity.getPosition() || entity.isOffBoard()) {
+                // If it's not on the board - aboard something else, for
+                // example...
+                continue;
+            }
+            if (entity.doomedInAtmosphere()) {
+                r = new Report(6016);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                addReport(r);
+                addReport(destroyEntity(entity,
+                        "being in atmosphere where it can't survive", true, true));
+            }
+        }
+    }
+    
+    /**
+     * Check to see if anyone dies due to being in space.
+     */
+    private void checkForSpaceDeath() {
+        Report r;
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            final Entity entity = i.nextElement();
+            if (null == entity.getPosition() || entity.isOffBoard()) {
+                // If it's not on the board - aboard something else, for
+                // example...
+                continue;
+            }
+            if (entity.doomedInSpace()) {
+                r = new Report(6017);
+                r.subject = entity.getId();
+                r.addDesc(entity);
+                addReport(r);
+                addReport(destroyEntity(entity,
+                        "being in space where it can't survive", true, true));
+            }
+        }
+    }
+    
     /**
      * Checks to see if any entities are underwater with damaged life support.
      * Called during the end phase.

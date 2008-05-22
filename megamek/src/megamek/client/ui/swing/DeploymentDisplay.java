@@ -33,7 +33,9 @@ import javax.swing.JPanel;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.AWT.AlertDialog;
 import megamek.client.ui.AWT.Messages;
+import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -406,6 +408,15 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             ce().setSecondaryFacing(ce().getFacing());
             clientgui.bv.redrawEntity(ce());
             turnMode = false;
+        } else if(ce().isBoardProhibited(client.game.getBoard().getType())) {
+            //check if this type of unit can be on the given type of map
+            AlertDialog dlg = new AlertDialog(clientgui.frame,
+                    Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
+                    Messages
+                            .getString(
+                                    "DeploymentDisplay.wrongMapType", new Object[] { ce().getShortName(), Board.getTypeName(client.game.getBoard().getType()) })); //$NON-NLS-1$
+            dlg.setVisible(true);
+            return;
         } else if (!(client.game.getBoard().isLegalDeployment(moveto,
                 ce().getOwner()) || assaultDropPreference)
                 || ce().isHexProhibited(client.game.getBoard().getHex(moveto))) {

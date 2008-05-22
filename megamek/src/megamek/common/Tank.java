@@ -250,6 +250,10 @@ public class Tank extends Entity implements Serializable {
     public boolean isHexProhibited(IHex hex) {
         if (hex.containsTerrain(Terrains.IMPASSABLE))
             return true;
+        
+        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+            return true;
+        
         switch (movementMode) {
             case IEntityMovementMode.TRACKED:
                 return hex.terrainLevel(Terrains.WOODS) > 1
@@ -1127,7 +1131,19 @@ public class Tank extends Entity implements Serializable {
         }
         return true;
     }
-
+    
+    public boolean doomedOnGround() {
+        return false;
+    }
+    
+    public boolean doomedInAtmosphere() {
+        return true;
+    }
+    
+    public boolean doomedInSpace() {
+        return true;
+    }
+    
     public boolean canGoHullDown() {
         return game.getOptions().booleanOption("hull_down");
     }

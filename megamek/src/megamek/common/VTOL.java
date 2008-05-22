@@ -120,6 +120,10 @@ public class VTOL extends Tank {
     public boolean isHexProhibited(IHex hex) {
         if (hex.containsTerrain(Terrains.IMPASSABLE))
             return true;
+        
+        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+            return true;
+        
         return false;
     }
 
@@ -215,6 +219,14 @@ public class VTOL extends Tank {
     }
 
     public boolean doomedInVacuum() {
+        return true;
+    }
+    
+    public boolean doomedInAtmosphere() {
+        return true;
+    }
+    
+    public boolean doomedInSpace() {
         return true;
     }
 

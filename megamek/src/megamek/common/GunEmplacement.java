@@ -204,6 +204,10 @@ public class GunEmplacement extends Entity implements Serializable {
     }
 
     public boolean isHexProhibited(IHex hex) {
+        
+        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+            return true;
+        
         // can't put on top of an existing building
         return hex.containsTerrain(Terrains.BUILDING);
     }
@@ -602,6 +606,18 @@ public class GunEmplacement extends Entity implements Serializable {
                 return false;
             }
         }
+        return true;
+    }
+    
+    public boolean doomedOnGround() {
+        return false;
+    }
+    
+    public boolean doomedInAtmosphere() {
+        return true;
+    }
+    
+    public boolean doomedInSpace() {
         return true;
     }
 

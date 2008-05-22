@@ -50,11 +50,18 @@ public class MapSettings implements Serializable {
     public static final int MOUNTAIN_SNOWCAPPED = 4;
     public static final int MOUNTAIN_LAKE = 5;
 
+    public static final int MEDIUM_GROUND = 0;
+    public static final int MEDIUM_ATMOSPHERE = 1;
+    public static final int MEDIUM_SPACE = 2;
+    
+    private static final String[] mediumNames = { "Ground", "Atmosphere", "Space" };
+    
     private int boardWidth = 16;
     private int boardHeight = 17;
     private int mapWidth = 1;
     private int mapHeight = 1;
-
+    private int medium = MEDIUM_GROUND;
+    
     private ArrayList<String> boardsSelected = new ArrayList<String>();
     private ArrayList<String> boardsAvailable = new ArrayList<String>();
     private ArrayList<BuildingTemplate> boardBuildings = new ArrayList<BuildingTemplate>();
@@ -1504,6 +1511,18 @@ public class MapSettings implements Serializable {
             mountainHeightMax = Integer.valueOf(param);
         else if (key.equals("MOUNTSTYLE"))
             mountainStyle = Integer.valueOf(param);
+    }
+    
+    public void setMedium(int m) {
+        this.medium = m;
+    }
+    
+    public int getMedium() {
+        return medium;
+    }
+    
+    public static String getMediumName(int m) {
+        return mediumNames[m];
     }
 
     void loadStringParameter(ParsedXML node, String param, String value) {

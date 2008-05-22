@@ -50,6 +50,15 @@ public class Board implements Serializable, IBoard {
     protected int width;
     protected int height;
 
+    //MapType
+    public static final int T_GROUND = 0;
+    public static final int T_ATMOSPHERE = 1;
+    public static final int T_SPACE = 2;
+    
+    private static final String[] typeNames = { "Ground", "Low Atmosphere", "Space" };
+    
+    private int mapType = T_GROUND;
+    
     private IHex[] data;
 
     /** Building data structures. */
@@ -1254,4 +1263,30 @@ public class Board implements Serializable, IBoard {
             Hashtable<Coords, Collection<SpecialHexDisplay>> shd) {
         specialHexes = shd;
     }
+    
+    public void setType(int t) {
+        this.mapType = t;
+    }
+    
+    public int getType() {
+        return mapType;
+    }
+    
+    public static String getTypeName(int t) {
+        return typeNames[t];
+    }
+    
+    //some convenience functions   
+    public boolean onGround() {
+        return (mapType == T_GROUND);
+    }
+    
+    public boolean inAtmosphere() {
+        return (mapType == T_ATMOSPHERE);
+    }
+    
+    public boolean inSpace() {
+        return (mapType == T_SPACE);
+    }
+    
 }

@@ -199,6 +199,9 @@ public class Infantry extends Entity implements Serializable {
             return true;
         if (hex.containsTerrain(Terrains.MAGMA))
             return true;
+        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+            return true;
+        
         if (hex.terrainLevel(Terrains.WOODS) > 0) {
             if (hex.terrainLevel(Terrains.WOODS) > 1 && getMovementMode() == IEntityMovementMode.TRACKED) {
                 return true;                
@@ -743,7 +746,18 @@ public class Infantry extends Entity implements Serializable {
         // FIXME
         return false;
     }
-
+    
+    public boolean doomedOnGround() {
+        return false;
+    }
+    
+    public boolean doomedInAtmosphere() {
+        return true;
+    }
+    
+    public boolean doomedInSpace() {
+        return true;
+    }
     public boolean canAssaultDrop() {
         return game.getOptions().booleanOption("paratroopers");
     }

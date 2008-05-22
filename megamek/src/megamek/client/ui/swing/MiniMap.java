@@ -215,6 +215,7 @@ public class MiniMap extends Canvas {
         m_terrainColors[Terrains.MAGMA] = new Color(200, 0, 0);
         m_terrainColors[Terrains.MUD] = new Color(218, 160, 100);
         m_terrainColors[Terrains.JUNGLE] = new Color(180, 230, 130);
+        m_terrainColors[Terrains.SPACE] = Color.gray;
 
         // now try to read in the config file
         int red;

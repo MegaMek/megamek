@@ -41,7 +41,7 @@ public class BoardUtilities {
      * @param boards an array of the boards to be combined
      */
     public static IBoard combine(int width, int height, int sheetWidth,
-            int sheetHeight, IBoard[] boards) {
+            int sheetHeight, IBoard[] boards, int medium) {
 
         int resultWidth = width * sheetWidth;
         int resultHeight = height * sheetHeight;
@@ -73,6 +73,9 @@ public class BoardUtilities {
         // Initialize all hexes - buildings, exits, etc
         result.newData(resultWidth, resultHeight, resultData);
 
+        //assuming that the map setting and board types match
+        result.setType(medium);
+        
         return result;
     }
 
@@ -114,13 +117,23 @@ public class BoardUtilities {
         int index = 0;
         for (int h = 0; h < mapSettings.getBoardHeight(); h++) {
             for (int w = 0; w < mapSettings.getBoardWidth(); w++) {
-                nb[index++] = new Hex(elevationMap[w][h], "", mapSettings
-                        .getTheme());
+                if(mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
+                    nb[index++] = new Hex(0,"space:1",mapSettings.getTheme());
+                } else {
+                    nb[index++] = new Hex(elevationMap[w][h], "", mapSettings
+                            .getTheme());
+                }
             }
         }
 
         IBoard result = new Board(mapSettings.getBoardWidth(), mapSettings
                 .getBoardHeight(), nb);
+        
+        if(mapSettings.getMedium() == MapSettings.MEDIUM_SPACE) {
+            result.setType(Board.T_SPACE);
+            return result;
+        }
+        
         /* initalize reverseHex */
         HashMap<IHex, Point> reverseHex = new HashMap<IHex, Point>(2
                 * mapSettings.getBoardWidth() * mapSettings.getBoardHeight());

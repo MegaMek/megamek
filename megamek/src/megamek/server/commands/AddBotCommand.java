@@ -39,7 +39,7 @@ public class AddBotCommand extends ServerCommand {
         }
         String playerName = args[1];
         for(int i = 2; i < args.length; i++) {
-            playerName = playerName + args[i];
+            playerName = playerName + " " + args[i];
         }
         
         Player target = null;

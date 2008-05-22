@@ -1460,6 +1460,27 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public boolean isHexProhibited(IHex hex) {
         if (hex.containsTerrain(Terrains.IMPASSABLE))
             return true;
+        
+        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+            return true;
+        
+        return false;
+    }
+    
+    /**
+     * Returns true if the the given board is prohibited
+     */
+    public boolean isBoardProhibited(int mapType) {
+        
+        if(mapType == Board.T_GROUND && doomedOnGround())
+            return true;
+        
+        if(mapType == Board.T_ATMOSPHERE && doomedInAtmosphere()) 
+            return true;
+        
+        if(mapType == Board.T_SPACE && doomedInSpace())
+            return true;
+        
         return false;
     }
 
@@ -6049,6 +6070,12 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public abstract boolean doomedInVacuum();
+    
+    public abstract boolean doomedOnGround();
+    
+    public abstract boolean doomedInAtmosphere();
+    
+    public abstract boolean doomedInSpace();
 
     public double getArmorWeight() {
         // this roundabout method is actually necessary to avoid rounding

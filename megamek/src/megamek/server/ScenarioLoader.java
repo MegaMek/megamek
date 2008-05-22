@@ -38,6 +38,7 @@ import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
+import megamek.common.MapSettings;
 import megamek.common.Mech;
 import megamek.common.MechFileParser;
 import megamek.common.MechSummary;
@@ -710,7 +711,7 @@ public class ScenarioLoader {
         if (ba.length == 1)
             return ba[0];
         // construct the big board
-        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba);
+        return BoardUtilities.combine(mapWidth, mapHeight, nWidth, nHeight, ba, MapSettings.MEDIUM_GROUND);
     }
 
     private Properties loadProperties() throws Exception {

@@ -22,6 +22,7 @@ package megamek.client.ui.AWT;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
+import java.awt.Choice;
 import java.awt.Checkbox;
 import java.awt.Dialog;
 import java.awt.GridBagConstraints;
@@ -59,6 +60,9 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
 
     private RandomMapDialog randomMapDialog;
 
+    private Panel panTypeChooser = new Panel();
+    private Choice typeChooser = new Choice();
+    
     private Panel panMapSize = new Panel();
 
     private Label labBoardSize = new Label(Messages
@@ -103,7 +107,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
     private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
     private Button butPreview = new Button(Messages
             .getString("BoardSelectionDialog.Preview")); //$NON-NLS-1$
-
+    
     Dialog mapPreviewW;
 
     private boolean bDelayedSingleSelect = false;
@@ -119,6 +123,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
 
         randomMapDialog = new RandomMapDialog(client.frame, this, mapSettings);
 
+        setupMapChoice();
         setupMapSize();
         setupSelected();
         setupAvailable();
@@ -136,6 +141,8 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 1;
+        gridbag.setConstraints(panTypeChooser, c);
+        this.add(panTypeChooser);
         gridbag.setConstraints(panMapSize, c);
         this.add(panMapSize);
 
@@ -178,12 +185,36 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
     }
 
     /**
+     * Set up the map chooser panel
+     */
+    private void setupMapChoice() {
+        typeChooser.add(MapSettings.getMediumName(MapSettings.MEDIUM_GROUND));
+        typeChooser.add(MapSettings.getMediumName(MapSettings.MEDIUM_ATMOSPHERE));
+        typeChooser.add(MapSettings.getMediumName(MapSettings.MEDIUM_SPACE));
+        typeChooser.addItemListener(this);
+        refreshMapChoice();
+        
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panTypeChooser.setLayout(gridbag);
+
+        c.insets = new Insets(1, 1, 1, 1);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(typeChooser,c);
+        panTypeChooser.add(typeChooser);
+        
+    }
+    
+    /**
      * Set up the map size panel
      */
     private void setupMapSize() {
         refreshMapSize();
         refreshMapButtons();
-
+              
         scrMapButtons.add(panMapButtons);
 
         // layout
@@ -195,6 +226,10 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         c.fill = GridBagConstraints.HORIZONTAL;
         c.weightx = 1.0;
         c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(typeChooser,c);
+        panMapSize.add(typeChooser);
+        
         c.gridwidth = 1;
         gridbag.setConstraints(labBoardSize, c);
         panMapSize.add(labBoardSize);
@@ -297,6 +332,10 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         panButtons.add(butCancel);
     }
 
+    private void refreshMapChoice() {
+        typeChooser.select(mapSettings.getMedium());
+    }
+    
     private void refreshMapSize() {
         texBoardWidth.setText(new Integer(mapSettings.getBoardWidth())
                 .toString());
@@ -393,7 +432,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
                     Messages.getString("BoardSelectionDialog.InvalidMapSize"), Messages.getString("BoardSelectionDialog.InvalidNumberOfmaps")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
-
+        
         // check settings
         if (boardHeight <= 0 || boardHeight <= 0 || mapWidth <= 0
                 || mapHeight <= 0) {
@@ -404,10 +443,10 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         }
 
         butOkay.setEnabled(false);
-
+        
         mapSettings.setBoardSize(boardWidth, boardHeight);
         mapSettings.setMapSize(mapWidth, mapHeight);
-
+        
         randomMapDialog.setMapSettings(mapSettings);
 
         refreshMapSize();
@@ -466,7 +505,16 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
                             .getString("BoardSelectionDialog.NoBoardOfSelectedSize.title"), Messages.getString("BoardSelectionDialog.NoBoardOfSelectedSize.message")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
             return;
         }
-
+        
+        //change the type - probably not the right place for this but I can't get it to work elsewhere
+        if(typeChooser.getSelectedIndex() == 2) {
+            mapSettings.setMedium(MapSettings.MEDIUM_SPACE);
+        } else if(typeChooser.getSelectedIndex() == 1) {
+            mapSettings.setMedium(MapSettings.MEDIUM_ATMOSPHERE);
+        } else if(typeChooser.getSelectedIndex() == 0) {
+            mapSettings.setMedium(MapSettings.MEDIUM_GROUND);
+        }
+        
         client.getClient().sendMapSettings(mapSettings);
         this.setVisible(false);
         mapPreviewW.setVisible(false);
@@ -542,6 +590,21 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
                 lisBoardsSelected.setMultipleMode(false);
             }
             refreshSelectAllCheck();
+        } else if(itemEvent.getSource() == typeChooser) {
+            //don't disable board selection, in case of null board
+            if(typeChooser.getSelectedIndex() == 2) {
+                //panBoardsSelected.setEnabled(false);
+                //panBoardsAvailable.setEnabled(false);
+                //butChange.setEnabled(false);
+            } else if(typeChooser.getSelectedIndex() == 1) { 
+                //panBoardsSelected.setEnabled(true);
+                //panBoardsAvailable.setEnabled(true);
+                //butChange.setEnabled(true);
+            } else if(typeChooser.getSelectedIndex() == 0){
+                //panBoardsSelected.setEnabled(true);
+                //panBoardsAvailable.setEnabled(true);
+                //butChange.setEnabled(true);
+            }
         }
     }
 

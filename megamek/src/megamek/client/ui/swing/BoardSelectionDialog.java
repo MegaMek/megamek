@@ -21,10 +21,12 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Choice;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -67,6 +69,9 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
 
     private RandomMapDialog randomMapDialog;
 
+    private JPanel panTypeChooser = new JPanel();
+    private Choice typeChooser = new Choice();
+    
     private JPanel panMapSize = new JPanel();
 
     private JLabel labBoardSize = new JLabel(Messages
@@ -125,6 +130,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
 
         randomMapDialog = new RandomMapDialog(client.frame, this, mapSettings);
 
+        setupMapChoice();
         setupMapSize();
         setupSelected();
         setupAvailable();
@@ -142,6 +148,9 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         c.weightx = 1.0;
         c.weighty = 1.0;
         c.gridwidth = 1;
+        gridbag.setConstraints(panTypeChooser, c);
+        getContentPane().add(panTypeChooser);
+        
         gridbag.setConstraints(panMapSize, c);
         getContentPane().add(panMapSize);
 
@@ -182,7 +191,29 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
                 / 2 - getSize().width / 2, client.frame.getLocation().y
                 + client.frame.getSize().height / 2 - getSize().height / 2);
     }
+    
+    /**
+     * Set up the map chooser panel
+     */
+    private void setupMapChoice() {
+        typeChooser.add(MapSettings.getMediumName(MapSettings.MEDIUM_GROUND));
+        typeChooser.add(MapSettings.getMediumName(MapSettings.MEDIUM_ATMOSPHERE));
+        typeChooser.add(MapSettings.getMediumName(MapSettings.MEDIUM_SPACE));
+        refreshMapChoice();
+        
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        panTypeChooser.setLayout(gridbag);
 
+        c.insets = new Insets(1, 1, 1, 1);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(typeChooser,c);
+        panTypeChooser.add(typeChooser);
+        
+    }
     /**
      * Set up the map size panel
      */
@@ -308,6 +339,10 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         panButtons.add(butCancel);
     }
 
+    private void refreshMapChoice() {
+        typeChooser.select(mapSettings.getMedium());
+    }
+    
     private void refreshMapSize() {
         texBoardWidth.setText(Integer.toString(mapSettings.getBoardWidth()));
         texBoardHeight.setText(Integer.toString(mapSettings.getBoardHeight()));
@@ -488,6 +523,15 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
             return;
         }
 
+        //change the type - probably not the right place for this but I can't get it to work elsewhere
+        if(typeChooser.getSelectedIndex() == 2) {
+            mapSettings.setMedium(MapSettings.MEDIUM_SPACE);
+        } else if(typeChooser.getSelectedIndex() == 1) {
+            mapSettings.setMedium(MapSettings.MEDIUM_ATMOSPHERE);
+        } else if(typeChooser.getSelectedIndex() == 0) {
+            mapSettings.setMedium(MapSettings.MEDIUM_GROUND);
+        }
+        
         client.getClient().sendMapSettings(mapSettings);
         setVisible(false);
         mapPreviewW.setVisible(false);

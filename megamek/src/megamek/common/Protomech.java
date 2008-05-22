@@ -1065,7 +1065,19 @@ public class Protomech extends Entity implements Serializable {
     public boolean doomedInVacuum() {
         return false;
     }
-
+    
+    public boolean doomedOnGround() {
+        return false;
+    }
+    
+    public boolean doomedInAtmosphere() {
+        return true;
+    }
+    
+    public boolean doomedInSpace() {
+        return true;
+    }
+    
     public boolean hasActiveEiCockpit() {
         return (super.hasActiveEiCockpit() && (getCritsHit(LOC_HEAD) == 0));
     }

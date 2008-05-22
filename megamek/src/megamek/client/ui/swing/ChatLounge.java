@@ -22,6 +22,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Label;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -67,6 +68,7 @@ import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IStartingPositions;
 import megamek.common.Infantry;
+import megamek.common.MapSettings;
 import megamek.common.MechSummaryCache;
 import megamek.common.Player;
 import megamek.common.Protomech;
@@ -124,6 +126,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     private JButton butOptions;
 
+    private JLabel labMapType;
     private JLabel labBoardSize;
     private JLabel labMapSize;
     private JList lisBoardsSelected;
@@ -506,6 +509,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
      * Sets up the board settings panel
      */
     private void setupBoardSettings() {
+        labMapType = new JLabel(
+                Messages.getString("ChatLounge.labMapType"), SwingConstants.CENTER); //$NON-NLS-1$
         labBoardSize = new JLabel(
                 Messages.getString("ChatLounge.labBoardSize"), SwingConstants.CENTER); //$NON-NLS-1$
         labMapSize = new JLabel(
@@ -531,6 +536,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.weightx = 1.0;
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(labMapType, c);
+        panBoardSettings.add(labMapType);
+        
         gridbag.setConstraints(labBoardSize, c);
         panBoardSettings.add(labBoardSize);
 
@@ -551,6 +559,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     }
 
     private void refreshBoardSettings() {
+        labMapType.setText(Messages.getString("ChatLounge.MapType") + " " + MapSettings.getMediumName(client.getMapSettings().getMedium()));
         labBoardSize.setText(Messages
                 .getString("ChatLounge.BoardSize", //$NON-NLS-1$
                         new Object[] {

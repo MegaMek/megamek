@@ -23,6 +23,7 @@ import megamek.common.AmmoType;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
 import megamek.common.IEntityMovementMode;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.SupportTank;
 import megamek.common.Tank;
@@ -104,6 +105,11 @@ public class TestTank extends TestEntity {
                         || wt.hasFlag(WeaponType.F_PPC)
                         || (wt.hasFlag(WeaponType.F_FLAMER) && wt.getAmmoType() == AmmoType.T_NA))
                     weight += wt.getTonnage(tank);
+                if (m.getLinkedBy() != null && m.getLinkedBy().getType() instanceof
+                        MiscType && m.getLinkedBy().getType().
+                        hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                    weight += ((MiscType)m.getLinkedBy().getType()).getTonnage(tank);
+                }
             }
             return ceil(weight / 10f, getWeightCeilingPowerAmp());
         }
@@ -126,6 +132,11 @@ public class TestTank extends TestEntity {
             WeaponType wt = (WeaponType) m.getType();
             if (wt.hasFlag(WeaponType.F_LASER) || wt.hasFlag(WeaponType.F_PPC))
                 heat += wt.getHeat();
+            if (m.getLinkedBy() != null && m.getLinkedBy().getType() instanceof
+                    MiscType && m.getLinkedBy().getType().
+                    hasFlag(MiscType.F_PPC_CAPACITOR)) {
+                heat += 5;
+            }
         }
         return heat;
     }

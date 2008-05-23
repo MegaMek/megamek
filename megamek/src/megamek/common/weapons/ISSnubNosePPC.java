@@ -56,8 +56,6 @@ public class ISSnubNosePPC extends PPCWeapon {
         this.tonnage = 6.0f;
         this.criticals = 2;
         this.bv = 165;
-        this.setModes(new String[] { "Field Inhibitor ON",
-                "Field Inhibitor OFF" });
         this.cost = 400000;
     }
 

@@ -11,6 +11,7 @@ v0.33.26-dev (SVN)
 + Patch 1967302: Lower Atmosphere, Space Maps (MA integration)
 + Bug 1967351: MGA damage scatters
 + Bug 1966554: SN PPC doesn't need field inhibitors
++ Bug 1966560: Vehicle-mounted PPC capacitors not counted for heat sinks
 
 v0.33.25 (2008-05-18, 14:42 GMT+2)
 + Bug 1961220: MG array damage vs. infantry too low

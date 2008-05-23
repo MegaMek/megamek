@@ -19,13 +19,11 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.HitData;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -41,6 +39,7 @@ public class MGAWeaponHandler extends MGHandler {
      */
     private static final long serialVersionUID = 8675420566952393440L;
     int howManyShots;
+    HitData hit;
 
     /**
      * @param t
@@ -133,7 +132,8 @@ public class MGAWeaponHandler extends MGHandler {
             Vector<Report> vPhaseReport, Building bldg, int hits, int nCluster,
             int nDamPerHit, int bldgAbsorbs) {
         int nDamage;
-        HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
+        if (hit == null)
+            hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                     .getSideTable(), waa.getAimedLocation(), waa
                     .getAimingMode());
         hit.setGeneralDamageType(generalDamageType);

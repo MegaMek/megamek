@@ -4553,6 +4553,7 @@ public class Server implements Runnable {
                     step.getElevation()));
 
             // check for breaking ice by breaking through from below
+            // FIXME: this does not work for first steps
             if (prevHex != null && prevStep != null
                     && prevStep.getElevation() < 0 && step.getElevation() == 0
                     && prevHex.containsTerrain(Terrains.ICE)
@@ -6445,7 +6446,6 @@ public class Server implements Runnable {
         r.addDesc(entity);
         r.add(fallElevation);
         r.add(dest.getBoardNum(), true);
-        r.newlines = 0;
         vPhaseReport.add(r);
 
         // if hex was empty, deal damage and we're done

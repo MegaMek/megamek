@@ -170,6 +170,7 @@ import megamek.server.commands.FixElevationCommand;
 import megamek.server.commands.HelpCommand;
 import megamek.server.commands.KickCommand;
 import megamek.server.commands.LocalSaveGameCommand;
+import megamek.server.commands.NukeCommand;
 import megamek.server.commands.ResetCommand;
 import megamek.server.commands.RollCommand;
 import megamek.server.commands.RulerCommand;
@@ -257,6 +258,8 @@ public class Server implements Runnable {
     // to add the import.
     // private HashSet knownDeadEntities = new HashSet();
     private static EntityVerifier entityVerifier;
+    
+    private ArrayList<int[]> scheduledNukes = new ArrayList<int[]>();
 
     private static Server serverInstance = null;
 
@@ -352,6 +355,7 @@ public class Server implements Runnable {
         registerCommand(new ShowValidTargetsCommand(this));
         registerCommand(new AddBotCommand(this));
         registerCommand(new CheckBVCommand(this));
+        registerCommand(new NukeCommand(this));
 
         // register terrain processors
         terrainProcessors.add(new FireProcessor(this));
@@ -1975,6 +1979,7 @@ public class Server implements Runnable {
                 resolveOnlyWeaponAttacks();
                 assignAMS();
                 handleAttacks();
+                resolveScheduledNukes();
                 applyBuildingDamage();
                 checkFor20Damage();
                 addReport(resolvePilotingRolls());
@@ -13268,6 +13273,39 @@ public class Server implements Runnable {
         if (Compute.d6(2) >= 9)
             return true;
         return false;
+    }
+    
+    /**
+     * add a nuke to be exploded in the next weapons attack phase
+     * @param nuke the nuke paramater
+     *             either 3 or 6 ints
+     *             0 and 1 being X and Y
+     *             when 3 ints: third is nuketype (from HS:3070)
+     *             if 6 ints:
+     *             third is damage
+     *             fourth is degradation
+     *             fifth is secondary radius
+     *             sixth is crater depth
+     */
+    public void addScheduledNuke(int[] nuke) {
+        scheduledNukes.add(nuke);
+    }
+    
+    /**
+     * explode any scheduled nukes
+     */
+    private void resolveScheduledNukes() {
+        for (int[] nuke : scheduledNukes) {
+            if (nuke.length == 3) {
+                doNuclearExplosion(new Coords(nuke[0], nuke[1]), nuke[2], 
+                        vPhaseReport);
+            }
+            if (nuke.length == 6) {
+                doNuclearExplosion(new Coords(nuke[0], nuke[1]), nuke[2],
+                        nuke[3], nuke[4], nuke[5] ,vPhaseReport);
+            }
+        }
+        scheduledNukes.clear();
     }
 
     /**

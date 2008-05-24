@@ -15,6 +15,7 @@ v0.33.26-dev (SVN)
 + Bug 1966712: crash w/ sending artydisplaypacket and player disconnected
 + Bug 1970865: Broken pipe error
 + Bug 1951561: stunned crew making actions they shouldn't be able to
++ Re-added commandline nukes
 
 v0.33.25 (2008-05-18, 14:42 GMT+2)
 + Bug 1961220: MG array damage vs. infantry too low

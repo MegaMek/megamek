@@ -12,6 +12,8 @@ v0.33.26-dev (SVN)
 + Bug 1967351: MGA damage scatters
 + Bug 1966554: SN PPC doesn't need field inhibitors
 + Bug 1966560: Vehicle-mounted PPC capacitors not counted for heat sinks
++ Bug 1966712: crash w/ sending artydisplaypacket and player disconnected
++ Bug 1970865: Broken pipe error
 
 v0.33.25 (2008-05-18, 14:42 GMT+2)
 + Bug 1961220: MG array damage vs. infantry too low

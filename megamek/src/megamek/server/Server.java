@@ -5155,8 +5155,8 @@ public class Server implements Runnable {
                     vPhaseReport.add(r);
                     // when no clear or pavement, crash
                     IHex hex = game.getBoard().getHex(curPos);
-                    if (!game.getBoard().getHex(curPos).hasPavement()
-                            && game.getBoard().getHex(curPos).terrainsPresent() > 0) {
+                    if (!hex.hasPavement()
+                            && hex.terrainsPresent() > 0) {
                         // crash
                         r = new Report(2124);
                         r.addDesc(entity);
@@ -13920,14 +13920,14 @@ public class Server implements Runnable {
                                 if (diceRoll < psr.getValue()) {
                                     r.choose(false);
                                     vDesc.add(r);
-                                    vDesc.addAll(crashVTOLorWiGE((VTOL) t));
+                                    vDesc.addAll(crashVTOLorWiGE(t));
                                 } else {
                                     r.choose(true);
                                     vDesc.add(r);
                                     t.setElevation(elevation);
                                 }
                             } else {
-                                vDesc.addAll(crashVTOLorWiGE((VTOL) t));
+                                vDesc.addAll(crashVTOLorWiGE(t));
                             }
                         }
                     }
@@ -17334,20 +17334,22 @@ public class Server implements Runnable {
         Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable = game.getBoard().getSpecialHexDisplayTable();
         Hashtable<Coords, Collection<SpecialHexDisplay>> shdTable2 = new Hashtable<Coords, Collection<SpecialHexDisplay>>();
         LinkedList<SpecialHexDisplay> tempList = null;
-        final String playerName = getPlayer(toPlayer).getName();
-        
-        for(Coords coord : shdTable.keySet()) {
-            tempList = new LinkedList<SpecialHexDisplay>();
-            for(SpecialHexDisplay shd : shdTable.get(coord)) {
-                if(!shd.isObscured() || shd.isOwner(playerName)) {
-                    tempList.add(0, shd);
+        Player player = getPlayer(toPlayer);
+        if (player != null) {
+            final String playerName = getPlayer(toPlayer).getName();
+            
+            for(Coords coord : shdTable.keySet()) {
+                tempList = new LinkedList<SpecialHexDisplay>();
+                for(SpecialHexDisplay shd : shdTable.get(coord)) {
+                    if(!shd.isObscured() || shd.isOwner(playerName)) {
+                        tempList.add(0, shd);
+                    }
+                }
+                if(!tempList.isEmpty()) {
+                    shdTable2.put(coord, tempList);
                 }
             }
-            if(!tempList.isEmpty()) {
-                shdTable2.put(coord, tempList);
-            }
-        }
-        
+        }        
         return new Packet(Packet.COMMAND_SENDING_SPECIAL_HEX_DISPLAY, shdTable2);
     }
 
@@ -19345,6 +19347,7 @@ public class Server implements Runnable {
             // roll
             final int diceRoll = Compute.d6(2);
             r = new Report(2190);
+            r.subject = entity.getId();
             r.add(rollTarget.getValueAsString());
             r.add(rollTarget.getDesc());
             r.add(diceRoll);
@@ -19538,7 +19541,7 @@ public class Server implements Runnable {
                     r = new Report(6670);
                     r.subject = te.getId();
                     vDesc.add(r);
-                    vDesc.addAll(crashVTOLorWiGE((VTOL) te));
+                    vDesc.addAll(crashVTOLorWiGE(te));
                 }
                 return vDesc;
         }

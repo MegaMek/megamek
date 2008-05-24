@@ -959,7 +959,8 @@ public class Tank extends Entity implements Serializable {
         // Tanks can charge, except Hovers when the option is set, and WIGEs
         return super.canCharge()
                 && !(game.getOptions().booleanOption("no_hover_charge") && IEntityMovementMode.HOVER == getMovementMode())
-                && !(IEntityMovementMode.WIGE == getMovementMode());
+                && !(IEntityMovementMode.WIGE == getMovementMode())
+                && !(getStunnedTurns() > 0);
     }
 
     public boolean canDFA() {

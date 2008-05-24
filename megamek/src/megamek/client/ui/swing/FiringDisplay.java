@@ -1368,18 +1368,21 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 && ce().isUsingSpotlight()
                 && ce().getCrew().isActive()
                 && SearchlightAttackAction.isPossible(client.game, cen, target,
-                        null));
+                        null)
+                && !(((Tank) ce()).getStunnedTurns() > 0));
     }
 
     private void updateClearTurret() {
         setFireClearTurretEnabled(ce() instanceof Tank
-                && ((Tank) ce()).isTurretJammed() && attacks.size() == 0);
+                && ((Tank) ce()).isTurretJammed() && attacks.size() == 0
+                && !(((Tank) ce()).getStunnedTurns() > 0));
     }
 
     private void updateClearWeaponJam() {
         setFireClearWeaponJamEnabled(ce() instanceof Tank
                 && ((Tank) ce()).getJammedWeapons().size() != 0
-                && attacks.size() == 0);
+                && attacks.size() == 0
+                && !(((Tank) ce()).getStunnedTurns() > 0));
     }
 
     private void setFireEnabled(boolean enabled) {

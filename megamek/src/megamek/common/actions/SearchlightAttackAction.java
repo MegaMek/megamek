@@ -24,6 +24,7 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.LosEffects;
 import megamek.common.Report;
+import megamek.common.Tank;
 import megamek.common.Targetable;
 
 /**
@@ -54,6 +55,8 @@ public class SearchlightAttackAction extends AbstractAttackAction {
             Targetable target, SearchlightAttackAction exempt) {
         final Entity attacker = game.getEntity(attackerId);
         if (attacker == null || !attacker.isUsingSpotlight() || target == null)
+            return false;
+        if (attacker instanceof Tank && ((Tank)attacker).getStunnedTurns() > 0)
             return false;
         if (!Compute.isInArc(attacker.getPosition(), attacker
                 .getSecondaryFacing(), target.getPosition(),

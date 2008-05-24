@@ -127,7 +127,9 @@ class DataStreamConnection extends AbstractConnection {
                 out.flush();
         } catch (IOException ioe) {
             ioe.printStackTrace();
-            // ignore since we cant do shit about it
+            // close this connection, because it's broken
+            close();
+
         }
     }
 

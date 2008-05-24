@@ -19387,6 +19387,8 @@ public class Server implements Runnable {
                     canSwipePods = false;
                 }
             }
+            if (((Tank)entity).getStunnedTurns() > 0)
+                canSwipePods = false;
             if (canSwipePods && entity.hasINarcPodsAttached()
                     && entity.getCrew().isActive()) {
                 entity.removeAllINarcPods();

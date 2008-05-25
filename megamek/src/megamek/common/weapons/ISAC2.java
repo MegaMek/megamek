@@ -52,5 +52,10 @@ public class ISAC2 extends ACWeapon {
         this.bv = 37;
         this.cost = 75000;
         this.explosive = true; // when firing incendiary ammo
+        this.shortAV = 2;
+        this.medAV = 2;
+        this.longAV = 2;
+        this.extAV = 2;
+        this.maxRange = RANGE_LONG;
     }
 }

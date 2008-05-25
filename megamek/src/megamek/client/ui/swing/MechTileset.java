@@ -29,15 +29,22 @@ import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.HashMap;
 
+import megamek.common.Aero;
 import megamek.common.BattleArmor;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntityWeightClass;
+import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IEntityMovementMode;
 import megamek.common.Infantry;
+import megamek.common.Jumpship;
 import megamek.common.Mech;
 import megamek.common.Protomech;
+import megamek.common.SmallCraft;
+import megamek.common.SpaceStation;
 import megamek.common.Tank;
+import megamek.common.Warship;
 
 /**
  * MechTileset is a misleading name, as this matches any unit, not just mechs
@@ -67,6 +74,15 @@ public class MechTileset {
     private String PROTO_STRING = "default_proto"; //$NON-NLS-1$
     private String GUN_EMPLACEMENT_STRING = "default_gun_emplacement"; //$NON-NLS-1$
     private String WIGE_STRING = "default_wige"; //$NON-NLS-1$
+    private String AERO_STRING = "default_aero"; //$NON-NLS-1$
+    private String SMALL_CRAFT_AERO_STRING = "default_small_craft_aero"; //$NON-NLS-1$
+    private String SMALL_CRAFT_SPHERE_STRING = "default_small_craft_sphere"; //$NON-NLS-1$
+    private String DROPSHIP_AERO_STRING = "default_dropship_aero"; //$NON-NLS-1$
+    private String DROPSHIP_SPHERE_STRING = "default_dropship_sphere"; //$NON-NLS-1$
+    private String JUMPSHIP_STRING = "default_jumpship"; //$NON-NLS-1$
+    private String WARSHIP_STRING = "default_warship"; //$NON-NLS-1$
+    private String SPACE_STATION_STRING = "default_space_station"; //$NON-NLS-1$
+    private String FIGHTER_SQUADRON_STRING = "default_fighter_squadron"; //$NON-NLS-1$
 
     private MechEntry default_light;
     private MechEntry default_medium;
@@ -88,7 +104,16 @@ public class MechTileset {
     private MechEntry default_proto;
     private MechEntry default_gun_emplacement;
     private MechEntry default_wige;
-
+    private MechEntry default_aero;
+    private MechEntry default_small_craft_aero;
+    private MechEntry default_small_craft_sphere;
+    private MechEntry default_dropship_aero;
+    private MechEntry default_dropship_sphere;
+    private MechEntry default_jumpship;
+    private MechEntry default_warship;
+    private MechEntry default_space_station;
+    private MechEntry default_fighter_squadron;
+    
     private HashMap<String, MechEntry> exact = new HashMap<String, MechEntry>();
     private HashMap<String, MechEntry> chassis = new HashMap<String, MechEntry>();
 
@@ -200,6 +225,39 @@ public class MechTileset {
         if (entity instanceof GunEmplacement) {
             return default_gun_emplacement;
         }
+        
+if (entity instanceof Aero) {
+            
+            if(entity instanceof SpaceStation)
+                return default_space_station;
+            
+            if(entity instanceof Warship)
+                return default_warship;
+                
+            if(entity instanceof Jumpship)
+                return default_jumpship;
+            
+            if(entity instanceof Dropship) {
+                Dropship ds = (Dropship)entity;
+                if(ds.isSpheroid()) 
+                    return default_dropship_sphere;
+                else
+                    return default_dropship_aero;
+            }
+            
+            if(entity instanceof FighterSquadron)
+                return default_fighter_squadron;
+            
+            if(entity instanceof SmallCraft) {
+                SmallCraft sc = (SmallCraft)entity;
+                if(sc.isSpheroid())
+                    return default_small_craft_sphere;
+                else
+                    return default_small_craft_aero;
+            }
+            
+            return default_aero;
+        }
 
         // TODO: better exception?
         throw new IndexOutOfBoundsException("can't find an image for that mech"); //$NON-NLS-1$
@@ -276,6 +334,15 @@ public class MechTileset {
         default_gun_emplacement = exact.get(GUN_EMPLACEMENT_STRING
                 .toUpperCase());
         default_wige = exact.get(WIGE_STRING.toUpperCase());
+        default_aero = exact.get(AERO_STRING.toUpperCase());
+        default_small_craft_aero = exact.get(SMALL_CRAFT_AERO_STRING.toUpperCase());
+        default_dropship_aero = exact.get(DROPSHIP_AERO_STRING.toUpperCase());
+        default_small_craft_sphere = exact.get(SMALL_CRAFT_SPHERE_STRING.toUpperCase());
+        default_dropship_sphere = exact.get(DROPSHIP_SPHERE_STRING.toUpperCase());
+        default_jumpship = exact.get(JUMPSHIP_STRING.toUpperCase());
+        default_warship = exact.get(WARSHIP_STRING.toUpperCase());
+        default_space_station = exact.get(SPACE_STATION_STRING.toUpperCase());
+        default_fighter_squadron = exact.get(FIGHTER_SQUADRON_STRING.toUpperCase());
     }
 
     /**

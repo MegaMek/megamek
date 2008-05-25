@@ -53,6 +53,8 @@ public class CLAPGaussRifle extends GaussWeapon {
         this.criticals = 1;
         this.bv = 21;
         this.cost = 8500;
+        this.shortAV = 3;
+        this.maxRange = RANGE_SHORT;
     }
 
     /*

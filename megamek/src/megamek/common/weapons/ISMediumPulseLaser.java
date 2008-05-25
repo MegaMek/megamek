@@ -53,5 +53,7 @@ public class ISMediumPulseLaser extends PulseLaserWeapon {
         this.criticals = 1;
         this.bv = 48;
         this.cost = 60000;
+        this.shortAV = 6;
+        this.maxRange = RANGE_SHORT;
     }
 }

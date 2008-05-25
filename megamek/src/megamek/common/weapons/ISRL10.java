@@ -45,5 +45,8 @@ public class ISRL10 extends RLWeapon {
         this.criticals = 1;
         this.bv = 18;
         this.cost = 15000;
+        this.shortAV = 6;
+        this.medAV = 6;
+        this.maxRange = RANGE_MED;
     }
 }

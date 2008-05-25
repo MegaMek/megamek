@@ -30,6 +30,8 @@ public abstract class SRMWeapon extends MissileWeapon {
     public SRMWeapon() {
         super();
         this.ammoType = AmmoType.T_SRM;
+        
+        this.atClass = CLASS_SRM;
     }
 
     /*

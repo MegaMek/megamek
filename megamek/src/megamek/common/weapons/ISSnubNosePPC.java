@@ -57,6 +57,9 @@ public class ISSnubNosePPC extends PPCWeapon {
         this.criticals = 2;
         this.bv = 165;
         this.cost = 400000;
+        this.maxRange = RANGE_MED;
+        this.shortAV = 10;
+        this.medAV = 8;
     }
 
     /*

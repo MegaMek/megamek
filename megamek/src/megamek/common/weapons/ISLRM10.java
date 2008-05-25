@@ -47,5 +47,9 @@ public class ISLRM10 extends LRMWeapon {
         this.criticals = 2;
         this.bv = 90;
         this.cost = 100000;
+        this.shortAV = 6;
+        this.medAV = 6;
+        this.longAV = 6;
+        this.maxRange = RANGE_LONG;
     }
 }

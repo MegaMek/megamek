@@ -58,6 +58,9 @@ public class ISHeavyPPC extends PPCWeapon {
         this.tonnage = 10.0f;
         this.criticals = 4;
         this.bv = 317;
+        this.shortAV = 15;
+        this.medAV = 15;
+        this.maxRange = RANGE_MED;
     }
 
     /*

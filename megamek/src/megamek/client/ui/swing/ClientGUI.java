@@ -62,6 +62,7 @@ import javax.swing.filechooser.FileFilter;
 import megamek.client.Client;
 import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewListener;
+import megamek.client.ui.swing.CustomFighterSquadronDialog;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;
@@ -128,6 +129,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
     GameOptionsDialog gameOptionsDialog;
     private MechSelectorDialog mechSelectorDialog;
     private CustomBattleArmorDialog customBADialog;
+    private CustomFighterSquadronDialog customFSDialog;
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
@@ -415,6 +417,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         client.changePhase(IGame.Phase.PHASE_UNKNOWN);
         mechSelectorDialog = new MechSelectorDialog(this, unitLoadingDialog);
         customBADialog = new CustomBattleArmorDialog(this);
+        customFSDialog = new CustomFighterSquadronDialog(this, unitLoadingDialog);
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
@@ -667,6 +670,10 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         return customBADialog;
     }
 
+    public CustomFighterSquadronDialog getCustomFSDialog() {
+        return customFSDialog;
+    }
+    
     public StartingPositionDialog getStartingPositionDialog() {
         if (startingPositionDialog == null) {
             startingPositionDialog = new StartingPositionDialog(this);

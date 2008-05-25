@@ -1191,4 +1191,6 @@ public interface IGame {
     public abstract void createVictoryConditions();
 
     public abstract Victory getVictory();
+    
+    public abstract boolean useVectorMove();
 }

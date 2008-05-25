@@ -48,6 +48,8 @@ public class ISMediumLaser extends LaserWeapon {
         this.tonnage = 1.0f;
         this.criticals = 1;
         this.bv = 46;
-        this.cost = 40000;
+        this.cost = 40000; 
+        this.shortAV = 5;
+        this.maxRange = RANGE_SHORT;
     }
 }

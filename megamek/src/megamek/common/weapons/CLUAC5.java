@@ -49,5 +49,9 @@ public class CLUAC5 extends UACWeapon {
         this.criticals = 3;
         this.bv = 122;
         this.cost = 200000;
+        this.shortAV = 7;
+        this.medAV = 7;
+        this.longAV = 7;
+        this.maxRange = RANGE_LONG;
     }
 }

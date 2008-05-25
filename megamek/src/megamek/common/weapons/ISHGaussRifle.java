@@ -55,6 +55,10 @@ public class ISHGaussRifle extends GaussWeapon {
         this.criticals = 11;
         this.bv = 346;
         this.cost = 500000;
+        this.shortAV = 25;
+        this.medAV = 20;
+        this.longAV = 10;
+        this.maxRange = RANGE_LONG;
     }
 
     /*

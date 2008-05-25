@@ -45,5 +45,8 @@ public class CLATM12 extends ATMWeapon {
         this.criticals = 5;
         this.bv = 212;
         this.cost = 350000;
+        this.shortAV = 20;
+        this.medAV = 20;
+        this.maxRange = RANGE_MED;
     }
 }

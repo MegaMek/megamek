@@ -34,6 +34,8 @@ public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
         super();
         this.flags |= F_PLASMA_MFUK | F_DIRECT_FIRE;
         ammoType = AmmoType.T_NA;
+        
+        this.atClass = CLASS_PLASMA;
     }
 
     /*

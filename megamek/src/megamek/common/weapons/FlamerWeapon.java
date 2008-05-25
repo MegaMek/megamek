@@ -36,6 +36,8 @@ public abstract class FlamerWeapon extends EnergyWeapon {
         this.ammoType = AmmoType.T_NA;
         String modes[] = { "Damage", "Heat" };
         this.setModes(modes);
+        
+        this.atClass = CLASS_POINT_DEFENSE;
     }
 
     protected AttackHandler getCorrectHandler(ToHitData toHit,

@@ -23,8 +23,15 @@ public class EntityWeightClass {
     public static final int WEIGHT_MEDIUM = 1;
     public static final int WEIGHT_HEAVY = 2;
     public static final int WEIGHT_ASSAULT = 3;
+    public static final int WEIGHT_SMALL_CRAFT =4;
+    public static final int WEIGHT_SMALL_DROP = 5;
+    public static final int WEIGHT_MEDIUM_DROP = 6;
+    public static final int WEIGHT_LARGE_DROP = 7;
+    public static final int WEIGHT_SMALL_WAR = 8;
+    public static final int WEIGHT_LARGE_WAR = 9;
+    
 
-    private static int[] weightLimits = { 35, 55, 75, 100 };
+    private static int[] weightLimits = { 35, 55, 75, 100, 200, 2499, 9999, 100000, 749999, 2500000 };
 
     public static final int SIZE = weightLimits.length;
 

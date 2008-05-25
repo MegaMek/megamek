@@ -59,6 +59,9 @@ public class ISPPC extends PPCWeapon {
         this.criticals = 3;
         this.bv = 176;
         this.cost = 200000;
+        this.shortAV = 10;
+        this.medAV = 10;
+        this.maxRange = RANGE_MED;
     }
 
     /*

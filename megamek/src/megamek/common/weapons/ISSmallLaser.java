@@ -50,5 +50,8 @@ public class ISSmallLaser extends LaserWeapon {
         this.flags |= F_NO_FIRES;
         this.bv = 9;
         this.cost = 11250;
+        this.shortAV = 3;
+        this.maxRange = RANGE_SHORT;
+        this.atClass = CLASS_POINT_DEFENSE;
     }
 }

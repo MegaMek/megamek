@@ -46,5 +46,9 @@ public class CLLRM10 extends LRMWeapon {
         this.criticals = 1;
         this.bv = 109;
         this.cost = 100000;
+        this.shortAV = 6;
+        this.medAV = 6;
+        this.longAV = 6;
+        this.maxRange = RANGE_LONG;
     }
 }

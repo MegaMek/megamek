@@ -51,6 +51,10 @@ public class CLERPPC extends PPCWeapon {
         this.criticals = 2;
         this.bv = 412;
         this.cost = 300000;
+        this.shortAV = 15;
+        this.medAV = 15;
+        this.longAV = 15;
+        this.maxRange = RANGE_LONG;
 
     }
 }

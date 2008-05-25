@@ -57,6 +57,9 @@ public class ISSmallPulseLaser extends PulseLaserWeapon {
         this.criticals = 1;
         this.bv = 12;
         this.cost = 16000;
+        this.shortAV = 3;
+        this.maxRange = RANGE_SHORT;
+        this.atClass = CLASS_POINT_DEFENSE;
     }
 
     /*

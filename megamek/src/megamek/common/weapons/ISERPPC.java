@@ -51,5 +51,9 @@ public class ISERPPC extends PPCWeapon {
         this.criticals = 3;
         this.bv = 229;
         this.cost = 300000;
+        this.shortAV = 10;
+        this.medAV = 10;
+        this.longAV = 10;
+        this.maxRange = RANGE_LONG;
     }
 }

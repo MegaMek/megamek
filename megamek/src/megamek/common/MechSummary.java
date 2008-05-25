@@ -81,6 +81,18 @@ public class MechSummary implements Serializable {
             return "ProtoMek";
         } else if (e instanceof GunEmplacement) {
             return "Gun Emplacement";
+        } else if (e instanceof SpaceStation) {
+            return "Space Station";
+        }else if (e instanceof Warship) {
+            return "Warship";
+        } else if (e instanceof Jumpship) {
+            return "Jumpship";
+        } else if (e instanceof Dropship) {
+            return "Dropship";
+        } else if (e instanceof SmallCraft) {
+            return "Small Craft";
+        } else if (e instanceof Aero) {
+            return "Aero";
         } else {
             // Hmm...this is not a good case, should throw excep. instead?
             return "Unknown";

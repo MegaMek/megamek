@@ -16,6 +16,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Button;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -142,6 +143,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     JButton butArmy;
     JButton butSkills;
     JButton butLoadCustomBA;
+    private JButton butLoadCustomFS;
     private JButton butDelete;
     private JButton butCustom;
     private JButton butMechReadout;
@@ -181,6 +183,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             butLoad.setEnabled(true);
             butArmy.setEnabled(true);
             butLoadCustomBA.setEnabled(true);
+            butLoadCustomFS.setEnabled(true);
         }
     };
 
@@ -672,13 +675,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butSkills = new JButton(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
         butLoadCustomBA = new JButton(Messages
                 .getString("ChatLounge.butLoadCustomBA"));
+        butLoadCustomFS = new JButton(Messages.getString("ChatLounge.butLoadCustomFS"));
 
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
         butLoad.setEnabled(mechSummaryCache.isInitialized());
         butArmy.setEnabled(mechSummaryCache.isInitialized());
         butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
-
+        butLoadCustomFS.setEnabled(mechSummaryCache.isInitialized());
+        
         butSkills.setEnabled(true);
 
         Font font = new Font("Sans Serif", Font.BOLD, 18); //$NON-NLS-1$
@@ -689,6 +694,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butSkills.addActionListener(this);
         butLoadCustomBA.setActionCommand("load_custom_ba"); //$NON-NLS-1$
         butLoadCustomBA.addActionListener(this);
+        butLoadCustomFS.setActionCommand("load_custom_fs"); //$NON-NLS-1$
+        butLoadCustomFS.addActionListener(this);
 
         butCustom = new JButton(Messages.getString("ChatLounge.butCustom")); //$NON-NLS-1$
         butCustom.setActionCommand("custom_mech"); //$NON-NLS-1$
@@ -755,22 +762,30 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         gridbag.setConstraints(butDelete, c);
         panEntities.add(butDelete);
 
-        c.gridwidth = 1;
         c.gridy = GridBagConstraints.RELATIVE;
-
+        
+        c.gridwidth = 1;
         gridbag.setConstraints(butArmy, c);
         panEntities.add(butArmy);
 
+        c.gridwidth = 1;
         gridbag.setConstraints(butSkills, c);
         panEntities.add(butSkills);
 
+        c.gridwidth = 1;
         gridbag.setConstraints(butLoadCustomBA, c);
         panEntities.add(butLoadCustomBA);
 
-        // c.gridwidth = 1;
-        // gridbag.setConstraints( lblPlaceholder, c );
-        // panEntities.add( lblPlaceholder );
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(butLoadCustomFS, c);
+        panEntities.add(butLoadCustomFS);
+        
+        c.gridy = GridBagConstraints.RELATIVE;
 
+        c.gridwidth = 1;
+        gridbag.setConstraints(butLoadList, c);
+        panEntities.add(butLoadList);
+        
         c.gridwidth = 1;
         gridbag.setConstraints(butSaveList, c);
         panEntities.add(butSaveList);
@@ -779,7 +794,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         gridbag.setConstraints(butViewGroup, c);
         panEntities.add(butViewGroup);
 
-        c.gridwidth = 1;
+        c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(butDeleteAll, c);
         panEntities.add(butDeleteAll);
     }
@@ -1408,7 +1423,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
         Entity entity = client.game.getEntity(entityCorrespondance[lisEntities
                 .getSelectedIndex()]);
-        MechView mechView = new MechView(entity);
+        MechView mechView = new MechView(entity, client.game.getOptions().booleanOption("show_bay_detail"));
         JTextArea ta = new JTextArea();
         ta.setEditable(false);
         ta.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
@@ -1457,6 +1472,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         clientgui.getCustomBADialog().setVisible(true);
     }
 
+    public void loadCustomFS() {
+        clientgui.getCustomFSDialog().setVisible(true);
+    }
+    
     private void loadArmy() {
         clientgui.getRandomArmyDialog().setVisible(true);
     }
@@ -1623,6 +1642,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             loadRandomSkills();
         } else if (ev.getSource().equals(butLoadCustomBA)) {
             loadCustomBA();
+        } else if (ev.getSource() == butLoadCustomFS) {
+            loadCustomFS();
         } else if (ev.getSource().equals(butCustom)
                 || ev.getSource().equals(lisEntities)) {
             customizeMech();

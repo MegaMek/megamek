@@ -53,5 +53,8 @@ public class CLMediumPulseLaser extends PulseLaserWeapon {
         this.criticals = 1;
         this.bv = 111;
         this.cost = 60000;
+        this.shortAV = 7;
+        this.medAV = 7;
+        this.maxRange = RANGE_MED;
     }
 }

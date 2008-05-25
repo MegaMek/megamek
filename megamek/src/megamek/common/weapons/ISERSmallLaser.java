@@ -52,5 +52,7 @@ public class ISERSmallLaser extends LaserWeapon {
         this.flags |= F_NO_FIRES;
         this.bv = 17;
         this.cost = 11250;
+        this.shortAV = 3;
+        this.maxRange = RANGE_SHORT;
     }
 }

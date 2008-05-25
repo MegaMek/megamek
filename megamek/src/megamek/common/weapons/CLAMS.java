@@ -50,5 +50,7 @@ public class CLAMS extends AmmoWeapon {
         this.setModes(new String[] { "On", "Off" });
         this.setInstantModeSwitch(false);
         this.cost = 100000;
+        
+        this.atClass = CLASS_POINT_DEFENSE;
     }
 }

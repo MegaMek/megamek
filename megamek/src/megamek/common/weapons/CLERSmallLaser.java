@@ -52,5 +52,7 @@ public class CLERSmallLaser extends LaserWeapon {
         this.flags |= F_NO_FIRES;
         this.bv = 31;
         this.cost = 11250;
+        this.shortAV = 5;
+        this.maxRange = RANGE_SHORT;
     }
 }

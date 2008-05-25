@@ -53,5 +53,7 @@ public abstract class LBXACWeapon extends AmmoWeapon {
         super();
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
         this.ammoType = AmmoType.T_AC_LBX;
+        
+        this.atClass = CLASS_LBX_AC;
     }
 }

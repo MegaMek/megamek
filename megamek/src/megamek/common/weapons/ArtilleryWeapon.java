@@ -35,6 +35,8 @@ public abstract class ArtilleryWeapon extends AmmoWeapon {
         super();
         this.flags |= F_ARTILLERY | F_SPLITABLE;
         this.damage = DAMAGE_ARTILLERY;
+        
+        this.atClass = CLASS_ARTILLERY;
     }
 
     /*

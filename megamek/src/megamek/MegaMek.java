@@ -468,7 +468,7 @@ public class MegaMek {
                         EntityVerifier entityVerifier = new EntityVerifier(
                                 new File(
                                         "data/mechfiles/UnitVerifierOptions.xml"));
-                        MechView mechView = new MechView(entity);
+                        MechView mechView = new MechView(entity, false);
                         StringBuffer sb = new StringBuffer(mechView
                                 .getMechReadout());
                         if (entity instanceof Mech || entity instanceof Tank) {

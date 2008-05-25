@@ -25,6 +25,7 @@ import javax.swing.JComponent;
 
 import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.swing.Messages;
+import megamek.common.Aero;
 import megamek.common.Building;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -46,10 +47,10 @@ public class GeneralInfoMapSet implements DisplayMapSet {
     private PMAreasGroup content = new PMAreasGroup();
     private PMSimpleLabel mechTypeL0, mechTypeL1, statusL, playerL, teamL,
             weightL, bvL, pilotL, mpL0, mpL1, mpL2, mpL3, curMoveL, heatL,
-            movementTypeL, ejectL, elevationL, buildingTypeL, buildingHeightL;
+            movementTypeL, ejectL, elevationL, buildingTypeL, buildingHeightL, fuelL;
     private PMSimpleLabel statusR, playerR, teamR, weightR, bvR, pilotR, mpR0,
             mpR1, mpR2, mpR3, curMoveR, heatR, movementTypeR, ejectR,
-            elevationR, buildingTypeR, buildingHeightR;
+            elevationR, buildingTypeR, buildingHeightR, fuelR;
     private PMSimpleLabel[] advantagesR;
     private Vector<BackGroundDrawer> bgDrawers = new Vector<BackGroundDrawer>();
     private static final Font FONT_VALUE = new Font(
@@ -176,6 +177,11 @@ public class GeneralInfoMapSet implements DisplayMapSet {
 
         heatR = createLabel(STAR3, fm, heatL.getSize().width + 10, getYCoord());
         content.addArea(heatR);
+        
+        fuelL = createLabel( Messages.getString("GeneralInfoMapSet.fuelL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
+        content.addArea( fuelL );
+        fuelR = createLabel(STAR3, fm, fuelL.getSize().width + 10, getYCoord());
+        content.addArea( fuelR );
 
         movementTypeL = createLabel(
                 Messages.getString("GeneralInfoMapSet.movementTypeL"), fm, 0, getNewYCoord()); //$NON-NLS-1$
@@ -332,10 +338,14 @@ public class GeneralInfoMapSet implements DisplayMapSet {
         else
             mpR3.setString(Integer.toString(en.getJumpMPWithTerrain()));
 
-        curMoveR
-                .setString(en.getMovementString(en.moved)
-                        + (en.moved == IEntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance)); //$NON-NLS-1$ //$NON-NLS-2$
-
+        if(en instanceof Aero) {
+            Aero a = (Aero)en;
+            curMoveR.setString(Integer.toString(a.getCurrentVelocity()));
+            fuelR.setString(Integer.toString(a.getFuel()));
+        } else {
+            curMoveR.setString(en.getMovementString(en.moved) + (en.moved == IEntityMovementType.MOVE_NONE ? "" : " " + en.delta_distance)); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        
         int heatCap = en.getHeatCapacity();
         int heatCapWater = en.getHeatCapacityWithWater();
         String heatCapacityStr = Integer.toString(heatCap);
@@ -427,6 +437,24 @@ public class GeneralInfoMapSet implements DisplayMapSet {
             buildingTypeR.setVisible(false);
             buildingHeightL.setVisible(false);
             buildingHeightR.setVisible(false);
+        }
+        
+        if (en instanceof Aero) {
+            heatL.setVisible(true);
+            heatR.setVisible(true);
+            mpR3.setVisible(false);
+            mpL3.setVisible(false);
+            curMoveL.setVisible(true);
+            curMoveR.setVisible(true);
+            fuelL.setVisible(true);
+            fuelR.setVisible(true);
+            //TODO: there must be a better way to do this
+            mpL0.setString(Messages.getString("GeneralInfoMapSet.thrust"));
+            mpL1.setString(Messages.getString("GeneralInfoMapSet.safe"));
+            mpL2.setString(Messages.getString("GeneralInfoMapSet.over"));
+        } else {
+            fuelL.setVisible(false);
+            fuelR.setVisible(false);
         }
 
         bvR.setString(Integer.toString(en.calculateBattleValue()));

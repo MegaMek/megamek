@@ -53,5 +53,9 @@ public class CLLargePulseLaser extends PulseLaserWeapon {
         this.criticals = 2;
         this.bv = 265;
         this.cost = 175000;
+        this.shortAV = 10;
+        this.medAV = 10;
+        this.longAV = 10;
+        this.maxRange = RANGE_LONG;
     }
 }

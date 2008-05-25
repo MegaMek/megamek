@@ -82,6 +82,29 @@ public class MoveStep implements Serializable {
     private boolean isStackingViolation = false;
     private boolean isDiggingIn = false;
     private MovePath parent = null;
+    
+    /*
+     * Aero related stuf
+     */
+    private int velocity = -999;
+    private int velocityN = -999;
+    
+    //also keep track of velocity left to spend
+    private int velocityLeft = 0;
+    //how many turns?
+    private int nTurns = 0;
+    private int nRolls = 0;
+    //does the unit have a free turn available
+    private boolean freeTurn = false;
+    //how many hexes straight has the unit traveled
+    private int nStraight = 0;
+    //how many elevations down 
+    private int nDown = 0;
+    //for Aeros, they may get pushed off board by OOC
+    private boolean offBoard = false; 
+    //for optional vector movement
+    private int[] mv;
+    private int recoveryUnit = -1;
 
     /**
      * Flag that indicates that this step is into prohibited terrain. <p/> If
@@ -1861,6 +1884,189 @@ public class MoveStep implements Serializable {
 
     public void setMineToLay(int mineId) {
         mineToLay = mineId;
+    }
+    
+    public void setVelocity(int vel) {
+        velocity = vel;
+    }
+    
+    public int getVelocity() {
+        return velocity;
+    }
+    
+    public void setVelocityN(int vel) {
+        velocityN = vel;
+    }
+    
+    public int getVelocityN() {
+        return velocityN;
+    }
+    
+    public void setVelocityLeft(int vel) {
+        velocityLeft = vel;
+    }
+    
+    public int getVelocityLeft() {
+        return velocityLeft;
+    }
+    
+    private int asfTurnCost(IGame game, int direction, Entity entity) {
+        
+        //if in atmosphere, the rules are different
+        if(game.getBoard().inAtmosphere()) {
+            //if they are spheroid in atmosphere, then no cost to turn
+            if(game.getBoard().inAtmosphere() && entity.getMovementMode() == IEntityMovementMode.SPHEROID) {
+                return 0;
+            }
+            //if they have a free turn, then this move is free
+            if(hasFreeTurn()) {
+                return 0;
+            } else {
+                //it costs half the current velocity (rounded up)
+                return (int)Math.ceil(getVelocity() / 2.0);
+            }
+            
+            
+        }
+        
+        
+        //first check for thruster damage
+        //put illegal for more than three thruster hits in CompileIllegal
+        Aero a = (Aero)entity;
+        int thrustCost = 0;
+        if(direction == MovePath.STEP_TURN_LEFT) 
+            thrustCost = a.getLeftThrustHits();
+        if(direction == MovePath.STEP_TURN_RIGHT)
+            thrustCost = a.getRightThrustHits();
+            
+        if(game.useVectorMove()) {
+            //velocity doesn't factor into advanced movement
+            return (1 + thrustCost);
+        }
+        
+        //based on velocity
+        if(velocity < 3) {
+            return 1 + thrustCost;
+        } else if (velocity > 2 && velocity < 6) {
+            return 2 + thrustCost;
+        } else if (velocity > 5 && velocity < 8) {
+            return 3 + thrustCost;
+        } else if (velocity > 7 && velocity < 10) {
+            return 4 + thrustCost;
+        } else if (velocity == 10) {
+            return 5 + thrustCost;
+        } else if (velocity == 11) {
+            return 6 + thrustCost;
+        } 
+        return (6 + velocity - 11 + thrustCost);
+    }
+
+    public void setNTurns(int turns) {
+        nTurns = turns;
+    }
+    
+    public int getNTurns() {
+        return nTurns;
+    }
+    
+    public void setNRolls(int rolls) {
+        nRolls = rolls;
+    }
+    
+    public int getNRolls() {
+        return nRolls;
+    }
+    
+    public void setOffBoard(boolean b) {
+        offBoard = b;
+    }
+    
+    public boolean isOffBoard() {
+        return offBoard;
+    }
+
+    public int[] getVectors() {
+        return mv;
+    }
+    
+    public void setVectors(int[] v) {
+        if(v.length != 6) 
+            return;
+        
+        this.mv = v;
+    }
+    
+    public boolean hasFreeTurn() {
+        return freeTurn;
+    }
+    
+    public void setFreeTurn(boolean b) {
+        this.freeTurn = b;
+    }
+
+    public int getNStraight() {
+        return nStraight;
+    }
+
+    public void setNStraight(int i) {
+        this.nStraight = i;
+    }
+    
+    public boolean dueFreeTurn(Entity en, int straight, int vel) {
+        
+        int thresh = 99;
+        
+        //I will assume that small craft should be treated as dropships?
+        if(en instanceof SmallCraft) {
+            if(vel > 15) {
+                thresh = 6;
+            } else if (vel > 12) {
+                thresh = 5;
+            } else if (vel > 9) {
+                thresh = 4;
+            } else if (vel > 6) {
+                thresh = 3;
+            } else if (vel > 3) {
+                thresh = 2;
+            } else {
+                thresh = 1;
+            }
+        } else {
+            if(vel > 15) {
+                thresh = 5;
+            } else if (vel > 12) {
+                thresh = 4;
+            } else if (vel > 9) {
+                thresh = 3;
+            } else if (vel > 6) {
+                thresh = 2;
+            } else {
+                thresh = 1;
+            }
+        }
+        
+        if(straight >= thresh) {
+            return true;
+        }
+        
+        return false;
+ 
+    }
+    
+    public void setNDown(int i) {
+        this.nDown = i;
+    }
+    
+    public int getNDown() {
+        return nDown;
+    }
+    
+    public int getRecoveryUnit() {
+        return recoveryUnit;
+    }
+    
+    public void setRecoveryUnit(int i) {
+        this.recoveryUnit = i;
     }
 
 }

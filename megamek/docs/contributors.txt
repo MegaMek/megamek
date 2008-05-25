@@ -59,6 +59,7 @@
      Markus Mikkolainen <itmo@users.sourceforge.net>
      Dave Bowman <davebowman@users.sourceforge.net>
      Chris Stadther <cstadthe@users.sourceforge.net>
+     Jay "Taharqa" Lawson <bombaijin@users.sourceforge.net>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

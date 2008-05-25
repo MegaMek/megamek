@@ -58,6 +58,9 @@ public class ISLightPPC extends PPCWeapon {
         this.tonnage = 3.0f;
         this.criticals = 2;
         this.bv = 88;
+        this.shortAV = 5;
+        this.medAV = 5;
+        this.maxRange = RANGE_MED;
     }
 
     /*

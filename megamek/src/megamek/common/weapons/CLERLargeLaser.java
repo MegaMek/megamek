@@ -51,5 +51,10 @@ public class CLERLargeLaser extends LaserWeapon {
         this.criticals = 1;
         this.bv = 248;
         this.cost = 200000;
+        this.shortAV = 10;
+        this.medAV = 10;
+        this.longAV = 10;
+        this.extAV = 10;
+        this.maxRange = RANGE_EXT;
     }
 }

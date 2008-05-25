@@ -22,20 +22,28 @@ package megamek.client.ui.swing;
 
 import java.util.Iterator;
 
+import megamek.client.ui.AWT.Messages;
+import megamek.common.Aero;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IArmorState;
 import megamek.common.Infantry;
+import megamek.common.Jumpship;
 import megamek.common.LargeSupportTank;
 import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
+import megamek.common.SmallCraft;
+import megamek.common.SpaceStation;
 import megamek.common.SupportTank;
 import megamek.common.SupportVTOL;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
+import megamek.common.Warship;
 import megamek.common.WeaponType;
+import megamek.common.weapons.BayWeapon;
 
 /**
  * A utility class for retrieving mech information in a formatted string.
@@ -51,12 +59,17 @@ public class MechView {
     private boolean isSupportVehicle;
     private boolean isLargeSupportVehicle;
     private boolean isSupportVTOL;
+    private boolean isAero;
+    private boolean isSquadron;
+    private boolean isSmallCraft;
+    private boolean isJumpship;
+    private boolean isSpaceStation;
 
     StringBuffer sBasic = new StringBuffer();
     StringBuffer sLoadout = new StringBuffer();
     StringBuffer sFluff = new StringBuffer("");
 
-    public MechView(Entity entity) {
+    public MechView(Entity entity, boolean showDetail) {
         this.entity = entity;
         isMech = entity instanceof Mech;
         isInf = entity instanceof Infantry;
@@ -66,12 +79,21 @@ public class MechView {
         isSupportVehicle = entity instanceof SupportTank;
         isLargeSupportVehicle = entity instanceof LargeSupportTank;
         isSupportVTOL = entity instanceof SupportVTOL;
+        isAero = entity instanceof Aero;
+        isSquadron = entity instanceof FighterSquadron;
+        isSmallCraft = entity instanceof SmallCraft;
+        isJumpship = entity instanceof Jumpship;
+        isSpaceStation = entity instanceof SpaceStation;
 
-        sLoadout.append(getWeapons()).append("\r\n")//$NON-NLS-1$
-                .append(getAmmo()).append("\r\n")//$NON-NLS-1$
-                .append(getMisc())// has to occur before basic is processed
-                .append("\r\n")//$NON-NLS-1$
-                .append(getFailed());
+        sLoadout.append( getWeapons(showDetail) )
+        .append("\r\n"); //$NON-NLS-1$
+        if(!entity.usesWeaponBays() || !showDetail) {
+            sLoadout.append(getAmmo())
+                .append("\r\n"); //$NON-NLS-1$
+        }
+        sLoadout.append(getMisc()) //has to occur before basic is processed
+        .append("\r\n") //$NON-NLS-1$
+        .append(getFailed());
 
         sBasic.append(entity.getShortNameRaw());
         sBasic.append("\r\n"); //$NON-NLS-1$
@@ -106,7 +128,7 @@ public class MechView {
                     .append(entity.getMovementModeAsString()).append(")"); //$NON-NLS-1$
         }
         sBasic.append("\n"); //$NON-NLS-1$
-        if (isMech || isVehicle) {
+        if (isMech || isVehicle || (isAero && !isSmallCraft && !isJumpship && !isSquadron)) {
             sBasic.append(Messages.getString("MechView.Engine")); //$NON-NLS-1$
             sBasic.append(entity.getEngine().getShortEngineName());
             sBasic.append("\n"); //$NON-NLS-1$
@@ -120,6 +142,16 @@ public class MechView {
             sBasic.append(Messages.getString("MechView.BARRating")); //$NON-NLS-1$
             sBasic.append(((SupportVTOL)entity).getBARRating());
             sBasic.append("\n"); //$NON-NLS-1$
+        }
+        if( isAero ) {
+            Aero a = (Aero)entity;
+            sBasic.append( Messages.getString("MechView.HeatSinks") ) //$NON-NLS-1$
+            .append( a.getHeatSinks() );
+            if (a.getHeatCapacity() > a.getHeatSinks()) {
+            sBasic.append( " [" ) //$NON-NLS-1$
+                .append( a.getHeatCapacity() )
+                .append( "]" ); //$NON-NLS-1$
+            }
         }
         if (isMech) {
             Mech aMech = (Mech) entity;
@@ -143,7 +175,13 @@ public class MechView {
         }
         sBasic.append("\n"); //$NON-NLS-1$
         if (!isGunEmplacement) {
-            sBasic.append(getInternalAndArmor());
+            if( isSquadron ) {
+                sBasic.append(getArmor());
+            } else if( isAero ) {
+                sBasic.append( getSIandArmor() );
+            } else {
+                sBasic.append( getInternalAndArmor() );
+            }
         } else {
             sBasic.append(Messages.getString("MechView.ConstructionFactor"))
                     .append(
@@ -231,16 +269,115 @@ public class MechView {
         }
         return sIntArm.toString();
     }
+    
+    private String getSIandArmor() {
 
-    private String getWeapons() {
+        Aero a = (Aero)entity;
+        
+        StringBuffer sIntArm = new StringBuffer();
+
+        sIntArm.append( "\n" ); //$NON-NLS-1$
+        
+        //int maxArmor = (int) mech.getWeight() * 8;
+        sIntArm.append( Messages.getString("MechView.SI") ) //$NON-NLS-1$
+            .append( a.getSI() );
+        
+        sIntArm.append( "\n" ); //$NON-NLS-1$
+
+        //if it is a jumpship get sail and KF integrity
+        if(isJumpship & !isSpaceStation) {
+            Jumpship js = (Jumpship)entity;
+            
+            sIntArm.append( Messages.getString("MechView.SailIntegrity") ) //$NON-NLS-1$
+            .append( js.getSailIntegrity() );
+         
+            sIntArm.append( "\n" ); //$NON-NLS-1$
+         
+            sIntArm.append( Messages.getString("MechView.KFIntegrity") ) //$NON-NLS-1$
+            .append( js.getKFIntegrity() );
+     
+            sIntArm.append( "\n" ); //$NON-NLS-1$
+        }
+        
+        
+        
+        sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
+            .append( entity.getTotalArmor() );
+        //sIntArm.append( "/" ) //$NON-NLS-1$
+            //.append( maxArmor );
+        
+        if(isJumpship) {
+            sIntArm.append(Messages.getString("MechView.CapitalArmor"));
+        }
+        
+        sIntArm.append(Messages.getString("MechView."
+               + EquipmentType.getArmorTypeName(entity.getArmorType())));
+        
+        sIntArm.append( "\n" ); //$NON-NLS-1$
+        // Walk through the entity's locations.
+        for ( int loc = 0; loc < entity.locations(); loc++ ) {
+
+            // Skip empty sections.
+            if ( IArmorState.ARMOR_NA == entity.getInternal(loc)) {
+                continue;
+            }
+
+            //skip broadsides on warships
+            if(entity instanceof Warship && (loc == Warship.LOC_LBS || loc == Warship.LOC_RBS)) {
+                continue;
+            }
+            
+            
+            sIntArm.append( "  " ); //$NON-NLS-1$
+            
+            sIntArm.append( entity.getLocationAbbr(loc) )
+                .append( ": " ); //$NON-NLS-1$
+            if ( IArmorState.ARMOR_NA != entity.getArmor(loc) ) {
+                sIntArm.append( renderArmor(entity.getArmor(loc)) );
+            }
+            if ( entity.hasRearArmor(loc) ) {
+                sIntArm.append( " (" ) //$NON-NLS-1$
+                    .append( renderArmor(entity.getArmor(loc, true)) )
+                    .append( ")" ); //$NON-NLS-1$
+            }
+            sIntArm.append( "\n" ); //$NON-NLS-1$
+        }
+        
+        
+        
+        return sIntArm.toString();
+    }
+
+    private String getArmor() {
+
+        FighterSquadron fs = (FighterSquadron)entity;
+        
+        StringBuffer sIntArm = new StringBuffer();
+        
+        sIntArm.append( "\n" ); //$NON-NLS-1$
+        
+        sIntArm.append(Messages.getString("MechView.Armor")) //$NON-NLS-1$
+            .append( fs.getTotalArmor() );
+        
+        sIntArm.append( "\n" ); //$NON-NLS-1$
+        
+        sIntArm.append(Messages.getString("MechView.ActiveFighters")) //$NON-NLS-1$
+        .append( fs.getNFighters() );
+        
+        sIntArm.append( "\n" ); //$NON-NLS-1$
+        
+        return sIntArm.toString();
+    }
+    
+    private String getWeapons(boolean showDetail) {
         StringBuffer sWeapons = new StringBuffer();
         for (Mounted mounted : entity.getWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
 
-            sWeapons.append(mounted.getDesc()).append("  [")//$NON-NLS-1$
+            sWeapons.append(mounted.getDesc()).append("  [") //$NON-NLS-1$
                     .append(entity.getLocationAbbr(mounted.getLocation()));
             if (mounted.isSplit()) {
-                sWeapons.append("/")// $NON-NLS-1$
+                sWeapons.append("/") // $NON-NLS-1$
                         .append(
                                 entity.getLocationAbbr(mounted
                                         .getSecondLocation()));
@@ -257,12 +394,43 @@ public class MechView {
                 sWeapons.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
             }
             if (wtype.hasFlag(WeaponType.F_ONESHOT)) {
-                sWeapons.append(" <")//$NON-NLS-1$
+                sWeapons.append(" <") //$NON-NLS-1$
                         .append(mounted.getLinked().getDesc()).append(">"); //$NON-NLS-1$
             }
-            sWeapons
-                    .append(" ").append(wtype.getHeat()).append(Messages.getString("MechView.Heat")); //$NON-NLS-1$ //$NON-NLS-2$
+            
+            sWeapons.append(" ").append(wtype.getHeat()).append(Messages.getString("MechView.Heat")); //$NON-NLS-1$ //$NON-NLS-2$
+            
             sWeapons.append("\n"); //$NON-NLS-1$
+            
+//          if this is a weapon bay, then cycle through weapons and ammo
+            if(wtype instanceof BayWeapon && showDetail) {
+                for(int wId : mounted.getBayWeapons()) {
+                    Mounted m = entity.getEquipment(wId);
+                    if(null == m) 
+                        continue;
+                    
+                    WeaponType newwtype = (WeaponType)m.getType();
+
+                    sWeapons.append("  ")
+                        .append( m.getDesc() );
+                        
+                    if (entity.isClan() && 
+                        m.getType().getInternalName().substring(0,2).equals("IS")) { //$NON-NLS-1$
+                        sWeapons.append(Messages.getString("MechView.IS")); //$NON-NLS-1$
+                    }
+                    if (!entity.isClan() &&
+                        m.getType().getInternalName().substring(0,2).equals("CL")) { //$NON-NLS-1$
+                        sWeapons.append(Messages.getString("MechView.Clan")); //$NON-NLS-1$
+                    }
+                    if (newwtype.hasFlag(WeaponType.F_ONESHOT)) {
+                        sWeapons.append(" <") //$NON-NLS-1$
+                            .append(mounted.getLinked().getDesc())
+                            .append(">"); //$NON-NLS-1$
+                    }
+                    
+                    sWeapons.append("\n"); //$NON-NLS-1$
+                }
+            }
         }
         return sWeapons.toString();
     }

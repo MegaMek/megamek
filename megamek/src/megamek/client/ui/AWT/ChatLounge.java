@@ -124,7 +124,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private Panel panBoardSettings;
 
     private Button butLoadList;
-    // private Label lblPlaceholder;
+    //private Label lblPlaceholder;
     private Button butSaveList;
     private Button butDeleteAll;
 
@@ -132,6 +132,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     Button butArmy;
     Button butSkills;
     Button butLoadCustomBA;
+    private Button butLoadCustomFS;
     private Button butDelete;
     private Button butCustom;
     private Button butMechReadout;
@@ -172,6 +173,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             butArmy.setEnabled(true);
             butSkills.setEnabled(true);
             butLoadCustomBA.setEnabled(true);
+            butLoadCustomFS.setEnabled(true);
         }
     };
 
@@ -669,7 +671,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butLoadList.setActionCommand("load_list"); //$NON-NLS-1$
         butLoadList.addActionListener(this);
 
-        // lblPlaceholder = new Label();
+        //lblPlaceholder = new Label();
 
         butSaveList = new Button(Messages.getString("ChatLounge.butSaveList")); //$NON-NLS-1$
         butSaveList.setActionCommand("save_list"); //$NON-NLS-1$
@@ -681,13 +683,15 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butSkills = new Button(Messages.getString("ChatLounge.butSkills")); //$NON-NLS-1$
         butLoadCustomBA = new Button(Messages
                 .getString("ChatLounge.butLoadCustomBA"));
+        butLoadCustomFS = new Button(Messages.getString("ChatLounge.butLoadCustomFS"));
 
         MechSummaryCache mechSummaryCache = MechSummaryCache.getInstance();
         mechSummaryCache.addListener(mechSummaryCacheListener);
         butLoad.setEnabled(mechSummaryCache.isInitialized());
         butArmy.setEnabled(mechSummaryCache.isInitialized());
         butLoadCustomBA.setEnabled(mechSummaryCache.isInitialized());
-
+        butLoadCustomFS.setEnabled(mechSummaryCache.isInitialized());
+        
         Font font = new Font("sanserif", Font.BOLD, 18); //$NON-NLS-1$
         butLoad.setFont(font);
 
@@ -697,6 +701,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         butSkills.addActionListener(this);
         butLoadCustomBA.setActionCommand("load_custom_ba"); //$NON-NLS-1$
         butLoadCustomBA.addActionListener(this);
+        butLoadCustomFS.setActionCommand("load_custom_fs"); //$NON-NLS-1$
+        butLoadCustomFS.addActionListener(this);
 
         butCustom = new Button(Messages.getString("ChatLounge.butCustom")); //$NON-NLS-1$
         butCustom.setActionCommand("custom_mech"); //$NON-NLS-1$
@@ -749,9 +755,6 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         gridbag.setConstraints(butCustom, c);
         panEntities.add(butCustom);
 
-        gridbag.setConstraints(butLoadList, c);
-        panEntities.add(butLoadList);
-
         gridbag.setConstraints(butMechReadout, c);
         panEntities.add(butMechReadout);
 
@@ -761,22 +764,30 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         gridbag.setConstraints(butDelete, c);
         panEntities.add(butDelete);
 
-        c.gridwidth = 1;
         c.gridy = GridBagConstraints.RELATIVE;
-
+        
+        c.gridwidth = 1;
         gridbag.setConstraints(butArmy, c);
         panEntities.add(butArmy);
 
+        c.gridwidth = 1;
         gridbag.setConstraints(butSkills, c);
         panEntities.add(butSkills);
 
+        c.gridwidth = 1;
         gridbag.setConstraints(butLoadCustomBA, c);
         panEntities.add(butLoadCustomBA);
 
-        // c.gridwidth = 1;
-        // gridbag.setConstraints( lblPlaceholder, c );
-        // panEntities.add( lblPlaceholder );
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        gridbag.setConstraints(butLoadCustomFS, c);
+        panEntities.add(butLoadCustomFS);
+        
+        c.gridy = GridBagConstraints.RELATIVE;
 
+        c.gridwidth = 1;
+        gridbag.setConstraints(butLoadList, c);
+        panEntities.add(butLoadList);
+        
         c.gridwidth = 1;
         gridbag.setConstraints(butSaveList, c);
         panEntities.add(butSaveList);
@@ -785,10 +796,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         gridbag.setConstraints(butViewGroup, c);
         panEntities.add(butViewGroup);
 
-        c.gridwidth = 1;
+        c.gridwidth = GridBagConstraints.REMAINDER;
         gridbag.setConstraints(butDeleteAll, c);
         panEntities.add(butDeleteAll);
-
     }
 
     /**
@@ -1405,7 +1415,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         }
         Entity entity = client.game.getEntity(entityCorrespondance[lisEntities
                 .getSelectedIndex()]);
-        MechView mechView = new MechView(entity);
+        MechView mechView = new MechView(entity, client.game.getOptions().booleanOption("show_bay_detail"));
         TextArea ta = new TextArea();
         ta.setEditable(false);
         ta.setFont(new Font("Monospaced", Font.PLAIN, 12)); //$NON-NLS-1$
@@ -1460,6 +1470,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
     public void loadCustomBA() {
         clientgui.getCustomBADialog().setVisible(true);
+    }
+    
+    public void loadCustomFS() {
+        clientgui.getCustomFSDialog().setVisible(true);
     }
 
     public void viewGroup() {
@@ -1638,6 +1652,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             loadRandomSkills();
         } else if (ev.getSource() == butLoadCustomBA) {
             loadCustomBA();
+        } else if (ev.getSource() == butLoadCustomFS) {
+            loadCustomFS();
         } else if (ev.getSource() == butCustom || ev.getSource() == lisEntities) {
             customizeMech();
         } else if (ev.getSource() == butDelete) {

@@ -39,6 +39,8 @@ public abstract class RACWeapon extends UACWeapon {
         this.setModes(modes);
         // explosive when jammed
         this.explosive = true;
+        
+        this.atClass = CLASS_AC;
     }
 
     /*

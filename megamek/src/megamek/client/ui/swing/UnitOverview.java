@@ -26,7 +26,9 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import megamek.client.event.BoardViewEvent;
+import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.widget.PMUtil;
+import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Entity;
 import megamek.common.GunEmplacement;
@@ -260,7 +262,7 @@ public class UnitOverview implements Displayable {
     }
 
     private void drawHeat(Graphics graph, Entity entity, int x, int y) {
-        if (!(entity instanceof Mech)) {
+        if (!(entity instanceof Mech || entity instanceof Aero)) {
             return;
         }
         boolean mtHeat = false;
@@ -341,6 +343,52 @@ public class UnitOverview implements Displayable {
 
     private void drawConditionStrings(Graphics graph, Entity entity, int x,
             int y) {
+        
+//      out of control conditions for ASF
+        if(entity instanceof Aero) {
+            Aero a = (Aero)entity;  
+            
+            
+            //draw altitude if Aero in atmosphere
+            if(clientgui.getClient().game.getBoard().inAtmosphere()) {
+                graph.setColor(Color.darkGray);
+                graph.drawString(Integer.toString(a.getElevation()), x + 36, y + 15); //$NON-NLS-1$
+                graph.setColor(Color.PINK);
+                graph.drawString(Integer.toString(a.getElevation()), x + 35, y + 14); //$NON-NLS-1$
+            }
+            
+            if(a.isRolled()) {
+                // draw "rolled"
+                graph.setColor(Color.darkGray);
+                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 11, y+29); //$NON-NLS-1$
+                graph.setColor(Color.red);
+                graph.drawString(Messages.getString("BoardView1.ROLLED"), x + 10, y+28); //$NON-NLS-1$
+            }
+            
+            if(a.isOutControlTotal() && a.isRandomMove()) {
+                graph.setColor(Color.darkGray);
+                graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 11, y + 24); //$NON-NLS-1$
+                graph.setColor(Color.red);
+                graph.drawString(Messages.getString("UnitOverview.RANDOM"), x + 10, y + 23); //$NON-NLS-1$
+            } else if(a.isOutControlTotal()) {
+                // draw "CONTROL"
+                graph.setColor(Color.darkGray);
+                graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 11, y + 24); //$NON-NLS-1$
+                graph.setColor(Color.red);
+                graph.drawString(Messages.getString("UnitOverview.CONTROL"), x + 10, y + 23); //$NON-NLS-1$
+            }
+            
+            //is the unit evading? - can't evade and be out of control so just draw on top
+            if(a.isEvading()) {
+                //draw evasion
+                graph.setColor(Color.darkGray);
+                graph.drawString(Messages.getString("UnitOverview.EVADE"), x +11, y + 24); //$NON-NLS-1$
+                graph.setColor(Color.red);
+                graph.drawString(Messages.getString("UnitOverview.EVADE"), x + 10, y + 23); //$NON-NLS-1$
+            }
+            
+        }
+        
         // draw condition strings
         if (entity.isImmobile() && !entity.isProne()) {
             // draw "IMMOB"
@@ -442,7 +490,8 @@ public class UnitOverview implements Displayable {
             }
             return adjustString(iconName, metrics);
         } else if (e instanceof Infantry || e instanceof Mech
-                || e instanceof GunEmplacement) {
+                || e instanceof GunEmplacement ||
+                e instanceof Aero) {
             String iconName = e.getModel();
             return adjustString(iconName, metrics);
         }

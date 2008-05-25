@@ -47,5 +47,9 @@ public class CLLRM15OS extends LRMWeapon {
         this.bv = 33;
         this.flags |= F_ONESHOT;
         this.cost = 175000;
+        this.shortAV = 9;
+        this.medAV = 9;
+        this.longAV = 9;
+        this.maxRange = RANGE_LONG;
     }
 }

@@ -49,5 +49,10 @@ public class ISUAC2 extends UACWeapon {
         this.criticals = 3;
         this.bv = 56;
         this.cost = 120000;
+        this.shortAV = 3;
+        this.medAV = 3;
+        this.longAV = 3;
+        this.extAV = 3;
+        this.maxRange = RANGE_EXT;
     }
 }

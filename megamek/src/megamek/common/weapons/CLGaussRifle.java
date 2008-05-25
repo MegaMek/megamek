@@ -50,5 +50,9 @@ public class CLGaussRifle extends GaussWeapon {
         this.criticals = 6;
         this.bv = 320;
         this.cost = 300000;
+        this.shortAV = 15;
+        this.medAV = 15;
+        this.longAV = 15;
+        this.maxRange = RANGE_LONG;
     }
 }

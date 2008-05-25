@@ -40,5 +40,9 @@ public class ISMML9 extends MMLWeapon {
         this.criticals = 5;
         this.bv = 86;
         this.cost = 225000;
+        this.shortAV = 5;
+        this.medAV = 5;
+        this.longAV = 5;
+        this.maxRange = RANGE_LONG;
     }
 }

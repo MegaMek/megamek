@@ -57,6 +57,8 @@ public class CLSmallPulseLaser extends PulseLaserWeapon {
         this.criticals = 1;
         this.bv = 24;
         this.cost = 16000;
+        this.shortAV = 3;
+        this.maxRange = RANGE_SHORT;
     }
 
     /*

@@ -64,6 +64,19 @@ public class MovePath implements Cloneable, Serializable {
     public static final int STEP_SHAKE_OFF_SWARMERS = 30;
     public static final int STEP_TAKEOFF = 31;
     public static final int STEP_LAND = 32;
+    public static final int STEP_ACC = 33;
+    public static final int STEP_DEC = 34;
+    public static final int STEP_EVADE = 35;
+    public static final int STEP_ACCN = 36;
+    public static final int STEP_DECN = 37;
+    public static final int STEP_ROLL = 38;
+    public static final int STEP_OFF  = 39;
+    public static final int STEP_LAUNCH = 40;
+    public static final int STEP_THRUST = 41;
+    public static final int STEP_YAW = 42;
+    public static final int STEP_CRASH = 43;
+    public static final int STEP_STALL = 44;
+    public static final int STEP_RECOVER = 45;
 
     public static class Key {
         private final Coords coords;

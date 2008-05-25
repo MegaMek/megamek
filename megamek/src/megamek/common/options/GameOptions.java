@@ -63,6 +63,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(base, "deep_deployment", false); //$NON-NLS-1$
         addOption(base, "restrict_game_commands", false); //$NON-NLS-1$
         addOption(base, "bridgeCF", 0); //$NON-NLS-1$
+        addOption(base, "show_bay_detail", false); //$NON-NLS-1$
 
         IBasicOptionGroup victory = addGroup("victory"); //$NON-NLS-1$
         addOption(victory, "skip_forced_victory", false); //$NON-NLS-1$
@@ -75,7 +76,15 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(victory, "use_game_turn_limit", false); //$NON-NLS-1$
         addOption(victory, "game_turn_limit", 10); //$NON-NLS-1$
         addOption(victory, "commander_killed", false); //$NON-NLS-1$
-
+        
+        IBasicOptionGroup at2 = addGroup("AT2"); //$NON-NLS-1$
+        addOption(at2,"advanced_movement", false); //$NON-NLS-1$
+        addOption(at2,"fuel_consumption", false); //$NON-NLS-1$
+        addOption(at2,"variable_damage_thresh", false); //$NON-NLS-1$
+        addOption(at2,"ammo_explosions", false); //$NON-NLS-1$
+        addOption(at2,"heat_by_bay", false); //$NON-NLS-1$
+        addOption(at2,"at2_nukes", false); //$NON-NLS-1$
+        
         IBasicOptionGroup level2 = addGroup("level2"); //$NON-NLS-1$
         addOption(level2, "flamer_heat", true); //$NON-NLS-1$
         addOption(level2, "fire", false); //$NON-NLS-1$

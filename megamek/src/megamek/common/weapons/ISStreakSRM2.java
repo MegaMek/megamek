@@ -46,5 +46,7 @@ public class ISStreakSRM2 extends StreakSRMWeapon {
         this.flags |= F_NO_FIRES;
         this.bv = 30;
         this.cost = 15000;
+        this.shortAV = 4;
+        this.maxRange = RANGE_SHORT;
     }
 }

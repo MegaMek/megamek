@@ -28,16 +28,22 @@ import java.util.Enumeration;
 import java.util.Vector;
 import java.util.zip.ZipFile;
 
+import megamek.common.loaders.BLKAeroFile;
 import megamek.common.loaders.BLKBattleArmorFile;
+import megamek.common.loaders.BLKDropshipFile;
 import megamek.common.loaders.BLKGunEmplacementFile;
 import megamek.common.loaders.BLKInfantryFile;
+import megamek.common.loaders.BLKJumpshipFile;
 import megamek.common.loaders.BLKLargeSupportTankFile;
 import megamek.common.loaders.BLKMechFile;
 import megamek.common.loaders.BLKProtoFile;
+import megamek.common.loaders.BLKSmallCraftFile;
+import megamek.common.loaders.BLKSpaceStationFile;
 import megamek.common.loaders.BLKSupportTankFile;
 import megamek.common.loaders.BLKSupportVTOLFile;
 import megamek.common.loaders.BLKTankFile;
 import megamek.common.loaders.BLKVTOLFile;
+import megamek.common.loaders.BLKWarshipFile;
 import megamek.common.loaders.EntityLoadingException;
 import megamek.common.loaders.HmpFile;
 import megamek.common.loaders.HmvFile;
@@ -47,6 +53,7 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.loaders.TdbFile;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BuildingBlock;
+import megamek.common.weapons.BayWeapon;
 
 /*
  * Switches between the various type-specific parsers depending on suffix
@@ -156,6 +163,18 @@ public class MechFileParser {
                     loader = new BLKLargeSupportTankFile(bb);
                 } else if (sType.equals("SupportVTOL")){
                     loader = new BLKSupportVTOLFile(bb);
+                } else if (sType.equals("Aero")) {
+                    loader = new BLKAeroFile(bb);
+                } else if (sType.equals("SmallCraft")) {
+                    loader = new BLKSmallCraftFile(bb);
+                } else if (sType.equals("Dropship")) {
+                    loader = new BLKDropshipFile(bb);
+                } else if (sType.equals("Jumpship")) {
+                    loader = new BLKJumpshipFile(bb);
+                } else if (sType.equals("Warship")) {
+                    loader = new BLKWarshipFile(bb);
+                } else if (sType.equals("SpaceStation")) {
+                    loader = new BLKSpaceStationFile(bb);
                 } else
                     throw new EntityLoadingException("Unknown UnitType: "
                             + sType);
@@ -187,7 +206,7 @@ public class MechFileParser {
                     && m.getLinked() == null) {
 
                 // link up to a weapon in the same location
-                for (Mounted mWeapon : ent.getWeaponList()) {
+                for (Mounted mWeapon : ent.getTotalWeaponList()) {
                     WeaponType wtype = (WeaponType) mWeapon.getType();
 
                     // only srm and lrm are valid for artemis
@@ -280,7 +299,7 @@ public class MechFileParser {
             }
 
         } // Check the next piece of equipment.
-
+        
         // Check if it's canon; if it is, mark it as such.
         ent.setCanon(false);// Guilty until proven innocent
         try {

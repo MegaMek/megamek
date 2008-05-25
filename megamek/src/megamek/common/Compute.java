@@ -52,6 +52,18 @@ public class Compute {
     public static final int ARC_NORTH = 8;
     public static final int ARC_EAST = 9;
     public static final int ARC_WEST = 10;
+    public static final int ARC_NOSE = 11;
+    public static final int ARC_LWING = 12;
+    public static final int ARC_RWING = 13;
+    public static final int ARC_LWINGA = 14;
+    public static final int ARC_RWINGA = 15;
+    public static final int ARC_AFT = 16;
+    public static final int ARC_LEFTSIDE_SPHERE = 17;
+    public static final int ARC_RIGHTSIDE_SPHERE = 18;
+    public static final int ARC_LEFTSIDEA_SPHERE = 19;
+    public static final int ARC_RIGHTSIDEA_SPHERE= 20;
+    public static final int ARC_LEFT_BROADSIDE = 21;
+    public static final int ARC_RIGHT_BROADSIDE =22;
 
     public static final int TYPE_IS = 0;
     public static final int TYPE_CLAN = 1;
@@ -2173,6 +2185,30 @@ public class Compute {
             return fa >= 30 && fa <= 150;
         case ARC_WEST:
             return fa >= 150 && fa <= 270;
+        case ARC_NOSE:
+            return fa > 300 || fa < 60;
+        case ARC_LWING:
+            return fa > 300 || fa <= 0;
+        case ARC_RWING:
+            return fa >= 0 && fa < 60;
+        case ARC_LWINGA:
+            return fa >= 180 && fa < 240;
+        case ARC_RWINGA: 
+            return fa > 120 && fa <= 180;
+        case ARC_AFT:
+            return fa > 120 && fa < 240;
+        case ARC_LEFTSIDE_SPHERE:
+            return fa > 240 || fa < 0;
+        case ARC_RIGHTSIDE_SPHERE:
+            return fa > 0 && fa < 120;
+        case ARC_LEFTSIDEA_SPHERE:
+            return fa > 180 && fa < 300;
+        case ARC_RIGHTSIDEA_SPHERE:
+            return fa > 60 && fa < 180;
+        case ARC_LEFT_BROADSIDE:
+            return fa >= 240 && fa <= 300;
+        case ARC_RIGHT_BROADSIDE:
+            return fa >= 60 && fa <= 120;
         default:
             return false;
         }
@@ -3142,6 +3178,143 @@ public class Compute {
         skills[1] = skillLevels[1][plevel];
 
         return skills;
+    }
+    
+    public static FighterSquadron compileSquadron(Vector<Entity> squadron) {
+        
+        //cycle through the entity vector and create a fighter squadron
+        FighterSquadron fs = new FighterSquadron();
+        
+        String chassis = squadron.elementAt(0).getChassis();
+        int si = 99;
+        boolean alike = true;
+        int armor = 0;
+        int heat = 0;
+        int safeThrust = 99;
+        int n = 0;
+        float weight = 0.0f;  
+        int fuel = 0;
+        int bv = 0;
+        double cost = 0.0;
+        int nTC = 0;
+        for(Entity e : squadron) {      
+            if(!chassis.equals(e.getChassis())) {
+                alike = false;
+            }       
+            n++;
+            //names
+            fs.fighters.add(e.getChassis() + " " + e.getModel());   
+            //armor
+            armor += e.getTotalArmor();
+            //heat
+            heat += e.getHeatCapacity();
+            //weight
+            weight += e.getWeight();
+            bv += e.calculateBattleValue();
+            cost += e.getCost();
+            //safe thrust
+            if(e.getWalkMP() < safeThrust) 
+                safeThrust = e.getWalkMP();
+            
+            Aero a = (Aero)e;
+            //si
+            if(a.getSI() < si) {
+                si = a.getSI();
+            }
+            
+            //fuel - give the minimum fuel
+            if(a.getFuel() < fuel || fuel == 0) {
+                fuel = a.getFuel();
+            }
+            
+            
+            //weapons 
+            Mounted newmount;
+            for(Mounted m : e.getEquipment() ) {
+                
+                if(m.getType() instanceof WeaponType) { 
+                    //first load the weapon onto the squadron   
+                    WeaponType wtype = (WeaponType)m.getType();
+                    try{
+                        newmount = fs.addEquipment(wtype, m.getLocation());
+                    } catch (LocationFullException ex) {
+                        System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        ex.printStackTrace();
+                        return fs;
+                    }
+                    //skip to the next if it has no AT class
+                    if(wtype.getAtClass() == WeaponType.CLASS_NONE) {
+                        continue;
+                    }
+                    
+                    //now find the right bay
+                    Mounted bay = fs.getFirstBay(wtype, newmount.getLocation(), newmount.isRearMounted());
+                    //if this is null, then I should create a new bay
+                    if(bay == null) {
+                        EquipmentType newBay = WeaponType.getBayType(wtype.getAtClass());
+                        try{
+                            bay = fs.addEquipment(newBay, newmount.getLocation());
+                        } catch (LocationFullException ex) {
+                            System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            ex.printStackTrace();
+                            return fs;
+                        }
+                    }
+                    //now add the weapon to the bay
+                    bay.addWeaponToBay(fs.getEquipmentNum(newmount));
+                } else {
+                    //just add the equipment normally
+                    try{
+                        //check if this is a TC
+                        if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
+                            nTC++;
+                        }
+                        fs.addEquipment(m.getType(), m.getLocation());
+                    } catch (LocationFullException ex) {
+                        System.out.println("Unable to add equipment"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        ex.printStackTrace();
+                        return fs;
+                    }
+                }
+            }
+        }
+        
+        armor = (int)Math.round(armor / 10.0);
+        
+        fs.setArmor(armor);
+        fs.set0Armor(armor);
+        fs.setHeatSinks(heat);
+        fs.setOriginalWalkMP(safeThrust);
+        fs.setN0Fighters(n);
+        fs.setNFighters(n);
+        fs.autoSetThresh();
+        fs.setWeight(weight);
+        fs.set0SI(si);
+        fs.setCost(cost);
+        fs.setFuel(fuel);
+        
+        if(nTC >= n) {
+            fs.setHasTC(true);
+        }
+        
+        //if all the same chassis, name by chassis
+        //otherwise name by weight
+        if(alike) {
+            fs.setChassis(chassis + " Squadron");
+        } else {
+            int aveWeight = Math.round(weight/n);
+            if(aveWeight <= 45) {
+                fs.setChassis("Mixed Light Squadron");
+            } else if(aveWeight <= 70) {
+                fs.setChassis("Mixed Medium Squadron");
+            } else {
+                fs.setChassis("Mixed Heavy Squadron");
+            }
+        }
+        fs.setModel("");
+        fs.loadAllWeapons();
+        
+        return fs;
     }
 
 } // End public class Compute

@@ -44,5 +44,8 @@ public class CLStreakSRM6 extends StreakSRMWeapon {
         this.criticals = 2;
         this.bv = 118;
         this.cost = 120000;
+        this.shortAV = 12;
+        this.medAV = 12;
+        this.maxRange = RANGE_MED;
     }
 }

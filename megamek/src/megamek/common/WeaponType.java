@@ -87,6 +87,43 @@ public class WeaponType extends EquipmentType {
     public static final long F_MGA = 1l << 32; // machine gun array
     public static final long F_NO_AIM = 1l << 33;
 
+//  add maximum range for AT2
+    public static final int     RANGE_SHORT = 1;
+    public static final int     RANGE_MED   = 2;
+    public static final int     RANGE_LONG  = 3;
+    public static final int     RANGE_EXT   = 4;
+    
+    //add weapon classes for AT2
+    public static final int     CLASS_NONE = 0;
+    public static final int     CLASS_LASER = 1;
+    public static final int     CLASS_POINT_DEFENSE = 2;
+    public static final int     CLASS_PPC = 3;
+    public static final int     CLASS_PULSE_LASER = 4;
+    public static final int     CLASS_ARTILLERY = 5;
+    public static final int     CLASS_PLASMA = 6;
+    public static final int     CLASS_AC = 7;
+    public static final int     CLASS_LBX_AC = 8;
+    public static final int     CLASS_LRM = 9;
+    public static final int     CLASS_SRM = 10;
+    public static final int     CLASS_MRM = 11;
+    public static final int     CLASS_MML = 12;
+    public static final int     CLASS_ATM = 13;
+    public static final int     CLASS_ROCKET_LAUNCHER = 14;
+    public static final int     CLASS_CAPITAL_LASER = 15;
+    public static final int     CLASS_CAPITAL_PPC = 16;
+    public static final int     CLASS_CAPITAL_AC = 17;
+    public static final int     CLASS_CAPITAL_GAUSS = 18;
+    public static final int     CLASS_CAPITAL_MISSILE = 19;
+    public static final int     CLASS_AR10 = 20;
+    public static final int     CLASS_SCREEN = 21;
+    public static final int     NUM_CLASSES = 22;
+    
+    public static String[] classNames = {"Unknown", "Laser","Point Defense", "PPC","Pulse Laser",
+                                         "Artilery","AMS","AC","LBX","LRM","SRM","MRM","ATM",
+                                         "Rocket Launcher","Capital Laser","Capital PPC",
+                                         "Capital AC", "Capital Gauss", "Capital Missile",
+                                         "AR10","Screen"};
+    
     // protected RangeType rangeL;
     protected int heat;
     protected int damage;
@@ -103,6 +140,16 @@ public class WeaponType extends EquipmentType {
     public int waterLongRange;
     public int waterExtremeRange;
 
+    //get stuff for AT2
+    //separate attack value by range. It will make weapon bays easier
+    public double      shortAV = 0.0;
+    public double      medAV = 0;
+    public double      longAV = 0;
+    public double      extAV = 0;
+    public int      maxRange = RANGE_SHORT;
+    public boolean  capital = false;
+    public int     atClass = CLASS_NONE;
+    
     public void setDamage(int inD) {
         damage = inD;
     }
@@ -220,7 +267,102 @@ public class WeaponType extends EquipmentType {
     public int getWExtremeRange() {
         return waterExtremeRange;
     }
-
+    
+    public int getMaxRange() {
+        return maxRange;
+    }
+    
+    public double getShortAV() {
+        return shortAV;
+    }
+    
+    public int getRoundShortAV() {
+        return (int)Math.ceil(shortAV);
+    }
+    
+    public double getMedAV() {
+        return medAV;
+    }
+    
+    public int getRoundMedAV() {
+        return (int)Math.ceil(medAV);
+    }
+    
+    public double getLongAV() {
+        return longAV;
+    }
+    
+    public int getRoundLongAV() {
+        return (int)Math.ceil(longAV);
+    }
+    
+    public double getExtAV() {
+        return extAV;
+    }
+    
+    public int getRoundExtAV() {
+        return (int)Math.ceil(extAV);
+    }
+    
+    public boolean isCapital() {
+        return capital;
+    }
+    
+    public int getAtClass() {
+        return atClass;
+    }
+    
+    //Probably not the best place for this
+    public static EquipmentType getBayType(int atclass) {    
+        //return the correct weapons bay for the given type of weapon
+        switch(atclass) {
+        case(CLASS_LASER):
+            return EquipmentType.get("Laser Bay");
+        case(CLASS_POINT_DEFENSE):
+            return EquipmentType.get("Point Defense Bay");
+        case(CLASS_PPC):
+            return EquipmentType.get("PPC Bay");
+        case(CLASS_PULSE_LASER):
+            return EquipmentType.get("Pulse Laser Bay");
+        case(CLASS_ARTILLERY):
+            return EquipmentType.get("Artillery Bay");
+        case(CLASS_PLASMA):
+            return EquipmentType.get("Plasma Bay");
+        case(CLASS_AC):
+            return EquipmentType.get("AC Bay");
+        case(CLASS_LBX_AC):
+            return EquipmentType.get("LBX AC Bay");
+        case(CLASS_LRM):
+            return EquipmentType.get("LRM Bay");
+        case(CLASS_SRM):
+            return EquipmentType.get("SRM Bay");
+        case(CLASS_MRM):
+            return EquipmentType.get("MRM Bay");
+        case(CLASS_MML):
+            return EquipmentType.get("MML Bay");
+        case(CLASS_ATM):
+            return EquipmentType.get("ATM Bay");
+        case(CLASS_ROCKET_LAUNCHER):
+            return EquipmentType.get("Rocket Launcher Bay");
+        case(CLASS_CAPITAL_LASER):
+            return EquipmentType.get("Capital Laser Bay");
+        case(CLASS_CAPITAL_PPC):
+            return EquipmentType.get("Capital PPC Bay");
+        case(CLASS_CAPITAL_AC):
+            return EquipmentType.get("Capital AC Bay");
+        case(CLASS_CAPITAL_GAUSS):
+            return EquipmentType.get("Capital Gauss Bay");
+        case(CLASS_CAPITAL_MISSILE):
+            return EquipmentType.get("Capital Missile Bay");
+        case(CLASS_AR10):
+            return EquipmentType.get("AR10 Bay");
+        case(CLASS_SCREEN):
+            return EquipmentType.get("Screen Launcher Bay");
+        default:
+            return EquipmentType.get("Misc Bay");
+        }
+    }
+    
     /**
      * Add all the types of weapons we can create to the list
      */
@@ -592,6 +734,53 @@ public class WeaponType extends EquipmentType {
         addType(new CLBALightMG());
         addType(new CLBAHeavyMG());
         addType(new ISBAMagshotGaussRifle());
+        
+        //Naval weapons
+        addType(new NL35Weapon());
+        addType(new NL45Weapon());
+        addType(new NL55Weapon());
+        addType(new LightNPPCWeapon());
+        addType(new MediumNPPCWeapon());
+        addType(new HeavyNPPCWeapon());
+        addType(new NAC10Weapon());
+        addType(new NAC20Weapon());
+        addType(new NAC25Weapon());
+        addType(new NAC30Weapon());
+        addType(new NAC35Weapon());
+        addType(new NAC40Weapon());
+        addType(new LightNGaussWeapon());
+        addType(new MediumNGaussWeapon());
+        addType(new HeavyNGaussWeapon());
+        addType(new BarracudaWeapon());
+        addType(new WhiteSharkWeapon());
+        addType(new KillerWhaleWeapon());
+        addType(new KrakenTWeapon());
+        addType(new AR10Weapon());
+        addType(new ScreenLauncherWeapon());
+        
+        //Weapon Bays
+        addType(new LaserBayWeapon());
+        addType(new PointDefenseBayWeapon());
+        addType(new PPCBayWeapon());
+        addType(new PulseLaserBayWeapon());
+        addType(new ArtilleryBayWeapon());
+        addType(new PlasmaBayWeapon());
+        addType(new ACBayWeapon());
+        addType(new LBXBayWeapon());
+        addType(new LRMBayWeapon());
+        addType(new SRMBayWeapon());
+        addType(new MRMBayWeapon());
+        addType(new MMLBayWeapon());
+        addType(new ATMBayWeapon());
+        addType(new RLBayWeapon());
+        addType(new CapitalLaserBayWeapon());
+        addType(new CapitalACBayWeapon());
+        addType(new CapitalGaussBayWeapon());
+        addType(new CapitalPPCBayWeapon());
+        addType(new CapitalMissileBayWeapon());
+        addType(new AR10BayWeapon());
+        addType(new ScreenLauncherBayWeapon());
+        addType(new MiscBayWeapon());
     }
 
     public String toString() {

@@ -2753,4 +2753,9 @@ public class Game implements Serializable, IGame {
     public Victory getVictory() {
         return victory;
     }
+    
+    //a shortcut function for determining whether vectored movement is applicable
+    public boolean useVectorMove() {
+        return this.getOptions().booleanOption("advanced_movement") && board.inSpace();
+    }
 }

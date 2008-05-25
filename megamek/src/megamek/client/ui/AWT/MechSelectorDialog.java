@@ -851,9 +851,9 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         if (GUIPreferences.getInstance().getMechSelectorIncludeName())
             val += makeLength(ms.getChassis(), 20) + " "; //$NON-NLS-1$ //$NON-NLS-2$
         if (GUIPreferences.getInstance().getMechSelectorIncludeTons())
-            val += makeLength("" + ms.getTons(), 3) + " "; //$NON-NLS-1$ //$NON-NLS-2$
+            val += makeLength("" + ms.getTons(), 7) + " "; //$NON-NLS-1$ //$NON-NLS-2$
         if (GUIPreferences.getInstance().getMechSelectorIncludeBV())
-            val += makeLength("" + ms.getBV(), 5) + " "; //$NON-NLS-1$ //$NON-NLS-2$
+            val += makeLength("" + ms.getBV(), 6) + " "; //$NON-NLS-1$ //$NON-NLS-2$
         if (GUIPreferences.getInstance().getMechSelectorIncludeYear())
             val += ms.getYear() + " ";
         if (GUIPreferences.getInstance().getMechSelectorIncludeLevel())
@@ -969,7 +969,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
     }
 
     void previewMech(Entity entity) {
-        MechView mechView = new MechView(entity);
+        MechView mechView = new MechView(entity, m_client.game.getOptions().booleanOption("show_bay_detail"));
         m_mechView.setEditable(false);
         String readout = mechView.getMechReadout();
         StringBuffer sb = new StringBuffer(readout);

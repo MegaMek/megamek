@@ -51,6 +51,9 @@ public class CLLightMG extends MGWeapon {
         this.criticals = 1;
         this.bv = 5;
         this.cost = 5000;
+        this.shortAV = 1;
+        this.maxRange = RANGE_SHORT;
+        this.atClass = CLASS_AC;
     }
 
 }

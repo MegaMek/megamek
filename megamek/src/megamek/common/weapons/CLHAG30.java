@@ -46,6 +46,10 @@ public class CLHAG30 extends HAGWeapon {
         this.criticals = 8;
         this.bv = 401;
         this.cost = 480000;
+        this.shortAV = 24;
+        this.medAV = 18;
+        this.longAV = 18;
+        this.maxRange = RANGE_LONG;
     }
 
 }

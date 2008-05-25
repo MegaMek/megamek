@@ -48,5 +48,7 @@ public class CLVehicleFlamer extends VehicleFlamerWeapon {
         this.criticals = 1;
         this.bv = 5;
         this.cost = 7500;
+        this.shortAV = 2;
+        this.maxRange = RANGE_SHORT;
     }
 }

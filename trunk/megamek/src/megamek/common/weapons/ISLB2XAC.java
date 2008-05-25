@@ -49,5 +49,10 @@ public class ISLB2XAC extends LBXACWeapon {
         this.criticals = 4;
         this.bv = 42;
         this.cost = 150000;
+        this.shortAV = 2;
+        this.medAV = 2;
+        this.longAV = 2;
+        this.extAV = 2;
+        this.maxRange = RANGE_EXT;
     }
 }

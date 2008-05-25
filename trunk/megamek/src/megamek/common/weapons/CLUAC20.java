@@ -49,5 +49,8 @@ public class CLUAC20 extends UACWeapon {
         this.bv = 335;
         this.cost = 480000;
         this.flags |= F_SPLITABLE;
+        this.shortAV = 30;
+        this.medAV = 30;
+        this.maxRange = RANGE_MED;
     }
 }

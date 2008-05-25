@@ -47,5 +47,8 @@ public class ISMRM30OS extends MRMWeapon {
         this.bv = 34;
         this.flags |= F_ONESHOT;
         this.cost = 225000;
+        this.shortAV = 18;
+        this.medAV = 18;
+        this.maxRange = RANGE_MED;
     }
 }

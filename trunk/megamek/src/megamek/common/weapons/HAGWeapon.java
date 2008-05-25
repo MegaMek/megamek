@@ -35,6 +35,8 @@ public abstract class HAGWeapon extends GaussWeapon {
         this.damage = DAMAGE_VARIABLE;
         this.ammoType = AmmoType.T_HAG;
         this.flags |= F_NO_AIM;
+        
+        this.atClass = CLASS_AC;
     }
 
     /*

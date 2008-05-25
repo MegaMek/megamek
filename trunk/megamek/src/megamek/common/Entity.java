@@ -34,6 +34,7 @@ import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.WeaponHandler;
+import megamek.common.weapons.BayWeapon;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.
@@ -138,6 +139,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     private int offBoardDirection = IOffBoardDirections.NONE;
     private int retreatedDirection = IOffBoardDirections.NONE;
 
+    protected int[] vectors = {0,0,0,0,0,0};
+    private int recoveryTurn = 0;
+    
     /**
      * The object that tracks this unit's Inferno round hits.
      */
@@ -162,6 +166,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     protected ArrayList<Mounted> weaponList = new ArrayList<Mounted>();
 
+    /**
+     * A list of all mounted weapon bays
+     */
+    protected ArrayList<Mounted>            weaponBayList = new ArrayList<Mounted>();
+    
     /**
      * A list of all mounted ammo.
      */
@@ -491,6 +500,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         this.techLevel = techLevel;
     }
 
+    public int getRecoveryTurn() {
+        return recoveryTurn;
+    }
+    
+    public void setRecoveryTurn(int r) {
+        this.recoveryTurn = r;
+    }
+    
     /**
      * Checks if this is a clan unit. It is determined by tech level.
      * 
@@ -1458,6 +1475,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * terrain.
      */
     public boolean isHexProhibited(IHex hex) {
+        
         if (hex.containsTerrain(Terrains.IMPASSABLE))
             return true;
         
@@ -1930,6 +1948,43 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         return mounted;
     }
 
+    //mounting weapons needs to take account of ammo
+    public Mounted addEquipment(EquipmentType etype, int loc,
+            boolean rearMounted, int nAmmo) throws LocationFullException {
+        Mounted mounted = new Mounted(this, etype);
+        addEquipment(mounted, loc, rearMounted, nAmmo);
+        return mounted;
+
+    }
+    
+    //indicate whether this is a bomb mount
+    public Mounted addEquipment(EquipmentType etype, int loc,
+            boolean rearMounted, boolean isBomb, int points) throws LocationFullException {
+        Mounted mounted = new Mounted(this, etype);
+        addEquipment(mounted, loc, rearMounted, isBomb, points);
+        return mounted;
+    }
+
+    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted,
+            int nAmmo) throws LocationFullException {
+        if (mounted.getType() instanceof AmmoType && nAmmo > 1) {
+            mounted.setByShot(true);
+            mounted.setShotsLeft(nAmmo);
+        }
+    
+        addEquipment(mounted, loc, rearMounted);
+    }
+    
+    protected void addEquipment(Mounted mounted, int loc, boolean rearMounted,
+            boolean isBomb, int points) throws LocationFullException {
+        if (isBomb) {
+            mounted.setBombMounted(true);
+            mounted.setBombPoints(points);
+        }
+    
+        addEquipment(mounted, loc, rearMounted);
+    }
+    
     protected void addEquipment(Mounted mounted, int loc, boolean rearMounted)
             throws LocationFullException {
         mounted.setLocation(loc, rearMounted);
@@ -1941,6 +1996,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             if (mounted.getType().hasFlag(WeaponType.F_ARTILLERY)) {
                 aTracker.addWeapon(mounted);
             }
+            if(mounted.getType() instanceof BayWeapon) {
+                weaponBayList.add(mounted);
+            }
+            
             // one-shot launchers need their single shot of ammo added.
             if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)) {
                 Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
@@ -2046,13 +2105,28 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * false, assume it fires into the primary.
      */
     public abstract boolean isSecondaryArcWeapon(int weaponId);
-
+    
     public Iterator<Mounted> getWeapons() {
+        if(this.usesWeaponBays())
+            return weaponBayList.iterator();
+        
         return weaponList.iterator();
     }
-
+    
     public ArrayList<Mounted> getWeaponList() {
+        if(this.usesWeaponBays())
+            return weaponBayList; 
+        
         return weaponList;
+    }
+    
+    public ArrayList<Mounted> getTotalWeaponList() {
+        //return full weapon list even for large craft
+        return weaponList;
+    }
+    
+    public ArrayList<Mounted> getWeaponBayList() {
+        return weaponBayList;
     }
 
     /**
@@ -4676,6 +4750,134 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 + " can not load " + unit.getShortName());
     }
 
+    /**
+     * Recover the given unit. Only for ASF and Small Craft
+     *
+     * @param   unit - the <code>Entity</code> to be loaded.
+     * @throws  IllegalArgumentException If the unit can't be loaded
+     */
+    public void recover( Entity unit ) {
+        // Walk through this entity's transport components;
+        // find the one that can load the unit.
+        // Stop looking after the first match.
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
+            if ( next.canLoad(unit) && unit.getElevation() == getElevation()) {
+                if(next instanceof ASFBay) {
+                    ((ASFBay)next).recover( unit );
+                    return;
+                }
+                if(next instanceof SmallCraftBay) {
+                    ((SmallCraftBay)next).recover(unit);
+                    return;
+                }
+            }
+        }
+
+        // If we got to this point, then we can't load the unit.
+        throw new IllegalArgumentException( this.getShortName() +
+                                            " can not recover " +
+                                            unit.getShortName() );
+    }
+    
+    //cycle through and update Bays
+    public void updateBays() {      
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
+            if( next instanceof ASFBay ) {
+                ASFBay nextBay = (ASFBay) next;
+                    nextBay.updateSlots();
+                }
+            }           
+        }
+    
+    /*
+     * Damages a randomly determined bay door on the entity, if one exists
+     * 
+     */
+    public String damageBayDoor() {
+        
+        String bayType = "none";
+        
+        Vector<Bay> potential;
+        potential = new Vector<Bay>();
+        
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
+            if( next instanceof Bay ) {
+                Bay nextBay = (Bay) next;
+                if(nextBay.getDoors() > 0) {
+                    potential.add(nextBay);
+                }
+            }           
+        }
+       
+        if(potential.size() > 0) {
+            Bay chosenBay = potential.elementAt(Compute.randomInt(potential.size()));
+            chosenBay.destroyDoor();
+            chosenBay.resetDoors();
+            chosenBay.setDoors(chosenBay.getDoors() - 1);
+            bayType = chosenBay.getType();
+        }
+        
+        return bayType;
+    }
+    
+    //damage the door of the first bay that can load this unit
+    public void damageDoorRecovery(Entity en) {
+        
+        Vector<Bay> potential;
+        potential = new Vector<Bay>();
+        
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
+            if( next instanceof ASFBay  && next.canLoad(en)) {
+                ((ASFBay)next).destroyDoor();
+                break;
+            }
+            if( next instanceof SmallCraftBay  && next.canLoad(en)) {
+                ((SmallCraftBay)next).destroyDoor();
+                break;
+            }
+            
+        }
+    }
+    
+    
+    /*
+     * Damages a randomly determined docking collar on the entity, if one exists
+     * 
+     */
+    public boolean damageDockCollar() {
+        
+        boolean result = false;
+        
+        Vector<DockingCollar> potential;
+        potential = new Vector<DockingCollar>();
+        
+        Enumeration iter = this.transports.elements();
+        while ( iter.hasMoreElements() ) {
+            Transporter next = (Transporter)iter.nextElement();
+            if( next instanceof DockingCollar ) {
+                DockingCollar nextDC = (DockingCollar) next;
+                if(!nextDC.isDamaged()) {
+                    potential.add(nextDC);
+                }
+            }           
+        }
+       
+        if(potential.size() > 0) {
+            DockingCollar chosenDC = potential.elementAt(Compute.randomInt(potential.size()));
+            chosenDC.setDamaged(true);
+            result = true;
+        }
+        
+        return result;
+    }
     public void pickUp(MechWarrior mw) {
         pickedUpMechWarriors.addElement(new Integer(mw.getId()));
     }
@@ -4704,6 +4906,217 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         return result;
     }
 
+//  get the number of docking collars
+    public int getDocks() {
+        int n = 0;
+        
+        for(Transporter next:transports) {
+            if(next instanceof DockingCollar) {
+                n++;
+            }
+        }
+
+        // Return the number
+        return n;
+        
+    }
+    
+    //only entities in Bays (for cargo damage to Aero units
+    public Vector<Entity> getBayLoadedUnits() {
+        Vector<Entity> result = new Vector<Entity>();
+
+        // Walk through this entity's transport components;
+        // add all of their lists to ours.
+        for(Transporter next:transports) {
+            if(next instanceof Bay) {
+                for (Entity e:next.getLoadedUnits()) {
+                    result.addElement(e);
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+    
+    //  only entities in ASF Bays
+    public Vector<Entity> getLoadedFighters() {
+        Vector<Entity> result = new Vector<Entity>();
+
+        // Walk through this entity's transport components;
+        // add all of their lists to ours.
+        
+        //I should only add entities in bays that are functional
+        for(Transporter next:transports) {
+            if(next instanceof ASFBay && ((ASFBay)next).getDoors()> 0) {
+                for (Entity e:next.getLoadedUnits()) {
+                    result.addElement(e);
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+    
+    //  only entities in ASF Bays that can be launched (i.e. not in recovery)
+    public Vector<Entity> getLaunchableFighters() {
+        Vector<Entity> result = new Vector<Entity>();
+
+        // Walk through this entity's transport components;
+        // add all of their lists to ours.
+        
+        //I should only add entities in bays that are functional
+        for(Transporter next:transports) {
+            if(next instanceof ASFBay && ((ASFBay)next).getDoors()> 0) {
+                Bay nextbay = (Bay)next;
+                for (Entity e:nextbay.getLaunchableUnits()) {
+                    result.addElement(e);
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+
+    public Bay getLoadedBay(int id) {
+        
+        Vector<Bay> bays = this.getFighterBays();
+        for (int nbay = 0; nbay < bays.size(); nbay++) {
+            Bay currentBay = bays.elementAt(nbay);
+            Vector<Entity> currentFighters = currentBay.getLoadedUnits();
+            for(int nfighter = 0; nfighter < currentFighters.size(); nfighter++){
+                Entity fighter = currentFighters.elementAt(nfighter);
+                if(fighter.getId()  == id) {
+                    //then we are in the right bay
+                    return currentBay;                  
+                }
+            }
+        }
+        
+        return null;
+        
+    }
+    
+    //get the bays separately
+    public Vector<Bay> getFighterBays() {
+        Vector<Bay> result = new Vector<Bay>();
+        
+        for(Transporter next:transports) {
+            if((next instanceof ASFBay || next instanceof SmallCraftBay) && ((Bay)next).getDoors() > 0) {
+                result.addElement((Bay)next);
+            }
+        }
+
+        // Return the list.
+        return result;
+        
+    }
+    
+    public Vector<Bay> getTransportBays() {
+    
+        Vector<Bay> result = new Vector<Bay>();
+        
+        for(Transporter next:transports) {
+            if(next instanceof Bay) {
+                result.addElement((Bay)next);
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+    
+   //do any damage to bay doors
+    public void resetBayDoors() {
+        
+        for(Transporter next:transports) {
+            if(next instanceof Bay) {
+                ((Bay)next).resetDoors();
+            }
+        }
+        
+    }
+    
+    //  what is the launch rate for fighters
+    public int getFighterLaunchRate() {
+        int result = 0;
+
+        // Walk through this entity's transport components;
+        for(Transporter next:transports) {
+            if(next instanceof ASFBay) {
+                result += 2 * ((ASFBay)next).getDoors();
+            }
+        }
+        // Return the number.
+        return result;
+    }
+    
+    public Vector<Entity> getLoadedSmallCraft() {
+        Vector<Entity> result = new Vector<Entity>();
+
+        // Walk through this entity's transport components;
+        // add all of their lists to ours.
+        for(Transporter next:transports) {
+            if(next instanceof SmallCraftBay && ((SmallCraftBay)next).getDoors()> 0) {
+                for (Entity e:next.getLoadedUnits()) {
+                    result.addElement(e);
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+    
+    public Vector<Entity> getLaunchableSmallCraft() {
+        Vector<Entity> result = new Vector<Entity>();
+
+        // Walk through this entity's transport components;
+        // add all of their lists to ours.
+        for(Transporter next:transports) {
+            if(next instanceof SmallCraftBay && ((SmallCraftBay)next).getDoors()> 0) {
+                Bay nextbay = (Bay)next;
+                for (Entity e:nextbay.getLaunchableUnits()) {
+                    result.addElement(e);
+                }
+            }
+        }
+
+        // Return the list.
+        return result;
+    }
+    
+//  get the bays separately
+    public Vector<SmallCraftBay> getSmallCraftBays() {
+        Vector<SmallCraftBay> result = new Vector<SmallCraftBay>();
+        
+        for(Transporter next:transports) {
+            if(next instanceof SmallCraftBay && ((SmallCraftBay)next).getDoors() > 0) {
+                result.addElement((SmallCraftBay)next);
+            }
+        }
+
+        // Return the list.
+        return result;
+        
+    }
+    
+    //  what is the launch rate for Small Craft
+    public int getSmallCraftLaunchRate() {
+        int result = 0;
+
+        // Walk through this entity's transport components;
+        for(Transporter next:transports) {
+            if(next instanceof SmallCraftBay) {
+                result += 2 * ((SmallCraftBay)next).getDoors();
+            }
+        }
+        // Return the number.
+        return result;
+    }
+    
     /**
      * Unload the given unit.
      * 
@@ -6157,13 +6570,22 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public int sideTable(Coords src) {
+        return sideTable(src, false);
+    }
+    
+   
+    public int sideTable(Coords src, boolean usePrior) {
+        return sideTable(src, usePrior, facing);
+    }
+    
+    public int sideTable(Coords src, boolean usePrior, int face) {
         if (src.equals(position)) {
             // most places handle 0 range explicitly,
             // this is a safe default (calculation gives SIDE_RIGHT)
             return ToHitData.SIDE_FRONT;
         }
         // calculate firing angle
-        int fa = (position.degree(src) + (6 - facing) * 60) % 360;
+        int fa = (position.degree(src) + (6 - face) * 60) % 360;
 
         boolean targetIsTank = (this instanceof Tank)
                 || (game.getOptions().booleanOption("quad_hit_location") && this instanceof QuadMech);
@@ -6177,6 +6599,24 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             } else {
                 return ToHitData.SIDE_FRONT;
             }
+        }
+        if(this instanceof Aero) {
+            Aero a = (Aero)this;
+            if (fa > 30 && fa <= 150) {
+                if(a.isRolled()) {
+                    return ToHitData.SIDE_LEFT;
+                }
+                return ToHitData.SIDE_RIGHT;
+            } else if (fa > 150 && fa < 210) {
+                return ToHitData.SIDE_REAR;
+            } else if (fa >= 210 && fa < 330) {
+                if(a.isRolled()) {
+                    return ToHitData.SIDE_RIGHT;
+                }
+                return ToHitData.SIDE_LEFT;
+            } else {
+                return ToHitData.SIDE_FRONT;
+            }   
         }
         if (fa > 90 && fa <= 150) {
             return ToHitData.SIDE_RIGHT;
@@ -6462,7 +6902,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public boolean isCommander() {
         return this.isCommander;
     }
-
+    
     public boolean hasLinkedMGA(Mounted mounted) {
         for (Mounted m : getWeaponList()) {
             if (m.getLocation() == mounted.getLocation()
@@ -6485,5 +6925,190 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public boolean isReckless() {
         return reckless;
     }
+    
+//  a function that let's us know if this entity has capital-scale armor
+    public boolean isCapitalScale() {
+        
+        if(this instanceof Jumpship || this instanceof FighterSquadron) {
+            return true;
+        }
+        
+        return false;
+        
+    }
+    
+    //a function that let's us know if this entity is using weapons bays
+    public boolean usesWeaponBays() {
+        
+        if(this instanceof Jumpship || this instanceof Dropship || this instanceof FighterSquadron) {
+            return true;
+        }
+        
+        return false;
+        
+    }
+    
+    //return the bay of the current weapon
+    public Mounted whichBay(int id) {
+        
+        for (Mounted m : getWeaponBayList()) {
+            for(int wId : m.getBayWeapons()) {
+                //find the weapon and determine if it is there
+                if(wId == id) {
+                    return m;
+                }   
+            }
+        }
+        return null;
+    }
+    
+    //  return the first bay of the right type in the right location with enough
+    //damage to spare
+    public Mounted getFirstBay(WeaponType wtype, int loc, boolean rearMount) {
+        
+        int weapDamage = wtype.getRoundShortAV();
+        if(wtype.isCapital())
+            weapDamage *= 10;
+        
+        for (Mounted m : getWeaponBayList()) {
+            BayWeapon bay = (BayWeapon)m.getType();
+            int damage = bay.getRoundShortAV() + weapDamage;
+            if(bay.getAtClass() == wtype.getAtClass() && m.getLocation() == loc 
+                    && m.isRearMounted() == rearMount && damage <= 700) {
+                return m;
+            }
+                
+        }
+        return null;
+    }
+    
+    public int getHeatInArc(int location, boolean rearMount) {
+        
+        int heat = 0;
+        
+        for(Mounted mounted : getTotalWeaponList()) {
+            //is the weapon usable?
+            if(mounted.isDestroyed() || mounted.isJammed()) {
+                continue;
+            }
+           
+            /*
+            //does it have ammo?
+            WeaponType weap = (WeaponType)mounted.getType();
+            if(weap.getAmmoType() != AmmoType.T_NA) {
+                Mounted ammo = mounted.getLinked();
+                if(ammo == null || ammo.getShotsLeft() <= 0) {
+                    continue;
+                }
+            }
+            */
+            
+            if(mounted.getLocation() == location && mounted.isRearMounted() == rearMount) {          
+                WeaponType wtype = (WeaponType)mounted.getType();
+                heat += wtype.getHeat();           
+            }           
+        }       
+        return heat;    
+    }
+    
+    public boolean ArcFired(int location, boolean rearMount) {
+        boolean hasFired = false;
+        
+        for(Mounted mounted : getTotalWeaponList()) {
+            if(mounted.getLocation() == location && mounted.isRearMounted() == rearMount) {
+                if(mounted.isUsedThisRound()) {
+                    return true;
+                }
+            }           
+        } 
+        return hasFired;
+        
+        
+    }
+    
+    public int[] getVectors() {
+        return vectors;
+    }
+    
+    public void setVectors(int[] v) {
+        if(v == null || v.length != 6)
+            return;
+        
+        this.vectors = v;
+    }
+    
+    public int getVector(int facing) {
+        if(facing < 6) {
+            return vectors[facing];
+        } else {
+            return 0;
+        }
+    }
+    
+    public int getVelocity() {
+        
+        int total = 0;
+        for(int dir = 0; dir < 6; dir++) {
+            total += getVector(dir);
+        }
+
+        return total;
+    }
+    
+    public int chooseSide(Coords attackPos, boolean usePrior) {
+        //loop through directions and if we have a non-zero vector, then compute
+        //the targetsidetable. If we come to a higher vector, then replace.  If
+        //we come to an equal vector then take it if it is better
+        int thrust = 0;
+        int high = -1;
+        int side = -1;
+        for(int dir = 0; dir < 6; dir++) {
+            thrust = getVector(dir);
+            if(thrust == 0)
+                continue;
+            
+            if(thrust > high) {
+                high = thrust;
+                side = sideTable(attackPos, usePrior, dir);
+            }
+            
+            //what if they tie
+            if(thrust == high) {
+                int newside = sideTable(attackPos, usePrior, dir);
+                //choose the best
+                if(newside == ToHitData.SIDE_LEFT || newside == ToHitData.SIDE_RIGHT) {
+                    newside = side;
+                } 
+                //that should be the only case, because it can't shift you from front
+                //to aft or vice-versa
+            }
+            
+        }
+        return side;
+    }
+    
+    //return the heading of the unit based on its active vectors
+    //if vectors are tied then return two headings
+    
+    public Vector<Integer> getHeading() {
+        
+        Vector<Integer> heading = new Vector<Integer>();
+        int high = 0;
+        int curDir = getFacing();
+        for(int dir = 0; dir < 6; dir++) {
+            int thrust = getVector(dir);
+            if(thrust >= high && thrust > 0) {
+                //if they were equal then add the last direction to the 
+                //vector before moving on
+                if(thrust == high) {
+                    heading.addElement(curDir);
+                }
+                high = getVector(dir);
+                curDir = dir;
+            }
+        }
+        heading.addElement(curDir);
+        return heading;     
+    }    
 
 }

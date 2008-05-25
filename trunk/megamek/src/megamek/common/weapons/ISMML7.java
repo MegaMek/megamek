@@ -40,5 +40,9 @@ public class ISMML7 extends MMLWeapon {
         this.criticals = 4;
         this.bv = 67;
         this.cost = 160000;
+        this.shortAV = 4;
+        this.medAV = 4;
+        this.longAV = 4;
+        this.maxRange = RANGE_LONG;
     }
 }

@@ -51,5 +51,7 @@ public class ISAC20 extends ACWeapon {
         this.bv = 178;
         this.flags |= F_SPLITABLE;
         this.cost = 300000;
+        this.shortAV = 20;
+        this.maxRange = RANGE_SHORT;
     }
 }

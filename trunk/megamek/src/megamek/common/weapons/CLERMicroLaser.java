@@ -52,5 +52,7 @@ public class CLERMicroLaser extends LaserWeapon {
         this.flags |= F_NO_FIRES;
         this.bv = 7;
         this.cost = 10000;
+        this.shortAV = 2;
+        this.maxRange = RANGE_SHORT;
     }
 }

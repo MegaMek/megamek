@@ -51,5 +51,8 @@ public class CLERMediumLaser extends LaserWeapon {
         this.criticals = 1;
         this.bv = 108;
         this.cost = 80000;
+        this.shortAV = 7;
+        this.medAV = 7;
+        this.maxRange = RANGE_MED;
     }
 }

@@ -51,6 +51,8 @@ public class CLHeavyMG extends MGWeapon {
         this.criticals = 1;
         this.bv = 6;
         this.cost = 7500;
+        this.shortAV = 3;
+        this.maxRange = RANGE_SHORT;
     }
 
 }

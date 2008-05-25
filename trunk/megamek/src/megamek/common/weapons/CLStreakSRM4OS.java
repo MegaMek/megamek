@@ -45,5 +45,8 @@ public class CLStreakSRM4OS extends StreakSRMWeapon {
         this.flags |= F_NO_FIRES | F_ONESHOT;
         this.bv = 16;
         this.cost = 90000;
+        this.shortAV = 8;
+        this.medAV = 8;
+        this.maxRange = RANGE_MED;
     }
 }

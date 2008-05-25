@@ -50,6 +50,9 @@ public class ISAC10 extends ACWeapon {
         this.criticals = 7;
         this.bv = 123;
         this.cost = 200000;
+        this.shortAV = 10;
+        this.medAV = 10;
+        this.maxRange = RANGE_MED;
 
     }
 }

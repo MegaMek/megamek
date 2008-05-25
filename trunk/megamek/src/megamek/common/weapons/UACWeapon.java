@@ -38,6 +38,8 @@ public abstract class UACWeapon extends AmmoWeapon {
         this.ammoType = AmmoType.T_AC_ULTRA;
         String[] modes = { "Single", "Ultra" };
         this.setModes(modes);
+        
+        this.atClass = CLASS_AC;
     }
 
     /*

@@ -75,7 +75,18 @@ public class AmmoType extends EquipmentType {
     public static final int     T_TBOLT_10          = 50;
     public static final int     T_TBOLT_15          = 51;
     public static final int     T_TBOLT_20          = 52;
-    public static final int     NUM_TYPES           = 53;
+    public static final int     T_NAC               = 53;
+    public static final int     T_LIGHT_NGAUSS      = 54;
+    public static final int     T_MED_NGAUSS        = 55;
+    public static final int     T_HEAVY_NGAUSS      = 56;
+    public static final int     T_KILLER_WHALE      = 57;
+    public static final int     T_WHITE_SHARK       = 58;
+    public static final int     T_BARRACUDA         = 59;
+    public static final int     T_KRAKEN            = 60;
+    public static final int     T_AR10              = 61;
+    public static final int     T_SCREEN_LAUNCHER   = 62;
+    public static final int     T_ALAMO             = 63;
+    public static final int     NUM_TYPES           = 64;
     
 
     // ammo flags
@@ -85,6 +96,9 @@ public class AmmoType extends EquipmentType {
     public static final long     F_HOTLOAD           = 1l << 3; // Ammo Can be hotloaded
     public static final long     F_ENCUMBERING       = 1l << 4; // BA can't jump or make antimech until dumped
     public static final long     F_MML_LRM           = 1l << 5; // LRM type
+    public static final long     F_AR10_WHITE_SHARK  = 1l << 6; // White shark type
+    public static final long     F_AR10_KILLER_WHALE = 1l << 7; // Killer Whale type
+    public static final long     F_NUCLEAR           = 1l << 8; // Nuclear missile
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -155,6 +169,7 @@ public class AmmoType extends EquipmentType {
 
     // Nuclear Munitions
     public static final long     M_DAVY_CROCKETT_M   = 1l << 41;
+    public static final long     M_SANTA_ANNA        = 1l << 42;
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
@@ -177,6 +192,8 @@ public class AmmoType extends EquipmentType {
     private long munitionType;
     protected int shots;
     private double kgPerShot = -1;
+//  ratio for capital ammo
+    private double ammoRatio;
     
     
     public AmmoType() {
@@ -184,6 +201,7 @@ public class AmmoType extends EquipmentType {
         tonnage = 1.0f;
         explosive = true;
         instantModeSwitch = false;
+        ammoRatio = 0;
     }
 
     /**
@@ -223,6 +241,10 @@ public class AmmoType extends EquipmentType {
 
     public int getShots() {
         return shots;
+    }
+    
+    public double getAmmoRatio() {
+        return ammoRatio;
     }
 
     // Returns the first usable ammo type for the given oneshot launcher
@@ -712,6 +734,28 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLPROMGAmmo());
         EquipmentType.addType(createCLPROLightMGAmmo());
 
+        //naval ammo
+        EquipmentType.addType(createNAC10Ammo());
+        EquipmentType.addType(createNAC20Ammo());
+        EquipmentType.addType(createNAC25Ammo());
+        EquipmentType.addType(createNAC30Ammo());
+        EquipmentType.addType(createNAC35Ammo());
+        EquipmentType.addType(createNAC40Ammo());
+        EquipmentType.addType(createLightNGaussAmmo());
+        EquipmentType.addType(createMediumNGaussAmmo());
+        EquipmentType.addType(createHeavyNGaussAmmo());
+        EquipmentType.addType(createKrakenAmmo());
+        EquipmentType.addType(createKillerWhaleAmmo());
+        EquipmentType.addType(createSantaAnnaAmmo());
+        EquipmentType.addType(createWhiteSharkAmmo());
+        EquipmentType.addType(createBarracudaAmmo());
+        EquipmentType.addType(createAR10KillerWhaleAmmo());
+        EquipmentType.addType(createAR10WhiteSharkAmmo());
+        EquipmentType.addType(createAR10SantaAnnaAmmo());
+        EquipmentType.addType(createAR10BarracudaAmmo());
+        EquipmentType.addType(createScreenLauncherAmmo());
+        EquipmentType.addType(createAlamoAmmo());
+        
         // Create the munition types for IS SRM launchers.
         munitions.clear();
         munitions.add( new MunitionMutator( "Inferno",
@@ -5970,6 +6014,361 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 26;
         ammo.cost = 30000;
         ammo.explosive = false;
+
+        return ammo;
+    }
+    
+//  naval ammo
+    /*
+    *Because ammo by ton is not in whole number
+    *I am doing this as single shot with a function
+    *to change the number of shots which will be called
+    *from the BLK file.  This means I also have to convert
+    *BV and cost per ton to BV and cost per shot 
+     */
+    
+    private static AmmoType createNAC10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "NAC/10 Ammo";
+        ammo.setInternalName("Ammo NAC/10");
+        ammo.addLookupName("NAC10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_NAC;
+        ammo.shots = 1;
+        ammo.bv = 238;
+        ammo.cost = 30000;
+        ammo.ammoRatio = 0.2;
+        
+        return ammo;
+    }
+    
+    private static AmmoType createNAC20Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "NAC/20 Ammo";
+        ammo.setInternalName("Ammo NAC/20");
+        ammo.addLookupName("NAC20 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 20;
+        ammo.ammoType = AmmoType.T_NAC;
+        ammo.shots = 1;
+        ammo.bv = 475;
+        ammo.cost = 60000;
+        ammo.ammoRatio = 0.4;
+        
+        return ammo;
+    }
+    
+    private static AmmoType createNAC25Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "NAC/25 Ammo";
+        ammo.setInternalName("Ammo NAC/25");
+        ammo.addLookupName("NAC25 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 25;
+        ammo.ammoType = AmmoType.T_NAC;
+        ammo.shots = 1;
+        ammo.bv = 594;
+        ammo.cost = 75000;
+        ammo.ammoRatio = 0.6;
+        
+        return ammo;
+    }
+    
+    private static AmmoType createNAC30Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "NAC/30 Ammo";
+        ammo.setInternalName("Ammo NAC/30");
+        ammo.addLookupName("NAC30 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 30;
+        ammo.ammoType = AmmoType.T_NAC;
+        ammo.shots = 1;
+        ammo.bv = 713;
+        ammo.cost = 90000;
+        ammo.ammoRatio = 0.8;
+        
+        return ammo;
+    }
+    
+    private static AmmoType createNAC35Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "NAC/35 Ammo";
+        ammo.setInternalName("Ammo NAC/35");
+        ammo.addLookupName("NAC35 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 35;
+        ammo.ammoType = AmmoType.T_NAC;
+        ammo.shots = 1;
+        ammo.bv = 620;
+        ammo.cost = 105000;
+        ammo.ammoRatio = 1.0;
+        
+        return ammo;
+    }
+    
+    private static AmmoType createNAC40Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "NAC/40 Ammo";
+        ammo.setInternalName("Ammo NAC/40");
+        ammo.addLookupName("NAC40 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 40;
+        ammo.ammoType = AmmoType.T_NAC;
+        ammo.shots = 1;
+        ammo.bv = 708;
+        ammo.cost = 120000;
+        ammo.ammoRatio = 1.2;
+
+        return ammo;
+    }
+    
+    private static AmmoType createLightNGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Light N-Gauss Ammo";
+        ammo.setInternalName("Ammo Light N-Gauss");
+        ammo.addLookupName("LightNGauss Ammo");
+        ammo.damagePerShot = 15;
+        ammo.ammoType = AmmoType.T_LIGHT_NGAUSS;
+        ammo.shots = 1;
+        ammo.bv = 360;
+        ammo.cost = 45000;
+        ammo.ammoRatio = 0.2;
+        
+        return ammo;
+    }
+    
+    private static AmmoType createMediumNGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Medium N-Gauss Ammo";
+        ammo.setInternalName("Ammo Medium N-Gauss");
+        ammo.addLookupName("MediumNGauss Ammo");
+        ammo.damagePerShot = 25;
+        ammo.ammoType = AmmoType.T_MED_NGAUSS;
+        ammo.shots = 1;
+        ammo.bv = 601;
+        ammo.cost = 75000;
+        ammo.ammoRatio = 0.4;
+        
+        return ammo;
+    }
+    
+    private static AmmoType createHeavyNGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Heavy N-Gauss Ammo";
+        ammo.setInternalName("Ammo Heavy N-Gauss");
+        ammo.addLookupName("HeavyNGauss Ammo");
+        ammo.damagePerShot = 40;
+        ammo.ammoType = AmmoType.T_HEAVY_NGAUSS;
+        ammo.shots = 1;
+        ammo.bv = 721;
+        ammo.cost = 90000;
+        ammo.ammoRatio = 0.5;
+        
+        return ammo;
+    }
+    
+    private static AmmoType createKrakenAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Kraken-T Ammo";
+        ammo.setInternalName("Ammo KrakenT");
+        ammo.addLookupName("KrakenT Ammo");
+        ammo.damagePerShot = 10;
+        ammo.ammoType = AmmoType.T_KRAKEN;
+        ammo.shots = 1;
+        ammo.bv = 288;
+        ammo.cost = 55000;
+
+        return ammo;
+    }
+    
+    private static AmmoType createKillerWhaleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Killer Whale Ammo";
+        ammo.setInternalName("Ammo Killer Whale");
+        ammo.addLookupName("KillerWhale Ammo");
+        ammo.damagePerShot = 4;
+        ammo.ammoType = AmmoType.T_KILLER_WHALE;
+        ammo.shots = 1;
+        ammo.bv = 96;
+        ammo.cost = 20000;
+
+        return ammo;
+    }
+    
+    private static AmmoType createSantaAnnaAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Santa Anna Ammo";
+        ammo.setInternalName("Ammo Santa Anna");
+        ammo.addLookupName("SantaAnna Ammo");
+        ammo.damagePerShot = 100;
+        ammo.ammoType = AmmoType.T_KILLER_WHALE;
+        ammo.munitionType = AmmoType.M_SANTA_ANNA;
+        ammo.shots = 1;
+        ammo.bv = 96;
+        ammo.cost = 20000;
+        ammo.flags |=  F_NUCLEAR;
+        
+        
+        return ammo;
+    }
+    
+    private static AmmoType createWhiteSharkAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "White Shark Ammo";
+        ammo.setInternalName("Ammo White Shark");
+        ammo.addLookupName("WhiteShark Ammo");
+        ammo.damagePerShot = 3;
+        ammo.ammoType = AmmoType.T_WHITE_SHARK;
+        ammo.shots = 1;
+        ammo.bv = 72;
+        ammo.cost = 14000;
+
+        return ammo;
+    }
+    
+    private static AmmoType createBarracudaAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Barracuda Ammo";
+        ammo.setInternalName("Ammo Barracuda");
+        ammo.addLookupName("Barracuda Ammo");
+        ammo.damagePerShot = 2;
+        ammo.ammoType = AmmoType.T_BARRACUDA;
+        ammo.shots = 1;
+        ammo.bv = 65;
+        ammo.cost = 8000;
+        ammo.toHitModifier = -2;
+
+        return ammo;
+    }
+ 
+    private static AmmoType createAR10BarracudaAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AR10 Barracuda Ammo";
+        ammo.setInternalName("Ammo AR10 Barracuda");
+        ammo.addLookupName("AR10 Barracuda Ammo");
+        ammo.damagePerShot = 2;
+        ammo.ammoType = AmmoType.T_AR10;
+        ammo.shots = 1;
+        ammo.bv = 65;
+        ammo.cost = 8000;
+        ammo.toHitModifier = -2;
+
+        return ammo;
+    }
+    
+    private static AmmoType createAR10KillerWhaleAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AR10 Killer Whale Ammo";
+        ammo.setInternalName("Ammo AR10 Killer Whale");
+        ammo.addLookupName("AR10 KillerWhale Ammo");
+        ammo.damagePerShot = 4;
+        ammo.ammoType = AmmoType.T_AR10;
+        ammo.shots = 1;
+        ammo.bv = 96;
+        ammo.cost = 20000;
+        ammo.flags |=  F_AR10_KILLER_WHALE;
+
+        return ammo;
+    }
+    
+    private static AmmoType createAR10SantaAnnaAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AR10 Santa Anna Ammo";
+        ammo.setInternalName("Ammo AR10 Santa Anna");
+        ammo.addLookupName("AR10 SantaAnna Ammo");
+        ammo.damagePerShot = 100;
+        ammo.ammoType = AmmoType.T_AR10;
+        ammo.munitionType = AmmoType.M_SANTA_ANNA;
+        ammo.shots = 1;
+        ammo.bv = 96;
+        ammo.cost = 20000;
+        ammo.flags |=  F_AR10_KILLER_WHALE | F_NUCLEAR;
+
+        return ammo;
+    }
+    
+    private static AmmoType createAR10WhiteSharkAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AR10 White Shark Ammo";
+        ammo.setInternalName("Ammo AR10 White Shark");
+        ammo.addLookupName("AR10 WhiteShark Ammo");
+        ammo.damagePerShot = 3;
+        ammo.ammoType = AmmoType.T_AR10;
+        ammo.shots = 1;
+        ammo.bv = 72;
+        ammo.cost = 14000;
+        ammo.flags |=  F_AR10_WHITE_SHARK;
+
+        return ammo;
+    }
+    
+    private static AmmoType createScreenLauncherAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Screen Launcher Ammo";
+        ammo.setInternalName("Ammo Screen");
+        ammo.addLookupName("ScreenLauncher Ammo");
+        ammo.damagePerShot = 0;
+        ammo.ammoType = AmmoType.T_SCREEN_LAUNCHER;
+        ammo.shots = 1;
+        ammo.bv = 20;
+        ammo.cost = 10000;
+       
+        return ammo;
+    }
+    
+    private static AmmoType createAlamoAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Alamo Ammo";
+        ammo.setInternalName("Ammo Alamo");
+        ammo.addLookupName("Alamo Ammo");
+        ammo.damagePerShot = 10;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_ALAMO;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 0;
+        ammo.flags |= F_NUCLEAR;
 
         return ammo;
     }

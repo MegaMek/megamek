@@ -35,6 +35,8 @@ public abstract class MGWeapon extends AmmoWeapon {
         super();
         this.ammoType = AmmoType.T_MG;
         this.flags |= F_MG | F_BALLISTIC;
+        
+        this.atClass = CLASS_POINT_DEFENSE;
     }
 
     /*

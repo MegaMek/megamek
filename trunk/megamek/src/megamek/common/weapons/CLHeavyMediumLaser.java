@@ -52,5 +52,7 @@ public class CLHeavyMediumLaser extends LaserWeapon {
         this.criticals = 2;
         this.bv = 76;
         this.cost = 100000;
+        this.shortAV = 10;
+        this.maxRange = RANGE_SHORT;
     }
 }

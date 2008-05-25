@@ -36,6 +36,8 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
         this.ammoType = AmmoType.T_VEHICLE_FLAMER;
         String modes[] = { "Damage", "Heat", "Cool" };
         this.setModes(modes);
+        
+        this.atClass = CLASS_POINT_DEFENSE;
     }
 
     protected AttackHandler getCorrectHandler(ToHitData toHit,

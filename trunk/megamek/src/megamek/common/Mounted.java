@@ -22,6 +22,8 @@
 package megamek.common;
 
 import java.io.Serializable;
+import java.util.Vector;
+import megamek.common.weapons.BayWeapon;
 
 /**
  * This describes equipment mounted on a mech.
@@ -62,11 +64,22 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean m_bPendingDump;
     private boolean m_bDumping;
 
+    //A list of ids (equipment numbers) for the weapons linked to
+    //this bay (if the mounted is of the BayWeapon type)
+    private Vector<Integer> bayWeapons = new Vector<Integer>();
+    
+    //for ammo loaded by shot rather than ton, a boolean
+    private boolean byShot = false;
+    
     // handle split weapons
     private boolean bSplit = false;
     private int nFoundCrits = 0;
     private int secondLocation = 0;
 
+    //  bomb stuff
+    private boolean bombMounted = false;
+    private int bombPoints = 0;
+    
     // mine type
     private int mineType = MINE_NONE;
     // vibrabomb mine setting
@@ -833,5 +846,37 @@ public class Mounted implements Serializable, RoundUpdated {
         }
         return Math.max(0, base - damageTaken);
     }
+    
+    public void addWeaponToBay(int w) {
+        this.bayWeapons.add(w);
+    }
+    
+    public Vector<Integer> getBayWeapons() {
+        return bayWeapons;
+    }
+    
+    public void setByShot(boolean b) {
+        this.byShot = b;
+    }
+    
+    public boolean byShot() {
+        return byShot;
+    }
 
+    //bomb related
+    public boolean isBombMounted() {
+        return bombMounted;
+    }
+    
+    public void setBombMounted(boolean b) {
+        this.bombMounted = b;
+    }
+    
+    public int getBombPoints() {
+        return bombPoints;
+    }
+    
+    public void setBombPoints(int b) {
+        this.bombPoints = b;
+    }
 }

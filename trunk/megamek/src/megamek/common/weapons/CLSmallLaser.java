@@ -50,5 +50,7 @@ public class CLSmallLaser extends LaserWeapon {
         this.flags |= F_NO_FIRES;
         this.bv = 9;
         this.cost = 11250;
+
+        this.atClass = CLASS_POINT_DEFENSE;
     }
 }

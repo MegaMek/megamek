@@ -31,6 +31,8 @@ public abstract class LRMWeapon extends MissileWeapon {
         super();
         this.ammoType = AmmoType.T_LRM;
         this.setModes(new String[] { "", "Indirect" });
+        
+        this.atClass = CLASS_LRM;
     }
 
     /*

@@ -54,5 +54,8 @@ public class ISLargePulseLaser extends PulseLaserWeapon {
         this.bv = 119;
         this.cost = 175000;
         this.flags |= F_PULSE;
+        this.shortAV = 9;
+        this.medAV = 9;
+        this.maxRange = RANGE_MED;
     }
 }

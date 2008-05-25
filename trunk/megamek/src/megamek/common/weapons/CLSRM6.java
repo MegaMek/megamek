@@ -46,5 +46,7 @@ public class CLSRM6 extends SRMWeapon {
         this.bv = 59;
         this.flags |= F_NO_FIRES;
         this.cost = 80000;
+        this.shortAV = 8;
+        this.maxRange = RANGE_SHORT;
     }
 }

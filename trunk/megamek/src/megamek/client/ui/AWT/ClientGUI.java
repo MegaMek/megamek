@@ -130,6 +130,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
     GameOptionsDialog gameOptionsDialog;
     private MechSelectorDialog mechSelectorDialog;
     private CustomBattleArmorDialog customBADialog;
+    private CustomFighterSquadronDialog customFSDialog;
     private StartingPositionDialog startingPositionDialog;
     private PlayerListDialog playerListDialog;
     private RandomArmyDialog randomArmyDialog;
@@ -464,6 +465,7 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
         randomArmyDialog = new RandomArmyDialog(this);
         randomSkillDialog = new RandomSkillDialog(this);
         customBADialog = new CustomBattleArmorDialog(this);
+        customFSDialog = new CustomFighterSquadronDialog(this, unitLoadingDialog);
         new Thread(mechSelectorDialog, "Mech Selector Dialog").start(); //$NON-NLS-1$
         new Thread(customBADialog, "Custom Battle Armor Dialog").start();
     }
@@ -728,6 +730,10 @@ public class ClientGUI extends Panel implements MouseListener, WindowListener,
 
     public CustomBattleArmorDialog getCustomBADialog() {
         return customBADialog;
+    }
+    
+    public CustomFighterSquadronDialog getCustomFSDialog() {
+        return customFSDialog;
     }
 
     public StartingPositionDialog getStartingPositionDialog() {

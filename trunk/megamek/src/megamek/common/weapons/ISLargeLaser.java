@@ -49,5 +49,8 @@ public class ISLargeLaser extends LaserWeapon {
         this.criticals = 2;
         this.bv = 123;
         this.cost = 100000;
+        this.shortAV = 8;
+        this.medAV = 8;
+        this.maxRange = RANGE_MED;
     }
 }

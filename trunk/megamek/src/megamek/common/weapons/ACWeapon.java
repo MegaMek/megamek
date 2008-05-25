@@ -39,6 +39,8 @@ public abstract class ACWeapon extends AmmoWeapon {
         String[] modes = { "", "Rapid" };
         this.setModes(modes);
         this.explosive = true; // when firing incendiary ammo
+        
+        this.atClass = CLASS_AC;
     }
 
     /*

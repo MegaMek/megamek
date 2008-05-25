@@ -127,7 +127,7 @@ public class MechGroupView extends JDialog implements ActionListener,
                 ta.setText("(enemy unit)");
             } else {
                 Entity entity = client.game.getEntity(entityArray[selected]);
-                MechView mechView = new MechView(entity);
+                MechView mechView = new MechView(entity, client.game.getOptions().booleanOption("show_bay_detail"));
                 ta.setText(mechView.getMechReadout());
             }
         }

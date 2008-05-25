@@ -31,6 +31,8 @@ public abstract class MMLWeapon extends MissileWeapon {
         super();
         this.ammoType = AmmoType.T_MML;
         this.setModes(new String[] { "", "Indirect" });
+        
+        this.atClass = CLASS_MML;
     }
 
     /*

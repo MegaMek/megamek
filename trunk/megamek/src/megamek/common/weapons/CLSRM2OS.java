@@ -46,5 +46,7 @@ public class CLSRM2OS extends SRMWeapon {
         this.bv = 4;
         this.flags |= F_NO_FIRES | F_ONESHOT;
         this.cost = 10000;
+        this.shortAV = 2;
+        this.maxRange = RANGE_SHORT;
     }
 }

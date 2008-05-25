@@ -51,5 +51,8 @@ public class ISERMediumLaser extends LaserWeapon {
         this.criticals = 1;
         this.bv = 62;
         this.cost = 80000;
+        this.shortAV = 5;
+        this.medAV = 5;
+        this.maxRange = RANGE_MED;
     }
 }

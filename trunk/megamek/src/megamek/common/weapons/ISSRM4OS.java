@@ -47,5 +47,7 @@ public class ISSRM4OS extends SRMWeapon {
         this.bv = 8;
         this.flags |= F_NO_FIRES | F_ONESHOT;
         this.cost = 60000;
+        this.shortAV = 4;
+        this.maxRange = RANGE_SHORT;
     }
 }

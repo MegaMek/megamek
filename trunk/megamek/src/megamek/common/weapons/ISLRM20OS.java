@@ -48,5 +48,9 @@ public class ISLRM20OS extends LRMWeapon {
         this.bv = 36;
         this.flags |= F_ONESHOT;
         this.cost = 250000;
+        this.shortAV = 12;
+        this.medAV = 12;
+        this.longAV = 12;
+        this.maxRange = RANGE_LONG;
     }
 }

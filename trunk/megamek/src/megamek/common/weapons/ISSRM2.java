@@ -47,5 +47,7 @@ public class ISSRM2 extends SRMWeapon {
         this.bv = 21;
         this.flags |= F_NO_FIRES;
         this.cost = 10000;
+        this.shortAV = 2;
+        this.maxRange = RANGE_SHORT;
     }
 }

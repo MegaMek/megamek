@@ -52,6 +52,10 @@ public class ISPlasmaRifle extends AmmoWeapon {
         this.flags |= F_PLASMA | F_DIRECT_FIRE;
         this.bv = 210;
         this.cost = 480000;
+        this.shortAV = 10;
+        this.medAV = 10;
+        this.maxRange = RANGE_MED;
+        this.atClass = CLASS_PLASMA;
 
     }
 

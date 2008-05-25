@@ -27,9 +27,16 @@ public class UnitType {
     public static final int VTOL = 5;
     public static final int NAVAL = 6;
     public static final int GUN_EMPLACEMENT = 7;
+    public static final int AERO = 8;
+    public static final int SMALL_CRAFT = 9;
+    public static final int DROPSHIP = 10;
+    public static final int WARSHIP = 11;
+    public static final int JUMPSHIP = 12;
+    public static final int SPACE_STATION = 13;
 
     private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",
-            "ProtoMek", "VTOL", "Naval", "Gun Emplacement" };
+            "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Aero", "Small Craft", "Dropship", 
+            "Jumpship", "Warship", "Space Station" };
 
     public static final int SIZE = names.length;
 
@@ -55,7 +62,17 @@ public class UnitType {
             return PROTOMEK;
         } else if (e instanceof GunEmplacement) {
             return GUN_EMPLACEMENT;
-        } else {
+        } else if (e instanceof Warship) {
+            return WARSHIP;
+        } else if (e instanceof Jumpship) {
+            return JUMPSHIP;
+        } else if (e instanceof Dropship) {
+            return DROPSHIP;
+        } else if (e instanceof SmallCraft) {
+            return SMALL_CRAFT;
+        } else if (e instanceof Aero) {
+            return AERO;
+        }else {
             throw new IllegalArgumentException("Unknown unit type");
         }
     }

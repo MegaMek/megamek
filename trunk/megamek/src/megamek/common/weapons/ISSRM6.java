@@ -46,5 +46,7 @@ public class ISSRM6 extends SRMWeapon {
         this.criticals = 2;
         this.bv = 59;
         this.cost = 80000;
+        this.shortAV = 8;
+        this.maxRange = RANGE_SHORT;
     }
 }

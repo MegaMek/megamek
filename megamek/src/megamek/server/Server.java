@@ -15656,8 +15656,7 @@ public class Server implements Runnable {
             waterDepth = 0;
             newElevation = fallHex.terrainLevel(Terrains.BRIDGE_ELEV);
         } else if (fallHex.containsTerrain(Terrains.ICE)
-                && height >= fallHex.depth()) {
-            damageHeight -= fallHex.depth();
+                && entity.getElevation() == 0) {
             waterDepth = 0;
             newElevation = 0;
         }

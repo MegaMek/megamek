@@ -18,6 +18,7 @@ v0.33.26-dev (SVN)
 + Re-added commandline nukes
 + Bug: Falling on ice makes unit end up underwater
 + Patch 1971927: MegaAero Integration: Aero Entities and Displays
++ Bug 1975641: Hot-loading Thunderbolts vs. last shot in ammo bin
 
 v0.33.25 (2008-05-18, 14:42 GMT+2)
 + Bug 1961220: MG array damage vs. infantry too low

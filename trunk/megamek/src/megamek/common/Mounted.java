@@ -448,8 +448,7 @@ public class Mounted implements Serializable, RoundUpdated {
 
         if (this.getType() instanceof WeaponType) {
             Mounted link = this.getLinked();
-            if (link == null || !(link.getType() instanceof AmmoType)
-                    || link.getShotsLeft() <= 0)
+            if (link == null || !(link.getType() instanceof AmmoType))
                 return false;
 
             isHotLoaded = link.hotloaded;
@@ -466,7 +465,7 @@ public class Mounted implements Serializable, RoundUpdated {
             return isHotLoaded;
         }
 
-        if (this.getType() instanceof AmmoType && this.getShotsLeft() > 0) {
+        if (this.getType() instanceof AmmoType) {
             isHotLoaded = this.hotloaded;
 
             if (((AmmoType) this.getType()).getMunitionType() == AmmoType.M_DEAD_FIRE)
@@ -632,7 +631,7 @@ public class Mounted implements Serializable, RoundUpdated {
                 return 3;
             } else if (wtype.getAmmoType() == AmmoType.T_HAG) {
                 return wtype.getRackSize() / 2;
-            } else if (this.isHotLoaded()) {
+            } else if (this.isHotLoaded() && this.getLinked().getShotsLeft() > 0) {
                 Mounted link = this.getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();
@@ -644,7 +643,6 @@ public class Mounted implements Serializable, RoundUpdated {
                 int damage = wtype.getRackSize() * damagePerShot;
                 return damage;
             } else if (wtype.hasFlag(WeaponType.F_PPC) && hasChargedCapacitor()) {
-
                 if (isFired())
                     return 0;
                 return 15;

@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.33.27-dev (SVN)
++ Bug: ISSRM3 not getting created
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)
 + Bug 1966400: Vehicle CASE/CASE II not working if attack destroys location

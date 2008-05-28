@@ -555,7 +555,7 @@ public class WeaponType extends EquipmentType {
         // SRMs
         addType(new ISSRM1());
         addType(new ISSRM2());
-        addType(new ISSRM2());
+        addType(new ISSRM3());
         addType(new ISSRM4());
         addType(new ISSRM5());
         addType(new ISSRM6());

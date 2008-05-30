@@ -158,4 +158,25 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         }
         return false;
     }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     */
+    protected int calcDamagePerHit() {
+        double toReturn = wtype.getDamage();
+        // infantry get hit by all shots
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            toReturn = wtype.getDamage() * howManyShots;
+            toReturn = Math.ceil(toReturn/10);
+            if (howManyShots > 1) {
+                //ok, more than 1 shot, +1 for cluster
+                toReturn += 1;
+            }
+        }
+        if (bGlancing)
+            toReturn = (int) Math.floor(toReturn / 2.0);
+        return (int)toReturn;
+    }
 }

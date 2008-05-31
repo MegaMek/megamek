@@ -108,9 +108,11 @@ public class Game implements Serializable, IGame {
     // phase state
     private Vector<EntityAction> actions = new Vector<EntityAction>();
     private Vector<AttackAction> pendingCharges = new Vector<AttackAction>();
+    private Vector<AttackAction> pendingRams = new Vector<AttackAction>();
     private Vector<LayMinefieldAction> pendingLayMinefieldActions = new Vector<LayMinefieldAction>();
     private Vector<PilotingRollData> pilotRolls = new Vector<PilotingRollData>();
     private Vector<PilotingRollData> extremeGravityRolls = new Vector<PilotingRollData>();
+    private Vector<PilotingRollData> controlRolls = new Vector<PilotingRollData>();
     private Vector<Team> initiativeRerollRequests = new Vector<Team>();
 
     // reports
@@ -684,12 +686,14 @@ public class Game implements Serializable, IGame {
             case PHASE_INITIATIVE:
                 resetActions();
                 resetCharges();
+                resetRams();
                 resetLayMinefieldActions();
                 break;
             // TODO Is there better solution to handle charges?
             case PHASE_PHYSICAL_REPORT:
             case PHASE_END:
                 resetCharges();
+                resetRams();
                 resetLayMinefieldActions();
                 break;
 
@@ -1232,6 +1236,7 @@ public class Game implements Serializable, IGame {
 
         resetActions();
         resetCharges();
+        resetRams();
         resetPSRs();
         resetArtilleryAttacks();
         removeMinefields();
@@ -1996,6 +2001,35 @@ public class Game implements Serializable, IGame {
     public Vector<AttackAction> getChargesVector() {
         return pendingCharges;
     }
+    
+    /**
+     * Adds a pending ramming attack to the list for this phase.
+     */
+    public void addRam(AttackAction ea) {
+        pendingRams.addElement(ea);
+        processGameEvent(new GameNewActionEvent(this, ea));
+    }
+
+    /**
+     * Returns an Enumeration of ramming attacks scheduled for the end of
+     * the physical phase.
+     */
+    public Enumeration<AttackAction> getRams() {
+        return pendingRams.elements();
+    }
+
+    /** Resets the pending rams list. */
+    public void resetRams() {
+        pendingRams.removeAllElements();
+    }
+
+    /**
+     * Returns the rams vector. Do not modify. >:[ Used for sending all
+     * charges to the client.
+     */
+    public Vector<AttackAction> getRamsVector() {
+        return pendingRams;
+    }
 
     /**
      * Adds a pending lay minefield action to the list for this phase.
@@ -2758,4 +2792,98 @@ public class Game implements Serializable, IGame {
     public boolean useVectorMove() {
         return this.getOptions().booleanOption("advanced_movement") && board.inSpace();
     }
+    
+    /** Adds a pending Control roll to the list for this phase. */
+    public void addControlRoll(PilotingRollData control) {
+        controlRolls.addElement(control);
+    }
+
+    /** Returns an Enumeration of pending Control rolls. */
+    public Enumeration<PilotingRollData> getControlRolls() {
+        return controlRolls.elements();
+    }
+
+    /** Resets the Control Roll list for a given entity. */
+    public void resetControlRolls(Entity entity) {
+        PilotingRollData roll;
+        Vector<Integer> rollsToRemove = new Vector<Integer>();
+        int i = 0;
+
+        // first, find all the rolls belonging to the target entity
+        for (i = 0; i < controlRolls.size(); i++) {
+            roll = controlRolls.elementAt(i);
+            if (roll.getEntityId() == entity.getId()) {
+                rollsToRemove.addElement(new Integer(i));
+            }
+        }
+
+        // now, clear them out
+        for (i = rollsToRemove.size() - 1; i > -1; i--) {
+            controlRolls.removeElementAt(rollsToRemove.elementAt(i).intValue());
+        }
+    }
+
+    /** Resets the PSR list. */
+    public void resetControlRolls() {
+        controlRolls.removeAllElements();
+    }
+    
+    /** A set of checks for aero units to make sure that the movement order is
+     * maintained
+     */
+    public boolean checkForValidSpaceStations(int playerId) {
+    	Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId)).iterator();
+    	while (iter.hasNext()) {
+    		Entity entity = iter.next();
+            if (entity instanceof SpaceStation && getTurn().isValidEntity(entity, this)) {
+                return true;
+            } 
+        }
+        return false;
+    }
+    
+    public boolean checkForValidJumpships(int playerId) {
+       	Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId)).iterator();
+    	while (iter.hasNext()) {
+    		Entity entity = iter.next();
+            if (entity instanceof Jumpship && !(entity instanceof Warship) && getTurn().isValidEntity(entity, this)) {
+                return true;
+            } 
+        }
+        return false;
+    }
+    
+    public boolean checkForValidWarships(int playerId) {
+       	Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId)).iterator();
+    	while (iter.hasNext()) {
+    		Entity entity = iter.next();
+            if (entity instanceof Warship && getTurn().isValidEntity(entity, this)) {
+                return true;
+            } 
+        }
+        return false;
+    }
+    
+    public boolean checkForValidDropships(int playerId) {
+       	Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId)).iterator();
+    	while (iter.hasNext()) {
+    		Entity entity = iter.next();
+            if (entity instanceof Dropship && getTurn().isValidEntity(entity, this)) {
+                return true;
+            } 
+        }
+        return false;
+    }
+    
+    public boolean checkForValidSmallCraft(int playerId) {
+       	Iterator<Entity> iter = getPlayerEntities(getPlayer(playerId)).iterator();
+    	while (iter.hasNext()) {
+    		Entity entity = iter.next();
+            if (entity instanceof SmallCraft && getTurn().isValidEntity(entity, this)) {
+                return true;
+            } 
+        }
+        return false;
+    }
+    
 }

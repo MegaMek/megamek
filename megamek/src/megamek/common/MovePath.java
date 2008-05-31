@@ -77,6 +77,7 @@ public class MovePath implements Cloneable, Serializable {
     public static final int STEP_CRASH = 43;
     public static final int STEP_STALL = 44;
     public static final int STEP_RECOVER = 45;
+    public static final int STEP_RAM = 46;
 
     public static class Key {
         private final Coords coords;
@@ -165,8 +166,16 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(new MoveStep(this, type, target));
     }
 
-    public MovePath addStep(final int type, final int mineToLay) {
-        return addStep(new MoveStep(this, type, mineToLay));
+    public MovePath addStep(final int type, final int recover) {
+    	return addStep(type, recover, -1);
+    }
+    
+    public MovePath addStep(final int type, final int recover, final int mineToLay) {
+        return addStep(new MoveStep(this, type, recover, mineToLay));
+    }
+    
+    public MovePath addStep(int type, Vector<Integer[]> targets) {
+        return addStep(new MoveStep(this, type, targets));
     }
 
     public boolean canShift() {
@@ -232,8 +241,12 @@ public class MovePath implements Cloneable, Serializable {
             MoveStep step = temp.elementAt(i);
             if (step.getTarget(game) != null) {
                 step = new MoveStep(this, step.getType(), step.getTarget(game));
-            } else if (step.getMineToLay() != -1) {
+            } else if (step.getRecoveryUnit() != -1) {
+            	step = new MoveStep(this, step.getType(), step.getRecoveryUnit(), -1);
+            } else if (step.getMineToLay() != -1){
                 step = new MoveStep(this, step.getType(), step.getMineToLay());
+            } else if (step.getLaunched().size() > 0) {
+            	step = new MoveStep(this, step.getType(), step.getLaunched());
             } else {
                 step = new MoveStep(this, step.getType());
             }
@@ -361,6 +374,34 @@ public class MovePath implements Cloneable, Serializable {
             return getLastStep().getElevation();
         }
         return entity.getElevation();
+    }
+    
+    public int getFinalVelocity() {
+    	if (getLastStep() != null) {
+            return getLastStep().getVelocity();
+        }
+    	if(entity instanceof Aero) {
+    		return ((Aero)entity).getCurrentVelocity();
+    	}
+        return 0;
+    }
+    
+    public int getFinalNDown() {
+    	if (getLastStep() != null) {
+            return getLastStep().getNDown();
+        }
+    	
+        return 0;
+    }
+
+    /**
+     * Returns the final vector for advanced movement
+     */
+    public int[] getFinalVectors() {
+        if (getLastStep() != null) {
+            return getLastStep().getVectors();
+        }
+        return entity.getVectors();
     }
 
     public int getLastStepMovementType() {
@@ -576,12 +617,29 @@ public class MovePath implements Cloneable, Serializable {
         if (!game.getBoard().contains(getFinalCoords())) {
             return false;
         }
+        
+        //for aero units move must use up all their velocity
+        if(entity instanceof Aero) {
+        	Aero a = (Aero)entity;
+        	if(getLastStep() == null) {
+        		if(a.getCurrentVelocity() > 0 && !game.useVectorMove()) {
+        			return false;
+        		}
+        	} else {
+        		if(getLastStep().getVelocityLeft() > 0 && !game.useVectorMove() && getLastStep().getType() != MovePath.STEP_FLEE) {
+        			return false;
+        		}
+        	}
+        }
 
         if (getLastStep() == null) {
             return true;
         }
 
         if (getLastStep().getMovementType() == STEP_CHARGE) {
+            return getSecondLastStep().isLegal();
+        }
+        if (getLastStep().getMovementType() == STEP_RAM) {
             return getSecondLastStep().isLegal();
         }
         return getLastStep().isLegal();
@@ -735,6 +793,32 @@ public class MovePath implements Cloneable, Serializable {
             // We've got all our next steps.
             return result;
         }
+        
+        //need to do a separate section here for Aeros.
+        //just like jumping for now, but I could add some other stuff
+        //here later
+        if(entity instanceof Aero) {
+        	MovePath left = (MovePath) this.clone();
+            MovePath right = (MovePath) this.clone();
+
+            // From here, we can move F, LF, RF, LLF, RRF, and RRRF.
+            result.add( ((MovePath) this.clone())
+                        .addStep(MovePath.STEP_FORWARDS) );
+            for ( int turn = 0; turn < 2; turn++ ) {
+                left.addStep(MovePath.STEP_TURN_LEFT);
+                right.addStep(MovePath.STEP_TURN_RIGHT);
+                result.add( ((MovePath) left.clone())
+                            .addStep(MovePath.STEP_FORWARDS) );
+                result.add( ((MovePath) right.clone())
+                            .addStep(MovePath.STEP_FORWARDS) );
+            }
+            right.addStep(MovePath.STEP_TURN_RIGHT);
+            result.add( right.addStep(MovePath.STEP_FORWARDS) );
+
+            // We've got all our next steps.            
+            return result;
+        }
+        
         if (getFinalProne() || getFinalHullDown()) {
             if (last != null && last.getType() != STEP_TURN_RIGHT) {
                 result.add(this.clone().addStep(MovePath.STEP_TURN_LEFT));
@@ -839,5 +923,28 @@ public class MovePath implements Cloneable, Serializable {
             }
             return firstFacing;
         }
+    }
+    
+    /*
+     * Get the position in the step immediately prior to the final position
+     */
+    public Coords getSecondFinalPosition(Coords startPos) {
+    	
+    	Coords priorPos = startPos;
+    	Coords finalPos = this.getFinalCoords();
+    	
+    	//if we moved one or fewer hexes, then just return starting position
+    	if(getHexesMoved() < 2) {
+    		return priorPos;
+    	}
+  
+    	 for (final Enumeration<MoveStep> i = this.getSteps(); i.hasMoreElements();) {
+             final MoveStep step = i.nextElement();
+             if(step.getPosition() != finalPos) {
+            	 priorPos = step.getPosition();  	 
+             }
+    	 }
+    	 return priorPos;
+    	
     }
 }

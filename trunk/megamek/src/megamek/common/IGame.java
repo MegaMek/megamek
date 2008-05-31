@@ -867,6 +867,28 @@ public interface IGame {
      * charges to the client.
      */
     public abstract Vector<AttackAction> getChargesVector();
+    
+    /**
+     * Adds a pending ram attack to the list for this phase.
+     */
+    public abstract void addRam(AttackAction ea);
+
+    /**
+     * Returns an Enumeration of ram attacks scheduled for the end of
+     * the physical phase.
+     */
+    public abstract Enumeration<AttackAction> getRams();
+
+    /**
+     * Resets the pending ram list.
+     */
+    public abstract void resetRams();
+
+    /**
+     * Returns the ram vector. Do not modify. >:[ Used for sending all
+     * charges to the client.
+     */
+    public abstract Vector<AttackAction> getRamsVector();
 
     /**
      * Adds a pending lay minefield action to the list for this phase.
@@ -1193,4 +1215,35 @@ public interface IGame {
     public abstract Victory getVictory();
     
     public abstract boolean useVectorMove();
+    
+    /**
+     * Adds a pending control roll to the list for this phase.
+     */
+    public abstract void addControlRoll(PilotingRollData control);
+
+    /**
+     * Returns an Enumeration of pending Control roll.
+     */
+    public abstract Enumeration<PilotingRollData> getControlRolls();
+
+    /**
+     * Resets the Control Roll list for a given entity.
+     */
+    public abstract void resetControlRolls(Entity entity);
+
+    /**
+     * Resets the Control Roll list.
+     */
+    public abstract void resetControlRolls();
+    
+    public abstract boolean checkForValidSpaceStations(int playerId);
+    
+    public abstract boolean checkForValidJumpships(int playerId);
+    
+    public abstract boolean checkForValidWarships(int playerId);
+    
+    public abstract boolean checkForValidDropships(int playerId);
+    
+    public abstract boolean checkForValidSmallCraft(int playerId);
+    
 }

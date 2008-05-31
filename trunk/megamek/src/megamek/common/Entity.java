@@ -83,6 +83,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     protected boolean destroyed = false;
 
     protected Coords position = null;
+    protected Coords priorPosition = null;
 
     protected int facing = 0;
     protected int sec_facing = 0;
@@ -141,6 +142,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
     protected int[] vectors = {0,0,0,0,0,0};
     private int recoveryTurn = 0;
+    //need to keep a list of areas that this entity has passed through on the current turn
+    private Vector<Coords> passedThrough = new Vector<Coords>();
+    private boolean ramming;
     
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -856,6 +860,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public void setPosition(Coords position) {
         this.position = position;
+    }
+    
+    public Coords getPriorPosition() {
+    	return priorPosition;
+    }
+    
+    public void setPriorPosition(Coords c) {
+    	this.priorPosition = c;
     }
 
     /**
@@ -3700,6 +3712,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             m.newRound(roundNumber);
         }
 
+        //reset hexes passed through
+        setPassedThrough(new Vector<Coords>());
+        
         // Update the inferno tracker.
         this.infernos.newRound(roundNumber);
     }
@@ -5688,6 +5703,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public boolean canDFA() {
         return !isImmobile() && getJumpMP() > 0 && !isStuck() && !isProne();
     }
+    
+    /** Whether this type of unit can perform Ramming attacks */
+    public boolean canRam() {
+        return false;
+    }
 
     boolean isUsingManAce() {
         return getCrew().getOptions().booleanOption("maneuvering_ace");
@@ -5775,7 +5795,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             return false;
         }
         // if you're charging or finding a club, it's already declared
-        if (isUnjammingRAC() || isCharging() || isMakingDfa()
+        if (isUnjammingRAC() || isCharging() || isMakingDfa() || isRamming()
                 || isFindingClub() || isOffBoard()) {
             return false;
         }
@@ -5796,7 +5816,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean isEligibleForFiring() {
         // if you're charging, no shooting
-        if (isUnjammingRAC() || isCharging() || isMakingDfa()) {
+        if (isUnjammingRAC() || isCharging() || isMakingDfa() || isRamming()) {
             return false;
         }
 
@@ -6579,13 +6599,18 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     public int sideTable(Coords src, boolean usePrior, int face) {
-        if (src.equals(position)) {
-            // most places handle 0 range explicitly,
-            // this is a safe default (calculation gives SIDE_RIGHT)
+    	Coords effectivePos = position;
+    	if(usePrior && null != priorPosition)
+    		effectivePos = priorPosition;
+    	
+        if(src.equals(effectivePos)) {
+            //most places handle 0 range explicitly,
+            //this is a safe default (calculation gives SIDE_RIGHT)
             return ToHitData.SIDE_FRONT;
         }
+        
         // calculate firing angle
-        int fa = (position.degree(src) + (6 - face) * 60) % 360;
+        int fa = (effectivePos.degree(src) + (6 - face) * 60) % 360;
 
         boolean targetIsTank = (this instanceof Tank)
                 || (game.getOptions().booleanOption("quad_hit_location") && this instanceof QuadMech);
@@ -7110,5 +7135,25 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         heading.addElement(curDir);
         return heading;     
     }    
+    
+    public void setPassedThrough(Vector<Coords> pass) {
+    	this.passedThrough = pass;
+    }
+    
+    public Vector<Coords> getPassedThrough() {
+    	return passedThrough;
+    }
+    
+    public void addPassedThrough(Coords c) {
+    	this.passedThrough.add(c);
+    }
+    
+    public void setRamming(boolean b) {
+    	this.ramming = b;
+    }
+    
+    public boolean isRamming() {
+    	return ramming;
+    }
 
 }

@@ -68,6 +68,7 @@ import megamek.client.ui.AWT.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.AWT.util.KeyAlphaFilter;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.util.StraightArrowPolygon;
+import megamek.common.Aero;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -208,6 +209,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
     // vector of sprites for all firing lines
     ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
+    
+    //vector of sprites for all movement paths (using vectored movement)
+    private ArrayList<MovementSprite> movementSprites = new ArrayList<MovementSprite>();
 
     // vector of sprites for C3 network lines
     private ArrayList<C3Sprite> C3Sprites = new ArrayList<C3Sprite>();
@@ -588,6 +592,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         // draw onscreen attacks
         drawSprites(attackSprites);
+        
+        //draw movement vectors. 
+        if(game.useVectorMove() && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+        	drawSprites(movementSprites);
+        }
 
         // draw movement, if valid
         drawSprites(pathSprites);
@@ -1981,28 +1990,78 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         clearMovementData();
 
-        for (Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = i.nextElement();
+        //need to update the movement sprites based on the move path for this entity
+        //only way to do this is to clear and refresh (seems wasteful)
+        
+        //first get the color for the vector
+        Color col = Color.blue;
+        if(md.getLastStep() != null) {
+        	switch (md.getLastStep().getMovementType()) {
+        	case IEntityMovementType.MOVE_RUN:
+        	case IEntityMovementType.MOVE_VTOL_RUN:
+        	case IEntityMovementType.MOVE_OVER_THRUST:
+        		col = GUIPreferences.getInstance().getColor("AdvancedMoveRunColor");
+        		break;
+        	case IEntityMovementType.MOVE_JUMP :
+        		col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
+        		break;
+        	case IEntityMovementType.MOVE_ILLEGAL :
+        		col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
+        		break;
+        	default :
+        		col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
+            	break;
+        	}
+        }
+        
+        refreshMoveVectors(entity, md, col);
+        
+        for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
+            final MoveStep step = (MoveStep)i.nextElement();
             // check old movement path for reusable step sprites
             boolean found = false;
             for (Iterator<StepSprite> j = temp.iterator(); j.hasNext();) {
                 final StepSprite sprite = j.next();
-                if (sprite.getStep().canReuseSprite(step)) {
+                if (sprite.getStep().canReuseSprite(step) && !(entity instanceof Aero)) {
                     pathSprites.add(sprite);
                     found = true;
                 }
             }
             if (!found) {
-                if (previousStep != null
-                        && (step.getType() == MovePath.STEP_UP || step
-                                .getType() == MovePath.STEP_DOWN)
-                        && (previousStep.getType() == MovePath.STEP_UP || previousStep
-                                .getType() == MovePath.STEP_DOWN)) {
-                    // Mark the previous elevation change sprite hidden
+                if ((previousStep != null &&
+                    (step.getType() == MovePath.STEP_UP ||
+                     step.getType() == MovePath.STEP_DOWN) &&
+                    (previousStep.getType() == MovePath.STEP_UP ||
+                     previousStep.getType() == MovePath.STEP_DOWN || 
+                     previousStep.getType() == MovePath.STEP_ACC ||
+                     previousStep.getType() == MovePath.STEP_DEC ||
+                     previousStep.getType() == MovePath.STEP_ACCN ||
+                     previousStep.getType() == MovePath.STEP_DECN)) ||
+                     (previousStep != null && 
+                      (step.getType() == MovePath.STEP_ACC ||
+                      step.getType() == MovePath.STEP_DEC) &&
+                      (previousStep.getType() == MovePath.STEP_ACC ||
+                       previousStep.getType() == MovePath.STEP_DEC || 
+                       previousStep.getType() == MovePath.STEP_DOWN)) ||
+                     (previousStep != null && 
+                      (step.getType() == MovePath.STEP_ACCN ||
+                       step.getType() == MovePath.STEP_DECN) &&
+                       (previousStep.getType() == MovePath.STEP_ACCN ||
+                        previousStep.getType() == MovePath.STEP_DECN ||
+                        previousStep.getType() == MovePath.STEP_UP ||
+                        previousStep.getType() == MovePath.STEP_DOWN))) {
+                    //Mark the previous elevation change sprite hidden
                     // so that we can draw a new one in it's place without
                     // having overlap.
-                    pathSprites.get(pathSprites.size() - 1).hidden = true;
+                    pathSprites.get(pathSprites.size() -1 ).hidden = true;
                 }
+                
+                //for advanced movement, we always need to hide prior
+                //because costs will overlap and we only want the current facing
+                if(previousStep != null && game.useVectorMove()) {
+                	pathSprites.get(pathSprites.size() -1 ).hidden = true;
+                }
+                
                 pathSprites.add(new StepSprite(step));
             }
             previousStep = step;
@@ -2018,6 +2077,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         for (Sprite sprite : temp) {
             repaintBounds(sprite.getBounds());
         }
+        refreshMoveVectors();
     }
 
     public void setLocalPlayer(Player p) {
@@ -2172,6 +2232,30 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
         }
     }
+    
+    public void refreshMoveVectors() {
+    	clearAllMoveVectors();
+    	for(Enumeration i = game.getEntities(); i.hasMoreElements();) {
+    		Entity e = (Entity)i.nextElement();
+    		if(e.getPosition() != null) 
+    			movementSprites.add(new MovementSprite(e, e.getVectors(), Color.gray, false));
+    	}
+    }
+    
+    public void refreshMoveVectors(Entity en, MovePath md, Color col) {
+    	clearAllMoveVectors();
+    	//same as normal but when I find the active entity I used the MovePath
+    	//to get vector
+    	for(Enumeration i = game.getEntities(); i.hasMoreElements();) {
+    		Entity e = (Entity)i.nextElement();
+    		if(e.getPosition() != null) 
+    			if(e.getId() == en.getId()) {
+    				movementSprites.add(new MovementSprite(e, md.getFinalVectors(), col, true));
+    			} else {
+    				movementSprites.add(new MovementSprite(e, e.getVectors(), col, false));
+    			}
+    	}
+    }
 
     public void clearC3Networks() {
         C3Sprites.clear();
@@ -2182,6 +2266,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      */
     public void clearAllAttacks() {
         attackSprites.clear();
+    }
+    
+    /**
+     * Clears out all movement vectors that were being drawn
+     */
+    public void clearAllMoveVectors() {
+        movementSprites.clear();
     }
 
     protected void firstLOSHex(Coords c) {
@@ -3465,6 +3556,48 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
 
             // draw condition strings
+            if(entity instanceof Aero) {	
+        		Aero a = (Aero)entity;		
+        		
+//        		draw altitude if Aero in atmosphere
+        		if(game.getBoard().inAtmosphere()) {
+        			graph.setColor(Color.darkGray);
+                    graph.drawString(Integer.toString(a.getElevation()), 26, 15); //$NON-NLS-1$
+                    graph.setColor(Color.PINK);
+                    graph.drawString(Integer.toString(a.getElevation()), 25, 14); //$NON-NLS-1$
+        		}
+        		
+        		if(a.isRolled()) {
+        			// draw "rolled"
+        			graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.ROLLED"), 18, 15); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.ROLLED"), 17, 14); //$NON-NLS-1$
+        		}
+        		
+        		if(a.isOutControlTotal() & a.isRandomMove()) {
+        	        // draw "RANDOM"
+        			graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.RANDOM"), 18, 35); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.RANDOM"), 17, 34); //$NON-NLS-1$
+        		} else if (a.isOutControlTotal()) {
+//        			 draw "CONTROL"
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.CONTROL"), 18, 39); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.CONTROL"), 17, 38); //$NON-NLS-1$
+        		}
+        		
+        		if(a.isEvading()) {
+        			//draw "EVADE" - can't overlap with out of control
+        			graph.setColor(Color.darkGray);
+                    graph.drawString(Messages.getString("BoardView1.EVADE"), 18, 39); //$NON-NLS-1$
+                    graph.setColor(Color.red);
+                    graph.drawString(Messages.getString("BoardView1.EVADE"), 17, 38); //$NON-NLS-1$
+        		}
+        	}
+            
             if (entity.crew.isDead()) {
                 // draw "CREW DEAD"
                 graph.setColor(Color.darkGray);
@@ -3742,9 +3875,14 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if (entity instanceof GunEmplacement) {
                 ge = (GunEmplacement) entity;
             }
+            
+            Aero a = null;
+            if(entity instanceof Aero) {
+            	a = (Aero) entity;
+            }
 
             buffer = new StringBuffer();
-            if (ge == null) {
+            if (ge == null && a == null) {
                 buffer.append(Messages.getString("BoardView1.move")) //$NON-NLS-1$
                         .append(entity.getMovementAbbr(entity.moved)).append(
                                 ":") //$NON-NLS-1$
@@ -3763,6 +3901,17 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     buffer.append(" ") //$NON-NLS-1$
                             .append(Messages.getString("BoardBiew1.DFA1")); //$NON-NLS-1$
                 }
+            } else if (ge == null) {
+            	buffer.append( Messages.getString("BoardView1.move") ) //$NON-NLS-1$
+            	.append( entity.getMovementAbbr(entity.moved) )
+            	.append( ":" ) //$NON-NLS-1$
+            	.append( entity.delta_distance )
+            	.append( Messages.getString("BoardView1.Heat") ) //$NON-NLS-1$
+            	.append( entity.heat );
+            	if (entity.isCharging()) {
+            		buffer.append(" ") //$NON-NLS-1$
+                		.append( Messages.getString("BoardView1.charge1")); //$NON-NLS-1$
+            	} 
             } else {
                 if (ge.hasTurret() && ge.isTurretLocked()) {
                     buffer
@@ -3840,6 +3989,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             switch (step.getMovementType()) {
                 case IEntityMovementType.MOVE_RUN:
                 case IEntityMovementType.MOVE_VTOL_RUN:
+                case IEntityMovementType.MOVE_OVER_THRUST:
                     if (step.isUsingMASC()) {
                         col = GUIPreferences.getInstance().getColor(
                                 "AdvancedMoveMASCColor");
@@ -3866,6 +4016,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     }
                     break;
             }
+            
+            if(game.useVectorMove()) {
+            	drawActiveVectors(step, stepPos, graph);
+            }
+            
+            drawConditions(step, stepPos, graph, col);
 
             // draw arrows and cost for the step
             switch (step.getType()) {
@@ -3895,8 +4051,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 case MovePath.STEP_DOWN:
                 case MovePath.STEP_DIG_IN:
                 case MovePath.STEP_FORTIFY:
+                case MovePath.STEP_DEC:
+                case MovePath.STEP_DECN:
                     // draw arrow indicating dropping prone
                     // also doubles as the descent indication
+                	// and triples as deceleration
                     Polygon downPoly = movementPolys[7];
                     myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints,
                             downPoly.npoints);
@@ -3911,8 +4070,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     break;
                 case MovePath.STEP_GET_UP:
                 case MovePath.STEP_UP:
+                case MovePath.STEP_ACC:
+                case MovePath.STEP_ACCN:
                     // draw arrow indicating standing up
                     // also doubles as the climb indication
+                	// and triples as deceleration
                     Polygon upPoly = movementPolys[6];
                     myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints,
                             upPoly.npoints);
@@ -3969,6 +4131,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     break;
                 case MovePath.STEP_TURN_LEFT:
                 case MovePath.STEP_TURN_RIGHT:
+                case MovePath.STEP_THRUST:
+                case MovePath.STEP_YAW:
+                case MovePath.STEP_EVADE:
+                case MovePath.STEP_ROLL:
                     // draw arrows showing the facing
                     myPoly = new Polygon(facingPoly.xpoints,
                             facingPoly.ypoints, facingPoly.npoints);
@@ -3978,6 +4144,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.setColor(col);
                     myPoly.translate(-1, -1);
                     graph.drawPolygon(myPoly);
+                    if(game.useVectorMove()) {
+                    	drawMovementCost(step, stepPos, graph, col, false);
+                    }
                     break;
                 case MovePath.STEP_LOAD:
                     // Announce load.
@@ -3994,6 +4163,34 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.drawString(load, loadX, stepPos.y + 39);
                     graph.setColor(col);
                     graph.drawString(load, loadX - 1, stepPos.y + 38);
+                    break;
+                case MovePath.STEP_LAUNCH:
+                	//announce launch
+                    String launch = Messages.getString("BoardView1.Launch"); //$NON-NLS-1$
+                    if (step.isPastDanger()) {
+                        launch = "(" + launch + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int launchX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(launch) / 2);
+                    int launchY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(launch, launchX, launchY + 1);
+                    graph.setColor(col);
+                    graph.drawString(launch, launchX - 1, launchY);
+                    break;
+                case MovePath.STEP_RECOVER:
+                	//announce launch
+                    String recover = Messages.getString("BoardView1.Recover"); //$NON-NLS-1$
+                    if (step.isPastDanger()) {
+                        launch = "(" + recover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int recoverX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(recover) / 2);
+                    int recoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(recover, recoverX, recoverY + 1);
+                    graph.setColor(col);
+                    graph.drawString(recover, recoverX - 1, recoverY);
                     break;
                 case MovePath.STEP_UNLOAD:
                     // Announce unload.
@@ -4030,6 +4227,59 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             tempImage.flush();
         }
 
+        private void drawConditions(MoveStep step, Point stepPos, Graphics graph, Color col) {
+        	//draw conditions separate from the step, This allows me to keep 
+        	//conditions on the Aero even when that step is erased (as per advanced 
+        	//movement). For now, just evading and rolling.
+        	//eventually loading and unloading as well
+        	if(step.isEvading()) {
+               	String evade = Messages.getString("BoardView1.Evade"); //$NON-NLS-1$
+            	graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+            	int evadeX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
+            	graph.setColor(Color.darkGray);
+            	graph.drawString(evade, evadeX, stepPos.y + 28);
+            	graph.setColor(col);
+            	graph.drawString(evade, evadeX - 1, stepPos.y + 27);
+        	}
+        	
+        	if(step.isRolled()) {
+        		//Announce roll
+            	String roll = Messages.getString("BoardView1.Roll"); //$NON-NLS-1$
+            	graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+            	int rollX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(roll) / 2);
+            	graph.setColor(Color.darkGray);
+            	graph.drawString(roll, rollX, stepPos.y + 18);
+            	graph.setColor(col);
+            	graph.drawString(roll, rollX - 1, stepPos.y + 17);
+        	}
+        	
+        	
+        }
+        
+        private void drawActiveVectors(MoveStep step, Point stepPos, Graphics graph) {
+        	
+        	/*TODO: it might be better to move this to the MovementSprite
+        	 * so that it is visible before first step and you can't see it 
+        	 * for all entities
+        	 */
+        	
+        	int[] activeXpos = {39, 59, 59, 40, 19, 19};
+        	int[] activeYpos = {20, 28, 52, 59, 52, 28};
+        	
+        	int[] v = step.getVectors();
+        	for(int i = 0; i < 6; i++) {
+        		
+        		String active = Integer.toString(v[i]);
+        		graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+        		graph.setColor(Color.darkGray);
+                graph.drawString(active, activeXpos[i] + stepPos.x, activeYpos[i] + stepPos.y);
+                graph.setColor(Color.red);
+                graph.drawString(active, activeXpos[i] + stepPos.x - 1, activeYpos[i] + stepPos.y - 1);
+        		
+        	}
+        	
+        }
+        
         public Rectangle getBounds() {
             bounds = new Rectangle(getHexLocation(step.getPosition()), hex_size);
             return bounds;
@@ -4066,6 +4316,17 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 costStringBuf.append("["); //$NON-NLS-1$
                 costStringBuf.append(step.getTargetNumberMASC());
                 costStringBuf.append("+]"); //$NON-NLS-1$
+            }
+            
+            if (!game.useVectorMove() &&
+            		(step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST
+                || step.getMovementType() == IEntityMovementType.MOVE_OVER_THRUST)) {
+                costStringBuf.append("[")
+                    .append(step.getVelocityLeft())
+                    .append("]")
+                	.append("(")
+                	.append(step.getVelocity())
+                	.append(")");
             }
 
             if (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK
@@ -4576,6 +4837,160 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     }
 
     /**
+     * Sprite and info for movement vector (AT2 advanced movement). 
+     *  Does not actually use the image buffer
+     * as this can be horribly inefficient for long diagonal lines.
+     *
+     * Appears as an arrow pointing to the hex this entity will move to
+     * based on current movement vectors.
+     * TODO: Different color depending upon whether entity has already moved 
+     * this turn
+     * 
+     */
+    private class MovementSprite extends Sprite
+    {
+        private Point a;
+        private Point t;
+        private double an;
+        private StraightArrowPolygon movePoly;
+        private Color moveColor;
+        //private MovementVector mv;
+        private int[] vectors;
+        private Coords start;
+        private Coords end;
+        private Entity en;
+        private int vel;
+
+        public MovementSprite(Entity e, int[] v, Color col, boolean isCurrent) {
+            //this.mv = en.getMV();
+
+            this.en = e;
+            this.vectors = v;//en.getVectors();
+            //get the starting and ending position
+            this.start = en.getPosition();
+            this.end = Compute.getFinalPosition(this.start, vectors);
+            
+            //what is the velocity
+            this.vel = 0;
+            for(int i =0; i < v.length; i++) {
+            	this.vel += v[i];
+            }
+            
+            // color?
+            //player colors
+            moveColor = PlayerColors.getColor(en.getOwner().getColorIndex());
+            //TODO: Its not going transparent. Oh well, it is a minor issue at the moment
+            /*
+            if(isCurrent) {
+            	int colour = col.getRGB();
+                int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+                moveColor = new Color(colour | (transparency << 24), true);
+            }
+            */
+            //red if offboard          
+            if(!game.getBoard().contains(end)) {
+            	int colour = 0xff0000; //red
+                int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+                moveColor = new Color(colour | (transparency << 24), true);
+            }
+            //dark gray if done
+            if(en.isDone()) {
+            	int colour = 0x696969; //gray
+                int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+                moveColor = new Color(colour | (transparency << 24), true);
+            }
+            
+            //moveColor = PlayerColors.getColor(en.getOwner().getColorIndex());
+            //angle of line connecting two hexes
+            this.an = (start.radian(end) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
+            makePoly();
+
+            // set bounds
+            this.bounds = new Rectangle(movePoly.getBounds());
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
+            // move poly to upper right of image
+            movePoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
+            
+            // nullify image
+            this.image = null;
+        }
+
+        private void makePoly(){
+            // make a polygon
+            this.a = getHexLocation(start);
+            this.t = getHexLocation(end);
+            // OK, that is actually not good. I do not like hard coded figures.
+            // HEX_W/2 - x distance in pixels from origin of hex bounding box to the center of hex.
+            // HEX_H/2 - y distance in pixels from origin of hex bounding box to the center of hex.
+            // 18 - is actually 36/2 - we do not want arrows to start and end directly
+            // in the centes of hex and hiding mek under.
+
+            a.x = a.x + (int)(HEX_W/2*scale) + (int)Math.round(Math.cos(an) * (int)(18*scale));
+            t.x = t.x + (int)(HEX_W/2*scale) - (int)Math.round(Math.cos(an) * (int)(18*scale));
+            a.y = a.y + (int)(HEX_H/2*scale) + (int)Math.round(Math.sin(an) * (int)(18*scale));
+            t.y = t.y + (int)(HEX_H/2*scale) - (int)Math.round(Math.sin(an) * (int)(18*scale));
+            movePoly = new StraightArrowPolygon(a, t, (int)(4*scale), (int)(8*scale), false);
+        }
+        
+        public Rectangle getBounds(){
+            makePoly();
+            // set bounds
+            this.bounds = new Rectangle(movePoly.getBounds());
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
+            // move poly to upper right of image
+            movePoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
+            
+            return bounds;
+        }
+
+        public void prepare() {
+        	
+        }
+
+        public boolean isReady() {
+            return true;
+        }
+
+        public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
+        	//don't draw anything if the unit has no velocity
+        	
+        	if(this.vel == 0) {
+        		return;
+        	}
+        	
+            Polygon drawPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, movePoly.npoints);
+            drawPoly.translate(x, y);
+            
+            g.setColor(moveColor);
+            g.fillPolygon(drawPoly);
+            g.setColor(Color.gray.darker());
+            g.drawPolygon(drawPoly);
+            
+            
+        }
+
+        /**
+         * Return true if the point is inside our polygon
+         */
+        public boolean isInside(Point point) {
+            return movePoly.contains(point.x + view.x - bounds.x - offset.x,
+                                       point.y + view.y - bounds.y - offset.y);
+        }
+
+        /*
+        public String[] getTooltip() {
+            String[] tipStrings = new String[1 + weaponDescs.size()];
+            int tip = 1;
+            tipStrings[0] = attackerDesc + " "+Messages.getString("BoardView1.on")+" " + targetDesc; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            for (Iterator<String> i = weaponDescs.iterator(); i.hasNext();) {
+                tipStrings[tip++] = i.next();
+            }
+            return tipStrings;
+        }
+        */
+    }
+    
+    /**
      * Determine if the tile manager's images have been loaded.
      * 
      * @return <code>true</code> if all images have been loaded.
@@ -4836,11 +5251,17 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         public void gameEntityNew(GameEntityNewEvent e) {
             updateEcmList();
             redrawAllEntities();
+            if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+            	refreshMoveVectors();
+            }
         }
 
         public void gameEntityRemove(GameEntityRemoveEvent e) {
             updateEcmList();
             redrawAllEntities();
+            if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+            	refreshMoveVectors();
+            }
         }
 
         public void gameEntityChange(GameEntityChangeEvent e) {
@@ -4848,6 +5269,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             updateEcmList();
             if (e.getEntity().hasActiveECM()) {
                 redrawAllEntities();
+            }
+            if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+            	refreshMoveVectors();
             }
             if (mp != null && mp.size() > 0
                     && GUIPreferences.getInstance().getShowMoveStep()) {
@@ -4884,8 +5308,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             refreshAttacks();
             switch (e.getNewPhase()) {
                 case PHASE_MOVEMENT:
-                case PHASE_FIRING:
-                case PHASE_PHYSICAL:
+                	refreshMoveVectors();
+                case PHASE_FIRING:       
+                	clearAllMoveVectors();
+                case PHASE_PHYSICAL:              	
                     refreshAttacks();
                     break;
                 case PHASE_INITIATIVE:
@@ -4908,6 +5334,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         pathSprites.clear();
         attackSprites.clear();
         C3Sprites.clear();
+        movementSprites.clear();
 
     }
 

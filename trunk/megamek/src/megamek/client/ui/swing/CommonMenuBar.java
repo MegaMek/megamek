@@ -12,6 +12,7 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -24,6 +25,8 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 
 import megamek.client.Client;
+import megamek.client.ui.AWT.Messages;
+import megamek.client.ui.AWT.MovementDisplay;
 import megamek.common.Entity;
 import megamek.common.IGame;
 
@@ -114,6 +117,21 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem moveGetUp;
     private JMenuItem moveRaise;
     private JMenuItem moveLower;
+    private JMenuItem moveAcc = null;
+    private JMenuItem moveDec = null;
+    private JMenuItem moveAccN = null;
+    private JMenuItem moveDecN = null;
+    private JMenuItem moveEvade = null;
+    private JMenuItem moveRoll = null;
+    private JMenuItem moveLaunch = null;
+    private JMenuItem moveRecover = null;
+    private JMenuItem moveDump = null;
+    private JMenuItem moveRam = null;
+    private JMenuItem moveTurnLeft = null;
+    private JMenuItem moveTurnRight = null;
+    private JMenuItem moveThrust = null;
+    private JMenuItem moveYaw = null;
+    private JMenuItem moveEndOver= null;
     private JMenuItem fireFire;
     private JMenuItem fireSkip;
     private JMenuItem fireNextTarg;
@@ -436,6 +454,23 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         moveLayMine = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.moveLayMine"), MovementDisplay.MOVE_LAY_MINE); //$NON-NLS-1$
+        moveAcc = createMenuItem(menu, Messages.getString("CommonMenuBar.moveAcc"), MovementDisplay.MOVE_ACC); //$NON-NLS-1$
+        moveDec = createMenuItem(menu, Messages.getString("CommonMenuBar.moveDec"), MovementDisplay.MOVE_DEC); //$NON-NLS-1$
+        moveAccN = createMenuItem(menu, Messages.getString("CommonMenuBar.moveAccN"), MovementDisplay.MOVE_ACCN); //$NON-NLS-1$
+        moveDecN = createMenuItem(menu, Messages.getString("CommonMenuBar.moveDecN"), MovementDisplay.MOVE_DECN); //$NON-NLS-1$
+        moveEvade = createMenuItem(menu, Messages.getString("CommonMenuBar.moveAcc"), MovementDisplay.MOVE_EVADE); //$NON-NLS-1$
+        moveRoll = createMenuItem(menu, Messages.getString("CommonMenuBar.moveRoll"), MovementDisplay.MOVE_ROLL); //$NON-NLS-1$
+        moveLaunch = createMenuItem(menu, Messages.getString("CommonMenuBar.moveLaunch"), MovementDisplay.MOVE_LAUNCH); //$NON-NLS-1$
+        moveRecover = createMenuItem(menu, Messages.getString("CommonMenuBar.moveRecover"), MovementDisplay.MOVE_RECOVER); //$NON-NLS-1$
+        moveDump = createMenuItem(menu, Messages.getString("CommonMenuBar.moveDump"), MovementDisplay.MOVE_DUMP); //$NON-NLS-1$
+        moveRam = createMenuItem(menu, Messages.getString("CommonMenuBar.moveRam"), MovementDisplay.MOVE_RAM); //$NON-NLS-1$
+        moveTurnLeft = createMenuItem(menu, Messages.getString("CommonMenuBar.moveTurnLeft"), MovementDisplay.MOVE_TURN_LEFT); //$NON-NLS-1$
+        moveTurnRight = createMenuItem(menu, Messages.getString("CommonMenuBar.moveTurnRight"), MovementDisplay.MOVE_TURN_RIGHT); //$NON-NLS-1$
+        moveThrust = createMenuItem(menu, Messages.getString("CommonMenuBar.moveThrust"), MovementDisplay.MOVE_THRUST); //$NON-NLS-1$
+        moveYaw = createMenuItem(menu, Messages.getString("CommonMenuBar.moveYaw"), MovementDisplay.MOVE_YAW); //$NON-NLS-1$
+        moveEndOver = createMenuItem(menu, Messages.getString("CommonMenuBar.moveEndOver"), MovementDisplay.MOVE_END_OVER); //$NON-NLS-1$
+        
+        
         menu.addSeparator();
         menu.add(submenu);
 
@@ -898,6 +933,51 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
 
     public synchronized void setMoveLowerEnabled(boolean enabled) {
         moveLower.setEnabled(enabled);
+    }
+    public synchronized void setMoveAccEnabled(boolean enabled) {
+        moveAcc.setEnabled(enabled);
+    }
+    public synchronized void setMoveDecEnabled(boolean enabled) {
+        moveDec.setEnabled(enabled);
+    }
+    public synchronized void setMoveAccNEnabled(boolean enabled) {
+        moveAccN.setEnabled(enabled);
+    }
+    public synchronized void setMoveDecNEnabled(boolean enabled) {
+        moveDecN.setEnabled(enabled);
+    }
+    public synchronized void setMoveEvadeEnabled(boolean enabled) {
+        moveEvade.setEnabled(enabled);
+    }
+    public synchronized void setMoveRollEnabled(boolean enabled) {
+        moveRoll.setEnabled(enabled);
+    }
+    public synchronized void setMoveLaunchEnabled(boolean enabled) {
+        moveLaunch.setEnabled(enabled);
+    }
+    public synchronized void setMoveRecoverEnabled(boolean enabled) {
+        moveRecover.setEnabled(enabled);
+    }
+    public synchronized void setMoveDumpEnabled(boolean enabled) {
+        moveDump.setEnabled(enabled);
+    }
+    public synchronized void setMoveRamEnabled(boolean enabled) {
+        moveRam.setEnabled(enabled);
+    }
+    public synchronized void setMoveTurnLeftEnabled(boolean enabled) {
+        moveTurnLeft.setEnabled(enabled);
+    }
+    public synchronized void setMoveTurnRightEnabled(boolean enabled) {
+        moveTurnRight.setEnabled(enabled);
+    }
+    public synchronized void setMoveThrustEnabled(boolean enabled) {
+        moveThrust.setEnabled(enabled);
+    }
+    public synchronized void setMoveYawEnabled(boolean enabled) {
+        moveYaw.setEnabled(enabled);
+    }
+    public synchronized void setMoveEndOverEnabled(boolean enabled) {
+        moveEndOver.setEnabled(enabled);
     }
 
     // Manages deploy menu items...

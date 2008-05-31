@@ -1353,13 +1353,17 @@ public class Aero
     
 
     public boolean canCharge() {
-        // Aero can ram but lets not deal with that yet
-        return (!isImmobile());
+        //ramming is resolved differently than chargin
+        return false;
     }
 
     public boolean canDFA() {
         // Aero can't DFA
         return false;
+    }
+    
+    public boolean canRam() {
+    	return !isImmobile() && getWalkMP() > 0;
     }
 
     public int getArmorType()
@@ -1441,7 +1445,7 @@ public class Aero
     }
     
     public boolean doomedOnGround() {
-        return false;
+        return true;
     }
     
     public boolean doomedInAtmosphere() {

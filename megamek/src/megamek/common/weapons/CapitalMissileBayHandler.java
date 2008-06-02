@@ -13,22 +13,26 @@
  */
 package megamek.common.weapons;
 
-
 import megamek.common.AmmoType;
 import megamek.common.IGame;
+import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
+import java.util.Vector;
 
 /**
  * @author Jay Lawson
  */
-public class AR10Handler extends AmmoWeaponHandler {
+public class CapitalMissileBayHandler extends AmmoBayWeaponHandler {
 
     /**
      * 
      */
-    private static final long serialVersionUID = -2536312899803153911L;
+    
+    private static final long serialVersionUID = -1618484541772117621L;
 
     /**
      * @param t
@@ -36,39 +40,32 @@ public class AR10Handler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public AR10Handler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public CapitalMissileBayHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
-    
-    /**
-     * Calculate the attack value based on range
-     * 
-     * @return an <code>int</code> representing the attack value at that range.
-     */
-    protected int calcAttackValue() {
-    	int av = 0;   	
-    	AmmoType atype = (AmmoType) ammo.getType();
-    	if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-            av = 4;
-        } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-            av = 3;
-        } else {
-        	av =2;
-        }
-    	return av;
-    }
-    
+ 
     protected int getCapMisMod() {
     	int mod = 0;
-    	AmmoType atype = (AmmoType) ammo.getType();
-    	if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-            mod = 10;
-        } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-            mod = 9;
-        } else {
-        	mod = 11;
-        }
+    	for(int wId: weapon.getBayWeapons()) {
+    		int curr_mod = 0;
+            Mounted bayW = ae.getEquipment(wId);
+            //check the currently loaded ammo
+            Mounted bayWAmmo = bayW.getLinked();
+            AmmoType atype = (AmmoType) bayWAmmo.getType();
+            if(atype == null) 
+            	continue;
+        	if (atype.getMunitionType() == AmmoType.T_WHITE_SHARK) {
+                curr_mod = 10;
+            } else if (atype.getMunitionType() == AmmoType.T_KILLER_WHALE) {
+                curr_mod = 9;
+            } else {
+            	curr_mod = 11;
+            }
+        	if(curr_mod > mod) {
+        		mod = curr_mod;
+        	}
+    	}
     	return mod;
     }
-
+    
 }

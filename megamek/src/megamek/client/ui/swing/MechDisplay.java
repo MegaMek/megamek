@@ -1626,8 +1626,8 @@ public class MechDisplay extends JPanel {
                 } 
             }
             else if (atype.getAmmoType() == AmmoType.T_AC_LBX) {
-                if (atype.getMunitionType() != AmmoType.M_CLUSTER) {
-                    int newAV = atype.getRackSize();   
+                if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
+                    int newAV = (int)Math.floor(0.6*atype.getRackSize());
                     avShort = newAV;
                     if(avMed > 0) {
                         avMed = newAV;
@@ -1651,7 +1651,12 @@ public class MechDisplay extends JPanel {
                     avMed = 3;
                     avLong = 3;
                     avExt = 3;
-                } 
+                } else {
+                	avShort = 2;
+                    avMed = 2;
+                    avLong = 2;
+                    avExt = 2;
+                }
             }
             
             double[] result = {avShort, avMed, avLong, avExt, maxr};
@@ -1681,32 +1686,34 @@ public class MechDisplay extends JPanel {
             
             for(int wId: bayWeapons) {
                 Mounted m = entity.getEquipment(wId);
-                WeaponType bayWType = ((WeaponType)m.getType());
-                heat = heat + bayWType.getHeat();
-                double mAVShort = bayWType.getShortAV();
-                double mAVMed = bayWType.getMedAV();
-                double mAVLong = bayWType.getLongAV();
-                double mAVExt = bayWType.getExtAV();
-                int mMaxR = bayWType.getMaxRange();
+                if(!m.isBreached() && !m.isDestroyed() && !m.isJammed() 
+                		&& (m.getLinked() == null || m.getLinked().getShotsLeft() > 0)) {
+                	WeaponType bayWType = ((WeaponType)m.getType());
+                	heat = heat + bayWType.getHeat();
+                	double mAVShort = bayWType.getShortAV();
+                	double mAVMed = bayWType.getMedAV();
+                	double mAVLong = bayWType.getLongAV();
+                	double mAVExt = bayWType.getExtAV();
+                	int mMaxR = bayWType.getMaxRange();
                 
-                //deal with any ammo adjustments
-                if (null != m.getLinked()) {
-                    double[] changes = changeAttackValues((AmmoType)m.getLinked().getType(), mAVShort, 
+                	//deal with any ammo adjustments
+                	if (null != m.getLinked()) {
+                		double[] changes = changeAttackValues((AmmoType)m.getLinked().getType(), mAVShort, 
                                                           mAVMed, mAVLong, mAVExt, mMaxR);
-                    mAVShort = changes[0];
-                    mAVMed = changes[1];
-                    mAVLong = changes[2];
-                    mAVExt = changes[3];
-                    mMaxR = (int)changes[4];
+                		mAVShort = changes[0];
+                		mAVMed = changes[1];
+                		mAVLong = changes[2];
+                		mAVExt = changes[3];
+                		mMaxR = (int)changes[4];
+                	}
+                
+                	avShort = avShort + mAVShort;
+                	avMed = avMed + mAVMed;
+                	avLong = avLong + mAVLong;
+                	avExt = avExt + mAVExt;
+                	if(mMaxR > maxr) 
+                		maxr = mMaxR;
                 }
-                
-                avShort = avShort + mAVShort;
-                avMed = avMed + mAVMed;
-                avLong = avLong + mAVLong;
-                avExt = avExt + mAVExt;
-                if(mMaxR > maxr) 
-                    maxr = mMaxR;
-                
             }
             
             wHeatR.setText(Integer.toString(heat));

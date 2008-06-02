@@ -19,8 +19,10 @@ import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -97,5 +99,44 @@ public class ATMHandler extends MissileWeaponHandler {
         nDamPerHit = 1;
         return hits;
     }
-
+    
+    /**
+     * Calculate the attack value based on range
+     * 
+     * @return an <code>int</code> representing the attack value at that range.
+     */
+    protected int calcAttackValue() {
+    	int distance = ae.getPosition().distance(target.getPosition());
+    	int av = 0;
+    	int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);   	
+    	AmmoType atype = (AmmoType) ammo.getType();
+        if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+        	if(range == WeaponType.RANGE_SHORT) {
+        		av = wtype.getRoundShortAV();
+        		av = av + av/2;
+        	}
+        } else if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+        	if(range == WeaponType.RANGE_SHORT) {
+        		av = wtype.getRoundShortAV();
+        	} else if(range == WeaponType.RANGE_MED) {
+        		av = wtype.getRoundMedAV();
+        	} else if (range == WeaponType.RANGE_LONG) {
+        		av = wtype.getRoundLongAV();
+        	} else if (range == WeaponType.RANGE_EXT) {
+        		av = wtype.getRoundLongAV();
+        	}
+        	av = av/2;
+        } else {
+        	if(range == WeaponType.RANGE_SHORT) {
+        		av = wtype.getRoundShortAV();
+        	} else if(range == WeaponType.RANGE_MED) {
+        		av = wtype.getRoundMedAV();
+        	} else if (range == WeaponType.RANGE_LONG) {
+        		av = wtype.getRoundLongAV();
+        	} else if (range == WeaponType.RANGE_EXT) {
+        		av = wtype.getRoundExtAV();
+        	}
+        }
+    	return av;
+    }
 }

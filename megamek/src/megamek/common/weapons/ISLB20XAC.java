@@ -49,8 +49,8 @@ public class ISLB20XAC extends LBXACWeapon {
         this.bv = 237;
         this.flags |= F_SPLITABLE;
         this.cost = 600000;
-        this.shortAV = 12;
-        this.medAV = 12;
+        this.shortAV = 20;
+        this.medAV = 20;
         this.maxRange = RANGE_MED;
     }
 }

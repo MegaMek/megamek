@@ -33,10 +33,10 @@ import megamek.common.*;
 
 public class SquadronMapSet implements DisplayMapSet{
 
-    private static final String IMAGE_DIR = "data/images/widgets";
+    private static final String IMAGE_DIR = "data/images/units";
     
     //Picture with figure
-    private Image battleArmorImage;
+    private Image fighterImage;
     //Images that shows how much armor + 1 internal damage left.
     //private Image[] armorImage = new Image[BattleArmor.BA_MAX_MEN];
     private Image armorImage;
@@ -82,8 +82,8 @@ public class SquadronMapSet implements DisplayMapSet{
         FontMetrics fm = comp.getFontMetrics(FONT_VALUE);
         FontMetrics fmBig = comp.getFontMetrics(BIG_FONT_VALUE);
         
-        battleArmorImage = comp.getToolkit().getImage(IMAGE_DIR+"/fighter.gif"); //$NON-NLS-1$
-        PMUtil.setImage(battleArmorImage, comp);
+        fighterImage = comp.getToolkit().getImage(IMAGE_DIR+"/asf.gif"); //$NON-NLS-1$
+        PMUtil.setImage(fighterImage, comp);
         armorImage = comp.createImage(120, 12);
         armorAreas = new PMPicArea(armorImage);
         armorAreas.translate(30, 0);
@@ -97,7 +97,7 @@ public class SquadronMapSet implements DisplayMapSet{
         for(int i = 0; i < FighterSquadron.MAX_SIZE; i++){
             int shiftX = (i % 3) * stepX;
         	int shiftY = (i / 3) * stepY + 110;
-            unitAreas[i] = new PMPicArea(battleArmorImage);
+            unitAreas[i] = new PMPicArea(fighterImage);
             unitAreas[i].translate(shiftX, shiftY);
             content.addArea(unitAreas[i]);
             int newx = shiftX + (stepX/2);

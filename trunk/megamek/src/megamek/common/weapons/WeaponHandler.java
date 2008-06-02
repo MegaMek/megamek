@@ -407,6 +407,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
     	}
     	return av;
     }
+    
+    /*
+     * Return the capital missile target for criticals. Zero if not a capital missile
+     */
+    protected int getCapMisMod() {
+    	return 0;
+    }
 
     /**
      * Handle damage against an entity, called once per hit by default.
@@ -428,6 +435,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
         HitData hit = entityTarget.rollHitLocation(toHit.getHitTable(), toHit
                 .getSideTable(), waa.getAimedLocation(), waa.getAimingMode());
         hit.setGeneralDamageType(generalDamageType);
+        hit.setCapital(wtype.isCapital());
+        hit.setBoxCars(roll == 12);
+        hit.setCapMisCritMod(getCapMisMod());
 
         if (entityTarget.removePartialCoverHits(hit.getLocation(), toHit
                 .getCover(), Compute.targetSideTable(ae, entityTarget))) {
@@ -474,7 +484,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
             vPhaseReport.addAll(buildingReport);
         }
-
+        
         // A building may absorb the entire shot.
         if (nDamage == 0) {
             r = new Report(3415);
@@ -638,7 +648,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             ae.heatBuildup += (wtype.getHeat());
         }
     }
-
+    
     /**
      * special resolution, like minefields and arty
      * 

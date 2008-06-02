@@ -31,7 +31,7 @@ public class HitData {
     public static final int DAMAGE_ENERGY = -3;
     public static final int DAMAGE_MISSILE = -4;
     public static final int DAMAGE_BALLISTIC = -5;
-
+    
     private int location;
     private boolean rear;
     private int effect;
@@ -45,7 +45,11 @@ public class HitData {
     private HitData undoneLocation = null;
     private boolean fallDamage = false; // did the damage come from a fall?
     private int generalDamageType = HitData.DAMAGE_NONE;
-
+    private boolean capital = false;
+    private int capMisCritMod = 0;
+    private boolean boxcars = false;
+    
+    
     public HitData(int location) {
         this(location, false, EFFECT_NONE, false, 0);
     }
@@ -127,7 +131,7 @@ public class HitData {
     public boolean isRear() {
         return rear;
     }
-
+    
     public int getEffect() {
         return effect;
     }
@@ -175,5 +179,30 @@ public class HitData {
 
     public void setGeneralDamageType(int type) {
         this.generalDamageType = type;
+    }
+    
+    public void setCapital(boolean b) {
+    	this.capital = b;
+    }
+    
+    public boolean isCapital() {
+        return capital;
+    }
+
+    
+    public int getCapMisCritMod() {
+        return capMisCritMod;
+    }
+    
+    public void setCapMisCritMod(int m) {
+    	this.capMisCritMod = m;
+    }
+    
+    public void setBoxCars(boolean b) {
+    	this.boxcars = b;
+    }
+    
+    public boolean rolledBoxCars() {
+    	return boxcars;
     }
 }

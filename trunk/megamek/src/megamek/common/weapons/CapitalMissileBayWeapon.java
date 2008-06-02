@@ -17,7 +17,11 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -48,5 +52,16 @@ public class CapitalMissileBayWeapon extends AmmoBayWeapon {
         this.cost = 0;
         this.atClass = CLASS_CAPITAL_MISSILE;
         this.capital = true;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame)
+     */
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new CapitalMissileBayHandler(toHit, waa, game, server);
     }
 }

@@ -5,6 +5,7 @@ v0.33.27-dev (SVN)
 + Bug 1973561: OSR-5W gyro doesn't match listed type
 + Bug: Ultra and Rotary ACs not doing enough damage when firing more than 1
     shot and targeting Infantry
++ added bundle.xml, containing a single target to create a MacOS X Application Bundle. Needs JavaApplicationStub at the default location and jarbundler (from jarbundler.sourceforge.net), and works under MacOS X only
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)
 + Bug 1966400: Vehicle CASE/CASE II not working if attack destroys location

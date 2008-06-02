@@ -19,6 +19,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Vector;
 
+import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -28,6 +29,7 @@ import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -64,6 +66,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected int subjectId;
     protected int nRange;
     protected int nDamPerHit;
+    protected int attackValue;
     protected boolean throughFront;
     protected boolean announcedEntityFiring = false;
     protected boolean missed = false;
@@ -184,7 +187,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 : null;
         final boolean targetInBuilding = Compute.isInBuilding(game,
                 entityTarget);
-
+       
         if (entityTarget != null)
             ae.setLastTarget(entityTarget.getId());
         // Which building takes the damage?
@@ -289,6 +292,19 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // ways
         int hits = calcHits(vPhaseReport), nCluster = calcnCluster();
 
+        //Now I need to adjust this for air-to-air attacks because they
+        //use attack value
+        if(ae instanceof Aero && target instanceof Aero) {
+        	if(hits == 1 && nCluster == 1) {
+        		nDamPerHit = attackValue;
+        	} else {
+        		nDamPerHit = 1;
+        		hits = attackValue;
+        		nCluster = 5;
+        	}
+        	
+        }
+        
         // We've calculated how many hits. At this point, any missed
         // shots damage the building instead of the target.
         if (bMissed) {
@@ -369,6 +385,27 @@ public class WeaponHandler implements AttackHandler, Serializable {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
         return (int) toReturn;
+    }
+    
+    /**
+     * Calculate the attack value based on range
+     * 
+     * @return an <code>int</code> representing the attack value at that range.
+     */
+    protected int calcAttackValue() {
+    	int distance = ae.getPosition().distance(target.getPosition());
+    	int av = 0;
+    	int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
+    	if(range == WeaponType.RANGE_SHORT) {
+    		av = wtype.getRoundShortAV();
+    	} else if(range == WeaponType.RANGE_MED) {
+    		av = wtype.getRoundMedAV();
+    	} else if (range == WeaponType.RANGE_LONG) {
+    		av = wtype.getRoundLongAV();
+    	} else if (range == WeaponType.RANGE_EXT) {
+    		av = wtype.getRoundExtAV();
+    	}
+    	return av;
     }
 
     /**
@@ -585,6 +622,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // use ammo when creating this, so it works when shooting the last shot
         // a unit has and we fire multiple weapons of the same type
         useAmmo();
+        attackValue = calcAttackValue();
     }
 
     protected void useAmmo() {

@@ -14,7 +14,10 @@
 package megamek.common.weapons;
 
 import megamek.common.IGame;
+import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.ToHitData;
+import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 import java.util.Vector;
@@ -27,7 +30,6 @@ public class BayWeaponHandler extends WeaponHandler {
     /**
      * 
      */
-    private Vector<Integer> weapons = new Vector<Integer>();
     
     private static final long serialVersionUID = -1618484541772117621L;
 
@@ -39,15 +41,37 @@ public class BayWeaponHandler extends WeaponHandler {
      */
     public BayWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
-        
-        
     }
-    
-    //At some point I need a function here that compiles the bay (ie. gets damage, heat, range, etc)
-    //it might be best to actually do this as separate functions for each thing
-    // - heat
-    // - attack value
-    // - maximum range
-    //- boolean functions (hasArtemis, hasSantaAnna, etc)
+ 
+    /**
+     * Calculate the attack value based on range
+     * 
+     * @return an <code>int</code> representing the attack value at that range.
+     */
+    protected int calcAttackValue() {
+    	int distance = ae.getPosition().distance(target.getPosition());
+    	double av = 0;
+    	int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
+    	
+    	for(int wId: weapon.getBayWeapons()) {
+            Mounted m = ae.getEquipment(wId);
+            if(!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+            	WeaponType bayWType = ((WeaponType)m.getType());
+            	//need to cycle through weapons and add av
+            	if(range == WeaponType.RANGE_SHORT) {
+            		av = av + bayWType.getShortAV();
+            	} else if(range == WeaponType.RANGE_MED) {
+            		av = av + bayWType.getMedAV();
+            	} else if (range == WeaponType.RANGE_LONG) {
+            		av = av + bayWType.getLongAV();
+            	} else if (range == WeaponType.RANGE_EXT) {
+            		av = av + bayWType.getExtAV();
+            	}
+            }
+    	}
+            
+    	
+    	return (int)Math.ceil(av);
+    }
     
 }

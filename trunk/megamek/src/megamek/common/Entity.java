@@ -1281,7 +1281,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns true if the entity has an RAC which is jammed and not destroyed
      */
     public boolean canUnjamRAC() {
-        for (Mounted mounted : getWeaponList()) {
+        for (Mounted mounted : getTotalWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY
                     && mounted.isJammed() && !mounted.isDestroyed()) {
@@ -2198,7 +2198,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Attempts to load all weapons with ammo
      */
     public void loadAllWeapons() {
-        for (Mounted mounted : getWeaponList()) {
+        for (Mounted mounted : getTotalWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
             if (wtype.getAmmoType() != AmmoType.T_NA) {
                 loadWeapon(mounted);
@@ -3787,7 +3787,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public void reloadEmptyWeapons() {
         // try to reload weapons
-        for (Mounted mounted : getWeaponList()) {
+        for (Mounted mounted : getTotalWeaponList()) {
             WeaponType wtype = (WeaponType) mounted.getType();
 
             if (wtype.getAmmoType() != AmmoType.T_NA

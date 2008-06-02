@@ -43,21 +43,7 @@ public abstract class BayWeapon extends Weapon {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
-        checkAmmo(waa, game);
         return super.fire(waa, game, server);
-    }
-
-    /**
-     * 
-     */
-    protected void checkAmmo(WeaponAttackAction waa, IGame g) {
-        Entity ae = waa.getEntity(g);
-        Mounted weapon = ae.getEquipment(waa.getWeaponId());
-        Mounted ammo = weapon.getLinked();
-        if (ammo == null || ammo.getShotsLeft() < 1) {
-            ae.loadWeaponWithSameAmmo(weapon);
-            ammo = weapon.getLinked();
-        }
     }
 
     /*

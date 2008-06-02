@@ -49,8 +49,8 @@ public class CLLB20XAC extends LBXACWeapon {
         this.flags |= F_SPLITABLE;
         this.bv = 237;
         this.cost = 600000;
-        this.shortAV = 12;
-        this.medAV = 12;
+        this.shortAV = 20;
+        this.medAV = 20;
         this.maxRange = RANGE_MED;
     }
 }

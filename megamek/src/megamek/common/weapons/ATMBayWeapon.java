@@ -22,7 +22,7 @@ import megamek.common.TechConstants;
 /**
  * @author Jay Lawson
  */
-public class ATMBayWeapon extends BayWeapon {
+public class ATMBayWeapon extends AmmoBayWeapon {
     /**
      * 
      */
@@ -39,10 +39,10 @@ public class ATMBayWeapon extends BayWeapon {
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
-        this.shortRange = 0;
-        this.mediumRange = 0;
-        this.longRange = 0;
-        this.extremeRange = 0;
+        this.shortRange = 6;
+        this.mediumRange = 12;
+        this.longRange = 20;
+        this.extremeRange = 25;
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;

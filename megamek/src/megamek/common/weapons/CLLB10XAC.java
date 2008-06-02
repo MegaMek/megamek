@@ -48,8 +48,8 @@ public class CLLB10XAC extends LBXACWeapon {
         this.criticals = 5;
         this.bv = 148;
         this.cost = 400000;
-        this.shortAV = 6;
-        this.medAV = 6;
+        this.shortAV = 10;
+        this.medAV = 10;
         this.maxRange = RANGE_MED;
     }
 }

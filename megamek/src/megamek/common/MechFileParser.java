@@ -300,6 +300,10 @@ public class MechFileParser {
 
         } // Check the next piece of equipment.
         
+        if(ent.usesWeaponBays()) {	
+        	ent.loadAllWeapons();
+        }
+        	
         // Check if it's canon; if it is, mark it as such.
         ent.setCanon(false);// Guilty until proven innocent
         try {

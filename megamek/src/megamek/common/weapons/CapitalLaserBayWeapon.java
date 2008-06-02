@@ -39,10 +39,10 @@ public class CapitalLaserBayWeapon extends BayWeapon {
         this.setInternalName(this.name);
         this.heat = 0;
         this.damage = DAMAGE_VARIABLE;
-        this.shortRange = 0;
-        this.mediumRange = 0;
-        this.longRange = 0;
-        this.extremeRange = 0;
+        this.shortRange = 12;
+        this.mediumRange = 24;
+        this.longRange = 40;
+        this.extremeRange = 50;
         this.tonnage = 0.0f;
         this.bv = 0;
         this.cost = 0;

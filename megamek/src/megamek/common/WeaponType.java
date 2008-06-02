@@ -272,6 +272,15 @@ public class WeaponType extends EquipmentType {
         return maxRange;
     }
     
+    public int[] getATRanges() {
+    	if(capital) {
+    		return new int[] { 0, 12, 24, 40, 50 };
+    	} else {
+    		return new int[] { 0, 6, 12, 20, 25 };
+    	}
+  
+    }
+    
     public double getShortAV() {
         return shortAV;
     }

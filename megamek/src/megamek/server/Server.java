@@ -12967,6 +12967,66 @@ public class Server implements Runnable {
             addReport(r);
         }
     }
+    /* 
+     * Resolve any collected standard damage to a capital-scale entity
+     * This is not where fighter squadron damage is resolved because
+     * that can only happen after all firing is resolved
+     */
+    private Vector<Report> resolveStandardtoCapital(int cen) {
+    	
+    	Vector<Report> vDesc = new Vector<Report>();
+    	boolean needReport = false;
+    	for(Enumeration e = game.getEntities(); e.hasMoreElements();) {
+    		Entity en = (Entity)e.nextElement();
+    		if(!en.isCapitalScale() || !(en instanceof Aero) || cen == Entity.NONE) {
+    			continue;
+    		}
+    		Aero ship = (Aero)en;
+    		Report r;
+    		boolean tookDamage = false;
+    		for(int i = 0; i < ship.locations(); i++) {
+    			int damage = ship.getStandardDamage(i);
+    			if(damage > 0) {
+    				needReport = true;
+    				if(!tookDamage) {
+    					//put out a report
+    					r = new Report(9055);
+    					r.subject = en.getId();
+    					r.indent(1);
+    					r.newlines = 0;
+    					r.addDesc(en);
+    					vDesc.addElement(r);
+    					tookDamage = true;
+    				}
+    				//I need to roll the hit location in order to determine the 
+    				//right critical, but I may have to reroll until the location matches
+    				int sideHit = Compute.targetSideTable(game.getEntity(cen), en);
+    				HitData hit = ship.rollHitLocation(ToHitData.HIT_NORMAL, sideHit);
+    				//lets make sure we don't get any infinite loops
+    				int j = 0;
+    				while(hit.getLocation() != i && j < 200) {
+    					j++;
+    					hit = ship.rollHitLocation(ToHitData.HIT_NORMAL, sideHit);
+    				}
+    				if(hit.getLocation() != i) {
+    					hit = new HitData(i);
+    				}
+    				damage = (int)Math.floor(damage / 10.0);
+    				hit.setCapital(true);
+    				vDesc.addAll(damageEntity(en, hit, damage));
+    			}
+    		}
+    		ship.resetStandardDamage();
+    	}
+    	//carriage return
+    	if(needReport) {
+    		Report finish;
+    		finish = new Report(1210);
+    		finish.newlines = 1;
+    		vDesc.addElement(finish);
+    	}  	
+    	return vDesc;
+    }
 
     /**
      * damage an Entity
@@ -13126,8 +13186,9 @@ public class Server implements Runnable {
         if(isCapital && !te.isCapitalScale()) {
         	damage = 10 * damage;
         }
+        boolean StandardToCapital = false;
         if(!isCapital && te.isCapitalScale()) {
-        	//TODO: collect standard to capital scale damage
+        	StandardToCapital = true;
         }
         
         int damage_orig = damage;
@@ -13361,12 +13422,44 @@ public class Server implements Runnable {
         // Allocate the damage
         while (damage > 0) {
         	
-        	if(te instanceof Aero) {
-            	//chance for a crit if attack roll was a 12
-            	/*
-        		
-            	*/
-            	
+        	//first check if this a standard scale attack to capital armor
+        	//if so, collect the damage on the entity and stop processing
+        	if(StandardToCapital && te instanceof Aero) {
+        		r = new Report(9050);
+    			r.subject = te_n;
+    			r.indent(2);
+    			r.newlines = 0;
+    			r.addDesc(te);
+    			r.add(damage);
+    			r.add(te.getLocationAbbr(hit));
+        		if(te instanceof FighterSquadron) {
+        			r = new Report(9051);
+        			r.subject = te_n;
+        			r.indent(2);
+        			r.newlines = 0;
+        			r.addDesc(te);
+        			r.add(damage);
+        		} 
+				vDesc.addElement(r);
+				Aero ship = (Aero)te;
+				ship.addStandardDamage(damage,hit);
+				//if boxcars were rolled, then this might be a critical hit
+				if(critBoxCars) {
+					Aero a = (Aero)te;
+					vDesc.elementAt(vDesc.size() - 1).newlines++;
+					vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit" , 8, damage_orig/10, isCapital ));
+				}
+				//if this did over 20 points of standard damage it might critical a FighterSquadron
+				if(damage >= 20 && te instanceof FighterSquadron) {
+					Aero a = (Aero)te;
+					vDesc.elementAt(vDesc.size() - 1).newlines++;
+					vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Damage threshold exceeded" , 8, damage_orig/10, isCapital ));
+				}
+				
+				return vDesc;
+        	}
+        	
+        	if(te instanceof Aero) {            	
             	//chance of a critical if damage greater than threshold
             	Aero a = (Aero)te;
             	int threshold = a.getThresh(hit.getLocation());
@@ -22345,6 +22438,9 @@ public class Server implements Runnable {
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
                 if (aId != lastAttackerId && !ah.announcedEntityFiring()) {
+                	//if this is a new attacker then resolve any standard-to-cap damage
+                	//from previous
+                	handleAttackReports.addAll(resolveStandardtoCapital(aId));               	
                     // report who is firing
                     r = new Report(3100);
                     r.subject = aId;
@@ -22358,6 +22454,7 @@ public class Server implements Runnable {
                     r.addDesc(game.getEntity(aId));
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
+                    
                 }
                 lastAttackerId = aId;
                 boolean keep = ah.handle(game.getPhase(), handleAttackReports);
@@ -22367,6 +22464,8 @@ public class Server implements Runnable {
             } else
                 keptAttacks.add(ah);
         }
+        //resolve standard to capital one more time
+        handleAttackReports.addAll(resolveStandardtoCapital(lastAttackerId));
         addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);

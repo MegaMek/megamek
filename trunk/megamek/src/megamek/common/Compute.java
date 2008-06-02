@@ -583,6 +583,9 @@ public class Compute {
         boolean isIndirect = ((wtype.getAmmoType() == AmmoType.T_LRM) || (wtype.getAmmoType() == AmmoType.T_MML) || (wtype.getAmmoType() == AmmoType.T_EXLRM) || (wtype.getAmmoType() == AmmoType.T_TBOLT_5) || (wtype.getAmmoType() == AmmoType.T_TBOLT_10) || (wtype.getAmmoType() == AmmoType.T_TBOLT_15) || (wtype.getAmmoType() == AmmoType.T_TBOLT_20) || (wtype.getAmmoType() == AmmoType.T_LRM_TORPEDO)) && weapon.curMode().equals("Indirect");
         boolean useExtremeRange = game.getOptions().booleanOption("maxtech_range");
 
+        if(ae instanceof Aero)
+        	useExtremeRange = true;
+        
         ToHitData mods = new ToHitData();
 
         // modify the ranges for ATM missile systems based on the ammo selected
@@ -700,11 +703,19 @@ public class Compute {
             // Torpedos only fire underwater.
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Weapon can only fire underwater.");
         }
-
+        
+        //if Aero then adjust to stanard ranges
+        if(ae instanceof Aero) 
+        	weaponRanges = wtype.getATRanges();
+        
         // determine base distance & range bracket
         int distance = effectiveDistance(game, ae, target);
         int range = RangeType.rangeBracket(distance, weaponRanges, useExtremeRange);
 
+        //if aero and greater than max range then swith to range_out
+        if(ae instanceof Aero && range > wtype.getMaxRange())
+        	range = RangeType.RANGE_OUT;
+        
         // short circuit if at zero range or out of range
         if (range == RangeType.RANGE_OUT) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
@@ -1244,6 +1255,8 @@ public class Compute {
             toHit.addModifier(3, "attacker ran and skidded");
         } else if (movement == IEntityMovementType.MOVE_JUMP) {
             toHit.addModifier(3, "attacker jumped");
+        } else if (movement == IEntityMovementType.MOVE_OVER_THRUST) {
+        	toHit.addModifier(2, "over thrust used");
         }
 
         return toHit;
@@ -1303,6 +1316,11 @@ public class Compute {
      */
     public static ToHitData getTargetMovementModifier(IGame game, int entityId) {
         Entity entity = game.getEntity(entityId);
+        
+        if(entity instanceof Aero) {
+        	return new ToHitData();
+        }
+        
         ToHitData toHit = getTargetMovementModifier(entity.delta_distance, ((entity.moved == IEntityMovementType.MOVE_JUMP) || (entity.moved == IEntityMovementType.MOVE_VTOL_RUN) || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK)), entity.moved == IEntityMovementType.MOVE_VTOL_RUN || entity.moved == IEntityMovementType.MOVE_VTOL_WALK || entity.getMovementMode() == IEntityMovementMode.VTOL);
 
         // Did the target skid this turn?
@@ -2249,7 +2267,57 @@ public class Compute {
     }
 
     public static int targetSideTable(Entity attacker, Targetable target) {
-        return target.sideTable(attacker.getPosition());
+    	Coords attackPos = attacker.getPosition();
+    	//check to see if they are in the same position, if so find which one should be farther 
+        //back
+        boolean usePrior = usePrior(attacker, target);
+    	
+        if(target instanceof Aero && attacker instanceof Aero) {
+        	return ((Entity)target).sideTable(attackPos, usePrior);
+        }
+        
+        return target.sideTable(attackPos);
+    }
+    
+    //determine who got there first when attacker and target share the same hex
+    //FIXME: this causes problem for bot calculations
+    public static boolean usePrior(Entity attacker, Targetable target) {
+    	
+    	Coords targetPos = target.getPosition();
+        Coords attackPos = attacker.getPosition();
+        boolean usePrior = false;
+        if(attacker instanceof Aero && target instanceof Aero && attackPos.equals(targetPos)) {
+        	int AttackerType = UnitType.determineUnitTypeCode(attacker);
+        	int TargetType = UnitType.determineUnitTypeCode((Entity)target);
+        	if(AttackerType < TargetType) {
+        		usePrior = true;
+        		attackPos = attacker.getPriorPosition();
+        	} else if(AttackerType > TargetType) {
+        		usePrior = true;
+        		targetPos = ((Entity)target).getPriorPosition();
+        	} else {
+        		//same type of unit, check velocity
+        		int attackVelocity = ((Aero)attacker).getCurrentVelocity();
+        		int targetVelocity = ((Aero)target).getCurrentVelocity();
+        		if(attackVelocity > targetVelocity) {
+        			usePrior = true;
+        			attackPos = attacker.getPriorPosition();
+        		} else if(targetVelocity > attackVelocity) {
+        			usePrior = true;
+        			targetPos = ((Entity)target).getPriorPosition();
+        		} else {
+        			if(((Aero)attacker).getWhoFirst() > ((Aero)target).getWhoFirst()) {
+        				usePrior = true;
+        				attackPos = attacker.getPriorPosition();
+        			} else {
+        				usePrior = true;
+            			targetPos = ((Entity)target).getPriorPosition();
+        			}
+        		}
+        	}
+        }
+        
+        return usePrior;
     }
 
     /**

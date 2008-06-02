@@ -1974,6 +1974,10 @@ public class Aero
     	return bombCrits;
     }
     
+    public int getExtremeRangeModifier() {
+        return 6;
+    }
+    
 }
 
 

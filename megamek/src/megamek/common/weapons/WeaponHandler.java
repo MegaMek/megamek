@@ -24,6 +24,7 @@ import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Entity;
+import megamek.common.FighterSquadron;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -408,6 +409,18 @@ public class WeaponHandler implements AttackHandler, Serializable {
     	return av;
     }
     
+    /****
+     * adjustment factor on attack value for fighter squadrons 
+     */
+    protected double getSquadronMultiplier() {
+    	double mult = 1.0;
+    	if(ae instanceof FighterSquadron) {
+    		FighterSquadron fs = (FighterSquadron)ae;
+    		mult = ((double)fs.getNFighters())/((double)fs.getN0Fighters());
+    	}
+    	return mult;
+    }
+    
     /*
      * Return the capital missile target for criticals. Zero if not a capital missile
      */
@@ -632,7 +645,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // use ammo when creating this, so it works when shooting the last shot
         // a unit has and we fire multiple weapons of the same type
         useAmmo();
-        attackValue = calcAttackValue();
+        attackValue = (int)Math.ceil(getSquadronMultiplier() * calcAttackValue());
     }
 
     protected void useAmmo() {

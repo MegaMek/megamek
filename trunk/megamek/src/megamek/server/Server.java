@@ -12978,7 +12978,7 @@ public class Server implements Runnable {
     	boolean needReport = false;
     	for(Enumeration e = game.getEntities(); e.hasMoreElements();) {
     		Entity en = (Entity)e.nextElement();
-    		if(!en.isCapitalScale() || !(en instanceof Aero) || cen == Entity.NONE) {
+    		if(!en.isCapitalScale() || !(en instanceof Aero) || en instanceof FighterSquadron || cen == Entity.NONE) {
     			continue;
     		}
     		Aero ship = (Aero)en;
@@ -13026,6 +13026,76 @@ public class Server implements Runnable {
     		vDesc.addElement(finish);
     	}  	
     	return vDesc;
+    }
+    
+    /*
+     * loop through available entities
+     * find fighter squadrons and resolve any remaining damage
+     */
+    private Vector<Report> resolveSquadronDamage() {
+    	
+    	Vector<Report> vDescFinal = new Vector<Report>();
+    	Vector<Report> vDesc = new Vector<Report>();
+
+    	Report header;
+    	Report r;
+    	
+    	for(Enumeration e = game.getEntities(); e.hasMoreElements();) {
+    		Entity en = (Entity)e.nextElement();
+    		if(en instanceof FighterSquadron) {
+    			FighterSquadron fs = (FighterSquadron)en;
+    			header = new Report(9400);
+    			header.subject = en.getId();
+    			header.indent(0);
+    			header.newlines = 0;
+    			header.addDesc(en);
+    			int damage = fs.getStandardDamage();
+    			if(damage > 0) {
+    				//put out a report
+    				vDesc.addElement(header);
+    				r = new Report(9055);
+    				r.subject = en.getId();
+    				r.indent(1);
+    				r.newlines = 0;
+    				r.addDesc(en);
+    				vDesc.addElement(r);
+    				//hmm--how I am I going to get the right side?
+    				//this shouldn't cause a critical, so I just need to make sure that 
+    				//it doesn't somehow
+    				HitData hit = fs.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+    				int newdamage = (int)Math.floor(damage / 10.0);
+    				hit.setCapital(true);
+    				vDesc.addAll(damageEntity(en, hit, newdamage));
+    			}
+    			fs.resetStandardDamage();
+    			//now check damage threshold
+    			int destroyed = fs.getDamageRound()/fs.getThresh();
+    			if(destroyed > 0) {
+    				if(damage <= 0) {
+    					vDesc.addElement(header);
+    				}
+    				fs.setNFighters(fs.getNFighters() - destroyed);
+    				r = new Report(9405);
+    				r.subject = en.getId();
+    				r.indent(1);
+    				r.newlines = 0;
+    				r.addDesc(en);
+    				r.add(fs.getDamageRound());
+    				r.add(destroyed);
+    				vDesc.addElement(r);
+    				//check for destruction
+    				if(fs.getNFighters() <= 0) {
+    					vDesc.addAll( destroyEntity(en, "total annhiliation", true));		
+    				}
+    			}
+    			fs.resetDamageRound();
+    		}
+    	}
+    	if(vDesc.size() > 0) {    	   	
+        	vDescFinal.addElement(new Report(9410, Report.PUBLIC));
+        	vDescFinal.addAll(vDesc);
+    	}
+    	return vDescFinal;
     }
 
     /**
@@ -13472,17 +13542,42 @@ public class Server implements Runnable {
 				}            	
             }
         	
-            // let's resolve some damage!
-            r = new Report(6065);
-            r.subject = te_n;
-            r.indent(2);
-            r.newlines = 0;
-            r.addDesc(te);
-            r.add(damage);
-            if (damageIS)
-                r.messageId = 6070;
-            r.add(te.getLocationAbbr(hit));
-            vDesc.addElement(r);
+        	//fighter squadrons receive damage differently
+            if(te instanceof FighterSquadron) {
+            	FighterSquadron fs = (FighterSquadron)te;
+            	fs.setArmor(fs.getArmor()-damage);
+            	fs.addDamageRound(damage);
+            	r = new Report(9065);
+				r.subject = te_n;
+				r.indent(2);
+				r.newlines = 0;
+				r.addDesc(te);
+				r.add(damage);
+				vDesc.addElement(r);
+				r = new Report(6085);
+                r.subject = te_n;
+                r.newlines = 0;
+                r.add(Math.max(fs.getArmor(),0));
+                vDesc.addElement(r);
+				//check to see if this detroyed the entity
+				if(fs.getArmor() <= 0) {
+            		vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
+            		fs.setArmor(0);
+            	}
+				damage = 0;
+            } else {
+            	r = new Report(6065);
+            	r.subject = te_n;
+            	r.indent(2);
+            	r.newlines = 0;
+            	r.addDesc(te);
+            	r.add(damage);
+            	if (damageIS)
+            		r.messageId = 6070;
+            	r.add(te.getLocationAbbr(hit));
+            	vDesc.addElement(r);
+            }
+            
             // was the section destroyed earlier this phase?
             if (te.getInternal(hit) == IArmorState.ARMOR_DOOMED) {
                 // cannot transfer a through armor crit if so
@@ -22466,6 +22561,7 @@ public class Server implements Runnable {
         }
         //resolve standard to capital one more time
         handleAttackReports.addAll(resolveStandardtoCapital(lastAttackerId));
+        handleAttackReports.addAll(resolveSquadronDamage());
         addReport(handleAttackReports);
         // HACK, but anything else seems to run into weird problems.
         game.setAttacksVector(keptAttacks);

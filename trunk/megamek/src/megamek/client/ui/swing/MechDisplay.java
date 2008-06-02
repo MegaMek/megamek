@@ -1715,6 +1715,16 @@ public class MechDisplay extends JPanel {
                 		maxr = mMaxR;
                 }
             }
+            //check for active fighters in fighter squadrons
+        	double mult = 1.0;
+        	if(entity instanceof FighterSquadron) {
+        		FighterSquadron fs = (FighterSquadron)entity;
+        		mult = ((double)fs.getNFighters())/((double)fs.getN0Fighters());
+        	}
+        	avShort = mult * avShort;
+        	avMed = mult * avMed;
+        	avLong = mult * avLong;
+        	avExt = mult * avExt;
             
             wHeatR.setText(Integer.toString(heat));
             wShortAVR.setText(Integer.toString((int)Math.ceil(avShort)));

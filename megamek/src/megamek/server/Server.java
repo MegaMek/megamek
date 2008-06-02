@@ -13723,6 +13723,114 @@ public class Server implements Runnable {
             // is there damage remaining?
             if (damage > 0) {
                 
+            	//if this is an Aero then I need to apply internal damage 
+            	//to the SI after halving it.  Return from here to prevent
+            	//further processing
+                if(te instanceof Aero) {                	
+                	Aero a = (Aero)te;
+                	
+                	//divide damage in half 
+                	//do not divide by half if it is an ammo exposion
+                	if(!ammoExplosion)// && !nukeS2S)
+                		damage /= 2;
+                	
+                	//this should result in a crit 
+                	//but only if it really did damage after rounding down
+                	if(damage > 0) {
+                		crits++;
+                		//critSI = true;
+                	}
+                	
+                	//Now apply damage to the structural integrity
+                	a.setSI(a.getSI()-damage);
+                    te.damageThisPhase += damage;
+                    //send the report
+                    r = new Report(1210);
+                    r.subject = te_n;
+                    r.newlines = 0;
+                    if(!ammoExplosion) {
+                    	r.messageId = 9005;
+                    } else {
+                    	r.messageId = 9006;
+                    }
+                    r.add(damage);
+                    r.add(Math.max(a.getSI(),0));
+                    vDesc.addElement(r);
+                    damage = 0;
+                    //check to see if this would destroy the ASF
+                	if(a.getSI() <= 0) {
+                		vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
+                		a.setSI(0);
+                	}
+                	
+                	/*
+                	//check for nuclear critical
+                	if(nukeS2S) {                		
+                		//add a control roll
+                		PilotingRollData nukePSR = new PilotingRollData( te.getId(), 4, "Nuclear attack" );
+                		//FIXME: This is not actually resetting to false for some reason
+                		nukePSR.setCumulative(false);
+                		game.addPSR(nukePSR);
+                		
+                		//need some kind of report
+                		int nukeroll = Compute.d6(2);
+                		r = new Report(9145);
+                        r.subject = a.getId();
+                        r.newlines = 0;
+                        r.indent(3);
+                        r.add(CapitalMissile);
+                        r.add(nukeroll);
+                        vDesc.add(r);                    
+                		if(nukeroll >= CapitalMissile) {
+
+                			int nukeDamage = damage_orig;
+                			a.setSI(a.getSI()-nukeDamage);
+                            te.damageThisPhase += nukeDamage;   
+                			r = new Report(9146);
+                            r.subject = a.getId();
+                            r.newlines = 0;
+                            r.add(nukeDamage);
+                            r.add(Math.max(a.getSI(),0));
+                            vDesc.addElement(r);    
+                            if(a.getSI() <= 0) {
+                        		vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
+                        		a.setSI(0);
+                        	} else if(!critSI) {
+                        			critSI = true;
+                        	}
+                		} else { 
+                    		r = new Report (9147);
+                    		r.subject = a.getId();
+                    		r.newlines = 0;
+                    		vDesc.addElement(r);
+                		}
+                	}
+                	*/	
+                	//apply crits
+                	/*
+                	if(critBoxCars) {
+                		vDesc.elementAt(vDesc.size() - 1).newlines++;
+                		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit" , 8, damage_orig, isCapital) );
+                	}
+                	//ammo explosions shouldn't affect threshold because they go right to SI
+                	if(critThresh && !ammoExplosion && !finalSquadDamage) {
+                		vDesc.elementAt(vDesc.size() - 1).newlines++;
+                		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Damage threshold exceeded" , 8, damage_orig, isCapital) );
+                	}
+                	if(critSI && !ammoExplosion && !finalSquadDamage) {
+                		vDesc.elementAt(vDesc.size() - 1).newlines++;
+                		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "SI damaged" , 8, damage_orig, isCapital) );
+                	}
+                	if(CapitalMissile > 0 && !nukeS2S && !finalSquadDamage) {
+                		vDesc.elementAt(vDesc.size() - 1).newlines++;
+                		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Capital Missile" , CapitalMissile, damage_orig, isCapital) );
+                	}
+                	*/
+                    crits = 0;
+                	
+                    return vDesc;
+                }
+            	
                 // Check for CASE II right away. if so reduce damage to 1
                 // and let it hit the IS.
                 // Also remove as much of the rear armor as allowed by the
@@ -13815,7 +13923,6 @@ public class Server implements Runnable {
                         damage /= 2;
                         damage += tmpDamageHold % 2;
                     }
-
                     if (te.getInternal(hit) > damage && damage > 0) {
                         // internal structure absorbs all damage
                         te.setInternal(te.getInternal(hit) - damage, hit);

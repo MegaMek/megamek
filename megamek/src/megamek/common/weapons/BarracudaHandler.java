@@ -14,7 +14,6 @@
 package megamek.common.weapons;
 
 
-import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -23,7 +22,7 @@ import megamek.server.Server;
 /**
  * @author Jay Lawson
  */
-public class AR10Handler extends AmmoWeaponHandler {
+public class BarracudaHandler extends AmmoWeaponHandler {
 
     /**
      * 
@@ -36,39 +35,12 @@ public class AR10Handler extends AmmoWeaponHandler {
      * @param g
      * @param s
      */
-    public AR10Handler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
+    public BarracudaHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
     
-    /**
-     * Calculate the attack value based on range
-     * 
-     * @return an <code>int</code> representing the attack value at that range.
-     */
-    protected int calcAttackValue() {
-    	int av = 0;   	
-    	AmmoType atype = (AmmoType) ammo.getType();
-    	if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-            av = 4;
-        } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-            av = 3;
-        } else {
-        	av =2;
-        }
-    	return av;
-    }
-    
     protected int getCapMisMod() {
-    	int mod = 0;
-    	AmmoType atype = (AmmoType) ammo.getType();
-    	if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
-            mod = 10;
-        } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
-            mod = 9;
-        } else {
-        	mod = 11;
-        }
-    	return mod;
+    	return 11;
     }
 
 }

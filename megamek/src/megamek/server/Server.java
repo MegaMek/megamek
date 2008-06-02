@@ -13065,6 +13065,35 @@ public class Server implements Runnable {
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
             boolean ammoExplosion, DamageType bFrag, boolean damageIS,
             boolean areaSatArty, boolean throughFront) {
+    	   	return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, 
+    	   			            areaSatArty, throughFront, false, false); 
+    }
+    
+    /**
+     * Deals the listed damage to an entity. Returns a vector of Reports for the
+     * phase report
+     * 
+     * @param te the target entity
+     * @param hit the hit data for the location hit
+     * @param damage the damage to apply
+     * @param ammoExplosion ammo explosion type damage is applied directly to
+     *            the IS, hurts the pilot, causes auto-ejects, and can blow the
+     *            unit to smithereens
+     * @param bFrag The DamageType of the attack.
+     * @param damageIS Should the target location's internal structure be
+     *            damaged directly?
+     * @param areaSatArty Is the damage from an area saturating artillery
+     *            attack?
+     * @param throughFront Is the damage coming through the hex the unit is
+     *            facing?
+     * @param finalSquadDamage is this the final resolution of squadron damage
+     * @param is this a ship-to-ship nuke?
+     * @return a <code>Vector</code> of <code>Report</code>s
+     */
+    public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
+            boolean ammoExplosion, DamageType bFrag, boolean damageIS,
+            boolean areaSatArty, boolean throughFront,
+            boolean finalSquadDamage, boolean nukeS2S) {
 
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
@@ -13079,6 +13108,30 @@ public class Server implements Runnable {
                 && hit.getLocation() == Mech.LOC_HEAD
                 && ((hit.getEffect() & HitData.EFFECT_NO_CRITICALS) != HitData.EFFECT_NO_CRITICALS);
 
+        //booleans to indicate criticals for AT2
+        boolean critBoxCars = false;
+        boolean critSI      = false;
+        boolean critThresh  = false;
+        
+        //is this capital-scale damage
+        boolean isCapital = hit.isCapital();
+        //get any capital missile critical mods
+        int CapitalMissile = hit.getCapMisCritMod();
+        //check for box cars
+        if(hit.rolledBoxCars()) {
+    		critBoxCars = true;
+    	}
+        
+        //check capital/standard damage
+        if(isCapital && !te.isCapitalScale()) {
+        	damage = 10 * damage;
+        }
+        if(!isCapital && te.isCapitalScale()) {
+        	//TODO: collect standard to capital scale damage
+        }
+        
+        int damage_orig = damage;
+        
         // show Locations which have rerolled with Edge
         HitData undoneLocation = hit.getUndoneLocation();
         while (undoneLocation != null) {
@@ -13307,6 +13360,25 @@ public class Server implements Runnable {
 
         // Allocate the damage
         while (damage > 0) {
+        	
+        	if(te instanceof Aero) {
+            	//chance for a crit if attack roll was a 12
+            	/*
+        		
+            	*/
+            	
+            	//chance of a critical if damage greater than threshold
+            	Aero a = (Aero)te;
+            	int threshold = a.getThresh(hit.getLocation());
+            	if(damage > threshold && !(te instanceof FighterSquadron)) {
+            		critThresh = true;
+            	}
+            	
+            	if(damage >= 2 && te instanceof FighterSquadron) {
+					critThresh = true;
+				}            	
+            }
+        	
             // let's resolve some damage!
             r = new Report(6065);
             r.subject = te_n;
@@ -13737,8 +13809,7 @@ public class Server implements Runnable {
                 	//this should result in a crit 
                 	//but only if it really did damage after rounding down
                 	if(damage > 0) {
-                		crits++;
-                		//critSI = true;
+                		critSI = true;
                 	}
                 	
                 	//Now apply damage to the structural integrity
@@ -13806,8 +13877,7 @@ public class Server implements Runnable {
                 		}
                 	}
                 	*/	
-                	//apply crits
-                	/*
+                	//apply crits                	
                 	if(critBoxCars) {
                 		vDesc.elementAt(vDesc.size() - 1).newlines++;
                 		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit" , 8, damage_orig, isCapital) );
@@ -13825,9 +13895,6 @@ public class Server implements Runnable {
                 		vDesc.elementAt(vDesc.size() - 1).newlines++;
                 		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Capital Missile" , CapitalMissile, damage_orig, isCapital) );
                 	}
-                	*/
-                    crits = 0;
-                	
                     return vDesc;
                 }
             	
@@ -14295,6 +14362,72 @@ public class Server implements Runnable {
                 specCrits = 0;
             }
 
+            //resolve Aero crits
+            if(te instanceof Aero) { 
+            	//apply crits           	
+            	Aero a = (Aero)te;
+            	
+            	//check for nuclear critical
+            	/*
+            	if(nukeS2S) {
+            		
+            		//add a control roll
+            		game.addPSR(new PilotingRollData
+	                    	( te.getId(), 4, "Nuclear attack" ));
+            		
+            		//need some kind of report
+            		int nukeroll = Compute.d6(2);
+            		r = new Report(9145);
+                    r.subject = a.getId();
+                    r.newlines = 0;
+                    r.indent(3);
+                    r.add(CapitalMissile);
+                    r.add(nukeroll);
+                    vDesc.add(r);                    
+            		if(nukeroll >= CapitalMissile) {
+            			
+            			int nukeDamage = damage_orig;          			
+            			a.setSI(a.getSI()-nukeDamage);
+                        te.damageThisPhase += nukeDamage;   
+            			r = new Report(9146);
+                        r.subject = a.getId();
+                        r.newlines = 0;
+                        r.add(nukeDamage);
+                        r.add(Math.max(a.getSI(),0));
+                        vDesc.addElement(r);    
+                        if(a.getSI() <= 0) {
+                    		vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
+                    		a.setSI(0);
+                    	} else if(!critSI) {
+                    			critSI = true;
+                    	}
+            		} else { 
+                		r = new Report (9147);
+                		r.subject = a.getId();
+                		r.newlines = 0;
+                		vDesc.addElement(r);
+            		}
+            	}
+            	*/
+            	if(critBoxCars) {
+            		vDesc.elementAt(vDesc.size() - 1).newlines++;
+            		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit", 8 , damage_orig, isCapital) );
+            	}
+            	if(critThresh && !ammoExplosion && !finalSquadDamage) {
+            		vDesc.elementAt(vDesc.size() - 1).newlines++;
+            		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Damage threshold exceeded", 8 , damage_orig, isCapital) );
+            	}
+            	if(critSI && !ammoExplosion && !finalSquadDamage) {
+            		vDesc.elementAt(vDesc.size() - 1).newlines++;
+            		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "SI damaged", 8 , damage_orig, isCapital) );
+            	}
+            	if(CapitalMissile > 0 && !nukeS2S && !finalSquadDamage) {
+            		vDesc.elementAt(vDesc.size() - 1).newlines++;
+            		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Capital Missile" , CapitalMissile, damage_orig, isCapital) );
+            	}
+            }
+            
+            
             if (isHeadHit) {
                 Report.addNewline(vDesc);
                 vDesc.addAll(damageCrew(te, 1));
@@ -15264,6 +15397,38 @@ public class Server implements Runnable {
      */
     public Vector<Report> applyCriticalHit(Entity en, int loc, CriticalSlot cs,
             boolean secondaryEffects) {
+    		return applyCriticalHit(en, loc, cs, secondaryEffects, -1, false);
+    }
+    
+    /**
+     * Apply a single critical hit. The following private member of Server are
+     * accessed from this function, preventing it from being factored out of the
+     * Server class: destroyEntity() destroyLocation() checkEngineExplosion()
+     * damageCrew() explodeEquipment() game
+     * 
+     * @param en the <code>Entity</code> that is being damaged. This value may
+     *            not be <code>null</code>.
+     * @param loc the <code>int</code> location of critical hit. This value
+     *            may be <code>Entity.NONE</code> for hits to
+     *            <code>Tank</code>s and for hits to a <code>Protomech</code>
+     *            torso weapon.
+     * @param cs the <code>CriticalSlot</code> being damaged. This value may
+     *            not be <code>null</code>. For critical hits on a
+     *            <code>Tank</code>, the index of the slot should be the
+     *            index of the critical hit table.
+     * @param secondaryEffects the <code>boolean</code> flag that indicates
+     *            whether to allow critical hits to cause secondary effects
+     *            (such as triggering an ammo explosion, sending hovercraft to
+     *            watery graves, or damaging Protomech torso weapons). This
+     *            value is normally <code>true</code>, but it will be
+     *            <code>false</code> when the hit is being applied from a
+     *            saved game or scenario.
+     * @param damageCaused the amount of damage causing this critical. Necessary for Aeros, but 
+     *            may be -1 for other units.
+     * @param isCapital whether it was capital scale damage that caused critical
+     */
+    public Vector<Report> applyCriticalHit(Entity en, int loc, CriticalSlot cs,
+            boolean secondaryEffects, int damageCaused, boolean isCapital) {
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
 
@@ -15607,7 +15772,350 @@ public class Server implements Runnable {
                     t.setStabiliserHit(VTOL.LOC_ROTOR);
                     break;
             }
-        } else if (en instanceof BattleArmor) {
+        } else if(en instanceof Aero) {
+        	Aero a = (Aero)en;
+        	
+        	Jumpship js = new Jumpship();
+        	if(en instanceof Jumpship) {
+        		js = (Jumpship) en;
+        	} else {
+        		js = null;
+        	}
+        	
+            switch(cs.getIndex()) {
+            case Aero.CRIT_NONE:
+                //no effect
+                r = new Report(6005);
+                r.subject = a.getId();
+        		r.newlines = 0;
+                vDesc.add(r);
+                break;            	
+            case Aero.CRIT_FCS:
+            	//Fire control system
+            	r = new Report(9105);
+                r.subject = a.getId();
+        		r.newlines = 0;
+                vDesc.add(r);
+                a.setFCSHits(a.getFCSHits() + 1);
+                break;
+            case Aero.CRIT_SENSOR:
+            	//sensors
+            	r = new Report(6620);
+                r.subject = a.getId();
+        		r.newlines = 0;
+                vDesc.add(r);
+                a.setSensorHits(a.getSensorHits() + 1);
+                break;
+        	case Aero.CRIT_AVIONICS:
+        		//avionics
+        		r = new Report(9110);
+        		r.subject = a.getId();
+        		r.newlines = 0;
+        		vDesc.add(r);
+        		a.setAvionicsHits(a.getAvionicsHits() + 1);
+        		game.addControlRoll(new PilotingRollData
+                        	( a.getId(), 0, "critical hit" ));
+        		break;
+        	case Aero.CRIT_CONTROL:
+        		//force control roll
+        		r = new Report(9115);
+        		r.subject = a.getId();
+        		r.newlines = 0;
+        		vDesc.add(r);
+        		game.addControlRoll(new PilotingRollData
+                    	( a.getId(), 0, "critical hit" ));
+        		break;
+        	case Aero.CRIT_FUEL_TANK:
+        		//fuel tank  		
+        		r = new Report(9120);
+        		r.subject = a.getId();
+        		r.newlines = 0;
+        		//check for possible explosion
+        		int fuelroll = Compute.d6(2);
+        		if(fuelroll>9) {
+        			r.choose(true);
+            		vDesc.add(r);
+            		vDesc.addAll(destroyEntity(a, "fuel explosion", false, false));
+        		} else {
+        			r.choose(false);
+            		vDesc.add(r);
+        		}            		
+        		break;
+        	case Aero.CRIT_CREW:
+        		//pilot hit
+        		r = new Report(6650);
+        		if(a instanceof SmallCraft || a instanceof Jumpship)
+        			r = new Report(9197);
+        		r.subject = a.getId();
+        		r.newlines = 1;
+        		vDesc.add(r);
+        		vDesc.addAll( damageCrew(a, 1) );
+//        		 The pilot may have just expired.
+                if ( (a.crew.isDead() || a.crew.isDoomed() )
+                     && !a.crew.isEjected() ) {
+                    vDesc.addAll( destroyEntity(a, "pilot death", true, true));
+                }
+        		break;
+        	case Aero.CRIT_GEAR:
+        		//landing gear
+        		r = new Report(9125);
+        		r.subject = a.getId();
+        		r.newlines = 0;
+        		vDesc.add(r);
+        		a.setGearHit(true);
+        		break;
+        	case Aero.CRIT_BOMB:
+        		//bomb destroyed
+        		//go through bomb list and choose one
+        		ArrayList<Integer> bombList = new ArrayList<Integer>();
+        		int[] bombs = a.getBombChoices();
+        		for(int i = 0; i < Aero.BOMB_NUM; i++) {
+        			for(int j = 0; j < bombs[i]; j++) {
+        				bombList.add(i);
+        			}
+        		}
+        		if(bombList.size() > 0) {
+        			int bombtype = bombList.get(Compute.randomInt(bombList.size()));
+        			a.critBombs(bombtype);
+        			r = new Report(9130);
+            		r.subject = a.getId();
+            		r.newlines = 0;
+            		r.add(Aero.bombNames[bombtype]);
+            		vDesc.add(r);
+        		} else {
+        			r = new Report(9131);
+            		r.subject = a.getId();
+            		r.newlines = 0;
+            		vDesc.add(r);
+        		}
+        		break;
+        	case Aero.CRIT_HEATSINK:
+        		//heat sink hit
+        		int sinksLost = 1;
+        		if(isCapital) {
+        			sinksLost = 10;
+        		}
+        		r = new Report(9135);
+        		r.subject = a.getId();
+        		r.newlines = 0;
+        		r.add(sinksLost);
+        		vDesc.add(r);
+        		a.setHeatSinks(Math.max(0, a.getHeatSinks()-sinksLost));
+        		break;
+        	case Aero.CRIT_WEAPON:
+        	   {
+        		r = new Report(9150);
+        		r.subject = a.getId();
+        		r.newlines = 0;
+        		ArrayList<Mounted> weapons = new ArrayList<Mounted>();
+        		for(Mounted weap: a.getWeaponList()) {
+        			if(weap.getLocation() == loc && !weap.isDestroyed() 
+        					&& !weap.isBombMounted() 
+        					&& !weap.getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {
+        				weapons.add(weap);
+        			}
+        		}
+        		//this is kind of hack but I don't know why null isn't working
+        		if(weapons.size() > 0 ) {
+        			Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
+        			//possibly check for an ammo explosion
+        			//don't allow ammo explosions on fighter squadrons
+        			if(game.getOptions().booleanOption("ammo_explosions") 
+        					&& !(a instanceof FighterSquadron)) {
+        				//does it use Ammo?
+        				WeaponType wtype = (WeaponType) weapon.getType();
+        		        if(wtype.getAmmoType() != AmmoType.T_NA) {
+        		        	Mounted m = weapon.getLinked();
+        		        	int ammoroll = Compute.d6(2);
+        		        	if(ammoroll >= 10) {
+        	                    r = new Report(9151);
+        	                    r.subject = a.getId();
+        	                    r.add(m.getName());
+        	                    r.newlines = 0;
+        	                    vDesc.add(r);
+        	                    vDesc.addAll(explodeEquipment(a, loc, m));
+        	                    break;
+        		        	}
+        		        }
+        			}
+        			weapon.setHit(true);
+        			r.add(weapon.getName());
+        			vDesc.add(r);
+        			//explosive weapons e.g. gauss now explode
+        			vDesc.addAll(explodeEquipment(a, loc, weapon));
+        			weapon.setDestroyed(true);
+        		} else {
+        			r = new Report(9155);
+            		r.subject = a.getId();
+            		r.newlines = 0;
+            		vDesc.add(r);
+        		}
+        	    }
+        		break;
+        	case Aero.CRIT_ENGINE:
+        		//engine hit
+        		r = new Report(9140);
+    			r.subject = a.getId();
+        		r.newlines = 0;
+    			vDesc.add(r);
+        		if((a.getEngineHits()+1) < a.getMaxEngineHits()) {
+        			a.setEngineHits(a.getEngineHits()+1);
+        			if(a instanceof SmallCraft || a instanceof Jumpship) {
+        				a.setOriginalWalkMP(Math.max(0,a.getOriginalWalkMP()-1));
+        			} else {
+        				a.setOriginalWalkMP(Math.max(0,a.getOriginalWalkMP()-2));
+        			}
+        		} else {
+        			//this engine hit puts the ASF out of commission
+        			vDesc.addAll(destroyEntity(a, "engine destruction",true,true));
+        		}
+        		break;
+        	case Aero.CRIT_LEFT_THRUSTER:
+        		//thruster hit
+        		r = new Report(9160);
+    			r.subject = a.getId();
+        		r.newlines = 0;
+    			vDesc.add(r);
+        		a.setLeftThrustHits(a.getLeftThrustHits() + 1);
+        		break;
+        	case Aero.CRIT_RIGHT_THRUSTER:
+        		//thruster hit
+        		r = new Report(9160);
+    			r.subject = a.getId();
+        		r.newlines = 0;
+    			vDesc.add(r);
+        		a.setRightThrustHits(a.getRightThrustHits() + 1);
+        		break;
+        	case Aero.CRIT_CARGO:
+        		//cargo hit
+        		//First what percentage of the cargo did the hit destroy?
+        		double percentDestroyed = 0.0;
+        		if(damageCaused > 0) 
+        			percentDestroyed =  Math.min(damageCaused / (2.0 * a.getSI()), 1.0);
+        		//did it hit cargo or units
+        		int roll = Compute.d6(1);
+        		if(roll < 4) {
+        			//cargo was hit
+        			//just report; no game effect
+        			r = new Report(9165);
+        			r.subject = a.getId();
+            		r.newlines = 0;
+            		r.add((int) (percentDestroyed * 100) );
+        			vDesc.add(r);
+        		} else {
+        			//units were hit
+        			//get a list of units
+        			Vector<Entity> passengers = en.getBayLoadedUnits();
+        			int unitsDestroyed = (int)Math.ceil(percentDestroyed * passengers.size());
+          			r = new Report(9166);
+        			r.subject = a.getId();
+            		r.newlines = 0;
+            		r.add(unitsDestroyed);
+        			vDesc.add(r);
+        			while(unitsDestroyed > 0) {
+        				//redraw loaded units to make sure I don't get ones already destroyed
+        				Vector<Entity> units = en.getLoadedUnits();
+        				if(units.size() > 0) {
+        					Entity target = units.get(Compute.randomInt(units.size()));
+        					vDesc.addAll(destroyEntity(target, "cargo damage", false, false));
+        				}
+        				unitsDestroyed--;
+        			}
+        		}
+        		break;
+        	case Aero.CRIT_DOOR:
+            		//door hit
+                   	//choose a random bay
+                   	String bayType = en.damageBayDoor();
+                   	if(!bayType.equals("none")) {
+                   		r = new Report(9170);
+                   		r.subject = a.getId();
+                   		r.add(bayType);
+                   		r.newlines = 0;
+                   		vDesc.add(r);
+                   	} else {
+                   		r = new Report(9171);
+                   		r.subject = a.getId();
+                   		r.newlines = 0;
+                   		vDesc.add(r);
+                   	}
+            		break;
+        	case Aero.CRIT_DOCK_COLLAR:
+        		//docking collar hit
+               	//different effect for dropships and jumpships
+        		if(en instanceof Dropship) {
+        			Dropship ds = (Dropship)en;
+        			ds.setDamageDockCollar(true);
+        			r = new Report(9175);
+        			r.subject = a.getId();
+            		r.newlines = 0;
+        			vDesc.add(r);
+        		} 
+        		if(en instanceof Jumpship) {
+        			//damage the docking collar
+        			if(en.damageDockCollar()) {
+        				r = new Report(9176);
+            			r.subject = a.getId();
+                		r.newlines = 0;
+            			vDesc.add(r);
+        			} else {
+        				r = new Report(9177);
+            			r.subject = a.getId();
+                		r.newlines = 0;
+            			vDesc.add(r);
+        			}
+        		}
+        		break;
+        	case Aero.CRIT_KF_BOOM:
+        		//KF boom hit
+               	//no real effect yet
+        		r = new Report(9180);
+    			r.subject = a.getId();
+        		r.newlines = 0;
+    			vDesc.add(r);
+        		break;
+        	case Aero.CRIT_CIC:
+        		if(js == null) {
+        			break;
+        		}
+            	//CIC hit
+            	r = new Report(9185);
+                r.subject = a.getId();
+        		r.newlines = 0;
+                vDesc.add(r);
+                js.setCICHits(js.getCICHits() + 1);
+                break;
+        	case Aero.CRIT_KF_DRIVE:
+        		if(js == null) {
+        			break;
+        		}
+            	//KF Drive hit
+            	r = new Report(9190);
+                r.subject = a.getId();
+        		r.newlines = 0;
+                vDesc.add(r);
+                js.setKFIntegrity(js.getKFIntegrity() - 1);
+                break;
+        	case Aero.CRIT_GRAV_DECK:
+        		if(js == null) {
+        			break;
+        		}
+            	//Grave Deck hit
+            	r = new Report(9195);
+                r.subject = a.getId();
+        		r.newlines = 0;
+                vDesc.add(r);
+                break;
+        	case Aero.CRIT_LIFE_SUPPORT:
+            	//Life Support hit
+        		a.setLifeSupport(false);
+            	r = new Report(9196);
+                r.subject = a.getId();
+        		r.newlines = 0;
+                vDesc.add(r);
+                break;
+        }
+    } else if (en instanceof BattleArmor) {
             // We might as well handle this here.
             // However, we're considering a crit against BA as a "crew kill".
             BattleArmor ba = (BattleArmor) en;
@@ -15937,14 +16445,14 @@ public class Server implements Runnable {
      */
 
     public Vector<Report> criticalEntity(Entity en, int loc, int critMod) {
-        return criticalEntity(en, loc, critMod, true);
+        return criticalEntity(en, loc, critMod, true, false);
     }
 
     /**
      * Rolls one critical hit
      */
     private Vector<Report> oneCriticalEntity(Entity en, int loc) {
-        return criticalEntity(en, loc, 0, false);
+        return criticalEntity(en, loc, 0, false, false);
     }
 
     /**
@@ -16243,14 +16751,52 @@ public class Server implements Runnable {
         return vDesc;
     }
 
+    private Vector<Report> criticalAero(Aero a, int loc, int critMod, String reason, int target, 
+			int damage, boolean isCapital) {
+    	Vector<Report> vDesc = new Vector<Report>();
+    	Report r;
+
+    	//roll the critical
+    	r = new Report(9100);
+    	r.subject = a.getId();
+    	r.add(reason);
+    	r.indent(3);
+    	r.newlines = 0;
+    	vDesc.add(r);
+    	int roll = Compute.d6(2);
+    	r = new Report(9101);
+    	r.subject = a.getId();
+    	r.add(target);
+    	String rollString = "";
+    	if ( critMod != 0 ) {
+    		rollString = "(" + roll;
+    		if ( critMod > 0 ) {
+    			rollString += "+";
+    		}
+    		rollString += critMod + ") = ";
+    		roll += critMod;
+    	}
+    	rollString += roll;
+    	r.add(rollString);
+    	r.newlines = 0;
+    	vDesc.add(r);
+
+    	//now look up on vehicle crits table
+    	int critType = a.getCriticalEffect(roll, target);
+    	vDesc.addAll(applyCriticalHit(a, loc, new CriticalSlot(0,critType), true, damage, isCapital));
+    	return vDesc;
+    }
+    
     /**
      * Rolls and resolves critical hits on mechs or vehicles. if rollNumber is
      * false, a single hit is applied - needed for MaxTech Heat Scale rule.
      */
     public Vector<Report> criticalEntity(Entity en, int loc, int critMod,
-            boolean rollNumber) {
+            boolean rollNumber, boolean isCapital) {
         if (en instanceof Tank)
             return criticalTank((Tank) en, loc, critMod);
+        if(en instanceof Aero)
+        	return criticalAero((Aero)en,loc,critMod, "unknown",8,-1, isCapital);
         CriticalSlot slot = null;
         Vector<Report> vDesc = new Vector<Report>();
         Report r;

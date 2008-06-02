@@ -18,12 +18,15 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
+import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EquipmentType;
+import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.HexTarget;
 import megamek.common.IAimingModes;
@@ -34,6 +37,7 @@ import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
+import megamek.common.Jumpship;
 import megamek.common.LandAirMech;
 import megamek.common.LosEffects;
 import megamek.common.Mech;
@@ -43,6 +47,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Protomech;
 import megamek.common.RangeType;
+import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -507,6 +512,103 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (ae.isSufferingEMI())
             toHit.addModifier(+2, "electromagnetic interference");
 
+        //Aeros may suffer from criticals
+        if (ae instanceof Aero) {
+            Aero aero = (Aero)ae;
+   
+            //sensor hits
+            int sensors = aero.getSensorHits();
+            if(sensors > 0 && sensors < 3) 
+                toHit.addModifier(sensors, "sensor damage");
+            if(sensors>2)
+            	toHit.addModifier(+5, "sensors destroyed");
+            
+            //FCS hits
+            int fcs = aero.getFCSHits();
+            if(fcs > 0)
+            	toHit.addModifier(fcs*2, "fcs damage");
+            
+            //pilot hits
+            int pilothits = aero.getCrew().getHits();
+            if(pilothits > 0)
+            	toHit.addModifier(pilothits, "pilot hits");
+            
+            //out of control
+            if(aero.isOutControlTotal()) {
+            	toHit.addModifier(+2, "out-of-control");
+            }
+            
+            if(aero instanceof Jumpship) {
+            	Jumpship js = (Jumpship)aero;
+            	int cic = js.getCICHits();
+            	if(cic > 0) {
+            		toHit.addModifier(cic*2,"CIC damage");
+            	}
+            }
+            
+            //targeting mods for evasive action by large craft
+            if(aero.isEvading()) {
+            	toHit.addModifier(+2,"attacker is evading");
+            }
+            
+            //check for heavy gauss rifle on fighter of small craft
+            if(weapon.getName().indexOf("Heavy Gauss Rifle") != -1 
+            		&& ae instanceof Aero && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) {
+            	toHit.addModifier(+1,"weapon to-hit modifier");
+            }
+            
+            //check for NOE
+            //if the target is NOE in atmosphere
+        	if(game.getBoard().inAtmosphere() && 1 == (ae.getElevation() - game.getBoard().getHex(ae.getPosition()).ceiling())) {
+        		if(ae.isOmni()) {
+        			toHit.addModifier(+1, "attacker is flying at NOE (omni)");
+        		} else {
+        			toHit.addModifier(+2, "attacker is flying at NOE");
+        		}
+        	}
+            
+        }
+        
+        if(target instanceof Aero) {
+        	       	 
+            //get direction of attack
+            int side = toHit.getSideTable();
+            //if this is an aero attack using advanced movement rules then determine side differently
+            if(target instanceof Aero && game.useVectorMove()) {
+            	side = ((Entity)target).chooseSide(ae.getPosition(), Compute.usePrior(ae, target));
+            }
+            if(side == ToHitData.SIDE_FRONT)
+            	toHit.addModifier(+1, "attack against nose");
+            if(side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
+            	toHit.addModifier(+2, "attack against side");
+        	
+        	Aero a = (Aero)target;
+        	
+        	//is the target at zero velocity
+        	if(a.getCurrentVelocity() == 0) {
+        		toHit.addModifier(-2,"target is not moving");
+        	}
+        	
+        	//is target evading
+        	if(a.isEvading()) {
+        		if(target instanceof SmallCraft) {
+        			toHit.addModifier(+2, "target is evading");
+        		} else  if (target instanceof Jumpship) {
+        			toHit.addModifier(+1, "target is evading");
+        		} else {
+        			toHit.addModifier(+3,"target is evading");
+        		}
+        	}   
+        	
+        	//capital weapon (except missiles) penalties at small targets
+        	if(wtype.isCapital() && 
+        			wtype.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE 
+        			&& wtype.getAtClass() != WeaponType.CLASS_AR10 
+        			&& (a.getWeight() < 500 || target instanceof FighterSquadron)) {
+        		toHit.addModifier(+5,"capital weapon at small target");
+        	}
+        }
+        
         // Vehicles may suffer from criticals
         if (ae instanceof Tank) {
             Tank tank = (Tank) ae;
@@ -1033,6 +1135,15 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
 
         }
+        
+        //Aeros in atmosphere can hit above and below
+        if( ae instanceof Aero && target instanceof Aero && game.getBoard().inAtmosphere()) {
+        	if((aElev - tElev) > 2) {
+        		toHit.setHitTable(ToHitData.HIT_ABOVE);
+        	} else if((tElev - aElev) > 2) {
+        		toHit.setHitTable(ToHitData.HIT_BELOW);
+        	}
+        }
 
         // Change hit table for partial cover, accomodate for partial
         // underwater(legs)
@@ -1288,6 +1399,48 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Attacker sensors destroyed.";
         }
 
+        if (ae instanceof Aero) {
+        	Aero aero = (Aero)ae;        	
+        	//FCS hits
+            int fcs = aero.getFCSHits();
+            if(fcs > 2 )
+            	return "Fire control system destroyed.";
+            
+            if(aero instanceof Jumpship) {
+            	Jumpship js = (Jumpship)aero;
+            	int cic = js.getCICHits();
+            	if(cic > 2)
+            		return "CIC destroyed.";
+            }
+            
+            if(aero.isEvading() && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) 
+            	return "Attacker is evading.";
+                        
+            //if space bombing, then can't do other attacks
+            for ( Enumeration i = game.getActions();
+            	i.hasMoreElements(); ) {
+            	Object o = i.nextElement();
+            	if (!(o instanceof WeaponAttackAction)) {
+            		continue;
+            	}
+            	WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+            	if (prevAttack.getEntityId() == attackerId) {
+      	
+            		if ( weaponId != prevAttack.getWeaponId() && 
+            				ae.getEquipment(prevAttack.getWeaponId()).getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {           			
+            			return "Already space bombing";
+            		}
+            	}
+            }
+            
+            //aeros cannot make artillery shots (really I should just change the targetable
+            //hexes, but I cannot find it)
+            if(isArtilleryIndirect || isArtilleryDirect || isArtilleryFLAK) {
+            	return "This unit cannot make artillery attacks";
+            }
+            
+        }
+        
         if (ae instanceof Tank) {
             sensorHits = ((Tank) ae).getSensorHits();
             if (sensorHits > 3)

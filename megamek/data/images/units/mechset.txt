@@ -102,7 +102,7 @@ chassis "Stingray" "stingray.gif"
 chassis "Stuka" "stuka.gif"
 chassis "Thrush" thrush.gif"
 chassis "Transgressor" "transgressor.gif"
-chassis "Xerses" "xerses.gif"
+chassis "Xerxes" "xerses.gif"
 chassis "Zero" "zero.gif"
 
 #Dropships

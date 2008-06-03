@@ -11463,6 +11463,17 @@ public class Server implements Runnable {
                 entity.heatBuildup = 0;
              
                 //add in the effects of heat
+                
+                if(entity instanceof Dropship || entity instanceof Jumpship) {
+                	//only check for a possible control roll
+                	if(entity.heat > 0) {
+                		int bonus = (int)Math.ceil((double)entity.heat / 100.0);
+                		game.addControlRoll(new PilotingRollData(entity.getId(), bonus,"used too much heat"));
+                		entity.heat = 0;
+                	}
+                	continue;
+                }
+                
                 int autoShutDownHeat = 30;
                 boolean mtHeat = false;
                 

@@ -1011,6 +1011,14 @@ public class MechDisplay extends BufferedPanel {
             m_chAmmo.setEnabled(false);
             m_chBayWeapon.removeAll();
             m_chBayWeapon.setEnabled(false);
+            
+            //on large craft we may need to take account of firing arcs
+        	boolean[] usedFrontArc = new boolean[entity.locations()];
+        	boolean[] usedRearArc = new boolean[entity.locations()];
+        	for(int i = 0; i<entity.locations(); i++) {
+        		usedFrontArc[i] = false;
+        		usedRearArc[i] = false;
+            }
 
             for (int i = 0; i < entity.getWeaponList().size(); i++) {
                 Mounted mounted = entity.getWeaponList().get(i);
@@ -1067,8 +1075,33 @@ public class MechDisplay extends BufferedPanel {
                         && game.getPhase() == mounted.usedInPhase()
                         && game.getPhase() == IGame.Phase.PHASE_FIRING) {
                     // add heat from weapons fire to heat tracker
-                    currentHeatBuildup += wtype.getHeat()
-                            * mounted.howManyShots();
+                	if(entity.usesWeaponBays()) {
+                		//if using bay heat option then don't add total arc
+                		if(game.getOptions().booleanOption("heat_by_bay")) {
+                			for(int wId: mounted.getBayWeapons()) {
+            					currentHeatBuildup += ((WeaponType)entity.getEquipment(wId).getType()).getHeat();
+            				} 
+                		} else {	
+                			//check whether arc has fired
+                			int loc = mounted.getLocation();
+                			boolean rearMount = mounted.isRearMounted();
+                			if(!rearMount) {
+                				if(!usedFrontArc[loc]) {
+                					currentHeatBuildup += entity.getHeatInArc(loc, rearMount);
+                					usedFrontArc[loc] = true;
+                				}
+                			} else {
+                				if(!usedRearArc[loc]) {
+                					currentHeatBuildup += entity.getHeatInArc(loc, rearMount);
+                					usedRearArc[loc] = true;
+                				}
+                			}	
+                		}
+                	} else {
+                		if(!mounted.isBombMounted()) {
+                			currentHeatBuildup += wtype.getHeat() * mounted.howManyShots();
+                		}
+                	}
                 }
             }
 

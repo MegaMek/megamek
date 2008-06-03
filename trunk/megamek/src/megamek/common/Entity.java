@@ -145,6 +145,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     //need to keep a list of areas that this entity has passed through on the current turn
     private Vector<Coords> passedThrough = new Vector<Coords>();
     private boolean ramming;
+    //to determine what arcs have fired for large craft
+    private boolean[] frontArcFired;
+    private boolean[] rearArcFired;
     
     /**
      * The object that tracks this unit's Inferno round hits.
@@ -3715,6 +3718,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         //reset hexes passed through
         setPassedThrough(new Vector<Coords>());
         
+        resetFiringArcs();
+        
         // Update the inferno tracker.
         this.infernos.newRound(roundNumber);
     }
@@ -7016,17 +7021,6 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             if(mounted.isDestroyed() || mounted.isJammed()) {
                 continue;
             }
-           
-            /*
-            //does it have ammo?
-            WeaponType weap = (WeaponType)mounted.getType();
-            if(weap.getAmmoType() != AmmoType.T_NA) {
-                Mounted ammo = mounted.getLinked();
-                if(ammo == null || ammo.getShotsLeft() <= 0) {
-                    continue;
-                }
-            }
-            */
             
             if(mounted.getLocation() == location && mounted.isRearMounted() == rearMount) {          
                 WeaponType wtype = (WeaponType)mounted.getType();
@@ -7034,21 +7028,6 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             }           
         }       
         return heat;    
-    }
-    
-    public boolean ArcFired(int location, boolean rearMount) {
-        boolean hasFired = false;
-        
-        for(Mounted mounted : getTotalWeaponList()) {
-            if(mounted.getLocation() == location && mounted.isRearMounted() == rearMount) {
-                if(mounted.isUsedThisRound()) {
-                    return true;
-                }
-            }           
-        } 
-        return hasFired;
-        
-        
     }
     
     public int[] getVectors() {
@@ -7154,6 +7133,43 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     
     public boolean isRamming() {
     	return ramming;
+    }
+    
+    public void resetFiringArcs() {
+    	frontArcFired = new boolean[this.locations()];
+    	rearArcFired = new boolean[this.locations()];
+    	for(int i = 0; i<this.locations(); i++) {
+    		frontArcFired[i] = false;
+    		rearArcFired[i] = false;
+    	}
+    }
+    
+    public boolean hasArcFired(int location, boolean rearMount) {
+    	if(null == frontArcFired || null == rearArcFired) {
+    		resetFiringArcs();
+    	}
+    	if(location>this.locations() || location<0)
+    		return false;
+    	
+    	if(rearMount) {
+    		return rearArcFired[location];
+    	} else {
+    		return frontArcFired[location];
+    	}
+    }
+    
+    public void setArcFired(int location, boolean rearMount) {
+    	if(null == frontArcFired || null == rearArcFired) {
+    		resetFiringArcs();
+    	}
+    	if(location>this.locations() || location<0)
+    		return;   	
+    	
+    	if(rearMount) {
+    		rearArcFired[location] = true;
+    	} else {
+    		frontArcFired[location] = true;
+    	}	
     }
 
 }

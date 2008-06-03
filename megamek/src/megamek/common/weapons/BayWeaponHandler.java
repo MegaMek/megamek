@@ -16,6 +16,7 @@ package megamek.common.weapons;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
@@ -69,9 +70,25 @@ public class BayWeaponHandler extends WeaponHandler {
             	}
             }
     	}
-            
-    	
     	return (int)Math.ceil(av);
+    }
+    
+    protected void addHeat() {
+        if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
+        	if(game.getOptions().booleanOption("heat_by_bay")) {
+        		for(int wId:weapon.getBayWeapons()) {
+                    Mounted m = ae.getEquipment(wId);
+                    ae.heatBuildup += ((WeaponType)m.getType()).getHeat();
+        		}
+        	} else {       	
+        		int loc = weapon.getLocation();
+        		boolean rearMount = weapon.isRearMounted();
+        		if(!ae.hasArcFired(loc, rearMount)) {
+        			ae.heatBuildup += ae.getHeatInArc(loc, rearMount);
+        			ae.setArcFired(loc, rearMount);
+        		}
+        	}
+        }
     }
     
 }

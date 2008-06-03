@@ -1532,6 +1532,92 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && weapon.curMode().equals("Heat") && !(te instanceof Mech)) {
             return "Can only raise the heat level of Meks.";
         }
+        
+        //limit large craft to zero net heat and to heat by arc
+        if(ae.usesWeaponBays()) {
+        	
+        	int totalheat = 0;
+        	int heatcap = ae.getHeatCapacity();
+        	
+        	//create an array of booleans of locations
+        	boolean[] usedFrontArc = new boolean[ae.locations()];
+        	boolean[] usedRearArc = new boolean[ae.locations()];
+        	for(int i = 0; i<ae.locations(); i++) {
+        		usedFrontArc[i] = false;
+        		usedRearArc[i] = false;
+            }
+       	
+        	for ( Enumeration i = game.getActions();
+            i.hasMoreElements(); ) {
+        		Object o = i.nextElement();
+        		if (!(o instanceof WeaponAttackAction)) {
+        			continue;
+        		}
+        		WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+        		if (prevAttack.getEntityId() == attackerId && weaponId != prevAttack.getWeaponId()) {        			
+        			Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+        			int loc = prevWeapon.getLocation();
+        			boolean rearMount = prevWeapon.isRearMounted();
+        			if(game.getOptions().booleanOption("heat_by_bay")) {
+        				for(int bwId: prevWeapon.getBayWeapons()) {
+        					WeaponType bwtype = (WeaponType)ae.getEquipment(bwId).getType();
+        					totalheat += bwtype.getHeat();
+        				}
+        			} else {
+        				if(!rearMount) {
+        					if(!usedFrontArc[loc]) {
+        						totalheat += ae.getHeatInArc(loc, rearMount);
+        						usedFrontArc[loc] = true;
+        					}
+        				} else {
+        					if(!usedRearArc[loc]) {
+        						totalheat += ae.getHeatInArc(loc, rearMount);
+        						usedRearArc[loc] = true;
+        					}
+        				}	       			
+        			}
+        		}
+        	}
+        	
+        	//now check the current heat
+        	int loc = weapon.getLocation();
+			boolean rearMount = weapon.isRearMounted();
+			int currentHeat = ae.getHeatInArc(loc, rearMount);
+			if(game.getOptions().booleanOption("heat_by_bay")) {
+				for(int bwId: weapon.getBayWeapons()) {
+					currentHeat = ((WeaponType)ae.getEquipment(bwId).getType()).getHeat();
+				}
+			}
+			//check to see if this is currently the only arc being fired
+			boolean onlyArc = true;
+			for(int nLoc = 0; nLoc < ae.locations(); nLoc++) {
+				if(nLoc == loc) {
+					continue;
+				} else {
+					if(usedFrontArc[nLoc] || usedRearArc[nLoc]) {
+						onlyArc = false;
+						break;
+					}
+				}
+			}
+			
+			if(game.getOptions().booleanOption("heat_by_bay")) {
+				if((totalheat + currentHeat) > heatcap) {
+					//FIXME: This is causing weird problems (try firing all the Suffen's nose weapons)
+					return "heat exceeds capacity";
+				}
+			} else {			
+				if(!rearMount) {
+					if(!usedFrontArc[loc] && (totalheat + currentHeat) > heatcap && !onlyArc) {
+						return "heat exceeds capacity";
+					}
+				} else {
+					if(!usedRearArc[loc] && (totalheat + currentHeat) > heatcap && !onlyArc) {
+						return "heat exceeds capacity";
+					}
+				}
+			}
+        }
 
         // MG arrays
         if (wtype.hasFlag(WeaponType.F_MGA) && wtype.hasModes()

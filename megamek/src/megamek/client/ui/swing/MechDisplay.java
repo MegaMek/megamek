@@ -1397,6 +1397,7 @@ public class MechDisplay extends JPanel {
             
             // update ammo selector
             ((DefaultComboBoxModel) m_chAmmo.getModel()).removeAllElements();
+            Mounted oldmount = mounted;
             if(wtype instanceof BayWeapon) {
                 int n = m_chBayWeapon.getSelectedIndex();
                 if(n == -1) {
@@ -1425,13 +1426,17 @@ public class MechDisplay extends JPanel {
                 int i = 0;
                 for (Mounted mountedAmmo : entity.getAmmo()) {
                     AmmoType atype = (AmmoType) mountedAmmo.getType();
-//                  for all aero units other than fighters, 
+                    //for all aero units other than fighters, 
                     //ammo must be located in the same place to be usable
                     boolean same = true;
                     if(entity instanceof SmallCraft || entity instanceof Jumpship)
                             same = (mounted.getLocation() == mountedAmmo.getLocation());
                     
-                    if (mountedAmmo.isAmmoUsable() && same
+                    boolean rightBay = true;
+                    if(entity.usesWeaponBays() && !(entity instanceof FighterSquadron))
+                        rightBay = oldmount.ammoInBay(entity.getEquipmentNum(mountedAmmo));
+                    
+                    if (mountedAmmo.isAmmoUsable() && same && rightBay
                             && atype.getAmmoType() == wtype.getAmmoType()
                             && atype.getRackSize() == wtype.getRackSize()) {
 

@@ -567,6 +567,76 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         		}
         	}
             
+            //check for particular kinds of weapons in weapon bays
+            if(ae.usesWeaponBays()) {
+              
+                //all lbx cluster
+                
+                //any heavy lasers
+                if(wtype.getAtClass() == WeaponType.CLASS_LASER) {
+                    for(int wId: weapon.getBayWeapons()) {
+                        Mounted bweap = ae.getEquipment(wId);
+                        WeaponType bwtype = (WeaponType) bweap.getType();
+                        if(bwtype.getInternalName().indexOf("Heavy") != -1 && 
+                                bwtype.getInternalName().indexOf("Laser") != -1) {
+                            toHit.addModifier(+1, "bay contains heavy laser");
+                            break;               
+                        }
+                    }
+                }             
+                //barracuda missiles
+                else if(wtype.getAtClass() == WeaponType.CLASS_CAPITAL_MISSILE) {
+                    for(int wId: weapon.getBayWeapons()) {
+                        Mounted bweap = ae.getEquipment(wId);
+                        Mounted bammo = bweap.getLinked();
+                        if(bammo != null) {
+                            AmmoType batype = (AmmoType) bammo.getType();
+                            if(batype.getAmmoType() == AmmoType.T_BARRACUDA) {
+                                toHit.addModifier(-2, "barracuda missile");
+                                break;
+                            }
+                        }
+                    
+                    }
+                
+                }
+                //barracuda missiles in an AR10 launcher (must all be barracuda)
+                else if(wtype.getAtClass() == WeaponType.CLASS_AR10) {
+                    boolean onlyBarracuda = true;
+                    for(int wId: weapon.getBayWeapons()) {
+                        Mounted bweap = ae.getEquipment(wId);
+                        Mounted bammo = bweap.getLinked();
+                        if(bammo != null) {
+                            AmmoType batype = (AmmoType) bammo.getType();
+                            if(!batype.hasFlag(AmmoType.F_AR10_BARRACUDA)) {
+                                onlyBarracuda = false;
+                                break;
+                            }
+                        }
+                    }
+                    if(onlyBarracuda) {
+                        toHit.addModifier(-2, "barracuda missile");
+                    }
+                }
+                //LBX cluster
+                else if(wtype.getAtClass() == WeaponType.CLASS_LBX_AC) {
+                    boolean onlyCluster = true;
+                    for(int wId: weapon.getBayWeapons()) {
+                        Mounted bweap = ae.getEquipment(wId);
+                        Mounted bammo = bweap.getLinked();
+                        if(bammo != null) {
+                            AmmoType batype = (AmmoType) bammo.getType();
+                            if(batype.getMunitionType() != AmmoType.M_CLUSTER) {
+                                onlyCluster = false;
+                                break;
+                            }
+                        }
+                    }
+                    if(onlyCluster) {
+                        toHit.addModifier(-1, "cluster LBX ammo");
+                    }
+                }
+            }
         }
         
         if(target instanceof Aero) {

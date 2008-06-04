@@ -348,25 +348,6 @@ public class SmallCraft extends Aero {
         }
         return hasWeapons;
     }
-    	
-    //ammo must be mounted in the same location as weapons
-    public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
-        boolean success = false;
-        WeaponType wtype = (WeaponType)mounted.getType();
-        AmmoType atype = (AmmoType)mountedAmmo.getType();
-        
-        if(mounted.getLocation() != mountedAmmo.getLocation())
-        	return success;
-        
-        if (mountedAmmo.isAmmoUsable() &&
-            !wtype.hasFlag(WeaponType.F_ONESHOT) &&
-            atype.getAmmoType() == wtype.getAmmoType() &&
-            atype.getRackSize() == wtype.getRackSize()) {
-            mounted.setLinked(mountedAmmo);
-            success = true;
-        }
-        return success;
-    }
     
     public double getArmorWeight() {
     	//first I need to subtract SI bonus from total armor
@@ -841,6 +822,26 @@ public class SmallCraft extends Aero {
      */
     public int calculateBattleValue(boolean assumeLinkedC3) {
     	return calculateBattleValue(assumeLinkedC3, false);
+    }
+    
+    /**
+     * need to check bay location before loading ammo
+     */
+    public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
+        boolean success = false;
+        WeaponType wtype = (WeaponType) mounted.getType();
+        AmmoType atype = (AmmoType) mountedAmmo.getType();
+        
+        if(mounted.getLocation() != mountedAmmo.getLocation())
+            return success;
+        
+        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
+                && atype.getAmmoType() == wtype.getAmmoType()
+                && atype.getRackSize() == wtype.getRackSize()) {
+            mounted.setLinked(mountedAmmo);
+            success = true;
+        }
+        return success;
     }
     
 }

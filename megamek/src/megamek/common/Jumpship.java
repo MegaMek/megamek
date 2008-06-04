@@ -973,4 +973,30 @@ public class Jumpship extends Aero {
         return false;
     }
     
+    /**
+     * need to check bay location before loading ammo
+     */
+    public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
+        boolean success = false;
+        WeaponType wtype = (WeaponType) mounted.getType();
+        AmmoType atype = (AmmoType) mountedAmmo.getType();
+        
+        if(mounted.getLocation() != mountedAmmo.getLocation())
+            return success;
+        
+        //for large craft, ammo must be in the same ba        
+        Mounted bay = whichBay(this.getEquipmentNum(mounted));
+        if(bay != null && !bay.ammoInBay(this.getEquipmentNum(mountedAmmo))) 
+            return success;
+    
+        
+        if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
+                && atype.getAmmoType() == wtype.getAmmoType()
+                && atype.getRackSize() == wtype.getRackSize()) {
+            mounted.setLinked(mountedAmmo);
+            success = true;
+        }
+        return success;
+    }
+    
 }

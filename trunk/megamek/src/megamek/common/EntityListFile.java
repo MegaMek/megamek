@@ -131,7 +131,7 @@ public class EntityListFile {
         for (int loc = 0; loc < entity.locations(); loc++) {
 
             // Record destroyed locations.
-            if (entity.getOInternal(loc) != IArmorState.ARMOR_NA
+            if (!(entity instanceof Aero) && entity.getOInternal(loc) != IArmorState.ARMOR_NA
                     && entity.getInternal(loc) <= 0) {
                 isDestroyed = true;
             }
@@ -360,7 +360,18 @@ public class EntityListFile {
             output.write("\" model=\"");
             output.write(entity.getModel().replaceAll("\"", "&quot;"));
             output.write("\" type=\"");
-            output.write(entity.getMovementModeAsString());
+            if(entity instanceof FighterSquadron) {
+                FighterSquadron fs = (FighterSquadron)entity;
+                output.write("squadron\" fighters=\"");
+                for(int i = 0; i < fs.fighters.size(); i++) {
+                    if(i > 0) {
+                        output.write(":");
+                    }
+                    output.write(fs.fighters.elementAt(i));
+                }
+            } else {
+                output.write(entity.getMovementModeAsString());
+            }
             output.write("\">");
             output.write(CommonConstants.NL);
 
@@ -411,6 +422,66 @@ public class EntityListFile {
                 if (tentity.isTurretLocked())
                     output.write(getTurretLockedString(tentity));
             }
+            
+            //add a bunch of stuff for aeros
+            if(entity instanceof Aero) {
+            	Aero a = (Aero) entity;
+            	
+            	//SI
+            	output.write("      <structural integrity=\"");
+        		output.write(String.valueOf(a.getSI()));
+        		output.write("\"/>");
+                output.write(CommonConstants.NL);
+            	
+            	//heat sinks
+            	output.write("      <heat sinks=\"");
+        		output.write(String.valueOf(a.getHeatSinks()));
+        		output.write("\"/>");
+                output.write(CommonConstants.NL);
+            	
+                //fuel
+                output.write("      <fuel left=\"");
+        		output.write(String.valueOf(a.getFuel()));
+        		output.write("\"/>");
+                output.write(CommonConstants.NL);
+                
+                if(a instanceof FighterSquadron) {
+                	FighterSquadron fs = (FighterSquadron)a;
+                	// active fighters
+                	output.write("      <active fighters=\"");
+            		output.write(String.valueOf(fs.getNFighters()));
+            		output.write("\"/>");
+                    output.write(CommonConstants.NL);
+                    //active fighters
+                	output.write("      <total armor=\"");
+            		output.write(String.valueOf(fs.getTotalArmor()));
+            		output.write("\"/>");
+                    output.write(CommonConstants.NL);
+                }
+                
+                //TODO: dropship docking collars, bays
+                
+                //large craft stuff
+                if(a instanceof Jumpship) {
+                	Jumpship j = (Jumpship) a;
+                	
+                	//kf integrity
+                	output.write("      <KF integrity=\"");
+            		output.write(String.valueOf(j.getKFIntegrity()));
+            		output.write("\"/>");
+                    output.write(CommonConstants.NL);
+                    
+                    //kf sail integrity
+                	output.write("      <sail integrity=\"");
+            		output.write(String.valueOf(j.getSailIntegrity()));
+            		output.write("\"/>");
+                    output.write(CommonConstants.NL);
+                }
+                
+                //crits
+                output.write(getAeroCritString(a));
+ 
+            }
 
             // Add the locations of this entity (if any are needed).
             String loc = getLocString(entity);
@@ -447,6 +518,68 @@ public class EntityListFile {
             retVal = retVal.concat(Integer.toString(e.getOriginalWalkMP()));
         retVal = retVal.concat("\"/>\n");
         return retVal;
+    }
+    
+//  Aero crits
+    private static String getAeroCritString(Aero a) {
+    	
+    	String retVal = "      <acriticals";
+    	String critVal = "";
+    	
+    	//    	crits
+    	if(a.getAvionicsHits() > 0) {
+    		critVal = critVal.concat(" avionics=\"");
+    		critVal = critVal.concat(Integer.toString(a.getAvionicsHits()));
+    		critVal = critVal.concat("\"");
+    	}
+    	if(a.getSensorHits() > 0) {
+    		critVal = critVal.concat(" sensors=\"");
+    		critVal = critVal.concat(Integer.toString(a.getSensorHits()));
+    		critVal = critVal.concat("\"");
+    	}
+    	if(a.getEngineHits() > 0) {
+    		critVal = critVal.concat(" engine=\"");
+    		critVal = critVal.concat(Integer.toString(a.getEngineHits()));
+    		critVal = critVal.concat("\"");
+    	}
+    	if(a.getFCSHits() > 0) {
+    		critVal = critVal.concat(" fcs=\"");
+    		critVal = critVal.concat(Integer.toString(a.getFCSHits()));
+    		critVal = critVal.concat("\"");
+    	}
+    	if(a.getCICHits() > 0) {
+    		critVal = critVal.concat(" cic=\"");
+    		critVal = critVal.concat(Integer.toString(a.getCICHits()));
+    		critVal = critVal.concat("\"");
+    	}
+    	if(a.getLeftThrustHits() > 0) {
+    		critVal = critVal.concat(" leftThrust=\"");
+    		critVal = critVal.concat(Integer.toString(a.getLeftThrustHits()));
+    		critVal = critVal.concat("\"");
+    	}
+    	if(a.getRightThrustHits() > 0) {
+    		critVal = critVal.concat(" rightThrust=\"");
+    		critVal = critVal.concat(Integer.toString(a.getRightThrustHits()));
+    		critVal = critVal.concat("\"");
+    	}
+    	if(!a.hasLifeSupport()) {
+    		critVal = critVal.concat(" lifeSupport=\"none\"");
+    	}
+    	if(a.isGearHit()) {
+    		critVal = critVal.concat(" gear=\"none\"");
+    	}
+    
+    	
+    	if(!critVal.equals("")) {
+    		//then add beginning and end
+    		retVal = retVal.concat(critVal);
+    		retVal = retVal.concat("/>\n");
+    	} else {
+    		return critVal;
+    	}
+    	
+    	return retVal;
+
     }
 
     /**

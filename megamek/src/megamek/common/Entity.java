@@ -4034,6 +4034,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 return "Jump";
             case IEntityMovementMode.WIGE:
                 return "WiGE";
+            case IEntityMovementMode.AERODYNE:
+                return "Aerodyne";
+            case IEntityMovementMode.SPHEROID:
+                return "Spheroid";
             default:
                 return "ERROR";
         }

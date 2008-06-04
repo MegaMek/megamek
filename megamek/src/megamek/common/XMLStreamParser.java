@@ -129,6 +129,15 @@ public class XMLStreamParser implements XMLResponder {
     public static final String SLOT = "slot";
     public static final String MOVEMENT = "movement";
     public static final String TURRETLOCK = "turretlock";
+    public static final String  SI = "structural";
+    public static final String  HEAT = "Heat";
+    public static final String  FUEL = "fuel";
+    public static final String  KF = "KF";
+    public static final String  SAIL = "sail";
+    public static final String  AEROCRIT = "acriticals";
+    public static final String  ACTIVE = "active";
+    public static final String  TOTAL = "total";
+ 
 
     /**
      * The names of the attributes recognized by this parser. Not every
@@ -156,6 +165,19 @@ public class XMLStreamParser implements XMLResponder {
     public static final String MUNITION = "munition";
     public static final String SPEED = "speed";
     public static final String DIRECTION = "direction";
+    public static final String  INTEGRITY = "integrity";
+    public static final String  SINK = "sinks";
+    public static final String  LEFT = "left";
+    public static final String  AVIONICS = "avionics";
+    public static final String  SENSORS = "sensors";
+    public static final String  ENGINE = "engine";
+    public static final String  FCS = "fcs";
+    public static final String  CIC = "cic";
+    public static final String  LEFT_THRUST = "leftThrust";
+    public static final String  RIGHT_THRUST = "rightThrust";
+    public static final String  LIFE_SUPPORT = "lifeSupport";
+    public static final String  GEAR = "gear";
+    public static final String  FIGHTERS = "fighters";
 
     /**
      * Special values recognized by this parser.
@@ -355,14 +377,43 @@ public class XMLStreamParser implements XMLResponder {
 
                     // We should have found the mech.
                     if (ms == null) {
-                        this.warning
-                                .append("Could not find Entity with chassis: ");
-                        this.warning.append(chassis);
-                        if (model != null && model.length() > 0) {
-                            this.warning.append(", and model: ");
-                            this.warning.append(model);
-                        }
-                        this.warning.append(".\n");
+                    	//check to see if this is a squadron
+                    	String type = (String) attr.get(TYPE);
+                    	if(type.equals("squadron")) {
+                    		
+                    		//then grab the names of the fighters
+                    		String fighters = (String) attr.get(FIGHTERS);
+                    		//now I need to loop through them and add them to
+                    		//an entity vector that I can use to compile the squadron
+                    		Vector<Entity> squadron = new Vector<Entity>();
+                    		for(String s : fighters.split(":")) {
+                    			ms = MechSummaryCache.getInstance().getMech( s );
+                    			//Try to add this fighter
+                                try {
+                                	squadron.add(new MechFileParser( ms.getSourceFile(), ms.getEntryName() ).getEntity());
+                                } catch (EntityLoadingException excep) {
+                                    excep.printStackTrace( System.err );
+                                    this.warning.append( "Unable to load mech: " )
+                                        .append( ms.getSourceFile() )
+                                        .append( ": " )
+                                        .append( ms.getEntryName() )
+                                        .append( ": " )
+                                        .append( excep.getMessage());
+                                }
+                    		}                   		
+                    		//now compile the squadron
+                    		this.entity = Compute.compileSquadron(squadron);
+                    	} else {
+                    	
+                    		this.warning
+                    		.append("Could not find Entity with chassis: ");
+                    		this.warning.append(chassis);
+                    		if (model != null && model.length() > 0) {
+                    			this.warning.append(", and model: ");
+                    			this.warning.append(model);
+                    		}
+                    		this.warning.append(".\n");
+                    	}
                     } else {
 
                         // Try to load the new mech.
@@ -718,7 +769,7 @@ public class XMLStreamParser implements XMLResponder {
                         pointsVal = IArmorState.ARMOR_NA;
                     } else if (points.equals(DESTROYED)) {
                         pointsVal = IArmorState.ARMOR_DESTROYED;
-                    } else if (pointsVal < 0 || pointsVal > 100) {
+                    } else if (pointsVal < 0 || pointsVal > 2000) {
                         this.warning.append("Found invalid points value: ")
                                 .append(points).append(".\n");
                         return;
@@ -770,6 +821,183 @@ public class XMLStreamParser implements XMLResponder {
                     }
                 } // End have-required-fields
             } // End ready-for-armor
+        } else if ( name.equals(SI) ) {
+        	if ( this.entity == null ) {
+                this.warning.append
+                    ( "Found structural integrity outside of an Entity.\n" );
+            } else if (!(this.entity instanceof Aero)) {
+                this.warning.append
+                    ( "structural integrity record found outside an Aero.\n" );
+            }
+        	String value = (String) attr.get( INTEGRITY );
+        	try {
+                int newSI = Integer.parseInt(value);
+                ((Aero)this.entity).setSI(newSI);
+            } catch (Exception e) {
+                this.warning.append
+                    ( "Invalid SI value in structural integrity tag.\n" );
+            }
+        }
+        else if ( name.equals(HEAT) ) {
+        	if ( this.entity == null ) {
+                this.warning.append
+                    ( "Found heat sink outside of an Entity.\n" );
+            } else if (!(this.entity instanceof Aero)) {
+                this.warning.append
+                    ( "heat sink record found outside an Aero.\n" );
+            }
+        	String value = (String) attr.get( SINK );
+        	try {
+                int newSinks = Integer.parseInt(value);
+                ((Aero)this.entity).setHeatSinks(newSinks);
+            } catch (Exception e) {
+                this.warning.append
+                    ( "Invalid heat sink value in heat sink tag.\n" );
+            }
+        }
+        else if ( name.equals(FUEL) ) {
+        	if ( this.entity == null ) {
+                this.warning.append
+                    ( "Found fuel outside of an Entity.\n" );
+            } else if (!(this.entity instanceof Aero)) {
+                this.warning.append
+                    ( "fuel record found outside an Aero.\n" );
+            }
+        	String value = (String) attr.get( LEFT );
+        	try {
+                int newFuel = Integer.parseInt(value);
+                ((Aero)this.entity).setFuel(newFuel);
+            } catch (Exception e) {
+                this.warning.append
+                    ( "Invalid fuel value in fuel tag.\n" );
+            }
+        }
+        else if ( name.equals(ACTIVE)) {
+        	if ( this.entity == null ) {
+                this.warning.append
+                    ( "Found active fighters outside of an Entity.\n" );
+            } else if (!(this.entity instanceof FighterSquadron)) {
+                this.warning.append
+                    ( "active fighter record found outside a Fighter Squadron.\n" );
+            }
+        	String value = (String) attr.get( FIGHTERS );
+        	try {
+                int newNFighters = Integer.parseInt(value);
+                ((FighterSquadron)this.entity).setNFighters(newNFighters);
+            } catch (Exception e) {
+                this.warning.append
+                    ( "Invalid active fighter value in active fighter tag.\n" );
+            }
+        }
+        else if ( name.equals(TOTAL)) {
+        	if ( this.entity == null ) {
+                this.warning.append
+                    ( "Found total armor outside of an Entity.\n" );
+            } else if (!(this.entity instanceof FighterSquadron)) {
+                this.warning.append
+                    ( "total armor record found outside a Fighter Squadron.\n" );
+            }
+        	String value = (String) attr.get( ARMOR );
+        	try {
+                int newArmor = Integer.parseInt(value);
+                ((FighterSquadron)this.entity).setArmor(newArmor);
+            } catch (Exception e) {
+                this.warning.append
+                    ( "Invalid total armor value in total armor tag.\n" );
+            }
+        }
+        else if ( name.equals(KF) ) {
+        	if ( this.entity == null ) {
+                this.warning.append
+                    ( "Found KF integrity outside of an Entity.\n" );
+            } else if (!(this.entity instanceof Jumpship)) {
+                this.warning.append
+                    ( "KF integrity record found outside a Jumpship.\n" );
+            }
+        	String value = (String) attr.get( INTEGRITY );
+        	try {
+                int newIntegrity = Integer.parseInt(value);
+                ((Jumpship)this.entity).setKFIntegrity(newIntegrity);
+            } catch (Exception e) {
+                this.warning.append
+                    ( "Invalid KF integrity value in KF integrity tag.\n" );
+            }
+        }
+        else if ( name.equals(SAIL) ) {
+        	if ( this.entity == null ) {
+                this.warning.append
+                    ( "Found sail integrity outside of an Entity.\n" );
+            } else if (!(this.entity instanceof Jumpship)) {
+                this.warning.append
+                    ( "sail integrity record found outside a Jumpship.\n" );
+            }
+        	String value = (String) attr.get( INTEGRITY );
+        	try {
+                int newIntegrity = Integer.parseInt(value);
+                ((Jumpship)this.entity).setSailIntegrity(newIntegrity);
+            } catch (Exception e) {
+                this.warning.append
+                    ( "Invalid sail integrity value in sail integrity tag.\n" );
+            }
+        }
+        else if ( name.equals(AEROCRIT) ) {
+        	if ( this.entity == null ) {
+                this.warning.append
+                    ( "Found aero crits outside of an Entity.\n" );
+            } else if (!(this.entity instanceof Aero)) {
+            	this.warning.append
+                ( "Found aero crits outside of an Aero.\n" );
+            }
+            else 
+            {
+            	String avionics = (String) attr.get( AVIONICS );
+            	String sensors = (String) attr.get( SENSORS );
+            	String engine = (String) attr.get( ENGINE );
+            	String fcs = (String) attr.get( FCS );
+            	String cic = (String) attr.get( CIC );
+            	String leftThrust = (String) attr.get( LEFT_THRUST );
+            	String rightThrust = (String) attr.get( RIGHT_THRUST );
+            	String lifeSupport = (String) attr.get( LIFE_SUPPORT );
+            	String gear = (String) attr.get( GEAR );
+            	
+            	Aero a = (Aero)this.entity;
+            	
+            	if ( avionics != null ) {
+            		a.setAvionicsHits(Integer.parseInt( avionics ));
+            	}
+            	
+            	if ( sensors != null ) {
+            		a.setSensorHits(Integer.parseInt( sensors ));
+            	}
+            	
+            	if ( engine != null ) {
+            		a.setEngineHits(Integer.parseInt( engine ));
+            	}
+            	
+            	if ( fcs != null ) {
+            		a.setFCSHits(Integer.parseInt( fcs ));
+            	}
+            	
+            	if ( cic != null ) {
+            		a.setCICHits(Integer.parseInt( cic ));
+            	}
+            	
+            	if ( leftThrust != null ) {
+            		a.setLeftThrustHits(Integer.parseInt( leftThrust ));
+            	}
+            	
+            	if ( rightThrust != null ) {
+            		a.setRightThrustHits(Integer.parseInt( rightThrust ));
+            	}
+            	
+            	if ( lifeSupport != null ) {
+            		a.setLifeSupport(false);
+            	}
+            	
+            	if ( gear != null ) {
+            		a.setGearHit(true);
+            	}
+            } 	
         } else if (name.equals(SLOT)) {
 
             // Are we in the outside of an Entity?

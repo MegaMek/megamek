@@ -1332,6 +1332,7 @@ public class MechDisplay extends BufferedPanel {
             
             //update ammo selector
             m_chAmmo.removeAll();
+            Mounted oldmount = mounted;
             if(wtype instanceof BayWeapon) {
                 int n = m_chBayWeapon.getSelectedIndex();
                 if(n == -1) {
@@ -1367,7 +1368,12 @@ public class MechDisplay extends BufferedPanel {
                     if(entity instanceof SmallCraft || entity instanceof Jumpship)
                             same = (mounted.getLocation() == mountedAmmo.getLocation());
                     
-                    if (mountedAmmo.isAmmoUsable() && same
+                    boolean rightBay = true;
+                    if(entity.usesWeaponBays() && !(entity instanceof FighterSquadron))
+                        rightBay = oldmount.ammoInBay(entity.getEquipmentNum(mountedAmmo));
+                    
+                    
+                    if (mountedAmmo.isAmmoUsable() && same && rightBay
                             && atype.getAmmoType() == wtype.getAmmoType()
                             && atype.getRackSize() == wtype.getRackSize()) {
 

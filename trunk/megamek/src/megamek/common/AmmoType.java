@@ -98,7 +98,8 @@ public class AmmoType extends EquipmentType {
     public static final long     F_MML_LRM           = 1l << 5; // LRM type
     public static final long     F_AR10_WHITE_SHARK  = 1l << 6; // White shark type
     public static final long     F_AR10_KILLER_WHALE = 1l << 7; // Killer Whale type
-    public static final long     F_NUCLEAR           = 1l << 8; // Nuclear missile
+    public static final long     F_AR10_BARRACUDA    = 1l << 8; // barracuda type
+    public static final long     F_NUCLEAR           = 1l << 9; // Nuclear missile
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -6282,6 +6283,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 65;
         ammo.cost = 8000;
+        ammo.flags |=  F_AR10_BARRACUDA;
         ammo.toHitModifier = -2;
 
         return ammo;

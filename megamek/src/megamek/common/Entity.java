@@ -2240,7 +2240,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         boolean success = false;
         WeaponType wtype = (WeaponType) mounted.getType();
         AmmoType atype = (AmmoType) mountedAmmo.getType();
-
+        
         if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
                 && atype.getAmmoType() == wtype.getAmmoType()
                 && atype.getRackSize() == wtype.getRackSize()) {

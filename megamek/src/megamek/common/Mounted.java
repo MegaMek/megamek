@@ -64,9 +64,10 @@ public class Mounted implements Serializable, RoundUpdated {
     private boolean m_bPendingDump;
     private boolean m_bDumping;
 
-    //A list of ids (equipment numbers) for the weapons linked to
+    //A list of ids (equipment numbers) for the weapons  and ammo linked to
     //this bay (if the mounted is of the BayWeapon type)
     private Vector<Integer> bayWeapons = new Vector<Integer>();
+    private Vector<Integer> bayAmmo = new Vector<Integer>();
     
     //for ammo loaded by shot rather than ton, a boolean
     private boolean byShot = false;
@@ -853,6 +854,14 @@ public class Mounted implements Serializable, RoundUpdated {
         return bayWeapons;
     }
     
+    public void addAmmoToBay(int a) {
+        this.bayAmmo.add(a);
+    }
+    
+    public Vector<Integer> getBayAmmo() {
+        return bayAmmo;
+    }
+    
     public void setByShot(boolean b) {
         this.byShot = b;
     }
@@ -877,4 +886,16 @@ public class Mounted implements Serializable, RoundUpdated {
     public void setBombPoints(int b) {
         this.bombPoints = b;
     }
+    
+    //is ammo in the same bay as the weapon
+    public boolean ammoInBay(int mAmmoId) {       
+        for(int nextAmmoId : bayAmmo) {
+            if(nextAmmoId == mAmmoId) {
+                return true;
+            }   
+        }
+        return false;
+    }
+    
+    
 }

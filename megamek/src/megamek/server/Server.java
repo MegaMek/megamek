@@ -13276,7 +13276,13 @@ public class Server implements Runnable {
         }
         boolean StandardToCapital = false;
         if(!isCapital && te.isCapitalScale()) {
-            StandardToCapital = true;
+            if(ammoExplosion) {
+                //applies directly to SI no need to 
+                //collect it with the rest of the standard damage
+                damage = damage / 10;
+            } else {
+                StandardToCapital = true;
+            }
         }
         
         int damage_orig = damage;
@@ -13506,11 +13512,40 @@ public class Server implements Runnable {
         if (!(te instanceof Mech) && !(te instanceof Protomech) && eiStatus) {
             damage += 1;
         }
+        
+        //check for case on Aeros
+        if(te instanceof Aero) {
+            Aero a = (Aero)te;
+            if (ammoExplosion && a.hasCase()) {
+                //damage should be reduced by a factor of 2 for ammo explosions
+                //according to p. 161, TW
+                damage /= 2;
+                r = new Report(9010);
+                r.subject = te_n;
+                r.add(damage);
+                r.indent(3);
+                r.newlines = 0;
+                vDesc.addElement(r);
+            }       
+        }
 
         // Allocate the damage
         while (damage > 0) {
             
-            //first check if this a standard scale attack to capital armor
+            //first check for ammo explosions on aeros separately, because it must be done before
+            //standard to capital damage conversions
+            if(te instanceof Aero && hit.getLocation() == Aero.LOC_AFT && !damageIS) {
+                for (Mounted mAmmo : te.getAmmo()) {
+                    if (mAmmo.isDumping() && !mAmmo.isDestroyed() &&
+                        !mAmmo.isHit()) {
+                        // doh.  explode it
+                        vDesc.addAll( explodeEquipment(te, mAmmo.getLocation(), mAmmo) );
+                        mAmmo.setHit(true);
+                    }
+                }
+            }
+                       
+        	//check if this a standard scale attack to capital armor
             //if so, collect the damage on the entity and stop processing
             if(StandardToCapital && te instanceof Aero) {
                 r = new Report(9050);
@@ -13583,7 +13618,8 @@ public class Server implements Runnable {
                     fs.setArmor(0);
                 }
                 damage = 0;
-            } else {
+            } else if(!(te instanceof Aero && ammoExplosion)) {
+                //report something different for Aero ammo explosions
                 r = new Report(6065);
                 r.subject = te_n;
                 r.indent(2);
@@ -14009,7 +14045,7 @@ public class Server implements Runnable {
                     
                     //divide damage in half 
                     //do not divide by half if it is an ammo exposion
-                    if(!ammoExplosion)// && !nukeS2S)
+                	if(!ammoExplosion && !nukeS2S)
                         damage /= 2;
                     
                     //this should result in a crit 
@@ -17710,6 +17746,15 @@ public class Server implements Runnable {
         // determine and deal damage
         int damage = mounted.getExplosionDamage();
 
+        //divide damage by 10 for aeros, per TW rules on pg. 161
+        if(en instanceof Aero) {
+            int newdamage = (int)Math.floor(damage / 10.0);
+            if(newdamage == 0 && damage > 0) 
+                damage = 1;
+            else
+                damage = newdamage;
+        }
+        
         if (damage <= 0) {
             return vDesc;
         }
@@ -17759,11 +17804,22 @@ public class Server implements Runnable {
             }
         }
 
+        HitData hit = new HitData(loc);
+        //check to determine whether this is capital scale if we have a capital scale entity
+        if(mounted.getType() instanceof AmmoType) {
+            if(((AmmoType)mounted.getType()).isCapital()) {
+                hit.setCapital(true);
+            }
+            
+        }
+        
         mounted.setShotsLeft(0);
-        vDesc.addAll(damageEntity(en, new HitData(loc), damage, true));
+        vDesc.addAll(damageEntity(en, hit, damage, true));
         Report.addNewline(vDesc);
 
         int pilotDamage = 2;
+        if(en instanceof Aero)
+            pilotDamage = 1;
         if (en.getCrew().getOptions().booleanOption("pain_resistance"))
             pilotDamage = 1;
         if (en.getCrew().getOptions().booleanOption("iron_man"))

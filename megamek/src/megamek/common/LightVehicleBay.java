@@ -14,13 +14,17 @@
 
 package megamek.common;
 
-import java.util.*;
 
 /**
  * Represtents a volume of space set aside for carrying ASFs and Small Craft aboard DropShips
  */
 
 public final class LightVehicleBay extends Bay {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1587851184051479305L;
 
     /**
      * The default constructor is only for serialization.

@@ -2016,8 +2016,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         
         refreshMoveVectors(entity, md, col);
         
-        for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = (MoveStep)i.nextElement();
+        for (Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
             // check old movement path for reusable step sprites
             boolean found = false;
             for (Iterator<StepSprite> j = temp.iterator(); j.hasNext();) {
@@ -2235,8 +2235,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     
     public void refreshMoveVectors() {
         clearAllMoveVectors();
-        for(Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity e = (Entity)i.nextElement();
+        for(Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity e = i.nextElement();
             if(e.getPosition() != null) 
                 movementSprites.add(new MovementSprite(e, e.getVectors(), Color.gray, false));
         }
@@ -2246,8 +2246,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         clearAllMoveVectors();
         //same as normal but when I find the active entity I used the MovePath
         //to get vector
-        for(Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity e = (Entity)i.nextElement();
+        for(Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity e = i.nextElement();
             if(e.getPosition() != null) 
                 if(e.getId() == en.getId()) {
                     movementSprites.add(new MovementSprite(e, md.getFinalVectors(), col, true));

@@ -21,6 +21,10 @@ import java.io.Serializable;
  */
 public class LargeSupportTank extends SupportTank implements Serializable {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3177191060629774478L;
     // locations
     public static final int LOC_BODY = 0;
     public static final int LOC_FRONT = 1;

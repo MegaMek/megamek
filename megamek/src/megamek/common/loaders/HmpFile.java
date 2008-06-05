@@ -1712,6 +1712,9 @@ implements IMechLoader
         if (critName != null && critName.endsWith("MG Ammo")) {
             critName += " (" + ammoCount + ")";
         }
+        
+        if (critName == null && critical.longValue() == 0)
+            return "-Empty-";
 
         // Unexpected parsing failures should be passed on so that
         // they can be dealt with properly.
@@ -1719,9 +1722,6 @@ implements IMechLoader
             critName = "UnknownCritical(0x"
                     + Integer.toHexString(critical.intValue()) + ")";
         }
-
-        if (critName == null && critical.longValue() == 0)
-            return "-Empty-";
 
         if (ammoCount > 0) {
             critName = mutateLBXAmmo(critName);

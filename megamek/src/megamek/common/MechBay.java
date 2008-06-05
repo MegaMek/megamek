@@ -14,13 +14,17 @@
 
 package megamek.common;
 
-import java.util.*;
 
 /**
  * Represtents a volume of space set aside for carrying mechs aboard dropships
  */
 
 public final class MechBay extends Bay {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 927162989742234173L;
 
     /**
      * The default constructor is only for serialization.

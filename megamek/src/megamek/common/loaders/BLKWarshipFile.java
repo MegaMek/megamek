@@ -25,38 +25,25 @@
  */
 package megamek.common.loaders;
 
+import megamek.common.ASFBay;
 import megamek.common.AmmoType;
+import megamek.common.BattleArmorBay;
 import megamek.common.CargoBay;
+import megamek.common.DockingCollar;
 import megamek.common.Engine;
 import megamek.common.Entity;
-import megamek.common.Aero;
 import megamek.common.EquipmentType;
-import megamek.common.LocationFullException;
-import megamek.common.Mounted;
-import megamek.common.SmallCraft;
-import megamek.common.Dropship;
-import megamek.common.Jumpship;
-import megamek.common.Warship;
-import megamek.common.TechConstants;
-import megamek.common.DockingCollar;
-import megamek.common.Bay;
-import megamek.common.ASFBay;
-import megamek.common.SmallCraftBay;
-import megamek.common.MechBay;
-import megamek.common.LightVehicleBay;
 import megamek.common.HeavyVehicleBay;
 import megamek.common.InfantryBay;
-import megamek.common.BattleArmorBay;
+import megamek.common.LightVehicleBay;
+import megamek.common.LocationFullException;
+import megamek.common.MechBay;
+import megamek.common.Mounted;
+import megamek.common.SmallCraftBay;
+import megamek.common.TechConstants;
+import megamek.common.Warship;
 import megamek.common.WeaponType;
-import megamek.common.util.*;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Vector;
-import java.util.Iterator;
+import megamek.common.util.BuildingBlock;
 
 public class BLKWarshipFile extends BLKFile implements IMechLoader {    
     

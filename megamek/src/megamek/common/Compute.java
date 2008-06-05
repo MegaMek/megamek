@@ -627,13 +627,9 @@ public class Compute {
 
         // is water involved?
         IHex targHex = game.getBoard().getHex(target.getPosition());
-        int targTop = 0;
-        int targBottom = 0;
-        if (target != null) {
-            targTop = target.absHeight();
-            targBottom = target.getElevation();
-        }
-
+        int targTop = target.absHeight();
+        int targBottom = target.getElevation();
+        
         boolean targetInPartialWater = false;
         boolean targetUnderwater = false;
         boolean weaponUnderwater = (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET);
@@ -721,7 +717,7 @@ public class Compute {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Target out of range");
         }
         if (distance == 0 && !isAttackerInfantry
-                && !(ae instanceof Mech && target != null && ((Mech) ae).getGrappled() == target.getTargetId())) {
+                && !(ae instanceof Mech && ((Mech) ae).getGrappled() == target.getTargetId())) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Only infantry shoot at zero range");
         }
 

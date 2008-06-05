@@ -14,13 +14,9 @@
 package megamek.common.weapons;
 
 import megamek.common.BattleArmor;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Mech;
-import megamek.common.Tank;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;

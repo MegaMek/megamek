@@ -14,7 +14,9 @@
 
 package megamek.common;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Represtents a volume of space set aside for carrying ASFs and Small Craft aboard DropShips
@@ -24,6 +26,11 @@ public class DockingCollar implements Transporter {
 
     // Private attributes and helper functions.
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4699786673513410716L;
+
     /**
      * The troops being carried.
      */
@@ -163,6 +170,7 @@ public class DockingCollar implements Transporter {
      *          The returned <code>List</code> is independant from the under-
      *          lying data structure; modifying one does not affect the other.
      */
+    @SuppressWarnings("unchecked")
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
         return (Vector<Entity>)this.troops.clone();

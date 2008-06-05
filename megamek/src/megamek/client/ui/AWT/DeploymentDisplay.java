@@ -556,12 +556,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         else if (ev.getActionCommand().equals(DEPLOY_UNLOAD)) {
 
             // Do we have anyone to unload?
-            Vector choices = ce().getLoadedUnits();
+            Vector<Entity> choices = ce().getLoadedUnits();
             if (choices.size() > 0) {
                 Entity other = null;
                 String[] names = new String[choices.size()];
                 for (int loop = 0; loop < names.length; loop++) {
-                    names[loop] = ((Entity) choices.elementAt(loop))
+                    names[loop] = (choices.elementAt(loop))
                             .getShortName();
                 }
                 SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
@@ -574,8 +574,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                         names);
                 choiceDialog.setVisible(true);
                 if (choiceDialog.getAnswer() == true) {
-                    other = (Entity) choices
-                            .elementAt(choiceDialog.getChoice());
+                    other = choices.elementAt(choiceDialog.getChoice());
                     // Please note, the Server never got this load order.
                     if (ce().unload(other)) {
                         other.setTransportId(Entity.NONE);

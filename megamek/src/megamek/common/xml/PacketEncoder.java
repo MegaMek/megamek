@@ -92,9 +92,7 @@ public class PacketEncoder {
         Object retval = null;
 
         // Decoding is base the node's name.
-        if (node.getName().equals("null")) {
-            retval = null;
-        } else if (node.getName().equals("integer")) {
+        if (node.getName().equals("integer")) {
             retval = new Integer(node.getAttribute("value"));
         } else if (node.getName().equals("board")) {
             retval = BoardEncoder.decode(node, game);

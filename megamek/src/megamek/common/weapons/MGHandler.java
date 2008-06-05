@@ -58,6 +58,7 @@ public class MGHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         if (weapon.isRapidfire()) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
+            // nDamPerHit was already set in useAmmo
             if (bGlancing)
                 nDamPerHit = (int) Math.floor(nDamPerHit / 2.0);
         } else {

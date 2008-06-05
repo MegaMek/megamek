@@ -50,7 +50,7 @@ import megamek.common.weapons.*;
 
 public class BLKDropshipFile extends BLKFile implements IMechLoader {    
     
-	//armor locatioms
+    //armor locatioms
     public static final int NOSE = 0;
     public static final int RW = 1;
     public static final int LW = 2;
@@ -127,8 +127,8 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         int nMotion = 16;
         if(sMotion.equals("spheroid")) {
-        	nMotion = 17;
-        	a.setSpheroid(true);
+            nMotion = 17;
+            a.setSpheroid(true);
         } 
         a.setMovementMode(nMotion);
         
@@ -193,55 +193,55 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
             String[] transporters = dataFile.getDataAsString("transporters");
             // Walk the array of transporters.
             for (int index = 0; index < transporters.length; index++) {
-            	if ( transporters[index].startsWith( "ASFBay:", 0 ) ) {
-            		String numbers = transporters[index].substring(7);
-            		String temp[] = numbers.split(":");
-            		int size = Integer.parseInt(temp[0]);
-            		int doors = Integer.parseInt(temp[1]);
-            		a.addTransporter( new ASFBay(size,doors) );
-            	} else if ( transporters[index].startsWith( "SmallCraftBay:", 0 ) ) {
-            		String numbers = transporters[index].substring(14);
-            		String temp[] = numbers.split(":");
-            		int size = Integer.parseInt(temp[0]);
-            		int doors = Integer.parseInt(temp[1]);
-            		a.addTransporter( new SmallCraftBay(size, doors) );
-            	} else if ( transporters[index].startsWith( "MechBay:", 0 ) ) {
-            		String numbers = transporters[index].substring(8);
-            		String temp[] = numbers.split(":");
-            		int size = Integer.parseInt(temp[0]);
-            		int doors = Integer.parseInt(temp[1]);
-            		a.addTransporter( new MechBay(size, doors) );
-            	} else if ( transporters[index].startsWith( "LightVehicleBay:", 0 ) ) {
-            		String numbers = transporters[index].substring(16);
-            		String temp[] = numbers.split(":");
-            		int size = Integer.parseInt(temp[0]);
-            		int doors = Integer.parseInt(temp[1]);
-            		a.addTransporter( new LightVehicleBay(size, doors) );
-            	} else if ( transporters[index].startsWith( "HeavyVehicleBay:", 0 ) ) {
-            		String numbers = transporters[index].substring(16);
-            		String temp[] = numbers.split(":");
-            		int size = Integer.parseInt(temp[0]);
-            		int doors = Integer.parseInt(temp[1]);
-            		a.addTransporter( new HeavyVehicleBay(size, doors) );
-            	} else if ( transporters[index].startsWith( "InfantryBay:", 0 ) ) {
-            		String numbers = transporters[index].substring(12);
-            		String temp[] = numbers.split(":");
-            		int size = Integer.parseInt(temp[0]);
-            		int doors = Integer.parseInt(temp[1]);
-            		a.addTransporter( new InfantryBay(size, doors) );
-            	} else if ( transporters[index].startsWith( "BattleArmorBay:", 0 ) ) {
-            		String numbers = transporters[index].substring(15);
-            		String temp[] = numbers.split(":");
-            		int size = Integer.parseInt(temp[0]);
-            		int doors = Integer.parseInt(temp[1]);
-            		a.addTransporter( new BattleArmorBay(size, doors) );
-            	} else if ( transporters[index].startsWith( "CargoBay:", 0 ) ) {
-            		String numbers = transporters[index].substring(9);
-            		String temp[] = numbers.split(":");
-            		int size = Integer.parseInt(temp[0]);
-            		int doors = Integer.parseInt(temp[1]);
-            		a.addTransporter( new CargoBay(size, doors) );
-            	}
+                if ( transporters[index].startsWith( "ASFBay:", 0 ) ) {
+                    String numbers = transporters[index].substring(7);
+                    String temp[] = numbers.split(":");
+                    int size = Integer.parseInt(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter( new ASFBay(size,doors) );
+                } else if ( transporters[index].startsWith( "SmallCraftBay:", 0 ) ) {
+                    String numbers = transporters[index].substring(14);
+                    String temp[] = numbers.split(":");
+                    int size = Integer.parseInt(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter( new SmallCraftBay(size, doors) );
+                } else if ( transporters[index].startsWith( "MechBay:", 0 ) ) {
+                    String numbers = transporters[index].substring(8);
+                    String temp[] = numbers.split(":");
+                    int size = Integer.parseInt(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter( new MechBay(size, doors) );
+                } else if ( transporters[index].startsWith( "LightVehicleBay:", 0 ) ) {
+                    String numbers = transporters[index].substring(16);
+                    String temp[] = numbers.split(":");
+                    int size = Integer.parseInt(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter( new LightVehicleBay(size, doors) );
+                } else if ( transporters[index].startsWith( "HeavyVehicleBay:", 0 ) ) {
+                    String numbers = transporters[index].substring(16);
+                    String temp[] = numbers.split(":");
+                    int size = Integer.parseInt(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter( new HeavyVehicleBay(size, doors) );
+                } else if ( transporters[index].startsWith( "InfantryBay:", 0 ) ) {
+                    String numbers = transporters[index].substring(12);
+                    String temp[] = numbers.split(":");
+                    int size = Integer.parseInt(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter( new InfantryBay(size, doors) );
+                } else if ( transporters[index].startsWith( "BattleArmorBay:", 0 ) ) {
+                    String numbers = transporters[index].substring(15);
+                    String temp[] = numbers.split(":");
+                    int size = Integer.parseInt(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter( new BattleArmorBay(size, doors) );
+                } else if ( transporters[index].startsWith( "CargoBay:", 0 ) ) {
+                    String numbers = transporters[index].substring(9);
+                    String temp[] = numbers.split(":");
+                    int size = Integer.parseInt(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter( new CargoBay(size, doors) );
+                }
             }
         }                  
         return a;   
@@ -271,9 +271,9 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
         int nBay = 1;
         if (saEquip[0] != null) {
             for (int x = 0; x < saEquip.length; x++) {
-            	rearMount = false;
-            	nAmmo = 1;
-            	newBay = false;
+                rearMount = false;
+                nAmmo = 1;
+                newBay = false;
                 String equipName = saEquip[x].trim();
                 
                 //I will need to deal with rear-mounted bays on Dropships
@@ -289,12 +289,12 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                 
                 //check for ammo loadouts
                 if(equipName.contains("Ammo:")) {
-                	//then split by the :
-                	String [] temp;
-                	temp = equipName.split(":");
-                	equipName = temp[0];
-                	if(temp[1] != null) 
-                		nAmmo = Integer.parseInt(temp[1]);                		
+                    //then split by the :
+                    String [] temp;
+                    temp = equipName.split(":");
+                    equipName = temp[0];
+                    if(temp[1] != null) 
+                        nAmmo = Integer.parseInt(temp[1]);                        
                 }
                 
                 EquipmentType etype = EquipmentType.get(equipName);
@@ -305,55 +305,55 @@ public class BLKDropshipFile extends BLKFile implements IMechLoader {
                 }
     
                 if (etype != null) {  
-               		//first load the equipment
-                	Mounted newmount;
-                	try {
-            			if(nAmmo == 1)
-            				newmount = a.addEquipment(etype, nLoc, rearMount);
-            			else
-            				newmount = a.addEquipment(etype, nLoc, rearMount, nAmmo);
-            		} catch (LocationFullException ex) {
-            			throw new EntityLoadingException(ex.getMessage());
-            		}
-            		      		
-                	//this is where weapon bays go
-                	//first, lets see if it is a weapon 
-                	if(newmount.getType() instanceof WeaponType) {
-                		//if so then I need to find out if it is the same class
-                		//as the current weapon bay
-                		//If the current bay is null, then it needs to be initialized
+                       //first load the equipment
+                    Mounted newmount;
+                    try {
+                        if(nAmmo == 1)
+                            newmount = a.addEquipment(etype, nLoc, rearMount);
+                        else
+                            newmount = a.addEquipment(etype, nLoc, rearMount, nAmmo);
+                    } catch (LocationFullException ex) {
+                        throw new EntityLoadingException(ex.getMessage());
+                    }
+                                  
+                    //this is where weapon bays go
+                    //first, lets see if it is a weapon 
+                    if(newmount.getType() instanceof WeaponType) {
+                        //if so then I need to find out if it is the same class
+                        //as the current weapon bay
+                        //If the current bay is null, then it needs to be initialized
                         WeaponType weap = (WeaponType)newmount.getType();
-                		if(bayMount == null ) {
-                			try{
+                        if(bayMount == null ) {
+                            try{
                                 bayMount = a.addEquipment(WeaponType.getBayType(weap.getAtClass()), nLoc, rearMount);
-                			} catch (LocationFullException ex) {
+                            } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(ex.getMessage());
                             }
-                		}
-                		
-                		
-                		int damage = weap.getRoundShortAV();
-                		if(weap.isCapital())
-                			damage *= 10;
-                		if( !newBay && (bayDamage + damage) <= 700 && 
-                				bayMount.isRearMounted() == rearMount && 
-                				weap.getAtClass() == ((WeaponType)bayMount.getType()).getAtClass()) {               			
-                			//then we should add this weapon to the current bay
+                        }
+                        
+                        
+                        int damage = weap.getRoundShortAV();
+                        if(weap.isCapital())
+                            damage *= 10;
+                        if( !newBay && (bayDamage + damage) <= 700 && 
+                                bayMount.isRearMounted() == rearMount && 
+                                weap.getAtClass() == ((WeaponType)bayMount.getType()).getAtClass()) {                           
+                            //then we should add this weapon to the current bay
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
-                			bayDamage += damage;
-                		} else {
-                			try{
+                            bayDamage += damage;
+                        } else {
+                            try{
                                 bayMount = a.addEquipment(WeaponType.getBayType(weap.getAtClass()), nLoc, rearMount);
-                			} catch (LocationFullException ex) {
+                            } catch (LocationFullException ex) {
                                 throw new EntityLoadingException(ex.getMessage());
                             }
                             bayMount.addWeaponToBay(a.getEquipmentNum(newmount));
-                			//reset bay damage
-                			bayDamage = damage;
-                			nBay++;
-                		}                		
-                	}
-                	//ammo should also get loaded into the bay
+                            //reset bay damage
+                            bayDamage = damage;
+                            nBay++;
+                        }                        
+                    }
+                    //ammo should also get loaded into the bay
                     if(newmount.getType() instanceof AmmoType) {
                         bayMount.addAmmoToBay(a.getEquipmentNum(newmount));
                     }

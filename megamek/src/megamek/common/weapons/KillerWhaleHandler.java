@@ -40,7 +40,7 @@ public class KillerWhaleHandler extends AmmoWeaponHandler {
     }
     
     protected int getCapMisMod() {
-    	return 10;
+        return 10;
     }
 
 }

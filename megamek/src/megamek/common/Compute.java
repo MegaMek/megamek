@@ -171,10 +171,10 @@ public class Compute {
      */
     public static Entity stackingViolation(IGame game, Entity entering, Coords coords, Entity transport) {
         //no stacking violations on the low-atmosphere and space maps
-    	if(!game.getBoard().onGround())
-    		return null;
-    	
-    	boolean isMech = entering instanceof Mech;
+        if(!game.getBoard().onGround())
+            return null;
+        
+        boolean isMech = entering instanceof Mech;
         Entity firstEntity = transport;
         int totalUnits = 1;
         int thisLowStackingLevel = entering.getElevation();
@@ -584,7 +584,7 @@ public class Compute {
         boolean useExtremeRange = game.getOptions().booleanOption("maxtech_range");
 
         if(ae instanceof Aero)
-        	useExtremeRange = true;
+            useExtremeRange = true;
         
         ToHitData mods = new ToHitData();
 
@@ -706,7 +706,7 @@ public class Compute {
         
         //if Aero then adjust to stanard ranges
         if(ae instanceof Aero) 
-        	weaponRanges = wtype.getATRanges();
+            weaponRanges = wtype.getATRanges();
         
         // determine base distance & range bracket
         int distance = effectiveDistance(game, ae, target);
@@ -714,7 +714,7 @@ public class Compute {
 
         //if aero and greater than max range then swith to range_out
         if(ae instanceof Aero && range > wtype.getMaxRange())
-        	range = RangeType.RANGE_OUT;
+            range = RangeType.RANGE_OUT;
         
         // short circuit if at zero range or out of range
         if (range == RangeType.RANGE_OUT) {
@@ -1256,7 +1256,7 @@ public class Compute {
         } else if (movement == IEntityMovementType.MOVE_JUMP) {
             toHit.addModifier(3, "attacker jumped");
         } else if (movement == IEntityMovementType.MOVE_OVER_THRUST) {
-        	toHit.addModifier(2, "over thrust used");
+            toHit.addModifier(2, "over thrust used");
         }
 
         return toHit;
@@ -1318,7 +1318,7 @@ public class Compute {
         Entity entity = game.getEntity(entityId);
         
         if(entity instanceof Aero) {
-        	return new ToHitData();
+            return new ToHitData();
         }
         
         ToHitData toHit = getTargetMovementModifier(entity.delta_distance, ((entity.moved == IEntityMovementType.MOVE_JUMP) || (entity.moved == IEntityMovementType.MOVE_VTOL_RUN) || (entity.moved == IEntityMovementType.MOVE_VTOL_WALK)), entity.moved == IEntityMovementType.MOVE_VTOL_RUN || entity.moved == IEntityMovementType.MOVE_VTOL_WALK || entity.getMovementMode() == IEntityMovementMode.VTOL);
@@ -2267,13 +2267,13 @@ public class Compute {
     }
 
     public static int targetSideTable(Entity attacker, Targetable target) {
-    	Coords attackPos = attacker.getPosition();
-    	//check to see if they are in the same position, if so find which one should be farther 
+        Coords attackPos = attacker.getPosition();
+        //check to see if they are in the same position, if so find which one should be farther 
         //back
         boolean usePrior = usePrior(attacker, target);
-    	
+        
         if(target instanceof Aero && attacker instanceof Aero) {
-        	return ((Entity)target).sideTable(attackPos, usePrior);
+            return ((Entity)target).sideTable(attackPos, usePrior);
         }
         
         return target.sideTable(attackPos);
@@ -2282,39 +2282,39 @@ public class Compute {
     //determine who got there first when attacker and target share the same hex
     //FIXME: this causes problem for bot calculations
     public static boolean usePrior(Entity attacker, Targetable target) {
-    	
-    	Coords targetPos = target.getPosition();
+        
+        Coords targetPos = target.getPosition();
         Coords attackPos = attacker.getPosition();
         boolean usePrior = false;
         if(attacker instanceof Aero && target instanceof Aero && attackPos.equals(targetPos)) {
-        	int AttackerType = UnitType.determineUnitTypeCode(attacker);
-        	int TargetType = UnitType.determineUnitTypeCode((Entity)target);
-        	if(AttackerType < TargetType) {
-        		usePrior = true;
-        		attackPos = attacker.getPriorPosition();
-        	} else if(AttackerType > TargetType) {
-        		usePrior = true;
-        		targetPos = ((Entity)target).getPriorPosition();
-        	} else {
-        		//same type of unit, check velocity
-        		int attackVelocity = ((Aero)attacker).getCurrentVelocity();
-        		int targetVelocity = ((Aero)target).getCurrentVelocity();
-        		if(attackVelocity > targetVelocity) {
-        			usePrior = true;
-        			attackPos = attacker.getPriorPosition();
-        		} else if(targetVelocity > attackVelocity) {
-        			usePrior = true;
-        			targetPos = ((Entity)target).getPriorPosition();
-        		} else {
-        			if(((Aero)attacker).getWhoFirst() > ((Aero)target).getWhoFirst()) {
-        				usePrior = true;
-        				attackPos = attacker.getPriorPosition();
-        			} else {
-        				usePrior = true;
-            			targetPos = ((Entity)target).getPriorPosition();
-        			}
-        		}
-        	}
+            int AttackerType = UnitType.determineUnitTypeCode(attacker);
+            int TargetType = UnitType.determineUnitTypeCode((Entity)target);
+            if(AttackerType < TargetType) {
+                usePrior = true;
+                attackPos = attacker.getPriorPosition();
+            } else if(AttackerType > TargetType) {
+                usePrior = true;
+                targetPos = ((Entity)target).getPriorPosition();
+            } else {
+                //same type of unit, check velocity
+                int attackVelocity = ((Aero)attacker).getCurrentVelocity();
+                int targetVelocity = ((Aero)target).getCurrentVelocity();
+                if(attackVelocity > targetVelocity) {
+                    usePrior = true;
+                    attackPos = attacker.getPriorPosition();
+                } else if(targetVelocity > attackVelocity) {
+                    usePrior = true;
+                    targetPos = ((Entity)target).getPriorPosition();
+                } else {
+                    if(((Aero)attacker).getWhoFirst() > ((Aero)target).getWhoFirst()) {
+                        usePrior = true;
+                        attackPos = attacker.getPriorPosition();
+                    } else {
+                        usePrior = true;
+                        targetPos = ((Entity)target).getPriorPosition();
+                    }
+                }
+            }
         }
         
         return usePrior;
@@ -3392,107 +3392,107 @@ public class Compute {
     
     /****STUFF FOR VECTOR MOVEMENT CALCULATIONS***/
     public static Coords getFinalPosition(Coords curpos, int[] v) {
-		
-    	if(v == null || v.length != 6) 
-    		return curpos;
-    	
-		//step through each vector and move the direction indicated
-		int thrust = 0;
-		Coords endpos = curpos;
-		for(int dir = 0; dir < 6; dir++) {
-			thrust = v[dir];
-			while(thrust > 0) {
-				endpos = endpos.translated(dir);
-				thrust--;
-			}
-		}
-		
-		return endpos;
-	}
+        
+        if(v == null || v.length != 6) 
+            return curpos;
+        
+        //step through each vector and move the direction indicated
+        int thrust = 0;
+        Coords endpos = curpos;
+        for(int dir = 0; dir < 6; dir++) {
+            thrust = v[dir];
+            while(thrust > 0) {
+                endpos = endpos.translated(dir);
+                thrust--;
+            }
+        }
+        
+        return endpos;
+    }
 
-	//method to change a set of active vectors for a one-point thrust
-	//expenditure in the giving facing
+    //method to change a set of active vectors for a one-point thrust
+    //expenditure in the giving facing
     public static int[] changeVectors(int[] v, int facing) {
-		
-    	if(v == null || v.length != 6)
-    		return v;
-    	
-		//first look at opposing vectors
-		int oppv = facing + 3;
-		if(oppv > 5) 
-			oppv -= 6;	
-		//is this vector active
-		if(v[oppv] > 0) {
-			//then decrement it by one and return
-			v[oppv]--;
-			return v;
-		}
-		
-		//now check oblique vectors
-		int oblv1 = facing + 2;
-		if(oblv1 > 5)
-			oblv1 -= 6;
-		int oblv2 = facing - 2;
-		if(oblv2 < 0)
-			oblv2 += 6;
-		
-		//check both of these and if either is active 
-		//deal with it and then return
-		if(v[oblv1] > 0 || v[oblv2] > 0) {
-			
-			int newface = facing + 1;
-			if(newface > 5) 
-				newface = 0;
-			if(v[oblv1] > 0) {
-				v[oblv1]--;
-				v[newface]++;
-			}
-			
-			newface = facing - 1;
-			if(newface < 0) {
-				newface = 0;
-			}
-			if(v[oblv2] > 0) {
-				v[oblv2]--;
-				v[newface]++;
-			}
-			return v;
-		}
-		
-		//if nothing was found, then just increase velocity in this vector
-		v[facing]++;
-		return v;	
-	}
+        
+        if(v == null || v.length != 6)
+            return v;
+        
+        //first look at opposing vectors
+        int oppv = facing + 3;
+        if(oppv > 5) 
+            oppv -= 6;    
+        //is this vector active
+        if(v[oppv] > 0) {
+            //then decrement it by one and return
+            v[oppv]--;
+            return v;
+        }
+        
+        //now check oblique vectors
+        int oblv1 = facing + 2;
+        if(oblv1 > 5)
+            oblv1 -= 6;
+        int oblv2 = facing - 2;
+        if(oblv2 < 0)
+            oblv2 += 6;
+        
+        //check both of these and if either is active 
+        //deal with it and then return
+        if(v[oblv1] > 0 || v[oblv2] > 0) {
+            
+            int newface = facing + 1;
+            if(newface > 5) 
+                newface = 0;
+            if(v[oblv1] > 0) {
+                v[oblv1]--;
+                v[newface]++;
+            }
+            
+            newface = facing - 1;
+            if(newface < 0) {
+                newface = 0;
+            }
+            if(v[oblv2] > 0) {
+                v[oblv2]--;
+                v[newface]++;
+            }
+            return v;
+        }
+        
+        //if nothing was found, then just increase velocity in this vector
+        v[facing]++;
+        return v;    
+    }
     
     //compare two vectors and determine if they are the same
     public static boolean sameVectors(int[] v1, int[] v2) {
     
-    	for(int i = 0; i<6; i++) {
-    		if(v1[i] != v2[i]) {
-    			return false;
-    		}
-    	}
-    	
-    	return true;
+        for(int i = 0; i<6; i++) {
+            if(v1[i] != v2[i]) {
+                return false;
+            }
+        }
+        
+        return true;
     }
     
     /*
      * Get the net velocity of two aeros for ramming attacks
      */
     public static int getNetVelocity(Coords src, Aero te, int avel, int tvel) {
-    	int angle = te.sideTableRam(src);
+        int angle = te.sideTableRam(src);
   
-    	switch(angle) {
-    	case Aero.RAM_TOWARD_DIR:
-    		return Math.max(avel+tvel,1);
-    	case Aero.RAM_TOWARD_OBL:
-    		return Math.max(avel+(tvel/2),1);
-    	case Aero.RAM_AWAY_OBL:
-    		return Math.max(avel-(tvel/2),1);
-    	case Aero.RAM_AWAY_DIR:
-    		return Math.max(avel-tvel,1);
-    	}
-    	return 0;
+        switch(angle) {
+        case Aero.RAM_TOWARD_DIR:
+            return Math.max(avel+tvel,1);
+        case Aero.RAM_TOWARD_OBL:
+            return Math.max(avel+(tvel/2),1);
+        case Aero.RAM_AWAY_OBL:
+            return Math.max(avel-(tvel/2),1);
+        case Aero.RAM_AWAY_DIR:
+            return Math.max(avel-tvel,1);
+        }
+        return 0;
     }
 
 } // End public class Compute

@@ -75,7 +75,7 @@ public class RamAttackAction extends AbstractAttackAction {
      * To-hit number for a ram, assuming that movement has been handled
      */
     public ToHitData toHit(IGame game) {
-    	final Entity entity = game.getEntity(getEntityId());
+        final Entity entity = game.getEntity(getEntityId());
         return toHit(game, game.getTarget(getTargetType(), getTargetId()),
                      entity.getPosition(), entity.getElevation(), 
                      entity.getPriorPosition(), entity.moved);
@@ -99,12 +99,12 @@ public class RamAttackAction extends AbstractAttackAction {
         }
         
         if(!(ae instanceof Aero)) {
-        	return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not Aero");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is not Aero");
         }
         
         if(!(target instanceof Aero)) {
-        	return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not Aero");
-        }	
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not Aero");
+        }    
 
         int targetId = Entity.NONE;
         Entity te = null;
@@ -165,45 +165,45 @@ public class RamAttackAction extends AbstractAttackAction {
         
         //target type
         if(target instanceof SpaceStation) {
-        	toHit.addModifier(-1,"target is a space station");
+            toHit.addModifier(-1,"target is a space station");
         } else if(target instanceof Warship) {
-        	toHit.addModifier(+1,"target is a warship");
+            toHit.addModifier(+1,"target is a warship");
         } else if(target instanceof Jumpship) {
-        	toHit.addModifier(+0,"target is a jumpship");
+            toHit.addModifier(+0,"target is a jumpship");
         } else if(target instanceof Dropship) {
-        	toHit.addModifier(+2,"target is a dropship");
+            toHit.addModifier(+2,"target is a dropship");
         } else {
-        	toHit.addModifier(+4,"target is a fighter");
+            toHit.addModifier(+4,"target is a fighter");
         }
         
         //attacker type
         if(a instanceof SpaceStation) {
-        	toHit.addModifier(+0,"attacker is a space station");
+            toHit.addModifier(+0,"attacker is a space station");
         } else if(a instanceof Warship) {
-        	toHit.addModifier(+1,"attacker is a warship");
+            toHit.addModifier(+1,"attacker is a warship");
         } else if(a instanceof Jumpship) {
-        	toHit.addModifier(+0,"attacker is a jumpship");
+            toHit.addModifier(+0,"attacker is a jumpship");
         } else if(a instanceof Dropship) {
-        	toHit.addModifier(-1,"attacker is a dropship");
+            toHit.addModifier(-1,"attacker is a dropship");
         } else {
-        	toHit.addModifier(-2,"target is a fighter");
+            toHit.addModifier(-2,"target is a fighter");
         }
         
         //can the target unit move
         if(target.isImmobile() || te.getWalkMP() == 0)
-        	toHit.addModifier(-2,"target cannot spend thrust");
-        	
+            toHit.addModifier(-2,"target cannot spend thrust");
+            
         //sensor damage
         if(a.getSensorHits() > 0) 
-        	toHit.addModifier(+1, "sensor damage");
-        	
+            toHit.addModifier(+1, "sensor damage");
+            
         //avionics damage
         int avionics = a.getAvionicsHits();
         if(avionics > 3) 
-        	avionics = 3;
+            avionics = 3;
         if(avionics > 0)
-        	toHit.addModifier(avionics, "avionics damage");
-        	
+            toHit.addModifier(avionics, "avionics damage");
+            
         //determine hit direction
         if (te != null) {
             toHit.setSideTable(te.sideTable(priorSrc));
@@ -261,30 +261,30 @@ public class RamAttackAction extends AbstractAttackAction {
      * 
      */
    public static int getDamageFor(Aero entity, Aero target) {
-   	int avel = entity.getCurrentVelocity();
-   	int tvel = target.getCurrentVelocity();
-   	return getDamageFor(entity, target, entity.getPriorPosition(), avel, tvel);
+       int avel = entity.getCurrentVelocity();
+       int tvel = target.getCurrentVelocity();
+       return getDamageFor(entity, target, entity.getPriorPosition(), avel, tvel);
    }
    
    public static int getDamageFor(Aero entity, Aero target, Coords atthex, int avel, int tvel) {
-   	int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
-   	return (int) Math.ceil(
-   			(entity.getWeight() / 10.0) * netv);
+       int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
+       return (int) Math.ceil(
+               (entity.getWeight() / 10.0) * netv);
    }
      
    /**
     * Damage that an Aero suffers after a successful charge.
     */
    public static int getDamageTakenBy(Aero entity, Aero target) {
-   	int avel = entity.getCurrentVelocity();
-   	int tvel = target.getCurrentVelocity();
-   	return getDamageTakenBy(entity, target, entity.getPriorPosition(), avel, tvel);
+       int avel = entity.getCurrentVelocity();
+       int tvel = target.getCurrentVelocity();
+       return getDamageTakenBy(entity, target, entity.getPriorPosition(), avel, tvel);
    }
    
    public static int getDamageTakenBy(Aero entity, Aero target, Coords atthex, int avel, int tvel) {
-   	int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
-   	return (int) Math.ceil(
-   			(target.getWeight() / 10.0) * netv);
+       int netv = Compute.getNetVelocity(atthex, target, avel, tvel);
+       return (int) Math.ceil(
+               (target.getWeight() / 10.0) * netv);
    }
 
 }

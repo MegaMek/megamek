@@ -101,7 +101,7 @@ public class SquadronMapSet implements DisplayMapSet{
         content.addArea(armorNameLabel);
         for(int i = 0; i < FighterSquadron.MAX_SIZE; i++){
             int shiftX = (i % 3) * stepX;
-        	int shiftY = (i / 3) * stepY + 110;
+            int shiftY = (i / 3) * stepY + 110;
             unitAreas[i] = new PMPicArea(fighterImage);
             unitAreas[i].translate(shiftX, shiftY);
             content.addArea(unitAreas[i]);
@@ -175,8 +175,8 @@ public class SquadronMapSet implements DisplayMapSet{
         drawArmorImage(armorImage, armor, orig);
         for(int i = 0; i < fighters ; i++) {
             if(i >= active){
-            	//then this one is dead (put an X through it?)
-            	deadUnit[i].setVisible(true);
+                //then this one is dead (put an X through it?)
+                deadUnit[i].setVisible(true);
             }
         }
     }
@@ -255,24 +255,24 @@ public class SquadronMapSet implements DisplayMapSet{
     }
     
     private String getCriticalHitTally(int tally, int max) {
-    	
-    	String marks = "";
-    	
-    	if(tally < 1) {
-    		return marks;
-    	}
-    	
-    	if(tally >= max) {
-    		marks = "Out";
-    		return marks;
-    	}
-    	
-    	while(tally > 0) {
-    		marks = marks + "X";
-    		tally--;
-    	}
-    	
-    	return marks;
+        
+        String marks = "";
+        
+        if(tally < 1) {
+            return marks;
+        }
+        
+        if(tally >= max) {
+            marks = "Out";
+            return marks;
+        }
+        
+        while(tally > 0) {
+            marks = marks + "X";
+            tally--;
+        }
+        
+        return marks;
     }
 
 }

@@ -521,51 +521,51 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             if(sensors > 0 && sensors < 3) 
                 toHit.addModifier(sensors, "sensor damage");
             if(sensors>2)
-            	toHit.addModifier(+5, "sensors destroyed");
+                toHit.addModifier(+5, "sensors destroyed");
             
             //FCS hits
             int fcs = aero.getFCSHits();
             if(fcs > 0)
-            	toHit.addModifier(fcs*2, "fcs damage");
+                toHit.addModifier(fcs*2, "fcs damage");
             
             //pilot hits
             int pilothits = aero.getCrew().getHits();
             if(pilothits > 0)
-            	toHit.addModifier(pilothits, "pilot hits");
+                toHit.addModifier(pilothits, "pilot hits");
             
             //out of control
             if(aero.isOutControlTotal()) {
-            	toHit.addModifier(+2, "out-of-control");
+                toHit.addModifier(+2, "out-of-control");
             }
             
             if(aero instanceof Jumpship) {
-            	Jumpship js = (Jumpship)aero;
-            	int cic = js.getCICHits();
-            	if(cic > 0) {
-            		toHit.addModifier(cic*2,"CIC damage");
-            	}
+                Jumpship js = (Jumpship)aero;
+                int cic = js.getCICHits();
+                if(cic > 0) {
+                    toHit.addModifier(cic*2,"CIC damage");
+                }
             }
             
             //targeting mods for evasive action by large craft
             if(aero.isEvading()) {
-            	toHit.addModifier(+2,"attacker is evading");
+                toHit.addModifier(+2,"attacker is evading");
             }
             
             //check for heavy gauss rifle on fighter of small craft
             if(weapon.getName().indexOf("Heavy Gauss Rifle") != -1 
-            		&& ae instanceof Aero && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) {
-            	toHit.addModifier(+1,"weapon to-hit modifier");
+                    && ae instanceof Aero && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) {
+                toHit.addModifier(+1,"weapon to-hit modifier");
             }
             
             //check for NOE
             //if the target is NOE in atmosphere
-        	if(game.getBoard().inAtmosphere() && 1 == (ae.getElevation() - game.getBoard().getHex(ae.getPosition()).ceiling())) {
-        		if(ae.isOmni()) {
-        			toHit.addModifier(+1, "attacker is flying at NOE (omni)");
-        		} else {
-        			toHit.addModifier(+2, "attacker is flying at NOE");
-        		}
-        	}
+            if(game.getBoard().inAtmosphere() && 1 == (ae.getElevation() - game.getBoard().getHex(ae.getPosition()).ceiling())) {
+                if(ae.isOmni()) {
+                    toHit.addModifier(+1, "attacker is flying at NOE (omni)");
+                } else {
+                    toHit.addModifier(+2, "attacker is flying at NOE");
+                }
+            }
             
             //check for particular kinds of weapons in weapon bays
             if(ae.usesWeaponBays()) {
@@ -640,43 +640,43 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
         
         if(target instanceof Aero) {
-        	       	 
+                        
             //get direction of attack
             int side = toHit.getSideTable();
             //if this is an aero attack using advanced movement rules then determine side differently
             if(target instanceof Aero && game.useVectorMove()) {
-            	side = ((Entity)target).chooseSide(ae.getPosition(), Compute.usePrior(ae, target));
+                side = ((Entity)target).chooseSide(ae.getPosition(), Compute.usePrior(ae, target));
             }
             if(side == ToHitData.SIDE_FRONT)
-            	toHit.addModifier(+1, "attack against nose");
+                toHit.addModifier(+1, "attack against nose");
             if(side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
-            	toHit.addModifier(+2, "attack against side");
-        	
-        	Aero a = (Aero)target;
-        	
-        	//is the target at zero velocity
-        	if(a.getCurrentVelocity() == 0) {
-        		toHit.addModifier(-2,"target is not moving");
-        	}
-        	
-        	//is target evading
-        	if(a.isEvading()) {
-        		if(target instanceof SmallCraft) {
-        			toHit.addModifier(+2, "target is evading");
-        		} else  if (target instanceof Jumpship) {
-        			toHit.addModifier(+1, "target is evading");
-        		} else {
-        			toHit.addModifier(+3,"target is evading");
-        		}
-        	}   
-        	
-        	//capital weapon (except missiles) penalties at small targets
-        	if(wtype.isCapital() && 
-        			wtype.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE 
-        			&& wtype.getAtClass() != WeaponType.CLASS_AR10 
-        			&& (a.getWeight() < 500 || target instanceof FighterSquadron)) {
-        		toHit.addModifier(+5,"capital weapon at small target");
-        	}
+                toHit.addModifier(+2, "attack against side");
+            
+            Aero a = (Aero)target;
+            
+            //is the target at zero velocity
+            if(a.getCurrentVelocity() == 0) {
+                toHit.addModifier(-2,"target is not moving");
+            }
+            
+            //is target evading
+            if(a.isEvading()) {
+                if(target instanceof SmallCraft) {
+                    toHit.addModifier(+2, "target is evading");
+                } else  if (target instanceof Jumpship) {
+                    toHit.addModifier(+1, "target is evading");
+                } else {
+                    toHit.addModifier(+3,"target is evading");
+                }
+            }   
+            
+            //capital weapon (except missiles) penalties at small targets
+            if(wtype.isCapital() && 
+                    wtype.getAtClass() != WeaponType.CLASS_CAPITAL_MISSILE 
+                    && wtype.getAtClass() != WeaponType.CLASS_AR10 
+                    && (a.getWeight() < 500 || target instanceof FighterSquadron)) {
+                toHit.addModifier(+5,"capital weapon at small target");
+            }
         }
         
         // Vehicles may suffer from criticals
@@ -1208,11 +1208,11 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         
         //Aeros in atmosphere can hit above and below
         if( ae instanceof Aero && target instanceof Aero && game.getBoard().inAtmosphere()) {
-        	if((aElev - tElev) > 2) {
-        		toHit.setHitTable(ToHitData.HIT_ABOVE);
-        	} else if((tElev - aElev) > 2) {
-        		toHit.setHitTable(ToHitData.HIT_BELOW);
-        	}
+            if((aElev - tElev) > 2) {
+                toHit.setHitTable(ToHitData.HIT_ABOVE);
+            } else if((tElev - aElev) > 2) {
+                toHit.setHitTable(ToHitData.HIT_BELOW);
+            }
         }
 
         // Change hit table for partial cover, accomodate for partial
@@ -1470,43 +1470,43 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
 
         if (ae instanceof Aero) {
-        	Aero aero = (Aero)ae;        	
-        	//FCS hits
+            Aero aero = (Aero)ae;            
+            //FCS hits
             int fcs = aero.getFCSHits();
             if(fcs > 2 )
-            	return "Fire control system destroyed.";
+                return "Fire control system destroyed.";
             
             if(aero instanceof Jumpship) {
-            	Jumpship js = (Jumpship)aero;
-            	int cic = js.getCICHits();
-            	if(cic > 2)
-            		return "CIC destroyed.";
+                Jumpship js = (Jumpship)aero;
+                int cic = js.getCICHits();
+                if(cic > 2)
+                    return "CIC destroyed.";
             }
             
             if(aero.isEvading() && !(ae instanceof Dropship) && !(ae instanceof Jumpship)) 
-            	return "Attacker is evading.";
+                return "Attacker is evading.";
                         
             //if space bombing, then can't do other attacks
             for ( Enumeration i = game.getActions();
-            	i.hasMoreElements(); ) {
-            	Object o = i.nextElement();
-            	if (!(o instanceof WeaponAttackAction)) {
-            		continue;
-            	}
-            	WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-            	if (prevAttack.getEntityId() == attackerId) {
-      	
-            		if ( weaponId != prevAttack.getWeaponId() && 
-            				ae.getEquipment(prevAttack.getWeaponId()).getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {           			
-            			return "Already space bombing";
-            		}
-            	}
+                i.hasMoreElements(); ) {
+                Object o = i.nextElement();
+                if (!(o instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                if (prevAttack.getEntityId() == attackerId) {
+          
+                    if ( weaponId != prevAttack.getWeaponId() && 
+                            ae.getEquipment(prevAttack.getWeaponId()).getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {                       
+                        return "Already space bombing";
+                    }
+                }
             }
             
             //aeros cannot make artillery shots (really I should just change the targetable
             //hexes, but I cannot find it)
             if(isArtilleryIndirect || isArtilleryDirect || isArtilleryFLAK) {
-            	return "This unit cannot make artillery attacks";
+                return "This unit cannot make artillery attacks";
             }
             
         }
@@ -1605,87 +1605,87 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         
         //limit large craft to zero net heat and to heat by arc
         if(ae.usesWeaponBays()) {
-        	
-        	int totalheat = 0;
-        	int heatcap = ae.getHeatCapacity();
-        	
-        	//create an array of booleans of locations
-        	boolean[] usedFrontArc = new boolean[ae.locations()];
-        	boolean[] usedRearArc = new boolean[ae.locations()];
-        	for(int i = 0; i<ae.locations(); i++) {
-        		usedFrontArc[i] = false;
-        		usedRearArc[i] = false;
+            
+            int totalheat = 0;
+            int heatcap = ae.getHeatCapacity();
+            
+            //create an array of booleans of locations
+            boolean[] usedFrontArc = new boolean[ae.locations()];
+            boolean[] usedRearArc = new boolean[ae.locations()];
+            for(int i = 0; i<ae.locations(); i++) {
+                usedFrontArc[i] = false;
+                usedRearArc[i] = false;
             }
-       	
-        	for ( Enumeration i = game.getActions();
+           
+            for ( Enumeration i = game.getActions();
             i.hasMoreElements(); ) {
-        		Object o = i.nextElement();
-        		if (!(o instanceof WeaponAttackAction)) {
-        			continue;
-        		}
-        		WeaponAttackAction prevAttack = (WeaponAttackAction)o;
-        		if (prevAttack.getEntityId() == attackerId && weaponId != prevAttack.getWeaponId()) {        			
-        			Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
-        			int loc = prevWeapon.getLocation();
-        			boolean rearMount = prevWeapon.isRearMounted();
-        			if(game.getOptions().booleanOption("heat_by_bay")) {
-        				for(int bwId: prevWeapon.getBayWeapons()) {
-        					totalheat += ae.getEquipment(bwId).getCurrentHeat();
-        				}
-        			} else {
-        				if(!rearMount) {
-        					if(!usedFrontArc[loc]) {
-        						totalheat += ae.getHeatInArc(loc, rearMount);
-        						usedFrontArc[loc] = true;
-        					}
-        				} else {
-        					if(!usedRearArc[loc]) {
-        						totalheat += ae.getHeatInArc(loc, rearMount);
-        						usedRearArc[loc] = true;
-        					}
-        				}	       			
-        			}
-        		}
-        	}
-        	
-        	//now check the current heat
-        	int loc = weapon.getLocation();
-			boolean rearMount = weapon.isRearMounted();
-			int currentHeat = ae.getHeatInArc(loc, rearMount);
-			if(game.getOptions().booleanOption("heat_by_bay")) {
-				for(int bwId: weapon.getBayWeapons()) {
-					currentHeat = ae.getEquipment(bwId).getCurrentHeat();
-				}
-			}
-			//check to see if this is currently the only arc being fired
-			boolean onlyArc = true;
-			for(int nLoc = 0; nLoc < ae.locations(); nLoc++) {
-				if(nLoc == loc) {
-					continue;
-				} else {
-					if(usedFrontArc[nLoc] || usedRearArc[nLoc]) {
-						onlyArc = false;
-						break;
-					}
-				}
-			}
-			
-			if(game.getOptions().booleanOption("heat_by_bay")) {
-				if((totalheat + currentHeat) > heatcap) {
-					//FIXME: This is causing weird problems (try firing all the Suffen's nose weapons)
-					return "heat exceeds capacity";
-				}
-			} else {			
-				if(!rearMount) {
-					if(!usedFrontArc[loc] && (totalheat + currentHeat) > heatcap && !onlyArc) {
-						return "heat exceeds capacity";
-					}
-				} else {
-					if(!usedRearArc[loc] && (totalheat + currentHeat) > heatcap && !onlyArc) {
-						return "heat exceeds capacity";
-					}
-				}
-			}
+                Object o = i.nextElement();
+                if (!(o instanceof WeaponAttackAction)) {
+                    continue;
+                }
+                WeaponAttackAction prevAttack = (WeaponAttackAction)o;
+                if (prevAttack.getEntityId() == attackerId && weaponId != prevAttack.getWeaponId()) {                    
+                    Mounted prevWeapon = ae.getEquipment(prevAttack.getWeaponId());
+                    int loc = prevWeapon.getLocation();
+                    boolean rearMount = prevWeapon.isRearMounted();
+                    if(game.getOptions().booleanOption("heat_by_bay")) {
+                        for(int bwId: prevWeapon.getBayWeapons()) {
+                            totalheat += ae.getEquipment(bwId).getCurrentHeat();
+                        }
+                    } else {
+                        if(!rearMount) {
+                            if(!usedFrontArc[loc]) {
+                                totalheat += ae.getHeatInArc(loc, rearMount);
+                                usedFrontArc[loc] = true;
+                            }
+                        } else {
+                            if(!usedRearArc[loc]) {
+                                totalheat += ae.getHeatInArc(loc, rearMount);
+                                usedRearArc[loc] = true;
+                            }
+                        }                       
+                    }
+                }
+            }
+            
+            //now check the current heat
+            int loc = weapon.getLocation();
+            boolean rearMount = weapon.isRearMounted();
+            int currentHeat = ae.getHeatInArc(loc, rearMount);
+            if(game.getOptions().booleanOption("heat_by_bay")) {
+                for(int bwId: weapon.getBayWeapons()) {
+                    currentHeat = ae.getEquipment(bwId).getCurrentHeat();
+                }
+            }
+            //check to see if this is currently the only arc being fired
+            boolean onlyArc = true;
+            for(int nLoc = 0; nLoc < ae.locations(); nLoc++) {
+                if(nLoc == loc) {
+                    continue;
+                } else {
+                    if(usedFrontArc[nLoc] || usedRearArc[nLoc]) {
+                        onlyArc = false;
+                        break;
+                    }
+                }
+            }
+            
+            if(game.getOptions().booleanOption("heat_by_bay")) {
+                if((totalheat + currentHeat) > heatcap) {
+                    //FIXME: This is causing weird problems (try firing all the Suffen's nose weapons)
+                    return "heat exceeds capacity";
+                }
+            } else {            
+                if(!rearMount) {
+                    if(!usedFrontArc[loc] && (totalheat + currentHeat) > heatcap && !onlyArc) {
+                        return "heat exceeds capacity";
+                    }
+                } else {
+                    if(!usedRearArc[loc] && (totalheat + currentHeat) > heatcap && !onlyArc) {
+                        return "heat exceeds capacity";
+                    }
+                }
+            }
         }
 
         // MG arrays

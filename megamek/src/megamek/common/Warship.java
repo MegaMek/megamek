@@ -27,18 +27,18 @@ import megamek.common.weapons.BayWeapon;
  * @author Jay Lawson
  */
 public class Warship extends Jumpship {
-	
-//	 locations
+    
+//     locations
     public static final int        LOC_NOSE               = 0;
     public static final int        LOC_FLS                = 1;
     public static final int        LOC_FRS                = 2;
     public static final int        LOC_AFT                = 3;
     public static final int        LOC_ALS                = 4;
     public static final int        LOC_ARS                = 5;
-    public static final int	       LOC_LBS				  = 6;
-    public static final int	       LOC_RBS				  = 7;
-	
-	protected static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "LBS", "RBS" };
+    public static final int           LOC_LBS                  = 6;
+    public static final int           LOC_RBS                  = 7;
+    
+    protected static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS", "LBS", "RBS" };
     protected static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side", "Aft Right Side", "Left Broadsides", "Right Broadsides" };
     
     private int damThresh[] = {0,0,0,0,0,0,0,0};
@@ -52,7 +52,7 @@ public class Warship extends Jumpship {
     }
     
     public String[] getLocationNames() { 
-    	return LOCATION_NAMES; 
+        return LOCATION_NAMES; 
     }
     
     public int locations() {
@@ -64,102 +64,102 @@ public class Warship extends Jumpship {
     }
     
     public int getThresh(int loc) {
-    	return damThresh[loc];
+        return damThresh[loc];
     }
     
     public void autoSetThresh()
     {
-    	for(int x = 0; x < locations(); x++)
-    	{
-    		initializeThresh(x);
-    	}	
+        for(int x = 0; x < locations(); x++)
+        {
+            initializeThresh(x);
+        }    
     }
     
     public void setKFIntegrity(int kf) {
-    	this.kf_integrity = kf;
+        this.kf_integrity = kf;
     }
     
     public int getKFIntegrity() {
-    	return kf_integrity;
+        return kf_integrity;
     }
     
     public void setSailIntegrity(int sail) {
-    	this.sail_integrity = sail;
+        this.sail_integrity = sail;
     }
     
     public int getSailIntegrity() {
-    	return sail_integrity;
+        return sail_integrity;
     }
     
     public void initializeSailIntegrity() {
-    	int integrity = 1 + (int)Math.round((30.0 + this.weight / 20000.0)/ 20.0);
-    	this.setSailIntegrity(integrity);
+        int integrity = 1 + (int)Math.round((30.0 + this.weight / 20000.0)/ 20.0);
+        this.setSailIntegrity(integrity);
     }
     
     public void initializeKFIntegrity() {
-    	int integrity = (int)Math.round(2 + 0.4525 * this.weight/25000.0);
-    	this.setKFIntegrity(integrity);
+        int integrity = (int)Math.round(2 + 0.4525 * this.weight/25000.0);
+        this.setKFIntegrity(integrity);
     }
     
     public boolean canJump() {
-    	return kf_integrity > 0;
+        return kf_integrity > 0;
     }
     
     //do damage threshhold using standard armor values
     //or I will have a big rounding issue
     public void initializeThresh(int loc)
     {
-    	int nThresh = (int)Math.ceil(getArmor(loc)/ 10.0 );
-    	setThresh(nThresh,loc);
+        int nThresh = (int)Math.ceil(getArmor(loc)/ 10.0 );
+        setThresh(nThresh,loc);
     }
     
     public int getStandardDamage(int loc) {
-    	return standard_damage[loc];
+        return standard_damage[loc];
     }
     
     public void resetStandardDamage() {
-    	for(int i = 0; i < locations(); i++) {
-    		standard_damage[i] = 0;
-    	}
+        for(int i = 0; i < locations(); i++) {
+            standard_damage[i] = 0;
+        }
     }
     
     public void addStandardDamage(int damage, HitData hit) {
-    	standard_damage[hit.getLocation()] = standard_damage[hit.getLocation()] + damage;
+        standard_damage[hit.getLocation()] = standard_damage[hit.getLocation()] + damage;
     }
     
-	//broadside weapon arcs
-	public int getWeaponArc(int wn) {
+    //broadside weapon arcs
+    public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
         
         
         switch (mounted.getLocation()) {
         case LOC_NOSE:
-        	return Compute.ARC_NOSE;
+            return Compute.ARC_NOSE;
         case LOC_FRS:
-        	return Compute.ARC_RIGHTSIDE_SPHERE;
+            return Compute.ARC_RIGHTSIDE_SPHERE;
         case LOC_FLS:
-        	return Compute.ARC_LEFTSIDE_SPHERE;
+            return Compute.ARC_LEFTSIDE_SPHERE;
         case LOC_ARS:
-        	return Compute.ARC_RIGHTSIDEA_SPHERE;
+            return Compute.ARC_RIGHTSIDEA_SPHERE;
         case LOC_ALS:
-        	return Compute.ARC_LEFTSIDEA_SPHERE;
+            return Compute.ARC_LEFTSIDEA_SPHERE;
         case LOC_AFT:
-        	return Compute.ARC_AFT;
+            return Compute.ARC_AFT;
         case LOC_LBS:
-        	return Compute.ARC_LEFT_BROADSIDE;
+            return Compute.ARC_LEFT_BROADSIDE;
         case LOC_RBS:
-        	return Compute.ARC_RIGHT_BROADSIDE;
+            return Compute.ARC_RIGHT_BROADSIDE;
         default:
-        	return Compute.ARC_360;
+            return Compute.ARC_360;
         }        
     }
-	
-	/*This is my educated guess as to what BV2.0 will look like for 
-	 * jumpships, warships, and space stations. it is based on just 
-	 * doing the same calculations as in
-	 * the TechManual, but with the corrected multipliers
-	 */
-	public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
+    
+    /*This is my educated guess as to what BV2.0 will look like for 
+     * jumpships, warships, and space stations. it is based on just 
+     * doing the same calculations as in
+     * the TechManual, but with the corrected multipliers
+     */
+    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -204,14 +204,14 @@ public class Warship extends Jumpship {
         for (Mounted mounted : getTotalWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             if(wtype instanceof BayWeapon) {
-        		continue;
-        	}
+                continue;
+            }
             double weaponHeat = wtype.getHeat();
             
             // only count non-damaged equipment
             if (mounted.isMissing() || mounted.isHit() ||
-            		mounted.isDestroyed() || mounted.isBreached()) {
-            	continue;
+                    mounted.isDestroyed() || mounted.isBreached()) {
+                continue;
             }
             
             // one shot weapons count 1/4
@@ -264,8 +264,8 @@ public class Warship extends Jumpship {
             for (Mounted mounted : getTotalWeaponList()) {
                 WeaponType wtype = (WeaponType)mounted.getType();
                 if(wtype instanceof BayWeapon) {
-            		continue;
-            	}
+                    continue;
+                }
                 double dBV = wtype.getBV(this);
                 
                 // don't count destroyed equipment
@@ -297,8 +297,8 @@ public class Warship extends Jumpship {
             for (Mounted weapon : weapons) {
                 WeaponType wtype = (WeaponType)weapon.getType();
                 if(wtype instanceof BayWeapon) {
-            		continue;
-            	}
+                    continue;
+                }
                 double dBV = wtype.getBV(this);
                 // don't count destroyed equipment
                 if (weapon.isDestroyed())
@@ -404,11 +404,11 @@ public class Warship extends Jumpship {
             
             double curBV = atype.getBV(this);
             if(mounted.byShot()) {
-            	double tons = (double)mounted.getShotsLeft() / atype.getShots();
-        		if(atype.getAmmoRatio() > 0) {
-        			tons = (double)mounted.getShotsLeft() * atype.getAmmoRatio();
-        		}
-        		curBV *= tons;
+                double tons = (double)mounted.getShotsLeft() / atype.getShots();
+                if(atype.getAmmoRatio() > 0) {
+                    tons = (double)mounted.getShotsLeft() * atype.getAmmoRatio();
+                }
+                curBV *= tons;
             }
             
             
@@ -417,22 +417,22 @@ public class Warship extends Jumpship {
                 Player tmpP = getOwner();
                 
                 if ( tmpP != null ){
-	                // Okay, actually check for friendly TAG.
-	                if (tmpP.hasTAG())
-	                    tagBV += curBV;
-	                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-	                   for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-	                        Team m = (Team)e.nextElement();
-	                        if (m.getId() == tmpP.getTeam()) {
-	                            if (m.hasTAG(game)) {
-	                                tagBV += curBV;
-	                            }
-	                            // A player can't be on two teams.
-	                            // If we check his team and don't give the penalty, that's it.
-	                            break;
-	                        }
-	                    }
-	                }
+                    // Okay, actually check for friendly TAG.
+                    if (tmpP.hasTAG())
+                        tagBV += curBV;
+                    else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+                       for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
+                            Team m = (Team)e.nextElement();
+                            if (m.getId() == tmpP.getTeam()) {
+                                if (m.hasTAG(game)) {
+                                    tagBV += curBV;
+                                }
+                                // A player can't be on two teams.
+                                // If we check his team and don't give the penalty, that's it.
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             String key = atype.getAmmoType()+":"+atype.getRackSize();
@@ -512,7 +512,7 @@ public class Warship extends Jumpship {
         
         // don't factor pilot in if we are just calculating BV for C3 extra BV
         if (ignoreC3)
-        	return finalBV;
+            return finalBV;
         return retVal;
     }
     
@@ -520,7 +520,7 @@ public class Warship extends Jumpship {
      * Calculates the battle value of this ASF
      */
     public int calculateBattleValue(boolean assumeLinkedC3) {
-    	return calculateBattleValue(assumeLinkedC3, false);
+        return calculateBattleValue(assumeLinkedC3, false);
     }
     
     public double getCost() {
@@ -561,7 +561,7 @@ public class Warship extends Jumpship {
         
         //HPG
         if(hasHPG()) {
-        	cost += 1000000000;
+            cost += 1000000000;
         }
         
         //fuel tanks
@@ -592,7 +592,7 @@ public class Warship extends Jumpship {
         driveCost *= 5;
         //lithium fusion?
         if(hasLF()) {
-        	driveCost *= 3;
+            driveCost *= 3;
         }
         
         cost += driveCost;
@@ -610,13 +610,13 @@ public class Warship extends Jumpship {
         int baydoors = 0;
         int bayCost = 0;
         for(Bay next:getTransportBays()) {
-        	baydoors += next.getDoors();
-        	if(next instanceof MechBay || next instanceof ASFBay || next instanceof SmallCraftBay) {
-        		bayCost += 20000 * next.totalSpace;
-        	}
-        	if(next instanceof LightVehicleBay || next instanceof HeavyVehicleBay) {
-        		bayCost += 20000 * next.totalSpace;
-        	}
+            baydoors += next.getDoors();
+            if(next instanceof MechBay || next instanceof ASFBay || next instanceof SmallCraftBay) {
+                bayCost += 20000 * next.totalSpace;
+            }
+            if(next instanceof LightVehicleBay || next instanceof HeavyVehicleBay) {
+                bayCost += 20000 * next.totalSpace;
+            }
         }
         
         cost += bayCost + baydoors * 1000;

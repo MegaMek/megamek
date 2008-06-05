@@ -40,7 +40,7 @@ public class WhiteSharkHandler extends AmmoWeaponHandler {
     }
     
     protected int getCapMisMod() {
-    	return 9;
+        return 9;
     }
 
 }

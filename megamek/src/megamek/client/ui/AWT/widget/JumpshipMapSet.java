@@ -46,16 +46,16 @@ public class JumpshipMapSet implements DisplayMapSet{
                                           new int[]{60,60,160,160},4);
        //Left front armor
     private Polygon leftFSArmor = new Polygon(new int[]{20,40,40,20},
-    											new int[]{60,60,120,120},4);  
+                                                new int[]{60,60,120,120},4);  
     //Left aft armor
     private Polygon leftASArmor = new Polygon(new int[]{20,40,40,20},
-    											new int[]{120,120,160,160},4);  
+                                                new int[]{120,120,160,160},4);  
     
     private Polygon rightFSArmor = new Polygon(new int[]{60,80,80,60},
-										new int[]{60,60,120,120},4);  
+                                        new int[]{60,60,120,120},4);  
     //right aft armor
     private Polygon rightASArmor = new Polygon(new int[]{60,80,80,60},
-    										new int[]{120,120,160,160},4);  
+                                            new int[]{120,120,160,160},4);  
 
       //Rear armor
     private Polygon aftArmor = new Polygon (new int[]{20,0,40,40,60,60,100,80},
@@ -114,7 +114,7 @@ public class JumpshipMapSet implements DisplayMapSet{
     }
     
     private void setContent(){
-    	
+        
       for(int i = 0; i < 6; i++){
         content.addArea(areas[i]);
         content.addArea(labels[i]);
@@ -257,24 +257,24 @@ public class JumpshipMapSet implements DisplayMapSet{
     }
     
     private String getCriticalHitTally(int tally, int max) {
-    	
-    	String marks = "";
-    	
-    	if(tally < 1) {
-    		return marks;
-    	}
-    	
-    	if(tally >= max) {
-    		marks = "Out";
-    		return marks;
-    	}
-    	
-    	while(tally > 0) {
-    		marks = marks + "X";
-    		tally--;
-    	}
-    	
-    	return marks;
+        
+        String marks = "";
+        
+        if(tally < 1) {
+            return marks;
+        }
+        
+        if(tally >= max) {
+            marks = "Out";
+            return marks;
+        }
+        
+        while(tally > 0) {
+            marks = marks + "X";
+            tally--;
+        }
+        
+        return marks;
     }
     
  }

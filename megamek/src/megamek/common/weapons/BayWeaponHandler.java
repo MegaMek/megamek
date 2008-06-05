@@ -50,44 +50,44 @@ public class BayWeaponHandler extends WeaponHandler {
      * @return an <code>int</code> representing the attack value at that range.
      */
     protected int calcAttackValue() {
-    	int distance = ae.getPosition().distance(target.getPosition());
-    	double av = 0;
-    	int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
-    	
-    	for(int wId: weapon.getBayWeapons()) {
+        int distance = ae.getPosition().distance(target.getPosition());
+        double av = 0;
+        int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
+        
+        for(int wId: weapon.getBayWeapons()) {
             Mounted m = ae.getEquipment(wId);
             if(!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
-            	WeaponType bayWType = ((WeaponType)m.getType());
-            	//need to cycle through weapons and add av
-            	if(range == WeaponType.RANGE_SHORT) {
-            		av = av + bayWType.getShortAV();
-            	} else if(range == WeaponType.RANGE_MED) {
-            		av = av + bayWType.getMedAV();
-            	} else if (range == WeaponType.RANGE_LONG) {
-            		av = av + bayWType.getLongAV();
-            	} else if (range == WeaponType.RANGE_EXT) {
-            		av = av + bayWType.getExtAV();
-            	}
+                WeaponType bayWType = ((WeaponType)m.getType());
+                //need to cycle through weapons and add av
+                if(range == WeaponType.RANGE_SHORT) {
+                    av = av + bayWType.getShortAV();
+                } else if(range == WeaponType.RANGE_MED) {
+                    av = av + bayWType.getMedAV();
+                } else if (range == WeaponType.RANGE_LONG) {
+                    av = av + bayWType.getLongAV();
+                } else if (range == WeaponType.RANGE_EXT) {
+                    av = av + bayWType.getExtAV();
+                }
             }
-    	}
-    	return (int)Math.ceil(av);
+        }
+        return (int)Math.ceil(av);
     }
     
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-        	if(game.getOptions().booleanOption("heat_by_bay")) {
-        		for(int wId:weapon.getBayWeapons()) {
+            if(game.getOptions().booleanOption("heat_by_bay")) {
+                for(int wId:weapon.getBayWeapons()) {
                     Mounted m = ae.getEquipment(wId);
                     ae.heatBuildup += m.getCurrentHeat();
-        		}
-        	} else {       	
-        		int loc = weapon.getLocation();
-        		boolean rearMount = weapon.isRearMounted();
-        		if(!ae.hasArcFired(loc, rearMount)) {
-        			ae.heatBuildup += ae.getHeatInArc(loc, rearMount);
-        			ae.setArcFired(loc, rearMount);
-        		}
-        	}
+                }
+            } else {           
+                int loc = weapon.getLocation();
+                boolean rearMount = weapon.isRearMounted();
+                if(!ae.hasArcFired(loc, rearMount)) {
+                    ae.heatBuildup += ae.getHeatInArc(loc, rearMount);
+                    ae.setArcFired(loc, rearMount);
+                }
+            }
         }
     }
     

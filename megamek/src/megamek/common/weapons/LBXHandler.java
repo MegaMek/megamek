@@ -71,8 +71,8 @@ public class LBXHandler extends AmmoWeaponHandler {
      * @return an <code>int</code> representing the attack value at that range.
      */
     protected int calcAttackValue() {
-    	//basically 60% of racksize
-    	return (int)Math.floor(0.6*wtype.getRackSize());
+        //basically 60% of racksize
+        return (int)Math.floor(0.6*wtype.getRackSize());
     }
 
     /*

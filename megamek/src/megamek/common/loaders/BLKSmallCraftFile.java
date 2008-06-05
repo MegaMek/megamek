@@ -44,7 +44,7 @@ import megamek.common.util.*;
 
 public class BLKSmallCraftFile extends BLKFile implements IMechLoader {    
     
-	//armor locatioms
+    //armor locatioms
     public static final int NOSE = 0;
     public static final int RW = 1;
     public static final int LW = 2;
@@ -114,8 +114,8 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         String sMotion = dataFile.getDataAsString("motion_type")[0];
         int nMotion = 16;
         if(sMotion.equals("spheroid")) {
-        	nMotion = 17;
-        	a.setSpheroid(true);
+            nMotion = 17;
+            a.setSpheroid(true);
         } 
         a.setMovementMode(nMotion);
         
@@ -176,25 +176,25 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
             String[] transporters = dataFile.getDataAsString("transporters");
             // Walk the array of transporters.
             for (int index = 0; index < transporters.length; index++) {
-            	if ( transporters[index].startsWith( "InfantryBay:", 0 ) ) {
-            		String numbers = transporters[index].substring(12);
-            		String temp[] = numbers.split(":");
-            		int size = Integer.parseInt(temp[0]);
-            		int doors = Integer.parseInt(temp[1]);
-            		a.addTransporter( new InfantryBay(size, doors) );
-            	} else if ( transporters[index].startsWith( "BattleArmorBay:", 0 ) ) {
-            		String numbers = transporters[index].substring(15);
-            		String temp[] = numbers.split(":");
-            		int size = Integer.parseInt(temp[0]);
-            		int doors = Integer.parseInt(temp[1]);
-            		a.addTransporter( new BattleArmorBay(size, doors) );
-            	} else if ( transporters[index].startsWith( "CargoBay:", 0 ) ) {
-            		String numbers = transporters[index].substring(9);
-            		String temp[] = numbers.split(":");
-            		int size = Integer.parseInt(temp[0]);
-            		int doors = Integer.parseInt(temp[1]);
-            		a.addTransporter( new CargoBay(size, doors) );
-            	}
+                if ( transporters[index].startsWith( "InfantryBay:", 0 ) ) {
+                    String numbers = transporters[index].substring(12);
+                    String temp[] = numbers.split(":");
+                    int size = Integer.parseInt(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter( new InfantryBay(size, doors) );
+                } else if ( transporters[index].startsWith( "BattleArmorBay:", 0 ) ) {
+                    String numbers = transporters[index].substring(15);
+                    String temp[] = numbers.split(":");
+                    int size = Integer.parseInt(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter( new BattleArmorBay(size, doors) );
+                } else if ( transporters[index].startsWith( "CargoBay:", 0 ) ) {
+                    String numbers = transporters[index].substring(9);
+                    String temp[] = numbers.split(":");
+                    int size = Integer.parseInt(temp[0]);
+                    int doors = Integer.parseInt(temp[1]);
+                    a.addTransporter( new CargoBay(size, doors) );
+                }
             }
         }          
         
@@ -218,7 +218,7 @@ public class BLKSmallCraftFile extends BLKFile implements IMechLoader {
         
         if (saEquip[0] != null) {
             for (int x = 0; x < saEquip.length; x++) {
-            	rearMount = false;
+                rearMount = false;
                 String equipName = saEquip[x].trim();
                 
                 if (equipName.startsWith("(R) ")) {

@@ -9,6 +9,7 @@ v0.33.27-dev (SVN)
     Bundle. Needs JavaApplicationStub at the default location and jarbundler
     (from jarbundler.sourceforge.net), and works under MacOS X only
 + fixed indent (4 spaces instead of tabs) and added some javadoc comments
++ Bug: Infantry flamers not dealing correct amount of heat to target.
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

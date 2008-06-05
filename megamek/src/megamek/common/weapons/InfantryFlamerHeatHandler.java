@@ -64,7 +64,7 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
         r.add(troopersHit);
         r.add(" troopers ");
         r.add(toHit.getTableDesc() + ", causing " + damage[troopersHit - 1]
-                + "heat.");
+                + " heat.");
         r.newlines = 0;
         vPhaseReport.addElement(r);
         return damage[troopersHit - 1];
@@ -94,16 +94,14 @@ public class InfantryFlamerHeatHandler extends InfantryFlamerHandler {
                 missed = true;
                 return;
             }
-
-            int heat = wtype.getHeat();
             r = new Report(3400);
             r.subject = subjectId;
             r.indent(2);
-            r.add(heat);
+            r.add(hits);
             r.newlines = 0;
             r.choose(true);
             vPhaseReport.addElement(r);
-            entityTarget.heatFromExternal += heat;
+            entityTarget.heatFromExternal += hits;
         } else {
             super.handleEntityDamage(entityTarget, vPhaseReport, bldg, hits,
                     nCluster, nDamPerHit, bldgAbsorbs);

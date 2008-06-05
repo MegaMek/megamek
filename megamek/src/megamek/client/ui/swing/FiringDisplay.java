@@ -320,26 +320,26 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         panButtons.setLayout(new GridLayout(0, 8));
 
         switch (buttonLayout) {
-            case 0:
-                panButtons.add(butNext);
-                panButtons.add(butFire);
-                panButtons.add(butSkip);
-                panButtons.add(butNextTarg);
-                panButtons.add(butTwist);
-                panButtons.add(butFireMode);
-                panButtons.add(butFireClearWeaponJam);
-                panButtons.add(butMore);
-                break;
-            case 1:
-                panButtons.add(butNext);
-                panButtons.add(butFire);
-                panButtons.add(butFlipArms);
-                panButtons.add(butFindClub);
-                panButtons.add(butSpot);
-                panButtons.add(butSearchlight);
-                panButtons.add(butFireClearTurret);
-                panButtons.add(butMore);
-                break;
+        case 0:
+            panButtons.add(butNext);
+            panButtons.add(butFire);
+            panButtons.add(butSkip);
+            panButtons.add(butNextTarg);
+            panButtons.add(butTwist);
+            panButtons.add(butFireMode);
+            panButtons.add(butFireClearWeaponJam);
+            panButtons.add(butMore);
+            break;
+        case 1:
+            panButtons.add(butNext);
+            panButtons.add(butFire);
+            panButtons.add(butFlipArms);
+            panButtons.add(butFindClub);
+            panButtons.add(butSpot);
+            panButtons.add(butSearchlight);
+            panButtons.add(butFireClearTurret);
+            panButtons.add(butMore);
+            break;
         }
 
         validate();
@@ -515,9 +515,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         if (m == null || !m.getType().hasModes()) {
             return;
         }
-        
-        //Aeros cannot switch modes under standard rules
-        if(ce() instanceof Aero) {
+
+        // Aeros cannot switch modes under standard rules
+        if (ce() instanceof Aero) {
             return;
         }
 
@@ -1153,8 +1153,9 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Torso twist to the left or right
      * 
-     * @param target An <code>int</code> specifying wether we're twisting left
-     *            or right, 0 if we're twisting to the left, 1 if to the right.
+     * @param target
+     *            An <code>int</code> specifying wether we're twisting left or
+     *            right, 0 if we're twisting to the left, 1 if to the right.
      */
 
     private void torsoTwist(int target) {
@@ -1273,7 +1274,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        if (client.isMyTurn() && client.game.getPhase() != IGame.Phase.PHASE_FIRING) {
+        if (client.isMyTurn()
+                && client.game.getPhase() != IGame.Phase.PHASE_FIRING) {
             endMyTurn();
         }
         // if we're ending the firing phase, unregister stuff.
@@ -1374,8 +1376,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 && ce().isUsingSpotlight()
                 && ce().getCrew().isActive()
                 && SearchlightAttackAction.isPossible(client.game, cen, target,
-                        null)
-                && !(((Tank) ce()).getStunnedTurns() > 0));
+                        null) && !(((Tank) ce()).getStunnedTurns() > 0));
     }
 
     private void updateClearTurret() {
@@ -1648,7 +1649,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             // also, remove body
             if (target instanceof Tank) {
                 mask[Tank.LOC_BODY] = false;
-                Tank tank = (Tank)target;
+                Tank tank = (Tank) target;
                 if (tank.hasNoTurret()) {
                     mask[Tank.LOC_TURRET] = false;
                 }
@@ -1689,20 +1690,20 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                     }
                 }
             }
-            
+
             // remove main gun on protos that don't have one
             if (target instanceof Protomech) {
-                if (!((Protomech)target).hasMainGun()) {
+                if (!((Protomech) target).hasMainGun()) {
                     mask[Protomech.LOC_MAINGUN] = false;
                 }
             }
-            
+
             // remove squad location on BAs
             // also remove dead troopers
             if (target instanceof BattleArmor) {
                 mask[BattleArmor.LOC_SQUAD] = false;
             }
-            
+
             // remove locations hidden by partial cover
             if ((partialCover & LosEffects.COVER_HORIZONTAL) != 0) {
                 mask[Mech.LOC_LLEG] = false;
@@ -1754,7 +1755,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
 
         /**
-         *  Enables the radiobuttons in the dialog.
+         * Enables the radiobuttons in the dialog.
          */
         public void setEnableAll(boolean enableAll) {
             if (asd != null) {
@@ -1808,9 +1809,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 return;
             }
             // immobile mech or gun emplacement
-            allowAim = (target != null && ((target.isImmobile() 
-                    && (target instanceof Mech || target instanceof Tank))
-                        || target instanceof GunEmplacement));
+            allowAim = (target != null && ((target.isImmobile() && (target instanceof Mech || target instanceof Tank)) || target instanceof GunEmplacement));
             if (allowAim) {
                 aimingMode = IAimingModes.AIM_MODE_IMMOBILE;
                 return;
@@ -1852,59 +1851,59 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 return false;
             }
             switch (aimingMode) {
-                case (IAimingModes.AIM_MODE_NONE):
+            case (IAimingModes.AIM_MODE_NONE):
+                return false;
+            case (IAimingModes.AIM_MODE_IMMOBILE):
+                if (atype != null) {
+                    switch (atype.getAmmoType()) {
+                    case (AmmoType.T_SRM_STREAK):
+                    case (AmmoType.T_LRM_STREAK):
+                    case (AmmoType.T_LRM):
+                    case (AmmoType.T_LRM_TORPEDO):
+                    case (AmmoType.T_SRM):
+                    case (AmmoType.T_SRM_TORPEDO):
+                    case (AmmoType.T_MRM):
+                    case (AmmoType.T_NARC):
+                    case (AmmoType.T_AMS):
+                    case (AmmoType.T_ARROW_IV):
+                    case (AmmoType.T_LONG_TOM):
+                    case (AmmoType.T_SNIPER):
+                    case (AmmoType.T_THUMPER):
+                    case (AmmoType.T_SRM_ADVANCED):
+                    case (AmmoType.T_LRM_TORPEDO_COMBO):
+                    case (AmmoType.T_ATM):
+                    case (AmmoType.T_MML):
+                    case (AmmoType.T_EXLRM):
+                    case AmmoType.T_TBOLT_5:
+                    case AmmoType.T_TBOLT_10:
+                    case AmmoType.T_TBOLT_15:
+                    case AmmoType.T_TBOLT_20:
+                    case AmmoType.T_PXLRM:
+                    case AmmoType.T_HSRM:
+                    case AmmoType.T_MRM_STREAK:
+                        return false;
+                    }
+                    if (((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
+                            .getAmmoType() == AmmoType.T_AC_LBX_THB))
+                            && (atype.getMunitionType() == AmmoType.M_CLUSTER))
+                        return false;
+                }
+                break;
+            case (IAimingModes.AIM_MODE_TARG_COMP):
+                if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
+                        || wtype.hasFlag(WeaponType.F_PULSE)) {
                     return false;
-                case (IAimingModes.AIM_MODE_IMMOBILE):
-                    if (atype != null) {
-                        switch (atype.getAmmoType()) {
-                            case (AmmoType.T_SRM_STREAK):
-                            case (AmmoType.T_LRM_STREAK):
-                            case (AmmoType.T_LRM):
-                            case (AmmoType.T_LRM_TORPEDO):
-                            case (AmmoType.T_SRM):
-                            case (AmmoType.T_SRM_TORPEDO):
-                            case (AmmoType.T_MRM):
-                            case (AmmoType.T_NARC):
-                            case (AmmoType.T_AMS):
-                            case (AmmoType.T_ARROW_IV):
-                            case (AmmoType.T_LONG_TOM):
-                            case (AmmoType.T_SNIPER):
-                            case (AmmoType.T_THUMPER):
-                            case (AmmoType.T_SRM_ADVANCED):
-                            case (AmmoType.T_LRM_TORPEDO_COMBO):
-                            case (AmmoType.T_ATM):
-                            case (AmmoType.T_MML):
-                            case (AmmoType.T_EXLRM):
-                            case AmmoType.T_TBOLT_5:
-                            case AmmoType.T_TBOLT_10:
-                            case AmmoType.T_TBOLT_15:
-                            case AmmoType.T_TBOLT_20:
-                            case AmmoType.T_PXLRM:
-                            case AmmoType.T_HSRM:
-                            case AmmoType.T_MRM_STREAK:
-                                return false;
-                        }
-                        if (((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
+                }
+                if (weapon.howManyShots() > 1) {
+                    return false;
+                }
+                if ((atype != null)
+                        && ((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
                                 .getAmmoType() == AmmoType.T_AC_LBX_THB))
-                                && (atype.getMunitionType() == AmmoType.M_CLUSTER))
-                            return false;
-                    }
-                    break;
-                case (IAimingModes.AIM_MODE_TARG_COMP):
-                    if (!wtype.hasFlag(WeaponType.F_DIRECT_FIRE)
-                            || wtype.hasFlag(WeaponType.F_PULSE)) {
-                        return false;
-                    }
-                    if (weapon.howManyShots() > 1) {
-                        return false;
-                    }
-                    if ((atype != null)
-                            && ((atype.getAmmoType() == AmmoType.T_AC_LBX) || (atype
-                                    .getAmmoType() == AmmoType.T_AC_LBX_THB))
-                            && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
-                        return false;
-                    }
-                    break;
+                        && (atype.getMunitionType() == AmmoType.M_CLUSTER)) {
+                    return false;
+                }
+                break;
             }
             return true;
         }
@@ -1938,10 +1937,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Specify if the listener should be distracted.
      * 
-     * @param distracted <code>true</code> if the listener should ignore
-     *            events <code>false</code> if the listener should pay
-     *            attention again. Events that occured while the listener was
-     *            distracted NOT going to be processed.
+     * @param distracted
+     *            <code>true</code> if the listener should ignore events
+     *            <code>false</code> if the listener should pay attention
+     *            again. Events that occured while the listener was distracted
+     *            NOT going to be processed.
      */
     public void setIgnoringEvents(boolean distracted) {
         this.distracted.setIgnoringEvents(distracted);
@@ -1969,7 +1969,8 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Have the player select a target from the entities at the given coords.
      * 
-     * @param pos - the <code>Coords</code> containing targets.
+     * @param pos -
+     *            the <code>Coords</code> containing targets.
      */
     private Targetable chooseTarget(Coords pos) {
 

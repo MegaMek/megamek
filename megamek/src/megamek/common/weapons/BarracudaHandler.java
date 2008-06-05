@@ -40,7 +40,7 @@ public class BarracudaHandler extends AmmoWeaponHandler {
     }
     
     protected int getCapMisMod() {
-    	return 11;
+        return 11;
     }
 
 }

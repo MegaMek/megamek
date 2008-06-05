@@ -28,68 +28,68 @@ import megamek.common.weapons.BayWeapon;
  */
 public class Dropship extends SmallCraft {
 
-	//escape pods and lifeboats
-	int escapePods = 0;
-	int lifeBoats = 0;
-	
-	//what needs to go here?
-	//loading and unloading of units?
-	private boolean dockCollarDamaged = false;
-	
-	public boolean isDockCollarDamaged() {
-		return dockCollarDamaged;
-	}
-	
-	public void setDamageDockCollar(boolean b) {
-		this.dockCollarDamaged = b;
-	}
-	
-	public void setEscapePods(int n) {
-		this.escapePods = n;
-	}
-	
-	public int getEscapePods() {
-		return escapePods;
-	}
-	
-	public void setLifeBoats(int n) {
-		this.lifeBoats = n;
-	}
-	
-	public int getLifeBoats() {
-		return lifeBoats;
-	}
-	
-	public int getFuelPerTon() {
-		
-		int points = 80;
-		
-		if(weight >= 40000) {
-			points = 10;
-			return points;
-		} else if (weight >= 20000) {
-			points = 20;
-			return points;
-		} else if (weight >= 3000) {
-			points = 30;
-			return points;
-		} else if (weight >= 1900) {
-			points = 40;
-			return points;
-		} else if (weight >= 1200) {
-			points = 50;
-			return points;
-		} else if (weight >= 800) {
-			points = 60;
-			return points;
-		} else if (weight >= 400) {
-			points = 70;
-			return points;
-		}
-		
-		return points;
-	}
-	
+    //escape pods and lifeboats
+    int escapePods = 0;
+    int lifeBoats = 0;
+    
+    //what needs to go here?
+    //loading and unloading of units?
+    private boolean dockCollarDamaged = false;
+    
+    public boolean isDockCollarDamaged() {
+        return dockCollarDamaged;
+    }
+    
+    public void setDamageDockCollar(boolean b) {
+        this.dockCollarDamaged = b;
+    }
+    
+    public void setEscapePods(int n) {
+        this.escapePods = n;
+    }
+    
+    public int getEscapePods() {
+        return escapePods;
+    }
+    
+    public void setLifeBoats(int n) {
+        this.lifeBoats = n;
+    }
+    
+    public int getLifeBoats() {
+        return lifeBoats;
+    }
+    
+    public int getFuelPerTon() {
+        
+        int points = 80;
+        
+        if(weight >= 40000) {
+            points = 10;
+            return points;
+        } else if (weight >= 20000) {
+            points = 20;
+            return points;
+        } else if (weight >= 3000) {
+            points = 30;
+            return points;
+        } else if (weight >= 1900) {
+            points = 40;
+            return points;
+        } else if (weight >= 1200) {
+            points = 50;
+            return points;
+        } else if (weight >= 800) {
+            points = 60;
+            return points;
+        } else if (weight >= 400) {
+            points = 70;
+            return points;
+        }
+        
+        return points;
+    }
+    
     public double getCost() {
         
         double cost = 0;
@@ -120,7 +120,7 @@ public class Dropship extends SmallCraft {
         //engine
         double engineMultiplier = 0.065;
         if(isClan()) {
-        	engineMultiplier = 0.061;
+            engineMultiplier = 0.061;
         }
         double engineWeight = getOriginalWalkMP() * weight * engineMultiplier;
         cost += engineWeight * 1000;
@@ -144,13 +144,13 @@ public class Dropship extends SmallCraft {
         int baydoors = 0;
         int bayCost = 0;
         for(Bay next:getTransportBays()) {
-        	baydoors += next.getDoors();
-        	if(next instanceof MechBay || next instanceof ASFBay || next instanceof SmallCraftBay) {
-        		bayCost += 20000 * next.totalSpace;
-        	}
-        	if(next instanceof LightVehicleBay || next instanceof HeavyVehicleBay) {
-        		bayCost += 10000 * next.totalSpace;
-        	}
+            baydoors += next.getDoors();
+            if(next instanceof MechBay || next instanceof ASFBay || next instanceof SmallCraftBay) {
+                bayCost += 20000 * next.totalSpace;
+            }
+            if(next instanceof LightVehicleBay || next instanceof HeavyVehicleBay) {
+                bayCost += 10000 * next.totalSpace;
+            }
         }
         
         cost += bayCost + baydoors * 1000;
@@ -160,14 +160,14 @@ public class Dropship extends SmallCraft {
         
         double weightMultiplier = 36.0;
         if(isSpheroid() ) {
-        	weightMultiplier = 28.0;
+            weightMultiplier = 28.0;
         }
         
         return Math.round(cost * weightMultiplier);
         
     }
 
-	public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
+    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -212,14 +212,14 @@ public class Dropship extends SmallCraft {
         for (Mounted mounted : getTotalWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             if(wtype instanceof BayWeapon) {
-            	continue;
+                continue;
             }
             double weaponHeat = wtype.getHeat();
             
             // only count non-damaged equipment
             if (mounted.isMissing() || mounted.isHit() ||
-            		mounted.isDestroyed() || mounted.isBreached()) {
-            	continue;
+                    mounted.isDestroyed() || mounted.isBreached()) {
+                continue;
             }
             
             // one shot weapons count 1/4
@@ -272,7 +272,7 @@ public class Dropship extends SmallCraft {
             for (Mounted mounted : getTotalWeaponList()) {
                 WeaponType wtype = (WeaponType)mounted.getType();
                 if(wtype instanceof BayWeapon) {
-                	continue;
+                    continue;
                 }
                 double dBV = wtype.getBV(this);
                 
@@ -305,7 +305,7 @@ public class Dropship extends SmallCraft {
             for (Mounted weapon : weapons) {
                 WeaponType wtype = (WeaponType)weapon.getType();
                 if(wtype instanceof BayWeapon) {
-                	continue;
+                    continue;
                 }
                 double dBV = wtype.getBV(this);
                 // don't count destroyed equipment
@@ -412,11 +412,11 @@ public class Dropship extends SmallCraft {
             
             double curBV = atype.getBV(this);
             if(mounted.byShot()) {
-            	double tons = (double)mounted.getShotsLeft() / atype.getShots();
-        		if(atype.getAmmoRatio() > 0) {
-        			tons = (double)mounted.getShotsLeft() * atype.getAmmoRatio();
-        		}
-        		curBV *= tons;
+                double tons = (double)mounted.getShotsLeft() / atype.getShots();
+                if(atype.getAmmoRatio() > 0) {
+                    tons = (double)mounted.getShotsLeft() * atype.getAmmoRatio();
+                }
+                curBV *= tons;
             }
             
             // semiguided ammo might count double
@@ -424,22 +424,22 @@ public class Dropship extends SmallCraft {
                 Player tmpP = getOwner();
                 
                 if ( tmpP != null ){
-	                // Okay, actually check for friendly TAG.
-	                if (tmpP.hasTAG())
-	                    tagBV += curBV;
-	                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-	                   for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-	                        Team m = (Team)e.nextElement();
-	                        if (m.getId() == tmpP.getTeam()) {
-	                            if (m.hasTAG(game)) {
-	                                tagBV += curBV;
-	                            }
-	                            // A player can't be on two teams.
-	                            // If we check his team and don't give the penalty, that's it.
-	                            break;
-	                        }
-	                    }
-	                }
+                    // Okay, actually check for friendly TAG.
+                    if (tmpP.hasTAG())
+                        tagBV += curBV;
+                    else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+                       for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
+                            Team m = (Team)e.nextElement();
+                            if (m.getId() == tmpP.getTeam()) {
+                                if (m.hasTAG(game)) {
+                                    tagBV += curBV;
+                                }
+                                // A player can't be on two teams.
+                                // If we check his team and don't give the penalty, that's it.
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             String key = atype.getAmmoType()+":"+atype.getRackSize();
@@ -515,7 +515,7 @@ public class Dropship extends SmallCraft {
         
         // don't factor pilot in if we are just calculating BV for C3 extra BV
         if (ignoreC3)
-        	return finalBV;
+            return finalBV;
         return retVal;
     }
     
@@ -523,12 +523,12 @@ public class Dropship extends SmallCraft {
      * Calculates the battle value of this ASF
      */
     public int calculateBattleValue(boolean assumeLinkedC3) {
-    	return calculateBattleValue(assumeLinkedC3, false);
+        return calculateBattleValue(assumeLinkedC3, false);
     }
-	
-	
-	/*THIS WAS USING WEAPON BAYS RATHER THAN INDIVIDUAL WEAPONS WHICH I BELIEVE IS 
-	 * INCORRECT (WAITING ON RULING)
+    
+    
+    /*THIS WAS USING WEAPON BAYS RATHER THAN INDIVIDUAL WEAPONS WHICH I BELIEVE IS 
+     * INCORRECT (WAITING ON RULING)
     public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
@@ -572,14 +572,14 @@ public class Dropship extends SmallCraft {
         Map<String, Double> weaponsForExcessiveAmmo = new HashMap<String, Double>();
         double maximumHeat = 0;
         for (Mounted mounted : getWeaponList()) {
-        	if(mounted.getType() instanceof WeaponBay) {
-        		WeaponType btype = (WeaponType)mounted.getType();
+            if(mounted.getType() instanceof WeaponBay) {
+                WeaponType btype = (WeaponType)mounted.getType();
                 double weaponHeat = mounted.getBayHeat();
                 
                 // only count non-damaged equipment
                 if (mounted.isMissing() || mounted.isHit() ||
-                		mounted.isDestroyed() || mounted.isBreached()) {
-                	continue;
+                        mounted.isDestroyed() || mounted.isBreached()) {
+                    continue;
                 }
                 
                 // one shot weapons count 1/4
@@ -589,11 +589,11 @@ public class Dropship extends SmallCraft {
                 }
                 
                 maximumHeat += weaponHeat;
-        	} else {
-        		//these are the individual wapons. I just need to figure out ammo-producing ones
-        		//for later
-        		WeaponType wtype = (WeaponType)mounted.getType();
-        		//add up BV of ammo-using weapons for each type of weapon,
+            } else {
+                //these are the individual wapons. I just need to figure out ammo-producing ones
+                //for later
+                WeaponType wtype = (WeaponType)mounted.getType();
+                //add up BV of ammo-using weapons for each type of weapon,
                 // to compare with ammo BV later for excessive ammo BV rule
                 if (!((wtype.hasFlag(WeaponType.F_ENERGY) && !(wtype.getAmmoType() == AmmoType.T_PLASMA))
                             || wtype.hasFlag(WeaponType.F_ONESHOT)
@@ -607,7 +607,7 @@ public class Dropship extends SmallCraft {
                         weaponsForExcessiveAmmo.put(key, wtype.getBV(this)+weaponsForExcessiveAmmo.get(key));
                     }
                 }
-        	}
+            }
         }
                 
         double weaponBV = 0;
@@ -617,7 +617,7 @@ public class Dropship extends SmallCraft {
         if (maximumHeat <= aeroHeatEfficiency) {
             //count all weapons equal, adjusting for rear-firing and excessive ammo
             for (Mounted mounted : getWeaponList()) {
-            	WeaponType btype = (WeaponType)mounted.getType();
+                WeaponType btype = (WeaponType)mounted.getType();
                 double dBV = mounted.getBayBV();
                 
                 // don't count destroyed equipment
@@ -654,7 +654,7 @@ public class Dropship extends SmallCraft {
            
                 // artemis bumps up the value
                 if (weapon.hasArtemis()) {
-                	dBV *= 1.2;
+                    dBV *= 1.2;
                 } 
                 
                 heatAdded += weapon.getBayHeat();
@@ -736,22 +736,22 @@ public class Dropship extends SmallCraft {
                 Player tmpP = getOwner();
                 
                 if ( tmpP != null ){
-	                // Okay, actually check for friendly TAG.
-	                if (tmpP.hasTAG())
-	                    tagBV += atype.getBV(this);
-	                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-	                   for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-	                        Team m = (Team)e.nextElement();
-	                        if (m.getId() == tmpP.getTeam()) {
-	                            if (m.hasTAG(game)) {
-	                                tagBV += atype.getBV(this);
-	                            }
-	                            // A player can't be on two teams.
-	                            // If we check his team and don't give the penalty, that's it.
-	                            break;
-	                        }
-	                    }
-	                }
+                    // Okay, actually check for friendly TAG.
+                    if (tmpP.hasTAG())
+                        tagBV += atype.getBV(this);
+                    else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+                       for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
+                            Team m = (Team)e.nextElement();
+                            if (m.getId() == tmpP.getTeam()) {
+                                if (m.hasTAG(game)) {
+                                    tagBV += atype.getBV(this);
+                                }
+                                // A player can't be on two teams.
+                                // If we check his team and don't give the penalty, that's it.
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             String key = atype.getAmmoType()+":"+atype.getRackSize();
@@ -827,14 +827,14 @@ public class Dropship extends SmallCraft {
         
         // don't factor pilot in if we are just calculating BV for C3 extra BV
         if (ignoreC3)
-        	return finalBV;
+            return finalBV;
         return retVal;
     }
     
     public int calculateBattleValue(boolean assumeLinkedC3) {
-    	return calculateBattleValue(assumeLinkedC3, false);
+        return calculateBattleValue(assumeLinkedC3, false);
     }
-	*/
+    */
     
     /**
      * need to check bay location before loading ammo
@@ -861,5 +861,5 @@ public class Dropship extends SmallCraft {
         }
         return success;
     }
-	
+    
 }

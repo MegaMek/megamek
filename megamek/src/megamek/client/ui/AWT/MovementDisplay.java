@@ -118,12 +118,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String MOVE_MODE_AIRMECH = "moveModeAirmech"; //$NON-NLS-1$
     public static final String MOVE_MODE_AIRCRAFT = "moveModeAircraft"; //$NON-NLS-1$
     //Aero Movement
-    public static final String	  MOVE_ACC = "MoveAccelerate"; //$NON-NLS-1$
-    public static final String	  MOVE_DEC = "MoveDecelerate"; //$NON-NLS-1$
-    public static final String	  MOVE_EVADE = "MoveEvade"; //$NON-NLS-1$
-    public static final String	  MOVE_ACCN = "MoveAccNext"; //$NON-NLS-1$
-    public static final String	  MOVE_DECN = "MoveDecNext"; //$NON-NLS-1$
-    public static final String	  MOVE_ROLL = "MoveRoll"; //$NON-NLS-1$
+    public static final String      MOVE_ACC = "MoveAccelerate"; //$NON-NLS-1$
+    public static final String      MOVE_DEC = "MoveDecelerate"; //$NON-NLS-1$
+    public static final String      MOVE_EVADE = "MoveEvade"; //$NON-NLS-1$
+    public static final String      MOVE_ACCN = "MoveAccNext"; //$NON-NLS-1$
+    public static final String      MOVE_DECN = "MoveDecNext"; //$NON-NLS-1$
+    public static final String      MOVE_ROLL = "MoveRoll"; //$NON-NLS-1$
     public static final String    MOVE_LAUNCH = "MoveLaunch"; //$NON-NLS-1$
     public static final String    MOVE_RECOVER = "MoveRecover"; //$NON-NLS-1$
     public static final String    MOVE_DUMP = "MoveDump"; //$NON-NLS-1$
@@ -185,20 +185,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     
     private Button            butAcc;
     private Button            butDec;
-    private Button			  butEvade;
-    private Button			  butAccN;
-    private Button			  butDecN;
-    private Button			  butRoll;
-    private Button			  butLaunch;
-    private Button			  butRecover;
-    private Button			  butDump;
-    private Button			  butRam;
+    private Button              butEvade;
+    private Button              butAccN;
+    private Button              butDecN;
+    private Button              butRoll;
+    private Button              butLaunch;
+    private Button              butRecover;
+    private Button              butDump;
+    private Button              butRam;
     
-    private Button			  butTurnLeft;
-    private Button			  butTurnRight;
-    private Button			  butThrust;
-    private Button			  butYaw;
-    private Button			  butEndOver;
+    private Button              butTurnLeft;
+    private Button              butTurnRight;
+    private Button              butThrust;
+    private Button              butYaw;
+    private Button              butEndOver;
 
     private int buttonLayout;
 
@@ -618,53 +618,53 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
         buttonsAero = new ArrayList<Button>(22);
         if(!client.game.useVectorMove()) {
-        	buttonsAero.add(butWalk);
-        	buttonsAero.add(butAcc);
-        	buttonsAero.add(butDec);
-        	buttonsAero.add(butTurn);
-        	buttonsAero.add(butAccN);
-        	buttonsAero.add(butDecN);
-        	buttonsAero.add(butRoll);
-        	buttonsAero.add(butEvade);
-        	buttonsAero.add(butRam);
-        	buttonsAero.add(butLower);
-        	buttonsAero.add(butRaise);
-        	buttonsAero.add(butEject);
-        	buttonsAero.add(butFlee);
-        	buttonsAero.add(butLaunch);
-        	buttonsAero.add(butRecover);
-        	buttonsAero.add(butRAC);   
-        	buttonsAero.add(butDump);
-        	//not used
-        	buttonsAero.add(butJump);
+            buttonsAero.add(butWalk);
+            buttonsAero.add(butAcc);
+            buttonsAero.add(butDec);
+            buttonsAero.add(butTurn);
+            buttonsAero.add(butAccN);
+            buttonsAero.add(butDecN);
+            buttonsAero.add(butRoll);
+            buttonsAero.add(butEvade);
+            buttonsAero.add(butRam);
+            buttonsAero.add(butLower);
+            buttonsAero.add(butRaise);
+            buttonsAero.add(butEject);
+            buttonsAero.add(butFlee);
+            buttonsAero.add(butLaunch);
+            buttonsAero.add(butRecover);
+            buttonsAero.add(butRAC);   
+            buttonsAero.add(butDump);
+            //not used
+            buttonsAero.add(butJump);
             buttonsAero.add(butDigIn);
             buttonsAero.add(butFortify);
-        	buttonsAero.add(butHullDown);
-        	buttonsAero.add(butShakeOff);
+            buttonsAero.add(butHullDown);
+            buttonsAero.add(butShakeOff);
         } else {
-        	buttonsAero.add(butThrust);
-        	buttonsAero.add(butTurnLeft);
-        	buttonsAero.add(butTurnRight);
-        	buttonsAero.add(butEvade);
-        	buttonsAero.add(butRoll);
-        	buttonsAero.add(butYaw);
-        	buttonsAero.add(butEndOver);
-        	buttonsAero.add(butRam);
-        	buttonsAero.add(butEject);
-        	buttonsAero.add(butFlee);
-        	buttonsAero.add(butLaunch);
-        	buttonsAero.add(butRecover);
-        	buttonsAero.add(butRAC);   
-        	buttonsAero.add(butDump);
-        	//not used
-        	buttonsAero.add(butDfa);
+            buttonsAero.add(butThrust);
+            buttonsAero.add(butTurnLeft);
+            buttonsAero.add(butTurnRight);
+            buttonsAero.add(butEvade);
+            buttonsAero.add(butRoll);
+            buttonsAero.add(butYaw);
+            buttonsAero.add(butEndOver);
+            buttonsAero.add(butRam);
+            buttonsAero.add(butEject);
+            buttonsAero.add(butFlee);
+            buttonsAero.add(butLaunch);
+            buttonsAero.add(butRecover);
+            buttonsAero.add(butRAC);   
+            buttonsAero.add(butDump);
+            //not used
+            buttonsAero.add(butDfa);
             buttonsAero.add(butUp);
             buttonsAero.add(butDown);
             buttonsAero.add(butJump);
             buttonsAero.add(butDigIn);
             buttonsAero.add(butFortify);
-        	buttonsAero.add(butHullDown);
-        	buttonsAero.add(butShakeOff);
+            buttonsAero.add(butHullDown);
+            buttonsAero.add(butShakeOff);
         }
         //TODO: allow Aeros to taxi if on the ground
         
@@ -726,7 +726,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             else if (ce instanceof Tank)
                 buttonList = buttonsTank;
             else if (ce instanceof Aero)
-            	buttonList = buttonsAero;
+                buttonList = buttonsAero;
         }
         // should this layout be skipped? (if nothing enabled)
         boolean ok = false;
@@ -868,23 +868,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateDumpButton();
 
         if(ce instanceof Aero) {
-        	Aero a = (Aero)ce;
-        	butThrust.setEnabled(true);
-        	butYaw.setEnabled(true);
-        	butEndOver.setEnabled(true);
-        	butTurnLeft.setEnabled(true);
-        	butTurnRight.setEnabled(true);
-        	butEvade.setEnabled(true);  
-        	setEjectEnabled(true);
-        	
+            Aero a = (Aero)ce;
+            butThrust.setEnabled(true);
+            butYaw.setEnabled(true);
+            butEndOver.setEnabled(true);
+            butTurnLeft.setEnabled(true);
+            butTurnRight.setEnabled(true);
+            butEvade.setEnabled(true);  
+            setEjectEnabled(true);
+            
         }
         
         updateSpeedButtons();
-    	updateThrustButton();
-    	updateRollButton();
-    	checkFuel();
-    	checkOOC();
-    	checkAtmosphere();
+        updateThrustButton();
+        updateRollButton();
+        checkFuel();
+        checkOOC();
+        checkAtmosphere();
         updateFleeButton();
         updateLaunchButton();
         
@@ -1009,10 +1009,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setThrustEnabled(false);
         setYawEnabled(false);
         setEndOverEnabled(false);
-    	setTurnLeftEnabled(false);
-    	setTurnRightEnabled(false);
-    	setDumpEnabled(false);
-    	setRamEnabled(false);
+        setTurnLeftEnabled(false);
+        setTurnRightEnabled(false);
+        setDumpEnabled(false);
+        setRamEnabled(false);
     }
 
     /**
@@ -1056,8 +1056,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateThrustButton();
         updateRollButton();
         checkFuel();
-    	checkOOC();
-    	checkAtmosphere();
+        checkOOC();
+        checkAtmosphere();
     }
 
     private void removeLastStep() {
@@ -1082,154 +1082,154 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      * Sends a data packet indicating the chosen movement.
      */
     private synchronized void moveTo(MovePath md) {
-    	
-    	final Entity ce = ce();
-    	boolean dontCheckPSR = false;
-    	if(ce instanceof Aero) {
-        	
-    		Aero a = (Aero)ce;
-    		
-    		//first check for stalling 
-    		if(client.game.getBoard().inAtmosphere() && 
-    				(!a.isSpheroid() && ((md == null && a.getCurrentVelocity() == 0) || 
-    				(md != null && md.getFinalVelocity() == 0)))) {
-    			
-    			//add a stall to the movement path
-    			md.addStep(MovePath.STEP_STALL);
-    		}
-    		
-    		//should check to see if md is null. If so I need to check and see if the units
-    		//current velocity is zero
-    		if( md != null ) {
-    			
-    			boolean isRamming = false;
-    			if(md.getLastStep() != null && md.getLastStep().getType() == MovePath.STEP_RAM) {
-    				isRamming = true;
-    			}
-    			
-    			//if using advanced movement then I need to add on movement steps
-    			//to get the vessel from point a to point b
-    			//if the unit is ramming then this is already done
-    			if(client.game.useVectorMove() && !isRamming) {
-    				//get rid of any illegal moves or the rest won't be added
-    				md.clipToPossible();
-    				md = addSteps(md,ce);
-    				
-    			}
-    			
-    				
-    			//check to see if the unit is out of control. If so, then set up a new
-    			//move path for them.  
-    			//the same should be true if the unit is shutdown or the pilot is unconscious
-    			if(!client.game.useVectorMove() && 
-    					(a.isOutControlTotal() || a.isShutDown() || a.getCrew().isUnconscious())) {
+        
+        final Entity ce = ce();
+        boolean dontCheckPSR = false;
+        if(ce instanceof Aero) {
+            
+            Aero a = (Aero)ce;
+            
+            //first check for stalling 
+            if(client.game.getBoard().inAtmosphere() && 
+                    (!a.isSpheroid() && ((md == null && a.getCurrentVelocity() == 0) || 
+                    (md != null && md.getFinalVelocity() == 0)))) {
+                
+                //add a stall to the movement path
+                md.addStep(MovePath.STEP_STALL);
+            }
+            
+            //should check to see if md is null. If so I need to check and see if the units
+            //current velocity is zero
+            if( md != null ) {
+                
+                boolean isRamming = false;
+                if(md.getLastStep() != null && md.getLastStep().getType() == MovePath.STEP_RAM) {
+                    isRamming = true;
+                }
+                
+                //if using advanced movement then I need to add on movement steps
+                //to get the vessel from point a to point b
+                //if the unit is ramming then this is already done
+                if(client.game.useVectorMove() && !isRamming) {
+                    //get rid of any illegal moves or the rest won't be added
+                    md.clipToPossible();
+                    md = addSteps(md,ce);
+                    
+                }
+                
+                    
+                //check to see if the unit is out of control. If so, then set up a new
+                //move path for them.  
+                //the same should be true if the unit is shutdown or the pilot is unconscious
+                if(!client.game.useVectorMove() && 
+                        (a.isOutControlTotal() || a.isShutDown() || a.getCrew().isUnconscious())) {
 
-    				MovePath oldmd = md;
-    				
-    				dontCheckPSR = true;
-    				md = new MovePath(client.game, ce);
-    				int vel = a.getCurrentVelocity();
-    				
-    				
-    				//need to check for stall here as well
-    				if(vel == 0 && !a.isSpheroid() && client.game.getBoard().inAtmosphere()) {
-    	    			//add a stall to the movement path
-    	    			md.addStep(MovePath.STEP_STALL);
-    	    		}
-    				
-    				while(vel > 0) {
-    					//check to see if the unit is currently on a border 
-    					//and facing a direction that would indicate leaving the map
-    					Coords position = a.getPosition();
-    					int facing = a.getFacing();
-    					MoveStep step = md.getLastStep();
-    					if(step != null) {
-    						position = step.getPosition();
-    						facing = step.getFacing();
-    					}
-    					boolean evenx = (position.x % 2) == 0;
-    					if(((position.x == 0 && (facing == 5 || facing==4)) || 
-                    		 (position.x == client.game.getBoard().getWidth() - 1 && (facing == 1 || facing==2)) ||
+                    MovePath oldmd = md;
+                    
+                    dontCheckPSR = true;
+                    md = new MovePath(client.game, ce);
+                    int vel = a.getCurrentVelocity();
+                    
+                    
+                    //need to check for stall here as well
+                    if(vel == 0 && !a.isSpheroid() && client.game.getBoard().inAtmosphere()) {
+                        //add a stall to the movement path
+                        md.addStep(MovePath.STEP_STALL);
+                    }
+                    
+                    while(vel > 0) {
+                        //check to see if the unit is currently on a border 
+                        //and facing a direction that would indicate leaving the map
+                        Coords position = a.getPosition();
+                        int facing = a.getFacing();
+                        MoveStep step = md.getLastStep();
+                        if(step != null) {
+                            position = step.getPosition();
+                            facing = step.getFacing();
+                        }
+                        boolean evenx = (position.x % 2) == 0;
+                        if(((position.x == 0 && (facing == 5 || facing==4)) || 
+                             (position.x == client.game.getBoard().getWidth() - 1 && (facing == 1 || facing==2)) ||
                              (position.y == 0 && (facing == 1 || facing==5 || facing==0) && evenx) || 
                              (position.y == 0 && facing==0) || 
                              (position.y == client.game.getBoard().getHeight() - 1 && (facing == 2 || facing==3 || facing==4) && !evenx) ||
                              (position.y == client.game.getBoard().getHeight() - 1 && facing==3))) {
-    						//then this birdie go bye-bye
-    						//set the conditions for removal
-    						 md.addStep(MovePath.STEP_OFF);
-    						 vel = 0;
-    					
-    					} else {
-    						
-    						if(a.isRandomMove()) {
-    							int roll = Compute.d6(1);
-    							switch (roll) {
-    							case 1:
-    								md.addStep(MovePath.STEP_FORWARDS);
-    								md.addStep(MovePath.STEP_TURN_LEFT);
-    								md.addStep(MovePath.STEP_TURN_LEFT);
-    							case 2:
-    								md.addStep(MovePath.STEP_FORWARDS);
-    								md.addStep(MovePath.STEP_TURN_LEFT);
-    							case 3:
-    							case 4:
-    								md.addStep(MovePath.STEP_FORWARDS);
-    							case 5:
-    								md.addStep(MovePath.STEP_FORWARDS);
-    								md.addStep(MovePath.STEP_TURN_RIGHT);
-    							case 6:
-    								md.addStep(MovePath.STEP_FORWARDS);
-    								md.addStep(MovePath.STEP_TURN_RIGHT);
-    								md.addStep(MovePath.STEP_TURN_RIGHT);
-    							}
-    						} else {
-    							md.addStep(MovePath.STEP_FORWARDS);
-    						}
-    						
-    						vel--;
-    					}
-    					
-    				}
-    			
-    				//check to see if old movement path contained a launch and 
-					//we are still on the board
-					if(oldmd.contains(MovePath.STEP_LAUNCH) && !md.contains(MovePath.STEP_OFF)) {
-						//since launches have to be the last step
-						MoveStep lastStep = oldmd.getLastStep();
-						if(lastStep.getType() == MovePath.STEP_LAUNCH)
-							md.addStep(lastStep.getType(),lastStep.getLaunched());
-					}
-    				
-    			} else {
-    			
-    				//I think this should be ok now
-    				md.clipToPossible();
-    				//check to see if velocity left is zero
-    				MoveStep step = md.getLastStep();
-    				if( step != null ) {
-    					if(step.getVelocityLeft() > 0 && !client.game.useVectorMove() && step.getType() != MovePath.STEP_FLEE) {
-    						//pop up some dialog telling the unit that it did not spend enough 
-    						String title = Messages.getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
-    						String body = Messages.getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
-    						clientgui.doAlertDialog(title, body);
-    						return;
-    					}
-    				} else {
-    					//if the step is null then the unit didn't move. Make sure velocity is zero
-    					if(a.getCurrentVelocity() > 0 && !client.game.useVectorMove()) {
-    						//pop up some dialog telling the unit that it did not spend enough 
-    						String title = Messages.getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
-    						String body = Messages.getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
-    						clientgui.doAlertDialog(title, body);
-    						return;
-    					}
-    				}
-    			}
-    			
-    			//check for G-forces (not for vectored movement)
-    			String check = doThrustCheck(md);
+                            //then this birdie go bye-bye
+                            //set the conditions for removal
+                             md.addStep(MovePath.STEP_OFF);
+                             vel = 0;
+                        
+                        } else {
+                            
+                            if(a.isRandomMove()) {
+                                int roll = Compute.d6(1);
+                                switch (roll) {
+                                case 1:
+                                    md.addStep(MovePath.STEP_FORWARDS);
+                                    md.addStep(MovePath.STEP_TURN_LEFT);
+                                    md.addStep(MovePath.STEP_TURN_LEFT);
+                                case 2:
+                                    md.addStep(MovePath.STEP_FORWARDS);
+                                    md.addStep(MovePath.STEP_TURN_LEFT);
+                                case 3:
+                                case 4:
+                                    md.addStep(MovePath.STEP_FORWARDS);
+                                case 5:
+                                    md.addStep(MovePath.STEP_FORWARDS);
+                                    md.addStep(MovePath.STEP_TURN_RIGHT);
+                                case 6:
+                                    md.addStep(MovePath.STEP_FORWARDS);
+                                    md.addStep(MovePath.STEP_TURN_RIGHT);
+                                    md.addStep(MovePath.STEP_TURN_RIGHT);
+                                }
+                            } else {
+                                md.addStep(MovePath.STEP_FORWARDS);
+                            }
+                            
+                            vel--;
+                        }
+                        
+                    }
+                
+                    //check to see if old movement path contained a launch and 
+                    //we are still on the board
+                    if(oldmd.contains(MovePath.STEP_LAUNCH) && !md.contains(MovePath.STEP_OFF)) {
+                        //since launches have to be the last step
+                        MoveStep lastStep = oldmd.getLastStep();
+                        if(lastStep.getType() == MovePath.STEP_LAUNCH)
+                            md.addStep(lastStep.getType(),lastStep.getLaunched());
+                    }
+                    
+                } else {
+                
+                    //I think this should be ok now
+                    md.clipToPossible();
+                    //check to see if velocity left is zero
+                    MoveStep step = md.getLastStep();
+                    if( step != null ) {
+                        if(step.getVelocityLeft() > 0 && !client.game.useVectorMove() && step.getType() != MovePath.STEP_FLEE) {
+                            //pop up some dialog telling the unit that it did not spend enough 
+                            String title = Messages.getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
+                            String body = Messages.getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
+                            clientgui.doAlertDialog(title, body);
+                            return;
+                        }
+                    } else {
+                        //if the step is null then the unit didn't move. Make sure velocity is zero
+                        if(a.getCurrentVelocity() > 0 && !client.game.useVectorMove()) {
+                            //pop up some dialog telling the unit that it did not spend enough 
+                            String title = Messages.getString("MovementDisplay.VelocityLeft.title"); //$NON-NLS-1$
+                            String body = Messages.getString("MovementDisplay.VelocityLeft.message"); //$NON-NLS-1$
+                            clientgui.doAlertDialog(title, body);
+                            return;
+                        }
+                    }
+                }
+                
+                //check for G-forces (not for vectored movement)
+                String check = doThrustCheck(md);
                 if (!client.game.useVectorMove() && 
-                		check.length() > 0 && GUIPreferences.getInstance().getNagForPSR()) {
+                        check.length() > 0 && GUIPreferences.getInstance().getNagForPSR()) {
                     ConfirmDialog nag = 
                         new ConfirmDialog(clientgui.frame,
                                           Messages.getString("MovementDisplay.areYouSure"),  //$NON-NLS-1$
@@ -1245,9 +1245,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                         return;
                     }
                 }
-    		}
-    	}
-    	
+            }
+        }
+        
         md.clipToPossible();
         if (md.length() == 0
                 && GUIPreferences.getInstance().getNagForNoAction()) {
@@ -1366,10 +1366,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
 
             if(entity instanceof Aero) {
-            	//check for more than one roll
-            	Aero a = (Aero)entity;
-            	rollTarget = a.checkRolls(step);
-            	if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                //check for more than one roll
+                Aero a = (Aero)entity;
+                rollTarget = a.checkRolls(step);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     nagReport.append(addNag(rollTarget));
                 }
             }
@@ -1620,35 +1620,35 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
         
         if(entity instanceof Aero) {
-        	//check to see if thrust exceeded SI
-        	Aero a = (Aero)entity;
-        	int thrust = md.getMpUsed();
-        	rollTarget = a.checkThrustSITotal(thrust);
-        	if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+            //check to see if thrust exceeded SI
+            Aero a = (Aero)entity;
+            int thrust = md.getMpUsed();
+            rollTarget = a.checkThrustSITotal(thrust);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                 nagReport.append(addNag(rollTarget));
             }
-        	
-        	//Atmospheric checks
-        	if(client.game.getBoard().inAtmosphere()) {
-        		//check to see if velocity is 2x thrust
-        		rollTarget = a.checkVelocityDouble(md.getFinalVelocity());
-        		if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+            
+            //Atmospheric checks
+            if(client.game.getBoard().inAtmosphere()) {
+                //check to see if velocity is 2x thrust
+                rollTarget = a.checkVelocityDouble(md.getFinalVelocity());
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     nagReport.append(addNag(rollTarget));
                 }
-        		
-        		//check to see if descended more than two hexes
-        		rollTarget = a.checkDown(md.getFinalNDown());
-        		if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                
+                //check to see if descended more than two hexes
+                rollTarget = a.checkDown(md.getFinalNDown());
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     nagReport.append(addNag(rollTarget));
                 }
-        		
-        		//stalling out
-        		if(md.getFinalVelocity() == 0 && !a.isSpheroid() && client.game.getBoard().inAtmosphere()) {
-        			rollTarget = a.checkStall(md.getFinalVelocity());
-        			nagReport.append(addNag(rollTarget));
-        		}
-        		
-        	} 	
+                
+                //stalling out
+                if(md.getFinalVelocity() == 0 && !a.isSpheroid() && client.game.getBoard().inAtmosphere()) {
+                    rollTarget = a.checkStall(md.getFinalVelocity());
+                    nagReport.append(addNag(rollTarget));
+                }
+                
+            }     
         }
 
         return nagReport.toString();
@@ -1658,8 +1658,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      * Checks to see if piloting skill rolls are needed for excessive use of thrust.  
      */
     private String doThrustCheck(MovePath md) {
-    	
-    	StringBuffer nagReport = new StringBuffer();
+        
+        StringBuffer nagReport = new StringBuffer();
 
         final Entity entity = ce();
         
@@ -1676,29 +1676,29 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             j++;
             //how do I figure out last step?
             if( step.getDistance() == 0 && md.length() != j) {
-            	thrustUsed += step.getMp();
+                thrustUsed += step.getMp();
             } else {
-            	//if this was the last move and distance was zero, then add thrust
-            	if(step.getDistance() == 0 && md.length() == j) {
-            		thrustUsed += step.getMp();
-            	}
-            	//then we moved to a new hex or the last step so check conditions
-            	//structural damage
-            	rollTarget = a.checkThrustSI(thrustUsed);
-            	if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-            		nagReport.append(addNag(rollTarget));
-            	}
+                //if this was the last move and distance was zero, then add thrust
+                if(step.getDistance() == 0 && md.length() == j) {
+                    thrustUsed += step.getMp();
+                }
+                //then we moved to a new hex or the last step so check conditions
+                //structural damage
+                rollTarget = a.checkThrustSI(thrustUsed);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    nagReport.append(addNag(rollTarget));
+                }
                
-            	//check for pilot damage
-            	int hits = entity.getCrew().getHits();
-            	int health = 6 - hits;
+                //check for pilot damage
+                int hits = entity.getCrew().getHits();
+                int health = 6 - hits;
             
-            	if( thrustUsed > (2*health) ) {
-            		int targetroll = 2 + (thrustUsed - 2 * health) + 2 * hits;
-            		nagReport.append(Messages.getString("MovementDisplay.addNag", new Object[]{Integer.toString(targetroll), "Thrust exceeded twice pilot's health in single hex"}));
-            	}
+                if( thrustUsed > (2*health) ) {
+                    int targetroll = 2 + (thrustUsed - 2 * health) + 2 * hits;
+                    nagReport.append(Messages.getString("MovementDisplay.addNag", new Object[]{Integer.toString(targetroll), "Thrust exceeded twice pilot's health in single hex"}));
+                }
             
-            	thrustUsed = 0;
+                thrustUsed = 0;
             }
         }
         
@@ -1798,7 +1798,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             }
 
             if(gear == MovementDisplay.GEAR_RAM) {
-            	//check if target is valid
+                //check if target is valid
                 final Targetable target = this.chooseTarget(b.getCoords());
                 if (target == null || target.equals(ce) || !(target instanceof Aero)) {
                     clientgui
@@ -1808,12 +1808,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     clearAllMoves();
                     return;
                 }
-            	
-            	//check if it's a valid ram
+                
+                //check if it's a valid ram
                 //First I need to add moves to the path if advanced
                 if(ce instanceof Aero && client.game.useVectorMove()) {
-                	cmd.clipToPossible();
-                	cmd = addSteps(cmd,ce);
+                    cmd.clipToPossible();
+                    cmd = addSteps(cmd,ce);
                 }
                 
                 cmd.addStep(MovePath.STEP_RAM);
@@ -1821,13 +1821,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 ToHitData toHit = new RamAttackAction(cen, target.getTargetType(),target.getTargetId(), target.getPosition()).toHit(client.game, cmd);
                 if (toHit.getValue() != TargetRoll.IMPOSSIBLE) {
                 
-                	//Determine how much damage the charger will take.
-                	Aero ta = (Aero)target;
-                	Aero ae = (Aero)ce;
-                	int toAttacker = RamAttackAction.getDamageTakenBy(ae, ta, cmd.getSecondFinalPosition(ae.getPosition()),  cmd.getHexesMoved(), ta.getCurrentVelocity());
-                	int toDefender = RamAttackAction.getDamageFor(ae, ta, cmd.getSecondFinalPosition(ae.getPosition()), cmd.getHexesMoved(), ta.getCurrentVelocity());
-               	
-                	//Ask the player if they want to charge.
+                    //Determine how much damage the charger will take.
+                    Aero ta = (Aero)target;
+                    Aero ae = (Aero)ce;
+                    int toAttacker = RamAttackAction.getDamageTakenBy(ae, ta, cmd.getSecondFinalPosition(ae.getPosition()),  cmd.getHexesMoved(), ta.getCurrentVelocity());
+                    int toDefender = RamAttackAction.getDamageFor(ae, ta, cmd.getSecondFinalPosition(ae.getPosition()), cmd.getHexesMoved(), ta.getCurrentVelocity());
+                   
+                    //Ask the player if they want to charge.
                     if ( clientgui.doYesNoDialog
                          ( Messages.getString("MovementDisplay.RamDialog.title", new Object[]{target.getDisplayName()}), //$NON-NLS-1$
                            Messages.getString("MovementDisplay.RamDialog.message", new Object[]{ //$NON-NLS-1$      
@@ -1843,11 +1843,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     }
                     return;
                 }
-				// if not valid, tell why
-				clientgui.doAlertDialog( Messages.getString("MovementDisplay.CantRam"), //$NON-NLS-1$
-				                      toHit.getDesc() );
-				clearAllMoves();
-				return;               	    
+                // if not valid, tell why
+                clientgui.doAlertDialog( Messages.getString("MovementDisplay.CantRam"), //$NON-NLS-1$
+                                      toHit.getDesc() );
+                clearAllMoves();
+                return;                       
             } else if (gear == MovementDisplay.GEAR_CHARGE) {
                 // check if target is valid
                 final Targetable target = this.chooseTarget(b.getCoords());
@@ -1997,8 +1997,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateThrustButton();
             updateRollButton();
             checkFuel();
-        	checkOOC();
-        	checkAtmosphere();
+            checkOOC();
+            checkAtmosphere();
         }
     }
 
@@ -2055,9 +2055,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
         
         if(ce instanceof Aero && ((Aero)ce).isOutControlTotal()) {
-        	setRaiseEnabled(false);
-        	setLowerEnabled(false);
-        	return;
+            setRaiseEnabled(false);
+            setLowerEnabled(false);
+            return;
         }
         
         setRaiseEnabled(ce.canGoUp(cmd.getFinalElevation(), cmd
@@ -2067,21 +2067,21 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     }
     
     private void updateRollButton() {
-    	final Entity ce = ce();
+        final Entity ce = ce();
         if(null==ce) return;
         
         if(!(ce instanceof Aero)) {
-        	return;
+            return;
         }
         
         setRollEnabled(true);
         
         if(client.game.getBoard().inAtmosphere()) {
-        	setRollEnabled(false);
+            setRollEnabled(false);
         }
         
         if(cmd.contains(MovePath.STEP_ROLL)) {
-        	setRollEnabled(false);
+            setRollEnabled(false);
         }
         
         return;
@@ -2090,11 +2090,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     
     
     private void updateThrustButton() {
-    	final Entity ce = ce();
+        final Entity ce = ce();
         if(null==ce) return;
         
         if(!(ce instanceof Aero)) {
-        	return;
+            return;
         }
         
         Aero a = (Aero)ce;
@@ -2103,23 +2103,23 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         int mpUsed = 0;
         MoveStep last = cmd.getLastStep();
         if(null != last)
-        	mpUsed = last.getMpUsed();
+            mpUsed = last.getMpUsed();
         
         if(mpUsed >= a.getRunMP()) {
-        	setThrustEnabled(false);
+            setThrustEnabled(false);
         } else {
-        	setThrustEnabled(true);
+            setThrustEnabled(true);
         }
         
         return;
     }
     
     private synchronized void updateSpeedButtons() {
-    	final Entity ce = ce();
+        final Entity ce = ce();
         if(null==ce) return;
         
         if(!(ce instanceof Aero)) {
-        	return;
+            return;
         }
         
         Aero a = (Aero)ce;
@@ -2134,94 +2134,94 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         int vel = a.getCurrentVelocity();
         int veln = a.getNextVelocity();
         if(null != last) {
-        	vel = last.getVelocity();
-        	veln = last.getVelocityN();
+            vel = last.getVelocity();
+            veln = last.getVelocityN();
         }
         
         if(null == last) {
-        	setAccEnabled(true);
-        	if(vel > 0) {
-        		setDecEnabled(true);
-        	}
+            setAccEnabled(true);
+            if(vel > 0) {
+                setDecEnabled(true);
+            }
         } else if(last.getType() == MovePath.STEP_ACC) {
-        	setAccEnabled(true);
+            setAccEnabled(true);
         } else if(last.getType() == MovePath.STEP_DEC && vel > 0) {
-        	setDecEnabled(true);
+            setDecEnabled(true);
         }
         
         //if accelerated/decelerate at the end of last turn then disable
         if(a.didAccLast()) {
-        	setAccEnabled(false);
-        	setDecEnabled(false);
+            setAccEnabled(false);
+            setDecEnabled(false);
         }
         
         //allow acc/dec next if acceleration/deceleration hasn't been used
         setAccNEnabled(false);
         setDecNEnabled(false);
         if(!cmd.contains(MovePath.STEP_ACC) && !cmd.contains(MovePath.STEP_DEC) 
-        		&& !cmd.contains(MovePath.STEP_DECN)) {
-        	setAccNEnabled(true);
+                && !cmd.contains(MovePath.STEP_DECN)) {
+            setAccNEnabled(true);
         }
         
         if(!cmd.contains(MovePath.STEP_ACC) && !cmd.contains(MovePath.STEP_DEC) 
-        		&& !cmd.contains(MovePath.STEP_ACCN) && veln > 0) {
-        	setDecNEnabled(true);
+                && !cmd.contains(MovePath.STEP_ACCN) && veln > 0) {
+            setDecNEnabled(true);
         }
         return;
     }
     
     private void updateDumpButton() {
-    	 
-    	if(ce() instanceof Aero) {
-    		Aero a = (Aero)ce();
-    		setDumpEnabled(a.hasBombs() && cmd.length() == 0);
-    	} else {
-    		setDumpEnabled(false);
-    	}
-    	
+         
+        if(ce() instanceof Aero) {
+            Aero a = (Aero)ce();
+            setDumpEnabled(a.hasBombs() && cmd.length() == 0);
+        } else {
+            setDumpEnabled(false);
+        }
+        
     }
     
     private void updateFleeButton() {
-    	final Entity ce = ce();
-    	
-    	//Aeros should be able to flee if they reach a border hex with velocity remaining
-    	//and facing the right direction 
-    	if(ce instanceof Aero) {
-    		MoveStep step = cmd.getLastStep();
-    		Coords position = ce.getPosition();
-    		int facing = ce.getFacing();
-    		Aero a = (Aero)ce;
-    		int velocityLeft = a.getCurrentVelocity();
-    		if(step != null) {
-    			position = step.getPosition();
-    			facing = step.getFacing();
-    			velocityLeft = step.getVelocityLeft();
-    		}  		
-    		boolean evenx = (position.x % 2) == 0;
-    		if(velocityLeft > 0 && 
-            		((position.x == 0 && (facing == 5 || facing==4)) || 
-            		 (position.x == client.game.getBoard().getWidth() - 1 && (facing == 1 || facing==2)) ||
+        final Entity ce = ce();
+        
+        //Aeros should be able to flee if they reach a border hex with velocity remaining
+        //and facing the right direction 
+        if(ce instanceof Aero) {
+            MoveStep step = cmd.getLastStep();
+            Coords position = ce.getPosition();
+            int facing = ce.getFacing();
+            Aero a = (Aero)ce;
+            int velocityLeft = a.getCurrentVelocity();
+            if(step != null) {
+                position = step.getPosition();
+                facing = step.getFacing();
+                velocityLeft = step.getVelocityLeft();
+            }          
+            boolean evenx = (position.x % 2) == 0;
+            if(velocityLeft > 0 && 
+                    ((position.x == 0 && (facing == 5 || facing==4)) || 
+                     (position.x == client.game.getBoard().getWidth() - 1 && (facing == 1 || facing==2)) ||
                      (position.y == 0 && (facing == 1 || facing==5 || facing==0) && evenx) || 
                      (position.y == 0 && facing==0) || 
                      (position.y == client.game.getBoard().getHeight() - 1 && (facing == 2 || facing==3 || facing==4) && !evenx) ||
                      (position.y == client.game.getBoard().getHeight() - 1 && facing==3))) {
-    			setFleeEnabled(true);
-    		} else {
-    			setFleeEnabled(false);
-    		}
-    	}
+                setFleeEnabled(true);
+            } else {
+                setFleeEnabled(false);
+            }
+        }
     }
 
     private void updateLaunchButton() {
-    	
-    	final Entity ce = ce();
-    	
-    	if (null == ce ) {
-    		return;
-    	}
-    	
-    	setLaunchEnabled(ce.getLaunchableFighters().size() > 0 || ce.getLaunchableSmallCraft().size() > 0);
-    	
+        
+        final Entity ce = ce();
+        
+        if (null == ce ) {
+            return;
+        }
+        
+        setLaunchEnabled(ce.getLaunchableFighters().size() > 0 || ce.getLaunchableSmallCraft().size() > 0);
+        
     }
 
     private synchronized void updateLoadButtons() {
@@ -2338,20 +2338,20 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     //whose movement is ended and hops on.  
     //need a new function
     private synchronized void updateRecoveryButton() {
-    	
-    	final Entity ce = ce();
+        
+        final Entity ce = ce();
         if(null==ce) return;
-    	
+        
 //      I also want to handle fighter recovery here. If using advanced movement
         //it is not a function of where carrier is but where the carrier will be at the end 
         //of its move
         if(ce instanceof Aero) {
-        	Coords loadeePos = cmd.getFinalCoords();
-        	if(client.game.useVectorMove()) {
-        		//not where you are, but where you will be
-        		loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
-        	}
-        	Entity other = null;
+            Coords loadeePos = cmd.getFinalCoords();
+            if(client.game.useVectorMove()) {
+                //not where you are, but where you will be
+                loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
+            }
+            Entity other = null;
             Enumeration entities = client.game.getEntities(loadeePos);
             boolean isGood = false;
             while (entities.hasMoreElements()) {
@@ -2360,33 +2360,33 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 if (!ce.getOwner().isEnemyOf(other.getOwner())
                         && !ce.equals(other)) {
                     // must be done with its movement
-                	// it also must be same heading and velocity
+                    // it also must be same heading and velocity
                     if ( other instanceof Aero && 
-                    		other.isDone()
+                            other.isDone()
                             && other.canLoad(ce)
                             && cmd.getFinalFacing() == other.getFacing()) {
-                    	
-                    	//now lets check velocity
-                    	//depends on movement rules
-                    	Aero oa = (Aero)other;
-                    	if(client.game.useVectorMove()) {                    		
-                    		//can you do equality with vectors?
-                    		if(Compute.sameVectors(cmd.getFinalVectors(),oa.getVectors())) {
-                    			setRecoverEnabled(true);
+                        
+                        //now lets check velocity
+                        //depends on movement rules
+                        Aero oa = (Aero)other;
+                        if(client.game.useVectorMove()) {                            
+                            //can you do equality with vectors?
+                            if(Compute.sameVectors(cmd.getFinalVectors(),oa.getVectors())) {
+                                setRecoverEnabled(true);
                                 isGood = true;
-                    		}	
-                    	} else if(cmd.getFinalVelocity() == oa.getCurrentVelocity()) {
-                    		setRecoverEnabled(true);
+                            }    
+                        } else if(cmd.getFinalVelocity() == oa.getCurrentVelocity()) {
+                            setRecoverEnabled(true);
                             isGood = true;
-                    	}    
+                        }    
                     }
                 }
-				// Nope. Discard it.
-				other = null;
+                // Nope. Discard it.
+                other = null;
             } // Check the next entity in this position.
             if (!isGood) {
                 setRecoverEnabled(false);
-            }       	
+            }           
         }
         
     }
@@ -2410,63 +2410,63 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             System.err.println( "MovementDisplay#getUnloadedUnit() called without loaded units." ); //$NON-NLS-1$
 
         } else {
-        	//cycle through the fighter bays and then the small craft bays
-        	int bayNum = 1;
-        	Bay currentBay;
-        	Vector<Entity> currentFighters = new Vector<Entity>();
-        	int doors = 0;
-        	Vector<Bay> FighterBays = ce.getFighterBays();
-        	for (int i = 0; i < FighterBays.size(); i++) {
-        		currentBay = FighterBays.elementAt(i);
-        		currentFighters = currentBay.getLaunchableUnits();
-        		//crap, this has to be done by doors in order to get the right 
-        		//bonus to the control roll
-        		doors = currentBay.getDoors();
-        		for( int j = 0; j < doors; j++) {
-        			if(currentFighters.size() > 0) {
-        				String[] names = new String[ currentFighters.size() ];
-        				String question = Messages.getString("MovementDisplay.LaunchFighterDialog.message", new Object[]{ //$NON-NLS-1$
-        						ce.getShortName(), bayNum, j+1});
-        				for ( int loop = 0; loop < names.length; loop++ ) {
-        					names[loop] = currentFighters.elementAt(loop).getShortName();
-        				}
-        				ChoiceDialog choiceDialog =
-        					new ChoiceDialog( clientgui.frame,
-        							Messages.getString("MovementDisplay.LaunchFighterDialog.title", new Object[]{ //$NON-NLS-1$
-        									currentBay.getType(), bayNum, j+1}), //$NON-NLS-1$
-        									question,
-        									names );
-        				choiceDialog.setVisible(true);
-        				if ( choiceDialog.getAnswer() == true ) {
-                			//load up the choices
-                			int[] unitsLaunched = choiceDialog.getChoices();
-                			//get the bonus to the control roll for overlaunching
-                			int bonus = unitsLaunched.length - 2;
-                			//I need to make the door check here, doesn't seem right but can't figure out better way
-                			//Its a hack, I know
-                			int doorDamage = 0;
-                			boolean alreadyDamaged = false;
-                			for(int k = 0; k < unitsLaunched.length; k++) {
-                				//add these to the units chosen
-                				doorDamage = 0;
-                				if((((Aero)ce).isOutControlTotal() || k > 1) && !alreadyDamaged) {
-                					int doorroll = Compute.d6(2);
-                					if(doorroll == 2) {
-                						doorDamage = 1;
-                						alreadyDamaged = true;
-                					}
-                				}
-                				choices.add(new Integer[]{currentFighters.elementAt(unitsLaunched[k]).getId(), bonus, doorDamage});
-                			}
-                			//now remove them (must be a better way?)
-                			for(int l = unitsLaunched.length; l > 0; l--) {
-                				currentFighters.remove(unitsLaunched[l-1]);
-                			}
-                		}	 
-        			}
-        		}
-        		bayNum++;
-        	}
+            //cycle through the fighter bays and then the small craft bays
+            int bayNum = 1;
+            Bay currentBay;
+            Vector<Entity> currentFighters = new Vector<Entity>();
+            int doors = 0;
+            Vector<Bay> FighterBays = ce.getFighterBays();
+            for (int i = 0; i < FighterBays.size(); i++) {
+                currentBay = FighterBays.elementAt(i);
+                currentFighters = currentBay.getLaunchableUnits();
+                //crap, this has to be done by doors in order to get the right 
+                //bonus to the control roll
+                doors = currentBay.getDoors();
+                for( int j = 0; j < doors; j++) {
+                    if(currentFighters.size() > 0) {
+                        String[] names = new String[ currentFighters.size() ];
+                        String question = Messages.getString("MovementDisplay.LaunchFighterDialog.message", new Object[]{ //$NON-NLS-1$
+                                ce.getShortName(), bayNum, j+1});
+                        for ( int loop = 0; loop < names.length; loop++ ) {
+                            names[loop] = currentFighters.elementAt(loop).getShortName();
+                        }
+                        ChoiceDialog choiceDialog =
+                            new ChoiceDialog( clientgui.frame,
+                                    Messages.getString("MovementDisplay.LaunchFighterDialog.title", new Object[]{ //$NON-NLS-1$
+                                            currentBay.getType(), bayNum, j+1}), //$NON-NLS-1$
+                                            question,
+                                            names );
+                        choiceDialog.setVisible(true);
+                        if ( choiceDialog.getAnswer() == true ) {
+                            //load up the choices
+                            int[] unitsLaunched = choiceDialog.getChoices();
+                            //get the bonus to the control roll for overlaunching
+                            int bonus = unitsLaunched.length - 2;
+                            //I need to make the door check here, doesn't seem right but can't figure out better way
+                            //Its a hack, I know
+                            int doorDamage = 0;
+                            boolean alreadyDamaged = false;
+                            for(int k = 0; k < unitsLaunched.length; k++) {
+                                //add these to the units chosen
+                                doorDamage = 0;
+                                if((((Aero)ce).isOutControlTotal() || k > 1) && !alreadyDamaged) {
+                                    int doorroll = Compute.d6(2);
+                                    if(doorroll == 2) {
+                                        doorDamage = 1;
+                                        alreadyDamaged = true;
+                                    }
+                                }
+                                choices.add(new Integer[]{currentFighters.elementAt(unitsLaunched[k]).getId(), bonus, doorDamage});
+                            }
+                            //now remove them (must be a better way?)
+                            for(int l = unitsLaunched.length; l > 0; l--) {
+                                currentFighters.remove(unitsLaunched[l-1]);
+                            }
+                        }     
+                    }
+                }
+                bayNum++;
+            }
         }// End have-choices
         //      Return the chosen unit.
         return choices;
@@ -2480,11 +2480,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         
         //collect all possible choices
         Coords loadeePos = cmd.getFinalCoords();
-    	if(client.game.useVectorMove()) {
-    		//not where you are, but where you will be
-    		loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
-    	}
-    	Entity other = null;
+        if(client.game.useVectorMove()) {
+            //not where you are, but where you will be
+            loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
+        }
+        Entity other = null;
         Enumeration entities = client.game.getEntities(loadeePos);
         while (entities.hasMoreElements()) {
             // Is the other unit friendly and not the current entity?
@@ -2492,136 +2492,136 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             if (!ce.getOwner().isEnemyOf(other.getOwner())
                     && !ce.equals(other)) {
                 // must be done with its movement
-            	// it also must be same heading and velocity
+                // it also must be same heading and velocity
                 if ( other instanceof Aero 
-                		&& !((Aero)other).isOutControlTotal()
-                		&& other.isDone()
+                        && !((Aero)other).isOutControlTotal()
+                        && other.isDone()
                         && other.canLoad(ce)
                         && ce.isLoadableThisTurn()
                         &&cmd.getFinalFacing() == other.getFacing()) {
-                	
-                	//now lets check velocity
-                	//depends on movement rules
-                	Aero oa = (Aero)other;
-                	if(client.game.useVectorMove()) {                    		
-                		if(Compute.sameVectors(cmd.getFinalVectors(),oa.getVectors())) {
-                			choices.add(other.getId());
-                		}	
-                	} else if(cmd.getFinalVelocity() == oa.getCurrentVelocity()) {
-                		choices.add(other.getId());
-                	}    
+                    
+                    //now lets check velocity
+                    //depends on movement rules
+                    Aero oa = (Aero)other;
+                    if(client.game.useVectorMove()) {                            
+                        if(Compute.sameVectors(cmd.getFinalVectors(),oa.getVectors())) {
+                            choices.add(other.getId());
+                        }    
+                    } else if(cmd.getFinalVelocity() == oa.getCurrentVelocity()) {
+                        choices.add(other.getId());
+                    }    
                 }
             }
-			// Nope. Discard it.
-			other = null;
+            // Nope. Discard it.
+            other = null;
         } // Check the next entity in this position. 
         
         if(choices.size() < 1) {
-        	return -1;
+            return -1;
         }
         
         if(choices.size() == 1) {
-        	if ( client.game.getEntity(choices.elementAt(0)).mpUsed > 0) {
-				if(clientgui.doYesNoDialog
-						( Messages.getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
-								Messages.getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$      
-						)) {
-					return choices.elementAt(0);
-				} 
-			} else {
-				return choices.elementAt(0);
-			}
-        	return -1;
+            if ( client.game.getEntity(choices.elementAt(0)).mpUsed > 0) {
+                if(clientgui.doYesNoDialog
+                        ( Messages.getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
+                                Messages.getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$      
+                        )) {
+                    return choices.elementAt(0);
+                } 
+            } else {
+                return choices.elementAt(0);
+            }
+            return -1;
         }
         
         String[] names = new String[ choices.size() ];
         for ( int loop = 0; loop < names.length; loop++ ) {
-			names[loop] = client.game.getEntity(choices.elementAt(loop)).getShortName();
-		}
+            names[loop] = client.game.getEntity(choices.elementAt(loop)).getShortName();
+        }
         String question = Messages.getString("MovementDisplay.RecoverFighterDialog.message");
         SingleChoiceDialog choiceDialog =
-			new SingleChoiceDialog( clientgui.frame,
-					Messages.getString("MovementDisplay.RecoverFighterDialog.title"),
-							question,
-							names );
-		choiceDialog.setVisible(true);
+            new SingleChoiceDialog( clientgui.frame,
+                    Messages.getString("MovementDisplay.RecoverFighterDialog.title"),
+                            question,
+                            names );
+        choiceDialog.setVisible(true);
         
-		if(choiceDialog.getAnswer()) {
-			//if this unit is thrusting, make sure they are aware			
-			if ( client.game.getEntity(choices.elementAt(choiceDialog.getChoice())).mpUsed > 0) {
-				if(clientgui.doYesNoDialog
-						( Messages.getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
-								Messages.getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$      
-						)) {
-					return choices.elementAt(choiceDialog.getChoice());
-				} 
-			} else {
-				return choices.elementAt(choiceDialog.getChoice());
-			}
-		}
-		return -1;
+        if(choiceDialog.getAnswer()) {
+            //if this unit is thrusting, make sure they are aware            
+            if ( client.game.getEntity(choices.elementAt(choiceDialog.getChoice())).mpUsed > 0) {
+                if(clientgui.doYesNoDialog
+                        ( Messages.getString("MovementDisplay.RecoverSureDialog.title"), //$NON-NLS-1$
+                                Messages.getString("MovementDisplay.RecoverSureDialog.message") //$NON-NLS-1$      
+                        )) {
+                    return choices.elementAt(choiceDialog.getChoice());
+                } 
+            } else {
+                return choices.elementAt(choiceDialog.getChoice());
+            }
+        }
+        return -1;
     }
     
     //check for out of control and adjust buttons
     private void checkOOC() {
-    	final Entity ce = ce();
+        final Entity ce = ce();
         if(null==ce) return;
         
         if(!(ce instanceof Aero)) {
-        	return;
+            return;
         }
         
         Aero a = (Aero)ce;
         
         if(a.isOutControlTotal()) {
-    		disableButtons();
-    		butDone.setEnabled(true);
-    		butNext.setEnabled(true);
-    		butLaunch.setEnabled(true);
-    	}
+            disableButtons();
+            butDone.setEnabled(true);
+            butNext.setEnabled(true);
+            butLaunch.setEnabled(true);
+        }
         return;
     }
     
     //check for fuel and adjust buttons
     private void checkFuel() {
-    	final Entity ce = ce();
+        final Entity ce = ce();
         if(null==ce) return;
         
         if(!(ce instanceof Aero)) {
-        	return;
+            return;
         }
         
         Aero a = (Aero)ce;
         if(a.getFuel() < 1) {
-    		disableButtons();
-    		butDone.setEnabled(true);
-    		butNext.setEnabled(true);
-    		butLaunch.setEnabled(true);
-    		updateRACButton();
-    		updateRecoveryButton();
-    		updateDumpButton();
-    	}
+            disableButtons();
+            butDone.setEnabled(true);
+            butNext.setEnabled(true);
+            butLaunch.setEnabled(true);
+            updateRACButton();
+            updateRecoveryButton();
+            updateDumpButton();
+        }
         return;
     }
     
     //check for atmosphere and adjust buttons
     private void checkAtmosphere() {
-    	final Entity ce = ce();
+        final Entity ce = ce();
         if(null==ce) return;
         
         if(!(ce instanceof Aero)) {
-        	return;
+            return;
         }
         
         Aero a = (Aero)ce;
         if(client.game.getBoard().inAtmosphere()) {
-    		if(a.isSpheroid()) {
-    	      	butAcc.setEnabled(false);
-            	butDec.setEnabled(false);
-            	butAccN.setEnabled(false);
-            	butDecN.setEnabled(false);
-    		}     		
-    	}
+            if(a.isSpheroid()) {
+                  butAcc.setEnabled(false);
+                butDec.setEnabled(false);
+                butAccN.setEnabled(false);
+                butDecN.setEnabled(false);
+            }             
+        }
         return;
     }
 
@@ -2698,25 +2698,25 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     }
 
     private void dumpBombs() {
-    	
-    	if(!(ce() instanceof Aero)) {
-    		return;
-    	}
-    	Aero a = (Aero)ce();
-    	
-    	//bring up dialog to dump bombs, then make a control roll and report success or failure
-    	//should update mp available
-    	BombPayloadDialog dumpBombsDialog = 
-    		new BombPayloadDialog(clientgui.frame,
-    				Messages.getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$
-    				a.getBombChoices(), false, true);
-    	dumpBombsDialog.setVisible(true); 
-    	if(dumpBombsDialog.getAnswer()) { 
-    		int[] bombsDumped = dumpBombsDialog.getChoices();
-    		//first make a control roll
-    		PilotingRollData psr = ce().getBasePilotingRoll();
-        	int ctrlroll = Compute.d6(2);
-        	Report r = new Report(9500);
+        
+        if(!(ce() instanceof Aero)) {
+            return;
+        }
+        Aero a = (Aero)ce();
+        
+        //bring up dialog to dump bombs, then make a control roll and report success or failure
+        //should update mp available
+        BombPayloadDialog dumpBombsDialog = 
+            new BombPayloadDialog(clientgui.frame,
+                    Messages.getString("MovementDisplay.BombDumpDialog.title"), //$NON-NLS-1$
+                    a.getBombChoices(), false, true);
+        dumpBombsDialog.setVisible(true); 
+        if(dumpBombsDialog.getAnswer()) { 
+            int[] bombsDumped = dumpBombsDialog.getChoices();
+            //first make a control roll
+            PilotingRollData psr = ce().getBasePilotingRoll();
+            int ctrlroll = Compute.d6(2);
+            Report r = new Report(9500);
             r.subject = ce().getId();
             r.add(ce().getDisplayName());
             r.add(psr.getValue());
@@ -2724,37 +2724,37 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             r.newlines = 0;
             r.indent(1);
             if(ctrlroll < psr.getValue()) {
-            	r.choose(false);
-        		//addReport(r);
-            	String title = Messages.getString("MovementDisplay.DumpingBombs.title"); //$NON-NLS-1$
-				String body = Messages.getString("MovementDisplay.DumpFailure.message"); //$NON-NLS-1$
-				clientgui.doAlertDialog(title, body);
-        		//failed the roll, so dump all bombs
-            	bombsDumped = a.getBombChoices();
+                r.choose(false);
+                //addReport(r);
+                String title = Messages.getString("MovementDisplay.DumpingBombs.title"); //$NON-NLS-1$
+                String body = Messages.getString("MovementDisplay.DumpFailure.message"); //$NON-NLS-1$
+                clientgui.doAlertDialog(title, body);
+                //failed the roll, so dump all bombs
+                bombsDumped = a.getBombChoices();
             } else {
-            	//avoided damage
-            	r.choose(true);
-            	String title = Messages.getString("MovementDisplay.DumpingBombs.title"); //$NON-NLS-1$
-				String body = Messages.getString("MovementDisplay.DumpSuccessful.message"); //$NON-NLS-1$
-				clientgui.doAlertDialog(title, body);
-        		//addReport(r);
+                //avoided damage
+                r.choose(true);
+                String title = Messages.getString("MovementDisplay.DumpingBombs.title"); //$NON-NLS-1$
+                String body = Messages.getString("MovementDisplay.DumpSuccessful.message"); //$NON-NLS-1$
+                clientgui.doAlertDialog(title, body);
+                //addReport(r);
             }
-    		//now unload the bombs
-    		for(int j = 0; j < bombsDumped.length; j++) {
-    			if(bombsDumped[j] > 0) {
-    				a.removeBombs(bombsDumped[j], j);
-    				//Report r = new Report(5115);
-    				r.subject = ce().getId();
-    				r.addDesc(ce());
-    				r.add("" + bombsDumped[j] + " " + Aero.bombNames[j] + "(s)");
-    				//addReport(r);	
-    			}
-    		}   
-    		//update the bomb load immediately
-    		a.updateBombLoad();
-    		client.sendUpdateEntity(ce());
-    		//not sure how to update mech display, but everything else is working
-    	}
+            //now unload the bombs
+            for(int j = 0; j < bombsDumped.length; j++) {
+                if(bombsDumped[j] > 0) {
+                    a.removeBombs(bombsDumped[j], j);
+                    //Report r = new Report(5115);
+                    r.subject = ce().getId();
+                    r.addDesc(ce());
+                    r.add("" + bombsDumped[j] + " " + Aero.bombNames[j] + "(s)");
+                    //addReport(r);    
+                }
+            }   
+            //update the bomb load immediately
+            a.updateBombLoad();
+            client.sendUpdateEntity(ce());
+            //not sure how to update mech display, but everything else is working
+        }
     }
     
     //
@@ -3132,22 +3132,22 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_LAUNCH)) {
-        	//The function will bring up a choice dialog that
-        	//asks the user how many units of each type (small craft and
-        	//ASF) he wants to launch
-        	Vector<Integer[]> launched = getLaunchedUnits();
-        	cmd.addStep(MovePath.STEP_LAUNCH, launched);
+            //The function will bring up a choice dialog that
+            //asks the user how many units of each type (small craft and
+            //ASF) he wants to launch
+            Vector<Integer[]> launched = getLaunchedUnits();
+            cmd.addStep(MovePath.STEP_LAUNCH, launched);
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
         }  else if (ev.getActionCommand().equals(MOVE_RECOVER)) {
-        	//if more than one unit is available as a carrier
-        	//then bring up an option dialog
-        	int recoverer = getRecoveryUnit();
-        	if(recoverer != -1) {
-        		cmd.addStep(MovePath.STEP_RECOVER, recoverer);
-        		clientgui.bv.drawMovementData(ce, cmd);
-        		clientgui.bv.repaint();
-        	}
+            //if more than one unit is available as a carrier
+            //then bring up an option dialog
+            int recoverer = getRecoveryUnit();
+            if(recoverer != -1) {
+                cmd.addStep(MovePath.STEP_RECOVER, recoverer);
+                clientgui.bv.drawMovementData(ce, cmd);
+                clientgui.bv.repaint();
+            }
         } else if (ev.getActionCommand().equals(MOVE_TURN_LEFT)) {
             cmd.addStep(MovePath.STEP_TURN_LEFT);
             clientgui.bv.drawMovementData(ce, cmd);
@@ -3165,12 +3165,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_END_OVER)) {
-        	cmd.addStep(MovePath.STEP_YAW);
-        	cmd.addStep(MovePath.STEP_ROLL);
+            cmd.addStep(MovePath.STEP_YAW);
+            cmd.addStep(MovePath.STEP_ROLL);
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_DUMP)) {
-        	dumpBombs();
+            dumpBombs();
         }
 
         updateProneButtons();
@@ -3185,8 +3185,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateThrustButton();
         updateRollButton();
         checkFuel();
-    	checkOOC();
-    	checkAtmosphere();
+        checkOOC();
+        checkAtmosphere();
     }
 
     /**
@@ -3607,110 +3607,110 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      */
     private MovePath addSteps(MovePath md, Entity en) {
 
-    	//if the last step is a launch or recovery, then I want to keep that at the end
-    	MoveStep lastStep = md.getLastStep();
-    	if(lastStep != null && (lastStep.getType() == MovePath.STEP_LAUNCH || lastStep.getType() == MovePath.STEP_RECOVER)) {
-    		md.removeLastStep();
-    	}
-    	
-    	//    	get the start and end
-		Coords start = en.getPosition();
-		Coords end = Compute.getFinalPosition(start, md.getFinalVectors());
-		//Coords end = md.getFinalVectors().getFinalPosition(start);
-		
-		//TODO: deal with lines that hit boundaries exactly
-		//(see LosEffects.java)
-		ArrayList<Coords> in = Coords.intervening(start, end);
-		//first check whether we are splitting hexes
-		boolean split = false;
-		double degree = start.degree(end);
-		if (degree % 60 == 30) {
-			split = true;
-			in = Coords.intervening(start, end, true);
-		}
-				
-		Coords current = start;
-		int facing = md.getFinalFacing();
-		for (int i = 1; i < in.size(); i++) {
-			
-			
-			//check for split hexes
-			//check for some number after a multiple of 3 (1,4,7,etc)			
-			if((i % 3) == 1 && split) {
-					
-				Coords left = in.get(i);
-				Coords right = in.get(i+1);
-					
-				//get the total tonnage in each hex
-				Enumeration<Entity> leftTargets = client.game.getEntities( left );
-				double leftTonnage = 0;
-				while ( leftTargets.hasMoreElements() ) { 
-					leftTonnage += leftTargets.nextElement().getWeight();
-				}
-				Enumeration<Entity> rightTargets = client.game.getEntities( right );
-				double rightTonnage = 0;
-				while ( rightTargets.hasMoreElements() ) { 
-					rightTonnage += rightTargets.nextElement().getWeight();
-				}
-					
-				//TODO: I will need to update this to account for asteroids
-					
-				//I need to consider both of these passed through 
-				//for purposes of bombing
-				en.addPassedThrough(right);
-				en.addPassedThrough(left);
-				client.sendUpdateEntity(en);
-				
-				//if the left is preferred, increment i so next one is skipped
-				if(leftTonnage < rightTonnage) {
-					i++;					
-				} else {					
-					continue;
-				}
-				
-			}
-			
-				
-			Coords c = in.get(i);
-				
-			//check if the next move would put vessel off the map
-			if(!client.game.getBoard().contains(c)) {
-				md.addStep(MovePath.STEP_OFF);
-				break;
-			}
-				
-			//which direction is this from the current hex?
-			int dir = current.direction(c);
-			//what kind of step do I need to get there?
-			int diff = dir - facing;
-			if(diff == 0) {
-				md.addStep(MovePath.STEP_FORWARDS);
-			} else if (diff == 1 || diff == -5) {
-				md.addStep(MovePath.STEP_LATERAL_RIGHT);
-			} else if (diff == -2 || diff == 4) {
-				md.addStep(MovePath.STEP_LATERAL_RIGHT_BACKWARDS);
-			} else if (diff == -1 || diff == 5) {
-				md.addStep(MovePath.STEP_LATERAL_LEFT);
-			} else if (diff == 2 || diff == -4) {
-				md.addStep(MovePath.STEP_LATERAL_LEFT_BACKWARDS);
-			} else if (diff == 3 || diff == -3) {
-				md.addStep(MovePath.STEP_BACKWARDS);
-			}
-			
-			current = c;
-				
-		}
-		
-		//do I now need to add on the last step again?
-		if(lastStep != null && lastStep.getType() == MovePath.STEP_LAUNCH) {
-			md.addStep(MovePath.STEP_LAUNCH,lastStep.getLaunched());
-		}
-		
-		if(lastStep != null && lastStep.getType() == MovePath.STEP_RECOVER) {
-			md.addStep(MovePath.STEP_RECOVER,lastStep.getRecoveryUnit());
-		}
-		
-		return md;
+        //if the last step is a launch or recovery, then I want to keep that at the end
+        MoveStep lastStep = md.getLastStep();
+        if(lastStep != null && (lastStep.getType() == MovePath.STEP_LAUNCH || lastStep.getType() == MovePath.STEP_RECOVER)) {
+            md.removeLastStep();
+        }
+        
+        //        get the start and end
+        Coords start = en.getPosition();
+        Coords end = Compute.getFinalPosition(start, md.getFinalVectors());
+        //Coords end = md.getFinalVectors().getFinalPosition(start);
+        
+        //TODO: deal with lines that hit boundaries exactly
+        //(see LosEffects.java)
+        ArrayList<Coords> in = Coords.intervening(start, end);
+        //first check whether we are splitting hexes
+        boolean split = false;
+        double degree = start.degree(end);
+        if (degree % 60 == 30) {
+            split = true;
+            in = Coords.intervening(start, end, true);
+        }
+                
+        Coords current = start;
+        int facing = md.getFinalFacing();
+        for (int i = 1; i < in.size(); i++) {
+            
+            
+            //check for split hexes
+            //check for some number after a multiple of 3 (1,4,7,etc)            
+            if((i % 3) == 1 && split) {
+                    
+                Coords left = in.get(i);
+                Coords right = in.get(i+1);
+                    
+                //get the total tonnage in each hex
+                Enumeration<Entity> leftTargets = client.game.getEntities( left );
+                double leftTonnage = 0;
+                while ( leftTargets.hasMoreElements() ) { 
+                    leftTonnage += leftTargets.nextElement().getWeight();
+                }
+                Enumeration<Entity> rightTargets = client.game.getEntities( right );
+                double rightTonnage = 0;
+                while ( rightTargets.hasMoreElements() ) { 
+                    rightTonnage += rightTargets.nextElement().getWeight();
+                }
+                    
+                //TODO: I will need to update this to account for asteroids
+                    
+                //I need to consider both of these passed through 
+                //for purposes of bombing
+                en.addPassedThrough(right);
+                en.addPassedThrough(left);
+                client.sendUpdateEntity(en);
+                
+                //if the left is preferred, increment i so next one is skipped
+                if(leftTonnage < rightTonnage) {
+                    i++;                    
+                } else {                    
+                    continue;
+                }
+                
+            }
+            
+                
+            Coords c = in.get(i);
+                
+            //check if the next move would put vessel off the map
+            if(!client.game.getBoard().contains(c)) {
+                md.addStep(MovePath.STEP_OFF);
+                break;
+            }
+                
+            //which direction is this from the current hex?
+            int dir = current.direction(c);
+            //what kind of step do I need to get there?
+            int diff = dir - facing;
+            if(diff == 0) {
+                md.addStep(MovePath.STEP_FORWARDS);
+            } else if (diff == 1 || diff == -5) {
+                md.addStep(MovePath.STEP_LATERAL_RIGHT);
+            } else if (diff == -2 || diff == 4) {
+                md.addStep(MovePath.STEP_LATERAL_RIGHT_BACKWARDS);
+            } else if (diff == -1 || diff == 5) {
+                md.addStep(MovePath.STEP_LATERAL_LEFT);
+            } else if (diff == 2 || diff == -4) {
+                md.addStep(MovePath.STEP_LATERAL_LEFT_BACKWARDS);
+            } else if (diff == 3 || diff == -3) {
+                md.addStep(MovePath.STEP_BACKWARDS);
+            }
+            
+            current = c;
+                
+        }
+        
+        //do I now need to add on the last step again?
+        if(lastStep != null && lastStep.getType() == MovePath.STEP_LAUNCH) {
+            md.addStep(MovePath.STEP_LAUNCH,lastStep.getLaunched());
+        }
+        
+        if(lastStep != null && lastStep.getType() == MovePath.STEP_RECOVER) {
+            md.addStep(MovePath.STEP_RECOVER,lastStep.getRecoveryUnit());
+        }
+        
+        return md;
     }
 
 }

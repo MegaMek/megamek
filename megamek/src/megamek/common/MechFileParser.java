@@ -300,10 +300,10 @@ public class MechFileParser {
 
         } // Check the next piece of equipment.
         
-        if(ent.usesWeaponBays()) {	
-        	ent.loadAllWeapons();
+        if(ent.usesWeaponBays()) {    
+            ent.loadAllWeapons();
         }
-        	
+            
         //set RACs and UACs at maximum firing rate if aero
         if(ent instanceof Aero) {
             ent.setRapidFire();

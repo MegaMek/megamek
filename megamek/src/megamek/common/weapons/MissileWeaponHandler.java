@@ -288,36 +288,36 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
      * @return an <code>int</code> representing the attack value at that range.
      */
     protected int calcAttackValue() {
-    	int distance = ae.getPosition().distance(target.getPosition());
-    	int av = 0;
-    	int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
-    	if(range == WeaponType.RANGE_SHORT) {
-    		av = wtype.getRoundShortAV();
-    	} else if(range == WeaponType.RANGE_MED) {
-    		av = wtype.getRoundMedAV();
-    	} else if (range == WeaponType.RANGE_LONG) {
-    		av = wtype.getRoundLongAV();
-    	} else if (range == WeaponType.RANGE_EXT) {
-    		av = wtype.getRoundExtAV();
-    	}
-    	Mounted mLinker = weapon.getLinkedBy();
+        int distance = ae.getPosition().distance(target.getPosition());
+        int av = 0;
+        int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
+        if(range == WeaponType.RANGE_SHORT) {
+            av = wtype.getRoundShortAV();
+        } else if(range == WeaponType.RANGE_MED) {
+            av = wtype.getRoundMedAV();
+        } else if (range == WeaponType.RANGE_LONG) {
+            av = wtype.getRoundLongAV();
+        } else if (range == WeaponType.RANGE_EXT) {
+            av = wtype.getRoundExtAV();
+        }
+        Mounted mLinker = weapon.getLinkedBy();
         AmmoType atype = (AmmoType) ammo.getType();
         int bonus = 0;
-    	if ((mLinker != null && mLinker.getType() instanceof MiscType
+        if ((mLinker != null && mLinker.getType() instanceof MiscType
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_ARTEMIS))
                 && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
-    		bonus = (int)Math.ceil(atype.getRackSize() / 5.0);
-    		if(atype.getAmmoType() == AmmoType.T_SRM) {
-    			bonus = 2;
-    		}
-    	}
-    	av = av + bonus;
-    	if (atype.getAmmoType() == AmmoType.T_MML && !atype.hasFlag(AmmoType.F_MML_LRM)) {
-    		av = av * 2;
-    	}
-    	return (av);
+            bonus = (int)Math.ceil(atype.getRackSize() / 5.0);
+            if(atype.getAmmoType() == AmmoType.T_SRM) {
+                bonus = 2;
+            }
+        }
+        av = av + bonus;
+        if (atype.getAmmoType() == AmmoType.T_MML && !atype.hasFlag(AmmoType.F_MML_LRM)) {
+            av = av * 2;
+        }
+        return (av);
     }
 
     
@@ -575,14 +575,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         //Now I need to adjust this for air-to-air attacks because they
         //use attack value
         if(ae instanceof Aero && target instanceof Aero) {
-        	if(hits == 1 && nCluster == 1) {
-        		nDamPerHit = attackValue;
-        	} else {
-        		nDamPerHit = 1;
-        		hits = attackValue;
-        		nCluster = 5;
-        	}
-        	
+            if(hits == 1 && nCluster == 1) {
+                nDamPerHit = attackValue;
+            } else {
+                nDamPerHit = 1;
+                hits = attackValue;
+                nCluster = 5;
+            }
+            
         }
         
         // We've calculated how many hits. At this point, any missed

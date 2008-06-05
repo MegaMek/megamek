@@ -70,7 +70,7 @@ public final class LightVehicleBay extends Bay {
         
         //is the door functional
         if( this.doors < 1 ) {
-        	result = false;
+            result = false;
         }
 
         // Return our result.
@@ -82,7 +82,7 @@ public final class LightVehicleBay extends Bay {
     }
     
     public String getType() {
-    	return "Light Vehicle";
+        return "Light Vehicle";
     }
 
 } // End package class TroopSpace implements Transporter

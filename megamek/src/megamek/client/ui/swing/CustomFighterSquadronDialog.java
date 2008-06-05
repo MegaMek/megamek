@@ -871,14 +871,14 @@ public class CustomFighterSquadronDialog
     
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == m_bCancel) {
-        	//clear squadron
-        	squadron.removeAllElements();
-        	//fs.fighters.removeAllElements();
-        	listFightersSelected.removeAll();
+            //clear squadron
+            squadron.removeAllElements();
+            //fs.fighters.removeAllElements();
+            listFightersSelected.removeAll();
             this.setVisible(false);
         }
         else if (ae.getSource() == butAdd) {
-        	int x = m_mechList.getSelectedIndex();
+            int x = m_mechList.getSelectedIndex();
             if (x == -1) {
                 return;
             }
@@ -901,11 +901,11 @@ public class CustomFighterSquadronDialog
             previewSquad(fs);
             //if this hits the maximum squadron size then disable add button
             if(squadron.size() == FighterSquadron.MAX_SIZE) {
-            	butAdd.setEnabled(false);
+                butAdd.setEnabled(false);
             }           
         }
         else if (ae.getSource() == butRemove) {
-        	int x = listFightersSelected.getSelectedIndex();
+            int x = listFightersSelected.getSelectedIndex();
             if (x == -1) {
                 return;
             }
@@ -921,30 +921,30 @@ public class CustomFighterSquadronDialog
             butAdd.setEnabled(true);
         }
         else if (ae.getSource() == m_bPick) {
-        	if(squadron.size() <= 0) {
-        		return;
-        	}
-        	Client c = null;
-        	if (m_chPlayer.getSelectedIndex() > 0) {
-        		String name = m_chPlayer.getSelectedItem();
-        		c = m_clientgui.getBots().get(name);
-        	}
-        	if (c == null) {
-        		c = m_client;
-        	}
-        	//compile the fighter squadron
-        	FighterSquadron fs = Compute.compileSquadron(squadron);
-        	//create a new fighter squadron entity
-        	//FighterSquadron chosen = fs;
-        	//fs.compileSquadron();
-        	autoSetSkills(fs);
-        	fs.setOwner(c.getLocalPlayer());
-        	c.sendAddEntity(fs);
-        	//clear the current squadron
-        	squadron.removeAllElements();
-        	//fs.fighters.removeAllElements();
-        	listFightersSelected.removeAll();
-        	this.setVisible(false);
+            if(squadron.size() <= 0) {
+                return;
+            }
+            Client c = null;
+            if (m_chPlayer.getSelectedIndex() > 0) {
+                String name = m_chPlayer.getSelectedItem();
+                c = m_clientgui.getBots().get(name);
+            }
+            if (c == null) {
+                c = m_client;
+            }
+            //compile the fighter squadron
+            FighterSquadron fs = Compute.compileSquadron(squadron);
+            //create a new fighter squadron entity
+            //FighterSquadron chosen = fs;
+            //fs.compileSquadron();
+            autoSetSkills(fs);
+            fs.setOwner(c.getLocalPlayer());
+            c.sendAddEntity(fs);
+            //clear the current squadron
+            squadron.removeAllElements();
+            //fs.fighters.removeAllElements();
+            listFightersSelected.removeAll();
+            this.setVisible(false);
         } else if (ae.getSource() == m_bSearch) {
             advancedSearch();
         } else if (ae.getSource() == m_bReset) {
@@ -971,18 +971,18 @@ public class CustomFighterSquadronDialog
                 clearMechPreview();
                 return;
             }
-			MechSummary ms = m_mechsCurrent[selected];
-			try {
-				Entity entity = new MechFileParser(ms.getSourceFile(), ms
-						.getEntryName()).getEntity();
-				previewMech(entity);
-			} catch (EntityLoadingException ex) {
-				System.out
-						.println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				ex.printStackTrace();
-				clearMechPreview();
-				return;
-			}
+            MechSummary ms = m_mechsCurrent[selected];
+            try {
+                Entity entity = new MechFileParser(ms.getSourceFile(), ms
+                        .getEntryName()).getEntity();
+                previewMech(entity);
+            } catch (EntityLoadingException ex) {
+                System.out
+                        .println("Unable to load mech: " + ms.getSourceFile() + ": " + ms.getEntryName() + ": " + ex.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                ex.printStackTrace();
+                clearMechPreview();
+                return;
+            }
         } else if (ie.getSource() == m_cModel ||
                    ie.getSource() == m_cName ||
                    ie.getSource() == m_cTons ||
@@ -1160,134 +1160,134 @@ public class CustomFighterSquadronDialog
     /*
      * Now being done in Compute
     private FighterSquadron compileSquadron(Vector<Entity> squadron) {
-    	
-    	//cycle through the entity vector and create a fighter squadron
-    	FighterSquadron fs = new FighterSquadron();
-    	
-    	String chassis = squadron.elementAt(0).getChassis();
-    	int si = 99;
-    	boolean alike = true;
-    	int armor = 0;
-    	int heat = 0;
-    	int safeThrust = 99;
-    	int n = 0;
-    	float weight = 0.0f;  
-    	int bv = 0;
-    	double cost = 0.0;
-    	int nTC = 0;
-    	for(Entity e : squadron) {  	
-    		if(!chassis.equals(e.getChassis())) {
-    			alike = false;
-    		}		
-    		n++;
-    		//names
-    		fs.fighters.add(e.getChassis() + " " + e.getModel());	
-    		//armor
-    		armor += e.getTotalArmor();
-    		//heat
-    		heat += e.getHeatCapacity();
-    		//weight
-    		weight += e.getWeight();
-    		bv += e.calculateBattleValue();
-    		cost += e.getCost();
-    		//safe thrust
-    		if(e.getWalkMP() < safeThrust) 
-    			safeThrust = e.getWalkMP();
-    		
-    		Aero a = (Aero)e;
-    		//si
-    		if(a.getSI() < si) {
-    			si = a.getSI();
-    		}
-    		
-    		//weapons 
-    		Mounted newmount;
-    		for(Mounted m : e.getEquipment() ) {
-    			
-    			if(m.getType() instanceof WeaponType) {	
-    				//first load the weapon onto the squadron	
-    				WeaponType wtype = (WeaponType)m.getType();
-    				try{
-    					newmount = fs.addEquipment(wtype, m.getLocation());
-    				} catch (LocationFullException ex) {
-    					System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    					ex.printStackTrace();
-    					return fs;
-    				}
-    				//skip to the next if it has no AT class
-    				if(wtype.getAtClass() == WeaponType.CLASS_NONE) {
-    					continue;
-    				}
-    				
-    				//now find the right bay
-    				Mounted bay = fs.getFirstBay(wtype, newmount.getLocation(), newmount.isRearMounted());
-    				//if this is null, then I should create a new bay
-    				if(bay == null) {
-    					EquipmentType newBay = WeaponBay.getBayType(wtype.getAtClass());
-    					try{
-    						bay = fs.addEquipment(newBay, newmount.getLocation());
-    					} catch (LocationFullException ex) {
-    						System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    						ex.printStackTrace();
-    						return fs;
-    					}
-    				}
-    				//now add the weapon to the bay
-    				bay.addWeapon(newmount);
-    			} else {
-    				//just add the equipment normally
-    				try{
-//    					check if this is a TC
-        				if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
-        					nTC++;
-        				}
-    					fs.addEquipment(m.getType(), m.getLocation());
-    				} catch (LocationFullException ex) {
-    					System.out.println("Unable to add equipment"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    					ex.printStackTrace();
-    					return fs;
-    				}
-    			}
-    		}
-    	}
-    	
-    	armor = (int)Math.round(armor / 10.0);
-    	
-    	fs.setArmor(armor);
-    	fs.set0Armor(armor);
-    	fs.setHeatSinks(heat);
-    	fs.setOriginalWalkMP(safeThrust);
-    	fs.setN0Fighters(n);
-    	fs.setNFighters(n);
-    	fs.autoSetThresh();
-    	fs.setWeight(weight);
-    	fs.set0SI(si);
-    	
-    	if(nTC >= n) {
-    		fs.setHasTC(true);
-    	}
-    	
-    	//if all the same chassis, name by chassis
-    	//otherwise name by weight
-    	if(alike) {
-    		fs.setChassis(chassis + " Squadron");
-    	} else {
-    		int aveWeight = Math.round(weight/n);
-    		if(aveWeight <= 45) {
-    			fs.setChassis("Mixed Light Squadron");
-    		} else if(aveWeight < 75) {
-    			fs.setChassis("Mixed Medium Squadron");
-    		} else {
-    			fs.setChassis("Mixed Heavy Squadron");
-    		}
-    	}
-    	fs.setModel("");
-    	
-    	fs.loadAllWeapons();
-    	fs.updateAllWeaponBays();
-    	
-    	
-    	return fs;
+        
+        //cycle through the entity vector and create a fighter squadron
+        FighterSquadron fs = new FighterSquadron();
+        
+        String chassis = squadron.elementAt(0).getChassis();
+        int si = 99;
+        boolean alike = true;
+        int armor = 0;
+        int heat = 0;
+        int safeThrust = 99;
+        int n = 0;
+        float weight = 0.0f;  
+        int bv = 0;
+        double cost = 0.0;
+        int nTC = 0;
+        for(Entity e : squadron) {      
+            if(!chassis.equals(e.getChassis())) {
+                alike = false;
+            }        
+            n++;
+            //names
+            fs.fighters.add(e.getChassis() + " " + e.getModel());    
+            //armor
+            armor += e.getTotalArmor();
+            //heat
+            heat += e.getHeatCapacity();
+            //weight
+            weight += e.getWeight();
+            bv += e.calculateBattleValue();
+            cost += e.getCost();
+            //safe thrust
+            if(e.getWalkMP() < safeThrust) 
+                safeThrust = e.getWalkMP();
+            
+            Aero a = (Aero)e;
+            //si
+            if(a.getSI() < si) {
+                si = a.getSI();
+            }
+            
+            //weapons 
+            Mounted newmount;
+            for(Mounted m : e.getEquipment() ) {
+                
+                if(m.getType() instanceof WeaponType) {    
+                    //first load the weapon onto the squadron    
+                    WeaponType wtype = (WeaponType)m.getType();
+                    try{
+                        newmount = fs.addEquipment(wtype, m.getLocation());
+                    } catch (LocationFullException ex) {
+                        System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        ex.printStackTrace();
+                        return fs;
+                    }
+                    //skip to the next if it has no AT class
+                    if(wtype.getAtClass() == WeaponType.CLASS_NONE) {
+                        continue;
+                    }
+                    
+                    //now find the right bay
+                    Mounted bay = fs.getFirstBay(wtype, newmount.getLocation(), newmount.isRearMounted());
+                    //if this is null, then I should create a new bay
+                    if(bay == null) {
+                        EquipmentType newBay = WeaponBay.getBayType(wtype.getAtClass());
+                        try{
+                            bay = fs.addEquipment(newBay, newmount.getLocation());
+                        } catch (LocationFullException ex) {
+                            System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            ex.printStackTrace();
+                            return fs;
+                        }
+                    }
+                    //now add the weapon to the bay
+                    bay.addWeapon(newmount);
+                } else {
+                    //just add the equipment normally
+                    try{
+//                        check if this is a TC
+                        if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
+                            nTC++;
+                        }
+                        fs.addEquipment(m.getType(), m.getLocation());
+                    } catch (LocationFullException ex) {
+                        System.out.println("Unable to add equipment"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        ex.printStackTrace();
+                        return fs;
+                    }
+                }
+            }
+        }
+        
+        armor = (int)Math.round(armor / 10.0);
+        
+        fs.setArmor(armor);
+        fs.set0Armor(armor);
+        fs.setHeatSinks(heat);
+        fs.setOriginalWalkMP(safeThrust);
+        fs.setN0Fighters(n);
+        fs.setNFighters(n);
+        fs.autoSetThresh();
+        fs.setWeight(weight);
+        fs.set0SI(si);
+        
+        if(nTC >= n) {
+            fs.setHasTC(true);
+        }
+        
+        //if all the same chassis, name by chassis
+        //otherwise name by weight
+        if(alike) {
+            fs.setChassis(chassis + " Squadron");
+        } else {
+            int aveWeight = Math.round(weight/n);
+            if(aveWeight <= 45) {
+                fs.setChassis("Mixed Light Squadron");
+            } else if(aveWeight < 75) {
+                fs.setChassis("Mixed Medium Squadron");
+            } else {
+                fs.setChassis("Mixed Heavy Squadron");
+            }
+        }
+        fs.setModel("");
+        
+        fs.loadAllWeapons();
+        fs.updateAllWeaponBays();
+        
+        
+        return fs;
     }
     */
 }

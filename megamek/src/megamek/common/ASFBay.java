@@ -22,7 +22,7 @@ import java.util.*;
 
 public final class ASFBay extends Bay {
 
-	Vector<Integer> recoverySlots = new Vector<Integer>();
+    Vector<Integer> recoverySlots = new Vector<Integer>();
   
     /**
      * The default constructor is only for serialization.
@@ -73,7 +73,7 @@ public final class ASFBay extends Bay {
 
 //      is there at least one recovery slot available?
         if(getRecoverySlots() < 1) {
-        	result = false;
+            result = false;
         }
         
         // Return our result.
@@ -128,98 +128,98 @@ public final class ASFBay extends Bay {
     }
 
     public String getType() {
-    	return "Fighter";
+        return "Fighter";
     }
     
 //  update the time remaining in recovery slots
     public void updateSlots() {
-    	if(this.recoverySlots.size() < 1) {
-    		return;
-    	}
-    	
-    	for(int i = this.recoverySlots.size() - 1; i >= 0; i--) {
-			 if(this.recoverySlots.elementAt(i) > 0) {
-				 int temp = this.recoverySlots.elementAt(i) - 1;
-				 this.recoverySlots.remove(i);
-				 this.recoverySlots.add(temp);
-			 }
-    	}
+        if(this.recoverySlots.size() < 1) {
+            return;
+        }
+        
+        for(int i = this.recoverySlots.size() - 1; i >= 0; i--) {
+             if(this.recoverySlots.elementAt(i) > 0) {
+                 int temp = this.recoverySlots.elementAt(i) - 1;
+                 this.recoverySlots.remove(i);
+                 this.recoverySlots.add(temp);
+             }
+        }
     }
     
     public Vector<Integer> initializeRecoverySlots() {
-    	
-    	Vector<Integer> slots = new Vector<Integer>();;
+        
+        Vector<Integer> slots = new Vector<Integer>();;
  
-    	for(int i = 0; i < this.doors; i++) {
-    		slots.add(0);
-    		slots.add(0);
-    	}
-     	
-    	return slots;
+        for(int i = 0; i < this.doors; i++) {
+            slots.add(0);
+            slots.add(0);
+        }
+         
+        return slots;
     }
     
     //check how many available slots we have  
     public int getRecoverySlots() {
-    	//a zero means it is available
-    	int avail = 0;
-    	if(null == this.recoverySlots) {
-    		return avail;
-    	}    	
-    	for(int i = 0; i < this.recoverySlots.size(); i++) {
-			 if(this.recoverySlots.elementAt(i) == 0) {
-				 avail++;
-			 }
-    	}
-    	return avail;
+        //a zero means it is available
+        int avail = 0;
+        if(null == this.recoverySlots) {
+            return avail;
+        }        
+        for(int i = 0; i < this.recoverySlots.size(); i++) {
+             if(this.recoverySlots.elementAt(i) == 0) {
+                 avail++;
+             }
+        }
+        return avail;
     }
     
     public void closeSlot() {
-    	for(int i = 0; i < this.recoverySlots.size(); i++) {
-			 if(this.recoverySlots.elementAt(i) == 0) {
-				 this.recoverySlots.remove(i);
-				 this.recoverySlots.add(5);
-				 break;
-			 }
-    	}
+        for(int i = 0; i < this.recoverySlots.size(); i++) {
+             if(this.recoverySlots.elementAt(i) == 0) {
+                 this.recoverySlots.remove(i);
+                 this.recoverySlots.add(5);
+                 break;
+             }
+        }
     }
     
     //  destroy a door
     public void destroyDoorNext() {
-    	
-    	setDoorsNext(getDoorsNext() - 1);
-    	
-    	//get rid of two empty recovery slots
-    	//it doesn't matter which ones
-    	if(this.recoverySlots.size() > 0) {
-    		this.recoverySlots.remove(0);
-    	}
-    	if(this.recoverySlots.size() > 0) {
-    		this.recoverySlots.remove(0);
-    	}
+        
+        setDoorsNext(getDoorsNext() - 1);
+        
+        //get rid of two empty recovery slots
+        //it doesn't matter which ones
+        if(this.recoverySlots.size() > 0) {
+            this.recoverySlots.remove(0);
+        }
+        if(this.recoverySlots.size() > 0) {
+            this.recoverySlots.remove(0);
+        }
     }
     
     //  destroy a door
     public void destroyDoor() {
-    	
-    	this.doors -= 1;
-    	
-    	//get rid of two empty recovery slots
-    	//it doesn't matter which ones
-    	if(this.recoverySlots.size() > 0) {
-    		this.recoverySlots.remove(0);
-    	}
-    	if(this.recoverySlots.size() > 0) {
-    		this.recoverySlots.remove(0);
-    	}
+        
+        this.doors -= 1;
+        
+        //get rid of two empty recovery slots
+        //it doesn't matter which ones
+        if(this.recoverySlots.size() > 0) {
+            this.recoverySlots.remove(0);
+        }
+        if(this.recoverySlots.size() > 0) {
+            this.recoverySlots.remove(0);
+        }
     }
   
     //get doors should be different - first I must subtract the number of active recoveries
     public int getDoors() {
-    	
-    	//just take the available recovery slots, divided by two
-    	return (int)Math.floor(getRecoverySlots()/2.0);
-    	
-    	
+        
+        //just take the available recovery slots, divided by two
+        return (int)Math.floor(getRecoverySlots()/2.0);
+        
+        
     }
     
 } 

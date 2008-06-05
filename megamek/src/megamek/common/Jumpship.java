@@ -27,8 +27,8 @@ import megamek.common.weapons.BayWeapon;
  * @author Jay Lawson
  */
 public class Jumpship extends Aero {
-	
-//	 locations
+    
+//     locations
     public static final int        LOC_NOSE               = 0;
     public static final int        LOC_FLS                = 1;
     public static final int        LOC_FRS                = 2;
@@ -36,8 +36,8 @@ public class Jumpship extends Aero {
     //aft comes first so it is consistent with Aero
     public static final int        LOC_ALS                = 4;
     public static final int        LOC_ARS                = 5;
-	
-	protected static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS" };
+    
+    protected static String[] LOCATION_ABBRS = { "NOS", "FLS", "FRS", "AFT", "ALS", "ARS" };
     protected static String[] LOCATION_NAMES = { "Nose", "Left Front Side", "Right Front Side", "Aft", "Aft Left Side", "Aft Right Side" };
  
     private int kf_integrity = 0;
@@ -75,79 +75,79 @@ public class Jumpship extends Aero {
     }
     
     public int getTotalGravDeck() {
-    	return (gravDeck + gravDeckLarge + gravDeckHuge);
+        return (gravDeck + gravDeckLarge + gravDeckHuge);
     }
     
     public void setGravDeck(int n) {
-    	this.gravDeck = n;
+        this.gravDeck = n;
     }
     
     public int getGravDeck() {
-    	return gravDeck;
+        return gravDeck;
     }
     
     public void setGravDeckLarge(int n) {
-    	this.gravDeckLarge = n;
+        this.gravDeckLarge = n;
     }
     
     public int getGravDeckLarge() {
-    	return gravDeckLarge;
+        return gravDeckLarge;
     }
     
     public void setGravDeckHuge(int n) {
-    	this.gravDeckHuge = n;
+        this.gravDeckHuge = n;
     }
     
     public int getGravDeckHuge() {
-    	return gravDeckHuge;
+        return gravDeckHuge;
     }
     
     public void setHPG(boolean b) {
-    	this.hasHPG = b;
+        this.hasHPG = b;
     }
     
     public boolean hasHPG() {
-    	return hasHPG;
+        return hasHPG;
     }
     
     public void setLF(boolean b) {
-    	this.hasLF = b;
+        this.hasLF = b;
     }
     
     public boolean hasLF() {
-    	return hasLF;
+        return hasLF;
     }
     
     public void setEscapePods(int n) {
-		this.escapePods = n;
-	}
-	
-	public int getEscapePods() {
-		return escapePods;
-	}
-	
-	public void setLifeBoats(int n) {
-		this.lifeBoats = n;
-	}
-	
-	public int getLifeBoats() {
-		return lifeBoats;
-	}
+        this.escapePods = n;
+    }
+    
+    public int getEscapePods() {
+        return escapePods;
+    }
+    
+    public void setLifeBoats(int n) {
+        this.lifeBoats = n;
+    }
+    
+    public int getLifeBoats() {
+        return lifeBoats;
+    }
     
     public void setNCrew(int crew) {
-    	this.nCrew = crew;
+        this.nCrew = crew;
     }
     
     public void setNPassenger(int pass) {
-    	this.nPassenger = pass;
+        this.nPassenger = pass;
     }
     
     public int getNCrew() {
-    	return nCrew;
+        return nCrew;
     }
     
     public int getNPassenger() {
-    	 return nPassenger;
+         return nPassenger;
     }
     
     public void setThresh(int val, int loc) {
@@ -155,21 +155,21 @@ public class Jumpship extends Aero {
     }
     
     public int getThresh(int loc) {
-    	return damThresh[loc];
+        return damThresh[loc];
     }
     
     public void autoSetThresh()
     {
-    	for(int x = 0; x < locations(); x++)
-    	{
-    		initializeThresh(x);
-    	}	
+        for(int x = 0; x < locations(); x++)
+        {
+            initializeThresh(x);
+        }    
     }
     
     public void initializeThresh(int loc)
     {
-    	int nThresh = (int)Math.ceil(getArmor(loc) / 10.0);
-    	setThresh(nThresh,loc);
+        int nThresh = (int)Math.ceil(getArmor(loc) / 10.0);
+        setThresh(nThresh,loc);
     }
     
     public String[] getLocationAbbrs() {
@@ -177,37 +177,37 @@ public class Jumpship extends Aero {
     }
     
     public String[] getLocationNames() { 
-    	return LOCATION_NAMES; 
+        return LOCATION_NAMES; 
     }
     
     public void setKFIntegrity(int kf) {
-    	this.kf_integrity = kf;
+        this.kf_integrity = kf;
     }
     
     public int getKFIntegrity() {
-    	return kf_integrity;
+        return kf_integrity;
     }
     
     public void setSailIntegrity(int sail) {
-    	this.sail_integrity = sail;
+        this.sail_integrity = sail;
     }
     
     public int getSailIntegrity() {
-    	return sail_integrity;
+        return sail_integrity;
     }
     
     public void initializeSailIntegrity() {
-    	int integrity = 1 + (int)Math.round((30.0 + this.weight / 7500.0)/ 20.0);
-    	this.setSailIntegrity(integrity);
+        int integrity = 1 + (int)Math.round((30.0 + this.weight / 7500.0)/ 20.0);
+        this.setSailIntegrity(integrity);
     }
     
     public void initializeKFIntegrity() {
-    	int integrity = (int)Math.round(1.2 + (0.95) * this.weight/60000.0);
-    	this.setKFIntegrity(integrity);
+        int integrity = (int)Math.round(1.2 + (0.95) * this.weight/60000.0);
+        this.setKFIntegrity(integrity);
     }
     
     public boolean canJump() {
-    	return kf_integrity > 0;
+        return kf_integrity > 0;
     }
     
     public void setEngine(Engine e) {
@@ -215,17 +215,17 @@ public class Jumpship extends Aero {
     }
     
     public int getStandardDamage(int loc) {
-    	return standard_damage[loc];
+        return standard_damage[loc];
     }
     
     public void resetStandardDamage() {
-    	for(int i = 0; i < locations(); i++) {
-    		standard_damage[i] = 0;
-    	}
+        for(int i = 0; i < locations(); i++) {
+            standard_damage[i] = 0;
+        }
     }
     
     public void addStandardDamage(int damage, HitData hit) {
-    	standard_damage[hit.getLocation()] = standard_damage[hit.getLocation()] + damage;
+        standard_damage[hit.getLocation()] = standard_damage[hit.getLocation()] + damage;
     }
     
     //different firing arcs
@@ -235,196 +235,196 @@ public class Jumpship extends Aero {
         
         switch (mounted.getLocation()) {
         case LOC_NOSE:
-        	return Compute.ARC_NOSE;
+            return Compute.ARC_NOSE;
         case LOC_FRS:
-        	return Compute.ARC_RIGHTSIDE_SPHERE;
+            return Compute.ARC_RIGHTSIDE_SPHERE;
         case LOC_FLS:
-        	return Compute.ARC_LEFTSIDE_SPHERE;
+            return Compute.ARC_LEFTSIDE_SPHERE;
         case LOC_ARS:
-        	return Compute.ARC_RIGHTSIDEA_SPHERE;
+            return Compute.ARC_RIGHTSIDEA_SPHERE;
         case LOC_ALS:
-        	return Compute.ARC_LEFTSIDEA_SPHERE;
+            return Compute.ARC_LEFTSIDEA_SPHERE;
         case LOC_AFT:
-        	return Compute.ARC_AFT;
+            return Compute.ARC_AFT;
         default:
-        	return Compute.ARC_360;
+            return Compute.ARC_360;
         }        
     }
     
-	//different hit locations
+    //different hit locations
     public HitData rollHitLocation(int table, int side) {
 
-    	/* 
-    	 * Unlike other units, ASFs determine potential crits based on the to-hit roll
-    	 * so I need to set this potential value as well as return the to hit data
-    	 */
+        /* 
+         * Unlike other units, ASFs determine potential crits based on the to-hit roll
+         * so I need to set this potential value as well as return the to hit data
+         */
        
-    	int roll = Compute.d6(2);
-    	if(side == ToHitData.SIDE_FRONT) {
-    	    // normal front hits
-    	    switch( roll ) {
-    	    case 2:
-    	    	setPotCrit(CRIT_LIFE_SUPPORT);
-    	    	return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-    	    case 3:
-    	    	setPotCrit(CRIT_CONTROL);
-    	    	return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-    	    case 4:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-    	    case 5:
-    	    	setPotCrit(CRIT_RIGHT_THRUSTER);
-    	    	return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-    	    case 6:
-    	    	setPotCrit(CRIT_CIC);
-    	    	return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-    	    case 7:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-    	    case 8:
-    	    	setPotCrit(CRIT_SENSOR);
-    	    	return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-    	    case 9:
-    	    	setPotCrit(CRIT_LEFT_THRUSTER);
-    	    	return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-    	    case 10:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-    	    case 11:
-    	    	setPotCrit(CRIT_CREW);
-    	    	return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-    	    case 12:
-    	    	setPotCrit(CRIT_KF_DRIVE);
-    	    	return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-    	    }
-    	}
-    	else if(side == ToHitData.SIDE_LEFT) {
-    	    // normal left-side hits
-    	    switch( roll ) {
-    	    case 2:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-    	    case 3:
-    	    	setPotCrit(CRIT_AVIONICS);
-    	    	return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-    	    case 4:
-    	    	setPotCrit(CRIT_GRAV_DECK);
-    	    	return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-    	    case 5:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-    	    case 6:
-    	    	setPotCrit(CRIT_DOCK_COLLAR);
-    	    	return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-    	    case 7:
-    	    	setPotCrit(CRIT_KF_DRIVE);
-    	    	return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
-    	    case 8:
-    	    	setPotCrit(CRIT_CARGO);
-    	    	return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
-    	    case 9:
-    	    	setPotCrit(CRIT_DOOR);
-    	    	return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
-    	    case 10:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
-    	    case 11:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	    case 12:
-    	    	setPotCrit(CRIT_ENGINE);
-    	    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	    }
-    	}
-    	else if(side == ToHitData.SIDE_RIGHT) {
-    	    // normal right-side hits
-    	    switch( roll ) {
-    	    case 2:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
-    	    case 3:
-    	    	setPotCrit(CRIT_AVIONICS);
-    	    	return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-    	    case 4:
-    	    	setPotCrit(CRIT_GRAV_DECK);
-    	    	return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-    	    case 5:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-    	    case 6:
-    	    	setPotCrit(CRIT_DOCK_COLLAR);
-    	    	return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-    	    case 7:
-    	    	setPotCrit(CRIT_KF_DRIVE);
-    	    	return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
-    	    case 8:
-    	    	setPotCrit(CRIT_CARGO);
-    	    	return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-    	    case 9:
-    	    	setPotCrit(CRIT_DOOR);
-    	    	return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-    	    case 10:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-    	    case 11:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	    case 12:
-    	    	setPotCrit(CRIT_ENGINE);
-    	    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	    }
-    	}
-    	else if(side == ToHitData.SIDE_REAR) {
-    	    // normal aft hits
-    	    switch( roll ) {
-    	    case 2:
-    	    	setPotCrit(CRIT_FUEL_TANK);
-    	    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	    case 3:
-    	    	setPotCrit(CRIT_AVIONICS);
-    	    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	    case 4:
-    	    	setPotCrit(CRIT_WEAPON);
-    			return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-    	    case 5:
-    	    	setPotCrit(CRIT_RIGHT_THRUSTER);
-    	    	return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
-    	    case 6:
-    	    	setPotCrit(CRIT_ENGINE);
-    	    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	    case 7:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	    case 8:
-    	    	setPotCrit(CRIT_ENGINE);
-    	    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	    case 9:
-    	    	setPotCrit(CRIT_LEFT_THRUSTER);
-    	    	return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
-    	    case 10:
-    	    	setPotCrit(CRIT_WEAPON);
-    	    	return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
-    	    case 11:
-    	    	setPotCrit(CRIT_CONTROL);
-    	    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	    case 12:
-    	    	setPotCrit(CRIT_KF_DRIVE);
-    	    	return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
-    	    }
-    	}	
-    		return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+        int roll = Compute.d6(2);
+        if(side == ToHitData.SIDE_FRONT) {
+            // normal front hits
+            switch( roll ) {
+            case 2:
+                setPotCrit(CRIT_LIFE_SUPPORT);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 3:
+                setPotCrit(CRIT_CONTROL);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 4:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+            case 5:
+                setPotCrit(CRIT_RIGHT_THRUSTER);
+                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+            case 6:
+                setPotCrit(CRIT_CIC);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 7:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 8:
+                setPotCrit(CRIT_SENSOR);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 9:
+                setPotCrit(CRIT_LEFT_THRUSTER);
+                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+            case 10:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+            case 11:
+                setPotCrit(CRIT_CREW);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 12:
+                setPotCrit(CRIT_KF_DRIVE);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            }
+        }
+        else if(side == ToHitData.SIDE_LEFT) {
+            // normal left-side hits
+            switch( roll ) {
+            case 2:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 3:
+                setPotCrit(CRIT_AVIONICS);
+                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+            case 4:
+                setPotCrit(CRIT_GRAV_DECK);
+                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+            case 5:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+            case 6:
+                setPotCrit(CRIT_DOCK_COLLAR);
+                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+            case 7:
+                setPotCrit(CRIT_KF_DRIVE);
+                return new HitData(LOC_FLS, false, HitData.EFFECT_NONE);
+            case 8:
+                setPotCrit(CRIT_CARGO);
+                return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
+            case 9:
+                setPotCrit(CRIT_DOOR);
+                return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
+            case 10:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
+            case 11:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 12:
+                setPotCrit(CRIT_ENGINE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            }
+        }
+        else if(side == ToHitData.SIDE_RIGHT) {
+            // normal right-side hits
+            switch( roll ) {
+            case 2:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
+            case 3:
+                setPotCrit(CRIT_AVIONICS);
+                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+            case 4:
+                setPotCrit(CRIT_GRAV_DECK);
+                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+            case 5:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+            case 6:
+                setPotCrit(CRIT_DOCK_COLLAR);
+                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+            case 7:
+                setPotCrit(CRIT_KF_DRIVE);
+                return new HitData(LOC_FRS, false, HitData.EFFECT_NONE);
+            case 8:
+                setPotCrit(CRIT_CARGO);
+                return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
+            case 9:
+                setPotCrit(CRIT_DOOR);
+                return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
+            case 10:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
+            case 11:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 12:
+                setPotCrit(CRIT_ENGINE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            }
+        }
+        else if(side == ToHitData.SIDE_REAR) {
+            // normal aft hits
+            switch( roll ) {
+            case 2:
+                setPotCrit(CRIT_FUEL_TANK);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 3:
+                setPotCrit(CRIT_AVIONICS);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 4:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
+            case 5:
+                setPotCrit(CRIT_RIGHT_THRUSTER);
+                return new HitData(LOC_ARS, false, HitData.EFFECT_NONE);
+            case 6:
+                setPotCrit(CRIT_ENGINE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 7:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 8:
+                setPotCrit(CRIT_ENGINE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 9:
+                setPotCrit(CRIT_LEFT_THRUSTER);
+                return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
+            case 10:
+                setPotCrit(CRIT_WEAPON);
+                return new HitData(LOC_ALS, false, HitData.EFFECT_NONE);
+            case 11:
+                setPotCrit(CRIT_CONTROL);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            case 12:
+                setPotCrit(CRIT_KF_DRIVE);
+                return new HitData(LOC_AFT, false, HitData.EFFECT_NONE);
+            }
+        }    
+            return new HitData(LOC_NOSE, false, HitData.EFFECT_NONE);
     }
-	
-	public int getMaxEngineHits() {
-    	return 6;
+    
+    public int getMaxEngineHits() {
+        return 6;
     }
-	
-	/*This is my educated guess as to what BV2.0 will look like for 
-	 * jumpships, warships, and space stations. it is based on just 
-	 * doing the same calculations as in
-	 * the TechManual, but with the corrected multipliers
-	 */
-	public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
+    
+    /*This is my educated guess as to what BV2.0 will look like for 
+     * jumpships, warships, and space stations. it is based on just 
+     * doing the same calculations as in
+     * the TechManual, but with the corrected multipliers
+     */
+    public int calculateBattleValue(boolean assumeLinkedC3, boolean ignoreC3) {
         double dbv = 0; // defensive battle value
         double obv = 0; // offensive bv
 
@@ -469,14 +469,14 @@ public class Jumpship extends Aero {
         for (Mounted mounted : getTotalWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             if(wtype instanceof BayWeapon) {
-        		continue;
-        	}
+                continue;
+            }
             double weaponHeat = wtype.getHeat();
             
             // only count non-damaged equipment
             if (mounted.isMissing() || mounted.isHit() ||
-            		mounted.isDestroyed() || mounted.isBreached()) {
-            	continue;
+                    mounted.isDestroyed() || mounted.isBreached()) {
+                continue;
             }
             
             // one shot weapons count 1/4
@@ -529,8 +529,8 @@ public class Jumpship extends Aero {
             for (Mounted mounted : getTotalWeaponList()) {
                 WeaponType wtype = (WeaponType)mounted.getType();
                 if(wtype instanceof BayWeapon) {
-            		continue;
-            	}
+                    continue;
+                }
                 double dBV = wtype.getBV(this);
                 
                 // don't count destroyed equipment
@@ -562,8 +562,8 @@ public class Jumpship extends Aero {
             for (Mounted weapon : weapons) {
                 WeaponType wtype = (WeaponType)weapon.getType();
                 if(wtype instanceof BayWeapon) {
-            		continue;
-            	}
+                    continue;
+                }
                 double dBV = wtype.getBV(this);
                 // don't count destroyed equipment
                 if (weapon.isDestroyed())
@@ -669,11 +669,11 @@ public class Jumpship extends Aero {
             
             double curBV = atype.getBV(this);
             if(mounted.byShot()) {
-            	double tons = (double)mounted.getShotsLeft() / atype.getShots();
-        		if(atype.getAmmoRatio() > 0) {
-        			tons = (double)mounted.getShotsLeft() * atype.getAmmoRatio();
-        		}
-        		curBV *= tons;
+                double tons = (double)mounted.getShotsLeft() / atype.getShots();
+                if(atype.getAmmoRatio() > 0) {
+                    tons = (double)mounted.getShotsLeft() * atype.getAmmoRatio();
+                }
+                curBV *= tons;
             }
             
             // semiguided ammo might count double
@@ -681,22 +681,22 @@ public class Jumpship extends Aero {
                 Player tmpP = getOwner();
                 
                 if ( tmpP != null ){
-	                // Okay, actually check for friendly TAG.
-	                if (tmpP.hasTAG())
-	                    tagBV += curBV;
-	                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-	                   for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-	                        Team m = (Team)e.nextElement();
-	                        if (m.getId() == tmpP.getTeam()) {
-	                            if (m.hasTAG(game)) {
-	                                tagBV += curBV;
-	                            }
-	                            // A player can't be on two teams.
-	                            // If we check his team and don't give the penalty, that's it.
-	                            break;
-	                        }
-	                    }
-	                }
+                    // Okay, actually check for friendly TAG.
+                    if (tmpP.hasTAG())
+                        tagBV += curBV;
+                    else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+                       for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
+                            Team m = (Team)e.nextElement();
+                            if (m.getId() == tmpP.getTeam()) {
+                                if (m.hasTAG(game)) {
+                                    tagBV += curBV;
+                                }
+                                // A player can't be on two teams.
+                                // If we check his team and don't give the penalty, that's it.
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             String key = atype.getAmmoType()+":"+atype.getRackSize();
@@ -772,7 +772,7 @@ public class Jumpship extends Aero {
         
         // don't factor pilot in if we are just calculating BV for C3 extra BV
         if (ignoreC3)
-        	return finalBV;
+            return finalBV;
         return retVal;
     }
     
@@ -780,21 +780,21 @@ public class Jumpship extends Aero {
      * Calculates the battle value of this ASF
      */
     public int calculateBattleValue(boolean assumeLinkedC3) {
-    	return calculateBattleValue(assumeLinkedC3, false);
+        return calculateBattleValue(assumeLinkedC3, false);
     }
     
     public int getArcswGuns() {
-    	//return the number 
-    	int nArcs = 0;
-    	for(int i = 0; i < locations(); i++) {
-    			if(hasWeaponInArc(i))
-    				nArcs++;
-    	}  	
-    	return nArcs;
+        //return the number 
+        int nArcs = 0;
+        for(int i = 0; i < locations(); i++) {
+                if(hasWeaponInArc(i))
+                    nArcs++;
+        }      
+        return nArcs;
     }
     
     public boolean hasWeaponInArc(int loc) {
-    	boolean hasWeapons = false;
+        boolean hasWeapons = false;
         for(Mounted weap: getWeaponList()) {
             if(weap.getLocation() == loc) {
                 hasWeapons = true;
@@ -804,54 +804,54 @@ public class Jumpship extends Aero {
     }
     
     public double getFuelPerTon() {
-		
-		double points = 10.0;
-		
-		if(weight >= 250000) {
-			points = 2.5;
-			return points;
-		} else if (weight >= 110000) {
-			points = 5.0;
-			return points;
-		} 
-		
-		return points;
-	}
+        
+        double points = 10.0;
+        
+        if(weight >= 250000) {
+            points = 2.5;
+            return points;
+        } else if (weight >= 110000) {
+            points = 5.0;
+            return points;
+        } 
+        
+        return points;
+    }
     
     public double getArmorWeight(int loc) {
-    	//first I need to subtract SI bonus from total armor
-    	double armorPoints = (double)getTotalOArmor();
-    	armorPoints -= Math.round((double)(get0SI() * loc)/ 10.0);
+        //first I need to subtract SI bonus from total armor
+        double armorPoints = (double)getTotalOArmor();
+        armorPoints -= Math.round((double)(get0SI() * loc)/ 10.0);
         //this roundabout method is actually necessary to avoid rounding weirdness.  Yeah, it's dumb.
-    	//now I need to determine base armor points by type and weight
-    	
-    	double baseArmor = 0.8;
-    	if(isClan()) {
-    		baseArmor = 1.0;
-    	}
-    	
-    	if(weight >= 250000) {
-    		baseArmor = 0.4;
-    		if(isClan()) {
-    			baseArmor = 0.5;
-    		}
-    	} else if(weight >= 150000) {
-    		baseArmor = 0.6;
-    		if(isClan()) {
-    			baseArmor = 0.7;
-    		}
-    	} 
-    	
-    	
-    	
-    	if(armorType == EquipmentType.T_ARMOR_FERRO_IMP) {
-    		baseArmor += 0.2;
-    	} else if (armorType == EquipmentType.T_ARMOR_FERRO_CARBIDE) {
-    		baseArmor += 0.4;
-    	} else if (armorType == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE) {
-    		baseArmor += 0.6;
-    	}
-    	
+        //now I need to determine base armor points by type and weight
+        
+        double baseArmor = 0.8;
+        if(isClan()) {
+            baseArmor = 1.0;
+        }
+        
+        if(weight >= 250000) {
+            baseArmor = 0.4;
+            if(isClan()) {
+                baseArmor = 0.5;
+            }
+        } else if(weight >= 150000) {
+            baseArmor = 0.6;
+            if(isClan()) {
+                baseArmor = 0.7;
+            }
+        } 
+        
+        
+        
+        if(armorType == EquipmentType.T_ARMOR_FERRO_IMP) {
+            baseArmor += 0.2;
+        } else if (armorType == EquipmentType.T_ARMOR_FERRO_CARBIDE) {
+            baseArmor += 0.4;
+        } else if (armorType == EquipmentType.T_ARMOR_LAMELLOR_FERRO_CARBIDE) {
+            baseArmor += 0.6;
+        }
+        
         double armorPerTon = baseArmor;
         double weight=0.0;
         for(;(weight*armorPerTon)<armorPoints;weight+=.5) {}
@@ -894,7 +894,7 @@ public class Jumpship extends Aero {
         
         //HPG
         if(hasHPG()) {
-        	cost += 1000000000;
+            cost += 1000000000;
         }
         
         //fuel tanks
@@ -924,7 +924,7 @@ public class Jumpship extends Aero {
         //is the core compact? (not for jumpships)
         //lithium fusion?
         if(hasLF()) {
-        	driveCost *= 3;
+            driveCost *= 3;
         }
         
         cost += driveCost;
@@ -941,13 +941,13 @@ public class Jumpship extends Aero {
         int baydoors = 0;
         int bayCost = 0;
         for(Bay next:getTransportBays()) {
-        	baydoors += next.getDoors();
-        	if(next instanceof MechBay || next instanceof ASFBay || next instanceof SmallCraftBay) {
-        		bayCost += 20000 * next.totalSpace;
-        	}
-        	if(next instanceof LightVehicleBay || next instanceof HeavyVehicleBay) {
-        		bayCost += 20000 * next.totalSpace;
-        	}
+            baydoors += next.getDoors();
+            if(next instanceof MechBay || next instanceof ASFBay || next instanceof SmallCraftBay) {
+                bayCost += 20000 * next.totalSpace;
+            }
+            if(next instanceof LightVehicleBay || next instanceof HeavyVehicleBay) {
+                bayCost += 20000 * next.totalSpace;
+            }
         }
         
         cost += bayCost + baydoors * 1000;

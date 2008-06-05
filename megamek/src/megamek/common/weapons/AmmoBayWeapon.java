@@ -43,7 +43,7 @@ public abstract class AmmoBayWeapon extends BayWeapon {
         // Just in case. Often necessary when/if multiple ammo weapons are
         // fired; if this line not present
         // then when one ammo slots run dry the rest silently don't fire.
-    	checkAmmo(waa, game);
+        checkAmmo(waa, game);
         return super.fire(waa, game, server);
     }
     
@@ -57,8 +57,8 @@ public abstract class AmmoBayWeapon extends BayWeapon {
             Mounted weapon = ae.getEquipment(wId);
             Mounted ammo = weapon.getLinked();
             if (ammo == null || ammo.getShotsLeft() < 1) {
-            	ae.loadWeaponWithSameAmmo(weapon);
-            	ammo = weapon.getLinked();
+                ae.loadWeaponWithSameAmmo(weapon);
+                ammo = weapon.getLinked();
             }
         }
     }

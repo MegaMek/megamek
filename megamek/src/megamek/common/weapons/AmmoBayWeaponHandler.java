@@ -50,44 +50,44 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      * @return an <code>int</code> representing the attack value at that range.
      */
     protected int calcAttackValue() {
-    	int distance = ae.getPosition().distance(target.getPosition());
-    	double av = 0;
-    	int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
+        int distance = ae.getPosition().distance(target.getPosition());
+        double av = 0;
+        int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
 
-    	for(int wId: weapon.getBayWeapons()) {
+        for(int wId: weapon.getBayWeapons()) {
             Mounted bayW = ae.getEquipment(wId);
             //check the currently loaded ammo
             Mounted bayWAmmo = bayW.getLinked();
             if(null == bayWAmmo || bayWAmmo.getShotsLeft() < 1) {
-            	//try loading something else
-            	ae.loadWeaponWithSameAmmo(bayW);
-            	bayWAmmo = bayW.getLinked();
+                //try loading something else
+                ae.loadWeaponWithSameAmmo(bayW);
+                bayWAmmo = bayW.getLinked();
             }
             
             if(!bayW.isBreached() && !bayW.isDestroyed() && !bayW.isJammed()
-            		&& bayWAmmo != null && bayWAmmo.getShotsLeft() > 0) {
-            	WeaponType bayWType = ((WeaponType)bayW.getType());
-            	//need to cycle through weapons and add av
-            	double current_av = 0;
-            	if(range == WeaponType.RANGE_SHORT) {
-            		current_av =  bayWType.getShortAV();
-            	} else if(range == WeaponType.RANGE_MED) {
-            		current_av = bayWType.getMedAV();
-            	} else if (range == WeaponType.RANGE_LONG) {
-            		current_av = bayWType.getLongAV();
-            	} else if (range == WeaponType.RANGE_EXT) {
-            		current_av = bayWType.getExtAV();
-            	}
-            	current_av = updateAVforAmmo(current_av, (AmmoType)bayWAmmo.getType(), 
-            			                     bayWType, range);           	
-            	av = av + current_av;
-            	//now use the ammo that we had loaded
-            	if(current_av > 0) {
-            		bayWAmmo.setShotsLeft(bayWAmmo.getShotsLeft() - 1);
-            	}
+                    && bayWAmmo != null && bayWAmmo.getShotsLeft() > 0) {
+                WeaponType bayWType = ((WeaponType)bayW.getType());
+                //need to cycle through weapons and add av
+                double current_av = 0;
+                if(range == WeaponType.RANGE_SHORT) {
+                    current_av =  bayWType.getShortAV();
+                } else if(range == WeaponType.RANGE_MED) {
+                    current_av = bayWType.getMedAV();
+                } else if (range == WeaponType.RANGE_LONG) {
+                    current_av = bayWType.getLongAV();
+                } else if (range == WeaponType.RANGE_EXT) {
+                    current_av = bayWType.getExtAV();
+                }
+                current_av = updateAVforAmmo(current_av, (AmmoType)bayWAmmo.getType(), 
+                                             bayWType, range);               
+                av = av + current_av;
+                //now use the ammo that we had loaded
+                if(current_av > 0) {
+                    bayWAmmo.setShotsLeft(bayWAmmo.getShotsLeft() - 1);
+                }
             }
-    	}   	
-    	return (int)Math.ceil(av);
+        }       
+        return (int)Math.ceil(av);
     }
     
     /*
@@ -95,40 +95,40 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      * TODO: it might be better to have unique weapon handlers 
      * for these by bay, but I am lazy
      */   
-    protected double updateAVforAmmo(double current_av, AmmoType atype, WeaponType wtype, int range) { 	
-    	
-    	//check for artemisIV
-    	Mounted mLinker = weapon.getLinkedBy();
+    protected double updateAVforAmmo(double current_av, AmmoType atype, WeaponType wtype, int range) {     
+        
+        //check for artemisIV
+        Mounted mLinker = weapon.getLinkedBy();
         int bonus = 0;
-    	if ((mLinker != null && mLinker.getType() instanceof MiscType
+        if ((mLinker != null && mLinker.getType() instanceof MiscType
                 && !mLinker.isDestroyed() && !mLinker.isMissing()
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_ARTEMIS))
                 && atype.getMunitionType() == AmmoType.M_ARTEMIS_CAPABLE) {
-    		bonus = (int)Math.ceil(atype.getRackSize() / 5.0);
-    		if(atype.getAmmoType() == AmmoType.T_SRM) {
-    			bonus = 2;
-    		}
-    		current_av = current_av + bonus;
-    	}
-    	
-    	if(atype.getMunitionType() == AmmoType.M_CLUSTER) {
-    		current_av = Math.floor(0.6*current_av);
-    	}
-    	else if (AmmoType.T_ATM == atype.getAmmoType()) {
+            bonus = (int)Math.ceil(atype.getRackSize() / 5.0);
+            if(atype.getAmmoType() == AmmoType.T_SRM) {
+                bonus = 2;
+            }
+            current_av = current_av + bonus;
+        }
+        
+        if(atype.getMunitionType() == AmmoType.M_CLUSTER) {
+            current_av = Math.floor(0.6*current_av);
+        }
+        else if (AmmoType.T_ATM == atype.getAmmoType()) {
             if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
                 current_av = wtype.getExtAV()/2;                       
             } else if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
                 current_av = 1.5 * current_av;
                 if(range > WeaponType.RANGE_SHORT) {
-                	current_av = 0.0;
+                    current_av = 0.0;
                 }
             } 
         }
         else if (atype.getAmmoType() == AmmoType.T_MML && !atype.hasFlag(AmmoType.F_MML_LRM)) {
           current_av = 2 * current_av;
           if(range > WeaponType.RANGE_SHORT) {
-        	  current_av = 0;
+              current_av = 0;
           }
         } 
         else if (atype.getAmmoType() == AmmoType.T_AR10) {
@@ -137,9 +137,9 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
             } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
                 current_av = 3;
             } else {
-            	current_av = 2;
+                current_av = 2;
             }
         }
-    	return current_av;
+        return current_av;
     }   
 }

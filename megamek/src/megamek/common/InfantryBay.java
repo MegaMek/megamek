@@ -72,7 +72,7 @@ public final class InfantryBay extends Bay {
         
         //is the door functional
         if( this.doors < 1 ) {
-        	result = false;
+            result = false;
         }
 
         // Return our result.
@@ -84,7 +84,7 @@ public final class InfantryBay extends Bay {
     }
     
     public String getType() {
-    	return "Infantry";
+        return "Infantry";
     }
     
 } // End package class TroopSpace implements Transporter

@@ -45,27 +45,27 @@ public class AR10BayHandler extends AmmoBayWeaponHandler {
     }
  
     protected int getCapMisMod() {
-    	int mod = 0;
-    	for(int wId: weapon.getBayWeapons()) {
-    		int curr_mod = 0;
+        int mod = 0;
+        for(int wId: weapon.getBayWeapons()) {
+            int curr_mod = 0;
             Mounted bayW = ae.getEquipment(wId);
             //check the currently loaded ammo
             Mounted bayWAmmo = bayW.getLinked();
             AmmoType atype = (AmmoType) bayWAmmo.getType();
             if(atype == null) 
-            	continue;
-        	if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+                continue;
+            if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
                 curr_mod = 10;
             } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
                 curr_mod = 9;
             } else {
-            	curr_mod = 11;
+                curr_mod = 11;
             }
-        	if(curr_mod > mod) {
-        		mod = curr_mod;
-        	}
-    	}
-    	return mod;
+            if(curr_mod > mod) {
+                mod = curr_mod;
+            }
+        }
+        return mod;
     }
     
 }

@@ -35,7 +35,7 @@ import megamek.common.util.*;
 
 public class BLKAeroFile extends BLKFile implements IMechLoader {    
     
-	//armor locatioms
+    //armor locatioms
     public static final int NOSE = 0;
     public static final int RW = 1;
     public static final int LW = 2;
@@ -112,7 +112,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         if (!dataFile.exists("fuel")) throw new EntityLoadingException("Could not find fuel block.");
         a.setFuel(dataFile.getDataAsInt("fuel")[0]);
         
-	//figure out engine stuff
+    //figure out engine stuff
         int engineCode = BLKFile.FUSION;
         if (dataFile.exists("engine_type")) {
             engineCode = dataFile.getDataAsInt("engine_type")[0];
@@ -162,7 +162,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         }
         
         if(a.isClan()) {
-        	a.addClanCase();
+            a.addClanCase();
         }
         
         return a;        
@@ -185,7 +185,7 @@ public class BLKAeroFile extends BLKFile implements IMechLoader {
         
         if (saEquip[0] != null) {
             for (int x = 0; x < saEquip.length; x++) {
-            	rearMount = false;
+                rearMount = false;
                 String equipName = saEquip[x].trim();
                 
                 if (equipName.startsWith("(R) ")) {

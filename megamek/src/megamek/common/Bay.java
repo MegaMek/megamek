@@ -24,10 +24,10 @@ public class Bay implements Transporter {
 
     // Private attributes and helper functions.
 
-	int doors = 1;
-	int doorsNext = 1;
-	Vector<Integer> recoverySlots = new Vector<Integer>();
-	
+    int doors = 1;
+    int doorsNext = 1;
+    Vector<Integer> recoverySlots = new Vector<Integer>();
+    
     /**
      * The troops being carried.
      */
@@ -102,25 +102,25 @@ public class Bay implements Transporter {
     }
 
     public int getDoors() {
-    	return doors;
+        return doors;
     }
     
     public void setDoors(int d) {
-    	this.doors = d;
-    	this.doorsNext = d;
+        this.doors = d;
+        this.doorsNext = d;
     }
 
     //for setting doors after this launch
     public void setDoorsNext(int d) {
-    	this.doorsNext = d;
+        this.doorsNext = d;
     }
     
     public int getDoorsNext() {
-    	return doorsNext;
+        return doorsNext;
     }
 
     public void resetDoors() {
-    	this.doors = this.doorsNext;
+        this.doors = this.doorsNext;
     }
     
     /**
@@ -143,7 +143,7 @@ public class Bay implements Transporter {
         
         //is there at least one door available
         if(this.doors < 1) {
-        	result = false;
+            result = false;
         }
         
         // Return our result.
@@ -187,17 +187,17 @@ public class Bay implements Transporter {
     //get a vector of launchable units. This is different from loaded in that
     //units in recovery cannot launch
     public Vector<Entity> getLaunchableUnits() {
-    	
-    	Vector<Entity> launchable = new Vector<Entity>();
-    	
-    	for(int i = 0; i < this.troops.size(); i++) {
-    		Entity nextUnit = this.troops.elementAt(i);
-    		if(nextUnit.getRecoveryTurn() == 0) {
-    			launchable.add(nextUnit);
-    		}
-    	}
-    	
-    	return launchable;
+        
+        Vector<Entity> launchable = new Vector<Entity>();
+        
+        for(int i = 0; i < this.troops.size(); i++) {
+            Entity nextUnit = this.troops.elementAt(i);
+            if(nextUnit.getRecoveryTurn() == 0) {
+                launchable.add(nextUnit);
+            }
+        }
+        
+        return launchable;
     }
 
     /**
@@ -208,13 +208,13 @@ public class Bay implements Transporter {
      *          <code>false</code> otherwise.
      */
     public boolean unload( Entity unit ) {
-    	
-    	//check to see if unloading possible
-    	//      is the door functional
+        
+        //check to see if unloading possible
+        //      is the door functional
         if( this.doors < 1 ) {
-        	return false;
+            return false;
         }
-    	
+        
         // Remove the unit if we are carrying it.
         boolean retval = this.troops.removeElement( unit );
 
@@ -275,21 +275,21 @@ public class Bay implements Transporter {
     }
     
     public String getType() {
-    	return "Unknown";
+        return "Unknown";
     }
     
     //destroy a door for next turn
     public void destroyDoorNext() {
-    	
-    	setDoorsNext(getDoorsNext() - 1);
-    	
+        
+        setDoorsNext(getDoorsNext() - 1);
+        
     }
     
     //  destroy a door
     public void destroyDoor() {
-    	
-    	setDoors(getDoors() - 1);
-    	
+        
+        setDoors(getDoors() - 1);
+        
     }
     
 } // End package class TroopSpace implements Transporter

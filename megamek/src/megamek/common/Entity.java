@@ -866,11 +866,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     public Coords getPriorPosition() {
-    	return priorPosition;
+        return priorPosition;
     }
     
     public void setPriorPosition(Coords c) {
-    	this.priorPosition = c;
+        this.priorPosition = c;
     }
 
     /**
@@ -1435,10 +1435,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     public int getJumpMP(boolean gravity) {
-    	if (gravity) {
-    		return getJumpMP();
-    	}
-    	return getOriginalJumpMP();
+        if (gravity) {
+            return getJumpMP();
+        }
+        return getOriginalJumpMP();
     }
 
     public int getJumpType() {
@@ -4784,9 +4784,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         // Walk through this entity's transport components;
         // find the one that can load the unit.
         // Stop looking after the first match.
-        Enumeration iter = this.transports.elements();
+        Enumeration<Transporter> iter = this.transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
+            Transporter next = iter.nextElement();
             if ( next.canLoad(unit) && unit.getElevation() == getElevation()) {
                 if(next instanceof ASFBay) {
                     ((ASFBay)next).recover( unit );
@@ -4805,11 +4805,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                                             unit.getShortName() );
     }
     
-    //cycle through and update Bays
+    /**
+     * cycle through and update Bays
+     */
     public void updateBays() {      
-        Enumeration iter = this.transports.elements();
+        Enumeration<Transporter> iter = this.transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
+            Transporter next = iter.nextElement();
             if( next instanceof ASFBay ) {
                 ASFBay nextBay = (ASFBay) next;
                     nextBay.updateSlots();
@@ -4817,7 +4819,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             }           
         }
     
-    /*
+    /**
      * Damages a randomly determined bay door on the entity, if one exists
      * 
      */
@@ -4828,9 +4830,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         Vector<Bay> potential;
         potential = new Vector<Bay>();
         
-        Enumeration iter = this.transports.elements();
+        Enumeration<Transporter> iter = this.transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
+            Transporter next = iter.nextElement();
             if( next instanceof Bay ) {
                 Bay nextBay = (Bay) next;
                 if(nextBay.getDoors() > 0) {
@@ -4850,15 +4852,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         return bayType;
     }
     
-    //damage the door of the first bay that can load this unit
+    /**
+     * damage the door of the first bay that can load this unit
+     */
     public void damageDoorRecovery(Entity en) {
-        
-        Vector<Bay> potential;
-        potential = new Vector<Bay>();
-        
-        Enumeration iter = this.transports.elements();
+        Enumeration<Transporter> iter = this.transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
+            Transporter next = iter.nextElement();
             if( next instanceof ASFBay  && next.canLoad(en)) {
                 ((ASFBay)next).destroyDoor();
                 break;
@@ -4872,7 +4872,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     
-    /*
+    /**
      * Damages a randomly determined docking collar on the entity, if one exists
      * 
      */
@@ -4883,9 +4883,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         Vector<DockingCollar> potential;
         potential = new Vector<DockingCollar>();
         
-        Enumeration iter = this.transports.elements();
+        Enumeration<Transporter> iter = this.transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = (Transporter)iter.nextElement();
+            Transporter next = iter.nextElement();
             if( next instanceof DockingCollar ) {
                 DockingCollar nextDC = (DockingCollar) next;
                 if(!nextDC.isDamaged()) {
@@ -4930,7 +4930,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         return result;
     }
 
-//  get the number of docking collars
+    /**
+     * @return the number of docking collars
+     */
     public int getDocks() {
         int n = 0;
         
@@ -4945,7 +4947,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         
     }
     
-    //only entities in Bays (for cargo damage to Aero units
+    /**
+     * only entities in Bays (for cargo damage to Aero units
+     * @return
+     */
     public Vector<Entity> getBayLoadedUnits() {
         Vector<Entity> result = new Vector<Entity>();
 
@@ -4963,7 +4968,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         return result;
     }
     
-    //  only entities in ASF Bays
+    /**
+     * @return only entities in ASF Bays
+     */
     public Vector<Entity> getLoadedFighters() {
         Vector<Entity> result = new Vector<Entity>();
 
@@ -4983,7 +4990,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         return result;
     }
     
-    //  only entities in ASF Bays that can be launched (i.e. not in recovery)
+    /**
+     * @return only entities in ASF Bays that can be launched (i.e. not in 
+     * recovery)
+     */
     public Vector<Entity> getLaunchableFighters() {
         Vector<Entity> result = new Vector<Entity>();
 
@@ -5023,7 +5033,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         
     }
     
-    //get the bays separately
+    /**
+     * @return get the bays separately
+     */
     public Vector<Bay> getFighterBays() {
         Vector<Bay> result = new Vector<Bay>();
         
@@ -5052,7 +5064,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         return result;
     }
     
-   //do any damage to bay doors
+    /**
+     * do any damage to bay doors
+     */
     public void resetBayDoors() {
         
         for(Transporter next:transports) {
@@ -5063,7 +5077,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         
     }
     
-    //  what is the launch rate for fighters
+    /**
+     * @return the launch rate for fighters
+     */
     public int getFighterLaunchRate() {
         int result = 0;
 
@@ -5112,7 +5128,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         return result;
     }
     
-//  get the bays separately
+    /**
+     * get the bays separately
+     */
     public Vector<SmallCraftBay> getSmallCraftBays() {
         Vector<SmallCraftBay> result = new Vector<SmallCraftBay>();
         
@@ -5127,7 +5145,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         
     }
     
-    //  what is the launch rate for Small Craft
+    /**
+     * @return launch rate for Small Craft
+     */
     public int getSmallCraftLaunchRate() {
         int result = 0;
 
@@ -6608,10 +6628,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     public int sideTable(Coords src, boolean usePrior, int face) {
-    	Coords effectivePos = position;
-    	if(usePrior && null != priorPosition)
-    		effectivePos = priorPosition;
-    	
+        Coords effectivePos = position;
+        if(usePrior && null != priorPosition)
+            effectivePos = priorPosition;
+        
         if(src.equals(effectivePos)) {
             //most places handle 0 range explicitly,
             //this is a safe default (calculation gives SIDE_RIGHT)
@@ -7119,60 +7139,60 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }    
     
     public void setPassedThrough(Vector<Coords> pass) {
-    	this.passedThrough = pass;
+        this.passedThrough = pass;
     }
     
     public Vector<Coords> getPassedThrough() {
-    	return passedThrough;
+        return passedThrough;
     }
     
     public void addPassedThrough(Coords c) {
-    	this.passedThrough.add(c);
+        this.passedThrough.add(c);
     }
     
     public void setRamming(boolean b) {
-    	this.ramming = b;
+        this.ramming = b;
     }
     
     public boolean isRamming() {
-    	return ramming;
+        return ramming;
     }
     
     public void resetFiringArcs() {
-    	frontArcFired = new boolean[this.locations()];
-    	rearArcFired = new boolean[this.locations()];
-    	for(int i = 0; i<this.locations(); i++) {
-    		frontArcFired[i] = false;
-    		rearArcFired[i] = false;
-    	}
+        frontArcFired = new boolean[this.locations()];
+        rearArcFired = new boolean[this.locations()];
+        for(int i = 0; i<this.locations(); i++) {
+            frontArcFired[i] = false;
+            rearArcFired[i] = false;
+        }
     }
     
     public boolean hasArcFired(int location, boolean rearMount) {
-    	if(null == frontArcFired || null == rearArcFired) {
-    		resetFiringArcs();
-    	}
-    	if(location>this.locations() || location<0)
-    		return false;
-    	
-    	if(rearMount) {
-    		return rearArcFired[location];
-    	} else {
-    		return frontArcFired[location];
-    	}
+        if(null == frontArcFired || null == rearArcFired) {
+            resetFiringArcs();
+        }
+        if(location>this.locations() || location<0)
+            return false;
+        
+        if(rearMount) {
+            return rearArcFired[location];
+        } else {
+            return frontArcFired[location];
+        }
     }
     
     public void setArcFired(int location, boolean rearMount) {
-    	if(null == frontArcFired || null == rearArcFired) {
-    		resetFiringArcs();
-    	}
-    	if(location>this.locations() || location<0)
-    		return;   	 
-    	
-    	if(rearMount) {
-    		rearArcFired[location] = true;
-    	} else {
-    		frontArcFired[location] = true;
-    	}	
+        if(null == frontArcFired || null == rearArcFired) {
+            resetFiringArcs();
+        }
+        if(location>this.locations() || location<0)
+            return;        
+        
+        if(rearMount) {
+            rearArcFired[location] = true;
+        } else {
+            frontArcFired[location] = true;
+        }    
     }
     
     /*

@@ -66,7 +66,7 @@ public final class CargoBay extends Bay {
     }
 
     public String getType() {
-    	return "Cargo";
+        return "Cargo";
     }
     
 } // End package class TroopSpace implements Transporter

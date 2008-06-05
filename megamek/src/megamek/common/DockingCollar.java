@@ -23,7 +23,7 @@ import java.util.*;
 public class DockingCollar implements Transporter {
 
     // Private attributes and helper functions.
-	
+    
     /**
      * The troops being carried.
      */
@@ -115,10 +115,10 @@ public class DockingCollar implements Transporter {
         /*
          * For now disable everything until I get docking worked out
         if(unit instanceof Dropship) {
-        	Dropship ds = (Dropship)unit;
-        	result = true;
-        	if(ds.isDockCollarDamaged()) 
-        		result = false;
+            Dropship ds = (Dropship)unit;
+            result = true;
+            if(ds.isDockCollarDamaged()) 
+                result = false;
         }
 
         // We must have enough space for the new troops.
@@ -176,12 +176,12 @@ public class DockingCollar implements Transporter {
      *          <code>false</code> otherwise.
      */
     public boolean unload( Entity unit ) {
-    	
-		//can we unload?
+        
+        //can we unload?
         if( isDamaged() ) {
-        	return false;
+            return false;
         }
-    	
+        
         // Remove the unit if we are carrying it.
         boolean retval = this.troops.removeElement( unit );
         
@@ -243,10 +243,10 @@ public class DockingCollar implements Transporter {
     }
     
     public boolean isDamaged() {
-    	return damaged;
+        return damaged;
     }
     
     public void setDamaged(boolean b) {
-    	this.damaged = b;
+        this.damaged = b;
     }
 } // End package class TroopSpace implements Transporter

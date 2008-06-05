@@ -12,6 +12,7 @@ v0.33.27-dev (SVN)
 + Bug: Infantry flamers not dealing correct amount of heat to target.
 + Fixed lots of warnings.
 + Bug: displacement off buildings due to DFA did not make target fall correctly
++ Aero ammo explosions and Aero ammo dumping
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

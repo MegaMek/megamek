@@ -231,6 +231,7 @@ public class AmmoType extends EquipmentType {
     protected int heat;
     protected RangeType range;
     protected int tech;
+    protected boolean capital = false;
 
     public int getDamagePerShot() {
         return damagePerShot;
@@ -248,6 +249,10 @@ public class AmmoType extends EquipmentType {
         return ammoRatio;
     }
 
+    public boolean isCapital() {
+        return capital;
+    }
+    
     // Returns the first usable ammo type for the given oneshot launcher
     public static AmmoType getOneshotAmmo(Mounted mounted) {
         WeaponType wt = (WeaponType)mounted.getType();
@@ -6042,6 +6047,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 238;
         ammo.cost = 30000;
         ammo.ammoRatio = 0.2;
+        ammo.capital = true;
         
         return ammo;
     }
@@ -6060,6 +6066,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 475;
         ammo.cost = 60000;
         ammo.ammoRatio = 0.4;
+        ammo.capital = true;
         
         return ammo;
     }
@@ -6078,6 +6085,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 594;
         ammo.cost = 75000;
         ammo.ammoRatio = 0.6;
+        ammo.capital = true;
         
         return ammo;
     }
@@ -6096,6 +6104,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 713;
         ammo.cost = 90000;
         ammo.ammoRatio = 0.8;
+        ammo.capital = true;
         
         return ammo;
     }
@@ -6114,6 +6123,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 620;
         ammo.cost = 105000;
         ammo.ammoRatio = 1.0;
+        ammo.capital = true;
         
         return ammo;
     }
@@ -6132,6 +6142,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 708;
         ammo.cost = 120000;
         ammo.ammoRatio = 1.2;
+        ammo.capital = true;
 
         return ammo;
     }
@@ -6149,6 +6160,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 360;
         ammo.cost = 45000;
         ammo.ammoRatio = 0.2;
+        ammo.capital = true;
         
         return ammo;
     }
@@ -6166,6 +6178,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 601;
         ammo.cost = 75000;
         ammo.ammoRatio = 0.4;
+        ammo.capital = true;
         
         return ammo;
     }
@@ -6183,6 +6196,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 721;
         ammo.cost = 90000;
         ammo.ammoRatio = 0.5;
+        ammo.capital = true;
         
         return ammo;
     }
@@ -6199,6 +6213,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 288;
         ammo.cost = 55000;
+        ammo.capital = true;
 
         return ammo;
     }
@@ -6215,6 +6230,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 96;
         ammo.cost = 20000;
+        ammo.capital = true;
 
         return ammo;
     }
@@ -6233,6 +6249,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 96;
         ammo.cost = 20000;
         ammo.flags |=  F_NUCLEAR;
+        ammo.capital = true;
         
         
         return ammo;
@@ -6250,6 +6267,7 @@ public class AmmoType extends EquipmentType {
         ammo.shots = 1;
         ammo.bv = 72;
         ammo.cost = 14000;
+        ammo.capital = true;
 
         return ammo;
     }
@@ -6267,6 +6285,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 65;
         ammo.cost = 8000;
         ammo.toHitModifier = -2;
+        ammo.capital = true;
 
         return ammo;
     }
@@ -6285,6 +6304,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 8000;
         ammo.flags |=  F_AR10_BARRACUDA;
         ammo.toHitModifier = -2;
+        ammo.capital = true;
 
         return ammo;
     }
@@ -6302,6 +6322,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 96;
         ammo.cost = 20000;
         ammo.flags |=  F_AR10_KILLER_WHALE;
+        ammo.capital = true;
 
         return ammo;
     }
@@ -6320,6 +6341,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 96;
         ammo.cost = 20000;
         ammo.flags |=  F_AR10_KILLER_WHALE | F_NUCLEAR;
+        ammo.capital = true;
 
         return ammo;
     }
@@ -6337,6 +6359,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 72;
         ammo.cost = 14000;
         ammo.flags |=  F_AR10_WHITE_SHARK;
+        ammo.capital = true;
 
         return ammo;
     }
@@ -6371,6 +6394,7 @@ public class AmmoType extends EquipmentType {
         ammo.bv = 0;
         ammo.cost = 0;
         ammo.flags |= F_NUCLEAR;
+        ammo.capital = true;
 
         return ammo;
     }

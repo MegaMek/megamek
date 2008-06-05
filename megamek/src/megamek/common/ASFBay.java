@@ -14,7 +14,7 @@
 
 package megamek.common;
 
-import java.util.*;
+import java.util.Vector;
 
 /**
  * Represtents a volume of space set aside for carrying ASFs and Small Craft aboard DropShips
@@ -22,6 +22,10 @@ import java.util.*;
 
 public final class ASFBay extends Bay {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4110012474950158433L;
     Vector<Integer> recoverySlots = new Vector<Integer>();
   
     /**

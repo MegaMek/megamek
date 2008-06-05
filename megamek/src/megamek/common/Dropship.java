@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+
 import megamek.common.weapons.BayWeapon;
 
 /**
@@ -28,6 +29,10 @@ import megamek.common.weapons.BayWeapon;
  */
 public class Dropship extends SmallCraft {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8102587793161001305L;
     //escape pods and lifeboats
     int escapePods = 0;
     int lifeBoats = 0;
@@ -414,7 +419,7 @@ public class Dropship extends SmallCraft {
             if(mounted.byShot()) {
                 double tons = (double)mounted.getShotsLeft() / atype.getShots();
                 if(atype.getAmmoRatio() > 0) {
-                    tons = (double)mounted.getShotsLeft() * atype.getAmmoRatio();
+                    tons = mounted.getShotsLeft() * atype.getAmmoRatio();
                 }
                 curBV *= tons;
             }
@@ -428,8 +433,8 @@ public class Dropship extends SmallCraft {
                     if (tmpP.hasTAG())
                         tagBV += curBV;
                     else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-                       for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-                            Team m = (Team)e.nextElement();
+                       for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements(); ) {
+                            Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
                                     tagBV += curBV;

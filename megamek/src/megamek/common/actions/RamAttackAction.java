@@ -23,29 +23,21 @@ package megamek.common.actions;
 import java.util.Enumeration;
 
 import megamek.common.Aero;
-import megamek.common.Dropship;
-import megamek.common.Jumpship;
-import megamek.common.Warship;
-import megamek.common.SpaceStation;
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
-import megamek.common.CriticalSlot;
+import megamek.common.Dropship;
 import megamek.common.Entity;
-import megamek.common.GunEmplacement;
 import megamek.common.IEntityMovementType;
 import megamek.common.IGame;
 import megamek.common.IHex;
-import megamek.common.ILocationExposureStatus;
-import megamek.common.Infantry;
-import megamek.common.Mech;
+import megamek.common.Jumpship;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
-import megamek.common.Protomech;
+import megamek.common.SpaceStation;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
-import megamek.common.Terrains;
 import megamek.common.ToHitData;
+import megamek.common.Warship;
 
 /**
  * Represents one unit charging another. Stores information about where the
@@ -106,11 +98,9 @@ public class RamAttackAction extends AbstractAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is not Aero");
         }    
 
-        int targetId = Entity.NONE;
         Entity te = null;
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
-            targetId = target.getTargetId();
         }
         IHex attHex = game.getBoard().getHex(src);
         IHex targHex = game.getBoard().getHex(target.getPosition());
@@ -205,9 +195,7 @@ public class RamAttackAction extends AbstractAttackAction {
             toHit.addModifier(avionics, "avionics damage");
             
         //determine hit direction
-        if (te != null) {
-            toHit.setSideTable(te.sideTable(priorSrc));
-        }
+        toHit.setSideTable(te.sideTable(priorSrc));
         
         toHit.setHitTable(ToHitData.HIT_NORMAL);
 

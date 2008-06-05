@@ -14,7 +14,6 @@
 
 package megamek.common;
 
-import java.util.*;
 
 /**
  * Represtents a volume of space set aside for carrying ASFs and Small Craft aboard DropShips
@@ -23,6 +22,11 @@ import java.util.*;
 public final class InfantryBay extends Bay {
 
     // Protected constructors and methods.
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 946578184870030662L;
 
     /**
      * The default constructor is only for serialization.

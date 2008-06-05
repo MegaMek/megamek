@@ -14,8 +14,21 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Button;
+import java.awt.Choice;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import megamek.common.Aero;
 
 /**
@@ -28,6 +41,11 @@ import megamek.common.Aero;
 public class BombPayloadDialog
     extends Dialog implements ActionListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4629867982571421459L;
+
     private boolean confirm = false;
 
     private Panel panButtons = new Panel();

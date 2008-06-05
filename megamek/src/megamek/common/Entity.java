@@ -33,8 +33,8 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
-import megamek.common.weapons.WeaponHandler;
 import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.WeaponHandler;
 
 /**
  * Entity is a master class for basically anything on the board except terrain.

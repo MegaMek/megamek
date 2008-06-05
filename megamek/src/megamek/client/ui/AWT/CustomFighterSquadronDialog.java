@@ -14,39 +14,6 @@
  
 package megamek.client.ui.AWT;
  
-import megamek.client.Client;
-import megamek.client.ui.AWT.widget.BufferedPanel;
-import megamek.common.AmmoType;
-import megamek.common.Aero;
-import megamek.common.BattleArmor;
-import megamek.common.Compute;
-import megamek.common.Entity;
-import megamek.common.EntityWeightClass;
-import megamek.common.EquipmentType;
-import megamek.common.FighterSquadron;
-import megamek.common.IEntityMovementMode;
-import megamek.common.Infantry;
-import megamek.common.LocationFullException;
-import megamek.common.Mech;
-import megamek.common.MechFileParser;
-import megamek.common.MechSummary;
-import megamek.common.MechSummaryCache;
-import megamek.common.MechSummaryComparator;
-import megamek.common.MiscType;
-import megamek.common.Mounted;
-import megamek.common.Tank;
-import megamek.common.TechConstants;
-import megamek.common.UnitType;
-import megamek.common.WeaponType;
-import megamek.common.loaders.EntityLoadingException;
-import megamek.common.options.PilotOptions;
-import megamek.common.preference.IClientPreferences;
-import megamek.common.preference.PreferenceManager;
-import megamek.common.verifier.EntityVerifier;
-import megamek.common.verifier.TestEntity;
-import megamek.common.verifier.TestMech;
-import megamek.common.verifier.TestTank;
-
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Checkbox;
@@ -72,11 +39,40 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Vector;
+
+import megamek.client.Client;
+import megamek.client.ui.AWT.widget.BufferedPanel;
+import megamek.common.BattleArmor;
+import megamek.common.Compute;
+import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
+import megamek.common.EquipmentType;
+import megamek.common.FighterSquadron;
+import megamek.common.IEntityMovementMode;
+import megamek.common.Infantry;
+import megamek.common.Mech;
+import megamek.common.MechFileParser;
+import megamek.common.MechSummary;
+import megamek.common.MechSummaryCache;
+import megamek.common.MechSummaryComparator;
+import megamek.common.MiscType;
+import megamek.common.Mounted;
+import megamek.common.Tank;
+import megamek.common.TechConstants;
+import megamek.common.UnitType;
+import megamek.common.WeaponType;
+import megamek.common.loaders.EntityLoadingException;
+import megamek.common.options.PilotOptions;
+import megamek.common.preference.IClientPreferences;
+import megamek.common.preference.PreferenceManager;
+import megamek.common.verifier.EntityVerifier;
+import megamek.common.verifier.TestEntity;
+import megamek.common.verifier.TestMech;
+import megamek.common.verifier.TestTank;
 
 /* 
  * Allows a user to sort through a list of MechSummaries and select one
@@ -86,6 +82,11 @@ public class CustomFighterSquadronDialog
     extends Dialog implements ActionListener, ItemListener, KeyListener, 
     Runnable, WindowListener
 {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4037247031384528887L;
+
     // how long after a key is typed does a new search begin
     private final static int KEY_TIMEOUT = 1000;
      

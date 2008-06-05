@@ -28,6 +28,10 @@ import java.util.Map;
 public class SmallCraft extends Aero {
     
         
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9013512155929642136L;
     protected static String[] LOCATION_ABBRS = { "NOS", "LS", "RS", "AFT" };
     protected static String[] LOCATION_NAMES = { "Nose", "Left Side", "Right Side", "Aft" };
     
@@ -726,8 +730,8 @@ public class SmallCraft extends Aero {
                     if (tmpP.hasTAG())
                         tagBV += atype.getBV(this);
                     else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-                       for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-                            Team m = (Team)e.nextElement();
+                       for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements(); ) {
+                            Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
                                     tagBV += atype.getBV(this);

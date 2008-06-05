@@ -53,7 +53,6 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.loaders.TdbFile;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BuildingBlock;
-import megamek.common.weapons.BayWeapon;
 
 /*
  * Switches between the various type-specific parsers depending on suffix

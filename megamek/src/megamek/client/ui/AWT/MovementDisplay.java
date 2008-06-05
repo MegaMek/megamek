@@ -868,7 +868,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateDumpButton();
 
         if(ce instanceof Aero) {
-            Aero a = (Aero)ce;
             butThrust.setEnabled(true);
             butYaw.setEnabled(true);
             butEndOver.setEnabled(true);
@@ -1670,8 +1669,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         //cycle through movement.  Collect thrust used until position changes.
         int thrustUsed = 0;
         int j = 0;
-        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = (MoveStep)i.nextElement();
+        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
             
             j++;
             //how do I figure out last step?
@@ -2332,11 +2331,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         return choice;
     }
     
-//  FIGHTER RECOVERY
-    //fighter recovery will be handled differently than loading other units.  Namely, it will
-    //be an action of the fighter not the carrier.  So the fighter just flies right up to a carrier
-    //whose movement is ended and hops on.  
-    //need a new function
+    /**
+     * FIGHTER RECOVERY
+     * fighter recovery will be handled differently than loading other units.  Namely, it will
+     * be an action of the fighter not the carrier.  So the fighter just flies right up to a carrier
+     * whose movement is ended and hops on.  
+     * need a new function
+     */
     private synchronized void updateRecoveryButton() {
         
         final Entity ce = ce();
@@ -2352,11 +2353,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
             }
             Entity other = null;
-            Enumeration entities = client.game.getEntities(loadeePos);
+            Enumeration<Entity> entities = client.game.getEntities(loadeePos);
             boolean isGood = false;
             while (entities.hasMoreElements()) {
                 // Is the other unit friendly and not the current entity?
-                other = (Entity)entities.nextElement();
+                other = entities.nextElement();
                 if (!ce.getOwner().isEnemyOf(other.getOwner())
                         && !ce.equals(other)) {
                     // must be done with its movement
@@ -2473,7 +2474,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     } 
 
         
-    //get the unit id that the player wants to be recovered by
+    /**
+     * @return the unit id that the player wants to be recovered by
+     */
     private int getRecoveryUnit() {
         Entity ce  = ce();
         Vector<Integer> choices = new Vector<Integer>();
@@ -2485,10 +2488,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
         }
         Entity other = null;
-        Enumeration entities = client.game.getEntities(loadeePos);
+        Enumeration<Entity> entities = client.game.getEntities(loadeePos);
         while (entities.hasMoreElements()) {
             // Is the other unit friendly and not the current entity?
-            other = (Entity)entities.nextElement();
+            other = entities.nextElement();
             if (!ce.getOwner().isEnemyOf(other.getOwner())
                     && !ce.equals(other)) {
                 // must be done with its movement

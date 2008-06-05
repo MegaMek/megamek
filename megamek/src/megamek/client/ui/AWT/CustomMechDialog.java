@@ -1056,8 +1056,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
     }
 
-    //a choice panel for determining number of santa anna warheads
+    /**
+     * a choice panel for determining number of santa anna warheads
+     */
     class SantaAnnaChoicePanel extends Panel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 4976381641641260454L;
         private Choice m_choice;
         private Mounted m_mounted;
                 
@@ -1102,8 +1108,14 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
     }
     
-    //bombs
+    /**
+     * bombs
+     */
     class BombChoicePanel extends Panel implements ItemListener {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 8294210679667925079L;
         //private Vector<MiscType> b_vTypes;
         private Choice b_choice_he;
         private Choice b_choice_cl;

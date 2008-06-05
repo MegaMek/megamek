@@ -41,8 +41,8 @@ import megamek.common.SupportVTOL;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.Warship;
-import megamek.common.weapons.BayWeapon;
 import megamek.common.WeaponType;
+import megamek.common.weapons.BayWeapon;
 
 /**
  * A utility class for retrieving mech information in a formatted string.

@@ -12,18 +12,19 @@
  *  for more details.
  */
 
-
-
-
-
 package megamek.client.ui.AWT.widget;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.util.Vector;
 
 import megamek.client.ui.AWT.GUIPreferences;
-import megamek.client.ui.AWT.Messages;
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.FighterSquadron;
 
 /**
  * Class which keeps set of all areas required to 
@@ -244,7 +245,7 @@ public class SquadronMapSet implements DisplayMapSet{
         Graphics g = im.getGraphics();
         g.setColor(Color.black);
         g.fillRect(0,0,w,h);
-        int percent = (int)Math.ceil(120.0 * ((double)a)/((double)orig));
+        int percent = (int)Math.ceil(120.0 * (a/orig));
         g.setColor(Color.green.darker());
         g.fillRect(0, 0, percent, 12);
     }

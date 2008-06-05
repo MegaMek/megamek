@@ -20,7 +20,6 @@ import java.io.Serializable;
 import java.util.Vector;
 
 import megamek.common.Aero;
-import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+
 import megamek.common.weapons.BayWeapon;
 
 /**
@@ -28,7 +29,11 @@ import megamek.common.weapons.BayWeapon;
  */
 public class Jumpship extends Aero {
     
-//     locations
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 8835064735203453570L;
+    //     locations
     public static final int        LOC_NOSE               = 0;
     public static final int        LOC_FLS                = 1;
     public static final int        LOC_FRS                = 2;
@@ -671,7 +676,7 @@ public class Jumpship extends Aero {
             if(mounted.byShot()) {
                 double tons = (double)mounted.getShotsLeft() / atype.getShots();
                 if(atype.getAmmoRatio() > 0) {
-                    tons = (double)mounted.getShotsLeft() * atype.getAmmoRatio();
+                    tons = mounted.getShotsLeft() * atype.getAmmoRatio();
                 }
                 curBV *= tons;
             }
@@ -685,8 +690,8 @@ public class Jumpship extends Aero {
                     if (tmpP.hasTAG())
                         tagBV += curBV;
                     else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-                       for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-                            Team m = (Team)e.nextElement();
+                       for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements(); ) {
+                            Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
                                     tagBV += curBV;
@@ -820,8 +825,8 @@ public class Jumpship extends Aero {
     
     public double getArmorWeight(int loc) {
         //first I need to subtract SI bonus from total armor
-        double armorPoints = (double)getTotalOArmor();
-        armorPoints -= Math.round((double)(get0SI() * loc)/ 10.0);
+        double armorPoints = getTotalOArmor();
+        armorPoints -= Math.round((get0SI() * loc)/ 10.0);
         //this roundabout method is actually necessary to avoid rounding weirdness.  Yeah, it's dumb.
         //now I need to determine base armor points by type and weight
         

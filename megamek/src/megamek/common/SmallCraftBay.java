@@ -14,13 +14,18 @@
 
 package megamek.common;
 
-import java.util.*;
+import java.util.Vector;
 
 /**
  * Represtents a volume of space set aside for carrying ASFs and Small Craft aboard DropShips
  */
 
 public final class SmallCraftBay extends Bay {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8275147432497460821L;
 
     /**
      * The default constructor is only for serialization.

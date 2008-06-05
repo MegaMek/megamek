@@ -29,107 +29,107 @@ import megamek.common.weapons.BayWeapon;
  */
 public class FighterSquadron extends Aero {
     
-	public static int MAX_SIZE = 12;
-	
-	public Vector<String> fighters = new Vector<String>();
-	
+    public static int MAX_SIZE = 12;
+    
+    public Vector<String> fighters = new Vector<String>();
+    
     private int damThresh = 1;
-	
+    
     private int standard_damage = 0;
     
-	//number of initial fighters
-	private int n0Fighters = 0;
-	//number of current fighters
-	private int nFighters = 0;
-//	just have a single armor value, no locations
-	private int armor = 0;
-	private int orig_armor = 0;
+    //number of initial fighters
+    private int n0Fighters = 0;
+    //number of current fighters
+    private int nFighters = 0;
+//    just have a single armor value, no locations
+    private int armor = 0;
+    private int orig_armor = 0;
     private boolean hasTC = false;
-	
-	private int damageRound = 0;
-	
-	private double cost = 0.0;
-	
-	public void setCost(double d) {
-		this.cost = d;
-	}
-	
-	public double getCost() {
-		return cost;
-	}
-	
+    
+    private int damageRound = 0;
+    
+    private double cost = 0.0;
+    
+    public void setCost(double d) {
+        this.cost = d;
+    }
+    
+    public double getCost() {
+        return cost;
+    }
+    
     public void setThresh(int val) {
         this.damThresh = val;
     }
     
     public int getThresh() {
-    	return damThresh;
+        return damThresh;
     }
     
     public void autoSetThresh()
     {
-    	int nThresh = (int)Math.round(getArmor() / (1.0*getN0Fighters()));
-    	setThresh(nThresh);
+        int nThresh = (int)Math.round(getArmor() / (1.0*getN0Fighters()));
+        setThresh(nThresh);
     }
-	
-	public void setN0Fighters(int n) {
-		this.n0Fighters = n;
-	}
-	
-	public int getN0Fighters() {
-		return n0Fighters;
-	}
-	
-	public void setNFighters(int n) {
-		this.nFighters = n;
-	}
-	
-	public int getNFighters() {
-		return nFighters;
-	}
-	
-	public void setArmor(int arm) {
-		this.armor = arm;
-	}
-	
-	public void set0Armor(int arm) {
-		this.orig_armor = arm;
-	}
-	
-	public int getArmor() {
-		return armor;
-	}
-	
-	public int getStandardDamage() {
-    	return standard_damage;
+    
+    public void setN0Fighters(int n) {
+        this.n0Fighters = n;
+    }
+    
+    public int getN0Fighters() {
+        return n0Fighters;
+    }
+    
+    public void setNFighters(int n) {
+        this.nFighters = n;
+    }
+    
+    public int getNFighters() {
+        return nFighters;
+    }
+    
+    public void setArmor(int arm) {
+        this.armor = arm;
+    }
+    
+    public void set0Armor(int arm) {
+        this.orig_armor = arm;
+    }
+    
+    public int getArmor() {
+        return armor;
+    }
+    
+    public int getStandardDamage() {
+        return standard_damage;
     }
     
     public void resetStandardDamage() {
-    		standard_damage = 0;
+            standard_damage = 0;
     }
     
     public void addStandardDamage(int damage, HitData hit) {
-    	standard_damage = standard_damage + damage;
+        standard_damage = standard_damage + damage;
     }
     
     public void addDamageRound(int dam) {
-    	this.damageRound += dam;
+        this.damageRound += dam;
     }
-	
+    
     public int getDamageRound() {
-    	return damageRound;
+        return damageRound;
     }
     
     public void resetDamageRound() {
-    	this.damageRound = 0;
+        this.damageRound = 0;
     }
     
     public int getTotalArmor() {
-    	return armor;
+        return armor;
     }
     
     public int getTotalOArmor() {
-    	return orig_armor;
+        return orig_armor;
     }
     
     public double getArmorRemainingPercent() {
@@ -143,152 +143,152 @@ public class FighterSquadron extends Aero {
     }
     
     public boolean hasTargComp() {
-    	
-    	/*for some reason
-    	 * equipment doesn't seem to be loaded for the fighters
-    	for(Entity e : fighters) {
-    		//if any fighter doesn't have it, then return false
-    		if(e.hasTargComp()) {
-    			return true;
-    		}
-    	}
-    	*/
-    	return hasTC;
+        
+        /*for some reason
+         * equipment doesn't seem to be loaded for the fighters
+        for(Entity e : fighters) {
+            //if any fighter doesn't have it, then return false
+            if(e.hasTargComp()) {
+                return true;
+            }
+        }
+        */
+        return hasTC;
     }
     
     public void setHasTC(boolean b) {
-    	this.hasTC = b;
+        this.hasTC = b;
     }
     
     /*I am getting wierd naming stuff so I am going to disable this for the time being
     * numbering of unique display names is off
     public void compileSquadron() {
-    	
-    	//if no fighters here then return
-    	if(fighters.size() <= 0) {
-    		return;
-    	}
-    	
-    	//cycle through the entity vector and create a fighter squadron
-    	String chassis = fighters.elementAt(0).getChassis();
-    	int si = 99;
-    	boolean alike = true;
-    	int armor = 0;
-    	int heat = 0;
-    	int safeThrust = 99;
-    	int n = 0;
-    	float weight = 0.0f;  
-    	int bv = 0;
-    	double cost = 0.0;
-    	int nTC = 0;
-    	for(Entity e : fighters) {  	
-    		if(!chassis.equals(e.getChassis())) {
-    			alike = false;
-    		}		
-    		n++;
-    		//armor
-    		armor += e.getTotalArmor();
-    		//heat
-    		heat += e.getHeatCapacity();
-    		//weight
-    		weight += e.getWeight();
-    		bv += e.calculateBattleValue();
-    		cost += e.getCost();
-    		//safe thrust
-    		if(e.getWalkMP() < safeThrust) 
-    			safeThrust = e.getWalkMP();
-    		
-    		Aero a = (Aero)e;
-    		//si
-    		if(a.getSI() < si) {
-    			si = a.getSI();
-    		}
-    		
-    		//weapons 
-    		Mounted newmount;
-    		for(Mounted m : e.getEquipment() ) {
-    			
-    			if(m.getType() instanceof WeaponType) {	
-    				//first load the weapon onto the squadron	
-    				WeaponType wtype = (WeaponType)m.getType();
-    				try{
-    					newmount = this.addEquipment(wtype, m.getLocation());
-    				} catch (LocationFullException ex) {
-    					System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    					ex.printStackTrace();
-    					return;
-    				}
-    				//skip to the next if it has no AT class
-    				if(wtype.getAtClass() == WeaponType.CLASS_NONE) {
-    					continue;
-    				}
-    				
-    				//now find the right bay
-    				Mounted bay = this.getFirstBay(wtype, newmount.getLocation(), newmount.isRearMounted());
-    				//if this is null, then I should create a new bay
-    				if(bay == null) {
-    					EquipmentType newBay = WeaponBay.getBayType(wtype.getAtClass());
-    					try{
-    						bay = this.addEquipment(newBay, newmount.getLocation());
-    					} catch (LocationFullException ex) {
-    						System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    						ex.printStackTrace();
-    						return;
-    					}
-    				}
-    				//now add the weapon to the bay
-    				bay.addWeapon(newmount);
-    			} else {
-    				//check if this is a TC
-    				if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
-    					nTC++;
-    				}
-    				//just add the equipment normally
-    				try{
-    					this.addEquipment(m.getType(), m.getLocation());
-    				} catch (LocationFullException ex) {
-    					System.out.println("Unable to add equipment"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-    					ex.printStackTrace();
-    					return;
-    				}
-    			}
-    		}
-    	}
-    	
-    	armor = (int)Math.round(armor / 10.0);
-    	
-    	this.setArmor(armor);
-    	this.set0Armor(armor);
-    	this.setHeatSinks(heat);
-    	this.setOriginalWalkMP(safeThrust);
-    	this.setN0Fighters(n);
-    	this.setNFighters(n);
-    	this.autoSetThresh();
-    	this.setWeight(weight);
-    	this.set0SI(si);
-    	
-    	if(nTC >= n) {
-    		this.hasTC = true;
-    	}
-    	
-    	//if all the same chassis, name by chassis
-    	//otherwise name by weight
-    	if(alike) {
-    		this.setChassis(chassis + " Squadron");
-    	} else {
-    		int aveWeight = Math.round(weight/n);
-    		if(aveWeight <= 45) {
-    			this.setChassis("Mixed Light Squadron");
-    		} else if(aveWeight < 75) {
-    			this.setChassis("Mixed Medium Squadron");
-    		} else {
-    			this.setChassis("Mixed Heavy Squadron");
-    		}
-    	}
-    	this.setModel("");
-    	
-    	this.loadAllWeapons();
-    	this.updateAllWeaponBays();
+        
+        //if no fighters here then return
+        if(fighters.size() <= 0) {
+            return;
+        }
+        
+        //cycle through the entity vector and create a fighter squadron
+        String chassis = fighters.elementAt(0).getChassis();
+        int si = 99;
+        boolean alike = true;
+        int armor = 0;
+        int heat = 0;
+        int safeThrust = 99;
+        int n = 0;
+        float weight = 0.0f;  
+        int bv = 0;
+        double cost = 0.0;
+        int nTC = 0;
+        for(Entity e : fighters) {      
+            if(!chassis.equals(e.getChassis())) {
+                alike = false;
+            }        
+            n++;
+            //armor
+            armor += e.getTotalArmor();
+            //heat
+            heat += e.getHeatCapacity();
+            //weight
+            weight += e.getWeight();
+            bv += e.calculateBattleValue();
+            cost += e.getCost();
+            //safe thrust
+            if(e.getWalkMP() < safeThrust) 
+                safeThrust = e.getWalkMP();
+            
+            Aero a = (Aero)e;
+            //si
+            if(a.getSI() < si) {
+                si = a.getSI();
+            }
+            
+            //weapons 
+            Mounted newmount;
+            for(Mounted m : e.getEquipment() ) {
+                
+                if(m.getType() instanceof WeaponType) {    
+                    //first load the weapon onto the squadron    
+                    WeaponType wtype = (WeaponType)m.getType();
+                    try{
+                        newmount = this.addEquipment(wtype, m.getLocation());
+                    } catch (LocationFullException ex) {
+                        System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        ex.printStackTrace();
+                        return;
+                    }
+                    //skip to the next if it has no AT class
+                    if(wtype.getAtClass() == WeaponType.CLASS_NONE) {
+                        continue;
+                    }
+                    
+                    //now find the right bay
+                    Mounted bay = this.getFirstBay(wtype, newmount.getLocation(), newmount.isRearMounted());
+                    //if this is null, then I should create a new bay
+                    if(bay == null) {
+                        EquipmentType newBay = WeaponBay.getBayType(wtype.getAtClass());
+                        try{
+                            bay = this.addEquipment(newBay, newmount.getLocation());
+                        } catch (LocationFullException ex) {
+                            System.out.println("Unable to compile weapons"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                            ex.printStackTrace();
+                            return;
+                        }
+                    }
+                    //now add the weapon to the bay
+                    bay.addWeapon(newmount);
+                } else {
+                    //check if this is a TC
+                    if (m.getType() instanceof MiscType && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
+                        nTC++;
+                    }
+                    //just add the equipment normally
+                    try{
+                        this.addEquipment(m.getType(), m.getLocation());
+                    } catch (LocationFullException ex) {
+                        System.out.println("Unable to add equipment"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        ex.printStackTrace();
+                        return;
+                    }
+                }
+            }
+        }
+        
+        armor = (int)Math.round(armor / 10.0);
+        
+        this.setArmor(armor);
+        this.set0Armor(armor);
+        this.setHeatSinks(heat);
+        this.setOriginalWalkMP(safeThrust);
+        this.setN0Fighters(n);
+        this.setNFighters(n);
+        this.autoSetThresh();
+        this.setWeight(weight);
+        this.set0SI(si);
+        
+        if(nTC >= n) {
+            this.hasTC = true;
+        }
+        
+        //if all the same chassis, name by chassis
+        //otherwise name by weight
+        if(alike) {
+            this.setChassis(chassis + " Squadron");
+        } else {
+            int aveWeight = Math.round(weight/n);
+            if(aveWeight <= 45) {
+                this.setChassis("Mixed Light Squadron");
+            } else if(aveWeight < 75) {
+                this.setChassis("Mixed Medium Squadron");
+            } else {
+                this.setChassis("Mixed Heavy Squadron");
+            }
+        }
+        this.setModel("");
+        
+        this.loadAllWeapons();
+        this.updateAllWeaponBays();
     }
     */
     
@@ -344,14 +344,14 @@ public class FighterSquadron extends Aero {
         for (Mounted mounted : getTotalWeaponList()) {
             WeaponType wtype = (WeaponType)mounted.getType();
             if(wtype instanceof BayWeapon) {
-        		continue;
-        	}
+                continue;
+            }
             double weaponHeat = wtype.getHeat();
             
             // only count non-damaged equipment
             if (mounted.isMissing() || mounted.isHit() ||
-            		mounted.isDestroyed() || mounted.isBreached()) {
-            	continue;
+                    mounted.isDestroyed() || mounted.isBreached()) {
+                continue;
             }
             
             // one shot weapons count 1/4
@@ -404,8 +404,8 @@ public class FighterSquadron extends Aero {
             for (Mounted mounted : getTotalWeaponList()) {
                 WeaponType wtype = (WeaponType)mounted.getType();
                 if(wtype instanceof BayWeapon) {
-            		continue;
-            	}
+                    continue;
+                }
                 double dBV = wtype.getBV(this);
                 
                 // don't count destroyed equipment
@@ -437,8 +437,8 @@ public class FighterSquadron extends Aero {
             for (Mounted weapon : weapons) {
                 WeaponType wtype = (WeaponType)weapon.getType();
                 if(wtype instanceof BayWeapon) {
-            		continue;
-            	}
+                    continue;
+                }
                 double dBV = wtype.getBV(this);
                 // don't count destroyed equipment
                 if (weapon.isDestroyed())
@@ -549,22 +549,22 @@ public class FighterSquadron extends Aero {
                 Player tmpP = getOwner();
                 
                 if ( tmpP != null ){
-	                // Okay, actually check for friendly TAG.
-	                if (tmpP.hasTAG())
-	                    tagBV += atype.getBV(this);
-	                else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-	                   for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-	                        Team m = (Team)e.nextElement();
-	                        if (m.getId() == tmpP.getTeam()) {
-	                            if (m.hasTAG(game)) {
-	                                tagBV += atype.getBV(this);
-	                            }
-	                            // A player can't be on two teams.
-	                            // If we check his team and don't give the penalty, that's it.
-	                            break;
-	                        }
-	                    }
-	                }
+                    // Okay, actually check for friendly TAG.
+                    if (tmpP.hasTAG())
+                        tagBV += atype.getBV(this);
+                    else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
+                       for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
+                            Team m = (Team)e.nextElement();
+                            if (m.getId() == tmpP.getTeam()) {
+                                if (m.hasTAG(game)) {
+                                    tagBV += atype.getBV(this);
+                                }
+                                // A player can't be on two teams.
+                                // If we check his team and don't give the penalty, that's it.
+                                break;
+                            }
+                        }
+                    }
                 }
             }
             String key = atype.getAmmoType()+":"+atype.getRackSize();
@@ -640,7 +640,7 @@ public class FighterSquadron extends Aero {
         
         // don't factor pilot in if we are just calculating BV for C3 extra BV
         if (ignoreC3)
-        	return finalBV;
+            return finalBV;
         return retVal;
     }
     
@@ -648,7 +648,7 @@ public class FighterSquadron extends Aero {
      * Calculates the battle value of this ASF
      */
     public int calculateBattleValue(boolean assumeLinkedC3) {
-    	return calculateBattleValue(assumeLinkedC3, false);
+        return calculateBattleValue(assumeLinkedC3, false);
     }
     
     

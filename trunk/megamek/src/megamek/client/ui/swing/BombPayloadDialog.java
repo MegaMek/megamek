@@ -82,51 +82,51 @@ public class BombPayloadDialog
         
         for (int x = 0; x<=bombs[Aero.BOMB_HE]; x++) {
             b_choice_he.add(Integer.toString(x));
-    	}
-    	
-    	for (int x = 0; x<=bombs[Aero.BOMB_CL]; x++) {
+        }
+        
+        for (int x = 0; x<=bombs[Aero.BOMB_CL]; x++) {
             b_choice_cl.add(Integer.toString(x));
-    	}
+        }
                
-    	for (int x = 0; x<=bombs[Aero.BOMB_LG]; x++) {
+        for (int x = 0; x<=bombs[Aero.BOMB_LG]; x++) {
             b_choice_lg.add(Integer.toString(x));
-    	}
-    	
-    	for (int x = 0; x<=bombs[Aero.BOMB_INF]; x++) {
+        }
+        
+        for (int x = 0; x<=bombs[Aero.BOMB_INF]; x++) {
             b_choice_inf.add(Integer.toString(x));
-    	}
-    	
-    	for (int x = 0; x<=bombs[Aero.BOMB_MINE]; x++) {
+        }
+        
+        for (int x = 0; x<=bombs[Aero.BOMB_MINE]; x++) {
             b_choice_mine.add(Integer.toString(x));
-    	}
-    	
-    	for (int x = 0; x<=bombs[Aero.BOMB_TAG]; x++) {
+        }
+        
+        for (int x = 0; x<=bombs[Aero.BOMB_TAG]; x++) {
             b_choice_tag.add(Integer.toString(x));
-    	}
-    	
-    	for (int x = 0; x<=bombs[Aero.BOMB_ARROW]; x++) {
+        }
+        
+        for (int x = 0; x<=bombs[Aero.BOMB_ARROW]; x++) {
             b_choice_arrow.add(Integer.toString(x));
-    	}
-    	
-    	for (int x = 0; x<=bombs[Aero.BOMB_RL]; x++) {
+        }
+        
+        for (int x = 0; x<=bombs[Aero.BOMB_RL]; x++) {
             b_choice_rl.add(Integer.toString(x));
-    	}
-    	
-    	for (int x = 0; x<=bombs[Aero.BOMB_ALAMO]; x++) {
+        }
+        
+        for (int x = 0; x<=bombs[Aero.BOMB_ALAMO]; x++) {
             b_choice_alamo.add(Integer.toString(x));
-    	}
-    	
-    	b_choice_he.select(0);
-    	b_choice_cl.select(0);
-    	b_choice_lg.select(0);
-    	b_choice_inf.select(0);
-    	b_choice_mine.select(0);
-    	b_choice_tag.select(0);
-    	b_choice_arrow.select(0);
-    	b_choice_rl.select(0);
-    	b_choice_alamo.select(0);
-    	
-    	String heDesc = Messages.getString("CustomMechDialog.labBombHE");
+        }
+        
+        b_choice_he.select(0);
+        b_choice_cl.select(0);
+        b_choice_lg.select(0);
+        b_choice_inf.select(0);
+        b_choice_mine.select(0);
+        b_choice_tag.select(0);
+        b_choice_arrow.select(0);
+        b_choice_rl.select(0);
+        b_choice_alamo.select(0);
+        
+        String heDesc = Messages.getString("CustomMechDialog.labBombHE");
         Label lhe = new Label(heDesc);
         c.gridx = 0;
         c.gridy = 0;
@@ -166,8 +166,8 @@ public class BombPayloadDialog
         add(b_choice_lg);
         
         if(!spaceBomb) {
-        	
-        	String infDesc = Messages.getString("CustomMechDialog.labBombInf");
+            
+            String infDesc = Messages.getString("CustomMechDialog.labBombInf");
             Label linf = new Label(infDesc);
             c.gridx = 0;
             c.gridy = 3;
@@ -192,10 +192,10 @@ public class BombPayloadDialog
             c.anchor = GridBagConstraints.WEST;
             gridbag.setConstraints(b_choice_mine, c);
             add(b_choice_mine);
-        	
+            
             if(bombDump) {
-            	
-            	String tagDesc = Messages.getString("CustomMechDialog.labBombTAG");
+                
+                String tagDesc = Messages.getString("CustomMechDialog.labBombTAG");
                 Label ltag = new Label(tagDesc);
                 c.gridx = 2;
                 c.gridy = 0;
@@ -320,7 +320,7 @@ public class BombPayloadDialog
     }
 
     public void actionPerformed(ActionEvent e) {
-    	if (e.getSource() == butOK) {
+        if (e.getSource() == butOK) {
             confirm = true;
             this.setVisible(false);
         } else {
@@ -350,21 +350,21 @@ public class BombPayloadDialog
      *          that match the selected choices is returned.
      */
     public int[] getChoices() {
-    	
-    	int[] choices = null;
-    	if(this.confirm) {
-    		int[] temp = new int[ Aero.BOMB_NUM ];
-    		temp[Aero.BOMB_HE] = b_choice_he.getSelectedIndex();
-    		temp[Aero.BOMB_CL] = b_choice_cl.getSelectedIndex();
-			temp[Aero.BOMB_LG] = b_choice_lg.getSelectedIndex();
-			temp[Aero.BOMB_INF] = b_choice_inf.getSelectedIndex();
-			temp[Aero.BOMB_MINE] = b_choice_mine.getSelectedIndex();
-			temp[Aero.BOMB_TAG] = b_choice_tag.getSelectedIndex();
-			temp[Aero.BOMB_ARROW] = b_choice_arrow.getSelectedIndex();
-			temp[Aero.BOMB_RL] = b_choice_rl.getSelectedIndex();
-			temp[Aero.BOMB_ALAMO] = b_choice_alamo.getSelectedIndex();
-			choices = temp;
-    	}
+        
+        int[] choices = null;
+        if(this.confirm) {
+            int[] temp = new int[ Aero.BOMB_NUM ];
+            temp[Aero.BOMB_HE] = b_choice_he.getSelectedIndex();
+            temp[Aero.BOMB_CL] = b_choice_cl.getSelectedIndex();
+            temp[Aero.BOMB_LG] = b_choice_lg.getSelectedIndex();
+            temp[Aero.BOMB_INF] = b_choice_inf.getSelectedIndex();
+            temp[Aero.BOMB_MINE] = b_choice_mine.getSelectedIndex();
+            temp[Aero.BOMB_TAG] = b_choice_tag.getSelectedIndex();
+            temp[Aero.BOMB_ARROW] = b_choice_arrow.getSelectedIndex();
+            temp[Aero.BOMB_RL] = b_choice_rl.getSelectedIndex();
+            temp[Aero.BOMB_ALAMO] = b_choice_alamo.getSelectedIndex();
+            choices = temp;
+        }
        
         return choices;
     }

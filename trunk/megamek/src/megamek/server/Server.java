@@ -2997,7 +2997,7 @@ public class Server implements Runnable {
     private boolean launchUnit( Entity unloader, Targetable unloaded,
             Coords pos, int facing, int velocity, int elevation, int[] moveVec, int bonus ) {
     
-    	Entity unit = null;
+        Entity unit = null;
         if ( unloaded instanceof Entity ) {
             unit = (Entity) unloaded;
         } else {
@@ -3007,9 +3007,9 @@ public class Server implements Runnable {
         //must be an ASF or Small Craft
         Aero a = new Aero();
         if( unit instanceof Aero && !(unit instanceof Dropship) && !(unit instanceof Jumpship)) {
-        	a = (Aero)unit;
+            a = (Aero)unit;
         } else {
-        	return false;
+            return false;
         }
 
         Report r;
@@ -3018,7 +3018,7 @@ public class Server implements Runnable {
         if ( !unloader.unload( unit ) ) {
             return false;
         }
-    	
+        
         //The unloaded unit is no longer being carried.
         unit.setTransportId( Entity.NONE );
 
@@ -3049,10 +3049,10 @@ public class Server implements Runnable {
         //if the bonus was greater than zero then too many fighters were launched and they
         //must all make control rolls
         if(bonus > 0) {
-        	PilotingRollData psr = unit.getBasePilotingRoll();
+            PilotingRollData psr = unit.getBasePilotingRoll();
             psr.addModifier(bonus,"safe launch rate exceeded");
-        	int ctrlroll = Compute.d6(2);
-        	r = new Report(9375);
+            int ctrlroll = Compute.d6(2);
+            r = new Report(9375);
             r.subject = unit.getId();
             r.add(unit.getDisplayName());
             r.add(psr.getValue());
@@ -3060,52 +3060,52 @@ public class Server implements Runnable {
             r.newlines = 0;
             r.indent(1);
             if(ctrlroll < psr.getValue()) {
-            	r.choose(false);
-        		addReport(r);
-        		//damage the unit
-        		int damage = 10 * (psr.getValue() - ctrlroll);   		
-        		HitData hit = a.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-        		addReport( damageEntity(unit, hit, damage) );
-        		//did we destroy the unit?
-        		if ( unit.isDoomed() ) {
+                r.choose(false);
+                addReport(r);
+                //damage the unit
+                int damage = 10 * (psr.getValue() - ctrlroll);           
+                HitData hit = a.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                addReport( damageEntity(unit, hit, damage) );
+                //did we destroy the unit?
+                if ( unit.isDoomed() ) {
                     // Clean out the entity.
                     unit.setDestroyed(true);
                     game.moveToGraveyard(unit.getId());
                     send(createRemoveEntityPacket(unit.getId()));
                 }
             } else {
-            	//avoided damage
-            	r.choose(true);
-        		addReport(r);
+                //avoided damage
+                r.choose(true);
+                addReport(r);
             }
         }
 
         //launching from an OOC vessel causes damage
         if(((Aero)unloader).isOutControlTotal() && !unit.isDoomed()) {
-        	int damroll = Compute.d6(2);
-        	int damage = damroll * 10;
-        	r = new Report(9385);
+            int damroll = Compute.d6(2);
+            int damage = damroll * 10;
+            r = new Report(9385);
             r.subject = unit.getId();
             r.add(unit.getDisplayName());
             r.add(damage);
             addReport(r);
             HitData hit = a.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-    		addReport( damageEntity(unit, hit, damage) );
-    		//did we destroy the unit?
-    		if ( unit.isDoomed() ) {
+            addReport( damageEntity(unit, hit, damage) );
+            //did we destroy the unit?
+            if ( unit.isDoomed() ) {
                 // Clean out the entity.
                 unit.setDestroyed(true);
                 game.moveToGraveyard(unit.getId());
                 send(createRemoveEntityPacket(unit.getId()));
-            }	
+            }    
         }
         
         //Update the unloaded unit.
         entityUpdate( unit.getId() );
 
         
-    	return true;
-    	
+        return true;
+        
     }
 
     /**
@@ -4000,140 +4000,140 @@ public class Server implements Runnable {
      * @return
      */
     private boolean processCollision(Entity entity, Entity target, Coords src) {
-    	Report r;
-    	
-    	r = new Report(9035);
+        Report r;
+        
+        r = new Report(9035);
         r.subject = entity.getId();
         r.add(entity.getDisplayName());
         r.add(target.getDisplayName());
         addReport(r);
         int partialroll = Compute.d6(1);
-		boolean partial = (partialroll == 6);
+        boolean partial = (partialroll == 6);
         //has the target moved yet this round?
-		Aero ta = (Aero)target;
-		if(target.mpUsed < target.getRunMPwithoutMASC() && !ta.isOutControlTotal() && !target.isImmobile()) {
-			//give them a control roll to avoid the collision
-        	//TODO: I should make this voluntary really
-        	PilotingRollData psr = target.getBasePilotingRoll();
+        Aero ta = (Aero)target;
+        if(target.mpUsed < target.getRunMPwithoutMASC() && !ta.isOutControlTotal() && !target.isImmobile()) {
+            //give them a control roll to avoid the collision
+            //TODO: I should make this voluntary really
+            PilotingRollData psr = target.getBasePilotingRoll();
             psr.addModifier(0,"avoiding collision");
-        	int ctrlroll = Compute.d6(2);
-        	r = new Report(9045);
+            int ctrlroll = Compute.d6(2);
+            r = new Report(9045);
             r.subject = target.getId();
             r.add(target.getDisplayName());
             r.add(ctrlroll);
             r.newlines = 0;
             r.indent(2);
             if(ctrlroll < psr.getValue()) {
-            	r.choose(false);
-        		addReport(r);
+                r.choose(false);
+                addReport(r);
             } else {
-            	//avoided collision
-            	r.choose(true);
-        		addReport(r);
-        		//two possibilities:
-        		//1) the target already moved, but had MP left - check for control roll conditions
-        		//2) the target had not yet moved, move them in straight line
-        		if(!target.isDone()) {
-        			int vel = ta.getCurrentVelocity();
-        			MovePath md = new MovePath(game, target);
-        			while(vel > 0) {
-        				md.addStep(MovePath.STEP_FORWARDS);
-        				vel--;
-        			}
-        			game.removeTurnFor(target);
-        			send(createTurnVectorPacket());
-        			processMovement(target, md);
-        			//for some reason it is not clearing out turn     			
-        		} else {
-        			//what needs to get checked?
-        			//this move puts them at over-thrust
-        			target.moved = IEntityMovementType.MOVE_OVER_THRUST;
-        			//they may have exceeded SI, only add if they hadn't exceeded it before
-        			if(target.mpUsed <= ta.getSI()) { 
-        				PilotingRollData rollTarget = ta.checkThrustSITotal(target.getRunMPwithoutMASC());
-        				if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-        	        		game.addControlRoll(new PilotingRollData
-        	                    	( ta.getId(), 0, "Thrust spent during turn exceeds SI" ));
-        	            }
-        			}
-        			target.mpUsed = target.getRunMPwithoutMASC();
-        		}
-        		return false;
+                //avoided collision
+                r.choose(true);
+                addReport(r);
+                //two possibilities:
+                //1) the target already moved, but had MP left - check for control roll conditions
+                //2) the target had not yet moved, move them in straight line
+                if(!target.isDone()) {
+                    int vel = ta.getCurrentVelocity();
+                    MovePath md = new MovePath(game, target);
+                    while(vel > 0) {
+                        md.addStep(MovePath.STEP_FORWARDS);
+                        vel--;
+                    }
+                    game.removeTurnFor(target);
+                    send(createTurnVectorPacket());
+                    processMovement(target, md);
+                    //for some reason it is not clearing out turn                 
+                } else {
+                    //what needs to get checked?
+                    //this move puts them at over-thrust
+                    target.moved = IEntityMovementType.MOVE_OVER_THRUST;
+                    //they may have exceeded SI, only add if they hadn't exceeded it before
+                    if(target.mpUsed <= ta.getSI()) { 
+                        PilotingRollData rollTarget = ta.checkThrustSITotal(target.getRunMPwithoutMASC());
+                        if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                            game.addControlRoll(new PilotingRollData
+                                    ( ta.getId(), 0, "Thrust spent during turn exceeds SI" ));
+                        }
+                    }
+                    target.mpUsed = target.getRunMPwithoutMASC();
+                }
+                return false;
             }
-		} else {
-			//can't avoid collision - write report
-        	r = new Report(9040);
+        } else {
+            //can't avoid collision - write report
+            r = new Report(9040);
             r.subject = entity.getId();
             r.add(entity.getDisplayName());
             r.indent(2);
             addReport(r); 
-		}
+        }
         
-		//if we are still here, then collide     	                          	
-		ToHitData toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Its a collision");
-		toHit.setSideTable(target.sideTable(src));
-		resolveRamDamage((Aero)entity, (Aero)target, toHit, partial, false);
-		
-		//Has the target been destroyed?
-		if ( target.isDoomed() ) {
-			// Has the target taken a turn?
-			if ( !target.isDone() ) {                        				
-				// Dead entities don't take turns.
-				game.removeTurnFor(target);
-				send(createTurnVectorPacket());
-			} // End target-still-to-move
-			// Clean out the entity.
-			target.setDestroyed(true);
-			game.moveToGraveyard(target.getId());
-			send(createRemoveEntityPacket(target.getId()));
-		}
-		// Update the target's position,
-		// unless it is off the game map.
-		if ( !game.isOutOfGame(target) ) {
-			entityUpdate( target.getId() );
-		}
+        //if we are still here, then collide                                       
+        ToHitData toHit = new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "Its a collision");
+        toHit.setSideTable(target.sideTable(src));
+        resolveRamDamage((Aero)entity, (Aero)target, toHit, partial, false);
+        
+        //Has the target been destroyed?
+        if ( target.isDoomed() ) {
+            // Has the target taken a turn?
+            if ( !target.isDone() ) {                                        
+                // Dead entities don't take turns.
+                game.removeTurnFor(target);
+                send(createTurnVectorPacket());
+            } // End target-still-to-move
+            // Clean out the entity.
+            target.setDestroyed(true);
+            game.moveToGraveyard(target.getId());
+            send(createRemoveEntityPacket(target.getId()));
+        }
+        // Update the target's position,
+        // unless it is off the game map.
+        if ( !game.isOutOfGame(target) ) {
+            entityUpdate( target.getId() );
+        }
           
-		return true;
-		
+        return true;
+        
     }
     
     private void processCrash(Entity entity, int vel) {
-    	Report r;
-    	
-    	if(vel < 1) {
-			vel = 1;
-		}
-		int crash_damage = Compute.d6(2) * 10 * vel;
-		r = new Report(9392, Report.PUBLIC);
-		r.indent();
+        Report r;
+        
+        if(vel < 1) {
+            vel = 1;
+        }
+        int crash_damage = Compute.d6(2) * 10 * vel;
+        r = new Report(9392, Report.PUBLIC);
+        r.indent();
         r.addDesc(entity);
         r.add(crash_damage);
         r.newlines = 0;
         addReport(r);
         while(crash_damage > 0) {
-        	HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+            HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             if(entity.getMovementMode() == IEntityMovementMode.SPHEROID) {
-            	hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_REAR);
+                hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_REAR);
             }
             
-        	if(crash_damage > 10) {
-        		addReport(damageEntity(entity, hit, 10));
-        	} else {
-        		addReport(damageEntity(entity, hit, crash_damage));
-        	}
-        	crash_damage -= 10;
+            if(crash_damage > 10) {
+                addReport(damageEntity(entity, hit, 10));
+            } else {
+                addReport(damageEntity(entity, hit, crash_damage));
+            }
+            crash_damage -= 10;
         }
         
         //if the entity survived they are useless anyway because we have no 
         //ground map yet so remove them
         if(!entity.isDoomed() && !entity.isDestroyed()) {
-        	r = new Report(9393, Report.PUBLIC);
+            r = new Report(9393, Report.PUBLIC);
             r.indent();
             r.addDesc(entity);
             addReport(r);
-    		game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED );
-        	send( createRemoveEntityPacket(entity.getId(),
-        			IEntityRemovalConditions.REMOVE_PUSHED) );
+            game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED );
+            send( createRemoveEntityPacket(entity.getId(),
+                    IEntityRemovalConditions.REMOVE_PUSHED) );
         }
     }
     
@@ -4368,160 +4368,160 @@ public class Server implements Runnable {
             
             //check fore aero stuff
             if(entity instanceof Aero) {
-            	Aero a = (Aero)entity;
-            	j++;
-            	
-            	//TODO: change the way this check is made
-            	if( !didMove && md.length() != j) {
-                	thrustUsed += step.getMp();
+                Aero a = (Aero)entity;
+                j++;
+                
+                //TODO: change the way this check is made
+                if( !didMove && md.length() != j) {
+                    thrustUsed += step.getMp();
                 } else {
-                	//if this was the last move and distance was zero, then add thrust
-                	if(!didMove && md.length() == j) {
-                		thrustUsed += step.getMp();
-                	}
-                	//then we moved to a new hex or the last step so check conditions
-                	//structural damage
-                	rollTarget = a.checkThrustSI(thrustUsed);
-                	if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && !(entity instanceof FighterSquadron) 
-                			&& !game.useVectorMove()) {
-                		if(!doSkillCheckInSpace(entity, rollTarget)) {
-                			a.setSI(a.getSI() - 1);
-                			//check for destruction
-                			if(a.getSI() == 0) {
-                				destroyEntity(entity,"Structural Integrity Collapse", false);
-                			}
-                		}
-                	}
-                   
-                	//check for pilot damage
-                	int hits = entity.getCrew().getHits();
-                	int health = 6 - hits;
-                
-                	if( thrustUsed > (2*health) && !game.useVectorMove()) {
-                		int targetroll = 2 + (thrustUsed - 2 * health) + 2 * hits;
-                		resistGForce(entity,targetroll);
-                	}
-                	
-                
-                	thrustUsed = 0;
-                }
-            	
-            	rollTarget = a.checkRolls(step);
-            	if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-            		game.addControlRoll(new PilotingRollData
-                        	( a.getId(), 0, "excess roll" ));
-            	}            	
-
-            	//if out of control, check for possible collision
-            	if(didMove && a.isOutControlTotal()) {
-            		Enumeration<Entity> targets = game.getEntities( step.getPosition() );
-                    if ( targets.hasMoreElements()) {
-                    	//Somebody here so check to see if there is a collision
-                    	int checkroll = Compute.d6(2);
-                    	//TODO: change this to 11 for Large Craft
-                    	int targetroll = 11;
-                    	if(a instanceof Dropship || entity instanceof Jumpship)
-                    		targetroll = 10;
-                    	if(checkroll >= targetroll) {  		
-                    		//this gets complicated, I need to check for each unit type
-                    		//by order of movement subphase
-                    		Vector<Integer> potentialSpaceStation;
-                    		Vector<Integer> potentialWarship;
-                    		Vector<Integer> potentialJumpship;
-                    		Vector<Integer> potentialDropship;
-                    		Vector<Integer> potentialSmallCraft;
-                    		Vector<Integer> potentialASF;
-                    		potentialSpaceStation = new Vector<Integer>();
-                    		potentialWarship = new Vector<Integer>();
-                    		potentialJumpship = new Vector<Integer>();
-                    		potentialDropship = new Vector<Integer>();
-                    		potentialSmallCraft = new Vector<Integer>();
-                    		potentialASF = new Vector<Integer>();
-                    		while ( targets.hasMoreElements() ) { 
-                    		    int id = targets.nextElement().getId(); 
-                    		    Entity ce = game.getEntity(id);
-                    		    if(ce instanceof SpaceStation) {
-                    		    	potentialSpaceStation.addElement(id);
-                    		    } else if(ce instanceof Warship) {
-                    		    	potentialWarship.addElement(id);
-                    		    } else if(ce instanceof Jumpship) {
-                    		    	potentialJumpship.addElement(id);
-                    		    } else if(ce instanceof Dropship) {
-                    		    	potentialDropship.addElement(id);
-                    		    } else if(ce instanceof SmallCraft) {
-                    		    	potentialSmallCraft.addElement(id);
-                    		    } else {
-                    		    	potentialASF.addElement(id);
-                    		    }
-                    		}
-                    		
-                    		//ok now go through and see if these have anybody in them
-                    		if(potentialSpaceStation.size() > 0) {
-                    			int chosen = Compute.randomInt(potentialSpaceStation.size());
-                    			Entity target = game.getEntity(potentialSpaceStation.elementAt(chosen));
-                    			Coords dest = target.getPosition();
-                        		if( processCollision(entity, target, lastPos) ) {
-                        			curPos = dest;
-                                    break;
-                        		}
-                    		} else if(potentialWarship.size() > 0) {
-                    			int chosen = Compute.randomInt(potentialWarship.size());
-                    			Entity target = game.getEntity(potentialWarship.elementAt(chosen));
-                    			Coords dest = target.getPosition();
-                        		if( processCollision(entity, target, lastPos) ) {
-                        			curPos = dest;
-                                    break;
-                        		}
-                    		} else if(potentialJumpship.size() > 0) {
-                    			int chosen = Compute.randomInt(potentialJumpship.size());
-                    			Entity target = game.getEntity(potentialJumpship.elementAt(chosen));
-                    			Coords dest = target.getPosition();
-                        		if( processCollision(entity, target, lastPos) ) {
-                        			curPos = dest;
-                                    break;
-                        		}
-                    		} else if(potentialDropship.size() > 0) {
-                    			int chosen = Compute.randomInt(potentialDropship.size());
-                    			Entity target = game.getEntity(potentialDropship.elementAt(chosen));
-                    			Coords dest = target.getPosition();
-                        		if( processCollision(entity, target, lastPos) ) {
-                        			curPos = dest;
-                                    break;
-                        		}
-                    		} else if(potentialSmallCraft.size() > 0) {
-                    			int chosen = Compute.randomInt(potentialSmallCraft.size());
-                    			Entity target = game.getEntity(potentialSmallCraft.elementAt(chosen));
-                    			Coords dest = target.getPosition();
-                        		if( processCollision(entity, target, lastPos) ) {
-                        			curPos = dest;
-                                    break;
-                        		}
-                    		} else if(potentialASF.size() > 0) {
-                    			int chosen = Compute.randomInt(potentialASF.size());
-                    			Entity target = game.getEntity(potentialASF.elementAt(chosen));
-                    			Coords dest = target.getPosition();
-                        		if( processCollision(entity, target, lastPos) ) {
-                        			curPos = dest;
-                                    break;
-                        		}
-                    		}
-                    		
-                    	}         	
+                    //if this was the last move and distance was zero, then add thrust
+                    if(!didMove && md.length() == j) {
+                        thrustUsed += step.getMp();
                     }
-            	}   
+                    //then we moved to a new hex or the last step so check conditions
+                    //structural damage
+                    rollTarget = a.checkThrustSI(thrustUsed);
+                    if (rollTarget.getValue() != TargetRoll.CHECK_FALSE && !(entity instanceof FighterSquadron) 
+                            && !game.useVectorMove()) {
+                        if(!doSkillCheckInSpace(entity, rollTarget)) {
+                            a.setSI(a.getSI() - 1);
+                            //check for destruction
+                            if(a.getSI() == 0) {
+                                destroyEntity(entity,"Structural Integrity Collapse", false);
+                            }
+                        }
+                    }
+                   
+                    //check for pilot damage
+                    int hits = entity.getCrew().getHits();
+                    int health = 6 - hits;
+                
+                    if( thrustUsed > (2*health) && !game.useVectorMove()) {
+                        int targetroll = 2 + (thrustUsed - 2 * health) + 2 * hits;
+                        resistGForce(entity,targetroll);
+                    }
+                    
+                
+                    thrustUsed = 0;
+                }
+                
+                rollTarget = a.checkRolls(step);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    game.addControlRoll(new PilotingRollData
+                            ( a.getId(), 0, "excess roll" ));
+                }                
+
+                //if out of control, check for possible collision
+                if(didMove && a.isOutControlTotal()) {
+                    Enumeration<Entity> targets = game.getEntities( step.getPosition() );
+                    if ( targets.hasMoreElements()) {
+                        //Somebody here so check to see if there is a collision
+                        int checkroll = Compute.d6(2);
+                        //TODO: change this to 11 for Large Craft
+                        int targetroll = 11;
+                        if(a instanceof Dropship || entity instanceof Jumpship)
+                            targetroll = 10;
+                        if(checkroll >= targetroll) {          
+                            //this gets complicated, I need to check for each unit type
+                            //by order of movement subphase
+                            Vector<Integer> potentialSpaceStation;
+                            Vector<Integer> potentialWarship;
+                            Vector<Integer> potentialJumpship;
+                            Vector<Integer> potentialDropship;
+                            Vector<Integer> potentialSmallCraft;
+                            Vector<Integer> potentialASF;
+                            potentialSpaceStation = new Vector<Integer>();
+                            potentialWarship = new Vector<Integer>();
+                            potentialJumpship = new Vector<Integer>();
+                            potentialDropship = new Vector<Integer>();
+                            potentialSmallCraft = new Vector<Integer>();
+                            potentialASF = new Vector<Integer>();
+                            while ( targets.hasMoreElements() ) { 
+                                int id = targets.nextElement().getId(); 
+                                Entity ce = game.getEntity(id);
+                                if(ce instanceof SpaceStation) {
+                                    potentialSpaceStation.addElement(id);
+                                } else if(ce instanceof Warship) {
+                                    potentialWarship.addElement(id);
+                                } else if(ce instanceof Jumpship) {
+                                    potentialJumpship.addElement(id);
+                                } else if(ce instanceof Dropship) {
+                                    potentialDropship.addElement(id);
+                                } else if(ce instanceof SmallCraft) {
+                                    potentialSmallCraft.addElement(id);
+                                } else {
+                                    potentialASF.addElement(id);
+                                }
+                            }
+                            
+                            //ok now go through and see if these have anybody in them
+                            if(potentialSpaceStation.size() > 0) {
+                                int chosen = Compute.randomInt(potentialSpaceStation.size());
+                                Entity target = game.getEntity(potentialSpaceStation.elementAt(chosen));
+                                Coords dest = target.getPosition();
+                                if( processCollision(entity, target, lastPos) ) {
+                                    curPos = dest;
+                                    break;
+                                }
+                            } else if(potentialWarship.size() > 0) {
+                                int chosen = Compute.randomInt(potentialWarship.size());
+                                Entity target = game.getEntity(potentialWarship.elementAt(chosen));
+                                Coords dest = target.getPosition();
+                                if( processCollision(entity, target, lastPos) ) {
+                                    curPos = dest;
+                                    break;
+                                }
+                            } else if(potentialJumpship.size() > 0) {
+                                int chosen = Compute.randomInt(potentialJumpship.size());
+                                Entity target = game.getEntity(potentialJumpship.elementAt(chosen));
+                                Coords dest = target.getPosition();
+                                if( processCollision(entity, target, lastPos) ) {
+                                    curPos = dest;
+                                    break;
+                                }
+                            } else if(potentialDropship.size() > 0) {
+                                int chosen = Compute.randomInt(potentialDropship.size());
+                                Entity target = game.getEntity(potentialDropship.elementAt(chosen));
+                                Coords dest = target.getPosition();
+                                if( processCollision(entity, target, lastPos) ) {
+                                    curPos = dest;
+                                    break;
+                                }
+                            } else if(potentialSmallCraft.size() > 0) {
+                                int chosen = Compute.randomInt(potentialSmallCraft.size());
+                                Entity target = game.getEntity(potentialSmallCraft.elementAt(chosen));
+                                Coords dest = target.getPosition();
+                                if( processCollision(entity, target, lastPos) ) {
+                                    curPos = dest;
+                                    break;
+                                }
+                            } else if(potentialASF.size() > 0) {
+                                int chosen = Compute.randomInt(potentialASF.size());
+                                Entity target = game.getEntity(potentialASF.elementAt(chosen));
+                                Coords dest = target.getPosition();
+                                if( processCollision(entity, target, lastPos) ) {
+                                    curPos = dest;
+                                    break;
+                                }
+                            }
+                            
+                        }             
+                    }
+                }   
             
-            	//if in the atmosphere, check for a potential crash
-            	
-            	if(game.getBoard().inAtmosphere() 
-            			&& game.getBoard().getHex(step.getPosition()).ceiling() >= step.getElevation() ) {          		
-            		processCrash(entity,md.getFinalVelocity());
+                //if in the atmosphere, check for a potential crash
+                
+                if(game.getBoard().inAtmosphere() 
+                        && game.getBoard().getHex(step.getPosition()).ceiling() >= step.getElevation() ) {                  
+                    processCrash(entity,md.getFinalVelocity());
                     //don't do the rest 
                     break;
-            	}
-            	
-            	
-            	//handle fighter launching
-            	if ( step.getType() == MovePath.STEP_LAUNCH ) {
+                }
+                
+                
+                //handle fighter launching
+                if ( step.getType() == MovePath.STEP_LAUNCH ) {
                     Vector<Integer[]> launched = step.getLaunched();
                     int nLaunched = launched.size();
                     r = new Report(9380);
@@ -4531,45 +4531,45 @@ public class Server implements Runnable {
                     r.add(nLaunched);
                     addReport(r);
                     for(int launch = 0; launch < nLaunched; launch++) {
-                    	int launchId = launched.elementAt(launch)[0];
-                    	int bonus = launched.elementAt(launch)[1];
-                    	int doorDamage = launched.elementAt(launch)[2];
-                    	Bay currentBay = entity.getLoadedBay(launchId);
-                    	//is there door damage
-                    	if(doorDamage > 0) {
-                    		r = new Report(9390);
-                    		r.subject = entity.getId();
-                    		r.indent(1);
-                    		r.newlines = 0;
-                    		r.add(currentBay.getType());
-                    		addReport(r);
-                    		currentBay.destroyDoorNext();
-                    	}
-                    	Targetable unloaded = game.getTarget(Targetable.TYPE_ENTITY, launchId);
-                    	if ( !launchUnit( entity, unloaded,
-                    			curPos, curFacing, step.getVelocity(), step.getElevation(), 
-                    			step.getVectors(), bonus ) ) {
-                    		System.err.println( "Error! Server was told to unload " +
-                    				unloaded.getDisplayName() +
-                    				" from " + entity.getDisplayName() +
-                    				" into " + curPos.getBoardNum() );
-                    	}             
+                        int launchId = launched.elementAt(launch)[0];
+                        int bonus = launched.elementAt(launch)[1];
+                        int doorDamage = launched.elementAt(launch)[2];
+                        Bay currentBay = entity.getLoadedBay(launchId);
+                        //is there door damage
+                        if(doorDamage > 0) {
+                            r = new Report(9390);
+                            r.subject = entity.getId();
+                            r.indent(1);
+                            r.newlines = 0;
+                            r.add(currentBay.getType());
+                            addReport(r);
+                            currentBay.destroyDoorNext();
+                        }
+                        Targetable unloaded = game.getTarget(Targetable.TYPE_ENTITY, launchId);
+                        if ( !launchUnit( entity, unloaded,
+                                curPos, curFacing, step.getVelocity(), step.getElevation(), 
+                                step.getVectors(), bonus ) ) {
+                            System.err.println( "Error! Server was told to unload " +
+                                    unloaded.getDisplayName() +
+                                    " from " + entity.getDisplayName() +
+                                    " into " + curPos.getBoardNum() );
+                        }             
                     }
                     //now apply any damage to bay doors
                     entity.resetBayDoors();
                 }
-            	
-            	if(step.getType() == MovePath.STEP_OFF) {
-            		r = new Report(9370, Report.PUBLIC);
+                
+                if(step.getType() == MovePath.STEP_OFF) {
+                    r = new Report(9370, Report.PUBLIC);
                     r.indent();
                     r.addDesc(entity);
                     addReport(r);
-            		game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED );
-                	send( createRemoveEntityPacket(entity.getId(),
-                			IEntityRemovalConditions.REMOVE_PUSHED) );
-            	}
-            	
-            	
+                    game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED );
+                    send( createRemoveEntityPacket(entity.getId(),
+                            IEntityRemovalConditions.REMOVE_PUSHED) );
+                }
+                
+                
             }
 
             // check piloting skill for getting up
@@ -4709,65 +4709,65 @@ public class Server implements Runnable {
             }
 
             if(step.getType() == MovePath.STEP_ACC || step.getType() == MovePath.STEP_ACCN) {
-            	if(entity instanceof Aero) {
-            		Aero a = (Aero)entity;
-            		if( step.getType() == MovePath.STEP_ACCN) {
-            			a.setAccLast(true);
-            			a.setNextVelocity(a.getNextVelocity()+1);
-            		} else {
-            			a.setCurrentVelocity(a.getCurrentVelocity()+1);
-            			a.setNextVelocity(a.getNextVelocity()+1);
-            		}
-            	}
+                if(entity instanceof Aero) {
+                    Aero a = (Aero)entity;
+                    if( step.getType() == MovePath.STEP_ACCN) {
+                        a.setAccLast(true);
+                        a.setNextVelocity(a.getNextVelocity()+1);
+                    } else {
+                        a.setCurrentVelocity(a.getCurrentVelocity()+1);
+                        a.setNextVelocity(a.getNextVelocity()+1);
+                    }
+                }
             }
             
             if(step.getType() == MovePath.STEP_DEC || step.getType() == MovePath.STEP_DECN) {
-            	if(entity instanceof Aero) {
-            		Aero a = (Aero)entity;
-            		if( step.getType() == MovePath.STEP_DECN) {
-            			a.setAccLast(true);
-               			a.setNextVelocity(a.getNextVelocity()-1);
-            		} else {
-            			a.setCurrentVelocity(a.getCurrentVelocity()-1);
-            			a.setNextVelocity(a.getNextVelocity()-1);
-            		}
-            	}
+                if(entity instanceof Aero) {
+                    Aero a = (Aero)entity;
+                    if( step.getType() == MovePath.STEP_DECN) {
+                        a.setAccLast(true);
+                           a.setNextVelocity(a.getNextVelocity()-1);
+                    } else {
+                        a.setCurrentVelocity(a.getCurrentVelocity()-1);
+                        a.setNextVelocity(a.getNextVelocity()-1);
+                    }
+                }
             }
             
             if(step.getType() == MovePath.STEP_EVADE) {
-            	if(entity instanceof Aero) {
-            		Aero a = (Aero)entity;
-            		a.setEvading(true);
-            	}
+                if(entity instanceof Aero) {
+                    Aero a = (Aero)entity;
+                    a.setEvading(true);
+                }
             }
             
             if(step.getType() == MovePath.STEP_STALL) {
-            	//TODO: check VSTOL status
-    			r = new Report(9391);
+                //TODO: check VSTOL status
+                r = new Report(9391);
                 r.subject = entity.getId();
                 r.addDesc(entity);
                 r.newlines = 0;
                 addReport(r);
-    			game.addControlRoll(new PilotingRollData
-    					(entity.getId(), 0, "stalled out"));
-    			//check for crash	
-    			if(game.getBoard().getHex(step.getPosition()).ceiling() >= step.getElevation()) {
-    				processCrash(entity,0);
+                game.addControlRoll(new PilotingRollData
+                        (entity.getId(), 0, "stalled out"));
+                //check for crash    
+                if(game.getBoard().getHex(step.getPosition()).ceiling() >= step.getElevation()) {
+                    processCrash(entity,0);
                     //don't do the rest 
                     break;
-    			}
+                }
             }
             
             if(step.getType() == MovePath.STEP_ROLL) {
-            	if(entity instanceof Aero) {
-            		Aero a = (Aero)entity;
-            		if(a.isRolled()) {
-            			a.setRolled(false);
-            		} else {
-            			a.setRolled(true);
-            		}
-            		
-            	}
+                if(entity instanceof Aero) {
+                    Aero a = (Aero)entity;
+                    if(a.isRolled()) {
+                        a.setRolled(false);
+                    } else {
+                        a.setRolled(true);
+                    }
+                    
+                }
             }
 
             // check for dig in or fortify
@@ -5227,15 +5227,15 @@ public class Server implements Runnable {
             
 //          handle fighter recovery
             if( step.getType() == MovePath.STEP_RECOVER) {
-            	
-            	loader = game.getEntity(step.getRecoveryUnit());
-            	
-            	PilotingRollData psr = entity.getBasePilotingRoll();
-            	if(loader.mpUsed > 0) {
-            		psr.addModifier(5, "carrier used thrust");
-            	}
-            	int ctrlroll = Compute.d6(2);
-            	r = new Report(9381);
+                
+                loader = game.getEntity(step.getRecoveryUnit());
+                
+                PilotingRollData psr = entity.getBasePilotingRoll();
+                if(loader.mpUsed > 0) {
+                    psr.addModifier(5, "carrier used thrust");
+                }
+                int ctrlroll = Compute.d6(2);
+                r = new Report(9381);
                 r.subject = entity.getId();
                 r.add(entity.getDisplayName());
                 r.add(loader.getDisplayName());
@@ -5244,26 +5244,26 @@ public class Server implements Runnable {
                 r.newlines = 0;
                 r.indent(1);
                 if(ctrlroll < psr.getValue()) {
-                	r.choose(false);
-            		addReport(r);
-            		//damage unit
-            		Aero a = (Aero)entity;
-            		HitData hit = a.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-            		addReport( damageEntity(entity, hit, 2 * (psr.getValue()-ctrlroll)) );
+                    r.choose(false);
+                    addReport(r);
+                    //damage unit
+                    Aero a = (Aero)entity;
+                    HitData hit = a.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    addReport( damageEntity(entity, hit, 2 * (psr.getValue()-ctrlroll)) );
                 } else {
-                	r.choose(true);
-                	addReport(r);
-                	recovered = true;             	
+                    r.choose(true);
+                    addReport(r);
+                    recovered = true;                 
                 }         
                 //check for door damage
-        		if(ctrlroll == 2) {
-        			loader.damageDoorRecovery(entity);
-        			r = new Report(9384);
-        			r.subject = entity.getId();
-        			r.indent(0);
-        			r.add(loader.getDisplayName());
-        			addReport(r);
-        		}
+                if(ctrlroll == 2) {
+                    loader.damageDoorRecovery(entity);
+                    r = new Report(9384);
+                    r.subject = entity.getId();
+                    r.indent(0);
+                    r.add(loader.getDisplayName());
+                    addReport(r);
+                }
             }
 
             // Handle unloading units.
@@ -5448,8 +5448,8 @@ public class Server implements Runnable {
             //if the lastpos is not the same as the current position
             //then add the current position to the list of places passed through
             if(!curPos.equals(lastPos)) {
-            	passedThrough.add(curPos);
-            	entity.setPriorPosition(lastPos);
+                passedThrough.add(curPos);
+                entity.setPriorPosition(lastPos);
             }
 
             // update lastPos, prevStep, prevFacing & prevHex
@@ -5489,38 +5489,38 @@ public class Server implements Runnable {
         }
         
         if(entity instanceof Aero) {
-        	
-        	Aero a = (Aero)entity;
-        	int thrust = md.getMpUsed();       	
-        	
-        	//consume fuel
+            
+            Aero a = (Aero)entity;
+            int thrust = md.getMpUsed();           
+            
+            //consume fuel
             if((entity instanceof Aero && game.getOptions().booleanOption("fuel_consumption"))) {
-            	int fuelUsed = thrust + Math.max(thrust - entity.getWalkMP(), 0);
-            	a.setFuel(Math.max(a.getFuel() - fuelUsed,0));
+                int fuelUsed = thrust + Math.max(thrust - entity.getWalkMP(), 0);
+                a.setFuel(Math.max(a.getFuel() - fuelUsed,0));
             }
-        	
-        	//check to see if thrust exceeded SI
-        	
-        	rollTarget = a.checkThrustSITotal(thrust);
-        	if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-        		game.addControlRoll(new PilotingRollData
-                    	( a.getId(), 0, "Thrust spent during turn exceeds SI" ));
+            
+            //check to see if thrust exceeded SI
+            
+            rollTarget = a.checkThrustSITotal(thrust);
+            if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                game.addControlRoll(new PilotingRollData
+                        ( a.getId(), 0, "Thrust spent during turn exceeds SI" ));
             }
-        	
-        	if(game.getBoard().inAtmosphere()) {
-        		rollTarget = a.checkVelocityDouble(md.getFinalVelocity());
-        		if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-            		game.addControlRoll(new PilotingRollData
-                        	( a.getId(), 0, "Velocity greater than 2x safe thrust" ));
+            
+            if(game.getBoard().inAtmosphere()) {
+                rollTarget = a.checkVelocityDouble(md.getFinalVelocity());
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    game.addControlRoll(new PilotingRollData
+                            ( a.getId(), 0, "Velocity greater than 2x safe thrust" ));
                 }
-        		
-        		rollTarget = a.checkDown(md.getFinalNDown());
-        		if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
-            		game.addControlRoll(new PilotingRollData
-                        	( a.getId(), 0, "lost more than two altitudes" ));
+                
+                rollTarget = a.checkDown(md.getFinalNDown());
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    game.addControlRoll(new PilotingRollData
+                            ( a.getId(), 0, "lost more than two altitudes" ));
                 }
-        		
-        	}
+                
+            }
         }
 
         // If the entity is being swarmed, erratic movement may dislodge the
@@ -5888,7 +5888,7 @@ public class Server implements Runnable {
         
         //recovered units should now be recovered and dealt with
         if(entity instanceof Aero && recovered && loader != null) {
-        	//Load the unit.
+            //Load the unit.
             loader.recover( entity );
             
             //start the recovery timer
@@ -5906,7 +5906,7 @@ public class Server implements Runnable {
         
         //even if load was unsuccessful, I may need to update the loader
         if(null != loader) {
-        	entityUpdate(loader.getId());
+            entityUpdate(loader.getId());
         }
 
         // if using double blind, update the player on new units he might see
@@ -6985,7 +6985,7 @@ public class Server implements Runnable {
      *
      */
     private boolean doSkillCheckInSpace(Entity entity, PilotingRollData roll) {
-    	
+        
         if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             return true;
         }
@@ -7551,12 +7551,12 @@ public class Server implements Runnable {
          * not the best place to do it, but what are you going to do
          */
         if(entity instanceof Aero && game.useVectorMove()) {
-        	Aero a = (Aero)entity;
-        	if(a.getCurrentVelocityActual() > 0) {
-        		int[] v = {0,0,0,0,0,0};
-        		v[nFacing] = a.getCurrentVelocityActual();
-        		entity.setVectors(v);
-        	}
+            Aero a = (Aero)entity;
+            if(a.getCurrentVelocityActual() > 0) {
+                int[] v = {0,0,0,0,0,0};
+                v[nFacing] = a.getCurrentVelocityActual();
+                entity.setVectors(v);
+            }
         }
         
         entity.setPosition(coords);
@@ -7585,20 +7585,20 @@ public class Server implements Runnable {
                                 + " appears to be in an infinite loop trying to get a legal elevation.");
             }
         } else if (entity instanceof Aero) {
-        	if(game.getBoard().inAtmosphere()) {
-        		//if within the right limits, then leave alone
-        		if(entity.getElevation() < 1) {
-        			//assume they never entered it and so it should be 10
-        			entity.setElevation(10);
-        		}
-        		if(entity.getElevation() > 10) {
-        			entity.setElevation(10);
-        		}
-        	} else if(game.getBoard().inSpace()) {
-        		entity.setElevation(0);
-        	} else {
-        		entity.setElevation(hex.floor() - hex.surface());
-        	}
+            if(game.getBoard().inAtmosphere()) {
+                //if within the right limits, then leave alone
+                if(entity.getElevation() < 1) {
+                    //assume they never entered it and so it should be 10
+                    entity.setElevation(10);
+                }
+                if(entity.getElevation() > 10) {
+                    entity.setElevation(10);
+                }
+            } else if(game.getBoard().inSpace()) {
+                entity.setElevation(0);
+            } else {
+                entity.setElevation(hex.floor() - hex.surface());
+            }
         } else if (entity.getMovementMode() == IEntityMovementMode.SUBMARINE) {
             // TODO: Submarines should have a selectable height.
             // For now, pretend they're regular naval.
@@ -10689,7 +10689,7 @@ public class Server implements Runnable {
      * Handle a ramming attack
      */
     private void resolveRamAttack(PhysicalResult pr, int lastEntityId) {
-    	final RamAttackAction raa = (RamAttackAction) pr.aaa;
+        final RamAttackAction raa = (RamAttackAction) pr.aaa;
         final Entity ae = game.getEntity(raa.getEntityId());
         final Targetable target = game.getTarget(raa.getTargetType(), raa
                 .getTargetId());
@@ -10733,19 +10733,19 @@ public class Server implements Runnable {
         
         //steel yourself for attack
         int steelroll = Compute.d6(2);
-    	r = new Report(9020);
-    	r.subject = ae.getId();
-    	r.add(steelroll);
-    	if(steelroll > 11) {
-    		r.choose(true);
-    		addReport(r);
-    	} else {
-    		r.choose(false);
-    		addReport(r);
-    		return;
-    	}
-    	
-    	//attacker immobile?
+        r = new Report(9020);
+        r.subject = ae.getId();
+        r.add(steelroll);
+        if(steelroll > 11) {
+            r.choose(true);
+            addReport(r);
+        } else {
+            r.choose(false);
+            addReport(r);
+            return;
+        }
+        
+        //attacker immobile?
         if (ae.isImmobile()) {
             r = new Report(4200);
             r.subject = ae.getId();
@@ -10754,14 +10754,14 @@ public class Server implements Runnable {
             return;
         }
         
-    	r = new Report(9030);   
-    	r.subject = ae.getId();
-    	r.indent();
-    	r.add(target.getDisplayName());
-    	r.newlines = 0;
-    	addReport(r);
-    	
-    	if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+        r = new Report(9030);   
+        r.subject = ae.getId();
+        r.indent();
+        r.add(target.getDisplayName());
+        r.newlines = 0;
+        addReport(r);
+        
+        if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             roll = Integer.MAX_VALUE;
             r = new Report(4225);
             r.subject = ae.getId();
@@ -10778,18 +10778,18 @@ public class Server implements Runnable {
         }
 
         // do we hit?
-    	if (roll < toHit.getValue()) {
+        if (roll < toHit.getValue()) {
             // miss
             r = new Report(4035);
             r.subject = ae.getId();
             addReport(r);
         } else {
-        	//Resolve the damage.
+            //Resolve the damage.
             resolveRamDamage((Aero)ae, (Aero)te, toHit, glancing,
                     throughFront);
         }
-    	
-    	
+        
+        
     }
     
     /**
@@ -10797,7 +10797,7 @@ public class Server implements Runnable {
      */
     private void resolveRamDamage(Aero ae, Aero te, ToHitData toHit, boolean glancing, boolean throughFront) {
 
-    	int damage = RamAttackAction.getDamageFor(ae, te);
+        int damage = RamAttackAction.getDamageFor(ae, te);
         int damageTaken = RamAttackAction.getDamageTakenBy(ae, te);
         if (glancing) {
             damage = (int)Math.floor(damage/2.0);
@@ -10806,16 +10806,16 @@ public class Server implements Runnable {
         
         //are they capital scale?
         if(te.isCapitalScale()) {
-        	damage = (int)Math.floor(damage/10.0);
+            damage = (int)Math.floor(damage/10.0);
         }
         if(ae.isCapitalScale()) {
-        	damageTaken = (int)Math.floor(damageTaken/10.0);
+            damageTaken = (int)Math.floor(damageTaken/10.0);
         }
         
         Report r;
 
         if(glancing) {
-        	r = new Report(9015);
+            r = new Report(9015);
             r.subject = ae.getId();
             r.indent(1);
             r.newlines = 0;
@@ -10829,27 +10829,27 @@ public class Server implements Runnable {
         r.newlines = 0;
         addReport(r);
         
-    	HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ae.sideTable(te.getPosition(), true));  
-    	//if the damage is greater than the initial armor then destroy the entity
-    	if((2 * ae.getOArmor(hit)) < damageTaken) {
-    		addReport(destroyEntity(ae,"by massive ramming damage", false));
-    	} else {
-    		addReport(damageEntity(ae, hit, damageTaken, false, DamageType.NONE, false, false, throughFront));
-    	}
-    		
+        HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ae.sideTable(te.getPosition(), true));  
+        //if the damage is greater than the initial armor then destroy the entity
+        if((2 * ae.getOArmor(hit)) < damageTaken) {
+            addReport(destroyEntity(ae,"by massive ramming damage", false));
+        } else {
+            addReport(damageEntity(ae, hit, damageTaken, false, DamageType.NONE, false, false, throughFront));
+        }
+            
         r = new Report(4230);
         r.subject = ae.getId();
         r.add(damage);
         r.add(toHit.getTableDesc());
         r.newlines = 0;
         addReport(r);
-    	
-    	hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
-    	if((2 * te.getOArmor(hit)) < damage) {
-    		addReport(destroyEntity(te,"by massive ramming damage", false));
-    	} else {
-    		addReport(damageEntity(te, hit, damage, false, DamageType.NONE, false, false, throughFront));
-    	}
+        
+        hit = te.rollHitLocation(toHit.getHitTable(), toHit.getSideTable());
+        if((2 * te.getOArmor(hit)) < damage) {
+            addReport(destroyEntity(te,"by massive ramming damage", false));
+        } else {
+            addReport(damageEntity(te, hit, damage, false, DamageType.NONE, false, false, throughFront));
+        }
     }
     
     /**
@@ -11432,10 +11432,10 @@ public class Server implements Runnable {
             
             //put in ASF heat build-up first because there are few differences
             if(entity instanceof Aero) {
-            	
-            	Aero a = (Aero) entity;
-            	
-            	//should we even bother?
+                
+                Aero a = (Aero) entity;
+                
+                //should we even bother?
                 if ( entity.isDestroyed() || entity.isDoomed() ||
                      entity.crew.isDoomed() || entity.crew.isDead() ) {
                     continue;
@@ -11443,7 +11443,7 @@ public class Server implements Runnable {
                 
                 //Engine hits cause excess heat for fighters
                 if(!(entity instanceof SmallCraft || entity instanceof Jumpship))
-                	entity.heatBuildup += 2*a.getEngineHits();
+                    entity.heatBuildup += 2*a.getEngineHits();
                 
                 //add the heat we've built up so far.
                 entity.heat += entity.heatBuildup;
@@ -11465,13 +11465,13 @@ public class Server implements Runnable {
                 //add in the effects of heat
                 
                 if(entity instanceof Dropship || entity instanceof Jumpship) {
-                	//only check for a possible control roll
-                	if(entity.heat > 0) {
-                		int bonus = (int)Math.ceil((double)entity.heat / 100.0);
-                		game.addControlRoll(new PilotingRollData(entity.getId(), bonus,"used too much heat"));
-                		entity.heat = 0;
-                	}
-                	continue;
+                    //only check for a possible control roll
+                    if(entity.heat > 0) {
+                        int bonus = (int)Math.ceil((double)entity.heat / 100.0);
+                        game.addControlRoll(new PilotingRollData(entity.getId(), bonus,"used too much heat"));
+                        entity.heat = 0;
+                    }
+                    continue;
                 }
                 
                 int autoShutDownHeat = 30;
@@ -11542,43 +11542,43 @@ public class Server implements Runnable {
 
                 //heat effects: control effects (must make it unless already random moving)
                 if(entity.heat >= 5 && !a.isRandomMove()) {
-                	int controlavoid = 5 + (entity.heat >= 10 ? 1 : 0) +
+                    int controlavoid = 5 + (entity.heat >= 10 ? 1 : 0) +
                     (entity.heat >= 15 ? 1 : 0) + (entity.heat >= 20 ? 1 : 0) + 
                     (entity.heat >= 25 ? 2 : 0);
-                	int controlroll = Compute.d6(2);
-                	r = new Report(9210);
+                    int controlroll = Compute.d6(2);
+                    r = new Report(9210);
                     r.subject = entity.getId();
                     r.addDesc(entity);
                     r.add(controlavoid);
                     r.add(controlroll);
                     if(controlroll >= controlavoid) {
-                    	//in control
-                    	r.choose(true);
-                    	addReport(r);
+                        //in control
+                        r.choose(true);
+                        addReport(r);
                     } else {
-                    	//out of control
-                    	r.choose(false);
-                    	addReport(r);
-                    	//if not already out of control, this may lead to elevation decline
-                    	if(!a.isOutControl() && game.getBoard().inAtmosphere()) {
-							int loss = Compute.d6(1);
-							r = new Report(9366);
-							r.newlines = 0;
-							r.subject = entity.getId();
-							r.addDesc(entity);
-							r.add(loss);
-							addReport(r);
-							//check for crash
-							if((a.getElevation() - loss) <= game.getBoard().getHex(a.getPosition()).ceiling()) {
-								a.setElevation(0);
-								processCrash(entity, a.getCurrentVelocity());
-							} else {
-								a.setElevation(a.getElevation() - loss);
-							}
-                    	}
-                    	//force unit out of control through heat
-                    	a.setOutCtrlHeat(true);
-                    	a.setRandomMove(true);
+                        //out of control
+                        r.choose(false);
+                        addReport(r);
+                        //if not already out of control, this may lead to elevation decline
+                        if(!a.isOutControl() && game.getBoard().inAtmosphere()) {
+                            int loss = Compute.d6(1);
+                            r = new Report(9366);
+                            r.newlines = 0;
+                            r.subject = entity.getId();
+                            r.addDesc(entity);
+                            r.add(loss);
+                            addReport(r);
+                            //check for crash
+                            if((a.getElevation() - loss) <= game.getBoard().getHex(a.getPosition()).ceiling()) {
+                                a.setElevation(0);
+                                processCrash(entity, a.getCurrentVelocity());
+                            } else {
+                                a.setElevation(a.getElevation() - loss);
+                            }
+                        }
+                        //force unit out of control through heat
+                        a.setOutCtrlHeat(true);
+                        a.setRandomMove(true);
                     }
                 }
              
@@ -11614,8 +11614,8 @@ public class Server implements Runnable {
 
                 // heat effects: pilot damage
                 if (entity.heat >= 21) {
-                	int ouch = 6 + (entity.heat >= 27 ? 3 : 0);
-                	int ouchroll = Compute.d6(2);
+                    int ouch = 6 + (entity.heat >= 27 ? 3 : 0);
+                    int ouchroll = Compute.d6(2);
                     r = new Report(5075);
                     r.subject = entity.getId();
                     r.addDesc(entity);
@@ -12670,183 +12670,183 @@ public class Server implements Runnable {
      * Resolves and reports all control skill rolls for a single aero.
      */
     private Vector<Report> resolveControl(Entity e) {
-    	Vector<Report> vPhaseReport = new Vector<Report>();
-    	Report r;
-    	
-    	/*
-    	 * See forum answers on OOC 
-    	 * http://forums.classicbattletech.com/index.php/topic,20424.0.html
-    	 */
+        Vector<Report> vPhaseReport = new Vector<Report>();
+        Report r;
+        
+        /*
+         * See forum answers on OOC 
+         * http://forums.classicbattletech.com/index.php/topic,20424.0.html
+         */
 
-    	if(e instanceof Aero) {
-    		Aero a = (Aero)e;
-            	
-    		//they should get a shot at a recovery roll at the end of all this
-    		//if they are already out of control
-    		boolean canRecover = a.isOutControl();
-    			
-    		//if the unit already is moving randomly then it can't get any worse
-    		if(!a.isRandomMove()) {
+        if(e instanceof Aero) {
+            Aero a = (Aero)e;
+                
+            //they should get a shot at a recovery roll at the end of all this
+            //if they are already out of control
+            boolean canRecover = a.isOutControl();
+                
+            //if the unit already is moving randomly then it can't get any worse
+            if(!a.isRandomMove()) {
     
-    			//find control rolls and make them
-    			Vector<PilotingRollData> rolls = new Vector<PilotingRollData>();
-    			StringBuffer reasons = new StringBuffer();
-    			PilotingRollData base = e.getBasePilotingRoll();
-    			for (Enumeration j = game.getControlRolls(); j.hasMoreElements();) {
-    				final PilotingRollData modifier = (PilotingRollData)j.nextElement();
-    				if (modifier.getEntityId() != e.getId()) {
-    					continue;
-    				}	
-    				// found a roll, add it
-    				rolls.addElement(modifier);
-    				if (reasons.length() > 0) {
-    					reasons.append("; ");
-    				}
-    				reasons.append(modifier.getPlainDesc());
-    				// only cumulative rolls get added to the base roll
-//    				FIXME: nuclear attacks are not resetting to non-cumulative for some reason
-    				//when they are added. Until I resolve this, the following hack will have 
-    				//to suffice
-    				if(modifier.getPlainDesc().contains("Nuclear")) {
-    					modifier.setCumulative(false);
-    				}
-    				if (modifier.isCumulative()) {
-    					base.append(modifier);
-    				}
-    			}
-    			// any rolls needed?
-    			if (rolls.size() > 0) {
-    				// loop thru rolls we do have to make...
-    				r = new Report(9310);
-    				r.subject = e.getId();
-    				r.addDesc(e);
-    				r.add(rolls.size());
-    				r.add(reasons.toString()); //international issue
-    				vPhaseReport.add(r);
-    				r = new Report(2285);
-    				r.subject = e.getId();
-    				r.add(base.getValueAsString());
-    				r.add(base.getDesc()); //international issue
-    				vPhaseReport.add(r);
-    				for (int j = 0; j < rolls.size(); j++) {                	
-    					PilotingRollData modifier = rolls.elementAt(j);
-    					PilotingRollData target = base;
-    					r = new Report(2290);
-    					r.subject = e.getId();
-    					r.indent();
-    					r.newlines = 0;
-    					r.add(j+1);
-    					r.add(modifier.getPlainDesc()); //international issue
-    					vPhaseReport.add(r);
-    					if (!modifier.isCumulative()) {
-    						//only for nuclear attacks
-    						r = new Report(2296);
-    						r.subject = e.getId();
-    						r.newlines = 0;
-    						r.add(modifier.getValueAsString()); //international issue
-    						target = new PilotingRollData(e.getId());
-    						target.append(base);
-    						target.append(modifier);
-    						vPhaseReport.add(r);
-    					}
-    					int diceRoll = Compute.d6(2);
-    					//different reports depending on out-of-control status
-    					if(a.isOutControl()) {
-    						r = new Report(9360);
-    						r.subject = e.getId();
-    						r.add(target.getValueAsString());
-    						r.add(diceRoll);
-    						if (diceRoll < (target.getValue() - 5) ) {
-    							r.choose(false);
-    							vPhaseReport.add(r);
-    							a.setRandomMove(true);
-    						} else {	
-    							r.choose(true);
-    							vPhaseReport.add(r);
-    						}
-    					} else {
-    						r = new Report(9315);
-    						r.subject = e.getId();
-    						r.add(target.getValueAsString());
-    						r.add(diceRoll);
-    						r.newlines = 1;
-    						if (diceRoll < target.getValue()) {
-    							r.choose(false);
-    							vPhaseReport.add(r);
-    							a.setOutControl(true);
-    							//do we have random movement?
-    							if((target.getValue() - diceRoll) > 5) {
-    								r = new Report(9365);
-    								r.newlines = 0;
-    								r.subject = e.getId();
-    								vPhaseReport.add(r);
-    								a.setRandomMove(true);
-    							}
-    							//if on the atmospheric map, then lose altitude and check
-    							//for crash
-    							if(game.getBoard().inAtmosphere()) {
-    								int loss = Compute.d6(1);
-    								r = new Report(9366);
-    								r.newlines = 0;
-    								r.subject = e.getId();
-    								r.addDesc(e);
-    								r.add(loss);
-    								vPhaseReport.add(r);
-    								//check for crash
-    								if((a.getElevation() - loss) <= game.getBoard().getHex(a.getPosition()).ceiling()) {
-    									a.setElevation(0);
-    									processCrash(e, a.getCurrentVelocity());
-    								} else {
-    									a.setElevation(a.getElevation() - loss);
-    								}
-    							}
-    							
-    							
-    						} else {	
-    							r.choose(true);
-    							vPhaseReport.add(r);
-    						}
-    					}
-    				}
-    			}
-    		}
-    		
-//    		if they were out-of-control to start with, give them a chance to regain control
-    		if( canRecover ) {
-    			PilotingRollData base = e.getBasePilotingRoll();
-    			//is our base roll impossible?
-    			if (base.getValue() == PilotingRollData.AUTOMATIC_FAIL || base.getValue() == PilotingRollData.IMPOSSIBLE) {
-    				//report something
-    				r = new Report(9340);
-    				r.subject = e.getId();
-    				r.addDesc(e);
-    				r.add(base.getDesc()); //international issue
-    				vPhaseReport.add(r);
-    				return vPhaseReport;
-    			}
-    			r = new Report(9345);
-    			r.subject = e.getId();
-    			r.addDesc(e);
-    			r.add(base.getDesc()); //international issue
-    			vPhaseReport.add(r);
-    			int diceRoll = Compute.d6(2);
-    			r = new Report(9350);
-    			r.subject = e.getId();
-    			r.add(base.getValueAsString());
-    			r.add(diceRoll);
-    			if( diceRoll < base.getValue() ) {
-    				r.choose(false);
-    				vPhaseReport.add(r);
-    			} else {
-    				r.choose(true);
-    				vPhaseReport.add(r);
-    				a.setOutControl(false);
-    				a.setOutCtrlHeat(false);
-    				a.setRandomMove(false);
-    			}
-    		} 
-    		
-    	}           
+                //find control rolls and make them
+                Vector<PilotingRollData> rolls = new Vector<PilotingRollData>();
+                StringBuffer reasons = new StringBuffer();
+                PilotingRollData base = e.getBasePilotingRoll();
+                for (Enumeration j = game.getControlRolls(); j.hasMoreElements();) {
+                    final PilotingRollData modifier = (PilotingRollData)j.nextElement();
+                    if (modifier.getEntityId() != e.getId()) {
+                        continue;
+                    }    
+                    // found a roll, add it
+                    rolls.addElement(modifier);
+                    if (reasons.length() > 0) {
+                        reasons.append("; ");
+                    }
+                    reasons.append(modifier.getPlainDesc());
+                    // only cumulative rolls get added to the base roll
+//                    FIXME: nuclear attacks are not resetting to non-cumulative for some reason
+                    //when they are added. Until I resolve this, the following hack will have 
+                    //to suffice
+                    if(modifier.getPlainDesc().contains("Nuclear")) {
+                        modifier.setCumulative(false);
+                    }
+                    if (modifier.isCumulative()) {
+                        base.append(modifier);
+                    }
+                }
+                // any rolls needed?
+                if (rolls.size() > 0) {
+                    // loop thru rolls we do have to make...
+                    r = new Report(9310);
+                    r.subject = e.getId();
+                    r.addDesc(e);
+                    r.add(rolls.size());
+                    r.add(reasons.toString()); //international issue
+                    vPhaseReport.add(r);
+                    r = new Report(2285);
+                    r.subject = e.getId();
+                    r.add(base.getValueAsString());
+                    r.add(base.getDesc()); //international issue
+                    vPhaseReport.add(r);
+                    for (int j = 0; j < rolls.size(); j++) {                    
+                        PilotingRollData modifier = rolls.elementAt(j);
+                        PilotingRollData target = base;
+                        r = new Report(2290);
+                        r.subject = e.getId();
+                        r.indent();
+                        r.newlines = 0;
+                        r.add(j+1);
+                        r.add(modifier.getPlainDesc()); //international issue
+                        vPhaseReport.add(r);
+                        if (!modifier.isCumulative()) {
+                            //only for nuclear attacks
+                            r = new Report(2296);
+                            r.subject = e.getId();
+                            r.newlines = 0;
+                            r.add(modifier.getValueAsString()); //international issue
+                            target = new PilotingRollData(e.getId());
+                            target.append(base);
+                            target.append(modifier);
+                            vPhaseReport.add(r);
+                        }
+                        int diceRoll = Compute.d6(2);
+                        //different reports depending on out-of-control status
+                        if(a.isOutControl()) {
+                            r = new Report(9360);
+                            r.subject = e.getId();
+                            r.add(target.getValueAsString());
+                            r.add(diceRoll);
+                            if (diceRoll < (target.getValue() - 5) ) {
+                                r.choose(false);
+                                vPhaseReport.add(r);
+                                a.setRandomMove(true);
+                            } else {    
+                                r.choose(true);
+                                vPhaseReport.add(r);
+                            }
+                        } else {
+                            r = new Report(9315);
+                            r.subject = e.getId();
+                            r.add(target.getValueAsString());
+                            r.add(diceRoll);
+                            r.newlines = 1;
+                            if (diceRoll < target.getValue()) {
+                                r.choose(false);
+                                vPhaseReport.add(r);
+                                a.setOutControl(true);
+                                //do we have random movement?
+                                if((target.getValue() - diceRoll) > 5) {
+                                    r = new Report(9365);
+                                    r.newlines = 0;
+                                    r.subject = e.getId();
+                                    vPhaseReport.add(r);
+                                    a.setRandomMove(true);
+                                }
+                                //if on the atmospheric map, then lose altitude and check
+                                //for crash
+                                if(game.getBoard().inAtmosphere()) {
+                                    int loss = Compute.d6(1);
+                                    r = new Report(9366);
+                                    r.newlines = 0;
+                                    r.subject = e.getId();
+                                    r.addDesc(e);
+                                    r.add(loss);
+                                    vPhaseReport.add(r);
+                                    //check for crash
+                                    if((a.getElevation() - loss) <= game.getBoard().getHex(a.getPosition()).ceiling()) {
+                                        a.setElevation(0);
+                                        processCrash(e, a.getCurrentVelocity());
+                                    } else {
+                                        a.setElevation(a.getElevation() - loss);
+                                    }
+                                }
+                                
+                                
+                            } else {    
+                                r.choose(true);
+                                vPhaseReport.add(r);
+                            }
+                        }
+                    }
+                }
+            }
+            
+//            if they were out-of-control to start with, give them a chance to regain control
+            if( canRecover ) {
+                PilotingRollData base = e.getBasePilotingRoll();
+                //is our base roll impossible?
+                if (base.getValue() == PilotingRollData.AUTOMATIC_FAIL || base.getValue() == PilotingRollData.IMPOSSIBLE) {
+                    //report something
+                    r = new Report(9340);
+                    r.subject = e.getId();
+                    r.addDesc(e);
+                    r.add(base.getDesc()); //international issue
+                    vPhaseReport.add(r);
+                    return vPhaseReport;
+                }
+                r = new Report(9345);
+                r.subject = e.getId();
+                r.addDesc(e);
+                r.add(base.getDesc()); //international issue
+                vPhaseReport.add(r);
+                int diceRoll = Compute.d6(2);
+                r = new Report(9350);
+                r.subject = e.getId();
+                r.add(base.getValueAsString());
+                r.add(diceRoll);
+                if( diceRoll < base.getValue() ) {
+                    r.choose(false);
+                    vPhaseReport.add(r);
+                } else {
+                    r.choose(true);
+                    vPhaseReport.add(r);
+                    a.setOutControl(false);
+                    a.setOutCtrlHeat(false);
+                    a.setRandomMove(false);
+                }
+            } 
+            
+        }           
         return vPhaseReport;
     }
 
@@ -12984,59 +12984,59 @@ public class Server implements Runnable {
      * that can only happen after all firing is resolved
      */
     private Vector<Report> resolveStandardtoCapital(int cen) {
-    	
-    	Vector<Report> vDesc = new Vector<Report>();
-    	boolean needReport = false;
-    	for(Enumeration e = game.getEntities(); e.hasMoreElements();) {
-    		Entity en = (Entity)e.nextElement();
-    		if(!en.isCapitalScale() || !(en instanceof Aero) || en instanceof FighterSquadron || cen == Entity.NONE) {
-    			continue;
-    		}
-    		Aero ship = (Aero)en;
-    		Report r;
-    		boolean tookDamage = false;
-    		for(int i = 0; i < ship.locations(); i++) {
-    			int damage = ship.getStandardDamage(i);
-    			if(damage > 0) {
-    				needReport = true;
-    				if(!tookDamage) {
-    					//put out a report
-    					r = new Report(9055);
-    					r.subject = en.getId();
-    					r.indent(1);
-    					r.newlines = 0;
-    					r.addDesc(en);
-    					vDesc.addElement(r);
-    					tookDamage = true;
-    				}
-    				//I need to roll the hit location in order to determine the 
-    				//right critical, but I may have to reroll until the location matches
-    				int sideHit = Compute.targetSideTable(game.getEntity(cen), en);
-    				HitData hit = ship.rollHitLocation(ToHitData.HIT_NORMAL, sideHit);
-    				//lets make sure we don't get any infinite loops
-    				int j = 0;
-    				while(hit.getLocation() != i && j < 200) {
-    					j++;
-    					hit = ship.rollHitLocation(ToHitData.HIT_NORMAL, sideHit);
-    				}
-    				if(hit.getLocation() != i) {
-    					hit = new HitData(i);
-    				}
-    				damage = (int)Math.floor(damage / 10.0);
-    				hit.setCapital(true);
-    				vDesc.addAll(damageEntity(en, hit, damage));
-    			}
-    		}
-    		ship.resetStandardDamage();
-    	}
-    	//carriage return
-    	if(needReport) {
-    		Report finish;
-    		finish = new Report(1210);
-    		finish.newlines = 1;
-    		vDesc.addElement(finish);
-    	}  	
-    	return vDesc;
+        
+        Vector<Report> vDesc = new Vector<Report>();
+        boolean needReport = false;
+        for(Enumeration e = game.getEntities(); e.hasMoreElements();) {
+            Entity en = (Entity)e.nextElement();
+            if(!en.isCapitalScale() || !(en instanceof Aero) || en instanceof FighterSquadron || cen == Entity.NONE) {
+                continue;
+            }
+            Aero ship = (Aero)en;
+            Report r;
+            boolean tookDamage = false;
+            for(int i = 0; i < ship.locations(); i++) {
+                int damage = ship.getStandardDamage(i);
+                if(damage > 0) {
+                    needReport = true;
+                    if(!tookDamage) {
+                        //put out a report
+                        r = new Report(9055);
+                        r.subject = en.getId();
+                        r.indent(1);
+                        r.newlines = 0;
+                        r.addDesc(en);
+                        vDesc.addElement(r);
+                        tookDamage = true;
+                    }
+                    //I need to roll the hit location in order to determine the 
+                    //right critical, but I may have to reroll until the location matches
+                    int sideHit = Compute.targetSideTable(game.getEntity(cen), en);
+                    HitData hit = ship.rollHitLocation(ToHitData.HIT_NORMAL, sideHit);
+                    //lets make sure we don't get any infinite loops
+                    int j = 0;
+                    while(hit.getLocation() != i && j < 200) {
+                        j++;
+                        hit = ship.rollHitLocation(ToHitData.HIT_NORMAL, sideHit);
+                    }
+                    if(hit.getLocation() != i) {
+                        hit = new HitData(i);
+                    }
+                    damage = (int)Math.floor(damage / 10.0);
+                    hit.setCapital(true);
+                    vDesc.addAll(damageEntity(en, hit, damage));
+                }
+            }
+            ship.resetStandardDamage();
+        }
+        //carriage return
+        if(needReport) {
+            Report finish;
+            finish = new Report(1210);
+            finish.newlines = 1;
+            vDesc.addElement(finish);
+        }      
+        return vDesc;
     }
     
     /*
@@ -13044,69 +13044,69 @@ public class Server implements Runnable {
      * find fighter squadrons and resolve any remaining damage
      */
     private Vector<Report> resolveSquadronDamage() {
-    	
-    	Vector<Report> vDescFinal = new Vector<Report>();
-    	Vector<Report> vDesc = new Vector<Report>();
+        
+        Vector<Report> vDescFinal = new Vector<Report>();
+        Vector<Report> vDesc = new Vector<Report>();
 
-    	Report header;
-    	Report r;
-    	
-    	for(Enumeration e = game.getEntities(); e.hasMoreElements();) {
-    		Entity en = (Entity)e.nextElement();
-    		if(en instanceof FighterSquadron) {
-    			FighterSquadron fs = (FighterSquadron)en;
-    			header = new Report(9400);
-    			header.subject = en.getId();
-    			header.indent(0);
-    			header.newlines = 0;
-    			header.addDesc(en);
-    			int damage = fs.getStandardDamage();
-    			if(damage > 0) {
-    				//put out a report
-    				vDesc.addElement(header);
-    				r = new Report(9055);
-    				r.subject = en.getId();
-    				r.indent(1);
-    				r.newlines = 0;
-    				r.addDesc(en);
-    				vDesc.addElement(r);
-    				//hmm--how I am I going to get the right side?
-    				//this shouldn't cause a critical, so I just need to make sure that 
-    				//it doesn't somehow
-    				HitData hit = fs.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-    				int newdamage = (int)Math.floor(damage / 10.0);
-    				hit.setCapital(true);
-    				vDesc.addAll(damageEntity(en, hit, newdamage));
-    			}
-    			fs.resetStandardDamage();
-    			//now check damage threshold
-    			int destroyed = fs.getDamageRound()/fs.getThresh();
-    			if(destroyed > 0) {
-    				if(damage <= 0) {
-    					vDesc.addElement(header);
-    				}
-    				fs.setNFighters(fs.getNFighters() - destroyed);
-    				r = new Report(9405);
-    				r.subject = en.getId();
-    				r.indent(1);
-    				r.newlines = 0;
-    				r.addDesc(en);
-    				r.add(fs.getDamageRound());
-    				r.add(destroyed);
-    				vDesc.addElement(r);
-    				//check for destruction
-    				if(fs.getNFighters() <= 0) {
-    					vDesc.addAll( destroyEntity(en, "total annhiliation", true));		
-    				}
-    			}
-    			fs.resetDamageRound();
-    		}
-    	}
-    	if(vDesc.size() > 0) {    	   	
-        	vDescFinal.addElement(new Report(9410, Report.PUBLIC));
-        	vDescFinal.addAll(vDesc);
-    	}
-    	return vDescFinal;
+        Report header;
+        Report r;
+        
+        for(Enumeration e = game.getEntities(); e.hasMoreElements();) {
+            Entity en = (Entity)e.nextElement();
+            if(en instanceof FighterSquadron) {
+                FighterSquadron fs = (FighterSquadron)en;
+                header = new Report(9400);
+                header.subject = en.getId();
+                header.indent(0);
+                header.newlines = 0;
+                header.addDesc(en);
+                int damage = fs.getStandardDamage();
+                if(damage > 0) {
+                    //put out a report
+                    vDesc.addElement(header);
+                    r = new Report(9055);
+                    r.subject = en.getId();
+                    r.indent(1);
+                    r.newlines = 0;
+                    r.addDesc(en);
+                    vDesc.addElement(r);
+                    //hmm--how I am I going to get the right side?
+                    //this shouldn't cause a critical, so I just need to make sure that 
+                    //it doesn't somehow
+                    HitData hit = fs.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    int newdamage = (int)Math.floor(damage / 10.0);
+                    hit.setCapital(true);
+                    vDesc.addAll(damageEntity(en, hit, newdamage));
+                }
+                fs.resetStandardDamage();
+                //now check damage threshold
+                int destroyed = fs.getDamageRound()/fs.getThresh();
+                if(destroyed > 0) {
+                    if(damage <= 0) {
+                        vDesc.addElement(header);
+                    }
+                    fs.setNFighters(fs.getNFighters() - destroyed);
+                    r = new Report(9405);
+                    r.subject = en.getId();
+                    r.indent(1);
+                    r.newlines = 0;
+                    r.addDesc(en);
+                    r.add(fs.getDamageRound());
+                    r.add(destroyed);
+                    vDesc.addElement(r);
+                    //check for destruction
+                    if(fs.getNFighters() <= 0) {
+                        vDesc.addAll( destroyEntity(en, "total annhiliation", true));        
+                    }
+                }
+                fs.resetDamageRound();
+            }
+        }
+        if(vDesc.size() > 0) {               
+            vDescFinal.addElement(new Report(9410, Report.PUBLIC));
+            vDescFinal.addAll(vDesc);
+        }
+        return vDescFinal;
     }
 
     /**
@@ -13206,8 +13206,8 @@ public class Server implements Runnable {
     public Vector<Report> damageEntity(Entity te, HitData hit, int damage,
             boolean ammoExplosion, DamageType bFrag, boolean damageIS,
             boolean areaSatArty, boolean throughFront) {
-    	   	return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, 
-    	   			            areaSatArty, throughFront, false, false); 
+               return damageEntity(te, hit, damage, ammoExplosion, bFrag, damageIS, 
+                                   areaSatArty, throughFront, false, false); 
     }
     
     /**
@@ -13260,16 +13260,16 @@ public class Server implements Runnable {
         int CapitalMissile = hit.getCapMisCritMod();
         //check for box cars
         if(hit.rolledBoxCars()) {
-    		critBoxCars = true;
-    	}
+            critBoxCars = true;
+        }
         
         //check capital/standard damage
         if(isCapital && !te.isCapitalScale()) {
-        	damage = 10 * damage;
+            damage = 10 * damage;
         }
         boolean StandardToCapital = false;
         if(!isCapital && te.isCapitalScale()) {
-        	StandardToCapital = true;
+            StandardToCapital = true;
         }
         
         int damage_orig = damage;
@@ -13502,91 +13502,91 @@ public class Server implements Runnable {
 
         // Allocate the damage
         while (damage > 0) {
-        	
-        	//first check if this a standard scale attack to capital armor
-        	//if so, collect the damage on the entity and stop processing
-        	if(StandardToCapital && te instanceof Aero) {
-        		r = new Report(9050);
-    			r.subject = te_n;
-    			r.indent(2);
-    			r.newlines = 0;
-    			r.addDesc(te);
-    			r.add(damage);
-    			r.add(te.getLocationAbbr(hit));
-        		if(te instanceof FighterSquadron) {
-        			r = new Report(9051);
-        			r.subject = te_n;
-        			r.indent(2);
-        			r.newlines = 0;
-        			r.addDesc(te);
-        			r.add(damage);
-        		} 
-				vDesc.addElement(r);
-				Aero ship = (Aero)te;
-				ship.addStandardDamage(damage,hit);
-				//if boxcars were rolled, then this might be a critical hit
-				if(critBoxCars) {
-					Aero a = (Aero)te;
-					vDesc.elementAt(vDesc.size() - 1).newlines++;
-					vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit" , 8, damage_orig/10, isCapital ));
-				}
-				//if this did over 20 points of standard damage it might critical a FighterSquadron
-				if(damage >= 20 && te instanceof FighterSquadron) {
-					Aero a = (Aero)te;
-					vDesc.elementAt(vDesc.size() - 1).newlines++;
-					vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Damage threshold exceeded" , 8, damage_orig/10, isCapital ));
-				}
-				
-				return vDesc;
-        	}
-        	
-        	if(te instanceof Aero) {            	
-            	//chance of a critical if damage greater than threshold
-            	Aero a = (Aero)te;
-            	int threshold = a.getThresh(hit.getLocation());
-            	if(damage > threshold && !(te instanceof FighterSquadron)) {
-            		critThresh = true;
-            	}
-            	
-            	if(damage >= 2 && te instanceof FighterSquadron) {
-					critThresh = true;
-				}            	
+            
+            //first check if this a standard scale attack to capital armor
+            //if so, collect the damage on the entity and stop processing
+            if(StandardToCapital && te instanceof Aero) {
+                r = new Report(9050);
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                r.addDesc(te);
+                r.add(damage);
+                r.add(te.getLocationAbbr(hit));
+                if(te instanceof FighterSquadron) {
+                    r = new Report(9051);
+                    r.subject = te_n;
+                    r.indent(2);
+                    r.newlines = 0;
+                    r.addDesc(te);
+                    r.add(damage);
+                } 
+                vDesc.addElement(r);
+                Aero ship = (Aero)te;
+                ship.addStandardDamage(damage,hit);
+                //if boxcars were rolled, then this might be a critical hit
+                if(critBoxCars) {
+                    Aero a = (Aero)te;
+                    vDesc.elementAt(vDesc.size() - 1).newlines++;
+                    vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit" , 8, damage_orig/10, isCapital ));
+                }
+                //if this did over 20 points of standard damage it might critical a FighterSquadron
+                if(damage >= 20 && te instanceof FighterSquadron) {
+                    Aero a = (Aero)te;
+                    vDesc.elementAt(vDesc.size() - 1).newlines++;
+                    vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Damage threshold exceeded" , 8, damage_orig/10, isCapital ));
+                }
+                
+                return vDesc;
             }
-        	
-        	//fighter squadrons receive damage differently
+            
+            if(te instanceof Aero) {                
+                //chance of a critical if damage greater than threshold
+                Aero a = (Aero)te;
+                int threshold = a.getThresh(hit.getLocation());
+                if(damage > threshold && !(te instanceof FighterSquadron)) {
+                    critThresh = true;
+                }
+                
+                if(damage >= 2 && te instanceof FighterSquadron) {
+                    critThresh = true;
+                }                
+            }
+            
+            //fighter squadrons receive damage differently
             if(te instanceof FighterSquadron) {
-            	FighterSquadron fs = (FighterSquadron)te;
-            	fs.setArmor(fs.getArmor()-damage);
-            	fs.addDamageRound(damage);
-            	r = new Report(9065);
-				r.subject = te_n;
-				r.indent(2);
-				r.newlines = 0;
-				r.addDesc(te);
-				r.add(damage);
-				vDesc.addElement(r);
-				r = new Report(6085);
+                FighterSquadron fs = (FighterSquadron)te;
+                fs.setArmor(fs.getArmor()-damage);
+                fs.addDamageRound(damage);
+                r = new Report(9065);
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                r.addDesc(te);
+                r.add(damage);
+                vDesc.addElement(r);
+                r = new Report(6085);
                 r.subject = te_n;
                 r.newlines = 0;
                 r.add(Math.max(fs.getArmor(),0));
                 vDesc.addElement(r);
-				//check to see if this detroyed the entity
-				if(fs.getArmor() <= 0) {
-            		vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
-            		fs.setArmor(0);
-            	}
-				damage = 0;
+                //check to see if this detroyed the entity
+                if(fs.getArmor() <= 0) {
+                    vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
+                    fs.setArmor(0);
+                }
+                damage = 0;
             } else {
-            	r = new Report(6065);
-            	r.subject = te_n;
-            	r.indent(2);
-            	r.newlines = 0;
-            	r.addDesc(te);
-            	r.add(damage);
-            	if (damageIS)
-            		r.messageId = 6070;
-            	r.add(te.getLocationAbbr(hit));
-            	vDesc.addElement(r);
+                r = new Report(6065);
+                r.subject = te_n;
+                r.indent(2);
+                r.newlines = 0;
+                r.addDesc(te);
+                r.add(damage);
+                if (damageIS)
+                    r.messageId = 6070;
+                r.add(te.getLocationAbbr(hit));
+                vDesc.addElement(r);
             }
             
             // was the section destroyed earlier this phase?
@@ -13994,109 +13994,109 @@ public class Server implements Runnable {
             // is there damage remaining?
             if (damage > 0) {
                 
-            	//if this is an Aero then I need to apply internal damage 
-            	//to the SI after halving it.  Return from here to prevent
-            	//further processing
-                if(te instanceof Aero) {                	
-                	Aero a = (Aero)te;
-                	
-                	//divide damage in half 
-                	//do not divide by half if it is an ammo exposion
-                	if(!ammoExplosion)// && !nukeS2S)
-                		damage /= 2;
-                	
-                	//this should result in a crit 
-                	//but only if it really did damage after rounding down
-                	if(damage > 0) {
-                		critSI = true;
-                	}
-                	
-                	//Now apply damage to the structural integrity
-                	a.setSI(a.getSI()-damage);
+                //if this is an Aero then I need to apply internal damage 
+                //to the SI after halving it.  Return from here to prevent
+                //further processing
+                if(te instanceof Aero) {                    
+                    Aero a = (Aero)te;
+                    
+                    //divide damage in half 
+                    //do not divide by half if it is an ammo exposion
+                    if(!ammoExplosion)// && !nukeS2S)
+                        damage /= 2;
+                    
+                    //this should result in a crit 
+                    //but only if it really did damage after rounding down
+                    if(damage > 0) {
+                        critSI = true;
+                    }
+                    
+                    //Now apply damage to the structural integrity
+                    a.setSI(a.getSI()-damage);
                     te.damageThisPhase += damage;
                     //send the report
                     r = new Report(1210);
                     r.subject = te_n;
                     r.newlines = 0;
                     if(!ammoExplosion) {
-                    	r.messageId = 9005;
+                        r.messageId = 9005;
                     } else {
-                    	r.messageId = 9006;
+                        r.messageId = 9006;
                     }
                     r.add(damage);
                     r.add(Math.max(a.getSI(),0));
                     vDesc.addElement(r);
                     damage = 0;
                     //check to see if this would destroy the ASF
-                	if(a.getSI() <= 0) {
-                		vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
-                		a.setSI(0);
-                	}
-                	
-                	/*
-                	//check for nuclear critical
-                	if(nukeS2S) {                		
-                		//add a control roll
-                		PilotingRollData nukePSR = new PilotingRollData( te.getId(), 4, "Nuclear attack" );
-                		//FIXME: This is not actually resetting to false for some reason
-                		nukePSR.setCumulative(false);
-                		game.addPSR(nukePSR);
-                		
-                		//need some kind of report
-                		int nukeroll = Compute.d6(2);
-                		r = new Report(9145);
+                    if(a.getSI() <= 0) {
+                        vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
+                        a.setSI(0);
+                    }
+                    
+                    /*
+                    //check for nuclear critical
+                    if(nukeS2S) {                        
+                        //add a control roll
+                        PilotingRollData nukePSR = new PilotingRollData( te.getId(), 4, "Nuclear attack" );
+                        //FIXME: This is not actually resetting to false for some reason
+                        nukePSR.setCumulative(false);
+                        game.addPSR(nukePSR);
+                        
+                        //need some kind of report
+                        int nukeroll = Compute.d6(2);
+                        r = new Report(9145);
                         r.subject = a.getId();
                         r.newlines = 0;
                         r.indent(3);
                         r.add(CapitalMissile);
                         r.add(nukeroll);
                         vDesc.add(r);                    
-                		if(nukeroll >= CapitalMissile) {
+                        if(nukeroll >= CapitalMissile) {
 
-                			int nukeDamage = damage_orig;
-                			a.setSI(a.getSI()-nukeDamage);
+                            int nukeDamage = damage_orig;
+                            a.setSI(a.getSI()-nukeDamage);
                             te.damageThisPhase += nukeDamage;   
-                			r = new Report(9146);
+                            r = new Report(9146);
                             r.subject = a.getId();
                             r.newlines = 0;
                             r.add(nukeDamage);
                             r.add(Math.max(a.getSI(),0));
                             vDesc.addElement(r);    
                             if(a.getSI() <= 0) {
-                        		vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
-                        		a.setSI(0);
-                        	} else if(!critSI) {
-                        			critSI = true;
-                        	}
-                		} else { 
-                    		r = new Report (9147);
-                    		r.subject = a.getId();
-                    		r.newlines = 0;
-                    		vDesc.addElement(r);
-                		}
-                	}
-                	*/	
-                	//apply crits                	
-                	if(critBoxCars) {
-                		vDesc.elementAt(vDesc.size() - 1).newlines++;
-                		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit" , 8, damage_orig, isCapital) );
-                	}
-                	//ammo explosions shouldn't affect threshold because they go right to SI
-                	if(critThresh && !ammoExplosion && !finalSquadDamage) {
-                		vDesc.elementAt(vDesc.size() - 1).newlines++;
-                		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Damage threshold exceeded" , 8, damage_orig, isCapital) );
-                	}
-                	if(critSI && !ammoExplosion && !finalSquadDamage) {
-                		vDesc.elementAt(vDesc.size() - 1).newlines++;
-                		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "SI damaged" , 8, damage_orig, isCapital) );
-                	}
-                	if(CapitalMissile > 0 && !nukeS2S && !finalSquadDamage) {
-                		vDesc.elementAt(vDesc.size() - 1).newlines++;
-                		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Capital Missile" , CapitalMissile, damage_orig, isCapital) );
-                	}
+                                vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
+                                a.setSI(0);
+                            } else if(!critSI) {
+                                    critSI = true;
+                            }
+                        } else { 
+                            r = new Report (9147);
+                            r.subject = a.getId();
+                            r.newlines = 0;
+                            vDesc.addElement(r);
+                        }
+                    }
+                    */    
+                    //apply crits                    
+                    if(critBoxCars) {
+                        vDesc.elementAt(vDesc.size() - 1).newlines++;
+                        vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit" , 8, damage_orig, isCapital) );
+                    }
+                    //ammo explosions shouldn't affect threshold because they go right to SI
+                    if(critThresh && !ammoExplosion && !finalSquadDamage) {
+                        vDesc.elementAt(vDesc.size() - 1).newlines++;
+                        vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Damage threshold exceeded" , 8, damage_orig, isCapital) );
+                    }
+                    if(critSI && !ammoExplosion && !finalSquadDamage) {
+                        vDesc.elementAt(vDesc.size() - 1).newlines++;
+                        vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "SI damaged" , 8, damage_orig, isCapital) );
+                    }
+                    if(CapitalMissile > 0 && !nukeS2S && !finalSquadDamage) {
+                        vDesc.elementAt(vDesc.size() - 1).newlines++;
+                        vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Capital Missile" , CapitalMissile, damage_orig, isCapital) );
+                    }
                     return vDesc;
                 }
-            	
+                
                 // Check for CASE II right away. if so reduce damage to 1
                 // and let it hit the IS.
                 // Also remove as much of the rear armor as allowed by the
@@ -14563,67 +14563,67 @@ public class Server implements Runnable {
 
             //resolve Aero crits
             if(te instanceof Aero) { 
-            	//apply crits           	
-            	Aero a = (Aero)te;
-            	
-            	//check for nuclear critical
-            	/*
-            	if(nukeS2S) {
-            		
-            		//add a control roll
-            		game.addPSR(new PilotingRollData
-	                    	( te.getId(), 4, "Nuclear attack" ));
-            		
-            		//need some kind of report
-            		int nukeroll = Compute.d6(2);
-            		r = new Report(9145);
+                //apply crits               
+                Aero a = (Aero)te;
+                
+                //check for nuclear critical
+                /*
+                if(nukeS2S) {
+                    
+                    //add a control roll
+                    game.addPSR(new PilotingRollData
+                            ( te.getId(), 4, "Nuclear attack" ));
+                    
+                    //need some kind of report
+                    int nukeroll = Compute.d6(2);
+                    r = new Report(9145);
                     r.subject = a.getId();
                     r.newlines = 0;
                     r.indent(3);
                     r.add(CapitalMissile);
                     r.add(nukeroll);
                     vDesc.add(r);                    
-            		if(nukeroll >= CapitalMissile) {
-            			
-            			int nukeDamage = damage_orig;          			
-            			a.setSI(a.getSI()-nukeDamage);
+                    if(nukeroll >= CapitalMissile) {
+                        
+                        int nukeDamage = damage_orig;                      
+                        a.setSI(a.getSI()-nukeDamage);
                         te.damageThisPhase += nukeDamage;   
-            			r = new Report(9146);
+                        r = new Report(9146);
                         r.subject = a.getId();
                         r.newlines = 0;
                         r.add(nukeDamage);
                         r.add(Math.max(a.getSI(),0));
                         vDesc.addElement(r);    
                         if(a.getSI() <= 0) {
-                    		vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
-                    		a.setSI(0);
-                    	} else if(!critSI) {
-                    			critSI = true;
-                    	}
-            		} else { 
-                		r = new Report (9147);
-                		r.subject = a.getId();
-                		r.newlines = 0;
-                		vDesc.addElement(r);
-            		}
-            	}
-            	*/
-            	if(critBoxCars) {
-            		vDesc.elementAt(vDesc.size() - 1).newlines++;
-            		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit", 8 , damage_orig, isCapital) );
-            	}
-            	if(critThresh && !ammoExplosion && !finalSquadDamage) {
-            		vDesc.elementAt(vDesc.size() - 1).newlines++;
-            		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Damage threshold exceeded", 8 , damage_orig, isCapital) );
-            	}
-            	if(critSI && !ammoExplosion && !finalSquadDamage) {
-            		vDesc.elementAt(vDesc.size() - 1).newlines++;
-            		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "SI damaged", 8 , damage_orig, isCapital) );
-            	}
-            	if(CapitalMissile > 0 && !nukeS2S && !finalSquadDamage) {
-            		vDesc.elementAt(vDesc.size() - 1).newlines++;
-            		vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Capital Missile" , CapitalMissile, damage_orig, isCapital) );
-            	}
+                            vDesc.addAll( destroyEntity(te, "structural integrity collapse"));
+                            a.setSI(0);
+                        } else if(!critSI) {
+                                critSI = true;
+                        }
+                    } else { 
+                        r = new Report (9147);
+                        r.subject = a.getId();
+                        r.newlines = 0;
+                        vDesc.addElement(r);
+                    }
+                }
+                */
+                if(critBoxCars) {
+                    vDesc.elementAt(vDesc.size() - 1).newlines++;
+                    vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "12 to hit", 8 , damage_orig, isCapital) );
+                }
+                if(critThresh && !ammoExplosion && !finalSquadDamage) {
+                    vDesc.elementAt(vDesc.size() - 1).newlines++;
+                    vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Damage threshold exceeded", 8 , damage_orig, isCapital) );
+                }
+                if(critSI && !ammoExplosion && !finalSquadDamage) {
+                    vDesc.elementAt(vDesc.size() - 1).newlines++;
+                    vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "SI damaged", 8 , damage_orig, isCapital) );
+                }
+                if(CapitalMissile > 0 && !nukeS2S && !finalSquadDamage) {
+                    vDesc.elementAt(vDesc.size() - 1).newlines++;
+                    vDesc.addAll( criticalAero(a, hit.getLocation(), hit.glancingMod(), "Capital Missile" , CapitalMissile, damage_orig, isCapital) );
+                }
             }
             
             
@@ -15596,7 +15596,7 @@ public class Server implements Runnable {
      */
     public Vector<Report> applyCriticalHit(Entity en, int loc, CriticalSlot cs,
             boolean secondaryEffects) {
-    		return applyCriticalHit(en, loc, cs, secondaryEffects, -1, false);
+            return applyCriticalHit(en, loc, cs, secondaryEffects, -1, false);
     }
     
     /**
@@ -15972,345 +15972,345 @@ public class Server implements Runnable {
                     break;
             }
         } else if(en instanceof Aero) {
-        	Aero a = (Aero)en;
-        	
-        	Jumpship js = new Jumpship();
-        	if(en instanceof Jumpship) {
-        		js = (Jumpship) en;
-        	} else {
-        		js = null;
-        	}
-        	
+            Aero a = (Aero)en;
+            
+            Jumpship js = new Jumpship();
+            if(en instanceof Jumpship) {
+                js = (Jumpship) en;
+            } else {
+                js = null;
+            }
+            
             switch(cs.getIndex()) {
             case Aero.CRIT_NONE:
                 //no effect
                 r = new Report(6005);
                 r.subject = a.getId();
-        		r.newlines = 0;
+                r.newlines = 0;
                 vDesc.add(r);
-                break;            	
+                break;                
             case Aero.CRIT_FCS:
-            	//Fire control system
-            	r = new Report(9105);
+                //Fire control system
+                r = new Report(9105);
                 r.subject = a.getId();
-        		r.newlines = 0;
+                r.newlines = 0;
                 vDesc.add(r);
                 a.setFCSHits(a.getFCSHits() + 1);
                 break;
             case Aero.CRIT_SENSOR:
-            	//sensors
-            	r = new Report(6620);
+                //sensors
+                r = new Report(6620);
                 r.subject = a.getId();
-        		r.newlines = 0;
+                r.newlines = 0;
                 vDesc.add(r);
                 a.setSensorHits(a.getSensorHits() + 1);
                 break;
-        	case Aero.CRIT_AVIONICS:
-        		//avionics
-        		r = new Report(9110);
-        		r.subject = a.getId();
-        		r.newlines = 0;
-        		vDesc.add(r);
-        		a.setAvionicsHits(a.getAvionicsHits() + 1);
-        		game.addControlRoll(new PilotingRollData
-                        	( a.getId(), 0, "critical hit" ));
-        		break;
-        	case Aero.CRIT_CONTROL:
-        		//force control roll
-        		r = new Report(9115);
-        		r.subject = a.getId();
-        		r.newlines = 0;
-        		vDesc.add(r);
-        		game.addControlRoll(new PilotingRollData
-                    	( a.getId(), 0, "critical hit" ));
-        		break;
-        	case Aero.CRIT_FUEL_TANK:
-        		//fuel tank  		
-        		r = new Report(9120);
-        		r.subject = a.getId();
-        		r.newlines = 0;
-        		//check for possible explosion
-        		int fuelroll = Compute.d6(2);
-        		if(fuelroll>9) {
-        			r.choose(true);
-            		vDesc.add(r);
-            		vDesc.addAll(destroyEntity(a, "fuel explosion", false, false));
-        		} else {
-        			r.choose(false);
-            		vDesc.add(r);
-        		}            		
-        		break;
-        	case Aero.CRIT_CREW:
-        		//pilot hit
-        		r = new Report(6650);
-        		if(a instanceof SmallCraft || a instanceof Jumpship)
-        			r = new Report(9197);
-        		r.subject = a.getId();
-        		r.newlines = 1;
-        		vDesc.add(r);
-        		vDesc.addAll( damageCrew(a, 1) );
-//        		 The pilot may have just expired.
+            case Aero.CRIT_AVIONICS:
+                //avionics
+                r = new Report(9110);
+                r.subject = a.getId();
+                r.newlines = 0;
+                vDesc.add(r);
+                a.setAvionicsHits(a.getAvionicsHits() + 1);
+                game.addControlRoll(new PilotingRollData
+                            ( a.getId(), 0, "critical hit" ));
+                break;
+            case Aero.CRIT_CONTROL:
+                //force control roll
+                r = new Report(9115);
+                r.subject = a.getId();
+                r.newlines = 0;
+                vDesc.add(r);
+                game.addControlRoll(new PilotingRollData
+                        ( a.getId(), 0, "critical hit" ));
+                break;
+            case Aero.CRIT_FUEL_TANK:
+                //fuel tank          
+                r = new Report(9120);
+                r.subject = a.getId();
+                r.newlines = 0;
+                //check for possible explosion
+                int fuelroll = Compute.d6(2);
+                if(fuelroll>9) {
+                    r.choose(true);
+                    vDesc.add(r);
+                    vDesc.addAll(destroyEntity(a, "fuel explosion", false, false));
+                } else {
+                    r.choose(false);
+                    vDesc.add(r);
+                }                    
+                break;
+            case Aero.CRIT_CREW:
+                //pilot hit
+                r = new Report(6650);
+                if(a instanceof SmallCraft || a instanceof Jumpship)
+                    r = new Report(9197);
+                r.subject = a.getId();
+                r.newlines = 1;
+                vDesc.add(r);
+                vDesc.addAll( damageCrew(a, 1) );
+//                 The pilot may have just expired.
                 if ( (a.crew.isDead() || a.crew.isDoomed() )
                      && !a.crew.isEjected() ) {
                     vDesc.addAll( destroyEntity(a, "pilot death", true, true));
                 }
-        		break;
-        	case Aero.CRIT_GEAR:
-        		//landing gear
-        		r = new Report(9125);
-        		r.subject = a.getId();
-        		r.newlines = 0;
-        		vDesc.add(r);
-        		a.setGearHit(true);
-        		break;
-        	case Aero.CRIT_BOMB:
-        		//bomb destroyed
-        		//go through bomb list and choose one
-        		ArrayList<Integer> bombList = new ArrayList<Integer>();
-        		int[] bombs = a.getBombChoices();
-        		for(int i = 0; i < Aero.BOMB_NUM; i++) {
-        			for(int j = 0; j < bombs[i]; j++) {
-        				bombList.add(i);
-        			}
-        		}
-        		if(bombList.size() > 0) {
-        			int bombtype = bombList.get(Compute.randomInt(bombList.size()));
-        			a.critBombs(bombtype);
-        			r = new Report(9130);
-            		r.subject = a.getId();
-            		r.newlines = 0;
-            		r.add(Aero.bombNames[bombtype]);
-            		vDesc.add(r);
-        		} else {
-        			r = new Report(9131);
-            		r.subject = a.getId();
-            		r.newlines = 0;
-            		vDesc.add(r);
-        		}
-        		break;
-        	case Aero.CRIT_HEATSINK:
-        		//heat sink hit
-        		int sinksLost = 1;
-        		if(isCapital) {
-        			sinksLost = 10;
-        		}
-        		r = new Report(9135);
-        		r.subject = a.getId();
-        		r.newlines = 0;
-        		r.add(sinksLost);
-        		vDesc.add(r);
-        		a.setHeatSinks(Math.max(0, a.getHeatSinks()-sinksLost));
-        		break;
-        	case Aero.CRIT_WEAPON:
-        	   {
-        		r = new Report(9150);
-        		r.subject = a.getId();
-        		r.newlines = 0;
-        		ArrayList<Mounted> weapons = new ArrayList<Mounted>();
-        		for(Mounted weap: a.getWeaponList()) {
-        			if(weap.getLocation() == loc && !weap.isDestroyed() 
-        					&& !weap.isBombMounted() 
-        					&& !weap.getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {
-        				weapons.add(weap);
-        			}
-        		}
-        		//this is kind of hack but I don't know why null isn't working
-        		if(weapons.size() > 0 ) {
-        			Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
-        			//possibly check for an ammo explosion
-        			//don't allow ammo explosions on fighter squadrons
-        			if(game.getOptions().booleanOption("ammo_explosions") 
-        					&& !(a instanceof FighterSquadron)) {
-        				//does it use Ammo?
-        				WeaponType wtype = (WeaponType) weapon.getType();
-        		        if(wtype.getAmmoType() != AmmoType.T_NA) {
-        		        	Mounted m = weapon.getLinked();
-        		        	int ammoroll = Compute.d6(2);
-        		        	if(ammoroll >= 10) {
-        	                    r = new Report(9151);
-        	                    r.subject = a.getId();
-        	                    r.add(m.getName());
-        	                    r.newlines = 0;
-        	                    vDesc.add(r);
-        	                    vDesc.addAll(explodeEquipment(a, loc, m));
-        	                    break;
-        		        	}
-        		        }
-        			}
-        			weapon.setHit(true);
-        			r.add(weapon.getName());
-        			vDesc.add(r);
-        			//explosive weapons e.g. gauss now explode
-        			vDesc.addAll(explodeEquipment(a, loc, weapon));
-        			weapon.setDestroyed(true);
-        		} else {
-        			r = new Report(9155);
-            		r.subject = a.getId();
-            		r.newlines = 0;
-            		vDesc.add(r);
-        		}
-        	    }
-        		break;
-        	case Aero.CRIT_ENGINE:
-        		//engine hit
-        		r = new Report(9140);
-    			r.subject = a.getId();
-        		r.newlines = 0;
-    			vDesc.add(r);
-        		if((a.getEngineHits()+1) < a.getMaxEngineHits()) {
-        			a.setEngineHits(a.getEngineHits()+1);
-        			if(a instanceof SmallCraft || a instanceof Jumpship) {
-        				a.setOriginalWalkMP(Math.max(0,a.getOriginalWalkMP()-1));
-        			} else {
-        				a.setOriginalWalkMP(Math.max(0,a.getOriginalWalkMP()-2));
-        			}
-        		} else {
-        			//this engine hit puts the ASF out of commission
-        			vDesc.addAll(destroyEntity(a, "engine destruction",true,true));
-        		}
-        		break;
-        	case Aero.CRIT_LEFT_THRUSTER:
-        		//thruster hit
-        		r = new Report(9160);
-    			r.subject = a.getId();
-        		r.newlines = 0;
-    			vDesc.add(r);
-        		a.setLeftThrustHits(a.getLeftThrustHits() + 1);
-        		break;
-        	case Aero.CRIT_RIGHT_THRUSTER:
-        		//thruster hit
-        		r = new Report(9160);
-    			r.subject = a.getId();
-        		r.newlines = 0;
-    			vDesc.add(r);
-        		a.setRightThrustHits(a.getRightThrustHits() + 1);
-        		break;
-        	case Aero.CRIT_CARGO:
-        		//cargo hit
-        		//First what percentage of the cargo did the hit destroy?
-        		double percentDestroyed = 0.0;
-        		if(damageCaused > 0) 
-        			percentDestroyed =  Math.min(damageCaused / (2.0 * a.getSI()), 1.0);
-        		//did it hit cargo or units
-        		int roll = Compute.d6(1);
-        		if(roll < 4) {
-        			//cargo was hit
-        			//just report; no game effect
-        			r = new Report(9165);
-        			r.subject = a.getId();
-            		r.newlines = 0;
-            		r.add((int) (percentDestroyed * 100) );
-        			vDesc.add(r);
-        		} else {
-        			//units were hit
-        			//get a list of units
-        			Vector<Entity> passengers = en.getBayLoadedUnits();
-        			int unitsDestroyed = (int)Math.ceil(percentDestroyed * passengers.size());
-          			r = new Report(9166);
-        			r.subject = a.getId();
-            		r.newlines = 0;
-            		r.add(unitsDestroyed);
-        			vDesc.add(r);
-        			while(unitsDestroyed > 0) {
-        				//redraw loaded units to make sure I don't get ones already destroyed
-        				Vector<Entity> units = en.getLoadedUnits();
-        				if(units.size() > 0) {
-        					Entity target = units.get(Compute.randomInt(units.size()));
-        					vDesc.addAll(destroyEntity(target, "cargo damage", false, false));
-        				}
-        				unitsDestroyed--;
-        			}
-        		}
-        		break;
-        	case Aero.CRIT_DOOR:
-            		//door hit
-                   	//choose a random bay
-                   	String bayType = en.damageBayDoor();
-                   	if(!bayType.equals("none")) {
-                   		r = new Report(9170);
-                   		r.subject = a.getId();
-                   		r.add(bayType);
-                   		r.newlines = 0;
-                   		vDesc.add(r);
-                   	} else {
-                   		r = new Report(9171);
-                   		r.subject = a.getId();
-                   		r.newlines = 0;
-                   		vDesc.add(r);
-                   	}
-            		break;
-        	case Aero.CRIT_DOCK_COLLAR:
-        		//docking collar hit
-               	//different effect for dropships and jumpships
-        		if(en instanceof Dropship) {
-        			Dropship ds = (Dropship)en;
-        			ds.setDamageDockCollar(true);
-        			r = new Report(9175);
-        			r.subject = a.getId();
-            		r.newlines = 0;
-        			vDesc.add(r);
-        		} 
-        		if(en instanceof Jumpship) {
-        			//damage the docking collar
-        			if(en.damageDockCollar()) {
-        				r = new Report(9176);
-            			r.subject = a.getId();
-                		r.newlines = 0;
-            			vDesc.add(r);
-        			} else {
-        				r = new Report(9177);
-            			r.subject = a.getId();
-                		r.newlines = 0;
-            			vDesc.add(r);
-        			}
-        		}
-        		break;
-        	case Aero.CRIT_KF_BOOM:
-        		//KF boom hit
-               	//no real effect yet
-        		r = new Report(9180);
-    			r.subject = a.getId();
-        		r.newlines = 0;
-    			vDesc.add(r);
-        		break;
-        	case Aero.CRIT_CIC:
-        		if(js == null) {
-        			break;
-        		}
-            	//CIC hit
-            	r = new Report(9185);
+                break;
+            case Aero.CRIT_GEAR:
+                //landing gear
+                r = new Report(9125);
                 r.subject = a.getId();
-        		r.newlines = 0;
+                r.newlines = 0;
+                vDesc.add(r);
+                a.setGearHit(true);
+                break;
+            case Aero.CRIT_BOMB:
+                //bomb destroyed
+                //go through bomb list and choose one
+                ArrayList<Integer> bombList = new ArrayList<Integer>();
+                int[] bombs = a.getBombChoices();
+                for(int i = 0; i < Aero.BOMB_NUM; i++) {
+                    for(int j = 0; j < bombs[i]; j++) {
+                        bombList.add(i);
+                    }
+                }
+                if(bombList.size() > 0) {
+                    int bombtype = bombList.get(Compute.randomInt(bombList.size()));
+                    a.critBombs(bombtype);
+                    r = new Report(9130);
+                    r.subject = a.getId();
+                    r.newlines = 0;
+                    r.add(Aero.bombNames[bombtype]);
+                    vDesc.add(r);
+                } else {
+                    r = new Report(9131);
+                    r.subject = a.getId();
+                    r.newlines = 0;
+                    vDesc.add(r);
+                }
+                break;
+            case Aero.CRIT_HEATSINK:
+                //heat sink hit
+                int sinksLost = 1;
+                if(isCapital) {
+                    sinksLost = 10;
+                }
+                r = new Report(9135);
+                r.subject = a.getId();
+                r.newlines = 0;
+                r.add(sinksLost);
+                vDesc.add(r);
+                a.setHeatSinks(Math.max(0, a.getHeatSinks()-sinksLost));
+                break;
+            case Aero.CRIT_WEAPON:
+               {
+                r = new Report(9150);
+                r.subject = a.getId();
+                r.newlines = 0;
+                ArrayList<Mounted> weapons = new ArrayList<Mounted>();
+                for(Mounted weap: a.getWeaponList()) {
+                    if(weap.getLocation() == loc && !weap.isDestroyed() 
+                            && !weap.isBombMounted() 
+                            && !weap.getType().getInternalName().equals(Aero.SPACE_BOMB_ATTACK)) {
+                        weapons.add(weap);
+                    }
+                }
+                //this is kind of hack but I don't know why null isn't working
+                if(weapons.size() > 0 ) {
+                    Mounted weapon = weapons.get(Compute.randomInt(weapons.size()));
+                    //possibly check for an ammo explosion
+                    //don't allow ammo explosions on fighter squadrons
+                    if(game.getOptions().booleanOption("ammo_explosions") 
+                            && !(a instanceof FighterSquadron)) {
+                        //does it use Ammo?
+                        WeaponType wtype = (WeaponType) weapon.getType();
+                        if(wtype.getAmmoType() != AmmoType.T_NA) {
+                            Mounted m = weapon.getLinked();
+                            int ammoroll = Compute.d6(2);
+                            if(ammoroll >= 10) {
+                                r = new Report(9151);
+                                r.subject = a.getId();
+                                r.add(m.getName());
+                                r.newlines = 0;
+                                vDesc.add(r);
+                                vDesc.addAll(explodeEquipment(a, loc, m));
+                                break;
+                            }
+                        }
+                    }
+                    weapon.setHit(true);
+                    r.add(weapon.getName());
+                    vDesc.add(r);
+                    //explosive weapons e.g. gauss now explode
+                    vDesc.addAll(explodeEquipment(a, loc, weapon));
+                    weapon.setDestroyed(true);
+                } else {
+                    r = new Report(9155);
+                    r.subject = a.getId();
+                    r.newlines = 0;
+                    vDesc.add(r);
+                }
+                }
+                break;
+            case Aero.CRIT_ENGINE:
+                //engine hit
+                r = new Report(9140);
+                r.subject = a.getId();
+                r.newlines = 0;
+                vDesc.add(r);
+                if((a.getEngineHits()+1) < a.getMaxEngineHits()) {
+                    a.setEngineHits(a.getEngineHits()+1);
+                    if(a instanceof SmallCraft || a instanceof Jumpship) {
+                        a.setOriginalWalkMP(Math.max(0,a.getOriginalWalkMP()-1));
+                    } else {
+                        a.setOriginalWalkMP(Math.max(0,a.getOriginalWalkMP()-2));
+                    }
+                } else {
+                    //this engine hit puts the ASF out of commission
+                    vDesc.addAll(destroyEntity(a, "engine destruction",true,true));
+                }
+                break;
+            case Aero.CRIT_LEFT_THRUSTER:
+                //thruster hit
+                r = new Report(9160);
+                r.subject = a.getId();
+                r.newlines = 0;
+                vDesc.add(r);
+                a.setLeftThrustHits(a.getLeftThrustHits() + 1);
+                break;
+            case Aero.CRIT_RIGHT_THRUSTER:
+                //thruster hit
+                r = new Report(9160);
+                r.subject = a.getId();
+                r.newlines = 0;
+                vDesc.add(r);
+                a.setRightThrustHits(a.getRightThrustHits() + 1);
+                break;
+            case Aero.CRIT_CARGO:
+                //cargo hit
+                //First what percentage of the cargo did the hit destroy?
+                double percentDestroyed = 0.0;
+                if(damageCaused > 0) 
+                    percentDestroyed =  Math.min(damageCaused / (2.0 * a.getSI()), 1.0);
+                //did it hit cargo or units
+                int roll = Compute.d6(1);
+                if(roll < 4) {
+                    //cargo was hit
+                    //just report; no game effect
+                    r = new Report(9165);
+                    r.subject = a.getId();
+                    r.newlines = 0;
+                    r.add((int) (percentDestroyed * 100) );
+                    vDesc.add(r);
+                } else {
+                    //units were hit
+                    //get a list of units
+                    Vector<Entity> passengers = en.getBayLoadedUnits();
+                    int unitsDestroyed = (int)Math.ceil(percentDestroyed * passengers.size());
+                      r = new Report(9166);
+                    r.subject = a.getId();
+                    r.newlines = 0;
+                    r.add(unitsDestroyed);
+                    vDesc.add(r);
+                    while(unitsDestroyed > 0) {
+                        //redraw loaded units to make sure I don't get ones already destroyed
+                        Vector<Entity> units = en.getLoadedUnits();
+                        if(units.size() > 0) {
+                            Entity target = units.get(Compute.randomInt(units.size()));
+                            vDesc.addAll(destroyEntity(target, "cargo damage", false, false));
+                        }
+                        unitsDestroyed--;
+                    }
+                }
+                break;
+            case Aero.CRIT_DOOR:
+                    //door hit
+                       //choose a random bay
+                       String bayType = en.damageBayDoor();
+                       if(!bayType.equals("none")) {
+                           r = new Report(9170);
+                           r.subject = a.getId();
+                           r.add(bayType);
+                           r.newlines = 0;
+                           vDesc.add(r);
+                       } else {
+                           r = new Report(9171);
+                           r.subject = a.getId();
+                           r.newlines = 0;
+                           vDesc.add(r);
+                       }
+                    break;
+            case Aero.CRIT_DOCK_COLLAR:
+                //docking collar hit
+                   //different effect for dropships and jumpships
+                if(en instanceof Dropship) {
+                    Dropship ds = (Dropship)en;
+                    ds.setDamageDockCollar(true);
+                    r = new Report(9175);
+                    r.subject = a.getId();
+                    r.newlines = 0;
+                    vDesc.add(r);
+                } 
+                if(en instanceof Jumpship) {
+                    //damage the docking collar
+                    if(en.damageDockCollar()) {
+                        r = new Report(9176);
+                        r.subject = a.getId();
+                        r.newlines = 0;
+                        vDesc.add(r);
+                    } else {
+                        r = new Report(9177);
+                        r.subject = a.getId();
+                        r.newlines = 0;
+                        vDesc.add(r);
+                    }
+                }
+                break;
+            case Aero.CRIT_KF_BOOM:
+                //KF boom hit
+                   //no real effect yet
+                r = new Report(9180);
+                r.subject = a.getId();
+                r.newlines = 0;
+                vDesc.add(r);
+                break;
+            case Aero.CRIT_CIC:
+                if(js == null) {
+                    break;
+                }
+                //CIC hit
+                r = new Report(9185);
+                r.subject = a.getId();
+                r.newlines = 0;
                 vDesc.add(r);
                 js.setCICHits(js.getCICHits() + 1);
                 break;
-        	case Aero.CRIT_KF_DRIVE:
-        		if(js == null) {
-        			break;
-        		}
-            	//KF Drive hit
-            	r = new Report(9190);
+            case Aero.CRIT_KF_DRIVE:
+                if(js == null) {
+                    break;
+                }
+                //KF Drive hit
+                r = new Report(9190);
                 r.subject = a.getId();
-        		r.newlines = 0;
+                r.newlines = 0;
                 vDesc.add(r);
                 js.setKFIntegrity(js.getKFIntegrity() - 1);
                 break;
-        	case Aero.CRIT_GRAV_DECK:
-        		if(js == null) {
-        			break;
-        		}
-            	//Grave Deck hit
-            	r = new Report(9195);
+            case Aero.CRIT_GRAV_DECK:
+                if(js == null) {
+                    break;
+                }
+                //Grave Deck hit
+                r = new Report(9195);
                 r.subject = a.getId();
-        		r.newlines = 0;
+                r.newlines = 0;
                 vDesc.add(r);
                 break;
-        	case Aero.CRIT_LIFE_SUPPORT:
-            	//Life Support hit
-        		a.setLifeSupport(false);
-            	r = new Report(9196);
+            case Aero.CRIT_LIFE_SUPPORT:
+                //Life Support hit
+                a.setLifeSupport(false);
+                r = new Report(9196);
                 r.subject = a.getId();
-        		r.newlines = 0;
+                r.newlines = 0;
                 vDesc.add(r);
                 break;
         }
@@ -16951,39 +16951,39 @@ public class Server implements Runnable {
     }
 
     private Vector<Report> criticalAero(Aero a, int loc, int critMod, String reason, int target, 
-			int damage, boolean isCapital) {
-    	Vector<Report> vDesc = new Vector<Report>();
-    	Report r;
+            int damage, boolean isCapital) {
+        Vector<Report> vDesc = new Vector<Report>();
+        Report r;
 
-    	//roll the critical
-    	r = new Report(9100);
-    	r.subject = a.getId();
-    	r.add(reason);
-    	r.indent(3);
-    	r.newlines = 0;
-    	vDesc.add(r);
-    	int roll = Compute.d6(2);
-    	r = new Report(9101);
-    	r.subject = a.getId();
-    	r.add(target);
-    	String rollString = "";
-    	if ( critMod != 0 ) {
-    		rollString = "(" + roll;
-    		if ( critMod > 0 ) {
-    			rollString += "+";
-    		}
-    		rollString += critMod + ") = ";
-    		roll += critMod;
-    	}
-    	rollString += roll;
-    	r.add(rollString);
-    	r.newlines = 0;
-    	vDesc.add(r);
+        //roll the critical
+        r = new Report(9100);
+        r.subject = a.getId();
+        r.add(reason);
+        r.indent(3);
+        r.newlines = 0;
+        vDesc.add(r);
+        int roll = Compute.d6(2);
+        r = new Report(9101);
+        r.subject = a.getId();
+        r.add(target);
+        String rollString = "";
+        if ( critMod != 0 ) {
+            rollString = "(" + roll;
+            if ( critMod > 0 ) {
+                rollString += "+";
+            }
+            rollString += critMod + ") = ";
+            roll += critMod;
+        }
+        rollString += roll;
+        r.add(rollString);
+        r.newlines = 0;
+        vDesc.add(r);
 
-    	//now look up on vehicle crits table
-    	int critType = a.getCriticalEffect(roll, target);
-    	vDesc.addAll(applyCriticalHit(a, loc, new CriticalSlot(0,critType), true, damage, isCapital));
-    	return vDesc;
+        //now look up on vehicle crits table
+        int critType = a.getCriticalEffect(roll, target);
+        vDesc.addAll(applyCriticalHit(a, loc, new CriticalSlot(0,critType), true, damage, isCapital));
+        return vDesc;
     }
     
     /**
@@ -16995,7 +16995,7 @@ public class Server implements Runnable {
         if (en instanceof Tank)
             return criticalTank((Tank) en, loc, critMod);
         if(en instanceof Aero)
-        	return criticalAero((Aero)en,loc,critMod, "unknown",8,-1, isCapital);
+            return criticalAero((Aero)en,loc,critMod, "unknown",8,-1, isCapital);
         CriticalSlot slot = null;
         Vector<Report> vDesc = new Vector<Report>();
         Report r;
@@ -22544,9 +22544,9 @@ public class Server implements Runnable {
             if (ah.cares(game.getPhase())) {
                 int aId = ah.getAttackerId();
                 if (aId != lastAttackerId && !ah.announcedEntityFiring()) {
-                	//if this is a new attacker then resolve any standard-to-cap damage
-                	//from previous
-                	handleAttackReports.addAll(resolveStandardtoCapital(aId));               	
+                    //if this is a new attacker then resolve any standard-to-cap damage
+                    //from previous
+                    handleAttackReports.addAll(resolveStandardtoCapital(aId));                   
                     // report who is firing
                     r = new Report(3100);
                     r.subject = aId;

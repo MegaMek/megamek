@@ -106,37 +106,37 @@ public class ATMHandler extends MissileWeaponHandler {
      * @return an <code>int</code> representing the attack value at that range.
      */
     protected int calcAttackValue() {
-    	int distance = ae.getPosition().distance(target.getPosition());
-    	int av = 0;
-    	int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);   	
-    	AmmoType atype = (AmmoType) ammo.getType();
+        int distance = ae.getPosition().distance(target.getPosition());
+        int av = 0;
+        int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);       
+        AmmoType atype = (AmmoType) ammo.getType();
         if (atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
-        	if(range == WeaponType.RANGE_SHORT) {
-        		av = wtype.getRoundShortAV();
-        		av = av + av/2;
-        	}
+            if(range == WeaponType.RANGE_SHORT) {
+                av = wtype.getRoundShortAV();
+                av = av + av/2;
+            }
         } else if (atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
-        	if(range == WeaponType.RANGE_SHORT) {
-        		av = wtype.getRoundShortAV();
-        	} else if(range == WeaponType.RANGE_MED) {
-        		av = wtype.getRoundMedAV();
-        	} else if (range == WeaponType.RANGE_LONG) {
-        		av = wtype.getRoundLongAV();
-        	} else if (range == WeaponType.RANGE_EXT) {
-        		av = wtype.getRoundLongAV();
-        	}
-        	av = av/2;
+            if(range == WeaponType.RANGE_SHORT) {
+                av = wtype.getRoundShortAV();
+            } else if(range == WeaponType.RANGE_MED) {
+                av = wtype.getRoundMedAV();
+            } else if (range == WeaponType.RANGE_LONG) {
+                av = wtype.getRoundLongAV();
+            } else if (range == WeaponType.RANGE_EXT) {
+                av = wtype.getRoundLongAV();
+            }
+            av = av/2;
         } else {
-        	if(range == WeaponType.RANGE_SHORT) {
-        		av = wtype.getRoundShortAV();
-        	} else if(range == WeaponType.RANGE_MED) {
-        		av = wtype.getRoundMedAV();
-        	} else if (range == WeaponType.RANGE_LONG) {
-        		av = wtype.getRoundLongAV();
-        	} else if (range == WeaponType.RANGE_EXT) {
-        		av = wtype.getRoundExtAV();
-        	}
+            if(range == WeaponType.RANGE_SHORT) {
+                av = wtype.getRoundShortAV();
+            } else if(range == WeaponType.RANGE_MED) {
+                av = wtype.getRoundMedAV();
+            } else if (range == WeaponType.RANGE_LONG) {
+                av = wtype.getRoundLongAV();
+            } else if (range == WeaponType.RANGE_EXT) {
+                av = wtype.getRoundExtAV();
+            }
         }
-    	return av;
+        return av;
     }
 }

@@ -397,38 +397,38 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return an <code>int</code> representing the attack value at that range.
      */
     protected int calcAttackValue() {
-    	int distance = ae.getPosition().distance(target.getPosition());
-    	int av = 0;
-    	int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
-    	if(range == WeaponType.RANGE_SHORT) {
-    		av = wtype.getRoundShortAV();
-    	} else if(range == WeaponType.RANGE_MED) {
-    		av = wtype.getRoundMedAV();
-    	} else if (range == WeaponType.RANGE_LONG) {
-    		av = wtype.getRoundLongAV();
-    	} else if (range == WeaponType.RANGE_EXT) {
-    		av = wtype.getRoundExtAV();
-    	}
-    	return av;
+        int distance = ae.getPosition().distance(target.getPosition());
+        int av = 0;
+        int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
+        if(range == WeaponType.RANGE_SHORT) {
+            av = wtype.getRoundShortAV();
+        } else if(range == WeaponType.RANGE_MED) {
+            av = wtype.getRoundMedAV();
+        } else if (range == WeaponType.RANGE_LONG) {
+            av = wtype.getRoundLongAV();
+        } else if (range == WeaponType.RANGE_EXT) {
+            av = wtype.getRoundExtAV();
+        }
+        return av;
     }
     
     /****
      * adjustment factor on attack value for fighter squadrons 
      */
     protected double getSquadronMultiplier() {
-    	double mult = 1.0;
-    	if(ae instanceof FighterSquadron) {
-    		FighterSquadron fs = (FighterSquadron)ae;
-    		mult = ((double)fs.getNFighters())/((double)fs.getN0Fighters());
-    	}
-    	return mult;
+        double mult = 1.0;
+        if(ae instanceof FighterSquadron) {
+            FighterSquadron fs = (FighterSquadron)ae;
+            mult = ((double)fs.getNFighters())/((double)fs.getN0Fighters());
+        }
+        return mult;
     }
     
     /*
      * Return the capital missile target for criticals. Zero if not a capital missile
      */
     protected int getCapMisMod() {
-    	return 0;
+        return 0;
     }
 
     /**

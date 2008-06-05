@@ -425,37 +425,37 @@ public class EntityListFile {
             
             //add a bunch of stuff for aeros
             if(entity instanceof Aero) {
-            	Aero a = (Aero) entity;
-            	
-            	//SI
-            	output.write("      <structural integrity=\"");
-        		output.write(String.valueOf(a.getSI()));
-        		output.write("\"/>");
+                Aero a = (Aero) entity;
+                
+                //SI
+                output.write("      <structural integrity=\"");
+                output.write(String.valueOf(a.getSI()));
+                output.write("\"/>");
                 output.write(CommonConstants.NL);
-            	
-            	//heat sinks
-            	output.write("      <heat sinks=\"");
-        		output.write(String.valueOf(a.getHeatSinks()));
-        		output.write("\"/>");
+                
+                //heat sinks
+                output.write("      <heat sinks=\"");
+                output.write(String.valueOf(a.getHeatSinks()));
+                output.write("\"/>");
                 output.write(CommonConstants.NL);
-            	
+                
                 //fuel
                 output.write("      <fuel left=\"");
-        		output.write(String.valueOf(a.getFuel()));
-        		output.write("\"/>");
+                output.write(String.valueOf(a.getFuel()));
+                output.write("\"/>");
                 output.write(CommonConstants.NL);
                 
                 if(a instanceof FighterSquadron) {
-                	FighterSquadron fs = (FighterSquadron)a;
-                	// active fighters
-                	output.write("      <active fighters=\"");
-            		output.write(String.valueOf(fs.getNFighters()));
-            		output.write("\"/>");
+                    FighterSquadron fs = (FighterSquadron)a;
+                    // active fighters
+                    output.write("      <active fighters=\"");
+                    output.write(String.valueOf(fs.getNFighters()));
+                    output.write("\"/>");
                     output.write(CommonConstants.NL);
                     //active fighters
-                	output.write("      <total armor=\"");
-            		output.write(String.valueOf(fs.getTotalArmor()));
-            		output.write("\"/>");
+                    output.write("      <total armor=\"");
+                    output.write(String.valueOf(fs.getTotalArmor()));
+                    output.write("\"/>");
                     output.write(CommonConstants.NL);
                 }
                 
@@ -463,18 +463,18 @@ public class EntityListFile {
                 
                 //large craft stuff
                 if(a instanceof Jumpship) {
-                	Jumpship j = (Jumpship) a;
-                	
-                	//kf integrity
-                	output.write("      <KF integrity=\"");
-            		output.write(String.valueOf(j.getKFIntegrity()));
-            		output.write("\"/>");
+                    Jumpship j = (Jumpship) a;
+                    
+                    //kf integrity
+                    output.write("      <KF integrity=\"");
+                    output.write(String.valueOf(j.getKFIntegrity()));
+                    output.write("\"/>");
                     output.write(CommonConstants.NL);
                     
                     //kf sail integrity
-                	output.write("      <sail integrity=\"");
-            		output.write(String.valueOf(j.getSailIntegrity()));
-            		output.write("\"/>");
+                    output.write("      <sail integrity=\"");
+                    output.write(String.valueOf(j.getSailIntegrity()));
+                    output.write("\"/>");
                     output.write(CommonConstants.NL);
                 }
                 
@@ -522,63 +522,63 @@ public class EntityListFile {
     
 //  Aero crits
     private static String getAeroCritString(Aero a) {
-    	
-    	String retVal = "      <acriticals";
-    	String critVal = "";
-    	
-    	//    	crits
-    	if(a.getAvionicsHits() > 0) {
-    		critVal = critVal.concat(" avionics=\"");
-    		critVal = critVal.concat(Integer.toString(a.getAvionicsHits()));
-    		critVal = critVal.concat("\"");
-    	}
-    	if(a.getSensorHits() > 0) {
-    		critVal = critVal.concat(" sensors=\"");
-    		critVal = critVal.concat(Integer.toString(a.getSensorHits()));
-    		critVal = critVal.concat("\"");
-    	}
-    	if(a.getEngineHits() > 0) {
-    		critVal = critVal.concat(" engine=\"");
-    		critVal = critVal.concat(Integer.toString(a.getEngineHits()));
-    		critVal = critVal.concat("\"");
-    	}
-    	if(a.getFCSHits() > 0) {
-    		critVal = critVal.concat(" fcs=\"");
-    		critVal = critVal.concat(Integer.toString(a.getFCSHits()));
-    		critVal = critVal.concat("\"");
-    	}
-    	if(a.getCICHits() > 0) {
-    		critVal = critVal.concat(" cic=\"");
-    		critVal = critVal.concat(Integer.toString(a.getCICHits()));
-    		critVal = critVal.concat("\"");
-    	}
-    	if(a.getLeftThrustHits() > 0) {
-    		critVal = critVal.concat(" leftThrust=\"");
-    		critVal = critVal.concat(Integer.toString(a.getLeftThrustHits()));
-    		critVal = critVal.concat("\"");
-    	}
-    	if(a.getRightThrustHits() > 0) {
-    		critVal = critVal.concat(" rightThrust=\"");
-    		critVal = critVal.concat(Integer.toString(a.getRightThrustHits()));
-    		critVal = critVal.concat("\"");
-    	}
-    	if(!a.hasLifeSupport()) {
-    		critVal = critVal.concat(" lifeSupport=\"none\"");
-    	}
-    	if(a.isGearHit()) {
-    		critVal = critVal.concat(" gear=\"none\"");
-    	}
+        
+        String retVal = "      <acriticals";
+        String critVal = "";
+        
+        //        crits
+        if(a.getAvionicsHits() > 0) {
+            critVal = critVal.concat(" avionics=\"");
+            critVal = critVal.concat(Integer.toString(a.getAvionicsHits()));
+            critVal = critVal.concat("\"");
+        }
+        if(a.getSensorHits() > 0) {
+            critVal = critVal.concat(" sensors=\"");
+            critVal = critVal.concat(Integer.toString(a.getSensorHits()));
+            critVal = critVal.concat("\"");
+        }
+        if(a.getEngineHits() > 0) {
+            critVal = critVal.concat(" engine=\"");
+            critVal = critVal.concat(Integer.toString(a.getEngineHits()));
+            critVal = critVal.concat("\"");
+        }
+        if(a.getFCSHits() > 0) {
+            critVal = critVal.concat(" fcs=\"");
+            critVal = critVal.concat(Integer.toString(a.getFCSHits()));
+            critVal = critVal.concat("\"");
+        }
+        if(a.getCICHits() > 0) {
+            critVal = critVal.concat(" cic=\"");
+            critVal = critVal.concat(Integer.toString(a.getCICHits()));
+            critVal = critVal.concat("\"");
+        }
+        if(a.getLeftThrustHits() > 0) {
+            critVal = critVal.concat(" leftThrust=\"");
+            critVal = critVal.concat(Integer.toString(a.getLeftThrustHits()));
+            critVal = critVal.concat("\"");
+        }
+        if(a.getRightThrustHits() > 0) {
+            critVal = critVal.concat(" rightThrust=\"");
+            critVal = critVal.concat(Integer.toString(a.getRightThrustHits()));
+            critVal = critVal.concat("\"");
+        }
+        if(!a.hasLifeSupport()) {
+            critVal = critVal.concat(" lifeSupport=\"none\"");
+        }
+        if(a.isGearHit()) {
+            critVal = critVal.concat(" gear=\"none\"");
+        }
     
-    	
-    	if(!critVal.equals("")) {
-    		//then add beginning and end
-    		retVal = retVal.concat(critVal);
-    		retVal = retVal.concat("/>\n");
-    	} else {
-    		return critVal;
-    	}
-    	
-    	return retVal;
+        
+        if(!critVal.equals("")) {
+            //then add beginning and end
+            retVal = retVal.concat(critVal);
+            retVal = retVal.concat("/>\n");
+        } else {
+            return critVal;
+        }
+        
+        return retVal;
 
     }
 

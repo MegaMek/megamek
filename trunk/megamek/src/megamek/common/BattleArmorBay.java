@@ -71,7 +71,7 @@ public final class BattleArmorBay extends Bay {
         
         //is the door functional
         if( this.doors < 1 ) {
-        	result = false;
+            result = false;
         }
 
         // Return our result.
@@ -83,7 +83,7 @@ public final class BattleArmorBay extends Bay {
     }
 
     public String getType() {
-    	return "Battle Armor";
+        return "Battle Armor";
     }
     
 } 

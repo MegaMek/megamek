@@ -20,9 +20,9 @@ package megamek.common;
  * @author Jay Lawson
  */
 public class SpaceStation extends Jumpship {
-	
-	
-	public double getCost() {
+    
+    
+    public double getCost() {
         
         double cost = 0.0f;
         
@@ -60,7 +60,7 @@ public class SpaceStation extends Jumpship {
         
         //HPG
         if(hasHPG()) {
-        	cost += 1000000000;
+            cost += 1000000000;
         }
         
         //fuel tanks
@@ -86,13 +86,13 @@ public class SpaceStation extends Jumpship {
         int baydoors = 0;
         int bayCost = 0;
         for(Bay next:getTransportBays()) {
-        	baydoors += next.getDoors();
-        	if(next instanceof MechBay || next instanceof ASFBay || next instanceof SmallCraftBay) {
-        		bayCost += 20000 * next.totalSpace;
-        	}
-        	if(next instanceof LightVehicleBay || next instanceof HeavyVehicleBay) {
-        		bayCost += 20000 * next.totalSpace;
-        	}
+            baydoors += next.getDoors();
+            if(next instanceof MechBay || next instanceof ASFBay || next instanceof SmallCraftBay) {
+                bayCost += 20000 * next.totalSpace;
+            }
+            if(next instanceof LightVehicleBay || next instanceof HeavyVehicleBay) {
+                bayCost += 20000 * next.totalSpace;
+            }
         }
         
         cost += bayCost + baydoors * 1000;
@@ -105,6 +105,6 @@ public class SpaceStation extends Jumpship {
         return Math.round(cost * weightMultiplier);
         
     }
-	
-	
+    
+    
 }

@@ -182,7 +182,7 @@ public class HitData {
     }
     
     public void setCapital(boolean b) {
-    	this.capital = b;
+        this.capital = b;
     }
     
     public boolean isCapital() {
@@ -195,14 +195,14 @@ public class HitData {
     }
     
     public void setCapMisCritMod(int m) {
-    	this.capMisCritMod = m;
+        this.capMisCritMod = m;
     }
     
     public void setBoxCars(boolean b) {
-    	this.boxcars = b;
+        this.boxcars = b;
     }
     
     public boolean rolledBoxCars() {
-    	return boxcars;
+        return boxcars;
     }
 }

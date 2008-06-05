@@ -46,29 +46,29 @@ public class AR10Handler extends AmmoWeaponHandler {
      * @return an <code>int</code> representing the attack value at that range.
      */
     protected int calcAttackValue() {
-    	int av = 0;   	
-    	AmmoType atype = (AmmoType) ammo.getType();
-    	if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+        int av = 0;       
+        AmmoType atype = (AmmoType) ammo.getType();
+        if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
             av = 4;
         } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
             av = 3;
         } else {
-        	av =2;
+            av =2;
         }
-    	return av;
+        return av;
     }
     
     protected int getCapMisMod() {
-    	int mod = 0;
-    	AmmoType atype = (AmmoType) ammo.getType();
-    	if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
+        int mod = 0;
+        AmmoType atype = (AmmoType) ammo.getType();
+        if (atype.hasFlag(AmmoType.F_AR10_KILLER_WHALE)) {
             mod = 10;
         } else if (atype.hasFlag(AmmoType.F_AR10_WHITE_SHARK)) {
             mod = 9;
         } else {
-        	mod = 11;
+            mod = 11;
         }
-    	return mod;
+        return mod;
     }
 
 }

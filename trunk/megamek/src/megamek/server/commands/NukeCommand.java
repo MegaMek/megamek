@@ -26,7 +26,7 @@ public class NukeCommand extends ServerCommand {
     /** Creates new NukeCommand */
     public NukeCommand(Server server) {
         super(server, "nuke", "Drops a nuke onto the board, to be exploded at" +
-        		"the end of the next weapons attack phase.");
+                "the end of the next weapons attack phase.");
     }
 
     /**

@@ -167,7 +167,7 @@ public class MovePath implements Cloneable, Serializable {
     }
 
     public MovePath addStep(final int type, final int recover) {
-    	return addStep(type, recover, -1);
+        return addStep(type, recover, -1);
     }
     
     public MovePath addStep(final int type, final int recover, final int mineToLay) {
@@ -242,11 +242,11 @@ public class MovePath implements Cloneable, Serializable {
             if (step.getTarget(game) != null) {
                 step = new MoveStep(this, step.getType(), step.getTarget(game));
             } else if (step.getRecoveryUnit() != -1) {
-            	step = new MoveStep(this, step.getType(), step.getRecoveryUnit(), -1);
+                step = new MoveStep(this, step.getType(), step.getRecoveryUnit(), -1);
             } else if (step.getMineToLay() != -1){
                 step = new MoveStep(this, step.getType(), step.getMineToLay());
             } else if (step.getLaunched().size() > 0) {
-            	step = new MoveStep(this, step.getType(), step.getLaunched());
+                step = new MoveStep(this, step.getType(), step.getLaunched());
             } else {
                 step = new MoveStep(this, step.getType());
             }
@@ -377,20 +377,20 @@ public class MovePath implements Cloneable, Serializable {
     }
     
     public int getFinalVelocity() {
-    	if (getLastStep() != null) {
+        if (getLastStep() != null) {
             return getLastStep().getVelocity();
         }
-    	if(entity instanceof Aero) {
-    		return ((Aero)entity).getCurrentVelocity();
-    	}
+        if(entity instanceof Aero) {
+            return ((Aero)entity).getCurrentVelocity();
+        }
         return 0;
     }
     
     public int getFinalNDown() {
-    	if (getLastStep() != null) {
+        if (getLastStep() != null) {
             return getLastStep().getNDown();
         }
-    	
+        
         return 0;
     }
 
@@ -620,16 +620,16 @@ public class MovePath implements Cloneable, Serializable {
         
         //for aero units move must use up all their velocity
         if(entity instanceof Aero) {
-        	Aero a = (Aero)entity;
-        	if(getLastStep() == null) {
-        		if(a.getCurrentVelocity() > 0 && !game.useVectorMove()) {
-        			return false;
-        		}
-        	} else {
-        		if(getLastStep().getVelocityLeft() > 0 && !game.useVectorMove() && getLastStep().getType() != MovePath.STEP_FLEE) {
-        			return false;
-        		}
-        	}
+            Aero a = (Aero)entity;
+            if(getLastStep() == null) {
+                if(a.getCurrentVelocity() > 0 && !game.useVectorMove()) {
+                    return false;
+                }
+            } else {
+                if(getLastStep().getVelocityLeft() > 0 && !game.useVectorMove() && getLastStep().getType() != MovePath.STEP_FLEE) {
+                    return false;
+                }
+            }
         }
 
         if (getLastStep() == null) {
@@ -798,7 +798,7 @@ public class MovePath implements Cloneable, Serializable {
         //just like jumping for now, but I could add some other stuff
         //here later
         if(entity instanceof Aero) {
-        	MovePath left = (MovePath) this.clone();
+            MovePath left = (MovePath) this.clone();
             MovePath right = (MovePath) this.clone();
 
             // From here, we can move F, LF, RF, LLF, RRF, and RRRF.
@@ -929,22 +929,22 @@ public class MovePath implements Cloneable, Serializable {
      * Get the position in the step immediately prior to the final position
      */
     public Coords getSecondFinalPosition(Coords startPos) {
-    	
-    	Coords priorPos = startPos;
-    	Coords finalPos = this.getFinalCoords();
-    	
-    	//if we moved one or fewer hexes, then just return starting position
-    	if(getHexesMoved() < 2) {
-    		return priorPos;
-    	}
+        
+        Coords priorPos = startPos;
+        Coords finalPos = this.getFinalCoords();
+        
+        //if we moved one or fewer hexes, then just return starting position
+        if(getHexesMoved() < 2) {
+            return priorPos;
+        }
   
-    	 for (final Enumeration<MoveStep> i = this.getSteps(); i.hasMoreElements();) {
+         for (final Enumeration<MoveStep> i = this.getSteps(); i.hasMoreElements();) {
              final MoveStep step = i.nextElement();
              if(step.getPosition() != finalPos) {
-            	 priorPos = step.getPosition();  	 
+                 priorPos = step.getPosition();       
              }
-    	 }
-    	 return priorPos;
-    	
+         }
+         return priorPos;
+        
     }
 }

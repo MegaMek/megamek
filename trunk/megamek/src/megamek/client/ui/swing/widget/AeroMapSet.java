@@ -54,7 +54,7 @@ public class AeroMapSet implements DisplayMapSet{
                                           new int[]{80,160,160,80},4);
        //Left armor
     private Polygon leftWingArmor = new Polygon(new int[]{50,45,0,0,45,50},
-    											new int[]{80,80,140,180,160,160},6);  
+                                                new int[]{80,80,140,180,160,160},6);  
        
     
     //Right armor
@@ -113,19 +113,19 @@ public class AeroMapSet implements DisplayMapSet{
       vLabels[7].setValue(getCriticalHitTally(t.getFCSHits(),3));
       vLabels[8].setValue(getCriticalHitTally(t.getSensorHits(),3));
       if(t instanceof SmallCraft) {
-    	  //add in thrusters
-    	  SmallCraft sc = (SmallCraft)t;
-    	  vLabels[9].setValue(getCriticalHitTally(sc.getLeftThrustHits(),3));
+          //add in thrusters
+          SmallCraft sc = (SmallCraft)t;
+          vLabels[9].setValue(getCriticalHitTally(sc.getLeftThrustHits(),3));
           vLabels[10].setValue(getCriticalHitTally(sc.getRightThrustHits(),3));
       } else {
-    	  vLabels[9].setValue("-");
+          vLabels[9].setValue("-");
           vLabels[10].setValue("-");
       }
       
     }
     
     private void setContent(){
-    	
+        
       for(int i = 0; i < 4; i++){
         content.addArea(areas[i]);
         content.addArea(labels[i]);
@@ -268,24 +268,24 @@ public class AeroMapSet implements DisplayMapSet{
     }
     
     private String getCriticalHitTally(int tally, int max) {
-    	
-    	String marks = "";
-    	
-    	if(tally < 1) {
-    		return marks;
-    	}
-    	
-    	if(tally >= max) {
-    		marks = "Out";
-    		return marks;
-    	}
-    	
-    	while(tally > 0) {
-    		marks = marks + "X";
-    		tally--;
-    	}
-    	
-    	return marks;
+        
+        String marks = "";
+        
+        if(tally < 1) {
+            return marks;
+        }
+        
+        if(tally >= max) {
+            marks = "Out";
+            return marks;
+        }
+        
+        while(tally > 0) {
+            marks = marks + "X";
+            tally--;
+        }
+        
+        return marks;
     }
     
  }

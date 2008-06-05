@@ -62,40 +62,40 @@ public class GameTurn implements Serializable {
      *         <code>false</code> if the entity is not valid for this turn.
      */
     public boolean isValidEntity(Entity entity, IGame game) {
-    	
-    	//check the various aero subphases
-    	/*TODO: This isn't exactly right because it doesn't force unequal size rules
-    	 * within each subphase (that will be harder to implement)
-    	 */
-    	boolean rightSubphase = true;
-    	if(entity instanceof SpaceStation) {
-    		rightSubphase = true;
-    	} else if(entity instanceof Warship) {
-    		rightSubphase = !game.checkForValidSpaceStations(playerId) &&
-    			!game.checkForValidJumpships(playerId);
-    	} else if(entity instanceof Jumpship) {
-    		rightSubphase = !game.checkForValidSpaceStations(playerId);
-    	} else if(entity instanceof Dropship) {
-    		rightSubphase = !game.checkForValidSpaceStations(playerId) &&
-			 	!game.checkForValidJumpships(playerId) &&
-    		 	!game.checkForValidWarships(playerId);
-    	} else if(entity instanceof SmallCraft) {
-    		rightSubphase = !game.checkForValidSpaceStations(playerId) &&
-				!game.checkForValidJumpships(playerId) &&
-				!game.checkForValidWarships(playerId) &&
-				!game.checkForValidDropships(playerId);
-    	} else {
-    		rightSubphase = !game.checkForValidSpaceStations(playerId) &&
-				!game.checkForValidJumpships(playerId) &&
-				!game.checkForValidWarships(playerId) &&
-				!game.checkForValidDropships(playerId) &&
-				!game.checkForValidSmallCraft(playerId);
-    	}
-    	
-    	if(game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
-    		rightSubphase = true;
-    	}
-    	
+        
+        //check the various aero subphases
+        /*TODO: This isn't exactly right because it doesn't force unequal size rules
+         * within each subphase (that will be harder to implement)
+         */
+        boolean rightSubphase = true;
+        if(entity instanceof SpaceStation) {
+            rightSubphase = true;
+        } else if(entity instanceof Warship) {
+            rightSubphase = !game.checkForValidSpaceStations(playerId) &&
+                !game.checkForValidJumpships(playerId);
+        } else if(entity instanceof Jumpship) {
+            rightSubphase = !game.checkForValidSpaceStations(playerId);
+        } else if(entity instanceof Dropship) {
+            rightSubphase = !game.checkForValidSpaceStations(playerId) &&
+                 !game.checkForValidJumpships(playerId) &&
+                 !game.checkForValidWarships(playerId);
+        } else if(entity instanceof SmallCraft) {
+            rightSubphase = !game.checkForValidSpaceStations(playerId) &&
+                !game.checkForValidJumpships(playerId) &&
+                !game.checkForValidWarships(playerId) &&
+                !game.checkForValidDropships(playerId);
+        } else {
+            rightSubphase = !game.checkForValidSpaceStations(playerId) &&
+                !game.checkForValidJumpships(playerId) &&
+                !game.checkForValidWarships(playerId) &&
+                !game.checkForValidDropships(playerId) &&
+                !game.checkForValidSmallCraft(playerId);
+        }
+        
+        if(game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
+            rightSubphase = true;
+        }
+        
         return entity != null && entity.getOwnerId() == playerId
                 && rightSubphase
                 && entity.isSelectableThisTurn()
@@ -269,22 +269,22 @@ public class GameTurn implements Serializable {
             classCode = GameTurn.CLASS_GUN_EMPLACEMENT;
         }
         else if ( entity instanceof SpaceStation ) {
-        	classCode = GameTurn.CLASS_SPACE_STATION;
+            classCode = GameTurn.CLASS_SPACE_STATION;
         }
         else if ( entity instanceof Warship ) {
-        	classCode = GameTurn.CLASS_WARSHIP;
+            classCode = GameTurn.CLASS_WARSHIP;
         }
         else if ( entity instanceof Jumpship ) {
-        	classCode = GameTurn.CLASS_JUMPSHIP;
+            classCode = GameTurn.CLASS_JUMPSHIP;
         }
         else if ( entity instanceof Dropship ) {
-        	classCode = GameTurn.CLASS_DROPSHIP;
+            classCode = GameTurn.CLASS_DROPSHIP;
         }
         else if ( entity instanceof SmallCraft ) {
-        	classCode = GameTurn.CLASS_SMALL_CRAFT;
+            classCode = GameTurn.CLASS_SMALL_CRAFT;
         }
         else if ( entity instanceof Aero ) {
-        	classCode = GameTurn.CLASS_AERO;
+            classCode = GameTurn.CLASS_AERO;
         }
         return classCode;
     }

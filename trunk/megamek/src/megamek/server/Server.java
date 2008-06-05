@@ -13274,14 +13274,14 @@ public class Server implements Runnable {
         if(isCapital && !te.isCapitalScale()) {
             damage = 10 * damage;
         }
-        boolean StandardToCapital = false;
+        boolean standardToCapital = false;
         if(!isCapital && te.isCapitalScale()) {
             if(ammoExplosion) {
                 //applies directly to SI no need to 
                 //collect it with the rest of the standard damage
                 damage = damage / 10;
             } else {
-                StandardToCapital = true;
+                standardToCapital = true;
             }
         }
         
@@ -13545,9 +13545,9 @@ public class Server implements Runnable {
                 }
             }
                        
-        	//check if this a standard scale attack to capital armor
+            //check if this a standard scale attack to capital armor
             //if so, collect the damage on the entity and stop processing
-            if(StandardToCapital && te instanceof Aero) {
+            if(standardToCapital && te instanceof Aero) {
                 r = new Report(9050);
                 r.subject = te_n;
                 r.indent(2);
@@ -14045,7 +14045,7 @@ public class Server implements Runnable {
                     
                     //divide damage in half 
                     //do not divide by half if it is an ammo exposion
-                	if(!ammoExplosion && !nukeS2S)
+                    if(!ammoExplosion && !nukeS2S)
                         damage /= 2;
                     
                     //this should result in a crit 

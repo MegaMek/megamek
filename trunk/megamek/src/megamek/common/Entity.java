@@ -1480,9 +1480,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 .containsTerrain(Terrains.ICE))
                 && hex.containsTerrain(Terrains.WATER)) {
             return hex.surface();
-        } else {
+        } else if (hex.containsTerrain(Terrains.BLDG_ELEV)){
+            return hex.floor() + hex.terrainLevel(Terrains.BLDG_ELEV);
+        } else
             return hex.floor();
-        }
     }
 
     /**

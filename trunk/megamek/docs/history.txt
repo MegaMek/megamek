@@ -11,6 +11,7 @@ v0.33.27-dev (SVN)
 + fixed indent (4 spaces instead of tabs) and added some javadoc comments
 + Bug: Infantry flamers not dealing correct amount of heat to target.
 + Fixed lots of warnings.
++ Bug: displacement off buildings due to DFA did not make target fall correctly
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

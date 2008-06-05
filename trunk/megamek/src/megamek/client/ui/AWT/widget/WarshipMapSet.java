@@ -14,17 +14,13 @@
 
 package megamek.client.ui.AWT.widget;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
-import java.awt.Polygon;
-import java.util.Vector;
+import java.awt.*;
+import java.util.*;
 
 import megamek.client.ui.AWT.GUIPreferences;
-import megamek.common.Entity;
-import megamek.common.Jumpship;
+import megamek.client.ui.AWT.Messages;
+import megamek.common.*;
+import megamek.client.ui.AWT.widget.WidgetUtils;
 
 /**
  * Class which keeps set of all areas required to 

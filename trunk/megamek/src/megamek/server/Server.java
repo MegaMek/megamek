@@ -7414,15 +7414,21 @@ public class Server implements Runnable {
         }
         // unstick the entity if it was stuck in swamp
         entity.setStuck(false);
+        int oldElev = entity.elevationOccupied(srcHex);
         // move the entity into the new location gently
         entity.setPosition(dest);
         entity.setElevation(entity.elevationOccupied(destHex)
                 - destHex.surface());
         Building bldg = game.getBoard().getBuildingAt(dest);
         if (bldg != null) {
-            //woops, into the building we go
-            passBuildingWall(entity, game.getBoard().getBuildingAt(dest),
-                    src, dest, 1, "displaced into", Math.abs(entity.getFacing() - src.direction(dest)) == 3);
+            if (destHex.terrainLevel(Terrains.BLDG_ELEV) > oldElev) {
+                //woops, into the building we go
+                passBuildingWall(entity, game.getBoard().getBuildingAt(dest),
+                        src, dest, 1, "displaced into", Math.abs(entity.getFacing() - src.direction(dest)) == 3);
+            } else {
+                //woops, we step on the roof
+                checkBuildingCollapseWhileMoving(bldg, entity, dest);
+            }
         }
         Entity violation = Compute
                 .stackingViolation(game, entity.getId(), dest);
@@ -11195,7 +11201,8 @@ public class Server implements Runnable {
                 r.addDesc(ae);
                 r.add(dest.getBoardNum(), true);
                 addReport(r);
-                addReport(doEntityFall(ae, dest, 2, 3, ae.getBasePilotingRoll()));
+                int height = 2 + (game.getBoard().getHex(dest).containsTerrain(Terrains.BLDG_ELEV)?game.getBoard().getHex(dest).terrainLevel(Terrains.BLDG_ELEV):0);
+                addReport(doEntityFall(ae, dest, height, 3, ae.getBasePilotingRoll()));
 
                 // move target to preferred hex
                 addReport(doEntityDisplacement(te, dest, targetDest, null));

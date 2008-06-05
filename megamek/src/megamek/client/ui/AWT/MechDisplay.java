@@ -1079,7 +1079,7 @@ public class MechDisplay extends BufferedPanel {
                 		//if using bay heat option then don't add total arc
                 		if(game.getOptions().booleanOption("heat_by_bay")) {
                 			for(int wId: mounted.getBayWeapons()) {
-            					currentHeatBuildup += ((WeaponType)entity.getEquipment(wId).getType()).getHeat();
+            					currentHeatBuildup += entity.getEquipment(wId).getCurrentHeat();
             				} 
                 		} else {	
                 			//check whether arc has fired
@@ -1099,7 +1099,7 @@ public class MechDisplay extends BufferedPanel {
                 		}
                 	} else {
                 		if(!mounted.isBombMounted()) {
-                			currentHeatBuildup += wtype.getHeat() * mounted.howManyShots();
+                			currentHeatBuildup += mounted.getCurrentHeat();
                 		}
                 	}
                 }
@@ -1220,9 +1220,9 @@ public class MechDisplay extends BufferedPanel {
             // update weapon display
             wNameR.setText(mounted.getDesc());
             if (mounted.hasChargedCapacitor())
-                wHeatR.setText((wtype.getHeat() + 5) + ""); //$NON-NLS-1$
+                wHeatR.setText((mounted.getCurrentHeat() + 5) + ""); //$NON-NLS-1$
             else
-                wHeatR.setText(wtype.getHeat() + ""); //$NON-NLS-1$
+                wHeatR.setText(mounted.getCurrentHeat() + ""); //$NON-NLS-1$
             
             wArcHeatR.setText(Integer.toString(entity.getHeatInArc(mounted.getLocation(), mounted.isRearMounted())));
             
@@ -1667,7 +1667,7 @@ public class MechDisplay extends BufferedPanel {
                 			continue;
                 		}
                 	}
-                	heat = heat + bayWType.getHeat();
+                	heat = heat + m.getCurrentHeat();
                 	double mAVShort = bayWType.getShortAV();
                 	double mAVMed = bayWType.getMedAV();
                 	double mAVLong = bayWType.getLongAV();

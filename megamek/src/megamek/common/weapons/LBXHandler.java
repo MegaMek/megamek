@@ -19,6 +19,7 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
@@ -104,5 +105,9 @@ public class LBXHandler extends AmmoWeaponHandler {
         vPhaseReport.addElement(r);
         bSalvo = true;
         return shotsHit;
+    }
+    
+    protected boolean usesClusterTable() {
+        return ((AmmoType)ammo.getType()).getMunitionType() == AmmoType.M_CLUSTER;
     }
 }

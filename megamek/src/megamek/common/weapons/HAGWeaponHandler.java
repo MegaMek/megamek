@@ -122,4 +122,8 @@ public class HAGWeaponHandler extends AmmoWeaponHandler {
         bSalvo = true;
         return nHits;
     }
+    
+    protected boolean usesClusterTable() {
+        return true;
+    }
 }

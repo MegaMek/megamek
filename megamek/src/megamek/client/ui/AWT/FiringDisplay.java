@@ -42,6 +42,7 @@ import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.AWT.widget.IndexedCheckbox;
+import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.BipedMech;
@@ -515,6 +516,11 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         // If the weapon does not have modes, just exit.
         Mounted m = ce().getEquipment(wn);
         if (m == null || !m.getType().hasModes()) {
+            return;
+        }
+        
+        //Aeros are not allowed to switch modes under standard rules
+        if(ce() instanceof Aero) {
             return;
         }
 

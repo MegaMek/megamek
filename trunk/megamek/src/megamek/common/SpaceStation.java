@@ -22,6 +22,11 @@ package megamek.common;
 public class SpaceStation extends Jumpship {
     
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 4793706631842428123L;
+
     public double getCost() {
         
         double cost = 0.0f;

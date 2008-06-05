@@ -14,7 +14,9 @@
 
 package megamek.common;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 
 /**
  * Represtents a volume of space set aside for carrying ASFs and Small Craft aboard DropShips
@@ -24,6 +26,10 @@ public class Bay implements Transporter {
 
     // Private attributes and helper functions.
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9056450317468016272L;
     int doors = 1;
     int doorsNext = 1;
     Vector<Integer> recoverySlots = new Vector<Integer>();
@@ -179,13 +185,16 @@ public class Bay implements Transporter {
      *          The returned <code>List</code> is independant from the under-
      *          lying data structure; modifying one does not affect the other.
      */
+    @SuppressWarnings("unchecked")
     public Vector<Entity> getLoadedUnits() {
         // Return a copy of our list of troops.
         return (Vector<Entity>)this.troops.clone();
     }
     
-    //get a vector of launchable units. This is different from loaded in that
-    //units in recovery cannot launch
+    /**
+     * get a vector of launchable units. This is different from loaded in that
+     * units in recovery cannot launch
+     */
     public Vector<Entity> getLaunchableUnits() {
         
         Vector<Entity> launchable = new Vector<Entity>();

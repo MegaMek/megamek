@@ -17,8 +17,6 @@
 */
 package megamek.common.weapons;
 
-import megamek.common.AmmoType;
-import megamek.common.TechConstants;
 
 /**
 * @author Jay Lawson

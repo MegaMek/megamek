@@ -22,6 +22,10 @@ import java.io.Serializable;
  */
 public class SupportTank extends Tank implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9028127010133768714L;
     private int barRating;
     
     public void setBARRating(int rating) {

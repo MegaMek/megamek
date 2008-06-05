@@ -14,7 +14,6 @@
  */
 package megamek.client.ui.swing;
 
-import java.awt.Button;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -35,12 +34,6 @@ import javax.swing.JPanel;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ui.swing.BombPayloadDialog;
-import megamek.client.ui.swing.ChoiceDialog;
-import megamek.client.ui.swing.ConfirmDialog;
-import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.Messages;
-import megamek.client.ui.swing.SingleChoiceDialog;
 import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Bay;
@@ -804,7 +797,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateDumpButton();
         
         if(ce instanceof Aero) {
-            Aero a = (Aero)ce;
             butThrust.setEnabled(true);
             butYaw.setEnabled(true);
             butEndOver.setEnabled(true);
@@ -994,7 +986,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private synchronized void moveTo(MovePath md) {
         
         final Entity ce = ce();
-        boolean dontCheckPSR = false;
         if(ce instanceof Aero) {
             
             Aero a = (Aero)ce;
@@ -1036,7 +1027,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
 
                     MovePath oldmd = md;
                     
-                    dontCheckPSR = true;
                     md = new MovePath(client.game, ce);
                     int vel = a.getCurrentVelocity();
                     
@@ -1570,8 +1560,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         //cycle through movement.  Collect thrust used until position changes.
         int thrustUsed = 0;
         int j = 0;
-        for (final Enumeration i = md.getSteps(); i.hasMoreElements();) {
-            final MoveStep step = (MoveStep)i.nextElement();
+        for (final Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
+            final MoveStep step = i.nextElement();
             
             j++;
             //how do I figure out last step?
@@ -2209,11 +2199,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         return choice;
     }
 
-//  FIGHTER RECOVERY
-    //fighter recovery will be handled differently than loading other units.  Namely, it will
-    //be an action of the fighter not the carrier.  So the fighter just flies right up to a carrier
-    //whose movement is ended and hops on.  
-    //need a new function
+    /**
+     * FIGHTER RECOVERY
+     * fighter recovery will be handled differently than loading other units.  Namely, it will
+     * be an action of the fighter not the carrier.  So the fighter just flies right up to a carrier
+     * whose movement is ended and hops on.  
+     * need a new function
+     */
     private synchronized void updateRecoveryButton() {
         
         final Entity ce = ce();
@@ -2229,11 +2221,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
             }
             Entity other = null;
-            Enumeration entities = client.game.getEntities(loadeePos);
+            Enumeration<Entity> entities = client.game.getEntities(loadeePos);
             boolean isGood = false;
             while (entities.hasMoreElements()) {
                 // Is the other unit friendly and not the current entity?
-                other = (Entity)entities.nextElement();
+                other = entities.nextElement();
                 if (!ce.getOwner().isEnemyOf(other.getOwner())
                         && !ce.equals(other)) {
                     // must be done with its movement
@@ -2350,7 +2342,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     } 
 
         
-    //get the unit id that the player wants to be recovered by
+    /**
+     * get the unit id that the player wants to be recovered by
+     */
     private int getRecoveryUnit() {
         Entity ce  = ce();
         Vector<Integer> choices = new Vector<Integer>();
@@ -2362,10 +2356,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             loadeePos = Compute.getFinalPosition(ce.getPosition(), cmd.getFinalVectors());
         }
         Entity other = null;
-        Enumeration entities = client.game.getEntities(loadeePos);
+        Enumeration<Entity> entities = client.game.getEntities(loadeePos);
         while (entities.hasMoreElements()) {
             // Is the other unit friendly and not the current entity?
-            other = (Entity)entities.nextElement();
+            other = entities.nextElement();
             if (!ce.getOwner().isEnemyOf(other.getOwner())
                     && !ce.equals(other)) {
                 // must be done with its movement
@@ -2439,7 +2433,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         return -1;
     }
     
-    //check for out of control and adjust buttons
+    /**
+     * check for out of control and adjust buttons
+     */
     private void checkOOC() {
         final Entity ce = ce();
         if(null==ce) return;
@@ -2459,7 +2455,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         return;
     }
     
-    //check for fuel and adjust buttons
+    /** 
+     * check for fuel and adjust buttons
+     */
     private void checkFuel() {
         final Entity ce = ce();
         if(null==ce) return;
@@ -2481,7 +2479,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         return;
     }
     
-    //check for atmosphere and adjust buttons
+    /** 
+     * check for atmosphere and adjust buttons
+     */
     private void checkAtmosphere() {
         final Entity ce = ce();
         if(null==ce) return;

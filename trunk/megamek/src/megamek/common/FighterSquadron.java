@@ -16,12 +16,13 @@
  */
 package megamek.common;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
+
 import megamek.common.weapons.BayWeapon;
 
 /**
@@ -29,6 +30,11 @@ import megamek.common.weapons.BayWeapon;
  */
 public class FighterSquadron extends Aero {
     
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8258929505993881445L;
+
     public static int MAX_SIZE = 12;
     
     public Vector<String> fighters = new Vector<String>();
@@ -553,8 +559,8 @@ public class FighterSquadron extends Aero {
                     if (tmpP.hasTAG())
                         tagBV += atype.getBV(this);
                     else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-                       for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-                            Team m = (Team)e.nextElement();
+                       for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements(); ) {
+                            Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
                                     tagBV += atype.getBV(this);

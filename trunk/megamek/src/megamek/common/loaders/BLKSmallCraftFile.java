@@ -25,22 +25,17 @@
  */
 package megamek.common.loaders;
 
-import megamek.common.ASFBay;
+import megamek.common.Aero;
 import megamek.common.BattleArmorBay;
 import megamek.common.CargoBay;
 import megamek.common.Engine;
 import megamek.common.Entity;
-import megamek.common.Aero;
 import megamek.common.EquipmentType;
-import megamek.common.HeavyVehicleBay;
 import megamek.common.InfantryBay;
-import megamek.common.LightVehicleBay;
 import megamek.common.LocationFullException;
-import megamek.common.MechBay;
 import megamek.common.SmallCraft;
-import megamek.common.SmallCraftBay;
 import megamek.common.TechConstants;
-import megamek.common.util.*;
+import megamek.common.util.BuildingBlock;
 
 public class BLKSmallCraftFile extends BLKFile implements IMechLoader {    
     

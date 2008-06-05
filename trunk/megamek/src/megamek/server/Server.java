@@ -11467,7 +11467,7 @@ public class Server implements Runnable {
                 if(entity instanceof Dropship || entity instanceof Jumpship) {
                     //only check for a possible control roll
                     if(entity.heat > 0) {
-                        int bonus = (int)Math.ceil((double)entity.heat / 100.0);
+                        int bonus = (int)Math.ceil(entity.heat / 100.0);
                         game.addControlRoll(new PilotingRollData(entity.getId(), bonus,"used too much heat"));
                         entity.heat = 0;
                     }
@@ -12692,8 +12692,8 @@ public class Server implements Runnable {
                 Vector<PilotingRollData> rolls = new Vector<PilotingRollData>();
                 StringBuffer reasons = new StringBuffer();
                 PilotingRollData base = e.getBasePilotingRoll();
-                for (Enumeration j = game.getControlRolls(); j.hasMoreElements();) {
-                    final PilotingRollData modifier = (PilotingRollData)j.nextElement();
+                for (Enumeration<PilotingRollData> j = game.getControlRolls(); j.hasMoreElements();) {
+                    final PilotingRollData modifier = j.nextElement();
                     if (modifier.getEntityId() != e.getId()) {
                         continue;
                     }    
@@ -12978,7 +12978,7 @@ public class Server implements Runnable {
             addReport(r);
         }
     }
-    /* 
+    /**
      * Resolve any collected standard damage to a capital-scale entity
      * This is not where fighter squadron damage is resolved because
      * that can only happen after all firing is resolved
@@ -12987,8 +12987,8 @@ public class Server implements Runnable {
         
         Vector<Report> vDesc = new Vector<Report>();
         boolean needReport = false;
-        for(Enumeration e = game.getEntities(); e.hasMoreElements();) {
-            Entity en = (Entity)e.nextElement();
+        for(Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
+            Entity en = e.nextElement();
             if(!en.isCapitalScale() || !(en instanceof Aero) || en instanceof FighterSquadron || cen == Entity.NONE) {
                 continue;
             }
@@ -13039,7 +13039,7 @@ public class Server implements Runnable {
         return vDesc;
     }
     
-    /*
+    /**
      * loop through available entities
      * find fighter squadrons and resolve any remaining damage
      */
@@ -13051,8 +13051,8 @@ public class Server implements Runnable {
         Report header;
         Report r;
         
-        for(Enumeration e = game.getEntities(); e.hasMoreElements();) {
-            Entity en = (Entity)e.nextElement();
+        for(Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
+            Entity en = e.nextElement();
             if(en instanceof FighterSquadron) {
                 FighterSquadron fs = (FighterSquadron)en;
                 header = new Report(9400);

@@ -1487,7 +1487,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 return "Attacker is evading.";
                         
             //if space bombing, then can't do other attacks
-            for ( Enumeration i = game.getActions();
+            for ( Enumeration<EntityAction> i = game.getActions();
                 i.hasMoreElements(); ) {
                 Object o = i.nextElement();
                 if (!(o instanceof WeaponAttackAction)) {
@@ -1617,8 +1617,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 usedRearArc[i] = false;
             }
            
-            for ( Enumeration i = game.getActions();
-            i.hasMoreElements(); ) {
+            for ( Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements(); ) {
                 Object o = i.nextElement();
                 if (!(o instanceof WeaponAttackAction)) {
                     continue;

@@ -19,15 +19,12 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Polygon;
 import java.util.Vector;
 
 import javax.swing.JComponent;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.Messages;
 import megamek.common.Entity;
-import megamek.common.Aero;
 import megamek.common.FighterSquadron;
 
 /**
@@ -249,7 +246,7 @@ public class SquadronMapSet implements DisplayMapSet{
         Graphics g = im.getGraphics();
         g.setColor(Color.black);
         g.fillRect(0,0,w,h);
-        int percent = (int)Math.ceil(120.0 * ((double)a)/((double)orig));
+        int percent = (int)Math.ceil(120.0 * a/orig);
         g.setColor(Color.green.darker());
         g.fillRect(0, 0, percent, 12);
     }

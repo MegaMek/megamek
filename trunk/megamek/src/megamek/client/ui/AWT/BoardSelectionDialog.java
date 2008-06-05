@@ -22,8 +22,8 @@ package megamek.client.ui.AWT;
 
 import java.awt.BorderLayout;
 import java.awt.Button;
-import java.awt.Choice;
 import java.awt.Checkbox;
+import java.awt.Choice;
 import java.awt.Dialog;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

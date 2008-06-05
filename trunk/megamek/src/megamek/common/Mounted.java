@@ -23,7 +23,6 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.Vector;
-import megamek.common.weapons.BayWeapon;
 
 /**
  * This describes equipment mounted on a mech.

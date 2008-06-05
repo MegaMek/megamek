@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+
 import megamek.common.weapons.BayWeapon;
 
 /**
@@ -28,7 +29,11 @@ import megamek.common.weapons.BayWeapon;
  */
 public class Warship extends Jumpship {
     
-//     locations
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4362521770072253942L;
+    //     locations
     public static final int        LOC_NOSE               = 0;
     public static final int        LOC_FLS                = 1;
     public static final int        LOC_FRS                = 2;
@@ -406,7 +411,7 @@ public class Warship extends Jumpship {
             if(mounted.byShot()) {
                 double tons = (double)mounted.getShotsLeft() / atype.getShots();
                 if(atype.getAmmoRatio() > 0) {
-                    tons = (double)mounted.getShotsLeft() * atype.getAmmoRatio();
+                    tons = mounted.getShotsLeft() * atype.getAmmoRatio();
                 }
                 curBV *= tons;
             }
@@ -421,8 +426,8 @@ public class Warship extends Jumpship {
                     if (tmpP.hasTAG())
                         tagBV += curBV;
                     else if (tmpP.getTeam() != Player.TEAM_NONE && game != null) {
-                       for (Enumeration e = game.getTeams(); e.hasMoreElements(); ) {
-                            Team m = (Team)e.nextElement();
+                       for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements(); ) {
+                            Team m = e.nextElement();
                             if (m.getId() == tmpP.getTeam()) {
                                 if (m.hasTAG(game)) {
                                     tagBV += curBV;

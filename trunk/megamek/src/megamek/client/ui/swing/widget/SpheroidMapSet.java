@@ -17,7 +17,6 @@ package megamek.client.ui.swing.widget;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Polygon;
 import java.util.Vector;
@@ -25,9 +24,8 @@ import java.util.Vector;
 import javax.swing.JComponent;
 
 import megamek.client.ui.swing.GUIPreferences;
-import megamek.client.ui.swing.Messages;
-import megamek.common.Entity;
 import megamek.common.Aero;
+import megamek.common.Entity;
 import megamek.common.SmallCraft;
 
 /**

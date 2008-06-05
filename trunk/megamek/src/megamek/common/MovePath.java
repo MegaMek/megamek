@@ -798,19 +798,16 @@ public class MovePath implements Cloneable, Serializable {
         //just like jumping for now, but I could add some other stuff
         //here later
         if(entity instanceof Aero) {
-            MovePath left = (MovePath) this.clone();
-            MovePath right = (MovePath) this.clone();
+            MovePath left = this.clone();
+            MovePath right = this.clone();
 
             // From here, we can move F, LF, RF, LLF, RRF, and RRRF.
-            result.add( ((MovePath) this.clone())
-                        .addStep(MovePath.STEP_FORWARDS) );
+            result.add((this.clone()).addStep(MovePath.STEP_FORWARDS) );
             for ( int turn = 0; turn < 2; turn++ ) {
                 left.addStep(MovePath.STEP_TURN_LEFT);
                 right.addStep(MovePath.STEP_TURN_RIGHT);
-                result.add( ((MovePath) left.clone())
-                            .addStep(MovePath.STEP_FORWARDS) );
-                result.add( ((MovePath) right.clone())
-                            .addStep(MovePath.STEP_FORWARDS) );
+                result.add(left.clone().addStep(MovePath.STEP_FORWARDS));
+                result.add(right.clone().addStep(MovePath.STEP_FORWARDS));
             }
             right.addStep(MovePath.STEP_TURN_RIGHT);
             result.add( right.addStep(MovePath.STEP_FORWARDS) );

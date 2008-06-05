@@ -43,7 +43,6 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
-import megamek.client.ui.swing.GUIPreferences;
 import megamek.client.ui.AWT.Messages;
 import megamek.client.ui.swing.util.KeyAlphaFilter;
 import megamek.client.ui.swing.util.PlayerColors;
@@ -1456,8 +1455,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     
     public void refreshMoveVectors() {
         clearAllMoveVectors();
-        for(Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity e = (Entity)i.nextElement();
+        for(Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity e = i.nextElement();
             if(e.getPosition() != null) 
                 movementSprites.add(new MovementSprite(e, e.getVectors(), Color.gray, false));
         }
@@ -1467,8 +1466,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         clearAllMoveVectors();
         //same as normal but when I find the active entity I used the MovePath
         //to get vector
-        for(Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            Entity e = (Entity)i.nextElement();
+        for(Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            Entity e = i.nextElement();
             if(e.getPosition() != null) 
                 if(e.getId() == en.getId()) {
                     movementSprites.add(new MovementSprite(e, md.getFinalVectors(), col, true));

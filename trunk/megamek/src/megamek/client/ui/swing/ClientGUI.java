@@ -62,7 +62,6 @@ import javax.swing.filechooser.FileFilter;
 import megamek.client.Client;
 import megamek.client.bot.TestBot;
 import megamek.client.event.BoardViewListener;
-import megamek.client.ui.swing.CustomFighterSquadronDialog;
 import megamek.client.ui.swing.util.PlayerColors;
 import megamek.common.BuildingTarget;
 import megamek.common.Coords;

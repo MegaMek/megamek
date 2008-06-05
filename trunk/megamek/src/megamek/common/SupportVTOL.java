@@ -22,6 +22,10 @@ import java.io.Serializable;
  */
 public class SupportVTOL extends VTOL implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2771230410747098997L;
     private int barRating;
     private boolean armoredChassisAndControl;
     

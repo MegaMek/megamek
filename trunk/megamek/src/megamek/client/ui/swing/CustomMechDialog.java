@@ -20,14 +20,12 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Choice;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Label;
 import java.awt.Panel;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -60,7 +58,6 @@ import megamek.common.Dropship;
 import megamek.common.Entity;
 import megamek.common.EntitySelector;
 import megamek.common.EquipmentType;
-import megamek.common.FighterSquadron;
 import megamek.common.GunEmplacement;
 import megamek.common.IGame;
 import megamek.common.IOffBoardDirections;
@@ -72,7 +69,6 @@ import megamek.common.Mounted;
 import megamek.common.Pilot;
 import megamek.common.Player;
 import megamek.common.Protomech;
-import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.TechConstants;
 import megamek.common.WeaponType;
@@ -1070,6 +1066,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
 
     //a choice panel for determining number of santa anna warheads
     class SantaAnnaChoicePanel extends Panel {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -1645895479085898410L;
         private JComboBox m_choice;
         private Mounted m_mounted;
                 
@@ -1115,6 +1115,10 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
     }
     
     class BombChoicePanel extends Panel implements ItemListener {
+        /**
+         * 
+         */
+        private static final long serialVersionUID = 483782753790544050L;
         //private Vector<MiscType> b_vTypes;
         private JComboBox b_choice_he;
         private JComboBox b_choice_cl;

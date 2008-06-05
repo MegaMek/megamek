@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.Vector;
 
 import megamek.common.Aero;
+import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -296,14 +297,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
         //Now I need to adjust this for air-to-air attacks because they
         //use attack value
         if(ae instanceof Aero && target instanceof Aero) {
-        	if(hits == 1 && nCluster == 1) {
-        		nDamPerHit = attackValue;
-        	} else {
-        		nDamPerHit = 1;
-        		hits = attackValue;
-        		nCluster = 5;
-        	}
-        	
+            //this will work differently for cluster and non-cluster weapons
+            if(usesClusterTable()) {
+                nDamPerHit = 1;
+                hits = attackValue;
+                nCluster = 5;
+            } else {
+                nDamPerHit = attackValue;
+                hits = 1;
+                nCluster = 1;
+            }
         }
         
         // We've calculated how many hits. At this point, any missed
@@ -660,6 +663,14 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
             ae.heatBuildup += (wtype.getHeat());
         }
+    }
+    
+    /*
+     * Does this attack use the cluster hit table?
+     * necessary to determine how Aero damage should be applied
+     */
+    protected boolean usesClusterTable() {
+        return false;
     }
     
     /**

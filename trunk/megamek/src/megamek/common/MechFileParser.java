@@ -304,6 +304,11 @@ public class MechFileParser {
         	ent.loadAllWeapons();
         }
         	
+        //set RACs and UACs at maximum firing rate if aero
+        if(ent instanceof Aero) {
+            ent.setRapidFire();
+        }
+        
         // Check if it's canon; if it is, mark it as such.
         ent.setCanon(false);// Guilty until proven innocent
         try {

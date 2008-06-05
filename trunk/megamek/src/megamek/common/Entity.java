@@ -7027,8 +7027,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             }
             
             if(mounted.getLocation() == location && mounted.isRearMounted() == rearMount) {          
-                WeaponType wtype = (WeaponType)mounted.getType();
-                heat += wtype.getHeat();           
+                heat += mounted.getCurrentHeat();           
             }           
         }       
         return heat;    
@@ -7167,13 +7166,28 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     		resetFiringArcs();
     	}
     	if(location>this.locations() || location<0)
-    		return;   	
+    		return;   	 
     	
     	if(rearMount) {
     		rearArcFired[location] = true;
     	} else {
     		frontArcFired[location] = true;
     	}	
+    }
+    
+    /*
+     * Force rapid fire mode to the highest level on RAC and UAC
+     */
+    public void setRapidFire() {
+        for(Mounted m : getTotalWeaponList()) {
+            WeaponType wtype = (WeaponType)m.getType();
+            if(wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                m.setMode("6-shot");
+            }
+            else if(wtype.getAmmoType() == AmmoType.T_AC_ULTRA) {
+                m.setMode("Ultra");
+            }
+        }
     }
 
 }

@@ -95,7 +95,7 @@ public class AmmoBayWeaponHandler extends BayWeaponHandler {
      * TODO: it might be better to have unique weapon handlers 
      * for these by bay, but I am lazy
      */   
-    private double updateAVforAmmo(double current_av, AmmoType atype, WeaponType wtype, int range) { 	
+    protected double updateAVforAmmo(double current_av, AmmoType atype, WeaponType wtype, int range) { 	
     	
     	//check for artemisIV
     	Mounted mLinker = weapon.getLinkedBy();

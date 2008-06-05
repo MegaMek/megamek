@@ -674,4 +674,8 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         }
         return isNemesisConfusable;
     }
+    
+    protected boolean usesClusterTable() {
+        return true;
+    }
 }

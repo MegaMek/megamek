@@ -78,7 +78,7 @@ public class BayWeaponHandler extends WeaponHandler {
         	if(game.getOptions().booleanOption("heat_by_bay")) {
         		for(int wId:weapon.getBayWeapons()) {
                     Mounted m = ae.getEquipment(wId);
-                    ae.heatBuildup += ((WeaponType)m.getType()).getHeat();
+                    ae.heatBuildup += m.getCurrentHeat();
         		}
         	} else {       	
         		int loc = weapon.getLocation();

@@ -91,4 +91,8 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         }
         return false;
     }
+    
+    protected boolean usesClusterTable() {
+        return true;
+    }
 }

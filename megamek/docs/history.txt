@@ -5,14 +5,29 @@ v0.33.27-dev (SVN)
 + Bug 1973561: OSR-5W gyro doesn't match listed type
 + Bug: Ultra and Rotary ACs not doing enough damage when firing more than 1
     shot and targeting Infantry
++ space movement (including vectored movement) for Aeros
++ attack value damage for Aero units (including weapon bays)
 + added bundle.xml, containing a single target to create a MacOS X Application 
     Bundle. Needs JavaApplicationStub at the default location and jarbundler
     (from jarbundler.sourceforge.net), and works under MacOS X only
 + fixed indent (4 spaces instead of tabs) and added some javadoc comments
++ Aero structural integrity damage
++ capital-scale damage
++ Aero critical hit effects
++ resolution of standard-scale damage to capital-scale entities
++ fixed range of laser bay
++ fighter squadron damage resolution
++ Aero specific to-hit bonuses and penalties
++ fixed misspelling of Xerxes in mechset.txt
++ heat by arc for large craft
++ save and load Aero entities using MUL files
++ restricted bay weapon ammo to ammo in bay
++ to-hit bonuses for specific weapons in bay
++ rapid fire weapon handling for Aeros
++ changed display of heat in Mech Display to account for rapid-firing weapon modes
 + Bug: Infantry flamers not dealing correct amount of heat to target.
 + Fixed lots of warnings.
 + Bug: displacement off buildings due to DFA did not make target fall correctly
-+ Aero ammo explosions and Aero ammo dumping
 + Weapon handling for screen launchers
 
 

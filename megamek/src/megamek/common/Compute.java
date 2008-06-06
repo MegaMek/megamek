@@ -1365,12 +1365,16 @@ public class Compute {
      * Modifier to attacks due to attacker terrain
      */
     public static ToHitData getAttackerTerrainModifier(IGame game, int entityId) {
-        /*
-         * final Entity attacker = game.getEntity(entityId); final IHex hex =
-         * game.getBoard().getHex(attacker.getPosition());
-         */
+        final Entity attacker = game.getEntity(entityId); 
+        final IHex hex = game.getBoard().getHex(attacker.getPosition());
+        
         ToHitData toHit = new ToHitData();
 
+        //space screens; bonus depends on number (level)
+        if(hex.terrainLevel(Terrains.SCREEN) > 0) {
+            toHit.addModifier(hex.terrainLevel(Terrains.SCREEN) + 1, "attacker in screen(s)");
+        }
+        
         return toHit;
     }
 
@@ -1466,6 +1470,11 @@ public class Compute {
                     }
                 }
             }
+        }
+        
+        //space screens; bonus depends on number (level)
+        if(hex.terrainLevel(Terrains.SCREEN) > 0) {
+            toHit.addModifier(hex.terrainLevel(Terrains.SCREEN) + 1, "target in screen(s)");
         }
 
         // only entities get remaining terrain bonuses

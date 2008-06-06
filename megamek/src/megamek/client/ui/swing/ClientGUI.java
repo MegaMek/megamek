@@ -991,7 +991,9 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
                     || curPanel instanceof PhysicalDisplay
                     || curPanel instanceof TargetingPhaseDisplay) {
                 IHex h = client.game.getBoard().getHex(coords);
-                if (h != null && curPanel instanceof FiringDisplay) {
+                if (h != null && curPanel instanceof FiringDisplay
+                        && !client.game.getBoard().inSpace() 
+                        && !client.game.getBoard().inAtmosphere()) {
                     popup
                             .add(new TargetMenuItem(new HexTarget(coords,
                                     client.game.getBoard(),
@@ -1022,17 +1024,23 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
                             client.game.getBoard())));
                 }
                 if (h != null && curPanel instanceof FiringDisplay) {
-                    popup.add(new TargetMenuItem(new HexTarget(coords,
-                            client.game.getBoard(),
-                            Targetable.TYPE_MINEFIELD_DELIVER)));
-                    popup.add(new TargetMenuItem(new HexTarget(coords,
-                            client.game.getBoard(),
-                            Targetable.TYPE_FLARE_DELIVER)));
-                    popup.add(new TargetMenuItem(new HexTarget(coords,
-                            client.game.getBoard(), Targetable.TYPE_HEX_BOMB)));
-                    popup.add(new TargetMenuItem(new HexTarget(coords,
-                            client.game.getBoard(),
-                            Targetable.TYPE_HEX_ARTILLERY)));
+                    if(client.game.getBoard().inSpace()) {
+                        popup.add(new TargetMenuItem(new HexTarget(coords,
+                                client.game.getBoard(),
+                                Targetable.TYPE_HEX_SCREEN)));
+                    } else {
+                        popup.add(new TargetMenuItem(new HexTarget(coords,
+                                client.game.getBoard(),
+                                Targetable.TYPE_MINEFIELD_DELIVER)));
+                        popup.add(new TargetMenuItem(new HexTarget(coords,
+                                client.game.getBoard(),
+                                Targetable.TYPE_FLARE_DELIVER)));
+                        popup.add(new TargetMenuItem(new HexTarget(coords,
+                                client.game.getBoard(), Targetable.TYPE_HEX_BOMB)));
+                        popup.add(new TargetMenuItem(new HexTarget(coords,
+                                client.game.getBoard(),
+                                Targetable.TYPE_HEX_ARTILLERY)));
+                    }
                 }
                 if (h != null && client.game.getOptions().booleanOption("fire")
                         && h.containsTerrain(Terrains.FIRE)) {
@@ -1040,7 +1048,9 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
                             client.game.getBoard(),
                             Targetable.TYPE_HEX_EXTINGUISH)));
                 }
-                if (h != null && curPanel instanceof TargetingPhaseDisplay) {
+                if (h != null && curPanel instanceof TargetingPhaseDisplay
+                        && !client.game.getBoard().inSpace() 
+                        && !client.game.getBoard().inAtmosphere()) {
                     popup.add(new TargetMenuItem(new HexTarget(coords,
                             client.game.getBoard(),
                             Targetable.TYPE_HEX_ARTILLERY)));

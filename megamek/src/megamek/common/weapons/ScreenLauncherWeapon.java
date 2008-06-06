@@ -17,7 +17,12 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.IGame;
+import megamek.common.Mounted;
 import megamek.common.TechConstants;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -47,9 +52,21 @@ public class ScreenLauncherWeapon extends AmmoWeapon {
         this.tonnage = 40.0f;
         this.bv = 160;
         this.cost = 250000;
-            
+        this.shortAV = 15;
         this.maxRange = RANGE_SHORT;
-        this.capital = true;
+        this.capital = false;
         this.atClass = CLASS_SCREEN;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     *      megamek.server.Server)
+     */
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new ScreenLauncherHandler(toHit, waa, game, server);
     }
 }

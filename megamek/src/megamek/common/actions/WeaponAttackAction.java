@@ -54,6 +54,7 @@ import megamek.common.Targetable;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
+import megamek.common.weapons.ScreenLauncherBayWeapon;
 import megamek.common.WeaponType;
 
 /**
@@ -1142,6 +1143,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (isHaywireINarced) {
             toHit.addModifier(1, "iNarc Haywire pod");
         }
+        
+        //`Screen launchers hit automatically (if in range)
+        if(toHit.getValue() != ToHitData.IMPOSSIBLE && (wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER || 
+                (wtype instanceof ScreenLauncherBayWeapon))) {
+            return new ToHitData( ToHitData.AUTOMATIC_SUCCESS,
+            "Screen launchers always hit" );
+        }
 
         // Heat Seeking Missles
         if (bHeatSeeking) {
@@ -1559,6 +1567,21 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Infantry can not clear woods.";
         }
 
+        //only screen launchers may launch screens (what a coincidence)
+        if (Targetable.TYPE_HEX_SCREEN == target.getTargetType()) {
+            if(!(wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER || 
+                    (wtype instanceof ScreenLauncherBayWeapon))) {
+                return "Only screen launchers may launch screens";
+            }
+        }
+        
+        if (Targetable.TYPE_HEX_SCREEN != target.getTargetType() &&
+            (wtype.getAmmoType() == AmmoType.T_SCREEN_LAUNCHER || 
+                    wtype instanceof ScreenLauncherBayWeapon)) {
+                return "Screen launchers may only target hexes";
+        }
+        
+        
         // Some weapons can't cause fires, but Infernos always can.
         if ((vf_cool || wtype.hasFlag(WeaponType.F_NO_FIRES) && !isInferno)
                 && Targetable.TYPE_HEX_IGNITE == target.getTargetType()) {

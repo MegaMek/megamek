@@ -896,6 +896,8 @@ super * "fire:2" "" "boring/fire.gif"
 super * "smoke:1" "" "transparent/light_smoke.png"
 super * "smoke:2" "" "transparent/heavy_smoke.png"
 
+super * "screen:*" "" "boring/screen.gif"
+
 super * "geyser:2" "" "transparent/geysererupt.png"
 
 super * "elevator:0" "" "boring/elevator1.gif"

@@ -16,7 +16,11 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -46,6 +50,18 @@ public class ScreenLauncherBayWeapon extends AmmoBayWeapon {
         this.bv = 0;
         this.cost = 0;
         this.atClass = CLASS_SCREEN;
-        this.capital = true;
+        this.capital = false;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
+     *      megamek.server.Server)
+     */
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new ScreenLauncherBayHandler(toHit, waa, game, server);
     }
 }

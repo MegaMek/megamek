@@ -370,6 +370,7 @@ public class Server implements Runnable {
         terrainProcessors.add(new FireProcessor(this));
         terrainProcessors.add(new GeyserProcessor(this));
         terrainProcessors.add(new ElevatorProcessor(this));
+        terrainProcessors.add(new ScreenProcessor(this));
 
         // Fully initialised, now accept connections
         connector = new Thread(this, "Connection Listener");
@@ -6274,6 +6275,25 @@ public class Server implements Runnable {
                 vPhaseReport.add(r);
             }
         }
+    }
+    
+    public void deliverScreen(Coords coords, Vector<Report> vPhaseReport) {
+        IHex h = game.getBoard().getHex(coords);
+        Report r;
+        Report.addNewline(vPhaseReport);
+        r = new Report(9070, Report.PUBLIC);
+        r.indent(2);
+        r.add(coords.getBoardNum());
+        vPhaseReport.add(r); 
+        //use level to count the number of screens (since level does not matter in space)
+        int nscreens = h.terrainLevel( Terrains.SCREEN );
+        if(nscreens > 0) {
+            h.removeTerrain(Terrains.SCREEN);
+            h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SCREEN, nscreens + 1));
+        } else {
+            h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SCREEN, 1));
+        }           
+        sendChangedHex(coords);       
     }
 
     /**

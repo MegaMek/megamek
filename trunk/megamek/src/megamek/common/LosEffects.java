@@ -71,6 +71,7 @@ public class LosEffects {
     int ultraWoods = 0;
     int lightSmoke = 0;
     int heavySmoke = 0; // heavySmoke is also standard for normal L2 smoke
+    int screen = 0;
     int targetCover = COVER_NONE; // that means partial cover
     int attackerCover = COVER_NONE; // ditto
     Building thruBldg = null;
@@ -97,6 +98,7 @@ public class LosEffects {
         this.ultraWoods += other.ultraWoods;
         this.lightSmoke += other.lightSmoke;
         this.heavySmoke += other.heavySmoke;
+        this.screen += other.screen;
         this.targetCover |= other.targetCover;
         this.attackerCover |= other.attackerCover;
         if (null != this.thruBldg && !this.thruBldg.equals(other.thruBldg)) {
@@ -122,6 +124,10 @@ public class LosEffects {
 
     public int getHeavySmoke() {
         return heavySmoke;
+    }
+    
+    public int getScreen() {
+        return screen;
     }
 
     public boolean isBlocked() {
@@ -298,7 +304,7 @@ public class LosEffects {
 
         LosEffects finalLoS = calculateLos(game, ai);
         finalLoS.setMinimumWaterDepth(ai.minimumWaterDepth);
-        finalLoS.hasLoS = !finalLoS.blocked
+        finalLoS.hasLoS = !finalLoS.blocked && finalLoS.screen < 1
                 && (finalLoS.lightWoods + finalLoS.lightSmoke)
                         + ((finalLoS.heavyWoods + finalLoS.heavySmoke) * 2)
                         + (finalLoS.ultraWoods * 3) < 3;
@@ -379,6 +385,10 @@ public class LosEffects {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by smoke.");
         }
 
+        if (screen > 0) {
+            return new ToHitData(ToHitData.IMPOSSIBLE, "LOS blocked by screen.");
+        }
+        
         if (lightSmoke + (heavySmoke * 2) + lightWoods + (heavyWoods * 2) > 2) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "LOS blocked by smoke and woods.");
@@ -695,6 +705,10 @@ public class LosEffects {
 
         // check for woods or smoke only if not under water
         if (!ai.underWaterCombat) {
+            if(hex.containsTerrain(Terrains.SCREEN)) {
+                //number of screens doesn't matter. One is enough to block
+                los.screen++;
+            }
             if ((hexEl + 2 > ai.attackAbsHeight && hexEl + 2 > ai.targetAbsHeight)
                     || (hexEl + 2 > ai.attackAbsHeight && ai.attackPos
                             .distance(coords) == 1)

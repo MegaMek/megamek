@@ -83,6 +83,9 @@ public class HexTarget implements Targetable {
             case Targetable.TYPE_HEX_EXTINGUISH:
                 name = Messages.getString("HexTarget.Extinguish");
                 break;
+            case (Targetable.TYPE_HEX_SCREEN):
+                name = Messages.getString("HexTarget.Screen");
+                break;
         }
         return "Hex: " + m_coords.getBoardNum() + name;
     }

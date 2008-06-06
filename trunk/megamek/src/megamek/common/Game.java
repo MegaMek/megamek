@@ -1098,6 +1098,7 @@ public class Game implements Serializable, IGame {
                 case Targetable.TYPE_FLARE_DELIVER:
                 case Targetable.TYPE_HEX_EXTINGUISH:
                 case Targetable.TYPE_HEX_ARTILLERY:
+                case Targetable.TYPE_HEX_SCREEN:
                     return new HexTarget(HexTarget.idToCoords(nID), board,
                             nType);
                 case Targetable.TYPE_FUEL_TANK:

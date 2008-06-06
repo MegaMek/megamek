@@ -854,6 +854,8 @@ super * "fire:2" "" "boring/fire.gif"
 
 super * "fortified:1" "" "boring/sandbags.gif"
 
+super * "screen:*" "" "boring/screen.gif"
+
 super * "arms:1" "" "limbs/arm1.gif"
 super * "arms:2" "" "limbs/arm2.gif"
 super * "arms:3" "" "limbs/arm2.gif"

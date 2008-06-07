@@ -127,6 +127,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     private int[] orig_armor;
     private int[] orig_internal;
     public int damageThisPhase;
+    public int damageThisRound;
     public int engineHitsThisRound;
     public boolean rolledForEngineExplosion = false; // So that we don't roll
                                                         // twice in one round
@@ -154,6 +155,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public InfernoTracker infernos = new InfernoTracker();
     public ArtilleryTracker aTracker = new ArtilleryTracker();
+    public TeleMissileTracker tmTracker = new TeleMissileTracker();
 
     protected String C3NetIdString = null;
     protected int C3Master = NONE;
@@ -3685,6 +3687,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         done = false;
         delta_distance = 0;
         mpUsed = 0;
+        damageThisRound = 0;
         if (assaultDropInProgress == 2)
             assaultDropInProgress = 0;
         moved = IEntityMovementType.MOVE_NONE;
@@ -7209,6 +7212,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 m.setMode("Ultra");
             }
         }
+    }
+    
+    public TeleMissileTracker getTMTracker() {
+        return tmTracker;
     }
 
 }

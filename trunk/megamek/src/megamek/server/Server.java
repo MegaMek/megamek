@@ -108,6 +108,7 @@ import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Team;
+import megamek.common.TeleMissile;
 import megamek.common.Terrain;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
@@ -143,6 +144,7 @@ import megamek.common.actions.RamAttackAction;
 import megamek.common.actions.RepairWeaponMalfunctionAction;
 import megamek.common.actions.SearchlightAttackAction;
 import megamek.common.actions.SpotAction;
+import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.TriggerAPPodAction;
@@ -729,6 +731,7 @@ public class Server implements Runnable {
                 send(connId, createAttackPacket(game.getActionsVector(), 0));
                 send(connId, createAttackPacket(game.getChargesVector(), 1));
                 send(connId, createAttackPacket(game.getRamsVector(), 1));
+                send(connId, createAttackPacket(game.getTeleMissileAttacksVector(), 1));
                 send(connId, createAttackPacket(game
                         .getLayMinefieldActionsVector(), 2));
             }
@@ -1148,6 +1151,8 @@ public class Server implements Runnable {
             entity.reloadEmptyWeapons();
 
             // reset damage this phase
+            //tele-missiles need a record of damage last phase
+            entity.damageThisRound += entity.damageThisPhase;
             entity.damageThisPhase = 0;
             entity.engineHitsThisRound = 0;
             entity.rolledForEngineExplosion = false;
@@ -1971,6 +1976,7 @@ public class Server implements Runnable {
                 checkFor20Damage();
                 addReport(resolvePilotingRolls()); // Skids cause damage in movement phase
                 checkForFlamingDeath();
+                checkForTeleMissileAttacks();
                 // check phase report
                 if (vPhaseReport.size() > 1) {
                     game.addReports(vPhaseReport);
@@ -3240,7 +3246,20 @@ public class Server implements Runnable {
 
         // looks like mostly everything's okay
         processMovement(entity, md);
-
+        
+        //check the LOS of any telemissiles owned by this entity
+        for(int missileId : entity.getTMTracker().getMissiles()) {
+            Entity tm = game.getEntity(missileId);
+            if(null != tm && !tm.isDestroyed() && tm instanceof TeleMissile) {
+                if(LosEffects.calculateLos(game, entity.getId(), tm).canSee()) {
+                    ((TeleMissile)tm).setOutContact(false);
+                } else {
+                    ((TeleMissile)tm).setOutContact(true);
+                }
+                entityUpdate(tm.getId());
+            }
+        }
+        
         // Notify the clients about any building updates.
         applyAffectedBldgs();
 
@@ -4398,7 +4417,7 @@ public class Server implements Runnable {
                     int hits = entity.getCrew().getHits();
                     int health = 6 - hits;
                 
-                    if( thrustUsed > (2*health) && !game.useVectorMove()) {
+                    if( thrustUsed > (2*health) && !game.useVectorMove() && !(entity instanceof TeleMissile)) {
                         int targetroll = 2 + (thrustUsed - 2 * health) + 2 * hits;
                         resistGForce(entity,targetroll);
                     }
@@ -5495,7 +5514,8 @@ public class Server implements Runnable {
             int thrust = md.getMpUsed();           
             
             //consume fuel
-            if((entity instanceof Aero && game.getOptions().booleanOption("fuel_consumption"))) {
+            if((entity instanceof Aero && game.getOptions().booleanOption("fuel_consumption"))  ||
+                    entity instanceof TeleMissile) {
                 int fuelUsed = thrust + Math.max(thrust - entity.getWalkMP(), 0);
                 a.setFuel(Math.max(a.getFuel() - fuelUsed,0));
             }
@@ -6294,6 +6314,48 @@ public class Server implements Runnable {
             h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SCREEN, 1));
         }           
         sendChangedHex(coords);       
+    }
+    
+    /*
+     * deploys a new tele-missile entity onto the map
+     */
+    public void deployTeleMissile(Entity ae, AmmoType atype, int wId, int capMisMod, Vector<Report> vPhaseReport) {
+        Report r = new Report(9080);
+        r.subject = ae.getId();
+        r.addDesc(ae);
+        r.indent(2);
+        r.newlines = 0;
+        r.add(atype.getName());
+        vPhaseReport.add(r);
+        TeleMissile tele = new TeleMissile(ae, atype.getDamagePerShot(), atype.getTonnage(ae), atype.getAmmoType(), capMisMod);
+        tele.setDeployed(true);
+        tele.setId(getFreeEntityId());
+        if(ae instanceof Aero) {
+            Aero a = (Aero)ae;
+            tele.setCurrentVelocity(a.getCurrentVelocity());
+            tele.setNextVelocity(a.getNextVelocity());
+            tele.setVectors(a.getVectors());
+        }
+        //set velocity and heading the same as parent entity
+        game.addEntity(tele.getId(), tele);
+        send(createAddEntityPacket(tele.getId()));
+        // make him not get a move this turn
+        tele.setDone(true);
+        //place on board          
+        tele.setPosition(ae.getPosition());
+        // Update the entity
+        entityUpdate(tele.getId());
+        //check to see if the launching of this missile removes control of any prior missiles
+        if(ae.getTMTracker().containsLauncher(wId)) {
+            Entity priorMissile = game.getEntity(ae.getTMTracker().getMissile(wId)); 
+            if(null != priorMissile && priorMissile instanceof TeleMissile) {
+                ((TeleMissile)priorMissile).setOutContact(true);
+                //remove this from the tracker for good measure
+                ae.getTMTracker().removeMissile(wId);
+            }
+        }
+        //track this missile on the entity
+        ae.getTMTracker().addMissile(wId, tele.getId());
     }
 
     /**
@@ -8644,6 +8706,13 @@ public class Server implements Runnable {
             game.addAction(i.nextElement());
         }
         game.resetRams();
+        
+        //add any pending Tele Missile Attacks
+        for (Enumeration<AttackAction> i = game.getTeleMissileAttacks(); i
+                .hasMoreElements();) {
+            game.addAction(i.nextElement());
+        }
+        game.resetTeleMissileAttacks();
 
         // remove any duplicate attack declarations
         cleanupPhysicalAttacks();
@@ -10712,6 +10781,120 @@ public class Server implements Runnable {
     }
 
     /**
+     * Handle a telemissile attack
+     */
+    private void resolveTeleMissileAttack(PhysicalResult pr, int lastEntityId) {
+        final TeleMissileAttackAction taa = (TeleMissileAttackAction) pr.aaa;
+        final Entity ae = game.getEntity(taa.getEntityId());
+        if(!(ae instanceof TeleMissile)) {
+            return;
+        }
+        TeleMissile tm = (TeleMissile)ae;
+        final Targetable target = game.getTarget(taa.getTargetType(), taa
+                .getTargetId());
+        final ToHitData toHit = pr.toHit;
+        int roll = pr.roll;
+        Entity te = null;
+        if (target != null && target.getTargetType() == Targetable.TYPE_ENTITY) {
+            te = (Entity) target;
+        }
+        
+        boolean throughFront = true;
+        if (te!=null) {
+            throughFront = Compute
+            .isThroughFrontHex(game, ae.getPosition(), te);
+        }
+        
+        Report r;
+        
+        if (lastEntityId != taa.getEntityId()) {
+            // who is making the attack
+            r = new Report(4005);
+            r.subject = ae.getId();
+            r.addDesc(ae);
+            addReport(r);
+        }
+
+        // should we even bother?
+        if (target == null || target.getTargetType() == Targetable.TYPE_ENTITY
+                && (te.isDestroyed() || te.isDoomed() || te.crew.isDead())) {
+            r = new Report(4190);
+            r.subject = ae.getId();
+            r.indent();
+            addReport(r);
+            return;
+        }
+        
+        r = new Report(9031);   
+        r.subject = ae.getId();
+        r.indent();
+        r.add(target.getDisplayName());
+        r.newlines = 0;
+        addReport(r);
+        
+        //add some stuff to the to hit value    
+        //need to add damage done modifier
+        if(ae.damageThisRound>10)
+            toHit.addModifier((int)(Math.floor(ae.damageThisRound / 10.0)), "damage taken");
+  
+        //add modifiers for the originating unit missing CIC, FCS, or sensors        
+        Entity ride = game.getEntity(tm.getOriginalRideId());
+        if(null != ride && ride instanceof Aero) {
+            Aero aride = (Aero)ride;
+            int cic = aride.getCICHits();
+            if(cic > 0) {
+                toHit.addModifier(cic*2,"CIC damage");
+            }
+            
+            //sensor hits
+            int sensors = aride.getSensorHits();
+            if(sensors > 0 && sensors < 3) 
+                toHit.addModifier(sensors, "sensor damage");
+            if(sensors>2)
+                toHit.addModifier(+5, "sensors destroyed");
+            
+            //FCS hits
+            int fcs = aride.getFCSHits();
+            if(fcs > 0)
+                toHit.addModifier(fcs*2, "fcs damage");            
+        }
+        
+        if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+            roll = Integer.MAX_VALUE;
+            r = new Report(4225);
+            r.subject = ae.getId();
+            r.add(toHit.getDesc());
+            addReport(r);
+        } else {
+            // report the roll
+            r = new Report(9032);
+            r.subject = ae.getId();
+            r.add(toHit.getValue());
+            r.add(toHit.getDesc());
+            r.add(roll);
+            r.newlines = 0;
+            addReport(r);
+        }
+
+        // do we hit?
+        if (roll < toHit.getValue()) {
+            // miss
+            r = new Report(4035);
+            r.subject = ae.getId();
+            addReport(r);
+        } else {
+            //Resolve the damage.
+            HitData hit = te.rollHitLocation(ToHitData.HIT_NORMAL, te.sideTable(ae.getPosition(), true));
+            hit.setCapital(true);
+            hit.setCapMisCritMod(tm.getCritMod());
+            addReport(damageEntity(te, hit, TeleMissileAttackAction.getDamageFor(ae), 
+                                   false, DamageType.NONE, false, false, throughFront));
+            destroyEntity(ae,"successful attack");
+        }
+        
+    }
+    
+    /**
      * Handle a ramming attack
      */
     private void resolveRamAttack(PhysicalResult pr, int lastEntityId) {
@@ -12348,6 +12531,37 @@ public class Server implements Runnable {
     }
 
     /**
+     * Checks to see if any tele-missiles are in a hex with enemy units.  If so, then attack one.
+     */
+    private void checkForTeleMissileAttacks() {
+        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+            final Entity entity = (Entity)i.nextElement();
+            if (entity instanceof TeleMissile) {
+                //check for enemy units
+                Vector<Integer> potTargets = new Vector<Integer>();
+                for (Enumeration j = game.getEntities(entity.getPosition()); j.hasMoreElements();) {
+                    final Entity te = (Entity)j.nextElement();
+                    if(te.isEnemyOf(entity)) {
+                        //then add it to a vector of potential targets
+                        potTargets.add(te.getId());
+                    }
+                }
+                if(potTargets.size() > 0) {
+                    //determine randomly
+                    Entity target = game.getEntity(potTargets.get(Compute.randomInt(potTargets.size())));
+                    //report this and add a new TeleMissileAttackAction
+                    Report r = new Report(9085);
+                    r.subject = entity.getId();
+                    r.addDesc(entity);
+                    r.addDesc(target);
+                    addReport(r);
+                    game.addTeleMissileAttack(new TeleMissileAttackAction(entity, target));
+                }
+            }
+        }
+    }
+    
+    /**
      * Check to see if anyone dies due to being in a vacuum.
      */
     private void checkForVacuumDeath() {
@@ -13940,6 +14154,12 @@ public class Server implements Runnable {
                         r.indent(3);
                     r.add(te.getArmor(hit));
                     vDesc.addElement(r);
+                    
+                    //tele-missiles are destroyed if they lose all armor
+                    if(te instanceof TeleMissile && te.getArmor(hit) == damage) {
+                        vDesc.addAll(destroyEntity(te, "damage", false));
+                    }
+                    
                 } else {
                     // damage goes on to internal
                     int absorbed = Math.max(te.getArmor(hit), 0);
@@ -17580,6 +17800,16 @@ public class Server implements Runnable {
                 r.addDesc(mw);
                 vDesc.addElement(r);
             }
+            
+            //make any remaining tele-missiles operated by this entity
+            //out of contact
+            for(int missileId : entity.getTMTracker().getMissiles()) {
+                Entity tm = game.getEntity(missileId);
+                if(null != tm && !tm.isDestroyed() && tm instanceof TeleMissile) {
+                    ((TeleMissile)tm).setOutContact(true);
+                    entityUpdate(tm.getId());
+                }
+            }
 
             // Mechanized BA that could die on a 3+
             ArrayList<Entity> externalUnits = entity.getExternalUnits();
@@ -21049,6 +21279,10 @@ public class Server implements Runnable {
             RamAttackAction raa = (RamAttackAction) aaa;
             toHit = raa.toHit(game);
             damage = RamAttackAction.getDamageFor((Aero)ae, (Aero)aaa.getTarget(game));
+        } else if (aaa instanceof TeleMissileAttackAction) {
+            TeleMissileAttackAction taa = (TeleMissileAttackAction)aaa;
+            toHit = taa.toHit(game);
+            damage = TeleMissileAttackAction.getDamageFor(ae);
         }
         pr.toHit = toHit;
         pr.damage = damage;
@@ -21130,6 +21364,9 @@ public class Server implements Runnable {
             cen = aaa.getEntityId();
         } else if (aaa instanceof RamAttackAction) {
             resolveRamAttack(pr, cen);
+            cen = aaa.getEntityId();
+        } else if (aaa instanceof TeleMissileAttackAction) {
+            resolveTeleMissileAttack(pr, cen);
             cen = aaa.getEntityId();
         } else {
             // hmm, error.

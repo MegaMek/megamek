@@ -891,6 +891,28 @@ public interface IGame {
     public abstract Vector<AttackAction> getRamsVector();
 
     /**
+     * Adds a pending tele-missile attack to the list for this phase.
+     */
+    public abstract void addTeleMissileAttack(AttackAction ea);
+
+    /**
+     * Returns an Enumeration of telemissile attacks scheduled for the end of
+     * the physical phase.
+     */
+    public abstract Enumeration<AttackAction> getTeleMissileAttacks();
+
+    /**
+     * Resets the pending telemissile attack list.
+     */
+    public abstract void resetTeleMissileAttacks();
+
+    /**
+     * Returns the telemissile attack vector. Do not modify. >:[ Used for sending all
+     * charges to the client.
+     */
+    public abstract Vector<AttackAction> getTeleMissileAttacksVector();
+
+    /**
      * Adds a pending lay minefield action to the list for this phase.
      */
     public void addLayMinefieldAction(LayMinefieldAction lma);

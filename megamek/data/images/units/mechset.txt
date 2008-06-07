@@ -76,6 +76,7 @@ exact "default_jumpship" "jumpship.gif"
 exact "default_warship" "naga_warship.gif"
 exact "default_space_station" "dropship_spheroid.gif"
 exact "default_fighter_squadron" "fighter_squadron.gif"
+exact "default_tele_missile" "telemissile.gif"
 
 
 #ASF

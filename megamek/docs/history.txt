@@ -29,6 +29,7 @@ v0.33.27-dev (SVN)
 + Fixed lots of warnings.
 + Bug: displacement off buildings due to DFA did not make target fall correctly
 + Weapon handling for screen launchers
++ Weapon handling for tele-operated missiles
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

@@ -62,6 +62,7 @@ import megamek.common.Report;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.TeleMissile;
 import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
@@ -2037,6 +2038,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 && !cmd.contains(MovePath.STEP_ACCN) && veln > 0) {
             setDecNEnabled(true);
         }
+        //if this is a tele-operated missile then it can't decelerate no matter what
+        if(a instanceof TeleMissile) {
+            setDecEnabled(false);
+            setDecNEnabled(false);
+        }
+        
         return;
     }
     

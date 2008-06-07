@@ -109,6 +109,7 @@ public class Game implements Serializable, IGame {
     private Vector<EntityAction> actions = new Vector<EntityAction>();
     private Vector<AttackAction> pendingCharges = new Vector<AttackAction>();
     private Vector<AttackAction> pendingRams = new Vector<AttackAction>();
+    private Vector<AttackAction> pendingTeleMissileAttacks = new Vector<AttackAction>();
     private Vector<LayMinefieldAction> pendingLayMinefieldActions = new Vector<LayMinefieldAction>();
     private Vector<PilotingRollData> pilotRolls = new Vector<PilotingRollData>();
     private Vector<PilotingRollData> extremeGravityRolls = new Vector<PilotingRollData>();
@@ -2030,6 +2031,35 @@ public class Game implements Serializable, IGame {
      */
     public Vector<AttackAction> getRamsVector() {
         return pendingRams;
+    }
+    
+    /**
+     * Adds a pending ramming attack to the list for this phase.
+     */
+    public void addTeleMissileAttack(AttackAction ea) {
+        pendingTeleMissileAttacks.addElement(ea);
+        processGameEvent(new GameNewActionEvent(this, ea));
+    }
+
+    /**
+     * Returns an Enumeration of ramming attacks scheduled for the end of
+     * the physical phase.
+     */
+    public Enumeration<AttackAction> getTeleMissileAttacks() {
+        return pendingTeleMissileAttacks.elements();
+    }
+
+    /** Resets the pending rams list. */
+    public void resetTeleMissileAttacks() {
+        pendingTeleMissileAttacks.removeAllElements();
+    }
+
+    /**
+     * Returns the rams vector. Do not modify. >:[ Used for sending all
+     * charges to the client.
+     */
+    public Vector<AttackAction> getTeleMissileAttacksVector() {
+        return pendingTeleMissileAttacks;
     }
 
     /**

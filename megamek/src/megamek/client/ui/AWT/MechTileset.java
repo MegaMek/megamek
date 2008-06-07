@@ -44,6 +44,7 @@ import megamek.common.Protomech;
 import megamek.common.SmallCraft;
 import megamek.common.SpaceStation;
 import megamek.common.Tank;
+import megamek.common.TeleMissile;
 import megamek.common.Warship;
 
 /**
@@ -84,6 +85,7 @@ public class MechTileset {
     private String WARSHIP_STRING = "default_warship"; //$NON-NLS-1$
     private String SPACE_STATION_STRING = "default_space_station"; //$NON-NLS-1$
     private String FIGHTER_SQUADRON_STRING = "default_fighter_squadron"; //$NON-NLS-1$
+    private String TELE_MISSILE_STRING = "default_tele_missile"; //$NON-NLS-1$
 
     private MechEntry default_light;
     private MechEntry default_medium;
@@ -114,6 +116,7 @@ public class MechTileset {
     private MechEntry default_warship;
     private MechEntry default_space_station;
     private MechEntry default_fighter_squadron;
+    private MechEntry default_tele_missile;
 
     private HashMap<String, MechEntry> exact = new HashMap<String, MechEntry>();
     private HashMap<String, MechEntry> chassis = new HashMap<String, MechEntry>();
@@ -254,6 +257,10 @@ public class MechTileset {
                     return default_small_craft_aero;
             }
             
+            if(entity instanceof TeleMissile) {
+                return default_tele_missile;
+            }
+            
             return default_aero;
         }
         
@@ -341,6 +348,7 @@ public class MechTileset {
         default_warship = exact.get(WARSHIP_STRING.toUpperCase());
         default_space_station = exact.get(SPACE_STATION_STRING.toUpperCase());
         default_fighter_squadron = exact.get(FIGHTER_SQUADRON_STRING.toUpperCase());
+        default_tele_missile = exact.get(TELE_MISSILE_STRING.toUpperCase());
     }
 
     /**

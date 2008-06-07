@@ -82,7 +82,7 @@ public class AmmoType extends EquipmentType {
     public static final int     T_KILLER_WHALE      = 57;
     public static final int     T_WHITE_SHARK       = 58;
     public static final int     T_BARRACUDA         = 59;
-    public static final int     T_KRAKEN            = 60;
+    public static final int     T_KRAKEN_T          = 60;
     public static final int     T_AR10              = 61;
     public static final int     T_SCREEN_LAUNCHER   = 62;
     public static final int     T_ALAMO             = 63;
@@ -100,6 +100,7 @@ public class AmmoType extends EquipmentType {
     public static final long     F_AR10_KILLER_WHALE = 1l << 7; // Killer Whale type
     public static final long     F_AR10_BARRACUDA    = 1l << 8; // barracuda type
     public static final long     F_NUCLEAR           = 1l << 9; // Nuclear missile
+    public static final long     F_TELE_MISSILE      = 1l << 10; //Tele-Missile
 
     // ammo munitions, used for custom loadouts
     // N.B. we play bit-shifting games to allow "incendiary"
@@ -171,6 +172,9 @@ public class AmmoType extends EquipmentType {
     // Nuclear Munitions
     public static final long     M_DAVY_CROCKETT_M   = 1l << 41;
     public static final long     M_SANTA_ANNA        = 1l << 42;
+    
+    //tele-missile
+    public static final long     M_TELE              = 1l << 43;
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
@@ -755,10 +759,16 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createSantaAnnaAmmo());
         EquipmentType.addType(createWhiteSharkAmmo());
         EquipmentType.addType(createBarracudaAmmo());
+        EquipmentType.addType(createKillerWhaleTAmmo());
+        EquipmentType.addType(createWhiteSharkTAmmo());
+        EquipmentType.addType(createBarracudaTAmmo());
         EquipmentType.addType(createAR10KillerWhaleAmmo());
         EquipmentType.addType(createAR10WhiteSharkAmmo());
         EquipmentType.addType(createAR10SantaAnnaAmmo());
         EquipmentType.addType(createAR10BarracudaAmmo());
+        EquipmentType.addType(createAR10KillerWhaleTAmmo());
+        EquipmentType.addType(createAR10WhiteSharkTAmmo());
+        EquipmentType.addType(createAR10BarracudaTAmmo());
         EquipmentType.addType(createScreenLauncherAmmo());
         EquipmentType.addType(createAlamoAmmo());
         
@@ -6209,11 +6219,12 @@ public class AmmoType extends EquipmentType {
         ammo.setInternalName("Ammo KrakenT");
         ammo.addLookupName("KrakenT Ammo");
         ammo.damagePerShot = 10;
-        ammo.ammoType = AmmoType.T_KRAKEN;
+        ammo.ammoType = AmmoType.T_KRAKEN_T;
         ammo.shots = 1;
         ammo.bv = 288;
         ammo.cost = 55000;
         ammo.capital = true;
+        ammo.flags |=  F_TELE_MISSILE;
 
         return ammo;
     }
@@ -6235,6 +6246,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    private static AmmoType createKillerWhaleTAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Killer Whale-T Ammo";
+        ammo.setInternalName("Ammo Killer Whale-T");
+        ammo.addLookupName("KillerWhaleT Ammo");
+        ammo.damagePerShot = 4;
+        ammo.ammoType = AmmoType.T_KILLER_WHALE;
+        ammo.shots = 1;
+        ammo.bv = 96;
+        ammo.cost = 20000;
+        ammo.capital = true;
+        ammo.munitionType = AmmoType.M_TELE;
+        ammo.flags |=  F_TELE_MISSILE;
+
+        return ammo;
+    }
+    
     private static AmmoType createSantaAnnaAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -6250,8 +6280,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 20000;
         ammo.flags |=  F_NUCLEAR;
         ammo.capital = true;
-        
-        
+              
         return ammo;
     }
     
@@ -6272,6 +6301,25 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
     
+    private static AmmoType createWhiteSharkTAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "White Shark-T Ammo";
+        ammo.setInternalName("Ammo White Shark-T");
+        ammo.addLookupName("WhiteSharkT Ammo");
+        ammo.damagePerShot = 3;
+        ammo.ammoType = AmmoType.T_WHITE_SHARK;
+        ammo.shots = 1;
+        ammo.bv = 72;
+        ammo.cost = 14000;
+        ammo.capital = true;
+        ammo.munitionType = AmmoType.M_TELE;
+        ammo.flags |=  F_TELE_MISSILE;
+        
+        return ammo;
+    }
+    
     private static AmmoType createBarracudaAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -6286,6 +6334,26 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 8000;
         ammo.toHitModifier = -2;
         ammo.capital = true;
+
+        return ammo;
+    }
+    
+    private static AmmoType createBarracudaTAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Barracuda-T Ammo";
+        ammo.setInternalName("Ammo Barracuda-T");
+        ammo.addLookupName("BarracudaT Ammo");
+        ammo.damagePerShot = 2;
+        ammo.ammoType = AmmoType.T_BARRACUDA;
+        ammo.shots = 1;
+        ammo.bv = 65;
+        ammo.cost = 8000;
+        ammo.toHitModifier = -2;
+        ammo.capital = true;
+        ammo.munitionType = AmmoType.M_TELE;
+        ammo.flags |=  F_TELE_MISSILE;
 
         return ammo;
     }
@@ -6323,6 +6391,7 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 20000;
         ammo.flags |=  F_AR10_KILLER_WHALE;
         ammo.capital = true;
+        
 
         return ammo;
     }
@@ -6360,6 +6429,64 @@ public class AmmoType extends EquipmentType {
         ammo.cost = 14000;
         ammo.flags |=  F_AR10_WHITE_SHARK;
         ammo.capital = true;
+
+        return ammo;
+    }
+    
+    private static AmmoType createAR10BarracudaTAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AR10 Barracuda-T Ammo";
+        ammo.setInternalName("Ammo AR10 Barracuda-T");
+        ammo.addLookupName("AR10 BarracudaT Ammo");
+        ammo.damagePerShot = 2;
+        ammo.ammoType = AmmoType.T_AR10;
+        ammo.shots = 1;
+        ammo.bv = 65;
+        ammo.cost = 8000;
+        ammo.flags |=  F_AR10_BARRACUDA | F_TELE_MISSILE;
+        ammo.toHitModifier = -2;
+        ammo.capital = true;
+        ammo.munitionType = AmmoType.M_TELE;
+
+        return ammo;
+    }
+    
+    private static AmmoType createAR10KillerWhaleTAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AR10 Killer Whale-T Ammo";
+        ammo.setInternalName("Ammo AR10 Killer Whale-T");
+        ammo.addLookupName("AR10 KillerWhaleT Ammo");
+        ammo.damagePerShot = 4;
+        ammo.ammoType = AmmoType.T_AR10;
+        ammo.shots = 1;
+        ammo.bv = 96;
+        ammo.cost = 20000;
+        ammo.flags |=  F_AR10_KILLER_WHALE | F_TELE_MISSILE;
+        ammo.capital = true;
+        ammo.munitionType = AmmoType.M_TELE;
+
+        return ammo;
+    }
+    
+    private static AmmoType createAR10WhiteSharkTAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AR10 White Shark-T Ammo";
+        ammo.setInternalName("Ammo AR10 White Shark-T");
+        ammo.addLookupName("AR10 WhiteSharkT Ammo");
+        ammo.damagePerShot = 3;
+        ammo.ammoType = AmmoType.T_AR10;
+        ammo.shots = 1;
+        ammo.bv = 72;
+        ammo.cost = 14000;
+        ammo.flags |=  F_AR10_WHITE_SHARK | F_TELE_MISSILE;
+        ammo.capital = true;
+        ammo.munitionType = AmmoType.M_TELE;
 
         return ammo;
     }

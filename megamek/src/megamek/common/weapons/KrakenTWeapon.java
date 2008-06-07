@@ -17,7 +17,11 @@
 package megamek.common.weapons;
 
 import megamek.common.AmmoType;
+import megamek.common.IGame;
 import megamek.common.TechConstants;
+import megamek.common.ToHitData;
+import megamek.common.actions.WeaponAttackAction;
+import megamek.server.Server;
 
 /**
  * @author Jay Lawson
@@ -39,7 +43,7 @@ public class KrakenTWeapon extends CapitalMissileWeapon {
         this.addLookupName("KrakenT");
         this.heat = 50;
         this.damage = 10;
-        this.ammoType = AmmoType.T_KRAKEN;
+        this.ammoType = AmmoType.T_KRAKEN_T;
         this.shortRange = 11;
         this.mediumRange = 22;
         this.longRange = 34;
@@ -52,5 +56,17 @@ public class KrakenTWeapon extends CapitalMissileWeapon {
         this.longAV = 10;
         this.extAV =10;
         this.maxRange = RANGE_EXT;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
+     *      megamek.common.actions.WeaponAttackAction, megamek.common.IGame,
+     *      megamek.server.Server)
+     */
+    protected AttackHandler getCorrectHandler(ToHitData toHit,
+            WeaponAttackAction waa, IGame game, Server server) {
+        return new KrakenTHandler(toHit, waa, game, server);
     }
 }

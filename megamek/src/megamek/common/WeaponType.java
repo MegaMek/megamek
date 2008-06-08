@@ -763,6 +763,9 @@ public class WeaponType extends EquipmentType {
         addType(new BarracudaWeapon());
         addType(new WhiteSharkWeapon());
         addType(new KillerWhaleWeapon());
+        addType(new BarracudaTWeapon());
+        addType(new WhiteSharkTWeapon());
+        addType(new KillerWhaleTWeapon());
         addType(new KrakenTWeapon());
         addType(new AR10Weapon());
         addType(new ScreenLauncherWeapon());

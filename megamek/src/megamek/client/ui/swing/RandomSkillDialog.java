@@ -27,9 +27,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.Enumeration;
-import java.util.Iterator;
-
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -37,6 +34,7 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 
 import megamek.client.Client;
 import megamek.common.Compute;
@@ -54,35 +52,35 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
     private Client client;
     private ClientGUI clientgui;
 
-    private JPanel panButtons = new JPanel();
-    private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private final JPanel panButtons = new JPanel();
+    private final JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
+    private final JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
-    private JLabel labelMethod = new JLabel(Messages
-            .getString("RandomSkillDialog.labelMethod"), JLabel.RIGHT); //$NON-NLS-1$
-    private JComboBox chMethod = new JComboBox();
-    private JLabel labelType = new JLabel(Messages
-            .getString("RandomSkillDialog.labelType"), JLabel.RIGHT); //$NON-NLS-1$
-    private JComboBox chType = new JComboBox();
-    private JLabel labelLevel = new JLabel(Messages
-            .getString("RandomSkillDialog.labelLevel"), JLabel.RIGHT); //$NON-NLS-1$
-    private JComboBox chLevel = new JComboBox();
+    private final JLabel labelMethod = new JLabel(Messages
+            .getString("RandomSkillDialog.labelMethod"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private final JComboBox chMethod = new JComboBox();
+    private final JLabel labelType = new JLabel(Messages
+            .getString("RandomSkillDialog.labelType"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private final JComboBox chType = new JComboBox();
+    private final JLabel labelLevel = new JLabel(Messages
+            .getString("RandomSkillDialog.labelLevel"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private final JComboBox chLevel = new JComboBox();
 
-    private JLabel labelPlayer = new JLabel(Messages
-            .getString("MechSelectorDialog.m_labelPlayer"), JLabel.RIGHT); //$NON-NLS-1$
-    private JComboBox chPlayer = new JComboBox();
+    private final JLabel labelPlayer = new JLabel(Messages
+            .getString("MechSelectorDialog.m_labelPlayer"), SwingConstants.RIGHT); //$NON-NLS-1$
+    private final JComboBox chPlayer = new JComboBox();
 
-    private JTextArea texDesc = new JTextArea(Messages
+    private final JTextArea texDesc = new JTextArea(Messages
             .getString("CustomMechDialog.texDesc"), 3, 35); //$NON-NLS-1$
 
-    private JCheckBox cForceClose = new JCheckBox(Messages
+    private final JCheckBox cForceClose = new JCheckBox(Messages
             .getString("RandomSkillDialog.cForceClose"));
 
     /** Creates a new instance of StartingPositionDialog */
     public RandomSkillDialog(ClientGUI clientgui) {
         super(clientgui.frame,
                 Messages.getString("RandomSkillDialog.title"), true); //$NON-NLS-1$
-        this.client = clientgui.getClient();
+        client = clientgui.getClient();
         this.clientgui = clientgui;
 
         updatePlayerChoice();
@@ -117,9 +115,9 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         setupButtons();
 
         // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        this.setLayout(gridbag);
+        final GridBagLayout gridbag = new GridBagLayout();
+        final GridBagConstraints c = new GridBagConstraints();
+        setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(4, 4, 4, 4);
@@ -170,6 +168,7 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         this.add(panButtons);
 
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -189,8 +188,8 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
         butCancel.addActionListener(this);
 
         // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
+        final GridBagLayout gridbag = new GridBagLayout();
+        final GridBagConstraints c = new GridBagConstraints();
         panButtons.setLayout(gridbag);
 
         c.insets = new Insets(5, 5, 0, 0);
@@ -219,23 +218,24 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
     }
 
     private void updatePlayerChoice() {
-        String lastChoice = (String) chPlayer.getSelectedItem();
-        String clientName = clientgui.getClient().getName();
+        final String lastChoice = (String) chPlayer.getSelectedItem();
+        final String clientName = clientgui.getClient().getName();
         chPlayer.removeAllItems();
         chPlayer.setEnabled(true);
         chPlayer.addItem(clientName);
-        for (Iterator<Client> i = clientgui.getBots().values().iterator(); i
-                .hasNext();) {
-            chPlayer.addItem(i.next().getName());
-        }
+        for (final Client client2 : clientgui.getBots().values()) {
+         chPlayer.addItem(client2.getName());
+      }
         if (chPlayer.getItemCount() == 1) {
             chPlayer.setEnabled(false);
         }
         chPlayer.setSelectedItem(lastChoice);
-        if (chPlayer.getSelectedIndex() < 0)
+        if (chPlayer.getSelectedIndex() < 0) {
             chPlayer.setSelectedIndex(0);
+        }
     }
 
+    @Override
     public void setVisible(boolean show) {
         if (show) {
             updatePlayerChoice();
@@ -249,17 +249,15 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
             // skill levels
             Client c = null;
             if (chPlayer.getSelectedIndex() > 0) {
-                String name = (String) chPlayer.getSelectedItem();
+                final String name = (String) chPlayer.getSelectedItem();
                 c = clientgui.getBots().get(name);
             }
             if (c == null) {
                 c = client;
             }
-            for (Enumeration<Entity> e = c.game.getEntities(); e
-                    .hasMoreElements();) {
-                Entity ent = e.nextElement();
+            for (final Entity ent : c.game.getEntities()) {
                 if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
-                    int skills[] = Compute.getRandomSkills(chMethod
+                    final int skills[] = Compute.getRandomSkills(chMethod
                             .getSelectedIndex(), chType.getSelectedIndex(),
                             chLevel.getSelectedIndex(), ent instanceof Tank
                                     || ent instanceof VTOL);
@@ -277,10 +275,10 @@ public class RandomSkillDialog extends JDialog implements ActionListener,
             clientgui.chatlounge.refreshEntities();
             // need to notify about customization
             // not updating entities in server
-            this.setVisible(false);
+            setVisible(false);
         }
         if (ev.getSource() == butCancel) {
-            this.setVisible(false);
+            setVisible(false);
         }
     }
 

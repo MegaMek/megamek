@@ -55,7 +55,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
      */
     private static final long serialVersionUID = -430925219438520710L;
     // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
+    private final DistractableAdapter distracted = new DistractableAdapter();
     // Action command names
     public static final String DEPLOY_TURN = "deployTurn"; //$NON-NLS-1$
     public static final String DEPLOY_NEXT = "deployNext"; //$NON-NLS-1$
@@ -148,8 +148,8 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         // panButtons.add(butDone);
 
         // layout screen
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
+        final GridBagLayout gridbag = new GridBagLayout();
+        final GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
         c.fill = GridBagConstraints.BOTH;
         c.weightx = 1.0;
@@ -271,7 +271,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         clientgui.setDisplayVisible(true);
         selectEntity(client.getFirstDeployableEntityNum());
         setNextEnabled(true);
-        Player p = client.getLocalPlayer();
+        final Player p = client.getLocalPlayer();
         // mark deployment hexes
         clientgui.bv.markDeploymentHexesFor(p);
         clientgui.bv.repaint(100);
@@ -283,7 +283,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     private void endMyTurn() {
         // end my turn, then.
         disableButtons();
-        Entity next = client.game.getNextEntity(client.game.getTurnIndex());
+        final Entity next = client.game.getNextEntity(client.game.getTurnIndex());
         if (IGame.Phase.PHASE_DEPLOYMENT == client.game.getPhase() && null != next
                 && null != ce() && next.getOwnerId() != ce().getOwnerId()) {
             clientgui.setDisplayVisible(false);
@@ -312,7 +312,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
      */
     private void deploy() {
         disableButtons();
-        Entity en = ce();
+        final Entity en = ce();
         client.deploy(cen, en.getPosition(), en.getFacing(), en
                 .getLoadedUnits(), assaultDropPreference);
         en.setDeployed(true);
@@ -344,6 +344,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         removeAll();
     }
 
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -361,8 +362,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
-        DeploymentDisplay.this.clientgui.bv.markDeploymentHexesFor(null);
+        clientgui.bv.markDeploymentHexesFor(null);
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
@@ -376,6 +378,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     //
     // BoardListener
     //
+    @Override
     public void hexMoused(BoardViewEvent b) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
@@ -399,10 +402,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         }
 
         // check for shifty goodness
-        boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
+        final boolean shiftheld = (b.getModifiers() & InputEvent.SHIFT_MASK) != 0;
 
         // check for a deployment
-        Coords moveto = b.getCoords();
+        final Coords moveto = b.getCoords();
         if (ce().getPosition() != null && (shiftheld || turnMode)) { // turn
             ce().setFacing(ce().getPosition().direction(moveto));
             ce().setSecondaryFacing(ce().getFacing());
@@ -410,7 +413,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             turnMode = false;
         } else if(ce().isBoardProhibited(client.game.getBoard().getType())) {
             //check if this type of unit can be on the given type of map
-            AlertDialog dlg = new AlertDialog(clientgui.frame,
+            final AlertDialog dlg = new AlertDialog(clientgui.frame,
                     Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
                     Messages
                             .getString(
@@ -426,7 +429,7 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                             Messages
                                     .getString(
                                             "DeploymentDisplay.cantDeployInto", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
-                            , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                            , JOptionPane.ERROR_MESSAGE); 
             return;
         } else if (Compute.stackingViolation(client.game, ce().getId(), moveto) != null) {
             // check if deployed unit violates stacking
@@ -447,8 +450,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         if (isIgnoringEvents()) {
             return;
         }
-        if (statusBarActionPerformed(ev, client))
+        if (statusBarActionPerformed(ev, client)) {
             return;
+        }
         if (!client.isMyTurn()) {
             // odd...
             return;
@@ -459,9 +463,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             ce().setPosition(null);
             clientgui.bv.redrawEntity(ce());
             // Unload any loaded units.
-            Enumeration<Entity> iter = ce().getLoadedUnits().elements();
+            final Enumeration<Entity> iter = ce().getLoadedUnits().elements();
             while (iter.hasMoreElements()) {
-                Entity other = iter.nextElement();
+                final Entity other = iter.nextElement();
                 // Please note, the Server never got this unit's load orders.
                 ce().unload(other);
                 other.setTransportId(Entity.NONE);
@@ -472,11 +476,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             turnMode = true;
         } else if (ev.getActionCommand().equals(DEPLOY_LOAD)) {
             // What undeployed units can we load?
-            Vector<Entity> choices = new Vector<Entity>();
-            Enumeration<Entity> entities = client.game.getEntities();
+            final Vector<Entity> choices = new Vector<Entity>();
             Entity other;
-            while (entities.hasMoreElements()) {
-                other = entities.nextElement();
+            for (final Entity entity : client.game.getEntities()) {
+                other = entity;
                 if (other.isSelectableThisTurn() && ce().canLoad(other)) {
                     choices.addElement(other);
                 }
@@ -484,11 +487,11 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
 
             // Do we have anyone to load?
             if (choices.size() > 0) {
-                String[] names = new String[choices.size()];
+                final String[] names = new String[choices.size()];
                 for (int loop = 0; loop < names.length; loop++) {
                     names[loop] = choices.elementAt(loop).getShortName();
                 }
-                SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
+                final SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
                         clientgui.frame,
                         Messages
                                 .getString("DeploymentDisplay.loadUnitDialog.title"), //$NON-NLS-1$
@@ -512,19 +515,19 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                                 Messages
                                         .getString(
                                                 "DeploymentDisplay.allertDialog1.message", new Object[] { ce().getShortName() }), Messages.getString("DeploymentDisplay.allertDialog1.title") //$NON-NLS-1$
-                                , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+                                , JOptionPane.ERROR_MESSAGE); 
             }
         } // End load-unit
         else if (ev.getActionCommand().equals(DEPLOY_UNLOAD)) {
             // Do we have anyone to unload?
-            Vector<Entity> choices = ce().getLoadedUnits();
+            final Vector<Entity> choices = ce().getLoadedUnits();
             if (choices.size() > 0) {
                 Entity other = null;
-                String[] names = new String[choices.size()];
+                final String[] names = new String[choices.size()];
                 for (int loop = 0; loop < names.length; loop++) {
                     names[loop] = choices.elementAt(loop).getShortName();
                 }
-                SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
+                final SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
                         clientgui.frame,
                         Messages
                                 .getString("DeploymentDisplay.unloadUnitDialog.title"), //$NON-NLS-1$
@@ -585,16 +588,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
     //
     // BoardViewListener
     //
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
     }
 
     // Selected a unit in the unit overview.
+    @Override
     public void unitSelected(BoardViewEvent b) {
         // Are we ignoring events?
         if (isIgnoringEvents()) {
             return;
         }
-        Entity e = client.game.getEntity(b.getEntityId());
+        final Entity e = client.game.getEntity(b.getEntityId());
         if (null == e) {
             return;
         }
@@ -604,9 +609,9 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                     ce().setPosition(null);
                     clientgui.bv.redrawEntity(ce());
                     // Unload any loaded units.
-                    Enumeration<Entity> iter = ce().getLoadedUnits().elements();
+                    final Enumeration<Entity> iter = ce().getLoadedUnits().elements();
                     while (iter.hasMoreElements()) {
-                        Entity other = iter.nextElement();
+                        final Entity other = iter.nextElement();
                         // Please note, the Server never got this unit's load
                         // orders.
                         ce().unload(other);

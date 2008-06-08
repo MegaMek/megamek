@@ -14,7 +14,6 @@
 
 package megamek.client.bot;
 
-import java.util.Enumeration;
 import java.util.Iterator;
 
 import megamek.common.BattleArmor;
@@ -46,11 +45,11 @@ public final class PhysicalCalculator {
 
     static PhysicalOption calculatePhysicalTurn(TestBot bot) {
         int entNum = bot.game.getFirstEntityNum();
-        int first = entNum;
+        final int first = entNum;
         do {
             // take the first entity that can do an attack
-            Entity en = bot.game.getEntity(entNum);
-            PhysicalOption bestAttack = getBestPhysical(en, bot.game);
+            final Entity en = bot.game.getEntity(entNum);
+            final PhysicalOption bestAttack = getBestPhysical(en, bot.game);
 
             if (bestAttack != null) {
 
@@ -275,27 +274,30 @@ public final class PhysicalCalculator {
             }
         }
 
-        for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
-            Entity target = e.nextElement();
+        for (final Entity target : game.getEntities()) {
+            if (target.equals(entity)) {
+                continue;
+            }
+            if (!target.isEnemyOf(entity)) {
+                continue;
+            }
+            if (target.getPosition() == null) {
+                continue;
+            }
+            if (Compute.effectiveDistance(game, entity, target) > 1) {
+                continue;
+            }
 
-            if (target.equals(entity))
-                continue;
-            if (!target.isEnemyOf(entity))
-                continue;
-            if (target.getPosition() == null)
-                continue;
-            if (Compute.effectiveDistance(game, entity, target) > 1)
-                continue;
-
-            PhysicalOption one = getBestPhysicalAttack(entity, target, game);
+            final PhysicalOption one = getBestPhysicalAttack(entity, target, game);
             if (one != null) {
                 if (best == null || one.expectedDmg > best.expectedDmg) {
                     best = one;
                 }
             }
         }
-        if (best == null)
+        if (best == null) {
             best = new PhysicalOption(entity);
+        }
         return best;
     }
 
@@ -368,14 +370,14 @@ public final class PhysicalCalculator {
         // Check for a double punch
         odds = PunchAttackAction.toHit(game, from.getId(), to,
                 PunchAttackAction.LEFT);
-        ToHitData odds_a = PunchAttackAction.toHit(game, from.getId(), to,
+        final ToHitData odds_a = PunchAttackAction.toHit(game, from.getId(), to,
                 PunchAttackAction.RIGHT);
         if (odds.getValue() != TargetRoll.IMPOSSIBLE
                 && odds_a.getValue() != TargetRoll.IMPOSSIBLE) {
             damage = PunchAttackAction.getDamageFor(from,
                     PunchAttackAction.LEFT, targetConvInfantry);
             dmg = Compute.oddsAbove(odds.getValue()) / 100.0 * damage;
-            double dmg_a = Compute.oddsAbove(odds_a.getValue()) / 100.0
+            final double dmg_a = Compute.oddsAbove(odds_a.getValue()) / 100.0
                     * damage;
             dmg += dmg_a;
             dmg *= punchThroughMod(to, location_table, target_arc, dmg,
@@ -417,7 +419,7 @@ public final class PhysicalCalculator {
         }
 
         // Check for mounted club-type weapon or carried improvised club
-        for (Mounted club : from.getClubs()) {
+        for (final Mounted club : from.getClubs()) {
             // If the target is a Mech, must determine if it hits full body,
             // punch, or kick table
             if (to instanceof Mech) {
@@ -457,8 +459,8 @@ public final class PhysicalCalculator {
             double breach;
             boolean water_landing = false;
             dmg = 0.0;
-            int disp_dir = from.getPosition().direction(to.getPosition());
-            Coords disp_c = to.getPosition().translated(disp_dir);
+            final int disp_dir = from.getPosition().direction(to.getPosition());
+            final Coords disp_c = to.getPosition().translated(disp_dir);
             // If the displacement hex is a valid one
             if (Compute.isValidDisplacement(game, to.getId(), to.getPosition(),
                     disp_c)) {
@@ -543,7 +545,7 @@ public final class PhysicalCalculator {
 
         // Conventional infantry in the open suffer double damage.
         if (to instanceof Infantry && !(to instanceof BattleArmor)) {
-            IHex e_hex = game.getBoard().getHex(to.getPosition());
+            final IHex e_hex = game.getBoard().getHex(to.getPosition());
             if (!e_hex.containsTerrain(Terrains.WOODS)
                     && !e_hex.containsTerrain(Terrains.BUILDING)) {
                 bestDmg *= 2.0;
@@ -577,7 +579,7 @@ public final class PhysicalCalculator {
         double coll_damage = 0.0;
         int damage;
         boolean targetConvInfantry = false;
-        ToHitData odds = KickAttackAction.toHit(game, from.getId(), to, action);
+        final ToHitData odds = KickAttackAction.toHit(game, from.getId(), to, action);
         if (odds.getValue() == TargetRoll.IMPOSSIBLE) {
             return 0.0;
         }
@@ -625,7 +627,7 @@ public final class PhysicalCalculator {
     private static double punchThroughMod(Entity target, int hitTable,
             int hitSide, double damage, double group) {
 
-        int[] armor_values = new int[8];
+        final int[] armor_values = new int[8];
         int max_index = 1;
         armor_values[0] = 0;
 
@@ -636,8 +638,9 @@ public final class PhysicalCalculator {
         // single hit)
         double base_multiplier = 0.5;
 
-        if (damage <= 0.0 || group <= 0.0)
+        if (damage <= 0.0 || group <= 0.0) {
             return final_multiplier;
+        }
 
         // If the target is a Mech
         if (target instanceof Mech) {

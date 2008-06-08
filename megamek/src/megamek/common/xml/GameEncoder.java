@@ -19,6 +19,7 @@ import gd.xml.tiny.ParsedXML;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Enumeration;
+import java.util.Iterator;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -84,7 +85,7 @@ public class GameEncoder {
             out.write("<minefields>");
             while (iter.hasMoreElements()) {
                 coords = (Coords) iter.nextElement();
-                Enumeration fields = game.getMinefields(coords).elements();
+                final Enumeration fields = game.getMinefields(coords).elements();
                 while (fields.hasMoreElements()) {
                     MinefieldEncoder.encode((Minefield) fields.nextElement(),
                             out);
@@ -114,21 +115,21 @@ public class GameEncoder {
         }
 
         // Encode the in-game entities.
-        iter = game.getEntities();
-        if (iter.hasMoreElements()) {
+        Iterator<Entity> iter2 = game.getEntities().iterator();
+        if (iter2.hasNext()) {
             out.write("<entities set=\"IN-GAME\">");
-            while (iter.hasMoreElements()) {
-                EntityEncoder.encode((Entity) iter.nextElement(), out);
+            while (iter2.hasNext()) {
+                EntityEncoder.encode(iter2.next(), out);
             }
             out.write("</entities>");
         }
 
         // Encode the out-of-game entities.
-        iter = game.getOutOfGameEntitiesVector().elements();
-        if (iter.hasMoreElements()) {
+        iter2 = game.getOutOfGameEntities().iterator();
+        if (iter2.hasNext()) {
             out.write("<entities set=\"OUT-GAME\">");
-            while (iter.hasMoreElements()) {
-                EntityEncoder.encode((Entity) iter.nextElement(), out);
+            while (iter2.hasNext()) {
+                EntityEncoder.encode(iter2.next(), out);
             }
             out.write("</entities>");
         }

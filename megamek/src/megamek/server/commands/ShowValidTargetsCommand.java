@@ -1,7 +1,5 @@
 package megamek.server.commands;
 
-import java.util.Vector;
-
 import megamek.common.Entity;
 import megamek.common.LosEffects;
 import megamek.common.TargetRoll;
@@ -20,19 +18,15 @@ public class ShowValidTargetsCommand extends ServerCommand {
     @Override
     public void run(int connId, String[] args) {
         try {
-            int id = Integer.parseInt(args[1]);
-            Entity ent = server.getGame().getEntity(id);
+            final int id = Integer.parseInt(args[1]);
+            final Entity ent = server.getGame().getEntity(id);
 
             if (ent != null) {
                 String str = "No valid targets.";
                 boolean canHit = false;
                 ToHitData thd;
 
-                Vector<Entity> entList = server.getGame().getValidTargets(ent);
-                Entity target;
-
-                for (int i = 0; i < entList.size(); i++) {
-                    target = entList.get(i);
+                for (final Entity target : server.getGame().getValidTargets(ent)) {
                     thd = LosEffects.calculateLos(server.getGame(), id, target)
                             .losModifiers(server.getGame());
                     if (thd.getValue() != TargetRoll.IMPOSSIBLE) {
@@ -43,11 +37,11 @@ public class ShowValidTargetsCommand extends ServerCommand {
                                     + ") can shoot the following entities: \n";
                             canHit = true;
                         }
-                        str = str + entList.get(i).getId()
+                        str = str + target.getId()
                                 + " at a to hit penalty of ";
                         str = str
                                 + thd.getValue()
-                                + ", at range " + ent.getPosition().distance(entList.get(i).getPosition()) + thd.getTableDesc() + ";\n"; //$NON-NLS-1$
+                                + ", at range " + ent.getPosition().distance(target.getPosition()) + thd.getTableDesc() + ";\n"; //$NON-NLS-1$
                     }
 
                 }
@@ -56,9 +50,9 @@ public class ShowValidTargetsCommand extends ServerCommand {
             } else {
                 server.sendServerChat(connId, "No such entity.");
             }
-        } catch (NumberFormatException nfe) {
-        } catch (NullPointerException npe) {
-        } catch (IndexOutOfBoundsException ioobe) {
+        } catch (final NumberFormatException nfe) {
+        } catch (final NullPointerException npe) {
+        } catch (final IndexOutOfBoundsException ioobe) {
         }
     }
 }

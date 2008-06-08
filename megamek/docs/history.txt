@@ -35,6 +35,7 @@ v0.33.27-dev (SVN)
 + FIXED: name of Killer Whale-T
 + Data 1981770: ASF
 + Data 1981757: Warships
++ Data 1981764: Jumpships
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

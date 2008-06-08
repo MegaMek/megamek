@@ -38,6 +38,7 @@ v0.33.27-dev (SVN)
 + Data 1981764: Jumpships
 + Fixed: tele-missile weapon launchers not being created
 + Data 1981763: Dropships
++ improved icons for Cheetah and Seydlitz
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

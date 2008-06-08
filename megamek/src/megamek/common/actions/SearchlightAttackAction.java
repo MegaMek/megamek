@@ -54,31 +54,26 @@ public class SearchlightAttackAction extends AbstractAttackAction {
     public static boolean isPossible(IGame game, int attackerId,
             Targetable target, SearchlightAttackAction exempt) {
         final Entity attacker = game.getEntity(attackerId);
-        if (attacker == null || !attacker.isUsingSpotlight() || target == null) {
+        if (attacker == null || !attacker.isUsingSpotlight() || target == null)
             return false;
-        }
-        if (attacker instanceof Tank && ((Tank)attacker).getStunnedTurns() > 0) {
+        if (attacker instanceof Tank && ((Tank)attacker).getStunnedTurns() > 0)
             return false;
-        }
         if (!Compute.isInArc(attacker.getPosition(), attacker
                 .getSecondaryFacing(), target.getPosition(),
-                Compute.ARC_FORWARD)) {
+                Compute.ARC_FORWARD))
             return false;
-        }
-        for (final Enumeration<EntityAction> actions = game.getActions(); actions
+        for (Enumeration<EntityAction> actions = game.getActions(); actions
                 .hasMoreElements();) {
-            final EntityAction action = actions.nextElement();
+            EntityAction action = actions.nextElement();
             if (action instanceof SearchlightAttackAction) {
-                final SearchlightAttackAction act = (SearchlightAttackAction) action;
-                if (act == exempt) {
+                SearchlightAttackAction act = (SearchlightAttackAction) action;
+                if (act == exempt)
                     break; // 1st in list is OK
-                }
-                if (act.getEntityId() == attackerId) {
+                if (act.getEntityId() == attackerId)
                     return false; // can only declare searchlight once!
-                }
             }
         }
-        final LosEffects los = LosEffects.calculateLos(game, attackerId, target);
+        LosEffects los = LosEffects.calculateLos(game, attackerId, target);
         return los.canSee();
     }
 
@@ -86,11 +81,11 @@ public class SearchlightAttackAction extends AbstractAttackAction {
      * illuminate an entity and all entities that are between us and the hex
      */
     public Vector<Report> resolveAction(IGame game) {
-        final Vector<Report> reports = new Vector<Report>();
+        Vector<Report> reports = new Vector<Report>();
         Report r;
         if (!isPossible(game)) {
             r = new Report(3445);
-            r.subject = getEntityId();
+            r.subject = this.getEntityId();
             r.newlines = 1;
             reports.addElement(r);
             return reports;
@@ -102,7 +97,7 @@ public class SearchlightAttackAction extends AbstractAttackAction {
 
         if (attacker.usedSearchlight()) {
             r = new Report(3450);
-            r.subject = getEntityId();
+            r.subject = this.getEntityId();
             r.add(attacker.getDisplayName());
             r.newlines = 1;
             reports.addElement(r);
@@ -110,17 +105,19 @@ public class SearchlightAttackAction extends AbstractAttackAction {
         }
         attacker.setUsedSearchlight(true);
 
-        final ArrayList<Coords> in = Coords.intervening(apos, tpos); // nb includes
+        ArrayList<Coords> in = Coords.intervening(apos, tpos); // nb includes
                                                                 // attacker &
                                                                 // target
-        for (final Coords c : in) {
-            for (final Entity en : game.getEntities(c)) {
-                final LosEffects los = LosEffects.calculateLos(game, getEntityId(),
+        for (Coords c : in) {
+            for (Enumeration<Entity> e = game.getEntities(c); e
+                    .hasMoreElements();) {
+                Entity en = e.nextElement();
+                LosEffects los = LosEffects.calculateLos(game, getEntityId(),
                         en);
                 if (los.canSee()) {
                     en.setIlluminated(true);
                     r = new Report(3455);
-                    r.subject = getEntityId();
+                    r.subject = this.getEntityId();
                     r.newlines = 1;
                     r.add(en.getDisplayName());
                     r.add(attacker.getDisplayName());
@@ -132,24 +129,24 @@ public class SearchlightAttackAction extends AbstractAttackAction {
     }
 
     public boolean willIlluminate(IGame game, Entity who) {
-        if (!isPossible(game)) {
+        if (!isPossible(game))
             return false;
-        }
         final Entity attacker = getEntity(game);
         final Coords apos = attacker.getPosition();
         final Targetable target = getTarget(game);
         final Coords tpos = target.getPosition();
 
-        final ArrayList<Coords> in = Coords.intervening(apos, tpos); // nb includes
+        ArrayList<Coords> in = Coords.intervening(apos, tpos); // nb includes
                                                                 // attacker &
                                                                 // target
-        for (final Coords c : in) {
-            for (final Entity en : game.getEntities(c)) {
-                final LosEffects los = LosEffects.calculateLos(game, getEntityId(),
+        for (Coords c : in) {
+            for (Enumeration<Entity> e = game.getEntities(c); e
+                    .hasMoreElements();) {
+                Entity en = e.nextElement();
+                LosEffects los = LosEffects.calculateLos(game, getEntityId(),
                         en);
-                if (los.canSee() && en.equals(who)) {
+                if (los.canSee() && en.equals(who))
                     return true;
-                }
             }
         }
         return false;

@@ -3,6 +3,8 @@
  */
 package megamek.client.commands;
 
+import java.util.Enumeration;
+
 import megamek.client.Client;
 import megamek.common.Entity;
 
@@ -36,15 +38,17 @@ public class ShowEntityCommand extends ClientCommand {
         }
         if (args.length == 1) {
             String list = "List of all entities.\n";
-            for (final Entity ent : client.getEntities()) {
+            Enumeration<Entity> entities = client.getEntities();
+            while (entities.hasMoreElements()) {
+                Entity ent = entities.nextElement();
                 list += ent.getId() + " " + ent.getOwner().getName() + "'s "
                         + ent.getDisplayName() + "\n";
             }
             return list;
         }
         try {
-            final int id = Integer.parseInt(args[1]);
-            final Entity ent = client.getEntity(id);
+            int id = Integer.parseInt(args[1]);
+            Entity ent = client.getEntity(id);
 
             if (ent != null) {
                 if (args.length > 2) {
@@ -55,11 +59,12 @@ public class ShowEntityCommand extends ClientCommand {
                     return str;
                 }
                 return ent.statusToString();
+            } else {
+                return "No such entity.";
             }
-            return "No such entity.";
-        } catch (final NumberFormatException nfe) {
-        } catch (final NullPointerException npe) {
-        } catch (final IndexOutOfBoundsException ioobe) {
+        } catch (NumberFormatException nfe) {
+        } catch (NullPointerException npe) {
+        } catch (IndexOutOfBoundsException ioobe) {
         }
 
         return "Error parsing the command.";

@@ -29,7 +29,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Enumeration;
-import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -59,14 +58,14 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
     private Client client;
     private ClientGUI clientgui;
 
-    private final JPanel panButtons = new JPanel();
-    private final JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
-    private final JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
+    private JPanel panButtons = new JPanel();
+    private JButton butOkay = new JButton(Messages.getString("Okay")); //$NON-NLS-1$
+    private JButton butCancel = new JButton(Messages.getString("Cancel")); //$NON-NLS-1$
 
-    private final JPanel panStartButtons = new JPanel();
-    private final JButton[] butStartPos = new JButton[11];
+    private JPanel panStartButtons = new JPanel();
+    private JButton[] butStartPos = new JButton[11];
 
-    private final JList lisStartList = new JList(new DefaultListModel());
+    private JList lisStartList = new JList(new DefaultListModel());
 
     /**
      * Creates a new instance of StartingPositionDialog
@@ -83,8 +82,8 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         setupButtons();
 
         // layout
-        final GridBagLayout gridbag = new GridBagLayout();
-        final GridBagConstraints c = new GridBagConstraints();
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
         getContentPane().setLayout(gridbag);
 
         c.fill = GridBagConstraints.VERTICAL;
@@ -97,7 +96,7 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         c.weighty = 1.0;
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        final JScrollPane sp = new JScrollPane(lisStartList);
+        JScrollPane sp = new JScrollPane(lisStartList);
         gridbag.setConstraints(sp, c);
         getContentPane().add(sp);
 
@@ -106,7 +105,6 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         getContentPane().add(panButtons);
 
         addWindowListener(new WindowAdapter() {
-            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -146,8 +144,8 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
         butCancel.addActionListener(this);
 
         // layout
-        final GridBagLayout gridbag = new GridBagLayout();
-        final GridBagConstraints c = new GridBagConstraints();
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
         panButtons.setLayout(gridbag);
 
         c.insets = new Insets(5, 5, 0, 0);
@@ -167,10 +165,10 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
 
     public void update() {
         ((DefaultListModel) lisStartList.getModel()).removeAllElements();
-        for (final Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
-            final Player player = i.nextElement();
+        for (Enumeration<Player> i = client.getPlayers(); i.hasMoreElements();) {
+            Player player = i.nextElement();
             if (player != null) {
-                final StringBuffer ssb = new StringBuffer();
+                StringBuffer ssb = new StringBuffer();
                 ssb.append(player.getName()).append(" : "); //$NON-NLS-1$
                 ssb.append(IStartingPositions.START_LOCATION_NAMES[player
                         .getStartingPos()]);
@@ -192,9 +190,9 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                                         "In Double Blind play, you cannot choose 'Any' as starting position.");
                         return;
                     }
-                    for (final Enumeration<Player> e = client.game.getPlayers(); e
+                    for (Enumeration<Player> e = client.game.getPlayers(); e
                             .hasMoreElements();) {
-                        final Player player = e.nextElement();
+                        Player player = e.nextElement();
                         if (player.getStartingPos() == 0) {
                             continue;
                         }
@@ -213,9 +211,8 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                     }
                 }
                 if (client.game.getOptions().booleanOption("deep_deployment")
-                        && i > 0 && i <= 9) {
+                        && i > 0 && i <= 9)
                     i += 10;
-                }
                 client.getLocalPlayer().setStartingPos(i);
                 client.sendPlayerInfo();
                 // If the gameoption set_arty_player_homeedge is set,
@@ -262,17 +259,17 @@ public class StartingPositionDialog extends JDialog implements ActionListener {
                             break;
                         default:
                     }
-                    final List<Entity> thisPlayerArtyUnits = client.game
+                    Enumeration<Entity> thisPlayerArtyUnits = client.game
                             .getSelectedEntities(new EntitySelector() {
                                 public boolean accept(Entity entity) {
                                     if (entity.getOwnerId() == client
-                                            .getLocalPlayer().getId()) {
+                                            .getLocalPlayer().getId())
                                         return true;
-                                    }
                                     return false;
                                 }
                             });
-                    for (final Entity entity : thisPlayerArtyUnits) {
+                    while (thisPlayerArtyUnits.hasMoreElements()) {
+                        Entity entity = thisPlayerArtyUnits.nextElement();
                         if (entity.getOffBoardDirection() != IOffBoardDirections.NONE) {
                             if (direction > IOffBoardDirections.NONE) {
                                 entity.setOffBoard(entity.getOffBoardDistance(),

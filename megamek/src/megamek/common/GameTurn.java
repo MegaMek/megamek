@@ -22,7 +22,7 @@
 package megamek.common;
 
 import java.io.Serializable;
-import java.util.List;
+import java.util.Enumeration;
 
 /**
  * Represents a single turn within a phase of the game, where a specific player
@@ -102,10 +102,10 @@ public class GameTurn implements Serializable {
                 // This next bit enforces the "A players Infantry/Protos
                 // move after that players other units" options.
                 && !(game.getPhase() == IGame.Phase.PHASE_MOVEMENT
-                        && (entity instanceof Infantry && game.getOptions()
-                                .booleanOption("inf_move_later") || entity instanceof Protomech && game
+                        && ((entity instanceof Infantry && game.getOptions()
+                                .booleanOption("inf_move_later")) || (entity instanceof Protomech && game
                                 .getOptions()
-                                .booleanOption("protos_move_later")) && game
+                                .booleanOption("protos_move_later"))) && game
                         .checkForValidNonInfantryAndOrProtomechs(playerId));
     }
 
@@ -123,7 +123,6 @@ public class GameTurn implements Serializable {
         return playerId == this.playerId;
     }
 
-    @Override
     public String toString() {
         return getClass().getName() + " [" + playerId + "]";
     }
@@ -155,7 +154,6 @@ public class GameTurn implements Serializable {
          * Returns true if the entity is normally valid and it is the specific
          * entity that can move this turn.
          */
-        @Override
         public boolean isValidEntity(Entity entity, IGame game) {
             return super.isValidEntity(entity, game)
                     && entity.getId() == entityId;
@@ -181,7 +179,6 @@ public class GameTurn implements Serializable {
          * Returns true if the entity matches this game turn, even if the entity
          * has declared an action.
          */
-        @Override
         public boolean isValidEntity(Entity entity, IGame game) {
             final boolean oldDone = entity.done;
             entity.done = false;
@@ -210,7 +207,6 @@ public class GameTurn implements Serializable {
          * Returns true if the entity matches this game turn, even if the entity
          * has declared an action.
          */
-        @Override
         public boolean isValidEntity(Entity entity, IGame game) {
             final boolean oldDone = entity.done;
             entity.done = false;
@@ -313,7 +309,7 @@ public class GameTurn implements Serializable {
          */
         public EntityClassTurn(int playerId, int classMask) {
             super(playerId);
-            mask = classMask;
+            this.mask = classMask;
         }
 
         /**
@@ -323,11 +319,10 @@ public class GameTurn implements Serializable {
          * @param game the <code>IGame</code> the entity belongs to
          * @return <code>true</code> if the entity can be moved.
          */
-        @Override
         public boolean isValidEntity(Entity entity, IGame game) {
             // The entity must be in the mask, and pass
             // the requirements of the parent class.
-            return (GameTurn.getClassCode(entity) & mask) != 0
+            return (GameTurn.getClassCode(entity) & this.mask) != 0
                     && super.isValidEntity(entity, game);
         }
 
@@ -338,7 +333,7 @@ public class GameTurn implements Serializable {
          * @return <code>true</code> if entities of that class can move.
          */
         public boolean isValidClass(int classCode) {
-            return (classCode & mask) != 0;
+            return (classCode & this.mask) != 0;
         }
     }
 
@@ -382,8 +377,8 @@ public class GameTurn implements Serializable {
             }
 
             // Create a copy of the array to prevent any post-call shenanigans.
-            entityIds = new int[ids.length];
-            System.arraycopy(ids, 0, entityIds, 0, ids.length);
+            this.entityIds = new int[ids.length];
+            System.arraycopy(ids, 0, this.entityIds, 0, ids.length);
         }
 
         /**
@@ -396,7 +391,7 @@ public class GameTurn implements Serializable {
          *                <code>null</code> or empty value is passed for
          *                entities.
          */
-        public UnloadStrandedTurn(List<Entity> entities) {
+        public UnloadStrandedTurn(Enumeration<Entity> entities) {
             super(Player.PLAYER_NONE);
 
             // Validate input.
@@ -404,15 +399,40 @@ public class GameTurn implements Serializable {
                 throw new IllegalArgumentException(
                         "the passed enumeration of entities is null");
             }
-            if (!(entities.size() > 0)) {
+            if (!entities.hasMoreElements()) {
                 throw new IllegalArgumentException(
                         "the passed enumeration of entities is empty");
             }
-            
-            entityIds = new int[entities.size()];
-            int i = 0;
-            for (final Entity entity : entities) {
-                entityIds[i++] = entity.getId();
+
+            // Get the first entity.
+            Entity entity = entities.nextElement();
+
+            // Do we need to get more entities?
+            if (entities.hasMoreElements()) {
+
+                // It's a bit of a hack, but get the Game from the first
+                // entity, and create a temporary array that can hold the
+                // IDs of every entity in the game.
+                int[] ids = new int[entity.game.getNoOfEntities()];
+                int length = 0;
+
+                // Store the first entity's ID.
+                ids[length++] = entity.getId();
+
+                // Walk the list of remaining stranded entities.
+                while (entities.hasMoreElements()) {
+                    ids[length++] = entities.nextElement().getId();
+                }
+
+                // Create an array that just holds the stranded entity ids.
+                this.entityIds = new int[length];
+                System.arraycopy(ids, 0, this.entityIds, 0, length);
+
+            } // End have-more-stranded-entities
+            else {
+                // There was only one stranded entity.
+                this.entityIds = new int[1];
+                this.entityIds[0] = entity.getId();
             }
         }
 
@@ -423,7 +443,6 @@ public class GameTurn implements Serializable {
          * @param game the <code>IGame</code> the entity belongs to
          * @return <code>true</code> if the entity can be moved.
          */
-        @Override
         public boolean isValidEntity(Entity entity, IGame game) {
             boolean retVal = false;
             // Null entities don't need to be checked.
@@ -432,8 +451,8 @@ public class GameTurn implements Serializable {
                 // Any entity in the array is valid.
                 // N.B. Stop looking after we've found the match.
                 final int entityId = entity.getId();
-                for (int index = 0; index < entityIds.length && !retVal; index++) {
-                    if (entityId == entityIds[index]) {
+                for (int index = 0; index < this.entityIds.length && !retVal; index++) {
+                    if (entityId == this.entityIds[index]) {
                         retVal = true;
                     }
                 }
@@ -446,21 +465,19 @@ public class GameTurn implements Serializable {
         /**
          * Returns true if the player and entity are both valid.
          */
-        @Override
         public boolean isValid(int playerId, Entity entity, IGame game) {
-            return null != entity && entity.getOwnerId() == playerId && isValidEntity(
-                    entity, game);
+            return (null != entity && entity.getOwnerId() == playerId && isValidEntity(
+                    entity, game));
         }
 
         /**
          * Returns true if the player is valid.
          */
-        @Override
         public boolean isValid(int playerId, IGame game) {
             boolean retVal = false;
-            for (int index = 0; index < entityIds.length && !retVal; index++) {
-                if (game.getEntity(entityIds[index]) != null
-                        && playerId == game.getEntity(entityIds[index])
+            for (int index = 0; index < this.entityIds.length && !retVal; index++) {
+                if (game.getEntity(this.entityIds[index]) != null
+                        && playerId == game.getEntity(this.entityIds[index])
                                 .getOwnerId()) {
                     retVal = true;
                 }
@@ -468,13 +485,12 @@ public class GameTurn implements Serializable {
             return retVal;
         }
 
-        @Override
         public String toString() {
             return getClass().getName() + ", entity IDs: [" + entityIds + "]";
         }
 
         public int[] getEntityIds() {
-            return entityIds;
+            return this.entityIds;
         }
     }
 
@@ -499,17 +515,16 @@ public class GameTurn implements Serializable {
          */
         public UnitNumberTurn(int playerId, char unit) {
             super(playerId);
-            unitNumber = unit;
+            this.unitNumber = unit;
         }
 
         /**
          * Returns true if the specified entity is a valid one to use for this
          * turn.
          */
-        @Override
         public boolean isValidEntity(Entity entity, IGame game) {
-            return super.isValidEntity(entity, game) && unitNumber == entity
-                    .getUnitNumber();
+            return (super.isValidEntity(entity, game) && this.unitNumber == entity
+                    .getUnitNumber());
         }
     }
 

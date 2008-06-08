@@ -38,9 +38,9 @@ public class KillerWhaleTWeapon extends CapitalMissileWeapon {
     public KillerWhaleTWeapon() {
         super();
         this.techLevel = TechConstants.T_IS_LEVEL_2;
-        this.name = "Killer Whale";
+        this.name = "Killer Whale-T";
         this.setInternalName(this.name);
-        this.addLookupName("KillerWhale");
+        this.addLookupName("KillerWhaleT");
         this.heat = 20;
         this.damage = 4;
         this.ammoType = AmmoType.T_KILLER_WHALE;

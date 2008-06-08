@@ -41,6 +41,7 @@ import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -107,7 +108,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
     private CommonAboutDialog about;
     private CommonHelpDialog help;
     private CommonSettingsDialog setdlg;
-    private final String helpFileName = "readme.txt"; //$NON-NLS-1$
+    private String helpFileName = "readme.txt"; //$NON-NLS-1$
     // keep me
     ChatterBox cb;
     public BoardView1 bv;
@@ -116,7 +117,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
     public MechDisplay mechD;
     public JDialog minimapW;
     public MiniMap minimap;
-    private final PopupMenu popup = new PopupMenu(Messages
+    private PopupMenu popup = new PopupMenu(Messages
             .getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
     private UnitOverview uo;
     private Ruler ruler; // added by kenn
@@ -146,33 +147,33 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
     /**
      * Map each phase to the name of the card for the main display area.
      */
-    private final HashMap<String, String> mainNames = new HashMap<String, String>();
+    private HashMap<String, String> mainNames = new HashMap<String, String>();
     /**
      * The <code>JPanel</code> containing the main display area.
      */
-    private final JPanel panMain = new JPanel();
+    private JPanel panMain = new JPanel();
     /**
      * The <code>CardLayout</code> of the main display area.
      */
-    private final CardLayout cardsMain = new CardLayout();
+    private CardLayout cardsMain = new CardLayout();
     /**
      * Map each phase to the name of the card for the secondary area.
      */
-    private final HashMap<String, String> secondaryNames = new HashMap<String, String>();
+    private HashMap<String, String> secondaryNames = new HashMap<String, String>();
     /**
      * The <code>JPanel</code> containing the secondary display area.
      */
-    private final JPanel panSecondary = new JPanel();
+    private JPanel panSecondary = new JPanel();
     /**
      * The <code>CardLayout</code> of the secondary display area.
      */
-    private final CardLayout cardsSecondary = new CardLayout();
+    private CardLayout cardsSecondary = new CardLayout();
     /**
      * Map phase component names to phase component objects.
      */
     HashMap<String, JComponent> phaseComponents = new HashMap<String, JComponent>();
     // TODO: there's a better place for this
-    private final Map<String, Client> bots = new TreeMap<String, Client>(StringUtil
+    private Map<String, Client> bots = new TreeMap<String, Client>(StringUtil
             .stringComparator());
     /**
      * Current Selected entity
@@ -191,7 +192,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         loadSoundClip();
         panMain.setLayout(cardsMain);
         panSecondary.setLayout(cardsSecondary);
-        final JPanel panDisplay = new JPanel(new BorderLayout());
+        JPanel panDisplay = new JPanel(new BorderLayout());
         panDisplay.add(panMain, BorderLayout.CENTER);
         panDisplay.add(panSecondary, BorderLayout.SOUTH);
         add(panDisplay, BorderLayout.CENTER);
@@ -205,11 +206,10 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
      * Try to load the "bing" sound clip.
      */
     private void loadSoundClip() {
-        if (GUIPreferences.getInstance().getSoundBingFilename() == null) {
+        if (GUIPreferences.getInstance().getSoundBingFilename() == null)
             return;
-        }
         try {
-            final File file = new File(GUIPreferences.getInstance()
+            File file = new File(GUIPreferences.getInstance()
                     .getSoundBingFilename());
             if (!file.exists()) {
                 System.err
@@ -217,7 +217,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
                 return;
             }
             bingClip = Applet.newAudioClip(file.toURI().toURL());
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -248,13 +248,14 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         menuBar.setGame(client.game);
         frame.setJMenuBar(menuBar);
         Rectangle virtualBounds = new Rectangle();
-        final GraphicsEnvironment ge = GraphicsEnvironment
+        GraphicsEnvironment ge = GraphicsEnvironment
                 .getLocalGraphicsEnvironment();
-        final GraphicsDevice[] gs = ge.getScreenDevices();
-        for (final GraphicsDevice gd : gs) {
-            final GraphicsConfiguration[] gc = gd.getConfigurations();
-            for (final GraphicsConfiguration element0 : gc) {
-                virtualBounds = virtualBounds.union(element0.getBounds());
+        GraphicsDevice[] gs = ge.getScreenDevices();
+        for (int j = 0; j < gs.length; j++) {
+            GraphicsDevice gd = gs[j];
+            GraphicsConfiguration[] gc = gd.getConfigurations();
+            for (int i = 0; i < gc.length; i++) {
+                virtualBounds = virtualBounds.union(gc[i].getBounds());
             }
         }
         if (GUIPreferences.getInstance().getWindowSizeHeight() != 0) {
@@ -262,18 +263,14 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             int y = GUIPreferences.getInstance().getWindowPosY();
             int w = GUIPreferences.getInstance().getWindowSizeWidth();
             int h = GUIPreferences.getInstance().getWindowSizeHeight();
-            if (x < virtualBounds.getMinX() || x + w > virtualBounds.getMaxX()) {
+            if (x < virtualBounds.getMinX() || x + w > virtualBounds.getMaxX())
                 x = 0;
-            }
-            if (y < virtualBounds.getMinY() || y + h > virtualBounds.getMaxY()) {
+            if (y < virtualBounds.getMinY() || y + h > virtualBounds.getMaxY())
                 y = 0;
-            }
-            if (w > virtualBounds.getWidth()) {
+            if (w > virtualBounds.getWidth())
                 w = (int) virtualBounds.getWidth();
-            }
-            if (h > virtualBounds.getHeight()) {
+            if (h > virtualBounds.getHeight())
                 h = (int) virtualBounds.getHeight();
-            }
             frame.setLocation(x, y);
             frame.setSize(w, h);
         } else {
@@ -316,7 +313,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             // Place the board viewer in a set of scrollbars.
             scroller = new JScrollPane(bv);
             bv.setScrollPane(scroller);
-        } catch (final IOException e) {
+        } catch (IOException e) {
             doAlertDialog(
                     Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
@@ -326,14 +323,13 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         menuBar.addActionListener(this);
         frame.addKeyListener(this);
         frame.addWindowListener(new WindowAdapter() {
-            @Override
             public void windowClosing(WindowEvent e) {
                 frame.setVisible(false);
                 saveSettings();
                 die();
             }
         });
-        final UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
+        UnitLoadingDialog unitLoadingDialog = new UnitLoadingDialog(frame);
         if (!MechSummaryCache.getInstance().isInitialized()) {
             unitLoadingDialog.setVisible(true);
         }
@@ -342,7 +338,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         bv.addMouseListener(this);
         bv.addKeyListener(this);
         bv.add(popup);
-        final Dimension screenSize = frame.getToolkit().getScreenSize();
+        Dimension screenSize = frame.getToolkit().getScreenSize();
         int x;
         int y;
         int h;
@@ -397,7 +393,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         y = GUIPreferences.getInstance().getMinimapPosY();
         try {
             minimap = new MiniMap(minimapW, this, bv);
-        } catch (final IOException e) {
+        } catch (IOException e) {
             doAlertDialog(
                     Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message1") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
@@ -405,10 +401,10 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         minimap.addKeyListener(this);
         h = minimap.getSize().height;
         w = minimap.getSize().width;
-        if (x + 10 >= screenSize.width || x + w < 10) {
+        if ((x + 10) >= screenSize.width || (x + w) < 10) {
             x = screenSize.width - w;
         }
-        if (y + 10 > screenSize.height || y + h < 10) {
+        if ((y + 10) > screenSize.height || (y + h) < 10) {
             y = screenSize.height - h;
         }
         minimapW.setLocation(x, y);
@@ -511,25 +507,23 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
      */
     public void actionPerformed(ActionEvent event) {
         if ("fileGameSave".equalsIgnoreCase(event.getActionCommand())) { //$NON-NLS-1$
-            final JFileChooser fc = new JFileChooser(".");
+            JFileChooser fc = new JFileChooser(".");
             fc.setLocation(frame.getLocation().x + 150,
                     frame.getLocation().y + 100);
             fc.setDialogTitle(Messages
                     .getString("ClientGUI.FileSaveDialog.title"));
             fc.setFileFilter(new FileFilter() {
-                @Override
                 public boolean accept(File dir) {
-                    return dir.getName() != null && dir.getName().endsWith(
-                            ".sav"); //$NON-NLS-1$
+                    return (dir.getName() != null && dir.getName().endsWith(
+                            ".sav")); //$NON-NLS-1$
                 }
 
-                @Override
                 public String getDescription() {
                     return ".sav";
                 }
             });
 
-            final int returnVal = fc.showOpenDialog(frame);
+            int returnVal = fc.showOpenDialog(frame);
             if (returnVal != JFileChooser.APPROVE_OPTION
                     || fc.getSelectedFile() == null) {
                 // I want a file, y'know!
@@ -581,7 +575,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
 
         // also minimap
         if (minimapW != null
-                && minimapW.getSize().width * minimapW.getSize().height > 0) {
+                && (minimapW.getSize().width * minimapW.getSize().height) > 0) {
             GUIPreferences.getInstance().setMinimapPosX(
                     minimapW.getLocation().x);
             GUIPreferences.getInstance().setMinimapPosY(
@@ -591,7 +585,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
 
         // also mech display
         if (mechW != null
-                && mechW.getSize().width * mechW.getSize().height > 0) {
+                && (mechW.getSize().width * mechW.getSize().height) > 0) {
             GUIPreferences.getInstance().setDisplayPosX(mechW.getLocation().x);
             GUIPreferences.getInstance().setDisplayPosY(mechW.getLocation().y);
             GUIPreferences.getInstance().setDisplaySizeWidth(
@@ -620,9 +614,9 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
     void die() {
         // Tell all the displays to remove themselves as listeners.
         boolean reportHandled = false;
-        final Iterator<String> names = phaseComponents.keySet().iterator();
+        Iterator<String> names = phaseComponents.keySet().iterator();
         while (names.hasNext()) {
-            final JComponent component = phaseComponents.get(names.next());
+            JComponent component = phaseComponents.get(names.next());
             if (component instanceof ReportDisplay) {
                 if (reportHandled) {
                     continue;
@@ -637,7 +631,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         frame.setVisible(false);
         try {
             frame.dispose();
-        } catch (final Throwable error) {
+        } catch (Throwable error) {
             error.printStackTrace();
         }
         client.die();
@@ -706,7 +700,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         }
 
         // Get the new panel.
-        final String name = String.valueOf(phase);
+        String name = String.valueOf(phase);
         curPanel = phaseComponents.get(name);
         if (curPanel == null) {
             curPanel = initializePanel(phase);
@@ -725,21 +719,20 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             ((Distractable) curPanel).setIgnoringEvents(false);
         }
         if (curPanel instanceof DoneButtoned) {
-            final JButton done = ((DoneButtoned) curPanel).getDoneButton();
+            JButton done = ((DoneButtoned) curPanel).getDoneButton();
             cb.setDoneButton(done);
             done.setVisible(true);
         }
 
         // Make the new panel the focus, if the Client option says so
         if (GUIPreferences.getInstance().getFocus()
-                && !(client instanceof TestBot)) {
+                && !(client instanceof TestBot))
             curPanel.requestFocus();
-        }
     }
 
     private JComponent initializePanel(IGame.Phase phase) {
         // Create the components for this phase.
-        final String name = String.valueOf(phase);
+        String name = String.valueOf(phase);
         JComponent component;
         String secondary;
         String main;
@@ -963,7 +956,9 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
 
         // add select options
         if (canSelectEntities()) {
-            for (final Entity entity : client.game.getEntities(coords)) {
+            for (Enumeration<Entity> i = client.game.getEntities(coords); i
+                    .hasMoreElements();) {
+                final Entity entity = i.nextElement();
                 if (client.game.getTurn().isValidEntity(entity, client.game)) {
                     popup.add(new SelectMenuItem(entity));
                 }
@@ -974,7 +969,9 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         }
 
         // add view options
-        for (final Entity entity : client.game.getEntities(coords)) {
+        for (Enumeration<Entity> i = client.game.getEntities(coords); i
+                .hasMoreElements();) {
+            final Entity entity = i.nextElement();
             popup.add(new ViewMenuItem(entity));
         }
 
@@ -983,7 +980,9 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             if (popup.getItemCount() > 0) {
                 popup.addSeparator();
             }
-            for (final Entity entity : client.game.getEntities(coords)) {
+            for (Enumeration<Entity> i = client.game.getEntities(coords); i
+                    .hasMoreElements();) {
+                final Entity entity = i.nextElement();
                 popup.add(new TargetMenuItem(entity));
             }
             // Can target weapons at the hex if it contains woods or building.
@@ -991,7 +990,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             if (curPanel instanceof FiringDisplay
                     || curPanel instanceof PhysicalDisplay
                     || curPanel instanceof TargetingPhaseDisplay) {
-                final IHex h = client.game.getBoard().getHex(coords);
+                IHex h = client.game.getBoard().getHex(coords);
                 if (h != null && curPanel instanceof FiringDisplay
                         && !client.game.getBoard().inSpace() 
                         && !client.game.getBoard().inAtmosphere()) {
@@ -1077,7 +1076,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
      *         returned.
      */
     public int[] doChoiceDialog(String title, String question, String[] choices) {
-        final ChoiceDialog choice = new ChoiceDialog(frame, title, question, choices);
+        ChoiceDialog choice = new ChoiceDialog(frame, title, question, choices);
         choice.setVisible(true);
         return choice.getChoices();
     }
@@ -1100,7 +1099,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
      * @return <code>true</code> if yes
      */
     public boolean doYesNoDialog(String title, String question) {
-        final ConfirmDialog confirm = new ConfirmDialog(frame, title, question);
+        ConfirmDialog confirm = new ConfirmDialog(frame, title, question);
         confirm.setVisible(true);
         return confirm.getAnswer();
     }
@@ -1120,7 +1119,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
      *         question.
      */
     public ConfirmDialog doYesNoBotherDialog(String title, String question) {
-        final ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
+        ConfirmDialog confirm = new ConfirmDialog(frame, title, question, true);
         confirm.setVisible(true);
         return confirm;
     }
@@ -1162,13 +1161,11 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             dlgLoadList.setDialogTitle(Messages
                     .getString("ClientGUI.openUnitListFileDialog.title"));
             dlgLoadList.setFileFilter(new FileFilter() {
-                @Override
                 public boolean accept(File dir) {
-                    return dir.getName() != null && dir.getName().endsWith(
-                            ".mul"); //$NON-NLS-1$
+                    return (dir.getName() != null && dir.getName().endsWith(
+                            ".mul")); //$NON-NLS-1$
                 }
 
-                @Override
                 public String getDescription() {
                     return ".mul";
                 }
@@ -1178,7 +1175,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         dlgLoadList.setSelectedFile(new File(client.getLocalPlayer().getName()
                 + ".mul")); //$NON-NLS-1$
 
-        final int returnVal = dlgLoadList.showOpenDialog(frame);
+        int returnVal = dlgLoadList.showOpenDialog(frame);
         if (returnVal != JFileChooser.APPROVE_OPTION
                 || dlgSaveList.getSelectedFile() == null) {
             // I want a file, y'know!
@@ -1186,17 +1183,20 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         }
 
         // Did the player select a file?
-        final File unitFile = dlgLoadList.getSelectedFile();
+        File unitFile = dlgLoadList.getSelectedFile();
         if (unitFile != null) {
             try {
                 // Read the units from the file.
-                final Vector<Entity> loadedUnits = EntityListFile.loadFrom(unitFile);
+                Vector<Entity> loadedUnits = EntityListFile.loadFrom(unitFile);
 
-                for (final Entity entity : loadedUnits) {
-               entity.setOwner(client.getLocalPlayer());
-               client.sendAddEntity(entity);
-            }
-            } catch (final IOException excep) {
+                // Add the units from the file.
+                for (Enumeration<Entity> iter = loadedUnits.elements(); iter
+                        .hasMoreElements();) {
+                    final Entity entity = iter.nextElement();
+                    entity.setOwner(client.getLocalPlayer());
+                    client.sendAddEntity(entity);
+                }
+            } catch (IOException excep) {
                 excep.printStackTrace(System.err);
                 doAlertDialog(
                         Messages.getString("ClientGUI.errorLoadingFile"), excep.getMessage()); //$NON-NLS-1$
@@ -1230,13 +1230,11 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             dlgSaveList.setDialogTitle(Messages
                     .getString("ClientGUI.saveUnitListFileDialog.title"));
             dlgSaveList.setFileFilter(new FileFilter() {
-                @Override
                 public boolean accept(File dir) {
-                    return dir.getName() != null && dir.getName().endsWith(
-                            ".mul"); //$NON-NLS-1$
+                    return (dir.getName() != null && dir.getName().endsWith(
+                            ".mul")); //$NON-NLS-1$
                 }
 
-                @Override
                 public String getDescription() {
                     return ".mul";
                 }
@@ -1246,7 +1244,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         dlgSaveList.setSelectedFile(new File(client.getLocalPlayer().getName()
                 + ".mul")); //$NON-NLS-1$
 
-        final int returnVal = dlgSaveList.showSaveDialog(frame);
+        int returnVal = dlgSaveList.showSaveDialog(frame);
         if (returnVal != JFileChooser.APPROVE_OPTION
                 || dlgSaveList.getSelectedFile() == null) {
             // I want a file, y'know!
@@ -1260,7 +1258,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             || unitFile.getName().toLowerCase().endsWith(".xml"))) { //$NON-NLS-1$
                 try {
                     unitFile = new File(unitFile.getCanonicalPath() + ".mul"); //$NON-NLS-1$
-                } catch (final IOException ie) {
+                } catch (IOException ie) {
                     // nothing needs to be done here
                     return;
                 }
@@ -1268,7 +1266,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             try {
                 // Save the player's entities to the file.
                 EntityListFile.saveTo(unitFile, unitList);
-            } catch (final IOException excep) {
+            } catch (IOException excep) {
                 excep.printStackTrace(System.err);
                 doAlertDialog(
                         Messages.getString("ClientGUI.errorSavingFile"), excep.getMessage()); //$NON-NLS-1$
@@ -1399,8 +1397,8 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
     // Shows a dialg where the player can select the entity types
     // used in the LOS tool.
     private void showLOSSettingDialog() {
-        final GUIPreferences gp = GUIPreferences.getInstance();
-        final LOSDialog ld = new LOSDialog(frame, gp.getMechInFirst(), gp
+        GUIPreferences gp = GUIPreferences.getInstance();
+        LOSDialog ld = new LOSDialog(frame, gp.getMechInFirst(), gp
                 .getMechInSecond());
         ld.setVisible(true);
         gp.setMechInFirst(ld.getMechInFirst());
@@ -1409,13 +1407,13 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
 
     // Loads a preview image of the unit into the BufferedPanel.
     public void loadPreviewImage(JLabel bp, Entity entity) {
-        final Player player = client.game.getPlayer(entity.getOwnerId());
+        Player player = client.game.getPlayer(entity.getOwnerId());
         loadPreviewImage(bp, entity, player);
     }
 
     public void loadPreviewImage(JLabel bp, Entity entity, Player player) {
-        final Image camo = bv.getTilesetManager().getPlayerCamo(player);
-        final int tint = PlayerColors.getColorRGB(player.getColorIndex());
+        Image camo = bv.getTilesetManager().getPlayerCamo(player);
+        int tint = PlayerColors.getColorRGB(player.getColorIndex());
         bv.getTilesetManager().loadPreviewImage(entity, camo, tint, bp);
     }
 
@@ -1428,8 +1426,7 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
         }
     }
 
-    private final GameListener gameListener = new GameListenerAdapter() {
-        @Override
+    private GameListener gameListener = new GameListenerAdapter() {
         public void gamePlayerDisconnected(GamePlayerDisconnectedEvent e) {
             JOptionPane
                     .showMessageDialog(
@@ -1440,12 +1437,10 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             die();
         }
 
-        @Override
         public void gamePlayerChat(GamePlayerChatEvent e) {
             bing();
         }
 
-        @Override
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             // This is a really lame place for this, but I couldn't find a
             // better one without making massive changes (which didn't seem
@@ -1463,9 +1458,8 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
                     // this will get rid of old report tabs
                     ReportDisplay rD = (ReportDisplay) phaseComponents
                             .get(String.valueOf(IGame.Phase.PHASE_INITIATIVE_REPORT));
-                    if (rD != null) {
+                    if (rD != null)
                         rD.resetTabs();
-                    }
                     break;
                 case PHASE_DEPLOY_MINEFIELDS:
                 case PHASE_DEPLOYMENT:
@@ -1498,7 +1492,6 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             cb.moveToEnd();
         }
 
-        @Override
         public void gamePlayerConnected(GamePlayerConnectedEvent e) {
             System.err.println("gamePlayerConnected");
             System.err.flush();
@@ -1509,7 +1502,6 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             }
         }
 
-        @Override
         public void gameReport(GameReportEvent e) {
             // Normally the Report Display is updated when the panel is
             // switched during a phase change.
@@ -1530,18 +1522,17 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
                 }
             } else {
                 // Continued movement after getting up
-                if (!(client instanceof TestBot)) {
+                if (!(client instanceof TestBot))
                     doAlertDialog("Movement Report", e.getReport());
-                }
             }
         }
 
-        @Override
         public void gameEnd(GameEndEvent e) {
             bv.clearMovementData();
-            for (Client client2 : getBots().values()) {
-            client2.die();
-         }
+            for (Iterator<Client> i = getBots().values().iterator(); i
+                    .hasNext();) {
+                i.next().die();
+            }
             getBots().clear();
 
             // Make a list of the player's living units.
@@ -1549,8 +1540,9 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
                     .getLocalPlayer());
 
             // Be sure to include all units that have retreated.
-            for (Entity entity : client.game.getRetreatedEntities()) {
-                living.add(entity);
+            for (Enumeration<Entity> iter = client.game.getRetreatedEntities(); iter
+                    .hasMoreElements();) {
+                living.add(iter.nextElement());
             }
 
             // Allow players to save their living units to a file.
@@ -1567,7 +1559,6 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             } // End user-wants-a-MUL
         }
 
-        @Override
         public void gameSettingsChange(GameSettingsChangeEvent e) {
             if (boardSelectionDialog != null
                     && boardSelectionDialog.isVisible()) {
@@ -1590,7 +1581,6 @@ public class ClientGUI extends JPanel implements MouseListener, WindowListener,
             }
         }
 
-        @Override
         public void gameMapQuery(GameMapQueryEvent e) {
             if (boardSelectionDialog != null
                     && boardSelectionDialog.isVisible()) {

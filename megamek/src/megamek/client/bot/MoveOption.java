@@ -129,29 +129,28 @@ public class MoveOption extends MovePath implements Cloneable {
     public MoveOption(IGame game, CEntity centity) {
         super(game, centity.entity);
         this.centity = centity;
-        pos = centity.entity.getPosition();
-        facing = centity.entity.getFacing();
-        prone = centity.entity.isProne();
+        this.pos = centity.entity.getPosition();
+        this.facing = centity.entity.getFacing();
+        this.prone = centity.entity.isProne();
     }
 
     public MoveOption(MoveOption base) {
         this(base.game, base.centity);
         steps = new Vector<MoveStep>(base.steps);
-        threat = base.threat;
-        damage = base.damage;
-        movement_threat = base.movement_threat;
-        tv = new ArrayList<String>(base.tv);
-        self_threat = base.self_threat;
-        inDanger = base.inDanger;
-        doomed = base.doomed;
-        isPhysical = base.isPhysical;
-        self_damage = base.self_damage;
-        pos = base.pos;
-        facing = base.facing;
-        prone = base.prone;
+        this.threat = base.threat;
+        this.damage = base.damage;
+        this.movement_threat = base.movement_threat;
+        this.tv = new ArrayList<String>(base.tv);
+        this.self_threat = base.self_threat;
+        this.inDanger = base.inDanger;
+        this.doomed = base.doomed;
+        this.isPhysical = base.isPhysical;
+        this.self_damage = base.self_damage;
+        this.pos = base.pos;
+        this.facing = base.facing;
+        this.prone = base.prone;
     }
 
-    @Override
     public MoveOption clone() {
         return new MoveOption(this);
     }
@@ -180,40 +179,37 @@ public class MoveOption extends MovePath implements Cloneable {
         return centity;
     }
 
-    @Override
     public MoveOption addStep(int step_type) {
         super.addStep(step_type);
-        final MoveStep current = getLastStep();
+        MoveStep current = getLastStep();
         // running with gyro or hip hit is dangerous!
         if (current.getMovementType() == IEntityMovementType.MOVE_RUN
                 && (entity.getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                         Mech.SYSTEM_GYRO, Mech.LOC_CT) > 0 || entity
                         .hasHipCrit())) {
-            getStep(0).setDanger(true);
+            this.getStep(0).setDanger(true);
             current.setDanger(true);
         }
         if (current.isDanger()) {
             if (getCEntity().base_psr_odds < .1) {
                 current.setMovementType(IEntityMovementType.MOVE_ILLEGAL);
             } else {
-                final double cur_threat = getCEntity().getThreatUtility(
-                        .2 * entity.getWeight(), ToHitData.SIDE_REAR)
+                double cur_threat = getCEntity().getThreatUtility(
+                        .2 * this.entity.getWeight(), ToHitData.SIDE_REAR)
                         * (1 - Math.pow(getCEntity().base_psr_odds, 2));
-                movement_threat += cur_threat;
-                if (centity.getTb().debug) {
-                    tv.add(cur_threat + " Movement Threat \r\n");
-                }
+                this.movement_threat += cur_threat;
+                if (centity.getTb().debug)
+                    this.tv.add(cur_threat + " Movement Threat \r\n");
             }
         }
         return this;
     }
 
     public int getMovementheatBuildup() {
-        final MoveStep last = getLastStep();
-        if (last == null) {
+        MoveStep last = this.getLastStep();
+        if (last == null)
             return 0;
-        }
-        final int heat = last.getTotalHeat();
+        int heat = last.getTotalHeat();
         int move = 0;
         switch (last.getMovementType()) {
             case IEntityMovementType.MOVE_WALK:
@@ -234,10 +230,10 @@ public class MoveOption extends MovePath implements Cloneable {
     }
 
     public boolean changeToPhysical() {
-        final MoveStep last = getLastStep();
-        final boolean isInfantry = getEntity() instanceof Infantry;
-        final boolean isProtomech = getEntity() instanceof Protomech;
-        final boolean isClan = getEntity().isClan();
+        MoveStep last = getLastStep();
+        boolean isInfantry = (getEntity() instanceof Infantry);
+        boolean isProtomech = (getEntity() instanceof Protomech);
+        boolean isClan = getEntity().isClan();
         if (last == null
                 || last.getMovementType() == IEntityMovementType.MOVE_ILLEGAL) {
             return false;
@@ -245,17 +241,18 @@ public class MoveOption extends MovePath implements Cloneable {
         if (last.getType() != STEP_FORWARDS
                 || isInfantry
                 || isProtomech
-                || isClan
+                || (isClan
                         && game.getOptions().booleanOption("no_clan_physical") && getEntity()
-                        .getSwarmAttackerId() == Entity.NONE) { 
+                        .getSwarmAttackerId() == Entity.NONE)) { //$NON-NLS-1$
             return false;
         }
-
+        Enumeration<Entity> e = game.getEntities(last.getPosition());
         // TODO: this just takes the first target
-        for (final Entity en : game.getEntities(last.getPosition())) {
-            if (!en.isSelectableThisTurn() && en.isEnemyOf(entity)) {
-                isPhysical = true;
-                removeLastStep();
+        while (e.hasMoreElements()) {
+            Entity en = e.nextElement();
+            if (!en.isSelectableThisTurn() && en.isEnemyOf(this.entity)) {
+                this.isPhysical = true;
+                this.removeLastStep();
                 if (isJumping()) {
                     addStep(MovePath.STEP_DFA, en);
                 } else {
@@ -269,21 +266,21 @@ public class MoveOption extends MovePath implements Cloneable {
 
     // it would be nice to have a stand still move...
     public void setState() {
-        entity = centity.entity;
-        if (steps.size() == 0) {
-            entity.setPosition(pos);
-            entity.setFacing(facing);
-            entity.setSecondaryFacing(facing);
-            entity.delta_distance = 0;
-            entity.setProne(prone);
+        this.entity = this.centity.entity;
+        if (this.steps.size() == 0) {
+            this.entity.setPosition(pos);
+            this.entity.setFacing(facing);
+            this.entity.setSecondaryFacing(facing);
+            this.entity.delta_distance = 0;
+            this.entity.setProne(prone);
         } else {
-            entity.setPosition(getFinalCoords());
-            entity.setFacing(getFinalFacing());
-            entity.setSecondaryFacing(getFinalFacing());
-            entity.setProne(getFinalProne());
-            entity.delta_distance = getHexesMoved();
+            this.entity.setPosition(getFinalCoords());
+            this.entity.setFacing(getFinalFacing());
+            this.entity.setSecondaryFacing(getFinalFacing());
+            this.entity.setProne(getFinalProne());
+            this.entity.delta_distance = getHexesMoved();
         }
-        entity.moved = getLastStepMovementType();
+        this.entity.moved = getLastStepMovementType();
     }
 
     /**
@@ -292,10 +289,10 @@ public class MoveOption extends MovePath implements Cloneable {
      */
     public int[] getModifiers(final Entity te) {
         // set them at the appropriate positions
-        final Entity ae = entity;
+        final Entity ae = this.entity;
 
-        final int attHeight = ae.isProne() ? 0 : 1;
-        final int targHeight = te.isProne() ? 0 : 1;
+        int attHeight = ae.isProne() ? 0 : 1;
+        int targHeight = te.isProne() ? 0 : 1;
         int attEl = 0;
         int targEl = 0;
         attEl = ae.getElevation() + attHeight;
@@ -305,8 +302,8 @@ public class MoveOption extends MovePath implements Cloneable {
         boolean apc = false;
 
         // get all relevent modifiers
-        final ToHitData toHita = new ToHitData();
-        final ToHitData toHitd = new ToHitData();
+        ToHitData toHita = new ToHitData();
+        ToHitData toHitd = new ToHitData();
 
         toHita.append(Compute.getAttackerMovementModifier(game, ae.getId()));
         toHita.append(Compute.getTargetMovementModifier(game, te.getId()));
@@ -315,12 +312,12 @@ public class MoveOption extends MovePath implements Cloneable {
 
         toHitd.append(Compute.getAttackerMovementModifier(game, te.getId()));
         toHitd.append(Compute.getTargetMovementModifier(game, ae.getId()));
-        if (!(isPhysical && isJumping())) {
+        if (!(this.isPhysical && isJumping())) {
             toHitd.append(Compute.getTargetTerrainModifier(game, ae));
         }
         toHitd.append(Compute.getAttackerTerrainModifier(game, te.getId()));
 
-        final IHex attHex = game.getBoard().getHex(ae.getPosition());
+        IHex attHex = game.getBoard().getHex(ae.getPosition());
         if (attHex.containsTerrain(Terrains.WATER) && attHex.surface() > attEl) {
             toHita.addModifier(TargetRoll.IMPOSSIBLE,
                     "Attacker in depth 2+ water");
@@ -329,7 +326,7 @@ public class MoveOption extends MovePath implements Cloneable {
         } else if (attHex.surface() == attEl && ae.height() > 0) {
             apc = true;
         }
-        final IHex targHex = game.getBoard().getHex(te.getPosition());
+        IHex targHex = game.getBoard().getHex(te.getPosition());
         if (targHex.containsTerrain(Terrains.WATER)) {
             if (targHex.surface() == targEl && te.height() > 0) {
                 pc = true;
@@ -342,13 +339,13 @@ public class MoveOption extends MovePath implements Cloneable {
         }
 
         // calc & add attacker los mods
-        final LosEffects los = LosEffects.calculateLos(game, ae.getId(), te);
+        LosEffects los = LosEffects.calculateLos(game, ae.getId(), te);
         toHita.append(los.losModifiers(game));
         // save variables
         pc = los.isTargetCover();
         apc = los.isAttackerCover();
         // reverse attacker & target partial cover & calc defender los mods
-        final int temp = los.getTargetCover();
+        int temp = los.getTargetCover();
         los.setTargetCover(los.getAttackerCover());
         los.setAttackerCover(temp);
         toHitd.append(los.losModifiers(game));
@@ -398,27 +395,27 @@ public class MoveOption extends MovePath implements Cloneable {
      */
     public double getUtility() {
         // self threat and self damage are considered transient
-        double temp_threat = (threat + movement_threat
-                + self_threat + (double) getMovementheatBuildup() / 20)
+        double temp_threat = (this.threat + this.movement_threat
+                + this.self_threat + (double) this.getMovementheatBuildup() / 20)
                 / getCEntity().strategy.attack;
-        final double temp_damage = (damage + self_damage)
-                * centity.strategy.attack;
-        if (threat + movement_threat > 4 * centity.avg_armor) {
-            final double ratio = (threat + movement_threat)
-                    / (centity.avg_armor + .25 * centity.avg_iarmor);
+        double temp_damage = (this.damage + this.self_damage)
+                * this.centity.strategy.attack;
+        if (this.threat + this.movement_threat > 4 * this.centity.avg_armor) {
+            double ratio = (this.threat + this.movement_threat)
+                    / (this.centity.avg_armor + .25 * this.centity.avg_iarmor);
             if (ratio > 2) {
-                temp_threat += centity.bv / 15.0; // likely to die
-                doomed = true;
-                inDanger = true;
+                temp_threat += this.centity.bv / 15.0; // likely to die
+                this.doomed = true;
+                this.inDanger = true;
             } else if (ratio > 1) {
-                temp_threat += centity.bv / 30.0; // in danger
-                inDanger = true;
+                temp_threat += this.centity.bv / 30.0; // in danger
+                this.inDanger = true;
             } else {
-                temp_threat += centity.bv / 75.0; // in danger
-                inDanger = true;
+                temp_threat += this.centity.bv / 75.0; // in danger
+                this.inDanger = true;
             }
-        } else if (threat + movement_threat > 30) {
-            temp_threat += centity.entity.getWeight();
+        } else if (this.threat + this.movement_threat > 30) {
+            temp_threat += this.centity.entity.getWeight();
         }
         double retVal = temp_threat - temp_damage;
         // If the move has a chance of making MASC fail...
@@ -426,21 +423,21 @@ public class MoveOption extends MovePath implements Cloneable {
             int mascTN = 0;
             for (final Enumeration<MoveStep> i = getSteps(); i
                     .hasMoreElements();) {
-                final MoveStep step = i.nextElement();
+                MoveStep step = i.nextElement();
                 if (step.isUsingMASC() && step.getTargetNumberMASC() > mascTN) {
                     mascTN = step.getTargetNumberMASC();
                 }
             }
-            final double mascMult = Compute.oddsAbove(mascTN) / 100;
-            retVal *= mascMult > 0 ? mascMult : 0.01;
+            double mascMult = Compute.oddsAbove(mascTN) / 100;
+            retVal *= (mascMult > 0) ? mascMult : 0.01;
         }
         // If getting up is difficult...
         if (prone) {
-            final PilotingRollData tmpPRD = centity.getEntity().checkGetUp(
+            PilotingRollData tmpPRD = this.centity.getEntity().checkGetUp(
                     getStep(0));
-            if (tmpPRD != null
-                    && (tmpPRD.getValue() == TargetRoll.IMPOSSIBLE || tmpPRD
-                            .getValue() == TargetRoll.AUTOMATIC_FAIL)) {
+            if ((tmpPRD != null)
+                    && ((tmpPRD.getValue() == TargetRoll.IMPOSSIBLE) || (tmpPRD
+                            .getValue() == TargetRoll.AUTOMATIC_FAIL))) {
                 retVal *= 0.01;
             }
         }
@@ -454,11 +451,11 @@ public class MoveOption extends MovePath implements Cloneable {
      */
     public double getMaxModifiedDamage(MoveOption enemy, int modifier, int apc) {
         double max = 0;
-        final int distance = getFinalCoords().distance(enemy.getFinalCoords());
+        int distance = getFinalCoords().distance(enemy.getFinalCoords());
         double mod = 1;
         // heat effect modifiers
         if (enemy.isJumping()
-                || enemy.entity.heat + enemy.entity.heatBuildup > 4) {
+                || (enemy.entity.heat + enemy.entity.heatBuildup > 4)) {
             if (enemy.centity.overheat == CEntity.OVERHEAT_LOW) {
                 mod = .75;
             } else if (enemy.centity.overheat == CEntity.OVERHEAT_HIGH) {
@@ -467,14 +464,14 @@ public class MoveOption extends MovePath implements Cloneable {
                 mod = .9;
             }
         }
-        final int enemy_firing_arcs[] = { 0, MovePath.STEP_TURN_LEFT,
+        int enemy_firing_arcs[] = { 0, MovePath.STEP_TURN_LEFT,
                 MovePath.STEP_TURN_RIGHT };
         for (int i = 0; i < enemy_firing_arcs.length; i++) {
             enemy_firing_arcs[i] = CEntity.getThreatHitArc(enemy
                     .getFinalCoords(), MovePath.getAdjustedFacing(enemy
                     .getFinalFacing(), enemy_firing_arcs[i]), getFinalCoords());
         }
-        max = enemy.centity.getModifiedDamage(apc == 1 ? CEntity.TT
+        max = enemy.centity.getModifiedDamage((apc == 1) ? CEntity.TT
                 : enemy_firing_arcs[0], distance, modifier);
 
         if (enemy_firing_arcs[1] == ToHitData.SIDE_FRONT) {
@@ -496,12 +493,12 @@ public class MoveOption extends MovePath implements Cloneable {
         max *= mod;
         if (!enemy.getFinalProne() && distance == 1
                 && enemy_firing_arcs[0] != ToHitData.SIDE_REAR) {
-            final IHex h = game.getBoard().getHex(getFinalCoords());
-            final IHex h1 = game.getBoard().getHex(enemy.getFinalCoords());
+            IHex h = game.getBoard().getHex(getFinalCoords());
+            IHex h1 = game.getBoard().getHex(enemy.getFinalCoords());
             if (Math.abs(h.getElevation() - h1.getElevation()) < 2) {
-                max += (h1.getElevation() - h.getElevation() == 1 || getFinalProne() ? 5
+                max += ((h1.getElevation() - h.getElevation() == 1 || getFinalProne()) ? 5
                         : 1)
-                        * (enemy_firing_arcs[0] == ToHitData.SIDE_FRONT ? .2
+                        * ((enemy_firing_arcs[0] == ToHitData.SIDE_FRONT) ? .2
                                 : .05)
                         * centity.entity.getWeight()
                         * Compute.oddsAbove(3 + modifier)
@@ -530,18 +527,17 @@ public class MoveOption extends MovePath implements Cloneable {
      * There could still be a problem here, but now it's the callers problem
      */
     int getPhysicalTargetId() {
-        final MoveStep step = getLastStep();
+        MoveStep step = getLastStep();
         if (step == null) {
             return -1;
         }
-        final Targetable target = step.getTarget(game);
+        Targetable target = step.getTarget(game);
         if (target == null) {
             return -1;
         }
         return target.getTargetId();
     }
 
-    @Override
     public String toString() {
         return getEntity().getShortName() + " " + getEntity().getId() + " "
                 + getFinalCoords() + " " + super.toString() + "\r\n Utility: "

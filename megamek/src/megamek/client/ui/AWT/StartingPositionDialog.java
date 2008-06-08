@@ -249,7 +249,7 @@ public class StartingPositionDialog extends java.awt.Dialog implements
                             direction = IOffBoardDirections.WEST;
                             break;
                     }
-                    java.util.List<Entity> thisPlayerArtyUnits = client.game
+                    Enumeration<Entity> thisPlayerArtyUnits = client.game
                             .getSelectedEntities(new EntitySelector() {
                                 public boolean accept(Entity entity) {
                                     if (entity.getOwnerId() == client
@@ -258,7 +258,8 @@ public class StartingPositionDialog extends java.awt.Dialog implements
                                     return false;
                                 }
                             });
-                    for (Entity entity : thisPlayerArtyUnits) {
+                    while (thisPlayerArtyUnits.hasMoreElements()) {
+                        Entity entity = thisPlayerArtyUnits.nextElement();
                         if (entity.getOffBoardDirection() != IOffBoardDirections.NONE) {
                             if (direction > IOffBoardDirections.NONE) {
                                 entity

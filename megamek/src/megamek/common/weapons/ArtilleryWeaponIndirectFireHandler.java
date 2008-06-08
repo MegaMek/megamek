@@ -17,7 +17,7 @@
  */
 package megamek.common.weapons;
 
-import java.util.List;
+import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.AmmoType;
@@ -33,7 +33,6 @@ import megamek.common.LosEffects;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
-import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
 import megamek.common.VTOL;
@@ -74,7 +73,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.AttackHandler#cares(int)
      */
-    @Override
     public boolean cares(IGame.Phase phase) {
         if (phase == IGame.Phase.PHASE_OFFBOARD || phase == IGame.Phase.PHASE_TARGETING) {
             return true;
@@ -87,12 +85,11 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.AttackHandler#handle(int, java.util.Vector)
      */
-    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        if (!cares(phase)) {
+        if (!this.cares(phase)) {
             return true;
         }
-        final ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
+        ArtilleryAttackAction aaa = (ArtilleryAttackAction) waa;
         if (phase == IGame.Phase.PHASE_TARGETING) {
             if (!handledAmmoAndReport) {
                 addHeat();
@@ -142,12 +139,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             System.err.println("Artillery Entity is null!");
             return true;
         }
-        final Mounted ammo = ae.getEquipment(aaa.getAmmoId());
+        Mounted ammo = ae.getEquipment(aaa.getAmmoId());
         final AmmoType atype = ammo == null ? null : (AmmoType) ammo.getType();
         // Are there any valid spotters?
         if (null != spottersBefore && !isFlak) {
             // fetch possible spotters now
-            final List<Entity> spottersAfter = game
+            Enumeration<Entity> spottersAfter = game
                     .getSelectedEntities(new EntitySelector() {
                         public int player = playerId;
 
@@ -157,8 +154,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                             Integer id = new Integer(entity.getId());
                             if (player == entity.getOwnerId()
                                     && spottersBefore.contains(id)
-                                    && !LosEffects.calculateLos(game, entity
-                                            .getId(), targ).isBlocked()
+                                    && !(LosEffects.calculateLos(game, entity
+                                            .getId(), targ)).isBlocked()
                                     && entity.isActive()
                                     && !entity.isINarcedWith(INarcPod.HAYWIRE)) {
                                 return true;
@@ -168,7 +165,8 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                     });
 
             // Out of any valid spotters, pick the best.
-            for (final Entity ent : spottersAfter) {
+            while (spottersAfter.hasMoreElements()) {
+                Entity ent = spottersAfter.nextElement();
                 if (bestSpotter == null
                         || ent.crew.getGunnery() < bestSpotter.crew
                                 .getGunnery()) {
@@ -180,23 +178,23 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         // If at least one valid spotter, then get the benefits thereof.
         if (null != bestSpotter) {
-            final int mod = (bestSpotter.crew.getGunnery() - 4) / 2;
+            int mod = (bestSpotter.crew.getGunnery() - 4) / 2;
             toHit.addModifier(mod, "Spotting modifier");
         }
 
         // Is the attacker still alive and we're not shooting FLAK?
         // then adjust the target
-        final Entity artyAttacker = aaa.getEntity(game);
+        Entity artyAttacker = aaa.getEntity(game);
         if (null != artyAttacker && !isFlak) {
 
             // Get the arty weapon.
-            final Mounted weapon = artyAttacker.getEquipment(aaa.getWeaponId());
+            Mounted weapon = artyAttacker.getEquipment(aaa.getWeaponId());
 
             // If the shot hit the target hex, then all subsequent
             // fire will hit the hex automatically.
             if (roll >= toHit.getValue()) {
                 artyAttacker.aTracker.setModifier(weapon,
-                        TargetRoll.AUTOMATIC_SUCCESS, targetPos);
+                        ToHitData.AUTOMATIC_SUCCESS, targetPos);
                 
                 game.getBoard().addSpecialHexDisplay(targetPos,
                         new SpecialHexDisplay(
@@ -240,19 +238,19 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         r.add(target.getDisplayName(), true);
         vPhaseReport.addElement(r);
-        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
@@ -317,9 +315,9 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                             "Artilery Hit. Better text later."));
 
         } else {
-            coords = Compute.scatter(coords, game.getOptions()
-                    .booleanOption("margin_scatter_distance") ? toHit
-                    .getValue() - roll : -1);
+            coords = Compute.scatter(coords, (game.getOptions()
+                    .booleanOption("margin_scatter_distance")) ? (toHit
+                    .getValue() - roll) : -1);
             if (game.getBoard().contains(coords)) {
                 // misses and scatters to another hex
                 if (!isFlak) {
@@ -353,13 +351,12 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
 
         if (atype.getMunitionType() == AmmoType.M_FLARE) {
             int radius;
-            if (atype.getAmmoType() == AmmoType.T_ARROW_IV) {
+            if (atype.getAmmoType() == AmmoType.T_ARROW_IV)
                 radius = 4;
-            } else if (atype.getAmmoType() == AmmoType.T_LONG_TOM) {
+            else if (atype.getAmmoType() == AmmoType.T_LONG_TOM)
                 radius = 3;
-            } else {
+            else
                 radius = Math.max(1, atype.getRackSize() / 5);
-            }
             server.deliverArtilleryFlare(coords, radius);
             return false;
         }
@@ -400,7 +397,6 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
-    @Override
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
         // area effect damage is double

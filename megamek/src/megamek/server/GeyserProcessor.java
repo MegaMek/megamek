@@ -14,6 +14,7 @@
  */
 package megamek.server;
 
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -75,8 +76,9 @@ public class GeyserProcessor extends DynamicTerrainProcessor {
                         hex.addTerrain(tf.createTerrain(Terrains.MAGMA, 2));
                         server.sendChangedHex(g.position);
                         gs.remove();
-                        for (Entity e : server.getGame().getEntities(g.position)) {
-                            server.doMagmaDamage(e, true);
+                        for (Enumeration<Entity> e = server.getGame()
+                                .getEntities(g.position); e.hasMoreElements();) {
+                            server.doMagmaDamage(e.nextElement(), true);
                         }
                     } else {
                         r = new Report(5280);

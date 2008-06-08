@@ -3,7 +3,7 @@
  */
 package megamek.server.commands;
 
-import java.util.Iterator;
+import java.util.Enumeration;
 
 import megamek.common.Coords;
 import megamek.common.Entity;
@@ -48,14 +48,14 @@ public class ShowTileCommand extends ServerCommand {
                     // units in this tile.
                     if (!server.getGame().getOptions().booleanOption(
                             "double_blind")) {
-                        final Iterator<Entity> entList = server.getGame()
-                                .getEntities(coord).iterator();
-                        if (entList.hasNext()) {
+                        Enumeration<Entity> entList = server.getGame()
+                                .getEntities(coord);
+                        if (entList.hasMoreElements()) {
                             str = str + "; Contains entities: "
-                                    + entList.next().getId();
-                            while (entList.hasNext()) {
+                                    + entList.nextElement().getId();
+                            while (entList.hasMoreElements()) {
                                 str = str + ", "
-                                        + entList.next().getId();
+                                        + entList.nextElement().getId();
                             }
                         }
                     }
@@ -72,9 +72,9 @@ public class ShowTileCommand extends ServerCommand {
 
                 i++;
             } while (i < args.length);
-        } catch (final NumberFormatException nfe) {
-        } catch (final NullPointerException npe) {
-        } catch (final IndexOutOfBoundsException ioobe) {
+        } catch (NumberFormatException nfe) {
+        } catch (NullPointerException npe) {
+        } catch (IndexOutOfBoundsException ioobe) {
         }
     }
 

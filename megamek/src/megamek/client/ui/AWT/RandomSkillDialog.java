@@ -33,6 +33,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Enumeration;
+import java.util.Iterator;
+
 import megamek.client.Client;
 import megamek.common.Compute;
 import megamek.common.Entity;
@@ -49,35 +52,35 @@ public class RandomSkillDialog extends java.awt.Dialog implements
     private Client client;
     private ClientGUI clientgui;
 
-    private final Panel panButtons = new Panel();
-    private final Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
-    private final Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
+    private Panel panButtons = new Panel();
+    private Button butOkay = new Button(Messages.getString("Okay")); //$NON-NLS-1$
+    private Button butCancel = new Button(Messages.getString("Cancel")); //$NON-NLS-1$
 
-    private final Label labelMethod = new Label(Messages
+    private Label labelMethod = new Label(Messages
             .getString("RandomSkillDialog.labelMethod"), Label.RIGHT); //$NON-NLS-1$
-    private final Choice chMethod = new Choice();
-    private final Label labelType = new Label(Messages
+    private Choice chMethod = new Choice();
+    private Label labelType = new Label(Messages
             .getString("RandomSkillDialog.labelType"), Label.RIGHT); //$NON-NLS-1$
-    private final Choice chType = new Choice();
-    private final Label labelLevel = new Label(Messages
+    private Choice chType = new Choice();
+    private Label labelLevel = new Label(Messages
             .getString("RandomSkillDialog.labelLevel"), Label.RIGHT); //$NON-NLS-1$
-    private final Choice chLevel = new Choice();
+    private Choice chLevel = new Choice();
 
-    private final Label labelPlayer = new Label(Messages
+    private Label labelPlayer = new Label(Messages
             .getString("MechSelectorDialog.m_labelPlayer"), Label.RIGHT); //$NON-NLS-1$
-    private final Choice chPlayer = new Choice();
+    private Choice chPlayer = new Choice();
 
-    private final TextArea texDesc = new TextArea(
+    private TextArea texDesc = new TextArea(
             Messages.getString("CustomMechDialog.texDesc"), 3, 35, TextArea.SCROLLBARS_VERTICAL_ONLY); //$NON-NLS-1$
 
-    private final Checkbox cForceClose = new Checkbox(Messages
+    private Checkbox cForceClose = new Checkbox(Messages
             .getString("RandomSkillDialog.cForceClose"));
 
     /** Creates a new instance of StartingPositionDialog */
     public RandomSkillDialog(ClientGUI clientgui) {
         super(clientgui.frame,
                 Messages.getString("RandomSkillDialog.title"), true); //$NON-NLS-1$
-        client = clientgui.getClient();
+        this.client = clientgui.getClient();
         this.clientgui = clientgui;
 
         updatePlayerChoice();
@@ -110,9 +113,9 @@ public class RandomSkillDialog extends java.awt.Dialog implements
         setupButtons();
 
         // layout
-        final GridBagLayout gridbag = new GridBagLayout();
-        final GridBagConstraints c = new GridBagConstraints();
-        setLayout(gridbag);
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
+        this.setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
         c.insets = new Insets(4, 4, 4, 4);
@@ -163,7 +166,6 @@ public class RandomSkillDialog extends java.awt.Dialog implements
         this.add(panButtons);
 
         addWindowListener(new WindowAdapter() {
-            @Override
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
             }
@@ -183,8 +185,8 @@ public class RandomSkillDialog extends java.awt.Dialog implements
         butCancel.addActionListener(this);
 
         // layout
-        final GridBagLayout gridbag = new GridBagLayout();
-        final GridBagConstraints c = new GridBagConstraints();
+        GridBagLayout gridbag = new GridBagLayout();
+        GridBagConstraints c = new GridBagConstraints();
         panButtons.setLayout(gridbag);
 
         c.insets = new Insets(5, 5, 0, 0);
@@ -213,12 +215,12 @@ public class RandomSkillDialog extends java.awt.Dialog implements
     }
 
     private void updatePlayerChoice() {
-        final String lastChoice = chPlayer.getSelectedItem();
+        String lastChoice = chPlayer.getSelectedItem();
         chPlayer.removeAll();
         chPlayer.setEnabled(true);
         chPlayer.addItem(clientgui.getClient().getName());
-        for (final Client client2 : clientgui.getBots().values()) {
-            chPlayer.addItem(client2.getName());
+        for (Iterator<Client> i = clientgui.getBots().values().iterator(); i.hasNext();) {
+            chPlayer.addItem(i.next().getName());
         }
         if (chPlayer.getItemCount() == 1) {
             chPlayer.setEnabled(false);
@@ -227,7 +229,6 @@ public class RandomSkillDialog extends java.awt.Dialog implements
         }
     }
 
-    @Override
     public void setVisible(boolean show) {
         if (show) {
             updatePlayerChoice();
@@ -241,15 +242,17 @@ public class RandomSkillDialog extends java.awt.Dialog implements
             // skill levels
             Client c = null;
             if (chPlayer.getSelectedIndex() > 0) {
-                final String name = chPlayer.getSelectedItem();
+                String name = chPlayer.getSelectedItem();
                 c = clientgui.getBots().get(name);
             }
             if (c == null) {
                 c = client;
             }
-            for (final Entity ent : c.game.getEntities()) {
+            for (Enumeration<Entity> e = c.game.getEntities(); e
+                    .hasMoreElements();) {
+                Entity ent = e.nextElement();
                 if (ent.getOwnerId() == c.getLocalPlayer().getId()) {
-                    final int skills[] = Compute.getRandomSkills(chMethod
+                    int skills[] = Compute.getRandomSkills(chMethod
                             .getSelectedIndex(), chType.getSelectedIndex(),
                             chLevel.getSelectedIndex(), ent instanceof Tank
                                     || ent instanceof VTOL);
@@ -267,10 +270,10 @@ public class RandomSkillDialog extends java.awt.Dialog implements
             clientgui.chatlounge.refreshEntities();
             // need to notify about customization
             // not updating entities in server
-            setVisible(false);
+            this.setVisible(false);
         }
         if (ev.getSource() == butCancel) {
-            setVisible(false);
+            this.setVisible(false);
         }
     }
 

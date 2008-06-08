@@ -14,6 +14,7 @@
 package megamek.common.weapons;
 
 
+import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.Coords;
@@ -22,7 +23,6 @@ import megamek.common.FighterSquadron;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Report;
-import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -53,9 +53,8 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
      * @return a <code>boolean</code> value indicating wether this should be
      *         kept or not
      */
-    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        if (!cares(phase)) {
+        if (!this.cares(phase)) {
             return true;
         }
      
@@ -68,19 +67,19 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
         r.messageId = 3120;
         r.add(target.getDisplayName(), true);
         vPhaseReport.addElement(r);
-        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
+        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
@@ -91,19 +90,20 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
         addHeat();
         
         //deliver screen
-        final Coords coords = target.getPosition();
+        Coords coords = target.getPosition();
         server.deliverScreen(coords, vPhaseReport);
         
         //damage any entities in the hex
-        for (final Entity entity : game.getEntities(coords)) {
+        for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+            Entity entity = (Entity)impactHexHits.nextElement();
             //if fighter squadron multiply damage by active fighters
             if(entity instanceof FighterSquadron) {
-                final FighterSquadron fs = (FighterSquadron)entity;
+                FighterSquadron fs = (FighterSquadron)entity;
                 attackValue *= fs.getNFighters();
             }          
-            final ToHitData toHit = new ToHitData();
+            ToHitData toHit = new ToHitData();
             toHit.setHitTable(ToHitData.HIT_NORMAL);
-            final HitData hit = entity.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
+            HitData hit = entity.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
             vPhaseReport.addAll( server.damageEntity(entity, hit, attackValue));
             server.creditKill(entity, ae);
         }

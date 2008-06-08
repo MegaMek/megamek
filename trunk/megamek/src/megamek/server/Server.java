@@ -15181,7 +15181,9 @@ public class Server implements Runnable {
 
         // Now we damage people near the explosion.
         ArrayList<Entity> loaded = new ArrayList<Entity>();
-        for (Entity entity : game.getEntitiesVector()) {
+        for (Enumeration<Entity> entities = game.getEntities();entities.hasMoreElements(); ) {
+            
+            Entity entity = entities.nextElement();
 
             if (entitiesHit.contains(entity))
                 continue;
@@ -15399,11 +15401,11 @@ public class Server implements Runnable {
     private void resolveScheduledNukes() {
         for (int[] nuke : scheduledNukes) {
             if (nuke.length == 3) {
-                doNuclearExplosion(new Coords(nuke[0], nuke[1]), nuke[2], 
+                doNuclearExplosion(new Coords(nuke[0]-1, nuke[1]-1), nuke[2], 
                         vPhaseReport);
             }
             if (nuke.length == 6) {
-                doNuclearExplosion(new Coords(nuke[0], nuke[1]), nuke[2],
+                doNuclearExplosion(new Coords(nuke[0]-1, nuke[1]-1), nuke[2],
                         nuke[3], nuke[4], nuke[5] ,vPhaseReport);
             }
         }

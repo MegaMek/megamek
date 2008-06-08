@@ -34,6 +34,7 @@ v0.33.27-dev (SVN)
 + Bug 1984925: Nuke Exception 0.33.27-Dev
 + FIXED: name of Killer Whale-T
 + Data 1981770: ASF
++ Data 1981757: Warships
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

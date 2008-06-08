@@ -31,6 +31,7 @@ v0.33.27-dev (SVN)
 + Weapon handling for screen launchers
 + Weapon handling for tele-operated missiles
 + TRO 3075 BA
++ Moved many Vectors to List
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

@@ -16,6 +16,7 @@ package megamek.common;
 
 import java.io.Serializable;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.event.GamePlayerChangeEvent;
@@ -28,29 +29,35 @@ public final class Player extends TurnOrdered implements Serializable {
      * 
      */
     private static final long serialVersionUID = 6828849559007455760L;
+
     public static final int PLAYER_NONE = -1;
+
     public static final int TEAM_NONE = 0;
 
-    public static final String colorNames[] = { "Blue", "Yellow", "Red",
-            "Green", "White", "Cyan", "Pink", "Orange", "Gray", "Brown",
-            "Purple" };
+    public static final String colorNames[] = { "Blue", "Yellow", "Red", "Green", "White", "Cyan",
+            "Pink", "Orange", "Gray", "Brown", "Purple" };
 
-    public static final String teamNames[] = { "No Team", "Team 1", "Team 2",
-            "Team 3", "Team 4", "Team 5" };
+    public static final String teamNames[] = { "No Team", "Team 1", "Team 2", "Team 3", "Team 4",
+            "Team 5" };
+
     public static final int MAX_TEAMS = teamNames.length;
 
     private transient IGame game;
 
     private String name = "unnamed";
+
     private int id;
 
     private int team = TEAM_NONE;
 
     private boolean done = false; // done with phase
+
     private boolean ghost = false; // disconnected player
+
     private boolean observer = false;
 
     private boolean see_entire_board = false; // Player can observe
+
     // double blind games
 
     private int colorIndex = 0;
@@ -61,7 +68,9 @@ public final class Player extends TurnOrdered implements Serializable {
 
     // number of minefields
     private int num_mf_conv = 0;
+
     private int num_mf_cmd = 0;
+
     private int num_mf_vibra = 0;
 
     // hexes that are automatically hit by artillery
@@ -88,11 +97,11 @@ public final class Player extends TurnOrdered implements Serializable {
 
     private String camoFileName = null;
 
-    private Vector<Minefield> visibleMinefields = new Vector<Minefield>();
+    private final Vector<Minefield> visibleMinefields = new Vector<Minefield>();
 
     private boolean admitsDefeat = false;
 
-    private Vector<Report> turnReports = new Vector<Report>();
+    private final Vector<Report> turnReports = new Vector<Report>();
 
     public Vector<Minefield> getMinefields() {
         return visibleMinefields;
@@ -125,7 +134,7 @@ public final class Player extends TurnOrdered implements Serializable {
     }
 
     public boolean hasMinefields() {
-        return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0);
+        return num_mf_cmd > 0 || num_mf_conv > 0 || num_mf_vibra > 0;
     }
 
     public void setNbrMFConventional(int nbrMF) {
@@ -153,7 +162,7 @@ public final class Player extends TurnOrdered implements Serializable {
     }
 
     public void setCamoCategory(String name) {
-        this.camoCategory = name;
+        camoCategory = name;
     }
 
     public String getCamoCategory() {
@@ -161,7 +170,7 @@ public final class Player extends TurnOrdered implements Serializable {
     }
 
     public void setCamoFileName(String name) {
-        this.camoFileName = name;
+        camoFileName = name;
     }
 
     public String getCamoFileName() {
@@ -219,13 +228,14 @@ public final class Player extends TurnOrdered implements Serializable {
     }
 
     public boolean isObserver() {
-        if (game != null && game.getPhase() == IGame.Phase.PHASE_VICTORY)
+        if (game != null && game.getPhase() == IGame.Phase.PHASE_VICTORY) {
             return false;
+        }
         return observer;
     }
 
     public void setSeeAll(boolean see_all) {
-        this.see_entire_board = see_all;
+        see_entire_board = see_all;
     }
 
     // This simply returns the value, without checking the observer flag
@@ -235,14 +245,15 @@ public final class Player extends TurnOrdered implements Serializable {
 
     // If observer is false, see_entire_board does nothing
     public boolean canSeeAll() {
-        return (observer && see_entire_board);
+        return observer && see_entire_board;
     }
 
     public void setObserver(boolean observer) {
         this.observer = observer;
         // If not an observer, clear the set see all flag
-        if (!observer)
-            this.setSeeAll(false);
+        if (!observer) {
+            setSeeAll(false);
+        }
     }
 
     public int getColorIndex() {
@@ -250,7 +261,7 @@ public final class Player extends TurnOrdered implements Serializable {
     }
 
     public void setColorIndex(int index) {
-        this.colorIndex = index;
+        colorIndex = index;
     }
 
     public int getStartingPos() {
@@ -263,30 +274,33 @@ public final class Player extends TurnOrdered implements Serializable {
 
     /** Set deployment zone to edge of board for reinforcements */
     public void adjustStartingPosForReinforcements() {
-        if (startingPos > 10)
+        if (startingPos > 10) {
             startingPos -= 10; // deep deploy change to standard
-        if (startingPos == 0 || startingPos == 10)
+        }
+        if (startingPos == 0 || startingPos == 10) {
             startingPos = 9; // any or centre change to edge
+        }
     }
 
     public boolean isEnemyOf(Player other) {
-        return (id != other.getId() && (team == TEAM_NONE || team != other
-                .getTeam()));
+        return id != other.getId() && (team == TEAM_NONE || team != other.getTeam());
     }
 
     /**
      * Two players are equal if their ids are equal
      */
+    @Override
     public boolean equals(Object object) {
         if (this == object) {
             return true;
         } else if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        Player other = (Player) object;
-        return other.getId() == this.id;
+        final Player other = (Player) object;
+        return other.getId() == id;
     }
 
+    @Override
     public int hashCode() {
         return getId();
     }
@@ -308,19 +322,19 @@ public final class Player extends TurnOrdered implements Serializable {
     }
 
     public boolean hasTAG() {
-        for (Enumeration<Entity> e = game
-                .getSelectedEntities(new EntitySelector() {
-                    private final int ownerId = getId();
+        for (final Entity m : game.getSelectedEntities(new EntitySelector() {
+            private final int ownerId = getId();
 
-                    public boolean accept(Entity entity) {
-                        if (entity.getOwner() == null)
-                            return false;
-                        if (ownerId == entity.getOwner().getId())
-                            return true;
-                        return false;
-                    }
-                }); e.hasMoreElements();) {
-            Entity m = e.nextElement();
+            public boolean accept(Entity entity) {
+                if (entity.getOwner() == null) {
+                    return false;
+                }
+                if (ownerId == entity.getOwner().getId()) {
+                    return true;
+                }
+                return false;
+            }
+        })) {
             if (m.hasTAG()) {
                 return true;
             }
@@ -333,19 +347,19 @@ public final class Player extends TurnOrdered implements Serializable {
      * @return The combined Battle Value of all the player's current assets.
      */
     public int getBV() {
-        Enumeration<Entity> survivors = game.getEntities();
         int bv = 0;
 
-        while (survivors.hasMoreElements()) {
-            Entity entity = survivors.nextElement();
-            if (entity.getOwner() == this && !entity.isDestroyed())
+        final List<Entity> survivors = game.getEntities();
+        for (final Entity entity : survivors) {
+            if (entity.getOwner() == this && !entity.isDestroyed()) {
                 bv += entity.calculateBattleValue();
+            }
         }
-        return (int) (bv * this.getForceSizeBVMod());
+        return (int) (bv * getForceSizeBVMod());
     }
 
     public void setInitialBV() {
-        this.initialBV = getBV();
+        initialBV = getBV();
     }
 
     public int getInitialBV() {
@@ -353,57 +367,53 @@ public final class Player extends TurnOrdered implements Serializable {
     }
 
     public float getForceSizeBVMod() {
-        if (game.getOptions().booleanOption("no_force_size_mod"))
+        if (game.getOptions().booleanOption("no_force_size_mod")) {
             return 1;
-        Enumeration<Entity> entities = game.getEntities();
+        }
         float ourUnitCount = 0;
-        while (entities.hasMoreElements()) {
-            final Entity entity = entities.nextElement();
+        final List<Entity> force = game.getEntities();
+        for (final Entity entity : force) {
             if (entity.getOwner().equals(this) && !entity.isDestroyed()) {
                 ourUnitCount++;
             }
         }
         float enemyUnitCount = 0;
-        if (this.getTeam() == TEAM_NONE) {
-            for (Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
-                Player p = e.nextElement();
+        if (getTeam() == TEAM_NONE) {
+            for (final Enumeration<Player> e = game.getPlayers(); e.hasMoreElements();) {
+                final Player p = e.nextElement();
                 if (!p.equals(this)) {
                     enemyUnitCount += game.getEntitiesOwnedBy(p);
                 }
             }
         } else {
-            Team team = game.getTeamForPlayer(this);
+            final Team team = game.getTeamForPlayer(this);
             if (team != null) {
-                for (Enumeration<Player> e = team.getPlayers(); e
-                        .hasMoreElements();) {
-                    Player p = e.nextElement();
+                for (final Enumeration<Player> e = team.getPlayers(); e.hasMoreElements();) {
+                    final Player p = e.nextElement();
                     if (!p.equals(this)) {
                         ourUnitCount += game.getEntitiesOwnedBy(p);
                     }
                 }
             }
-            for (Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
-                Team t = e.nextElement();
-                if (t.getId() != this.getTeam()) {
-                    for (Enumeration<Player> players = t.getPlayers(); players
-                            .hasMoreElements();) {
-                        Player p = players.nextElement();
+            for (final Enumeration<Team> e = game.getTeams(); e.hasMoreElements();) {
+                final Team t = e.nextElement();
+                if (t.getId() != getTeam()) {
+                    for (final Enumeration<Player> players = t.getPlayers(); players.hasMoreElements();) {
+                        final Player p = players.nextElement();
                         enemyUnitCount += game.getEntitiesOwnedBy(p);
                     }
                 }
             }
         }
-        if (ourUnitCount <= enemyUnitCount || enemyUnitCount == 0
-                || ourUnitCount == 0) {
+        if (ourUnitCount <= enemyUnitCount || enemyUnitCount == 0 || ourUnitCount == 0) {
             return 1;
         }
 
-        return (enemyUnitCount / ourUnitCount)
-                + (ourUnitCount / enemyUnitCount) - 1;
+        return enemyUnitCount / ourUnitCount + ourUnitCount / enemyUnitCount - 1;
     }
 
     public void setConstantInitBonus(int b) {
-        this.constantInitBonus = b;
+        constantInitBonus = b;
     }
 
     public int getConstantInitBonus() {

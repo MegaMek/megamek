@@ -32,6 +32,7 @@ import java.awt.event.KeyListener;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 
@@ -75,7 +76,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private static final long serialVersionUID = 6948890985035249901L;
 
     // Distraction implementation.
-    private DistractableAdapter distracted = new DistractableAdapter();
+    private final DistractableAdapter distracted = new DistractableAdapter();
 
     // Action command names
     public static final String FIRE_FIRE = "fireFire"; //$NON-NLS-1$
@@ -130,8 +131,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     public TargetingPhaseDisplay(ClientGUI clientgui, boolean offboard) {
         this.clientgui = clientgui;
-        this.client = clientgui.getClient();
-        this.phase = offboard ? IGame.Phase.PHASE_OFFBOARD : IGame.Phase.PHASE_TARGETING;
+        client = clientgui.getClient();
+        phase = offboard ? IGame.Phase.PHASE_OFFBOARD : IGame.Phase.PHASE_TARGETING;
         shiftheld = false;
 
         // fire
@@ -199,8 +200,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         setupButtonPanel();
 
         // layout screen
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
+        final GridBagLayout gridbag = new GridBagLayout();
+        final GridBagConstraints c = new GridBagConstraints();
         setLayout(gridbag);
 
         c.fill = GridBagConstraints.BOTH;
@@ -240,12 +241,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         client.game.addGameListener(this);
         clientgui.getBoardView().addBoardViewListener(this);
 
-        this.clientgui.bv.addKeyListener(this);
+        clientgui.bv.addKeyListener(this);
         addKeyListener(this);
 
         // mech display.
-        this.clientgui.mechD.wPan.weaponList.addItemListener(this);
-        this.clientgui.mechD.wPan.weaponList.addKeyListener(this);
+        clientgui.mechD.wPan.weaponList.addItemListener(this);
+        clientgui.mechD.wPan.weaponList.addKeyListener(this);
     }
 
     private void addBag(Component comp, GridBagLayout gridbag,
@@ -289,7 +290,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
         if (client.game.getEntity(en) != null) {
 
-            this.cen = en;
+            cen = en;
             clientgui.setSelectedEntityNum(en);
 
             // If the selected entity is not on the board, use the next one.
@@ -301,7 +302,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                         .getNextEntityNum(nextId)) {
 
                     if (null != client.game.getEntity(nextId).getPosition()) {
-                        this.cen = nextId;
+                        cen = nextId;
                         break;
                     }
 
@@ -361,11 +362,11 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (client.game.getTurn() instanceof GameTurn.TriggerAPPodTurn
                 && null != ce()) {
             disableButtons();
-            TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui
+            final TriggerAPPodDialog dialog = new TriggerAPPodDialog(clientgui
                     .getFrame(), ce());
             dialog.setVisible(true);
             attacks.removeAllElements();
-            Enumeration<EntityAction> actions = dialog.getActions();
+            final Enumeration<EntityAction> actions = dialog.getActions();
             while (actions.hasMoreElements()) {
                 attacks.addElement(actions.nextElement());
             }
@@ -382,7 +383,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     private void endMyTurn() {
         // end my turn, then.
-        Entity next = client.game.getNextEntity(client.game.getTurnIndex());
+        final Entity next = client.game.getNextEntity(client.game.getTurnIndex());
         if (phase == client.game.getPhase() && null != next && null != ce()
                 && next.getOwnerId() != ce().getOwnerId()) {
             clientgui.setDisplayVisible(false);
@@ -415,7 +416,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * Fire Mode - Adds a Fire Mode Change to the current Attack Action
      */
     private void changeMode() {
-        int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
+        final int wn = clientgui.mechD.wPan.getSelectedWeaponNum();
 
         // Do nothing we have no unit selected.
         if (null == ce()) {
@@ -423,13 +424,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         // If the weapon does not have modes, just exit.
-        Mounted m = ce().getEquipment(wn);
+        final Mounted m = ce().getEquipment(wn);
         if (m == null || !m.getType().hasModes()) {
             return;
         }
 
         // send change to the server
-        int nMode = m.switchMode();
+        final int nMode = m.switchMode();
         client.sendModeChange(cen, wn, nMode);
 
         // notify the player
@@ -445,7 +446,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                                     "FiringDisplay.willSwitch", new Object[] { m.getName(), m.pendingMode().getDisplayableName() })); //$NON-NLS-1$
         }
 
-        this.updateTarget();
+        updateTarget();
         clientgui.mechD.wPan.displayMech(ce());
         clientgui.mechD.wPan.selectWeapon(wn);
     }
@@ -458,11 +459,11 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         if (attacks.isEmpty()
                 && GUIPreferences.getInstance().getNagForNoAction()) {
             // comfirm this action
-            String title = Messages
+            final String title = Messages
                     .getString("TargetingPhaseDisplay.DontFireDialog.title"); //$NON-NLS-1$
-            String body = Messages
+            final String body = Messages
                     .getString("TargetingPhaseDisplay.DontFireDialog.message"); //$NON-NLS-1$
-            ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
+            final ConfirmDialog response = clientgui.doYesNoBotherDialog(title, body);
             if (!response.getShowAgain()) {
                 GUIPreferences.getInstance().setNagForNoAction(false);
             }
@@ -497,11 +498,12 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
                     "current searchlight parameters are invalid"); //$NON-NLS-1$
         }
 
-        if (!SearchlightAttackAction.isPossible(client.game, cen, target, null))
+        if (!SearchlightAttackAction.isPossible(client.game, cen, target, null)) {
             return;
+        }
 
         // create and queue a searchlight action
-        SearchlightAttackAction saa = new SearchlightAttackAction(cen, target
+        final SearchlightAttackAction saa = new SearchlightAttackAction(cen, target
                 .getTargetType(), target.getTargetId());
         attacks.addElement(saa);
 
@@ -521,8 +523,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      */
     private void fire() {
         // get the selected weaponnum
-        int weaponNum = clientgui.mechD.wPan.getSelectedWeaponNum();
-        Mounted mounted = ce().getEquipment(weaponNum);
+        final int weaponNum = clientgui.mechD.wPan.getSelectedWeaponNum();
+        final Mounted mounted = ce().getEquipment(weaponNum);
 
         // validate
         if (ce() == null || target == null || mounted == null
@@ -543,10 +545,10 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
         if (null != mounted.getLinked()
                 && ((WeaponType) mounted.getType()).getAmmoType() != AmmoType.T_NA) {
-            Mounted ammoMount = mounted.getLinked();
+            final Mounted ammoMount = mounted.getLinked();
             waa.setAmmoId(ce().getEquipmentNum(ammoMount));
-            if (((AmmoType) (ammoMount.getType())).getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
-                VibrabombSettingDialog vsd = new VibrabombSettingDialog(
+            if (((AmmoType) ammoMount.getType()).getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
+                final VibrabombSettingDialog vsd = new VibrabombSettingDialog(
                         clientgui.frame);
                 vsd.setVisible(true);
                 waa.setOtherAttackInfo(vsd.getSetting());
@@ -566,7 +568,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         mounted.setUsedThisRound(true);
 
         // find the next available weapon
-        int nextWeapon = ce().getNextWeapon(weaponNum);
+        final int nextWeapon = ce().getNextWeapon(weaponNum);
 
         // check; if there are no ready weapons, you're done.
         if (nextWeapon == -1 && GUIPreferences.getInstance().getAutoEndFiring()) {
@@ -585,7 +587,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * Skips to the next weapon
      */
     private void nextWeapon() {
-        int nextWeapon = ce().getNextWeapon(
+        final int nextWeapon = ce().getNextWeapon(
                 clientgui.mechD.wPan.getSelectedWeaponNum());
         // if there's no next weapon, forget about it
         if (nextWeapon == -1) {
@@ -606,11 +608,11 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
 
         // remove attacks, set weapons available again
-        Enumeration<EntityAction> i = attacks.elements();
+        final Enumeration<EntityAction> i = attacks.elements();
         while (i.hasMoreElements()) {
-            Object o = i.nextElement();
+            final Object o = i.nextElement();
             if (o instanceof WeaponAttackAction) {
-                WeaponAttackAction waa = (WeaponAttackAction) o;
+                final WeaponAttackAction waa = (WeaponAttackAction) o;
                 ce().getEquipment(waa.getWeaponId()).setUsedThisRound(false);
             }
         }
@@ -654,7 +656,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * Targets something
      */
     void target(Targetable t) {
-        this.target = t;
+        target = t;
         updateTarget();
 
     }
@@ -681,7 +683,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
 
             clientgui.mechD.wPan.wRangeR
                     .setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
-            Mounted m = ce().getEquipment(weaponId);
+            final Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages
                         .getString("TargetingPhaseDisplay.alreadyFired")); //$NON-NLS-1$
@@ -718,9 +720,10 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void torsoTwist(Coords target) {
         int direction = ce().getFacing();
 
-        if (null != target)
+        if (null != target) {
             direction = ce().clipSecondaryFacing(
                     ce().getPosition().direction(target));
+        }
 
         if (direction != ce().getSecondaryFacing()) {
             clearAttacks();
@@ -761,27 +764,28 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     private void cacheVisibleTargets() {
         clearVisibleTargets();
 
-        Vector<Entity> vec = client.game.getValidTargets(ce());
-        Comparator<Entity> sortComp = new Comparator<Entity>() {
+        final List<Entity> vec = client.game.getValidTargets(ce());
+        final Comparator<Entity> sortComp = new Comparator<Entity>() {
             public int compare(Entity entX, Entity entY) {
                 int rangeToX = ce().getPosition().distance(entX.getPosition());
                 int rangeToY = ce().getPosition().distance(entY.getPosition());
 
-                if (rangeToX == rangeToY)
-                    return ((entX.getId() < entY.getId()) ? -1 : 1);
+                if (rangeToX == rangeToY) {
+                    return entX.getId() < entY.getId() ? -1 : 1;
+                }
 
-                return ((rangeToX < rangeToY) ? -1 : 1);
+                return rangeToX < rangeToY ? -1 : 1;
             }
         };
 
-        TreeSet<Entity> tree = new TreeSet<Entity>(sortComp);
+        final TreeSet<Entity> tree = new TreeSet<Entity>(sortComp);
         visibleTargets = new Entity[vec.size()];
 
         for (int i = 0; i < vec.size(); i++) {
-            tree.add(vec.elementAt(i));
+            tree.add(vec.get(i));
         }
 
-        Iterator<Entity> it = tree.iterator();
+        final Iterator<Entity> it = tree.iterator();
         int count = 0;
         while (it.hasNext()) {
             visibleTargets[count++] = it.next();
@@ -800,13 +804,15 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * Get the next target. Return null if we don't have any targets.
      */
     private Entity getNextTarget() {
-        if (null == visibleTargets)
+        if (null == visibleTargets) {
             return null;
+        }
 
         lastTargetID++;
 
-        if (lastTargetID >= visibleTargets.length)
+        if (lastTargetID >= visibleTargets.length) {
             lastTargetID = 0;
+        }
 
         return visibleTargets[lastTargetID];
     }
@@ -815,10 +821,11 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * Jump to our next target. If there isn't one, well, don't do anything.
      */
     private void jumpToNextTarget() {
-        Entity targ = getNextTarget();
+        final Entity targ = getNextTarget();
 
-        if (null == targ)
+        if (null == targ) {
             return;
+        }
 
         clientgui.bv.centerOnHex(targ.getPosition());
         clientgui.getBoardView().select(targ.getPosition());
@@ -836,10 +843,11 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     //
     // BoardListener
     //
+    @Override
     public void hexMoused(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -871,16 +879,17 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    @Override
     public void hexSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
         if (client.isMyTurn() && b.getCoords() != null && ce() != null
                 && !b.getCoords().equals(ce().getPosition())) {
-            boolean friendlyFire = client.game.getOptions().booleanOption(
+            final boolean friendlyFire = client.game.getOptions().booleanOption(
                     "friendly_fire"); //$NON-NLS-1$
             if (shiftheld) {
                 updateFlipArms(false);
@@ -900,10 +909,11 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     //
     // GameListener
     //
+    @Override
     public void gameTurnChange(GameTurnChangeEvent e) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -922,10 +932,11 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    @Override
     public void gamePhaseChange(GamePhaseChangeEvent e) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -945,12 +956,13 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     public void actionPerformed(ActionEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
-        if (statusBarActionPerformed(ev, client))
+        if (statusBarActionPerformed(ev, client)) {
             return;
+        }
 
         if (!client.isMyTurn()) {
             return;
@@ -1061,7 +1073,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     public void keyPressed(KeyEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1099,7 +1111,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     public void keyReleased(KeyEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1117,7 +1129,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     public void itemStateChanged(ItemEvent ev) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1128,10 +1140,11 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
     }
 
     // board view listener
+    @Override
     public void finishedMovingUnits(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
@@ -1141,14 +1154,15 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
+    @Override
     public void unitSelected(BoardViewEvent b) {
 
         // Are we ignoring events?
-        if (this.isIgnoringEvents()) {
+        if (isIgnoringEvents()) {
             return;
         }
 
-        Entity e = client.game.getEntity(b.getEntityId());
+        final Entity e = client.game.getEntity(b.getEntityId());
         if (client.isMyTurn()) {
             if (client.game.getTurn().isValidEntity(e, client.game)) {
                 selectEntity(e.getId());
@@ -1168,7 +1182,7 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
      * @return <code>true</code> if the listener is ignoring events.
      */
     public boolean isIgnoringEvents() {
-        return this.distracted.isIgnoringEvents();
+        return distracted.isIgnoringEvents();
     }
 
     /**

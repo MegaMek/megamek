@@ -225,7 +225,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     /**
      * The ids of the MechWarriors this entity has picked up
      */
-    private Vector<Integer> pickedUpMechWarriors = new Vector<Integer>();
+    private final Vector<Integer> pickedUpMechWarriors = new Vector<Integer>();
 
     /**
      * The ID of the <code>Entity</code> that has loaded this unit.
@@ -308,7 +308,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * 
      * @see megamek.common.Entity#hitBySwarmsWeapon
      */
-    private Vector<Integer> hitBySwarmsEntity = new Vector<Integer>();
+    private final Vector<Integer> hitBySwarmsEntity = new Vector<Integer>();
 
     /**
      * A vector that stores from which launcher we where hit by a swarm weapon
@@ -316,7 +316,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * 
      * @see megamek.common.Entity#hitBySwarmsEntity
      */
-    private Vector<Integer> hitBySwarmsWeapon = new Vector<Integer>();
+    private final Vector<Integer> hitBySwarmsWeapon = new Vector<Integer>();
 
     // Whether this unit is canon;
     /**
@@ -341,14 +341,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Generates a new, blank, entity.
      */
     public Entity() {
-        this.armor = new int[locations()];
-        this.internal = new int[locations()];
-        this.orig_armor = new int[locations()];
-        this.orig_internal = new int[locations()];
-        this.crits = new CriticalSlot[locations()][];
-        this.exposure = new int[locations()];
+        armor = new int[locations()];
+        internal = new int[locations()];
+        orig_armor = new int[locations()];
+        orig_internal = new int[locations()];
+        crits = new CriticalSlot[locations()][];
+        exposure = new int[locations()];
         for (int i = 0; i < locations(); i++) {
-            this.crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
+            crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
         }
         setC3NetId(this);
     }
@@ -358,7 +358,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public void restore() {
         // restore all mounted equipments
-        for (Mounted mounted : equipmentList) {
+        for (final Mounted mounted : equipmentList) {
             mounted.restore();
         }
     }
@@ -422,14 +422,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public void setGame(IGame game) {
         this.game = game;
-        this.restore();
+        restore();
         // Make sure the owner is set.
         if (null == owner) {
             if (Entity.NONE == ownerId) {
                 throw new IllegalStateException(
                         "Entity doesn't know its owner's ID.");
             }
-            Player player = game.getPlayer(ownerId);
+            final Player player = game.getPlayer(ownerId);
             if (null == player) {
                 System.err.println("Entity can't find player #" + ownerId);
             } else {
@@ -438,7 +438,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         }
 
         // Also set game for each entity "loaded" in this entity.
-        Enumeration<Entity> iter = this.getLoadedUnits().elements();
+        final Enumeration<Entity> iter = getLoadedUnits().elements();
         while (iter.hasMoreElements()) {
             iter.nextElement().setGame(game);
         }
@@ -514,7 +514,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     public void setRecoveryTurn(int r) {
-        this.recoveryTurn = r;
+        recoveryTurn = r;
     }
     
     /**
@@ -524,13 +524,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @see megamek.common.Entity#setTechLevel(int)
      */
     public boolean isClan() {
-        return (techLevel == TechConstants.T_CLAN_LEVEL_2 || techLevel == TechConstants.T_CLAN_LEVEL_3);
+        return techLevel == TechConstants.T_CLAN_LEVEL_2 || techLevel == TechConstants.T_CLAN_LEVEL_3;
     }
 
     public boolean isClanArmor() {
-        if (getArmorTechLevel() == TechConstants.T_TECH_UNKNOWN)
+        if (getArmorTechLevel() == TechConstants.T_TECH_UNKNOWN) {
             return isClan();
-        return ((getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_2) || (getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_3));
+        }
+        return getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_2 || getArmorTechLevel() == TechConstants.T_CLAN_LEVEL_3;
     }
 
     public boolean isMixedTech() {
@@ -594,8 +595,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public void setOwner(Player player) {
-        this.owner = player;
-        this.ownerId = player.getId();
+        owner = player;
+        ownerId = player.getId();
 
         generateDisplayName();
     }
@@ -611,7 +612,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean isEnemyOf(Entity other) {
         if (null == owner) {
-            return (id != other.getId() && ownerId != other.ownerId);
+            return id != other.getId() && ownerId != other.ownerId;
         }
         return id != other.getId() && owner.isEnemyOf(other.getOwner());
     }
@@ -639,8 +640,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public void setDoomed(boolean doomed) {
         // Doomed entities aren't in retreat.
         if (doomed) {
-            this
-                    .setRemovalCondition(IEntityRemovalConditions.REMOVE_SALVAGEABLE);
+            setRemovalCondition(IEntityRemovalConditions.REMOVE_SALVAGEABLE);
         }
         this.doomed = doomed;
     }
@@ -681,7 +681,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * a dead swarmer's game turn.
      */
     public void setUnloaded(boolean unloaded) {
-        this.unloadedThisTurn = unloaded;
+        unloadedThisTurn = unloaded;
     }
 
     /**
@@ -697,9 +697,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
     public boolean isActive(int turn) {
         boolean isActive = !shutDown && !destroyed && getCrew().isActive()
-                && !this.unloadedThisTurn;
+                && !unloadedThisTurn;
 
-        if ((turn > -1) && isActive) {
+        if (turn > -1 && isActive) {
             isActive = !deployed && shouldDeploy(turn);
         } else {
             isActive = isActive && deployed;
@@ -713,7 +713,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * entities can not be selected.
      */
     public boolean isSelectableThisTurn() {
-        return !done && (conveyance == Entity.NONE) && !this.unloadedThisTurn
+        return !done && conveyance == Entity.NONE && !unloadedThisTurn
                 && !isClearingMinefield() && !isCarcass();
     }
 
@@ -722,8 +722,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * from starting hex)
      */
     public boolean isLoadableThisTurn() {
-        return (delta_distance == 0) && (conveyance == Entity.NONE)
-                && !this.unloadedThisTurn && !isClearingMinefield();
+        return delta_distance == 0 && conveyance == Entity.NONE
+                && !unloadedThisTurn && !isClearingMinefield();
     }
 
     /**
@@ -734,7 +734,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         during this turn.
      */
     public boolean isUnloadedThisTurn() {
-        return this.unloadedThisTurn;
+        return unloadedThisTurn;
     }
 
     /**
@@ -808,8 +808,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * entity is a target of.
      */
     public DisplacementAttackAction findTargetedDisplacement() {
-        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
-            Entity other = i.nextElement();
+        for (final Entity other : game.getEntities()) {
             if (other.hasDisplacementAttack()
                     && other.getDisplacementAttack().getTargetId() == id) {
                 return other.getDisplacementAttack();
@@ -846,7 +845,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns true if the mech's arms are flipped to the rear
      */
     public boolean getArmsFlipped() {
-        return this.armsFlipped;
+        return armsFlipped;
     }
 
     /**
@@ -872,7 +871,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     public void setPriorPosition(Coords c) {
-        this.priorPosition = c;
+        priorPosition = c;
     }
 
     /**
@@ -892,43 +891,43 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public int calcElevation(IHex current, IHex next, int assumedElevation,
             boolean climb, boolean wigeEndClimbPrevious) {
         int retVal = assumedElevation;
-        if ((getMovementMode() == IEntityMovementMode.SUBMARINE)
-                || (getMovementMode() == IEntityMovementMode.INF_UMU && (current
+        if (getMovementMode() == IEntityMovementMode.SUBMARINE
+                || getMovementMode() == IEntityMovementMode.INF_UMU && (current
                         .containsTerrain(Terrains.WATER) || next
-                        .containsTerrain(Terrains.WATER)))
-                || (getMovementMode() == IEntityMovementMode.VTOL)
+                        .containsTerrain(Terrains.WATER))
+                || getMovementMode() == IEntityMovementMode.VTOL
                 // a WIGE in climb mode or that ended climb mode in the previous
                 // hex stays at the same flight level, like a VTOL
-                || (getMovementMode() == IEntityMovementMode.WIGE 
+                || getMovementMode() == IEntityMovementMode.WIGE 
                         && (climb || wigeEndClimbPrevious)
-                        && assumedElevation > 0)
-                || (getMovementMode() == IEntityMovementMode.QUAD_SWIM && hasUMU())
-                || (getMovementMode() == IEntityMovementMode.BIPED_SWIM && hasUMU())) {
+                        && assumedElevation > 0
+                || getMovementMode() == IEntityMovementMode.QUAD_SWIM && hasUMU()
+                || getMovementMode() == IEntityMovementMode.BIPED_SWIM && hasUMU()) {
             retVal += current.surface();
             retVal -= next.surface();
         } else {
-            if ((getMovementMode() != IEntityMovementMode.HOVER)
-                    && (getMovementMode() != IEntityMovementMode.NAVAL)
-                    && (getMovementMode() != IEntityMovementMode.HYDROFOIL)
-                    && (getMovementMode() != IEntityMovementMode.WIGE)) {
+            if (getMovementMode() != IEntityMovementMode.HOVER
+                    && getMovementMode() != IEntityMovementMode.NAVAL
+                    && getMovementMode() != IEntityMovementMode.HYDROFOIL
+                    && getMovementMode() != IEntityMovementMode.WIGE) {
                 int prevWaterLevel = 0;
                 if (current.containsTerrain(Terrains.WATER)) {
                     prevWaterLevel = current.terrainLevel(Terrains.WATER);
-                    if (!(current.containsTerrain(Terrains.ICE))
+                    if (!current.containsTerrain(Terrains.ICE)
                             || assumedElevation < 0) {
                         // count water, only if the entity isn't on ice surface
                         retVal += current.terrainLevel(Terrains.WATER);
                     }
                 }
                 if (next.containsTerrain(Terrains.WATER)) {
-                    int waterLevel = next.terrainLevel(Terrains.WATER);
+                    final int waterLevel = next.terrainLevel(Terrains.WATER);
                     if (next.containsTerrain(Terrains.ICE)) {
                         // a mech can only climb out onto ice in depth 2 or
                         // shallower water
                         // mech on the surface will stay on the surface
 
-                        if ((waterLevel == 1 && prevWaterLevel == 1)
-                                || (prevWaterLevel <= 2 && climb)
+                        if (waterLevel == 1 && prevWaterLevel == 1
+                                || prevWaterLevel <= 2 && climb
                                 || assumedElevation >= 0) {
                             retVal += waterLevel;
                         }
@@ -938,11 +937,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             }
             if (next.containsTerrain(Terrains.BUILDING)
                     || current.containsTerrain(Terrains.BUILDING)) {
-                int bldcur = Math.max(0, current
+                final int bldcur = Math.max(0, current
                         .terrainLevel(Terrains.BLDG_ELEV));
-                int bldnex = Math.max(0, next.terrainLevel(Terrains.BLDG_ELEV));
+                final int bldnex = Math.max(0, next.terrainLevel(Terrains.BLDG_ELEV));
 
-                if ((assumedElevation == bldcur && climb && (this instanceof Mech))
+                if (assumedElevation == bldcur && climb && this instanceof Mech
                         || retVal > bldnex) {
                     retVal = bldnex;
                 } else if (bldnex + next.surface() > bldcur + current.surface()) {
@@ -950,17 +949,17 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                     retVal -= next.surface();
                 }
             }
-            if ((getMovementMode() != IEntityMovementMode.NAVAL)
-                    && (getMovementMode() != IEntityMovementMode.HYDROFOIL)
+            if (getMovementMode() != IEntityMovementMode.NAVAL
+                    && getMovementMode() != IEntityMovementMode.HYDROFOIL
                     && (next.containsTerrain(Terrains.BRIDGE) || current
                             .containsTerrain(Terrains.BRIDGE))) {
-                int brdnex = Math.max(-(next.depth()), next
+                final int brdnex = Math.max(-next.depth(), next
                         .terrainLevel(Terrains.BRIDGE_ELEV));
-                if (Math.abs((next.surface() + brdnex)
+                if (Math.abs(next.surface() + brdnex
                         - (current.surface() + assumedElevation)) <= getMaxElevationChange()) {
                     // bridge is reachable at least
                     if (climb
-                            || Math.abs((next.surface() + retVal)
+                            || Math.abs(next.surface() + retVal
                                     - (current.surface() + assumedElevation)) > getMaxElevationChange()
                             || !isElevationValid(retVal, next)) {
                         // use bridge if you can't use the base terrain or if
@@ -981,13 +980,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns the elevation of this entity.
      */
     public int getElevation() {
-        if (Entity.NONE != this.getTransportId()) {
-            return game.getEntity(this.getTransportId()).getElevation();
+        if (Entity.NONE != getTransportId()) {
+            return game.getEntity(getTransportId()).getElevation();
         }
 
-        if ((null == getPosition()) && (isDeployed()))
-            throw new IllegalStateException("Entity #" + this.getId()
+        if (null == getPosition() && isDeployed()) {
+            throw new IllegalStateException("Entity #" + getId()
                     + " does not know its position.");
+        }
 
         if (isOffBoard()) {
             return 0;
@@ -1006,8 +1006,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean canGoDown(int assumedElevation, Coords assumedPos) {
         boolean inWaterOrWoods = false;
-        IHex hex = getGame().getBoard().getHex(assumedPos);
-        int altitude = assumedElevation + hex.surface();
+        final IHex hex = getGame().getBoard().getHex(assumedPos);
+        final int altitude = assumedElevation + hex.surface();
         int minAlt = hex.surface();
         if (hex.containsTerrain(Terrains.WOODS)
                 || hex.containsTerrain(Terrains.WATER)
@@ -1036,7 +1036,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             default:
                 return false;
         }
-        return (altitude > minAlt);
+        return altitude > minAlt;
     }
 
     /**
@@ -1044,8 +1044,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * elevation.
      */
     public boolean canGoUp(int assumedElevation, Coords assumedPos) {
-        IHex hex = getGame().getBoard().getHex(assumedPos);
-        int altitude = assumedElevation + hex.surface();
+        final IHex hex = getGame().getBoard().getHex(assumedPos);
+        final int altitude = assumedElevation + hex.surface();
         int maxAlt = hex.surface();
         switch (getMovementMode()) {
             case IEntityMovementMode.INF_JUMP:
@@ -1068,7 +1068,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             default:
                 return false;
         }
-        return (altitude < maxAlt);
+        return altitude < maxAlt;
     }
 
     /**
@@ -1076,60 +1076,65 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * check stacking, only terrain limitations
      */
     public boolean isElevationValid(int assumedElevation, IHex hex) {
-        int altitude = assumedElevation + hex.surface();
+        final int altitude = assumedElevation + hex.surface();
         if (getMovementMode() == IEntityMovementMode.VTOL) {
             if (this instanceof Infantry
                     && (hex.containsTerrain(Terrains.BUILDING)
                             || hex.containsTerrain(Terrains.WOODS) || hex
                             .containsTerrain(Terrains.JUNGLE))) {
                 // VTOL BA (sylph) can move as ground unit as well
-                return (assumedElevation <= 50 && altitude >= hex.floor());
+                return assumedElevation <= 50 && altitude >= hex.floor();
             } else if (hex.containsTerrain(Terrains.WOODS)
                     || hex.containsTerrain(Terrains.WATER)
                     || hex.containsTerrain(Terrains.JUNGLE)) {
-                return (assumedElevation <= 50 && altitude > hex.ceiling());
+                return assumedElevation <= 50 && altitude > hex.ceiling();
             }
-            return (assumedElevation <= 50 && altitude >= hex.ceiling());
+            return assumedElevation <= 50 && altitude >= hex.ceiling();
         } else if (getMovementMode() == IEntityMovementMode.SUBMARINE
-                || (getMovementMode() == IEntityMovementMode.INF_UMU && hex
-                        .containsTerrain(Terrains.WATER))
-                || (getMovementMode() == IEntityMovementMode.QUAD_SWIM && hasUMU())
-                || (getMovementMode() == IEntityMovementMode.BIPED_SWIM && hasUMU())) {
-            return (altitude >= hex.floor() && altitude <= hex.surface());
+                || getMovementMode() == IEntityMovementMode.INF_UMU && hex
+                        .containsTerrain(Terrains.WATER)
+                || getMovementMode() == IEntityMovementMode.QUAD_SWIM && hasUMU()
+                || getMovementMode() == IEntityMovementMode.BIPED_SWIM && hasUMU()) {
+            return altitude >= hex.floor() && altitude <= hex.surface();
         } else if (getMovementMode() == IEntityMovementMode.HYDROFOIL
                 || getMovementMode() == IEntityMovementMode.NAVAL) {
             return altitude == hex.surface();
         } else if (getMovementMode() == IEntityMovementMode.WIGE) {
             // WiGEs can possibly be at any location above or on the surface
-            return (altitude >= hex.floor());
+            return altitude >= hex.floor();
         } else {
             // regular ground units
             if (hex.containsTerrain(Terrains.ICE)
-                    || (getMovementMode() == IEntityMovementMode.HOVER && hex
-                            .containsTerrain(Terrains.WATER))) {
+                    || getMovementMode() == IEntityMovementMode.HOVER && hex
+                            .containsTerrain(Terrains.WATER)) {
                 // surface of ice is OK, surface of water is OK for hovers
-                if (altitude == hex.surface())
+                if (altitude == hex.surface()) {
                     return true;
+                }
             }
             // only mechs can move underwater
             if (hex.containsTerrain(Terrains.WATER) && altitude < hex.surface()
-                    && !(this instanceof Mech) && !(this instanceof Protomech))
+                    && !(this instanceof Mech) && !(this instanceof Protomech)) {
                 return false;
+            }
             // can move on the ground unless its underwater
-            if (altitude == hex.floor())
+            if (altitude == hex.floor()) {
                 return true;
+            }
             if (hex.containsTerrain(Terrains.BRIDGE)) {
                 // can move on top of a bridge
-                if (assumedElevation == hex.terrainLevel(Terrains.BRIDGE_ELEV))
+                if (assumedElevation == hex.terrainLevel(Terrains.BRIDGE_ELEV)) {
                     return true;
+                }
             }
             if (hex.containsTerrain(Terrains.BUILDING)) {
                 // Mechs, protos and infantry can occupy any floor in the
                 // building
                 if (this instanceof Mech || this instanceof Protomech
                         || this instanceof Infantry) {
-                    if (altitude >= hex.floor() && altitude <= hex.ceiling())
+                    if (altitude >= hex.floor() && altitude <= hex.ceiling()) {
                         return true;
+                    }
                 }
             }
         }
@@ -1167,14 +1172,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * [Model] ([Player Name]).
      */
     public void generateDisplayName() {
-        StringBuffer nbuf = new StringBuffer();
+        final StringBuffer nbuf = new StringBuffer();
         nbuf.append(chassis);
         if (model != null && model.length() > 0) {
             nbuf.append(" ").append(model);
         }
         // if show unit id is on, append the id
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            nbuf.append(" ID:").append(this.getId());
+            nbuf.append(" ID:").append(getId());
         } else if (duplicateMarker > 1) {
             // if not, and a player has more than one unit with the same name,
             // append "#N" after the model to differentiate.
@@ -1184,10 +1189,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             nbuf.append(" (").append(getOwner().getName()).append(")");
         }
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            nbuf.append(" ID:").append(this.getId());
+            nbuf.append(" ID:").append(getId());
         }
 
-        this.displayName = nbuf.toString();
+        displayName = nbuf.toString();
     }
 
     /**
@@ -1207,25 +1212,25 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * [Model].
      */
     public void generateShortName() {
-        StringBuffer nbuf = new StringBuffer();
+        final StringBuffer nbuf = new StringBuffer();
         nbuf.append(chassis);
         if (model != null && model.length() > 0) {
             nbuf.append(" ").append(model);
         }
         // if show unit id is on, append the id
         if (PreferenceManager.getClientPreferences().getShowUnitId()) {
-            nbuf.append(" ID:").append(this.getId());
+            nbuf.append(" ID:").append(getId());
         } else if (duplicateMarker > 1) {
             // if not, and a player has more than one unit with the same name,
             // append "#N" after the model to differentiate.
             nbuf.append(" #" + duplicateMarker);
         }
 
-        this.shortName = nbuf.toString();
+        shortName = nbuf.toString();
     }
 
     public String getShortNameRaw() {
-        StringBuffer nbuf = new StringBuffer();
+        final StringBuffer nbuf = new StringBuffer();
         nbuf.append(chassis);
         if (model != null && model.length() > 0) {
             nbuf.append(" ").append(model);
@@ -1245,8 +1250,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public void setFacing(int facing) {
         this.facing = facing;
-        if (game != null)
+        if (game != null) {
             game.processGameEvent(new GameEntityChangeEvent(this, this));
+        }
     }
 
     /**
@@ -1261,8 +1267,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public void setSecondaryFacing(int sec_facing) {
         this.sec_facing = sec_facing;
-        if (game != null)
+        if (game != null) {
             game.processGameEvent(new GameEntityChangeEvent(this, this));
+        }
     }
 
     /**
@@ -1286,8 +1293,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns true if the entity has an RAC which is jammed and not destroyed
      */
     public boolean canUnjamRAC() {
-        for (Mounted mounted : getTotalWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
+        for (final Mounted mounted : getTotalWeaponList()) {
+            final WeaponType wtype = (WeaponType) mounted.getType();
             if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY
                     && mounted.isJammed() && !mounted.isDestroyed()) {
                 return true;
@@ -1338,7 +1345,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (!ignoreheat) {
             if (game != null && game.getOptions().booleanOption("maxtech_heat")) {
                 if (heat < 30) {
-                    minus = (heat / 5);
+                    minus = heat / 5;
                 } else if (heat >= 49) {
                     minus = 9;
                 } else if (heat >= 43) {
@@ -1352,7 +1359,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 }
                 mp = Math.max(mp - minus, 0);
             } else {
-                mp = Math.max(mp - (heat / 5), 0);
+                mp = Math.max(mp - heat / 5, 0);
             }
         }
         mp = Math.max(mp - getCargoMpReduction(), 0);
@@ -1476,16 +1483,17 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (movementMode == IEntityMovementMode.VTOL
                 || movementMode == IEntityMovementMode.WIGE) {
             return hex.surface() + elevation;
-        } else if (((movementMode == IEntityMovementMode.HOVER)
-                || (movementMode == IEntityMovementMode.NAVAL)
-                || (movementMode == IEntityMovementMode.HYDROFOIL) || hex
+        } else if ((movementMode == IEntityMovementMode.HOVER
+                || movementMode == IEntityMovementMode.NAVAL
+                || movementMode == IEntityMovementMode.HYDROFOIL || hex
                 .containsTerrain(Terrains.ICE))
                 && hex.containsTerrain(Terrains.WATER)) {
             return hex.surface();
         } else if (hex.containsTerrain(Terrains.BLDG_ELEV)){
             return hex.floor() + hex.terrainLevel(Terrains.BLDG_ELEV);
-        } else
+        } else {
             return hex.floor();
+        }
     }
 
     /**
@@ -1494,11 +1502,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean isHexProhibited(IHex hex) {
         
-        if (hex.containsTerrain(Terrains.IMPASSABLE))
+        if (hex.containsTerrain(Terrains.IMPASSABLE)) {
             return true;
+        }
         
-        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+        if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace()) {
             return true;
+        }
         
         return false;
     }
@@ -1508,14 +1518,17 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean isBoardProhibited(int mapType) {
         
-        if(mapType == Board.T_GROUND && doomedOnGround())
+        if(mapType == Board.T_GROUND && doomedOnGround()) {
             return true;
+        }
         
-        if(mapType == Board.T_ATMOSPHERE && doomedInAtmosphere()) 
+        if(mapType == Board.T_ATMOSPHERE && doomedInAtmosphere()) {
             return true;
+        }
         
-        if(mapType == Board.T_SPACE && doomedInSpace())
+        if(mapType == Board.T_SPACE && doomedInSpace()) {
             return true;
+        }
         
         return false;
     }
@@ -1543,10 +1556,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns the name of the location specified.
      */
     public String getLocationName(int loc) {
-        String[] locationNames = getLocationNames();
+        final String[] locationNames = getLocationNames();
 
-        if ((null == locationNames) || (loc >= locationNames.length))
+        if (null == locationNames || loc >= locationNames.length) {
             return "";
+        }
 
         return locationNames[loc];
     }
@@ -1567,10 +1581,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns the abbreviated name of the location specified.
      */
     public String getLocationAbbr(int loc) {
-        String[] locationAbbrs = getLocationAbbrs();
+        final String[] locationAbbrs = getLocationAbbrs();
 
-        if ((null == locationAbbrs) || (loc >= locationAbbrs.length))
+        if (null == locationAbbrs || loc >= locationAbbrs.length) {
             return "";
+        }
         return locationAbbrs[loc];
     }
 
@@ -1692,14 +1707,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public void refreshLocations() {
-        this.armor = new int[locations()];
-        this.internal = new int[locations()];
-        this.orig_armor = new int[locations()];
-        this.orig_internal = new int[locations()];
-        this.crits = new CriticalSlot[locations()][];
-        this.exposure = new int[locations()];
+        armor = new int[locations()];
+        internal = new int[locations()];
+        orig_armor = new int[locations()];
+        orig_internal = new int[locations()];
+        crits = new CriticalSlot[locations()][];
+        exposure = new int[locations()];
         for (int i = 0; i < locations(); i++) {
-            this.crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
+            crits[i] = new CriticalSlot[getNumberOfCriticals(i)];
         }
     }
 
@@ -1748,9 +1763,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns the percent of the armor remaining
      */
     public double getArmorRemainingPercent() {
-        if (getTotalOArmor() == 0)
+        if (getTotalOArmor() == 0) {
             return IArmorState.ARMOR_NA;
-        return ((double) getTotalArmor() / (double) getTotalOArmor());
+        }
+        return (double) getTotalArmor() / (double) getTotalOArmor();
     }
 
     /**
@@ -1842,7 +1858,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns the percent of the armor remaining
      */
     public double getInternalRemainingPercent() {
-        return ((double) getTotalInternal() / (double) getTotalOInternal());
+        return (double) getTotalInternal() / (double) getTotalOInternal();
     }
 
     /**
@@ -1935,7 +1951,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (heat >= 24) {
             mod++;
         }
-        boolean mtHeat = game.getOptions().booleanOption("maxtech_heat");
+        final boolean mtHeat = game.getOptions().booleanOption("maxtech_heat");
         if (mtHeat && heat >= 33) {
             mod++;
         }
@@ -1961,7 +1977,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public Mounted addEquipment(EquipmentType etype, int loc,
             boolean rearMounted) throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        final Mounted mounted = new Mounted(this, etype);
         addEquipment(mounted, loc, rearMounted);
         return mounted;
     }
@@ -1969,7 +1985,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     //mounting weapons needs to take account of ammo
     public Mounted addEquipment(EquipmentType etype, int loc,
             boolean rearMounted, int nAmmo) throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        final Mounted mounted = new Mounted(this, etype);
         addEquipment(mounted, loc, rearMounted, nAmmo);
         return mounted;
 
@@ -1978,7 +1994,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     //indicate whether this is a bomb mount
     public Mounted addEquipment(EquipmentType etype, int loc,
             boolean rearMounted, boolean isBomb, int points) throws LocationFullException {
-        Mounted mounted = new Mounted(this, etype);
+        final Mounted mounted = new Mounted(this, etype);
         addEquipment(mounted, loc, rearMounted, isBomb, points);
         return mounted;
     }
@@ -2020,7 +2036,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             
             // one-shot launchers need their single shot of ammo added.
             if (mounted.getType().hasFlag(WeaponType.F_ONESHOT)) {
-                Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
+                final Mounted m = new Mounted(this, AmmoType.getOneshotAmmo(mounted));
                 m.setShotsLeft(1);
                 mounted.setLinked(m);
                 // Oneshot ammo will be identified by having a location
@@ -2064,15 +2080,16 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public Mounted getEquipment(int index) {
         try {
             return equipmentList.get(index);
-        } catch (IndexOutOfBoundsException ex) {
+        } catch (final IndexOutOfBoundsException ex) {
             return null;
         }
     }
 
     public EquipmentType getEquipmentType(CriticalSlot cs) {
-        if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+        if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
             return null;
-        Mounted m = equipmentList.get(cs.getIndex());
+        }
+        final Mounted m = equipmentList.get(cs.getIndex());
         return m.getType();
     }
 
@@ -2086,7 +2103,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
     public int getTotalAmmoOfType(EquipmentType et) {
         int totalShotsLeft = 0;
-        for (Mounted amounted : getAmmo()) {
+        for (final Mounted amounted : getAmmo()) {
             if (amounted.getType() == et && !amounted.isDumping()) {
                 totalShotsLeft += amounted.getShotsLeft();
             }
@@ -2105,7 +2122,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public int getTotalMunitionsOfType(EquipmentType et) {
         int totalShotsLeft = 0;
-        for (Mounted amounted : getAmmo()) {
+        for (final Mounted amounted : getAmmo()) {
             if (amounted.getType().equals(et) && !amounted.isDumping()) {
                 totalShotsLeft += amounted.getShotsLeft();
             }
@@ -2125,15 +2142,17 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public abstract boolean isSecondaryArcWeapon(int weaponId);
     
     public Iterator<Mounted> getWeapons() {
-        if(this.usesWeaponBays())
+        if(usesWeaponBays()) {
             return weaponBayList.iterator();
+        }
         
         return weaponList.iterator();
     }
     
     public ArrayList<Mounted> getWeaponList() {
-        if(this.usesWeaponBays())
-            return weaponBayList; 
+        if(usesWeaponBays()) {
+            return weaponBayList;
+        } 
         
         return weaponList;
     }
@@ -2154,7 +2173,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         ready.
      */
     public int getFirstWeapon() {
-        for (Mounted mounted : getWeaponList()) {
+        for (final Mounted mounted : getWeaponList()) {
             if (mounted.isReady()) {
                 return getEquipmentNum(mounted);
             }
@@ -2167,23 +2186,24 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public int getNextWeapon(int start) {
         boolean past = false;
-        for (Mounted mounted : getWeaponList()) {
+        for (final Mounted mounted : getWeaponList()) {
             // FIXME
             // Logic must be inserted here to NOT always skip AMS once the
             // MaxTech rule for firing AMSes is implemented.
             if (past
-                    && (mounted != null)
-                    && (mounted.isReady())
-                    && (!mounted.getType().hasFlag(WeaponType.F_AMS))
-                    && ((mounted.getLinked() == null) || (mounted.getLinked()
-                            .getShotsLeft() > 0))) {
+                    && mounted != null
+                    && mounted.isReady()
+                    && !mounted.getType().hasFlag(WeaponType.F_AMS)
+                    && (mounted.getLinked() == null || mounted.getLinked()
+                            .getShotsLeft() > 0)) {
                 if (mounted.getType().hasFlag(WeaponType.F_TAG)
                         && game.getPhase() == IGame.Phase.PHASE_FIRING) {
                     continue;
                 }
                 if (mounted.getType().hasFlag(WeaponType.F_MG)) {
-                    if (hasLinkedMGA(mounted))
+                    if (hasLinkedMGA(mounted)) {
                         continue;
+                    }
                 }
 
                 return getEquipmentNum(mounted);
@@ -2204,8 +2224,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Attempts to load all weapons with ammo
      */
     public void loadAllWeapons() {
-        for (Mounted mounted : getTotalWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
+        for (final Mounted mounted : getTotalWeaponList()) {
+            final WeaponType wtype = (WeaponType) mounted.getType();
             if (wtype.getAmmoType() != AmmoType.T_NA) {
                 loadWeapon(mounted);
             }
@@ -2216,9 +2236,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Tries to load the specified weapon with the first available ammo
      */
     public void loadWeapon(Mounted mounted) {
-        for (Mounted mountedAmmo : getAmmo()) {
-            if (loadWeapon(mounted, mountedAmmo))
+        for (final Mounted mountedAmmo : getAmmo()) {
+            if (loadWeapon(mounted, mountedAmmo)) {
                 break;
+            }
         }
     }
 
@@ -2227,9 +2248,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * same munition type as currently in use. If this fails, use first ammo.
      */
     public void loadWeaponWithSameAmmo(Mounted mounted) {
-        for (Mounted mountedAmmo : getAmmo()) {
-            if (loadWeaponWithSameAmmo(mounted, mountedAmmo))
+        for (final Mounted mountedAmmo : getAmmo()) {
+            if (loadWeaponWithSameAmmo(mounted, mountedAmmo)) {
                 return;
+            }
         }
         // fall back to use any ammo
         loadWeapon(mounted);
@@ -2241,8 +2263,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean loadWeapon(Mounted mounted, Mounted mountedAmmo) {
         boolean success = false;
-        WeaponType wtype = (WeaponType) mounted.getType();
-        AmmoType atype = (AmmoType) mountedAmmo.getType();
+        final WeaponType wtype = (WeaponType) mounted.getType();
+        final AmmoType atype = (AmmoType) mountedAmmo.getType();
         
         if (mountedAmmo.isAmmoUsable() && !wtype.hasFlag(WeaponType.F_ONESHOT)
                 && atype.getAmmoType() == wtype.getAmmoType()
@@ -2258,13 +2280,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * if successful, false otherwise.
      */
     public boolean loadWeaponWithSameAmmo(Mounted mounted, Mounted mountedAmmo) {
-        AmmoType atype = (AmmoType) mountedAmmo.getType();
-        Mounted oldammo = mounted.getLinked();
+        final AmmoType atype = (AmmoType) mountedAmmo.getType();
+        final Mounted oldammo = mounted.getLinked();
 
         if (oldammo != null
                 && ((AmmoType) oldammo.getType()).getMunitionType() != atype
-                        .getMunitionType())
+                        .getMunitionType()) {
             return false;
+        }
 
         return loadWeapon(mounted, mountedAmmo);
     }
@@ -2276,12 +2299,12 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public boolean weaponFiredFrom(int loc) {
         // check critical slots for used weapons
         for (int i = 0; i < this.getNumberOfCriticals(loc); i++) {
-            CriticalSlot slot = getCritical(loc, i);
+            final CriticalSlot slot = getCritical(loc, i);
             // ignore empty & system slots
             if (slot == null || slot.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
             }
-            Mounted mounted = getEquipment(slot.getIndex());
+            final Mounted mounted = getEquipment(slot.getIndex());
             if (mounted.getType() instanceof WeaponType
                     && mounted.isUsedThisRound()) {
                 return true;
@@ -2303,7 +2326,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * for removing broken tree clubs.
      */
     public void removeMisc(String toRemove) {
-        for (Mounted mounted : getMisc()) {
+        for (final Mounted mounted : getMisc()) {
             if (mounted.getName().equals(toRemove)) {
                 miscList.remove(mounted);
                 equipmentList.remove(mounted);
@@ -2313,8 +2336,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public List<Mounted> getClubs() {
-        List<Mounted> rv = new ArrayList<Mounted>();
-        for (Mounted m : getMisc()) {
+        final List<Mounted> rv = new ArrayList<Mounted>();
+        for (final Mounted m : getMisc()) {
             if (m.getType().hasFlag(MiscType.F_CLUB)) {
                 rv.add(m);
             }
@@ -2330,12 +2353,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return true if at least one ready item.
      */
     public boolean hasWorkingMisc(long flag, int secondary) {
-        for (Mounted m : miscList) {
+        for (final Mounted m : miscList) {
             if (m.getType() instanceof MiscType && m.isReady()) {
-                MiscType type = (MiscType) m.getType();
+                final MiscType type = (MiscType) m.getType();
                 if (type.hasFlag(flag)
-                        && (secondary == -1 || type.hasSubType(secondary)))
+                        && (secondary == -1 || type.hasSubType(secondary))) {
                     return true;
+                }
             }
         }
         return false;
@@ -2350,13 +2374,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return true if at least one ready item.
      */
     public boolean hasWorkingMisc(long flag, int secondary, int location) {
-        for (Mounted m : miscList) {
+        for (final Mounted m : miscList) {
             if (m.getType() instanceof MiscType && m.isReady()
                     && m.getLocation() == location) {
-                MiscType type = (MiscType) m.getType();
+                final MiscType type = (MiscType) m.getType();
                 if (type.hasFlag(flag)
-                        && (secondary == -1 || type.hasSubType(secondary)))
+                        && (secondary == -1 || type.hasSubType(secondary))) {
                     return true;
+                }
             }
         }
         return false;
@@ -2468,7 +2493,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean canTransferCriticals(int loc) {
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-            CriticalSlot crit = getCritical(loc, i);
+            final CriticalSlot crit = getCritical(loc, i);
             if (crit != null && !crit.isDestroyed() && crit.isEverHittable()) {
                 return false;
             }
@@ -2500,9 +2525,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public int getGoodCriticals(int type, int index, int loc) {
         int operational = 0;
 
-        int numberOfCriticals = getNumberOfCriticals(loc);
+        final int numberOfCriticals = getNumberOfCriticals(loc);
         for (int i = 0; i < numberOfCriticals; i++) {
-            CriticalSlot ccs = getCritical(loc, i);
+            final CriticalSlot ccs = getCritical(loc, i);
 
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index
                     && !ccs.isDestroyed() && !ccs.isBreached()) {
@@ -2518,9 +2543,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public int getBadCriticals(int type, int index, int loc) {
         int hits = 0;
 
-        int numberOfCriticals = getNumberOfCriticals(loc);
+        final int numberOfCriticals = getNumberOfCriticals(loc);
         for (int i = 0; i < numberOfCriticals; i++) {
-            CriticalSlot ccs = getCritical(loc, i);
+            final CriticalSlot ccs = getCritical(loc, i);
 
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
                 if (ccs.isDestroyed() || ccs.isBreached()) {
@@ -2536,9 +2561,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public int getHitCriticals(int type, int index, int loc) {
         int hits = 0;
-        int numCrits = getNumberOfCriticals(loc);
+        final int numCrits = getNumberOfCriticals(loc);
         for (int i = 0; i < numCrits; i++) {
-            CriticalSlot ccs = getCritical(loc, i);
+            final CriticalSlot ccs = getCritical(loc, i);
 
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
                 if (ccs.isDamaged() || ccs.isBreached()) {
@@ -2555,8 +2580,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns the number of total critical slots in a location
      */
     public int getNumberOfCriticals(int loc) {
-        int[] noOfSlots = getNoOfSlots();
-        if ((null == noOfSlots) || (loc >= noOfSlots.length) || loc == LOC_NONE) {
+        final int[] noOfSlots = getNoOfSlots();
+        if (null == noOfSlots || loc >= noOfSlots.length || loc == LOC_NONE) {
             return 0;
         }
         return noOfSlots[loc];
@@ -2568,9 +2593,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public int getNumberOfCriticals(int type, int index, int loc) {
         int num = 0;
-        int numCrits = getNumberOfCriticals(loc);
+        final int numCrits = getNumberOfCriticals(loc);
         for (int i = 0; i < numCrits; i++) {
-            CriticalSlot ccs = getCritical(loc, i);
+            final CriticalSlot ccs = getCritical(loc, i);
             if (ccs != null && ccs.getType() == type && ccs.getIndex() == index) {
                 num++;
             }
@@ -2584,9 +2609,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public int getNumberOfCriticals(EquipmentType etype, int loc) {
         int num = 0;
-        int numberOfCriticals = getNumberOfCriticals(loc);
+        final int numberOfCriticals = getNumberOfCriticals(loc);
         for (int i = 0; i < numberOfCriticals; i++) {
-            CriticalSlot ccs = getCritical(loc, i);
+            final CriticalSlot ccs = getCritical(loc, i);
             if (ccs != null && getEquipmentType(ccs) != null
                     && getEquipmentType(ccs).equals(etype)) {
                 num++;
@@ -2601,7 +2626,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public int getNumberOfCriticals(EquipmentType etype) {
         int num = 0;
-        int locations = locations();
+        final int locations = locations();
         for (int l = 0; l < locations; l++) {
             num += getNumberOfCriticals(etype, l);
         }
@@ -2614,9 +2639,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public int getNumberOf(EquipmentType etype) {
         int total = 0;
-        for (Mounted m : equipmentList) {
-            if (m.getType().equals(etype))
+        for (final Mounted m : equipmentList) {
+            if (m.getType().equals(etype)) {
                 total++;
+            }
         }
         return total;
     }
@@ -2636,14 +2662,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
         for (int i = 0; i < locations(); i++) {
             if (locationIsLeg(i)) {
-                if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                        Mech.ACTUATOR_HIP, i) > 0)
-                        || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_UPPER_LEG, i) > 0)
-                        || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_LOWER_LEG, i) > 0)
-                        || (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
-                                Mech.ACTUATOR_FOOT, i) > 0)) {
+                if (getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                        Mech.ACTUATOR_HIP, i) > 0
+                        || getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                                Mech.ACTUATOR_UPPER_LEG, i) > 0
+                        || getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                                Mech.ACTUATOR_LOWER_LEG, i) > 0
+                        || getBadCriticals(CriticalSlot.TYPE_SYSTEM,
+                                Mech.ACTUATOR_FOOT, i) > 0) {
                     hasCrit = true;
                     break;
                 }
@@ -2658,7 +2684,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean hasWorkingSystem(int system, int loc) {
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-            CriticalSlot ccs = getCritical(loc, i);
+            final CriticalSlot ccs = getCritical(loc, i);
             if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM
                     && ccs.getIndex() == system && !ccs.isDestroyed()
                     && !ccs.isBreached()) {
@@ -2674,7 +2700,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean hasSystem(int system, int loc) {
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-            CriticalSlot ccs = getCritical(loc, i);
+            final CriticalSlot ccs = getCritical(loc, i);
             if (ccs != null && ccs.getType() == CriticalSlot.TYPE_SYSTEM
                     && ccs.getIndex() == system) {
                 return true;
@@ -2714,11 +2740,12 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         int shieldCount = 0;
 
         // only mechs can have shields.
-        if (!(this instanceof Mech))
+        if (!(this instanceof Mech)) {
             return false;
+        }
 
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
+        for (final Mounted m : getMisc()) {
+            final EquipmentType type = m.getType();
             if (type instanceof MiscType && ((MiscType) type).isShield()
                     && this.getInternal(m.getLocation()) > 0) {
                 shieldCount++;
@@ -2736,24 +2763,28 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public int getNumberOfShields(int size) {
         // only mechs can have shields.
-        if (!(this instanceof Mech))
+        if (!(this instanceof Mech)) {
             return 0;
+        }
 
         int raShield = 0;
         int laShield = 0;
 
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
+        for (final Mounted m : getMisc()) {
+            final EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_CLUB)
-                    && (type.hasSubType(size))) {
+                    && type.hasSubType(size)) {
                 // ok so we have a shield of certain size. no which arm is it.
-                if (m.getLocation() == Mech.LOC_RARM)
+                if (m.getLocation() == Mech.LOC_RARM) {
                     raShield = 1;
-                if (m.getLocation() == Mech.LOC_LARM)
+                }
+                if (m.getLocation() == Mech.LOC_LARM) {
                     laShield = 1;
+                }
                 // break now.
-                if (raShield > 0 && laShield > 0)
+                if (raShield > 0 && laShield > 0) {
                     return 2;
+                }
             }
         }
         return raShield + laShield;
@@ -2773,11 +2804,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 // no rear head location so must be rear CT which is not
                 // proected by
                 // any shield
-                if (rear)
+                if (rear) {
                     return false;
+                }
                 if (hasActiveShield(Mech.LOC_LARM)
-                        || hasActiveShield(Mech.LOC_RARM))
+                        || hasActiveShield(Mech.LOC_RARM)) {
                     return true;
+                }
                 // else
                 return false;
             case Mech.LOC_LARM:
@@ -2795,28 +2828,33 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean hasActiveShield(int location) {
 
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM)
+        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM) {
             return false;
+        }
 
-        if (this.isShutDown()
-                || (this.getCrew().isKoThisRound() || this.getCrew()
-                        .isUnconscious()))
+        if (isShutDown()
+                || getCrew().isKoThisRound() || getCrew()
+                        .isUnconscious()) {
             return false;
+        }
 
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = this.getCritical(location, slot);
+            final CriticalSlot cs = getCritical(location, slot);
 
-            if (cs == null)
+            if (cs == null) {
                 continue;
+            }
 
-            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
+            }
 
-            if (cs.isDamaged())
+            if (cs.isDamaged()) {
                 continue;
+            }
 
-            Mounted m = this.getEquipment(cs.getIndex());
-            EquipmentType type = m.getType();
+            final Mounted m = this.getEquipment(cs.getIndex());
+            final EquipmentType type = m.getType();
             if (type instanceof MiscType && ((MiscType) type).isShield()
                     && m.curMode().equals(MiscType.S_ACTIVE_SHIELD)) {
                 return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
@@ -2842,15 +2880,17 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 return false;
             case Mech.LOC_LARM:
             case Mech.LOC_LT:
-                if (rear)// only LT has a rear and passive does not protect
-                            // that
+                if (rear) {
+                    // that
                     return false;
+                }
                 return hasPassiveShield(Mech.LOC_LARM);
                 // RA RT
             default:
-                if (rear)// only RT has a rear and passive does not protect
-                            // that
+                if (rear) {
+                    // that
                     return false;
+                }
                 return hasPassiveShield(Mech.LOC_RARM);
         }
     }
@@ -2861,28 +2901,33 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean hasPassiveShield(int location) {
 
-        if (this.isShutDown()
-                || (this.getCrew().isKoThisRound() || this.getCrew()
-                        .isUnconscious()))
+        if (isShutDown()
+                || getCrew().isKoThisRound() || getCrew()
+                        .isUnconscious()) {
             return false;
+        }
 
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM)
+        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM) {
             return false;
+        }
 
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = this.getCritical(location, slot);
+            final CriticalSlot cs = getCritical(location, slot);
 
-            if (cs == null)
+            if (cs == null) {
                 continue;
+            }
 
-            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
+            }
 
-            if (cs.isDamaged())
+            if (cs.isDamaged()) {
                 continue;
+            }
 
-            Mounted m = this.getEquipment(cs.getIndex());
-            EquipmentType type = m.getType();
+            final Mounted m = this.getEquipment(cs.getIndex());
+            final EquipmentType type = m.getType();
             if (type instanceof MiscType && ((MiscType) type).isShield()
                     && m.curMode().equals(MiscType.S_PASSIVE_SHIELD)) {
                 return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
@@ -2896,31 +2941,35 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean hasNoDefenseShield(int location) {
 
-        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM)
+        if (location != Mech.LOC_RARM && location != Mech.LOC_LARM) {
             return false;
+        }
 
         for (int slot = 0; slot < this.getNumberOfCriticals(location); slot++) {
-            CriticalSlot cs = this.getCritical(location, slot);
+            final CriticalSlot cs = getCritical(location, slot);
 
-            if (cs == null)
+            if (cs == null) {
                 continue;
+            }
 
-            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT)
+            if (cs.getType() != CriticalSlot.TYPE_EQUIPMENT) {
                 continue;
+            }
 
-            if (cs.isDamaged())
+            if (cs.isDamaged()) {
                 continue;
+            }
 
-            Mounted m = this.getEquipment(cs.getIndex());
-            EquipmentType type = m.getType();
+            final Mounted m = this.getEquipment(cs.getIndex());
+            final EquipmentType type = m.getType();
             if (type instanceof MiscType
                     && ((MiscType) type).isShield()
                     && (m.curMode().equals(MiscType.S_NO_SHIELD)
-                            || this.isShutDown() || // if he has a shield and
+                            || isShutDown() || // if he has a shield and
                                                     // the mek is SD or pilot
                                                     // KOed then it goes to no
                                                     // defense mode
-                            this.getCrew().isKoThisRound() || this.getCrew()
+                            getCrew().isKoThisRound() || getCrew()
                             .isUnconscious())) {
                 return m.getCurrentDamageCapacity(this, m.getLocation()) > 0;
             }
@@ -2935,10 +2984,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return <code>boolean</code> if the entity has usable UMU crits.
      */
     public boolean hasUMU() {
-        if (!(this instanceof Mech))
+        if (!(this instanceof Mech)) {
             return false;
+        }
 
-        int umuCount = getActiveUMUCount();
+        final int umuCount = getActiveUMUCount();
 
         return umuCount > 0;
     }
@@ -2951,12 +3001,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public int getActiveUMUCount() {
         int count = 0;
 
-        if (this.hasShield()
-                && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
+        if (hasShield()
+                && getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0) {
             return 0;
+        }
 
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
+        for (final Mounted m : getMisc()) {
+            final EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_UMU)
                     && !(m.isDestroyed() || m.isMissing() || m.isBreached())) {
                 count++;
@@ -2974,15 +3025,17 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public int getAllUMUCount() {
         int count = 0;
 
-        if (!(this instanceof Mech))
+        if (!(this instanceof Mech)) {
             return 0;
+        }
 
-        if (this.hasShield()
-                && this.getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0)
+        if (hasShield()
+                && getNumberOfShields(MiscType.S_SHIELD_LARGE) > 0) {
             return 0;
+        }
 
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
+        for (final Mounted m : getMisc()) {
+            final EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_UMU)) {
                 count++;
             }
@@ -2995,12 +3048,12 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Does the mech have a functioning ECM unit?
      */
     public boolean hasActiveECM() {
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
+        for (final Mounted m : getMisc()) {
+            final EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
                     && m.curMode().equals("ECM")) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached()
-                        || isShutDown() || this.getCrew().isUnconscious());
+                        || isShutDown() || getCrew().isUnconscious());
             }
         }
         return false;
@@ -3011,8 +3064,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean hasActiveAngelECM() {
         if (game.getOptions().booleanOption("maxtech_angel_ecm")) {
-            for (Mounted m : getMisc()) {
-                EquipmentType type = m.getType();
+            for (final Mounted m : getMisc()) {
+                final EquipmentType type = m.getType();
                 if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)
                         && m.curMode().equals("ECM")) {
                     return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
@@ -3032,12 +3085,12 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean hasActiveECCM() {
         if (game.getOptions().booleanOption("maxtech_eccm")) {
-            for (Mounted m : getMisc()) {
-                EquipmentType type = m.getType();
+            for (final Mounted m : getMisc()) {
+                final EquipmentType type = m.getType();
                 if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
                         && m.curMode().equals("ECCM")) {
                     return !(m.isDestroyed() || m.isMissing() || m.isBreached()
-                            || isShutDown() || this.getCrew().isUnconscious());
+                            || isShutDown() || getCrew().isUnconscious());
                 }
             }
         }
@@ -3055,8 +3108,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public boolean hasActiveAngelECCM() {
         if (game.getOptions().booleanOption("maxtech_angel_ecm") &&
                 game.getOptions().booleanOption("maxtech_eccm")) {
-            for (Mounted m : getMisc()) {
-                EquipmentType type = m.getType();
+            for (final Mounted m : getMisc()) {
+                final EquipmentType type = m.getType();
                 if (type instanceof MiscType && type.hasFlag(MiscType.F_ANGEL_ECM)
                         && m.curMode().equals("ECCM")) {
                     return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
@@ -3074,8 +3127,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         be <code>Entity.NONE</code> if no ECM is active.
      */
     public int getECMRange() {
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
+        for (final Mounted m : getMisc()) {
+            final EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
                     && !m.isDestroyed() && !m.isMissing()) {
                 if (BattleArmor.SINGLE_HEX_ECM.equals(type.getInternalName())) {
@@ -3092,8 +3145,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Beagle BloodHound WatchDog Clan Active or Light.
      */
     public boolean hasBAP() {
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
+        for (final Mounted m : getMisc()) {
+            final EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_BAP)) {
                 return !(m.isDestroyed()
                         || m.isMissing()
@@ -3114,26 +3167,30 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         be <code>Entity.NONE</code> if no BAP is active.
      */
     public int getBAPRange() {
-        for (Mounted m : getMisc()) {
-            EquipmentType type = m.getType();
+        for (final Mounted m : getMisc()) {
+            final EquipmentType type = m.getType();
             if (type instanceof MiscType && type.hasFlag(MiscType.F_BAP)
                     && !m.isDestroyed() && !m.isMissing()) {
                 // System.err.println("BAP type name: "+m.getName()+"
                 // internalName: "+((MiscType)m.getType()).internalName);
                 if (m.getName().equals("Bloodhound Active Probe (THB)")
-                        || m.getName().equals("Bloodhound Active Probe"))
+                        || m.getName().equals("Bloodhound Active Probe")) {
                     return 8;
-                if ((m.getType()).getInternalName().equals("CLActiveProbe")
-                        || (m.getType()).getInternalName().equals(
-                                "WatchdogECMSuite"))
+                }
+                if (m.getType().getInternalName().equals("CLActiveProbe")
+                        || m.getType().getInternalName().equals(
+                                "WatchdogECMSuite")) {
                     return 5;
-                if ((m.getType()).getInternalName()
+                }
+                if (m.getType().getInternalName()
                         .equals("CLLightActiveProbe")
                         || m.getType().getInternalName().equals(
-                                "CLImprovedSensors"))
+                                "CLImprovedSensors")) {
                     return 3;
-                if (m.getType().getInternalName().equals("ISImprovedSensors"))
+                }
+                if (m.getType().getInternalName().equals("ISImprovedSensors")) {
                     return 2;
+                }
                 return 4;// everthing else should be range 4
             }
         }
@@ -3144,7 +3201,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns wether or not this entity has a Targeting Computer.
      */
     public boolean hasTargComp() {
-        for (Mounted m : getMisc()) {
+        for (final Mounted m : getMisc()) {
             if (m.getType() instanceof MiscType
                     && m.getType().hasFlag(MiscType.F_TARGCOMP)) {
                 return !(m.isDestroyed() || m.isMissing() || m.isBreached());
@@ -3167,7 +3224,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 return true;
             }
         }
-        for (Mounted m : getMisc()) {
+        for (final Mounted m : getMisc()) {
             if (m.getType() instanceof MiscType
                     && m.getType().hasFlag(MiscType.F_TARGCOMP)
                     && m.curMode().equals("Aimed shot")) {
@@ -3181,9 +3238,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns whether this 'mech has a C3 Slave or not.
      */
     public boolean hasC3S() {
-        if (isShutDown() || isOffBoard())
+        if (isShutDown() || isOffBoard()) {
             return false;
-        for (Mounted m : getEquipment()) {
+        }
+        for (final Mounted m : getEquipment()) {
             if (m.getType() instanceof MiscType
                     && m.getType().hasFlag(MiscType.F_C3S) && !m.isDestroyed()
                     && !m.isBreached()) {
@@ -3218,17 +3276,18 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return true if it has a working C3M computer and has a master.
      */
     public boolean hasC3M() {
-        if (isShutDown() || isOffBoard())
+        if (isShutDown() || isOffBoard()) {
             return false;
-        for (Mounted m : getEquipment()) {
+        }
+        for (final Mounted m : getEquipment()) {
             if (m.getType() instanceof WeaponType
                     && m.getType().hasFlag(WeaponType.F_C3M)
                     && !m.isDestroyed() && !m.isBreached()) {
                 // If this unit is configured as a company commander,
                 // and if this computer is the company master, then
                 // this unit does not have a lance master computer.
-                if (this.C3MasterIs(this)
-                        && this.C3CompanyMasterIndex == getEquipmentNum(m)) {
+                if (C3MasterIs(this)
+                        && C3CompanyMasterIndex == getEquipmentNum(m)) {
                     return false;
                 }
                 return true;
@@ -3238,16 +3297,18 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public boolean hasC3MM() {
-        if (isShutDown() || isOffBoard())
+        if (isShutDown() || isOffBoard()) {
             return false;
+        }
 
         // Have we already determined that there's no company command master?
-        if (C3CompanyMasterIndex == LOC_NONE)
+        if (C3CompanyMasterIndex == LOC_NONE) {
             return false;
+        }
 
         // Do we need to determine that there's no company command master?
         if (C3CompanyMasterIndex == LOC_DESTROYED) {
-            Iterator<Mounted> e = getEquipment().iterator();
+            final Iterator<Mounted> e = getEquipment().iterator();
             while (C3CompanyMasterIndex == LOC_DESTROYED && e.hasNext()) {
                 Mounted m = e.next();
                 if (m.getType() instanceof WeaponType
@@ -3260,19 +3321,19 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                                 && m.getType().hasFlag(WeaponType.F_C3M)
                                 && !m.isDestroyed() && !m.isBreached()) {
                             // Found the comany command master
-                            this.C3CompanyMasterIndex = getEquipmentNum(m);
+                            C3CompanyMasterIndex = getEquipmentNum(m);
                         }
                     }
                 }
             }
             // If we haven't found the company command master, there is none.
             if (C3CompanyMasterIndex == LOC_DESTROYED) {
-                this.C3CompanyMasterIndex = LOC_NONE;
+                C3CompanyMasterIndex = LOC_NONE;
                 return false;
             }
         }
 
-        Mounted m = getEquipment(this.C3CompanyMasterIndex);
+        final Mounted m = getEquipment(C3CompanyMasterIndex);
         if (!m.isDestroyed() && !m.isBreached()) {
             return true;
         }
@@ -3289,9 +3350,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public boolean hasC3i() {
-        if (isShutDown() || isOffBoard())
+        if (isShutDown() || isOffBoard()) {
             return false;
-        for (Mounted m : getEquipment()) {
+        }
+        for (final Mounted m : getEquipment()) {
             if (m.getType() instanceof MiscType
                     && m.getType().hasFlag(MiscType.F_C3I) && !m.isDestroyed()
                     && !m.isBreached()) {
@@ -3313,8 +3375,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public void setC3NetId(Entity e) {
-        if (isEnemyOf(e))
+        if (isEnemyOf(e)) {
             return;
+        }
         C3NetIdString = e.C3NetIdString;
     }
 
@@ -3333,30 +3396,30 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (hasC3MM()) {
             nodes = 2;
             if (game != null) {
-                for (java.util.Enumeration<Entity> i = game.getEntities(); i
-                        .hasMoreElements();) {
-                    final Entity e = i.nextElement();
+                for (final Entity e : game.getEntities()) {
                     if (e.hasC3M() && e != this) {
                         final Entity m = e.getC3Master();
-                        if (equals(m))
+                        if (equals(m)) {
                             nodes--;
-                        if (nodes <= 0)
+                        }
+                        if (nodes <= 0) {
                             return 0;
+                        }
                     }
                 }
             }
-        } else if (hasC3M() && this.C3MasterIs(this)) {
+        } else if (hasC3M() && C3MasterIs(this)) {
             nodes = 3;
             if (game != null) {
-                for (java.util.Enumeration<Entity> i = game.getEntities(); i
-                        .hasMoreElements();) {
-                    final Entity e = i.nextElement();
+                for (final Entity e : game.getEntities()) {
                     if (e.hasC3() && e != this) {
                         final Entity m = e.getC3Master();
-                        if (equals(m))
+                        if (equals(m)) {
                             nodes--;
-                        if (nodes <= 0)
+                        }
+                        if (nodes <= 0) {
                             return 0;
+                        }
                     }
                 }
             }
@@ -3379,33 +3442,32 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (hasC3i()) {
             nodes = 5;
             if (game != null) {
-                for (Enumeration<Entity> i = game.getEntities(); i
-                        .hasMoreElements();) {
-                    final Entity e = i.nextElement();
+                for (final Entity e : game.getEntities()) {
                     if (!equals(e) && onSameC3NetworkAs(e)) {
                         nodes--;
-                        if (nodes <= 0)
+                        if (nodes <= 0) {
                             return 0;
+                        }
                     }
                 }
             }
         } else if (hasC3M()) {
             nodes = 3;
             if (game != null) {
-                for (Enumeration<Entity> i = game.getEntities(); i
-                        .hasMoreElements();) {
-                    final Entity e = i.nextElement();
+                for (final Entity e : game.getEntities()) {
                     if (e.hasC3() && !equals(e)) {
                         final Entity m = e.getC3Master();
                         if (equals(m)) {
                             // If this unit is a company commander, and has two
                             // C3 Master computers, only count C3 Slaves here.
-                            if (!this.C3MasterIs(this) || !this.hasC3MM()
-                                    || e.hasC3S())
+                            if (!C3MasterIs(this) || !hasC3MM()
+                                    || e.hasC3S()) {
                                 nodes--;
+                            }
                         }
-                        if (nodes <= 0)
+                        if (nodes <= 0) {
                             return 0;
+                        }
                     }
                 }
             }
@@ -3420,13 +3482,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public Entity getC3Top() {
         Entity m = this;
         Entity master = m.getC3Master();
-        while ((master != null)
+        while (master != null
                 && !master.equals(m)
                 && master.hasC3()
-                && !(Compute.isAffectedByECM(m, m.getPosition(), master
-                        .getPosition()))
-                && !(Compute.isAffectedByECM(master, master.getPosition(),
-                        master.getPosition()))) {
+                && !Compute.isAffectedByECM(m, m.getPosition(), master
+                        .getPosition())
+                && !Compute.isAffectedByECM(master, master.getPosition(),
+                        master.getPosition())) {
             m = master;
             master = m.getC3Master();
         }
@@ -3446,12 +3508,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         after the master unit restarts.
      */
     public Entity getC3Master() {
-        if (C3Master == NONE)
+        if (C3Master == NONE) {
             return null;
+        }
         if (hasC3S() && C3Master > NONE) {
             // since we can't seem to get the check working in setC3Master(),
             // I'll just do it here, every time. This sucks.
-            Entity eMaster = game.getEntity(C3Master);
+            final Entity eMaster = game.getEntity(C3Master);
             // Have we lost our C3Master?
             if (eMaster == null) {
                 C3Master = NONE;
@@ -3469,7 +3532,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 C3Master = NONE;
             }
         } else if (hasC3M() && C3Master > NONE) {
-            Entity eMaster = game.getEntity(C3Master);
+            final Entity eMaster = game.getEntity(C3Master);
             // Have we lost our C3Master?
             if (eMaster == null) {
                 C3Master = NONE;
@@ -3479,15 +3542,15 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 return null;
             }
             // Has our company commander lost his company command computer?
-            else if ((eMaster.C3CompanyMasterIndex > LOC_NONE && !eMaster
-                    .hasC3MM())
-                    || (eMaster.C3CompanyMasterIndex <= LOC_NONE && !eMaster
-                            .hasC3M())) {
+            else if (eMaster.C3CompanyMasterIndex > LOC_NONE && !eMaster
+                    .hasC3MM()
+                    || eMaster.C3CompanyMasterIndex <= LOC_NONE && !eMaster
+                            .hasC3M()) {
                 C3Master = NONE;
             }
             // maximum depth of a c3 network is 2 levels.
             else if (eMaster != this) {
-                Entity eCompanyMaster = eMaster.getC3Master();
+                final Entity eCompanyMaster = eMaster.getC3Master();
                 if (eCompanyMaster != null
                         && eCompanyMaster.getC3Master() != eCompanyMaster) {
                     C3Master = NONE;
@@ -3518,8 +3581,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public int getC3MasterId() {
         // Make sure that this unit is still on a C3 network.
         // N.B. this call may set this.C3Master to NONE.
-        this.getC3Master();
-        return this.C3Master;
+        getC3Master();
+        return C3Master;
     }
 
     /**
@@ -3540,13 +3603,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean C3MasterIs(Entity e) {
         if (e == null) {
-            if (C3Master == NONE)
+            if (C3Master == NONE) {
                 return true;
+            }
 
             return false; // if this entity has a C3Master then null is not
                             // it's master.
         }
-        return (e.id == C3Master);
+        return e.id == C3Master;
     }
 
     /**
@@ -3558,8 +3622,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (e == null) {
             setC3Master(NONE);
         } else {
-            if (isEnemyOf(e))
+            if (isEnemyOf(e)) {
                 return;
+            }
             setC3Master(e.id);
         }
     }
@@ -3568,20 +3633,19 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @param entityId
      */
     public void setC3Master(int entityId) {
-        if ((id == entityId) != (id == C3Master)) {
+        if (id == entityId != (id == C3Master)) {
             // this just changed from a company-level to lance-level (or vice
             // versa); have to disconnect all slaved units to maintain
             // integrity.
-            for (java.util.Enumeration<Entity> i = game.getEntities(); i
-                    .hasMoreElements();) {
-                final Entity e = i.nextElement();
+            for (final Entity e : game.getEntities()) {
                 if (e.C3MasterIs(this) && !equals(e)) {
                     e.setC3Master(NONE);
                 }
             }
         }
-        if (hasC3())
+        if (hasC3()) {
             C3Master = entityId;
+        }
         if (hasC3() && entityId == NONE) {
             C3NetIdString = "C3." + id;
         } else if (hasC3i() && entityId == NONE) {
@@ -3589,9 +3653,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         } else if (hasC3() || hasC3i()) {
             C3NetIdString = game.getEntity(entityId).getC3NetId();
         }
-        for (java.util.Enumeration<Entity> i = game.getEntities(); i
-                .hasMoreElements();) {
-            final Entity e = i.nextElement();
+        for (final Entity e : game.getEntities()) {
             if (e.C3MasterIs(this) && !equals(e)) {
                 e.C3NetIdString = C3NetIdString;
             }
@@ -3618,40 +3680,43 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
         // Active Mek Stealth prevents entity from participating in C3.
         // Turn off the stealth, and your back in the network.
-        if (this instanceof Mech && this.isStealthActive())
+        if (this instanceof Mech && isStealthActive()) {
             return false;
-        if (e instanceof Mech && e.isStealthActive())
+        }
+        if (e instanceof Mech && e.isStealthActive()) {
             return false;
+        }
 
         // C3i is easy - if they both have C3i, and their net ID's match,
         // they're on the same network!
         if (hasC3i() && e.hasC3i() && getC3NetId().equals(e.getC3NetId())) {
-            if (ignoreECM)
+            if (ignoreECM) {
                 return true;
-            else {
-                return !(Compute.isAffectedByECM(e, e.getPosition(), e
-                        .getPosition()))
-                        && !(Compute.isAffectedByECM(this, getPosition(),
-                                getPosition()));
             }
+            return !Compute.isAffectedByECM(e, e.getPosition(), e
+                    .getPosition())
+                    && !Compute.isAffectedByECM(this, getPosition(),
+                            getPosition());
         }
 
         // simple sanity check - do they both have C3, and are they both on the
         // same network?
-        if (!hasC3() || !e.hasC3())
+        if (!hasC3() || !e.hasC3()) {
             return false;
-        if (getC3Top() == null || e.getC3Top() == null)
+        }
+        if (getC3Top() == null || e.getC3Top() == null) {
             return false;
+        }
         // got the easy part out of the way, now we need to verify that the
         // network isn't down
-        return (getC3Top().equals(e.getC3Top()));
+        return getC3Top().equals(e.getC3Top());
     }
 
     /**
      * Returns whether there is CASE protecting the location.
      */
     public boolean locationHasCase(int loc) {
-        for (Mounted mounted : getMisc()) {
+        for (final Mounted mounted : getMisc()) {
             if (mounted.getLocation() == loc
                     && mounted.getType().hasFlag(MiscType.F_CASE)
                     && !mounted.isDestroyed()) {
@@ -3667,9 +3732,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * any special effect of hitting the criticals, like ammo explosion.
      */
     public void hitAllCriticals(int loc, int slot) {
-        CriticalSlot orig = getCritical(loc, slot);
+        final CriticalSlot orig = getCritical(loc, slot);
         for (int i = 0; i < getNumberOfCriticals(loc); i++) {
-            CriticalSlot cs = getCritical(loc, slot);
+            final CriticalSlot cs = getCritical(loc, slot);
             if (cs.getType() == orig.getType()
                     && cs.getIndex() == orig.getIndex()) {
                 cs.setHit(true);
@@ -3688,8 +3753,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         delta_distance = 0;
         mpUsed = 0;
         damageThisRound = 0;
-        if (assaultDropInProgress == 2)
+        if (assaultDropInProgress == 2) {
             assaultDropInProgress = 0;
+        }
         moved = IEntityMovementType.MOVE_NONE;
         gotPavementBonus = false;
         hitThisRoundByAntiTSM = false;
@@ -3715,7 +3781,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             pendingNarcPods.clear();
         }
 
-        for (Mounted m : getEquipment()) {
+        for (final Mounted m : getEquipment()) {
             m.newRound(roundNumber);
         }
 
@@ -3725,7 +3791,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         resetFiringArcs();
         
         // Update the inferno tracker.
-        this.infernos.newRound(roundNumber);
+        infernos.newRound(roundNumber);
     }
 
     /**
@@ -3735,7 +3801,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public void applyDamage() {
         // mark all damaged equipment destroyed and empty
-        for (Mounted mounted : getEquipment()) {
+        for (final Mounted mounted : getEquipment()) {
             if (mounted.isHit() || mounted.isMissing()) {
                 mounted.setShotsLeft(0);
                 mounted.setDestroyed(true);
@@ -3759,30 +3825,30 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 setArmor(IArmorState.ARMOR_DESTROYED, i, true);
                 setInternal(IArmorState.ARMOR_DESTROYED, i);
                 // destroy any Narc beacons
-                for (Iterator<NarcPod> iter = narcPods.iterator(); iter
+                for (final Iterator<NarcPod> iter = narcPods.iterator(); iter
                         .hasNext();) {
-                    NarcPod p = iter.next();
+                    final NarcPod p = iter.next();
                     if (p.getLocation() == i) {
                         iter.remove();
                     }
                 }
-                for (Iterator<INarcPod> iter = iNarcPods.iterator(); iter
+                for (final Iterator<INarcPod> iter = iNarcPods.iterator(); iter
                         .hasNext();) {
-                    INarcPod p = iter.next();
+                    final INarcPod p = iter.next();
                     if (p.getLocation() == i) {
                         iter.remove();
                     }
                 }
-                for (Iterator<NarcPod> iter = pendingNarcPods.iterator(); iter
+                for (final Iterator<NarcPod> iter = pendingNarcPods.iterator(); iter
                         .hasNext();) {
-                    NarcPod p = iter.next();
+                    final NarcPod p = iter.next();
                     if (p.getLocation() == i) {
                         iter.remove();
                     }
                 }
-                for (Iterator<INarcPod> iter = pendingINarcPods.iterator(); iter
+                for (final Iterator<INarcPod> iter = pendingINarcPods.iterator(); iter
                         .hasNext();) {
-                    INarcPod p = iter.next();
+                    final INarcPod p = iter.next();
                     if (p.getLocation() == i) {
                         iter.remove();
                     }
@@ -3796,8 +3862,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public void reloadEmptyWeapons() {
         // try to reload weapons
-        for (Mounted mounted : getTotalWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
+        for (final Mounted mounted : getTotalWeaponList()) {
+            final WeaponType wtype = (WeaponType) mounted.getType();
 
             if (wtype.getAmmoType() != AmmoType.T_NA
                     && (wtype.getFlags() & WeaponType.F_INFANTRY) != WeaponType.F_INFANTRY) {
@@ -3816,8 +3882,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public void assignAMS(Vector<WeaponHandler> vAttacks) {
 
-        HashSet<WeaponAttackAction> targets = new HashSet<WeaponAttackAction>();
-        for (Mounted weapon : getWeaponList()) {
+        final HashSet<WeaponAttackAction> targets = new HashSet<WeaponAttackAction>();
+        for (final Mounted weapon : getWeaponList()) {
             if (weapon.getType().hasFlag(WeaponType.F_AMS)) {
                 if (!weapon.isReady() || weapon.isMissing()) {
                     continue;
@@ -3825,7 +3891,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
                 // make sure ammo is loaded
                 Mounted ammo = weapon.getLinked();
-                if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
+                if (!weapon.getType().hasFlag(WeaponType.F_ENERGY)
                         && (ammo == null || ammo.getShotsLeft() == 0 || ammo
                                 .isDumping())) {
                     loadWeapon(weapon);
@@ -3833,7 +3899,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 }
 
                 // try again
-                if (!(weapon.getType().hasFlag(WeaponType.F_ENERGY))
+                if (!weapon.getType().hasFlag(WeaponType.F_ENERGY)
                         && (ammo == null || ammo.getShotsLeft() == 0 || ammo
                                 .isDumping())) {
                     // No ammo for this AMS.
@@ -3841,18 +3907,18 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 }
 
                 // make a new vector of only incoming attacks in arc
-                Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(
+                final Vector<WeaponAttackAction> vAttacksInArc = new Vector<WeaponAttackAction>(
                         vAttacks.size());
-                for (WeaponHandler wr : vAttacks) {
+                for (final WeaponHandler wr : vAttacks) {
                     if (!targets.contains(wr.waa)
-                            && Compute.isInArc(game, this.getId(),
+                            && Compute.isInArc(game, getId(),
                                     getEquipmentNum(weapon), game
                                             .getEntity(wr.waa.getEntityId()))) {
                         vAttacksInArc.addElement(wr.waa);
                     }
                 }
                 // find the most dangerous salvo by expected damage
-                WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
+                final WeaponAttackAction waa = Compute.getHighestExpectedDamage(game,
                         vAttacksInArc, true);
                 if (waa != null) {
                     waa.addCounterEquipment(weapon);
@@ -3866,9 +3932,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * has the team attached a narc pod to me?
      */
     public boolean isNarcedBy(int nTeamID) {
-        for (NarcPod p : narcPods) {
-            if (p.getTeam() == nTeamID)
+        for (final NarcPod p : narcPods) {
+            if (p.getTeam() == nTeamID) {
                 return true;
+            }
         }
         return false;
     }
@@ -3879,7 +3946,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @param pod The <code>NarcPod</code> to be attached.
      */
     public void attachNarcPod(NarcPod pod) {
-        this.pendingNarcPods.add(pod);
+        pendingNarcPods.add(pod);
     }
 
     /**
@@ -3888,7 +3955,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @param pod The <code>INarcPod</code> to be attached.
      */
     public void attachINarcPod(INarcPod pod) {
-        this.pendingINarcPods.add(pod);
+        pendingINarcPods.add(pod);
     }
 
     /**
@@ -3898,9 +3965,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return true if the Entity is narced by that team.
      */
     public boolean isINarcedBy(int nTeamID) {
-        for (INarcPod pod : iNarcPods) {
-            if (pod.getTeam() == nTeamID && pod.getType() == INarcPod.HOMING)
+        for (final INarcPod pod : iNarcPods) {
+            if (pod.getTeam() == nTeamID && pod.getType() == INarcPod.HOMING) {
                 return true;
+            }
         }
         return false;
     }
@@ -3912,9 +3980,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return <code>true</code> if we have.
      */
     public boolean isINarcedWith(long type) {
-        for (INarcPod pod : iNarcPods) {
-            if (pod.getType() == type)
+        for (final INarcPod pod : iNarcPods) {
+            if (pod.getType() == type) {
                 return true;
+            }
         }
         return false;
     }
@@ -3991,8 +4060,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         } else if (object == null || getClass() != object.getClass()) {
             return false;
         }
-        Entity other = (Entity) object;
-        return other.getId() == this.id;
+        final Entity other = (Entity) object;
+        return other.getId() == id;
     }
 
     /**
@@ -4058,14 +4127,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Helper function to determine if a entity is a biped
      */
     public boolean entityIsBiped() {
-        return (getMovementMode() == IEntityMovementMode.BIPED);
+        return getMovementMode() == IEntityMovementMode.BIPED;
     }
 
     /**
      * Helper function to determine if a entity is a quad
      */
     public boolean entityIsQuad() {
-        return (getMovementMode() == IEntityMovementMode.QUAD);
+        return getMovementMode() == IEntityMovementMode.QUAD;
     }
 
     /**
@@ -4114,15 +4183,17 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
         // both legs present?
         if (this instanceof BipedMech) {
-            if (((BipedMech) this).countBadLegs() == 2)
+            if (((BipedMech) this).countBadLegs() == 2) {
                 return new PilotingRollData(entityId,
                         TargetRoll.AUTOMATIC_FAIL, 10, "Both legs destroyed");
+            }
         } else if (this instanceof QuadMech) {
-            if (((QuadMech) this).countBadLegs() >= 3)
+            if (((QuadMech) this).countBadLegs() >= 3) {
                 return new PilotingRollData(entityId,
                         TargetRoll.AUTOMATIC_FAIL, 10, ((Mech) this)
                                 .countBadLegs()
                                 + " legs destroyed");
+            }
         }
         // entity shut down?
         if (isShutDown()) {
@@ -4167,9 +4238,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * the piloting skill check.
      */
     public PilotingRollData checkGetUp(MoveStep step) {
-        PilotingRollData roll = getBasePilotingRoll();
+        final PilotingRollData roll = getBasePilotingRoll();
 
-        if ((step == null) || (step.getType() != MovePath.STEP_GET_UP)) {
+        if (step == null || step.getType() != MovePath.STEP_GET_UP) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
                     "Check false: Entity is not attempting to get up.");
             return roll;
@@ -4182,8 +4253,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         }
 
         if (!needsRollToStand()
-                && (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                        Mech.LOC_CT) < 2)) {
+                && getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+                        Mech.LOC_CT) < 2) {
             roll
                     .addModifier(
                             TargetRoll.AUTOMATIC_SUCCESS,
@@ -4204,12 +4275,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * PSR. If so, returns the target roll for the piloting skill check.
      */
     public PilotingRollData checkRunningWithDamage(int overallMoveType) {
-        PilotingRollData roll = getBasePilotingRoll();
+        final PilotingRollData roll = getBasePilotingRoll();
 
         int gyroDamage = getBadCriticals(CriticalSlot.TYPE_SYSTEM,
                 Mech.SYSTEM_GYRO, Mech.LOC_CT);
-        if (getGyroType() == Mech.GYRO_HEAVY_DUTY)
+        if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
             gyroDamage--; // HD gyro ignores 1st damage
+        }
         if (overallMoveType == IEntityMovementType.MOVE_RUN && !isProne()
                 && (gyroDamage > 0 || hasHipCrit())) {
             // append the reason modifier
@@ -4228,12 +4300,12 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * force a PSR. If so, returns the target roll for the piloting skill check.
      */
     public PilotingRollData checkLandingWithDamage() {
-        PilotingRollData roll = getBasePilotingRoll();
+        final PilotingRollData roll = getBasePilotingRoll();
 
-        if ((getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                Mech.LOC_CT) > 0 && getGyroType() != Mech.GYRO_HEAVY_DUTY)
-                || (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
-                        Mech.LOC_CT) > 1 && getGyroType() == Mech.GYRO_HEAVY_DUTY)
+        if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+                Mech.LOC_CT) > 0 && getGyroType() != Mech.GYRO_HEAVY_DUTY
+                || getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
+                        Mech.LOC_CT) > 1 && getGyroType() == Mech.GYRO_HEAVY_DUTY
                 || hasLegActuatorCrit()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), 0,
@@ -4250,7 +4322,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public PilotingRollData checkMovedTooFast(MoveStep step) {
-        PilotingRollData roll = getBasePilotingRoll();
+        final PilotingRollData roll = getBasePilotingRoll();
         addPilotingModifierForTerrain(roll, step);
         switch (step.getMovementType()) {
             case IEntityMovementType.MOVE_WALK:
@@ -4261,19 +4333,21 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                         .ceil(getOriginalWalkMP() * 1.5)) {
                     roll.append(new PilotingRollData(getId(), 0,
                             "used more MPs than at 1G possible"));
-                } else
+                } else {
                     roll
                             .addModifier(TargetRoll.CHECK_FALSE,
                                     "Check false: Entity did not use more MPs walking/running than possible at 1G");
+                }
                 break;
             case IEntityMovementType.MOVE_JUMP:
                 if (step.getMpUsed() > getOriginalJumpMP()) {
                     roll.append(new PilotingRollData(getId(), 0,
                             "used more MPs than at 1G possible"));
-                } else
+                } else {
                     roll
                             .addModifier(TargetRoll.CHECK_FALSE,
                                     "Check false: Entity did not use more MPs jumping than possible at 1G");
+                }
                 break;
         }
         return roll;
@@ -4287,7 +4361,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             int overallMoveType, MoveStep prevStep, int prevFacing,
             int curFacing, Coords lastPos, Coords curPos, boolean isInfantry,
             int distance) {
-        PilotingRollData roll = getBasePilotingRoll();
+        final PilotingRollData roll = getBasePilotingRoll();
         addPilotingModifierForTerrain(roll, lastPos);
 
         // TODO: add check for elevation of pavement, road,
@@ -4300,13 +4374,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                  * prevHex.contains(Terrain.ROAD) ||
                  * prevHex.contains(Terrain.BRIDGE) )
                  */
-                && ((prevStep.isPavementStep()
+                && (prevStep.isPavementStep()
                         && overallMoveType == IEntityMovementType.MOVE_RUN
-                        && movementMode != IEntityMovementMode.HOVER && movementMode != IEntityMovementMode.WIGE)
-                        || (prevHex.containsTerrain(Terrains.ICE)
-                                && movementMode != IEntityMovementMode.HOVER && movementMode != IEntityMovementMode.WIGE) || ((movementMode == IEntityMovementMode.HOVER || movementMode == IEntityMovementMode.WIGE) && (game
+                        && movementMode != IEntityMovementMode.HOVER && movementMode != IEntityMovementMode.WIGE
+                        || prevHex.containsTerrain(Terrains.ICE)
+                                && movementMode != IEntityMovementMode.HOVER && movementMode != IEntityMovementMode.WIGE || (movementMode == IEntityMovementMode.HOVER || movementMode == IEntityMovementMode.WIGE) && (game
                         .getOptions().booleanOption("blizzard") || game
-                        .getOptions().booleanOption("high_winds"))))
+                        .getOptions().booleanOption("high_winds")))
                 && prevFacing != curFacing && !lastPos.equals(curPos)
                 && !isInfantry
                 // Bug 912127, a unit that just got up and changed facing
@@ -4343,7 +4417,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public PilotingRollData checkRubbleMove(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos) {
-        PilotingRollData roll = getBasePilotingRoll();
+        final PilotingRollData roll = getBasePilotingRoll();
         addPilotingModifierForTerrain(roll, curPos);
 
         if (!lastPos.equals(curPos)
@@ -4367,15 +4441,15 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public PilotingRollData checkSwampMove(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos, boolean isPavementStep) {
-        PilotingRollData roll = getBasePilotingRoll();
+        final PilotingRollData roll = getBasePilotingRoll();
         // DO NOT add terrain modifier, or the example in maxtech would have the
         // wrong target number
 
         if (!lastPos.equals(curPos)
                 && step.getMovementType() != IEntityMovementType.MOVE_JUMP
-                && (this.getMovementMode() != IEntityMovementMode.HOVER)
-                && (this.getMovementMode() != IEntityMovementMode.VTOL)
-                && (this.getMovementMode() != IEntityMovementMode.WIGE)
+                && getMovementMode() != IEntityMovementMode.HOVER
+                && getMovementMode() != IEntityMovementMode.VTOL
+                && getMovementMode() != IEntityMovementMode.WIGE
                 && step.getElevation() == 0 && !isPavementStep) {
             // non-hovers need a simple PSR
             if (curHex.containsTerrain(Terrains.SWAMP)) {
@@ -4431,7 +4505,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * target roll for the piloting skill check.
      */
     public PilotingRollData checkWaterMove(int waterLevel) {
-        PilotingRollData roll = getBasePilotingRoll();
+        final PilotingRollData roll = getBasePilotingRoll();
 
         int mod;
         if (waterLevel == 1) {
@@ -4442,7 +4516,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             mod = 1;
         }
 
-        if (waterLevel > 0 && !this.hasUMU()) {
+        if (waterLevel > 0 && !hasUMU()) {
             // append the reason modifier
             roll.append(new PilotingRollData(getId(), mod, "entering Depth "
                     + waterLevel + " Water"));
@@ -4467,7 +4541,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         }
 
         // append the reason modifier
-        PilotingRollData roll = getBasePilotingRoll();
+        final PilotingRollData roll = getBasePilotingRoll();
         roll.append(new PilotingRollData(getId(), 0,
                 "attempting to dislodge swarmers by dropping prone"));
         addPilotingModifierForTerrain(roll, step);
@@ -4484,13 +4558,15 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public int checkMovementInBuilding(MoveStep step, MoveStep prevStep,
             Coords curPos, Coords prevPos) {
-        if (prevPos.equals(curPos))
+        if (prevPos.equals(curPos)) {
             return 0;
-        IHex curHex = game.getBoard().getHex(curPos);
-        IHex prevHex = game.getBoard().getHex(prevPos);
+        }
+        final IHex curHex = game.getBoard().getHex(curPos);
+        final IHex prevHex = game.getBoard().getHex(prevPos);
         // ineligable because of movement type or unit type
-        if (this instanceof Infantry || this instanceof Protomech)
+        if (this instanceof Infantry || this instanceof Protomech) {
             return 0;
+        }
 
         int rv = 0;
         // check current hex for building
@@ -4517,8 +4593,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (rv > 1) {
             Building bldgEntered = null;
             bldgEntered = game.getBoard().getBuildingAt(curPos);
-            if (bldgEntered.getType() == Building.WALL)
+            if (bldgEntered.getType() == Building.WALL) {
                 return 4;
+            }
         }
 
         return rv;
@@ -4529,7 +4606,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public PilotingRollData rollMovementInBuilding(Building bldg, int distance,
             String why) {
-        PilotingRollData roll = getBasePilotingRoll();
+        final PilotingRollData roll = getBasePilotingRoll();
 
         int mod = 0;
         String desc;
@@ -4591,24 +4668,26 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public int getMovementBeforeSkidPSRModifier(int distance) {
         int mod = -1;
 
-        if (distance > 24) // 11+ hexes
+        if (distance > 24) {
             mod = 6;
-        else if (distance > 17) // 11+ hexes
+        } else if (distance > 17) {
             mod = 5;
-        else if (distance > 10) // 11+ hexes
+        } else if (distance > 10) {
             mod = 4;
-        else if (distance > 7) // 8-10 hexes
+        } else if (distance > 7) {
             mod = 2;
-        else if (distance > 4) // 5-7 hexes
+        } else if (distance > 4) {
             mod = 1;
-        else if (distance > 2) // 3-4 hexes
+        } else if (distance > 2) {
             mod = 0;
-        else
+        } else {
             // 0-2 hexes
             mod = -1;
+        }
 
-        if (getCrew().getOptions().booleanOption("maneuvering_ace"))
+        if (getCrew().getOptions().booleanOption("maneuvering_ace")) {
             mod--;
+        }
 
         return mod;
     }
@@ -4636,8 +4715,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         empty ("") if the entity has no <code>Transporter</code>s.
      */
     public static String encodeTransporters(Entity entity) {
-        StringBuffer buffer = new StringBuffer();
-        Enumeration<Transporter> iter = entity.transports.elements();
+        final StringBuffer buffer = new StringBuffer();
+        final Enumeration<Transporter> iter = entity.transports.elements();
         boolean isFirst = true;
         while (iter.hasMoreElements()) {
 
@@ -4649,7 +4728,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             }
 
             // Add the next Transporter's class name.
-            Transporter transporter = iter.nextElement();
+            final Transporter transporter = iter.nextElement();
             buffer.append(transporter.getClass().getName());
 
             // If this is a TroopSpace transporter, get it's capacity.
@@ -4677,23 +4756,23 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             throws IllegalStateException {
 
         // Split the string on the commas, and add transporters to the Entity.
-        Enumeration<String> iter = StringUtil.splitString(transporters, ",")
+        final Enumeration<String> iter = StringUtil.splitString(transporters, ",")
                 .elements();
         while (iter.hasMoreElements()) {
             try {
-                String name = iter.nextElement();
-                Class<?> transporter = Class.forName(name);
+                final String name = iter.nextElement();
+                final Class<?> transporter = Class.forName(name);
                 Object object = null;
                 if (TroopSpace.class.getName().equals(name)) {
                     // Get the tonnage of space.
-                    int tonnage = Integer.parseInt(name.substring(name
+                    final int tonnage = Integer.parseInt(name.substring(name
                             .lastIndexOf("=")));
                     object = new TroopSpace(tonnage);
                 } else {
                     object = transporter.newInstance();
                 }
                 entity.addTransporter((Transporter) object);
-            } catch (Exception err) {
+            } catch (final Exception err) {
                 err.printStackTrace();
                 throw new IllegalStateException(err.getMessage());
             }
@@ -4741,9 +4820,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (!unit.isEnemyOf(this)) {
             // Walk through this entity's transport components;
             // if one of them can load the unit, we can.
-            Enumeration<Transporter> iter = this.transports.elements();
+            final Enumeration<Transporter> iter = transports.elements();
             while (iter.hasMoreElements()) {
-                Transporter next = iter.nextElement();
+                final Transporter next = iter.nextElement();
                 if (next.canLoad(unit) && unit.getElevation() == getElevation()) {
                     return true;
                 }
@@ -4764,9 +4843,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         // Walk through this entity's transport components;
         // find the one that can load the unit.
         // Stop looking after the first match.
-        Enumeration<Transporter> iter = this.transports.elements();
+        final Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
-            Transporter next = iter.nextElement();
+            final Transporter next = iter.nextElement();
             if (next.canLoad(unit) && unit.getElevation() == getElevation()) {
                 next.load(unit);
                 return;
@@ -4774,7 +4853,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         }
 
         // If we got to this point, then we can't load the unit.
-        throw new IllegalArgumentException(this.getShortName()
+        throw new IllegalArgumentException(getShortName()
                 + " can not load " + unit.getShortName());
     }
 
@@ -4788,9 +4867,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         // Walk through this entity's transport components;
         // find the one that can load the unit.
         // Stop looking after the first match.
-        Enumeration<Transporter> iter = this.transports.elements();
+        final Enumeration<Transporter> iter = transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = iter.nextElement();
+            final Transporter next = iter.nextElement();
             if ( next.canLoad(unit) && unit.getElevation() == getElevation()) {
                 if(next instanceof ASFBay) {
                     ((ASFBay)next).recover( unit );
@@ -4804,7 +4883,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         }
 
         // If we got to this point, then we can't load the unit.
-        throw new IllegalArgumentException( this.getShortName() +
+        throw new IllegalArgumentException( getShortName() +
                                             " can not recover " +
                                             unit.getShortName() );
     }
@@ -4813,11 +4892,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * cycle through and update Bays
      */
     public void updateBays() {      
-        Enumeration<Transporter> iter = this.transports.elements();
+        final Enumeration<Transporter> iter = transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = iter.nextElement();
+            final Transporter next = iter.nextElement();
             if( next instanceof ASFBay ) {
-                ASFBay nextBay = (ASFBay) next;
+                final ASFBay nextBay = (ASFBay) next;
                     nextBay.updateSlots();
                 }
             }           
@@ -4834,11 +4913,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         Vector<Bay> potential;
         potential = new Vector<Bay>();
         
-        Enumeration<Transporter> iter = this.transports.elements();
+        final Enumeration<Transporter> iter = transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = iter.nextElement();
+            final Transporter next = iter.nextElement();
             if( next instanceof Bay ) {
-                Bay nextBay = (Bay) next;
+                final Bay nextBay = (Bay) next;
                 if(nextBay.getDoors() > 0) {
                     potential.add(nextBay);
                 }
@@ -4846,7 +4925,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         }
        
         if(potential.size() > 0) {
-            Bay chosenBay = potential.elementAt(Compute.randomInt(potential.size()));
+            final Bay chosenBay = potential.elementAt(Compute.randomInt(potential.size()));
             chosenBay.destroyDoor();
             chosenBay.resetDoors();
             chosenBay.setDoors(chosenBay.getDoors() - 1);
@@ -4860,9 +4939,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * damage the door of the first bay that can load this unit
      */
     public void damageDoorRecovery(Entity en) {
-        Enumeration<Transporter> iter = this.transports.elements();
+        final Enumeration<Transporter> iter = transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = iter.nextElement();
+            final Transporter next = iter.nextElement();
             if( next instanceof ASFBay  && next.canLoad(en)) {
                 ((ASFBay)next).destroyDoor();
                 break;
@@ -4887,11 +4966,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         Vector<DockingCollar> potential;
         potential = new Vector<DockingCollar>();
         
-        Enumeration<Transporter> iter = this.transports.elements();
+        final Enumeration<Transporter> iter = transports.elements();
         while ( iter.hasMoreElements() ) {
-            Transporter next = iter.nextElement();
+            final Transporter next = iter.nextElement();
             if( next instanceof DockingCollar ) {
-                DockingCollar nextDC = (DockingCollar) next;
+                final DockingCollar nextDC = (DockingCollar) next;
                 if(!nextDC.isDamaged()) {
                     potential.add(nextDC);
                 }
@@ -4899,7 +4978,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         }
        
         if(potential.size() > 0) {
-            DockingCollar chosenDC = potential.elementAt(Compute.randomInt(potential.size()));
+            final DockingCollar chosenDC = potential.elementAt(Compute.randomInt(potential.size()));
             chosenDC.setDamaged(true);
             result = true;
         }
@@ -4920,12 +4999,12 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         data structure; modifying one does not affect the other.
      */
     public Vector<Entity> getLoadedUnits() {
-        Vector<Entity> result = new Vector<Entity>();
+        final Vector<Entity> result = new Vector<Entity>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
-        for (Transporter next : transports) {
-            for (Entity e : next.getLoadedUnits()) {
+        for (final Transporter next : transports) {
+            for (final Entity e : next.getLoadedUnits()) {
                 result.addElement(e);
             }
         }
@@ -4940,7 +5019,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public int getDocks() {
         int n = 0;
         
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if(next instanceof DockingCollar) {
                 n++;
             }
@@ -4956,13 +5035,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return
      */
     public Vector<Entity> getBayLoadedUnits() {
-        Vector<Entity> result = new Vector<Entity>();
+        final Vector<Entity> result = new Vector<Entity>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if(next instanceof Bay) {
-                for (Entity e:next.getLoadedUnits()) {
+                for (final Entity e:next.getLoadedUnits()) {
                     result.addElement(e);
                 }
             }
@@ -4976,15 +5055,15 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return only entities in ASF Bays
      */
     public Vector<Entity> getLoadedFighters() {
-        Vector<Entity> result = new Vector<Entity>();
+        final Vector<Entity> result = new Vector<Entity>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
         
         //I should only add entities in bays that are functional
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if(next instanceof ASFBay && ((ASFBay)next).getDoors()> 0) {
-                for (Entity e:next.getLoadedUnits()) {
+                for (final Entity e:next.getLoadedUnits()) {
                     result.addElement(e);
                 }
             }
@@ -4999,16 +5078,16 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * recovery)
      */
     public Vector<Entity> getLaunchableFighters() {
-        Vector<Entity> result = new Vector<Entity>();
+        final Vector<Entity> result = new Vector<Entity>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
         
         //I should only add entities in bays that are functional
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if(next instanceof ASFBay && ((ASFBay)next).getDoors()> 0) {
-                Bay nextbay = (Bay)next;
-                for (Entity e:nextbay.getLaunchableUnits()) {
+                final Bay nextbay = (Bay)next;
+                for (final Entity e:nextbay.getLaunchableUnits()) {
                     result.addElement(e);
                 }
             }
@@ -5020,12 +5099,12 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
     public Bay getLoadedBay(int id) {
         
-        Vector<Bay> bays = this.getFighterBays();
+        final Vector<Bay> bays = getFighterBays();
         for (int nbay = 0; nbay < bays.size(); nbay++) {
-            Bay currentBay = bays.elementAt(nbay);
-            Vector<Entity> currentFighters = currentBay.getLoadedUnits();
+            final Bay currentBay = bays.elementAt(nbay);
+            final Vector<Entity> currentFighters = currentBay.getLoadedUnits();
             for(int nfighter = 0; nfighter < currentFighters.size(); nfighter++){
-                Entity fighter = currentFighters.elementAt(nfighter);
+                final Entity fighter = currentFighters.elementAt(nfighter);
                 if(fighter.getId()  == id) {
                     //then we are in the right bay
                     return currentBay;                  
@@ -5041,9 +5120,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return get the bays separately
      */
     public Vector<Bay> getFighterBays() {
-        Vector<Bay> result = new Vector<Bay>();
+        final Vector<Bay> result = new Vector<Bay>();
         
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if((next instanceof ASFBay || next instanceof SmallCraftBay) && ((Bay)next).getDoors() > 0) {
                 result.addElement((Bay)next);
             }
@@ -5056,9 +5135,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     
     public Vector<Bay> getTransportBays() {
     
-        Vector<Bay> result = new Vector<Bay>();
+        final Vector<Bay> result = new Vector<Bay>();
         
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if(next instanceof Bay) {
                 result.addElement((Bay)next);
             }
@@ -5073,7 +5152,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public void resetBayDoors() {
         
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if(next instanceof Bay) {
                 ((Bay)next).resetDoors();
             }
@@ -5088,7 +5167,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         int result = 0;
 
         // Walk through this entity's transport components;
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if(next instanceof ASFBay) {
                 result += 2 * ((ASFBay)next).getDoors();
             }
@@ -5098,13 +5177,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     public Vector<Entity> getLoadedSmallCraft() {
-        Vector<Entity> result = new Vector<Entity>();
+        final Vector<Entity> result = new Vector<Entity>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if(next instanceof SmallCraftBay && ((SmallCraftBay)next).getDoors()> 0) {
-                for (Entity e:next.getLoadedUnits()) {
+                for (final Entity e:next.getLoadedUnits()) {
                     result.addElement(e);
                 }
             }
@@ -5115,14 +5194,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     public Vector<Entity> getLaunchableSmallCraft() {
-        Vector<Entity> result = new Vector<Entity>();
+        final Vector<Entity> result = new Vector<Entity>();
 
         // Walk through this entity's transport components;
         // add all of their lists to ours.
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if(next instanceof SmallCraftBay && ((SmallCraftBay)next).getDoors()> 0) {
-                Bay nextbay = (Bay)next;
-                for (Entity e:nextbay.getLaunchableUnits()) {
+                final Bay nextbay = (Bay)next;
+                for (final Entity e:nextbay.getLaunchableUnits()) {
                     result.addElement(e);
                 }
             }
@@ -5136,9 +5215,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * get the bays separately
      */
     public Vector<SmallCraftBay> getSmallCraftBays() {
-        Vector<SmallCraftBay> result = new Vector<SmallCraftBay>();
+        final Vector<SmallCraftBay> result = new Vector<SmallCraftBay>();
         
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if(next instanceof SmallCraftBay && ((SmallCraftBay)next).getDoors() > 0) {
                 result.addElement((SmallCraftBay)next);
             }
@@ -5156,7 +5235,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         int result = 0;
 
         // Walk through this entity's transport components;
-        for(Transporter next:transports) {
+        for(final Transporter next:transports) {
             if(next instanceof SmallCraftBay) {
                 result += 2 * ((SmallCraftBay)next).getDoors();
             }
@@ -5176,9 +5255,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         // Walk through this entity's transport components;
         // try to remove the unit from each in turn.
         // Stop after the first match.
-        Enumeration<Transporter> iter = this.transports.elements();
+        final Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
-            Transporter next = iter.nextElement();
+            final Transporter next = iter.nextElement();
             if (next.unload(unit)) {
                 return true;
             }
@@ -5194,13 +5273,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return A <code>String</code> meant for a human.
      */
     public String getUnusedString() {
-        StringBuffer result = new StringBuffer();
+        final StringBuffer result = new StringBuffer();
 
         // Walk through this entity's transport components;
         // add all of their string to ours.
-        Enumeration<Transporter> iter = this.transports.elements();
+        final Enumeration<Transporter> iter = transports.elements();
         while (iter.hasMoreElements()) {
-            Transporter next = iter.nextElement();
+            final Transporter next = iter.nextElement();
             result.append(next.getUnusedString());
             // Add a newline character between strings.
             if (iter.hasMoreElements()) {
@@ -5227,7 +5306,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         // Walk through this entity's transport components;
         // check each for blockage in turn.
         // Stop after the first match.
-        for (Transporter next : transports) {
+        for (final Transporter next : transports) {
             if (next.isWeaponBlockedAt(loc, isRear)) {
                 return true;
             }
@@ -5256,8 +5335,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         // Walk through this entity's transport components;
         // check each for an exterior unit in turn.
         // Stop after the first match.
-        for (Transporter next : transports) {
-            Entity exterior = next.getExteriorUnitAt(loc, isRear);
+        for (final Transporter next : transports) {
+            final Entity exterior = next.getExteriorUnitAt(loc, isRear);
             if (null != exterior) {
                 return exterior;
             }
@@ -5269,8 +5348,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public ArrayList<Entity> getExternalUnits() {
-        ArrayList<Entity> rv = new ArrayList<Entity>();
-        for (Transporter t : transports) {
+        final ArrayList<Entity> rv = new ArrayList<Entity>();
+        for (final Transporter t : transports) {
             rv.addAll(t.getExternalUnits());
         }
         return rv;
@@ -5278,7 +5357,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
     public int getCargoMpReduction() {
         int rv = 0;
-        for (Transporter t : transports) {
+        for (final Transporter t : transports) {
             rv += t.getCargoMpReduction();
         }
         return rv;
@@ -5298,11 +5377,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *            <code>Entity.NONE</code> if this unit has been unloaded.
      */
     public void setTransportId(int transportId) {
-        this.conveyance = transportId;
+        conveyance = transportId;
         // If we were unloaded, set the appropriate flags.
         if (transportId == Entity.NONE) {
-            this.unloadedThisTurn = true;
-            this.done = true;
+            unloadedThisTurn = true;
+            done = true;
         }
     }
 
@@ -5314,7 +5393,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         unit has not been loaded.
      */
     public int getTransportId() {
-        return this.conveyance;
+        return conveyance;
     }
 
     /**
@@ -5379,11 +5458,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *            <code>Entity.NONE</code> if this unit has stopped swarming.
      */
     public void setSwarmTargetId(int id) {
-        this.swarmTargetId = id;
+        swarmTargetId = id;
         // This entity can neither move nor attack for the rest of this turn.
         if (id == Entity.NONE) {
-            this.unloadedThisTurn = true;
-            this.done = true;
+            unloadedThisTurn = true;
+            done = true;
         }
     }
 
@@ -5396,7 +5475,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         this unit is not swarming.
      */
     public int getSwarmTargetId() {
-        return this.swarmTargetId;
+        return swarmTargetId;
     }
 
     /**
@@ -5408,7 +5487,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *            <code>Entity.NONE</code> if the swarm attack has ended.
      */
     public void setSwarmAttackerId(int id) {
-        this.swarmAttackerId = id;
+        swarmAttackerId = id;
     }
 
     /**
@@ -5420,7 +5499,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         if this unit is not being swarmed.
      */
     public int getSwarmAttackerId() {
-        return this.swarmAttackerId;
+        return swarmAttackerId;
     }
 
     /**
@@ -5434,10 +5513,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         boolean found = false;
 
         // Walk through the unit's ammo, stop when we find a match.
-        for (Mounted amounted : getAmmo()) {
-            AmmoType atype = (AmmoType) amounted.getType();
-            if (((atype.getAmmoType() == AmmoType.T_SRM) || (atype
-                    .getAmmoType() == AmmoType.T_MML))
+        for (final Mounted amounted : getAmmo()) {
+            final AmmoType atype = (AmmoType) amounted.getType();
+            if ((atype.getAmmoType() == AmmoType.T_SRM || atype
+                    .getAmmoType() == AmmoType.T_MML)
                     && atype.getMunitionType() == AmmoType.M_INFERNO
                     && amounted.getShotsLeft() > 0) {
                 found = true;
@@ -5457,10 +5536,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public void setSalvage(boolean canSalvage) {
         // Unsalvageable entities aren't in retreat or salvageable.
         if (!canSalvage) {
-            this
-                    .setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
+            setRemovalCondition(IEntityRemovalConditions.REMOVE_DEVASTATED);
         }
-        this.salvageable = canSalvage;
+        salvageable = canSalvage;
     }
 
     /**
@@ -5473,7 +5551,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @see #isRepairable()
      */
     public boolean isSalvage() {
-        return this.salvageable;
+        return salvageable;
     }
 
     /**
@@ -5544,8 +5622,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean canSpot() {
         if (game.getOptions().booleanOption("pilots_cannot_spot")
-                && this instanceof MechWarrior)
+                && this instanceof MechWarrior) {
             return false;
+        }
         return isActive() && !isOffBoard();
     }
 
@@ -5613,7 +5692,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (loc == LOC_NONE) {
             try {
                 loc = Integer.parseInt(str);
-            } catch (NumberFormatException nfe) {
+            } catch (final NumberFormatException nfe) {
             }
         }
 
@@ -5658,7 +5737,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Returns true if the entity should be deployed
      */
     public boolean shouldDeploy(int round) {
-        return (!deployed && (getDeployRound() <= round) && !isOffBoard());
+        return !deployed && getDeployRound() <= round && !isOffBoard();
     }
 
     /**
@@ -5669,7 +5748,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *            unit by passing the value, <code>(char) Entity.NONE</code>.
      */
     public void setUnitNumber(char unit) {
-        this.unitNumber = unit;
+        unitNumber = unit;
     }
 
     /**
@@ -5680,7 +5759,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      *         returned.
      */
     public char getUnitNumber() {
-        return this.unitNumber;
+        return unitNumber;
     }
 
     /**
@@ -5688,7 +5767,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * returns true if the entity is on the edge of the board.
      */
     public boolean canFlee() {
-        Coords pos = getPosition();
+        final Coords pos = getPosition();
         return pos != null
                 && getWalkMP() > 0
                 && !isProne()
@@ -5700,26 +5779,26 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public void setSeenByEnemy(boolean b) {
-        this.seenByEnemy = b;
+        seenByEnemy = b;
     }
 
     public boolean isSeenByEnemy() {
-        return this.seenByEnemy;
+        return seenByEnemy;
     }
 
     public void setVisibleToEnemy(boolean b) {
-        this.visibleToEnemy = b;
+        visibleToEnemy = b;
     }
 
     public boolean isVisibleToEnemy() {
-        return this.visibleToEnemy;
+        return visibleToEnemy;
     }
 
     protected int applyGravityEffectsOnMP(int MP) {
         int result = MP;
         if (game != null) {
             float fMP = MP / game.getOptions().floatOption("gravity");
-            fMP = (Math.abs((Math.round(fMP) - fMP)) == 0.5) ? (float) Math
+            fMP = Math.abs((Math.round(fMP) - fMP)) == 0.5 ? (float) Math
                     .floor(fMP) : Math.round(fMP); // the rule requires
                                                     // rounding down on .5
             result = (int) fMP;
@@ -5746,38 +5825,38 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         return getCrew().getOptions().booleanOption("maneuvering_ace");
     }
 
-    public Enumeration<Entity> getKills() {
-        final int killer = this.id;
+    public List<Entity> getKills() {
         return game.getSelectedOutOfGameEntities(new EntitySelector() {
-            private final int killerId = killer;
+            private final int killer = id;
 
             public boolean accept(Entity entity) {
-                if (killerId == entity.killerId)
+                if (killer == entity.killerId) {
                     return true;
+                }
                 return false;
             }
         });
     }
 
     public int getKillNumber() {
-        final int killer = this.id;
         return game.getSelectedOutOfGameEntityCount(new EntitySelector() {
-            private final int killerId = killer;
+            private final int killer = id;
 
             public boolean accept(Entity entity) {
-                if (killerId == entity.killerId)
+                if (killer == entity.killerId) {
                     return true;
+                }
                 return false;
             }
         });
     }
 
     public void addKill(Entity kill) {
-        kill.killerId = this.id;
+        kill.killerId = id;
     }
 
     public boolean getGaveKillCredit() {
-        return this.killerId != Entity.NONE;
+        return killerId != Entity.NONE;
     }
 
     /**
@@ -5785,18 +5864,20 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean isEligibleFor(IGame.Phase phase) {
         // only deploy in deployment phase
-        if ((phase == IGame.Phase.PHASE_DEPLOYMENT) == isDeployed()) {
+        if (phase == IGame.Phase.PHASE_DEPLOYMENT == isDeployed()) {
             return false;
         }
 
         // carcass can't do anything
-        if (isCarcass())
+        if (isCarcass()) {
             return false;
+        }
 
         // check game options
         if (game.getOptions().booleanOption("skip_forced_victory")) {
-            if (game.isForceVictory())
+            if (game.isForceVictory()) {
                 return false;
+            }
         }
 
         switch (phase) {
@@ -5909,8 +5990,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (isOffBoard() || isAssaultDropInProgress()) {
             return false;
         }
-        for (Mounted mounted : getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
+        for (final Mounted mounted : getWeaponList()) {
+            final WeaponType wtype = (WeaponType) mounted.getType();
             if (wtype.hasFlag(WeaponType.F_TAG) && mounted.isReady()) {
                 return true;
             }
@@ -5919,14 +6000,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public boolean isAttackingThisTurn() {
-        Vector<EntityAction> actions = game.getActionsVector();
-        for (Enumeration<EntityAction> e = actions.elements(); e
-                .hasMoreElements();) {
-            EntityAction ea = e.nextElement();
-            if (ea.getEntityId() == this.getId()
-                    && ea instanceof AbstractAttackAction)
-                return true;
-        }
+        final Vector<EntityAction> actions = game.getActionsVector();
+        for (EntityAction ea : actions) {
+         if (ea.getEntityId() == getId()
+            && ea instanceof AbstractAttackAction) {
+        return true;
+         }
+      }
         return false;
     }
 
@@ -5935,7 +6015,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean isEligibleForPhysical() {
         boolean canHit = false;
-        boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
+        final boolean friendlyFire = game.getOptions().booleanOption("friendly_fire");
 
         // only mechs and protos have physical attacks (except tank charges)
         if (!(this instanceof Mech || this instanceof Protomech || this instanceof Infantry)) {
@@ -5956,8 +6036,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
         // Issue with Vibroblades only being turned on/off during Physical phase
         // -- Torren
-        if (hasVibroblades())
+        if (hasVibroblades()) {
             return true;
+        }
 
         if (!game.getOptions().booleanOption("skip_ineligable_physical")) {
             return true;
@@ -5978,14 +6059,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         }
 
         // Try to find a valid entity target.
-        Enumeration<Entity> e = game.getEntities();
-        while (!canHit && e.hasMoreElements()) {
-            Entity target = e.nextElement();
+        final Iterator<Entity> e = game.getEntities().iterator();
+        while (!canHit && e.hasNext()) {
+            final Entity target = e.next();
 
             // don't shoot at friendlies unless you are into that sort of thing
             // and do not shoot yourself even then
-            if (!(isEnemyOf(target) || (friendlyFire && getId() != target
-                    .getId()))) {
+            if (!(isEnemyOf(target) || friendlyFire && getId() != target
+                    .getId())) {
                 continue;
             }
 
@@ -5998,18 +6079,18 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             canHit |= Compute.canPhysicalTarget(game, getId(), target);
             // check if we can dodge and target can attack us,
             // then we are eligible.
-            canHit |= (this instanceof Mech && !isProne()
+            canHit |= this instanceof Mech && !isProne()
                     && getCrew().getOptions().booleanOption("dodge_maneuver") && Compute
-                    .canPhysicalTarget(game, target.getId(), this));
+                    .canPhysicalTarget(game, target.getId(), this);
         }
 
         // If there are no valid Entity targets, check for add valid buildings.
-        Enumeration<Building> bldgs = game.getBoard().getBuildings();
+        final Enumeration<Building> bldgs = game.getBoard().getBuildings();
         while (!canHit && bldgs.hasMoreElements()) {
             final Building bldg = bldgs.nextElement();
 
             // Walk through the hexes of the building.
-            Enumeration<Coords> hexes = bldg.getCoords();
+            final Enumeration<Coords> hexes = bldg.getCoords();
             while (!canHit && hexes.hasMoreElements()) {
                 final Coords coords = hexes.nextElement();
 
@@ -6034,9 +6115,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (isAssaultDropInProgress()) {
             return false;
         }
-        for (Mounted mounted : getWeaponList()) {
-            WeaponType wtype = (WeaponType) mounted.getType();
-            if ((wtype != null) && (wtype.hasFlag(WeaponType.F_ARTILLERY))) {
+        for (final Mounted mounted : getWeaponList()) {
+            final WeaponType wtype = (WeaponType) mounted.getType();
+            if (wtype != null && wtype.hasFlag(WeaponType.F_ARTILLERY)) {
                 return true;
             }
         }
@@ -6045,22 +6126,20 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
     public int getTroopCarryingSpace() {
         int space = 0;
-        for (Enumeration<Transporter> e = transports.elements(); e
-                .hasMoreElements();) {
-            Transporter t = e.nextElement();
-            if (t instanceof TroopSpace)
-                space += ((TroopSpace) t).totalSpace;
-        }
+        for (Transporter t : transports) {
+         if (t instanceof TroopSpace) {
+        space += ((TroopSpace) t).totalSpace;
+         }
+      }
         return space;
     }
 
     public boolean hasBattleArmorHandles() {
-        for (Enumeration<Transporter> e = transports.elements(); e
-                .hasMoreElements();) {
-            Transporter t = e.nextElement();
-            if (t instanceof BattleArmorHandles)
-                return true;
-        }
+        for (Transporter t : transports) {
+         if (t instanceof BattleArmorHandles) {
+        return true;
+         }
+      }
         return false;
     }
 
@@ -6211,7 +6290,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @return <code>true</code> if it has.
      */
     public boolean isCaptured() {
-        return this.captured && !this.isDestroyed();
+        return captured && !isDestroyed();
     }
 
     /**
@@ -6220,31 +6299,32 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @param arg the <code>boolean</code> value to assign.
      */
     public void setCaptured(boolean arg) {
-        this.captured = arg;
+        captured = arg;
     }
 
     public void setSpotlight(boolean arg) {
-        this.hasSpotlight = arg;
+        hasSpotlight = arg;
     }
 
     public boolean hasSpotlight() {
-        return this.hasSpotlight;
+        return hasSpotlight;
     }
 
     public void setSpotlightState(boolean arg) {
-        if (this.hasSpotlight) {
-            this.spotlightIsActive = arg;
-            if (arg)
-                this.illuminated = true;
+        if (hasSpotlight) {
+            spotlightIsActive = arg;
+            if (arg) {
+                illuminated = true;
+            }
         }
     }
 
     public boolean isIlluminated() {
-        return this.illuminated;
+        return illuminated;
     }
 
     public void setIlluminated(boolean arg) {
-        this.illuminated = arg;
+        illuminated = arg;
     }
 
     public boolean isUsingSpotlight() {
@@ -6265,14 +6345,12 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @param target the <code>HexTarget</code> to illuminate
      */
     public void illuminateTarget(HexTarget target) {
-        if (this.hasSpotlight && this.spotlightIsActive && target != null) {
-            this.illuminated = true;
-            ArrayList<Coords> in = Coords.intervening(this.getPosition(),
+        if (hasSpotlight && spotlightIsActive && target != null) {
+            illuminated = true;
+            final ArrayList<Coords> in = Coords.intervening(getPosition(),
                     target.getPosition());
-            for (Coords c : in) {
-                for (Enumeration<Entity> e = game.getEntities(c); e
-                        .hasMoreElements();) {
-                    Entity en = e.nextElement();
+            for (final Coords c : in) {
+                for (final Entity en : game.getEntities(c)) {
                     en.setIlluminated(true);
                 }
             }
@@ -6319,7 +6397,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
 
     public String destroy(String reason, boolean survivable, boolean canSalvage) {
-        StringBuffer sb = new StringBuffer();
+        final StringBuffer sb = new StringBuffer();
 
         int condition = IEntityRemovalConditions.REMOVE_SALVAGEABLE;
         if (!canSalvage) {
@@ -6336,10 +6414,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
         setDoomed(true);
 
-        Enumeration<Integer> iter = getPickedUpMechWarriors().elements();
+        final Enumeration<Integer> iter = getPickedUpMechWarriors().elements();
         while (iter.hasMoreElements()) {
-            Integer mechWarriorId = iter.nextElement();
-            Entity mw = game.getEntity(mechWarriorId.intValue());
+            final Integer mechWarriorId = iter.nextElement();
+            final Entity mw = game.getEntity(mechWarriorId.intValue());
             mw.setDestroyed(true);
             game.removeEntity(mw.getId(), condition);
             sb.append("\n*** ").append(
@@ -6369,8 +6447,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean getTargetedBySwarm(int entityId, int weaponId) {
         for (int i = 0; i < hitBySwarmsEntity.size(); i++) {
-            Integer entityIdToTest = hitBySwarmsEntity.elementAt(i);
-            Integer weaponIdToTest = hitBySwarmsWeapon.elementAt(i);
+            final Integer entityIdToTest = hitBySwarmsEntity.elementAt(i);
+            final Integer weaponIdToTest = hitBySwarmsWeapon.elementAt(i);
             if (entityId == entityIdToTest.intValue()
                     && weaponId == weaponIdToTest.intValue()) {
                 return true;
@@ -6380,10 +6458,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public int getShortRangeModifier() {
-        if (getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE)
+        if (getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE) {
             return -1;
-        else if (getTargSysType() == MiscType.T_TARGSYS_LONGRANGE)
+        } else if (getTargSysType() == MiscType.T_TARGSYS_LONGRANGE) {
             return 1;
+        }
         return 0;
     }
 
@@ -6392,10 +6471,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public int getLongRangeModifier() {
-        if (getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE)
+        if (getTargSysType() == MiscType.T_TARGSYS_SHORTRANGE) {
             return 5;
-        else if (getTargSysType() == MiscType.T_TARGSYS_LONGRANGE)
+        } else if (getTargSysType() == MiscType.T_TARGSYS_LONGRANGE) {
             return 3;
+        }
         return 4;
     }
 
@@ -6461,7 +6541,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
 
     public int getWeaponsAndEquipmentCost() {
         int cost = 0;
-        for (Mounted mounted : getEquipment()) {
+        for (final Mounted mounted : getEquipment()) {
             int itemCost = (int) mounted.getType().getCost();
             if (itemCost == EquipmentType.COST_VARIABLE) {
                 itemCost = mounted.getType().resolveVariableCost(this);
@@ -6475,40 +6555,48 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if (cover > LosEffects.COVER_NONE) {
             switch (cover) {
                 case LosEffects.COVER_LOWLEFT:
-                    if (location == Mech.LOC_LLEG)
+                    if (location == Mech.LOC_LLEG) {
                         return true;
+                    }
                     break;
                 case LosEffects.COVER_LOWRIGHT:
-                    if (location == Mech.LOC_RLEG)
+                    if (location == Mech.LOC_RLEG) {
                         return true;
+                    }
                     break;
                 case LosEffects.COVER_LEFT:
                     if (location == Mech.LOC_LLEG || location == Mech.LOC_LARM
-                            || location == Mech.LOC_LT)
+                            || location == Mech.LOC_LT) {
                         return true;
+                    }
                     break;
                 case LosEffects.COVER_RIGHT:
                     if (location == Mech.LOC_RLEG || location == Mech.LOC_RARM
-                            || location == Mech.LOC_RT)
+                            || location == Mech.LOC_RT) {
                         return true;
+                    }
                     break;
                 case LosEffects.COVER_HORIZONTAL:
-                    if (location == Mech.LOC_LLEG || location == Mech.LOC_RLEG)
+                    if (location == Mech.LOC_LLEG || location == Mech.LOC_RLEG) {
                         return true;
+                    }
                     break;
                 case LosEffects.COVER_UPPER:
-                    if (location == Mech.LOC_LLEG || location == Mech.LOC_RLEG)
+                    if (location == Mech.LOC_LLEG || location == Mech.LOC_RLEG) {
                         return false;
+                    }
                     return true;
                 case LosEffects.COVER_FULL:
                     return true;
                 case LosEffects.COVER_75LEFT:
-                    if (location == Mech.LOC_RARM || location == Mech.LOC_RLEG)
+                    if (location == Mech.LOC_RARM || location == Mech.LOC_RLEG) {
                         return false;
+                    }
                     return true;
                 case LosEffects.COVER_75RIGHT:
-                    if (location == Mech.LOC_LLEG || location == Mech.LOC_LARM)
+                    if (location == Mech.LOC_LLEG || location == Mech.LOC_LARM) {
                         return false;
+                    }
                     return true;
             }
         }
@@ -6523,13 +6611,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public boolean isOnSameSheet(Coords tc) {
         if (game.getOptions().booleanOption("a4homing_target_area")) {
             // unofficial rule which may be better with odd sized boards
-            if (tc.distance(getPosition()) <= 8)
+            if (tc.distance(getPosition()) <= 8) {
                 return true;
+            }
             return false;
         }
         // using FASA map sheets
-        if ((tc.x / 16 == getPosition().x / 16)
-                && (tc.y / 17 == getPosition().y / 17)) {
+        if (tc.x / 16 == getPosition().x / 16
+                && tc.y / 17 == getPosition().y / 17) {
             return true;
         }
         return false;
@@ -6548,18 +6637,19 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         // weirdness. Yeah, it's dumb.
         double armorPerTon = 16.0 * EquipmentType.getArmorPointMultiplier(
                 armorType, techLevel);
-        if (armorType == EquipmentType.T_ARMOR_HARDENED)
+        if (armorType == EquipmentType.T_ARMOR_HARDENED) {
             armorPerTon = 8.0;
-        double points = getTotalOArmor();
+        }
+        final double points = getTotalOArmor();
         double armorWeight = points / armorPerTon;
         armorWeight = Math.ceil(armorWeight * 2.0) / 2.0;
         return armorWeight;
     }
 
     public boolean hasTAG() {
-        for (Mounted m : getWeaponList()) {
-            WeaponType equip = (WeaponType) (m.getType());
-            if ((equip != null) && (equip.hasFlag(WeaponType.F_TAG))) {
+        for (final Mounted m : getWeaponList()) {
+            final WeaponType equip = (WeaponType) m.getType();
+            if (equip != null && equip.hasFlag(WeaponType.F_TAG)) {
                 return true;
             }
         }
@@ -6583,8 +6673,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public boolean usedTag() {
-        for (Mounted weapon : getWeaponList()) {
-            WeaponType wtype = (WeaponType) weapon.getType();
+        for (final Mounted weapon : getWeaponList()) {
+            final WeaponType wtype = (WeaponType) weapon.getType();
             if (weapon.isUsedThisRound() && wtype.hasFlag(WeaponType.F_TAG)) {
                 return true;
             }
@@ -6593,13 +6683,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public boolean hasEiCockpit() {
-        return (game != null && game.getOptions().booleanOption(
-                "all_have_ei_cockpit"));
+        return game != null && game.getOptions().booleanOption(
+                "all_have_ei_cockpit");
     }
 
     public boolean hasActiveEiCockpit() {
-        return (hasEiCockpit() && getCrew().getOptions().booleanOption(
-                "ei_implant"));
+        return hasEiCockpit() && getCrew().getOptions().booleanOption(
+                "ei_implant");
     }
 
     public boolean isLayingMines() {
@@ -6611,9 +6701,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public boolean canLayMine() {
-        for (Object oMount : miscList) {
-            Mounted mount = (Mounted) oMount;
-            EquipmentType type = mount.getType();
+        for (final Object oMount : miscList) {
+            final Mounted mount = (Mounted) oMount;
+            final EquipmentType type = mount.getType();
             if (!mount.isMissing() && type.hasFlag(MiscType.F_MINE)
                     && !isLayingMines()) {
                 return true;
@@ -6633,8 +6723,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     
     public int sideTable(Coords src, boolean usePrior, int face) {
         Coords effectivePos = position;
-        if(usePrior && null != priorPosition)
+        if(usePrior && null != priorPosition) {
             effectivePos = priorPosition;
+        }
         
         if(src.equals(effectivePos)) {
             //most places handle 0 range explicitly,
@@ -6643,10 +6734,10 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         }
         
         // calculate firing angle
-        int fa = (effectivePos.degree(src) + (6 - face) * 60) % 360;
+        final int fa = (effectivePos.degree(src) + (6 - face) * 60) % 360;
 
-        boolean targetIsTank = (this instanceof Tank)
-                || (game.getOptions().booleanOption("quad_hit_location") && this instanceof QuadMech);
+        final boolean targetIsTank = this instanceof Tank
+                || game.getOptions().booleanOption("quad_hit_location") && this instanceof QuadMech;
         if (targetIsTank) {
             if (fa > 30 && fa <= 150) {
                 return ToHitData.SIDE_RIGHT;
@@ -6659,7 +6750,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             }
         }
         if(this instanceof Aero) {
-            Aero a = (Aero)this;
+            final Aero a = (Aero)this;
             if (fa > 30 && fa <= 150) {
                 if(a.isRolled()) {
                     return ToHitData.SIDE_LEFT;
@@ -6715,13 +6806,14 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @param c the coordinates where the PSR happens
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll, Coords c) {
-        if (c == null || roll == null)
-            return;
-        if (isOffBoard() || !(isDeployed())) {
+        if (c == null || roll == null) {
             return;
         }
-        IHex hex = game.getBoard().getHex(c);
-        int modifier = hex.terrainPilotingModifier();
+        if (isOffBoard() || !isDeployed()) {
+            return;
+        }
+        final IHex hex = game.getBoard().getHex(c);
+        final int modifier = hex.terrainPilotingModifier();
         if (modifier != 0) {
             roll.addModifier(modifier, "difficult terrain");
         }
@@ -6735,8 +6827,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll,
             MoveStep step) {
-        if (step.getElevation() > 0)
+        if (step.getElevation() > 0) {
             return;
+        }
         addPilotingModifierForTerrain(roll, step.getPosition());
     }
 
@@ -6746,8 +6839,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * @param roll the PSR to modify
      */
     public void addPilotingModifierForTerrain(PilotingRollData roll) {
-        if (getElevation() > 0)
+        if (getElevation() > 0) {
             return;
+        }
         addPilotingModifierForTerrain(roll, getPosition());
     }
 
@@ -6756,8 +6850,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      */
     public boolean fixElevation() {
         if (!isDeployed() || isOffBoard()
-                || !game.getBoard().contains(getPosition()))
+                || !game.getBoard().contains(getPosition())) {
             return false;
+        }
         if (!isElevationValid(getElevation(), game.getBoard().getHex(
                 getPosition()))) {
             System.err.println(getDisplayName() + " in hex "
@@ -6778,13 +6873,15 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public boolean itemOppositeTech(String s) {
         if (isClan()) { // Clan base
             if (s.toLowerCase().indexOf("(IS)") != -1
-                    || s.toLowerCase().indexOf("Inner Sphere") != -1)
+                    || s.toLowerCase().indexOf("Inner Sphere") != -1) {
                 return true;
+            }
             return false;
         }
         if (s.toLowerCase().indexOf("(C)") != -1
-                || s.toLowerCase().indexOf("Clan") != -1)
+                || s.toLowerCase().indexOf("Clan") != -1) {
             return true;
+        }
         return false;
     }
 
@@ -6871,9 +6968,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             setArmor(IArmorState.ARMOR_DOOMED, loc, true);
         }
         // equipment marked missing
-        for (Mounted mounted : getEquipment()) {            
+        for (final Mounted mounted : getEquipment()) {            
             if (mounted.getLocation() == loc && mounted.getType().isHittable() ||
-                    (mounted.isSplit() && mounted.getSecondLocation() == loc)) {
+                    mounted.isSplit() && mounted.getSecondLocation() == loc) {
                 mounted.setMissing(true);
             }
         }
@@ -6895,28 +6992,32 @@ public abstract class Entity extends TurnOrdered implements Serializable,
             destroyLocation(getDependentLocation(loc));
         }
         // remove any narc/inarc pods in this location
-        for (Iterator<INarcPod> i = pendingINarcPods.iterator(); i.hasNext();) {
-            if (i.next().getLocation() == loc)
+        for (final Iterator<INarcPod> i = pendingINarcPods.iterator(); i.hasNext();) {
+            if (i.next().getLocation() == loc) {
                 i.remove();
+            }
         }
-        for (Iterator<INarcPod> i = iNarcPods.iterator(); i.hasNext();) {
-            if (i.next().getLocation() == loc)
+        for (final Iterator<INarcPod> i = iNarcPods.iterator(); i.hasNext();) {
+            if (i.next().getLocation() == loc) {
                 i.remove();
+            }
         }
-        for (Iterator<NarcPod> i = pendingNarcPods.iterator(); i.hasNext();) {
-            if (i.next().getLocation() == loc)
+        for (final Iterator<NarcPod> i = pendingNarcPods.iterator(); i.hasNext();) {
+            if (i.next().getLocation() == loc) {
                 i.remove();
+            }
         }
-        for (Iterator<NarcPod> i = narcPods.iterator(); i.hasNext();) {
-            if (i.next().getLocation() == loc)
+        for (final Iterator<NarcPod> i = narcPods.iterator(); i.hasNext();) {
+            if (i.next().getLocation() == loc) {
                 i.remove();
+            }
         }
     }
 
     public PilotingRollData checkSideSlip(int moveType, IHex prevHex,
             int overallMoveType, MoveStep prevStep, int prevFacing,
             int curFacing, Coords lastPos, Coords curPos, int distance) {
-        PilotingRollData roll = getBasePilotingRoll();
+        final PilotingRollData roll = getBasePilotingRoll();
 
         if (moveType != IEntityMovementType.MOVE_JUMP
                 && prevHex != null
@@ -6954,15 +7055,15 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public void setCommander(boolean arg) {
-        this.isCommander = arg;
+        isCommander = arg;
     }
 
     public boolean isCommander() {
-        return this.isCommander;
+        return isCommander;
     }
     
     public boolean hasLinkedMGA(Mounted mounted) {
-        for (Mounted m : getWeaponList()) {
+        for (final Mounted m : getWeaponList()) {
             if (m.getLocation() == mounted.getLocation()
                     && m.getType().hasFlag(WeaponType.F_MGA)
                     && !(m.isDestroyed() || m.isBreached())
@@ -6977,7 +7078,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
 
     public void setReckless(boolean b) {
-        this.reckless = b;
+        reckless = b;
     }
 
     public boolean isReckless() {
@@ -7009,8 +7110,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     //return the bay of the current weapon
     public Mounted whichBay(int id) {
         
-        for (Mounted m : getWeaponBayList()) {
-            for(int wId : m.getBayWeapons()) {
+        for (final Mounted m : getWeaponBayList()) {
+            for(final int wId : m.getBayWeapons()) {
                 //find the weapon and determine if it is there
                 if(wId == id) {
                     return m;
@@ -7025,12 +7126,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public Mounted getFirstBay(WeaponType wtype, int loc, boolean rearMount) {
         
         int weapDamage = wtype.getRoundShortAV();
-        if(wtype.isCapital())
+        if(wtype.isCapital()) {
             weapDamage *= 10;
+        }
         
-        for (Mounted m : getWeaponBayList()) {
-            BayWeapon bay = (BayWeapon)m.getType();
-            int damage = bay.getRoundShortAV() + weapDamage;
+        for (final Mounted m : getWeaponBayList()) {
+            final BayWeapon bay = (BayWeapon)m.getType();
+            final int damage = bay.getRoundShortAV() + weapDamage;
             if(bay.getAtClass() == wtype.getAtClass() && m.getLocation() == loc 
                     && m.isRearMounted() == rearMount && damage <= 700) {
                 return m;
@@ -7044,7 +7146,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         
         int heat = 0;
         
-        for(Mounted mounted : getTotalWeaponList()) {
+        for(final Mounted mounted : getTotalWeaponList()) {
             //is the weapon usable?
             if(mounted.isDestroyed() || mounted.isJammed()) {
                 continue;
@@ -7062,18 +7164,18 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     public void setVectors(int[] v) {
-        if(v == null || v.length != 6)
+        if(v == null || v.length != 6) {
             return;
+        }
         
-        this.vectors = v;
+        vectors = v;
     }
     
     public int getVector(int facing) {
         if(facing < 6) {
             return vectors[facing];
-        } else {
-            return 0;
         }
+        return 0;
     }
     
     public int getVelocity() {
@@ -7095,8 +7197,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         int side = -1;
         for(int dir = 0; dir < 6; dir++) {
             thrust = getVector(dir);
-            if(thrust == 0)
+            if(thrust == 0) {
                 continue;
+            }
             
             if(thrust > high) {
                 high = thrust;
@@ -7123,11 +7226,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     
     public Vector<Integer> getHeading() {
         
-        Vector<Integer> heading = new Vector<Integer>();
+        final Vector<Integer> heading = new Vector<Integer>();
         int high = 0;
         int curDir = getFacing();
         for(int dir = 0; dir < 6; dir++) {
-            int thrust = getVector(dir);
+            final int thrust = getVector(dir);
             if(thrust >= high && thrust > 0) {
                 //if they were equal then add the last direction to the 
                 //vector before moving on
@@ -7143,7 +7246,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }    
     
     public void setPassedThrough(Vector<Coords> pass) {
-        this.passedThrough = pass;
+        passedThrough = pass;
     }
     
     public Vector<Coords> getPassedThrough() {
@@ -7151,11 +7254,11 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     public void addPassedThrough(Coords c) {
-        this.passedThrough.add(c);
+        passedThrough.add(c);
     }
     
     public void setRamming(boolean b) {
-        this.ramming = b;
+        ramming = b;
     }
     
     public boolean isRamming() {
@@ -7163,9 +7266,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     }
     
     public void resetFiringArcs() {
-        frontArcFired = new boolean[this.locations()];
-        rearArcFired = new boolean[this.locations()];
-        for(int i = 0; i<this.locations(); i++) {
+        frontArcFired = new boolean[locations()];
+        rearArcFired = new boolean[locations()];
+        for(int i = 0; i<locations(); i++) {
             frontArcFired[i] = false;
             rearArcFired[i] = false;
         }
@@ -7175,22 +7278,23 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         if(null == frontArcFired || null == rearArcFired) {
             resetFiringArcs();
         }
-        if(location>this.locations() || location<0)
+        if(location>locations() || location<0) {
             return false;
+        }
         
         if(rearMount) {
             return rearArcFired[location];
-        } else {
-            return frontArcFired[location];
         }
+        return frontArcFired[location];
     }
     
     public void setArcFired(int location, boolean rearMount) {
         if(null == frontArcFired || null == rearArcFired) {
             resetFiringArcs();
         }
-        if(location>this.locations() || location<0)
-            return;        
+        if(location>locations() || location<0) {
+            return;
+        }        
         
         if(rearMount) {
             rearArcFired[location] = true;
@@ -7203,8 +7307,8 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Force rapid fire mode to the highest level on RAC and UAC
      */
     public void setRapidFire() {
-        for(Mounted m : getTotalWeaponList()) {
-            WeaponType wtype = (WeaponType)m.getType();
+        for(final Mounted m : getTotalWeaponList()) {
+            final WeaponType wtype = (WeaponType)m.getType();
             if(wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {
                 m.setMode("6-shot");
             }

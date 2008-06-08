@@ -13,7 +13,6 @@
  */
 package megamek.common.weapons;
 
-import java.util.Enumeration;
 import java.util.Vector;
 
 import megamek.common.Coords;
@@ -22,6 +21,7 @@ import megamek.common.FighterSquadron;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Report;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -53,8 +53,9 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
      * @return a <code>boolean</code> value indicating wether this should be
      *         kept or not
      */
+    @Override
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
-        if (!this.cares(phase)) {
+        if (!cares(phase)) {
             return true;
         }
      
@@ -70,19 +71,19 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
         r.messageId = 3120;
         r.add(target.getDisplayName(), true);
         vPhaseReport.addElement(r);
-        if (toHit.getValue() == ToHitData.IMPOSSIBLE) {
+        if (toHit.getValue() == TargetRoll.IMPOSSIBLE) {
             r = new Report(3135);
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
             return false;
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_FAIL) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
             r = new Report(3140);
             r.newlines = 0;
             r.subject = subjectId;
             r.add(toHit.getDesc());
             vPhaseReport.addElement(r);
-        } else if (toHit.getValue() == ToHitData.AUTOMATIC_SUCCESS) {
+        } else if (toHit.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
             r = new Report(3145);
             r.newlines = 0;
             r.subject = subjectId;
@@ -95,19 +96,18 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
         //iterate through by number of weapons in bay
         for(int i = 0; i < weapon.getBayWeapons().size(); i++) {      
             //deliver screen
-            Coords coords = target.getPosition();
+            final Coords coords = target.getPosition();
             server.deliverScreen(coords, vPhaseReport);       
             //damage any entities in the hex
-            for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
-                Entity entity = (Entity)impactHexHits.nextElement();
+            for (final Entity entity : game.getEntities(coords)) {
                 //if fighter squadron multiply damage by active fighters
                 if(entity instanceof FighterSquadron) {
-                    FighterSquadron fs = (FighterSquadron)entity;
+                    final FighterSquadron fs = (FighterSquadron)entity;
                     attackValue *= fs.getNFighters();
                 }          
-                ToHitData toHit = new ToHitData();
+                final ToHitData toHit = new ToHitData();
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
-                HitData hit = entity.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
+                final HitData hit = entity.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
                 vPhaseReport.addAll( server.damageEntity(entity, hit, attackValue));
                 server.creditKill(entity, ae);
             }

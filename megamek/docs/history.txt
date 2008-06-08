@@ -32,6 +32,8 @@ v0.33.27-dev (SVN)
 + Weapon handling for tele-operated missiles
 + TRO 3075 BA
 + Bug 1984925: Nuke Exception 0.33.27-Dev
++ FIXED: name of Killer Whale-T
++ Data 1981770: ASF
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

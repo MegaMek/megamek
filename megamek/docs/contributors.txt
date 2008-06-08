@@ -90,6 +90,7 @@
      Alexander Schölling <schoelling@users.sourceforge.net>
      fastsammy <fastsammy@users.sourceforge.net>
      Sni77 <sni77@users.sourceforge.net>
+     Jellico
 
   Updates to the Ant build file:
      Robert Schuster <thebohemian@users.sourceforge.net>

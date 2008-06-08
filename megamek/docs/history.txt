@@ -39,6 +39,7 @@ v0.33.27-dev (SVN)
 + Fixed: tele-missile weapon launchers not being created
 + Data 1981763: Dropships
 + improved icons for Cheetah and Seydlitz
++ Data 1977277: New Inner Sphere Warship Icons
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

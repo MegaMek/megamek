@@ -20,6 +20,8 @@
 
 package megamek.server.commands;
 
+import java.util.Enumeration;
+
 import megamek.common.Entity;
 import megamek.server.Server;
 
@@ -38,10 +40,11 @@ public class FixElevationCommand extends ServerCommand {
     /**
      * Run this command with the arguments supplied
      */
-    @Override
     public void run(int connId, String[] args) {
         int countbad = 0;
-        for (final Entity entity : server.getGame().getEntities()) {
+        for (Enumeration<Entity> e = server.getGame().getEntities(); e
+                .hasMoreElements();) {
+            Entity entity = e.nextElement();
             if (entity.fixElevation()) {
                 server.sendServerChat(entity.getDisplayName()
                         + " elevation fixed, see megameklog.txt for details & report a bug if you know how this happened");

@@ -16,7 +16,6 @@ package megamek.server;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Vector;
 
 import megamek.common.Building;
@@ -87,7 +86,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
         Report r;
 
         // Get the position map of all entities in the game.
-        Hashtable<Coords, List<Entity>> positionMap = game.getPositionMap();
+        Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
 
         // Build vector to send for updated buildings at once.
         Vector<Building> burningBldgs = new Vector<Building>();

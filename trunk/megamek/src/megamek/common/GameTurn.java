@@ -63,41 +63,7 @@ public class GameTurn implements Serializable {
      */
     public boolean isValidEntity(Entity entity, IGame game) {
         
-        //check the various aero subphases
-        /*TODO: This isn't exactly right because it doesn't force unequal size rules
-         * within each subphase (that will be harder to implement)
-         */
-        boolean rightSubphase = true;
-        if(entity instanceof SpaceStation) {
-            rightSubphase = true;
-        } else if(entity instanceof Warship) {
-            rightSubphase = !game.checkForValidSpaceStations(playerId) &&
-                !game.checkForValidJumpships(playerId);
-        } else if(entity instanceof Jumpship) {
-            rightSubphase = !game.checkForValidSpaceStations(playerId);
-        } else if(entity instanceof Dropship) {
-            rightSubphase = !game.checkForValidSpaceStations(playerId) &&
-                 !game.checkForValidJumpships(playerId) &&
-                 !game.checkForValidWarships(playerId);
-        } else if(entity instanceof SmallCraft) {
-            rightSubphase = !game.checkForValidSpaceStations(playerId) &&
-                !game.checkForValidJumpships(playerId) &&
-                !game.checkForValidWarships(playerId) &&
-                !game.checkForValidDropships(playerId);
-        } else {
-            rightSubphase = !game.checkForValidSpaceStations(playerId) &&
-                !game.checkForValidJumpships(playerId) &&
-                !game.checkForValidWarships(playerId) &&
-                !game.checkForValidDropships(playerId) &&
-                !game.checkForValidSmallCraft(playerId);
-        }
-        
-        if(game.getPhase() != IGame.Phase.PHASE_MOVEMENT) {
-            rightSubphase = true;
-        }
-        
         return entity != null && entity.getOwnerId() == playerId
-                && rightSubphase
                 && entity.isSelectableThisTurn()
                 // This next bit enforces the "A players Infantry/Protos
                 // move after that players other units" options.

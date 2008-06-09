@@ -45,6 +45,7 @@ v0.33.27-dev (SVN)
 + disable most custom munitions for Aeros
 + disallow firing of weapon bays whose weapons are completely out of ammo
 + default icon for aerodyne dropships
++ Aerospace subphases for movement
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

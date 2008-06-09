@@ -3390,6 +3390,7 @@ public class Compute {
         }
         fs.setModel("");
         fs.loadAllWeapons();
+        fs.setRapidFire();
         
         return fs;
     }

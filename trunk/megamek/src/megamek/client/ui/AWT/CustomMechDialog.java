@@ -509,6 +509,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             tempPanel.add(panMunitions);
         }
 
+        /*
         //set up Santa Annas if using nukes
         if( (entity instanceof Dropship || entity instanceof Jumpship)
                 && clientgui.getClient().game.getOptions().booleanOption("at2_nukes")) {
@@ -526,6 +527,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             gridbag.setConstraints(panBombs, c);
             tempPanel.add(panBombs);
         }
+        */
         
         // Set up rapidfire mg
         if (clientgui.getClient().game.getOptions().booleanOption(

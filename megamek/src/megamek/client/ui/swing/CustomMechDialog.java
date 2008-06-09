@@ -759,6 +759,19 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             if (vAllTypes == null) {
                 continue;
             }
+            
+            //don't allow ammo switching of most things for Aeros
+            //allow only MML, ATM, NARC, and LBX switching
+            //TODO: need a better way to customize munitions on Aeros
+            //currently this doesn't allow AR10 and tele-missile launchers
+            //to switch back and forth between tele and regular missiles
+            //also would be better to not have to add Santa Anna's in such 
+            //an idiosyncratic fashion
+            if((entity instanceof Aero) && !(at.getAmmoType() == AmmoType.T_MML ||
+                    at.getAmmoType() == AmmoType.T_ATM || at.getAmmoType() == AmmoType.T_NARC || 
+                    at.getAmmoType() == AmmoType.T_AC_LBX)) {
+                continue;
+            }
 
             for (int x = 0, n = vAllTypes.size(); x < n; x++) {
                 AmmoType atCheck = vAllTypes.elementAt(x);

@@ -42,6 +42,7 @@ v0.33.27-dev (SVN)
 + Data 1977277: New Inner Sphere Warship Icons
 + RAC and UAC jamming in weapon bays and unjamming for Aeros
 + disable mode switching of rapid-fire weapons for Aeros in Mech Display
++ disable most custom munitions for Aeros
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

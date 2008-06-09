@@ -13,10 +13,13 @@
  */
 package megamek.common.weapons;
 
+import java.util.Vector;
+
 import megamek.common.AmmoType;
 import megamek.common.IGame;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
+import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
@@ -104,5 +107,63 @@ public class ACBayHandler extends AmmoBayWeaponHandler {
             }
         }       
         return (int)Math.ceil(av);
+    }
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.UltraWeaponHandler#doChecks(java.util.Vector)
+     */
+    protected boolean doChecks(Vector<Report> vPhaseReport) {
+        for(int wId: weapon.getBayWeapons()) {    
+            Mounted bayW = ae.getEquipment(wId);
+            WeaponType bayWType = ((WeaponType)bayW.getType());
+            int ammoUsed = bayW.getCurrentShots();
+            if(bayWType.getAmmoType() == AmmoType.T_AC_ROTARY) {
+                boolean jams = false;
+                switch (ammoUsed) {
+                    case 6:
+                        if (roll <= 4) {
+                            jams = true;
+                        }
+                        break;
+                    case 5:
+                    case 4:
+                        if (roll <= 3) {
+                            jams = true;
+                        }
+                        break;
+                    case 3:
+                    case 2:
+                        if (roll <= 2) {
+                            jams = true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                if (jams) {
+                    r = new Report(3170);
+                    r.subject = subjectId;
+                    r.add(" shot(s)");
+                    r.newlines = 0;
+                    vPhaseReport.addElement(r);
+                    bayW.setJammed(true);
+                }
+            }
+            else if (bayWType.getAmmoType() == AmmoType.T_AC_ULTRA) {
+                if (roll == 2 && ammoUsed == 2) {
+                    r = new Report();
+                    r.subject = subjectId;
+                    r.messageId = 3160;
+                    r.newlines = 0;
+                    bayW.setJammed(true);
+                    bayW.setHit(true);
+                    vPhaseReport.addElement(r);
+                }
+            }
+        }
+        
+            return false;
     }
 }

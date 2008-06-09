@@ -4617,7 +4617,10 @@ public class Server implements Runnable {
                 entity.setUnjammingRAC(true);
                 game.addAction(new UnjamAction(entity.getId()));
 
-                break;
+                //for Aeros this will end movement prematurely
+                //if we break
+                if(!(entity instanceof Aero))
+                    break;
             }
 
             if (step.getType() == MovePath.STEP_LAY_MINE) {
@@ -8389,7 +8392,7 @@ public class Server implements Runnable {
         r.subject = entity.getId();
         r.addDesc(entity);
         addReport(r);
-        for (Mounted mounted : entity.getWeaponList()) {
+        for (Mounted mounted : entity.getTotalWeaponList()) {
             if (mounted.isJammed()) {
                 WeaponType wtype = (WeaponType) mounted.getType();
                 if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY) {

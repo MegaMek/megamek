@@ -40,6 +40,7 @@ v0.33.27-dev (SVN)
 + Data 1981763: Dropships
 + improved icons for Cheetah and Seydlitz
 + Data 1977277: New Inner Sphere Warship Icons
++ RAC and UAC jamming in weapon bays and unjamming for Aeros
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

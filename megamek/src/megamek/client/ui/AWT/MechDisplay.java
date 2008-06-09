@@ -2127,6 +2127,15 @@ public class MechDisplay extends BufferedPanel {
                         m_chMode.removeAll();
                         return;
                     }
+                    //disable rapid fire mode switching for Aeros
+                    if(en instanceof Aero && m.getType() instanceof WeaponType
+                            && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC_ROTARY 
+                                    || ((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC_ULTRA
+                                    ||    ((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC
+                                    ||    ((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+                        m_chMode.removeAll();
+                        return;
+                    }
                     modeLabel.setEnabled(true);
                     m_chMode.removeAll();
                     for (Enumeration<EquipmentMode> e = m.getType().getModes(); e

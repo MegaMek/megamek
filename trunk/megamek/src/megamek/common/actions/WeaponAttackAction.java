@@ -570,9 +570,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             
             //check for particular kinds of weapons in weapon bays
             if(ae.usesWeaponBays()) {
-              
-                //all lbx cluster
-                
+
                 //any heavy lasers
                 if(wtype.getAtClass() == WeaponType.CLASS_LASER) {
                     for(int wId: weapon.getBayWeapons()) {
@@ -1626,9 +1624,32 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "Can only raise the heat level of Meks.";
         }
         
-        //limit large craft to zero net heat and to heat by arc
         if(ae.usesWeaponBays()) {
             
+            //first check to see if there are any usable weapons
+            boolean useable = false;
+            for (int wId : weapon.getBayWeapons()) {
+                Mounted m = ae.getEquipment(wId);
+                WeaponType bayWType = ((WeaponType) m.getType());
+                boolean bayWUsesAmmo = (bayWType.getAmmoType() != AmmoType.T_NA);
+                if (!m.isBreached() && !m.isDestroyed() && !m.isJammed()) {
+                    if(bayWUsesAmmo) {
+                        if (m.getLinked() != null
+                                    && m.getLinked().getShotsLeft() > 0) {
+                            useable = true;
+                            break;
+                        }
+                    } else {
+                        useable = true;
+                        break;
+                    }
+                }
+            }
+            if(!useable)
+                return "weapon bay out of ammo or otherwise unusable";
+            
+            
+            //limit large craft to zero net heat and to heat by arc
             int totalheat = 0;
             int heatcap = ae.getHeatCapacity();
             

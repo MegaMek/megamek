@@ -46,6 +46,7 @@ v0.33.27-dev (SVN)
 + disallow firing of weapon bays whose weapons are completely out of ammo
 + default icon for aerodyne dropships
 + Aerospace subphases for movement
++ added Small Craft and Space Stations
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

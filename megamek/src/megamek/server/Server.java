@@ -2402,12 +2402,12 @@ public class Server implements Runnable {
                 && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
             // Add a game turn to unload stranded units, if this
             // is the movement phase.
-            turns = new Vector<GameTurn>(team_order.getNormalTurns()
+            turns = new Vector<GameTurn>(team_order.getTotalTurns()
                     + team_order.getEvenTurns() + 1);
             turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
         } else {
             // No stranded units.
-            turns = new Vector<GameTurn>(team_order.getNormalTurns()
+            turns = new Vector<GameTurn>(team_order.getTotalTurns()
                     + team_order.getEvenTurns());
         }
 
@@ -2470,7 +2470,12 @@ public class Server implements Runnable {
             player.resetEvenTurns();
             player.resetMultiTurns();
             player.resetOtherTurns();
-
+            player.resetSpaceStationTurns();
+            player.resetJumpshipTurns();
+            player.resetWarshipTurns();
+            player.resetDropshipTurns();
+            player.resetSmallCraftTurns();
+            
             // Add turns for protomechs weapons declaration.
             if (protosMoveByPoint) {
 
@@ -2532,7 +2537,23 @@ public class Server implements Runnable {
                         else
                             player.incrementOtherTurns();
                     }
-                } else
+                } else if (entity instanceof SpaceStation 
+                            && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                    player.incrementSpaceStationTurns();
+                } else if (entity instanceof Warship 
+                        && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                    player.incrementWarshipTurns();
+                } else if (entity instanceof Jumpship 
+                            && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                    player.incrementJumpshipTurns();
+                } else if (entity instanceof Dropship 
+                            && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                    player.incrementDropshipTurns();
+                } else if (entity instanceof SmallCraft 
+                            && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+                    player.incrementSmallCraftTurns();
+                }
+                else
                     player.incrementOtherTurns();
             }
         }
@@ -2582,12 +2603,12 @@ public class Server implements Runnable {
                 && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
             // Add a game turn to unload stranded units, if this
             // is the movement phase.
-            turns = new Vector<GameTurn>(team_order.getNormalTurns()
+            turns = new Vector<GameTurn>(team_order.getTotalTurns()
                     + team_order.getEvenTurns() + 1);
             turns.addElement(new GameTurn.UnloadStrandedTurn(strandedUnits));
         } else {
             // No stranded units.
-            turns = new Vector<GameTurn>(team_order.getNormalTurns()
+            turns = new Vector<GameTurn>(team_order.getTotalTurns()
                     + team_order.getEvenTurns());
         }
 
@@ -2638,8 +2659,43 @@ public class Server implements Runnable {
             // Record this team for the next move.
             prevTeam = team;
 
+            if (withinTeamTurns.hasMoreSpaceStationElements()) {
+                Player player = (Player) withinTeamTurns.nextSpaceStationElement();
+                GameTurn turn = null;
+                turn = new GameTurn.EntityClassTurn(player.getId(),
+                            GameTurn.CLASS_SPACE_STATION);
+                turns.addElement(turn);
+            } 
+            else if (withinTeamTurns.hasMoreJumpshipElements()) {
+                Player player = (Player) withinTeamTurns.nextJumpshipElement();
+                GameTurn turn = null;
+                turn = new GameTurn.EntityClassTurn(player.getId(),
+                            GameTurn.CLASS_JUMPSHIP);
+                turns.addElement(turn);
+            }
+            else if (withinTeamTurns.hasMoreWarshipElements()) {
+                Player player = (Player) withinTeamTurns.nextWarshipElement();
+                GameTurn turn = null;
+                turn = new GameTurn.EntityClassTurn(player.getId(),
+                            GameTurn.CLASS_WARSHIP);
+                turns.addElement(turn);
+            }
+            else if (withinTeamTurns.hasMoreDropshipElements()) {
+                Player player = (Player) withinTeamTurns.nextDropshipElement();
+                GameTurn turn = null;
+                turn = new GameTurn.EntityClassTurn(player.getId(),
+                            GameTurn.CLASS_DROPSHIP);
+                turns.addElement(turn);
+            }
+            else if (withinTeamTurns.hasMoreSmallCraftElements()) {
+                Player player = (Player) withinTeamTurns.nextSmallCraftElement();
+                GameTurn turn = null;
+                turn = new GameTurn.EntityClassTurn(player.getId(),
+                            GameTurn.CLASS_SMALL_CRAFT);
+                turns.addElement(turn);
+            }
             // This may be a "placeholder" for a team without "normal" turns.
-            if (withinTeamTurns.hasMoreElements()) {
+            else if (withinTeamTurns.hasMoreElements()) {
 
                 // Not a placeholder... get the player who moves next.
                 Player player = (Player) withinTeamTurns.nextElement();
@@ -2647,7 +2703,7 @@ public class Server implements Runnable {
                 // If we've added all "normal" turns, allocate turns
                 // for the infantry and/or protomechs moving even.
                 GameTurn turn = null;
-                if (numTurn >= team_order.getNormalTurns()) {
+                if (numTurn >= team_order.getTotalTurns()) {
                     turn = new GameTurn.EntityClassTurn(player.getId(),
                             evenMask);
                 }

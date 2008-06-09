@@ -112,6 +112,56 @@ public final class Team extends TurnOrdered implements Serializable {
         }
         return sum;
     }
+    
+    public int getSpaceStationTurns() {
+//      Sum the other turns of all Players in this Team.
+        int sum = 0;
+        for (Enumeration<Player> loop = players.elements(); loop
+                .hasMoreElements();) {
+            sum += loop.nextElement().getSpaceStationTurns();
+        }
+        return sum;
+    }
+    
+    public int getJumpshipTurns() {
+//      Sum the other turns of all Players in this Team.
+        int sum = 0;
+        for (Enumeration<Player> loop = players.elements(); loop
+                .hasMoreElements();) {
+            sum += loop.nextElement().getJumpshipTurns();
+        }
+        return sum;
+    }
+    
+    public int getWarshipTurns() {
+//      Sum the other turns of all Players in this Team.
+        int sum = 0;
+        for (Enumeration<Player> loop = players.elements(); loop
+                .hasMoreElements();) {
+            sum += loop.nextElement().getWarshipTurns();
+        }
+        return sum;
+    }
+    
+    public int getDropshipTurns() {
+//      Sum the other turns of all Players in this Team.
+        int sum = 0;
+        for (Enumeration<Player> loop = players.elements(); loop
+                .hasMoreElements();) {
+            sum += loop.nextElement().getDropshipTurns();
+        }
+        return sum;
+    }
+    
+    public int getSmallCraftTurns() {
+//      Sum the other turns of all Players in this Team.
+        int sum = 0;
+        for (Enumeration<Player> loop = players.elements(); loop
+                .hasMoreElements();) {
+            sum += loop.nextElement().getSmallCraftTurns();
+        }
+        return sum;
+    }
 
     /**
      * Two teams are equal if their ids and players are equal. <p/> Override

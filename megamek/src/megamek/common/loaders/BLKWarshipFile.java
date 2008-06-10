@@ -313,7 +313,7 @@ public class BLKWarshipFile extends BLKFile implements IMechLoader {
                 }
                 
                 //check for ammo loadouts
-                if(equipName.contains("Ammo:")) {
+                if(equipName.contains(":") && equipName.contains("Ammo")) {
                     //then split by the :
                     String [] temp;
                     temp = equipName.split(":");

@@ -1,6 +1,7 @@
 ﻿VERSION HISTORY:
 ----------------
 v0.33.28-dev (SVN)
++ Aeros can go up and down in atmosphere
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

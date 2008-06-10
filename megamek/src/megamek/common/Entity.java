@@ -1027,6 +1027,17 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                     minAlt++; // can't land here
                 }
                 break;
+            case IEntityMovementMode.AERODYNE:
+            case IEntityMovementMode.SPHEROID:
+                if(game.getBoard().inAtmosphere()) {
+                    altitude = assumedElevation;
+                    minAlt = hex.ceiling() + 1;
+                    //if sensors are damaged then, one higher
+                    if(((Aero)this).getSensorHits() > 0) {
+                        minAlt++;
+                    }
+                }
+                break;
             case IEntityMovementMode.SUBMARINE:
             case IEntityMovementMode.INF_UMU:
             case IEntityMovementMode.BIPED_SWIM:
@@ -1055,6 +1066,13 @@ public abstract class Entity extends TurnOrdered implements Serializable,
                 break;
             case IEntityMovementMode.VTOL:
                 maxAlt = hex.surface() + 50;
+                break;
+            case IEntityMovementMode.AERODYNE:
+            case IEntityMovementMode.SPHEROID:
+                if(game.getBoard().inAtmosphere()) {
+                    altitude = assumedElevation;
+                    maxAlt = 10;
+                }
                 break;
             case IEntityMovementMode.SUBMARINE:
             case IEntityMovementMode.INF_UMU:

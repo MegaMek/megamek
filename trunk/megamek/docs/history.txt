@@ -50,7 +50,7 @@ v0.33.27-dev (SVN)
 + changed Fighter files to account for Artemis-IV capable ammo
 + Fixed munition reading problem in bay weapon ammo
 + changed Dropship files to account for Artemis-IV capable ammo
-
++ changed Jumpship and Warship files to account for Artemis-IV capable ammo
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)
 + Bug 1966400: Vehicle CASE/CASE II not working if attack destroys location

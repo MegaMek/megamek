@@ -48,6 +48,7 @@ v0.33.27-dev (SVN)
 + Aerospace subphases for movement
 + added Small Craft and Space Stations
 + changed Fighter files to account for Artemis-IV capable ammo
++ Fixed munition reading problem in bay weapon ammo
 
 
 v0.33.26 (2008-05-28, 23:23 GMT+2)

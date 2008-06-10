@@ -491,14 +491,14 @@ public class Aero
         if(getRecoveryTurn() > 0) {
             setRecoveryTurn(getRecoveryTurn() - 1);
         }
-        
-        //update velocity
-        this.setCurrentVelocity(this.getNextVelocity());
-        
+
         //if in atmosphere, then halve next turn's velocity
         if(game.getBoard().inAtmosphere() && isDeployed()) {
             this.setNextVelocity((int)Math.floor(this.getNextVelocity() / 2.0));
         }
+        
+        //update velocity
+        this.setCurrentVelocity(this.getNextVelocity());
         
         //if using variable damage thresholds then autoset them
         if(game.getOptions().booleanOption("variable_damage_thresh")) {

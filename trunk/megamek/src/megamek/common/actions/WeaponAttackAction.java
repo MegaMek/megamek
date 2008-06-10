@@ -640,17 +640,6 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         
         if(target instanceof Aero) {
                         
-            //get direction of attack
-            int side = toHit.getSideTable();
-            //if this is an aero attack using advanced movement rules then determine side differently
-            if(target instanceof Aero && game.useVectorMove()) {
-                side = ((Entity)target).chooseSide(ae.getPosition(), Compute.usePrior(ae, target));
-            }
-            if(side == ToHitData.SIDE_FRONT)
-                toHit.addModifier(+1, "attack against nose");
-            if(side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
-                toHit.addModifier(+2, "attack against side");
-            
             Aero a = (Aero)target;
             
             //is the target at zero velocity
@@ -1249,6 +1238,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.setSideTable(ToHitData.SIDE_FRONT);
         } else {
             toHit.setSideTable(Compute.targetSideTable(ae, target));
+        }
+        
+        if(target instanceof Aero) {
+            //get mods for direction of attack
+            int side = toHit.getSideTable();
+            //if this is an aero attack using advanced movement rules then determine side differently
+            if(target instanceof Aero && game.useVectorMove()) {
+                side = ((Entity)target).chooseSide(ae.getPosition(), Compute.usePrior(ae, target));
+            }
+            if(side == ToHitData.SIDE_FRONT)
+                toHit.addModifier(+1, "attack against nose");
+            if(side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
+                toHit.addModifier(+2, "attack against side");
         }
 
         // deal with grapples

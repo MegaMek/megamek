@@ -46,24 +46,17 @@ import megamek.server.DedicatedServer;
  */
 public class MegaMek {
 
-    public static String VERSION = "0.33.27-dev"; //$NON-NLS-1$
-
+    public static String VERSION = "0.33.27"; //$NON-NLS-1$
     public static long TIMESTAMP = new File(PreferenceManager
             .getClientPreferences().getLogDirectory()
             + File.separator + "timestamp").lastModified(); //$NON-NLS-1$
 
     private static final NumberFormat commafy = NumberFormat.getInstance();
-
     private static final String INCORRECT_ARGUMENTS_MESSAGE = "Incorrect arguments:";
-
     private static final String ARGUMENTS_DESCRIPTION_MESSAGE = "Arguments syntax:\n\t MegaMek [-log <logfile>] [(-gui <guiname>)|(-dedicated)|(-validate)] [<args>]";
-
     private static final String UNKNOWN_GUI_MESSAGE = "Unknown GUI:";
-
     private static final String GUI_CLASS_NOT_FOUND_MESSAGE = "Couldn't find the GUI Class:";
-
     private static final String DEFAULT_LOG_FILE_NAME = "megameklog.txt"; //$NON-NLS-1$
-
     private static String PROPERTIES_FILE = "megamek/MegaMek.properties";
 
     public static void main(String[] args) {

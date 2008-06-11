@@ -19,18 +19,23 @@
 
 package megamek.common.actions;
 
-import java.util.Enumeration;
-
-import megamek.common.*;
+import megamek.common.Entity;
+import megamek.common.IGame;
+import megamek.common.Targetable;
+import megamek.common.TeleMissile;
+import megamek.common.ToHitData;
 
 /**
- * Represents one unit charging another. Stores information about where the
- * target is supposed to be for the charge to be successful, as well as normal
- * attack info.
+ * Represents one tele-controlled missile attack
  * 
  * @author Ben Mazur
  */
 public class TeleMissileAttackAction extends AbstractAttackAction {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1054613811287285482L;
 
     public TeleMissileAttackAction(Entity attacker, Targetable target) {
         super(attacker.getId(), target.getTargetType(), target.getTargetId());
@@ -62,13 +67,6 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         // Do to pretreatment of physical attacks, the target may be null.
         if (target == null) {
             return new ToHitData(ToHitData.IMPOSSIBLE, "Target is null");
-        }
-
-        int targetId = Entity.NONE;
-        Entity te = null;
-        if ( target.getTargetType() == Targetable.TYPE_ENTITY ) {
-            te = (Entity) target;
-            targetId = target.getTargetId();
         }
 
         //set the to-hit

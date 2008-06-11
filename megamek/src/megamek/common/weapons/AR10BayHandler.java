@@ -97,7 +97,7 @@ public class AR10BayHandler extends AmmoBayWeaponHandler {
             Mounted bayWAmmo = bayW.getLinked();
             AmmoType atype = (AmmoType) bayWAmmo.getType();
             if(!bayW.isBreached() && !bayW.isDestroyed() && !bayW.isJammed()
-                    && bayWAmmo != null && bayWAmmo.getShotsLeft() > 0 
+                    && bayWAmmo.getShotsLeft() > 0 
                     && atype.hasFlag(AmmoType.F_TELE_MISSILE)) {
                 server.deployTeleMissile(ae, atype, wId, getCritMod(atype), vPhaseReport);  
                 attackValue -= atype.getDamagePerShot();

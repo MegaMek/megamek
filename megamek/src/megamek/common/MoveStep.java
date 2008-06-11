@@ -802,7 +802,8 @@ public class MoveStep implements Serializable {
             this.velocity = a.getCurrentVelocity();
             this.velocityN = a.getNextVelocity();
             this.velocityLeft = a.getCurrentVelocity();
-            this.isRolled = false;//a.isRolled();           
+            this.isRolled = false;//a.isRolled(); 
+            this.nStraight = a.getStraightMoves();
         }
         
         int nMove = entity.getMovementMode();

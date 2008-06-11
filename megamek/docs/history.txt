@@ -8,6 +8,7 @@ v0.33.28-dev (SVN)
 + Altitude effects on firing for low-atmosphere map
 + control rolls for damage in atmosphere
 + Bug 199123: all weapon bays limited to short range
++ minimum straight movement in atmosphere carried over from last turn
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

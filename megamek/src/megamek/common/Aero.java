@@ -106,6 +106,9 @@ public class Aero
     //need to set up standard damage here
     private int[] standard_damage = {0,0,0,0};
     
+    //track straight movement from last turn
+    private int straightMoves = 0;
+    
     private boolean spheroid = false;
     
     //deal with heat
@@ -1981,6 +1984,14 @@ public class Aero
     
     public int getExtremeRangeModifier() {
         return 6;
+    }
+    
+    public int getStraightMoves() {
+        return straightMoves;
+    }
+    
+    public void setStraightMoves(int i) {
+        this.straightMoves = i;
     }
     
 }

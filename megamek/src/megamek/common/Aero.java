@@ -1563,7 +1563,7 @@ public class Aero
 
         if( drop > 2 ) {
             // append the reason modifier
-            roll.append(new PilotingRollData(getId(), 0, "lost more than two altitudes"));
+            roll.append(new PilotingRollData(getId(), drop, "lost more than two altitudes"));
         } else {
             roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: entity did not drop more than two altitudes");
         }

@@ -1101,6 +1101,12 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
             }
             clientgui.mechD.wPan.wRangeR
                     .setText("" + ce().getPosition().distance(target.getPosition())); //$NON-NLS-1$
+            if(ce() instanceof Aero && target instanceof Aero && client.game.getBoard().inAtmosphere()) {
+                //add altitude difference
+                int altdiff = Math.abs(ce().getElevation()-target.getElevation());
+                clientgui.mechD.wPan.wRangeR.setText("" + ce().getPosition().distance(target.getPosition()) + " + " + altdiff + " altitude"); //$NON-NLS-1$
+            }
+            
             Mounted m = ce().getEquipment(weaponId);
             if (m.isUsedThisRound()) {
                 clientgui.mechD.wPan.wToHitR.setText(Messages

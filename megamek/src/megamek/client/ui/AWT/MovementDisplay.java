@@ -3048,6 +3048,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_LOWER_ELEVATION)) {
             cmd.addStep(MovePath.STEP_DOWN);
+            if(ce instanceof Aero && cmd.getLastStep().getNDown() == 2 && cmd.getLastStep().getVelocity() < 12) {
+                cmd.addStep(MovePath.STEP_ACC);
+            }
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_CLIMB_MODE)) {

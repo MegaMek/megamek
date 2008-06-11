@@ -5557,7 +5557,7 @@ public class Server implements Runnable {
             entity.setElevation(curVTOLElevation);
         }
         entity.setClimbMode(md.getFinalClimbMode());
-
+        
         //add a list of places passed through
         entity.setPassedThrough(passedThrough);
         
@@ -5570,7 +5570,10 @@ public class Server implements Runnable {
         if(entity instanceof Aero) {
             
             Aero a = (Aero)entity;
-            int thrust = md.getMpUsed();           
+            int thrust = md.getMpUsed();  
+            
+            //set straight movement
+            a.setStraightMoves(md.getLastStep().getNStraight());
             
             //consume fuel
             if((entity instanceof Aero && game.getOptions().booleanOption("fuel_consumption"))  ||

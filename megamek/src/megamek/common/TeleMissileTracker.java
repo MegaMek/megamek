@@ -59,8 +59,8 @@ public class TeleMissileTracker implements Serializable {
         //I could probably do this more directly with a Collection
         //but I don't know how to work with collections
         Vector<Integer> m = new Vector<Integer>();
-        for (Enumeration k = missiles.keys() ; k.hasMoreElements();) {
-            int wId = (Integer)k.nextElement();
+        for (Enumeration<Integer> k = missiles.keys() ; k.hasMoreElements();) {
+            int wId = k.nextElement();
             int missileId = missiles.get(wId);
             m.add(missileId);
         }

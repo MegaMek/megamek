@@ -2631,8 +2631,7 @@ public class Game implements Serializable, IGame {
                     l.gamePlayerConnected((GamePlayerConnectedEvent) event);
                     break;
                 case GameEvent.GAME_PLAYER_DISCONNECTED:
-                    l
-                            .gamePlayerDisconnected((GamePlayerDisconnectedEvent) event);
+                    l.gamePlayerDisconnected((GamePlayerDisconnectedEvent) event);
                     break;
                 case GameEvent.GAME_PLAYER_CHANGE:
                     l.gamePlayerChange((GamePlayerChangeEvent) event);

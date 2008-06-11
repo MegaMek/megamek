@@ -14,14 +14,10 @@
  */
 package megamek.server;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Vector;
 
-import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
-import megamek.common.Entity;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
@@ -76,30 +72,30 @@ public class ScreenProcessor extends DynamicTerrainProcessor {
         int width = board.getWidth();
         int height = board.getHeight();
         // Cycle through all hexes, checking for screens
-       debugTime("resolve screen 1", true);
+        debugTime("resolve screen 1", true);
 
-       for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
+        for (int currentXCoord = 0; currentXCoord < width; currentXCoord++ ) {
 
-    	   for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
-    		   Coords currentCoords = new Coords(currentXCoord, currentYCoord);
-    		   IHex currentHex = board.getHex(currentXCoord, currentYCoord);
+            for (int currentYCoord = 0; currentYCoord < height; currentYCoord++) {
+                Coords currentCoords = new Coords(currentXCoord, currentYCoord);
+                IHex currentHex = board.getHex(currentXCoord, currentYCoord);
 
-    		   // check for existence of screen
-    		   if (currentHex.containsTerrain(Terrains.SCREEN)){
-    			     			   
-    			   if(Compute.d6(2)>6) {
-    				   Report r = new Report(9075, Report.PUBLIC);
-    				   r.add(currentCoords.getBoardNum());
-    				   vPhaseReport.addElement(r);
-    			   
-    				   currentHex.removeTerrain(Terrains.SCREEN);
-    				   server.sendChangedHex(currentCoords);
-    			   }
-    		   }
-    	   }
+                // check for existence of screen
+                if (currentHex.containsTerrain(Terrains.SCREEN)){
 
-       }
-       debugTime("resolve screen 1 end", true);
+                    if(Compute.d6(2)>6) {
+                        Report r = new Report(9075, Report.PUBLIC);
+                        r.add(currentCoords.getBoardNum());
+                        vPhaseReport.addElement(r);
+
+                        currentHex.removeTerrain(Terrains.SCREEN);
+                        server.sendChangedHex(currentCoords);
+                    }
+                }
+            }
+
+        }
+        debugTime("resolve screen 1 end", true);
     }
 
 }

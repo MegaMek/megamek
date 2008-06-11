@@ -34,6 +34,7 @@ import megamek.common.actions.PushAttackAction;
 import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.WeaponAttackAction;
+import megamek.common.weapons.BayWeapon;
 
 /**
  * The compute class is designed to provide static methods for mechs and other
@@ -708,8 +709,19 @@ public class Compute {
         int distance = effectiveDistance(game, ae, target);
         int range = RangeType.rangeBracket(distance, weaponRanges, useExtremeRange);
 
+        int maxRange = wtype.getMaxRange();
+        //if this is a weapon bay I need to cycle through weapons
+        if(wtype instanceof BayWeapon) {
+            for(int wId : weapon.getBayWeapons()) {
+                Mounted bayW = ae.getEquipment(wId);
+                WeaponType bayWType = (WeaponType)bayW.getType();
+                if(bayWType.getMaxRange() > maxRange)
+                    maxRange = bayWType.getMaxRange();
+            }
+        }
+        
         //if aero and greater than max range then swith to range_out
-        if(ae instanceof Aero && range > wtype.getMaxRange())
+        if(ae instanceof Aero && range > maxRange)
             range = RangeType.RANGE_OUT;
         
         // short circuit if at zero range or out of range

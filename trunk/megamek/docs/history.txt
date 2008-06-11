@@ -10,6 +10,7 @@ v0.33.28-dev (SVN)
 + Bug 199123: all weapon bays limited to short range
 + minimum straight movement in atmosphere carried over from last turn
 + limit velocity in atmosphere to twice safe thrust
++ get proper bonus on control rolls for descending more than two altitudes
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

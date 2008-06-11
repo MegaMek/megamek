@@ -5600,7 +5600,7 @@ public class Server implements Runnable {
                 rollTarget = a.checkDown(md.getFinalNDown());
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     game.addControlRoll(new PilotingRollData
-                            ( a.getId(), 0, "lost more than two altitudes" ));
+                            ( a.getId(), md.getFinalNDown(), "descended more than two altitudes" ));
                 }
                 
             }

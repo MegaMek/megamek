@@ -720,6 +720,16 @@ public class Compute {
                 && !(ae instanceof Mech && ((Mech) ae).getGrappled() == target.getTargetId())) {
             return new ToHitData(TargetRoll.AUTOMATIC_FAIL, "Only infantry shoot at zero range");
         }
+        
+        //Account for "dead zones" between Aeros at different altitudes
+        if(game.getBoard().inAtmosphere() && ae instanceof Aero && target instanceof Aero) {
+            int altDiff = Math.abs(ae.getElevation() - target.getElevation());
+            int realDistance = distance - altDiff;
+            if(altDiff >= realDistance) {
+                return new ToHitData(ToHitData.IMPOSSIBLE,
+                "Target in dead zone");
+            }
+        }
 
         // find any c3 spotters that could help
         Entity c3spotter = findC3Spotter(game, ae, target);
@@ -824,7 +834,9 @@ public class Compute {
         // If the attack is completely inside a building, add the difference
         // in elevations between the attacker and target to the range.
         // TODO: should the player be explcitly notified?
-        if (isInSameBuilding(game, attacker, target)) {
+        //also for Aeros in atmosphere
+        if (isInSameBuilding(game, attacker, target)  ||
+                (attacker instanceof Aero && target instanceof Aero && game.getBoard().inAtmosphere())) {
             int aElev = attacker.getElevation();
             int tElev = target.getElevation();
             distance += Math.abs(aElev - tElev);

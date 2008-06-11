@@ -7,6 +7,7 @@ v0.33.28-dev (SVN)
 + Aeros gain velocity when going down two or more elevations
 + Altitude effects on firing for low-atmosphere map
 + control rolls for damage in atmosphere
++ Bug 199123: all weapon bays limited to short range
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

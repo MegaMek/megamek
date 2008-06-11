@@ -12606,13 +12606,13 @@ public class Server implements Runnable {
      * Checks to see if any tele-missiles are in a hex with enemy units.  If so, then attack one.
      */
     private void checkForTeleMissileAttacks() {
-        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
-            final Entity entity = (Entity)i.nextElement();
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+            final Entity entity = i.nextElement();
             if (entity instanceof TeleMissile) {
                 //check for enemy units
                 Vector<Integer> potTargets = new Vector<Integer>();
-                for (Enumeration j = game.getEntities(entity.getPosition()); j.hasMoreElements();) {
-                    final Entity te = (Entity)j.nextElement();
+                for (Enumeration<Entity> j = game.getEntities(entity.getPosition()); j.hasMoreElements();) {
+                    final Entity te = j.nextElement();
                     if(te.isEnemyOf(entity)) {
                         //then add it to a vector of potential targets
                         potTargets.add(te.getId());
@@ -20259,6 +20259,9 @@ public class Server implements Runnable {
                 temp.setNullBoards(DEFAULT_BOARD);
                 temp.replaceBoardWithRandom(MapSettings.BOARD_RANDOM);
                 temp.removeUnavailable();
+                // if still only nulls left, use BOARD_GENERATED
+                if (temp.getBoardsSelected().next() == null)
+                    temp.setNullBoards((MapSettings.BOARD_GENERATED));
                 send(connId, createMapQueryPacket(temp));
                 break;
             case Packet.COMMAND_UNLOAD_STRANDED:

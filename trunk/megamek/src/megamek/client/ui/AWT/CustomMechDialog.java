@@ -1919,6 +1919,22 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                                 .getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterSkillsBetween0_8")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
                 return;
             }
+            
+            if(velocity > (2 * entity.getWalkMP()) || velocity < 0) {
+                new AlertDialog(
+                        clientgui.frame,
+                        Messages
+                                .getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterCorrectVelocity")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                return;
+            }
+            
+            if(elev < 0 || elev > 10) {
+                new AlertDialog(
+                        clientgui.frame,
+                        Messages
+                                .getString("CustomMechDialog.NumberFormatError"), Messages.getString("CustomMechDialog.EnterCorrectElev")).setVisible(true); //$NON-NLS-1$ //$NON-NLS-2$
+                return;
+            }
 
             if (chOffBoard.getState()) {
                 try {

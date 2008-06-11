@@ -1973,7 +1973,7 @@ public class Server implements Runnable {
                 doAllAssaultDrops();
                 addMovementHeat();
                 applyBuildingDamage();
-                checkFor20Damage();
+                checkForPSRFromDamage();
                 addReport(resolvePilotingRolls()); // Skids cause damage in movement phase
                 checkForFlamingDeath();
                 checkForTeleMissileAttacks();
@@ -1999,7 +1999,7 @@ public class Server implements Runnable {
                 handleAttacks();
                 resolveScheduledNukes();
                 applyBuildingDamage();
-                checkFor20Damage();
+                checkForPSRFromDamage();
                 addReport(resolvePilotingRolls());
                 // check phase report
                 if (vPhaseReport.size() > 1) {
@@ -2019,7 +2019,7 @@ public class Server implements Runnable {
             case PHASE_PHYSICAL:
                 resolvePhysicalAttacks();
                 applyBuildingDamage();
-                checkFor20Damage();
+                checkForPSRFromDamage();
                 addReport(resolvePilotingRolls());
                 resolveSinkVees();
                 // check phase report
@@ -2070,7 +2070,7 @@ public class Server implements Runnable {
                     send(connId, createArtilleryPacket(player));
                 }
                 applyBuildingDamage();
-                checkFor20Damage();
+                checkForPSRFromDamage();
                 addReport(resolvePilotingRolls());
 
                 sendSpecialHexDisplayPackets();
@@ -12509,10 +12509,9 @@ public class Server implements Runnable {
     }
 
     /**
-     * Checks to see if any entity has takes 20 damage. If so, they need a
-     * piloting skill roll.
+     * Checks to see if any entity takes enough damage that requires them to make a piloting roll
      */
-    private void checkFor20Damage() {
+    private void checkForPSRFromDamage() {
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             final Entity entity = i.nextElement();
             if (entity instanceof Mech) {
@@ -12559,6 +12558,17 @@ public class Server implements Runnable {
                         game.addPSR(new PilotingRollData(entity.getId(), 1,
                                 "20+ damage"));
                     }
+                }
+            }
+            if (entity instanceof Aero && game.getBoard().inAtmosphere()) {
+                // if this aero has any damage, add another roll to the list.
+                if (entity.damageThisPhase > 0) {
+                      int damMod = entity.damageThisPhase / 20;
+                      StringBuffer reportStr = new StringBuffer();
+                      reportStr.append(entity.damageThisPhase)
+                          .append(" damage +").append(damMod);
+                      PilotingRollData damPRD = new PilotingRollData(entity.getId(), damMod, reportStr.toString());
+                      game.addControlRoll(damPRD);
                 }
             }
         }

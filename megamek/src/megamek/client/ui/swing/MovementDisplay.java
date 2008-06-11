@@ -2038,6 +2038,16 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 && !cmd.contains(MovePath.STEP_ACCN) && veln > 0) {
             setDecNEnabled(true);
         }
+        
+        //if in atmosphere, limit acceleration to 2x safe thrust
+        if(vel == (2 * a.getWalkMP())) {
+            setAccEnabled(false);
+        }
+        //velocity next will get halved before next turn so allow up to 4 times
+        if(veln == (4 * a.getWalkMP())) {
+            setAccNEnabled(false);
+        }
+        
         //if this is a tele-operated missile then it can't decelerate no matter what
         if(a instanceof TeleMissile) {
             setDecEnabled(false);

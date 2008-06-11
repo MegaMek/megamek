@@ -98,8 +98,8 @@ public class ScreenLauncherBayHandler extends AmmoBayWeaponHandler {
             Coords coords = target.getPosition();
             server.deliverScreen(coords, vPhaseReport);       
             //damage any entities in the hex
-            for (Enumeration impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
-                Entity entity = (Entity)impactHexHits.nextElement();
+            for (Enumeration<Entity> impactHexHits = game.getEntities(coords);impactHexHits.hasMoreElements();) {
+                Entity entity = impactHexHits.nextElement();
                 //if fighter squadron multiply damage by active fighters
                 if(entity instanceof FighterSquadron) {
                     FighterSquadron fs = (FighterSquadron)entity;

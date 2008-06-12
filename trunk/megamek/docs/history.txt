@@ -17,6 +17,7 @@ v0.33.28-dev (SVN)
 + Spheroids don't gain velocity when descending more than two altitudes
 + Customizing velocity has no effect on spheroids in atmosphere
 + Elevation is set to 10 by default for Aeros and restrictions placed on deployment based on elevation
++ Disabled turning for spheroids in atmosphere
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

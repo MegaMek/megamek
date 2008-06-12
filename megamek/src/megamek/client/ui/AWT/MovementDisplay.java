@@ -129,6 +129,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String    MOVE_RECOVER = "MoveRecover"; //$NON-NLS-1$
     public static final String    MOVE_DUMP = "MoveDump"; //$NON-NLS-1$
     public static final String    MOVE_RAM = "MoveRam"; //$NON-NLS-1$
+    public static final String    MOVE_HOVER = "MoveHover"; //$NON-NLS-1$
     //Aero Vector Movement
     public static final String    MOVE_TURN_LEFT = "MoveTurnLeft"; //$NON-NLS-1$
     public static final String    MOVE_TURN_RIGHT = "MoveTurnRight"; //$NON-NLS-1$
@@ -194,6 +195,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private Button              butRecover;
     private Button              butDump;
     private Button              butRam;
+    private Button              butHover;
     
     private Button              butTurnLeft;
     private Button              butTurnRight;
@@ -478,6 +480,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butRam.setActionCommand(MOVE_RAM);
         butRam.addKeyListener(this);
         
+        butHover = new Button(Messages.getString("MovementDisplay.butHover")); //$NON-NLS-1$
+        butHover.addActionListener(this);
+        butHover.setEnabled(false);
+        butHover.setActionCommand(MOVE_HOVER);
+        butHover.addKeyListener(this);
+        
         butTurnLeft = new Button(Messages.getString("MovementDisplay.butTurnLeft")); //$NON-NLS-1$
         butTurnLeft.addActionListener(this);
         butTurnLeft.setEnabled(false);
@@ -634,10 +642,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butFlee);
             buttonsAero.add(butLaunch);
             buttonsAero.add(butRecover);
+            buttonsAero.add(butHover);
             buttonsAero.add(butRAC);   
             buttonsAero.add(butDump);
             //not used
-            buttonsAero.add(butJump);
             buttonsAero.add(butDigIn);
             buttonsAero.add(butFortify);
             buttonsAero.add(butHullDown);
@@ -887,6 +895,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         checkAtmosphere();
         updateFleeButton();
         updateLaunchButton();
+        updateHoverButton();
         
         if (isInfantry
                 && ce.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL))
@@ -1013,6 +1022,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setTurnRightEnabled(false);
         setDumpEnabled(false);
         setRamEnabled(false);
+        setHoverEnabled(false);
     }
 
     /**
@@ -1046,6 +1056,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateElevationButtons();
         updateFleeButton();
         updateLaunchButton();
+        updateHoverButton();
 
         loadedUnits = ce.getLoadedUnits();
 
@@ -1648,6 +1659,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     nagReport.append(addNag(rollTarget));
                 }
                 
+                //check for hovering
+                rollTarget = a.checkHover(md);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    nagReport.append(addNag(rollTarget));
+                }
+                
+                
             }     
         }
 
@@ -1993,6 +2011,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateElevationButtons();
             updateFleeButton();
             updateLaunchButton();
+            updateHoverButton();
             updateSpeedButtons();
             updateThrustButton();
             updateRollButton();
@@ -2082,6 +2101,34 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         
         if(cmd.contains(MovePath.STEP_ROLL)) {
             setRollEnabled(false);
+        }
+        
+        return;
+        
+    }
+    
+    private void updateHoverButton() {
+        final Entity ce = ce();
+        if(null==ce) return;
+        
+        if(!(ce instanceof Aero)) {
+            return;
+        }
+        
+        Aero a = (Aero)ce;
+         
+        if(!a.isSpheroid()) {
+            return;
+        }
+        
+        if(!client.game.getBoard().inAtmosphere()) {
+            return;
+        }
+        
+        if(!cmd.contains(MovePath.STEP_HOVER)) {
+            setHoverEnabled(true);
+        } else {
+            setHoverEnabled(false);
         }
         
         return;
@@ -3154,6 +3201,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             cmd.addStep(MovePath.STEP_ROLL);
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
+        } else if (ev.getActionCommand().equals(MOVE_HOVER)) {
+            cmd.addStep(MovePath.STEP_HOVER);
+            clientgui.bv.drawMovementData(ce, cmd);
+            clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_LAUNCH)) {
             //The function will bring up a choice dialog that
             //asks the user how many units of each type (small craft and
@@ -3203,6 +3254,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateElevationButtons();
         updateFleeButton();
         updateLaunchButton();
+        updateHoverButton();
         updateDumpButton();
         updateSpeedButtons();
         updateThrustButton();
@@ -3565,6 +3617,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butRam.setEnabled(enabled);
         clientgui.getMenuBar().setMoveRamEnabled(enabled);
     }
+    private void setHoverEnabled(boolean enabled) {
+        butHover.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveHoverEnabled(enabled);
+    }
     private void setTurnLeftEnabled(boolean enabled) {
         butTurnLeft.setEnabled(enabled);
         clientgui.getMenuBar().setMoveTurnLeftEnabled(enabled);
@@ -3641,7 +3697,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         Coords end = Compute.getFinalPosition(start, md.getFinalVectors());
         //Coords end = md.getFinalVectors().getFinalPosition(start);
         
-        //TODO: deal with lines that hit boundaries exactly
         //(see LosEffects.java)
         ArrayList<Coords> in = Coords.intervening(start, end);
         //first check whether we are splitting hexes

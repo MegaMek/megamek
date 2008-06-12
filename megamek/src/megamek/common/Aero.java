@@ -1570,6 +1570,18 @@ public class Aero
         return roll;
     }
     
+    public PilotingRollData checkHover(MovePath md) {
+        PilotingRollData roll = getBasePilotingRoll();
+
+        if( md.contains(MovePath.STEP_HOVER) ) {
+            // append the reason modifier
+            roll.append(new PilotingRollData(getId(), 0, "hovering"));
+        } else {
+            roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: entity did not hover");
+        }
+        return roll;
+    }
+    
     public PilotingRollData checkStall(int velocity) {
         PilotingRollData roll = getBasePilotingRoll();
 

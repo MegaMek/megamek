@@ -681,6 +681,9 @@ public class MoveStep implements Serializable {
                 setElevation(getElevation() - 1);
                 setMp(0);
                 break;
+            case MovePath.STEP_HOVER:
+                setMp(2);
+                break;
             default:
                 setMp(0);
         }

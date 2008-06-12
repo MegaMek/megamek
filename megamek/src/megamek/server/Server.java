@@ -4331,6 +4331,8 @@ public class Server implements Runnable {
         Coords curPos = entity.getPosition();
         int curFacing = entity.getFacing();
         int curVTOLElevation = entity.getElevation();
+        int startElevation = entity.getElevation();
+        int curElevation = entity.getElevation();
         // if the entity already used some MPs,
         // it previously tried to get up and fell,
         // and then got another turn. set moveType
@@ -4880,6 +4882,7 @@ public class Server implements Runnable {
             int buildingMove = entity.checkMovementInBuilding(step, prevStep,
                     curPos, lastPos);
             curVTOLElevation = step.getElevation();
+            curElevation = step.getElevation();
             // set elevation in case of collapses
             entity.setElevation(step.getElevation());
 
@@ -5573,7 +5576,11 @@ public class Server implements Runnable {
             int thrust = md.getMpUsed();  
             
             //set straight movement
-            a.setStraightMoves(md.getLastStep().getNStraight());
+            if(null != md.getLastStep()) {
+                a.setStraightMoves(md.getLastStep().getNStraight());
+            } else {
+                a.setStraightMoves(0);
+            }
             
             //consume fuel
             if((entity instanceof Aero && game.getOptions().booleanOption("fuel_consumption"))  ||
@@ -5602,6 +5609,27 @@ public class Server implements Runnable {
                     game.addControlRoll(new PilotingRollData
                             ( a.getId(), md.getFinalNDown(), "descended more than two altitudes" ));
                 }
+                
+                //check for hovering
+                rollTarget = a.checkHover(md);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    game.addControlRoll(new PilotingRollData
+                            ( a.getId(),0, "hovering" ));
+                }
+                
+                //if this is a spheroid then check to see if it loses elevation
+                //TODO: I am currently awaiting a rules decision on the forums regarding
+                //exactly when this elevation loss occurs. For the moment lets assume it occurs
+                //if there was no elevation change during the turn and no hover step
+                if(a.isSpheroid() && startElevation == curElevation
+                        && !md.contains(MovePath.STEP_HOVER)) {
+                    a.setElevation(a.getElevation() - 1);
+                    //check for crash
+                    if(game.getBoard().getHex(a.getPosition()).ceiling() >= a.getElevation()) {
+                        processCrash(entity, md.getFinalVelocity());
+                    }
+                }
+                
                 
             }
         }

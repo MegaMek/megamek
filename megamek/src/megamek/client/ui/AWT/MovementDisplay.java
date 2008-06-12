@@ -883,10 +883,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             butTurnLeft.setEnabled(true);
             butTurnRight.setEnabled(true);
             butEvade.setEnabled(true);  
-            setEjectEnabled(true);
-            
+            setEjectEnabled(true);       
+            //no turning for spheroids in atmosphere
+            if(((Aero)ce).isSpheroid() && client.game.getBoard().inAtmosphere()) {
+                setTurnEnabled(false);
+            }
         }
-        
+ 
         updateSpeedButtons();
         updateThrustButton();
         updateRollButton();

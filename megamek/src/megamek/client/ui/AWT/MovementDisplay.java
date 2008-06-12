@@ -3104,7 +3104,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_LOWER_ELEVATION)) {
             cmd.addStep(MovePath.STEP_DOWN);
-            if(ce instanceof Aero && cmd.getLastStep().getNDown() == 2 && cmd.getLastStep().getVelocity() < 12) {
+            //if this movement path goes down more than two altitudes
+            //then add acceleration. 
+            //TODO: Is there somewhere better to put this?
+            if(ce instanceof Aero && cmd.getLastStep().getNDown() == 2 
+                    && cmd.getLastStep().getVelocity() < 12 
+                    && !((Aero)ce).isSpheroid()) {
                 cmd.addStep(MovePath.STEP_ACC);
             }
             clientgui.bv.drawMovementData(ce, cmd);

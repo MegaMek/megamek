@@ -35,6 +35,7 @@ import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.ui.AWT.AlertDialog;
 import megamek.client.ui.AWT.Messages;
+import megamek.common.Aero;
 import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -427,6 +428,17 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                                     .getString(
                                             "DeploymentDisplay.cantDeployInto", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
                             , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
+            return;
+        } else if(ce() instanceof Aero && client.game.getBoard().inAtmosphere() && 
+                ce().getElevation() <= client.game.getBoard().getHex(moveto).ceiling()) {
+            //make sure aeros don't end up at a lower elevation than the current hex
+            JOptionPane
+            .showMessageDialog(
+                    clientgui.frame,
+                    Messages
+                            .getString(
+                                    "DeploymentDisplay.elevationTooLow", new Object[] { ce().getShortName(), moveto.getBoardNum() }), Messages.getString("DeploymentDisplay.alertDialog.title") //$NON-NLS-1$
+                    , JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             return;
         } else if (Compute.stackingViolation(client.game, ce().getId(), moveto) != null) {
             // check if deployed unit violates stacking

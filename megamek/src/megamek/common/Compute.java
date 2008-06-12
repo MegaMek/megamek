@@ -65,6 +65,8 @@ public class Compute {
     public static final int ARC_RIGHTSIDEA_SPHERE= 20;
     public static final int ARC_LEFT_BROADSIDE = 21;
     public static final int ARC_RIGHT_BROADSIDE =22;
+    public static final int ARC_LEFT_SPHERE_GROUND = 23;
+    public static final int ARC_RIGHT_SPHERE_GROUND =24;
 
     public static final int TYPE_IS = 0;
     public static final int TYPE_CLAN = 1;
@@ -2260,6 +2262,10 @@ public class Compute {
             return fa >= 240 && fa <= 300;
         case ARC_RIGHT_BROADSIDE:
             return fa >= 60 && fa <= 120;
+        case ARC_LEFT_SPHERE_GROUND:
+            return fa >= 180 && fa < 360;
+        case ARC_RIGHT_SPHERE_GROUND:
+            return fa >= 0 && fa < 180;
         default:
             return false;
         }

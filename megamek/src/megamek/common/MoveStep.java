@@ -1359,6 +1359,13 @@ public class MoveStep implements Serializable {
                 return;
             }
             
+            //conventional fighters cannot use thrust to get extra turns
+            if(a instanceof ConvFighter && 
+                    (type == MovePath.STEP_TURN_LEFT || type == MovePath.STEP_TURN_RIGHT)
+                    && !prev.hasFreeTurn() ) {
+                return;
+            }
+            
             if(type == MovePath.STEP_FORWARDS && game.getBoard().inAtmosphere() && !a.isOutControl()) {
                 IHex desth = game.getBoard().getHex(this.getPosition());
                 if (elevation<=desth.ceiling()) {
@@ -2379,6 +2386,16 @@ public class MoveStep implements Serializable {
             } else {
                 thresh = 1;
             }
+        } else if (en instanceof ConvFighter) {
+            if(vel > 15) {
+                thresh = 4;
+            } else if (vel > 12) {
+                thresh = 3;
+            } else if (vel > 9) {
+                thresh = 2;
+            }  else {
+                thresh = 1;
+            }
         } else {
             if(vel > 15) {
                 thresh = 5;
@@ -2388,7 +2405,7 @@ public class MoveStep implements Serializable {
                 thresh = 3;
             } else if (vel > 6) {
                 thresh = 2;
-            } else {
+            }  else {
                 thresh = 1;
             }
         }

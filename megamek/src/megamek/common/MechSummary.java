@@ -91,6 +91,8 @@ public class MechSummary implements Serializable {
             return "Dropship";
         } else if (e instanceof SmallCraft) {
             return "Small Craft";
+        } else if (e instanceof ConvFighter) {
+            return "Conventional Fighter";
         } else if (e instanceof Aero) {
             return "Aero";
         } else {

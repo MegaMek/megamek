@@ -30,6 +30,7 @@ import java.util.zip.ZipFile;
 
 import megamek.common.loaders.BLKAeroFile;
 import megamek.common.loaders.BLKBattleArmorFile;
+import megamek.common.loaders.BLKConvFighterFile;
 import megamek.common.loaders.BLKDropshipFile;
 import megamek.common.loaders.BLKGunEmplacementFile;
 import megamek.common.loaders.BLKInfantryFile;
@@ -164,6 +165,8 @@ public class MechFileParser {
                     loader = new BLKSupportVTOLFile(bb);
                 } else if (sType.equals("Aero")) {
                     loader = new BLKAeroFile(bb);
+                } else if (sType.equals("ConvFighter")) {
+                    loader = new BLKConvFighterFile(bb);
                 } else if (sType.equals("SmallCraft")) {
                     loader = new BLKSmallCraftFile(bb);
                 } else if (sType.equals("Dropship")) {

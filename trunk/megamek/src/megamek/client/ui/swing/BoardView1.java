@@ -2996,7 +2996,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     graph.setColor(col);
                     graph.drawString(unload, unloadX - 1, unloadY);
                     break;
-
+                case MovePath.STEP_HOVER:
+                    //announce launch
+                    String hover = Messages.getString("BoardView1.Hover"); //$NON-NLS-1$
+                    if (step.isPastDanger()) {
+                        hover = "(" + hover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                    int hoverX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(hover) / 2);
+                    int hoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                    graph.setColor(Color.darkGray);
+                    graph.drawString(hover, hoverX, hoverY + 1);
+                    graph.setColor(col);
+                    graph.drawString(hover, hoverX - 1, hoverY);
+                    drawMovementCost(step, stepPos, graph, col, false);
+                    break;
                 default:
                     break;
             }

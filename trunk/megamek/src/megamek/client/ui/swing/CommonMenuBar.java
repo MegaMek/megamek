@@ -12,6 +12,7 @@
  */
 package megamek.client.ui.swing;
 
+import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -126,6 +127,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem moveRecover = null;
     private JMenuItem moveDump = null;
     private JMenuItem moveRam = null;
+    private JMenuItem moveHover = null;
     private JMenuItem moveTurnLeft = null;
     private JMenuItem moveTurnRight = null;
     private JMenuItem moveThrust = null;
@@ -463,6 +465,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         moveRecover = createMenuItem(menu, Messages.getString("CommonMenuBar.moveRecover"), MovementDisplay.MOVE_RECOVER); //$NON-NLS-1$
         moveDump = createMenuItem(menu, Messages.getString("CommonMenuBar.moveDump"), MovementDisplay.MOVE_DUMP); //$NON-NLS-1$
         moveRam = createMenuItem(menu, Messages.getString("CommonMenuBar.moveRam"), MovementDisplay.MOVE_RAM); //$NON-NLS-1$
+        moveHover = createMenuItem(menu, Messages.getString("CommonMenuBar.moveHover"), MovementDisplay.MOVE_HOVER); //$NON-NLS-1$
         moveTurnLeft = createMenuItem(menu, Messages.getString("CommonMenuBar.moveTurnLeft"), MovementDisplay.MOVE_TURN_LEFT); //$NON-NLS-1$
         moveTurnRight = createMenuItem(menu, Messages.getString("CommonMenuBar.moveTurnRight"), MovementDisplay.MOVE_TURN_RIGHT); //$NON-NLS-1$
         moveThrust = createMenuItem(menu, Messages.getString("CommonMenuBar.moveThrust"), MovementDisplay.MOVE_THRUST); //$NON-NLS-1$
@@ -962,6 +965,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     }
     public synchronized void setMoveRamEnabled(boolean enabled) {
         moveRam.setEnabled(enabled);
+    }
+    public synchronized void setMoveHoverEnabled(boolean enabled) {
+        moveHover.setEnabled(enabled);
     }
     public synchronized void setMoveTurnLeftEnabled(boolean enabled) {
         moveTurnLeft.setEnabled(enabled);

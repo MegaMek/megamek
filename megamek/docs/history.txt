@@ -14,6 +14,7 @@ v0.33.28-dev (SVN)
 + Fix lots of warnings and indent and imports
 + Bug 1991256: can't change map dimensions
 + Hovering for spheroid craft in atmosphere
++ Spheroids don't gain velocity when descending more than two altitudes
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

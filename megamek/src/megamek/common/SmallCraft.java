@@ -307,23 +307,38 @@ public class SmallCraft extends Aero {
                     return Compute.ARC_360;
             }
         } else {
-            switch (mounted.getLocation()) {
-            case LOC_NOSE:
-                return Compute.ARC_NOSE;
-            case LOC_RWING:
-                if(mounted.isRearMounted()) {
-                    return Compute.ARC_RIGHTSIDEA_SPHERE;
+            if(game.getBoard().inAtmosphere()) {
+                switch (mounted.getLocation()) {
+                case LOC_NOSE:
+                    return Compute.ARC_360;
+                case LOC_RWING:
+                    return Compute.ARC_RIGHT_SPHERE_GROUND;
+                case LOC_LWING:
+                    return Compute.ARC_LEFT_SPHERE_GROUND;
+                case LOC_AFT:
+                    return Compute.ARC_360;
+                default:
+                    return Compute.ARC_360;
                 }
-                return Compute.ARC_RIGHTSIDE_SPHERE;
-            case LOC_LWING:
-                if(mounted.isRearMounted()) {
-                    return Compute.ARC_LEFTSIDEA_SPHERE;
+            } else {
+                switch (mounted.getLocation()) {
+                case LOC_NOSE:
+                    return Compute.ARC_NOSE;
+                case LOC_RWING:
+                    if(mounted.isRearMounted()) {
+                        return Compute.ARC_RIGHTSIDEA_SPHERE;
+                    }
+                    return Compute.ARC_RIGHTSIDE_SPHERE;
+                case LOC_LWING:
+                    if(mounted.isRearMounted()) {
+                        return Compute.ARC_LEFTSIDEA_SPHERE;
+                    }
+                    return Compute.ARC_LEFTSIDE_SPHERE;
+                case LOC_AFT:
+                    return Compute.ARC_AFT;
+                default:
+                    return Compute.ARC_360;
                 }
-                return Compute.ARC_LEFTSIDE_SPHERE;
-            case LOC_AFT:
-                return Compute.ARC_AFT;
-            default:
-                return Compute.ARC_360;
             }
         
         }   

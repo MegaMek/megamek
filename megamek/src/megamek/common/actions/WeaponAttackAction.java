@@ -1241,16 +1241,32 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         }
         
         if(target instanceof Aero) {
-            //get mods for direction of attack
-            int side = toHit.getSideTable();
-            //if this is an aero attack using advanced movement rules then determine side differently
-            if(target instanceof Aero && game.useVectorMove()) {
-                side = ((Entity)target).chooseSide(ae.getPosition(), Compute.usePrior(ae, target));
+            
+            //hit locations for spheroids in atmosphere are handled differently
+            //TODO: awaiting rules clarification on forums
+            //http://www.classicbattletech.com/forums/index.php/topic,29329.0.html
+            //Until then assume that above/below are actually nose/aft 
+            if(((Aero)target).isSpheroid() && game.getBoard().inAtmosphere()) {
+                if(toHit.getHitTable() == ToHitData.HIT_ABOVE) {
+                    toHit.setSideTable(ToHitData.SIDE_FRONT);
+                    toHit.setHitTable(ToHitData.HIT_NORMAL);
+                }
+                if(toHit.getHitTable() == ToHitData.HIT_BELOW) {
+                    toHit.setSideTable(ToHitData.SIDE_REAR);
+                    toHit.setHitTable(ToHitData.HIT_NORMAL);
+                }
+            } else {           
+                //get mods for direction of attack
+                int side = toHit.getSideTable();
+                //if this is an aero attack using advanced movement rules then determine side differently
+                if(target instanceof Aero && game.useVectorMove()) {
+                    side = ((Entity)target).chooseSide(ae.getPosition(), Compute.usePrior(ae, target));
+                }
+                if(side == ToHitData.SIDE_FRONT)
+                    toHit.addModifier(+1, "attack against nose");
+                if(side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
+                    toHit.addModifier(+2, "attack against side");
             }
-            if(side == ToHitData.SIDE_FRONT)
-                toHit.addModifier(+1, "attack against nose");
-            if(side == ToHitData.SIDE_LEFT || side == ToHitData.SIDE_RIGHT)
-                toHit.addModifier(+2, "attack against side");
         }
 
         // deal with grapples
@@ -1921,6 +1937,19 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // Weapon in arc?
         if (!Compute.isInArc(game, attackerId, weaponId, target)) {
             return "Target not in arc.";
+        }
+        
+        //for spheroid dropships in atmosphere, nose and aft mounted weapons can only be fired
+        //at units two elevations different
+        //TODO: awaiting rules clarification on forums
+        if(ae instanceof Aero && ((Aero)ae).isSpheroid() && game.getBoard().inAtmosphere()) {
+            int altDif = ae.getElevation() - target.getElevation();
+            if(weapon.getLocation() == Aero.LOC_NOSE && altDif > -3) {
+                return "Target is too low";
+            }
+            if(weapon.getLocation() == Aero.LOC_AFT && altDif < 3) {
+                return "Target is too high";
+            }
         }
 
         // Must target infantry in buildings from the inside.

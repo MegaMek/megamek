@@ -6678,6 +6678,16 @@ public abstract class Entity extends TurnOrdered implements Serializable,
         }
         if(this instanceof Aero) {
             Aero a = (Aero)this;
+            //Handle spheroids in atmosphere differently
+            //TODO: awaiting a rules forum clarification
+            //until then assume that the side must either be left or rifht
+            if(a.isSpheroid() && game.getBoard().inAtmosphere()) {
+                fa = effectivePos.degree(src);
+                if(fa >= 0 && fa < 180) {
+                    return ToHitData.SIDE_RIGHT;
+                }
+                return ToHitData.SIDE_LEFT;
+            }
             if (fa > 30 && fa <= 150) {
                 if(a.isRolled()) {
                     return ToHitData.SIDE_LEFT;

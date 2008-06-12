@@ -344,7 +344,8 @@ public class MoveStep implements Serializable {
         
         //if this is an ASF, then reduce velocity left
         //also reset nTurns
-        if(entity instanceof Aero && !game.useVectorMove()) {
+        if(entity instanceof Aero && !game.useVectorMove() &&
+                !(entity.getMovementMode() == IEntityMovementMode.SPHEROID && game.getBoard().inAtmosphere())) {
             setVelocityLeft(getVelocityLeft() - 1);
             setNTurns(0);
         }

@@ -7764,14 +7764,6 @@ public class Server implements Runnable {
             }
         } else if (entity instanceof Aero) {
             if(game.getBoard().inAtmosphere()) {
-                //if within the right limits, then leave alone
-                if(entity.getElevation() < 1) {
-                    //assume they never entered it and so it should be 10
-                    entity.setElevation(10);
-                }
-                if(entity.getElevation() > 10) {
-                    entity.setElevation(10);
-                }
                 //all spheroid craft should have velocity of zero in atmosphere regardless of
                 //what was entered
                 Aero a = (Aero)entity;

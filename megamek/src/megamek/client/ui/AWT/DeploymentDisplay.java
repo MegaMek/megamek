@@ -32,6 +32,7 @@ import java.util.Vector;
 import megamek.client.Client;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.common.Aero;
 import megamek.common.Board;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -457,7 +458,18 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
                                     "DeploymentDisplay.cantDeployInto", new Object[] { ce().getShortName(), moveto.getBoardNum() })); //$NON-NLS-1$
             dlg.setVisible(true);
             return;
+        } else if(ce() instanceof Aero && client.game.getBoard().inAtmosphere() && 
+                ce().getElevation() <= client.game.getBoard().getHex(moveto).ceiling()) {
+            //make sure aeros don't end up at a lower elevation than the current hex
+            AlertDialog dlg = new AlertDialog(clientgui.frame,
+                    Messages.getString("DeploymentDisplay.alertDialog.title"), //$NON-NLS-1$
+                    Messages
+                            .getString(
+                                    "DeploymentDisplay.elevationTooLow", new Object[] { ce().getShortName(), moveto.getBoardNum() })); //$NON-NLS-1$
+            dlg.setVisible(true);
+            return;
         } else if (Compute.stackingViolation(client.game, ce().getId(), moveto) != null) {
+        
             // check if deployed unit violates stacking
             return;
         } else {

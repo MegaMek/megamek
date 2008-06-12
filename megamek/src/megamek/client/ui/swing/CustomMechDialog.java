@@ -1909,22 +1909,15 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 return;
             }
          
-            if(velocity > (2 * entity.getWalkMP()) || velocity < 0) {
-                JOptionPane
-                .showMessageDialog(
-                        clientgui.frame,
-                        Messages
-                                .getString("CustomMechDialog.EnterCorrectVelocity"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
-                return;
-            }
-            
-            if(elev < 0 || elev > 10) {
-                JOptionPane
-                .showMessageDialog(
-                        clientgui.frame,
-                        Messages
-                                .getString("CustomMechDialog.EnterCorrectElevation"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
-         return;
+            if(entity instanceof Aero) {
+                if(velocity > (2 * entity.getWalkMP()) || velocity < 0) {
+                    JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterCorrectVelocity"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                    return;
+                }  
+                if(elev < 1 || elev > 10) {
+                    JOptionPane.showMessageDialog(clientgui.frame, Messages.getString("CustomMechDialog.EnterCorrectElevation"), Messages.getString("CustomMechDialog.NumberFormatError"), JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$ //$NON-NLS-2$
+                    return;
+                }
             }
             
             if (chOffBoard.isSelected()) {

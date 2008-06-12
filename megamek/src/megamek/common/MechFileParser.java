@@ -299,13 +299,17 @@ public class MechFileParser {
 
         } // Check the next piece of equipment.
         
+        //need to load all those weapons in the weapon bays
         if(ent.usesWeaponBays()) {    
             ent.loadAllWeapons();
         }
-            
-        //set RACs and UACs at maximum firing rate if aero
+                   
         if(ent instanceof Aero) {
+            //set RACs and UACs at maximum firing rate if aero
             ent.setRapidFire();
+            //set elevation as 10. This will get overwritten as zero
+            //in space during deployment
+            ent.setElevation(10);
         }
         
         // Check if it's canon; if it is, mark it as such.

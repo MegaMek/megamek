@@ -4173,7 +4173,8 @@ public class Server implements Runnable {
         
     }
     
-    private void processCrash(Entity entity, int vel) {
+    private Vector<Report> processCrash(Entity entity, int vel) {
+        Vector<Report> vReport = new Vector<Report>();
         Report r;
         
         if(vel < 1) {
@@ -4185,7 +4186,7 @@ public class Server implements Runnable {
         r.addDesc(entity);
         r.add(crash_damage);
         r.newlines = 0;
-        addReport(r);
+        vReport.add(r);
         while(crash_damage > 0) {
             HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
             if(entity.getMovementMode() == IEntityMovementMode.SPHEROID) {
@@ -4193,9 +4194,9 @@ public class Server implements Runnable {
             }
             
             if(crash_damage > 10) {
-                addReport(damageEntity(entity, hit, 10));
+                vReport.addAll(damageEntity(entity, hit, 10));
             } else {
-                addReport(damageEntity(entity, hit, crash_damage));
+                vReport.addAll(damageEntity(entity, hit, crash_damage));
             }
             crash_damage -= 10;
         }
@@ -4206,11 +4207,10 @@ public class Server implements Runnable {
             r = new Report(9393, Report.PUBLIC);
             r.indent();
             r.addDesc(entity);
-            addReport(r);
-            game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED );
-            send( createRemoveEntityPacket(entity.getId(),
-                    IEntityRemovalConditions.REMOVE_PUSHED) );
+            vReport.add(r);
+            entity.setDoomed(true);
         }
+        return vReport;
     }
     
     /**
@@ -4592,7 +4592,7 @@ public class Server implements Runnable {
                 
                 if(game.getBoard().inAtmosphere() 
                         && game.getBoard().getHex(step.getPosition()).ceiling() >= step.getElevation() ) {                  
-                    processCrash(entity,md.getFinalVelocity());
+                    addReport( processCrash(entity,md.getFinalVelocity()) );
                     //don't do the rest 
                     break;
                 }
@@ -4833,7 +4833,7 @@ public class Server implements Runnable {
                         (entity.getId(), 0, "stalled out"));
                 //check for crash    
                 if(game.getBoard().getHex(step.getPosition()).ceiling() >= step.getElevation()) {
-                    processCrash(entity,0);
+                    addReport( processCrash(entity,0) );
                     //don't do the rest 
                     break;
                 }
@@ -5626,7 +5626,7 @@ public class Server implements Runnable {
                     a.setElevation(a.getElevation() - 1);
                     //check for crash
                     if(game.getBoard().getHex(a.getPosition()).ceiling() >= a.getElevation()) {
-                        processCrash(entity, md.getFinalVelocity());
+                        addReport(processCrash(entity, md.getFinalVelocity()));
                     }
                 }
                 
@@ -11870,7 +11870,7 @@ public class Server implements Runnable {
                             //check for crash
                             if((a.getElevation() - loss) <= game.getBoard().getHex(a.getPosition()).ceiling()) {
                                 a.setElevation(0);
-                                processCrash(entity, a.getCurrentVelocity());
+                                addReport(processCrash(entity, a.getCurrentVelocity()));
                             } else {
                                 a.setElevation(a.getElevation() - loss);
                             }
@@ -12997,20 +12997,24 @@ public class Server implements Runnable {
      * Resolves all built up control  rolls. Used only during end phase
      */
     private Vector<Report> resolveControlRolls() {
-        Vector<Report> vPhaseReport = new Vector<Report>();
-        vPhaseReport.add(new Report(5001, Report.PUBLIC));
+        Vector<Report> vFullReport = new Vector<Report>();
+        vFullReport.add(new Report(5001, Report.PUBLIC));
         for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
-            vPhaseReport.addAll(resolveControl(i.nextElement()));
+            vFullReport.addAll(resolveControl(i.nextElement()));
         }
         game.resetControlRolls();
-        return vPhaseReport;
+        return vFullReport;
     }
 
     /**
      * Resolves and reports all control skill rolls for a single aero.
      */
     private Vector<Report> resolveControl(Entity e) {
-        Vector<Report> vPhaseReport = new Vector<Report>();
+        Vector<Report> vReport = new Vector<Report>();
+        if (e.isDoomed() || e.isDestroyed() || e.isOffBoard()
+                || !e.isDeployed()) {
+            return vReport;
+        }
         Report r;
         
         /*
@@ -13044,7 +13048,7 @@ public class Server implements Runnable {
                     }
                     reasons.append(modifier.getPlainDesc());
                     // only cumulative rolls get added to the base roll
-//                    FIXME: nuclear attacks are not resetting to non-cumulative for some reason
+                    //FIXME: nuclear attacks are not resetting to non-cumulative for some reason
                     //when they are added. Until I resolve this, the following hack will have 
                     //to suffice
                     if(modifier.getPlainDesc().contains("Nuclear")) {
@@ -13062,12 +13066,12 @@ public class Server implements Runnable {
                     r.addDesc(e);
                     r.add(rolls.size());
                     r.add(reasons.toString()); //international issue
-                    vPhaseReport.add(r);
+                    vReport.add(r);
                     r = new Report(2285);
                     r.subject = e.getId();
                     r.add(base.getValueAsString());
                     r.add(base.getDesc()); //international issue
-                    vPhaseReport.add(r);
+                    vReport.add(r);
                     for (int j = 0; j < rolls.size(); j++) {                    
                         PilotingRollData modifier = rolls.elementAt(j);
                         PilotingRollData target = base;
@@ -13077,7 +13081,7 @@ public class Server implements Runnable {
                         r.newlines = 0;
                         r.add(j+1);
                         r.add(modifier.getPlainDesc()); //international issue
-                        vPhaseReport.add(r);
+                        vReport.add(r);
                         if (!modifier.isCumulative()) {
                             //only for nuclear attacks
                             r = new Report(2296);
@@ -13087,7 +13091,7 @@ public class Server implements Runnable {
                             target = new PilotingRollData(e.getId());
                             target.append(base);
                             target.append(modifier);
-                            vPhaseReport.add(r);
+                            vReport.add(r);
                         }
                         int diceRoll = Compute.d6(2);
                         //different reports depending on out-of-control status
@@ -13098,11 +13102,11 @@ public class Server implements Runnable {
                             r.add(diceRoll);
                             if (diceRoll < (target.getValue() - 5) ) {
                                 r.choose(false);
-                                vPhaseReport.add(r);
+                                vReport.add(r);
                                 a.setRandomMove(true);
                             } else {    
                                 r.choose(true);
-                                vPhaseReport.add(r);
+                                vReport.add(r);
                             }
                         } else {
                             r = new Report(9315);
@@ -13112,14 +13116,14 @@ public class Server implements Runnable {
                             r.newlines = 1;
                             if (diceRoll < target.getValue()) {
                                 r.choose(false);
-                                vPhaseReport.add(r);
+                                vReport.add(r);
                                 a.setOutControl(true);
                                 //do we have random movement?
                                 if((target.getValue() - diceRoll) > 5) {
                                     r = new Report(9365);
                                     r.newlines = 0;
                                     r.subject = e.getId();
-                                    vPhaseReport.add(r);
+                                    vReport.add(r);
                                     a.setRandomMove(true);
                                 }
                                 //if on the atmospheric map, then lose altitude and check
@@ -13131,11 +13135,11 @@ public class Server implements Runnable {
                                     r.subject = e.getId();
                                     r.addDesc(e);
                                     r.add(loss);
-                                    vPhaseReport.add(r);
+                                    vReport.add(r);
                                     //check for crash
                                     if((a.getElevation() - loss) <= game.getBoard().getHex(a.getPosition()).ceiling()) {
-                                        a.setElevation(0);
-                                        processCrash(e, a.getCurrentVelocity());
+                                        a.setElevation(game.getBoard().getHex(a.getPosition()).surface());
+                                        vReport.addAll(processCrash(e, a.getCurrentVelocity()));
                                     } else {
                                         a.setElevation(a.getElevation() - loss);
                                     }
@@ -13144,7 +13148,7 @@ public class Server implements Runnable {
                                 
                             } else {    
                                 r.choose(true);
-                                vPhaseReport.add(r);
+                                vReport.add(r);
                             }
                         }
                     }
@@ -13161,14 +13165,14 @@ public class Server implements Runnable {
                     r.subject = e.getId();
                     r.addDesc(e);
                     r.add(base.getDesc()); //international issue
-                    vPhaseReport.add(r);
-                    return vPhaseReport;
+                    vReport.add(r);
+                    return vReport;
                 }
                 r = new Report(9345);
                 r.subject = e.getId();
                 r.addDesc(e);
                 r.add(base.getDesc()); //international issue
-                vPhaseReport.add(r);
+                vReport.add(r);
                 int diceRoll = Compute.d6(2);
                 r = new Report(9350);
                 r.subject = e.getId();
@@ -13176,10 +13180,10 @@ public class Server implements Runnable {
                 r.add(diceRoll);
                 if( diceRoll < base.getValue() ) {
                     r.choose(false);
-                    vPhaseReport.add(r);
+                    vReport.add(r);
                 } else {
                     r.choose(true);
-                    vPhaseReport.add(r);
+                    vReport.add(r);
                     a.setOutControl(false);
                     a.setOutCtrlHeat(false);
                     a.setRandomMove(false);
@@ -13187,7 +13191,7 @@ public class Server implements Runnable {
             } 
             
         }           
-        return vPhaseReport;
+        return vReport;
     }
 
     /**

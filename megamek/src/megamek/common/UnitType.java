@@ -27,15 +27,17 @@ public class UnitType {
     public static final int VTOL = 5;
     public static final int NAVAL = 6;
     public static final int GUN_EMPLACEMENT = 7;
-    public static final int AERO = 8;
-    public static final int SMALL_CRAFT = 9;
-    public static final int DROPSHIP = 10;
-    public static final int WARSHIP = 11;
-    public static final int JUMPSHIP = 12;
-    public static final int SPACE_STATION = 13;
+    public static final int CONV_FIGHTER = 8;
+    public static final int AERO = 9;
+    public static final int SMALL_CRAFT = 10;
+    public static final int DROPSHIP = 11;
+    public static final int WARSHIP = 12;
+    public static final int JUMPSHIP = 13;
+    public static final int SPACE_STATION = 14;
 
     private static String[] names = { "Mek", "Tank", "BattleArmor", "Infantry",
-            "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Aero", "Small Craft", "Dropship", 
+            "ProtoMek", "VTOL", "Naval", "Gun Emplacement", "Conventional Fighter", 
+            "Aero", "Small Craft", "Dropship", 
             "Jumpship", "Warship", "Space Station" };
 
     public static final int SIZE = names.length;
@@ -70,6 +72,8 @@ public class UnitType {
             return DROPSHIP;
         } else if (e instanceof SmallCraft) {
             return SMALL_CRAFT;
+        } else if (e instanceof ConvFighter) {
+            return CONV_FIGHTER;
         } else if (e instanceof Aero) {
             return AERO;
         }else {

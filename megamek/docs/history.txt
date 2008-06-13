@@ -23,6 +23,7 @@ v0.33.28-dev (SVN)
 + changed spheroid firing arcs and to-hit angles in atmosphere
 + fixed crash reporting during control rolls
 + Conventional fighter unit type
++ Fixed loading conventional fighters into Create Squadron dialog
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

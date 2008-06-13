@@ -6425,6 +6425,7 @@ public class Server implements Runnable {
             tele.setCurrentVelocity(a.getCurrentVelocity());
             tele.setNextVelocity(a.getNextVelocity());
             tele.setVectors(a.getVectors());
+            tele.setFacing(a.getFacing());
         }
         //set velocity and heading the same as parent entity
         game.addEntity(tele.getId(), tele);

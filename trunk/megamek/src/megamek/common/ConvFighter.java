@@ -34,4 +34,13 @@ public class ConvFighter extends Aero {
     public int getHeatCapacity() {
         return 999;
     }
+    
+    public int getFuelUsed(int thrust) {
+        int used = (thrust + Math.max(thrust - getWalkMP(), 0));
+        if(game.getOptions().booleanOption("air_breathers") && !getEngine().isFusion()) {
+            used = (int)Math.floor(used / 2.0);
+        }
+        return used;
+    }
+    
 }

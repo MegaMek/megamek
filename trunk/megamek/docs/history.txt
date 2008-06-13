@@ -34,6 +34,7 @@ v0.33.28-dev (SVN)
 + more improvements to movement step display for Aero
 + Fixed: Aero elevation changing over water
 + Fixed: acc/dec next disabling acc/dec buttons in all future rounds
++ air-breather fuel efficiency option
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

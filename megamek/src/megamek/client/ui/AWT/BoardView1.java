@@ -4035,6 +4035,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 case MovePath.STEP_LATERAL_RIGHT:
                 case MovePath.STEP_LATERAL_LEFT_BACKWARDS:
                 case MovePath.STEP_LATERAL_RIGHT_BACKWARDS:
+                case MovePath.STEP_DEC:
+                case MovePath.STEP_DECN:
+                case MovePath.STEP_ACC:
+                case MovePath.STEP_ACCN:
                     // draw arrows showing them entering the next
                     myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints,
                             movePoly.npoints);
@@ -4046,17 +4050,15 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.drawPolygon(myPoly);
                     // draw movement cost
                     drawMovementCost(step, stepPos, graph, col, true);
+                    drawRemainingVelocity(step, stepPos, graph, true);
                     break;
                 case MovePath.STEP_GO_PRONE:
                 case MovePath.STEP_HULL_DOWN:
                 case MovePath.STEP_DOWN:
                 case MovePath.STEP_DIG_IN:
                 case MovePath.STEP_FORTIFY:
-                case MovePath.STEP_DEC:
-                case MovePath.STEP_DECN:
-                    // draw arrow indicating dropping prone
+                    //draw arrow indicating dropping prone
                     // also doubles as the descent indication
-                    // and triples as deceleration
                     Polygon downPoly = movementPolys[7];
                     myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints,
                             downPoly.npoints);
@@ -4071,8 +4073,6 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     break;
                 case MovePath.STEP_GET_UP:
                 case MovePath.STEP_UP:
-                case MovePath.STEP_ACC:
-                case MovePath.STEP_ACCN:
                     // draw arrow indicating standing up
                     // also doubles as the climb indication
                     // and triples as deceleration
@@ -4252,9 +4252,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 int evadeX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
                 graph.setColor(Color.darkGray);
-                graph.drawString(evade, evadeX, stepPos.y + 28);
+                graph.drawString(evade, evadeX, stepPos.y + 64);
                 graph.setColor(col);
-                graph.drawString(evade, evadeX - 1, stepPos.y + 27);
+                graph.drawString(evade, evadeX - 1, stepPos.y + 63);
             }
             
             if(step.isRolled()) {
@@ -4303,6 +4303,41 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         public MoveStep getStep() {
             return step;
         }
+        
+        private void drawRemainingVelocity(MoveStep step, Point stepPos,
+                Graphics graph, boolean shiftFlag) {
+            String velString = null;
+            StringBuffer velStringBuf = new StringBuffer();
+            
+            if (!game.useVectorMove() &&
+                    (step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST
+                || step.getMovementType() == IEntityMovementType.MOVE_OVER_THRUST)) {
+                velStringBuf.append("(")
+                    .append(step.getVelocityLeft())
+                    .append("/")
+                    .append(step.getVelocity())
+                    .append(")");
+            }
+
+            Color col = Color.GREEN;
+            if(step.getVelocityLeft() > 0) {
+                col = Color.RED;
+            }
+            
+//          Convert the buffer to a String and draw it.
+            velString = velStringBuf.toString();
+            graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+            int costX = stepPos.x + 42;
+            if (shiftFlag) {
+                costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(
+                        velString) / 2);
+            }
+            graph.setColor(Color.darkGray);
+            graph.drawString(velString, costX, stepPos.y + 28);
+            graph.setColor(col);
+            graph.drawString(velString, costX - 1, stepPos.y + 27);
+            
+        }
 
         private void drawMovementCost(MoveStep step, Point stepPos,
                 Graphics graph, Color col, boolean shiftFlag) {
@@ -4331,17 +4366,6 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 costStringBuf.append("["); //$NON-NLS-1$
                 costStringBuf.append(step.getTargetNumberMASC());
                 costStringBuf.append("+]"); //$NON-NLS-1$
-            }
-            
-            if (!game.useVectorMove() &&
-                    (step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST
-                || step.getMovementType() == IEntityMovementType.MOVE_OVER_THRUST)) {
-                costStringBuf.append("[")
-                    .append(step.getVelocityLeft())
-                    .append("]")
-                    .append("(")
-                    .append(step.getVelocity())
-                    .append(")");
             }
 
             if (step.getMovementType() == IEntityMovementType.MOVE_VTOL_WALK

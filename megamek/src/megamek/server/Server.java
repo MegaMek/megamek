@@ -4391,6 +4391,12 @@ public class Server implements Runnable {
                 && entity.getElevation() == 0) {
             doMagmaDamage(entity, false);
         }
+        
+        //set acceleration used to default 
+        if(entity instanceof Aero) {
+            Aero a = (Aero)entity;
+            a.setAccLast(false);
+        }
 
         // iterate through steps
         firstStep = true;

@@ -5592,7 +5592,7 @@ public class Server implements Runnable {
             //consume fuel
             if((entity instanceof Aero && game.getOptions().booleanOption("fuel_consumption"))  ||
                     entity instanceof TeleMissile) {
-                int fuelUsed = thrust + Math.max(thrust - entity.getWalkMP(), 0);
+                int fuelUsed = ((Aero)entity).getFuelUsed(thrust);
                 a.setFuel(Math.max(a.getFuel() - fuelUsed,0));
             }
             

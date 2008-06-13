@@ -82,6 +82,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         addOption(at2,"fuel_consumption", false); //$NON-NLS-1$
         addOption(at2,"variable_damage_thresh", false); //$NON-NLS-1$
         addOption(at2,"ammo_explosions", false); //$NON-NLS-1$
+        addOption(at2,"air_breathers", false); //$NON-NLS-1$
         addOption(at2,"heat_by_bay", false); //$NON-NLS-1$
         addOption(at2,"at2_nukes", false); //$NON-NLS-1$
         

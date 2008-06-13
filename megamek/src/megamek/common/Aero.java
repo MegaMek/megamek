@@ -2016,6 +2016,10 @@ public class Aero
         this.vstol = b;
     }
     
+    public int getFuelUsed(int thrust) {
+        return (thrust + Math.max(thrust - getWalkMP(), 0));
+    }
+    
 }
 
 

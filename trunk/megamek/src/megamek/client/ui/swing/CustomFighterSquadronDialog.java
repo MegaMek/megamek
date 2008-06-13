@@ -468,7 +468,7 @@ public class CustomFighterSquadronDialog
             m_chUnitType.addItem(UnitType.getTypeDisplayableName(i));
         }
         m_chUnitType.addItem(Messages.getString("MechSelectorDialog.All")); //$NON-NLS-1$
-        m_chUnitType.select(8);
+        m_chUnitType.select(UnitType.AERO);
 
         m_cWalk
                 .addItem(Messages

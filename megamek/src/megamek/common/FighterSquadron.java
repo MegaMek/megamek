@@ -657,5 +657,9 @@ public class FighterSquadron extends Aero {
         return calculateBattleValue(assumeLinkedC3, false);
     }
     
+    public boolean doomedInAtmosphere() {
+        return true;
+    }
+    
     
 }

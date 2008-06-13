@@ -1251,28 +1251,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
             if (!found) {
-                if ((previousStep != null &&
+                if (null != previousStep && 
                         (step.getType() == MovePath.STEP_UP ||
-                         step.getType() == MovePath.STEP_DOWN) &&
-                        (previousStep.getType() == MovePath.STEP_UP ||
-                         previousStep.getType() == MovePath.STEP_DOWN || 
-                         previousStep.getType() == MovePath.STEP_ACC ||
-                         previousStep.getType() == MovePath.STEP_DEC ||
-                         previousStep.getType() == MovePath.STEP_ACCN ||
-                         previousStep.getType() == MovePath.STEP_DECN)) ||
-                         (previousStep != null && 
-                          (step.getType() == MovePath.STEP_ACC ||
-                          step.getType() == MovePath.STEP_DEC) &&
-                          (previousStep.getType() == MovePath.STEP_ACC ||
-                           previousStep.getType() == MovePath.STEP_DEC || 
-                           previousStep.getType() == MovePath.STEP_DOWN)) ||
-                         (previousStep != null && 
-                          (step.getType() == MovePath.STEP_ACCN ||
-                           step.getType() == MovePath.STEP_DECN) &&
-                           (previousStep.getType() == MovePath.STEP_ACCN ||
-                            previousStep.getType() == MovePath.STEP_DECN ||
-                            previousStep.getType() == MovePath.STEP_UP ||
-                            previousStep.getType() == MovePath.STEP_DOWN))) {
+                                step.getType() == MovePath.STEP_DOWN ||
+                                step.getType() == MovePath.STEP_ACC ||
+                                step.getType() == MovePath.STEP_DEC ||
+                                step.getType() == MovePath.STEP_ACCN ||
+                                step.getType() == MovePath.STEP_DECN)) {
                         //Mark the previous elevation change sprite hidden
                         // so that we can draw a new one in it's place without
                         // having overlap.

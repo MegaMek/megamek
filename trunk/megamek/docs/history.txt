@@ -27,6 +27,7 @@ v0.33.28-dev (SVN)
 + Bug 1993188: Tele-Op Missiles always face "north"
 + Heat works differently for conventional fighters
 + Conventional fighter data
++ Fighter squadrons disallowed in atmosphere
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

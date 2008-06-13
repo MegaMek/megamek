@@ -30,4 +30,8 @@ public class ConvFighter extends Aero {
     public boolean doomedInSpace() {
         return true;
     }  
+    
+    public int getHeatCapacity() {
+        return 999;
+    }
 }

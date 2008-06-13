@@ -162,6 +162,10 @@ public class BLKConvFighterFile extends BLKFile implements IMechLoader {
             a.setOmni(true);
         }
         
+        if(dataFile.exists("vstol")) {
+            a.setVSTOL(true);
+        }
+        
         if(a.isClan()) {
             a.addClanCase();
         }

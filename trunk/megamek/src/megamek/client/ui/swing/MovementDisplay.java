@@ -1008,7 +1008,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             Aero a = (Aero)ce;
             
             //first check for stalling 
-            if(client.game.getBoard().inAtmosphere() && 
+            if(client.game.getBoard().inAtmosphere() && !a.isVSTOL() &&
                     (!a.isSpheroid() && ((md == null && a.getCurrentVelocity() == 0) || 
                     (md != null && md.getFinalVelocity() == 0)))) {
                 
@@ -1049,7 +1049,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     
                     
                     //need to check for stall here as well
-                    if(vel == 0 && !a.isSpheroid() && client.game.getBoard().inAtmosphere()) {
+                    if(vel == 0 && !a.isSpheroid() && client.game.getBoard().inAtmosphere() 
+                            && !a.isVSTOL()) {
                         //add a stall to the movement path
                         md.addStep(MovePath.STEP_STALL);
                     }
@@ -1550,7 +1551,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 }
                 
                 //stalling out
-                if(md.getFinalVelocity() == 0 && !a.isSpheroid() && client.game.getBoard().inAtmosphere()) {
+                if(md.getFinalVelocity() == 0 && !a.isSpheroid() && client.game.getBoard().inAtmosphere() && !a.isVSTOL()) {
                     rollTarget = a.checkStall(md.getFinalVelocity());
                     nagReport.append(addNag(rollTarget));
                 }

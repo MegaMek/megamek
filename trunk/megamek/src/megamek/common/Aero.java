@@ -164,6 +164,8 @@ public class Aero
     private boolean accLast = false;
     private boolean rolled = false;
     
+    //vstol status
+    boolean vstol = false;
     
     /*
      * According to the rules if two units of the same type and with the 
@@ -2004,6 +2006,14 @@ public class Aero
     
     public void setStraightMoves(int i) {
         this.straightMoves = i;
+    }
+    
+    public boolean isVSTOL() {
+        return vstol;
+    }
+    
+    public void setVSTOL(boolean b) {
+        this.vstol = b;
     }
     
 }

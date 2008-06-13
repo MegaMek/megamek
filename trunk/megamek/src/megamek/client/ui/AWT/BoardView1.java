@@ -2028,28 +2028,13 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 }
             }
             if (!found) {
-                if ((previousStep != null &&
-                    (step.getType() == MovePath.STEP_UP ||
-                     step.getType() == MovePath.STEP_DOWN) &&
-                    (previousStep.getType() == MovePath.STEP_UP ||
-                     previousStep.getType() == MovePath.STEP_DOWN || 
-                     previousStep.getType() == MovePath.STEP_ACC ||
-                     previousStep.getType() == MovePath.STEP_DEC ||
-                     previousStep.getType() == MovePath.STEP_ACCN ||
-                     previousStep.getType() == MovePath.STEP_DECN)) ||
-                     (previousStep != null && 
-                      (step.getType() == MovePath.STEP_ACC ||
-                      step.getType() == MovePath.STEP_DEC) &&
-                      (previousStep.getType() == MovePath.STEP_ACC ||
-                       previousStep.getType() == MovePath.STEP_DEC || 
-                       previousStep.getType() == MovePath.STEP_DOWN)) ||
-                     (previousStep != null && 
-                      (step.getType() == MovePath.STEP_ACCN ||
-                       step.getType() == MovePath.STEP_DECN) &&
-                       (previousStep.getType() == MovePath.STEP_ACCN ||
-                        previousStep.getType() == MovePath.STEP_DECN ||
-                        previousStep.getType() == MovePath.STEP_UP ||
-                        previousStep.getType() == MovePath.STEP_DOWN))) {
+                if (null != previousStep && 
+                        (step.getType() == MovePath.STEP_UP ||
+                                step.getType() == MovePath.STEP_DOWN ||
+                                step.getType() == MovePath.STEP_ACC ||
+                                step.getType() == MovePath.STEP_DEC ||
+                                step.getType() == MovePath.STEP_ACCN ||
+                                step.getType() == MovePath.STEP_DECN)) {
                     //Mark the previous elevation change sprite hidden
                     // so that we can draw a new one in it's place without
                     // having overlap.
@@ -4071,6 +4056,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.drawPolygon(myPoly);
                     offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
                     drawMovementCost(step, offsetCostPos, graph, col, false);
+                    drawRemainingVelocity(step, stepPos, graph, true);
                     break;
                 case MovePath.STEP_GET_UP:
                 case MovePath.STEP_UP:
@@ -4088,6 +4074,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     graph.drawPolygon(myPoly);
                     offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
                     drawMovementCost(step, offsetCostPos, graph, col, false);
+                    drawRemainingVelocity(step, stepPos, graph, true);
                     break;
                 case MovePath.STEP_CLIMB_MODE_ON:
                     // draw climb mode indicator

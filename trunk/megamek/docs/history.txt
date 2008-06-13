@@ -31,6 +31,7 @@ v0.33.28-dev (SVN)
 + Changed the way velocity is reported in movement costs
 + added VSTOL capabilities
 + Fixed: velocity increase due to altitude fall does not increase thrust nor prevent acc/dec next turn
++ more improvements to movement step display for Aero
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

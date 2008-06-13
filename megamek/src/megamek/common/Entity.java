@@ -892,6 +892,9 @@ public abstract class Entity extends TurnOrdered implements Serializable,
     public int calcElevation(IHex current, IHex next, int assumedElevation,
             boolean climb, boolean wigeEndClimbPrevious) {
         int retVal = assumedElevation;
+        if(this instanceof Aero) {
+            return retVal;
+        }
         if ((getMovementMode() == IEntityMovementMode.SUBMARINE)
                 || (getMovementMode() == IEntityMovementMode.INF_UMU && (current
                         .containsTerrain(Terrains.WATER) || next

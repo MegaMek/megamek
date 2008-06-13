@@ -640,6 +640,12 @@ public class MoveStep implements Serializable {
                 setVelocityLeft(getVelocityLeft()+1);
                 setMp(1);
                 break;
+            case MovePath.STEP_ACC_DOWN:
+                //this is the special case of acceleration due to downward movement
+                setVelocity(getVelocity()+1);
+                setVelocityLeft(getVelocityLeft()+1);
+                setMp(0);
+                break;
             case MovePath.STEP_DEC:
                 setVelocity(getVelocity()-1);
                 setVelocityLeft(getVelocityLeft()-1);
@@ -1316,8 +1322,7 @@ public class MoveStep implements Serializable {
             if( type == MovePath.STEP_ACC || type == MovePath.STEP_DEC ) {
                 //either the previous had to be acceleration or deceleration or this is the first
                 //in atmosphere, acceleration can happen later as a result of elevation change
-                if(!isFirstStep() && prev.getType() != MovePath.STEP_ACC && prev.getType() != MovePath.STEP_DEC &&
-                        (prev.getType() != MovePath.STEP_DOWN || prev.getNDown() != 2)) {
+                if(!isFirstStep() && prev.getType() != MovePath.STEP_ACC && prev.getType() != MovePath.STEP_DEC) {
                     return;
                 }
                 //if ASF acc/dec at the end of last turn, then can't accelerate/decelerate this turn

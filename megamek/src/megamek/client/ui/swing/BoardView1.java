@@ -2830,6 +2830,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 case MovePath.STEP_DECN:
                 case MovePath.STEP_ACC:
                 case MovePath.STEP_ACCN:
+                case MovePath.STEP_ACC_DOWN:
                     // draw arrows showing them entering the next
                     myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints,
                             movePoly.npoints);

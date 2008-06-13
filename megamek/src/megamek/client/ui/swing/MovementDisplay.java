@@ -2953,12 +2953,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             clientgui.bv.drawMovementData(ce(), cmd);
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_LOWER_ELEVATION)) {
-            cmd.addStep(MovePath.STEP_DOWN);
-            if(ce instanceof Aero && cmd.getLastStep().getNDown() == 2 
+            if(ce instanceof Aero && null != cmd.getLastStep()
+                    && cmd.getLastStep().getNDown() == 1 
                     && cmd.getLastStep().getVelocity() < 12
                     && !((Aero)ce).isSpheroid()) {
-                cmd.addStep(MovePath.STEP_ACC);
+                cmd.addStep(MovePath.STEP_ACC_DOWN);
             }
+            cmd.addStep(MovePath.STEP_DOWN);
             clientgui.bv.drawMovementData(ce(), cmd);
             clientgui.bv.repaint();
         } else if (ev.getActionCommand().equals(MOVE_CLIMB_MODE)) {

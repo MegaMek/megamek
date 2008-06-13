@@ -4789,7 +4789,8 @@ public class Server implements Runnable {
                 break;
             }
 
-            if(step.getType() == MovePath.STEP_ACC || step.getType() == MovePath.STEP_ACCN) {
+            if(step.getType() == MovePath.STEP_ACC || step.getType() == MovePath.STEP_ACCN 
+                    || step.getType() == MovePath.STEP_ACC_DOWN) {
                 if(entity instanceof Aero) {
                     Aero a = (Aero)entity;
                     if( step.getType() == MovePath.STEP_ACCN) {

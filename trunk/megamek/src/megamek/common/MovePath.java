@@ -79,6 +79,7 @@ public class MovePath implements Cloneable, Serializable {
     public static final int STEP_RECOVER = 45;
     public static final int STEP_RAM = 46;
     public static final int STEP_HOVER = 47;
+    public static final int STEP_ACC_DOWN = 48;
 
     public static class Key {
         private final Coords coords;

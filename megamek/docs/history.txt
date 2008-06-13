@@ -26,6 +26,7 @@ v0.33.28-dev (SVN)
 + Fixed loading conventional fighters into Create Squadron dialog
 + Bug 1993188: Tele-Op Missiles always face "north"
 + Heat works differently for conventional fighters
++ Conventional fighter data
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

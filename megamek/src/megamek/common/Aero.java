@@ -163,6 +163,8 @@ public class Aero
     private boolean evading = false;
     private boolean accLast = false;
     private boolean rolled = false;
+    private boolean failedManeuver = false;
+    private boolean accDecNow = false;
     
     //vstol status
     boolean vstol = false;
@@ -489,6 +491,11 @@ public class Aero
        
         //reset evasion
         this.setEvading(false);
+        
+        //reset maneuver status
+        this.setFailedManeuver(false);
+        //reset acc/dec this turn
+        this.setAccDecNow(false);
         
         this.updateBays();
         
@@ -1608,6 +1615,26 @@ public class Aero
         }
         return roll;
     }
+    
+    /**
+     * Checks if a maneuver requires a control roll
+     */
+    public PilotingRollData checkManeuver(MoveStep step) {
+        PilotingRollData roll = getBasePilotingRoll();
+        
+        if ((step == null) || (step.getType() != MovePath.STEP_MANEUVER)) {
+            roll.addModifier(TargetRoll.CHECK_FALSE,
+                    "Check false: Entity is not attempting to get up.");
+            return roll;
+        }
+        
+        roll.append(new PilotingRollData(getId(), 
+                    ManeuverType.getMod(step.getManeuverType(), isVSTOL()), 
+                    ManeuverType.getTypeName(step.getManeuverType()) + " maneuver"));
+        
+        return roll;
+        
+    }
    
     
     /**
@@ -2018,6 +2045,22 @@ public class Aero
     
     public int getFuelUsed(int thrust) {
         return (thrust + Math.max(thrust - getWalkMP(), 0));
+    }
+    
+    public boolean didFailManeuver() {
+        return failedManeuver;
+    }
+    
+    public void setFailedManeuver(boolean b) {
+        this.failedManeuver = b;
+    }
+    
+    public void setAccDecNow(boolean b) {
+        this.accDecNow = b;
+    }
+    
+    public boolean didAccDecNow() {
+        return accDecNow;
     }
     
 }

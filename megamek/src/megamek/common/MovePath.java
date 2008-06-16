@@ -79,7 +79,8 @@ public class MovePath implements Cloneable, Serializable {
     public static final int STEP_RECOVER = 45;
     public static final int STEP_RAM = 46;
     public static final int STEP_HOVER = 47;
-    public static final int STEP_ACC_DOWN = 48;
+    public static final int STEP_MANEUVER = 48;
+    public static final int STEP_LOOP = 49;
 
     public static class Key {
         private final Coords coords;
@@ -179,6 +180,18 @@ public class MovePath implements Cloneable, Serializable {
     public MovePath addStep(int type, Vector<Integer[]> targets) {
         return addStep(new MoveStep(this, type, targets));
     }
+    
+    public MovePath addStep(final int type, final boolean noCost) {
+        return addStep(new MoveStep(this, type, noCost));
+    }
+    
+    public MovePath addStep(final int type, final boolean noCost, final boolean isManeuver) {
+        return addStep(new MoveStep(this, type, noCost, isManeuver));
+    }
+    
+    public MovePath addManeuver(final int manType) {
+        return addStep(new MoveStep(this, STEP_MANEUVER, -1, -1, manType));
+    }
 
     public boolean canShift() {
         return ((entity instanceof QuadMech) || entity.isUsingManAce())
@@ -249,6 +262,12 @@ public class MovePath implements Cloneable, Serializable {
                 step = new MoveStep(this, step.getType(), step.getMineToLay());
             } else if (step.getLaunched().size() > 0) {
                 step = new MoveStep(this, step.getType(), step.getLaunched());
+            } else if (step.getManeuverType() != ManeuverType.MAN_NONE) {
+                step = new MoveStep(this, step.getType(), -1, -1, step.getManeuverType());
+            } else if (step.isManeuver()) {
+                step = new MoveStep(this, step.getType(), step.hasNoCost(), step.isManeuver());
+            } else if(step.hasNoCost()) {
+                step = new MoveStep(this, step.getType(), step.hasNoCost());
             } else {
                 step = new MoveStep(this, step.getType());
             }
@@ -758,12 +777,12 @@ public class MovePath implements Cloneable, Serializable {
         while (!getFinalCoords().equals(subDest)) {
             // adjust facing
             rotatePathfinder((getFinalCoords().direction(subDest) + (step == STEP_BACKWARDS ? 3
-                    : 0)) % 6);
+                    : 0)) % 6, false);
             // step forwards
             addStep(step);
         }
         rotatePathfinder((getFinalCoords().direction(dest) + (step == STEP_BACKWARDS ? 3
-                : 0)) % 6);
+                : 0)) % 6, false);
         if (!dest.equals(getFinalCoords())) {
             addStep(type);
         }
@@ -880,10 +899,10 @@ public class MovePath implements Cloneable, Serializable {
     /**
      * Rotate from the current facing to the destination facing.
      */
-    public void rotatePathfinder(final int destFacing) {
+    public void rotatePathfinder(final int destFacing, final boolean isManeuver) {
         while (getFinalFacing() != destFacing) {
             final int stepType = getDirection(getFinalFacing(), destFacing);
-            addStep(stepType);
+            addStep(stepType, isManeuver, isManeuver);
         }
     }
 

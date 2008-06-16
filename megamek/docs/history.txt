@@ -36,6 +36,7 @@ v0.33.28-dev (SVN)
 + Fixed: acc/dec next disabling acc/dec buttons in all future rounds
 + air-breather fuel efficiency option
 + Aero special maneuvers in atmosphere
++ damage to Aero if launched in atmosphere at velocity > 2
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

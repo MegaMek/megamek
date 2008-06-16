@@ -4182,7 +4182,7 @@ public abstract class Entity extends TurnOrdered implements Serializable,
      * Add in any piloting skill mods
      */
     public abstract PilotingRollData addEntityBonuses(PilotingRollData roll);
-
+    
     /**
      * Checks if the entity is getting up. If so, returns the target roll for
      * the piloting skill check.

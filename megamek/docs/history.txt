@@ -35,6 +35,7 @@ v0.33.28-dev (SVN)
 + Fixed: Aero elevation changing over water
 + Fixed: acc/dec next disabling acc/dec buttons in all future rounds
 + air-breather fuel efficiency option
++ Aero special maneuvers in atmosphere
 
 v0.33.27 (2008-06-10, 23:50 GMT+2)
 + Bug: ISSRM3 not getting created

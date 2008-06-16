@@ -51,6 +51,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.LandAirMech;
+import megamek.common.ManeuverType;
 import megamek.common.Mech;
 import megamek.common.Minefield;
 import megamek.common.MiscType;
@@ -130,6 +131,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final String    MOVE_DUMP = "MoveDump"; //$NON-NLS-1$
     public static final String    MOVE_RAM = "MoveRam"; //$NON-NLS-1$
     public static final String    MOVE_HOVER = "MoveHover"; //$NON-NLS-1$
+    public static final String    MOVE_MANEUVER = "MoveManeuver";
     //Aero Vector Movement
     public static final String    MOVE_TURN_LEFT = "MoveTurnLeft"; //$NON-NLS-1$
     public static final String    MOVE_TURN_RIGHT = "MoveTurnRight"; //$NON-NLS-1$
@@ -196,6 +198,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private Button              butDump;
     private Button              butRam;
     private Button              butHover;
+    private Button              butManeuver;
     
     private Button              butTurnLeft;
     private Button              butTurnRight;
@@ -235,6 +238,8 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     public static final int GEAR_TURN = 5;
     public static final int GEAR_SWIM = 6;
     public static final int GEAR_RAM = 7;
+    public static final int GEAR_IMMEL = 8;
+    public static final int GEAR_SPLIT_S = 9;
 
     /**
      * Creates and lays out a new movement phase display for the specified
@@ -486,6 +491,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         butHover.setActionCommand(MOVE_HOVER);
         butHover.addKeyListener(this);
         
+        butManeuver = new Button(Messages.getString("MovementDisplay.butManeuver")); //$NON-NLS-1$
+        butManeuver.addActionListener(this);
+        butManeuver.setEnabled(false);
+        butManeuver.setActionCommand(MOVE_MANEUVER);
+        butManeuver.addKeyListener(this);
+        
         butTurnLeft = new Button(Messages.getString("MovementDisplay.butTurnLeft")); //$NON-NLS-1$
         butTurnLeft.addActionListener(this);
         butTurnLeft.setEnabled(false);
@@ -638,6 +649,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butRam);
             buttonsAero.add(butLower);
             buttonsAero.add(butRaise);
+            buttonsAero.add(butManeuver);
             buttonsAero.add(butEject);
             buttonsAero.add(butFlee);
             buttonsAero.add(butLaunch);
@@ -646,7 +658,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             buttonsAero.add(butRAC);   
             buttonsAero.add(butDump);
             //not used
-            buttonsAero.add(butDigIn);
             buttonsAero.add(butFortify);
             buttonsAero.add(butHullDown);
             buttonsAero.add(butShakeOff);
@@ -899,6 +910,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateFleeButton();
         updateLaunchButton();
         updateHoverButton();
+        updateManeuverButton();
         
         if (isInfantry
                 && ce.hasWorkingMisc(MiscType.F_TOOLS, MiscType.S_VIBROSHOVEL))
@@ -1026,6 +1038,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         setDumpEnabled(false);
         setRamEnabled(false);
         setHoverEnabled(false);
+        setManeuverEnabled(false);
     }
 
     /**
@@ -1060,6 +1073,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateFleeButton();
         updateLaunchButton();
         updateHoverButton();
+        updateManeuverButton();
 
         loadedUnits = ce.getLoadedUnits();
 
@@ -1384,6 +1398,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 //check for more than one roll
                 Aero a = (Aero)entity;
                 rollTarget = a.checkRolls(step);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    nagReport.append(addNag(rollTarget));
+                }
+                
+                rollTarget = a.checkManeuver(step);
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     nagReport.append(addNag(rollTarget));
                 }
@@ -1740,7 +1759,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
      */
     private void currentMove(Coords dest) {
         if (shiftheld || gear == GEAR_TURN) {
-            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest));
+            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
         } else if (gear == GEAR_LAND || gear == GEAR_JUMP) {
             cmd.findPathTo(dest, MovePath.STEP_FORWARDS);
         } else if (gear == GEAR_BACKUP) {
@@ -1753,6 +1772,19 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             cmd.findPathTo(dest, MovePath.STEP_SWIM);
         } else if (gear == GEAR_RAM) {
             cmd.findPathTo(dest, MovePath.STEP_FORWARDS);
+        } else if (gear == GEAR_IMMEL) {
+            cmd.addStep(MovePath.STEP_UP, true, true);
+            cmd.addStep(MovePath.STEP_UP, true, true);
+            cmd.addStep(MovePath.STEP_DEC, true, true);
+            cmd.addStep(MovePath.STEP_DEC, true, true);
+            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
+            gear = GEAR_LAND;
+        } else if (gear == GEAR_SPLIT_S) {
+            cmd.addStep(MovePath.STEP_DOWN, true, true);
+            cmd.addStep(MovePath.STEP_DOWN, true, true);
+            cmd.addStep(MovePath.STEP_ACC, true, true);
+            cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), true);
+            gear = GEAR_LAND;
         }
     }
 
@@ -1818,7 +1850,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 }
                 return;
             }
-
+            
             if(gear == MovementDisplay.GEAR_RAM) {
                 //check if target is valid
                 final Targetable target = this.chooseTarget(b.getCoords());
@@ -2016,6 +2048,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             updateFleeButton();
             updateLaunchButton();
             updateHoverButton();
+            updateManeuverButton();
             updateSpeedButtons();
             updateThrustButton();
             updateRollButton();
@@ -2200,6 +2233,12 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             setDecEnabled(true);
         }
         
+        //if the aero has failed a maneuver this turn, then don't allow 
+        if(a.didFailManeuver()) {
+            setAccEnabled(false);
+            setDecEnabled(false);
+        }
+        
         //if accelerated/decelerate at the end of last turn then disable
         if(a.didAccLast()) {
             setAccEnabled(false);
@@ -2218,6 +2257,13 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                 && !cmd.contains(MovePath.STEP_ACCN) && veln > 0) {
             setDecNEnabled(true);
         }
+        
+        //acc/dec next needs to be disabled if acc/dec used before a failed maneuver
+        if(a.didFailManeuver() && a.didAccDecNow()) {
+            setDecNEnabled(false);
+            setAccNEnabled(false);
+        }
+        
         
         //if in atmosphere, limit acceleration to 2x safe thrust
         if(vel == (2 * a.getWalkMP())) {
@@ -2289,6 +2335,28 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         
         setLaunchEnabled(ce.getLaunchableFighters().size() > 0 || ce.getLaunchableSmallCraft().size() > 0);
         
+    }
+    
+    private void updateManeuverButton() {
+        
+        final Entity ce = ce();
+        
+        if (null == ce ) {
+            return;
+        }
+        
+        if(!(ce instanceof Aero))
+            return;
+        
+        Aero a = (Aero)ce;
+        
+        if(a.isSpheroid())
+            return;
+        
+        if(!a.didFailManeuver() && (null == cmd || !cmd.contains(MovePath.STEP_MANEUVER))) {
+            setManeuverEnabled(true);
+        }
+        return;
     }
 
     private synchronized void updateLoadButtons() {
@@ -2828,6 +2896,58 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
     }
     
+    /*
+     * based on maneuver type add the appropriate steps
+     * return true if we should redraw the movement data
+     */
+    private boolean addManeuver(int type) {       
+        cmd.addManeuver(type);
+        switch(type) {
+            case (ManeuverType.MAN_HAMMERHEAD):
+                cmd.addStep(MovePath.STEP_YAW, true, true);
+                return true;
+            case (ManeuverType.MAN_HALF_ROLL):
+                cmd.addStep(MovePath.STEP_ROLL, true, true);
+                return true;
+            case (ManeuverType.MAN_BARREL_ROLL):
+                cmd.addStep(MovePath.STEP_DEC, true, true);
+            return true; 
+            case(ManeuverType.MAN_IMMELMAN):
+                gear = MovementDisplay.GEAR_IMMEL;
+                return false;
+            case (ManeuverType.MAN_SPLIT_S):
+                gear = MovementDisplay.GEAR_SPLIT_S;
+                return false;
+            case (ManeuverType.MAN_VIFF):
+                if(!(ce() instanceof Aero)) {
+                    return false;
+                }                
+                Aero a = (Aero)ce();
+                MoveStep last = cmd.getLastStep();
+                int vel = a.getCurrentVelocity();
+                if(null != last) {
+                    vel = last.getVelocityLeft();
+                }
+                while(vel > 0) {
+                    cmd.addStep(MovePath.STEP_DEC, true, true);
+                    vel--;
+                }
+                cmd.addStep(MovePath.STEP_UP);
+                return true;
+            case (ManeuverType.MAN_SIDE_SLIP_LEFT):
+                cmd.addStep(MovePath.STEP_LATERAL_LEFT, true, true);
+                return true;
+            case (ManeuverType.MAN_SIDE_SLIP_RIGHT):
+                cmd.addStep(MovePath.STEP_LATERAL_RIGHT, true, true);
+                return true;
+            case (ManeuverType.MAN_LOOP):
+                cmd.addStep(MovePath.STEP_LOOP, true, true);
+                return true;
+            default:
+                return false;
+        }        
+    }
+    
     //
     // GameListener
     //
@@ -3114,7 +3234,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
                     && cmd.getLastStep().getNDown() == 1 
                     && cmd.getLastStep().getVelocity() < 12 
                     && !((Aero)ce).isSpheroid()) {
-                cmd.addStep(MovePath.STEP_ACC_DOWN);
+                cmd.addStep(MovePath.STEP_ACC, true);
             }
             cmd.addStep(MovePath.STEP_DOWN);
             clientgui.bv.drawMovementData(ce, cmd);
@@ -3215,6 +3335,32 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             cmd.addStep(MovePath.STEP_HOVER);
             clientgui.bv.drawMovementData(ce, cmd);
             clientgui.bv.repaint();
+        } else if (ev.getActionCommand().equals(MOVE_MANEUVER)) {
+            ManeuverChoiceDialog choiceDialog = new ManeuverChoiceDialog(
+                    clientgui.frame,
+                    Messages
+                            .getString("MovementDisplay.ManeuverDialog.title"), //$NON-NLS-1$
+                    "huh?");
+            Aero a = (Aero)ce;
+            MoveStep last = cmd.getLastStep();
+            int vel = a.getCurrentVelocity();
+            int elev = a.getElevation();
+            Coords pos = a.getPosition();
+            int distance = 0;
+            if(null != last) {
+                vel = last.getVelocityLeft();
+                elev = last.getElevation();
+                pos = last.getPosition();
+                distance = last.getDistance();
+            }
+            int ceil = client.game.getBoard().getHex(pos).ceiling();
+            choiceDialog.checkPerformability(vel, elev, ceil, a.isVSTOL(), distance);
+            choiceDialog.setVisible(true);
+            int manType = choiceDialog.getChoice();
+            if( manType > ManeuverType.MAN_NONE && addManeuver(manType) ) {
+                clientgui.bv.drawMovementData(ce, cmd);
+                clientgui.bv.repaint(); 
+            }
         } else if (ev.getActionCommand().equals(MOVE_LAUNCH)) {
             //The function will bring up a choice dialog that
             //asks the user how many units of each type (small craft and
@@ -3265,6 +3411,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         updateFleeButton();
         updateLaunchButton();
         updateHoverButton();
+        updateManeuverButton();
         updateDumpButton();
         updateSpeedButtons();
         updateThrustButton();
@@ -3630,6 +3777,10 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
     private void setHoverEnabled(boolean enabled) {
         butHover.setEnabled(enabled);
         clientgui.getMenuBar().setMoveHoverEnabled(enabled);
+    }
+    private void setManeuverEnabled(boolean enabled) {
+        butManeuver.setEnabled(enabled);
+        clientgui.getMenuBar().setMoveManeuverEnabled(enabled);
     }
     private void setTurnLeftEnabled(boolean enabled) {
         butTurnLeft.setEnabled(enabled);

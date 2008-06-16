@@ -3144,7 +3144,9 @@ public class Server implements Runnable {
         }
 
         //launching from an OOC vessel causes damage
-        if(((Aero)unloader).isOutControlTotal() && !unit.isDoomed()) {
+        //same thing if faster than 2 velocity in atmosphere
+        if((((Aero)unloader).isOutControlTotal() && !unit.isDoomed()) 
+                || (((Aero)unloader).getCurrentVelocity() > 2 && game.getBoard().inAtmosphere())) {
             int damroll = Compute.d6(2);
             int damage = damroll * 10;
             r = new Report(9385);

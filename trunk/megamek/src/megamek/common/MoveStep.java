@@ -108,6 +108,13 @@ public class MoveStep implements Serializable {
     Vector<Integer[]> launched = new Vector<Integer[]>();
     private boolean isEvading = false;
     private boolean isRolled = false;
+    
+    //for maneuvers
+    private int maneuverType = ManeuverType.MAN_NONE; 
+    //steps associated with maneuvers have no cost
+    private boolean noCost = false;
+    //is this step part of a maneuver?
+    private boolean maneuver = false;
 
     /**
      * Flag that indicates that this step is into prohibited terrain. <p/> If
@@ -192,6 +199,24 @@ public class MoveStep implements Serializable {
         this(path, type);
         this.recoveryUnit = recovery;
         this.mineToLay = mineToLay;
+    }
+    
+    public MoveStep(MovePath path, int type, boolean noCost) {
+        this(path, type);
+        this.noCost = noCost;      
+    }
+    
+    public MoveStep(MovePath path, int type, boolean noCost, boolean isManeuver) {
+        this(path, type);
+        this.noCost = noCost;      
+        this.maneuver = isManeuver;
+    }
+    
+    public MoveStep(MovePath path, int type, int recovery, int mineToLay, int manType) {
+        this(path, type);
+        this.recoveryUnit = recovery;
+        this.mineToLay = mineToLay;
+        this.maneuverType = manType;
     }
 
     void setParent(MovePath path) {
@@ -640,12 +665,6 @@ public class MoveStep implements Serializable {
                 setVelocityLeft(getVelocityLeft()+1);
                 setMp(1);
                 break;
-            case MovePath.STEP_ACC_DOWN:
-                //this is the special case of acceleration due to downward movement
-                setVelocity(getVelocity()+1);
-                setVelocityLeft(getVelocityLeft()+1);
-                setMp(0);
-                break;
             case MovePath.STEP_DEC:
                 setVelocity(getVelocity()-1);
                 setVelocityLeft(getVelocityLeft()-1);
@@ -691,10 +710,20 @@ public class MoveStep implements Serializable {
             case MovePath.STEP_HOVER:
                 setMp(2);
                 break;
+            case MovePath.STEP_MANEUVER:
+                setMp(ManeuverType.getCost(getManeuverType(), getVelocity()));
+                break;
+            case MovePath.STEP_LOOP:
+                setVelocityLeft(getVelocityLeft() - 4);
+                setMp(0);
             default:
                 setMp(0);
         }
 
+        if(noCost) {
+            setMp(0);
+        }
+        
         // Update the entity's total MP used.
         addMpUsed(getMp());
 
@@ -811,7 +840,7 @@ public class MoveStep implements Serializable {
             Aero a = (Aero)entity;
             this.velocity = a.getCurrentVelocity();
             this.velocityN = a.getNextVelocity();
-            this.velocityLeft = a.getCurrentVelocity();
+            this.velocityLeft = a.getCurrentVelocity() - a.delta_distance;
             this.isRolled = false;//a.isRolled(); 
             this.nStraight = a.getStraightMoves();
         }
@@ -1322,17 +1351,23 @@ public class MoveStep implements Serializable {
             if( type == MovePath.STEP_ACC || type == MovePath.STEP_DEC ) {
                 //either the previous had to be acceleration or deceleration or this is the first
                 //in atmosphere, acceleration can happen later as a result of elevation change
-                if(!isFirstStep() && prev.getType() != MovePath.STEP_ACC && prev.getType() != MovePath.STEP_DEC) {
+                //I think I can safely comment this out, because acc/dec should be appropriately
+                //disabled in the MovementDisplay and this is getting complicated with the 
+                //addition of maneuvers
+                /*
+                if(!isFirstStep() && prev.getType() != MovePath.STEP_ACC && prev.getType() != MovePath.STEP_DEC 
+                        && !(game.getBoard().inAtmosphere() && prev.getType() == MovePath.STEP_DOWN && getNDown() == 1)) {
                     return;
                 }
                 //if ASF acc/dec at the end of last turn, then can't accelerate/decelerate this turn
                 if(a.didAccLast()) {
                     return;
                 }
+                */
             }
             
             //unless velocity is zero ASFs must move forward one hex before making turns
-            if(!game.useVectorMove() && 
+            if(!game.useVectorMove() && !isManeuver() && 
                     !(game.getBoard().inAtmosphere() && a.isSpheroid()) &&
                     distance == 0 && velocity != 0 && 
                     (type == MovePath.STEP_TURN_LEFT || type == MovePath.STEP_TURN_RIGHT)) {
@@ -1340,14 +1375,15 @@ public class MoveStep implements Serializable {
             }
             
             //if in atmosphere, then they cannot turn under any circumstances in the first hex
-            if(game.getBoard().inAtmosphere() && distance == 0 
+            if(game.getBoard().inAtmosphere() && distance == 0  && !isManeuver()
                     && !(game.getBoard().inAtmosphere() && a.isSpheroid()) && 
                     (type == MovePath.STEP_TURN_LEFT || type == MovePath.STEP_TURN_RIGHT)) {
                 return;
             }
             
             //no more than two turns in one hex unless velocity is zero for anything except ASF
-            if( !game.useVectorMove() && !(game.getBoard().inAtmosphere() && a.isSpheroid()) &&
+            if( !game.useVectorMove() && !isManeuver() &&
+                    !(game.getBoard().inAtmosphere() && a.isSpheroid()) &&
                     a instanceof SmallCraft && velocity != 0 && getNTurns() > 2 ) {
                 return;
             }
@@ -1359,7 +1395,7 @@ public class MoveStep implements Serializable {
             }
 
             //if in atmosphere then only one turn no matter what
-            if( game.getBoard().inAtmosphere() && getNTurns() > 1 && 
+            if( game.getBoard().inAtmosphere() && getNTurns() > 1 && !isManeuver() && 
                     !(game.getBoard().inAtmosphere() && a.isSpheroid())) {
                 return;
             }
@@ -2437,6 +2473,18 @@ public class MoveStep implements Serializable {
     
     public void setRecoveryUnit(int i) {
         this.recoveryUnit = i;
+    }
+    
+    public int getManeuverType() {
+        return maneuverType;
+    }
+    
+    public boolean hasNoCost() {
+        return noCost;
+    }
+    
+    public boolean isManeuver() {
+        return maneuver;
     }
 
 }

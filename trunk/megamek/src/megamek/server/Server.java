@@ -4494,8 +4494,43 @@ public class Server implements Runnable {
                 if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
                     game.addControlRoll(new PilotingRollData
                             ( a.getId(), 0, "excess roll" ));
-                }                
-
+                }         
+                
+                rollTarget = a.checkManeuver(step);
+                if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {
+                    if(!doSkillCheckManeuver(entity, rollTarget)) {
+                        a.setFailedManeuver(true);
+                        int forward = Math.max(step.getVelocityLeft() / 2, 1);
+                        if(forward < step.getVelocityLeft()) {
+                            fellDuringMovement = true;
+                        }
+                        while(forward > 0) {
+                            curPos = curPos.translated(step.getFacing());
+                            forward--;
+                            distance++;
+                            //make sure it didn't fly off the map
+                            if(!game.getBoard().contains(curPos)) {
+                                r = new Report(9370, Report.PUBLIC);
+                                r.indent();
+                                r.addDesc(entity);
+                                addReport(r);
+                                game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED );
+                                send( createRemoveEntityPacket(entity.getId(),
+                                        IEntityRemovalConditions.REMOVE_PUSHED) );
+                                forward = 0;
+                                fellDuringMovement = false;
+                                return;
+                            //make sure it didn't crash
+                            } else if(game.getBoard().getHex(curPos).ceiling() >= step.getElevation() ) {                  
+                                addReport( processCrash(entity,step.getVelocity()) );
+                                forward = 0;
+                                fellDuringMovement = false;
+                            }
+                        }
+                        break;
+                    }
+                }
+    
                 //if out of control, check for possible collision
                 if(didMove && a.isOutControlTotal()) {
                     Enumeration<Entity> targets = game.getEntities( step.getPosition() );
@@ -4651,6 +4686,7 @@ public class Server implements Runnable {
                     game.removeEntity( entity.getId(), IEntityRemovalConditions.REMOVE_PUSHED );
                     send( createRemoveEntityPacket(entity.getId(),
                             IEntityRemovalConditions.REMOVE_PUSHED) );
+                    return;
                 }
                 
                 
@@ -4795,14 +4831,14 @@ public class Server implements Runnable {
                 break;
             }
 
-            if(step.getType() == MovePath.STEP_ACC || step.getType() == MovePath.STEP_ACCN 
-                    || step.getType() == MovePath.STEP_ACC_DOWN) {
+            if(step.getType() == MovePath.STEP_ACC || step.getType() == MovePath.STEP_ACCN) {
                 if(entity instanceof Aero) {
                     Aero a = (Aero)entity;
                     if( step.getType() == MovePath.STEP_ACCN) {
                         a.setAccLast(true);
                         a.setNextVelocity(a.getNextVelocity()+1);
                     } else {
+                        a.setAccDecNow(true);
                         a.setCurrentVelocity(a.getCurrentVelocity()+1);
                         a.setNextVelocity(a.getNextVelocity()+1);
                     }
@@ -4814,8 +4850,9 @@ public class Server implements Runnable {
                     Aero a = (Aero)entity;
                     if( step.getType() == MovePath.STEP_DECN) {
                         a.setAccLast(true);
-                           a.setNextVelocity(a.getNextVelocity()-1);
+                        a.setNextVelocity(a.getNextVelocity()-1);
                     } else {
+                        a.setAccDecNow(true);
                         a.setCurrentVelocity(a.getCurrentVelocity()-1);
                         a.setNextVelocity(a.getNextVelocity()-1);
                     }
@@ -7180,6 +7217,50 @@ public class Server implements Runnable {
         // roll
         final int diceRoll = Compute.d6(2);
         r = new Report(9325);
+        r.subject = entity.getId();
+        r.add(roll.getValueAsString());
+        r.add(roll.getDesc());
+        r.add(diceRoll);
+        boolean suc;
+        if (diceRoll < roll.getValue()) {
+            r.choose(false);
+            addReport(r);
+            suc = false;
+        } else {
+            r.choose(true);
+            addReport(r);
+            suc = true;
+        }
+
+        return suc;
+    }
+    
+    /**
+     * Do a piloting skill check in space to do a successful maneuver
+     * Failure means moving forward half velocity
+     *
+     * @param entity The <code>Entity</code> that should make the PSR
+     * @param roll   The <code>PilotingRollData</code> to be used for this PSR.
+     *
+     * @return true if check succeeds, false otherwise.
+     *
+     */
+    private boolean doSkillCheckManeuver(Entity entity, PilotingRollData roll) {
+        
+        if (roll.getValue() == TargetRoll.AUTOMATIC_SUCCESS) {
+            return true;
+        }
+
+        // okay, print the info
+        Report r = new Report(9600);
+        r.subject = entity.getId();
+        r.addDesc(entity);
+        r.add(roll.getLastPlainDesc(), true);
+        addReport(r);
+
+        // roll
+        final int diceRoll = Compute.d6(2);
+        r = new Report(9601);
         r.subject = entity.getId();
         r.add(roll.getValueAsString());
         r.add(roll.getDesc());

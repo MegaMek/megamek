@@ -151,7 +151,7 @@ public class MoveCommand extends ClientCommand {
     private void currentMove(Coords dest) {
         if (dest != null) {
             if (gear == GEAR_TURN) {
-                cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest));
+                cmd.rotatePathfinder(cmd.getFinalCoords().direction(dest), false);
             } else if (gear == GEAR_LAND || gear == GEAR_JUMP) {
                 cmd.findPathTo(dest, MovePath.STEP_FORWARDS);
             } else if (gear == GEAR_BACKUP) {

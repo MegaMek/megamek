@@ -67,6 +67,16 @@ public class ClubAttackAction extends PhysicalAttackAction {
         this.aiming = aimTable;
     }
 
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 61 * hash + club.hashCode();
+        return hash;
+    }
+    
+    public boolean equals(Object o) {
+        return super.equals(o) && ((ClubAttackAction)o).getClub().equals(club);
+    }
+
     /**
      * Damage that the specified mech does with a club attack
      */

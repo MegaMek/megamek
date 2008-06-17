@@ -60,6 +60,16 @@ public class PunchAttackAction extends PhysicalAttackAction {
         this.arm = arm;
     }
 
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 61 * hash + arm;
+        return hash;
+    }
+    
+    public boolean equals(Object o) {
+        return super.equals(o) && ((PunchAttackAction)o).getArm() == arm;
+    }
+
     public ToHitData toHit(IGame game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
                 getTargetId()), getArm());

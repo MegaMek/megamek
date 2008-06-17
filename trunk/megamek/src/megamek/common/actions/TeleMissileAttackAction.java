@@ -41,7 +41,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         super(attacker.getId(), target.getTargetType(), target.getTargetId());
     }
 
-    public static int getDamageFor(Entity entity) {  	
+    public static int getDamageFor(Entity entity) {
         if(entity instanceof TeleMissile) {
             return ((TeleMissile)entity).getDamageValue();
         } else {
@@ -80,7 +80,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         
         //out of fuel
         if(tm.getFuel() <= 0) 
-        	toHit.addModifier(+6, "out of fuel");
+            toHit.addModifier(+6, "out of fuel");
         
         //modifiers for the originating unit need to be added later, because
         //they may change as a result of damage

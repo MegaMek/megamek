@@ -60,6 +60,7 @@
      Dave Bowman <davebowman@users.sourceforge.net>
      Chris Stadther <cstadthe@users.sourceforge.net>
      Jay "Taharqa" Lawson <bombaijin@users.sourceforge.net>
+     Jörg Walter <j.walter@syntax-k.de>
 
   XML Parser:
      Tom Gibara (original URL: http://gibaradunn.srac.org/tiny/index.shtml)

@@ -77,9 +77,9 @@ public class UnitOverview implements Displayable {
 
     public UnitOverview(ClientGUI clientgui) {
         this.clientgui = clientgui;
-        fm = clientgui.bv.getFontMetrics(FONT);
+        fm = clientgui.getFontMetrics(FONT);
 
-        Toolkit toolkit = clientgui.bv.getToolkit();
+        Toolkit toolkit = clientgui.getToolkit();
         scrollUp = toolkit.getImage(IMAGE_DIR + "/scrollUp.gif"); //$NON-NLS-1$
         PMUtil.setImage(scrollUp, clientgui);
         scrollDown = toolkit.getImage(IMAGE_DIR + "/scrollDown.gif"); //$NON-NLS-1$
@@ -119,9 +119,9 @@ public class UnitOverview implements Displayable {
         int y = DIST_TOP;
 
         if (scroll) {
-            graph.drawImage(pageUp, x, y, clientgui.bv);
+            graph.drawImage(pageUp, x, y, null);
             graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                    clientgui.bv);
+                    null);
             y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
                     + BUTTON_PADDING;
         }
@@ -133,7 +133,7 @@ public class UnitOverview implements Displayable {
             String name = getIconName(e, fm);
             Image i1 = clientgui.bv.getTilesetManager().iconFor(e);
 
-            graph.drawImage(i1, x, y, clientgui.bv);
+            graph.drawImage(i1, x, y, null);
             printLine(graph, x + 3, y + 46, name);
             drawBars(graph, e, x, y);
             drawHeat(graph, e, x, y);
@@ -153,9 +153,9 @@ public class UnitOverview implements Displayable {
         if (scroll) {
             y -= PADDING;
             y += BUTTON_PADDING;
-            graph.drawImage(scrollDown, x, y, clientgui.bv);
+            graph.drawImage(scrollDown, x, y, null);
             graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
-                    clientgui.bv);
+                    null);
         }
 
     }
@@ -438,7 +438,7 @@ public class UnitOverview implements Displayable {
             if (scrollOffset < 0) {
                 scrollOffset = 0;
             }
-            clientgui.bv.repaint();
+            clientgui.bv.refreshDisplayables();
         }
     }
 
@@ -448,21 +448,21 @@ public class UnitOverview implements Displayable {
             if (scrollOffset > unitIds.length - actUnitsPerPage) {
                 scrollOffset = unitIds.length - actUnitsPerPage;
             }
-            clientgui.bv.repaint();
+            clientgui.bv.refreshDisplayables();
         }
     }
 
     private void scrollUp() {
         if (scrollOffset > 0) {
             scrollOffset--;
-            clientgui.bv.repaint();
+            clientgui.bv.refreshDisplayables();
         }
     }
 
     private void scrollDown() {
         if (scrollOffset < unitIds.length - actUnitsPerPage) {
             scrollOffset++;
-            clientgui.bv.repaint();
+            clientgui.bv.refreshDisplayables();
         }
     }
 

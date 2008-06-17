@@ -405,7 +405,7 @@ public class BoardSelectionDialog extends JDialog implements ActionListener,
         for (final int newVar : selected) {
             String name = board;
             if (!MapSettings.BOARD_RANDOM.equals(name)
-	  		        && !MapSettings.BOARD_SURPRISE.equals(name)
+                    && !MapSettings.BOARD_SURPRISE.equals(name)
                     && chkRotateBoard.isSelected()) {
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }

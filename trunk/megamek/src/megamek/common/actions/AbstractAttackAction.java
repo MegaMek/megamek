@@ -77,6 +77,22 @@ public abstract class AbstractAttackAction extends AbstractEntityAction
         return e;
     }
 
+    public int hashCode() {
+        int hash = 5;
+        hash = 61 * hash + this.targetType;
+        hash = 61 * hash + this.targetId;
+        hash = 61 * hash + this.getEntityId();
+        return hash;
+    }
+    
+    public boolean equals(Object o) {
+        if (o == null || o.getClass() != getClass()) return false;
+        AbstractAttackAction a = (AbstractAttackAction)o;
+        return a.getTargetType() == getTargetType() &&
+            a.getTargetId() == getTargetId() &&
+            a.getEntityId() == getEntityId();
+    }
+
     /**
      * used by the toHit of derived classes atype may be null if not using an
      * ammo based weapon

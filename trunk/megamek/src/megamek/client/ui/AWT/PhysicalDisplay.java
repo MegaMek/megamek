@@ -562,7 +562,6 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         // and add it into the game, temporarily
         client.game.addAction(saa);
         clientgui.bv.addAttack(saa);
-        clientgui.bv.repaint(100);
         clientgui.minimap.drawMap();
 
         // and prevent duplicates

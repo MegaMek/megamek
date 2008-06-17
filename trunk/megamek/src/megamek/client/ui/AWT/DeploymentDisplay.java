@@ -24,8 +24,6 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -46,7 +44,7 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public class DeploymentDisplay extends StatusBarPhaseDisplay implements
-        BoardViewListener, ActionListener, DoneButtoned, KeyListener,
+        BoardViewListener, ActionListener, DoneButtoned,
         GameListener, Distractable {
     /**
      * 
@@ -185,17 +183,12 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
-
-        clientgui.bv.addKeyListener(this);
-        addKeyListener(this);
-
     }
 
     private void addBag(Component comp, GridBagLayout gridbag,
             GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
-        comp.addKeyListener(this);
     }
 
     /**
@@ -210,10 +203,10 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
             return;
         }
 
-        // remove C3 sprites from earlier here, or we might crash when
+        // FIXME: Hack alert: remove C3 sprites from earlier here, or we might crash when
         // trying to draw a c3 sprite belonging to the previously selected,
-        // but not deployed entity
-        clientgui.bv.clearC3Networks();
+        // but not deployed entity. BoardView1 should take care of that itself.
+        if (clientgui.bv instanceof BoardView1) ((BoardView1)clientgui.bv).clearC3Networks();
 
         this.cen = en;
         clientgui.setSelectedEntityNum(en);
@@ -296,7 +289,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         Player p = client.getLocalPlayer();
         // mark deployment hexes
         clientgui.bv.markDeploymentHexesFor(p);
-        clientgui.bv.repaint(100);
     }
 
     /**
@@ -315,7 +307,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.bv.markDeploymentHexesFor(null);
-        clientgui.bv.repaint(100);
     }
 
     /**
@@ -628,18 +619,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         }
 
     } // End public void actionPerformed(ActionEvent ev)
-
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ev) {
-    }
-
-    public void keyReleased(KeyEvent ev) {
-    }
-
-    public void keyTyped(KeyEvent ev) {
-    }
 
     //
     // BoardViewListener

@@ -95,7 +95,7 @@ public class MiniMap extends Canvas {
     private final static int NBR_MODES = 3;
 
     private Image m_mapImage;
-    private BoardView1 m_bview;
+    private IBoardView m_bview;
     private IGame m_game;
     private Dialog m_dialog;
     private static final int margin = 6;
@@ -126,7 +126,7 @@ public class MiniMap extends Canvas {
     /**
      * Creates and lays out a new minimap.
      */
-    public MiniMap(Dialog d, IGame g, BoardView1 bview) throws IOException {
+    public MiniMap(Dialog d, IGame g, IBoardView bview) throws IOException {
         m_game = g;
         m_bview = bview;
         m_dialog = d;
@@ -158,7 +158,7 @@ public class MiniMap extends Canvas {
         d.pack();
     }
 
-    public MiniMap(Dialog d, ClientGUI c, BoardView1 bview) throws IOException {
+    public MiniMap(Dialog d, ClientGUI c, IBoardView bview) throws IOException {
         this(d, c.getClient().game, bview);
         clientgui = c;
 
@@ -1144,14 +1144,9 @@ public class MiniMap extends Canvas {
                 return;
             }
             if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-                // m_bview.checkLOS(translateCoords(x - leftMargin, y -
-                // topMargin));
-                m_bview.mouseAction(translateCoords(x - leftMargin, y
-                        - topMargin), IBoardView.BOARD_HEX_CLICK, me
-                        .getModifiers());
+                m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
             } else {
-                m_bview.centerOnHex(translateCoords(x - leftMargin, y
-                        - topMargin));
+                m_bview.centerOnHex(translateCoords(x - leftMargin, y - topMargin));
             }
         }
     }

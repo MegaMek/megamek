@@ -21,8 +21,8 @@ package megamek.common;
  * @author Jay Lawson
  */
 public class TeleMissile extends Aero {
-	
-	/**
+
+    /**
      * 
      */
     private static final long serialVersionUID = -7012204077292481371L;
@@ -64,7 +64,7 @@ public class TeleMissile extends Aero {
         case(AmmoType.T_BARRACUDA):
             fuel = 30;
         name = "Barracuda-T Missile";
-        break;	
+        break;
         default:
             fuel = 30;
         }

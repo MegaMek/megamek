@@ -399,7 +399,7 @@ public class BoardSelectionDialog extends Dialog implements ActionListener,
         for (int i = 0; i < selected.length; i++) {
             String name = board;
             if (!MapSettings.BOARD_RANDOM.equals(name)
-            		&& !MapSettings.BOARD_SURPRISE.equals(name)
+                    && !MapSettings.BOARD_SURPRISE.equals(name)
                     && chkRotateBoard.getState()) {
                 name = Board.BOARD_REQUEST_ROTATION + name;
             }

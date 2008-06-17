@@ -92,6 +92,16 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         this.weaponId = weaponId;
     }
 
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 61 * hash + weaponId;
+        return hash;
+    }
+    
+    public boolean equals(Object o) {
+        return super.equals(o) && ((WeaponAttackAction)o).getWeaponId() == weaponId;
+    }
+
     public int getWeaponId() {
         return weaponId;
     }

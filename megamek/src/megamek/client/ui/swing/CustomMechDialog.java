@@ -50,7 +50,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.Client;
-import megamek.client.ui.AWT.AlertDialog;
 import megamek.client.ui.AWT.Messages;
 import megamek.common.Aero;
 import megamek.common.AmmoType;

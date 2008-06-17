@@ -185,6 +185,8 @@ public class MechDisplay extends JPanel {
         wPan.displayMech(en);
         sPan.displayMech(en);
         ePan.displayMech(en);
+
+        processMechDisplayEvent(new MechDisplayEvent(this, en, null));
     }
 
     /**

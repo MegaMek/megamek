@@ -5571,7 +5571,7 @@ public class Server implements Runnable {
 
             // Track this step's location.
             movePath.addElement(new UnitLocation(entity.getId(), curPos,
-                    curFacing));
+                    curFacing, step.getElevation()));
             
             //if the lastpos is not the same as the current position
             //then add the current position to the list of places passed through

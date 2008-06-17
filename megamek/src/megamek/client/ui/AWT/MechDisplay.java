@@ -180,6 +180,8 @@ public class MechDisplay extends BufferedPanel {
         wPan.displayMech(en);
         sPan.displayMech(en);
         ePan.displayMech(en);
+
+        processMechDisplayEvent(new MechDisplayEvent(this, en, null));
     }
 
     /**

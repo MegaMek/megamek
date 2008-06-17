@@ -24,8 +24,6 @@ import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Vector;
 
 import megamek.client.Client;
@@ -41,7 +39,7 @@ import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
 
 public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
-        BoardViewListener, ActionListener, DoneButtoned, KeyListener,
+        BoardViewListener, ActionListener, DoneButtoned,
         GameListener, Distractable {
     /**
      * 
@@ -176,16 +174,12 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
         c.weighty = 0.0;
         c.gridwidth = GridBagConstraints.REMAINDER;
         addBag(panStatus, gridbag, c);
-
-        clientgui.bv.addKeyListener(this);
-        addKeyListener(this);
     }
 
     private void addBag(Component comp, GridBagLayout gridbag,
             GridBagConstraints c) {
         gridbag.setConstraints(comp, c);
         add(comp);
-        comp.addKeyListener(this);
     }
 
     /**
@@ -271,8 +265,8 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
                         clientgui.frame);
                 vsd.setVisible(true);
 
-                // Hack warning...
-                clientgui.bv.stopScrolling();
+                // BIG FAT Hack warning...
+                if (clientgui.bv instanceof BoardView1) ((BoardView1)clientgui.bv).stopScrolling();
                 mf = Minefield.createVibrabombMF(coords, p.getId(), vsd
                         .getSetting());
                 p.setNbrMFVibra(p.getNbrMFVibra() - 1);
@@ -281,7 +275,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
             }
             client.game.addMinefield(mf);
             deployedMinefields.addElement(mf);
-            clientgui.bv.repaint();
+            clientgui.bv.refreshMinefields();
         }
 
         if (p.getNbrMFConventional() == 0 && p.getNbrMFCommand() == 0
@@ -409,18 +403,6 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
             deployV = true;
         }
     } // End public void actionPerformed(ActionEvent ev)
-
-    //
-    // KeyListener
-    //
-    public void keyPressed(KeyEvent ev) {
-    }
-
-    public void keyReleased(KeyEvent ev) {
-    }
-
-    public void keyTyped(KeyEvent ev) {
-    }
 
     private void setConventionalEnabled(int nbr) {
         butM

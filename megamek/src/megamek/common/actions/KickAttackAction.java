@@ -63,6 +63,16 @@ public class KickAttackAction extends PhysicalAttackAction {
         this.leg = leg;
     }
 
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 61 * hash + leg;
+        return hash;
+    }
+    
+    public boolean equals(Object o) {
+        return super.equals(o) && ((KickAttackAction)o).getLeg() == leg;
+    }
+
     /**
      * Damage that the specified mech does with a kick
      */

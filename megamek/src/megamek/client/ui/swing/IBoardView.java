@@ -14,42 +14,60 @@
 
 package megamek.client.ui.swing;
 
+import java.awt.Color;
+import java.awt.PopupMenu;
+import java.awt.event.KeyListener;
+import java.awt.Component;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
+import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.IDisplayable;
+import megamek.client.ui.ITilesetManager;
 import megamek.common.Coords;
+import megamek.common.Entity;
+import megamek.common.MovePath;
+import megamek.common.Player;
+import megamek.common.actions.AttackAction;
 
-public interface IBoardView {
+public interface IBoardView extends MechDisplayListener {
 
-    public static final int BOARD_HEX_CLICK = 1;
+    public void addAttack(AttackAction saa);
+    public void refreshAttacks();
+    public void removeAttacksFor(Entity ce);
 
-    public static final int BOARD_HEX_DOUBLECLICK = 2;
+    public void refreshMinefields();
+    public void markDeploymentHexesFor(Player p);
+    public void redrawEntity(Entity ce);
 
-    public static final int BOARD_HEX_DRAG = 3;
+    public void drawMovementData(Entity ce, MovePath cmd);
+    public void clearMovementData();
+    public boolean isMovingUnits();
 
-    /**
-     * @param lastCursor The lastCursor to set.
-     */
-    public abstract void setLastCursor(Coords lastCursor);
+    public void addDisplayable(IDisplayable d);
+    public void refreshDisplayables();
+
+    public void drawRuler(Coords start, Coords end, Color startColor, Color endColor);
+
+    public ITilesetManager getTilesetManager();
+
+    public Player getLocalPlayer();
+    public void setLocalPlayer(Player localPlayer);
+
+    public void zoomIn();
+    public void zoomOut();
+    public void centerOnHex(Coords position);
+
+    public void showPopup(PopupMenu popup, Coords c);
+    public void hideTooltip();
+
+    public void addKeyListener(KeyListener k);
+
+    public Component getComponent();
 
     /**
      * @return Returns the lastCursor.
      */
     public abstract Coords getLastCursor();
-
-    /**
-     * @param highlighted The highlighted to set.
-     */
-    public abstract void setHighlighted(Coords highlighted);
-
-    /**
-     * @return Returns the highlighted.
-     */
-    public abstract Coords getHighlighted();
-
-    /**
-     * @param selected The selected to set.
-     */
-    public abstract void setSelected(Coords selected);
 
     /**
      * @return Returns the selected.
@@ -62,25 +80,12 @@ public interface IBoardView {
     public abstract void setFirstLOS(Coords firstLOS);
 
     /**
-     * @return Returns the firstLOS.
-     */
-    public abstract Coords getFirstLOS();
-
-    /**
      * Determines if this Board contains the Coords, and if so, "selects" that
      * Coords.
      * 
      * @param coords the Coords.
      */
     public abstract void select(Coords coords);
-
-    /**
-     * "Selects" the specified Coords.
-     * 
-     * @param x the x coordinate.
-     * @param y the y coordinate.
-     */
-    public abstract void select(int x, int y);
 
     /**
      * Determines if this Board contains the Coords, and if so, highlights that
@@ -91,14 +96,6 @@ public interface IBoardView {
     public abstract void highlight(Coords coords);
 
     /**
-     * Highlights the specified Coords.
-     * 
-     * @param x the x coordinate.
-     * @param y the y coordinate.
-     */
-    public abstract void highlight(int x, int y);
-
-    /**
      * Determines if this Board contains the Coords, and if so, "cursors" that
      * Coords.
      * 
@@ -106,28 +103,7 @@ public interface IBoardView {
      */
     public abstract void cursor(Coords coords);
 
-    /**
-     * "Cursors" the specified Coords.
-     * 
-     * @param x the x coordinate.
-     * @param y the y coordinate.
-     */
-    public abstract void cursor(int x, int y);
-
     public abstract void checkLOS(Coords c);
-
-    /**
-     * Determines if this Board contains the (x, y) Coords, and if so, notifies
-     * listeners about the specified mouse action.
-     */
-    public abstract void mouseAction(int x, int y, int mtype, int modifiers);
-
-    /**
-     * Notifies listeners about the specified mouse action.
-     * 
-     * @param coords the Coords.
-     */
-    public abstract void mouseAction(Coords coords, int mtype, int modifiers);
 
     /**
      * Adds the specified board view listener to receive events from this view.
@@ -150,4 +126,5 @@ public interface IBoardView {
      * @param event the board event.
      */
     public abstract void processBoardViewEvent(BoardViewEvent event);
+
 }

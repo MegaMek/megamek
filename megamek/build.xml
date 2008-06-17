@@ -94,7 +94,7 @@
         </manifest>
     </jar>
   </target>
-
+  
   <target name="run" depends="compile" >
     <echo message="Running MegaMek from build directory: ${builddir}"/>
      <java classname="megamek.MegaMek" fork="true">
@@ -103,6 +103,23 @@
            <pathelement path="${builddir}"/>
            <fileset dir="${libdir}" includes="*.jar"/>
         </classpath>
+     </java>
+  </target>
+
+  <target name="run3d" depends="compile" >
+    <echo message="Running MegaMek in 3D-Mode from build directory: ${builddir}"/>
+     <java classname="megamek.MegaMek" fork="true">
+        <arg line="-log off -gui swing"/>
+        <classpath>
+           <pathelement path="${basedir}"/>
+           <pathelement path="${builddir}"/>
+           <pathelement path="${basedir}/src/"/>
+           <pathelement path="${basedir}/l10n/"/>
+           <fileset dir="${libdir}" includes="*.jar"/>
+        </classpath>
+        <jvmarg value="-Dmegamek.client.ui.AWT.boardView=megamek.client.ui.AWT.boardview3d.BoardView3D"/>
+        <jvmarg value="-Dmegamek.client.ui.AWT.boardview3d.view=0"/>
+        <jvmarg value="-Xmx512M"/>
      </java>
   </target>
 

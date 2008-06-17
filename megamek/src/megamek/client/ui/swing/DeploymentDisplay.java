@@ -196,7 +196,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         // remove C3 sprites from earlier here, or we might crash when
         // trying to draw a c3 sprite belonging to the previously selected,
         // but not deployed entity
-        clientgui.bv.clearC3Networks();
         cen = en;
         clientgui.setSelectedEntityNum(en);
         setTurnEnabled(true);
@@ -275,7 +274,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         Player p = client.getLocalPlayer();
         // mark deployment hexes
         clientgui.bv.markDeploymentHexesFor(p);
-        clientgui.bv.repaint(100);
     }
 
     /**
@@ -294,7 +292,6 @@ public class DeploymentDisplay extends StatusBarPhaseDisplay implements
         clientgui.getBoardView().highlight(null);
         clientgui.getBoardView().cursor(null);
         clientgui.bv.markDeploymentHexesFor(null);
-        clientgui.bv.repaint(100);
     }
 
     /**

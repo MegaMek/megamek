@@ -40,6 +40,7 @@ public class BoardViewEvent extends java.util.EventObject {
 
     public static final int FINISHED_MOVING_UNITS = 8;
     public static final int SELECT_UNIT = 9;
+    public static final int BOARD_HEX_POPUP = 10;
 
     private Coords c;
     private Entity entity;

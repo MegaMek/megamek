@@ -24,6 +24,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -329,7 +330,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         updateBoardSize();
 
         // tooltip
-        tipWindow = new Window(null);
+        tipWindow = new Window(new Frame());
 
         hex_size = new Dimension((int) (HEX_W * scale), (int) (HEX_H * scale));
 

@@ -2,6 +2,7 @@
 ----------------
 v0.33.29-dev (SVN)
 + Bug: restore Java 1.5 compatibility
++ Added new 3d libs to build.bat
 
 v0.33.28 (2008-06-17, 18:19 GMT+2)
 + Aeros can go up and down in atmosphere

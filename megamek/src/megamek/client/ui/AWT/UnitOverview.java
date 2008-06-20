@@ -329,7 +329,7 @@ public class UnitOverview implements Displayable {
     }
 
     private void printLine(Graphics g, int x, int y, String s) {
-        if (s == null || s.isEmpty()) return; // some Graphics objects don't like empty strings
+        if (s == null || s.trim().length() < 0) return; // some Graphics objects don't like empty strings
         g.setColor(Color.black);
         g.drawString(s, x + 1, y);
         g.drawString(s, x - 1, y);

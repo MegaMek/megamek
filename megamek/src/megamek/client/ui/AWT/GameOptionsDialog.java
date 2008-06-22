@@ -20,6 +20,8 @@
 
 package megamek.client.ui.AWT;
 
+import gov.nist.gui.TabPanel;
+
 import java.awt.BorderLayout;
 import java.awt.Button;
 import java.awt.Dialog;
@@ -67,7 +69,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
 
     private int maxOptionWidth = 0;
 
-    private Panel panOptions = new Panel();
+    private TabPanel panOptions;
+    private Panel groupPanel;
     private ScrollPane scrOptions = new ScrollPane();
 
     private TextArea texDesc = new TextArea(
@@ -96,9 +99,11 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         this.options = options;
         this.currentFrame = frame;
 
-        scrOptions.add(panOptions);
-        scrOptions.getVAdjustable().setUnitIncrement(10);
+        //scrOptions.add(panOptions);
+        //scrOptions.getVAdjustable().setUnitIncrement(10);
 
+        panOptions = new TabPanel();
+        
         texDesc.setEditable(false);
 
         setupButtons();
@@ -114,8 +119,8 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
         c.weighty = 1.0;
         c.fill = GridBagConstraints.BOTH;
         c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(scrOptions, c);
-        add(scrOptions);
+        gridbag.setConstraints(panOptions, c);
+        add(panOptions);
 
         c.weightx = 1.0;
         c.weighty = 0.0;
@@ -219,7 +224,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
 
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
-        panOptions.setLayout(gridbag);
+        //panOptions.setLayout(gridbag);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -251,10 +256,15 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
 
     private void addGroup(IOptionGroup group, GridBagLayout gridbag,
             GridBagConstraints c) {
-        Label groupLabel = new Label(group.getDisplayableName());
+        groupPanel = new Panel();
+        scrOptions = new ScrollPane();
 
-        gridbag.setConstraints(groupLabel, c);
-        panOptions.add(groupLabel);
+        groupPanel.setLayout(gridbag);
+        scrOptions.add(groupPanel);
+        scrOptions.getVAdjustable().setUnitIncrement(10);
+
+        gridbag.setConstraints(groupPanel, c);
+        panOptions.add(group.getDisplayableName(),scrOptions);
     }
 
     private void addOption(IOption option, GridBagLayout gridbag,
@@ -263,7 +273,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                 option);
 
         gridbag.setConstraints(optionComp, c);
-        panOptions.add(optionComp);
+        groupPanel.add(optionComp);
         maxOptionWidth = Math.max(maxOptionWidth,
                 optionComp.getPreferredSize().width);
 

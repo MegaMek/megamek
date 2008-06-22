@@ -5,6 +5,7 @@ v0.33.29-dev (SVN)
 + Added new 3d libs to build.bat
 + Added 3d libs to manifest.txt
 + Added boardview3d folder to build.bat
++ Added Tabs to Game Options Dialog in both Swing and AWT
 
 v0.33.28 (2008-06-17, 18:19 GMT+2)
 + Aeros can go up and down in atmosphere

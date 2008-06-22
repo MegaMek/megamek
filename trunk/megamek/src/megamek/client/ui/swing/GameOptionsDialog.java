@@ -21,9 +21,7 @@
 package megamek.client.ui.swing;
 
 import java.awt.BorderLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
@@ -31,12 +29,14 @@ import java.awt.event.WindowEvent;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -67,9 +67,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
     private int maxOptionWidth;
 
-    private JPanel panOptions = new JPanel();
+    private JTabbedPane panOptions = new JTabbedPane();
     private JScrollPane scrOptions;
-
+    private JPanel groupPanel;
+    
     private JTextArea texDesc = new JTextArea(Messages
             .getString("GameOptionsDialog.optionDescriptionHint"), 3, 35); //$NON-NLS-1$
 
@@ -96,38 +97,26 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         this.options = options;
         currentFrame = frame;
 
-        scrOptions = new JScrollPane(panOptions);
+        //scrOptions = new JScrollPane(panOptions);
 
         texDesc.setEditable(false);
         texDesc.setOpaque(false);
 
         setupButtons();
         setupPassword();
-
+        JPanel mainPanel = new JPanel();
+        
         // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        getContentPane().setLayout(gridbag);
+        mainPanel.add(panOptions);
 
-        c.insets = new Insets(1, 1, 1, 1);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.fill = GridBagConstraints.BOTH;
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        gridbag.setConstraints(scrOptions, c);
-        getContentPane().add(scrOptions);
+        mainPanel.add(new JScrollPane(texDesc));
 
-        c.weightx = 1.0;
-        c.weighty = 0.0;
-        gridbag.setConstraints(texDesc, c);
-        getContentPane().add(new JScrollPane(texDesc));
+        mainPanel.add(panPassword);
 
-        gridbag.setConstraints(panPassword, c);
-        getContentPane().add(panPassword);
+        mainPanel.add(panButtons);
 
-        gridbag.setConstraints(panButtons, c);
-        getContentPane().add(panButtons);
-
+        this.getContentPane().add(mainPanel);
+        
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 setVisible(false);
@@ -140,6 +129,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         setLocation(frame.getLocation().x + frame.getSize().width / 2
                 - getSize().width / 2, frame.getLocation().y
                 + frame.getSize().height / 2 - getSize().height / 2);
+        Dimension size = new Dimension(getSize().width*40/100,getSize().height*59/100);
+        panOptions.setPreferredSize(size);
+        panOptions.setMinimumSize(size);
+        panOptions.setMaximumSize(size);
 
     }
 
@@ -217,27 +210,17 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         panOptions.removeAll();
         optionComps = new Vector<DialogOptionComponent>();
 
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panOptions.setLayout(gridbag);
-
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(1, 1, 0, 0);
-        c.ipadx = 0;
-        c.ipady = 0;
-
         for (Enumeration<IOptionGroup> i = options.getGroups(); i
                 .hasMoreElements();) {
             IOptionGroup group = i.nextElement();
 
-            addGroup(group, gridbag, c);
+            addGroup(group);
 
             for (Enumeration<IOption> j = group.getOptions(); j
                     .hasMoreElements();) {
                 IOption option = j.nextElement();
 
-                addOption(option, gridbag, c);
+                addOption(option);
             }
         }
 
@@ -249,21 +232,20 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         validate();
     }
 
-    private void addGroup(IOptionGroup group, GridBagLayout gridbag,
-            GridBagConstraints c) {
-        JLabel groupLabel = new JLabel(group.getDisplayableName());
+    private void addGroup(IOptionGroup group) {
+        groupPanel = new JPanel();
+        scrOptions = new JScrollPane(groupPanel);
+        groupPanel.setLayout(new BoxLayout(groupPanel,BoxLayout.Y_AXIS));
+        scrOptions.setAutoscrolls(true);
 
-        gridbag.setConstraints(groupLabel, c);
-        panOptions.add(groupLabel);
+        panOptions.addTab(group.getDisplayableName(),scrOptions);
     }
 
-    private void addOption(IOption option, GridBagLayout gridbag,
-            GridBagConstraints c) {
+    private void addOption(IOption option) {
         DialogOptionComponent optionComp = new DialogOptionComponent(this,
                 option);
 
-        gridbag.setConstraints(optionComp, c);
-        panOptions.add(optionComp);
+        groupPanel.add(optionComp);
         maxOptionWidth = Math.max(maxOptionWidth,
                 optionComp.getPreferredSize().width);
 
@@ -483,29 +465,10 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         butCancel.addActionListener(this);
         butDefaults.addActionListener(this);
 
-        // layout
-        GridBagLayout gridbag = new GridBagLayout();
-        GridBagConstraints c = new GridBagConstraints();
-        panButtons.setLayout(gridbag);
-
-        c.insets = new Insets(5, 5, 5, 5);
-        c.weightx = 1.0;
-        c.weighty = 1.0;
-        c.fill = GridBagConstraints.VERTICAL;
-        c.ipadx = 20;
-        c.ipady = 5;
-        c.gridwidth = 1;
-        c.anchor = GridBagConstraints.EAST;
-        gridbag.setConstraints(butOkay, c);
         panButtons.add(butOkay);
 
-        c.anchor = GridBagConstraints.WEST;
-        gridbag.setConstraints(butCancel, c);
         panButtons.add(butCancel);
 
-        c.gridwidth = GridBagConstraints.REMAINDER;
-        c.anchor = GridBagConstraints.CENTER;
-        gridbag.setConstraints(butDefaults, c);
         panButtons.add(butDefaults);
     }
 

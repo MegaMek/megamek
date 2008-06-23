@@ -2131,11 +2131,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         }
         
         //if in atmosphere, limit acceleration to 2x safe thrust
-        if(vel == (2 * a.getWalkMP())) {
+        if(!client.game.getBoard().inSpace() && vel == (2 * a.getWalkMP())) {
             setAccEnabled(false);
         }
         //velocity next will get halved before next turn so allow up to 4 times
-        if(veln == (4 * a.getWalkMP())) {
+        if(!client.game.getBoard().inSpace() && veln == (4 * a.getWalkMP())) {
             setAccNEnabled(false);
         }
         

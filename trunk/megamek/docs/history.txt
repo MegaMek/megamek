@@ -7,6 +7,7 @@ v0.33.29-dev (SVN)
 + Added boardview3d folder to build.bat
 + Added Tabs to Game Options Dialog in both Swing and AWT
 + Bug 2000044: Velocity in Space
++ Bug 2001104: Screen launcher damage scale
 
 v0.33.28 (2008-06-17, 18:19 GMT+2)
 + Aeros can go up and down in atmosphere

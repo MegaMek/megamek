@@ -104,6 +104,7 @@ public class ScreenLauncherHandler extends AmmoWeaponHandler {
             ToHitData toHit = new ToHitData();
             toHit.setHitTable(ToHitData.HIT_NORMAL);
             HitData hit = entity.rollHitLocation(toHit.getHitTable(), ToHitData.SIDE_FRONT);
+            hit.setCapital(false);
             vPhaseReport.addAll( server.damageEntity(entity, hit, attackValue));
             server.creditKill(entity, ae);
         }

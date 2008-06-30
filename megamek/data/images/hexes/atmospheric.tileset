@@ -892,7 +892,7 @@ super * "bridge:*:62;bridge_cf:*;bridge_elev:*" "" "bridge/bridge_62.gif"
 super * "bridge:*:63;bridge_cf:*;bridge_elev:*" "" "bridge/bridge_63.gif"
 
 super * "fire:1" "" "boring/fire.gif"
-super * "fire:2" "" "boring/fire.gif"
+super * "fire:2" "" "transparent/inferno.png"
 super * "smoke:1" "" "transparent/light_smoke.png"
 super * "smoke:2" "" "transparent/heavy_smoke.png"
 

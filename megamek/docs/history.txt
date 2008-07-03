@@ -9,6 +9,7 @@ v0.33.29-dev (SVN)
 + Bug 2000044: Velocity in Space
 + Bug 2001104: Screen launcher damage scale
 + Added 3d start batch file for dos users
++ Avatar Prime had Rifleman image
 
 v0.33.28 (2008-06-17, 18:19 GMT+2)
 + Aeros can go up and down in atmosphere

@@ -1233,7 +1233,7 @@ public class Compute {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Can't target Mech with active stealth armor as secondary target");
         }
 
-        if (curInFrontArc) {
+        if (curInFrontArc || attacker instanceof BattleArmor) {
             return new ToHitData(1, "secondary target modifier");
         }
         return new ToHitData(2, "secondary target modifier");

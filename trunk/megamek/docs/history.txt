@@ -11,6 +11,7 @@ v0.33.29-dev (SVN)
 + Added 3d start batch file for dos users
 + Avatar Prime had Rifleman image
 + Bug 2008251: BA secondary targets
++ Warship icons for Aegis, Avatar, Farragut, Fredrasa, Kimagure, Lola (I-III), Luxor, Monsoon, Riga, Sovetskii Soyuz, and Whirlwind
 
 v0.33.28 (2008-06-17, 18:19 GMT+2)
 + Aeros can go up and down in atmosphere

@@ -2345,6 +2345,9 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
             return;
         }
         
+        if(client.game.getBoard().inSpace())
+            return;
+        
         if(!(ce instanceof Aero))
             return;
         
@@ -2353,10 +2356,15 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements
         if(a.isSpheroid())
             return;
         
-        if(!a.didFailManeuver() && (null == cmd || !cmd.contains(MovePath.STEP_MANEUVER))) {
+        if(a.didFailManeuver())
+            setManeuverEnabled(false);
+        
+        
+        if(null != cmd  && cmd.contains(MovePath.STEP_MANEUVER)) {
+            setManeuverEnabled(false);
+        } else {
             setManeuverEnabled(true);
         }
-        return;
     }
 
     private synchronized void updateLoadButtons() {

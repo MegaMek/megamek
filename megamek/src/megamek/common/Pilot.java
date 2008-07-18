@@ -46,6 +46,18 @@ public class Pilot implements Serializable {
     private boolean koThisRound; // did I go KO this game round?
 
     private PilotOptions options = new PilotOptions();
+    
+    private static double[][] bvMod = new double[][] {
+            {2.8,  2.63, 2.45, 2.28, 2.01, 1.87, 1.78, 1.69, 1.59},
+            {2.56, 2.4,  2.24, 2.08, 1.84, 1.63, 1.6,  1.54, 1.46},
+            {2.24, 2.1,  1.96, 1.82, 1.61, 1.4,  1.33, 1.35, 1.27},
+            {1.92, 1.8,  1.68, 1.56, 1.38, 1.2,  1.14, 1.08, 1.07},
+            {1.6,  1.5,  1.4,  1.3,  1.15, 1.0,  0.95, 0.9,  0.85},
+            {1.54, 1.35, 1.26, 1.17, 1.04, 0.90, 0.86, 0.81, 0.77},
+            {1.46, 1.36, 1.19, 1.11, 0.98, 0.85, 0.81, 0.77, 0.72},
+            {1.37, 1.28, 1.2,  1.04, 0.92, 0.80, 0.76, 0.72, 0.68},
+            {1.28, 1.20, 1.12, 1.04, 0.86, 0.75, 0.71, 0.68, 0.64},
+    };
 
     /** The number of hits that a pilot can take before he dies. */
     static public final int DEATH = 6;
@@ -499,43 +511,8 @@ public class Pilot implements Serializable {
      * @return a multiplier to the BV of whatever unit the pilot is piloting.
      */
     public static double getBVSkillMultiplier(int gunnery, int piloting) {
-        double pilotingMod = 1.0;
-        double gunneryMod = 1.0;
-
-        switch (gunnery) {
-            case 0:
-                gunneryMod += 0.82;
-                break;
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-                gunneryMod += 0.2 * (4 - gunnery);
-                break;
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-                gunneryMod += 0.05 * (3 - gunnery);
-        }
-        switch (piloting) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-                pilotingMod += 0.1 * (6 - piloting);
-                break;
-            case 4:
-                pilotingMod += 0.15;
-                break;
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-                pilotingMod += 0.05 * (5 - piloting);
-                break;
-        }
-        return Math.round(gunneryMod * pilotingMod * 100) / 100.0;
+        System.out.println(bvMod[gunnery][piloting]);
+        return bvMod[gunnery][piloting];
     }
 
     public int modifyPhysicalDamagaForMeleeSpecialist() {

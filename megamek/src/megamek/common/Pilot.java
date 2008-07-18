@@ -511,7 +511,6 @@ public class Pilot implements Serializable {
      * @return a multiplier to the BV of whatever unit the pilot is piloting.
      */
     public static double getBVSkillMultiplier(int gunnery, int piloting) {
-        System.out.println(bvMod[gunnery][piloting]);
         return bvMod[gunnery][piloting];
     }
 

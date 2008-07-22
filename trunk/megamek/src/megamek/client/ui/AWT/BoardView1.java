@@ -176,7 +176,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     private Font font_minefield = FONT_12;
 
     IGame game;
-
+    private Frame frame;
+    
     private Point mousePos = new Point();
     Rectangle view = new Rectangle();
     Point offset = new Point();
@@ -298,9 +299,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     /**
      * Construct a new board view for the specified game
      */
-    public BoardView1(IGame game) throws java.io.IOException {
+    public BoardView1(IGame game, Frame frame) throws java.io.IOException {
         this.game = game;
-
+        this.frame = frame;
+        
         tileManager = new TilesetManager(this);
 
         game.addGameListener(gameListener);
@@ -1468,12 +1470,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             // adjust horizontal location for the tipWindow if it goes off the
             // frame
-            if (scroller.getLocationOnScreen().x + scroller.getSize().width < tipLoc.x
+            if (frame.getLocation().x + frame.getSize().width < tipLoc.x
                     + tipWindow.getSize().width + 10) {
-                if (scroller.getSize().width > tipWindow.getSize().width) {
+                if (frame.getSize().width > tipWindow.getSize().width) {
                     // bound it by the right edge of the frame
                     tipLoc.x -= tipLoc.x + tipWindow.getSize().width + 10
-                            - scroller.getSize().width - scroller.getLocationOnScreen().x;
+                            - frame.getSize().width - frame.getLocation().x;
                 } else {
                     // too big to fit, left justify to the frame (roughly).
                     // how do I extract the first term of HEX_SIZE to use
@@ -2358,7 +2360,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                             .getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
                 }
             }
-            AlertDialog alert = new AlertDialog(null, Messages
+            AlertDialog alert = new AlertDialog(frame, Messages
                     .getString("BoardView1.LOSTitle"), //$NON-NLS-1$
                     message.toString(), false);
             alert.setVisible(true);
@@ -5543,7 +5545,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 names[loop] = entities.elementAt(loop).getDisplayName();
             }
             SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
-                    null,
+                    this.frame,
                     Messages.getString("BoardView1.ChooseEntityDialog.title"), //$NON-NLS-1$
                     Messages
                             .getString(

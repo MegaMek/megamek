@@ -147,7 +147,7 @@ public class BoardEditor extends Container implements ItemListener,
      */
     public BoardEditor() {
         try {
-            bv = new BoardView1(game);
+            bv = new BoardView1(game, frame);
         } catch (final IOException e) {
             new AlertDialog(
                     frame,

@@ -16,7 +16,6 @@
 package megamek.client.ui.swing;
 
 import java.awt.AlphaComposite;
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -51,6 +50,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneLayout;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -4661,9 +4661,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (scrollpane != null) return scrollpane;
 
         // Place the board viewer in a set of scrollbars.
-        scrollpane = new JScrollPane();
-        scrollpane.setLayout(new BorderLayout());
-        scrollpane.add(this, BorderLayout.CENTER);
+        scrollpane = new JScrollPane(this);
+        scrollpane.setLayout(new ScrollPaneLayout());
 
         return scrollpane;
     }

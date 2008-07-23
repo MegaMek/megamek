@@ -14,6 +14,7 @@ v0.33.29-dev (SVN)
 + Warship icons for Aegis, Avatar, Farragut, Fredrasa, Kimagure, Lola (I-III), Luxor, Monsoon, Riga, Sovetskii Soyuz, and Whirlwind
 + Corrected pilot skill BV multiplier
 + Bug: Cntl+Click ruler not working
++ Fix Swing UI
  
 v0.33.28 (2008-06-17, 18:19 GMT+2)
 + Aeros can go up and down in atmosphere

@@ -15,6 +15,7 @@ v0.33.29-dev (SVN)
 + Corrected pilot skill BV multiplier
 + Bug: Cntl+Click ruler not working
 + Fix Swing UI
++ Bug: Rotary ACs not classified as ballistic
  
 v0.33.28 (2008-06-17, 18:19 GMT+2)
 + Aeros can go up and down in atmosphere

@@ -34,7 +34,7 @@ public abstract class UACWeapon extends AmmoWeapon {
      */
     public UACWeapon() {
         super();
-        this.flags |= WeaponType.F_DIRECT_FIRE;
+        this.flags |= WeaponType.F_DIRECT_FIRE|WeaponType.F_BALLISTIC;
         this.ammoType = AmmoType.T_AC_ULTRA;
         String[] modes = { "Single", "Ultra" };
         this.setModes(modes);

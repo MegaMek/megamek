@@ -20628,6 +20628,10 @@ public class Server implements Runnable {
      * @param damage - the <code>int</code> amount of damage.
      */
     public void damageInfantryIn(Building bldg, int damage) {
+        
+        if ( bldg == null ) {
+            return;
+        }
         // Calculate the amount of damage the infantry will sustain.
         float percent = 0.0f;
         Report r;

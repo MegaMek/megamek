@@ -71,6 +71,7 @@ public class MiscType extends EquipmentType {
     public static final long F_ENVIRONMENTAL_SEALING = 0x20000000000L;
     public static final long F_ARMORED_CHASSIS = 0x40000000000L;
     public static final long F_TRACTOR_MODIFICATION = 0x80000000000L;    
+    public static final long F_INDUSTRIAL_TSM = 1L << 49;
 
     // Secondary Flags for Physical Weapons
     public static final int S_CLUB = 0x00000001; // BMR

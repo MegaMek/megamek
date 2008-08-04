@@ -23083,7 +23083,6 @@ public class Server implements Runnable {
                     r.addDesc(game.getEntity(aId));
                     handleAttackReports.addElement(r);
                     ah.setAnnouncedEntityFiring(true);
-                    
                 }
                 lastAttackerId = aId;
                 boolean keep = ah.handle(game.getPhase(), handleAttackReports);

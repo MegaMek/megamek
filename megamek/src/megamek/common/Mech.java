@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -704,6 +705,16 @@ public abstract class Mech extends Entity implements Serializable {
         for (Mounted m : getEquipment()) {
             if (m.getType() instanceof MiscType
                     && m.getType().hasFlag(MiscType.F_TSM)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean hasIndustrialTSM() {
+        for (Mounted m : getEquipment()) {
+            if (m.getType() instanceof MiscType
+                    && m.getType().hasFlag(MiscType.F_INDUSTRIAL_TSM)) {
                 return true;
             }
         }
@@ -2378,16 +2389,50 @@ public abstract class Mech extends Entity implements Serializable {
         double weaponsBVFront = 0;
         double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
-
+        // first, add up front-faced and rear-faced unmodified BV,
+        // to know wether front- or rear faced BV should be halved
+        double bvFront = 0, bvRear = 0;
+        ArrayList<Mounted> weapons = this.getWeaponList();
+        for (Mounted weapon : weapons) {
+            WeaponType wtype = (WeaponType) weapon.getType();
+            double dBV = wtype.getBV(this);
+            // don't count destroyed equipment
+            if (weapon.isDestroyed())
+                continue;
+            // don't count AMS, it's defensive
+            if (wtype.hasFlag(WeaponType.F_AMS)) {
+                continue;
+            }
+            // calc MG Array here:
+            if (wtype.hasFlag(WeaponType.F_MGA)) {
+                double mgaBV = 0;
+                for (Mounted possibleMG : this.getWeaponList()) {
+                    if (possibleMG.getType().hasFlag(WeaponType.F_MG)
+                            && possibleMG.getLocation() == weapon
+                                    .getLocation()) {
+                        mgaBV += possibleMG.getType().getBV(this);
+                    }
+                }
+                dBV = mgaBV * 0.67;
+            }
+            if (weapon.isRearMounted())
+                bvRear += dBV;
+            else
+                bvFront += dBV;
+        }
+        boolean halveRear = true;
+        if (bvFront <= bvRear)
+            halveRear = false;
+        
         if (maximumHeat <= mechHeatEfficiency) {
             // count all weapons equal, adjusting for rear-firing and excessive
             // ammo
-            for (Mounted mounted : getWeaponList()) {
-                WeaponType wtype = (WeaponType) mounted.getType();
+            for (Mounted weapon : getWeaponList()) {
+                WeaponType wtype = (WeaponType) weapon.getType();
                 double dBV = wtype.getBV(this);
 
                 // don't count destroyed equipment
-                if (mounted.isDestroyed())
+                if (weapon.isDestroyed())
                     continue;
 
                 // don't count AMS, it's defensive
@@ -2399,7 +2444,7 @@ public abstract class Mech extends Entity implements Serializable {
                     double mgaBV = 0;
                     for (Mounted possibleMG : this.getWeaponList()) {
                         if (possibleMG.getType().hasFlag(WeaponType.F_MG)
-                                && possibleMG.getLocation() == mounted
+                                && possibleMG.getLocation() == weapon
                                         .getLocation()) {
                             mgaBV += possibleMG.getType().getBV(this);
                         }
@@ -2413,26 +2458,30 @@ public abstract class Mech extends Entity implements Serializable {
                         dBV *= 1.25;
                 }
                 // artemis bumps up the value
-                if (mounted.getLinkedBy() != null) {
-                    Mounted mLinker = mounted.getLinkedBy();
+                if (weapon.getLinkedBy() != null) {
+                    Mounted mLinker = weapon.getLinkedBy();
                     if (mLinker.getType() instanceof MiscType
                             && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                         dBV *= 1.2;
                     }
                 }
-
-                if (mounted.isRearMounted()) {
-                    weaponsBVRear += dBV;
-                } else {
-                    weaponsBVFront += dBV;
+                // half for being rear mounted (or front mounted, when more rear-
+                // than front-mounted un-modded BV
+                if ((weapon.isRearMounted() && halveRear) || (!weapon.isRearMounted() && !halveRear)) {
+                    dBV /= 2;
                 }
+                weaponBV += dBV;
             }
         } else {
-            // count weapons at full BV until heatefficiency is reached or
-            // passed with one weapon
-            int heatAdded = 0;
-            ArrayList<Mounted> weapons = this.getWeaponList();
-            Collections.sort(weapons, new WeaponComparator());
+            // this will count heat-generating weapons at full modified BV until 
+            // heatefficiency is reached or passed with one weapon
+            
+            // here we store the modified BV and heat of all heat-using weapons,
+            // to later be sorted by BV
+            ArrayList<double[]> heatBVs = new ArrayList<double[]>();
+            // BVs of non-heat-using weapons
+            ArrayList<Double> nonHeatBVs = new ArrayList<Double>();
+            // loop through weapons, calc their modified BV
             for (Mounted weapon : weapons) {
                 WeaponType wtype = (WeaponType) weapon.getType();
                 double dBV = wtype.getBV(this);
@@ -2467,23 +2516,51 @@ public abstract class Mech extends Entity implements Serializable {
                         dBV *= 1.2;
                     }
                 }
-                if (heatAdded >= mechHeatEfficiency && wtype.getHeat() > 0)
+                // half for being rear mounted (or front mounted, when more rear-
+                // than front-mounted un-modded BV
+                if ((weapon.isRearMounted() && halveRear) || (!weapon.isRearMounted() && !halveRear)) {
                     dBV /= 2;
-                if (weapon.isRearMounted()) {
-                    weaponsBVRear += dBV;
-                } else {
-                    weaponsBVFront += dBV;
                 }
-                heatAdded += ((WeaponType) weapon.getType()).getHeat();
+                int heat = ((WeaponType)weapon.getType()).getHeat();
+                double[] weaponValues = new double[2];
+                weaponValues[0] = dBV;
+                weaponValues[1] = heat;
+                if (heat > 0) {
+                    // store heat and BV, for sorting a few lines down
+                    weaponValues[0] = dBV;
+                    weaponValues[1] = heat;
+                    heatBVs.add(weaponValues);
+                }
+                else {
+                    nonHeatBVs.add(dBV);
+                }
             }
+            // sort the heat-using weapons by modified BV
+            Collections.sort(heatBVs, new Comparator<double[]>() {
+                public int compare(double[] obj1, double[] obj2) {
+                    // if same BV, lower heat first
+                    if (obj1[0] == obj2[0])
+                        return new Double(obj1[1] - obj2[1]).intValue();
+                    // higher BV first
+                    return new Double(obj2[1] - obj1[1]).intValue();
+                }
+            });
+            // count heat-free weapons at full modified BV
+            for (double bv : nonHeatBVs) {
+                weaponBV += bv;
+            }
+            // count heat-generating weapons at full modified BV until heatefficiency is reached or
+            // passed with one weapon
+            int heatAdded = 0;
+            for (double[] weaponValues : heatBVs) {
+                double dBV = weaponValues[0];
+                if (heatAdded >= mechHeatEfficiency)
+                    dBV /= 2;
+                heatAdded += weaponValues[1];
+                weaponBV += dBV;
+            }             
         }
-        if (weaponsBVFront > weaponsBVRear) {
-            weaponBV += weaponsBVFront;
-            weaponBV += (weaponsBVRear * 0.5);
-        } else {
-            weaponBV += weaponsBVRear;
-            weaponBV += (weaponsBVFront * 0.5);
-        }
+        
         // add offensive misc. equipment BV (everything except AMS, A-Pod, ECM -
         // BMR p152)
         double oEquipmentBV = 0;
@@ -2600,6 +2677,8 @@ public abstract class Mech extends Entity implements Serializable {
         // add tonnage, adjusted for TSM
         if (hasTSM())
             weaponBV += getWeight() * 1.5;
+        else if (hasIndustrialTSM())
+            weaponBV += getWeight() * 1.15;
         else
             weaponBV += getWeight();
 

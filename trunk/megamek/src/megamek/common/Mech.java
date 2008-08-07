@@ -2936,7 +2936,7 @@ public abstract class Mech extends Entity implements Serializable {
             if (getGyroType() == Mech.GYRO_HEAVY_DUTY) {
                 if (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO,
                         Mech.LOC_CT) == 1)
-                    roll.addModifier(2, "HD Gyro damaged once");
+                    roll.addModifier(1, "HD Gyro damaged once");
                 else
                     roll.addModifier(3, "HD Gyro damaged twice");
             } else

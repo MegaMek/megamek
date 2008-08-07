@@ -18,6 +18,7 @@ v0.33.29-dev (SVN)
 + Bug: Rotary ACs not classified as ballistic
 + Bug: Null building being passed for a damage check to infantry in a building
 + Updated Mech BV calculation to upcoming TM errata
++ Bug: Heavy Duty Gyro causing +2 PSR on first critical hit instead of +1
 
 v0.33.28 (2008-06-17, 18:19 GMT+2)
 + Aeros can go up and down in atmosphere

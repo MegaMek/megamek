@@ -101,13 +101,19 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             return 1;
         }
         int shotsHit;
+        int nMod = 0;
+        if(bGlancing) 
+            nMod -= 4;
+        if(game.getPlanetaryConditions().hasEMI())
+            nMod -= 2;
         switch (howManyShots) {
             case 1:
                 shotsHit = 1;
                 break;
             default:
                 shotsHit = allShotsHit() ? howManyShots : Compute
-                        .missilesHit(howManyShots);
+                            .missilesHit(howManyShots, nMod);
+            
                 // report number of shots that hit only when weapon doesn't jam
                 if (!weapon.isJammed()) {
                     r = new Report(3325);
@@ -171,14 +177,18 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         // infantry get hit by all shots
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = wtype.getDamage() * howManyShots;
-            toReturn = Math.ceil(toReturn/10);
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
             if (howManyShots > 1) {
                 //ok, more than 1 shot, +1 for cluster
                 toReturn += 1;
             }
-        }
-        if (bGlancing)
+        }if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
+        }
+        
+        if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
+            toReturn = (int) Math.floor(toReturn * .75);
+        }
         return (int)toReturn;
     }
     

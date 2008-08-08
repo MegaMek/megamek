@@ -53,5 +53,6 @@ public class CLUAC5 extends UACWeapon {
         this.medAV = 7;
         this.longAV = 7;
         this.maxRange = RANGE_LONG;
+        this.explosionDamage = damage;
     }
 }

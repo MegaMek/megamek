@@ -59,10 +59,17 @@ public abstract class TurnOrdered implements Serializable {
     }
 
     public int getMultiTurns(IGame game) {
-        return (int) Math
-                .ceil(((double) turns_multi)
-                        / ((double) game.getOptions().intOption(
-                                "inf_proto_move_multi")));
+        
+        int turns = 0;
+        
+        if ( game.getOptions().booleanOption("vehicle_lance_movement") ) {
+            turns += game.getOptions().intOption("vehicle_lance_movement_number");
+        }
+        
+        if ( game.getOptions().booleanOption("protos_move_multi") || game.getOptions().booleanOption("inf_move_multi") ) {
+            turns += game.getOptions().intOption("inf_proto_move_multi");
+        }
+        return (int) Math.ceil(((double) turns_multi)/ (double)turns); 
     }
     
     public int getSpaceStationTurns() {

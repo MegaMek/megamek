@@ -21,6 +21,11 @@ package megamek.common.weapons;
  * @author Jay Lawson
  */
 public abstract class NavalPPCWeapon extends EnergyWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 414010600231978506L;
+
     public NavalPPCWeapon() {
         super();
         this.atClass = CLASS_CAPITAL_PPC;

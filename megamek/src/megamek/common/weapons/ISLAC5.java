@@ -45,5 +45,6 @@ public class ISLAC5 extends LACWeapon {
         this.criticals = 2;
         this.bv = 62;
         this.cost = 150000;
+        this.explosionDamage = damage;
     }
 }

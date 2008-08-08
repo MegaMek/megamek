@@ -34,10 +34,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import megamek.client.ui.ITilesetManager;
 import megamek.client.ui.AWT.util.ImageFileFactory;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.util.RotateFilter;
-import megamek.client.ui.ITilesetManager;
 import megamek.common.Entity;
 import megamek.common.IBoard;
 import megamek.common.IGame;
@@ -375,7 +375,9 @@ public class TilesetManager implements IPreferenceChangeListener, ITilesetManage
         hexTileset.loadAllImages(comp, tracker);
     }
 
-    // Loads a preview image of the unit into the BufferedPanel.
+    /**
+     *  Loads a preview image of the unit into the BufferedPanel.
+     */
     public Image loadPreviewImage(Entity entity, Image camo, int tint,
             Component bp) {
         Image base = mechTileset.imageFor(entity, comp);

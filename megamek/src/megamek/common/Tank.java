@@ -98,7 +98,7 @@ public class Tank extends Entity implements Serializable {
     private boolean driverHitPS = false;
     private boolean commanderHitPS = false;
     private boolean crewHitPS = false;
-
+    
     public boolean hasNoTurret() {
         return m_bHasNoTurret;
     }
@@ -114,13 +114,24 @@ public class Tank extends Entity implements Serializable {
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
+        if(null != game) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            if(weatherMod != 0) {
+                j = Math.max(j + weatherMod, 0);
+            } 
+        }
+        
+        if ( hasModularArmor() ) {
+            j--;
+        }
+        
         if (gravity)
             j = applyGravityEffectsOnMP(j);
-        if (game != null && !ignoreheat) {
-            int i = game.getTemperatureDifference();
-            return Math.max(j - i, 0);
-        }
+        
+        
         return j;
+        
+        
     }
 
     public boolean isTurretLocked() {
@@ -253,14 +264,15 @@ public class Tank extends Entity implements Serializable {
         
         if(hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
             return true;
-        
+
         switch (movementMode) {
             case IEntityMovementMode.TRACKED:
                 return hex.terrainLevel(Terrains.WOODS) > 1
                         || (hex.terrainLevel(Terrains.WATER) > 0 && !hex
                                 .containsTerrain(Terrains.ICE))
                         || hex.containsTerrain(Terrains.JUNGLE)
-                        || hex.terrainLevel(Terrains.MAGMA) > 1;
+                        || hex.terrainLevel(Terrains.MAGMA) > 1
+                        || hex.terrainLevel(Terrains.ROUGH) > 1;
             case IEntityMovementMode.WHEELED:
                 return hex.containsTerrain(Terrains.WOODS)
                         || hex.containsTerrain(Terrains.ROUGH)
@@ -269,12 +281,13 @@ public class Tank extends Entity implements Serializable {
                         || hex.containsTerrain(Terrains.RUBBLE)
                         || hex.containsTerrain(Terrains.MAGMA)
                         || hex.containsTerrain(Terrains.JUNGLE)
-                        || hex.containsTerrain(Terrains.SNOW)
+                        || hex.terrainLevel(Terrains.SNOW) > 1
                         || hex.terrainLevel(Terrains.GEYSER) == 2;
             case IEntityMovementMode.HOVER:
                 return hex.containsTerrain(Terrains.WOODS)
                         || hex.containsTerrain(Terrains.JUNGLE)
-                        || hex.terrainLevel(Terrains.MAGMA) > 1;
+                        || hex.terrainLevel(Terrains.MAGMA) > 1
+                        || hex.terrainLevel(Terrains.ROUGH) > 1;
             case IEntityMovementMode.NAVAL:
             case IEntityMovementMode.HYDROFOIL:
                 return (hex.terrainLevel(Terrains.WATER) <= 0)
@@ -391,16 +404,31 @@ public class Tank extends Entity implements Serializable {
         switch (mounted.getLocation()) {
             case LOC_FRONT:
             case LOC_TURRET:
+                if(game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                    return Compute.ARC_TURRET;
+                }
             case LOC_BODY:
                 // Body mounted C3Ms fire into the front arc,
                 // per
                 // http://forums.classicbattletech.com/index.php/topic,9400.0.html
+                if(game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                    return Compute.ARC_NOSE;
+                }
                 return Compute.ARC_FORWARD;
             case LOC_RIGHT:
+                if(game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                    return Compute.ARC_RIGHT_BROADSIDE;
+                }
                 return Compute.ARC_RIGHTSIDE;
             case LOC_LEFT:
+                if(game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                    return Compute.ARC_LEFT_BROADSIDE;
+                }
                 return Compute.ARC_LEFTSIDE;
             case LOC_REAR:
+                if(game.getOptions().booleanOption("tacops_vehicle_arcs")) {
+                    return Compute.ARC_AFT;
+                }
                 return Compute.ARC_REAR;
             default:
                 return Compute.ARC_360;
@@ -444,6 +472,9 @@ public class Tank extends Entity implements Serializable {
             motiveMod = 1;
             bRear = true;
         }        
+        if(game.getOptions().booleanOption("tacops_vehicle_effective")) {
+            motiveMod = 0;
+        }
         HitData rv = new HitData(nArmorLoc);
         boolean bHitAimed = false;
         if ((aimedLocation != LOC_NONE)
@@ -487,22 +518,32 @@ public class Tank extends Entity implements Serializable {
             case 7:
                 break;
             case 8:
-                if (bSide) {
+                if (bSide && !game.getOptions().booleanOption("tacops_vehicle_effective")) {
                     rv.setEffect(HitData.EFFECT_CRITICAL);
                 }
                 break;
             case 9:
-                if (bSide) {
-                    rv = new HitData(LOC_REAR, false,
-                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
-                } else if (bRear) {
-                    rv = new HitData(LOC_RIGHT, false,
-                            HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                if(game.getOptions().booleanOption("tacops_vehicle_effective")) {
+                    if (bSide) {
+                        rv = new HitData(LOC_REAR);
+                    } else if (bRear) {
+                        rv = new HitData(LOC_RIGHT);
+                    } else {
+                        rv = new HitData(LOC_LEFT);
+                    }
                 } else {
-                    rv = new HitData(LOC_LEFT, false,
+                    if (bSide) {
+                        rv = new HitData(LOC_REAR, false,
+                                HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else if (bRear) {
+                        rv = new HitData(LOC_RIGHT, false,
                             HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    } else {
+                        rv = new HitData(LOC_LEFT, false,
+                                HitData.EFFECT_VEHICLE_MOVE_DAMAGED);
+                    }
+                    rv.setMotiveMod(motiveMod);
                 }
-                rv.setMotiveMod(motiveMod);
                 break;
             case 10:
                 if (!m_bHasNoTurret) {
@@ -649,6 +690,13 @@ public class Tank extends Entity implements Serializable {
                 if (mLinker.getType() instanceof MiscType
                         && mLinker.getType().hasFlag(MiscType.F_ARTEMIS)) {
                     dBV *= 1.2;
+                }
+            }
+
+            if (mounted.getLinkedBy() != null) {
+                Mounted mLinker = mounted.getLinkedBy();
+                if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                    dBV *= 1.15;
                 }
             }
 
@@ -835,11 +883,22 @@ public class Tank extends Entity implements Serializable {
         if (driverHit)
             prd.addModifier(2, "driver injured");
 
+        //are we wheeled and in light snow?
+        IHex hex = game.getBoard().getHex(getPosition());
+        if(null != hex && getMovementMode() == IEntityMovementMode.WHEELED && hex.terrainLevel(Terrains.SNOW) == 1) {
+            prd.addModifier(1, "thin snow");
+        }
+        
         // VDNI bonus?
         if (getCrew().getOptions().booleanOption("vdni")
                 && !getCrew().getOptions().booleanOption("bvdni")) {
             prd.addModifier(-1, "VDNI");
         }
+        
+        if ( hasModularArmor() ) {
+            prd.addModifier(1,"Modular Armor");
+        }
+
         return prd;
     }
 
@@ -1146,7 +1205,7 @@ public class Tank extends Entity implements Serializable {
     }
     
     public boolean canGoHullDown() {
-        return game.getOptions().booleanOption("hull_down");
+        return game.getOptions().booleanOption("tacops_hull_down");
     }
 
     public void setOnFire(boolean inferno) {
@@ -1479,4 +1538,29 @@ public class Tank extends Entity implements Serializable {
         }
     }
 
+    public boolean hasModularArmor() {
+        
+        for (Mounted mount : this.getEquipment()) {
+            if (!mount.isDestroyed()
+                    && mount.getType() instanceof MiscType 
+                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR))
+                return true;
+        }
+
+        return false;
+        
+    }
+
+    public boolean hasModularArmor(int loc) {
+        
+        for (Mounted mount : this.getEquipment()) {
+            if (mount.getLocation() == loc 
+                    && mount.getType() instanceof MiscType 
+                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR))
+                return true;
+        }
+
+        return false;
+        
+    }
 }

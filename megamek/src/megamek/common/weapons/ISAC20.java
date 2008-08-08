@@ -53,5 +53,6 @@ public class ISAC20 extends ACWeapon {
         this.cost = 300000;
         this.shortAV = 20;
         this.maxRange = RANGE_SHORT;
+        this.explosionDamage = damage;
     }
 }

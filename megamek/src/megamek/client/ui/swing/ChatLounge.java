@@ -118,9 +118,13 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JLabel labConventional;
     private JLabel labCommandDetonated;
     private JLabel labVibrabomb;
+    private JLabel labActive;
+    private JLabel labInferno;
     private JTextField fldConventional;
     private JTextField fldCommandDetonated;
     private JTextField fldVibrabomb;
+    private JTextField fldActive;
+    private JTextField fldInferno;
     private JButton butMinefield;
 
     private JButton butOptions;
@@ -131,6 +135,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
     private JList lisBoardsSelected;
     private JButton butChangeBoard;
     private JPanel panBoardSettings;
+    private JButton butConditions;
 
     private JButton butLoadList;
     // private JLabel lblPlaceholder;
@@ -417,10 +422,16 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 Messages.getString("ChatLounge.labCommandDetonated"), SwingConstants.RIGHT); //$NON-NLS-1$
         labVibrabomb = new JLabel(
                 Messages.getString("ChatLounge.labVibrabomb"), SwingConstants.RIGHT); //$NON-NLS-1$
+        labActive = new JLabel(
+                Messages.getString("ChatLounge.labActive"), SwingConstants.RIGHT); //$NON-NLS-1$
+        labInferno = new JLabel(
+                Messages.getString("ChatLounge.labInferno"), SwingConstants.RIGHT); //$NON-NLS-1$
 
         fldConventional = new JTextField(1);
         fldCommandDetonated = new JTextField(1);
         fldVibrabomb = new JTextField(1);
+        fldActive = new JTextField(1);
+        fldInferno = new JTextField(1);
 
         butMinefield = new JButton(Messages
                 .getString("ChatLounge.butMinefield")); //$NON-NLS-1$
@@ -482,6 +493,30 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.weighty = 0.0;
         gridbag.setConstraints(fldVibrabomb, c);
         panMinefield.add(fldVibrabomb);
+        
+        c.gridwidth = 1;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(labActive, c);
+        panMinefield.add(labActive);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(fldActive, c);
+        panMinefield.add(fldActive);
+        
+        c.gridwidth = 1;
+        c.weightx = 0.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(labInferno, c);
+        panMinefield.add(labInferno);
+
+        c.gridwidth = GridBagConstraints.REMAINDER;
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(fldInferno, c);
+        panMinefield.add(fldInferno);
 
         c.gridwidth = GridBagConstraints.REMAINDER;
         c.anchor = GridBagConstraints.CENTER;
@@ -502,6 +537,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         fldVibrabomb.setEnabled(enable);
         labVibrabomb.setEnabled(enable);
+        
+        fldActive.setEnabled(enable);
+        labActive.setEnabled(enable);
+        
+        fldInferno.setEnabled(enable);
+        labInferno.setEnabled(enable);
 
         butMinefield.setEnabled(enable);
     }
@@ -524,6 +565,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 .getString("ChatLounge.butChangeBoard")); //$NON-NLS-1$
         butChangeBoard.setActionCommand("change_board"); //$NON-NLS-1$
         butChangeBoard.addActionListener(this);
+        
+        butConditions = new JButton(Messages
+                .getString("ChatLounge.butConditions")); //$NON-NLS-1$
+        butConditions.addActionListener(this);
 
         panBoardSettings = new JPanel();
 
@@ -555,6 +600,11 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.weighty = 0.0;
         gridbag.setConstraints(butChangeBoard, c);
         panBoardSettings.add(butChangeBoard);
+        
+        c.weightx = 1.0;
+        c.weighty = 0.0;
+        gridbag.setConstraints(butConditions, c);
+        panBoardSettings.add(butConditions);
 
         refreshBoardSettings();
     }
@@ -1133,7 +1183,9 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 pi.append(player.getName()).append(" : "); //$NON-NLS-1$
                 pi.append(player.getNbrMFConventional()).append("/"); //$NON-NLS-1$
                 pi.append(player.getNbrMFCommand()).append("/"); //$NON-NLS-1$
-                pi.append(player.getNbrMFVibra());
+                pi.append(player.getNbrMFVibra()).append("/"); //$NON-NLS-1$
+                pi.append(player.getNbrMFActive()).append("/"); //$NON-NLS-1$
+                pi.append(player.getNbrMFInferno());
 
                 ((DefaultListModel) lisMinefield.getModel()).addElement(pi
                         .toString());
@@ -1147,6 +1199,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
 
         nbr = client.getLocalPlayer().getNbrMFVibra();
         fldVibrabomb.setText(Integer.toString(nbr));
+        
+        nbr = client.getLocalPlayer().getNbrMFActive();
+        fldActive.setText(Integer.toString(nbr));
+        
+        nbr = client.getLocalPlayer().getNbrMFInferno();
+        fldInferno.setText(Integer.toString(nbr));
     }
 
     /**
@@ -1318,10 +1376,14 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         String conv = fldConventional.getText();
         String cmd = fldCommandDetonated.getText();
         String vibra = fldVibrabomb.getText();
+        String active = fldActive.getText();
+        String inferno = fldInferno.getText();
 
         int nbrConv = 0;
         int nbrCmd = 0;
         int nbrVibra = 0;
+        int nbrActive = 0;
+        int nbrInferno = 0;
 
         try {
             if (conv != null && conv.length() != 0) {
@@ -1333,6 +1395,12 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             if (vibra != null && vibra.length() != 0) {
                 nbrVibra = Integer.parseInt(vibra);
             }
+            if (active != null && active.length() != 0) {
+                nbrActive = Integer.parseInt(active);
+            }
+            if (inferno != null && inferno.length() != 0) {
+                nbrInferno = Integer.parseInt(inferno);
+            }
         } catch (NumberFormatException e) {
             JOptionPane
                     .showMessageDialog(
@@ -1342,7 +1410,7 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             return;
         }
 
-        if (nbrConv < 0 || nbrCmd < 0 || nbrVibra < 0) {
+        if (nbrConv < 0 || nbrCmd < 0 || nbrVibra < 0 || nbrActive < 0 || nbrInferno < 0) {
             JOptionPane
                     .showMessageDialog(
                             clientgui.frame,
@@ -1354,6 +1422,8 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
         c.getLocalPlayer().setNbrMFConventional(nbrConv);
         c.getLocalPlayer().setNbrMFCommand(nbrCmd);
         c.getLocalPlayer().setNbrMFVibra(nbrVibra);
+        c.getLocalPlayer().setNbrMFActive(nbrActive);
+        c.getLocalPlayer().setNbrMFInferno(nbrInferno);
         c.sendPlayerInfo();
     }
 
@@ -1767,6 +1837,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
             }
             c.die();
             clientgui.getBots().remove(c.getName());
+        } else if (ev.getSource() == butConditions) {
+            // Display the game options dialog.
+            clientgui.getPlanetaryConditionsDialog().update(client.game.getPlanetaryConditions());
+            clientgui.getPlanetaryConditionsDialog().setVisible(true);
         }
     }
 

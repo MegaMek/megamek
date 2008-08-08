@@ -335,6 +335,13 @@ public class Warship extends Jumpship {
                     }
                 } 
                 
+                if (weapon.getLinkedBy() != null) {
+                    Mounted mLinker = weapon.getLinkedBy();
+                    if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                        dBV *= 1.15;
+                    }
+                }
+
                 if (heatAdded > aeroHeatEfficiency && wtype.getHeat() > 0)
                     dBV /= 2;
                 if (weapon.getLocation() == LOC_AFT) {

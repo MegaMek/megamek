@@ -19,6 +19,7 @@ import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
@@ -60,6 +61,11 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         if (ae.getPosition().distance(target.getPosition()) > 1) {
             return "Target not in range";
         }
+        
+        //can't make a physical attack if you are evading
+        if(ae.isEvading()) {
+            return "Attacker is evading.";
+        }
 
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             // Checks specific to entity targets
@@ -80,8 +86,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
                 return "Target is swarming a Mek.";
             }
 
-            if (ae instanceof Mech && ((Mech) ae).getGrappled() != Entity.NONE) {
-                return "Locked in Grapple";
+            if ( ae.getGrappled() != Entity.NONE && 
+                    ae.getGrappleSide() == Entity.GRAPPLE_BOTH ) {
+                    return "Locked in Grapple";
+                
             }
 
             // target unit in building checks
@@ -103,7 +111,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
             if (te.isMakingDfa()) {
                 return "Target is making a DFA attack";
             }
-
+            
         }
 
         // Can't target woods or ignite a building with a physical.
@@ -134,6 +142,10 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         // target terrain
         toHit.append(Compute.getTargetTerrainModifier(game, target));
 
+        if ( ae.hasModularArmor() ) {
+            toHit.addModifier(1,"Modular Armor");
+        }
+        
         // If it has a torso-mounted cockpit and two head sensor hits or three
         // sensor hits...
         // It gets a =4 penalty for being blind!
@@ -160,7 +172,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         // target immobile
         toHit.append(Compute.getImmobileMod(target));
 
-        toHit.append(nightModifiers(game, target, null, ae));
+        toHit.append(nightModifiers(game, target, null, ae, false));
 
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             // Checks specific to entity targets
@@ -183,6 +195,20 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
             // Pilot skills
             Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
+            
+            //Attacking Weight Class Modifier.
+            if ( game.getOptions().booleanOption("tacops_attack_physical_psr") ) {
+                if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT ) {
+                    toHit.addModifier(-2, "Weight Class Attack Modifier");
+                }else if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM ) {
+                    toHit.addModifier(-1, "Weight Class Attack Modifier");
+                }
+            }
+            
+            //evading bonuses (
+            if(te.isEvading()) {
+                toHit.addModifier(te.getEvasionBonus(), "target is evading");
+            }
         }
     }
 }

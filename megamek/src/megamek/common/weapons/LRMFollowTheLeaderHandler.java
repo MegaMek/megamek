@@ -38,6 +38,7 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
             IGame g, Server s) {
         super(t, w, g, s);
         sSalvoType = " FTL missile(s) ";
+        nSalvoBonus = 1;
     }
 
     /*
@@ -57,5 +58,5 @@ public class LRMFollowTheLeaderHandler extends LRMHandler {
     protected int calcDamagePerHit() {
         return 1;
     }
-
+    
 }

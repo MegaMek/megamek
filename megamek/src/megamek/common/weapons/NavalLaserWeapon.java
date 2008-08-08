@@ -21,6 +21,11 @@ package megamek.common.weapons;
  * @author Jay Lawson
  */
 public abstract class NavalLaserWeapon extends EnergyWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3039645862661842495L;
+
     public NavalLaserWeapon() {
         super();
         this.atClass = CLASS_CAPITAL_LASER;

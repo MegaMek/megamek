@@ -54,14 +54,4 @@ public class DisplacementAttackAction extends AbstractAttackAction {
         this.targetPos = targetPos;
     }
 
-    public int hashCode() {
-        int hash = super.hashCode();
-        hash = 61 * hash + targetPos.hashCode();
-        return hash;
-    }
-    
-    public boolean equals(Object o) {
-        return super.equals(o) && ((DisplacementAttackAction)o).getTargetPos().equals(targetPos);
-    }
-
 }

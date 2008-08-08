@@ -23,15 +23,18 @@ package megamek.common.actions;
 import java.util.Enumeration;
 
 import megamek.common.BattleArmor;
+import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
 import megamek.common.GunEmplacement;
 import megamek.common.IEntityMovementType;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
 import megamek.common.Tank;
@@ -73,6 +76,11 @@ public class DfaAttackAction extends DisplacementAttackAction {
      */
     public static int getDamageFor(Entity entity, boolean targetInfantry) {
         int toReturn = (int) Math.ceil((entity.getWeight() / 10.0) * 3.0);
+        
+        if ( hasTalons(entity) ) {
+            toReturn *= 1.5;
+        }
+
         if (targetInfantry) {
             toReturn = Math.max(1, toReturn / 10);
         }
@@ -126,6 +134,11 @@ public class DfaAttackAction extends DisplacementAttackAction {
         if (te != null && Entity.NONE != te.getTransportId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Target is a passenger.");
+        }
+        
+        //no evading
+        if(md.contains(MovePath.STEP_EVADE)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "No evading while charging");
         }
 
         // Can't target a entity conducting a swarm attack.
@@ -339,10 +352,15 @@ public class DfaAttackAction extends DisplacementAttackAction {
         // target immobile
         toHit.append(Compute.getImmobileMod(te));
 
-        toHit.append(nightModifiers(game, target, null, ae));
+        toHit.append(nightModifiers(game, target, null, ae, false));
 
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
+        //evading bonuses (
+        if(te.isEvading()) {
+            toHit.addModifier(te.getEvasionBonus(), "target is evading");
+        }
+        
         if (te != null) {
             if (te instanceof Tank) {
                 toHit.setSideTable(ToHitData.SIDE_FRONT);
@@ -356,8 +374,32 @@ public class DfaAttackAction extends DisplacementAttackAction {
             }
         }
 
+        //Attacking Weight Class Modifier.
+        if ( game.getOptions().booleanOption("tacops_attack_physical_psr") ) {
+            if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT ) {
+                toHit.addModifier(-2, "Weight Class Attack Modifier");
+            }else if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM ) {
+                toHit.addModifier(-1, "Weight Class Attack Modifier");
+            }
+        }
+
         // done!
         return toHit;
     }
 
+    public static boolean hasTalons(Entity entity){
+        
+        if ( entity instanceof Mech ){
+        
+            if ( entity instanceof BipedMech ){
+                
+                return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RLEG)) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LLEG));
+            }else{
+                return (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RLEG)) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LLEG) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LLEG)) || (entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_RARM)) && (entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_RARM) || entity.hasWorkingMisc(MiscType.F_TALON, -1, Mech.LOC_LARM) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, Mech.LOC_LARM));
+                
+            }
+        }
+        
+        return false;
+    }
 }

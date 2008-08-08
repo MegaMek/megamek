@@ -27,6 +27,11 @@ import megamek.server.Server;
  * @author Sebastian Brocks
  */
 public abstract class TAGWeapon extends Weapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 6794299593713032006L;
+
     public TAGWeapon() {
         super();
         this.flags |= F_TAG | F_NO_FIRES;

@@ -47,6 +47,8 @@ public class AutoGrenadeLauncherHandler extends WeaponHandler {
             int toReturn = (int) Math.ceil(((double) Compute.d6()) / 2);
             if (bGlancing)
                 toReturn = (int) Math.floor(toReturn / 2.0);
+            if (bDirect)
+                toReturn += toHit.getMoS()/3;
             return toReturn;
         } else
             return super.calcDamagePerHit();

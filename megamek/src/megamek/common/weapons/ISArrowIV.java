@@ -46,8 +46,8 @@ public class ISArrowIV extends ArtilleryWeapon {
         this.ammoType = AmmoType.T_ARROW_IV;
         this.shortRange = 1;
         this.mediumRange = 2;
-        this.longRange = 5;
-        this.extremeRange = 5; // No extreme range.
+        this.longRange = 8;
+        this.extremeRange = 8; // No extreme range.
         this.tonnage = 15f;
         this.criticals = 15;
         this.bv = 171;

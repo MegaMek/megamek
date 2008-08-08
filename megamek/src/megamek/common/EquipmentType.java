@@ -118,7 +118,7 @@ public class EquipmentType {
     protected int techLevel = TechConstants.T_TECH_UNKNOWN;
 
     protected long flags = 0;
-    protected int subType = 0;
+    protected long subType = 0;
 
     protected double bv = 0; // battle value point system
     protected double cost = 0; // The C-Bill cost of the item.
@@ -154,7 +154,7 @@ public class EquipmentType {
         subType |= newFlag;
     }
 
-    public boolean hasSubType(int testFlag) {
+    public boolean hasSubType(long testFlag) {
         return (subType & testFlag) != 0;
     }
 

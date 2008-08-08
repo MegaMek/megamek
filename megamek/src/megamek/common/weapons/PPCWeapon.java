@@ -29,6 +29,8 @@ public abstract class PPCWeapon extends EnergyWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = -8128018700095507410L;
+
     public PPCWeapon() {
         super();
         this.flags |= F_PPC | F_DIRECT_FIRE;

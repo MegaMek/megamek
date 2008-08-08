@@ -68,7 +68,7 @@ public class SupportTank extends Tank implements Serializable {
                         || hex.containsTerrain(Terrains.RUBBLE)
                         || hex.containsTerrain(Terrains.MAGMA)
                         || hex.containsTerrain(Terrains.JUNGLE)
-                        || hex.containsTerrain(Terrains.SNOW)
+                        || hex.terrainLevel(Terrains.SNOW) > 1
                         || hex.terrainLevel(Terrains.GEYSER) == 2;
             case IEntityMovementMode.HOVER:
                 return hex.containsTerrain(Terrains.WOODS)

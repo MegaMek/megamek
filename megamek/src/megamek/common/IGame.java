@@ -180,6 +180,12 @@ public interface IGame {
     public abstract void setMinefields(Vector<Minefield> minefields);
 
     /**
+     * Resets the minefield density for a given <code>Vector</code> of minefields
+     * @param newMinefields
+     */
+    public abstract void resetMinefieldDensity(Vector<Minefield> newMinefields);
+    
+    /**
      * Removes the specified minefield
      * 
      * @param mf minefield to remove
@@ -329,12 +335,6 @@ public interface IGame {
      * pilot special ability.
      */
     public abstract boolean hasTacticalGenius(Player player);
-
-    /**
-     * Returns how much higher than 50 or lower than -30 degrees, divided by
-     * ten, rounded up, the temperature is
-     */
-    public abstract int getTemperatureDifference();
 
     /**
      * Get a vector of entity objects that are "acceptable" to attack with this
@@ -728,16 +728,6 @@ public interface IGame {
 
     public abstract int getNextDeployableEntityNum(GameTurn turn, int start);
 
-    public abstract void determineWind();
-
-    public abstract int getWindDirection();
-
-    public abstract String getStringWindDirection();
-
-    public abstract int getWindStrength();
-
-    public abstract String getStringWindStrength();
-
     /**
      * Get the entities for the player.
      * 
@@ -768,6 +758,11 @@ public interface IGame {
      * Returns the number of remaining selectable Protomechs owned by a player.
      */
     public abstract int getProtomechsLeft(int playerId);
+
+    /**
+     * Returns the number of remaining selectable Vehicles owned by a player.
+     */
+    public abstract int getVehiclesLeft(int playerId);
 
     /**
      * Removes the last, next turn found that the specified entity can move in.
@@ -1267,5 +1262,9 @@ public interface IGame {
     public abstract boolean checkForValidDropships(int playerId);
     
     public abstract boolean checkForValidSmallCraft(int playerId);
+    
+    public abstract PlanetaryConditions getPlanetaryConditions();
+    
+    public abstract void setPlanetaryConditions(PlanetaryConditions conditions);
     
 }

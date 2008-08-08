@@ -19,6 +19,7 @@ import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.CriticalSlot;
 import megamek.common.Entity;
+import megamek.common.EntityWeightClass;
 import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Mech;
@@ -68,6 +69,15 @@ public class PushAttackAction extends DisplacementAttackAction {
             extendedBladeImpossible = "Extended retractable blade";
         if (physicalImpossible != null)
             return physicalImpossible;
+        
+        if ( ae.getGrappled() != Entity.NONE ) {
+            return "Unit Grappled";
+        }
+        
+        if(ae.isEvading()) {
+            return "attacker is evading.";
+        }
+        
         return extendedBladeImpossible;
     }
 
@@ -277,7 +287,12 @@ public class PushAttackAction extends DisplacementAttackAction {
 
         Compute.modifyPhysicalBTHForAdvantages(ae, te, toHit, game);
 
-        toHit.append(nightModifiers(game, target, null, ae));
+        //evading
+        if(te.isEvading()) {
+            toHit.addModifier(te.getEvasionBonus(), "target is evading");
+        }
+        
+        toHit.append(nightModifiers(game, target, null, ae, false));
         // side and elevation shouldn't matter
 
         // If it has a torso-mounted cockpit and two head sensor hits or three
@@ -294,6 +309,15 @@ public class PushAttackAction extends DisplacementAttackAction {
             } else if (sensorHits == 2) {
                 toHit.addModifier(4,
                         "Head Sensors Destroyed for Torso-Mounted Cockpit");
+            }
+        }
+        
+        //Attacking Weight Class Modifier.
+        if ( game.getOptions().booleanOption("tacops_attack_physical_psr") ) {
+            if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_LIGHT ) {
+                toHit.addModifier(-2, "Weight Class Attack Modifier");
+            }else if ( ae.getWeightClass() == EntityWeightClass.WEIGHT_MEDIUM ) {
+                toHit.addModifier(-1, "Weight Class Attack Modifier");
             }
         }
 

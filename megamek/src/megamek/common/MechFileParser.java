@@ -54,6 +54,11 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.loaders.TdbFile;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.BuildingBlock;
+import megamek.common.weapons.ISERPPC;
+import megamek.common.weapons.ISHeavyPPC;
+import megamek.common.weapons.ISLightPPC;
+import megamek.common.weapons.ISPPC;
+import megamek.common.weapons.ISSnubNosePPC;
 
 /*
  * Switches between the various type-specific parsers depending on suffix
@@ -200,6 +205,23 @@ public class MechFileParser {
      */
     private void postLoadInit(Entity ent) throws EntityLoadingException {
 
+        //add any sensors to the entity's vector of sensors
+        if(ent instanceof Mech) {
+            //all meks get the four bacis sensors
+            ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_RADAR));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_IR));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_MAGSCAN));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_MEK_SEISMIC));
+            ent.setNextSensor(ent.getSensors().firstElement());
+        } else if (ent instanceof Tank) {
+            //all tanks get the four bacis sensors
+            ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_RADAR));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_IR));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_MAGSCAN));
+            ent.getSensors().add(new Sensor(Sensor.TYPE_VEE_SEISMIC));
+            ent.setNextSensor(ent.getSensors().firstElement());
+        }
+        
         // Walk through the list of equipment.
         for (Mounted m : ent.getMisc()) {
 
@@ -282,8 +304,20 @@ public class MechFileParser {
 
                     // check location
                     if (mWeapon.getLocation() == m.getLocation()) {
-                        m.setLinked(mWeapon);
-                        break;
+                        
+                        if ( (m.getType().getInternalName().equals("ISPPCCapacitor") 
+                                && mWeapon.getType() instanceof ISPPC)
+                                || (m.getType().getInternalName().equals("ISLightPPCCapacitor") 
+                                        && mWeapon.getType() instanceof ISLightPPC)
+                                || (m.getType().getInternalName().equals("ISHeavyPPCCapacitor") 
+                                        && mWeapon.getType() instanceof ISHeavyPPC)
+                                || (m.getType().getInternalName().equals("ISERPPCCapacitor") 
+                                        && mWeapon.getType() instanceof ISERPPC) 
+                                || (m.getType().getInternalName().equals("ISSNPPCCapacitor") 
+                                        && mWeapon.getType() instanceof ISSnubNosePPC)) {
+                            m.setLinked(mWeapon);
+                            break;
+                        }
                     }
                 }
 
@@ -293,13 +327,118 @@ public class MechFileParser {
                             "Unable to match Capacitor to PPC");
                 }
             } // End link-PPC Capacitor
+            // Link MRM Apollo fire-control systems to their missle racks.
+            else if (m.getType().hasFlag(MiscType.F_APOLLO)
+                    && m.getLinked() == null) {
 
+                // link up to a weapon in the same location
+                for (Mounted mWeapon : ent.getTotalWeaponList()) {
+                    WeaponType wtype = (WeaponType) mWeapon.getType();
+
+                    // only srm and lrm are valid for artemis
+                    if (wtype.getAmmoType() != AmmoType.T_MRM) {
+                        continue;
+                    }
+
+                    // already linked?
+                    if (mWeapon.getLinkedBy() != null) {
+                        continue;
+                    }
+
+                    // check location
+                    if (mWeapon.getLocation() == m.getLocation()) {
+                        m.setLinked(mWeapon);
+                        break;
+                    }
+                    
+                }
+
+                if (m.getLinked() == null) {
+                    // huh. this shouldn't happen
+                    throw new EntityLoadingException(
+                            "Unable to match Apollo to launcher");
+                }
+            } // End link-Apollo
+            //now find any active probes and add them to the sensor list
+            //choose this sensor if added
+            if(m.getType().hasFlag(MiscType.F_BAP)) {
+                if(m.getType().getInternalName().equals(Sensor.BAP)) {
+                    ent.getSensors().add(new Sensor(Sensor.TYPE_BAP));
+                    ent.setNextSensor(ent.getSensors().lastElement());
+                } else if(m.getType().getInternalName().equals(Sensor.BLOODHOUND)) {
+                    ent.getSensors().add(new Sensor(Sensor.TYPE_BLOODHOUND));
+                    ent.setNextSensor(ent.getSensors().lastElement());
+                } else if(m.getType().getInternalName().equals(Sensor.WATCHDOG)) {
+                    ent.getSensors().add(new Sensor(Sensor.TYPE_WATCHDOG));
+                    ent.setNextSensor(ent.getSensors().lastElement());
+                } else if(m.getType().getInternalName().equals(Sensor.CLAN_AP)) {
+                    ent.getSensors().add(new Sensor(Sensor.TYPE_CLAN_BAP));
+                    ent.setNextSensor(ent.getSensors().lastElement());
+                } else if(m.getType().getInternalName().equals(Sensor.LIGHT_AP)) {
+                    ent.getSensors().add(new Sensor(Sensor.TYPE_LIGHT_AP));
+                    ent.setNextSensor(ent.getSensors().lastElement());
+                } else if(m.getType().getInternalName().equals(Sensor.CLIMPROVED)) {
+                    ent.getSensors().add(new Sensor(Sensor.TYPE_BA_IMPROVED));
+                    ent.setNextSensor(ent.getSensors().lastElement());
+                } else if(m.getType().getInternalName().equals(Sensor.ISIMPROVED)) {
+                    ent.getSensors().add(new Sensor(Sensor.TYPE_BA_IMPROVED));
+                    ent.setNextSensor(ent.getSensors().lastElement());
+                }
+            }
+            
             if (ent instanceof Mech
                     && (m.getType().hasFlag(MiscType.F_CASE) || m.getType()
                             .hasFlag(MiscType.F_CASEII))) {
                 ((Mech) ent).setAutoEject(false);
             }
 
+            if ( ent instanceof Mech && m.getType().hasFlag(MiscType.F_ACTUATOR_ENHANCEMENT_SYSTEM)) {
+                
+                if ( ent.hasTargComp() || ((Mech)ent).hasTSM() || ((Mech)ent).hasMASC()) {
+                    throw new EntityLoadingException("Unable to load AES due to incompatible systems");
+                }
+                
+                if ( m.getLocation() != Mech.LOC_LARM && m.getLocation() != Mech.LOC_LLEG
+                        && m.getLocation() != Mech.LOC_RARM && m.getLocation() != Mech.LOC_RLEG) {
+                    throw new EntityLoadingException("Unable to load AES due to incompatible location");
+                }
+                
+            }
+            
+            if ( m.getType().hasFlag(MiscType.F_HARJEL) && m.getLocation() == Mech.LOC_HEAD ) {
+                throw new EntityLoadingException("Unable to load harjel in head.");
+            }
+            
+            if ( m.getType().hasFlag(MiscType.F_MODULAR_ARMOR) 
+                    && ( (ent instanceof Mech && m.getLocation() == Mech.LOC_HEAD) || (ent instanceof VTOL && m.getLocation() == VTOL.LOC_ROTOR) )) {
+                throw new EntityLoadingException("Unable to load Modular Armor in Rotor/Head location");
+            }
+            
+            if ( m.getType().hasFlag(MiscType.F_TALON) ){
+               if ( ent instanceof BipedMech ){
+                   if ( m.getLocation() != Mech.LOC_LLEG && m.getLocation() != Mech.LOC_RLEG ){
+                       throw new EntityLoadingException("Talons are only legal in the Legs");
+                   }
+                   
+                   if ( !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LLEG) ){
+                       throw new EntityLoadingException("Talons must be in all legs");
+                   }
+               }else if ( ent instanceof QuadMech ){
+                   if ( m.getLocation() != Mech.LOC_LLEG && m.getLocation() != Mech.LOC_RLEG  &&
+                           m.getLocation() != Mech.LOC_LARM && m.getLocation() != Mech.LOC_RARM){
+                       throw new EntityLoadingException("Talons are only legal in the Legs");
+                   }
+                   
+                   if ( !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_RLEG) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LLEG) || 
+                           !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LARM) || !ent.hasWorkingMisc(MiscType.F_TALON,-1,Mech.LOC_LARM)){
+                       throw new EntityLoadingException("Talons must be in all legs");
+                   }
+                   
+               }else {
+                   throw new EntityLoadingException("Unable to load talons in non-Mek entity");
+               }
+            }
+            
         } // Check the next piece of equipment.
         
         //need to load all those weapons in the weapon bays

@@ -87,13 +87,17 @@ public class MGAWeaponHandler extends MGHandler {
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
         int shotsHit;
+        int nMod = 0;
+        if(game.getPlanetaryConditions().hasEMI()) {
+            nMod -= 2;
+        }
         switch (howManyShots) {
             case 1:
                 shotsHit = 1;
                 break;
             default:
                 shotsHit = allShotsHit() ? howManyShots : Compute
-                        .missilesHit(howManyShots);
+                        .missilesHit(howManyShots, nMod);
                 r = new Report(3325);
                 r.subject = subjectId;
                 r.add(shotsHit);
@@ -167,6 +171,8 @@ public class MGAWeaponHandler extends MGHandler {
             }
             vPhaseReport.addAll(buildingReport);
         }
+        
+        nDamage = checkTerrain(nDamage, entityTarget,vPhaseReport);
 
         // A building may absorb the entire shot.
         if (nDamage == 0) {

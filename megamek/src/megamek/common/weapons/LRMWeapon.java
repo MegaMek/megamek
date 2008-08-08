@@ -27,6 +27,8 @@ public abstract class LRMWeapon extends MissileWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = 8755275511561446251L;
+
     public LRMWeapon() {
         super();
         this.ammoType = AmmoType.T_LRM;

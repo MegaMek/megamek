@@ -60,11 +60,17 @@ public class PrototypeLBXHandler extends LBXHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             return 1;
         }
-        int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
-                .missilesHit(wtype.getRackSize(), -1);
+        
+        int shotMod = -1;
         if (bGlancing) {
-            shotsHit = (int) Math.floor(shotsHit / 2.0);
+            shotMod -= 4;
         }
+        if(game.getPlanetaryConditions().hasEMI()) {
+            shotMod -= 2;
+        }
+        int shotsHit = allShotsHit() ? wtype.getRackSize() : Compute
+                .missilesHit(wtype.getRackSize(), shotMod);
+        
         r = new Report(3325);
         r.subject = subjectId;
         r.add(shotsHit);

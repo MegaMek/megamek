@@ -27,6 +27,9 @@ import megamek.server.Server;
  * @author Andrew Hunter
  */
 public abstract class LBXACWeapon extends AmmoWeapon {
+
+    private static final long serialVersionUID = 5478539267390524833L;
+
     /**
      * 
      */
@@ -45,7 +48,7 @@ public abstract class LBXACWeapon extends AmmoWeapon {
         if (atype.getMunitionType() == AmmoType.M_CLUSTER) {
             return new LBXHandler(toHit, waa, game, server);
         } else {
-            return super.getCorrectHandler(toHit, waa, game, server);
+            return new ACWeaponHandler(toHit, waa, game, server);
         }
     }
 

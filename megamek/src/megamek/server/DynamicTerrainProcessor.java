@@ -30,5 +30,5 @@ public abstract class DynamicTerrainProcessor {
      * 
      * @param vPhaseReport reports for the server to send out
      */
-    abstract void DoEndPhaseChanges(Vector<Report> vPhaseReport);
+    abstract void doEndPhaseChanges(Vector<Report> vPhaseReport);
 }

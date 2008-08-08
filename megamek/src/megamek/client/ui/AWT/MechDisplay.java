@@ -86,13 +86,18 @@ import megamek.common.Mounted;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
+import megamek.common.Sensor;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
+import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.GaussWeapon;
+import megamek.common.weapons.RACWeapon;
+import megamek.common.weapons.UACWeapon;
 
 /**
  * Displays the info for a mech. This is also a sort of interface for special
@@ -180,8 +185,6 @@ public class MechDisplay extends BufferedPanel {
         wPan.displayMech(en);
         sPan.displayMech(en);
         ePan.displayMech(en);
-
-        processMechDisplayEvent(new MechDisplayEvent(this, en, null));
     }
 
     /**
@@ -980,17 +983,17 @@ public class MechDisplay extends BufferedPanel {
                 }
                 if (!((Mech) en).hasLaserHeatSinks()) {
                     // extreme temperatures.
-                    if (game.getOptions().intOption("temperature") > 0) {
-                        currentHeatBuildup += game.getTemperatureDifference();
+                    if (game.getPlanetaryConditions().getTemperature() > 0) {
+                        currentHeatBuildup += game.getPlanetaryConditions().getTemperatureDifference(50,-30);
                     } else {
-                        currentHeatBuildup -= game.getTemperatureDifference();
+                        currentHeatBuildup -= game.getPlanetaryConditions().getTemperatureDifference(50,-30);
                     }
                 }
             }
             Coords position = entity.getPosition();
             if (!en.isOffBoard() && position != null) {
                 IHex hex = game.getBoard().getHex(position);
-                if (hex.terrainLevel(Terrains.FIRE) == 2) {
+                if (hex.containsTerrain(Terrains.FIRE) && hex.getFireTurn() > 0) {
                     currentHeatBuildup += 5; // standing in fire
                 }
                 if (hex.terrainLevel(Terrains.MAGMA) == 1) {
@@ -1169,7 +1172,7 @@ public class MechDisplay extends BufferedPanel {
             }
 
             // If MaxTech range rules are in play, display the extreme range.
-            if (game.getOptions().booleanOption("maxtech_range") || entity instanceof Aero) { //$NON-NLS-1$
+            if (game.getOptions().booleanOption("tacops_range") || entity instanceof Aero) { //$NON-NLS-1$
                 wExtL.setVisible(true);
                 wExtR.setVisible(true);
             } else {
@@ -1223,18 +1226,21 @@ public class MechDisplay extends BufferedPanel {
                 wExtR.setText("---"); //$NON-NLS-1$
                 return;
             }
-            Mounted mounted = entity.getWeaponList().get(
-                    weaponList.getSelectedIndex());
+            Mounted mounted = entity.getWeaponList().get(weaponList.getSelectedIndex());
             WeaponType wtype = (WeaponType) mounted.getType();
             // update weapon display
             wNameR.setText(mounted.getDesc());
             if (mounted.hasChargedCapacitor())
-                wHeatR.setText((mounted.getCurrentHeat() + 5) + ""); //$NON-NLS-1$
-            else
-                wHeatR.setText(mounted.getCurrentHeat() + ""); //$NON-NLS-1$
+                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted, wtype) + 5))); //$NON-NLS-1$
+            else if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes() 
+                    && clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons") ){
+                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted, wtype))));
+            }
+            else{
+                wHeatR.setText(Integer.toString(mounted.getCurrentHeat())); //$NON-NLS-1$
+            }
 
-            wArcHeatR.setText(Integer.toString(entity.getHeatInArc(mounted
-                    .getLocation(), mounted.isRearMounted())));
+            wArcHeatR.setText(Integer.toString(entity.getHeatInArc(mounted.getLocation(), mounted.isRearMounted())));
 
             if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
                 wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
@@ -1245,14 +1251,16 @@ public class MechDisplay extends BufferedPanel {
             } else if (wtype.getDamage() == WeaponType.DAMAGE_ARTILLERY) {
                 StringBuffer damage = new StringBuffer();
                 damage.append(Integer.toString(wtype.getRackSize()))
-                        .append('/').append(
-                                Integer.toString(wtype.getRackSize() / 2));
+                        .append('/').append(Integer.toString(wtype.getRackSize() / 2));
                 wDamR.setText(damage.toString());
-            } else {
+            } else if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes() 
+                    && clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons") ){
                 if (mounted.hasChargedCapacitor()) {
-                    wDamR.setText(Integer.toString(wtype.getDamage() + 5));
-                } else
-                    wDamR.setText(Integer.toString(wtype.getDamage()));
+                    wDamR.setText(Integer.toString(Compute.dialDownDamage(mounted, wtype) + 5));
+                } else                
+                    wDamR.setText(Integer.toString(Compute.dialDownDamage(mounted, wtype)));
+            } else {
+                wDamR.setText(Integer.toString(wtype.getDamage()));
             }
 
             // update range
@@ -2074,8 +2082,7 @@ public class MechDisplay extends BufferedPanel {
                 modeLabel.setEnabled(false);
                 Mounted m = getSelectedEquipment();
 
-                boolean bOwner = (clientgui.getClient().getLocalPlayer() == en
-                        .getOwner());
+                boolean bOwner = (clientgui.getClient().getLocalPlayer() == en.getOwner());
                 if (m != null
                         && bOwner
                         && m.getType() instanceof AmmoType
@@ -2090,7 +2097,7 @@ public class MechDisplay extends BufferedPanel {
                                 .getRoundCount()) {
                     m_bDumpAmmo.setEnabled(true);
                     if (clientgui.getClient().game.getOptions().booleanOption(
-                            "maxtech_hotload")
+                            "tacops_hotload")
                             && en instanceof Tank
                             && m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
                         m_bDumpAmmo.setEnabled(false);
@@ -2111,30 +2118,34 @@ public class MechDisplay extends BufferedPanel {
                     if (!m.isDestroyed()
                             && m.getType().hasFlag(MiscType.F_STEALTH)) {
                         m_chMode.setEnabled(true);
-                    }// if the maxtech eccm option is not set then the ECM
-                    // should not show anything.
-                    if (m.getType().hasFlag(MiscType.F_ECM)
-                            && !clientgui.getClient().game.getOptions()
-                                    .booleanOption("maxtech_eccm")) {
+                    }
+                    
+                    //If not using tacops Energy Weapon rule then remove all the dial down statements
+                    if (m.getType().hasFlag(WeaponType.F_ENERGY) 
+                            && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA) 
+                            && !clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons")) {
                         m_chMode.removeAll();
                         return;
                     }
+
+                    //If not using tacops Gauss Weapon rule then remove all the power up/down modes
+                    if (m.getType() instanceof GaussWeapon 
+                            && !clientgui.getClient().game.getOptions().booleanOption("tacops_gauss_weapons")) {
+                        m_chMode.removeAll();
+                        return;
+                    }
+
                     // disables AC mode switching from system tab if
-                    // maxtech_rapid_ac is not turned on
-                    if (m.getType() instanceof WeaponType
-                            && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC || ((WeaponType) m
-                                    .getType()).getAmmoType() == AmmoType.T_LAC)
-                            && !clientgui.getClient().game.getOptions()
-                                    .booleanOption("maxtech_rapid_ac")) {
+                    // tacops_rapid_ac is not turned on
+                    if (m.getType() instanceof ACWeapon
+                            && !clientgui.getClient().game.getOptions().booleanOption("tacops_rapid_ac")) {
                         m_chMode.removeAll();
                         return;
                     }
                     //disable rapid fire mode switching for Aeros
-                    if(en instanceof Aero && m.getType() instanceof WeaponType
-                            && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC_ROTARY 
-                                    || ((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC_ULTRA
-                                    ||    ((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC
-                                    ||    ((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+                    if(en instanceof Aero && m.getType() instanceof ACWeapon 
+                            || m.getType() instanceof RACWeapon 
+                            || m.getType() instanceof UACWeapon) {
                         m_chMode.removeAll();
                         return;
                     }
@@ -2156,8 +2167,7 @@ public class MechDisplay extends BufferedPanel {
                             m_chMode.add("EI Off");
                             m_chMode.add("EI On");
                             m_chMode.add("Aimed shot");
-                            m_chMode.select(((Mech) en)
-                                    .getCockpitStatusNextRound());
+                            m_chMode.select(((Mech) en).getCockpitStatusNextRound());
                         }
                     }
                 }
@@ -2370,8 +2380,8 @@ public class MechDisplay extends BufferedPanel {
 
         private static final String IMAGE_DIR = "data/images/widgets";
 
-        private TransparentLabel narcLabel, unusedL, carrysL, heatL, sinksL,
-                targSysL;
+        private TransparentLabel curSensorsL, narcLabel, unusedL, carrysL, heatL, sinksL, targSysL;
+        public Choice chSensors;
         public TextArea unusedR, carrysR, heatR, sinksR;
         public Button sinks2B, dumpBombs;
         public java.awt.List narcList;
@@ -2391,7 +2401,14 @@ public class MechDisplay extends BufferedPanel {
             prompt = null;
 
             FontMetrics fm = getFontMetrics(FONT_VALUE);
-
+            
+            curSensorsL = new TransparentLabel((Messages
+                    .getString("MechDisplay.CurrentSensors")).concat(" "), fm,
+                    Color.white, TransparentLabel.CENTER);
+            
+            chSensors = new Choice();
+            chSensors.addItemListener(this);
+            
             narcLabel = new TransparentLabel(
                     Messages.getString("MechDisplay.AffectedBy"), fm, Color.white, TransparentLabel.CENTER); //$NON-NLS-1$
 
@@ -2454,6 +2471,14 @@ public class MechDisplay extends BufferedPanel {
             c.anchor = GridBagConstraints.CENTER;
             c.weightx = 1.0;
 
+            c.weighty = 0.0;
+            gridbag.setConstraints(curSensorsL, c);
+            add(curSensorsL);
+
+            c.weighty = 0.0;
+            gridbag.setConstraints(chSensors, c);
+            add(chSensors);
+            
             c.weighty = 0.0;
             gridbag.setConstraints(narcLabel, c);
             add(narcLabel);
@@ -2580,10 +2605,12 @@ public class MechDisplay extends BufferedPanel {
                     .getOwnerId()) {
                 sinks2B.setEnabled(false);
                 dumpBombs.setEnabled(false);
+                chSensors.setEnabled(false);
                 dontChange = true;
             } else {
                 sinks2B.setEnabled(true);
                 dumpBombs.setEnabled(true);
+                chSensors.setEnabled(true);
                 dontChange = false;
             }
             // Walk through the list of teams. There
@@ -2770,7 +2797,7 @@ public class MechDisplay extends BufferedPanel {
                     hasTSM = true;
 
                 if (clientgui.getClient().game.getOptions().booleanOption(
-                        "maxtech_heat")) {
+                        "tacops_heat")) {
                     mtHeat = true;
                 }
                 heatR.append(HeatEffects
@@ -2790,13 +2817,47 @@ public class MechDisplay extends BufferedPanel {
             } else {
                 dumpBombs.setEnabled(false);
             }
+            
+            refreshSensorChoices(en);
+            
+            if(null != en.getActiveSensor()) {
+                curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors"))
+                        .concat(" ").concat(
+                                Sensor.getSensorName(en.getActiveSensor().getType())));
+            } else {
+                curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors"))
+                        .concat(" None"));
+            }
 
             targSysL.setText((Messages.getString("MechDisplay.TargSysLabel"))
                     .concat(" ").concat(
                             MiscType.getTargetSysName(en.getTargSysType())));
         } // End public void displayMech( Entity )
 
+        
+        private void refreshSensorChoices(Entity en) {
+            chSensors.removeAll();
+            for(int i = 0; i < en.getSensors().size(); i++) {
+                Sensor sensor = en.getSensors().elementAt(i);
+                String condition = "";
+                if(sensor.isBAP() && !en.hasBAP(false)) {
+                    condition = " (Disabled)";
+                }
+                chSensors.add(Sensor.getSensorName(sensor.getType()) + condition);
+                if(sensor.getType() == en.getNextSensor().getType()) {
+                    chSensors.select(i);
+                }
+            }
+        }
+        
         public void itemStateChanged(ItemEvent ev) {
+            if (ev.getItemSelectable() == chSensors) { 
+                Entity en = clientgui.getClient().game.getEntity(myMechId);
+                en.setNextSensor(en.getSensors().elementAt(chSensors.getSelectedIndex()));
+                refreshSensorChoices(en);
+                clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd", new Object[] { "Active Sensors", Sensor.getSensorName(en.getSensors().elementAt(chSensors.getSelectedIndex()).getType()) }));//$NON-NLS-1$
+                clientgui.getClient().sendUpdateEntity(clientgui.getClient().game.getEntity(myMechId));
+            }
         }
 
         public void actionPerformed(ActionEvent ae) {

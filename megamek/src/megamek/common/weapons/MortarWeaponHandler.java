@@ -22,6 +22,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
 public class MortarWeaponHandler extends PulseLaserWeaponHandler {
+
     /**
      * 
      */
@@ -47,6 +48,8 @@ public class MortarWeaponHandler extends PulseLaserWeaponHandler {
             int toReturn = Compute.d6();
             if (bGlancing)
                 toReturn = (int) Math.floor(toReturn / 2.0);
+            if (bDirect)
+                toReturn += toHit.getMoS()/3;
             return toReturn;
         } else
             return super.calcDamagePerHit();

@@ -27,6 +27,10 @@ import megamek.server.Server;
  * @author Sebastian Brocks
  */
 public abstract class MPodWeapon extends AmmoWeapon {
+
+    
+    private static final long serialVersionUID = 3343394645568467135L;
+
     /**
      * 
      */
@@ -44,8 +48,10 @@ public abstract class MPodWeapon extends AmmoWeapon {
         this.tonnage = 1.0f;
         this.criticals = 1;
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC | F_ONESHOT;
+        this.explosive = true;
         this.bv = 5;
         this.cost = 6000;
+        this.explosionDamage = 5;
     }
 
     /*

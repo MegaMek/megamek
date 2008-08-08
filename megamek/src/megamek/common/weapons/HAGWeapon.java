@@ -30,6 +30,8 @@ public abstract class HAGWeapon extends GaussWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = -2890339452762009216L;
+
     public HAGWeapon() {
         super();
         this.damage = DAMAGE_VARIABLE;

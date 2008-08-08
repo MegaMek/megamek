@@ -30,6 +30,7 @@ public class Hex implements IHex, Serializable {
     private int elevation;
     private ITerrain[] terrains;
     private String theme;
+    private int fireTurn;
 
     /** Constructs clear, plain hex at level 0. */
     public Hex() {
@@ -182,12 +183,28 @@ public class Hex implements IHex, Serializable {
     public int ceiling() {
         int maxFeature = 0;
 
+        //TODO: maxfeature should really be a method in Terrain.java
+        
+        //planted fields rise one level above the terrain
+        if (containsTerrain(Terrains.FIELDS)) {
+            maxFeature = 1;
+        }
+        
         // Account for woods. They are 2 levels high
         // N.B. VTOLs are allowed to enter smoke.
         if (containsTerrain(Terrains.WOODS) || containsTerrain(Terrains.JUNGLE)) {
             maxFeature = 2;
         }
+        //not so fast ultra jungles and woods are three levels high
+        if(terrainLevel(Terrains.WOODS) > 2 || terrainLevel(Terrains.JUNGLE) > 2) {
+            maxFeature = 3;
+        }     
 
+        //account for heavy industrial zones, which can vary in height
+        if (maxFeature < this.terrainLevel(Terrains.INDUSTRIAL)) {
+            maxFeature = this.terrainLevel(Terrains.INDUSTRIAL);
+        }
+        
         // Account for buildings.
         if (maxFeature < this.terrainLevel(Terrains.BLDG_ELEV)) {
             maxFeature = this.terrainLevel(Terrains.BLDG_ELEV);
@@ -352,11 +369,11 @@ public class Hex implements IHex, Serializable {
         return new Hex(elevation, tcopy, theme);
     }
 
-    public int terrainPilotingModifier() {
+    public int terrainPilotingModifier(int moveType) {
         int rv = 0;
         for (int i = 0; i < terrains.length; i++) {
             if (terrains[i] != null)
-                rv += terrains[i].pilotingModifier();
+                rv += terrains[i].pilotingModifier(moveType);
         }
         return rv;
     }
@@ -416,5 +433,67 @@ public class Hex implements IHex, Serializable {
             }
         }
         return temp;
+    }
+    
+    /*
+     * Get the fire ignition modifier for this hex, based on its terrain
+     */
+    public int getIgnitionModifier() {
+        int mod = 0;
+        for (int i = 0; i < terrains.length; i++) {
+            if (terrains[i] != null)
+                mod += terrains[i].ignitionModifier();
+        }
+        return mod;
+    }
+    
+    /**
+     * Is this hex ignitable?
+     */
+    public boolean isIgnitable() {
+        return (containsTerrain(Terrains.WOODS) 
+                || containsTerrain(Terrains.JUNGLE) 
+                || containsTerrain(Terrains.BUILDING)
+                || containsTerrain(Terrains.FUEL_TANK)
+                || containsTerrain(Terrains.FIELDS)
+                || containsTerrain(Terrains.INDUSTRIAL));
+        
+    }
+    
+    public int getFireTurn() {
+        return fireTurn;
+    }
+    
+    public void incrementFireTurn() {
+        fireTurn = fireTurn + 1;
+    }
+    
+    public void resetFireTurn() {
+        fireTurn = 0;
+    }
+    
+    /**
+     * get any modifiers to a bog-down roll in this hex. Takes the worst modifier
+     * If there is no bog-down chance in this hex, then it returns TargetRoll.AUTOMATIC_SUCCESS
+     */
+    public int getBogDownModifier(int moveType, boolean largeVee) {
+        int mod = TargetRoll.AUTOMATIC_SUCCESS;
+        for (int i = 0; i < terrains.length; i++) {
+            if (terrains[i] != null && mod < terrains[i].getBogDownModifier(moveType, largeVee))
+                mod = terrains[i].getBogDownModifier(moveType, largeVee);
+        }
+        return mod;
+    }
+    
+    /**
+     * get any modifiers to a an unstuck roll in this hex.
+     */
+    public int getUnstuckModifier(int elev) {
+        int mod = 0;
+        for (int i = 0; i < terrains.length; i++) {
+            if (terrains[i] != null)
+                mod += terrains[i].getUnstuckModifier(elev);
+        }
+        return mod;
     }
 }

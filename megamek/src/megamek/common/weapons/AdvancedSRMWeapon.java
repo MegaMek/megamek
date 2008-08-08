@@ -27,6 +27,11 @@ public abstract class AdvancedSRMWeapon extends SRMWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = 8098857067349950771L;
+
+    /**
+     * 
+     */
     public AdvancedSRMWeapon() {
         super();
         this.ammoType = AmmoType.T_SRM_ADVANCED;

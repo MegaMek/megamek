@@ -67,16 +67,6 @@ public class ClubAttackAction extends PhysicalAttackAction {
         this.aiming = aimTable;
     }
 
-    public int hashCode() {
-        int hash = super.hashCode();
-        hash = 61 * hash + club.hashCode();
-        return hash;
-    }
-    
-    public boolean equals(Object o) {
-        return super.equals(o) && ((ClubAttackAction)o).getClub().equals(club);
-    }
-
     /**
      * Damage that the specified mech does with a club attack
      */
@@ -126,6 +116,8 @@ public class ClubAttackAction extends PhysicalAttackAction {
             } else
                 // when not active a vibro blade does normal sword damage
                 nDamage = (int) (Math.ceil(entity.getWeight() / 10.0) + 1.0);
+        }else if (mType.hasSubType(MiscType.S_CHAIN_WHIP)){
+            nDamage = 3;
         }
 
         // TSM doesn't apply to some weapons, including Saws.
@@ -136,9 +128,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
                         || mType.isShield()
                         || mType.hasSubType(MiscType.S_WRECKING_BALL)
                         || mType.hasSubType(MiscType.S_FLAIL)
-                        || (mType.isVibroblade() && club.curMode().equals(
-                                "Active")) || mType
-                        .hasSubType(MiscType.S_BUZZSAW))
+                        || (mType.isVibroblade() && club.curMode().equals("Active")) 
+                        || mType.hasSubType(MiscType.S_BUZZSAW)
+                        || mType.hasSubType(MiscType.S_CHAIN_WHIP))
                 && ((Mech) entity).hasTSM()) {
             nDamage *= 2;
         }
@@ -202,6 +194,19 @@ public class ClubAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Blade is Retracted.");
         }
 
+        if ( ae.getGrappled() != Entity.NONE && 
+                ae.getGrappleSide() == Entity.GRAPPLE_LEFT
+                && club.getLocation() == Mech.LOC_LARM ) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
+        }
+        
+        if ( ae.getGrappled() != Entity.NONE && 
+                ae.getGrappleSide() == Entity.GRAPPLE_RIGHT
+                && club.getLocation() == Mech.LOC_RARM ) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
+        }
+
+
         IHex attHex = game.getBoard().getHex(ae.getPosition());
         IHex targHex = game.getBoard().getHex(target.getPosition());
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
@@ -209,17 +214,16 @@ public class ClubAttackAction extends PhysicalAttackAction {
         final int targetElevation = target.getElevation()
                 + targHex.getElevation();
         final int targetHeight = targetElevation + target.getHeight();
-        final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB) && ((MiscType) club
-                .getType()).hasSubType(MiscType.S_CLUB));
-        final boolean hasClaws = (((BipedMech) ae).hasClaw(Mech.LOC_RARM) || ((BipedMech) ae)
-                .hasClaw(Mech.LOC_LARM));
+        final boolean bothArms = (club.getType().hasFlag(MiscType.F_CLUB) 
+                && ((MiscType) club.getType()).hasSubType(MiscType.S_CLUB));
+        final boolean hasClaws = (((BipedMech) ae).hasClaw(Mech.LOC_RARM) 
+                || ((BipedMech) ae).hasClaw(Mech.LOC_LARM));
         final boolean shield = ((MiscType) club.getType()).isShield();
         boolean needsHand = true;
 
         if (hasClaws
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL))
-                || (((MiscType) club.getType())
-                        .hasSubType(MiscType.S_WRECKING_BALL))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_WRECKING_BALL))
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_LANCE))
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_BUZZSAW))
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))) {
@@ -334,45 +338,39 @@ public class ClubAttackAction extends PhysicalAttackAction {
         }
 
         // Set the base BTH
-        int base = ae.getCrew().getPiloting() - 1;
+        int base = ae.getCrew().getPiloting();
 
         // Various versions of physical weapons have different base bonuses and
         // penalties.
-        if (((MiscType) club.getType()).hasSubType(MiscType.S_SWORD)
-                || ((MiscType) club.getType()).isVibroblade()
-                || ((MiscType) club.getType())
-                        .hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
-            base -= 1;
-        } else if ((((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
+        if ((((MiscType) club.getType()).hasSubType(MiscType.S_DUAL_SAW))
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_CHAINSAW))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_LANCE))
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_FLAIL))) {
             base += 1;
         } else if ((((MiscType) club.getType()).hasSubType(MiscType.S_MACE_THB))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_SWORD))
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_RETRACTABLE_BLADE))
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_MACE))
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_BACKHOE))
-                || (((MiscType) club.getType()).hasSubType(MiscType.S_LANCE))
                 || (((MiscType) club.getType()).hasSubType(MiscType.S_BACKHOE))
-                || (((MiscType) club.getType())
-                        .hasSubType(MiscType.S_WRECKING_BALL))) {
+                || (((MiscType) club.getType()).hasSubType(MiscType.S_WRECKING_BALL))) {
             base += 2;
-        } else if (((MiscType) club.getType())
-                .hasSubType(MiscType.S_PILE_DRIVER)) {
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_PILE_DRIVER)) {
             base += 3;
-        } else if (((MiscType) club.getType())
-                .hasSubType(MiscType.S_SHIELD_LARGE)) {
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_SHIELD_LARGE)) {
             base -= 3;
-        } else if (((MiscType) club.getType())
-                .hasSubType(MiscType.S_SHIELD_MEDIUM)) {
+        } else if (((MiscType) club.getType()).hasSubType(MiscType.S_SHIELD_MEDIUM)
+                || ((MiscType) club.getType()).hasSubType(MiscType.S_CHAIN_WHIP)
+                || ((MiscType) club.getType()).isVibroblade()) {
             base -= 2;
-        } else if (((MiscType) club.getType())
-                .hasSubType(MiscType.S_SHIELD_SMALL)) {
+        }else {
             base -= 1;
         }
 
         toHit = new ToHitData(base, "base");
 
         setCommonModifiers(toHit, game, ae, target);
-
+        
         // damaged or missing actuators
         if (bothArms) {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_RARM)) {
@@ -388,7 +386,10 @@ public class ClubAttackAction extends PhysicalAttackAction {
                 toHit.addModifier(2, "Lower arm actuator missing or destroyed");
             }
             if (hasClaws) {
-                toHit.addModifier(2, "Mek has claws");
+                toHit.addModifier(1, "Mek has claws");
+            }
+            if ( ae.hasFunctionalArmAES(Mech.LOC_RARM) && ae.hasFunctionalArmAES(Mech.LOC_LARM) ) {
+                toHit.addModifier(-1,"AES modifer");
             }
         } else {
             if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, club
@@ -413,6 +414,9 @@ public class ClubAttackAction extends PhysicalAttackAction {
                     && (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, club
                             .getLocation()) || !ae.hasWorkingSystem(
                             Mech.ACTUATOR_UPPER_ARM, club.getLocation()))) {
+            }
+            if ( ae.hasFunctionalArmAES(club.getLocation()) ) {
+                toHit.addModifier(-1,"AES modifer");
             }
         }
 

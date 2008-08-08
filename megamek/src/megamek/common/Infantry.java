@@ -169,12 +169,36 @@ public class Infantry extends Entity implements Serializable {
     }
 
     /**
+     * return this infantry's walk mp, adjusted for planetary conditions
+     */
+    public int getWalkMP(boolean gravity, boolean ignoreheat) {
+        int mp = getOriginalWalkMP();
+        if(null != game) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            if(weatherMod != 0) {
+                mp = Math.max(mp + weatherMod, 0);
+            } 
+        }      
+        if (gravity) {
+            mp = applyGravityEffectsOnMP(mp);
+        }
+        return mp;
+    }
+    
+    /**
      * Return this Infantry's run MP.
      */
     public int getRunMP(boolean gravity, boolean ignoreheat) {
+        int j = getOriginalRunMP();
+        if(null != game) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            if(weatherMod != 0) {
+                j = Math.max(j + weatherMod, 0);
+            } 
+        }  
         if (gravity)
-            return applyGravityEffectsOnMP(this.getOriginalRunMP());
-        return this.getOriginalRunMP();
+            j = applyGravityEffectsOnMP(j);
+        return j;
     }
 
     /**
@@ -190,6 +214,34 @@ public class Infantry extends Entity implements Serializable {
     protected int getOriginalRunMP() {
         return this.runMP;
     }
+    
+    /*
+     * Get this infantry's jump MP, adjusted for weather conditions
+     */
+    public int getJumpMP(boolean gravity) {
+        return getJumpMP();
+    }
+    
+    /**
+     * Returns this entity's current jumping MP, not effected by terrain,
+     * factored for gravity.
+     */
+    public int getJumpMP() {
+        int mp = applyGravityEffectsOnMP(getOriginalJumpMP());
+        int windP = 0;
+        if(null != game) {
+            int windCond = game.getPlanetaryConditions().getWindStrength();
+            if(windCond == PlanetaryConditions.WI_MOD_GALE) {
+                windP++;
+            }
+            if(windCond >= PlanetaryConditions.WI_STRONG_GALE) {
+                return 0;
+            }
+        }
+        mp = Math.max(mp - windP, 0);
+        return mp;
+    }
+    
 
     /**
      * Infantry can not enter water unless they have UMU mp or hover.
@@ -635,36 +687,15 @@ public class Infantry extends Entity implements Serializable {
      * roll for the piloting skill check. now includes the level 3 terains which
      * can bog down
      */
-    public PilotingRollData checkSwampMove(MoveStep step, IHex curHex,
+    public PilotingRollData checkBogDown(MoveStep step, IHex curHex,
             Coords lastPos, Coords curPos, boolean isPavementStep) {
         PilotingRollData roll = new PilotingRollData(this.getId(), 5,
                 "entering boggy terrain");
-        // DO NOT add terrain modifier, or the example in maxtech would have the
-        // wrong target number
-
-        if (!lastPos.equals(curPos)
-                && step.getMovementType() != IEntityMovementType.MOVE_JUMP
-                && (this.getMovementMode() != IEntityMovementMode.HOVER)
-                && (this.getMovementMode() != IEntityMovementMode.VTOL)
-                && step.getElevation() == 0 && !isPavementStep) {
-            // non-hovers need a simple PSR
-            if (curHex.containsTerrain(Terrains.SWAMP)) {
-                // append the reason modifier
-                roll.append(new PilotingRollData(getId(), 0, "entering Swamp"));
-            } else if (curHex.containsTerrain(Terrains.MAGMA)
-                    || curHex.containsTerrain(Terrains.MUD)
-                    || curHex.containsTerrain(Terrains.SNOW)
-                    || curHex.containsTerrain(Terrains.TUNDRA)) {
-                roll.append(new PilotingRollData(getId(), -1,
-                        "avoid bogging down"));
-            } else {
-                roll.addModifier(TargetRoll.CHECK_FALSE,
-                        "Check false: no swamp-like terrain present");
-            }
+        int bgMod = curHex.getBogDownModifier(getMovementMode(), false);
+        if (!lastPos.equals(curPos) && bgMod != TargetRoll.AUTOMATIC_SUCCESS && step.getMovementType() != IEntityMovementType.MOVE_JUMP && (this.getMovementMode() != IEntityMovementMode.HOVER) && (this.getMovementMode() != IEntityMovementMode.VTOL) && (this.getMovementMode() != IEntityMovementMode.WIGE) && step.getElevation() == 0 && !isPavementStep) {
+            roll.append(new PilotingRollData(getId(), bgMod, "avoid bogging down"));       
         } else {
-            roll
-                    .addModifier(TargetRoll.CHECK_FALSE,
-                            "Check false: Not entering swamp, or jumping/hovering over the swamp");
+            roll.addModifier(TargetRoll.CHECK_FALSE, "Check false: Not entering bog-down terrain, or jumping/hovering over such terrain");
         }
         return roll;
     }

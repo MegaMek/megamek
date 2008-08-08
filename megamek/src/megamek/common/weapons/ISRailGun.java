@@ -50,5 +50,6 @@ public class ISRailGun extends GaussWeapon {
         this.criticals = 9;
         this.bv = 411;
         this.cost = 300000;
+        this.explosionDamage = 20;
     }
 }

@@ -1060,6 +1060,7 @@ public class MechSelectorDialog extends Dialog implements ActionListener,
         m_bPickClose.setEnabled(enable);
     }
 
+   
     private void autoSetSkills(Entity e) {
         IClientPreferences cs = PreferenceManager.getClientPreferences();
         if (!cs.useAverageSkills())

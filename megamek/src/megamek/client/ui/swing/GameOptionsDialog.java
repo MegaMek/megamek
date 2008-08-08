@@ -39,6 +39,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 
 import megamek.common.options.GameOptions;
 import megamek.common.options.IBasicOption;
@@ -125,7 +126,7 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
 
         pack();
         setSize(getSize().width, Math.max(getSize().height, 400));
-        setResizable(false);
+        setResizable(true);
         setLocation(frame.getLocation().x + frame.getSize().width / 2
                 - getSize().width / 2, frame.getLocation().y
                 + frame.getSize().height / 2 - getSize().height / 2);
@@ -237,6 +238,8 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
         scrOptions = new JScrollPane(groupPanel);
         groupPanel.setLayout(new BoxLayout(groupPanel,BoxLayout.Y_AXIS));
         scrOptions.setAutoscrolls(true);
+        scrOptions.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        scrOptions.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
         panOptions.addTab(group.getDisplayableName(),scrOptions);
     }
@@ -305,7 +308,12 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else {
+        } else if (option.getName().equals("tacops_falling_expanded")) { //$NON-NLS-1$
+            if (!(options.getOption("tacops_hull_down")).booleanValue() //$NON-NLS-1$
+                    || !editable) {
+                optionComp.setEditable(false);
+            }
+        }else {
             optionComp.setEditable(editable);
         }
         optionComps.addElement(optionComp);
@@ -444,6 +452,16 @@ public class GameOptionsDialog extends JDialog implements ActionListener,
                     .hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if ("fire".equals(comp_i.option.getName())) { //$NON-NLS-1$
+                    comp_i.setEditable(!state);
+                    comp_i.setSelected(false);
+                }
+            }
+        }
+        if ("tacops_hull_down".equals(option.getName())) { //$NON-NLS-1$
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
+                    .hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if ("tacops_falling_expanded".equals(comp_i.option.getName())) { //$NON-NLS-1$
                     comp_i.setEditable(!state);
                     comp_i.setSelected(false);
                 }

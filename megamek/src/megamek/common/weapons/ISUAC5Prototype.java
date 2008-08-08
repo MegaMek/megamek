@@ -55,6 +55,7 @@ public class ISUAC5Prototype extends UACWeapon {
         this.criticals = 6;
         this.bv = 112;
         this.cost = 200000;
+        this.explosionDamage = damage;
     }
 
     /*

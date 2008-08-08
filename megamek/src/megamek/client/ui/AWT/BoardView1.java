@@ -63,19 +63,17 @@ import java.util.Vector;
 
 import javax.swing.SwingUtilities;
 
-import sun.swing.SwingUtilities2;
-
 import megamek.client.TimerSingleton;
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayEvent;
 import megamek.client.event.MechDisplayListener;
+import megamek.client.ui.IDisplayable;
 import megamek.client.ui.AWT.util.ImageCache;
 import megamek.client.ui.AWT.util.ImprovedAveragingScaleFilter;
 import megamek.client.ui.AWT.util.KeyAlphaFilter;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.util.StraightArrowPolygon;
-import megamek.client.ui.IDisplayable;
 import megamek.common.Aero;
 import megamek.common.Building;
 import megamek.common.Compute;
@@ -94,6 +92,7 @@ import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
 import megamek.common.MoveStep;
+import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.SpecialHexDisplay;
@@ -141,7 +140,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     private static final long serialVersionUID = -7518808415074725538L;
 
     private static final int TRANSPARENT = 0xFFFF00FF;
-
+    
     private static final int BOARD_HEX_CLICK = 1;
     private static final int BOARD_HEX_DOUBLECLICK = 2;
     private static final int BOARD_HEX_DRAG = 3;
@@ -303,7 +302,6 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      */
     public BoardView1(IGame game) throws IOException {
         this.game = game;
-        
         tileManager = new TilesetManager(this);
 
         game.addGameListener(gameListener);
@@ -463,7 +461,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         displayables.add(disp);
     }
 
-    public void removeDisplayable(Displayable disp) {
+    public void removeDisplayable(IDisplayable disp) {
         displayables.remove(disp);
     }
 
@@ -963,43 +961,39 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                         case (Minefield.TYPE_CONVENTIONAL):
                             drawCenteredString(
                                     Messages
-                                            .getString("BoardView1.Conventional"), //$NON-NLS-1$
+                                    .getString("BoardView1.Conventional") + mf.getDensity() + ")", //$NON-NLS-1$
                                     p.x, p.y + (int) (51 * scale),
                                     font_minefield, backGraph);
+                            if(mf.isSeaBased()) {
+                                drawCenteredString(
+                                        "Depth: " + mf.getDepth() + "", //$NON-NLS-1$ //$NON-NLS-2$
+                                        p.x, p.y + (int) (60 * scale),
+                                        font_minefield, backGraph);
+                            }
                             break;
-                        case (Minefield.TYPE_THUNDER):
-                            drawCenteredString(
-                                    Messages.getString("BoardView1.Thunder") + mf.getDamage() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, backGraph);
-                            break;
-                        case (Minefield.TYPE_THUNDER_INFERNO):
-                            drawCenteredString(
-                                    Messages
-                                            .getString("BoardView1.Thunder-Inf") + mf.getDamage() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, backGraph);
-                            break;
-                        case (Minefield.TYPE_THUNDER_ACTIVE):
+                        case (Minefield.TYPE_INFERNO):
                             drawCenteredString(
                                     Messages
-                                            .getString("BoardView1.Thunder-Actv") + mf.getDamage() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+                                            .getString("BoardView1.Inferno") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+                                    p.x, p.y + (int) (51 * scale),
+                                    font_minefield, backGraph);
+                            break;
+                        case (Minefield.TYPE_ACTIVE):
+                            drawCenteredString(
+                                    Messages
+                                            .getString("BoardView1.Active") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
                                     p.x, p.y + (int) (51 * scale),
                                     font_minefield, backGraph);
                             break;
                         case (Minefield.TYPE_COMMAND_DETONATED):
                             drawCenteredString(
-                                    Messages.getString("BoardView1.Command-"), //$NON-NLS-1$
+                                    Messages.getString("BoardView1.Command") + mf.getDensity() + ")", //$NON-NLS-1$
                                     p.x, p.y + (int) (51 * scale),
-                                    font_minefield, backGraph);
-                            drawCenteredString(
-                                    Messages.getString("BoardView1.detonated"), //$NON-NLS-1$
-                                    p.x, p.y + (int) (60 * scale),
                                     font_minefield, backGraph);
                             break;
                         case (Minefield.TYPE_VIBRABOMB):
                             drawCenteredString(
-                                    Messages.getString("BoardView1.Vibrabomb"), //$NON-NLS-1$
+                                    Messages.getString("BoardView1.Vibrabomb") + mf.getDensity() + ")", //$NON-NLS-1$
                                     p.x, p.y + (int) (51 * scale),
                                     font_minefield, backGraph);
                             if (mf.getPlayerId() == localPlayer.getId()) {
@@ -1229,7 +1223,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         if (GUIPreferences.getInstance().getBoolean(
                 GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
-                && game.getOptions().booleanOption("night_battle")
+                && game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY
                 && !game.isPositionIlluminated(c)) {
             scaledImage = getScaledImage(tileManager.getNightFog());
             boardGraph.drawImage(scaledImage, drawX, drawY, this);
@@ -1469,7 +1463,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             tipLoc.translate(mousePos.x, mousePos.y + 20);
 
-            // adjust horizontal location for the tipWindow if it goes off the
+         // adjust horizontal location for the tipWindow if it goes off the
             // frame
             if (scroller.getLocationOnScreen().x + scroller.getSize().width < tipLoc.x
                     + tipWindow.getSize().width + 10) {
@@ -1691,38 +1685,33 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                         case (Minefield.TYPE_CONVENTIONAL):
                             strings[stringsIndex] = mf.getName()
                                     + Messages
-                                            .getString("BoardView1.minefield") + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                            break;
-                        case (Minefield.TYPE_THUNDER):
-                            strings[stringsIndex] = mf.getName()
-                                    + Messages
-                                            .getString("BoardView1.minefield") + "(" + mf.getDamage() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
                             break;
                         case (Minefield.TYPE_COMMAND_DETONATED):
                             strings[stringsIndex] = mf.getName()
                                     + Messages
-                                            .getString("BoardView1.minefield") + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
+                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")"+ " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
                             break;
                         case (Minefield.TYPE_VIBRABOMB):
                             if (mf.getPlayerId() == localPlayer.getId()) {
                                 strings[stringsIndex] = mf.getName()
                                         + Messages
-                                                .getString("BoardView1.minefield") + "(" + mf.getSetting() + ") " + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                                .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + "(" + mf.getSetting() + ") " + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             } else {
                                 strings[stringsIndex] = mf.getName()
                                         + Messages
-                                                .getString("BoardView1.minefield") + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
+                                                .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
                             }
                             break;
-                        case (Minefield.TYPE_THUNDER_ACTIVE):
+                        case (Minefield.TYPE_ACTIVE):
                             strings[stringsIndex] = mf.getName()
                                     + Messages
-                                            .getString("BoardView1.minefield") + "(" + mf.getDamage() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             break;
-                        case (Minefield.TYPE_THUNDER_INFERNO):
+                        case (Minefield.TYPE_INFERNO):
                             strings[stringsIndex] = mf.getName()
                                     + Messages
-                                            .getString("BoardView1.minefield") + "(" + mf.getDamage() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                             break;
                     }
                     stringsIndex++;
@@ -2049,7 +2038,6 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             }
             previousStep = step;
         }
-        repaint(100);
     }
 
     /**
@@ -2078,7 +2066,6 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
      */
     public void markDeploymentHexesFor(Player p) {
         m_plDeployer = p;
-        repaint(100);
     }
 
     /**
@@ -2185,7 +2172,6 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         } else {
             attackSprites.add(new AttackSprite(aa));
         }
-        repaint(100);
     }
 
     /** Removes all attack sprites from a certain entity */
@@ -2219,7 +2205,6 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 addAttack(ea);
             }
         }
-        repaint(100);
     }
     
     public void refreshMoveVectors() {
@@ -2342,15 +2327,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                             new Integer(le.getLightSmoke()) }));
                 }
                 if (le.getHeavySmoke() > 0) {
-                    if (game.getOptions().booleanOption("maxtech_fire")) { //$NON-NLS-1$
-                        message.append(Messages.getString(
-                                "BoardView1.HeavySmoke", new Object[] { //$NON-NLS-1$
-                                new Integer(le.getHeavySmoke()) }));
-                    } else {
-                        message.append(Messages.getString(
-                                "BoardView1.Smoke", new Object[] { //$NON-NLS-1$
-                                new Integer(le.getHeavySmoke()) }));
-                    }
+                    message.append(Messages.getString(
+                            "BoardView1.HeavySmoke", new Object[] { //$NON-NLS-1$
+                                    new Integer(le.getHeavySmoke()) }));
                 }
                 if (le.isTargetCover()) {
                     message.append(Messages
@@ -2642,12 +2621,6 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 ctlKeyHeld = true;
                 initCtlScroll = true;
                 break;
-            case KeyEvent.VK_PAGE_DOWN:
-                zoomIn();
-                break;
-            case KeyEvent.VK_PAGE_UP:
-                zoomOut();
-                break;
         }
 
         if (isTipShowing()) {
@@ -2680,17 +2653,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         oldMousePosition = point;
 
         isTipPossible = false;
-
         for (int i = 0; i < displayables.size(); i++) {
             IDisplayable disp = displayables.get(i);
             if ((backSize != null) && (disp.isHit(point, backSize))) {
                 return;
             }
-        }
-
-        if (me.isPopupTrigger()) {
-            mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiers());
-            return;
         }
 
         // Disable scrolling when ctrl or alt is held down, since this
@@ -2744,10 +2711,6 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         }
         isScrolling = false;
 
-        if (me.isPopupTrigger() && me.getPoint() != null) {
-            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP, me.getModifiers());
-            return;
-        }
         // Unless the user has auto-scroll on and is using the left
         // mouse button, no click action should be triggered if the map
         // is being scrolled.
@@ -2772,9 +2735,6 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     }
 
     public void mouseClicked(MouseEvent me) {
-        if (me.isPopupTrigger() && me.getPoint() != null) {
-            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP, me.getModifiers());
-        }
     }
 
     //
@@ -3532,7 +3492,8 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if (entity.getFacing() != -1
                     && !(entity instanceof Infantry && ((Infantry) entity)
                             .getDugIn() == Infantry.DUG_IN_NONE)
-                    && !(entity instanceof Aero && ((Aero)entity).isSpheroid() && game.getBoard().inAtmosphere())) {
+                    && !(entity instanceof Aero && ((Aero)entity).isSpheroid() 
+                            && game.getBoard().inAtmosphere())) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
 
@@ -4083,6 +4044,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                     break;
                 case MovePath.STEP_GET_UP:
                 case MovePath.STEP_UP:
+                case MovePath.STEP_CAREFUL_STAND:
                     // draw arrow indicating standing up
                     // also doubles as the climb indication
                     // and triples as deceleration
@@ -5561,7 +5523,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
         // Return the chosen unit.
         return choice;
     }
-
+    
     public Component getComponent() {
         // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
         if (System.getProperty
@@ -5587,7 +5549,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
         return scroller;
     }
-
+    
     public void refreshDisplayables() {
         repaint();
     }
@@ -5603,5 +5565,4 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     public void refreshMinefields() {
         repaint();
     }
-
 }

@@ -17,6 +17,7 @@ package megamek.common.actions;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mech;
+import megamek.common.Protomech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
@@ -42,13 +43,13 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
     /**
      * Generates the to hit data for this action.
      * 
-     * @param game the game.
+     * @param game
+     *            the game.
      * @return the to hit data object for this action.
      * @see #toHit(IGame, int, Targetable)
      */
     public ToHitData toHit(IGame game) {
-        return toHit(game, getEntityId(), game.getTarget(getTargetType(),
-                getTargetId()));
+        return toHit(game, getEntityId(), game.getTarget(getTargetType(), getTargetId()));
     }
 
     /**
@@ -57,11 +58,10 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
     public static ToHitData toHit(IGame game, int attackerId, Targetable target) {
         final Entity ae = game.getEntity(attackerId);
         if (ae == null)
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "You can't attack from a null entity!");
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "You can't attack from a null entity!");
 
-        if (!game.getOptions().booleanOption("maxtech_new_physicals"))
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "no MaxTech physicals");
+        if (!game.getOptions().booleanOption("tacops_grappling"))
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "grappling attack not allowed");
 
         String impossible = toHitIsImpossible(game, ae, target);
         if (impossible != null && !impossible.equals("Locked in Grapple")) {
@@ -71,12 +71,11 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
         ToHitData toHit;
 
         // non-mechs can't grapple or be grappled
-        if (!(ae instanceof Mech)) {
-            return new ToHitData(TargetRoll.IMPOSSIBLE,
-                    "Only mechs should be grappled");
+        if (!(ae instanceof Mech) && !(ae instanceof Protomech)) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Only mechs and protomechs can be grappled");
         }
 
-        if (((Mech) ae).getGrappled() != target.getTargetId()) {
+        if (ae.getGrappled() != target.getTargetId()) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Not grappled");
         }
 
@@ -86,44 +85,56 @@ public class BreakGrappleAttackAction extends PhysicalAttackAction {
         // Start the To-Hit
         toHit = new ToHitData(base, "base");
 
-        if (((Mech) ae).isGrappleAttacker()) {
-            toHit
-                    .addModifier(TargetRoll.AUTOMATIC_SUCCESS,
-                            "original attacker");
+        if (ae.isGrappleAttacker()) {
+            toHit.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "original attacker");
             return toHit;
         }
 
         setCommonModifiers(toHit, game, ae, target);
 
-        // damaged or missing actuators
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
-            toHit.addModifier(2, "Left shoulder actuator destroyed");
-        }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_LARM)) {
-            toHit.addModifier(2, "Left upper arm actuator destroyed");
-        }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM)) {
-            toHit.addModifier(2, "Left lower arm actuator destroyed");
-        }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
-            toHit.addModifier(1, "Left hand actuator destroyed");
-        }
+        if (ae instanceof Mech) {
+            // damaged or missing actuators
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_LARM)) {
+                toHit.addModifier(2, "Left shoulder actuator destroyed");
+            }
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_LARM)) {
+                toHit.addModifier(2, "Left upper arm actuator destroyed");
+            }
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_LARM)) {
+                toHit.addModifier(2, "Left lower arm actuator destroyed");
+            }
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_LARM)) {
+                toHit.addModifier(1, "Left hand actuator destroyed");
+            }
 
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)) {
-            toHit.addModifier(2, "Right shoulder actuator destroyed");
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)) {
+                toHit.addModifier(2, "Right shoulder actuator destroyed");
+            }
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_RARM)) {
+                toHit.addModifier(2, "Right upper arm actuator destroyed");
+            }
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)) {
+                toHit.addModifier(2, "Right lower arm actuator destroyed");
+            }
+            if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
+                toHit.addModifier(1, "Right hand actuator destroyed");
+            }
+            if ( ae.hasFunctionalArmAES(Mech.LOC_RARM) && ae.hasFunctionalArmAES(Mech.LOC_LARM) ) {
+                toHit.addModifier(-1,"AES modifer");
+            }
         }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_UPPER_ARM, Mech.LOC_RARM)) {
-            toHit.addModifier(2, "Right upper arm actuator destroyed");
-        }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, Mech.LOC_RARM)) {
-            toHit.addModifier(2, "Right lower arm actuator destroyed");
-        }
-        if (!ae.hasWorkingSystem(Mech.ACTUATOR_HAND, Mech.LOC_RARM)) {
-            toHit.addModifier(1, "Right hand actuator destroyed");
-        }
-
+        Entity te = (Entity) target;
         // Weight class difference
-        int wmod = ((Entity) target).getWeightClass() - ae.getWeightClass();
+        int wmod = te.getWeightClass() - ae.getWeightClass();
+
+        if (te instanceof Protomech && !(ae instanceof Protomech)) {
+            wmod = ae.getWeightClass() * -1;
+        } else if (ae instanceof Protomech && !(te instanceof Protomech)) {
+            wmod = te.getWeightClass();
+        } else if (te instanceof Protomech && ae instanceof Protomech) {
+            wmod = 0;
+        }
+
         if (wmod != 0) {
             toHit.addModifier(wmod, "Weight class difference");
         }

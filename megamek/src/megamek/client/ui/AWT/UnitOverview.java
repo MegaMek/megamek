@@ -119,7 +119,8 @@ public class UnitOverview implements Displayable {
 
         if (scroll) {
             graph.drawImage(pageUp, x, y, null);
-            graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING, null);
+            graph.drawImage(scrollUp, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                    null);
             y += BUTTON_HEIGHT + BUTTON_HEIGHT + BUTTON_PADDING
                     + BUTTON_PADDING;
         }
@@ -152,7 +153,8 @@ public class UnitOverview implements Displayable {
             y -= PADDING;
             y += BUTTON_PADDING;
             graph.drawImage(scrollDown, x, y, null);
-            graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING, null);
+            graph.drawImage(pageDown, x, y + BUTTON_HEIGHT + BUTTON_PADDING,
+                    null);
         }
 
     }
@@ -265,7 +267,7 @@ public class UnitOverview implements Displayable {
         boolean mtHeat = false;
         int mHeat = 30;
         if (entity.getGame() != null
-                && entity.getGame().getOptions().booleanOption("maxtech_heat")) {
+                && entity.getGame().getOptions().booleanOption("tacops_heat")) {
             mHeat = 50;
             mtHeat = true;
         }

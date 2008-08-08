@@ -25,6 +25,7 @@ public class MechWarrior extends Infantry {
     private int originalRideExternalId;
     private int pickedUpById = Entity.NONE;
     private int pickedUpByExternalId = Entity.NONE;
+    private boolean landed = true;
 
     /**
      * Create a new MechWarrior
@@ -139,5 +140,18 @@ public class MechWarrior extends Infantry {
     public void newRound(int number) {
         super.newRound(number);
         getCrew().setEjected(false);
+    }
+    
+    /**
+     * Ejected pilots do not get killed by ammo/fusion engine explosions
+     * so that means they are still up in the air and do not land until the end of the turn.
+     * @param landed
+     */
+    public void setLanded(boolean landed){
+        this.landed = landed;
+    }
+    
+    public boolean hasLanded(){
+        return landed;
     }
 }

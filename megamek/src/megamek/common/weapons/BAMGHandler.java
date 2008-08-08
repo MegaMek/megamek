@@ -68,6 +68,8 @@ public class BAMGHandler extends WeaponHandler {
                     case 3:
                         nDamPerHit = Compute.d6(2);
                 }
+                if ( bDirect )
+                    nDamPerHit += toHit.getMoS()/3;
             } else {
                 nDamPerHit = super.calcDamagePerHit();
             }

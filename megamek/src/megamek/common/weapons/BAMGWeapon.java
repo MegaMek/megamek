@@ -28,6 +28,8 @@ import megamek.server.Server;
  */
 public abstract class BAMGWeapon extends Weapon {
 
+    private static final long serialVersionUID = -6222214456392675786L;
+
     /**
      * 
      */

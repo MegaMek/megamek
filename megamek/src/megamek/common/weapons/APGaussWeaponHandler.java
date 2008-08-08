@@ -22,6 +22,7 @@ import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -56,6 +57,12 @@ public class APGaussWeaponHandler extends AmmoWeaponHandler {
             int toReturn = Compute.d6(2);
             if (bGlancing)
                 toReturn = (int) Math.floor(toReturn / 2.0);
+            if ( bDirect )
+                toReturn += toHit.getMoS()/3;
+            if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+                toReturn -= 1;
+            }
+
             return toReturn;
         }        
         return super.calcDamagePerHit();

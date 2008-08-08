@@ -81,7 +81,8 @@ public class MovePath implements Cloneable, Serializable {
     public static final int STEP_HOVER = 47;
     public static final int STEP_MANEUVER = 48;
     public static final int STEP_LOOP = 49;
-
+    public static final int STEP_CAREFUL_STAND = 50;
+    
     public static class Key {
         private final Coords coords;
         private final int facing;
@@ -113,6 +114,9 @@ public class MovePath implements Cloneable, Serializable {
     protected transient Entity entity;
 
     public static final int DEFAULT_PATHFINDER_TIME_LIMIT = 2000;
+    
+    //is this move path being done using careful movement?
+    private boolean careful = true;
 
     /**
      * Generates a new, empty, movement path object.
@@ -169,8 +173,8 @@ public class MovePath implements Cloneable, Serializable {
         return addStep(new MoveStep(this, type, target));
     }
 
-    public MovePath addStep(final int type, final int recover) {
-        return addStep(type, recover, -1);
+    public MovePath addStep(final int type, final int mineToLay) {
+        return addStep(type, -1, mineToLay);
     }
     
     public MovePath addStep(final int type, final int recover, final int mineToLay) {
@@ -187,6 +191,10 @@ public class MovePath implements Cloneable, Serializable {
     
     public MovePath addStep(final int type, final boolean noCost, final boolean isManeuver) {
         return addStep(new MoveStep(this, type, noCost, isManeuver));
+    }
+    
+    public MovePath addStep(final int type, final Minefield mf) {
+        return addStep(new MoveStep(this, type, mf));
     }
     
     public MovePath addManeuver(final int manType) {
@@ -268,7 +276,10 @@ public class MovePath implements Cloneable, Serializable {
                 step = new MoveStep(this, step.getType(), step.hasNoCost(), step.isManeuver());
             } else if(step.hasNoCost()) {
                 step = new MoveStep(this, step.getType(), step.hasNoCost());
+            } else if(null != step.getMinefield()) {
+                step = new MoveStep(this, step.getType(), step.getMinefield());
             } else {
+            
                 step = new MoveStep(this, step.getType());
             }
             this.addStep(step);
@@ -844,7 +855,12 @@ public class MovePath implements Cloneable, Serializable {
             if (last != null && last.getType() != STEP_TURN_LEFT) {
                 result.add(this.clone().addStep(MovePath.STEP_TURN_RIGHT));
             }
-            result.add(this.clone().addStep(MovePath.STEP_GET_UP));
+            
+            if ( entity.isCarefulStand() ) {
+                result.add(this.clone().addStep(MovePath.STEP_CAREFUL_STAND));
+            } else {
+                result.add(this.clone().addStep(MovePath.STEP_GET_UP));
+            }
             return result;
         }
         if (canShift()) {
@@ -893,6 +909,7 @@ public class MovePath implements Cloneable, Serializable {
     public MovePath clone() {
         final MovePath copy = new MovePath(this.game, this.entity);
         copy.steps = new Vector<MoveStep>(steps);
+        copy.careful = this.careful;
         return copy;
     }
 
@@ -964,5 +981,13 @@ public class MovePath implements Cloneable, Serializable {
          }
          return priorPos;
         
+    }
+    
+    public boolean isCareful() {
+        return careful;
+    }
+    
+    public void setCareful(boolean b) {
+        this.careful = b;
     }
 }

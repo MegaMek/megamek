@@ -86,6 +86,8 @@ public class WeaponType extends EquipmentType {
                                                         // infantry
     public static final long F_MGA = 1l << 32; // machine gun array
     public static final long F_NO_AIM = 1l << 33;
+    public static final long F_BOMBAST_LASER = 1l << 34;
+    public static final long F_CRUISE_MISSILE = 1l << 35;
 
 //  add maximum range for AT2
     public static final int     RANGE_SHORT = 1;
@@ -127,6 +129,11 @@ public class WeaponType extends EquipmentType {
     // protected RangeType rangeL;
     protected int heat;
     protected int damage;
+    protected int damageShort;
+    protected int damageMedium;
+    protected int damageLong;
+    protected int explosionDamage = 0;
+    
     public int rackSize; // or AC size, or whatever
     public int ammoType;
 
@@ -210,6 +217,10 @@ public class WeaponType extends EquipmentType {
         }
     }
 
+    public int getDamage(int range) {
+        return damage;
+    }
+
     public int getDamage() {
         return damage;
     }
@@ -222,9 +233,47 @@ public class WeaponType extends EquipmentType {
         return ammoType;
     }
 
-    public int[] getRanges() {
-        return new int[] { minimumRange, shortRange, mediumRange, longRange,
+    public int[] getRanges(Mounted weapon) {
+        
+        int[] weaponRanges = { minimumRange, shortRange, mediumRange, longRange,
                 extremeRange };
+        // modify the ranges for ATM missile systems based on the ammo selected
+        // TODO: this is not the right place to hardcode these
+        if (this.getAmmoType() == AmmoType.T_ATM) {
+            AmmoType atype = (AmmoType) weapon.getLinked().getType();
+            if ((atype.getAmmoType() == AmmoType.T_ATM) && atype.getMunitionType() == AmmoType.M_EXTENDED_RANGE) {
+                minimumRange = 4;
+                shortRange = 9;
+                mediumRange = 18;
+                longRange = 27;
+                extremeRange = 36;
+            } else if ((atype.getAmmoType() == AmmoType.T_ATM) && atype.getMunitionType() == AmmoType.M_HIGH_EXPLOSIVE) {
+                minimumRange = 0;
+                shortRange = 3;
+                mediumRange = 6;
+                longRange = 9;
+                extremeRange = 12;
+            }
+        }
+        if (this.getAmmoType() == AmmoType.T_MML) {
+            AmmoType atype = (AmmoType) weapon.getLinked().getType();
+            if (atype.hasFlag(AmmoType.F_MML_LRM) || this.getAmmoType() == AmmoType.T_LRM_TORPEDO) {
+                minimumRange = 6;
+                shortRange = 7;
+                mediumRange = 14;
+                longRange = 21;
+                extremeRange = 28;
+            } else {
+                minimumRange = 0;
+                shortRange = 3;
+                mediumRange = 6;
+                longRange = 9;
+                extremeRange = 12;
+            }
+            weaponRanges = new int[] { minimumRange, shortRange, mediumRange, longRange, extremeRange };
+        }
+
+        return weaponRanges;
     }
 
     public int getMinimumRange() {
@@ -391,6 +440,11 @@ public class WeaponType extends EquipmentType {
         addType(new ISSmallPulseLaser());
         addType(new ISSmallXPulseLaser());
         addType(new ISERSmallLaser());
+        addType(new ISMediumVariableSpeedPulseLaser());
+        addType(new ISSmallVariableSpeedPulseLaser());
+        addType(new ISLargeVariableSpeedPulseLaser());
+        addType(new ISBinaryLaserCannon());
+        addType(new ISBombastLaser());
         addType(new CLERLargeLaser());
         addType(new CLHeavyLargeLaser());
         addType(new CLLargePulseLaser());
@@ -405,6 +459,12 @@ public class WeaponType extends EquipmentType {
         addType(new CLHeavySmallLaser());
         addType(new CLERMicroLaser());
         addType(new CLMicroPulseLaser());
+        addType(new CLImprovedHeavyLargeLaser());
+        addType(new CLImprovedMediumLargeLaser());
+        addType(new CLImprovedSmallLargeLaser());
+        addType(new CLLargeChemicalLaser());
+        addType(new CLMediumChemicalLaser());
+        addType(new CLSmallChemicalLaser());
         // PPC types
         addType(new ISPPC());
         addType(new ISERPPC());
@@ -460,12 +520,18 @@ public class WeaponType extends EquipmentType {
         addType(new ISLAC5());
         addType(new ISLAC10());
         addType(new ISLAC20());
+        //HVACs
+        addType(new ISHVAC2());
+        addType(new ISHVAC5());
+        addType(new ISHVAC10());
         // Gausses
         addType(new ISGaussRifle());
         addType(new ISGaussRiflePrototype());
+        addType(new ISSilverBulletGauss());
         addType(new CLGaussRifle());
         addType(new ISLGaussRifle());
         addType(new ISHGaussRifle());
+        addType(new ISIHGaussRifle());
         addType(new CLHAG20());
         addType(new CLHAG30());
         addType(new CLHAG40());
@@ -712,7 +778,17 @@ public class WeaponType extends EquipmentType {
         // plasma weapons
         addType(new ISPlasmaRifle());
         addType(new CLPlasmaCannon());
-
+        
+        //MekMortarWeapons
+        addType(new ISMekMortar1());
+        addType(new ISMekMortar2());
+        addType(new ISMekMortar4());
+        addType(new ISMekMortar8());
+        addType(new CLMekMortar1());
+        addType(new CLMekMortar2());
+        addType(new CLMekMortar4());
+        addType(new CLMekMortar8());
+        
         // BA weapons
         addType(new CLSmallLaser());
         addType(new ISLightRecoillessRifle());
@@ -797,5 +873,9 @@ public class WeaponType extends EquipmentType {
 
     public String toString() {
         return "WeaponType: " + name;
+    }
+    
+    public int getExplosionDamage() {
+        return explosionDamage;
     }
 }

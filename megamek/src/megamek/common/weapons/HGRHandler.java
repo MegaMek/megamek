@@ -19,10 +19,8 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
-import megamek.common.BattleArmor;
 import megamek.common.EntityWeightClass;
 import megamek.common.IGame;
-import megamek.common.Infantry;
 import megamek.common.PilotingRollData;
 import megamek.common.Report;
 import megamek.common.ToHitData;
@@ -32,7 +30,7 @@ import megamek.server.Server;
 /**
  * @author Andrew Hunter
  */
-public class HGRHandler extends AmmoWeaponHandler {
+public class HGRHandler extends GRHandler {
 
     /**
      * 
@@ -67,34 +65,10 @@ public class HGRHandler extends AmmoWeaponHandler {
             } else {
                 nMod = -1;
             }
-            PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,
-                    "fired HeavyGauss unbraced");
+            PilotingRollData psr = new PilotingRollData(ae.getId(), nMod,"fired HeavyGauss unbraced");
             psr.setCumulative(false);
             game.addPSR(psr);
         }
         return false;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
-     */
-    protected int calcDamagePerHit() {
-        float toReturn;
-        int nRange = ae.getPosition().distance(target.getPosition());
-        if (nRange <= wtype.getShortRange()) {
-            toReturn = 25;
-        } else if (nRange <= wtype.getMediumRange()) {
-            toReturn = 20;
-        } else {
-            toReturn = 10;
-        }
-        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn /= 10;
-        }
-        if (bGlancing)
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        return (int) Math.ceil(toReturn);
     }
 }

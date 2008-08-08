@@ -406,13 +406,14 @@ public class CEntity {
             if (entity.getPosition() != null) {
                 if (tb.game.getBoard().getHex(entity.getPosition()) != null) {
                     if (tb.game.getBoard().getHex(entity.getPosition())
-                            .terrainLevel(Terrains.FIRE) == 2) {
+                            .containsTerrain(Terrains.FIRE) &&
+                            tb.game.getBoard().getHex(entity.getPosition()).getFireTurn() > 0) {
                         heat += 5;
                     }
                 }
             }
             // Include heat from ambient temperature
-            heat += tb.game.getTemperatureDifference();
+            heat += tb.game.getPlanetaryConditions().getTemperatureDifference(50,-30);
         }
 
         if (heat <= 4) {
@@ -1092,6 +1093,16 @@ public class CEntity {
                 }
             }
 
+            if (wt.getAmmoType() == AmmoType.T_MRM) {
+                lnk_guide = weapon.getLinkedBy();
+                if (lnk_guide != null
+                        && lnk_guide.getType() instanceof MiscType
+                        && !lnk_guide.isDestroyed() && !lnk_guide.isMissing()
+                        && !lnk_guide.isBreached()
+                        && lnk_guide.getType().hasFlag(MiscType.F_APOLLO)) {
+                    fHits *= .9f;
+                }
+            }
             // Most Battle Armor units have a weapon per trooper, plus their
             // weapons do odd things when mounting multiples
             if (attacker instanceof BattleArmor) {

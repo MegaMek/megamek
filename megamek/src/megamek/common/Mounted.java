@@ -24,6 +24,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.Vector;
 
+import megamek.common.weapons.GaussWeapon;
+
 /**
  * This describes equipment mounted on a mech.
  * 
@@ -90,7 +92,10 @@ public class Mounted implements Serializable, RoundUpdated {
     public static final int MINE_NONE = -1;
     public static final int MINE_CONVENTIONAL = 0;
     public static final int MINE_VIBRABOMB = 1;
-    public static final int MINE_COMMAND_DETONATED = 2;
+    public static final int MINE_ACTIVE = 2;
+    public static final int MINE_INFERNO = 3;
+    public static final int MINE_EMP = 4;
+    public static final int MINE_COMMAND_DETONATED = 5;
 
     // New stuff for shields
     protected int baseDamageAbsorptionRate = 0;
@@ -109,13 +114,13 @@ public class Mounted implements Serializable, RoundUpdated {
         if (type instanceof MiscType && type.hasFlag(MiscType.F_MINE)) {
             this.mineType = MINE_CONVENTIONAL;
         }
-        if (type instanceof MiscType && ((MiscType) type).isShield()) {
+        if (type instanceof MiscType && ((MiscType) type).isShield() || type.hasFlag(MiscType.F_MODULAR_ARMOR) ) {
             MiscType shield = (MiscType) type;
             baseDamageAbsorptionRate = shield.baseDamageAbsorptionRate;
             baseDamageCapacity = shield.baseDamageCapacity;
             damageTaken = shield.damageTaken;
         }
-
+        
     }
 
     /**
@@ -250,17 +255,23 @@ public class Mounted implements Serializable, RoundUpdated {
     public String getDesc() {
         StringBuffer desc;
         switch (getMineType()) {
-            case 0:
+            case MINE_CONVENTIONAL:
                 desc = new StringBuffer(Messages
                         .getString("Mounted.ConventionalMine"));
                 break;
-            case 1:
+            case MINE_VIBRABOMB:
                 desc = new StringBuffer(Messages
                         .getString("Mounted.VibraBombMine"));
                 break;
-            case 2:
+            case MINE_COMMAND_DETONATED:
                 desc = new StringBuffer(Messages
                         .getString("Mounted.CommandDetonatedMine"));
+                break;
+            case MINE_ACTIVE:
+                desc = new StringBuffer(Messages.getString("Mounted.ActiveMine"));
+                break;
+            case MINE_INFERNO:
+                desc = new StringBuffer(Messages.getString("Mounted.InfernoMine"));
                 break;
             case -1:
             default:
@@ -611,27 +622,15 @@ public class Mounted implements Serializable, RoundUpdated {
                 damagePerShot++;
 
             return damagePerShot * rackSize * shotsLeft;
-        } else if (type instanceof WeaponType) {
+        } 
+
+        if (type instanceof WeaponType) {
             WeaponType wtype = (WeaponType) type;
-            // HACK: gauss rifle damage hardcoding
-            if (wtype.getAmmoType() == AmmoType.T_GAUSS
-                    || wtype.getAmmoType() == AmmoType.T_SBGAUSS) {
-                return 20;
-            } else if (wtype.getAmmoType() == AmmoType.T_GAUSS_LIGHT) {
-                return 16;
-            } else if (wtype.getAmmoType() == AmmoType.T_RAIL_GUN) {
-                return 22;
-            } else if (wtype.getAmmoType() == AmmoType.T_GAUSS_HEAVY) {
-                return 25;
-            } else if (wtype.getAmmoType() == AmmoType.T_AC_ROTARY
-                    || wtype.getAmmoType() == AmmoType.T_AC
-                    || wtype.getAmmoType() == AmmoType.T_LAC) {
-                return wtype.getDamage();
-            } else if (wtype.getAmmoType() == AmmoType.T_MAGSHOT) {
-                return 3;
-            } else if (wtype.getAmmoType() == AmmoType.T_HAG) {
-                return wtype.getRackSize() / 2;
-            } else if (this.isHotLoaded() && this.getLinked().getShotsLeft() > 0) {
+            //TacOps Gauss Weapon rule p. 102
+            if ( type instanceof GaussWeapon && type.hasModes() && this.curMode().equals("Powered Down") ) {
+                return 0;
+            }
+            if (this.isHotLoaded() && this.getLinked().getShotsLeft() > 0) {
                 Mounted link = this.getLinked();
                 AmmoType atype = ((AmmoType) link.getType());
                 int damagePerShot = atype.getDamagePerShot();
@@ -642,18 +641,30 @@ public class Mounted implements Serializable, RoundUpdated {
 
                 int damage = wtype.getRackSize() * damagePerShot;
                 return damage;
-            } else if (wtype.hasFlag(WeaponType.F_PPC) && hasChargedCapacitor()) {
+            } 
+            
+            if (wtype.hasFlag(WeaponType.F_PPC) && hasChargedCapacitor()) {
                 if (isFired())
                     return 0;
                 return 15;
             }
-        } else if (type instanceof MiscType) {
+
+            if ( wtype.getAmmoType() == AmmoType.T_MPOD && isFired() ){
+                return 0;
+            }
+            
+           return wtype.getExplosionDamage();
+           
+        } 
+
+        if (type instanceof MiscType) {
             MiscType mtype = (MiscType) type;
             if (mtype.hasFlag(MiscType.F_PPC_CAPACITOR)) {
                 if (curMode().equals("Charge") && linked != null
                         && !linked.isFired())
                     return 15;
-            } else if (mtype.hasFlag(MiscType.F_B_POD)) {
+            } 
+            if (mtype.hasFlag(MiscType.F_B_POD)) {
                 return 2;
             }
             return 0;
@@ -843,6 +854,10 @@ public class Mounted implements Serializable, RoundUpdated {
             }
         }
         return Math.max(0, base - damageTaken);
+    }
+    
+    public int getDamageTaken() {
+        return damageTaken;
     }
     
     public void addWeaponToBay(int w) {

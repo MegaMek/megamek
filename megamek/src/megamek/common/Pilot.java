@@ -554,5 +554,14 @@ public class Pilot implements Serializable {
     public String getGunneryRPG() {
         return "" + gunneryL + "(L)/" + gunneryM + "(M)/" + gunneryB + "(B)";
     }
+    
+    //for sensor ops, so these might be easily expanded later for rpg
+    public int getSensorOps() {
+        if(piloting > -1) {
+            return piloting;
+        } else {
+            return gunnery;
+        }
+    }
 
 }

@@ -48,5 +48,6 @@ public class ISMagshotGaussRifle extends GaussWeapon {
         this.criticals = 2;
         this.bv = 15;
         this.cost = 8500;
+        this.explosionDamage = 3;
     }
 }

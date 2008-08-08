@@ -3,6 +3,7 @@
 v0.33.30-dev (SVN)
 + Bug: Talons not added to equipment list.
 + Bug: Wrong messages.properties file
++ Bug: AES not loading if Unit has SuperCharger
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

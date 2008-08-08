@@ -17,11 +17,7 @@
  */
 package megamek.common.weapons;
 
-import megamek.common.IGame;
 import megamek.common.TechConstants;
-import megamek.common.ToHitData;
-import megamek.common.actions.WeaponAttackAction;
-import megamek.server.Server;
 
 /**
  * @author Andrew Hunter
@@ -48,11 +44,14 @@ public class ISSnubNosePPC extends PPCWeapon {
         this.shortRange = 9;
         this.mediumRange = 13;
         this.longRange = 15;
-        this.extremeRange = 26;
+        this.extremeRange = 22;
         this.waterShortRange = 6;
         this.waterMediumRange = 8;
         this.waterLongRange = 9;
-        this.waterExtremeRange = 16;
+        this.waterExtremeRange = 13;
+        this.damageShort = 10;
+        this.damageMedium = 8;
+        this.damageLong = 5;
         this.tonnage = 6.0f;
         this.criticals = 2;
         this.bv = 165;
@@ -62,16 +61,14 @@ public class ISSnubNosePPC extends PPCWeapon {
         this.medAV = 8;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.Weapon#getCorrectHandler(megamek.common.ToHitData,
-     *      megamek.common.actions.WeaponAttackAction, megamek.common.Game,
-     *      megamek.server.Server)
-     */
-    protected AttackHandler getCorrectHandler(ToHitData toHit,
-            WeaponAttackAction waa, IGame game, Server server) {
-        return new SNPPCHandler(toHit, waa, game, server);
+    public int getDamage(int range) {
+        if ( range <= shortRange )
+            return damageShort;
+        
+        if ( range <= mediumRange )
+            return damageMedium;
+        
+            return damageLong;
     }
 
 }

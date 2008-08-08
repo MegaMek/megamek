@@ -26,10 +26,11 @@ import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.Report;
+import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.ToHitData;
-import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
 
@@ -61,12 +62,52 @@ public class SRMInfernoHandler extends SRMHandler {
      * 
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
+    //TAHARQA: I don't think this should be in here. Why isn't it in special miss?
+    /*
     protected void reportMiss(Vector<Report> vPhaseReport) {
         super.reportMiss(vPhaseReport);
-        server.tryIgniteHex(target.getPosition(), ae.getId(), true, 11,
-                vPhaseReport);
+        server.tryIgniteHex(target.getPosition(), ae.getId(), true, new TargetRoll(wtype.getFireTN(), wtype.getName()),
+                3, vPhaseReport);
     }
+    */
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#handleSpecialMiss(megamek.common.Entity,
+     *      boolean, megamek.common.Building)
+     */
+    protected boolean handleSpecialMiss(Entity entityTarget,
+            boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+        // Shots that miss an entity can set fires.
+        // Buildings can't be accidentally ignited,
+        // and some weapons can't ignite fires.
+        if (entityTarget != null
+                && (bldg == null && wtype.getFireTN() != TargetRoll.IMPOSSIBLE)) {
+            server.tryIgniteHex(target.getPosition(), subjectId, false, true,
+                    new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
+                    vPhaseReport);
+        }
+
+        //shots that miss an entity can also potential cause explosions in a heavy industrial hex
+        server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
+        
+        // Report any AMS action.
+        if (amsEnganged) {
+            r = new Report(3230);
+            r.indent();
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
+        }
+
+        // BMRr, pg. 51: "All shots that were aimed at a target inside
+        // a building and miss do full damage to the building instead."
+        if (!targetInBuilding || toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
+            return false;
+        }
+        return true;
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -155,7 +196,7 @@ public class SRMInfernoHandler extends SRMHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
+        if (game.getOptions().booleanOption("tacops_glancing_blows")) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
                 r = new Report(3186);
@@ -168,6 +209,16 @@ public class SRMInfernoHandler extends SRMHandler {
         } else {
             bGlancing = false;
         }
+
+        //Set Margin of Success/Failure.
+        toHit.setMoS(roll-Math.max(2,toHit.getValue()));
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1);
+        if (bDirect) {
+            r = new Report(3189);
+            r.subject = ae.getId();
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        } 
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
@@ -248,20 +299,21 @@ public class SRMInfernoHandler extends SRMHandler {
                 : null;
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
-        boolean bWeather = false;
-        boolean maxtechmissiles = game.getOptions().booleanOption(
-                "maxtech_mslhitpen");
-        if (maxtechmissiles) {
+        boolean tacopscluster = game.getOptions().booleanOption("tacops_clusterhitpen");
+        if (tacopscluster) {
             if (nRange <= 1) {
                 nMissilesModifier += 1;
-            } else if (nRange <= wtype.getShortRange()) {
-                nMissilesModifier += 0;
             } else if (nRange <= wtype.getMediumRange()) {
-                nMissilesModifier -= 1;
+                nMissilesModifier += 0;
             } else {
-                nMissilesModifier -= 2;
+                nMissilesModifier -= 1;
             }
         }
+        
+        if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
+            nMissilesModifier -= 2;
+        }
+
         boolean bMekStealthActive = false;
         if (ae instanceof Mech) {
             bMekStealthActive = ae.isStealthActive();
@@ -340,24 +392,13 @@ public class SRMInfernoHandler extends SRMHandler {
         if (bGlancing) {
             nMissilesModifier -= 4;
         }
-
-        // weather checks
-        if (game.getOptions().booleanOption("blizzard")
-                && wtype.hasFlag(WeaponType.F_MISSILE)) {
-            nMissilesModifier -= 4;
-            bWeather = true;
+        
+        if ( bDirect ){
+            nMissilesModifier += (toHit.getMoS()/3)*2;
         }
-
-        if (game.getOptions().booleanOption("moderate_winds")
-                && wtype.hasFlag(WeaponType.F_MISSILE)) {
+        
+        if(game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
-            bWeather = true;
-        }
-
-        if (game.getOptions().booleanOption("high_winds")
-                && wtype.hasFlag(WeaponType.F_MISSILE)) {
-            nMissilesModifier -= 4;
-            bWeather = true;
         }
 
         // add AMS mods
@@ -369,12 +410,10 @@ public class SRMInfernoHandler extends SRMHandler {
             if (ae instanceof BattleArmor)
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
-                        nMissilesModifier, bWeather || bGlancing
-                                || maxtechmissiles, weapon.isHotLoaded());
+                        nMissilesModifier, weapon.isHotLoaded());
             else
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                        nMissilesModifier, bWeather || bGlancing
-                                || maxtechmissiles, weapon.isHotLoaded());
+                        nMissilesModifier, weapon.isHotLoaded());
         }
 
         if (missilesHit > 0) {
@@ -402,5 +441,35 @@ public class SRMInfernoHandler extends SRMHandler {
         vPhaseReport.addElement(r);
         bSalvo = true;
         return missilesHit;
+    }
+    
+    protected void handleClearDamage(Vector<Report> vPhaseReport,
+            Building bldg, int nDamage, boolean bSalvo) {
+        if (!bSalvo) {
+            // hits!
+            r = new Report(2270);
+            r.subject = subjectId;
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        }
+        // report that damage was "applied" to terrain
+        r = new Report(3385);
+        r.indent();
+        r.subject = subjectId;
+        r.add(nDamage);
+        vPhaseReport.addElement(r);
+
+        // Any clear attempt can result in accidental ignition, even
+        // weapons that can't normally start fires. that's weird.
+        // Buildings can't be accidentally ignited.
+        //TODO: change this for TacOps - now you roll another 2d6 first and on a 5 or less
+        //you do a normal ignition as though for intentional fires
+        if (bldg != null
+                && server.tryIgniteHex(target.getPosition(), subjectId, false, true,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
+            return;
+        }
+        vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
+        return;
     }
 }

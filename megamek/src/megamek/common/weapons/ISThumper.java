@@ -41,12 +41,12 @@ public class ISThumper extends ArtilleryWeapon {
         this.addLookupName("ISThumperArtillery");
         this.addLookupName("IS Thumper");
         this.heat = 5;
-        this.rackSize = 5;
+        this.rackSize = 15;
         this.ammoType = AmmoType.T_THUMPER;
         this.shortRange = 1;
         this.mediumRange = 2;
-        this.longRange = 14;
-        this.extremeRange = 14; // No extreme range.
+        this.longRange = 21;
+        this.extremeRange = 21; // No extreme range.
         this.tonnage = 15f;
         this.criticals = 15;
         this.bv = 40;

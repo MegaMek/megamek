@@ -23,6 +23,11 @@ import megamek.common.AmmoType;
  * @author Jay Lawson
  */
 public abstract class NavalACWeapon extends AmmoWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -4293264735637352953L;
+
     public NavalACWeapon() {
         super();
         this.ammoType = AmmoType.T_NAC;

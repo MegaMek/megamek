@@ -21,6 +21,11 @@ package megamek.common.weapons;
  * @author Jay Lawson
  */
 public abstract class CapitalMissileWeapon extends AmmoWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 9186993166684654767L;
+
     public CapitalMissileWeapon() {
         super();
         this.atClass = CLASS_CAPITAL_MISSILE;

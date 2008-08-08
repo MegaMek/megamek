@@ -50,6 +50,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
     String sSalvoType = " missile(s) ";
     boolean amsEnganged = false;
     int nSalvoBonus = 0;
+    boolean advancedAMS = false;
 
     /**
      * @param t
@@ -61,6 +62,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             Server s) {
         super(t, w, g, s);
         generalDamageType = HitData.DAMAGE_MISSILE;
+        advancedAMS=g.getOptions().booleanOption("tacops_ams");
     }
 
     /*
@@ -79,7 +81,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 r.add(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength());
                 r.add(sSalvoType);
-                r.add(toHit.getTableDesc());
+                r.add(" ");
                 r.newlines = 0;
                 vPhaseReport.add(r);
                 return ((BattleArmor) ae).getShootingStrength();
@@ -88,7 +90,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             r.subject = subjectId;
             r.add(wtype.getRackSize());
             r.add(sSalvoType);
-            r.add(toHit.getTableDesc());
+            r.add(" ");
             r.newlines = 0;
             vPhaseReport.add(r);
             return 1;
@@ -97,20 +99,23 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 : null;
         int missilesHit;
         int nMissilesModifier = nSalvoBonus;
-        boolean bWeather = false;
-        boolean maxtechmissiles = game.getOptions().booleanOption(
-                "maxtech_mslhitpen");
-        if (maxtechmissiles) {
+        boolean tacopscluster = game.getOptions().booleanOption("tacops_clusterhitpen");
+        
+        int[] ranges = wtype.getRanges(weapon);
+        if (tacopscluster) {
             if (nRange <= 1) {
                 nMissilesModifier += 1;
-            } else if (nRange <= wtype.getShortRange()) {
+            } else if (nRange <= ranges[RangeType.RANGE_MEDIUM]) {
                 nMissilesModifier += 0;
-            } else if (nRange <= wtype.getMediumRange()) {
-                nMissilesModifier -= 1;
             } else {
-                nMissilesModifier -= 2;
-            }
+                nMissilesModifier -= 1;
+            } 
         }
+        
+        if ( game.getOptions().booleanOption("tacops_range") && nRange > ranges[RangeType.RANGE_LONG] ) {
+            nMissilesModifier -= 2;
+        }
+        
         boolean bMekStealthActive = false;
         if (ae instanceof Mech) {
             bMekStealthActive = ae.isStealthActive();
@@ -145,6 +150,12 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
                 vPhaseReport.addElement(r);
             } else
                 nMissilesModifier += 2;
+        } else if ((mLinker != null && mLinker.getType() instanceof MiscType
+                && !mLinker.isDestroyed() && !mLinker.isMissing()
+                && !mLinker.isBreached() && mLinker.getType().hasFlag(
+                MiscType.F_APOLLO))
+                && atype.getAmmoType() == AmmoType.T_MRM) {
+            nMissilesModifier -= 1;
         } else if (atype.getAmmoType() == AmmoType.T_ATM) {
             if (bECMAffected) {
                 // ECM prevents bonus
@@ -190,25 +201,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             nMissilesModifier -= 4;
         }
 
-        // weather checks
-        if (game.getOptions().booleanOption("blizzard")
-                && wtype.hasFlag(WeaponType.F_MISSILE)) {
-            nMissilesModifier -= 4;
-            bWeather = true;
+        if ( bDirect ){
+            nMissilesModifier += (toHit.getMoS()/3)*2;
         }
 
-        if (game.getOptions().booleanOption("moderate_winds")
-                && wtype.hasFlag(WeaponType.F_MISSILE)) {
+        if(game.getPlanetaryConditions().hasEMI()) {
             nMissilesModifier -= 2;
-            bWeather = true;
         }
-
-        if (game.getOptions().booleanOption("high_winds")
-                && wtype.hasFlag(WeaponType.F_MISSILE)) {
-            nMissilesModifier -= 4;
-            bWeather = true;
-        }
-
+        
         // add AMS mods
         nMissilesModifier += getAMSHitsMod(vPhaseReport);
 
@@ -218,12 +218,13 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
             if (ae instanceof BattleArmor)
                 missilesHit = Compute.missilesHit(wtype.getRackSize()
                         * ((BattleArmor) ae).getShootingStrength(),
-                        nMissilesModifier, bWeather || bGlancing
-                                || maxtechmissiles, weapon.isHotLoaded());
+                        nMissilesModifier, 
+                        weapon.isHotLoaded(), false, advancedAMS);
             else
                 missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                        nMissilesModifier, bWeather || bGlancing
-                                || maxtechmissiles, weapon.isHotLoaded());
+                        nMissilesModifier,
+                        weapon.isHotLoaded(),
+                        false, advancedAMS);
         }
 
         if (missilesHit > 0) {
@@ -271,10 +272,10 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         double toReturn;
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = wtype.getRackSize();
-            toReturn /= 5;
-            toReturn = Math.ceil(toReturn);
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE);
             if (bGlancing)
-                toReturn = (int) Math.floor(toReturn / 2.0);
+                toReturn /= 2;
+            toReturn = Math.ceil(toReturn);
             return (int)toReturn;
         }
         return 1;
@@ -332,10 +333,14 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         // and some weapons can't ignite fires.
         if (entityTarget != null
                 && (bldg == null && wtype.getFireTN() != TargetRoll.IMPOSSIBLE)) {
-            server.tryIgniteHex(target.getPosition(), subjectId, false, 11,
+            server.tryIgniteHex(target.getPosition(), subjectId, false, false,
+                    new TargetRoll(wtype.getFireTN(), wtype.getName()), 3,
                     vPhaseReport);
         }
 
+        //shots that miss an entity can also potential cause explosions in a heavy industrial hex
+        server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
+        
         // Report any AMS action.
         if (amsEnganged) {
             r = new Report(3230);
@@ -523,7 +528,7 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
+        if (game.getOptions().booleanOption("tacops_glancing_blows")) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
                 r = new Report(3186);
@@ -536,6 +541,16 @@ public class MissileWeaponHandler extends AmmoWeaponHandler {
         } else {
             bGlancing = false;
         }
+
+        //Set Margin of Success/Failure.
+        toHit.setMoS(roll-Math.max(2,toHit.getValue()));
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1);
+        if (bDirect) {
+            r = new Report(3189);
+            r.subject = ae.getId();
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        } 
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.

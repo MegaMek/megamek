@@ -52,5 +52,6 @@ public class ISUAC20 extends UACWeapon {
         this.shortAV = 30;
         this.medAV = 30;
         this.maxRange = RANGE_MED;
+        this.explosionDamage = damage;
     }
 }

@@ -132,6 +132,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     private RandomArmyDialog randomArmyDialog;
     private RandomSkillDialog randomSkillDialog;
     private CustomInitiativeDialog initDialog;
+    private PlanetaryConditionsDialog conditionsDialog;
 
     /**
      * Save and Open dialogs for MegaMek Unit List (mul) files.
@@ -323,7 +324,6 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
                     Messages.getString("ClientGUI.FatalError.title"), Messages.getString("ClientGUI.FatalError.message") + e); //$NON-NLS-1$ //$NON-NLS-2$
             die();
         }
-
         layoutFrame();
 
         frame.setVisible(true);
@@ -707,6 +707,13 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         }
         return initDialog;
     }
+    
+    public PlanetaryConditionsDialog getPlanetaryConditionsDialog() {
+        if (conditionsDialog == null) {
+            conditionsDialog = new PlanetaryConditionsDialog(this);
+        }
+        return conditionsDialog;
+    }
 
     void switchPanel(IGame.Phase phase) {
 
@@ -1026,7 +1033,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
                             .add(new TargetMenuItem(new HexTarget(coords,
                                     client.game.getBoard(),
                                     Targetable.TYPE_HEX_CLEAR)));
-                    if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
+                    if (client.game.getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
                         popup.add(new TargetMenuItem(new HexTarget(coords,
                                 client.game.getBoard(),
                                 Targetable.TYPE_HEX_IGNITE)));
@@ -1034,20 +1041,20 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
                 } else if (h != null && h.containsTerrain(Terrains.FUEL_TANK)) {
                     popup.add(new TargetMenuItem(new BuildingTarget(coords,
                             client.game.getBoard(), false)));
-                    if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
+                    if (client.game.getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
                         popup.add(new TargetMenuItem(new BuildingTarget(coords,
                                 client.game.getBoard(), true)));
                     }
                 } else if (h != null && h.containsTerrain(Terrains.BUILDING)) {
                     popup.add(new TargetMenuItem(new BuildingTarget(coords,
                             client.game.getBoard(), false)));
-                    if (client.game.getOptions().booleanOption("fire")) { //$NON-NLS-1$
+                    if (client.game.getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
                         popup.add(new TargetMenuItem(new BuildingTarget(coords,
                                 client.game.getBoard(), true)));
                     }
                 }
                 if (h != null && client.game.containsMinefield(coords)
-                        && curPanel instanceof FiringDisplay) {
+                        && (curPanel instanceof FiringDisplay || curPanel instanceof TargetingPhaseDisplay)) {
                     popup.add(new TargetMenuItem(new MinefieldTarget(coords,
                             client.game.getBoard())));
                 }
@@ -1068,7 +1075,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
                         popup.add(new TargetMenuItem(new HexTarget(coords,
                                 client.game.getBoard(),
                                 Targetable.TYPE_HEX_ARTILLERY)));
-                        if (client.game.getOptions().booleanOption("fire")
+                        if (client.game.getOptions().booleanOption("tacops_start_fire")
                                 && h.containsTerrain(Terrains.FIRE)) {
                             popup.add(new TargetMenuItem(new HexTarget(coords,
                                     client.game.getBoard(),

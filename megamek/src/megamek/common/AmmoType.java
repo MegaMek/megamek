@@ -86,7 +86,12 @@ public class AmmoType extends EquipmentType {
     public static final int     T_AR10              = 61;
     public static final int     T_SCREEN_LAUNCHER   = 62;
     public static final int     T_ALAMO             = 63;
-    public static final int     NUM_TYPES           = 64;
+    public static final int     T_IGAUSS_HEAVY      = 64;
+    public static final int     T_CHEMICAL_LASER    = 65;
+    public static final int     T_HYPER_VELOCITY    = 66;
+    public static final int     T_MEK_MORTAR        = 67;
+    public static final int     T_CRUISE_MISSILE    = 68;
+    public static final int     NUM_TYPES           = 69;
     
 
     // ammo flags
@@ -116,65 +121,64 @@ public class AmmoType extends EquipmentType {
     public static final long     M_INCENDIARY_AC     = 1l << 3;
     public static final long     M_PRECISION         = 1l << 4;
     public static final long     M_TRACER            = 1l << 5;
+    public static final long     M_FLAK              = 1l << 6;
 
     // ATM Munition Types
-    public static final long     M_EXTENDED_RANGE    = 1l << 6;
-    public static final long     M_HIGH_EXPLOSIVE    = 1l << 7;
+    public static final long     M_EXTENDED_RANGE    = 1l << 7;
+    public static final long     M_HIGH_EXPLOSIVE    = 1l << 8;
 
     // LRM & SRM Munition Types
-    public static final long     M_FRAGMENTATION     = 1l << 8;
-    public static final long     M_LISTEN_KILL       = 1l << 9;
-    public static final long     M_ANTI_TSM          = 1l << 10;
-    public static final long     M_NARC_CAPABLE      = 1l << 11;
-    public static final long     M_ARTEMIS_CAPABLE   = 1l << 12;
-    public static final long     M_DEAD_FIRE         = 1l << 13;
-    public static final long     M_HEAT_SEEKING      = 1l << 14;
-    public static final long     M_TANDEM_CHARGE     = 1l << 15;
-
+    public static final long     M_FRAGMENTATION     = 1l << 9;
+    public static final long     M_LISTEN_KILL       = 1l << 8;
+    public static final long     M_ANTI_TSM          = 1l << 11;
+    public static final long     M_NARC_CAPABLE      = 1l << 12;
+    public static final long     M_ARTEMIS_CAPABLE   = 1l << 13;
+    public static final long     M_DEAD_FIRE         = 1l << 14;
+    public static final long     M_HEAT_SEEKING      = 1l << 15;
+    public static final long     M_TANDEM_CHARGE     = 1l << 16;
     // LRM Munition Types
     // Incendiary is special, though...
     //FIXME - I'm not implemented!!!
-    public static final long     M_INCENDIARY_LRM    = 1l << 16;
-    public static final long     M_FLARE             = 1l << 17;
-    public static final long     M_SEMIGUIDED        = 1l << 18;
-    public static final long     M_SWARM             = 1l << 19;
-    public static final long     M_SWARM_I           = 1l << 20;
-    public static final long     M_THUNDER           = 1l << 21;
-    public static final long     M_THUNDER_AUGMENTED = 1l << 22;
-    public static final long     M_THUNDER_INFERNO   = 1l << 23;
-    public static final long     M_THUNDER_VIBRABOMB = 1l << 24;
-    public static final long     M_THUNDER_ACTIVE    = 1l << 25;
-    public static final long     M_FOLLOW_THE_LEADER = 1l << 26;
-    public static final long     M_MULTI_PURPOSE     = 1l << 27;
-
+    public static final long     M_INCENDIARY_LRM    = 1l << 17;
+    public static final long     M_FLARE             = 1l << 18;
+    public static final long     M_SEMIGUIDED        = 1l << 19;
+    public static final long     M_SWARM             = 1l << 20;
+    public static final long     M_SWARM_I           = 1l << 21;
+    public static final long     M_THUNDER           = 1l << 22;
+    public static final long     M_THUNDER_AUGMENTED = 1l << 23;
+    public static final long     M_THUNDER_INFERNO   = 1l << 24;
+    public static final long     M_THUNDER_VIBRABOMB = 1l << 25;
+    public static final long     M_THUNDER_ACTIVE    = 1l << 26;
+    public static final long     M_FOLLOW_THE_LEADER = 1l << 27;
+    public static final long     M_MULTI_PURPOSE     = 1l << 28;
     // SRM Munition Types
-    public static final long     M_INFERNO           = 1l << 28;
-    public static final long     M_AX_HEAD           = 1l << 29;
+    public static final long     M_INFERNO           = 1l << 29;
+    public static final long     M_AX_HEAD           = 1l << 30;
     
     //SRM, MRM and LRM
-    public static final long     M_TORPEDO           = 1l << 30;
+    public static final long     M_TORPEDO           = 1l << 31;
 
     // iNarc Munition Types
-    public static final long     M_NARC_EX           = 1l << 31;
-    public static final long     M_ECM               = 1l << 32;
-    public static final long     M_HAYWIRE           = 1l << 33;
-    public static final long     M_NEMESIS           = 1l << 34;
+    public static final long     M_NARC_EX           = 1l << 32;
+    public static final long     M_ECM               = 1l << 33;
+    public static final long     M_HAYWIRE           = 1l << 34;
+    public static final long     M_NEMESIS           = 1l << 35;
 
-    public static final long     M_EXPLOSIVE         = 1l << 35;
+    public static final long     M_EXPLOSIVE         = 1l << 36;
 
     // Arrow IV Munition Types
-    public static final long     M_HOMING            = 1l << 36;
-    public static final long     M_FASCAM            = 1l << 37;
-    public static final long     M_INFERNO_IV        = 1l << 38;
-    public static final long     M_VIBRABOMB_IV      = 1l << 39;
-    public static final long     M_SMOKE             = 1l << 40;
+    public static final long     M_HOMING            = 1l << 37;
+    public static final long     M_FASCAM            = 1l << 38;
+    public static final long     M_INFERNO_IV        = 1l << 39;
+    public static final long     M_VIBRABOMB_IV      = 1l << 40;
+    public static final long     M_SMOKE             = 1l << 41;
 
     // Nuclear Munitions
-    public static final long     M_DAVY_CROCKETT_M   = 1l << 41;
-    public static final long     M_SANTA_ANNA        = 1l << 42;
+    public static final long     M_DAVY_CROCKETT_M   = 1l << 42;
+    public static final long     M_SANTA_ANNA        = 1l << 43;
     
     //tele-missile
-    public static final long     M_TELE              = 1l << 43;
+    public static final long     M_TELE              = 1l << 44;
 
     /*public static final String[] MUNITION_NAMES = { "Standard",
         "Cluster", "Armor Piercing", "Flechette", "Incendiary", "Incendiary", "Precision",
@@ -284,10 +288,12 @@ public class AmmoType extends EquipmentType {
         ArrayList<AmmoType> acAmmos  = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> arrowAmmos = new ArrayList<AmmoType>(4);
         ArrayList<AmmoType> clanArrowAmmos = new ArrayList<AmmoType>(4);
-        ArrayList<AmmoType> thumperAmmos = new ArrayList<AmmoType>(2);
+        ArrayList<AmmoType> thumperAmmos = new ArrayList<AmmoType>(6);
         ArrayList<AmmoType> sniperAmmos = new ArrayList<AmmoType>(6);
         ArrayList<AmmoType> longTomAmmos = new ArrayList<AmmoType>(6);
         ArrayList<AmmoType> clanArtyAmmos = new ArrayList<AmmoType>(6);
+        ArrayList<AmmoType> mortarAmmos = new ArrayList<AmmoType>(4);
+        ArrayList<AmmoType> clanMortarAmmos = new ArrayList<AmmoType>(4);
         ArrayList<MunitionMutator> munitions = new ArrayList<MunitionMutator>();
         ArrayList<AmmoType> mmlAmmos = new ArrayList<AmmoType>();
 
@@ -379,6 +385,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISGaussAmmo());
         EquipmentType.addType(createISLTGaussAmmo());
         EquipmentType.addType(createISHVGaussAmmo());
+        EquipmentType.addType(createISIHVGaussAmmo());
         EquipmentType.addType(createISStreakSRM2Ammo());
         EquipmentType.addType(createISStreakSRM4Ammo());
         EquipmentType.addType(createISStreakSRM6Ammo());
@@ -429,6 +436,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createISLightMGAmmo());
         EquipmentType.addType(createISLightMGAmmoHalf());
         EquipmentType.addType(createISSBGaussRifleAmmo());
+        EquipmentType.addType(createISHVAC10Ammo());
+        EquipmentType.addType(createISHVAC5Ammo());
+        EquipmentType.addType(createISHVAC2Ammo());
         
         base = createISMML3LRMAmmo();
         lrmAmmos.add( base );
@@ -475,7 +485,7 @@ public class AmmoType extends EquipmentType {
         base = createISArrowIVAmmo();
         arrowAmmos.add( base );
         EquipmentType.addType( base );
-
+        
         EquipmentType.addType(createCLLB2XAmmo());
         EquipmentType.addType(createCLLB5XAmmo());
         EquipmentType.addType(createCLLB10XAmmo());
@@ -559,6 +569,9 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLPlasmaCannonAmmo());
         EquipmentType.addType(createISPlasmaRifleAmmo());
         EquipmentType.addType(createCLAPGaussRifleAmmo());
+        EquipmentType.addType(createCLMediumChemicalLaserAmmo());
+        EquipmentType.addType(createCLSmallChemicalLaserAmmo());
+        EquipmentType.addType(createCLLargeChemicalLaserAmmo());
         
         base = createCLLongTomAmmo();
         clanArtyAmmos.add( base );
@@ -772,6 +785,41 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createScreenLauncherAmmo());
         EquipmentType.addType(createAlamoAmmo());
         
+        
+        base = createISAPMortar1Ammo();
+        mortarAmmos.add(base);
+        base = createISAPMortar2Ammo();
+        mortarAmmos.add(base);
+        base = createISAPMortar4Ammo();
+        mortarAmmos.add(base);
+        base = createISAPMortar8Ammo();
+        mortarAmmos.add(base);
+
+        //TODO add more Mek Mortar Ammo later.
+        base = createCLAPMortar1Ammo();
+        clanMortarAmmos.add(base);
+        base = createCLAPMortar2Ammo();
+        clanMortarAmmos.add(base);
+        base = createCLAPMortar4Ammo();
+        clanMortarAmmos.add(base);
+        base = createCLAPMortar8Ammo();
+        clanMortarAmmos.add(base);
+
+        EquipmentType.addType(createISAPMortar1Ammo());
+        EquipmentType.addType(createISAPMortar2Ammo());
+        EquipmentType.addType(createISAPMortar4Ammo());
+        EquipmentType.addType(createISAPMortar8Ammo());
+        EquipmentType.addType(createCLAPMortar1Ammo());
+        EquipmentType.addType(createCLAPMortar2Ammo());
+        EquipmentType.addType(createCLAPMortar4Ammo());
+        EquipmentType.addType(createCLAPMortar8Ammo());
+        
+        EquipmentType.addType(createISCruiseMissile50Ammo());
+        EquipmentType.addType(createISCruiseMissile70Ammo());
+        EquipmentType.addType(createISCruiseMissile90Ammo());
+        EquipmentType.addType(createISCruiseMissile120Ammo());
+
+
         // Create the munition types for IS SRM launchers.
         munitions.clear();
         munitions.add( new MunitionMutator( "Inferno",
@@ -868,8 +916,6 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for IS LRM launchers.
         munitions.clear();
-        munitions.add( new MunitionMutator( "Flare",
-                                                   1, M_FLARE, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Thunder",
@@ -909,8 +955,6 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Clan LRM launchers.
         munitions.clear();
-        munitions.add( new MunitionMutator( "(Clan) Flare",
-                                                   1, M_FLARE, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "(Clan) Fragmentation",
                                                    1, M_FRAGMENTATION, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "(Clan) Thunder",
@@ -958,16 +1002,12 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for AC rounds.
         munitions.clear();
-        munitions.add( new MunitionMutator( "Precision",
-                                                   2, M_PRECISION, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.add( new MunitionMutator( "Armor-Piercing",
-                                                   2, M_ARMOR_PIERCING, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.add( new MunitionMutator( "Flechette",
-                                                   1, M_FLECHETTE, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.add( new MunitionMutator( "Incendiary",
-                                                   1, M_INCENDIARY_AC, TechConstants.T_IS_LEVEL_2 ) );
-        munitions.add( new MunitionMutator( "Tracer",
-                                                   1, M_TRACER, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "Precision",2, M_PRECISION, TechConstants.T_IS_LEVEL_2 ) );
+        munitions.add( new MunitionMutator( "Armor-Piercing",2, M_ARMOR_PIERCING, TechConstants.T_IS_LEVEL_2 ) );
+        munitions.add( new MunitionMutator( "Flechette",1, M_FLECHETTE, TechConstants.T_IS_LEVEL_2 ) );
+        munitions.add( new MunitionMutator( "Incendiary",1, M_INCENDIARY_AC, TechConstants.T_IS_LEVEL_2 ) );
+        munitions.add( new MunitionMutator( "Tracer",1, M_TRACER, TechConstants.T_IS_LEVEL_2 ) );
+        munitions.add( new MunitionMutator( "Flak", 1, M_FLAK, TechConstants.T_IS_LEVEL_2 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -976,19 +1016,21 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for IS Arrow IV launchers.
         munitions.clear();
         munitions.add( new MunitionMutator( "Homing",
-                                                   1, M_HOMING, TechConstants.T_IS_LEVEL_2 ) );
+                1, M_HOMING, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "FASCAM",
-                                                   1, M_FASCAM, TechConstants.T_IS_LEVEL_2 ) );
+                1, M_FASCAM, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Inferno-IV",
-                                                   1, M_INFERNO_IV, TechConstants.T_IS_LEVEL_2 ) );
+                1, M_INFERNO_IV, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Vibrabomb-IV",
-                                                   1, M_VIBRABOMB_IV, TechConstants.T_IS_LEVEL_2 ) );
+                1, M_VIBRABOMB_IV, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Illumination",
-                                                   1, M_FLARE, TechConstants.T_IS_LEVEL_3 ) );
+                1, M_FLARE, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Cluster",
-                                                   1, M_CLUSTER, TechConstants.T_IS_LEVEL_3 ) );
+                1, M_CLUSTER, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Davy Crockett-M",
-                                                   5, M_DAVY_CROCKETT_M, TechConstants.T_IS_LEVEL_3 ) );
+                5, M_DAVY_CROCKETT_M, TechConstants.T_IS_LEVEL_3 ) );
+        munitions.add( new MunitionMutator( "Smoke",
+                1, M_SMOKE, TechConstants.T_IS_LEVEL_2 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -997,19 +1039,21 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for clan Arrow IV launchers.
         munitions.clear();
         munitions.add( new MunitionMutator( "Homing",
-                                                   1, M_HOMING, TechConstants.T_CLAN_LEVEL_2 ) );
+                1, M_HOMING, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "FASCAM",
-                                                   1, M_FASCAM, TechConstants.T_CLAN_LEVEL_2 ) );
+                1, M_FASCAM, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Inferno-IV",
-                                                   1, M_INFERNO_IV, TechConstants.T_CLAN_LEVEL_2 ) );
+                1, M_INFERNO_IV, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Vibrabomb-IV",
-                                                   1, M_VIBRABOMB_IV, TechConstants.T_CLAN_LEVEL_2 ) );
+                1, M_VIBRABOMB_IV, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Davy Crockett-M",
-                                                   5, M_DAVY_CROCKETT_M, TechConstants.T_CLAN_LEVEL_3 ) );
+                5, M_DAVY_CROCKETT_M, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "Illumination",
-                1, M_FLARE, TechConstants.T_CLAN_LEVEL_3 ) );
+                1, M_FLARE, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Cluster",
-                1, M_CLUSTER, TechConstants.T_CLAN_LEVEL_3 ) );
+                1, M_CLUSTER, TechConstants.T_CLAN_LEVEL_2 ) );
+        munitions.add( new MunitionMutator( "Smoke",
+                1, M_SMOKE, TechConstants.T_CLAN_LEVEL_2 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1018,24 +1062,20 @@ public class AmmoType extends EquipmentType {
         // Create the munition types for Artillery launchers.
         munitions.clear();
         munitions.add( new MunitionMutator( "Smoke",
-                                                   1, M_SMOKE, TechConstants.T_IS_LEVEL_2 ) );
-        // Walk through both the base types and the
-        // mutators, and create munition types.
-        createMunitions(thumperAmmos,munitions);
-
-        // extra level 3 ammo for sniper & long tom but not thumper
+                1, M_SMOKE, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Copperhead",
-                                                   1, M_HOMING, TechConstants.T_IS_LEVEL_3 ) );
+                1, M_HOMING, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Illumination",
-                                                   1, M_FLARE, TechConstants.T_IS_LEVEL_3 ) );
+                1, M_FLARE, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Cluster",
-                1, M_CLUSTER, TechConstants.T_IS_LEVEL_3 ) );
+                1, M_CLUSTER, TechConstants.T_IS_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "Flechette",
-                1, M_FLECHETTE, TechConstants.T_IS_LEVEL_3 ) );
+                1, M_FLECHETTE, TechConstants.T_IS_LEVEL_2 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
         createMunitions(sniperAmmos,munitions);
+        createMunitions(thumperAmmos,munitions);
 
         // Make Davy Crockett-Ms for Long Toms, but not Thumper or Sniper.
         munitions.add( new MunitionMutator( "Davy Crockett-M",
@@ -1044,8 +1084,14 @@ public class AmmoType extends EquipmentType {
 
         // Create the munition types for Clan Artillery launchers.
         munitions.clear();
+        munitions.add( new MunitionMutator( "(Clan) Copperhead",
+                1, M_HOMING, TechConstants.T_CLAN_LEVEL_2 ) );
         munitions.add( new MunitionMutator( "(Clan) Smoke",
-                                                   1, M_SMOKE, TechConstants.T_CLAN_LEVEL_2 ) );
+                1, M_SMOKE, TechConstants.T_CLAN_LEVEL_2 ) );
+        munitions.add( new MunitionMutator( "(Clan) Illumination",
+                1, M_FLARE, TechConstants.T_CLAN_LEVEL_2 ) );
+        munitions.add( new MunitionMutator( "(Clan) Flechette",
+                1, M_FLECHETTE, TechConstants.T_CLAN_LEVEL_2 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -1571,7 +1617,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS Ammo Long Tom");
         ammo.addLookupName("IS Long Tom Ammo");
         ammo.damagePerShot=1;
-        ammo.rackSize = 20;
+        ammo.rackSize = 25;
         ammo.ammoType = AmmoType.T_LONG_TOM;
         ammo.shots = 5;
         ammo.bv = 11;
@@ -1591,7 +1637,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS Ammo Sniper");
         ammo.addLookupName("IS Sniper Ammo");
         ammo.damagePerShot=1;
-        ammo.rackSize = 10;
+        ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_SNIPER;
         ammo.shots = 10;
         ammo.bv = 5;
@@ -1611,7 +1657,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS Ammo Thumper");
         ammo.addLookupName("IS Thumper Ammo");
         ammo.damagePerShot=1;
-        ammo.rackSize = 5;
+        ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_THUMPER;
         ammo.shots = 20;
         ammo.bv = 3;
@@ -2152,6 +2198,23 @@ public class AmmoType extends EquipmentType {
         ammo.ammoType = AmmoType.T_GAUSS_HEAVY;
         ammo.shots = 4;
         ammo.bv = 43;
+        ammo.cost = 20000;
+
+        return ammo;
+    }
+    
+    private static AmmoType createISIHVGaussAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "Improved Heavy Gauss Ammo";
+        ammo.setInternalName("ISImprovedHeavyGauss Ammo");
+        ammo.addLookupName("IS Improved Heavy Gauss Rifle Ammo");
+        ammo.damagePerShot = 22;
+        ammo.explosive = false;
+        ammo.ammoType = AmmoType.T_IGAUSS_HEAVY;
+        ammo.shots = 4;
+        ammo.bv = 48;
         ammo.cost = 20000;
 
         return ammo;
@@ -4054,6 +4117,51 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createCLSmallChemicalLaserAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "Small Chemical Laser Ammo";
+        ammo.setInternalName("CLSmallChemLaserAmmo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 3;
+        ammo.ammoType = AmmoType.T_CHEMICAL_LASER;
+        ammo.shots = 60;
+        ammo.bv = 1;
+        ammo.cost = 30000;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLMediumChemicalLaserAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "Medium Chemical Laser Ammo";
+        ammo.setInternalName("CLMediumChemLaserAmmo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_CHEMICAL_LASER;
+        ammo.shots = 30;
+        ammo.bv = 5;
+        ammo.cost = 30000;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLLargeChemicalLaserAmmo() {
+        AmmoType ammo = new AmmoType();
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "Large Chemical Laser Ammo";
+        ammo.setInternalName("CLLargeChemLaserAmmo");
+        ammo.damagePerShot = 8;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_CHEMICAL_LASER;
+        ammo.shots = 10;
+        ammo.bv = 12;
+        ammo.cost = 30000;
+
+        return ammo;
+    }
+
     private static AmmoType createISMML3LRMAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -4726,7 +4834,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan Ammo Long Tom");
         ammo.addLookupName("Clan Long Tom Ammo");
         ammo.damagePerShot=1;
-        ammo.rackSize = 20;
+        ammo.rackSize = 25;
         ammo.ammoType = AmmoType.T_LONG_TOM;
         ammo.shots = 5;
         ammo.bv = 11;
@@ -4746,7 +4854,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan Ammo Sniper");
         ammo.addLookupName("Clan Sniper Ammo");
         ammo.damagePerShot=1;
-        ammo.rackSize = 10;
+        ammo.rackSize = 20;
         ammo.ammoType = AmmoType.T_SNIPER;
         ammo.shots = 10;
         ammo.bv = 5;
@@ -4766,7 +4874,7 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("Clan Ammo Thumper");
         ammo.addLookupName("Clan Thumper Ammo");
         ammo.damagePerShot=1;
-        ammo.rackSize = 5;
+        ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_THUMPER;
         ammo.shots = 20;
         ammo.bv = 3;
@@ -5413,6 +5521,65 @@ public class AmmoType extends EquipmentType {
 
         return ammo;
     }
+
+    private static AmmoType createISHVAC2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "HVAC/2 Ammo";
+        ammo.setInternalName("IS Ammo HVAC/2");
+        ammo.addLookupName("ISHVAC2 Ammo");
+        ammo.addLookupName("IS Hyper Velocity Autocannon/2 Ammo");
+        ammo.addLookupName("Hyper Velocity AC/2 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_HYPER_VELOCITY;
+        ammo.shots = 30;
+        ammo.bv = 7;
+        ammo.cost = 3000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISHVAC5Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "HVAC/5 Ammo";
+        ammo.setInternalName("IS Ammo HVAC/5");
+        ammo.addLookupName("ISHVAC5 Ammo");
+        ammo.addLookupName("IS Hyper Velocity Autocannon/5 Ammo");
+        ammo.addLookupName(" Hyper Velocity AC/5 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 5;
+        ammo.ammoType = AmmoType.T_HYPER_VELOCITY;
+        ammo.shots = 15;
+        ammo.bv = 14;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+    private static AmmoType createISHVAC10Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "HVAC/10 Ammo";
+        ammo.setInternalName("IS Ammo HVAC/10");
+        ammo.addLookupName("ISHVAC10 Ammo");
+        ammo.addLookupName("IS Hyper Velocity Autocannon/10 Ammo");
+        ammo.addLookupName("Hyper Velocity AC/10 Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 10;
+        ammo.ammoType = AmmoType.T_HYPER_VELOCITY;
+        ammo.shots = 8;
+        ammo.bv = 20;
+        ammo.cost = 20000;
+
+        return ammo;
+    }
+
+
     private static AmmoType createISHeavyFlamerAmmo() {
         AmmoType ammo = new AmmoType();
 
@@ -5930,14 +6097,16 @@ public class AmmoType extends EquipmentType {
         ammo.addLookupName("IS SBGauss Rifle Ammo");
         ammo.addLookupName("ISSBGauss Ammo");
         ammo.addLookupName("ISSBGaussRifleAmmo");
+        ammo.explosive = false;
         ammo.damagePerShot = 1;
         ammo.rackSize = 15;
         ammo.ammoType = AmmoType.T_SBGAUSS;
         ammo.munitionType = M_CLUSTER;
         ammo.shots = 8;
-        ammo.bv = 21;
+        ammo.bv = 25;
         ammo.cost = 25000;
-        
+        ammo.toHitModifier = -1;
+
         return ammo;
     }
 
@@ -6526,23 +6695,263 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createISAPMortar1Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AP Mortar 1 Ammo";
+        ammo.setInternalName("IS Ammo AP Mortar-1");
+        ammo.addLookupName("ISArmorPiercingMortarAmmo1");
+        ammo.addLookupName("ISAPMortarAmmo1");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_MEK_MORTAR;
+        ammo.shots = 24;
+        ammo.bv = 1;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+
+    private static AmmoType createISAPMortar2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AP Mortar 2 Ammo";
+        ammo.setInternalName("IS Ammo AP Mortar-2");
+        ammo.addLookupName("ISArmorPiercingMortarAmmo2");
+        ammo.addLookupName("ISAPMortarAmmo2");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_MEK_MORTAR;
+        ammo.shots = 12;
+        ammo.bv = 2;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+
+    private static AmmoType createISAPMortar4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AP Mortar 4 Ammo";
+        ammo.setInternalName("IS Ammo AP Mortar-4");
+        ammo.addLookupName("ISArmorPiercingMortarAmmo4");
+        ammo.addLookupName("ISAPMortarAmmo4");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_MEK_MORTAR;
+        ammo.shots = 6;
+        ammo.bv = 3;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+
+    private static AmmoType createISAPMortar8Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_2;
+        ammo.name = "AP Mortar 8 Ammo";
+        ammo.setInternalName("IS Ammo AP Mortar-8");
+        ammo.addLookupName("ISArmorPiercingMortarAmmo8");
+        ammo.addLookupName("ISAPMortarAmmo8");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 8;
+        ammo.ammoType = AmmoType.T_MEK_MORTAR;
+        ammo.shots = 4;
+        ammo.bv = 6;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+    private static AmmoType createCLAPMortar1Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "AP Mortar 1 Ammo";
+        ammo.setInternalName("Clan Ammo AP Mortar-1");
+        ammo.addLookupName("CLArmorPiercingMortarAmmo1");
+        ammo.addLookupName("CLAPMortarAmmo1");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_MEK_MORTAR;
+        ammo.shots = 24;
+        ammo.bv = 4;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+
+    private static AmmoType createCLAPMortar2Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "AP Mortar 2 Ammo";
+        ammo.setInternalName("Clan Ammo AP Mortar-2");
+        ammo.addLookupName("CLArmorPiercingMortarAmmo2");
+        ammo.addLookupName("CLAPMortarAmmo2");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 2;
+        ammo.ammoType = AmmoType.T_MEK_MORTAR;
+        ammo.shots = 12;
+        ammo.bv = 7;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+
+    private static AmmoType createCLAPMortar4Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "AP Mortar 4 Ammo";
+        ammo.setInternalName("Clan Ammo AP Mortar-4");
+        ammo.addLookupName("CLArmorPiercingMortarAmmo4");
+        ammo.addLookupName("CLAPMortarAmmo4");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 4;
+        ammo.ammoType = AmmoType.T_MEK_MORTAR;
+        ammo.shots = 6;
+        ammo.bv = 11;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+
+
+    private static AmmoType createCLAPMortar8Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "AP Mortar 8 Ammo";
+        ammo.setInternalName("Clan Ammo AP Mortar-8");
+        ammo.addLookupName("CLArmorPiercingMortarAmmo8");
+        ammo.addLookupName("CLAPMortarAmmo8");
+        ammo.damagePerShot = 2;
+        ammo.rackSize = 8;
+        ammo.ammoType = AmmoType.T_MEK_MORTAR;
+        ammo.shots = 4;
+        ammo.bv = 14;
+        ammo.cost = 10000;
+
+        return ammo;
+    }
+    
+    private static AmmoType createISCruiseMissile50Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Cruise Missile/50 Ammo";
+        ammo.setInternalName("ISCruiseMissile50Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 50;
+        ammo.ammoType = AmmoType.T_CRUISE_MISSILE;
+        ammo.shots = 1;
+        ammo.bv = 75;
+        ammo.cost = 20000;
+        ammo.tonnage = 25;
+
+        return ammo;
+    }
+    
+    private static AmmoType createISCruiseMissile70Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Cruise Missile/70 Ammo";
+        ammo.setInternalName("ISCruiseMissile70Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 70;
+        ammo.ammoType = AmmoType.T_CRUISE_MISSILE;
+        ammo.shots = 1;
+        ammo.bv = 129;
+        ammo.cost = 50000;
+        ammo.tonnage = 35;
+
+        return ammo;
+    }
+    
+    private static AmmoType createISCruiseMissile90Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Cruise Missile/50 Ammo";
+        ammo.setInternalName("ISCruiseMissile90Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 90;
+        ammo.ammoType = AmmoType.T_CRUISE_MISSILE;
+        ammo.shots = 1;
+        ammo.bv = 191;
+        ammo.cost = 90000;
+        ammo.tonnage = 45;
+
+        return ammo;
+    }
+    
+    
+    private static AmmoType createISCruiseMissile120Ammo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_3;
+        ammo.name = "Cruise Missile/120 Ammo";
+        ammo.setInternalName("ISCruiseMissile120Ammo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 120;
+        ammo.ammoType = AmmoType.T_CRUISE_MISSILE;
+        ammo.shots = 1;
+        ammo.bv = 285;
+        ammo.cost = 140000;
+        ammo.tonnage = 60;
+
+        return ammo;
+    }
+
     public String toString() {
         return "Ammo: " + name;
     }
 
     public static boolean canClearMinefield(AmmoType at) {
 
+        //first the normal munition types
         if (at != null &&
             ( ((at.getAmmoType() == T_LRM ||
+              at.getAmmoType() == T_LRM_STREAK ||        
               at.getAmmoType() == T_EXLRM ||
               at.getAmmoType() == T_PXLRM ||
               at.getAmmoType() == T_MRM  ||
-              at.getAmmoType() == T_MRM_STREAK) &&
+              at.getAmmoType() == T_MRM_STREAK ||
+              at.getAmmoType() == T_ROCKET_LAUNCHER) &&
                   at.getRackSize() >= 20) ||
               at.getAmmoType() == T_TBOLT_20) &&
              at.getMunitionType() == M_STANDARD) {
             return true;
         }
+        
+        //ATMs
+        if(at != null && 
+              (at.getAmmoType() == T_ATM && at.getRackSize() >= 12 && at.getMunitionType() != M_EXTENDED_RANGE) ||
+              (at.getAmmoType() == T_ATM && at.getRackSize() >= 9 && at.getMunitionType() == M_HIGH_EXPLOSIVE)) {
+            return true;
+        }
+        
+        //Artillery
+        if(at != null &&
+                ((at.getAmmoType() == T_ARROW_IV || 
+                        at.getAmmoType() == T_LONG_TOM ||
+                        at.getAmmoType() == T_SNIPER ||
+                        at.getAmmoType() == T_THUMPER) && at.getMunitionType() == M_STANDARD)) {
+            return true;
+        }
+        
+        //TODO: mine clearance munitions
 
         return false;
     }
@@ -6774,11 +7183,20 @@ public class AmmoType extends EquipmentType {
             // check for cost
             //TODO: ammo for weapons using artemis should cost double
             double cost = base.cost;
+            double bv = base.bv;
+            
             if(munition.getAmmoType() == T_AC || munition.getAmmoType() == T_LAC) {
                 if (munition.getMunitionType() == AmmoType.M_ARMOR_PIERCING)
                     cost *= 4;
-                if (munition.getMunitionType() == AmmoType.M_FLECHETTE)
+                if (munition.getMunitionType() == AmmoType.M_FLECHETTE 
+                        || munition.getMunitionType() == AmmoType.M_FLAK)
                     cost *= 1.5;
+                
+                if ( munition.getMunitionType() == AmmoType.M_TRACER ) {
+                    cost *= 1.5;
+                    bv *= .25;
+                }
+                
                 if (munition.getMunitionType() == AmmoType.M_INCENDIARY_AC)
                     cost *= 2;
                 if (munition.getMunitionType() == AmmoType.M_PRECISION)
@@ -6787,12 +7205,15 @@ public class AmmoType extends EquipmentType {
             if (((munition.getAmmoType() == AmmoType.T_LRM) 
                     || (munition.getAmmoType() == AmmoType.T_MML)
                     || (munition.getAmmoType() == AmmoType.T_SRM))
-                    && munition.getMunitionType() == AmmoType.M_FRAGMENTATION)
-                cost *= 2;
-/*
-            if (munition.hasFlag(AmmoType.M_INCENDIARY_LRM))
+                    && munition.getMunitionType() == AmmoType.M_AX_HEAD)
+                cost *= .5;
+
+            if (((munition.getAmmoType() == AmmoType.T_LRM) 
+                    || (munition.getAmmoType() == AmmoType.T_MML)
+                    || (munition.getAmmoType() == AmmoType.T_SRM))
+                    && munition.getMunitionType() == AmmoType.M_INCENDIARY_LRM)
                 cost *= 1.5;
-*/
+
             if ((munition.getAmmoType() == AmmoType.T_SRM || (munition.getAmmoType() == AmmoType.T_MML))
                     && munition.getMunitionType() == AmmoType.M_INFERNO)
                 cost = 13500;
@@ -6803,8 +7224,10 @@ public class AmmoType extends EquipmentType {
                     && munition.getMunitionType() == AmmoType.M_SWARM)
                 cost *= 2;
             if ((munition.getAmmoType() == AmmoType.T_LRM || (munition.getAmmoType() == AmmoType.T_MML))
-                    && munition.getMunitionType() == AmmoType.M_SWARM_I)
+                    && munition.getMunitionType() == AmmoType.M_SWARM_I) {
                 cost *= 3;
+                bv *= .2;
+            }
             if ((munition.getAmmoType() == AmmoType.T_LRM || (munition.getAmmoType() == AmmoType.T_MML))
                     && munition.getMunitionType() == AmmoType.M_THUNDER)
                 cost *= 2;
@@ -6846,10 +7269,18 @@ public class AmmoType extends EquipmentType {
             if (((munition.getAmmoType() == AmmoType.T_LRM)|| (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
                     && (munition.getMunitionType() == AmmoType.M_ANTI_TSM ||
                          munition.getMunitionType() == AmmoType.M_DEAD_FIRE ||
-                         munition.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER ||
-                         munition.getMunitionType() == AmmoType.M_HEAT_SEEKING ||
-                         munition.getMunitionType() == AmmoType.M_TANDEM_CHARGE))
+                         munition.getMunitionType() == AmmoType.M_TANDEM_CHARGE ||
+                         munition.getMunitionType() == AmmoType.M_FRAGMENTATION))
                 cost *= 2;
+
+            if (((munition.getAmmoType() == AmmoType.T_LRM)|| (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
+                    && (munition.getMunitionType() == AmmoType.M_HEAT_SEEKING ||
+                        munition.getMunitionType() == AmmoType.M_FOLLOW_THE_LEADER )) {
+                cost *= 2;
+                bv *= .5;
+            }
+
+            munition.bv = bv;
             munition.cost = cost;
             
 
@@ -6857,7 +7288,6 @@ public class AmmoType extends EquipmentType {
             munition.damagePerShot = base.damagePerShot;
             munition.rackSize = base.rackSize;
             munition.ammoType = base.ammoType;
-            munition.bv = base.bv;
             munition.flags = base.flags;
             munition.hittable = base.hittable;
             munition.explosive = base.explosive;

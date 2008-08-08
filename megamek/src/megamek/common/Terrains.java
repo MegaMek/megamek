@@ -18,16 +18,16 @@ import java.util.Hashtable;
 
 public class Terrains implements ITerrainFactory {
 
-    public static final int WOODS = 1;
-    public static final int ROUGH = 2;
-    public static final int RUBBLE = 3;
+    public static final int WOODS = 1; //1: light 2: heavy 3: ultra
+    public static final int ROUGH = 2; //1: normal 2: ultra
+    public static final int RUBBLE = 3; //1: normal 2: ultra
     public static final int WATER = 4;
     public static final int PAVEMENT = 5;
     public static final int ROAD = 6;
-    public static final int FIRE = 7;
+    public static final int FIRE = 7; // 1: normal fire 2: inferno fire
     public static final int SMOKE = 8;
-    public static final int SWAMP = 9;
-    public static final int BUILDING = 10;
+    public static final int SWAMP = 9; //1: normal 2: just became quicksand 3: quicksand
+    public static final int BUILDING = 10; // 1: light 2: medium 3: heavy 4: hardened 5: wall
     public static final int BLDG_CF = 11;
     public static final int BLDG_ELEV = 12;
     public static final int BLDG_BASEMENT = 13;
@@ -44,30 +44,33 @@ public class Terrains implements ITerrainFactory {
     public static final int FORTIFIED = 21;
     public static final int GEYSER = 22; // 1: dormant 2: active 3: magma
                                             // vent
-    public static final int JUNGLE = 23; // levels 1,2,3
+    public static final int JUNGLE = 23; //1: light 2: heavy 3: ultra
     public static final int MAGMA = 24; // 1: crust 2: liquid
-    public static final int MUD = 25; // 1: can't bog down 2: can bog down
-    public static final int RAPIDS = 26;
+    public static final int MUD = 25;
+    public static final int RAPIDS = 26; //1: rapids 2: torrent
     public static final int SAND = 27;
-    public static final int SNOW = 28;
+    public static final int SNOW = 28; // 1: thin 2: deep
     public static final int TUNDRA = 29;
     public static final int SPACE = 30;
     public static final int SCREEN  = 31;
+    public static final int FIELDS = 32;
+    public static final int INDUSTRIAL = 33; //level indicates height
     // special types
-    public static final int IMPASSABLE = 32;
-    public static final int ELEVATOR = 33; // level=elevation it moves to,
+    public static final int IMPASSABLE = 34;
+    public static final int ELEVATOR = 35; // level=elevation it moves to,
                                             // exits=d6 rolls it moves on
-    public static final int FUEL_TANK = 34;
-    public static final int FUEL_TANK_CF = 35;
-    public static final int FUEL_TANK_ELEV = 36;
-    public static final int FUEL_TANK_MAGN = 37;
+    public static final int FUEL_TANK = 36;
+    public static final int FUEL_TANK_CF = 37;
+    public static final int FUEL_TANK_ELEV = 38;
+    public static final int FUEL_TANK_MAGN = 39;
 
     private static final String[] names = { "none", "woods", "rough", "rubble",
             "water", "pavement", "road", "fire", "smoke", "swamp", "building",
             "bldg_cf", "bldg_elev", "bldg_basement", "bridge", "bridge_cf",
             "bridge_elev", "fluff", "arms", "legs", "ice", "fortified",
             "geyser", "jungle", "magma", "mud", "rapids", "sand", "snow",
-            "tundra", "space", "screen", "impassable", "elevator", "fuel_tank", "fuel_tank_cf",
+            "tundra", "space", "screen", "planted fields", "heavy industrial zone", 
+            "impassable", "elevator", "fuel_tank", "fuel_tank_cf",
             "fuel_tank_elev", "fuel_tank_magn" };
 
     public static final int SIZE = names.length;

@@ -19,6 +19,109 @@ v0.33.29-dev (SVN)
 + Bug: Null building being passed for a damage check to infantry in a building
 + Updated Mech BV calculation to upcoming TM errata
 + Bug: Heavy Duty Gyro causing +2 PSR on first critical hit instead of +1
++ Oodles of TacOps features:
+    Standing Still (Expanded)
+    Evading
+    Hull Down
+    Backward Movement
+    PSRs: Taking damage
+    PSRs: Taking damage (Weightclass mods)
+    PSRs: Leg damage
+    Vehicles: Movement: Lance Movement
+    PSR: Falling (Expanded)
+    PSRs: Attempting to Stand
+    PSRs: Careful Stand
+    Jungle (needs art for hexes)
+    Heavy Industrial Zones, need art for hexes; explosion due to less than all 
+        missiles hitting unimplemented
+    Planted Fields (needs art for hexes)
+    Rough (Ultra)
+    Rubble (Ultra) (needs art for hexes)
+    Sand
+    Woods (Ultra-Heavy) (needs art for hexes)
+    Fire
+    Rapids (water flow not implemented)
+    Swamp (need an image for quicksand (level 2 and 3 swamp). Until I get a
+        rules clarification, being sunk up to your legs does not prevent leg
+        hits or leg weapons from firing)
+    Torrent (water flow not implemented)
+    Atmospheric Pressure (Density) (waiting on rules clarification regarding
+        aero movement in trace atmosphere; no changes to WiGE take-off
+    Electromagnetic Interference (EMI)
+    Fog
+    Hail
+    Light
+    Rain
+    Snow
+    Wind
+    Extreme Temperature
+    Bog Down Rules (Protomechs need to be allowed PSRs (here and elsewhere)
+    Careful Movement
+    Line of Sight
+    Glancing Blow
+    Direct Blow
+    Altered Energy Weapon Damage
+    Cluster Hit Penalties
+    Woods Cover
+    Extreme Range
+    Firing When Down
+    Partial Cover
+    Weight Class Physical Attack Modifier
+    Jump Jet Attack
+    Grappling
+    Charging
+    Trip Attack
+    ECCM
+    Autocannons: Rapid Fire Mode
+    Ghost Targets
+    Machine Guns: Rapid Fire Mode
+    Energy Weapons
+    Gauss Weapons
+    PPC Inhibitor
+    Extended Heat Scale (Assumes that quads get -2 on the roll)
+    Heat Sink Failure
+    Vehicle Firing Arcs
+    Vehicle Effectiveness
+    Digging In
+    Battle Armor Infantry
+    Battlefield Wreckage
+    Skin of teeth ejection
+    Minefields (The following related advanced technologies are unimplemented/
+        unchanged in this commit: (1) minesweepers, (2) minesweeping specialist
+        infantry, (3) mine dispensers, (4) EMP mines. The LOS rules on whether
+        weapon-delivered mines are seen by opponent are implemented, but are
+        only marginally useful because both the attack arrow and weapons report
+        tell the opponent what they need to know. )
+    Double-Blind Rules
+    BAP
+    Angel ECM 
+    Actuator Enhancement System
+    Modular Armor
+    Chain Whip
+    Spikes
+    Talons
+    Improved Heavy Gauss Rifle
+    Silver Bullet Gauss Rifle
+    Binary Laser
+    Bombast Laser
+    Chemical Lasers
+    Variable Speed Pulse Lasers
+    Improved Heavy Lasers
+    Mech Mortar
+    Flak Autocannon Ammo
+    Inferno-IV Missiles
+    Thunder/FASCAM Ammo
+    Active Mines
+    Inferno Mines
+    Standard Mines
+    Vibrabomb Mines
+    Heat Seeking Missiles
+    Tandem Charge Missiles
+    Thunder LRM
+    MRM Apollo FCS
+    Advanced Hit Locations
+    Engine Explosions
+    Artillery (no counter battery fire, no laser-inhibiting ammo)
 
 v0.33.28 (2008-06-17, 18:19 GMT+2)
 + Aeros can go up and down in atmosphere

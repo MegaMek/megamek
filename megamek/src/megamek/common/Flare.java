@@ -16,8 +16,10 @@ package megamek.common;
 
 import java.io.Serializable;
 
-// This class represents parachute flares deployed by flare LRM
-// or illumination artillery.
+/**
+ *  This class represents parachute flares deployed by illumination artillery
+ *  or mech mortars
+ */
 public class Flare implements Serializable {
     /**
      * 

@@ -1236,7 +1236,8 @@ public class MiniMap extends Canvas {
                 return;
             }
             if ((me.getModifiers() & InputEvent.CTRL_MASK) != 0) {
-                m_bview.checkLOS(translateCoords(x - leftMargin, y - topMargin));
+                m_bview.checkLOS(translateCoords(x - leftMargin, y -
+                 topMargin));
             } else {
                 m_bview.centerOnHex(translateCoords(x - leftMargin, y
                         - topMargin));

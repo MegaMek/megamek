@@ -24,6 +24,8 @@ public abstract class GaussWeapon extends AmmoWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = 8640523093316267351L;
+
     public GaussWeapon() {
         super();
         this.flags |= F_DIRECT_FIRE | F_NO_FIRES | F_BALLISTIC;

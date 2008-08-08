@@ -50,6 +50,9 @@ public class ISHGaussRifle extends GaussWeapon {
         this.mediumRange = 13;
         this.longRange = 20;
         this.extremeRange = 26;
+        this.damageShort = 25;
+        this.damageMedium = 20;
+        this.damageLong = 10;
         this.flags |= F_SPLITABLE;
         this.tonnage = 18.0f;
         this.criticals = 11;
@@ -59,7 +62,19 @@ public class ISHGaussRifle extends GaussWeapon {
         this.medAV = 20;
         this.longAV = 10;
         this.maxRange = RANGE_LONG;
+        this.explosionDamage = 25;
     }
+
+    public int getDamage(int range) {
+        if ( range <= shortRange )
+            return damageShort;
+        
+        if ( range <= mediumRange )
+            return damageMedium;
+        
+            return damageLong;
+    }
+
 
     /*
      * (non-Javadoc)

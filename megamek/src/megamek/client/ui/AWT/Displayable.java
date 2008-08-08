@@ -14,12 +14,13 @@
 
 package megamek.client.ui.AWT;
 
-import megamek.client.ui.IDisplayable;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 
-public interface Displayable extends IDisplayable {
+import megamek.client.ui.IDisplayable;
+
+public interface Displayable extends IDisplayable{
 
     public void draw(Graphics graph, Dimension size);
 

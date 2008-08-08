@@ -56,8 +56,13 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
             Entity entityTarget, boolean bMissed) {
         Coords coords = target.getPosition();
         AmmoType atype = (AmmoType) ammo.getType();
+        //only report to player if mine delivery
+        int whoReport = Report.PLAYER;
+        if(atype.getMunitionType() == AmmoType.M_FLARE) {
+            whoReport = Report.PUBLIC;
+        }    
         if (!bMissed) {
-            r = new Report(3190);
+            r = new Report(3190, whoReport);
             r.subject = subjectId;
             r.add(coords.getBoardNum());
             vPhaseReport.addElement(r);
@@ -66,7 +71,7 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
                     "margin_scatter_distance") ? toHit.getValue() - roll : -1);
             if (game.getBoard().contains(coords)) {
                 // misses and scatters to another hex
-                r = new Report(3195);
+                r = new Report(3195, whoReport);
                 r.subject = subjectId;
                 r.add(coords.getBoardNum());
                 vPhaseReport.addElement(r);
@@ -82,21 +87,19 @@ public class LRMScatterableHandler extends MissileWeaponHandler {
         // Handle the thunder munitions.
         if (atype.getMunitionType() == AmmoType.M_THUNDER_AUGMENTED) {
             server.deliverThunderAugMinefield(coords, ae.getOwner().getId(),
-                    atype.getRackSize());
+                    atype.getRackSize(), ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER) {
             server.deliverThunderMinefield(coords, ae.getOwner().getId(), atype
-                    .getRackSize());
+                    .getRackSize(), ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER_INFERNO) {
             server.deliverThunderInfernoMinefield(coords,
-                    ae.getOwner().getId(), atype.getRackSize());
+                    ae.getOwner().getId(), atype.getRackSize(), ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER_VIBRABOMB) {
             server.deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
-                    atype.getRackSize(), waa.getOtherAttackInfo());
+                    atype.getRackSize(), waa.getOtherAttackInfo(), ae.getId());
         } else if (atype.getMunitionType() == AmmoType.M_THUNDER_ACTIVE) {
             server.deliverThunderActiveMinefield(coords, ae.getOwner().getId(),
-                    atype.getRackSize());
-        } else if (atype.getMunitionType() == AmmoType.M_FLARE) {
-            server.deliverFlare(coords, atype.getRackSize());
+                    atype.getRackSize(), ae.getId());
         }
         return true;
     }

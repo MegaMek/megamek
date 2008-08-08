@@ -24,6 +24,8 @@ import megamek.server.Server;
  */
 public abstract class MMLWeapon extends MissileWeapon {
 
+    private static final long serialVersionUID = 110779423352325731L;
+
     /**
      * 
      */

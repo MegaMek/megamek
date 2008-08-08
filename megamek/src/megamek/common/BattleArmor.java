@@ -273,19 +273,24 @@ public class BattleArmor extends Infantry implements Serializable {
         return jumpMP;
     }
 
+    public int getWalkMP() {
+        return getWalkMP(true, true);
+    }
+    
     /**
      * Returns this entity's walking mp, factored for extreme temperatures and
      * gravity.
      */
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
-        int i;
         int j = getOriginalWalkMP();
+        if(null != game) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            if(weatherMod != 0) {
+                j = Math.max(j + weatherMod, 0);
+            } 
+        }      
         if (gravity)
             j = applyGravityEffectsOnMP(j);
-        if (game != null) {
-            i = game.getTemperatureDifference();
-            return Math.max(j - i, 0);
-        }
         return j;
     }
 
@@ -294,15 +299,20 @@ public class BattleArmor extends Infantry implements Serializable {
      * gravity.
      */
     public int getRunMP(boolean gravity, boolean ignoreheat) {
-        int i;
         int j = getOriginalRunMP();
+        if(null != game) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            if(weatherMod != 0) {
+                j = Math.max(j + weatherMod, 0);
+            } 
+        }  
         if (gravity)
             j = applyGravityEffectsOnMP(j);
-        if (game != null && !ignoreheat) {
-            i = game.getTemperatureDifference();
-            return Math.max(j - i, 0);
-        }
         return j;
+    }
+    
+    public int getJumpMP(boolean gravity) {
+        return getJumpMP();
     }
 
     /**
@@ -313,8 +323,15 @@ public class BattleArmor extends Infantry implements Serializable {
     public int getJumpMP() {
         if (this.isBurdened()) {
             return 0;
+        }      
+        if(null != game) {
+            int windCond = game.getPlanetaryConditions().getWindStrength();
+            if(windCond >= PlanetaryConditions.WI_STORM) {
+                return 0;
+            }
         }
-        return super.getJumpMP();
+        int mp = applyGravityEffectsOnMP(getOriginalJumpMP());
+        return mp;
     }
 
     /**
@@ -383,11 +400,8 @@ public class BattleArmor extends Infantry implements Serializable {
         // Pick a random number between 1 and 6.
         int loc = Compute.d6();
 
-        if (game.getOptions().booleanOption("ba_criticals") && loc == 6) {
-            return new HitData(Compute.d6(), false, HitData.EFFECT_CRITICAL);
-        }
         
-        if ((aimedLocation != LOC_NONE)
+/*        if ((aimedLocation != LOC_NONE)
                 && (aimingMode != IAimingModes.AIM_MODE_NONE)) {
             
             int roll = Compute.d6(2);
@@ -396,7 +410,7 @@ public class BattleArmor extends Infantry implements Serializable {
                 return new HitData(aimedLocation, side == ToHitData.SIDE_REAR,
                         true);
             }
-        }
+        }*/
 
         // Pick a new random number if that trooper is dead or never existed.
         // Remember that there's one more location than the number of troopers.
@@ -411,6 +425,11 @@ public class BattleArmor extends Infantry implements Serializable {
             loc = Compute.d6();
         }
 
+        int critLocation = Compute.d6();
+        //TacOps p. 108 Trooper takes a crit if a second roll is the same location as the first. 
+        if (game.getOptions().booleanOption("tacops_ba_criticals") && loc == critLocation) {
+            return new HitData(loc, false, HitData.EFFECT_CRITICAL);
+        }
         // Hit that trooper.
         return new HitData(loc);
 

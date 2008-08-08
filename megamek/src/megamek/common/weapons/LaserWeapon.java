@@ -23,6 +23,11 @@ import megamek.common.AmmoType;
  * @author Andrew Hunter
  */
 public abstract class LaserWeapon extends EnergyWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -9210696480919833245L;
+
     public LaserWeapon() {
         super();
         this.flags |= F_LASER | F_DIRECT_FIRE;

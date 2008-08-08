@@ -187,7 +187,7 @@ public interface IHex extends Cloneable {
     /**
      * @return modifier to PSRs made in the hex
      */
-    public abstract int terrainPilotingModifier();
+    public abstract int terrainPilotingModifier(int moveType);
 
     /**
      * (Only if statically determinable)
@@ -195,4 +195,24 @@ public interface IHex extends Cloneable {
      * @return extra movement cost for entering the hex
      */
     public abstract int movementCost(int moveType);
+    
+    /**
+     * @return the modifier to the roll to ignite this hex
+     */
+    public abstract int getIgnitionModifier();
+    
+    /**
+     * @return <code>true</code> if this hex is ignitable
+     */
+    public abstract boolean isIgnitable();
+    
+    public abstract int getFireTurn();
+    
+    public abstract void incrementFireTurn();
+    
+    public abstract void resetFireTurn();
+    
+    public abstract int getBogDownModifier(int moveType, boolean largeVee);
+    
+    public abstract int getUnstuckModifier(int elev);
 }

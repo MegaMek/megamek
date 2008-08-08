@@ -46,7 +46,9 @@ public class BurstPulseLaserWeaponHandler extends PulseLaserWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             int toReturn = Compute.d6(2);
             if (bGlancing)
-                toReturn = (int) Math.floor(toReturn / 2.0);;
+                toReturn = (int) Math.floor(toReturn / 2.0);
+            if (bDirect)
+                toReturn += toHit.getMoS()/3;
             return toReturn;
         } else
             return super.calcDamagePerHit();

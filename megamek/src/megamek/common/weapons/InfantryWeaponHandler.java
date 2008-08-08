@@ -32,6 +32,11 @@ import megamek.server.Server;
  */
 public abstract class InfantryWeaponHandler extends WeaponHandler {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1425176802065536326L;
+    
     // damage lookup table, different for each infantry weapon
     int[] damage;
 

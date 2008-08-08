@@ -27,6 +27,11 @@ public abstract class RLWeapon extends MissileWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = -1718301014226423896L;
+
+    /**
+     * 
+     */
     public RLWeapon() {
         super();
         this.ammoType = AmmoType.T_ROCKET_LAUNCHER;
@@ -45,6 +50,6 @@ public abstract class RLWeapon extends MissileWeapon {
      */
     protected AttackHandler getCorrectHandler(ToHitData toHit,
             WeaponAttackAction waa, IGame game, Server server) {
-        return new MissileWeaponHandler(toHit, waa, game, server);
+        return new RLHandler(toHit, waa, game, server);
     }
 }

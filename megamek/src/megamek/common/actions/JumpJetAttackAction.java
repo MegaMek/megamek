@@ -88,9 +88,7 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
         for (Mounted m : entity.getMisc()) {
             if (m.getType().hasFlag(MiscType.F_JUMP_JET) && m.isReady()
                     && m.getLocation() == legLoc) {
-                damage += 3 * m.getType().getCriticals(entity); // assumption:
-                                                                // IJJ do 2 heat
-                                                                // 6 damage
+                damage += 3;
             }
         }
 
@@ -112,8 +110,8 @@ public class JumpJetAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "You can't attack from a null entity!");
 
-        if (!game.getOptions().booleanOption("maxtech_new_physicals"))
-            return new ToHitData(TargetRoll.IMPOSSIBLE, "no MaxTech physicals");
+        if (!game.getOptions().booleanOption("tacops_jump_jet_attack"))
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "no Jump Jet attack");
 
         String impossible = toHitIsImpossible(game, ae, target);
         if (impossible != null) {

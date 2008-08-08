@@ -60,16 +60,6 @@ public class PunchAttackAction extends PhysicalAttackAction {
         this.arm = arm;
     }
 
-    public int hashCode() {
-        int hash = super.hashCode();
-        hash = 61 * hash + arm;
-        return hash;
-    }
-    
-    public boolean equals(Object o) {
-        return super.equals(o) && ((PunchAttackAction)o).getArm() == arm;
-    }
-
     public ToHitData toHit(IGame game) {
         return toHit(game, getEntityId(), game.getTarget(getTargetType(),
                 getTargetId()), getArm());
@@ -108,6 +98,18 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
         String impossible = toHitIsImpossible(game, ae, target);
         if (impossible != null) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
+        }
+
+        if ( ae.getGrappled() != Entity.NONE && 
+                ae.getGrappleSide() == Entity.GRAPPLE_LEFT
+                && arm == Mech.LOC_LARM ) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
+        }
+        
+        if ( ae.getGrappled() != Entity.NONE && 
+                ae.getGrappleSide() == Entity.GRAPPLE_RIGHT
+                && arm == Mech.LOC_RARM ) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
 
@@ -219,6 +221,11 @@ public class PunchAttackAction extends PhysicalAttackAction {
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_LOWER_ARM, armLoc)) {
             toHit.addModifier(2, "Lower arm actuator missing or destroyed");
         }
+        
+        if ( ae.hasFunctionalArmAES(armLoc) ) {
+            toHit.addModifier(-1,"AES modifer");
+        }
+
         // Claws replace Actuators, but they are Equipment vs System as they
         // take up multiple crits.
         // Rules state +1 bth with claws and if claws are critted then you get
@@ -233,14 +240,17 @@ public class PunchAttackAction extends PhysicalAttackAction {
         }
 
         // elevation
-        if (attackerHeight == targetElevation) {
+        if (attackerHeight == targetElevation && !ae.isHullDown()) {
             if (target.getHeight() == 0) {
                 toHit.setHitTable(ToHitData.HIT_NORMAL);
             } else {
                 toHit.setHitTable(ToHitData.HIT_KICK);
             }
         } else {
-            toHit.setHitTable(ToHitData.HIT_PUNCH);
+            if ( ae.isHullDown() )
+                toHit.setHitTable(ToHitData.HIT_KICK);
+            else
+                toHit.setHitTable(ToHitData.HIT_PUNCH);
         }
 
         // factor in target side

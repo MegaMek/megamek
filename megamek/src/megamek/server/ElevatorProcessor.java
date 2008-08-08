@@ -40,7 +40,7 @@ public class ElevatorProcessor extends DynamicTerrainProcessor {
     }
 
     @Override
-    void DoEndPhaseChanges(Vector<Report> vPhaseReport) {
+    void doEndPhaseChanges(Vector<Report> vPhaseReport) {
         // 1st time, find elevators on board
         if (elevators == null || server.getGame().getRoundCount() == 1) {
             elevators = new ElevatorInfo[6];

@@ -43,6 +43,7 @@ public class ToHitData extends TargetRoll {
     private int hitTable = HIT_NORMAL;
     private int sideTable = SIDE_FRONT;
     private int cover = LosEffects.COVER_NONE;
+    private int margineOfSuccess = 0;
 
     /**
      * Construct default.
@@ -147,5 +148,13 @@ public class ToHitData extends TargetRoll {
 
     public void setCover(int cover) {
         this.cover = cover;
+    }
+    
+    public int getMoS() {
+        return margineOfSuccess;
+    }
+    
+    public void setMoS(int moS) {
+        this.margineOfSuccess = moS;
     }
 }

@@ -41,7 +41,7 @@ public class TeleMissileAttackAction extends AbstractAttackAction {
         super(attacker.getId(), target.getTargetType(), target.getTargetId());
     }
 
-    public static int getDamageFor(Entity entity) {
+    public static int getDamageFor(Entity entity) {      
         if(entity instanceof TeleMissile) {
             return ((TeleMissile)entity).getDamageValue();
         } else {

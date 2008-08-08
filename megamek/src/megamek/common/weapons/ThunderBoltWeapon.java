@@ -26,6 +26,11 @@ public abstract class ThunderBoltWeapon extends MissileWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = 3496376576886743383L;
+
+    /**
+     * 
+     */
     public ThunderBoltWeapon() {
         super();
         this.setModes(new String[] { "", "Indirect" });

@@ -66,7 +66,7 @@ public class VTOL extends Tank {
             int overallMoveType, MoveStep prevStep, int prevFacing,
             int curFacing, Coords lastPos, Coords curPos, boolean isInfantry,
             int distance) {
-        PilotingRollData roll = getBasePilotingRoll();
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         roll.addModifier(TargetRoll.CHECK_FALSE,
                 "Check false: VTOLs can't skid");
         return roll;
@@ -193,7 +193,7 @@ public class VTOL extends Tank {
             case 7:
                 break;
             case 8:
-                if (bSide) {
+                if (bSide && !game.getOptions().booleanOption("tacops_vehicle_effective")) {
                     rv.setEffect(HitData.EFFECT_CRITICAL);
                 }
                 break;
@@ -412,7 +412,7 @@ public class VTOL extends Tank {
                 && !getCrew().getOptions().booleanOption("bvdni")) {
             prd.addModifier(-1, "VDNI");
         }
-
+     
         return prd;
     }
 

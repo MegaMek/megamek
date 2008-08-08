@@ -21,7 +21,9 @@ import java.util.Vector;
 
 import megamek.common.Building;
 import megamek.common.IGame;
+import megamek.common.RangeType;
 import megamek.common.Report;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -55,8 +57,14 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
 
-        if (bGlancing) {
+        if ( bDirect ){
+            toReturn += toHit.getMoS()/3;
+        }else if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
+        }
+
+        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+            toReturn = (int) Math.floor(toReturn * .75);
         }
 
         return (int) Math.ceil(toReturn);
@@ -91,10 +99,11 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
         if (bldg != null
-                && server.tryIgniteHex(target.getPosition(), subjectId, false,
-                        9, vPhaseReport)) {
+                && server.tryIgniteHex(target.getPosition(), subjectId, false, false,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
+        
         vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
         return;
     }

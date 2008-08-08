@@ -19,10 +19,12 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -38,6 +40,7 @@ public class MGHandler extends AmmoWeaponHandler {
      * 
      */
     private static final long serialVersionUID = 5635871269404561702L;
+
     private int nRapidDamHeatPerHit;
 
     /**
@@ -66,10 +69,18 @@ public class MGHandler extends AmmoWeaponHandler {
                 nDamPerHit = Compute.d6(wtype.getDamage());
                 if (bGlancing)
                     nDamPerHit = (int) Math.floor(nDamPerHit / 2.0);
+                if (bDirect)
+                    nDamPerHit += toHit.getMoS()/3;
             } else {
                 nDamPerHit = super.calcDamagePerHit();
             }
         }
+        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+            float toReturn = nDamPerHit;
+            toReturn *= .75;
+            nDamPerHit = (int) Math.floor(toReturn);
+        }
+
         return nDamPerHit;
     }
 
@@ -111,7 +122,20 @@ public class MGHandler extends AmmoWeaponHandler {
      */
     protected void useAmmo() {
         if (weapon.isRapidfire()) {
-            nDamPerHit = Compute.d6();
+
+            //TacOps p.102 Rapid Fire MG Rules
+            switch (wtype.getAmmoType()) {
+            case AmmoType.T_MG:
+                nDamPerHit = Compute.d6();
+                break;
+            case AmmoType.T_MG_HEAVY:
+                nDamPerHit = Compute.d6() + 1;
+                break;
+            case AmmoType.T_MG_LIGHT:
+                nDamPerHit = Math.max(1, Compute.d6() - 1);
+                break;
+            }
+
             nRapidDamHeatPerHit = nDamPerHit;
             checkAmmo();
             int ammoUsage = 3 * nRapidDamHeatPerHit;

@@ -55,6 +55,7 @@ public class ISGaussRiflePrototype extends GaussWeapon {
         this.cost = 300000;
         this.criticals = 8;
         this.flags |= F_PROTOTYPE;
+        this.explosionDamage = 20;
     }
 
     /*

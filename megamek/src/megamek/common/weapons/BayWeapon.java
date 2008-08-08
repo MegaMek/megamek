@@ -30,7 +30,9 @@ import megamek.server.Server;
 public abstract class BayWeapon extends Weapon {
     /**
      * 
-     */   
+     */
+    private static final long serialVersionUID = -1787970217528405766L;
+
     public BayWeapon() {
         super();
     }

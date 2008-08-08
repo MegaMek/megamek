@@ -168,7 +168,7 @@ public class GameEncoder {
         // Encode the game's data.
         out.write("<gameData ");
         out.write("windDirection=\"");
-        out.write(game.getWindDirection());
+        out.write(game.getPlanetaryConditions().getWindDirection());
         out.write("\" roundCount=\"");
         out.write(game.getRoundCount());
         out.write("\" phase=\"");

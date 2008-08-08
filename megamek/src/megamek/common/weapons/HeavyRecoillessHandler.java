@@ -54,6 +54,8 @@ public class HeavyRecoillessHandler extends WeaponHandler {
             int toReturn = Compute.d6(2);
             if (bGlancing)
                 toReturn = (int) Math.floor(toReturn / 2.0);
+            if (bDirect)
+                toReturn += toHit.getMoS()/3;
             return toReturn;
         }        
         else

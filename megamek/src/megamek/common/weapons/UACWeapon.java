@@ -32,6 +32,11 @@ public abstract class UACWeapon extends AmmoWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = -8041750694509751561L;
+
+    /**
+     * 
+     */
     public UACWeapon() {
         super();
         this.flags |= WeaponType.F_DIRECT_FIRE|WeaponType.F_BALLISTIC;

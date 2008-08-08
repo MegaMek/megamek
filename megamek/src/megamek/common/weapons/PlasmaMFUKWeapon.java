@@ -27,6 +27,10 @@ import megamek.server.Server;
  * @author Andrew Hunter
  */
 public abstract class PlasmaMFUKWeapon extends EnergyWeapon {
+
+    
+    private static final long serialVersionUID = -6903718412622554494L;
+
     /**
      * 
      */

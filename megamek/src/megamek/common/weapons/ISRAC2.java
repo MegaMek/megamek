@@ -51,5 +51,6 @@ public class ISRAC2 extends RACWeapon {
         this.shortAV = 8;
         this.medAV = 8;
         this.maxRange = RANGE_MED;
-    }
+        this.explosionDamage = damage;
+   }
 }

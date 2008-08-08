@@ -63,6 +63,7 @@ public class MoveCommand extends ClientCommand {
                         + "#move TURN [x y] = Starts turning towards target coordinate. Can be followed by a coordiate.\n"
                         + "#move CLIP = Clips to path to what is actually possible, and reports on what will happen if commited.\n"
                         + "#move GETUP = Attempt to stand up. Will require a piloting roll.\n"
+                        + "#move CAREFUL = Attempt to stand up. Will require a piloting roll.\n"
                         + "#move x y = move towards coordinate in the current gear. It will do pathfinding for least cost path. Note that the entity will try to move to each coordinate supplied in order.\n";
             } else if (args[1].equalsIgnoreCase("SELECT")) {
                 try {
@@ -117,6 +118,14 @@ public class MoveCommand extends ClientCommand {
                 } else if (args[1].equalsIgnoreCase("GETUP")) {
                     if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
                         cmd.addStep(MovePath.STEP_GET_UP);
+                        return "Mech will try to stand up. this requieres a piloting roll.";
+                    }
+
+                    return "Trying to get up but the mech is not prone.";
+                } else if (args[1].equalsIgnoreCase("CAREFULSTAND")) {
+                    if (cmd.getFinalProne() || cmd.getFinalHullDown()
+                            && client.game.getOptions().booleanOption("tacops_careful_stand")) {
+                        cmd.addStep(MovePath.STEP_CAREFUL_STAND);
                         return "Mech will try to stand up. this requieres a piloting roll.";
                     }
 

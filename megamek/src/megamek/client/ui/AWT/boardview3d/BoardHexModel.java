@@ -143,14 +143,11 @@ class BoardHexModel extends HexModel {
                 case Minefield.TYPE_CONVENTIONAL:
                     addText(Messages.getString("BoardView1.Conventional"), col); //$NON-NLS-1$
                     break;
-                case Minefield.TYPE_THUNDER:
-                    addText(Messages.getString("BoardView1.Thunder") + mf.getDamage() + ")", col); //$NON-NLS-1$ //$NON-NLS-2$
+                case Minefield.TYPE_INFERNO:
+                    addText(Messages.getString("BoardView1.Thunder-Inf") + mf.getDensity() + ")",  col); //$NON-NLS-1$ //$NON-NLS-2$
                     break;
-                case Minefield.TYPE_THUNDER_INFERNO:
-                    addText(Messages.getString("BoardView1.Thunder-Inf") + mf.getDamage() + ")",  col); //$NON-NLS-1$ //$NON-NLS-2$
-                    break;
-                case Minefield.TYPE_THUNDER_ACTIVE:
-                    addText(Messages.getString("BoardView1.Thunder-Actv") + mf.getDamage() + ")", col); //$NON-NLS-1$ //$NON-NLS-2$
+                case Minefield.TYPE_ACTIVE:
+                    addText(Messages.getString("BoardView1.Thunder-Actv") + mf.getDensity() + ")", col); //$NON-NLS-1$ //$NON-NLS-2$
                     break;
                 case Minefield.TYPE_COMMAND_DETONATED:
                     addText(Messages.getString("BoardView1.detonated"), col); //$NON-NLS-1$

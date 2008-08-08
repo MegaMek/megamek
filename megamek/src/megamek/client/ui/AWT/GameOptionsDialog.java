@@ -141,7 +141,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
 
         pack();
         setSize(getSize().width, Math.max(getSize().height, 400));
-        setResizable(false);
+        setResizable(true);
         setLocation(frame.getLocation().x + frame.getSize().width / 2
                 - getSize().width / 2, frame.getLocation().y
                 + frame.getSize().height / 2 - getSize().height / 2);
@@ -333,7 +333,12 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                     || !editable) {
                 optionComp.setEditable(false);
             }
-        } else {
+        }else if (option.getName().equals("tacops_falling_expanded")) { //$NON-NLS-1$
+            if (!(options.getOption("tacops_hull_down")).booleanValue() //$NON-NLS-1$
+                    || !editable) {
+                optionComp.setEditable(false);
+            }
+        }else {
             optionComp.setEditable(editable);
         }
         optionComps.addElement(optionComp);
@@ -430,8 +435,7 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
             }
         }
         if (option.getName().equals("individual_initiative")) { //$NON-NLS-1$
-            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i
-                    .hasMoreElements();) {
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
                 DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("protos_deploy_even")) { //$NON-NLS-1$
                     comp_i.setEditable(false);
@@ -483,6 +487,16 @@ public class GameOptionsDialog extends Dialog implements ActionListener,
                 DialogOptionComponent comp_i = i.nextElement();
                 if (comp_i.option.getName().equals("visibility")) { //$NON-NLS-1$
                     comp_i.setEditable(state);
+                }
+            }
+        }
+        
+        if (option.getName().equals("tacops_hull_down") ){
+            for (Enumeration<DialogOptionComponent> i = optionComps.elements(); i.hasMoreElements();) {
+                DialogOptionComponent comp_i = i.nextElement();
+                if ( comp_i.option.getName().equals("tacops_falling_expanded")){
+                    comp_i.setEditable(state);
+                    comp_i.setState(false);
                 }
             }
         }

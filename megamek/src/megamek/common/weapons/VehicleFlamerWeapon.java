@@ -30,6 +30,11 @@ public abstract class VehicleFlamerWeapon extends AmmoWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = -8729838198434670197L;
+
+    /**
+     * 
+     */
     public VehicleFlamerWeapon() {
         super();
         this.flags |= F_FLAMER;

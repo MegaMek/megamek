@@ -56,7 +56,7 @@ import megamek.server.victory.VictoryFactory;
  * The game class is the root of all data about the game in progress. Both the
  * Client and the Server should have one of these objects and it is their job to
  * keep it synched.
- */
+ */ 
 public class Game implements Serializable, IGame {
     /**
      * 
@@ -87,11 +87,8 @@ public class Game implements Serializable, IGame {
     private boolean deploymentComplete = false;
 
     /** how's the weather? */
-    private int windDirection = -1;
-    private int windStrength = -1;
-    private String stringWindDirection;
-    private String stringWindStrength;
-
+    private PlanetaryConditions planetaryConditions = new PlanetaryConditions();
+    
     /** what round is it? */
     private int roundCount = 0;
 
@@ -222,6 +219,19 @@ public class Game implements Serializable, IGame {
             addMinefieldHelper(mf);
         }
         processGameEvent(new GameBoardChangeEvent(this));
+    }
+    
+    public void resetMinefieldDensity(Vector<Minefield> newMinefields) {
+        if(newMinefields.size() < 1) {
+            return;
+        }
+        Vector<Minefield> mfs = minefields.get(newMinefields.firstElement().getCoords());
+        mfs.clear();
+        for (int i = 0; i < newMinefields.size(); i++) {
+            Minefield mf = newMinefields.elementAt(i);
+            addMinefieldHelper(mf);
+        }
+        processGameEvent(new GameBoardChangeEvent(this));      
     }
 
     protected void addMinefieldHelper(Minefield mf) {
@@ -535,28 +545,6 @@ public class Game implements Serializable, IGame {
             }
         }
         return false;
-    }
-
-    /**
-     * Returns how much higher than 50 or lower than -30 degrees, divided by
-     * ten, rounded up, the temperature is
-     */
-
-    public int getTemperatureDifference() {
-        int i = 0;
-        if (getOptions().intOption("temperature") >= -30
-                && getOptions().intOption("temperature") <= 50)
-            return i;
-        else if (getOptions().intOption("temperature") < -30) {
-            do {
-                i++;
-            } while (getOptions().intOption("temperature") + i * 10 < -30);
-            return i;
-        } else
-            do {
-                i++;
-            } while (getOptions().intOption("temperature") - i * 10 > 50);
-        return i;
     }
 
     /**
@@ -1585,77 +1573,6 @@ public class Game implements Serializable, IGame {
         return getFirstDeployableEntityNum(turn);
     }
 
-    public void determineWind() {
-        String[] dirNames = { "North", "Northeast", "Southeast", "South",
-                "Southwest", "Northwest" };
-        String[] strNames = { "Calm", "Light", "Moderate", "High" };
-
-        if (windDirection == -1) {
-            // Initial wind direction. If using level 2 rules, this
-            // will be the wind direction for the whole battle.
-            windDirection = Compute.d6(1) - 1;
-        } else if (getOptions().booleanOption("maxtech_fire")) {
-            // Wind direction changes on a roll of 1 or 6
-            switch (Compute.d6()) {
-                case 1: // rotate clockwise
-                    windDirection = (windDirection + 1) % 6;
-                    break;
-                case 6: // rotate counter-clockwise
-                    windDirection = (windDirection + 5) % 6;
-            }
-        }
-        if (getOptions().booleanOption("maxtech_fire")) {
-            if (windStrength == -1) {
-                // Initial wind strength
-                switch (Compute.d6()) {
-                    case 1:
-                        windStrength = 0;
-                        break;
-                    case 2:
-                    case 3:
-                        windStrength = 1;
-                        break;
-                    case 4:
-                    case 5:
-                        windStrength = 2;
-                        break;
-                    case 6:
-                        windStrength = 3;
-                }
-            } else {
-                // Wind strength changes on a roll of 1 or 6
-                switch (Compute.d6()) {
-                    case 1: // weaker
-                        if (windStrength > 0)
-                            windStrength--;
-                        break;
-                    case 6: // stronger
-                        if (windStrength < 3)
-                            windStrength++;
-                }
-            }
-            stringWindStrength = strNames[windStrength];
-        }
-
-        stringWindDirection = dirNames[windDirection];
-    }
-
-    public int getWindDirection() {
-        return windDirection;
-    }
-
-    public String getStringWindDirection() {
-        return stringWindDirection;
-    }
-
-    public int getWindStrength() {
-        return windStrength;
-    }
-
-    public String getStringWindStrength() {
-        return stringWindStrength;
-    }
-
     /**
      * Get the entities for the player.
      * 
@@ -1738,6 +1655,28 @@ public class Game implements Serializable, IGame {
     }
 
     /**
+     * Returns the number of Vehicles that <code>playerId</code>
+     * has not moved yet this turn.
+     * @param playerId
+     * @return number of vehicles <code>playerId</code> has not moved yet this turn
+     */
+    public int getVehiclesLeft(int playerId) {
+        Player player = this.getPlayer(playerId);
+        int remaining = 0;
+
+        for (Enumeration<Entity> i = entities.elements(); i.hasMoreElements();) {
+            final Entity entity = i.nextElement();
+            if (player.equals(entity.getOwner())
+                    && entity.isSelectableThisTurn()
+                    && entity instanceof Tank) {
+                remaining++;
+            }
+        }
+
+        return remaining;
+    }
+
+    /**
      * Removes the last, next turn found that the specified entity can move in.
      * Used when, say, an entity dies mid-phase.
      */
@@ -1789,6 +1728,30 @@ public class Game implements Serializable, IGame {
                 return;
             }
         }
+
+        // Same thing but for vehicles
+        if (getOptions().booleanOption("vehicle_lance_movement")
+                && entity instanceof Tank && phase == Phase.PHASE_MOVEMENT) {
+            if ((getProtomechsLeft(entity.getOwnerId()) % getOptions()
+                    .intOption("vehicle_lance_movement_number")) != 1) {
+                // exception, if the _next_ turn is an tank turn, remove
+                // that
+                // contrived, but may come up e.g. one tank accidently kills
+                // another
+                if (hasMoreTurns()) {
+                    GameTurn nextTurn = turnVector.elementAt(turnIndex + 1);
+                    if (nextTurn instanceof GameTurn.EntityClassTurn) {
+                        GameTurn.EntityClassTurn ect = (GameTurn.EntityClassTurn) nextTurn;
+                        if (ect.isValidClass(GameTurn.CLASS_TANK)
+                                && !ect.isValidClass(~GameTurn.CLASS_TANK)) {
+                            turnVector.removeElementAt(turnIndex + 1);
+                        }
+                    }
+                }
+                return;
+            }
+        }
+
         for (int i = turnVector.size() - 1; i >= turnIndex; i--) {
             GameTurn turn = turnVector.elementAt(i);
             if (turn.isValidEntity(entity, this)) {
@@ -2764,13 +2727,27 @@ public class Game implements Serializable, IGame {
             if ((flare.flags & Flare.F_IGNITED) != 0) {
                 flare.turnsToBurn--;
                 if ((flare.flags & Flare.F_DRIFTING) != 0) {
-                    int dir = getWindDirection();
-                    int str = getWindStrength();
+                    int dir = planetaryConditions.getWindDirection();
+                    int str = planetaryConditions.getWindStrength();
+                    
+                    // strength 1 and 2: drift 1 hex
+                    // strength 3: drift 2 hexes
+                    // strength 4: drift 3 hexes     
+                    // for each above strenght 4 (storm), drift one more
                     if (str > 0) {
                         flare.position = flare.position.translated(dir);
-                        if (str == 3) {
+                        if (str > 2) {
                             flare.position = flare.position.translated(dir);
                         }
+                        if (str > 3) {
+                            flare.position = flare.position.translated(dir);
+                        }
+                        if (str > 4) {
+                            flare.position = flare.position.translated(dir);
+                        }
+                        if (str > 5) {
+                            flare.position = flare.position.translated(dir);
+                        } 
                         r = new Report(5236);
                         r.add(flare.position.getBoardNum());
                         r.newlines = 0;
@@ -2914,6 +2891,19 @@ public class Game implements Serializable, IGame {
             } 
         }
         return false;
+    }
+    
+    public PlanetaryConditions getPlanetaryConditions() {
+        return planetaryConditions;
+    }
+    
+    public void setPlanetaryConditions(PlanetaryConditions conditions) {
+        if (null == conditions) {
+            System.err.println("Can't set the planetary conditions to null!");
+        } else {
+            this.planetaryConditions = conditions;
+            processGameEvent(new GameSettingsChangeEvent(this));
+        }
     }
     
 }

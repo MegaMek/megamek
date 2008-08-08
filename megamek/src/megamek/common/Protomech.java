@@ -96,6 +96,11 @@ public class Protomech extends Entity implements Serializable {
 
     public static final String systemNames[] = { "Arm", "Leg", "Head", "Torso" };
 
+    // For grapple attacks
+    private int grappled_id = Entity.NONE;
+
+    private boolean isGrappleAttacker = false;
+
     /**
      * Construct a new, blank, pmech.
      */
@@ -176,6 +181,7 @@ public class Protomech extends Entity implements Serializable {
     /**
      * Protos don't take piloting skill rolls.
      */
+    //TODO: this is no longer true in TacOps. Protos sometimes make PSRs using their gunnery skill
     public PilotingRollData getBasePilotingRoll() {
         return new PilotingRollData(this.getId(), TargetRoll.CHECK_FALSE,
                 "Protomeks never take PSRs.");
@@ -205,8 +211,13 @@ public class Protomech extends Entity implements Serializable {
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int wmp = getOriginalWalkMP();
         int legCrits = this.getCritsHit(LOC_LEG);
-        int i;
         int j;
+        if(null != game) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            if(weatherMod != 0) {
+                wmp = Math.max(wmp + weatherMod, 0);
+            } 
+        }      
         // Gravity, Protos can't get faster
         if (gravity)
             j = applyGravityEffectsOnMP(wmp);
@@ -226,10 +237,6 @@ public class Protomech extends Entity implements Serializable {
             case 3:
                 wmp = 0;
                 break;
-        }
-        if (game != null && !ignoreheat) {
-            i = game.getTemperatureDifference();
-            return Math.max(wmp - i, 0);
         }
         return wmp;
     }
@@ -771,6 +778,13 @@ public class Protomech extends Entity implements Serializable {
                 }
             }
 
+            if (mounted.getLinkedBy() != null) {
+                Mounted mLinker = mounted.getLinkedBy();
+                if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                    dBV *= 1.15;
+                }
+            }
+
             // and we'll add the tcomp here too
             if (wtype.hasFlag(WeaponType.F_DIRECT_FIRE) && hasTargComp) {
                 dBV *= 1.25;
@@ -1085,8 +1099,39 @@ public class Protomech extends Entity implements Serializable {
     public boolean canAssaultDrop() {
         return true;
     }
+    
+    public boolean isHexProhibited(IHex hex) {
+        if (hex.containsTerrain(Terrains.IMPASSABLE))
+            return true;
+
+        if (hex.containsTerrain(Terrains.SPACE) && doomedInSpace())
+            return true;
+
+        return hex.terrainLevel(Terrains.WOODS) > 2 || hex.terrainLevel(Terrains.JUNGLE) > 2;
+    }
 
     public boolean isNuclearHardened() {
         return true;
     }
+    public void setGrappled(int id, boolean attacker) {
+        grappled_id = id;
+        isGrappleAttacker = attacker;
+    }
+
+    public boolean isGrappleAttacker() {
+        return isGrappleAttacker;
+    }
+
+    public int getGrappled() {
+        return grappled_id;
+    }
+
+    public boolean isEligibleForMovement() {
+        if (grappled_id != Entity.NONE) {
+            return false;
+        }
+        return super.isEligibleForMovement();
+    }
+
+
 }

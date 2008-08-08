@@ -350,9 +350,6 @@ class HoverInfo implements Displayable {
                 case (Minefield.TYPE_CONVENTIONAL) :
                     out.add(mf.getName()+Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
                     break;
-                case (Minefield.TYPE_THUNDER) :
-                    out.add(mf.getName()+Messages.getString("BoardView1.minefield") + "(" + mf.getDamage() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                    break;
                 case (Minefield.TYPE_COMMAND_DETONATED) :
                     out.add(mf.getName()+Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
                     break;
@@ -363,11 +360,11 @@ class HoverInfo implements Displayable {
                         out.add(mf.getName()+Messages.getString("BoardView1.minefield") + " " + owner); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                     break;
-                case (Minefield.TYPE_THUNDER_ACTIVE) :
-                    out.add(mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDamage() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                case (Minefield.TYPE_ACTIVE) :
+                    out.add(mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDensity() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     break;
-                case (Minefield.TYPE_THUNDER_INFERNO) :
-                    out.add(mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDamage() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                case (Minefield.TYPE_INFERNO) :
+                    out.add(mf.getName()+Messages.getString("BoardView1.minefield")+"(" + mf.getDensity() + ")" + owner); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     break;
                 }
             }

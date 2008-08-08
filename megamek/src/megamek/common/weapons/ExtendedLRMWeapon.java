@@ -23,6 +23,11 @@ public abstract class ExtendedLRMWeapon extends LRMWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = -1266251778897684302L;
+
+    /**
+     * 
+     */
     public ExtendedLRMWeapon() {
         super();
         this.ammoType = AmmoType.T_EXLRM;

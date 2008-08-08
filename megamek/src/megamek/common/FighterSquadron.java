@@ -476,6 +476,13 @@ public class FighterSquadron extends Aero {
                     }
                 } 
                 
+                if (weapon.getLinkedBy() != null) {
+                    Mounted mLinker = weapon.getLinkedBy();
+                    if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                        dBV *= 1.15;
+                    }
+                }
+
                 heatAdded += ((WeaponType)weapon.getType()).getHeat();
                 //changed this to greater than rather than greater or equal
                 if (heatAdded > aeroHeatEfficiency && wtype.getHeat() > 0)

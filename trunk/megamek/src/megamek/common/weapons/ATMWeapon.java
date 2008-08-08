@@ -27,6 +27,8 @@ public abstract class ATMWeapon extends MissileWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = -1735365348213073649L;
+
     public ATMWeapon() {
         super();
         this.ammoType = AmmoType.T_ATM;

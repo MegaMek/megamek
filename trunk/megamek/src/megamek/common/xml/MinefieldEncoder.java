@@ -63,7 +63,7 @@ public class MinefieldEncoder {
         out.write("\" setting=\"");
         out.write(minefield.getSetting());
         out.write("\" damage=\"");
-        out.write(minefield.getDamage());
+        out.write(minefield.getDensity());
         out.write("\" >");
         CoordsEncoder.encode(minefield.getCoords(), out);
         out.write("</minefieldData>");

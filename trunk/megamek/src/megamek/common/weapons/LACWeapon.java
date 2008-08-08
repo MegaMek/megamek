@@ -26,6 +26,11 @@ import megamek.server.Server;
 
 public abstract class LACWeapon extends AmmoWeapon {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1273558621868218173L;
+
     public LACWeapon() {
         super();
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
@@ -59,7 +64,7 @@ public abstract class LACWeapon extends AmmoWeapon {
         } else if (atype.getMunitionType() == AmmoType.M_TRACER) {
             return new ACTracerHandler(toHit, waa, game, server);
         } else {
-            return super.getCorrectHandler(toHit, waa, game, server);
+            return new ACWeaponHandler(toHit, waa, game, server);
         }
 
     }

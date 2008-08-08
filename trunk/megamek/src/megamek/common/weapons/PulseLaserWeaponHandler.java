@@ -14,8 +14,10 @@
 package megamek.common.weapons;
 
 import megamek.common.BattleArmor;
+import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.RangeType;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -43,31 +45,38 @@ public class PulseLaserWeaponHandler extends WeaponHandler {
      */
     protected int calcDamagePerHit() {
         float toReturn = wtype.getDamage();
+
+        if ( game.getOptions().booleanOption("tacops_energy_weapons") && wtype.hasModes()){
+            toReturn = Compute.dialDownDamage(weapon, wtype,nRange);
+        }
+
         // during a swarm, all damage gets applied as one block to one location
         if (ae instanceof BattleArmor
                 && weapon.getLocation() == BattleArmor.LOC_SQUAD
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
-        // Check for Altered Damage from Energy Weapons (MTR, pg.22)
+        // Check for Altered Damage from Energy Weapons (TacOp, pg.83)
         int nRange = ae.getPosition().distance(target.getPosition());
-        if (game.getOptions().booleanOption("maxtech_altdmg")) {
+        if (game.getOptions().booleanOption("tacops_altdmg")) {
             if (nRange <= 1) {
                 toReturn++;
             } else if (nRange <= wtype.getMediumRange()) {
                 // Do Nothing for Short and Medium Range
             } else if (nRange <= wtype.getLongRange()) {
                 toReturn--;
-            } else if (nRange <= wtype.getExtremeRange()) {
-                toReturn = (int) Math.floor(toReturn / 2.0);
             }
         }
-        if (bGlancing) {
+
+        if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
             toReturn = (int) Math.floor(toReturn / 2.0);
+            toReturn -= 1;
         }
+
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn /= 10;
-            toReturn += 2;
+            toReturn = (float)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_PULSE);
+        }if (bGlancing) {
+            toReturn = (int) Math.floor(toReturn / 2.0);
         }
         return (int) Math.ceil(toReturn);
     }

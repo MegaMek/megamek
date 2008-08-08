@@ -28,11 +28,15 @@ import megamek.server.Server;
  */
 public abstract class ArtilleryWeapon extends AmmoWeapon {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -732023379991213890L;
+
     public ArtilleryWeapon() {
         super();
         this.flags |= F_ARTILLERY | F_SPLITABLE;
         this.damage = DAMAGE_ARTILLERY;
-        
         this.atClass = CLASS_ARTILLERY;
     }
 

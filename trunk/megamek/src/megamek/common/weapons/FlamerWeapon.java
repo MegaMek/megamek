@@ -27,6 +27,9 @@ import megamek.server.Server;
  * @author Andrew Hunter
  */
 public abstract class FlamerWeapon extends EnergyWeapon {
+
+    private static final long serialVersionUID = 1L;
+
     /**
      * 
      */

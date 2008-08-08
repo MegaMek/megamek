@@ -27,6 +27,11 @@ public abstract class SRMWeapon extends MissileWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = 3636219178276978444L;
+
+    /**
+     * 
+     */
     public SRMWeapon() {
         super();
         this.ammoType = AmmoType.T_SRM;

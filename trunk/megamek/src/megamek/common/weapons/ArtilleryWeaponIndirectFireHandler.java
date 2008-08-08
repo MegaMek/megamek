@@ -17,6 +17,7 @@
  */
 package megamek.common.weapons;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -30,6 +31,7 @@ import megamek.common.IGame;
 import megamek.common.INarcPod;
 import megamek.common.Infantry;
 import megamek.common.LosEffects;
+import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
@@ -355,8 +357,10 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
                 radius = 4;
             else if (atype.getAmmoType() == AmmoType.T_LONG_TOM)
                 radius = 3;
+            else if (atype.getAmmoType() == AmmoType.T_SNIPER)
+                radius = 2;
             else
-                radius = Math.max(1, atype.getRackSize() / 5);
+                radius = 1;
             server.deliverArtilleryFlare(coords, radius);
             return false;
         }
@@ -366,16 +370,16 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_FASCAM) {
-            server.deliverFASCAMMinefield(coords, ae.getOwner().getId());
+            server.deliverFASCAMMinefield(coords, ae.getOwner().getId(), atype.getRackSize(), ae.getId());
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_INFERNO_IV) {
-            server.deliverArtilleryInferno(coords, subjectId, vPhaseReport);
+            server.deliverArtilleryInferno(coords, artyAttacker, subjectId, vPhaseReport);
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_VIBRABOMB_IV) {
             server.deliverThunderVibraMinefield(coords, ae.getOwner().getId(),
-                    20, waa.getOtherAttackInfo());
+                    atype.getRackSize(), waa.getOtherAttackInfo(), ae.getId());
             return false;
         }
         if (atype.getMunitionType() == AmmoType.M_SMOKE) {
@@ -386,9 +390,50 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         if (isFlak) {
             altitude = ((VTOL) target).getElevation();
         }
-        server.artilleryDamageArea(coords, artyAttacker.getPosition(), atype,
-                subjectId, artyAttacker, isFlak, altitude, vPhaseReport);
+        
+        //check to see if this is a mine clearing attack
+        //According to the RAW you have to hit the right hex to hit even if the scatter hex has minefields
+        boolean mineClear = target.getTargetType() == Targetable.TYPE_MINEFIELD_CLEAR;
+        if (mineClear && game.containsMinefield(coords) 
+                && !isFlak && !bMissed) {
+            r = new Report(3255);
+            r.indent(1);
+            r.subject = subjectId;
+            vPhaseReport.addElement(r);
 
+            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
+            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+            while (minefields.hasMoreElements()) {
+                Minefield mf = minefields.nextElement();
+                if(server.clearMinefield(mf, ae, Minefield.CLEAR_NUMBER_WEAPON, vPhaseReport)) {
+                    mfRemoved.add(mf);
+                }
+            }
+            //we have to do it this way to avoid a concurrent error problem
+            for(Minefield mf : mfRemoved) {
+                server.removeMinefield(mf);
+            }
+        }
+        
+        server.artilleryDamageArea(coords, artyAttacker.getPosition(), atype,
+                subjectId, artyAttacker, isFlak, altitude, mineClear, vPhaseReport);
+
+        //artillery may unintentially clear minefields, but only if it wasn't trying to
+        if(!mineClear && game.containsMinefield(coords)) {
+            Enumeration<Minefield> minefields = game.getMinefields(coords).elements();
+            ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
+            while (minefields.hasMoreElements()) {
+                Minefield mf = minefields.nextElement();
+                if(server.clearMinefield(mf, artyAttacker, 10, vPhaseReport)) {
+                    mfRemoved.add(mf);
+                }
+            }
+            //we have to do it this way to avoid a concurrent error problem
+            for(Minefield mf : mfRemoved) {
+                server.removeMinefield(mf);
+            }
+        }
+        
         return false;
     }
 
@@ -401,14 +446,14 @@ public class ArtilleryWeaponIndirectFireHandler extends AmmoWeaponHandler {
         float toReturn = wtype.getDamage();
         // area effect damage is double
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn /= 0.5;
-        }
-            
+                toReturn /= 0.5;
+        } 
+        
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
 
-        System.err.println("Attack is doing " + toReturn + " damage.");
+        //System.err.println("Attack is doing " + toReturn + " damage.");
 
         return (int) Math.ceil(toReturn);
     }

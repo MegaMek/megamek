@@ -28,6 +28,7 @@ import megamek.common.IHex;
 import megamek.common.ITerrain;
 import megamek.common.ITerrainFactory;
 import megamek.common.MapSettings;
+import megamek.common.PlanetaryConditions;
 import megamek.common.Terrains;
 
 public class BoardUtilities {
@@ -868,6 +869,74 @@ public class BoardUtilities {
                     }
                 }
                 candidate.clear();
+            }
+        }
+    }
+    
+    /*
+     * adjust the board based on weather conditions
+     */
+    public static void addWeatherConditions(IBoard board, int weatherCond, int windCond) {
+        ITerrainFactory tf = Terrains.getTerrainFactory();
+        
+        for (int x = 0; x < board.getWidth(); x++) {
+            for (int y = 0; y < board.getHeight(); y++) {
+                Coords c = new Coords(x, y);
+                IHex hex = board.getHex(c);
+                
+                //moderate rain - mud in clear hexes, depth 0 water, and dirt roads (not implemented yet)
+                if(weatherCond == PlanetaryConditions.WE_MOD_RAIN) {
+                    if(hex.terrainsPresent() == 0 || (hex.containsTerrain(Terrains.WATER) && hex.depth() == 0)) {
+                        hex.addTerrain(tf.createTerrain(Terrains.MUD, 1));
+                        if(hex.containsTerrain(Terrains.WATER)) {
+                            hex.removeTerrain(Terrains.WATER);
+                        }
+                    }
+                }   
+                
+                //heavy rain - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
+                //rapids in all depth 1+ water
+                if(weatherCond == PlanetaryConditions.WE_HEAVY_RAIN) {
+                    if(hex.containsTerrain(Terrains.WATER) && !hex.containsTerrain(Terrains.RAPIDS) && hex.depth() > 0) {
+                        hex.addTerrain(tf.createTerrain(Terrains.RAPIDS, 1));
+                    }
+                    else if(!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.ROAD)) {
+                        hex.addTerrain(tf.createTerrain(Terrains.MUD, 1));
+                        if(hex.containsTerrain(Terrains.WATER)) {
+                            hex.removeTerrain(Terrains.WATER);
+                        }
+                    }
+                }
+                
+                //torrential downpour - mud in all hexes except buildings, depth 1+ water, and non-dirt roads
+                //torrent in all depth 1+ water, swamps in all depth 0 water hexes
+                if(weatherCond == PlanetaryConditions.WE_DOWNPOUR) {
+                    if(hex.containsTerrain(Terrains.WATER) && !(hex.terrainLevel(Terrains.RAPIDS) > 1) && hex.depth() > 0) {
+                        hex.addTerrain(tf.createTerrain(Terrains.RAPIDS, 2));
+                    }
+                    else if(hex.containsTerrain(Terrains.WATER)) {
+                        hex.addTerrain(tf.createTerrain(Terrains.SWAMP, 1));
+                        hex.removeTerrain(Terrains.WATER);
+                    }
+                    else if(!hex.containsTerrain(Terrains.BUILDING) && !hex.containsTerrain(Terrains.ROAD)) {
+                        hex.addTerrain(tf.createTerrain(Terrains.MUD, 1));
+                    }
+                }
+                
+                //check for rapids/torrents created by wind
+                if(windCond > PlanetaryConditions.WI_MOD_GALE 
+                        && hex.containsTerrain(Terrains.WATER) && hex.depth() > 0) {
+                    
+                    if(windCond > PlanetaryConditions.WI_STORM) {
+                        if(!(hex.terrainLevel(Terrains.RAPIDS) > 1)) {
+                            hex.addTerrain(tf.createTerrain(Terrains.RAPIDS, 2));
+                        }
+                    } else {
+                        if(!hex.containsTerrain(Terrains.RAPIDS)) {
+                            hex.addTerrain(tf.createTerrain(Terrains.RAPIDS, 1));
+                        }
+                    }                   
+                }
             }
         }
     }

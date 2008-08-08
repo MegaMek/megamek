@@ -479,7 +479,7 @@ public class TestBot extends BotClient {
                                             .getEntity(), target.getEntity())
                                             .toHit(game, option);
                                     damage = ChargeAttackAction.getDamageFor(
-                                            option.getEntity(), option
+                                            option.getEntity(), target.getEntity(),false, option
                                                     .getHexesMoved());
                                     self_threat = option
                                             .getCEntity()
@@ -1892,14 +1892,14 @@ public class TestBot extends BotClient {
                 Minefield mf = null;
 
                 if (type == 0) {
-                    mf = Minefield.createConventionalMF(coords,
-                            getLocalPlayer().getId());
+                    mf = Minefield.createMinefield(coords,
+                            getLocalPlayer().getId(), Minefield.TYPE_CONVENTIONAL, 10);
                 } else if (type == 1) {
-                    mf = Minefield.createCommandDetonatedMF(coords,
-                            getLocalPlayer().getId());
+                    mf = Minefield.createMinefield(coords,
+                            getLocalPlayer().getId(), Minefield.TYPE_COMMAND_DETONATED, 10);
                 } else if (type == 2) {
-                    mf = Minefield.createVibrabombMF(coords, getLocalPlayer()
-                            .getId(), 20);
+                    mf = Minefield.createMinefield(coords, getLocalPlayer()
+                            .getId(), Minefield.TYPE_VIBRABOMB, 20);
                 }
                 deployedMinefields.add(mf);
             }

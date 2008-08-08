@@ -46,8 +46,8 @@ public class CLArrowIV extends ArtilleryWeapon {
         this.ammoType = AmmoType.T_ARROW_IV;
         this.shortRange = 1; //
         this.mediumRange = 2;
-        this.longRange = 6;
-        this.extremeRange = 6; // No extreme range.
+        this.longRange = 9;
+        this.extremeRange = 9; // No extreme range.
         this.tonnage = 12f;
         this.criticals = 12;
         this.bv = 171;

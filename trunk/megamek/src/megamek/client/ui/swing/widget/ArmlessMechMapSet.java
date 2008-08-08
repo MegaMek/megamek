@@ -152,7 +152,7 @@ public class ArmlessMechMapSet implements DisplayMapSet {
         Mech m = (Mech) e;
         boolean mtHeat = false;
         if (e.getGame() != null
-                && e.getGame().getOptions().booleanOption("maxtech_heat")) {
+                && e.getGame().getOptions().booleanOption("tacops_heat")) {
             mtHeat = true;
         }
         int a = 1;

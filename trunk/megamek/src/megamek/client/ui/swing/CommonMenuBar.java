@@ -89,6 +89,8 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem deployMinesConventional;
     private JMenuItem deployMinesCommand;
     private JMenuItem deployMinesVibrabomb;
+    private JMenuItem deployMinesActive;
+    private JMenuItem deployMinesInferno;
     private JMenuItem deployNext;
     private JMenuItem deployTurn;
     private JMenuItem deployLoad;
@@ -116,6 +118,7 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     private JMenuItem moveGetUp;
     private JMenuItem moveRaise;
     private JMenuItem moveLower;
+    private JMenuItem moveReckless;
     private JMenuItem moveAcc = null;
     private JMenuItem moveDec = null;
     private JMenuItem moveAccN = null;
@@ -363,6 +366,12 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         deployMinesVibrabomb = createMenuItem(
                 submenu,
                 Messages.getString("CommonMenuBar.deployMinesVibrabomb"), DeployMinefieldDisplay.DEPLOY_MINE_VIBRA); //$NON-NLS-1$
+        deployMinesActive = createMenuItem(
+                submenu,
+                Messages.getString("CommonMenuBar.deployMinesActive"), DeployMinefieldDisplay.DEPLOY_MINE_ACTIVE); //$NON-NLS-1$
+        deployMinesInferno = createMenuItem(
+                submenu,
+                Messages.getString("CommonMenuBar.deployMinesInferno"), DeployMinefieldDisplay.DEPLOY_MINE_INFERNO); //$NON-NLS-1$
 
         // Finish off the deploy menu.
         deployNext = createMenuItem(
@@ -419,6 +428,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         moveLower = createMenuItem(
                 menu,
                 Messages.getString("CommonMenuBar.moveLower"), MovementDisplay.MOVE_LOWER_ELEVATION); //$NON-NLS-1$
+        moveReckless = createMenuItem(
+                menu,
+                Messages.getString("CommonMenuBar.moveReckless"), MovementDisplay.MOVE_RECKLESS); //$NON-NLS-1$
 
         // Create the Special sub-menu.
         submenu = new JMenu(Messages.getString("CommonMenuBar.SpecialMenu")); //$NON-NLS-1$
@@ -937,6 +949,9 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
     public synchronized void setMoveLowerEnabled(boolean enabled) {
         moveLower.setEnabled(enabled);
     }
+    public synchronized void setMoveRecklessEnabled(boolean enabled) {
+        moveReckless.setEnabled(enabled);
+    }
     public synchronized void setMoveAccEnabled(boolean enabled) {
         moveAcc.setEnabled(enabled);
     }
@@ -1032,6 +1047,18 @@ public class CommonMenuBar extends JMenuBar implements ActionListener {
         deployMinesVibrabomb.setText(Messages.getString(
                 "CommonMenuBar.Vibrabomb", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
         deployMinesVibrabomb.setEnabled(nbr > 0);
+    }
+    
+    public synchronized void setDeployActiveEnabled(int nbr) {
+        deployMinesActive.setText(Messages.getString(
+                "CommonMenuBar.Active", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        deployMinesActive.setEnabled(nbr > 0);
+    }
+    
+    public synchronized void setDeployInfernoEnabled(int nbr) {
+        deployMinesInferno.setText(Messages.getString(
+                "CommonMenuBar.Inferno", new Object[] { new Integer(nbr) })); //$NON-NLS-1$
+        deployMinesInferno.setEnabled(nbr > 0);
     }
 
     // Manages physical menu items...

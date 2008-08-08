@@ -93,13 +93,18 @@ import megamek.common.Mounted;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
+import megamek.common.Sensor;
 import megamek.common.SmallCraft;
 import megamek.common.Tank;
 import megamek.common.Terrains;
 import megamek.common.VTOL;
 import megamek.common.Warship;
 import megamek.common.WeaponType;
+import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.BayWeapon;
+import megamek.common.weapons.GaussWeapon;
+import megamek.common.weapons.RACWeapon;
+import megamek.common.weapons.UACWeapon;
 
 /**
  * Displays the info for a mech. This is also a sort of interface for special
@@ -185,8 +190,6 @@ public class MechDisplay extends JPanel {
         wPan.displayMech(en);
         sPan.displayMech(en);
         ePan.displayMech(en);
-
-        processMechDisplayEvent(new MechDisplayEvent(this, en, null));
     }
 
     /**
@@ -1051,17 +1054,17 @@ public class MechDisplay extends JPanel {
                 }
                 if (!((Mech) en).hasLaserHeatSinks()) {
                     // extreme temperatures.
-                    if (game.getOptions().intOption("temperature") > 0) {
-                        currentHeatBuildup += game.getTemperatureDifference();
+                    if (game.getPlanetaryConditions().getTemperature() > 0) {
+                        currentHeatBuildup += game.getPlanetaryConditions().getTemperatureDifference(50,-30);
                     } else {
-                        currentHeatBuildup -= game.getTemperatureDifference();
+                        currentHeatBuildup -= game.getPlanetaryConditions().getTemperatureDifference(50,-30);
                     }
                 }
             }
             Coords position = entity.getPosition();
             if (!en.isOffBoard() && position != null) {
                 IHex hex = game.getBoard().getHex(position);
-                if (hex.terrainLevel(Terrains.FIRE) == 2) {
+                if (hex.containsTerrain(Terrains.FIRE) && hex.getFireTurn() > 0) {
                     currentHeatBuildup += 5; // standing in fire
                 }
                 if (hex.terrainLevel(Terrains.MAGMA) == 1) {
@@ -1232,7 +1235,7 @@ public class MechDisplay extends JPanel {
             }
 
             // If MaxTech range rules are in play, display the extreme range.
-            if (game.getOptions().booleanOption("maxtech_range") || entity instanceof Aero) { //$NON-NLS-1$
+            if (game.getOptions().booleanOption("tacops_range") || entity instanceof Aero) { //$NON-NLS-1$
                 wExtL.setVisible(true);
                 wExtR.setVisible(true);
             } else {
@@ -1293,10 +1296,19 @@ public class MechDisplay extends JPanel {
             WeaponType wtype = (WeaponType) mounted.getType();
             // update weapon display
             wNameR.setText(mounted.getDesc());
-            wHeatR.setText(mounted.getCurrentHeat() + ""); //$NON-NLS-1$
+            if (mounted.hasChargedCapacitor())
+                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted, wtype) + 5))); //$NON-NLS-1$
+            else if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes() 
+                    && clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons") ){
+                wHeatR.setText(Integer.toString((Compute.dialDownHeat(mounted, wtype))));
+            }
+            else{
+                wHeatR.setText(Integer.toString(mounted.getCurrentHeat())); //$NON-NLS-1$
+            }
 
             wArcHeatR.setText(Integer.toString(entity.getHeatInArc(mounted
                     .getLocation(), mounted.isRearMounted())));
+
 
             if (wtype.getDamage() == WeaponType.DAMAGE_MISSILE) {
                 wDamR.setText(Messages.getString("MechDisplay.Missile")); //$NON-NLS-1$
@@ -1310,8 +1322,14 @@ public class MechDisplay extends JPanel {
                         .append('/').append(
                                 Integer.toString(wtype.getRackSize() / 2));
                 wDamR.setText(damage.toString());
+            } else if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes() 
+                    && clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons") ){
+                if (mounted.hasChargedCapacitor()) {
+                    wDamR.setText(Integer.toString(Compute.dialDownDamage(mounted, wtype) + 5));
+                } else
+                    wDamR.setText(Integer.toString(Compute.dialDownDamage(mounted, wtype)));
             } else {
-                wDamR.setText(Integer.toString(wtype.getDamage()));
+                    wDamR.setText(Integer.toString(wtype.getDamage()));
             }
 
             // update range
@@ -2164,7 +2182,7 @@ public class MechDisplay extends JPanel {
                                 .getRoundCount()) {
                     m_bDumpAmmo.setEnabled(true);
                     if (clientgui.getClient().game.getOptions().booleanOption(
-                            "maxtech_hotload")
+                            "tacops_hotload")
                             && en instanceof Tank
                             && m.getType().hasFlag(AmmoType.F_HOTLOAD)) {
                         m_bDumpAmmo.setEnabled(false);
@@ -2186,32 +2204,34 @@ public class MechDisplay extends JPanel {
                     if (!m.isDestroyed()
                             && m.getType().hasFlag(MiscType.F_STEALTH)) {
                         m_chMode.setEnabled(true);
-                    }// if the maxtech eccm option is not set then the ECM
-                    // should not show anything.
-                    if (m.getType().hasFlag(MiscType.F_ECM)
-                            && !clientgui.getClient().game.getOptions()
-                                    .booleanOption("maxtech_eccm")) {
-                        ((DefaultComboBoxModel) m_chMode.getModel())
-                                .removeAllElements();
+                    }
+                    
+                    //If not using tacops Energy Weapon rule then remove all the dial down statements
+                    if (m.getType().hasFlag(WeaponType.F_ENERGY) 
+                            && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA) 
+                            && !clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons")) {
+                        m_chMode.removeAll();
                         return;
                     }
+
+                    //If not using tacops Gauss Weapon rule then remove all the power up/down modes
+                    if (m.getType() instanceof GaussWeapon 
+                            && !clientgui.getClient().game.getOptions().booleanOption("tacops_gauss_weapons")) {
+                        m_chMode.removeAll();
+                        return;
+                    }
+
                     // disables AC mode switching from system tab if
-                    // maxtech_rapid_ac is not turned on
-                    if (m.getType() instanceof WeaponType
-                            && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC || ((WeaponType) m
-                                    .getType()).getAmmoType() == AmmoType.T_LAC)
-                            && !clientgui.getClient().game.getOptions()
-                                    .booleanOption("maxtech_rapid_ac")) {
-                        ((DefaultComboBoxModel) m_chMode.getModel())
-                                .removeAllElements();
+                    // tacops_rapid_ac is not turned on
+                    if (m.getType() instanceof ACWeapon
+                            && !clientgui.getClient().game.getOptions().booleanOption("tacops_rapid_ac")) {
+                        ((DefaultComboBoxModel) m_chMode.getModel()).removeAllElements();
                         return;
                     }
                     //disable rapid fire mode switching for Aeros
-                    if(en instanceof Aero && m.getType() instanceof WeaponType
-                            && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC_ROTARY 
-                                    || ((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC_ULTRA
-                                    ||    ((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC
-                                    ||    ((WeaponType) m.getType()).getAmmoType() == AmmoType.T_AC_ULTRA_THB)) {
+                    if(en instanceof Aero && m.getType() instanceof ACWeapon 
+                            || m.getType() instanceof RACWeapon 
+                            || m.getType() instanceof UACWeapon) {
                         ((DefaultComboBoxModel) m_chMode.getModel()).removeAllElements();
                         return;
                     }
@@ -2223,7 +2243,22 @@ public class MechDisplay extends JPanel {
                         m_chMode.addItem(em.getDisplayableName());
                     }
                     m_chMode.setSelectedItem(m.curMode().getDisplayableName());
-                } else {
+                } else 
+                    //TacOps Energy Weapon rule allows you to dial down the damage, which will lower the heat
+                    //Damage can goto 0 but heat will always be a min of 1
+                    if ( m != null && bOwner && m.getType() instanceof WeaponType 
+                            && m.getType().hasFlag(WeaponType.F_ENERGY)
+                            && (((WeaponType) m.getType()).getAmmoType() == AmmoType.T_NA) 
+                            && clientgui.getClient().game.getOptions().booleanOption("tacops_energy_weapons")){
+                        m_chMode.removeAll();
+                        m_chMode.setEnabled(true);
+                        
+                        for ( int damage = ((WeaponType) m.getType()).getDamage(); damage >= 0; damage-- ){
+                            m_chMode.addItem("Damage "+damage);
+                        }
+                        m_chMode.setSelectedIndex(0);
+                        m.getType().setInstantModeSwitch(true);
+                    } else {
                     CriticalSlot cs = getSelectedCritical();
                     if (cs != null && cs.getType() == CriticalSlot.TYPE_SYSTEM) {
                         if (cs.getIndex() == Mech.SYSTEM_COCKPIT
@@ -2467,7 +2502,7 @@ public class MechDisplay extends JPanel {
                     // should not show anything.
                     if (m.getType().hasFlag(MiscType.F_ECM)
                             && !clientgui.getClient().game.getOptions()
-                                    .booleanOption("maxtech_eccm")) {
+                                    .booleanOption("tacops_eccm")) {
                         ((DefaultComboBoxModel) m_chMode.getModel())
                                 .removeAllElements();
                         return;
@@ -2504,7 +2539,7 @@ public class MechDisplay extends JPanel {
     /**
      * This class shows information about a unit that doesn't belong elsewhere.
      */
-    private class ExtraPanel extends PicMap implements ActionListener {
+    private class ExtraPanel extends PicMap implements ActionListener, ItemListener {
 
         /**
          * 
@@ -2513,6 +2548,7 @@ public class MechDisplay extends JPanel {
 
         private static final String IMAGE_DIR = "data/images/widgets";
 
+        private JLabel curSensorsL;
         private JLabel narcLabel;
         private JLabel unusedL;
         private JLabel carrysL;
@@ -2528,6 +2564,8 @@ public class MechDisplay extends JPanel {
         private JList narcList;
         private int myMechId;
 
+        private JComboBox chSensors;
+        
         private Slider prompt;
 
         private int sinks;
@@ -2601,6 +2639,15 @@ public class MechDisplay extends JPanel {
                     SwingConstants.CENTER);
             targSysL.setForeground(Color.WHITE);
             targSysL.setOpaque(false);
+            
+            curSensorsL = new JLabel((Messages
+                    .getString("MechDisplay.CurrentSensors")).concat(" "),
+                    SwingConstants.CENTER);
+            curSensorsL.setForeground(Color.WHITE);
+            curSensorsL.setOpaque(false);
+            
+            chSensors = new JComboBox();
+            chSensors.addItemListener(this);
 
             // layout choice panel
             GridBagLayout gridbag;
@@ -2616,6 +2663,15 @@ public class MechDisplay extends JPanel {
             c.anchor = GridBagConstraints.CENTER;
             c.weighty = 1.0;
 
+            gridbag.setConstraints(curSensorsL, c);
+            add(curSensorsL);
+            
+            gridbag.setConstraints(chSensors, c);
+            add(chSensors);
+            
+            gridbag.setConstraints(narcLabel, c);
+            add(narcLabel);
+            
             gridbag.setConstraints(narcLabel, c);
             add(narcLabel);
 
@@ -2744,10 +2800,12 @@ public class MechDisplay extends JPanel {
                     .getOwnerId()) {
                 sinks2B.setEnabled(false);
                 dumpBombs.setEnabled(false);
+                chSensors.setEnabled(false);
                 dontChange = true;
             } else {
                 sinks2B.setEnabled(true);
                 dumpBombs.setEnabled(false);
+                chSensors.setEnabled(true);
                 dontChange = false;
             }
             // Walk through the list of teams. There
@@ -2917,7 +2975,7 @@ public class MechDisplay extends JPanel {
                     hasTSM = true;
 
                 if (clientgui.getClient().game.getOptions().booleanOption(
-                        "maxtech_heat")) {
+                        "tacops_heat")) {
                     mtHeat = true;
                 }
                 heatR.append(HeatEffects
@@ -2937,6 +2995,17 @@ public class MechDisplay extends JPanel {
             } else {
                 dumpBombs.setEnabled(false);
             }
+            
+            refreshSensorChoices(en);
+            
+            if(null != en.getActiveSensor()) {
+                curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors"))
+                        .concat(" ").concat(
+                                Sensor.getSensorName(en.getActiveSensor().getType())));
+            } else {
+                curSensorsL.setText((Messages.getString("MechDisplay.CurrentSensors"))
+                        .concat(" "));
+            }
 
             targSysL.setText((Messages.getString("MechDisplay.TargSysLabel"))
                     .concat(" ").concat(
@@ -2944,6 +3013,33 @@ public class MechDisplay extends JPanel {
             onResize();
         } // End public void displayMech( Entity )
 
+        private void refreshSensorChoices(Entity en) {
+            chSensors.removeItemListener(this);
+            chSensors.removeAllItems();
+            for(int i = 0; i < en.getSensors().size(); i++) {
+                Sensor sensor = en.getSensors().elementAt(i);
+                String condition = "";
+                if(sensor.isBAP() && !en.hasBAP(false)) {
+                    condition = " (Disabled)";
+                }
+                chSensors.addItem(Sensor.getSensorName(sensor.getType()) + condition);
+                if(sensor.getType() == en.getNextSensor().getType()) {
+                    chSensors.setSelectedIndex(i);
+                }
+            }
+            chSensors.addItemListener(this);
+        }
+        
+        public void itemStateChanged(ItemEvent ev) {
+            if (ev.getItemSelectable() == chSensors) { 
+                Entity en = clientgui.getClient().game.getEntity(myMechId);
+                en.setNextSensor(en.getSensors().elementAt(chSensors.getSelectedIndex()));
+                refreshSensorChoices(en);
+                clientgui.systemMessage(Messages.getString("MechDisplay.willSwitchAtEnd", new Object[] { "Active Sensors", Sensor.getSensorName(en.getSensors().elementAt(chSensors.getSelectedIndex()).getType()) }));//$NON-NLS-1$
+                clientgui.getClient().sendUpdateEntity(clientgui.getClient().game.getEntity(myMechId));
+            }
+        }
+        
         public void actionPerformed(ActionEvent ae) {
             if ("changeSinks".equals(ae.getActionCommand()) && !dontChange) { //$NON-NLS-1$
                 prompt = new Slider(clientgui.frame, Messages

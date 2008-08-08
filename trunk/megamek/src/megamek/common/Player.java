@@ -63,6 +63,10 @@ public final class Player extends TurnOrdered implements Serializable {
     private int num_mf_conv = 0;
     private int num_mf_cmd = 0;
     private int num_mf_vibra = 0;
+    private int num_mf_active = 0;
+    private int num_mf_inferno = 0;
+    
+    //now I need to actually keep a vector of minefields because more information is needed than just the number
 
     // hexes that are automatically hit by artillery
     private Vector<Coords> artyAutoHitHexes = new Vector<Coords>();
@@ -125,7 +129,7 @@ public final class Player extends TurnOrdered implements Serializable {
     }
 
     public boolean hasMinefields() {
-        return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0);
+        return (num_mf_cmd > 0) || (num_mf_conv > 0) || (num_mf_vibra > 0) || (num_mf_active > 0) || (num_mf_inferno > 0);
     }
 
     public void setNbrMFConventional(int nbrMF) {
@@ -139,6 +143,14 @@ public final class Player extends TurnOrdered implements Serializable {
     public void setNbrMFVibra(int nbrMF) {
         num_mf_vibra = nbrMF;
     }
+    
+    public void setNbrMFActive(int nbrMF) {
+        num_mf_active = nbrMF;
+    }
+    
+    public void setNbrMFInferno(int nbrMF) {
+        num_mf_inferno = nbrMF;
+    }
 
     public int getNbrMFConventional() {
         return num_mf_conv;
@@ -150,6 +162,14 @@ public final class Player extends TurnOrdered implements Serializable {
 
     public int getNbrMFVibra() {
         return num_mf_vibra;
+    }
+    
+    public int getNbrMFActive() {
+        return num_mf_active;
+    }
+    
+    public int getNbrMFInferno() {
+        return num_mf_inferno;
     }
 
     public void setCamoCategory(String name) {

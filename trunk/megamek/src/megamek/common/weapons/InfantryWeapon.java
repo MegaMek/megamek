@@ -26,6 +26,8 @@ public abstract class InfantryWeapon extends Weapon {
     /**
      * 
      */
+    private static final long serialVersionUID = -4437093890717853422L;
+
     public InfantryWeapon() {
         super();
         this.damage = DAMAGE_VARIABLE;

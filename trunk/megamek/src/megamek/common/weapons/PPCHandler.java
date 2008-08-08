@@ -29,6 +29,7 @@ import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
@@ -74,7 +75,13 @@ public class PPCHandler extends EnergyWeaponHandler {
      * @see megamek.common.weapons.EnergyWeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-        float toReturn = wtype.getDamage();
+        int nRange = ae.getPosition().distance(target.getPosition());
+        float toReturn = wtype.getDamage(nRange);
+
+        if ( game.getOptions().booleanOption("tacops_energy_weapons") && wtype.hasModes()){
+            toReturn = Compute.dialDownDamage(weapon, wtype,nRange);
+        }
+
         if (weapon.hasChargedCapacitor()) {
             toReturn += 5;
         }
@@ -84,18 +91,24 @@ public class PPCHandler extends EnergyWeaponHandler {
                 && (ae.getSwarmTargetId() == target.getTargetId())) {
             toReturn *= ((BattleArmor) ae).getShootingStrength();
         }
-        // Check for Altered Damage from Energy Weapons (MTR, pg.22)
-        int nRange = ae.getPosition().distance(target.getPosition());
-        if (game.getOptions().booleanOption("maxtech_altdmg")) {
+
+        // Check for Altered Damage from Energy Weapons (TacOps, pg.83)
+        if (game.getOptions().booleanOption("tacops_altdmg")) {
             if (nRange <= 1) {
                 toReturn++;
             } else if (nRange <= wtype.getMediumRange()) {
                 // Do Nothing for Short and Medium Range
             } else if (nRange <= wtype.getLongRange()) {
                 toReturn--;
-            } else if (nRange <= wtype.getExtremeRange()) {
-                toReturn = (int) Math.floor(toReturn / 2.0);
-            }
+            } 
+        }
+        
+        if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
+            toReturn -= 1;
+        }
+
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            toReturn = (int)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
         }
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
@@ -105,8 +118,6 @@ public class PPCHandler extends EnergyWeaponHandler {
                 && ((Entity) target).getArmorType() == EquipmentType.T_ARMOR_REFLECTIVE)
             toReturn /= 2;
 
-        if (target instanceof Infantry && !(target instanceof BattleArmor))
-            toReturn /= 10;
         return (int) Math.ceil(toReturn);
     }
 
@@ -118,7 +129,7 @@ public class PPCHandler extends EnergyWeaponHandler {
      */
     protected boolean doChecks(Vector<Report> vPhaseReport) {
         // Resolve roll for disengaged field inhibitors on PPCs, if needed
-        if (game.getOptions().booleanOption("maxtech_ppc_inhibitors")
+        if (game.getOptions().booleanOption("tacops_ppc_inhibitors")
                 && wtype.hasModes()
                 && weapon.curMode().equals("Field Inhibitor OFF")) {
             int rollTarget = 0;

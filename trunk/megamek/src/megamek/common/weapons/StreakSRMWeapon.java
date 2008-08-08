@@ -25,6 +25,11 @@ import megamek.server.Server;
 
 public abstract class StreakSRMWeapon extends SRMWeapon {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 9157660680598071296L;
+
     public StreakSRMWeapon() {
         super();
         this.ammoType = AmmoType.T_SRM_STREAK;

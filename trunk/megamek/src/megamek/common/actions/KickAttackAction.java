@@ -22,6 +22,7 @@ import megamek.common.IHex;
 import megamek.common.ILocationExposureStatus;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
@@ -63,16 +64,6 @@ public class KickAttackAction extends PhysicalAttackAction {
         this.leg = leg;
     }
 
-    public int hashCode() {
-        int hash = super.hashCode();
-        hash = 61 * hash + leg;
-        return hash;
-    }
-    
-    public boolean equals(Object o) {
-        return super.equals(o) && ((KickAttackAction)o).getLeg() == leg;
-    }
-
     /**
      * Damage that the specified mech does with a kick
      */
@@ -104,6 +95,11 @@ public class KickAttackAction extends PhysicalAttackAction {
         if (entity.heat >= 9 && ((Mech) entity).hasTSM()) {
             multiplier *= 2.0f;
         }
+        
+        if ( entity.hasWorkingMisc(MiscType.F_TALON, -1, legLoc) && entity.hasWorkingSystem(Mech.ACTUATOR_FOOT, legLoc) ){
+            multiplier *= 1.5;
+        }
+        
         int toReturn = (int) Math.floor(damage * multiplier)
                 + entity.getCrew().modifyPhysicalDamagaForMeleeSpecialist();
         // underwater damage is half, round up (see bug 1110692)
@@ -272,6 +268,10 @@ public class KickAttackAction extends PhysicalAttackAction {
             toHit.addModifier(1, "Foot actuator destroyed");
         }
 
+        if ( ae.hasFunctionalLegAES() ) {
+            toHit.addModifier(-1, "AES bonus");
+        }
+        
         // elevation
         if (attackerElevation < targetHeight) {
             toHit.setHitTable(ToHitData.HIT_KICK);

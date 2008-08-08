@@ -27,6 +27,11 @@ public abstract class NarcWeapon extends MissileWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = 1651402906360520759L;
+
+    /**
+     * 
+     */
     public NarcWeapon() {
         super();
         this.flags |= F_NO_FIRES;

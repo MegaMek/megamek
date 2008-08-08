@@ -19,7 +19,9 @@ import java.util.Vector;
 
 import megamek.common.Compute;
 import megamek.common.Coords;
+import megamek.common.EquipmentType;
 import megamek.common.IGame;
+import megamek.common.WeaponType;
 
 /**
  * ArtilleryAttackAction Holds the data needed for an artillery attack in
@@ -44,22 +46,22 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         this.firingCoords = game.getEntity(entityId).getPosition();
         int distance = Compute.effectiveDistance(game, getEntity(game),
                 getTarget(game));
-        if (game.getOptions().booleanOption("maxtech_artillery")) {
+        EquipmentType eType = game.getEntity(entityId).getEquipment(weaponId).getType();
+        if (eType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
+            turnsTilHit = 1 + (distance / 17 / 5);
+        } else {
             if (distance <= 17)
                 turnsTilHit = 0;
-            else if (distance <= (6 * 17))
+            else if (distance <= (8 * 17))
                 turnsTilHit = 1;
-            else if (distance <= (14 * 17))
+            else if (distance <= (15 * 17))
                 turnsTilHit = 2;
-            else if (distance <= (20 * 17))
+            else if (distance <= (21 * 17))
                 turnsTilHit = 3;
-            else if (distance <= (25 * 17))
+            else if (distance <= (26 * 17))
                 turnsTilHit = 4;
             else
                 turnsTilHit = 5;
-        } else {
-            // Two boards is one turn of flight time, except on the same sheet.
-            turnsTilHit = (distance <= 17) ? 0 : ((distance / 34) + 1);
         }
     }
 

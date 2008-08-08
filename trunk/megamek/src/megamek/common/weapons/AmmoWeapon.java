@@ -31,6 +31,8 @@ public abstract class AmmoWeapon extends Weapon {
     /**
      * 
      */
+    private static final long serialVersionUID = -1657672242932169730L;
+
     public AmmoWeapon() {
         super();
     }

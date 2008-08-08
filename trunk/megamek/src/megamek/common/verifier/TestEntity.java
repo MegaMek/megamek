@@ -283,7 +283,7 @@ public abstract class TestEntity implements TestEntityOption {
                         .hasSubType(MiscType.S_MACE_THB))) {
             return ceil(getWeight() / 15.0f, getWeightCeilingWeapons());
         } else if (mt.hasFlag(MiscType.F_CLUB)
-                && mt.hasSubType(MiscType.S_SWORD)) {
+                && ( mt.hasSubType(MiscType.S_SWORD) || mt.hasSubType(MiscType.S_CHAIN_WHIP)) ) {
             return ceilMaxHalf(getWeight() / 20.0f, getWeightCeilingWeapons());
         } else if (mt.hasFlag(MiscType.F_CLUB)
                 && mt.hasSubType(MiscType.S_RETRACTABLE_BLADE)) {
@@ -478,8 +478,9 @@ public abstract class TestEntity implements TestEntityOption {
     public int calcMiscCrits(MiscType mt) {
         if (mt.hasFlag(MiscType.F_CLUB)
                 && (mt.hasSubType(MiscType.S_HATCHET)
-                        || mt.hasSubType(MiscType.S_SWORD) || mt
-                        .hasSubType(MiscType.S_MACE_THB))) {
+                        || mt.hasSubType(MiscType.S_SWORD) 
+                        || mt.hasSubType(MiscType.S_CHAIN_WHIP)
+                        || mt.hasSubType(MiscType.S_MACE_THB))) {
             return (int) Math.ceil(getWeight() / 15.0);
         } else if (mt.hasFlag(MiscType.F_CLUB)
                 && mt.hasSubType(MiscType.S_MACE)) {

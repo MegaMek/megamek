@@ -21,6 +21,7 @@ import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
+import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
@@ -56,9 +57,7 @@ public class StreakHandler extends MissileWeaponHandler {
      */
     protected int calcDamagePerHit() {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            int toReturn = (int) Math.ceil(((float) wtype.getRackSize() * 2) / 5);
-            if (bGlancing)
-                toReturn = (int) Math.floor(toReturn / 2.0);
+            int toReturn = (int)Compute.directBlowInfantryDamage(wtype.getRackSize()*2, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE);
             return toReturn;
         }
         return 2;
@@ -92,31 +91,22 @@ public class StreakHandler extends MissileWeaponHandler {
         if (bMissed)
             return 0;
         int nMissilesModifier = nSalvoBonus;
-        int nGlancing = 0;
-        if (bGlancing)
-            nGlancing -= 4;
-        boolean maxtechmissiles = game.getOptions().booleanOption(
-                "maxtech_mslhitpen");
-        if (maxtechmissiles) {
-            if (nRange <= 1) {
-                nMissilesModifier += 1;
-            } else if (nRange <= wtype.getShortRange()) {
-                nMissilesModifier += 0;
-            } else if (nRange <= wtype.getMediumRange()) {
-                nMissilesModifier -= 1;
-            } else {
-                nMissilesModifier -= 2;
-            }
+
+        if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
+            nMissilesModifier -= 2;
         }
+        
+        if(game.getPlanetaryConditions().hasEMI()) {
+            nMissilesModifier -= 2;
+        }
+
         int missilesHit;
-        int amsMod = getAMSHitsMod(vPhaseReport);
+        int amsMod = getAMSHitsMod(vPhaseReport) + nMissilesModifier;
         if (amsMod == 0) {
             missilesHit = wtype.getRackSize();
         } else {
-            nMissilesModifier += amsMod;
             missilesHit = Compute.missilesHit(wtype.getRackSize(),
-                    nMissilesModifier, maxtechmissiles | bGlancing, weapon
-                            .isHotLoaded(), true);
+                    nMissilesModifier, weapon.isHotLoaded(), true, advancedAMS);
             if (nMissilesModifier != 0) {
                 if (nMissilesModifier > 0)
                     r = new Report(3340);
@@ -172,14 +162,14 @@ public class StreakHandler extends MissileWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#reportMiss(java.util.Vector)
      */
     protected void reportMiss(Vector<Report> vPhaseReport) {
-        if (!isAngelECMAffected) {
+        //if (!isAngelECMAffected) {
             // no lock
             Report r = new Report(3215);
             r.subject = subjectId;
             vPhaseReport.addElement(r);
-        } else {
+        /*} else {
             super.reportMiss(vPhaseReport);
-        }
+        }*/
     }
 
     /*

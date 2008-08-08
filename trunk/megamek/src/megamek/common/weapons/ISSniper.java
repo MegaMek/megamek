@@ -41,12 +41,12 @@ public class ISSniper extends ArtilleryWeapon {
         this.addLookupName("ISSniperArtillery");
         this.addLookupName("IS Sniper");
         this.heat = 10;
-        this.rackSize = 10;
+        this.rackSize = 20;
         this.ammoType = AmmoType.T_SNIPER;
         this.shortRange = 1;
         this.mediumRange = 2;
-        this.longRange = 12;
-        this.extremeRange = 12; // No extreme range.
+        this.longRange = 18;
+        this.extremeRange = 18; // No extreme range.
         this.tonnage = 20f;
         this.criticals = 20;
         this.bv = 86;

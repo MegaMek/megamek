@@ -304,7 +304,7 @@ public class ScenarioLoader {
         }
 
         // set wind
-        g.determineWind();
+        g.getPlanetaryConditions().determineWind();
 
         // Set up the teams (for initiative)
         g.setupTeams();

@@ -136,7 +136,7 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
+        if (game.getOptions().booleanOption("tacops_glancing_blows")) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
                 r = new Report(3186);
@@ -149,6 +149,16 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
         } else {
             bGlancing = false;
         }
+
+        //Set Margin of Success/Failure.
+        toHit.setMoS(roll-Math.max(2,toHit.getValue()));
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1);
+        if (bDirect) {
+            r = new Report(3189);
+            r.subject = ae.getId();
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        } 
 
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.

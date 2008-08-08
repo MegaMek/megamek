@@ -23,6 +23,8 @@ public abstract class InfantryAttack extends Weapon {
     /**
      * 
      */
+    private static final long serialVersionUID = -8249141375380685926L;
+
     public InfantryAttack() {
         super();
         this.flags |= F_SOLO_ATTACK | F_NO_FIRES;

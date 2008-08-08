@@ -32,6 +32,11 @@ import megamek.server.Server;
  */
 public abstract class ACWeapon extends AmmoWeapon {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1537808266032711407L;
+
     public ACWeapon() {
         super();
         this.flags |= F_DIRECT_FIRE | F_BALLISTIC;
@@ -58,17 +63,24 @@ public abstract class ACWeapon extends AmmoWeapon {
                 waa.getWeaponId());
         if (weapon.curMode().equals("Rapid")) {
             return new RapidfireACWeaponHandler(toHit, waa, game, server);
-        } else if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
+        } 
+        if (atype.getMunitionType() == AmmoType.M_ARMOR_PIERCING) {
             return new ACAPHandler(toHit, waa, game, server);
-        } else if (atype.getMunitionType() == AmmoType.M_FLECHETTE) {
+        } 
+
+        if (atype.getMunitionType() == AmmoType.M_FLECHETTE) {
             return new ACFlechetteHandler(toHit, waa, game, server);
-        } else if (atype.getMunitionType() == AmmoType.M_INCENDIARY_AC) {
-            return new ACIncendiaryHandler(toHit, waa, game, server);
-        } else if (atype.getMunitionType() == AmmoType.M_TRACER) {
-            return new ACTracerHandler(toHit, waa, game, server);
-        } else {
-            return super.getCorrectHandler(toHit, waa, game, server);
         }
+
+        if (atype.getMunitionType() == AmmoType.M_INCENDIARY_AC) {
+            return new ACIncendiaryHandler(toHit, waa, game, server);
+        }
+
+        if (atype.getMunitionType() == AmmoType.M_TRACER) {
+            return new ACTracerHandler(toHit, waa, game, server);
+        }
+
+        return new ACWeaponHandler(toHit, waa, game, server);
 
     }
 }

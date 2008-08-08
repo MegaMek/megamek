@@ -19,7 +19,11 @@ package megamek.common.weapons;
 
 import java.util.Vector;
 
+import megamek.common.BattleArmor;
+import megamek.common.Compute;
 import megamek.common.IGame;
+import megamek.common.Infantry;
+import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -40,9 +44,29 @@ public class PrototypeGaussHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public PrototypeGaussHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+    public PrototypeGaussHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     */
+    protected int calcDamagePerHit() {
+        float toReturn = wtype.getDamage();
+        int nRange = ae.getPosition().distance(target.getPosition());
+
+        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+            toReturn -= 1;
+        }
+
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            toReturn = (float)Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
+        } if (bGlancing) {
+            toReturn = (int) Math.floor(toReturn / 2.0);
+        }
+        return (int) Math.ceil(toReturn);
     }
 
     /*

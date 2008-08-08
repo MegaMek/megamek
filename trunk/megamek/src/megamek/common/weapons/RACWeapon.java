@@ -28,6 +28,10 @@ import megamek.server.Server;
  * @author Andrew Hunter TODO: is this the right hierarchy location?
  */
 public abstract class RACWeapon extends UACWeapon {
+
+    
+    private static final long serialVersionUID = 659000035767322660L;
+
     /**
      * 
      */
@@ -39,6 +43,7 @@ public abstract class RACWeapon extends UACWeapon {
         this.setModes(modes);
         // explosive when jammed
         this.explosive = true;
+        this.explosionDamage = damage;
         
         this.atClass = CLASS_AC;
     }
@@ -62,7 +67,7 @@ public abstract class RACWeapon extends UACWeapon {
         } else if (weapon.curMode().equals("2-shot")) {
             return new UltraWeaponHandler(toHit, waa, game, server);
         } else {
-            return super.getCorrectHandler(toHit, waa, game, server);
+            return new ACWeaponHandler(toHit, waa, game, server);
         }
     }
 }

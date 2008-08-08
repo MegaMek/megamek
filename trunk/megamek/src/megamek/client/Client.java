@@ -58,6 +58,7 @@ import megamek.common.MechSummaryCache;
 import megamek.common.Minefield;
 import megamek.common.Mounted;
 import megamek.common.MovePath;
+import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
 import megamek.common.Report;
 import megamek.common.SpecialHexDisplay;
@@ -588,6 +589,13 @@ public class Client implements IClientCommandHandler {
     public void sendMapSettings(MapSettings settings) {
         send(new Packet(Packet.COMMAND_SENDING_MAP_SETTINGS, settings));
     }
+    
+    /**
+     * Send the planetary Conditions to the server
+     */
+    public void sendPlanetaryConditions(PlanetaryConditions conditions) {
+        send(new Packet(Packet.COMMAND_SENDING_PLANETARY_CONDITIONS, conditions));
+    }
 
     /**
      * Send the game settings to the server
@@ -776,13 +784,25 @@ public class Client implements IClientCommandHandler {
     protected void receiveSendingMinefields(Packet packet) {
         game.setMinefields((Vector<Minefield>) packet.getObject(0));
     }
-
+    
     protected void receiveRevealMinefield(Packet packet) {
         game.addMinefield((Minefield) packet.getObject(0));
     }
 
     protected void receiveRemoveMinefield(Packet packet) {
         game.removeMinefield((Minefield) packet.getObject(0));
+    }
+    
+    @SuppressWarnings("unchecked")
+    protected void receiveUpdateMinefields(Packet packet) {
+        //only update information if you know about the minefield
+        Vector<Minefield> newMines = new Vector<Minefield>();
+        for(Minefield mf : (Vector<Minefield>)packet.getObject(0)) {
+            if(getLocalPlayer().containsMinefield(mf))
+                newMines.add(mf);    
+        }
+        if(newMines.size() > 0)
+            game.resetMinefieldDensity((Vector<Minefield>) newMines);
     }
 
     @SuppressWarnings("unchecked")
@@ -991,6 +1011,9 @@ public class Client implements IClientCommandHandler {
             case Packet.COMMAND_SENDING_MINEFIELDS:
                 receiveSendingMinefields(c);
                 break;
+            case Packet.COMMAND_UPDATE_MINEFIELDS:
+                receiveUpdateMinefields(c);
+                break;
             case Packet.COMMAND_DEPLOY_MINEFIELDS:
                 receiveDeployMinefields(c);
                 break;
@@ -1076,6 +1099,10 @@ public class Client implements IClientCommandHandler {
                 break;
             case Packet.COMMAND_SENDING_MAP_SETTINGS:
                 mapSettings = (MapSettings) c.getObject(0);
+                game.processGameEvent(new GameSettingsChangeEvent(this));
+                break;
+            case Packet.COMMAND_SENDING_PLANETARY_CONDITIONS:
+                game.setPlanetaryConditions((PlanetaryConditions) c.getObject(0));
                 game.processGameEvent(new GameSettingsChangeEvent(this));
                 break;
             case Packet.COMMAND_QUERY_MAP_SETTINGS:

@@ -32,4 +32,5 @@ public interface IEntityMovementType {
     public static final int MOVE_FLYING = 8;
     public static final int MOVE_SAFE_THRUST = 9;
     public static final int MOVE_OVER_THRUST = 10;
+    public static final int MOVE_CAREFUL_STAND = 11;
 }

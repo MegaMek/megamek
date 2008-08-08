@@ -268,7 +268,7 @@ public class UnitOverview implements Displayable {
         boolean mtHeat = false;
         int mHeat = 30;
         if (entity.getGame() != null
-                && entity.getGame().getOptions().booleanOption("maxtech_heat")) {
+                && entity.getGame().getOptions().booleanOption("tacops_heat")) {
             mHeat = 50;
             mtHeat = true;
         }

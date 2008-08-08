@@ -218,7 +218,8 @@ public class GAAttack extends GA {
         // ... or standing in fire...
         if (game.getBoard().getHex(attacker.entity.getPosition()) != null) {
             if (game.getBoard().getHex(attacker.entity.getPosition())
-                    .terrainLevel(Terrains.FIRE) == 2) {
+                    .containsTerrain(Terrains.FIRE) &&
+                    game.getBoard().getHex(attacker.entity.getPosition()).getFireTurn() > 0) {
                 overheat += 5;
             }
         }
@@ -227,7 +228,7 @@ public class GAAttack extends GA {
             overheat += attacker.entity.getEngineCritHeat();
         }
         // ... or ambient temperature
-        overheat += game.getTemperatureDifference();
+        overheat += game.getPlanetaryConditions().getTemperatureDifference(50,-30);
         if (attacker.entity.heat > 0 && overheat < 0) {
             // always perfer smaller heat numbers
             total_utility -= attacker.bv / 1000 * overheat;

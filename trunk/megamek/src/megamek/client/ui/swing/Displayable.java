@@ -14,10 +14,11 @@
 
 package megamek.client.ui.swing;
 
-import megamek.client.ui.IDisplayable;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+
+import megamek.client.ui.IDisplayable;
 
 public interface Displayable extends IDisplayable {
 

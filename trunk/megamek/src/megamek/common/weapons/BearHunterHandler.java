@@ -54,6 +54,9 @@ public class BearHunterHandler extends WeaponHandler {
             int toReturn = Compute.d6(3);
             if (bGlancing)
                 toReturn = (int) Math.floor(toReturn / 2.0);
+            if ( bDirect )
+                toReturn += toHit.getMoS()/3;
+            
             return toReturn;
         }
         return super.calcDamagePerHit();

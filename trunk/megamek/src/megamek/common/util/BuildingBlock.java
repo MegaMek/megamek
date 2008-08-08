@@ -294,13 +294,12 @@ public class BuildingBlock {
         for (int rawRecord = startIndex; rawRecord < endIndex; rawRecord++) {
 
             try {
-                data[dataRecord] = Integer.parseInt(rawData.get(rawRecord)
-                        .toString());
+                data[dataRecord] = Integer.parseInt(rawData.get(rawRecord).toString());
                 dataRecord++;
             } catch (NumberFormatException oops) {
                 data[0] = 0;
-                System.err
-                        .println("getDataAsInt(\"" + blockName + "\") failed.  NumberFormatException was caught."); //$NON-NLS-1$ //$NON-NLS-2$
+                System.err.println("getDataAsInt(\"" + blockName + "\") failed.  NumberFormatException was caught."); //$NON-NLS-1$ //$NON-NLS-2$
+                oops.printStackTrace();
             }
         }
         return data; // hand back the goods...

@@ -27,6 +27,7 @@ import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.HitData;
 import megamek.common.IGame;
+import megamek.common.ITerrain;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
@@ -34,6 +35,7 @@ import megamek.common.RangeType;
 import megamek.common.Report;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
+import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.WeaponAttackAction;
@@ -60,6 +62,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     protected boolean bMissed;
     protected boolean bSalvo = false;
     protected boolean bGlancing = false;
+    protected boolean bDirect = false;
     protected WeaponType wtype;
     protected Mounted weapon;
     protected Entity ae;
@@ -123,10 +126,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // and some weapons can't ignite fires.
         if (entityTarget != null
                 && (bldg == null && wtype.getFireTN() != TargetRoll.IMPOSSIBLE)) {
-            server.tryIgniteHex(target.getPosition(), subjectId, false, 11,
-                    vPhaseReport);
+            server.tryIgniteHex(target.getPosition(), subjectId, false, false, new TargetRoll(wtype.getFireTN(), wtype.getName()),
+                    3, vPhaseReport);
         }
 
+        //shots that miss an entity can also potential cause explosions in a heavy industrial hex
+        server.checkExplodeIndustrialZone(target.getPosition(), vPhaseReport);
+        
         // BMRr, pg. 51: "All shots that were aimed at a target inside
         // a building and miss do full damage to the building instead."
         if (!targetInBuilding || toHit.getValue() == TargetRoll.AUTOMATIC_FAIL) {
@@ -245,7 +251,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         bMissed = roll < toHit.getValue();
 
         // are we a glancing hit?
-        if (game.getOptions().booleanOption("maxtech_glancing_blows")) {
+        if (game.getOptions().booleanOption("tacops_glancing_blows")) {
             if (roll == toHit.getValue()) {
                 bGlancing = true;
                 r = new Report(3186);
@@ -259,6 +265,16 @@ public class WeaponHandler implements AttackHandler, Serializable {
             bGlancing = false;
         }
 
+        //Set Margin of Success/Failure.
+        toHit.setMoS(roll-Math.max(2,toHit.getValue()));
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1);
+        if (bDirect) {
+            r = new Report(3189);
+            r.subject = ae.getId();
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+        } 
+        
         // Do this stuff first, because some weapon's miss report reference the
         // amount of shots fired and stuff.
         nDamPerHit = calcDamagePerHit();
@@ -373,7 +389,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
      * @return an <code>int</code> representing the damage dealt per hit.
      */
     protected int calcDamagePerHit() {
-        double toReturn = wtype.getDamage();
+        int nRange = ae.getPosition().distance(target.getPosition());
+        double toReturn = wtype.getDamage(nRange);
         // during a swarm, all damage gets applied as one block to one location
         if (ae instanceof BattleArmor
                 && weapon.getLocation() == BattleArmor.LOC_SQUAD
@@ -382,9 +399,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
         }
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = Math.ceil(toReturn/10);
-        }
-        if (bGlancing) {
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
+        }if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
         return (int) toReturn;
@@ -488,6 +504,17 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // Resolve damage normally.
         nDamage = nDamPerHit * Math.min(nCluster, hits);
 
+        if ( bDirect && (!(target instanceof Infantry) || target instanceof BattleArmor)){
+            if ( this instanceof LBXHandler || this instanceof RapidfireACWeaponHandler 
+                    || this instanceof MissileWeaponHandler
+                    || this instanceof HAGWeaponHandler ){
+                nDamage = Math.min(nDamage+(toHit.getMoS()/3), wtype.getRackSize()); 
+            } else{
+                nDamage = Math.min(nDamage+(toHit.getMoS()/3), nDamage*2);
+            }
+            hit.makeDirectBlow(toHit.getMoS()/3);
+        }
+        
         // A building may be damaged, even if the squad is not.
         if (bldgAbsorbs > 0) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
@@ -499,6 +526,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
             }
             vPhaseReport.addAll(buildingReport);
         }
+        
+        nDamage = checkTerrain(nDamage, entityTarget, vPhaseReport);
         
         // A building may absorb the entire shot.
         if (nDamage == 0) {
@@ -544,14 +573,11 @@ public class WeaponHandler implements AttackHandler, Serializable {
             r.newlines = 0;
             vPhaseReport.addElement(r);
         }
-        int tn = wtype.getFireTN();
-        if (tn != TargetRoll.IMPOSSIBLE) {
-            if (bldg != null) {
-                tn += bldg.getType() - 1;
-            }
+        TargetRoll tn = new TargetRoll(wtype.getFireTN(), wtype.getName());
+        if (tn.getValue() != TargetRoll.IMPOSSIBLE) {
             Report.addNewline(vPhaseReport);
-            server.tryIgniteHex(target.getPosition(), subjectId, false, tn,
-                    true, vPhaseReport);
+            server.tryIgniteHex(target.getPosition(), subjectId, false, false, tn,
+                    true, -1, vPhaseReport);
         }
     }
 
@@ -574,11 +600,13 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // Any clear attempt can result in accidental ignition, even
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
+        //TODO: change this for TacOps - now you roll another 2d6 first and on a 5 or less
+        //you do a normal ignition as though for intentional fires
         if (bldg != null
-                && server.tryIgniteHex(target.getPosition(), subjectId, false,
-                        9, vPhaseReport)) {
+                && server.tryIgniteHex(target.getPosition(), subjectId, false, false, 
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
-        }
+        }      
         vPhaseReport.addAll(server.tryClearHex(target.getPosition(), nDamage, subjectId));
         return;
     }
@@ -697,6 +725,36 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
     public WeaponAttackAction getWaa() {
         return waa;
+    }
+    
+    public int checkTerrain(int nDamage, Entity entityTarget, Vector<Report>vPhaseReport){
+        if ( game.getBoard().getHex(entityTarget.getPosition()).containsTerrain(Terrains.WOODS)
+                || game.getBoard().getHex(entityTarget.getPosition()).containsTerrain(Terrains.JUNGLE)) {
+            ITerrain woodHex = game.getBoard().getHex(entityTarget.getPosition()).getTerrain(Terrains.WOODS);
+            ITerrain jungleHex = game.getBoard().getHex(entityTarget.getPosition()).getTerrain(Terrains.JUNGLE);
+            int treeAbsorbs = 0;
+            String hexType = "";
+            if ( woodHex != null ){
+                treeAbsorbs = woodHex.getLevel() * 2;
+                hexType = "wooded";
+            }else if (jungleHex != null){
+                treeAbsorbs = jungleHex.getLevel() * 2;
+                hexType = "jungle";
+            }
+            
+            
+            nDamage = Math.max(0, nDamage-treeAbsorbs);
+            server.tryClearHex(entityTarget.getPosition(), treeAbsorbs, ae.getId());
+            Report.addNewline(vPhaseReport);
+            Report r = new Report(6427);
+            r.subject = entityTarget.getId();
+            r.add(hexType);
+            r.add(treeAbsorbs);
+            r.indent(2);
+            r.newlines = 0;
+            vPhaseReport.add(r);
+        }
+        return nDamage;
     }
 
 }

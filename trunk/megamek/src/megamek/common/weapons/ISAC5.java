@@ -54,5 +54,6 @@ public class ISAC5 extends ACWeapon {
         this.shortAV = 5;
         this.medAV = 5;
         this.maxRange = RANGE_MED;
+        this.explosionDamage = damage;
     }
 }

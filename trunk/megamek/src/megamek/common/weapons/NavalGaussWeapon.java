@@ -21,6 +21,11 @@ package megamek.common.weapons;
  * @author Jay Lawson
  */
 public abstract class NavalGaussWeapon extends GaussWeapon {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+
     public NavalGaussWeapon() {
         super();
         this.atClass = CLASS_CAPITAL_GAUSS;

@@ -50,6 +50,8 @@ public class CLHAG20 extends HAGWeapon {
         this.medAV = 12;
         this.longAV = 12;
         this.maxRange = RANGE_LONG;
+        this.explosionDamage = rackSize/2;
+
     }
 
 }

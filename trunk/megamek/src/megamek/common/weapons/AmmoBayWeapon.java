@@ -32,7 +32,9 @@ import megamek.server.Server;
 public abstract class AmmoBayWeapon extends BayWeapon {
     /**
      * 
-     */   
+     */
+    private static final long serialVersionUID = 4718603486868464292L;
+
     public AmmoBayWeapon() {
         super();
     }

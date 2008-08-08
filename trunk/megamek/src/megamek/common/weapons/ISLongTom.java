@@ -41,12 +41,12 @@ public class ISLongTom extends ArtilleryWeapon {
         this.addLookupName("ISLongTomArtillery");
         this.addLookupName("IS Long Tom");
         this.heat = 20;
-        this.rackSize = 20;
+        this.rackSize = 25;
         this.ammoType = AmmoType.T_LONG_TOM;
         this.shortRange = 1;
         this.mediumRange = 2;
-        this.longRange = 20;
-        this.extremeRange = 20; // No extreme range.
+        this.longRange = 30;
+        this.extremeRange = 30; // No extreme range.
         this.tonnage = 30f;
         this.criticals = 30;
         this.bv = 171;

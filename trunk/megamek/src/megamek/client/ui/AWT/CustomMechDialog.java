@@ -56,6 +56,7 @@ import megamek.common.Mech;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.Pilot;
+import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.Tank;
@@ -527,7 +528,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         
         // Set up rapidfire mg
         if (clientgui.getClient().game.getOptions().booleanOption(
-                "maxtech_burst")) { //$NON-NLS-1$
+                "tacops_burst")) { //$NON-NLS-1$
             c.gridwidth = 1;
             setupRapidfireMGs();
             c.anchor = GridBagConstraints.CENTER;
@@ -536,8 +537,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
         }
 
         // Set up searchlight
-        if (clientgui.getClient().game.getOptions().booleanOption(
-                "night_battle")) { //$NON-NLS-1$
+        if (clientgui.getClient().game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DUSK) { 
             c.gridwidth = 1;
             c.anchor = GridBagConstraints.EAST;
             gridbag.setConstraints(labSearchlight, c);
@@ -873,7 +873,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     && !client.game.getOptions().booleanOption(
                             "lobby_ammo_dump")
                     && !client.game.getOptions().booleanOption(
-                            "maxtech_hotload")) { //$NON-NLS-1$
+                            "tacops_hotload")) { //$NON-NLS-1$
                 continue;
             }
 
@@ -904,6 +904,8 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
             m_choice = new Choice();
             m_choice.add(Messages.getString("CustomMechDialog.Conventional")); //$NON-NLS-1$
             m_choice.add(Messages.getString("CustomMechDialog.Vibrabomb")); //$NON-NLS-1$
+            m_choice.add(Messages.getString("CustomMechDialog.Active")); //$NON-NLS-1$
+            m_choice.add(Messages.getString("CustomMechDialog.Inferno")); //$NON-NLS-1$
             // m_choice.add("Messages.getString("CustomMechDialog.Command-detonated"));
             // //$NON-NLS-1$
             int loc;
@@ -1000,7 +1002,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 g.setConstraints(chDump, c);
                 add(chDump);
                 if (clientgui.getClient().game.getOptions().booleanOption(
-                        "maxtech_hotload")
+                        "tacops_hotload")
                         && curType.hasFlag(AmmoType.F_HOTLOAD)) { //$NON-NLS-1$
                     c.gridx = 0;
                     c.gridy = 2;
@@ -1014,7 +1016,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                     add(chHotLoad);
                 }
             } else if (clientgui.getClient().game.getOptions().booleanOption(
-                    "maxtech_hotload")
+                    "tacops_hotload")
                     && curType.hasFlag(AmmoType.F_HOTLOAD)) { //$NON-NLS-1$
                 c.gridx = 0;
                 c.gridy = 1;
@@ -1037,7 +1039,7 @@ public class CustomMechDialog extends ClientDialog implements ActionListener,
                 m_mounted.setShotsLeft(0);
             }
             if (clientgui.getClient().game.getOptions().booleanOption(
-                    "maxtech_hotload")) {
+                    "tacops_hotload")) {
                 if (chHotLoad.getState() != m_mounted.isHotLoaded())
                     m_mounted.setHotLoad(chHotLoad.getState());
             }

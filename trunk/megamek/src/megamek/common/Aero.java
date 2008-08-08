@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import megamek.common.weapons.EnergyWeapon;
+
 /**
  * Taharqa's attempt at creating an Aerospace entity
  */
@@ -160,7 +162,6 @@ public class Aero
     //set up movement
     private int currentVelocity = 0;
     private int nextVelocity = currentVelocity;
-    private boolean evading = false;
     private boolean accLast = false;
     private boolean rolled = false;
     private boolean failedManeuver = false;
@@ -184,11 +185,22 @@ public class Aero
     * Returns this entity's safe thrust, factored
     * for heat, extreme temperatures, gravity, and bomb load.
     */
-    public int getWalkMP(boolean gravity) {
+    public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int j = getOriginalWalkMP();
         j = Math.max(0, j - getCargoMpReduction());
+        if(null != game) {
+            int weatherMod = game.getPlanetaryConditions().getMovementMods(this);
+            if(weatherMod != 0) {
+                j = Math.max(j + weatherMod, 0);
+            } 
+        }      
         //get bomb load
         j = Math.max(0, j - (int)Math.ceil(getBombPoints()/5.0));
+        
+        if ( hasModularArmor() ) {
+            j--;
+        }
+        
         return j;
     }    
 
@@ -228,10 +240,6 @@ public class Aero
         return randomMove;
     }
     
-    public boolean isEvading() {
-        return evading;
-    }
-    
     public boolean didAccLast() {
         return accLast;
     }
@@ -262,10 +270,6 @@ public class Aero
     
     public void setRolled(boolean roll) {
         this.rolled = roll;
-    }
-    
-    public void setEvading(boolean evasion) {
-        this.evading = evasion;
     }
     
     public void setAccLast(boolean b) {
@@ -488,9 +492,6 @@ public class Aero
     
     public void newRound(int roundNumber) {
         super.newRound(roundNumber);
-       
-        //reset evasion
-        this.setEvading(false);
         
         //reset maneuver status
         this.setFailedManeuver(false);
@@ -1019,6 +1020,13 @@ public class Aero
                     }
                 } 
                 
+                if (weapon.getLinkedBy() != null) {
+                    Mounted mLinker = weapon.getLinkedBy();
+                    if (mLinker.getType() instanceof MiscType && mLinker.getType().hasFlag(MiscType.F_APOLLO)) {
+                        dBV *= 1.15;
+                    }
+                }
+
                 if (heatAdded > aeroHeatEfficiency && wtype.getHeat() > 0)
                     dBV /= 2;
                 if (weapon.getLocation() == LOC_AFT) {
@@ -1246,6 +1254,11 @@ public class Aero
         //life support (only applicable to non-ASFs
         if(!hasLifeSupport()) 
             prd.addModifier(+2,"No life support");
+        
+        if ( hasModularArmor() ) {
+            prd.addModifier(1,"Modular Armor");
+        }
+
         
         return prd;
     }
@@ -1531,8 +1544,8 @@ public class Aero
         return critical;
     }
 
-    public PilotingRollData checkThrustSI(int thrust) {
-        PilotingRollData roll = getBasePilotingRoll();
+    public PilotingRollData checkThrustSI(int thrust, int overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         
         if(thrust > getSI()) {
             // append the reason modifier
@@ -1543,8 +1556,8 @@ public class Aero
         return roll;
     }
     
-    public PilotingRollData checkThrustSITotal(int thrust) {
-        PilotingRollData roll = getBasePilotingRoll();
+    public PilotingRollData checkThrustSITotal(int thrust, int overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if(thrust > getSI()) {
             // append the reason modifier
@@ -1555,8 +1568,8 @@ public class Aero
         return roll;
     }
     
-    public PilotingRollData checkVelocityDouble(int velocity) {
-        PilotingRollData roll = getBasePilotingRoll();
+    public PilotingRollData checkVelocityDouble(int velocity, int overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if(velocity > (2 * getWalkMP()) && game.getBoard().inAtmosphere()) {
             // append the reason modifier
@@ -1567,8 +1580,8 @@ public class Aero
         return roll;
     }
     
-    public PilotingRollData checkDown(int drop) {
-        PilotingRollData roll = getBasePilotingRoll();
+    public PilotingRollData checkDown(int drop, int overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if( drop > 2 ) {
             // append the reason modifier
@@ -1580,7 +1593,7 @@ public class Aero
     }
     
     public PilotingRollData checkHover(MovePath md) {
-        PilotingRollData roll = getBasePilotingRoll();
+        PilotingRollData roll = getBasePilotingRoll(md.getLastStepMovementType());
 
         if( md.contains(MovePath.STEP_HOVER) ) {
             // append the reason modifier
@@ -1591,8 +1604,8 @@ public class Aero
         return roll;
     }
     
-    public PilotingRollData checkStall(int velocity) {
-        PilotingRollData roll = getBasePilotingRoll();
+    public PilotingRollData checkStall(int velocity, int overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if( velocity == 0 ) {
             // append the reason modifier
@@ -1603,8 +1616,8 @@ public class Aero
         return roll;
     }
     
-    public PilotingRollData checkRolls(MoveStep step) {
-        PilotingRollData roll = getBasePilotingRoll();
+    public PilotingRollData checkRolls(MoveStep step, int overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         if((step.getType() == MovePath.STEP_ROLL || step.getType() == MovePath.STEP_YAW) 
                 && step.getNRolls() > 1) {
@@ -1619,8 +1632,8 @@ public class Aero
     /**
      * Checks if a maneuver requires a control roll
      */
-    public PilotingRollData checkManeuver(MoveStep step) {
-        PilotingRollData roll = getBasePilotingRoll();
+    public PilotingRollData checkManeuver(MoveStep step, int overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
         
         if ((step == null) || (step.getType() != MovePath.STEP_MANEUVER)) {
             roll.addModifier(TargetRoll.CHECK_FALSE,
@@ -2062,9 +2075,58 @@ public class Aero
     public boolean didAccDecNow() {
         return accDecNow;
     }
-    
+
+    public void setGameOptions(IGame game) {
+        super.setGameOptions(game);
+        
+        for (Mounted mounted : this.getWeaponList()) {
+            if (mounted.getType() instanceof EnergyWeapon 
+                    && (((WeaponType) mounted.getType()).getAmmoType() == AmmoType.T_NA) 
+                    && game != null && game.getOptions().booleanOption("tacops_energy_weapons")) {
+
+                ArrayList<String> modes = new ArrayList<String>();
+                String[] stringArray = {};
+                int damage = ((WeaponType) mounted.getType()).getDamage();
+                
+                if ( damage == WeaponType.DAMAGE_VARIABLE )
+                    damage = ((WeaponType) mounted.getType()).damageShort;
+                
+                for (; damage >= 0; damage--) {
+                    modes.add("Damage " + damage);
+                }
+                if ( ((WeaponType)mounted.getType()).hasFlag(WeaponType.F_FLAMER) ){
+                    modes.add("Heat");
+                }
+                ((WeaponType) mounted.getType()).setModes(modes.toArray(stringArray));
+            }
+            
+        }
+
+    }
+
+    public boolean hasModularArmor() {
+        
+        for (Mounted mount : this.getEquipment()) {
+            if (!mount.isDestroyed()
+                    && mount.getType() instanceof MiscType 
+                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR))
+                return true;
+        }
+
+        return false;
+        
+    }
+
+    public boolean hasModularArmor(int loc) {
+        
+        for (Mounted mount : this.getEquipment()) {
+            if (mount.getLocation() == loc 
+                    && mount.getType() instanceof MiscType 
+                    && ((MiscType) mount.getType()).hasFlag(MiscType.F_MODULAR_ARMOR))
+                return true;
+        }
+
+        return false;
+        
+    }
 }
-
-
-
-

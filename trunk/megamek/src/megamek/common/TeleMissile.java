@@ -21,7 +21,7 @@ package megamek.common;
  * @author Jay Lawson
  */
 public class TeleMissile extends Aero {
-
+    
     /**
      * 
      */
@@ -64,7 +64,7 @@ public class TeleMissile extends Aero {
         case(AmmoType.T_BARRACUDA):
             fuel = 30;
         name = "Barracuda-T Missile";
-        break;
+        break;    
         default:
             fuel = 30;
         }
@@ -149,15 +149,15 @@ public class TeleMissile extends Aero {
         return 0;
     }
 
-    public PilotingRollData checkThrustSI(int thrust) {
-        PilotingRollData roll = getBasePilotingRoll();
+    public PilotingRollData checkThrustSI(int thrust, int overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
         return roll;
     }
 
-    public PilotingRollData checkThrustSITotal(int thrust) {
-        PilotingRollData roll = getBasePilotingRoll();
+    public PilotingRollData checkThrustSITotal(int thrust, int overallMoveType) {
+        PilotingRollData roll = getBasePilotingRoll(overallMoveType);
 
         roll.addModifier(TargetRoll.CHECK_FALSE,"Check false: Entity is not exceeding SI");
         return roll;

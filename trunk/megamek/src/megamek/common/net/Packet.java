@@ -72,19 +72,21 @@ public class Packet {
     public static final int COMMAND_REVEAL_MINEFIELD = 400;
     public static final int COMMAND_REMOVE_MINEFIELD = 410;
     public static final int COMMAND_SENDING_MINEFIELDS = 420;
+    public static final int COMMAND_UPDATE_MINEFIELDS = 430;
 
-    public static final int COMMAND_REROLL_INITIATIVE = 430;
-    public static final int COMMAND_UNLOAD_STRANDED = 440;
+    public static final int COMMAND_REROLL_INITIATIVE = 440;
+    public static final int COMMAND_UNLOAD_STRANDED = 450;
 
-    public static final int COMMAND_SET_ARTYAUTOHITHEXES = 450;
-    public static final int COMMAND_SENDING_ARTILLERYATTACKS = 460;
-    public static final int COMMAND_SENDING_FLARES = 470;
+    public static final int COMMAND_SET_ARTYAUTOHITHEXES = 460;
+    public static final int COMMAND_SENDING_ARTILLERYATTACKS = 470;
+    public static final int COMMAND_SENDING_FLARES = 480;
 
-    public static final int COMMAND_SERVER_CORRECT_NAME = 480;
+    public static final int COMMAND_SERVER_CORRECT_NAME = 490;
 
-    public static final int COMMAND_SEND_SAVEGAME = 490;
-    public static final int COMMAND_SENDING_SPECIAL_HEX_DISPLAY = 500;
-    public static final int COMMAND_CUSTOM_INITIATIVE = 510;
+    public static final int COMMAND_SEND_SAVEGAME = 500;
+    public static final int COMMAND_SENDING_SPECIAL_HEX_DISPLAY = 510;
+    public static final int COMMAND_CUSTOM_INITIATIVE = 520;
+    public static final int COMMAND_SENDING_PLANETARY_CONDITIONS = 530;
 
     private int command;
 

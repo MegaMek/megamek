@@ -21,6 +21,7 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.Report;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -64,6 +65,8 @@ public class SRMFragHandler extends SRMHandler {
         // against infantry, we have 1 hit
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn *= wtype.getRackSize();
+            if (bDirect)
+                toReturn += toHit.getMoS()/3;
             if (bGlancing)
                 toReturn = (int) Math.floor(toReturn / 2.0);
         }
@@ -104,8 +107,8 @@ public class SRMFragHandler extends SRMHandler {
         // weapons that can't normally start fires. that's weird.
         // Buildings can't be accidentally ignited.
         if (bldg != null
-                && server.tryIgniteHex(target.getPosition(), subjectId, false,
-                        9, vPhaseReport)) {
+                && server.tryIgniteHex(target.getPosition(), subjectId, false, false,
+                        new TargetRoll(wtype.getFireTN(), wtype.getName()), 5, vPhaseReport)) {
             return;
         }
 

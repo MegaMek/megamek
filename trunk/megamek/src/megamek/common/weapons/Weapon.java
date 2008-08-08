@@ -32,6 +32,11 @@ import megamek.server.Server;
  */
 public abstract class Weapon extends WeaponType implements Serializable {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -8781224279449654544L;
+
     public Weapon() {
         this.ammoType = AmmoType.T_NA;
         this.minimumRange = WEAPON_NA;

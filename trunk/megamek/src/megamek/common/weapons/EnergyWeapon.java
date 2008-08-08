@@ -27,11 +27,16 @@ import megamek.server.Server;
  */
 public abstract class EnergyWeapon extends Weapon {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3128205629152612073L;
+
     public EnergyWeapon() {
         this.flags |= F_ENERGY;
 
     }
-
+    
     /*
      * (non-Javadoc)
      * 

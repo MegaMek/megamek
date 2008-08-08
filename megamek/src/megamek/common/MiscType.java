@@ -520,6 +520,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCoolantSystem());
         EquipmentType.addType(createHeavyArmor());
         EquipmentType.addType(createSpikes());
+        EquipmentType.addType(createTalons());
         EquipmentType.addType(createReactive());
         EquipmentType.addType(createReflective());
         EquipmentType.addType(createISCASEII());

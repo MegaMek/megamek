@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.29-dev (SVN)
+v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility
 + Added new 3d libs to build.bat
 + Added 3d libs to manifest.txt

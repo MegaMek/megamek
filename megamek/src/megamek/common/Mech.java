@@ -2024,6 +2024,13 @@ public abstract class Mech extends Entity implements Serializable {
         if (getArmorType() == EquipmentType.T_ARMOR_COMMERCIAL) {
             armorMultiplier = 0.5;
         }
+        
+        //BV for torso mounted cockpit.
+        if ( this.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED ) {
+            dbv += this.getArmor(Mech.LOC_CT);
+            dbv += this.getArmor(Mech.LOC_CT,true);
+        }
+        
         dbv += getTotalArmor() * 2.5 * armorMultiplier;
 
         // total internal structure
@@ -2541,6 +2548,10 @@ public abstract class Mech extends Entity implements Serializable {
 
         // and then factor in pilot
         double pilotFactor = crew.getBVSkillMultiplier();
+        
+        if ( this.getCockpitType() == Mech.COCKPIT_TORSO_MOUNTED ) {
+            pilotFactor = crew.getBVImplantMultiplier() * Pilot.getBVSkillMultiplier(crew.getGunnery(), crew.getPiloting()+1);
+        }
 
         int retVal = (int) Math.round((finalBV) * pilotFactor);
 

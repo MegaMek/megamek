@@ -6,6 +6,8 @@ v0.33.30-dev (SVN)
 + Bug: AES not loading if Unit has SuperCharger
 + BV for Torso Cockpits
 + Bug 2043681: right-click menu not working
++ Bug: Thunderbolt missiles not doing correct damage with direct blow
++ Bug: Ammunition Explosion damaging adjecent units when exploding unit has CASE in effected location.
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

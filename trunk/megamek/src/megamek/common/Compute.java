@@ -1476,6 +1476,7 @@ public class Compute {
                 }
             }
         }
+        
         if(hex.containsTerrain(Terrains.INDUSTRIAL)) {
             toHit.addModifier(+1, "target in heavy industrial zone");
         }

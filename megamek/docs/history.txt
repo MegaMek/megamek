@@ -5,6 +5,7 @@ v0.33.30-dev (SVN)
 + Bug: Wrong messages.properties file
 + Bug: AES not loading if Unit has SuperCharger
 + BV for Torso Cockpits
++ Bug 2043681: right-click menu not working
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

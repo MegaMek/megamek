@@ -1463,7 +1463,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             tipLoc.translate(mousePos.x, mousePos.y + 20);
 
-         // adjust horizontal location for the tipWindow if it goes off the
+            // adjust horizontal location for the tipWindow if it goes off the
             // frame
             if (scroller.getLocationOnScreen().x + scroller.getSize().width < tipLoc.x
                     + tipWindow.getSize().width + 10) {
@@ -2621,6 +2621,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 ctlKeyHeld = true;
                 initCtlScroll = true;
                 break;
+            case KeyEvent.VK_PAGE_DOWN:
+                zoomIn();
+                break;
+            case KeyEvent.VK_PAGE_UP:
+                zoomOut();
+                break;
         }
 
         if (isTipShowing()) {
@@ -2658,6 +2664,11 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if ((backSize != null) && (disp.isHit(point, backSize))) {
                 return;
             }
+        }
+        
+        if (me.isPopupTrigger()) {
+            mouseAction(getCoordsAt(point), BOARD_HEX_POPUP, me.getModifiers());
+            return;
         }
 
         // Disable scrolling when ctrl or alt is held down, since this
@@ -2718,6 +2729,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 && ((me.getModifiers() & InputEvent.BUTTON1_MASK) == 0 || !GUIPreferences
                         .getInstance().getAutoEdgeScroll()))
             return;
+        
+        if (me.isPopupTrigger()) {
+            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP, me.getModifiers());
+            return;
+        }
+        
         if (me.getClickCount() == 1) {
             mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_CLICK, me
                     .getModifiers());
@@ -2735,6 +2752,10 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
     }
 
     public void mouseClicked(MouseEvent me) {
+        if (me.isPopupTrigger()) {
+            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP, me.getModifiers());
+            return;
+        }
     }
 
     //

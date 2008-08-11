@@ -230,6 +230,11 @@ public class KickAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is prone");
         }
 
+        if ( ae.isHullDown() ){
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker is hull down");
+        }
+        
+
         // Attacks against adjacent buildings automatically hit.
         if (target.getTargetType() == Targetable.TYPE_BUILDING
                 || target.getTargetType() == Targetable.TYPE_FUEL_TANK

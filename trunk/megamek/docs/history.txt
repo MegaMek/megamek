@@ -13,6 +13,10 @@ v0.33.30-dev (SVN)
 + Bug: PPC's not working with dial down rule
 + Bug: ECM ghosts not working correctly.
 + Added new messages and a Try/Catch to receiveEntityModeChange
++ Bug 2045753: Improved Heavy Laser Nomenclature
++ Bug: Units not falling down when failing PSR's
++ Bug: Hull Down units having to make PSR's when taking damage
++ Changed Code to log errors from receiveEntityModeChange.
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

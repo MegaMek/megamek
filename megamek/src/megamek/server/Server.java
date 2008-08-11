@@ -12967,7 +12967,7 @@ public class Server implements Runnable {
             }
         }
         // non mechs and prone mechs can now return
-        if (!(entity instanceof Mech) || entity.isProne()) {
+        if (!(entity instanceof Mech) || entity.isProne() || entity.isHullDown()) {
             return vPhaseReport;
         }
 
@@ -13080,6 +13080,8 @@ public class Server implements Runnable {
                             r.subject = entity.getId();
                             r.add(entity.getDisplayName());
                             vPhaseReport.add(r);
+                        }else{
+                            vPhaseReport.addAll(doEntityFall(entity, base));
                         }
 
                     }else {
@@ -19270,6 +19272,7 @@ public class Server implements Runnable {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+            System.err.println(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + ": " + ex.getMessage());
             sendServerChat(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + ": " + ex.getMessage());
         }
 

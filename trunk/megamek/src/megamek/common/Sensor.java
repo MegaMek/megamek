@@ -125,7 +125,8 @@ public class Sensor implements Serializable {
             range -= 2*(los.getUltraWoods() + los.getHardBuildings());
         }
         
-        if((type == TYPE_MEK_RADAR || type == TYPE_VEE_RADAR) 
+        if((type == TYPE_MEK_RADAR || type == TYPE_VEE_RADAR
+                || type == TYPE_VEE_MAGSCAN || type == TYPE_MEK_MAGSCAN) 
                 && (los.getHardBuildings() + los.getSoftBuildings()) > 0) {
             range = 0;
         }

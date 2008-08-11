@@ -12,6 +12,7 @@ v0.33.30-dev (SVN)
 + Bug: Badly named Weapons in some Aeros
 + Bug: PPC's not working with dial down rule
 + Bug: ECM ghosts not working correctly.
++ Added new messages and a Try/Catch to receiveEntityModeChange
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

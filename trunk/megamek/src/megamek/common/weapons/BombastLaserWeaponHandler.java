@@ -90,7 +90,9 @@ public class BombastLaserWeaponHandler extends WeaponHandler {
     protected void addHeat() {
         if ( toHit.getValue() != TargetRoll.IMPOSSIBLE) {
             int heat = wtype.getHeat();
-            heat = Compute.dialDownHeat(weapon, wtype,ae.getPosition().distance(target.getPosition()));
+            if ( game.getOptions().booleanOption("tacops_energy_weapons") ){
+                heat = Compute.dialDownHeat(weapon, wtype,ae.getPosition().distance(target.getPosition()));
+            }
             ae.heatBuildup += heat;
         }
     }

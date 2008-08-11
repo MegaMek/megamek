@@ -21656,7 +21656,9 @@ public class Server implements Runnable {
                 r.choose(false);
                 vDesc.addElement(r);
                 Report.addNewline(vDesc);
-                vDesc.addAll(damageCrew(pilot, 1));
+                if ( (rollTarget.getValue()-diceRoll) > 1){
+                    vDesc.addAll(damageCrew(pilot, (rollTarget.getValue()-diceRoll)/2));
+                }
             } else {
                 r.choose(true);
                 vDesc.addElement(r);

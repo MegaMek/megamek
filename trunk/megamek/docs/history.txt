@@ -17,6 +17,7 @@ v0.33.30-dev (SVN)
 + Bug: Units not falling down when failing PSR's
 + Bug: Hull Down units having to make PSR's when taking damage
 + Changed Code to log errors from receiveEntityModeChange.
++ Bug: Ejection Failure roll not calculating damage correctly
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

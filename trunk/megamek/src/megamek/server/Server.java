@@ -19257,11 +19257,22 @@ public class Server implements Runnable {
         }
         Mounted m = e.getEquipment(equipId);
 
-        // a mode change for ammo means dumping or hotloading
-        if (m.getType() instanceof AmmoType && !m.getType().hasInstantModeSwitch() && mode <= 0) {
-            m.setPendingDump(mode == -1);
-        } else
-            m.setMode(mode);
+        if ( m == null ) {
+            return;
+        }
+        
+        try {
+            // a mode change for ammo means dumping or hotloading
+            if (m.getType() instanceof AmmoType && !m.getType().hasInstantModeSwitch() && mode <= 0) {
+                m.setPendingDump(mode == -1);
+            } else {
+                m.setMode(mode);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            sendServerChat(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + ": " + ex.getMessage());
+        }
+
     }
 
     /**

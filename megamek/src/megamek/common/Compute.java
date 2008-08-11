@@ -2875,7 +2875,7 @@ public class Compute {
 
         // none? get out of here
         if (vEnemyGTCoords.size() == 0)
-            return 0;
+            return -1;
 
         // get intervening Coords.
         ArrayList<Coords> coords = Coords.intervening(a, b);
@@ -2927,9 +2927,9 @@ public class Compute {
         //lets loop through that and identify the highest bonus and count the total number crossed
         int totalGT = 0;
         int highestMod = -1;
-        Enumeration ids = hEnemyGTCrossed.keys();
+        Enumeration<Integer> ids = hEnemyGTCrossed.keys();
         while(ids.hasMoreElements()) {
-            int id = (Integer)ids.nextElement();
+            int id = ids.nextElement();
             if(hEnemyGTCrossed.get(id)) {
                 if(hEnemyGTMods.get(id) > highestMod) {
                     highestMod = hEnemyGTMods.get(id);

@@ -4557,6 +4557,8 @@ public class Server implements Runnable {
                 fellDuringMovement = true;
                 if ( !entity.isCarefulStand() )
                     break;
+            }else {
+                entity.setHullDown(false);
             }
 
             if (step.getType() == MovePath.STEP_UNJAM_RAC) {

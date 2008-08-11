@@ -63,7 +63,12 @@ public class PPCHandler extends EnergyWeaponHandler {
      */
     protected void addHeat() {
         if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
-            ae.heatBuildup += (wtype.getHeat());
+            int heat = wtype.getHeat();
+            if ( game.getOptions().booleanOption("tacops_energy_weapons") ){
+                heat = Compute.dialDownHeat(weapon, wtype,ae.getPosition().distance(target.getPosition()));
+            }
+
+            ae.heatBuildup += heat;
             if (weapon.hasChargedCapacitor()) {
                 ae.heatBuildup += 5;
             }

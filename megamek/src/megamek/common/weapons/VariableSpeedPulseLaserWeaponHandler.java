@@ -18,6 +18,7 @@ import megamek.common.Compute;
 import megamek.common.IGame;
 import megamek.common.Infantry;
 import megamek.common.RangeType;
+import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
@@ -84,4 +85,24 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
         }
         return (int) Math.ceil(toReturn);
     }
+    
+    /*
+     * (non-Javadoc)
+     * @see megamek.common.weapons.WeaponHandler#addHeat()
+     */
+    protected void addHeat() {
+        if (!(toHit.getValue() == TargetRoll.IMPOSSIBLE)) {
+            int heat = wtype.getHeat();
+            if ( game.getOptions().booleanOption("tacops_energy_weapons") ){
+                heat = Compute.dialDownHeat(weapon, wtype,ae.getPosition().distance(target.getPosition()));
+            }
+
+            ae.heatBuildup += heat;
+            if (weapon.hasChargedCapacitor()) {
+                ae.heatBuildup += 5;
+            }
+        }
+    }
+    
+
 }

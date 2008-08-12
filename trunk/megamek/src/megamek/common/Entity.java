@@ -1347,26 +1347,8 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
      */
     public int getWalkMP(boolean gravity, boolean ignoreheat) {
         int mp = getOriginalWalkMP();
-        int minus;
         if (!ignoreheat) {
-            if (game != null && game.getOptions().booleanOption("tacops_heat")) {
-                if (heat < 30) {
-                    minus = (heat / 5);
-                } else if (heat >= 49) {
-                    minus = 9;
-                } else if (heat >= 43) {
-                    minus = 8;
-                } else if (heat >= 37) {
-                    minus = 7;
-                } else if (heat >= 31) {
-                    minus = 6;
-                } else {
-                    minus = 5;
-                }
-                mp = Math.max(mp - minus, 0);
-            } else {
-                mp = Math.max(mp - (heat / 5), 0);
-            }
+            mp = Math.max(0, mp - getHeatMPReduction());
         }
         mp = Math.max(mp - getCargoMpReduction(), 0);
         if(null != game) {
@@ -1381,6 +1363,34 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         return mp;
     }
 
+    /**
+     * This returns how much MP is removed due to heat
+     * @return
+     */
+    public int getHeatMPReduction(){
+        int minus;
+
+        if (game != null && game.getOptions().booleanOption("tacops_heat")) {
+            if (heat < 30) {
+                minus = (heat / 5);
+            } else if (heat >= 49) {
+                minus = 9;
+            } else if (heat >= 43) {
+                minus = 8;
+            } else if (heat >= 37) {
+                minus = 7;
+            } else if (heat >= 31) {
+                minus = 6;
+            } else {
+                minus = 5;
+            }
+        } else {
+            minus = heat / 5;
+        }
+
+        return minus;
+    }
+    
     /**
      * For non-'Mechs, this is really boring, but...
      */

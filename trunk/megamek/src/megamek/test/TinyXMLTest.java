@@ -121,7 +121,7 @@ public class TinyXMLTest implements XMLResponder {
             throws ParseException {
         System.out.println(prefix + "Element: " + name);
         if (attr != null) {
-            Enumeration e = attr.keys();
+            Enumeration<?> e = attr.keys();
             System.out.print(prefix);
             String conj = "";
             while (e.hasMoreElements()) {

@@ -124,7 +124,7 @@ public class HexEncoder {
         // TODO : perform version checking.
 
         // Find the terrains node.
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
         while (children.hasMoreElements()) {
             ParsedXML child = (ParsedXML) children.nextElement();
             if (child.getName().equals("terrains")) {
@@ -139,7 +139,7 @@ public class HexEncoder {
                 ITerrain[] terrains = new ITerrain[Terrains.SIZE];
 
                 // Walk through the subnodes, parsing out terrain nodes.
-                Enumeration subnodes = child.elements();
+                Enumeration<?> subnodes = child.elements();
                 while (subnodes.hasMoreElements()) {
 
                     // Is this a "terrain" node?

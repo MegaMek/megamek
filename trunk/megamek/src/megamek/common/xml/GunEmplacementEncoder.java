@@ -78,7 +78,7 @@ public class GunEmplacementEncoder {
 
         // TODO : perform version checking.
 
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
         while (children.hasMoreElements()) {
             ParsedXML child = (ParsedXML) children.nextElement();
             String childName = child.getName();

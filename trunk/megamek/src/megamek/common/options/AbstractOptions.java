@@ -109,8 +109,7 @@ public abstract class AbstractOptions implements IOptions, Serializable {
         addOption(group, name, IOption.FLOAT, new Float(defaultValue));
     }
 
-    protected void addOption(IBasicOptionGroup group, String name,
-            Vector defaultValue) {
+    protected void addOption(IBasicOptionGroup group, String name, Vector<String> defaultValue) {
         addOption(group, name, IOption.CHOICE, ""); //$NON-NLS-1$
     }
 

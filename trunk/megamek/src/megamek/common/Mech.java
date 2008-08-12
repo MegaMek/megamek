@@ -1102,6 +1102,7 @@ public abstract class Mech extends Entity implements Serializable {
         case IEntityMovementType.MOVE_SKID:
             return "Skidded";
         case IEntityMovementType.MOVE_NONE:
+        case IEntityMovementType.MOVE_CAREFUL_STAND:
             return "None";
         case IEntityMovementType.MOVE_WALK:
             return "Walked";

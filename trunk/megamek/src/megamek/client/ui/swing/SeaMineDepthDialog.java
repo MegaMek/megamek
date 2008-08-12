@@ -24,8 +24,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.AWT.Messages;
@@ -45,12 +43,12 @@ public class SeaMineDepthDialog extends JDialog implements ActionListener {
             .getString("SeaMineDepthDialog.labDepth"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox choDepth = new JComboBox();
     private int depth;
-    private JFrame frame;
+    //private JFrame frame;
 
     public SeaMineDepthDialog(JFrame p, int totalDepth) {
         super(p, Messages.getString("MineDensityDialog.title"), true); //$NON-NLS-1$
         super.setResizable(false);
-        frame = p;
+        //frame = p;
         butOk.addActionListener(this);
         
         

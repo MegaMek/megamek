@@ -101,11 +101,11 @@ public class PreferenceManager {
             return;
         }
 
-        Enumeration rootChildren = root.elements();
+        Enumeration<?> rootChildren = root.elements();
         ParsedXML optionsNode = (ParsedXML) rootChildren.nextElement();
 
         if (optionsNode.getName().equals(ROOT_NODE_NAME)) {
-            Enumeration children = optionsNode.elements();
+            Enumeration<?> children = optionsNode.elements();
             while (children.hasMoreElements()) {
                 ParsedXML child = (ParsedXML) children.nextElement();
                 if (child != null && child.getName().equals(STORE_NODE_NAME)) {
@@ -128,7 +128,7 @@ public class PreferenceManager {
     }
 
     protected void loadGroup(ParsedXML node, IPreferenceStore cp) {
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
         while (children.hasMoreElements()) {
             ParsedXML child = (ParsedXML) children.nextElement();
             if (child != null && child.getName().equals(PREFERENCE_NODE_NAME)) {
@@ -174,7 +174,7 @@ public class PreferenceManager {
         output.write("\t<" + STORE_NODE_NAME + " " + NAME_ATTRIBUTE + "=\""
                 + quoteXMLChars(name) + "\">");
         output.write(CommonConstants.NL);
-        for (Enumeration e = ps.properties.keys(); e.hasMoreElements();) {
+        for (Enumeration<?> e = ps.properties.keys(); e.hasMoreElements();) {
             String pname = (String) e.nextElement();
             String pvalue = (String) ps.properties.get(pname);
             output.write("\t\t<" + PREFERENCE_NODE_NAME + " " + NAME_ATTRIBUTE

@@ -76,7 +76,7 @@ abstract class ViewTransform {
     protected BranchGroup controllers;
 
     private static final Transform3D identity = new Transform3D();
-    private static final Class[] transforms = { PlayerViewTransform.class, MapViewTransform.class };
+    private static final Class<?>[] transforms = { PlayerViewTransform.class, MapViewTransform.class };
 
 }
 

@@ -20,9 +20,6 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Enumeration;
 
 import megamek.client.Client;

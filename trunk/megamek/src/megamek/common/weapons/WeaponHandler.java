@@ -744,6 +744,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 hexType = "jungle";
             }
             
+            //Do not absorb more damage then the weapon can do.
+            treeAbsorbs = Math.min(nDamage, treeAbsorbs);
             
             nDamage = Math.max(0, nDamage-treeAbsorbs);
             server.tryClearHex(entityTarget.getPosition(), treeAbsorbs, ae.getId());

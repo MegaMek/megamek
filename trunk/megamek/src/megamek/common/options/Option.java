@@ -43,7 +43,7 @@ public class Option implements IOption, Serializable {
         this(owner, name, FLOAT, new Float(defaultValue));
     }
 
-    public Option(IOptions owner, String name, Vector defaultValue) {
+    public Option(IOptions owner, String name, Vector<String> defaultValue) {
         this(owner, name, CHOICE, ""); //$NON-NLS-1$
     }
 

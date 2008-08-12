@@ -1700,7 +1700,7 @@ implements IMechLoader
 
             // Attempt to lookup equipment using the appropriate
             // tech type.
-            Hashtable techCriticals = (Hashtable) criticals.get(tType);
+            Hashtable<?,?> techCriticals = (Hashtable<?,?>) criticals.get(tType);
             if (techCriticals != null) {
                 critName = (String) techCriticals.get(critical);
             }

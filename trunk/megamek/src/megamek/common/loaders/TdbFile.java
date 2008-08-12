@@ -171,7 +171,7 @@ public class TdbFile implements IMechLoader {
             return;
         }
 
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
 
         if (node.getName().equals(CREATOR_SECTION)) {
             parseCreatorNode(node);
@@ -198,7 +198,7 @@ public class TdbFile implements IMechLoader {
             return;
         }
 
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
 
         if (node.getName().equals(NAME)) {
             creatorName = ((ParsedXML) children.nextElement()).getContent();
@@ -221,7 +221,7 @@ public class TdbFile implements IMechLoader {
             return;
         }
 
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
 
         if (node.getName().equals(NAME)) {
             name = ((ParsedXML) children.nextElement()).getContent();
@@ -293,7 +293,7 @@ public class TdbFile implements IMechLoader {
             return;
         }
 
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
 
         if (node.getName().equals(MOUNTED_ITEM)) {
             if (node.getAttribute(REAR_MOUNTED).equals(TRUE)) {
@@ -323,7 +323,7 @@ public class TdbFile implements IMechLoader {
             return;
         }
 
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
 
         if (node.getName().equals(LOCATION)) {
             int loc = -1;

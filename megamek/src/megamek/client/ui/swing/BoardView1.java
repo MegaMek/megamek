@@ -2574,9 +2574,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (entity.isHullDown()) {
                 // draw "D"
                 graph.setColor(Color.darkGray);
-                graph.drawString("D", 40, 71); //$NON-NLS-1$
+                graph.drawString("Hull Down", 40, 71); //$NON-NLS-1$
                 graph.setColor(Color.black);
-                graph.drawString("D", 39, 70); //$NON-NLS-1$                
+                graph.drawString("Hull Down", 39, 70); //$NON-NLS-1$                
             } else if (entity instanceof Infantry) {
                 int dig = ((Infantry) entity).getDugIn();
                 if (dig == Infantry.DUG_IN_COMPLETE) {

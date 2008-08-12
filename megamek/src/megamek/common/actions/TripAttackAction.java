@@ -100,6 +100,10 @@ public class TripAttackAction extends PhysicalAttackAction {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "Target is prone");
         }
 
+        if ( ae.getElevation() != target.getElevation() ){
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "Attacker and Target must be at the same elevation");
+        }
+        
         // check if attacker has fired leg-mounted weapons
         boolean usedWeapons[] = new boolean[ae.locations()];
         for (int i = 0; i < ae.locations(); i++) {

@@ -50,7 +50,7 @@ public class XMLMarshaller extends PacketMarshaller {
      */
     public Packet unmarshall(InputStream stream) throws Exception {
         ParsedXML root = TinyParser.parseXML(stream);
-        Enumeration rootChildren = root.elements();
+        Enumeration<?> rootChildren = root.elements();
         if (!rootChildren.hasMoreElements()) {
             throw new ParseException("No children of the root.");
         }

@@ -1266,7 +1266,7 @@ public class Compute {
         if (entity.getMovementMode() == IEntityMovementMode.BIPED_SWIM || entity.getMovementMode() == IEntityMovementMode.QUAD_SWIM)
             return toHit;
 
-        if (movement == IEntityMovementType.MOVE_WALK || movement == IEntityMovementType.MOVE_VTOL_WALK) {
+        if (movement == IEntityMovementType.MOVE_WALK || movement == IEntityMovementType.MOVE_VTOL_WALK || movement == IEntityMovementType.MOVE_CAREFUL_STAND) {
             toHit.addModifier(1, "attacker walked");
         } else if (movement == IEntityMovementType.MOVE_RUN || movement == IEntityMovementType.MOVE_VTOL_RUN) {
             toHit.addModifier(2, "attacker ran");

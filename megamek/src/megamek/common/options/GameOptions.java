@@ -231,11 +231,11 @@ public class GameOptions extends AbstractOptions implements Serializable {
             return changedOptions;
         }
 
-        Enumeration rootChildren = root.elements();
+        Enumeration<?> rootChildren = root.elements();
         ParsedXML optionsNode = (ParsedXML) rootChildren.nextElement();
 
         if (optionsNode.getName().equals("options")) { //$NON-NLS-1$
-            Enumeration children = optionsNode.elements();
+            Enumeration<?> children = optionsNode.elements();
 
             while (children.hasMoreElements()) {
                 IOption option = parseOptionNode((ParsedXML) children
@@ -256,7 +256,7 @@ public class GameOptions extends AbstractOptions implements Serializable {
         IOption option = null;
 
         if (node.getName().equals("gameoption")) { //$NON-NLS-1$
-            Enumeration children = node.elements();
+            Enumeration<?> children = node.elements();
             String name = null;
             Object value = null;
 

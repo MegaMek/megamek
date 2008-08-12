@@ -116,7 +116,7 @@ public class TankEncoder {
         entity = new Tank();
 
         // Walk the board node's children.
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
         while (children.hasMoreElements()) {
             ParsedXML child = (ParsedXML) children.nextElement();
             String childName = child.getName();

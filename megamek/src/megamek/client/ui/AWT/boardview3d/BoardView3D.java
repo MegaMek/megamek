@@ -231,7 +231,7 @@ public class BoardView3D
     public void processBoardViewEvent(BoardViewEvent event) {
         if (boardListeners == null) return;
 
-        for(Enumeration e = boardListeners.elements(); e.hasMoreElements();) {
+        for(Enumeration<?> e = boardListeners.elements(); e.hasMoreElements();) {
             BoardViewListener l = (BoardViewListener)e.nextElement();
             switch(event.getType()) {
             case BoardViewEvent.BOARD_HEX_CLICKED :

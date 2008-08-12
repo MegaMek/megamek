@@ -24,8 +24,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import megamek.client.ui.AWT.Messages;
@@ -45,12 +43,12 @@ public class MineDensityDialog extends JDialog implements ActionListener {
             .getString("MineDensityDialog.labDensity"), SwingConstants.RIGHT); //$NON-NLS-1$
     private JComboBox choDensity = new JComboBox();
     private int density;
-    private JFrame frame;
+    //private JFrame frame;
 
     public MineDensityDialog(JFrame p) {
         super(p, Messages.getString("MineDensityDialog.title"), true); //$NON-NLS-1$
         super.setResizable(false);
-        frame = p;
+        //frame = p;
         butOk.addActionListener(this);
         
         choDensity.removeAllItems();

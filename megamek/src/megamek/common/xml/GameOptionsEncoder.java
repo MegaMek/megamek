@@ -59,13 +59,13 @@ public class GameOptionsEncoder {
         output.write("<options version=\"1.0\">");
 
         // Now the options themselves
-        Enumeration groups = options.getGroups();
+        Enumeration<IOptionGroup> groups = options.getGroups();
         while (groups.hasMoreElements()) {
-            final IOptionGroup group = (IOptionGroup) groups.nextElement();
+            final IOptionGroup group = groups.nextElement();
 
-            Enumeration iter = group.getOptions();
+            Enumeration<IOption> iter = group.getOptions();
             while (iter.hasMoreElements()) {
-                final IOption option = (IOption) iter.nextElement();
+                final IOption option = iter.nextElement();
 
                 // Encode this option.
                 output.write("<gameoption><optionname>");

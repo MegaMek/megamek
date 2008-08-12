@@ -4559,6 +4559,11 @@ public class Server implements Runnable {
                     break;
             }else {
                 entity.setHullDown(false);
+               // moveType = step.getMovementType();
+                //curFacing = entity.getFacing();
+                //curPos = entity.getPosition();
+                mpUsed = step.getMpUsed();
+                fellDuringMovement = false;
             }
 
             if (step.getType() == MovePath.STEP_UNJAM_RAC) {
@@ -12160,7 +12165,7 @@ public class Server implements Runnable {
             
             // should we use a coolant pod?
             int safeHeat = entity.hasInfernoAmmo() ? 9 : 13;
-            int possibleSinkage = ((Mech) entity).getNumberOfSinks();
+            int possibleSinkage = ((Mech) entity).getNumberOfSinks() - entity.getCoolantFailureAmount();
             for (Mounted m : entity.getEquipment()) {
                 if (m.getType() instanceof AmmoType) {
                     AmmoType at = (AmmoType) m.getType();

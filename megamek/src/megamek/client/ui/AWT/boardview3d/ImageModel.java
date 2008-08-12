@@ -265,7 +265,7 @@ class ImageModel extends Shape3D {
      */
     private static final Vector<int[]> getContour(boolean[][][] border, int x, int y, int start, byte[][] removed) {
         Vector<int[]> contour = new Vector<int[]>();
-        int nx, ny, ortho, dir = start, sx = x, sy = y;
+        int nx, ny, ortho, dir = start;//, sx = x, sy = y;
         
         // find start of current segment
         nx = x - next[dir][0];

@@ -57,7 +57,7 @@ public class ImageCache<K, V> {
                 if (valToNix instanceof Image) {
                     ((Image) valToNix).flush();
                 } else if (valToNix instanceof List) {
-                    for (Object o : ((List) valToNix)) {
+                    for (Object o : ((List<?>) valToNix)) {
                         if (o instanceof Image) {
                             ((Image) o).flush();
                         }

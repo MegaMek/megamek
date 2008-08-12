@@ -226,7 +226,7 @@ public class PacketEncoder {
         // TODO : perform version checking.
 
         // Walk the packet node's children. Try to find a "packetData" node.
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
         while (children.hasMoreElements()) {
             ParsedXML subNode = (ParsedXML) children.nextElement();
             if (subNode.getName().equals("packetData")) {
@@ -237,13 +237,13 @@ public class PacketEncoder {
                 data = new Object[count];
 
                 // Do we need to unzip the data elements?
-                Enumeration dataElements = null;
+                Enumeration<?> dataElements = null;
                 if (subNode.getAttribute("isGzipped").equals("true")) {
 
                     // Try to find the zipped content.
                     String cdata = subNode.getContent();
                     if (null == cdata) {
-                        Enumeration cdataEnum = subNode.elements();
+                        Enumeration<?> cdataEnum = subNode.elements();
                         while (cdataEnum.hasMoreElements() && null == cdata) {
                             final ParsedXML cdataNode = (ParsedXML) cdataEnum
                                     .nextElement();

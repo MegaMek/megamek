@@ -43,12 +43,12 @@ public class SeaMineDepthDialog extends Dialog implements ActionListener {
     private Choice choDepth = new Choice();
 
     private int depth = 5;
-    private Frame frame = null;
+    //private Frame frame = null;
 
     public SeaMineDepthDialog(Frame p, int totalDepth) {
         super(p, Messages.getString("SeaMineDepthDialog.title"), true); //$NON-NLS-1$
         super.setResizable(false);
-        frame = p;
+        //frame = p;
 
         butOk.addActionListener(this);
 

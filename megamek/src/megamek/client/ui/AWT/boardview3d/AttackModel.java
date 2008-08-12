@@ -96,7 +96,7 @@ class AttackModel extends ArrowModel {
     }
     
     void add(AttackAction aa, ViewTransform currentView) {
-        for (Enumeration e = getAllChildren(); e.hasMoreElements();) {
+        for (Enumeration<?> e = getAllChildren(); e.hasMoreElements();) {
             Node tg = (Node)e.nextElement();
             if (aa.equals(tg.getUserData())) return;
         }

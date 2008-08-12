@@ -810,7 +810,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         final Entity ce = ce();
         final boolean isMech = (ce instanceof Mech);
         final boolean isInfantry = (ce instanceof Infantry);
-        final boolean isProtomech = (ce instanceof Protomech);
+        //final boolean isProtomech = (ce instanceof Protomech);
         final boolean isAero = (ce instanceof Aero);
         // ^-- I suppose these should really be methods, a-la
         // Entity.canCharge(), Entity.canDFA()...

@@ -18,6 +18,8 @@ v0.33.30-dev (SVN)
 + Bug: Hull Down units having to make PSR's when taking damage
 + Changed Code to log errors from receiveEntityModeChange.
 + Bug: Ejection Failure roll not calculating damage correctly
++ Bug: PPC Inhibitors not showing if Dial Down Damage rule used
++ added text "Hull Down" when unit is Hull Down on map
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

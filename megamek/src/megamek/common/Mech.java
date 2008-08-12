@@ -30,6 +30,7 @@ import megamek.common.loaders.MtfFile;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
 import megamek.common.weapons.EnergyWeapon;
+import megamek.common.weapons.PPCWeapon;
 
 /**
  * You know what mechs are, silly.
@@ -3687,6 +3688,13 @@ public abstract class Mech extends Entity implements Serializable {
 
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
+                
+                if ( mounted.getType() instanceof PPCWeapon 
+                        && ((WeaponType)mounted.getType()).getMinimumRange() > 0
+                        && game.getOptions().booleanOption("tacops_ppc_inhibitors") ) {
+                    modes.add("Field Inhibitor ON");
+                    modes.add("Field Inhibitor OFF");
+                }
                 int damage = ((WeaponType) mounted.getType()).getDamage();
                 
                 if ( damage == WeaponType.DAMAGE_VARIABLE )

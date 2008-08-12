@@ -51,7 +51,7 @@ public class BoardEncoder {
      * @throws <code>IOException</code> if there's any error on write.
      */
     public static void encode(IBoard board, Writer out) throws IOException {
-        Enumeration iter; // used when marching through a list of sub-elements
+        Enumeration<?> iter; // used when marching through a list of sub-elements
         Coords coords;
         int x;
         int y;
@@ -148,7 +148,7 @@ public class BoardEncoder {
         int width = 0;
         IHex[] hexes = null;
         Coords coords = null;
-        Enumeration subnodes = null;
+        Enumeration<?> subnodes = null;
         ParsedXML subnode = null;
 
         // Did we get a null node?
@@ -164,7 +164,7 @@ public class BoardEncoder {
         // TODO : perform version checking.
 
         // Walk the board node's children.
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
         while (children.hasMoreElements()) {
             ParsedXML child = (ParsedXML) children.nextElement();
             String childName = child.getName();
@@ -279,7 +279,7 @@ public class BoardEncoder {
                         InfernoTracker tracker = new InfernoTracker();
 
                         // Try to find the inferno detail nodes.
-                        Enumeration details = subnode.elements();
+                        Enumeration<?> details = subnode.elements();
                         while (details.hasMoreElements()) {
                             ParsedXML detail = (ParsedXML) details
                                     .nextElement();

@@ -1270,8 +1270,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 toHit.addModifier(1, "ammunition to-hit modifier");
             }
             else {
-                int heatPenalty = te.getOriginalWalkMP() - te.getWalkMP(false,false);
-               toHit.addModifier(-heatPenalty, "ammunition to-hit modifier");
+               toHit.addModifier(-te.getHeatMPReduction(), "ammunition to-hit modifier");
             }
             
             if (!(ae instanceof Aero) && LosEffects.hasFireBetween(ae.getPosition(), target.getPosition(), game)) {

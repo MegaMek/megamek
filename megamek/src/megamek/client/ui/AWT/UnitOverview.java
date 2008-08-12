@@ -419,6 +419,27 @@ public class UnitOverview implements Displayable {
             graph.setColor(Color.yellow);
             graph.drawString(
                     Messages.getString("UnitOverview.PRONE"), x + 10, y + 33); //$NON-NLS-1$
+        } else if (!entity.isImmobile() && entity.isHullDown()) {
+            // draw "PRONE"
+            graph.setColor(Color.darkGray);
+            graph.drawString(
+                    Messages.getString("UnitOverview.HULLDOWN"), x-1, y + 29); //$NON-NLS-1$
+            graph.setColor(Color.yellow);
+            graph.drawString(
+                    Messages.getString("UnitOverview.HULLDOWN"), x-2, y + 28); //$NON-NLS-1$
+        } else if (entity.isImmobile() && entity.isHullDown()) {
+            // draw "IMMOB" and "PRONE"
+            graph.setColor(Color.darkGray);
+            graph.drawString(
+                    Messages.getString("UnitOverview.IMMOB"), x + 11, y + 24); //$NON-NLS-1$
+            graph.drawString(
+                    Messages.getString("UnitOverview.HULLDOWN"), x - 1 , y + 34); //$NON-NLS-1$
+            graph.setColor(Color.red);
+            graph.drawString(
+                    Messages.getString("UnitOverview.IMMOB"), x + 10, y + 23); //$NON-NLS-1$
+            graph.setColor(Color.yellow);
+            graph.drawString(
+                    Messages.getString("UnitOverview.HULLDOWN"), x - 2, y + 33); //$NON-NLS-1$
         } else if (!entity.isDeployed()) {
             int roundsLeft = entity.getDeployRound()
                     - clientgui.getClient().game.getRoundCount();

@@ -109,7 +109,7 @@ public class ZippedItems implements Categorized {
             ZipException, IOException {
 
         // Declare local variables.
-        Enumeration entries = null;
+        Enumeration<?> entries = null;
         ZipEntry entry = null;
         String catName = null;
         String name = null;

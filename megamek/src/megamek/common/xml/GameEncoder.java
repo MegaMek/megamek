@@ -54,7 +54,7 @@ public class GameEncoder {
      * @throws <code>IOException</code> if there's any error on write.
      */
     public static void encode(IGame game, Writer out) throws IOException {
-        Enumeration iter; // used when marching through a list of sub-elements
+        Enumeration<?> iter; // used when marching through a list of sub-elements
         Coords coords;
 
         // First, validate our input.
@@ -84,7 +84,7 @@ public class GameEncoder {
             out.write("<minefields>");
             while (iter.hasMoreElements()) {
                 coords = (Coords) iter.nextElement();
-                Enumeration fields = game.getMinefields(coords).elements();
+                Enumeration<?> fields = game.getMinefields(coords).elements();
                 while (fields.hasMoreElements()) {
                     MinefieldEncoder.encode((Minefield) fields.nextElement(),
                             out);

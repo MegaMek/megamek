@@ -47,7 +47,7 @@ public class BuildingEncoder {
      * @throws <code>IOException</code> if there's any error on write.
      */
     public static void encode(Building bldg, Writer out) throws IOException {
-        Enumeration iter; // used when marching through a list of sub-elements
+        Enumeration<?> iter; // used when marching through a list of sub-elements
         Coords coords;
 
         // First, validate our input.
@@ -108,7 +108,7 @@ public class BuildingEncoder {
         int attrVal = 0;
         Building retVal = null;
         Vector<Coords> coordVec = new Vector<Coords>();
-        Enumeration subnodes = null;
+        Enumeration<?> subnodes = null;
         ParsedXML subnode = null;
         Coords coords = null;
         int type = -1;
@@ -116,7 +116,7 @@ public class BuildingEncoder {
         String name = null;
 
         // Walk the building node's children.
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
         while (children.hasMoreElements()) {
             ParsedXML child = (ParsedXML) children.nextElement();
             String childName = child.getName();

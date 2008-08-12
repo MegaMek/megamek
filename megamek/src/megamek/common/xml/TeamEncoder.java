@@ -45,7 +45,7 @@ public class TeamEncoder {
      * @throws <code>IOException</code> if there's any error on write.
      */
     public static void encode(Team team, Writer out) throws IOException {
-        Enumeration iter; // used when marching through a list of sub-elements
+        Enumeration<Player> iter; // used when marching through a list of sub-elements
 
         // First, validate our input.
         if (null == team) {
@@ -68,7 +68,7 @@ public class TeamEncoder {
         if (iter.hasMoreElements()) {
             out.write("<playerIds>");
             while (iter.hasMoreElements()) {
-                final Player player = (Player) iter.nextElement();
+                final Player player = iter.nextElement();
                 out.write("<player id=\"");
                 out.write(player.getId());
                 out.write("\" />");

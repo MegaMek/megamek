@@ -50,7 +50,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
         ParsedXML root = null;
         try {
             root = TinyParser.parseXML(new FileInputStream(config));
-            for (Enumeration e = root.elements(); e.hasMoreElements();) {
+            for (Enumeration<?> e = root.elements(); e.hasMoreElements();) {
                 ParsedXML child = (ParsedXML) e.nextElement();
                 if (child.getTypeName().equals("tag")
                         && child.getName().equals(BASE_NODE)) {
@@ -150,7 +150,7 @@ public class EntityVerifier implements MechSummaryCache.Listener {
     }
 
     private void readOptions(ParsedXML node) {
-        for (Enumeration e = node.elements(); e.hasMoreElements();) {
+        for (Enumeration<?> e = node.elements(); e.hasMoreElements();) {
             ParsedXML child = (ParsedXML) e.nextElement();
             if (child.getName().equals(BASE_TANK_NODE))
                 tankOption.readXMLOptions(child);

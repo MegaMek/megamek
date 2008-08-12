@@ -704,7 +704,7 @@ public class BuildingBlock {
      * @see getReturnedArraySize (String[])
      * @return Returns <CODE>array.size()</CODE>
      */
-    public int getReturnedArraySize(Vector array) {
+    public int getReturnedArraySize(Vector<Object> array) {
         return array.size();
     }
 

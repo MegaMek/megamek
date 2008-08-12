@@ -43,12 +43,12 @@ public class MineDensityDialog extends Dialog implements ActionListener {
     private Choice choDensity = new Choice();
 
     private int density = 5;
-    private Frame frame = null;
+    //private Frame frame = null;
 
     public MineDensityDialog(Frame p) {
         super(p, Messages.getString("MineDensityDialog.title"), true); //$NON-NLS-1$
         super.setResizable(false);
-        frame = p;
+        //frame = p;
 
         butOk.addActionListener(this);
 

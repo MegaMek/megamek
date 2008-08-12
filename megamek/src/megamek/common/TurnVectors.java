@@ -164,7 +164,7 @@ public class TurnVectors implements Enumeration<TurnOrdered> {
         this.numDS = dsCount;
         this.numSC = scCount;
         this.normal_turns = new Vector<TurnOrdered>(normalCount);
-        this.total_turns = new Vector<TurnOrdered>(totalCount);
+        this.total_turns = new Vector<TurnOrdered>(this.numTotal);
         this.even_turns = new Vector<TurnOrdered>(evenCount);
         this.space_station_turns = new Vector<TurnOrdered>(ssCount);
         this.jumpship_turns = new Vector<TurnOrdered>(jsCount);

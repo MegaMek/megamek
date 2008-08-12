@@ -101,7 +101,7 @@ public class TestBoardEncoder {
             // Decode the board from XML.
             ParsedXML root = TinyParser.parseXML(new ByteArrayInputStream(to
                     .toString().getBytes()));
-            Enumeration rootChildren = root.elements();
+            Enumeration<?> rootChildren = root.elements();
             if (!rootChildren.hasMoreElements()) {
                 throw new ParseException("No children of the root.");
             }

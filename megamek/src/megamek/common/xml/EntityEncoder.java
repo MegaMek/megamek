@@ -62,7 +62,7 @@ public class EntityEncoder {
      * @throws IOException if there's any error on write.
      */
     public static void encode(Entity entity, Writer out) throws IOException {
-        Enumeration iter; // used when marching through a list of sub-elements
+        Enumeration<Entity> iter; // used when marching through a list of sub-elements
         Coords coords;
         int turns;
         String substr;
@@ -297,13 +297,12 @@ public class EntityEncoder {
         out.write("</entityData>");
 
         // Encode this unit's equipment.
-        Iterator iter2 = entity.getEquipment().iterator();
+        Iterator<Mounted> iter2 = entity.getEquipment().iterator();
         if (iter2.hasNext()) {
             out.write("<entityEquipment>");
             int index = 0;
             while (iter2.hasNext()) {
-                substr = EntityEncoder.formatEquipment(index, (Mounted) iter2
-                        .next(), entity);
+                substr = EntityEncoder.formatEquipment(index,iter2.next(), entity);
                 if (null != substr)
                     out.write(substr);
                 index++;
@@ -644,7 +643,7 @@ public class EntityEncoder {
         }
 
         // Try to find the inferno detail nodes.
-        Enumeration details = node.elements();
+        Enumeration<?> details = node.elements();
         while (details.hasMoreElements()) {
             ParsedXML detail = (ParsedXML) details.nextElement();
 
@@ -736,7 +735,7 @@ public class EntityEncoder {
         // TODO : perform version checking.
 
         // Walk the entityData node's children.
-        Enumeration children = node.elements();
+        Enumeration<?> children = node.elements();
         while (children.hasMoreElements()) {
             ParsedXML child = (ParsedXML) children.nextElement();
             String childName = child.getName();
@@ -851,7 +850,7 @@ public class EntityEncoder {
         Vector<ParsedXML> locations = new Vector<ParsedXML>();
         ParsedXML pilotNode = null;
         ParsedXML equipNode = null;
-        Enumeration children = null;
+        Enumeration<?> children = null;
         ParsedXML child = null;
         String childName;
 

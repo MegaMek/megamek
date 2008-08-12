@@ -42,7 +42,7 @@ class MoveGroup extends BranchGroup {
     }
     
     public void clear() {
-        for (Enumeration e = getAllChildren(); e.hasMoreElements();) {
+        for (Enumeration<?> e = getAllChildren(); e.hasMoreElements();) {
             ((BranchGroup)e.nextElement()).detach();
         }
         cur = null;
@@ -54,7 +54,7 @@ class MoveGroup extends BranchGroup {
         cur = md;
         IBoard gboard = game.getBoard();
         int count = 0;
-        for (Enumeration i = md.getSteps(); i.hasMoreElements();) {
+        for (Enumeration<?> i = md.getSteps(); i.hasMoreElements();) {
             MoveStep step = (MoveStep)i.nextElement();
             addChild(new MoveStepModel(step, count++, gboard.getHex(step.getPosition()), currentView));
         }

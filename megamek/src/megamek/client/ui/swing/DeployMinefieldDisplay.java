@@ -14,7 +14,6 @@
 
 package megamek.client.ui.swing;
 
-import java.awt.Button;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -280,7 +279,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
         if(remove) {
             if (!client.game.containsMinefield(coords))
                 return;
-            Enumeration mfs = client.game.getMinefields(coords).elements();
+            Enumeration<?> mfs = client.game.getMinefields(coords).elements();
             ArrayList<Minefield> mfRemoved = new ArrayList<Minefield>();
             while(mfs.hasMoreElements()) {
                 Minefield mf = (Minefield)mfs.nextElement();  
@@ -311,7 +310,7 @@ public class DeployMinefieldDisplay extends StatusBarPhaseDisplay implements
             }
         } else {
             //first check that there is not already a mine of this type deployed
-            Enumeration mfs = client.game.getMinefields(coords).elements();
+            Enumeration<?> mfs = client.game.getMinefields(coords).elements();
             while(mfs.hasMoreElements()) {
                 Minefield mf = (Minefield)mfs.nextElement(); 
                 if((deployM && mf.getType() == Minefield.TYPE_CONVENTIONAL) ||

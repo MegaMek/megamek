@@ -82,7 +82,7 @@ class AttackGroup extends BranchGroup {
     }
 
     public void remove(Entity entity) {
-        for (Enumeration e = getAllChildren(); e.hasMoreElements();) {
+        for (Enumeration<?> e = getAllChildren(); e.hasMoreElements();) {
             BranchGroup bg = (BranchGroup)e.nextElement();
             AttackAction a = (AttackAction)bg.getUserData();
             if (a != null && a.getEntityId() == entity.getId()) bg.detach();
@@ -90,7 +90,7 @@ class AttackGroup extends BranchGroup {
     }
 
     public void clear() {
-        for (Enumeration e = getAllChildren(); e.hasMoreElements();) {
+        for (Enumeration<?> e = getAllChildren(); e.hasMoreElements();) {
             ((BranchGroup)e.nextElement()).detach();
         }
     }

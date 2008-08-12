@@ -53,7 +53,7 @@ class EntityGroup extends BranchGroup {
     }
 
     private EntityModel find(Entity entity) {
-        for (Enumeration e = getAllChildren(); e.hasMoreElements(); ) {
+        for (Enumeration<?> e = getAllChildren(); e.hasMoreElements(); ) {
             Node n = (Node)e.nextElement();
             if (n instanceof EntityModel && entity.equals(n.getUserData())) {
                 return (EntityModel)n;
@@ -77,7 +77,7 @@ class EntityGroup extends BranchGroup {
     }
 
     public boolean isMoving() {
-        for (Enumeration e = getAllChildren(); e.hasMoreElements();) {
+        for (Enumeration<?> e = getAllChildren(); e.hasMoreElements();) {
             Object o = e.nextElement();
             if (o instanceof EntityModel && ((EntityModel)o).isMoving()) return true;
         }
@@ -90,7 +90,7 @@ class EntityGroup extends BranchGroup {
     }
 
     public void clear() {
-        for (Enumeration e = getAllChildren(); e.hasMoreElements();) {
+        for (Enumeration<?> e = getAllChildren(); e.hasMoreElements();) {
             ((BranchGroup)e.nextElement()).detach();
         }
     }
@@ -127,7 +127,7 @@ class EntityGroup extends BranchGroup {
         final IBoard gboard = game.getBoard();
         if (gboard == null) return;
 
-        for (Enumeration i = game.getEntities(); i.hasMoreElements();) {
+        for (Enumeration<?> i = game.getEntities(); i.hasMoreElements();) {
             update((Entity)i.nextElement(), null);
         }
 

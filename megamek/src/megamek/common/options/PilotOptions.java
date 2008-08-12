@@ -38,7 +38,7 @@ public class PilotOptions extends AbstractOptions implements Serializable {
         addOption(adv, "melee_specialist", false); //$NON-NLS-1$
         addOption(adv, "pain_resistance", false); //$NON-NLS-1$
         addOption(adv, "tactical_genius", false); //$NON-NLS-1$
-        addOption(adv, "weapon_specialist", new Vector()); //$NON-NLS-1$
+        addOption(adv, "weapon_specialist", new Vector<String>()); //$NON-NLS-1$
         addOption(adv, "gunnery_laser", false); //$NON-NLS-1$
         addOption(adv, "gunnery_missile", false); //$NON-NLS-1$
         addOption(adv, "gunnery_ballistic", false); //$NON-NLS-1$

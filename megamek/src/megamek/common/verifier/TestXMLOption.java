@@ -106,7 +106,7 @@ public class TestXMLOption implements TestEntityOption {
     }
 
     public void readXMLOptions(ParsedXML node) {
-        for (Enumeration e = node.elements(); e.hasMoreElements();) {
+        for (Enumeration<?> e = node.elements(); e.hasMoreElements();) {
             ParsedXML child = (ParsedXML) e.nextElement();
             if (child.getName().equals(CEIL_WEIGHT)) {
                 readCeilWeight(child);
@@ -143,7 +143,7 @@ public class TestXMLOption implements TestEntityOption {
     }
 
     private void readCeilWeight(ParsedXML node) {
-        for (Enumeration e = node.elements(); e.hasMoreElements();) {
+        for (Enumeration<?> e = node.elements(); e.hasMoreElements();) {
             ParsedXML child = (ParsedXML) e.nextElement();
             String name = child.getName();
             if (name.equals(ENGINE))

@@ -3655,24 +3655,20 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             } else if (entity.isProne()) {
                 // draw "PRONE"
                 graph.setColor(Color.darkGray);
-                graph
-                        .drawString(
+                graph.drawString(
                                 Messages.getString("BoardView1.PRONE"), 26, 39); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
-                graph
-                        .drawString(
+                graph.drawString(
                                 Messages.getString("BoardView1.PRONE"), 25, 38); //$NON-NLS-1$
             } else if (crewStunned > 0) {
                 // draw STUNNED
                 graph.setColor(Color.darkGray);
-                graph
-                        .drawString(
+                graph.drawString(
                                 Messages
                                         .getString(
                                                 "BoardView1.STUNNED", new Object[] { crewStunned }), 22, 48); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
-                graph
-                        .drawString(
+                graph.drawString(
                                 Messages
                                         .getString(
                                                 "BoardView1.STUNNED", new Object[] { crewStunned }), 21, 47); //$NON-NLS-1$
@@ -3745,9 +3741,9 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
             if (entity.isHullDown()) {
                 // draw "D"
                 graph.setColor(Color.darkGray);
-                graph.drawString("Hull Down", 40, 71); //$NON-NLS-1$
-                graph.setColor(Color.black);
-                graph.drawString("Hull Down", 39, 70); //$NON-NLS-1$                
+                graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), 15, 39); //$NON-NLS-1$
+                graph.setColor(Color.yellow);
+                graph.drawString(Messages.getString("UnitOverview.HULLDOWN"), 14, 38); //$NON-NLS-1$                
             } else if (entity instanceof Infantry) {
                 int dig = ((Infantry) entity).getDugIn();
                 if (dig == Infantry.DUG_IN_COMPLETE) {

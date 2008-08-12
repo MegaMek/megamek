@@ -17,7 +17,6 @@ package megamek.server;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IBoard;

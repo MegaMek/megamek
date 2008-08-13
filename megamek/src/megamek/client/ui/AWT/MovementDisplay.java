@@ -1407,6 +1407,11 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
                 nagReport.append(addNag(rollTarget));
             }
             
+            int lightPenalty = entity.getGame().getPlanetaryConditions().getLightPilotPenalty();
+            if(lightPenalty > 0) {
+                rollTarget.addModifier(lightPenalty, entity.getGame().getPlanetaryConditions().getLightCurrentName());
+            }
+
             //check if we are moving recklessly
             rollTarget = entity.checkRecklessMove(step, curHex, lastPos, curPos, lastElevation);
             if (rollTarget.getValue() != TargetRoll.CHECK_FALSE) {

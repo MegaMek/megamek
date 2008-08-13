@@ -115,8 +115,16 @@ exact "Fury (Upgrade)" "leopard.gif"
 #Jumpships
 chassis "Invader" "invader.gif"
 
+#Transport Ships
+chassis "Atreus" "atreus.gif"
+chassis "Davion" "whirlwind.gif"
+chassis "Leviathan II" "leviathan.gif"
+chassis "Quixote" "quixote.gif"
+chassis "Robinson" "robinson.gif"
+
 #Warships
 chassis "Aegis" "aegis.gif"
+chassis "Agamemnon" "agamemnon.gif"
 chassis "Avalon" "avalon.gif"
 chassis "Avatar" "avatarWS.gif"
 chassis "Dante" "dante.gif"
@@ -124,6 +132,7 @@ chassis "Black Lion" "black_lion.gif"
 chassis "Cameron" "cameron.gif"
 chassis "Carrack" "carrack.gif"
 chassis "Conqueror" "conqueror.gif"
+chassis "Dui Shi Wang" "dui_shi_wang.gif"
 chassis "Eagle" "EagleWS.gif"
 chassis "Essex" "essex.gif"
 chassis "Farragut" "farragut.gif"
@@ -148,15 +157,19 @@ chassis "Naga" "naga_warship.gif"
 chassis "Nightlord" "nightlord.gif"
 chassis "Potemkin" "potemkin.gif"
 chassis "Riga" "riga.gif"
+chassis "Smarkand" "smarkand.gif"
 chassis "Sovetskii Soyuz" "sovetskii_soyuz.gif"
 chassis "Suffren" "suffren.gif"
+chassis "Tatsumaki" "tatsumaki.gif"
 chassis "Texas" "texas.gif"
+chassis "Tharkad" tharkad.gif"
 chassis "Thera" "thera.gif"
 chassis "Vincent" "vincent.gif"
 chassis "Volga" "volga.gif"
 chassis "Whirlwind" "whirlwind.gif"
 chassis "York" "york.gif"
-chassi "Zechetinu" "zechetinu.gif"
+chassis "Zechetinu" "zechetinu.gif"
+chassis "Zechetinu II" "zechetinu.gif"
 
 # Infantry
 chassis "Achileus" "isbattlearmor-b.gif"
@@ -1601,7 +1614,6 @@ chassis "Zeus" "V_Zeus.gif"
 exact "Zeus ZEU-6T" "V_ZeusT.gif"
 exact "Zeus ZEU-9S" "V_ZeusT.gif"
 exact "Zeus ZEU-9T" "V_ZeusT.gif"
-
 
 # Protomechs
 chassis "Basilisk" "basilisk.gif"

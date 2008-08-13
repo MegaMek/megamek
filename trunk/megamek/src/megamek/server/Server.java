@@ -14832,6 +14832,8 @@ public class Server implements Runnable {
                             // If the head is destroyed, kill the crew.
                             
                             if (te instanceof Mech && hit.getLocation() == Mech.LOC_HEAD
+                                    && !te.getCrew().isDead()
+                                    && !te.getCrew().isDoomed()
                                     && game.getOptions().booleanOption("tacops_skin_of_the_teeth_ejection") ) {
                                 Mech mech = (Mech) te;
                                 if (mech.isAutoEject()) {
@@ -16791,7 +16793,7 @@ public class Server implements Runnable {
                     numEngineHits += en.getHitCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_ENGINE, Mech.LOC_LT);
 
                     engineExploded = checkEngineExplosion(en, vDesc, numEngineHits);
-                    if (!engineExploded && numEngineHits >= 4) {
+                    if (!engineExploded && numEngineHits > 2) {
                         // third engine hit
                         vDesc.addAll(destroyEntity(en, "engine destruction"));
                         if (game.getOptions().booleanOption("auto_abandon_unit")) {

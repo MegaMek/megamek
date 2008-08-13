@@ -24,6 +24,7 @@ v0.33.30-dev (SVN)
 + Bug: able to trip units that are not at the same elevation
 + Coolant Pods are now effected by Heat Sink Coolant Failure Mods
 + Bug: Careful stand not causing Movement Modifier when attacking.
++ Re-organized unit files
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

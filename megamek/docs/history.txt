@@ -26,6 +26,7 @@ v0.33.30-dev (SVN)
 + Bug: Careful stand not causing Movement Modifier when attacking.
 + Re-organized unit files
 + Bug 2048658: 3 Engine Crits
++ Bug 2049743: Several bugs
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

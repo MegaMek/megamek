@@ -846,7 +846,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                     toHit.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
                 }
             } else if(windCond == PlanetaryConditions.WI_TORNADO_F4) {
-                toHit.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
+                    toHit.addModifier(3, PlanetaryConditions.getWindDisplayableName(windCond));
             }
         }
         
@@ -1973,7 +1973,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             return "No missile fire in a tornado";
         }
         
-        if(windCond == PlanetaryConditions.WI_TORNADO_F13 && !game.getBoard().inSpace() && 
+        if(windCond == PlanetaryConditions.WI_TORNADO_F4 && !game.getBoard().inSpace() && 
                 (wtype.hasFlag(WeaponType.F_MISSILE) || wtype.hasFlag(WeaponType.F_BALLISTIC))) {
             return "No missile or ballistic fire in an F4 tornado";
         }

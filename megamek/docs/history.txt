@@ -30,6 +30,7 @@ v0.33.30-dev (SVN)
 + Bug Night Movement PSR not shown when reckless movement is used
 + Bug: F1-F3 Tornado's showing as F4 rules.
 + Bug: Ammo Explosion not hurting nearby units.
++ Bug: Direct Blow increasing cluster weapons damage instead of just hits on the CHT
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

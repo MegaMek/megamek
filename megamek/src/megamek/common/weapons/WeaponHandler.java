@@ -505,13 +505,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
         nDamage = nDamPerHit * Math.min(nCluster, hits);
 
         if ( bDirect && (!(target instanceof Infantry) || target instanceof BattleArmor)){
+            nDamage = Math.min(nDamage+(toHit.getMoS()/3), nDamage*2);
             if ( (this instanceof LBXHandler || this instanceof RapidfireACWeaponHandler 
                     || this instanceof MissileWeaponHandler
                     || this instanceof HAGWeaponHandler)
                     && !(this instanceof ThunderBoltWeaponHandler) ){
-                nDamage = Math.min(nDamage+(toHit.getMoS()/3), wtype.getRackSize()); 
-            } else{
-                nDamage = Math.min(nDamage+(toHit.getMoS()/3), nDamage*2);
+                nDamage = nDamPerHit * Math.min(nCluster, hits);
             }
             hit.makeDirectBlow(toHit.getMoS()/3);
         }

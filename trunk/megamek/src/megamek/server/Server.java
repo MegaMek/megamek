@@ -19279,12 +19279,20 @@ public class Server implements Runnable {
             if (m.getType() instanceof AmmoType && !m.getType().hasInstantModeSwitch() && mode <= 0) {
                 m.setPendingDump(mode == -1);
             } else {
-                m.setMode(mode);
+                if ( !m.setMode(mode) ){
+                    System.err.println(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + " trying to compensate");
+                    sendServerChat(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + " trying to compensate");
+                    e.setGameOptions(game);
+                    
+                    if ( !m.setMode(mode) ){
+                        System.err.println(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + " unable to compensate");
+                        sendServerChat(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + " unable to compensate");
+                    }
+                    
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            System.err.println(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + ": " + ex.getMessage());
-            sendServerChat(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + ": " + ex.getMessage());
         }
 
     }

@@ -505,12 +505,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
         nDamage = nDamPerHit * Math.min(nCluster, hits);
 
         if ( bDirect && (!(target instanceof Infantry) || target instanceof BattleArmor)){
-            nDamage = Math.min(nDamage+(toHit.getMoS()/3), nDamage*2);
-            if ( (this instanceof LBXHandler || this instanceof RapidfireACWeaponHandler 
-                    || this instanceof MissileWeaponHandler
-                    || this instanceof HAGWeaponHandler)
-                    && !(this instanceof ThunderBoltWeaponHandler) ){
-                nDamage = nDamPerHit * Math.min(nCluster, hits);
+            
+            if ( canDoDirectBlowDamage() ){
+                nDamage = Math.min(nDamage+(toHit.getMoS()/3), nDamage*2);
             }
             hit.makeDirectBlow(toHit.getMoS()/3);
         }
@@ -758,6 +755,10 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.add(r);
         }
         return nDamage;
+    }
+    
+    protected boolean canDoDirectBlowDamage(){
+        return true;
     }
 
 }

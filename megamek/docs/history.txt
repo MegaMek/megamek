@@ -32,6 +32,7 @@ v0.33.30-dev (SVN)
 + Bug: Ammo Explosion not hurting nearby units.
 + Bug: Direct Blow increasing cluster weapons damage instead of just hits on the CHT
 + Bug 2055501: Errors/Typos in Game Options
++ Bug: Streak weapons doing double damage with Direct Blow
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

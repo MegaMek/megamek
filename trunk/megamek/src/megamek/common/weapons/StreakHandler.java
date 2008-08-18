@@ -100,6 +100,10 @@ public class StreakHandler extends MissileWeaponHandler {
             nMissilesModifier -= 2;
         }
 
+        if ( bDirect ){
+            nMissilesModifier += (toHit.getMoS()/3)*2;
+        }
+
         int missilesHit;
         int amsMod = getAMSHitsMod(vPhaseReport) + nMissilesModifier;
         if (amsMod == 0) {
@@ -199,6 +203,10 @@ public class StreakHandler extends MissileWeaponHandler {
      */
     protected boolean handleSpecialMiss(Entity entityTarget,
             boolean targetInBuilding, Building bldg, Vector<Report> vPhaseReport) {
+        return false;
+    }
+    
+    protected boolean canDoDirectBlowDamage(){
         return false;
     }
 }

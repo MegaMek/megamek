@@ -157,4 +157,9 @@ public class LBXHandler extends AmmoWeaponHandler {
     protected boolean usesClusterTable() {
         return ((AmmoType) ammo.getType()).getMunitionType() == AmmoType.M_CLUSTER;
     }
+    
+    protected boolean canDoDirectBlowDamage(){
+        return false;
+    }
+
 }

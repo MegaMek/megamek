@@ -123,6 +123,16 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                     r.add(toHit.getTableDesc());
                     r.newlines = 0;
                     vPhaseReport.addElement(r);
+                    if (nMod != 0) {
+                        if (nMod > 0)
+                            r = new Report(3340);
+                        else
+                            r = new Report(3341);
+                        r.subject = subjectId;
+                        r.add(nMod);
+                        r.newlines = 0;
+                        vPhaseReport.addElement(r);
+                    }
                     r = new Report(3345);
                     r.subject = subjectId;
                     r.newlines = 0;
@@ -182,9 +192,9 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                 //ok, more than 1 shot, +1 for cluster
                 toReturn += 1;
             }
-        }if (bGlancing) {
+        }/*if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
-        }
+        }*/
         
         if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
             toReturn = (int) Math.floor(toReturn * .75);

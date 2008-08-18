@@ -69,9 +69,9 @@ public class RapidfireACWeaponHandler extends UltraWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
         }
-        if (bGlancing) {
+       /* if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
-        }
+        }*/
         
         if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
             toReturn = (int) Math.floor(toReturn * .75);

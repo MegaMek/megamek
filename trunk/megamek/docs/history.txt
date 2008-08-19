@@ -37,6 +37,7 @@ v0.33.30-dev (SVN)
 + Bug: 2051697 "permanent" hull down
 + Bug: Dial down Heat/Damage now display correctly on MekDisplay
 + Changed to how game options are loaded in Entity.
++ Bug: Tool tips not centering on Mouse Point
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

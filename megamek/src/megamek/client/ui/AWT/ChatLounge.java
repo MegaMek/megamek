@@ -1706,10 +1706,10 @@ public class ChatLounge extends AbstractPhaseDisplay implements ActionListener,
                 }
             }
             
-            for (Enumeration<Entity> entities =client.game.getEntities(); entities.hasMoreElements(); ){
+            /*for (Enumeration<Entity> entities =client.game.getEntities(); entities.hasMoreElements(); ){
                 Entity en = entities.nextElement();
-                en.setGameOptions(client.game);
-            }
+                en.setGameOptions();
+            }*/
 
             boolean done = !client.getLocalPlayer().isDone();
             client.sendDone(done);

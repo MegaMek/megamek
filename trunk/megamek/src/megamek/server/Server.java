@@ -19282,7 +19282,7 @@ public class Server implements Runnable {
                 if ( !m.setMode(mode) ){
                     System.err.println(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + " trying to compensate");
                     sendServerChat(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + " trying to compensate");
-                    e.setGameOptions(game);
+                    e.setGameOptions();
                     
                     if ( !m.setMode(mode) ){
                         System.err.println(e.getShortName()+ ": " + m.getName() + ": " + e.getLocationName(m.getLocation()) + " unable to compensate");

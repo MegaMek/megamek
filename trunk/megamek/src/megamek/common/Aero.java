@@ -2076,8 +2076,8 @@ public class Aero
         return accDecNow;
     }
 
-    public void setGameOptions(IGame game) {
-        super.setGameOptions(game);
+    public void setGameOptions() {
+        super.setGameOptions();
         
         for (Mounted mounted : this.getWeaponList()) {
             if (mounted.getType() instanceof EnergyWeapon 

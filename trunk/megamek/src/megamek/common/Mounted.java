@@ -947,6 +947,11 @@ public class Mounted implements Serializable, RoundUpdated {
      */
     public int getCurrentHeat() {
         if(this.getType() instanceof WeaponType) {
+            WeaponType wtype = (WeaponType)this.getType();
+            if ( wtype.hasFlag(WeaponType.F_ENERGY) && wtype.hasModes() ){
+                return  Compute.dialDownHeat(this, wtype)*getCurrentShots();
+            }
+
             return ((WeaponType)this.getType()).getHeat()*getCurrentShots();
         }
         return 0;

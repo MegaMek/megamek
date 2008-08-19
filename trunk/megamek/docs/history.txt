@@ -35,6 +35,8 @@ v0.33.30-dev (SVN)
 + Bug: Streak weapons doing double damage with Direct Blow
 + Bug: Modes not loading correctly for MekWars
 + Bug: 2051697 "permanent" hull down
++ Bug: Dial down Heat/Damage now display correctly on MekDisplay
++ Changed to how game options are loaded in Entity.
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

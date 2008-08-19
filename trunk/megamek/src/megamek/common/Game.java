@@ -1119,6 +1119,7 @@ public class Game implements Serializable, IGame {
 
     public void addEntity(int id, Entity entity) {
         entity.setGame(this);
+        entity.setGameOptions();
         entities.addElement(entity);
         entityIds.put(new Integer(id), entity);
 

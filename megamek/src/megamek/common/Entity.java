@@ -6885,7 +6885,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             }
 
             if (mounted.getLocation() == location && mounted.isRearMounted() == rearMount) {
-                heat += mounted.getCurrentHeat();
+                    heat += mounted.getCurrentHeat();
             }
         }
         return heat;
@@ -7064,11 +7064,15 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         return Entity.NONE;
     }
 
-    public void setGameOptions(IGame game) {
+    public void setGameOptions() {
 
+        if ( game == null ){
+            return;
+        }
+        
         for (Mounted mounted : this.getWeaponList()) {
             if (mounted.getType() instanceof GaussWeapon
-                    &&  game != null && game.getOptions().booleanOption("tacops_gauss_weapons")) {
+                    && game.getOptions().booleanOption("tacops_gauss_weapons")) {
 
                 String[] modes = {"Powered Up","Powered Down"};
                 ((WeaponType) mounted.getType()).setModes(modes);

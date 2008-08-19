@@ -1465,12 +1465,12 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
 
             // adjust horizontal location for the tipWindow if it goes off the
             // frame
-            if (scroller.getLocationOnScreen().x + scroller.getSize().width < tipLoc.x
+            if (this.getLocationOnScreen().x + this.getSize().width < tipLoc.x
                     + tipWindow.getSize().width + 10) {
-                if (scroller.getSize().width > tipWindow.getSize().width) {
+                if (this.getSize().width > tipWindow.getSize().width) {
                     // bound it by the right edge of the frame
                     tipLoc.x -= tipLoc.x + tipWindow.getSize().width + 10
-                            - scroller.getSize().width - scroller.getLocation().x;
+                            - this.getSize().width - this.getLocation().x;
                 } else {
                     // too big to fit, left justify to the frame (roughly).
                     // how do I extract the first term of HEX_SIZE to use
@@ -5525,7 +5525,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 names[loop] = entities.elementAt(loop).getDisplayName();
             }
             SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
-                    null,
+                    (Frame)SwingUtilities.getAncestorOfClass(Frame.class, this),
                     Messages.getString("BoardView1.ChooseEntityDialog.title"), //$NON-NLS-1$
                     Messages
                             .getString(

@@ -13,6 +13,7 @@
  */
 package megamek.common.weapons;
 
+import megamek.common.AmmoType;
 import megamek.common.TechConstants;
 
 /**
@@ -35,6 +36,7 @@ public class CLStreakLRM15 extends LRMWeapon {
         this.setInternalName("CLStreakLRM15");
         this.addLookupName("Clan Streak LRM-15");
         this.addLookupName("Clan Streak LRM 15");
+        this.ammoType = AmmoType.T_LRM_STREAK;
         this.heat = 5;
         this.rackSize = 15;
         this.shortRange = 7;

@@ -2288,6 +2288,31 @@ public class Server implements Runnable {
         return vr.victory();
     }// end victory
 
+    private boolean isPlayerForcedVictory(){
+        // check game options
+        if (!game.getOptions().booleanOption("skip_forced_victory")) {
+                return false;
+        }
+
+        if ( !game.isForceVictory() ){
+            return false;
+        }
+
+        for ( Player player : game.getPlayersVector() ){
+            
+            if ( player.getId() == game.getVictoryPlayerId()
+                    || (player.getTeam() == game.getVictoryTeam() && game.getVictoryTeam() != Player.TEAM_NONE) ){
+                continue;
+            }
+                
+            if ( !player.admitsDefeat() ){
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
     /**
      * Applies board settings. This loads and combines all the boards that were
      * specified into one mega-board and sets that board as current.
@@ -2830,11 +2855,16 @@ public class Server implements Runnable {
     private void setIneligible(IGame.Phase phase) {
         Vector<Entity> assistants = new Vector<Entity>();
         boolean assistable = false;
-        for (Entity entity : game.getEntitiesVector()) {
-            if (entity.isEligibleFor(phase)) {
-                assistable = true;
-            } else {
-                assistants.addElement(entity);
+        
+        if ( isPlayerForcedVictory() ){
+            assistants.addAll(game.getEntitiesVector());
+        }else {
+            for (Entity entity : game.getEntitiesVector()) {
+                if (entity.isEligibleFor(phase)) {
+                    assistable = true;
+                } else {
+                    assistants.addElement(entity);
+                }
             }
         }
         for (Entity assistant : assistants) {

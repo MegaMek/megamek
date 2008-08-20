@@ -41,6 +41,7 @@ v0.33.30-dev (SVN)
 + Bug: Ammo explosion rule causing NPE
 + Bug: Visual Range not calculated correctly in Planetary Conditions.
 + Bug 2062129: skips fire phase when /victory declared and no /defeat done
++ Bug: Streak LRMs not loading ammo correctly
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

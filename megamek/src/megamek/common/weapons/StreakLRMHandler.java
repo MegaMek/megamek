@@ -17,9 +17,12 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.common.BattleArmor;
+import megamek.common.Compute;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
+import megamek.common.Infantry;
 import megamek.common.Minefield;
 import megamek.common.Report;
 import megamek.common.Targetable;
@@ -43,6 +46,29 @@ public class StreakLRMHandler extends StreakHandler {
     public StreakLRMHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
+     */
+    protected int calcDamagePerHit() {
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+            int toReturn = (int)Compute.directBlowInfantryDamage(wtype.getRackSize()*2, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_CLUSTER_MISSILE);
+            return toReturn;
+        }
+        return 1;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see megamek.common.weapons.WeaponHandler#calcnCluster()
+     */
+    protected int calcnCluster() {
+        return 5;
+    }
+
 
     /*
      * (non-Javadoc)

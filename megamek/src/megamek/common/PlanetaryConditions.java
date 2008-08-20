@@ -623,6 +623,7 @@ public class PlanetaryConditions implements Serializable {
         //Needed for MekWars for Maximum Visual Range.
         if ( en == null ) {
             isMechVee = true;
+            Spotlight = targetSpotlight;
         }else {
             Spotlight = en.isUsingSpotlight();
             isMechVee = en instanceof Mech || en instanceof Tank;
@@ -671,7 +672,7 @@ public class PlanetaryConditions implements Serializable {
             if(isLargeCraft)
                 return 14;
             return 6;
-        } else if((lightConditions >= L_DAY && !Spotlight && !targetSpotlight)
+        } else if((lightConditions > L_DAY && !Spotlight && !targetSpotlight)
                 || ((weatherConditions == WE_HEAVY_SNOW || weatherConditions == WE_MOD_SNOW) && windStrength >= WI_MOD_GALE) ) {
             if(isMechVee)
                 return 15;
@@ -680,7 +681,7 @@ public class PlanetaryConditions implements Serializable {
             if(isLargeCraft)
                 return 20;
             return 8;
-        } else if(lightConditions >= L_DAY && !targetSpotlight) {
+        } else if(lightConditions > L_DAY && !targetSpotlight) {
             if(isMechVee)
                 return 25;
             if(isAero)
@@ -696,7 +697,7 @@ public class PlanetaryConditions implements Serializable {
             if(isLargeCraft)
                 return 25;
             return 10;
-        } else if(lightConditions >= L_DAY
+        } else if(lightConditions > L_DAY
                 || weatherConditions == WE_LIGHT_SNOW || weatherConditions == WE_LIGHT_RAIN 
                 || weatherConditions == WE_LIGHT_HAIL || fog == FOG_LIGHT) {
             if(isMechVee)

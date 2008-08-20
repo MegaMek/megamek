@@ -39,6 +39,7 @@ v0.33.30-dev (SVN)
 + Changed to how game options are loaded in Entity.
 + Bug: Tool tips not centering on Mouse Point
 + Bug: Ammo explosion rule causing NPE
++ Bug: Visual Range not calculated correctly in Planetary Conditions.
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

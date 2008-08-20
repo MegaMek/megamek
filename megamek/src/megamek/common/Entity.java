@@ -5668,12 +5668,6 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         if (isCarcass())
             return false;
 
-        // check game options
-        if (game.getOptions().booleanOption("skip_forced_victory")) {
-            if (game.isForceVictory())
-                return false;
-        }
-
         switch (phase) {
         case PHASE_MOVEMENT:
             return isEligibleForMovement();

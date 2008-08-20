@@ -42,6 +42,7 @@ v0.33.30-dev (SVN)
 + Bug: Visual Range not calculated correctly in Planetary Conditions.
 + Bug 2062129: skips fire phase when /victory declared and no /defeat done
 + Bug: Streak LRMs not loading ammo correctly
++ Bug: Streak LRM's using wrong Weapon Handler
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

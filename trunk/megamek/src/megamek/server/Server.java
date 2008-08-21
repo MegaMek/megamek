@@ -17316,6 +17316,8 @@ public class Server implements Runnable {
      * false, a single hit is applied - needed for MaxTech Heat Scale rule.
      */
     public Vector<Report> criticalEntity(Entity en, int loc, int critMod, boolean rollNumber, boolean isCapital) {
+        
+        critMod = Math.min(12, critMod);
         if (en instanceof Tank)
             return criticalTank((Tank) en, loc, critMod);
         if (en instanceof Aero)

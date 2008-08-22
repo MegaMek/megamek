@@ -24,7 +24,6 @@ import megamek.common.Infantry;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
 import megamek.server.Server;
-import megamek.server.Server.DamageType;
 
 /**
  * @author Sebastian Brocks
@@ -43,7 +42,6 @@ public class FiredrakeHandler extends WeaponHandler {
      */
     public FiredrakeHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
-        damageType = DamageType.FIREDRAKE;
     }
 
     /*

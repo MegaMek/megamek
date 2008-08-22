@@ -50,6 +50,7 @@ v0.33.30-dev (SVN)
 + Bug: fix 3d view.
 + Bug 2022141: "Firedrake" Assault Needler
 + Added BPod Code.
++ Bug: AP ammo and TC Ammo not doing full damage to Hardened Armor
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

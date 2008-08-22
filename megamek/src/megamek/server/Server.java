@@ -210,7 +210,7 @@ public class Server implements Runnable {
      * The DamageType enumeration is used for the damageEntity function.
      */
     public enum DamageType {
-        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, FIREDRAKE, IGNORE_PASSENGER, ANTI_TSM
+        NONE, FRAGMENTATION, FLECHETTE, ACID, INCENDIARY, IGNORE_PASSENGER, ANTI_TSM
     }
 
     // public final static String LEGAL_CHARS =
@@ -13959,16 +13959,6 @@ public class Server implements Runnable {
                 vDesc.addElement(r);
             }
             break;
-        case FIREDRAKE:
-            // Firedrake needler does 0 damage to armoured target
-            if (!isPlatoon) {
-                damage = 0;
-                r = new Report(6540);
-                r.subject = te_n;
-                r.indent(2);
-                r.newlines = 0;
-                vDesc.addElement(r);
-            }
         case ANTI_TSM:
             te.hitThisRoundByAntiTSM = true;
         default:

@@ -48,6 +48,7 @@ v0.33.30-dev (SVN)
 + Bug: Mechs carrying BAs on their backs shouldn't be able to dump ammunition
 + Bug: rapidfire MGs against conventional infantry should do normal damage
 + Bug: fix 3d view.
++ Bug 2022141: "Firedrake" Assault Needler
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

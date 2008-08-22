@@ -42,6 +42,7 @@ public class ACAPHandler extends AmmoWeaponHandler {
      * 
      */
     private static final long serialVersionUID = -4251291510045646817L;
+    protected int generalDamageType = HitData.DAMAGE_ARMOR_PIERCING;
 
     /**
      * @param t

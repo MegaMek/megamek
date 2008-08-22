@@ -40,6 +40,7 @@ public class SRMTandemChargeHandler extends SRMHandler {
      * 
      */
     private static final long serialVersionUID = 6292692766500970690L;
+    protected int generalDamageType = HitData.DAMAGE_ARMOR_PIERCING_MISSILE;
 
     /**
      * @param t

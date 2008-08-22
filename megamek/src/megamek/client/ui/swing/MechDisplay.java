@@ -2165,6 +2165,12 @@ public class MechDisplay extends JPanel {
                 m_bDumpAmmo.setEnabled(false);
                 m_chMode.setEnabled(false);
                 Mounted m = getSelectedEquipment();
+                boolean carryingBAsOnBack = false;
+                if (en instanceof Mech && (
+                        en.getExteriorUnitAt(Mech.LOC_CT, true) != null ||
+                        en.getExteriorUnitAt(Mech.LOC_LT, true) != null ||
+                        en.getExteriorUnitAt(Mech.LOC_RT, true) != null))
+                    carryingBAsOnBack = true;
 
                 boolean bOwner = (clientgui.getClient().getLocalPlayer() == en
                         .getOwner());
@@ -2179,7 +2185,8 @@ public class MechDisplay extends JPanel {
                         && en.isActive()
                         && clientgui.getClient().game.getOptions().intOption(
                                 "dumping_from_round") <= clientgui.getClient().game
-                                .getRoundCount()) {
+                                .getRoundCount()
+                        && !carryingBAsOnBack) {
                     m_bDumpAmmo.setEnabled(true);
                     if (clientgui.getClient().game.getOptions().booleanOption(
                             "tacops_hotload")

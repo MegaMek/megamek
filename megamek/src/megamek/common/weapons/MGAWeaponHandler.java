@@ -165,7 +165,7 @@ public class MGAWeaponHandler extends MGHandler {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg, entityTarget.getPosition());
             for (Report report : buildingReport) {
                 report.subject = subjectId;
             }

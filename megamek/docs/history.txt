@@ -34,7 +34,7 @@ v0.33.30-dev (SVN)
 + Bug 2055501: Errors/Typos in Game Options
 + Bug: Streak weapons doing double damage with Direct Blow
 + Bug: Modes not loading correctly for MekWars
-+ Bug: 2051697 "permanent" hull down
++ Bug 2051697: "permanent" hull down
 + Bug: Dial down Heat/Damage now display correctly on MekDisplay
 + Changed to how game options are loaded in Entity.
 + Bug: Tool tips not centering on Mouse Point
@@ -44,6 +44,7 @@ v0.33.30-dev (SVN)
 + Bug: Streak LRMs not loading ammo correctly
 + Bug: Streak LRM's using wrong Weapon Handler
 + Bug: Direct Blows causing Crit rolls greater then 12
++ Implemented multi-hex buildings
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

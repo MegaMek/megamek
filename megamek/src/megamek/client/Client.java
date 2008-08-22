@@ -802,7 +802,7 @@ public class Client implements IClientCommandHandler {
                 newMines.add(mf);    
         }
         if(newMines.size() > 0)
-            game.resetMinefieldDensity((Vector<Minefield>) newMines);
+            game.resetMinefieldDensity(newMines);
     }
 
     @SuppressWarnings("unchecked")
@@ -814,7 +814,7 @@ public class Client implements IClientCommandHandler {
     @SuppressWarnings("unchecked")
     protected void receiveBuildingCollapse(Packet packet) {
         game.getBoard()
-                .collapseBuilding((Vector<Building>) packet.getObject(0));
+                .collapseBuilding((Vector<Coords>) packet.getObject(0));
     }
 
     /**

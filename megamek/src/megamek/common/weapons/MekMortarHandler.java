@@ -236,7 +236,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
         if (targetInBuilding && bldg != null) {
-            bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF() / 10.0);
+            bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
         }
 
         // Make sure the player knows when his attack causes no damage.
@@ -267,7 +267,7 @@ public class MekMortarHandler extends AmmoWeaponHandler {
             if (target.getTargetType() == Targetable.TYPE_BUILDING) {
                 // The building takes the full brunt of the attack.
                 nDamage = nDamPerHit * hits;
-                handleBuildingDamage(vPhaseReport, bldg, nDamage, bSalvo);
+                handleBuildingDamage(vPhaseReport, bldg, nDamage, bSalvo, target.getPosition());
                 // And we're done!
                 return false;
             }

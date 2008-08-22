@@ -19,6 +19,8 @@ import gd.xml.tiny.ParsedXML;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import megamek.common.Building;
@@ -66,14 +68,8 @@ public class BuildingEncoder {
         out.write(Integer.toString(bldg.getId()));
         out.write("\" type=\"");
         out.write(Integer.toString(bldg.getType()));
-        out.write("\" currentCF=\"");
-        out.write(Integer.toString(bldg.getCurrentCF()));
-        out.write("\" phaseCF=\"");
-        out.write(Integer.toString(bldg.getPhaseCF()));
         out.write("\" name=\"");
         out.write(bldg.getName());
-        out.write("\" isBurning=\"");
-        out.write(bldg.isBurning() ? "true" : "false");
         out.write("\" >");
 
         // Write the coordinate of the building.
@@ -83,6 +79,12 @@ public class BuildingEncoder {
                 // Encode the infernos as these coordinates.
                 coords = (Coords) iter.nextElement();
                 CoordsEncoder.encode(coords, out);
+                out.write("\" currentCF=\"");
+                out.write(Integer.toString(bldg.getCurrentCF(coords)));
+                out.write("\" phaseCF=\"");
+                out.write(Integer.toString(bldg.getPhaseCF(coords)));
+                out.write("\" isBurning=\"");
+                out.write(bldg.isBurning(coords) ? "true" : "false");
             }
         }
         out.write("</buildingData>");
@@ -108,6 +110,9 @@ public class BuildingEncoder {
         int attrVal = 0;
         Building retVal = null;
         Vector<Coords> coordVec = new Vector<Coords>();
+        Map<Coords, Boolean> burning = new HashMap<Coords, Boolean>();
+        Map<Coords, Integer> curCF = new HashMap<Coords, Integer>();
+        Map<Coords, Integer> phaseCF = new HashMap<Coords, Integer>();
         Enumeration<?> subnodes = null;
         ParsedXML subnode = null;
         Coords coords = null;
@@ -147,6 +152,48 @@ public class BuildingEncoder {
                         if (null != coords) {
                             coordVec.addElement(coords);
                         }
+                        // Do we have a 'currentCF' attribute?
+                        attrStr = subnode.getAttribute("currentCF");
+                        if (null != attrStr) {
+
+                            // Try to pull the currentCF from the attribute string
+                            try {
+                                attrVal = Integer.parseInt(attrStr);
+                            } catch (NumberFormatException nfexp) {
+                                throw new IllegalStateException(
+                                        "Couldn't get an integer from " + attrStr);
+                            }
+
+                            // Do we have a valid value?
+                            if (0 > attrVal) {
+                                throw new IllegalStateException(
+                                        "Illegal value for currentCF: " + attrStr);
+                            }
+                            curCF.put(coords, attrVal);
+                        }
+
+                        // Do we have a 'phaseCF' attribute?
+                        attrStr = subnode.getAttribute("phaseCF");
+                        if (null != attrStr) {
+
+                            // Try to pull the phaseCF from the attribute string
+                            try {
+                                attrVal = Integer.parseInt(attrStr);
+                            } catch (NumberFormatException nfexp) {
+                                throw new IllegalStateException(
+                                        "Couldn't get an integer from " + attrStr);
+                            }
+
+                            // Do we have a valid value?
+                            if (0 >= attrVal) {
+                                throw new IllegalStateException(
+                                        "Illegal value for phaseCF: " + attrStr);
+                            }
+                            phaseCF.put(coords, attrVal);
+                        }
+                        // Set the building's 'isBurning' flag.
+                        burning.put(coords,StringUtil.parseBoolean(child
+                                .getAttribute("isBurning")));
                     }
 
                 } // Check the next subnode
@@ -215,50 +262,15 @@ public class BuildingEncoder {
                 } catch (IllegalArgumentException iaexp) {
                     throw new IllegalStateException(iaexp.getMessage());
                 }
-
-                // Do we have a 'currentCF' attribute?
-                attrStr = child.getAttribute("currentCF");
-                if (null != attrStr) {
-
-                    // Try to pull the currentCF from the attribute string
-                    try {
-                        attrVal = Integer.parseInt(attrStr);
-                    } catch (NumberFormatException nfexp) {
-                        throw new IllegalStateException(
-                                "Couldn't get an integer from " + attrStr);
-                    }
-
-                    // Do we have a valid value?
-                    if (0 > attrVal) {
-                        throw new IllegalStateException(
-                                "Illegal value for currentCF: " + attrStr);
-                    }
-                    retVal.setCurrentCF(attrVal);
+                for (Coords coord : burning.keySet()) {
+                    retVal.setBurning(burning.get(coord), coord);
                 }
-
-                // Do we have a 'phaseCF' attribute?
-                attrStr = child.getAttribute("phaseCF");
-                if (null != attrStr) {
-
-                    // Try to pull the phaseCF from the attribute string
-                    try {
-                        attrVal = Integer.parseInt(attrStr);
-                    } catch (NumberFormatException nfexp) {
-                        throw new IllegalStateException(
-                                "Couldn't get an integer from " + attrStr);
-                    }
-
-                    // Do we have a valid value?
-                    if (0 >= attrVal) {
-                        throw new IllegalStateException(
-                                "Illegal value for phaseCF: " + attrStr);
-                    }
-                    retVal.setPhaseCF(attrVal);
+                for (Coords coord : curCF.keySet()) {
+                    retVal.setCurrentCF(curCF.get(coord), coord);
                 }
-
-                // Set the building's 'isBurning' flag.
-                retVal.setBurning(StringUtil.parseBoolean(child
-                        .getAttribute("isBurning")));
+                for (Coords coord : phaseCF.keySet()) {
+                    retVal.setPhaseCF(phaseCF.get(coord), coord);
+                }
 
             } // End found-"buildingData"-child
 

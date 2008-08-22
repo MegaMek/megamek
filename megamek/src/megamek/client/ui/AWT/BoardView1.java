@@ -1640,7 +1640,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 buf.append(" "); //$NON-NLS-1$
                 buf.append(bldg.toString());
                 buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
-                buf.append(bldg.getCurrentCF());
+                buf.append(bldg.getCurrentCF(mcoords));
                 strings[stringsIndex] = buf.toString();
                 stringsIndex += 1;
             }
@@ -1654,7 +1654,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 buf.append(" "); //$NON-NLS-1$
                 buf.append(bldg.toString());
                 buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
-                buf.append(bldg.getCurrentCF());
+                buf.append(bldg.getCurrentCF(mcoords));
                 strings[stringsIndex] = buf.toString();
                 stringsIndex += 1;
             }
@@ -1670,7 +1670,7 @@ public class BoardView1 extends Canvas implements IBoardView, BoardListener,
                 buf.append(" "); //$NON-NLS-1$
                 buf.append(bldg.toString());
                 buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
-                buf.append(bldg.getCurrentCF());
+                buf.append(bldg.getCurrentCF(mcoords));
                 strings[stringsIndex] = buf.toString();
                 stringsIndex += 1;
             }

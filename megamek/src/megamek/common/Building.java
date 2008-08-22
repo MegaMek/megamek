@@ -17,6 +17,8 @@ package megamek.common;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -48,19 +50,22 @@ public class Building implements Serializable {
      * The construction type of the building.
      */
     private int type = Building.UNKNOWN;
+    
+    private int collapsedHexes = 0;
+    
+    private int originalHexes = 0;
 
     /**
-     * The current construction factor of the building. Any damage immediately
+     * The current construction factor of the building hexes. Any damage immediately
      * updates this value.
      */
-    private int currentCF = Building.UNKNOWN;
-
+    private Map<Coords, Integer> currentCF = new HashMap<Coords, Integer>();
     /**
-     * The construction factor of the building at the start of this attack
+     * The construction factor of the building hexes at the start of this attack
      * phase. Damage that is received during the phase is applied at the end of
      * the phase.
      */
-    private int phaseCF = Building.UNKNOWN;
+    private Map<Coords, Integer> phaseCF = new HashMap<Coords, Integer>();
 
     /**
      * The name of the building.
@@ -70,7 +75,7 @@ public class Building implements Serializable {
     /**
      * Flag that indicates whether this building is burning
      */
-    private boolean burning = false;
+    private Map<Coords, Boolean> burning = new HashMap<Coords, Boolean>();
 
     public class DemolitionCharge implements Serializable {
         /**
@@ -120,18 +125,14 @@ public class Building implements Serializable {
                         + ", should contain the same type of building as "
                         + this.coordinates.elementAt(0).getBoardNum());
             }
-            boolean hexHasCF = nextHex.containsTerrain(Terrains.BLDG_CF);
-            if ((hexHasCF && this.currentCF != nextHex
-                    .terrainLevel(Terrains.BLDG_CF))
-                    || (!hexHasCF && this.currentCF != getDefaultCF(this.type))) {
-                throw new IllegalArgumentException("The coordinates, "
-                        + coords.getBoardNum()
-                        + ", should contain a building with the same CF as "
-                        + this.coordinates.elementAt(0).getBoardNum());
-            }
         }
         // We passed our tests, add the next hex to this building.
         this.coordinates.addElement(coords);
+        originalHexes++;
+        this.currentCF.put(coords, getDefaultCF(this.type));
+        this.phaseCF.put(coords, getDefaultCF(this.type));
+        
+        this.burning.put(coords, false);
 
         // Walk through the exit directions and
         // identify all hexes in this building.
@@ -182,6 +183,9 @@ public class Building implements Serializable {
 
         // The building occupies the given coords, at least.
         this.coordinates.addElement(coords);
+        originalHexes++;
+        
+        this.burning.put(coords, false);
 
         // Get the Hex for those coords.
         IHex startHex = board.getHex(coords);
@@ -194,8 +198,8 @@ public class Building implements Serializable {
         this.type = startHex.terrainLevel(structureType);
 
         // Insure that we've got a good type (and initialize our CF).
-        this.currentCF = getDefaultCF(this.type);
-        if (this.currentCF == Building.UNKNOWN) {
+        this.currentCF.put(coords, getDefaultCF(this.type));
+        if (this.currentCF.get(coords) == Building.UNKNOWN) {
             throw new IllegalArgumentException("Unknown construction type: "
                     + this.type + ".  The board is invalid.");
         }
@@ -203,13 +207,13 @@ public class Building implements Serializable {
         // Now read the *real* CF, if the board specifies one.
         if (structureType == Terrains.BUILDING
                 && startHex.containsTerrain(Terrains.BLDG_CF)) {
-            this.currentCF = startHex.terrainLevel(Terrains.BLDG_CF);
+            this.currentCF.put(coords, startHex.terrainLevel(Terrains.BLDG_CF));
         }
         if (structureType == Terrains.BRIDGE
                 && startHex.containsTerrain(Terrains.BRIDGE_CF)) {
-            this.currentCF = startHex.terrainLevel(Terrains.BRIDGE_CF);
+            this.currentCF.put(coords, startHex.terrainLevel(Terrains.BRIDGE_CF));
         }
-        this.phaseCF = this.currentCF;
+        this.phaseCF.putAll(currentCF);
 
         // Walk through the exit directions and
         // identify all hexes in this building.
@@ -260,13 +264,14 @@ public class Building implements Serializable {
         this.id = id;
         this.name = name;
         this.coordinates = coords;
-
         // Insure that we've got a good type (and initialize our CF).
-        this.currentCF = getDefaultCF(this.type);
-        this.phaseCF = this.currentCF;
-        if (this.currentCF == Building.UNKNOWN) {
-            throw new IllegalArgumentException("Invalid construction type: "
-                    + this.type + ".");
+        for (Coords coord : coordinates) {
+            this.currentCF.put(coord, getDefaultCF(this.type));
+            this.phaseCF.putAll(currentCF);
+            if (getDefaultCF(this.type) == Building.UNKNOWN) {
+                throw new IllegalArgumentException("Invalid construction type: "
+                        + this.type + ".");
+            }
         }
     }
 
@@ -312,67 +317,73 @@ public class Building implements Serializable {
     }
 
     /**
-     * Get the current construction factor of the building. Any damage
+     * Get the current construction factor of the building hex at the
+     * passed coords. Any damage
      * immediately updates this value.
+     * @param coords - the <code>Coords> of the hex in question
      * 
-     * @return the <code>int</code> value of the building's current
+     * @return the <code>int</code> value of the building hex's current
      *         construction factor. This value will be greater than or equal to
      *         zero.
      */
-    public int getCurrentCF() {
-        return this.currentCF;
+    public int getCurrentCF(Coords coords) {
+        return this.currentCF.get(coords);
     }
 
     /**
-     * Get the construction factor of the building at the start of the current
-     * phase. Damage that is received during the phase is applied at the end of
+     * Get the construction factor of the building hex at the passed coords 
+     * at the start of the current phase.
+     * Damage that is received during the phase is applied at the end of
      * the phase.
      * 
+     * @param coords - the <code>Coords> of the hex in question
      * @return the <code>int</code> value of the building's construction
      *         factor at the start of this phase. This value will be greater
      *         than or equal to zero.
      */
-    public int getPhaseCF() {
-        return this.phaseCF;
+    public int getPhaseCF(Coords coords) {
+        return this.phaseCF.get(coords);
     }
 
     /**
-     * Set the current construction factor of the building. Call this method
+     * Set the current construction factor of the building hex. Call this method
      * immediately when the building sustains any damage.
      * 
-     * @param cf - the <code>int</code> value of the building's current
+     * @param coords - the <code>Coords> of the hex in question
+     * @param cf - the <code>int</code> value of the building hex's current
      *            construction factor. This value must be greater than or equal
      *            to zero.
      * @exception If the passed value is less than zero, an
      *                <code>IllegalArgumentException</code> is thrown.
      */
-    public void setCurrentCF(int cf) {
+    public void setCurrentCF(int cf, Coords coords) {
         if (cf < 0) {
             throw new IllegalArgumentException(
                     "Invalid value for Construction Factor: " + cf);
         }
 
-        this.currentCF = cf;
+        this.currentCF.put(coords, cf);
     }
 
     /**
-     * Set the construction factor of the building for the start of the next
+     * Set the construction factor of the building hex for the start of the next
      * phase. Call this method at the end of the phase to apply damage sustained
      * by the building during the phase.
      * 
+     * @param coords - the <code>Coords> of the hex in question 
      * @param cf - the <code>int</code> value of the building's current
      *            construction factor. This value must be greater than or equal
      *            to zero.
      * @exception If the passed value is less than zero, an
      *                <code>IllegalArgumentException</code> is thrown.
      */
-    public void setPhaseCF(int cf) {
+    public void setPhaseCF(int cf, Coords coords) {
         if (cf < 0) {
             throw new IllegalArgumentException(
                     "Invalid value for Construction Factor: " + cf);
         }
 
-        this.phaseCF = cf;
+        this.phaseCF.put(coords, cf);
     }
 
     /**
@@ -472,8 +483,8 @@ public class Building implements Serializable {
      * 
      * @return <code>true</code> if the building is on fire.
      */
-    public boolean isBurning() {
-        return burning;
+    public boolean isBurning(Coords coords) {
+        return burning.get(coords);
     }
 
     /**
@@ -482,12 +493,32 @@ public class Building implements Serializable {
      * @param onFire - a <code>boolean</code> value that indicates whether
      *            this building is on fire.
      */
-    public void setBurning(boolean onFire) {
-        this.burning = onFire;
+    public void setBurning(boolean onFire, Coords coords) {
+        this.burning.put(coords, onFire);
     }
 
     public void addDemolitionCharge(int playerId, int damage) {
         DemolitionCharge charge = new DemolitionCharge(playerId, damage);
         demolitionCharges.add(charge);
+    }
+    
+    /**
+     * Remove one building hex from the building
+     * 
+     * @param coords - the <code>Coords</code> of the hex to be removed
+     */
+    public void removeHex(Coords coords) {
+        this.coordinates.remove(coords);
+        this.currentCF.remove(coords);
+        this.phaseCF.remove(coords);
+        collapsedHexes++;
+    }
+    
+    public int getOriginalHexCount() {
+        return originalHexes;
+    }
+    
+    public int getCollapsedHexCount() {
+        return collapsedHexes;
     }
 } // End public class Building implements Serializable

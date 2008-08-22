@@ -73,7 +73,7 @@ public class ACFlechetteHandler extends AmmoWeaponHandler {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector,
+     * @see megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
      *      megamek.common.Building, int, boolean)
      */
     protected void handleClearDamage(Vector<Report> vPhaseReport,

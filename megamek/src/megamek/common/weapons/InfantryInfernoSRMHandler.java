@@ -194,7 +194,7 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
         if (bMissed) {
             if (targetInBuilding && bldg != null) {
                 handleAccidentalBuildingDamage(vPhaseReport, bldg, hits,
-                        nDamPerHit);
+                        nDamPerHit, target.getPosition());
             } // End missed-target-in-building
             return false;
 

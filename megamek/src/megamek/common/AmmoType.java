@@ -91,7 +91,8 @@ public class AmmoType extends EquipmentType {
     public static final int     T_HYPER_VELOCITY    = 66;
     public static final int     T_MEK_MORTAR        = 67;
     public static final int     T_CRUISE_MISSILE    = 68;
-    public static final int     NUM_TYPES           = 69;
+    public static final int     T_BPOD              = 69;
+    public static final int     NUM_TYPES           = 70;
     
 
     // ammo flags
@@ -355,6 +356,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCoolantPod());
         EquipmentType.addType(createISRailGunAmmo());
         EquipmentType.addType(createISMPodAmmo());
+        EquipmentType.addType(createISBPodAmmo());
         
         // Start of Level2 Ammo
         EquipmentType.addType(createISLB2XAmmo());
@@ -563,6 +565,7 @@ public class AmmoType extends EquipmentType {
         EquipmentType.addType(createCLLRT20Ammo());
         EquipmentType.addType(createCLMagshotGRAmmo());
         EquipmentType.addType(createCLMPodAmmo());
+        EquipmentType.addType(createCLBPodAmmo());
         EquipmentType.addType(createCLHAG20Ammo());
         EquipmentType.addType(createCLHAG30Ammo());
         EquipmentType.addType(createCLHAG40Ammo());
@@ -6914,6 +6917,40 @@ public class AmmoType extends EquipmentType {
         return ammo;
     }
 
+    private static AmmoType createISBPodAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_IS_LEVEL_1;
+        ammo.name = "B Pod Ammo";
+        ammo.setInternalName("ISBPodAmmo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_BPOD;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 0;
+        ammo.tonnage = 0;
+
+        return ammo;
+    }
+    
+    private static AmmoType createCLBPodAmmo() {
+        AmmoType ammo = new AmmoType();
+
+        ammo.techLevel = TechConstants.T_CLAN_LEVEL_2;
+        ammo.name = "B Pod Ammo";
+        ammo.setInternalName("ClanBPodAmmo");
+        ammo.damagePerShot = 1;
+        ammo.rackSize = 1;
+        ammo.ammoType = AmmoType.T_BPOD;
+        ammo.shots = 1;
+        ammo.bv = 0;
+        ammo.cost = 0;
+        ammo.tonnage = 0;
+
+        return ammo;
+    }
+    
     public String toString() {
         return "Ammo: " + name;
     }

@@ -454,6 +454,18 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
                 attacks.addElement(actions.nextElement());
             }
             ready();
+        } else if (client.game.getTurn() instanceof GameTurn.TriggerBPodTurn
+                && null != ce()) {
+            disableButtons();
+            TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui
+                    .getFrame(), ce(), ((GameTurn.TriggerBPodTurn)client.game.getTurn()).getAttackType());
+            dialog.setVisible(true);
+            attacks.removeAllElements();
+            Enumeration<EntityAction> actions = dialog.getActions();
+            while (actions.hasMoreElements()) {
+                attacks.addElement(actions.nextElement());
+            }
+            ready();
         } else {
             setNextEnabled(true);
             butDone.setEnabled(true);

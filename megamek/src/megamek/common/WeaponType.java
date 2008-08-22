@@ -88,6 +88,8 @@ public class WeaponType extends EquipmentType {
     public static final long F_NO_AIM = 1l << 33;
     public static final long F_BOMBAST_LASER = 1l << 34;
     public static final long F_CRUISE_MISSILE = 1l << 35;
+    public static final long F_B_POD          = 1l << 36;
+    
 
 //  add maximum range for AT2
     public static final int     RANGE_SHORT = 1;
@@ -754,6 +756,8 @@ public class WeaponType extends EquipmentType {
         addType(new CLMagshotGaussRifle());
         addType(new ISMPod());
         addType(new CLMPod());
+        addType(new ISBPod());
+        addType(new CLBPod());
         // Thunderbolts
         addType(new ISThunderBolt5());
         addType(new ISThunderBolt10());

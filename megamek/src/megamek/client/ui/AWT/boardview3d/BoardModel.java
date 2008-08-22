@@ -38,6 +38,7 @@ import megamek.common.Coords;
 import megamek.common.IBoard;
 import megamek.common.IGame;
 import megamek.common.IHex;
+import megamek.common.PlanetaryConditions;
 import megamek.common.Player;
 
 class BoardModel extends BranchGroup {
@@ -179,7 +180,7 @@ class BoardModel extends BranchGroup {
 
     public void resetBoard() {
         boolean night = GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT) && 
-            game.getOptions().booleanOption("night_battle");
+            game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY;
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
                 BoardHexModel bhm = hexAt(x, y);

@@ -13964,7 +13964,7 @@ public class Server implements Runnable {
         boolean reflectiveArmor = false;
         boolean reactiveArmor = false;
 
-        if (te instanceof Mech && te.getArmorType() == EquipmentType.T_ARMOR_HARDENED)
+        if ( (te instanceof Mech || te instanceof Tank) && te.getArmorType() == EquipmentType.T_ARMOR_HARDENED)
             hardenedArmor = true;
 
         if ((te instanceof Mech || te instanceof Tank) && te.getArmorType() == EquipmentType.T_ARMOR_REFLECTIVE)
@@ -13976,7 +13976,7 @@ public class Server implements Runnable {
         int crits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) && !hardenedArmor ? 1 : 0;
         int specCrits = ((hit.getEffect() & HitData.EFFECT_CRITICAL) == HitData.EFFECT_CRITICAL) && hardenedArmor ? 1 : 0;
         HitData nextHit = null;
-
+        
         // Some "hits" on a Protomech are actually misses.
         if (te instanceof Protomech && hit.getLocation() == Protomech.LOC_NMISS) {
             r = new Report(6035);
@@ -14438,7 +14438,7 @@ public class Server implements Runnable {
                 int origDamage = damage;
 
                 // If the target has hardened armor, we need to adjust damage.
-                if (hardenedArmor) {
+                if (hardenedArmor && hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING && hit.getGeneralDamageType() != HitData.DAMAGE_ARMOR_PIERCING_MISSILE) {
                     tmpDamageHold = damage;
                     damage = (int) Math.ceil(((double) damage) / 2);
                     r = new Report(6069);
@@ -14480,7 +14480,7 @@ public class Server implements Runnable {
                     r.newlines = 0;
                     r.add(damage);
                     vDesc.addElement(r);
-                } else if (reactiveArmor && hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE) {
+                } else if (reactiveArmor && ( hit.getGeneralDamageType() == HitData.DAMAGE_MISSILE || hit.getGeneralDamageType() == HitData.DAMAGE_ARMOR_PIERCING_MISSILE)) {
                     tmpDamageHold = damage;
                     damage = (int) Math.ceil(((double) damage) / 2);
                     r = new Report(6068);

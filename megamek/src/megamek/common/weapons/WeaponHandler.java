@@ -23,6 +23,7 @@ import megamek.common.Aero;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
 import megamek.common.Compute;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.FighterSquadron;
 import megamek.common.HitData;
@@ -329,7 +330,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         if (bMissed) {
             if (targetInBuilding && bldg != null) {
                 handleAccidentalBuildingDamage(vPhaseReport, bldg, hits,
-                        nDamPerHit);
+                        nDamPerHit, target.getPosition());
             } // End missed-target-in-building
             return false;
 
@@ -339,7 +340,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
         if (targetInBuilding && bldg != null) {
-            bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF() / 10.0);
+            bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
         }
 
         // Make sure the player knows when his attack causes no damage.
@@ -368,7 +369,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             if (target.getTargetType() == Targetable.TYPE_BUILDING) {
                 // The building takes the full brunt of the attack.
                 nDamage = nDamPerHit * hits;
-                handleBuildingDamage(vPhaseReport, bldg, nDamage, bSalvo);
+                handleBuildingDamage(vPhaseReport, bldg, nDamage, bSalvo, target.getPosition());
                 // And we're done!
                 return false;
             }
@@ -517,7 +518,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             int toBldg = Math.min(bldgAbsorbs, nDamage);
             nDamage -= toBldg;
             Report.addNewline(vPhaseReport);
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg, entityTarget.getPosition());
             for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
@@ -548,12 +549,12 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void handleAccidentalBuildingDamage(Vector<Report> vPhaseReport,
-            Building bldg, int hits, int nDamPerHit) {
+            Building bldg, int hits, int nDamPerHit, Coords coords) {
         // Damage the building in one big lump.
         // Only report if damage was done to the building.
         int toBldg = hits * nDamPerHit;
         if (toBldg > 0) {
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg);
+            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg, coords);
             for (Report report : buildingReport) {
                 report.subject = subjectId;
             }
@@ -609,7 +610,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
     }
 
     protected void handleBuildingDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, boolean bSalvo) {
+            Building bldg, int nDamage, boolean bSalvo, Coords coords) {
         if (!bSalvo) {
             // hits!
             r = new Report(3390);
@@ -617,7 +618,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
             vPhaseReport.addElement(r);
         }
         Report.addNewline(vPhaseReport);
-        Vector<Report> buildingReport = server.damageBuilding(bldg, nDamage);
+        Vector<Report> buildingReport = server.damageBuilding(bldg, nDamage, coords);
         for (Report report : buildingReport) {
             report.subject = subjectId;
         }

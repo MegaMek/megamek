@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.Vector;
@@ -3725,14 +3726,14 @@ public class Server implements Runnable {
                 // if Tanks or Mechs were charged.
                 int chargeDamage = ChargeAttackAction.getDamageFor(entity, game.getOptions().booleanOption("tacops_charge_damage"), entity.delta_distance);
                 if (!bldgSuffered) {
-                    Vector<Report> reports = damageBuilding(bldg, chargeDamage);
+                    Vector<Report> reports = damageBuilding(bldg, chargeDamage, nextPos);
                     for (Report report : reports) {
                         report.subject = entity.getId();
                     }
                     addReport(reports);
 
                     // Apply damage to the attacker.
-                    int toAttacker = ChargeAttackAction.getDamageTakenBy(entity, bldg);
+                    int toAttacker = ChargeAttackAction.getDamageTakenBy(entity, bldg, nextPos);
                     HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, entity.sideTable(nextPos));
                     hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
                     addReport(damageEntity(entity, hit, toAttacker));
@@ -3753,12 +3754,12 @@ public class Server implements Runnable {
 
                 // If a building still stands, then end the skid,
                 // and add it to the list of affected buildings.
-                if (bldg.getCurrentCF() > 0) {
+                if (bldg.getCurrentCF(nextPos) > 0) {
                     stopTheSkid = true;
                     addAffectedBldg(bldg, false);
                 } else {
                     // otherwise it collapses immediately on our head
-                    checkForCollapse(bldg, game.getPositionMap());
+                    checkForCollapse(bldg, game.getPositionMap(), nextPos);
                 }
 
             } // End handle-building.
@@ -3777,7 +3778,7 @@ public class Server implements Runnable {
             // Check for collapse of any building the entity might be on
             Building roof = game.getBoard().getBuildingAt(nextPos);
             if (roof != null) {
-                if (checkForCollapse(roof, game.getPositionMap()))
+                if (checkForCollapse(roof, game.getPositionMap(), nextPos))
                     break; // stop skidding if the building collapsed
             }
 
@@ -5287,14 +5288,14 @@ public class Server implements Runnable {
                     // If we're not leaving a building, just handle the
                     // "entered".
                     if (bldgExited == null) {
-                        collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "entering", step.isThisStepBackwards(), step.getParent().getLastStepMovementType());
+                        collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "entering", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), true);
                         addAffectedBldg(bldgEntered, collapsed);
                     }
 
                     // If we're moving within the same building, just handle
                     // the "within".
                     else if (bldgExited.equals(bldgEntered)) {
-                        collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "moving in", step.isThisStepBackwards(), step.getParent().getLastStepMovementType());
+                        collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "moving in", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), true);
                         addAffectedBldg(bldgEntered, collapsed);
                     }
 
@@ -5302,20 +5303,20 @@ public class Server implements Runnable {
                     else if (bldgEntered != null) {
                         if (entity instanceof Protomech) {
                             // protos entering a building cause 1 damage
-                            Vector<Report> vBuildingReport = damageBuilding(bldgEntered, 1);
+                            Vector<Report> vBuildingReport = damageBuilding(bldgEntered, 1, curPos);
                             for (Report report : vBuildingReport)
                                 report.subject = entity.getId();
                             addReport(vBuildingReport);
                         }
-                        collapsed = passBuildingWall(entity, bldgExited, lastPos, curPos, distance, "exiting", step.isThisStepBackwards(), step.getParent().getLastStepMovementType());
+                        collapsed = passBuildingWall(entity, bldgExited, lastPos, curPos, distance, "exiting", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), false);
                         addAffectedBldg(bldgExited, collapsed);
-                        collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "entering", step.isThisStepBackwards(), step.getParent().getLastStepMovementType());
+                        collapsed = passBuildingWall(entity, bldgEntered, lastPos, curPos, distance, "entering", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), true);
                         addAffectedBldg(bldgEntered, collapsed);
                     }
 
                     // Otherwise, just handle the "exited".
                     else {
-                        collapsed = passBuildingWall(entity, bldgExited, lastPos, curPos, distance, "exiting", step.isThisStepBackwards(), step.getParent().getLastStepMovementType());
+                        collapsed = passBuildingWall(entity, bldgExited, lastPos, curPos, distance, "exiting", step.isThisStepBackwards(), step.getParent().getLastStepMovementType(), false);
                         addAffectedBldg(bldgExited, collapsed);
                     }
                 }
@@ -5632,7 +5633,7 @@ public class Server implements Runnable {
             // check for building collapse
             Building bldg = game.getBoard().getBuildingAt(curPos);
             if (bldg != null) {
-                checkForCollapse(bldg, game.getPositionMap());
+                checkForCollapse(bldg, game.getPositionMap(), curPos);
             }
 
             // check for breaking magma crust
@@ -6315,7 +6316,7 @@ public class Server implements Runnable {
                 }
             }
             if (game.getBoard().getBuildingAt(t.getPosition()) != null) {
-                Vector<Report> vBuildingReport = damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles);
+                Vector<Report> vBuildingReport = damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles, t.getPosition());
                 for (Report report : vBuildingReport) {
                     report.subject = ae.getId();
                 }
@@ -6343,7 +6344,7 @@ public class Server implements Runnable {
                     vPhaseReport.addAll(deliverInfernoMissiles(ae, e, missiles));
                 }
             }
-            Vector<Report> vBuildingReport = damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles);
+            Vector<Report> vBuildingReport = damageBuilding(game.getBoard().getBuildingAt(t.getPosition()), 2 * missiles, t.getPosition());
             for (Report report : vBuildingReport) {
                 report.subject = ae.getId();
             }
@@ -7665,7 +7666,7 @@ public class Server implements Runnable {
         if (bldg != null) {
             if (destHex.terrainLevel(Terrains.BLDG_ELEV) > oldElev) {
                 // woops, into the building we go
-                passBuildingWall(entity, game.getBoard().getBuildingAt(dest), src, dest, 1, "displaced into", Math.abs(entity.getFacing() - src.direction(dest)) == 3, entity.moved);
+                passBuildingWall(entity, game.getBoard().getBuildingAt(dest), src, dest, 1, "displaced into", Math.abs(entity.getFacing() - src.direction(dest)) == 3, entity.moved, true);
             } else {
                 // woops, we step on the roof
                 checkBuildingCollapseWhileMoving(bldg, entity, dest);
@@ -9082,7 +9083,7 @@ public class Server implements Runnable {
 
                 // Only report if damage was done to the building.
                 if (damage > 0) {
-                    Vector<Report> buildingReport = damageBuilding(bldg, damage);
+                    Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
                     for (Report report : buildingReport) {
                         report.subject = ae.getId();
                     }
@@ -9099,7 +9100,7 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -9124,11 +9125,11 @@ public class Server implements Runnable {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         if (targetInBuilding && bldg != null) {
-            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF() / 10.0);
+            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
-            Vector<Report> buildingReport = damageBuilding(bldg, toBldg);
+            Vector<Report> buildingReport = damageBuilding(bldg, toBldg, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -9281,7 +9282,7 @@ public class Server implements Runnable {
 
                 // Only report if damage was done to the building.
                 if (damage > 0) {
-                    Vector<Report> buildingReport = damageBuilding(bldg, damage);
+                    Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
                     for (Report report : buildingReport) {
                         report.subject = ae.getId();
                     }
@@ -9298,7 +9299,7 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -9323,11 +9324,11 @@ public class Server implements Runnable {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         if (targetInBuilding && bldg != null) {
-            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF() / 10.0);
+            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
-            Vector<Report> buildingReport = damageBuilding(bldg, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -9508,7 +9509,7 @@ public class Server implements Runnable {
                 damage += pr.damageRight;
                 // Only report if damage was done to the building.
                 if (damage > 0) {
-                    Vector<Report> buildingReport = damageBuilding(bldg, damage);
+                    Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
                     for (Report report : buildingReport) {
                         report.subject = ae.getId();
                     }
@@ -9526,7 +9527,7 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -9556,11 +9557,11 @@ public class Server implements Runnable {
             // The building shields all units from a certain amount of damage.
             // The amount is based upon the building's CF at the phase's start.
             if (targetInBuilding && bldg != null) {
-                int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF() / 10.0);
+                int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
                 int toBldg = Math.min(bldgAbsorbs, damage);
                 damage -= toBldg;
                 addNewLines();
-                Vector<Report> buildingReport = damageBuilding(bldg, damage);
+                Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
                 for (Report report : buildingReport) {
                     report.subject = ae.getId();
                 }
@@ -9684,7 +9685,7 @@ public class Server implements Runnable {
 
                 // Only report if damage was done to the building.
                 if (damage > 0) {
-                    Vector<Report> buildingReport = damageBuilding(bldg, damage);
+                    Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
                     for (Report report : buildingReport) {
                         report.subject = ae.getId();
                     }
@@ -9701,7 +9702,7 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -9727,11 +9728,11 @@ public class Server implements Runnable {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         if (targetInBuilding && bldg != null) {
-            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF() / 10.0);
+            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
-            Vector<Report> buildingReport = damageBuilding(bldg, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -10177,7 +10178,7 @@ public class Server implements Runnable {
 
                 // Only report if damage was done to the building.
                 if (damage > 0) {
-                    Vector<Report> buildingReport = damageBuilding(bldg, damage);
+                    Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
                     for (Report report : buildingReport) {
                         report.subject = ae.getId();
                     }
@@ -10195,7 +10196,7 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -10220,11 +10221,11 @@ public class Server implements Runnable {
         // The building shields all units from a certain amount of damage.
         // The amount is based upon the building's CF at the phase's start.
         if (targetInBuilding && bldg != null) {
-            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF() / 10.0);
+            int bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(target.getPosition()) / 10.0);
             int toBldg = Math.min(bldgAbsorbs, damage);
             damage -= toBldg;
             addNewLines();
-            Vector<Report> buildingReport = damageBuilding(bldg, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -10980,7 +10981,7 @@ public class Server implements Runnable {
             r = new Report(4040);
             r.subject = ae.getId();
             addReport(r);
-            Vector<Report> buildingReport = damageBuilding(bldg, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -10990,7 +10991,7 @@ public class Server implements Runnable {
             damageInfantryIn(bldg, damage);
 
             // Apply damage to the attacker.
-            int toAttacker = ChargeAttackAction.getDamageTakenBy(ae, bldg);
+            int toAttacker = ChargeAttackAction.getDamageTakenBy(ae, bldg, target.getPosition());
             HitData hit = ae.rollHitLocation(ToHitData.HIT_NORMAL, ae.sideTable(target.getPosition()));
             hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
             addReport(damageEntity(ae, hit, toAttacker, false, DamageType.NONE, false, false, throughFront));
@@ -11318,7 +11319,7 @@ public class Server implements Runnable {
         // The amount is based upon the building's CF at the phase's start.
         int bldgAbsorbs = 0;
         if (targetInBuilding && bldg != null) {
-            bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF() / 10.0);
+            bldgAbsorbs = (int) Math.ceil(bldg.getPhaseCF(te.getPosition()) / 10.0);
         }
 
         // If we're upright, we may fall down.
@@ -11389,7 +11390,7 @@ public class Server implements Runnable {
                 int toBldg = Math.min(bldgAbsorbs, cluster);
                 cluster -= toBldg;
                 addNewLines();
-                Vector<Report> buildingReport = damageBuilding(bldg, damage);
+                Vector<Report> buildingReport = damageBuilding(bldg, damage, te.getPosition());
                 for (Report report : buildingReport) {
                     report.subject = ae.getId();
                 }
@@ -11644,7 +11645,7 @@ public class Server implements Runnable {
         if ((target.getTargetType() == Targetable.TYPE_BUILDING) || (target.getTargetType() == Targetable.TYPE_FUEL_TANK)) {
 
             // The building takes the full brunt of the attack.
-            Vector<Report> buildingReport = damageBuilding(bldg, damage);
+            Vector<Report> buildingReport = damageBuilding(bldg, damage, target.getPosition());
             for (Report report : buildingReport) {
                 report.subject = ae.getId();
             }
@@ -15305,28 +15306,18 @@ public class Server implements Runnable {
 
             // Lets find the closest hex from the building.
             Enumeration<Coords> hexes = bldg.getCoords();
-            Coords closestPos;
-            try {
-                closestPos = hexes.nextElement();
-            } catch (Exception e) {
-                continue;
-            }
-            int closestDist = position.distance(closestPos);
+            
             while (hexes.hasMoreElements()) {
                 final Coords coords = hexes.nextElement();
-
-                if (position.distance(closestPos) < closestDist) {
-                    closestDist = position.distance(closestPos);
-                    closestPos = coords;
+                int dist = position.distance(coords);
+                if (dist < damages.length) {
+                    Vector<Report> buildingReport = damageBuilding(bldg, damages[dist], coords);
+                    for (Report report : buildingReport) {
+                        report.type = Report.PUBLIC;
+                    }
+                    vDesc.addAll(buildingReport);
                 }
             }
-            if (closestDist >= damages.length)
-                continue; // It's not close enough to take damage.
-            Vector<Report> buildingReport = damageBuilding(bldg, damages[closestDist]);
-            for (Report report : buildingReport) {
-                report.type = Report.PUBLIC;
-            }
-            vDesc.addAll(buildingReport);
         }
         applyBuildingDamage();
 
@@ -15717,7 +15708,7 @@ public class Server implements Runnable {
             r = new Report(2415);
             r.add(tmpB.getName());
             addReport(r);
-            collapseBuilding(tmpB, game.getPositionMap());
+            collapseBuilding(tmpB, game.getPositionMap(), position);
         }
         IHex gzHex = game.getBoard().getHex(position);
         if (gzHex.containsTerrain(Terrains.WATER)) {
@@ -20470,9 +20461,11 @@ public class Server implements Runnable {
      * @param backwards -
      *            the <code>boolean</code> indicating if the entity is
      *            entering the hex backwards
+     * @param entering -
+     *            a <code>boolean</code> if the entity is entering or exiting a building
      * @return <code>true</code> if the building collapses due to overloading.
      */
-    private boolean passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos, int distance, String why, boolean backwards, int overallMoveType) {
+    private boolean passBuildingWall(Entity entity, Building bldg, Coords lastPos, Coords curPos, int distance, String why, boolean backwards, int overallMoveType, boolean entering) {
 
         Report r;
 
@@ -20483,7 +20476,7 @@ public class Server implements Runnable {
         if (0 < doSkillCheckWhileMoving(entity, lastPos, curPos, psr, false)) {
 
             // Divide the building's current CF by 10, round up.
-            int damage = (int) Math.ceil(bldg.getCurrentCF() / 10.0);
+            int damage = (int) Math.ceil(bldg.getCurrentCF(entering?curPos:lastPos) / 10.0);
 
             // It is possible that the unit takes no damage.
             if (damage == 0) {
@@ -20506,16 +20499,16 @@ public class Server implements Runnable {
 
         // Damage the building. The CF can never drop below 0.
         int toBldg = (int) Math.ceil(entity.getWeight() / 10.0);
-        int curCF = bldg.getCurrentCF();
+        int curCF = bldg.getCurrentCF(entering?curPos:lastPos);
         curCF -= Math.min(curCF, toBldg);
-        bldg.setCurrentCF(curCF);
+        bldg.setCurrentCF(curCF, entering?curPos:lastPos);
 
         // Apply the correct amount of damage to infantry in the building.
         // ASSUMPTION: We inflict toBldg damage to infantry and
         // not the amount to bring building to 0 CF.
         damageInfantryIn(bldg, toBldg);
 
-        return checkBuildingCollapseWhileMoving(bldg, entity, curPos);
+        return checkBuildingCollapseWhileMoving(bldg, entity, entering?curPos:lastPos);
     }
 
     /**
@@ -20539,7 +20532,7 @@ public class Server implements Runnable {
         Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
 
         // Check for collapse of this building due to overloading, and return.
-        boolean rv = checkForCollapse(bldg, positionMap);
+        boolean rv = checkForCollapse(bldg, positionMap, curPos);
 
         // If the entity was not displaced and didnt fall, move it back where it
         // was
@@ -20655,118 +20648,115 @@ public class Server implements Runnable {
      *            positions or each unit in the game to a <code>Vector</code>
      *            of <code>Entity</code>s at that position. This value should
      *            not be <code>null</code>.
+     * @param coords -
+     *            the <code>Coords</code> of the building hex to be checked
      * @return <code>true</code> if the building collapsed.
      */
-    public boolean checkForCollapse(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap) {
+    public boolean checkForCollapse(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords) {
 
         // If the input is meaningless, do nothing and throw no exception.
-        if (bldg == null || positionMap == null || positionMap.isEmpty()) {
+        if (bldg == null || positionMap == null || positionMap.isEmpty() || coords == null) {
             return false;
         }
 
         // Get the building's current CF.
-        final int currentCF = bldg.getCurrentCF();
+        final int currentCF = bldg.getCurrentCF(coords);
 
         // Track all units that fall into the building's basement by Coords.
         Hashtable<Coords, Vector<Entity>> basementMap = new Hashtable<Coords, Vector<Entity>>();
 
-        // Walk through the hexes in the building, looking for a collapse.
-        Enumeration<Coords> bldgCoords = bldg.getCoords();
+        // look for a collapse.
         boolean collapse = false;
-        while (!collapse && bldgCoords.hasMoreElements()) {
-            final Coords coords = bldgCoords.nextElement();
 
-            // Get the Vector of Entities at these coordinates.
-            final Vector<Entity> vector = positionMap.get(coords);
+        // Get the Vector of Entities at these coordinates.
+        final Vector<Entity> vector = positionMap.get(coords);
 
-            // Are there any Entities at these coords?
-            if (vector != null) {
+        // Are there any Entities at these coords?
+        if (vector != null) {
 
-                // How many levels does this building have in this hex?
-                final IHex curHex = game.getBoard().getHex(coords);
-                final int numFloors = Math.max(0, curHex.terrainLevel(Terrains.BLDG_ELEV));
-                final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
-                int numLoads = numFloors;
-                if (bridgeEl != ITerrain.LEVEL_NONE) {
-                    numLoads++;
+            // How many levels does this building have in this hex?
+            final IHex curHex = game.getBoard().getHex(coords);
+            final int numFloors = Math.max(0, curHex.terrainLevel(Terrains.BLDG_ELEV));
+            final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
+            int numLoads = numFloors;
+            if (bridgeEl != ITerrain.LEVEL_NONE) {
+                numLoads++;
+            }
+            if (numLoads < 1) {
+                System.err.println("Check for collapse: hex " + coords.toString() + " has no bridge or building");
+                return false;
+            }
+
+            // Track the load of each floor (and of the roof) separately.
+            // Track all units that fall into the basement in this hex.
+            // N.B. don't track the ground floor, the first floor is at
+            // index 0, the second is at index 1, etc., and the roof is
+            // at index (numFloors-1).
+            // if bridge is present, bridge will be numFloors
+            int[] loads = new int[numLoads];
+            Vector<Entity> basement = new Vector<Entity>();
+            for (int loop = 0; loop < numLoads; loop++) {
+                loads[loop] = 0;
+            }
+
+            // Walk through the entities in this position.
+            Enumeration<Entity> entities = vector.elements();
+            while (!collapse && entities.hasMoreElements()) {
+                final Entity entity = entities.nextElement();
+                final int entityElev = entity.getElevation();
+
+                if (entityElev != bridgeEl) {
+                    // Ignore entities not *inside* the building
+                    if (entityElev > numFloors) {
+                        continue;
+                    }
                 }
-                if (numLoads < 1) {
-                    System.err.println("Check for collapse: hex " + coords.toString() + " has no bridge or building");
-                    continue;
+
+                if (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL || entity.getMovementMode() == IEntityMovementMode.NAVAL || entity.getMovementMode() == IEntityMovementMode.SUBMARINE || entity.getMovementMode() == IEntityMovementMode.INF_UMU) {
+                    continue; // under the bridge even at same level
                 }
 
-                // Track the load of each floor (and of the roof) separately.
-                // Track all units that fall into the basement in this hex.
-                // N.B. don't track the ground floor, the first floor is at
-                // index 0, the second is at index 1, etc., and the roof is
-                // at index (numFloors-1).
-                // if bridge is present, bridge will be numFloors
-                int[] loads = new int[numLoads];
-                Vector<Entity> basement = new Vector<Entity>();
-                for (int loop = 0; loop < numLoads; loop++) {
-                    loads[loop] = 0;
-                }
-
-                // Walk through the entities in this position.
-                Enumeration<Entity> entities = vector.elements();
-                while (!collapse && entities.hasMoreElements()) {
-                    final Entity entity = entities.nextElement();
-                    final int entityElev = entity.getElevation();
-
-                    if (entityElev != bridgeEl) {
-                        // Ignore entities not *inside* the building
-                        if (entityElev > numFloors) {
-                            continue;
-                        }
+                // Add the weight of a Mek or tank to the correct floor.
+                if (entity instanceof Mech || entity instanceof Tank) {
+                    int load = (int) entity.getWeight();
+                    int floor = entityElev;
+                    if (floor == bridgeEl) {
+                        floor = numLoads;
                     }
 
-                    if (entity.getMovementMode() == IEntityMovementMode.HYDROFOIL || entity.getMovementMode() == IEntityMovementMode.NAVAL || entity.getMovementMode() == IEntityMovementMode.SUBMARINE || entity.getMovementMode() == IEntityMovementMode.INF_UMU) {
-                        continue; // under the bridge even at same level
-                    }
+                    // Entities on the ground floor may fall into the
+                    // basement, but they won't collapse the building.
+                    if (numFloors > 0 && floor == 0 && load > currentCF) {
+                        basement.addElement(entity);
+                    } else if (floor > 0) {
 
-                    // Add the weight of a Mek or tank to the correct floor.
-                    if (entity instanceof Mech || entity instanceof Tank) {
-                        int load = (int) entity.getWeight();
-                        int floor = entityElev;
-                        if (floor == bridgeEl) {
-                            floor = numLoads;
+                        // If the load on any floor but the ground floor
+                        // exceeds the building's current CF it collapses.
+                        floor--;
+                        loads[floor] += load;
+                        if (loads[floor] > currentCF) {
+                            collapse = true;
                         }
 
-                        // Entities on the ground floor may fall into the
-                        // basement, but they won't collapse the building.
-                        if (numFloors > 0 && floor == 0 && load > currentCF) {
-                            basement.addElement(entity);
-                        } else if (floor > 0) {
+                    } // End not-ground-floor
 
-                            // If the load on any floor but the ground floor
-                            // exceeds the building's current CF it collapses.
-                            floor--;
-                            loads[floor] += load;
-                            if (loads[floor] > currentCF) {
-                                collapse = true;
-                            }
+                } // End increase-load
 
-                        } // End not-ground-floor
+            } // Handle the next entity.
 
-                    } // End increase-load
+            // Track all entities that fell into the basement.
+            if (!basement.isEmpty()) {
+                basementMap.put(coords, basement);
+            }
 
-                } // Handle the next entity.
-
-                // Track all entities that fell into the basement.
-                if (!basement.isEmpty()) {
-                    basementMap.put(coords, basement);
-                }
-
-            } // End have-entities-here
-
-        } // Check the next hex of the building.
+        } // End have-entities-here
 
         // Collapse the building if the flag is set.
         if (collapse) {
             Report r = new Report(2375);
             r.add(bldg.getName());
             addReport(r);
-            collapseBuilding(bldg, positionMap);
+            collapseBuilding(bldg, positionMap, coords);
         }
 
         // Otherwise, did any entities fall into the basement?
@@ -20780,7 +20770,7 @@ public class Server implements Runnable {
     } // End private boolean checkForCollapse( Building, Hashtable )
 
     /**
-     * Collapse the building. Inflict the appropriate amount of damage on all
+     * Collapse a building hex. Inflict the appropriate amount of damage on all
      * entities in the building. Update all clients.
      * 
      * @param bldg -
@@ -20790,131 +20780,128 @@ public class Server implements Runnable {
      *            positions or each unit in the game to a <code>Vector</code>
      *            of <code>Entity</code>s at that position. This value should
      *            not be <code>null</code>.
+     * @param coords - 
+     *            The <code>Coords></code> of the building hex that has collapsed
      */
-    public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap) {
+    public void collapseBuilding(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords) {
         // Loop through the hexes in the building, and apply
         // damage to all entities inside or on top of the building.
         Report r;
-        final int phaseCF = bldg.getPhaseCF();
-        Enumeration<Coords> bldgCoords = bldg.getCoords();
-        while (bldgCoords.hasMoreElements()) {
-            final Coords coords = bldgCoords.nextElement();
+        final int phaseCF = bldg.getPhaseCF(coords);
+        // Get the Vector of Entities at these coordinates.
+        final Vector<Entity> vector = positionMap.get(coords);
 
-            // Get the Vector of Entities at these coordinates.
-            final Vector<Entity> vector = positionMap.get(coords);
+        // Are there any Entities at these coords?
+        if (vector != null) {
 
-            // Are there any Entities at these coords?
-            if (vector != null) {
+            // How many levels does this building have in this hex?
+            final IHex curHex = game.getBoard().getHex(coords);
+            final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
+            final int numFloors = Math.max(bridgeEl, curHex.terrainLevel(Terrains.BLDG_ELEV));
 
-                // How many levels does this building have in this hex?
-                final IHex curHex = game.getBoard().getHex(coords);
-                final int bridgeEl = curHex.terrainLevel(Terrains.BRIDGE_ELEV);
-                final int numFloors = Math.max(bridgeEl, curHex.terrainLevel(Terrains.BLDG_ELEV));
+            // Now collapse the building in this hex, so entities fall to
+            // the ground
+            game.getBoard().collapseBuilding(coords);
 
-                // Now collapse the building in this hex, so entities fall to
-                // the ground
-                game.getBoard().collapseBuilding(coords);
+            // Sort in elevation order
+            Collections.sort(vector, new Comparator<Entity>() {
+                public int compare(Entity a, Entity b) {
+                    if (a.getElevation() > b.getElevation())
+                        return -1;
+                    else if (a.getElevation() > b.getElevation())
+                        return 1;
+                    return 0;
+                }
+            });
+            // Walk through the entities in this position.
+            Enumeration<Entity> entities = vector.elements();
+            while (entities.hasMoreElements()) {
+                final Entity entity = entities.nextElement();
+                // final int entityElev = entity.elevationOccupied( curHex
+                // );
+                int floor = entity.getElevation();
 
-                // Sort in elevation order
-                Collections.sort(vector, new Comparator<Entity>() {
-                    public int compare(Entity a, Entity b) {
-                        if (a.getElevation() > b.getElevation())
-                            return -1;
-                        else if (a.getElevation() > b.getElevation())
-                            return 1;
-                        return 0;
+                // Ignore units above the building / bridge.
+                if (floor > numFloors) {
+                    continue;
+                }
+
+                // Treat units on the roof like
+                // they were in the top floor.
+                if (floor == numFloors) {
+                    floor--;
+                }
+
+                // Calculate collapse damage for this entity.
+                int damage = (int) Math.ceil(phaseCF * (numFloors - floor) / 10.0);
+
+                // Infantry suffer triple damage.
+                if (entity instanceof Infantry) {
+                    damage *= 3;
+                }
+
+                // Apply collapse damage the entity.
+                // ASSUMPTION: use 5 point clusters.
+                r = new Report(6455);
+                r.indent();
+                r.subject = entity.getId();
+                r.add(entity.getDisplayName());
+                r.add(damage);
+                addReport(r);
+                int remaining = damage;
+                int cluster = damage;
+                if (entity instanceof BattleArmor || entity instanceof Mech || entity instanceof Tank) {
+                    cluster = 5;
+                }
+                while (remaining > 0) {
+                    int next = Math.min(cluster, remaining);
+                    // In
+                    // www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf,
+                    // pg. 18, Randall Bills says that all damage from a
+                    // collapsing building is applied to the front.
+
+                    HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
+                    hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
+                    addReport(damageEntity(entity, hit, next));
+                    remaining -= next;
+                }
+                addReport(new Report(1210));
+                // TODO: Why are dead entities showing up on firing phase?
+
+                // Do we need to handle falling Meks?
+                // BMRr, pg. 53 only mentions falling BattleMechs;
+                // Tanks can't be above the floor and I guess that
+                // infantry don't suffer falling damage.
+                // TODO: implement basements, then fall into it.
+                // ASSUMPTION: we'll let the Mech fall twice: once
+                // during damageEntity() above and once here.
+                floor = entity.getElevation();
+                if (floor > 0 || floor == bridgeEl) {
+                    // ASSUMPTION: PSR to avoid pilot damage
+                    // should use mods for entity damage and
+                    // 20+ points of collapse damage (if any).
+                    PilotingRollData psr = entity.getBasePilotingRoll();
+                    entity.addPilotingModifierForTerrain(psr, coords);
+                    if (damage >= 20) {
+                        psr.addModifier(1, "20+ damage");
                     }
-                });
-                // Walk through the entities in this position.
-                Enumeration<Entity> entities = vector.elements();
-                while (entities.hasMoreElements()) {
-                    final Entity entity = entities.nextElement();
-                    // final int entityElev = entity.elevationOccupied( curHex
-                    // );
-                    int floor = entity.getElevation();
+                    addReport(doEntityFallsInto(entity, coords, coords, psr));
+                }
 
-                    // Ignore units above the building / bridge.
-                    if (floor > numFloors) {
-                        continue;
-                    }
+                // Update this entity.
+                // ASSUMPTION: this is the correct thing to do.
+                entityUpdate(entity.getId());
 
-                    // Treat units on the roof like
-                    // they were in the top floor.
-                    if (floor == numFloors) {
-                        floor--;
-                    }
+            } // Handle the next entity.
 
-                    // Calculate collapse damage for this entity.
-                    int damage = (int) Math.ceil(phaseCF * (numFloors - floor) / 10.0);
+        } // End have-entities-here.
 
-                    // Infantry suffer triple damage.
-                    if (entity instanceof Infantry) {
-                        damage *= 3;
-                    }
-
-                    // Apply collapse damage the entity.
-                    // ASSUMPTION: use 5 point clusters.
-                    r = new Report(6455);
-                    r.indent();
-                    r.subject = entity.getId();
-                    r.add(entity.getDisplayName());
-                    r.add(damage);
-                    addReport(r);
-                    int remaining = damage;
-                    int cluster = damage;
-                    if (entity instanceof BattleArmor || entity instanceof Mech || entity instanceof Tank) {
-                        cluster = 5;
-                    }
-                    while (remaining > 0) {
-                        int next = Math.min(cluster, remaining);
-                        // In
-                        // www.classicbattletech.com/PDF/AskPMForumArchiveandFAQ.pdf,
-                        // pg. 18, Randall Bills says that all damage from a
-                        // collapsing building is applied to the front.
-
-                        HitData hit = entity.rollHitLocation(ToHitData.HIT_NORMAL, ToHitData.SIDE_FRONT);
-                        hit.setGeneralDamageType(HitData.DAMAGE_PHYSICAL);
-                        addReport(damageEntity(entity, hit, next));
-                        remaining -= next;
-                    }
-                    addReport(new Report(1210));
-                    // TODO: Why are dead entities showing up on firing phase?
-
-                    // Do we need to handle falling Meks?
-                    // BMRr, pg. 53 only mentions falling BattleMechs;
-                    // Tanks can't be above the floor and I guess that
-                    // infantry don't suffer falling damage.
-                    // TODO: implement basements, then fall into it.
-                    // ASSUMPTION: we'll let the Mech fall twice: once
-                    // during damageEntity() above and once here.
-                    floor = entity.getElevation();
-                    if (floor > 0 || floor == bridgeEl) {
-                        // ASSUMPTION: PSR to avoid pilot damage
-                        // should use mods for entity damage and
-                        // 20+ points of collapse damage (if any).
-                        PilotingRollData psr = entity.getBasePilotingRoll();
-                        entity.addPilotingModifierForTerrain(psr, coords);
-                        if (damage >= 20) {
-                            psr.addModifier(1, "20+ damage");
-                        }
-                        addReport(doEntityFallsInto(entity, coords, coords, psr));
-                    }
-
-                    // Update this entity.
-                    // ASSUMPTION: this is the correct thing to do.
-                    entityUpdate(entity.getId());
-
-                } // Handle the next entity.
-
-            } // End have-entities-here.
-
-        } // Handle the next hex of the building.
 
         // Update the building.
-        bldg.setCurrentCF(0);
-        bldg.setPhaseCF(0);
-        send(createCollapseBuildingPacket(bldg));
-        game.getBoard().collapseBuilding(bldg);
+        bldg.setCurrentCF(0, coords);
+        bldg.setPhaseCF(0, coords);
+        send(createCollapseBuildingPacket(coords));
+        game.getBoard().collapseBuilding(coords);
 
     } // End private void collapseBuilding( Building )
 
@@ -20925,22 +20912,22 @@ public class Server implements Runnable {
      *            the <code>Building</code> that has collapsed.
      * @return a <code>Packet</code> for the command.
      */
-    private Packet createCollapseBuildingPacket(Building bldg) {
-        Vector<Building> buildings = new Vector<Building>();
-        buildings.addElement(bldg);
-        return createCollapseBuildingPacket(buildings);
+    private Packet createCollapseBuildingPacket(Coords coords) {
+        Vector<Coords> coordsV = new Vector<Coords>();
+        coordsV.addElement(coords);
+        return createCollapseBuildingPacket(coordsV);
     }
 
     /**
-     * Tell the clients to replace the given buildings with rubble hexes.
+     * Tell the clients to replace the given building hexes with rubble hexes.
      * 
      * @param buildings -
      *            a <code>Vector</code> of <code>Building</code>s that has
      *            collapsed.
      * @return a <code>Packet</code> for the command.
      */
-    private Packet createCollapseBuildingPacket(Vector<Building> buildings) {
-        return new Packet(Packet.COMMAND_BLDG_COLLAPSE, buildings);
+    private Packet createCollapseBuildingPacket(Vector<Coords> coords) {
+        return new Packet(Packet.COMMAND_BLDG_COLLAPSE, coords);
     }
 
     /**
@@ -20965,23 +20952,28 @@ public class Server implements Runnable {
         // Build the collapse and update vectors as you go.
         // N.B. never, NEVER, collapse buildings while you are walking through
         // the Enumeration from megamek.common.Board#getBuildings.
-        Vector<Building> collapse = new Vector<Building>();
-        Vector<Building> update = new Vector<Building>();
+        Map<Building, Vector<Coords>> collapse = new HashMap<Building, Vector<Coords>>();
+        Map<Building, Vector<Coords>> update = new HashMap<Building, Vector<Coords>>();
         Enumeration<Building> buildings = game.getBoard().getBuildings();
         while (buildings.hasMoreElements()) {
             Building bldg = buildings.nextElement();
-
-            // If the CF is zero, the building should fall.
-            if (bldg.getCurrentCF() == 0) {
-                collapse.addElement(bldg);
+            Vector<Coords> collapseCoords = new Vector<Coords>();
+            Vector<Coords> updateCoords = new Vector<Coords>();
+            Enumeration<Coords> buildingCoords = bldg.getCoords();
+            while (buildingCoords.hasMoreElements()) {
+                Coords coords = buildingCoords.nextElement();
+                // If the CF is zero, the building should fall.
+                if (bldg.getCurrentCF(coords) == 0) {
+                    collapseCoords.addElement(coords);
+                }
+                // If the building took damage this round, update it.
+                else if (bldg.getPhaseCF(coords) != bldg.getCurrentCF(coords)) {
+                    bldg.setPhaseCF(bldg.getCurrentCF(coords), coords);
+                    updateCoords.addElement(coords);
+                }
             }
-
-            // If the building took damage this round, update it.
-            else if (bldg.getPhaseCF() != bldg.getCurrentCF()) {
-                bldg.setPhaseCF(bldg.getCurrentCF());
-                update.addElement(bldg);
-            }
-
+            collapse.put(bldg, collapseCoords);
+            update.put(bldg, updateCoords);
         } // Handle the next building
 
         // If we have any buildings to collapse, collapse them now.
@@ -20990,32 +20982,38 @@ public class Server implements Runnable {
             // Get the position map of all entities in the game.
             Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
 
-            // Walk through the buildings that have collapsed.
-            buildings = collapse.elements();
-            while (buildings.hasMoreElements()) {
-                Building bldg = buildings.nextElement();
-                Report r = new Report(6460, Report.PUBLIC);
-                r.add(bldg.getName());
-                addReport(r);
-                collapseBuilding(bldg, positionMap);
+            // Walk through the hexes that have collapsed.
+            for (Building bldg : collapse.keySet()) {
+                Vector <Coords> coordsVector = collapse.get(bldg);
+                for (Coords coords : coordsVector) {
+                    Report r = new Report(6460, Report.PUBLIC);
+                    r.add(bldg.getName());
+                    addReport(r);
+                    collapseBuilding(bldg, positionMap, coords);
+                }
             }
-
         }
 
         // check for buildings which should collapse due to being overloaded now
         // CF is reduced
         if (!update.isEmpty()) {
             Hashtable<Coords, Vector<Entity>> positionMap = game.getPositionMap();
-            for (Iterator<Building> i = update.iterator(); i.hasNext();) {
+            for (Iterator<Building> i = update.keySet().iterator(); i.hasNext();) {
                 Building bldg = i.next();
-                if (checkForCollapse(bldg, positionMap))
-                    i.remove();
+                Vector<Coords> updateCoords = update.get(bldg);
+                for (Enumeration<Coords> coordsEnum = updateCoords.elements();coordsEnum.hasMoreElements();) {
+                    Coords coords = coordsEnum.nextElement();
+                    if (checkForCollapse(bldg, positionMap, coords)) {
+                        updateCoords.remove(coords);
+                    }
+                }
+                update.put(bldg, updateCoords);
             }
         }
 
         // If we have any buildings to update, send the message.
         if (!update.isEmpty()) {
-            sendChangedCFBuildings(update);
+            sendChangedCFBuildings(new Vector<Building>(update.keySet()));
         }
     }
 
@@ -21031,11 +21029,12 @@ public class Server implements Runnable {
      *            occur.
      * @param damage -
      *            the <code>int</code> amount of damage.
+     * @param coords - the <code>Coords</code> of the building hex to be damaged
      * @return a <code>Report</code> to be shown to the players.
      */
-    public Vector<Report> damageBuilding(Building bldg, int damage) {
+    public Vector<Report> damageBuilding(Building bldg, int damage, Coords coords) {
         final String defaultWhy = " absorbs ";
-        return damageBuilding(bldg, damage, defaultWhy);
+        return damageBuilding(bldg, damage, defaultWhy, coords);
     }
 
     /**
@@ -21052,19 +21051,21 @@ public class Server implements Runnable {
      * @param why -
      *            the <code>String</code> message that describes why the
      *            building took the damage.
+     * @param coords - the <code>Coords</code> of the building hex to be damaged
      * @return a <code>Report</code> to be shown to the players.
      */
-    public Vector<Report> damageBuilding(Building bldg, int damage, String why) {
+    public Vector<Report> damageBuilding(Building bldg, int damage, String why,
+            Coords coords) {
         Vector<Report> vPhaseReport = new Vector<Report>();
         Report r = new Report(1210);
         r.newlines = 0;
 
         // Do nothing if no building or no damage was passed.
         if (bldg != null && damage > 0) {
-            int curCF = bldg.getCurrentCF();
+            int curCF = bldg.getCurrentCF(coords);
             final int startingCF = curCF;
             curCF -= Math.min(curCF, damage);
-            bldg.setCurrentCF(curCF);
+            bldg.setCurrentCF(curCF, coords);
             r.messageId = 3435;
             r.add(bldg.getName());
             r.add(why);
@@ -22596,10 +22597,10 @@ public class Server implements Runnable {
         Building bldg = game.getBoard().getBuildingAt(coords);
         int bldgAbsorbs = 0;
         if (bldg != null && !(flak && flakElevation > hex.terrainLevel(Terrains.BLDG_ELEV))) {
-            bldgAbsorbs = bldg.getPhaseCF() / 10;
+            bldgAbsorbs = bldg.getPhaseCF(coords) / 10;
             if (!(ammo != null && ammo.getMunitionType() == AmmoType.M_FLECHETTE)) {
                 // damage the building
-                Vector<Report> buildingReport = damageBuilding(bldg, damage);
+                Vector<Report> buildingReport = damageBuilding(bldg, damage, coords);
                 for (Report report : buildingReport) {
                     report.subject = subjectId;
                 }

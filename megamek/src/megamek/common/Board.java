@@ -954,31 +954,20 @@ public class Board implements Serializable, IBoard {
     }
 
     /**
-     * Collapse an array of buildings.
+     * Collapse a vector of building hexes.
      * 
-     * @param bldgs - the <code>Vector</code> of <code>Building</code>
+     * @param bldgs - the <code>Vector</code> of <code>Coord</code>
      *            objects to be collapsed.
      */
-    public void collapseBuilding(Vector<Building> bldgs) {
+    public void collapseBuilding(Vector<Coords> coords) {
 
-        // Walk through the vector of buildings.
-        Enumeration<Building> loop = bldgs.elements();
+        // Walk through the vector of coords.
+        Enumeration<Coords> loop = coords.elements();
         while (loop.hasMoreElements()) {
-            final Building other = loop.nextElement();
-
-            // Find the local object for the given building.
-            Building bldg = this.getLocalBuilding(other);
-
-            // Handle garbage input.
-            if (bldg == null) {
-                System.err.print("Could not find a match for ");
-                System.err.print(other);
-                System.err.println(" to collapse.");
-                continue;
-            }
+            final Coords other = loop.nextElement();
 
             // Update the building.
-            this.collapseBuilding(bldg);
+            this.collapseBuilding(other);
 
         } // Handle the next building.
 
@@ -995,7 +984,15 @@ public class Board implements Serializable, IBoard {
         int elevation = curHex.getElevation();
 
         // Remove the building from the building map.
-        this.bldgByCoords.remove(coords);
+        Building bldg = bldgByCoords.get(coords);
+        bldg.removeHex(coords);
+        if (!bldg.getCoords().hasMoreElements())
+            this.bldgByCoords.get(coords).removeHex(coords);
+       
+        // if more than half of the hexes are gone, collapse all
+        if (bldg.getCollapsedHexCount() > bldg.getOriginalHexCount()/2) {
+            collapseBuilding(bldg);
+        }
 
         // determine type of rubble
         // Terrain type can be a max of 4 for harded building
@@ -1079,11 +1076,13 @@ public class Board implements Serializable, IBoard {
                 System.err.println(" to update.");
                 continue;
             }
-
-            // Set the current and phase CFs of the building.
-            bldg.setCurrentCF(other.getCurrentCF());
-            bldg.setPhaseCF(other.getPhaseCF());
-
+            Enumeration<Coords> coordsEnum = bldg.getCoords();
+            while (coordsEnum.hasMoreElements()) {
+                // Set the current and phase CFs of the building hexes.
+                final Coords coords = coordsEnum.nextElement();
+                bldg.setCurrentCF(other.getCurrentCF(coords), coords);
+                bldg.setPhaseCF(other.getPhaseCF(coords), coords);
+            }
         } // Handle the next building.
 
     }
@@ -1168,7 +1167,7 @@ public class Board implements Serializable, IBoard {
      * @see megamek.common.IBoard#removeBoardListener(megamek.common.BoardListener)
      */
     public void removeBoardListener(BoardListener listener) {
-        if (boardListeners != null) {
+        if (boardListeners  != null) {
             boardListeners.removeElement(listener);
         }
     }
@@ -1212,7 +1211,7 @@ public class Board implements Serializable, IBoard {
                 Coords c = coords.nextElement();
                 IHex h = getHex(c);
                 if (h.containsTerrain(Terrains.BRIDGE)) {
-                    bldg.setCurrentCF(value);
+                    bldg.setCurrentCF(value, c);
                 }
             }
         }

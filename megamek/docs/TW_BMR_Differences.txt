@@ -156,7 +156,7 @@ HEAT
 x1) Heat applied from outside sources (Weapons & Environment) can never exceed 15 Heat Points per turn.  Any additional heat points have no effect.
 
 BUILDINGS
-1) Multi-hex buildings now have a separate CF for each of their hexes, and each hex is destroyed individually.  However, if more than half of a multi-hex building has been destroyed, the remaining hexes all collapse as well.
+x1) Multi-hex buildings now have a separate CF for each of their hexes, and each hex is destroyed individually.  However, if more than half of a multi-hex building has been destroyed, the remaining hexes all collapse as well.
 
 2) Battle Armor with Jumping or VTOL MP may leave or enter buildings at levels higher than 0, but these require an Anti-Mech skill Roll to avoid taking damage.
 

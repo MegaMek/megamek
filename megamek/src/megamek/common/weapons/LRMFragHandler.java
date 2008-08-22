@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import megamek.common.BattleArmor;
 import megamek.common.Building;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Infantry;
@@ -82,7 +83,7 @@ public class LRMFragHandler extends LRMHandler {
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector,
+     * @see megamek.common.weapons.WeaponHandler#handleClearDamage(java.util.Vector,
      *      megamek.common.Building, int, boolean)
      */
     protected void handleClearDamage(Vector<Report> vPhaseReport,
@@ -122,10 +123,10 @@ public class LRMFragHandler extends LRMHandler {
      * (non-Javadoc)
      * 
      * @see megamek.common.weapons.WeaponHandler#handleBuildingDamage(java.util.Vector,
-     *      megamek.common.Building, int, boolean)
+     *      megamek.common.Building, int, boolean, Coords)
      */
     protected void handleBuildingDamage(Vector<Report> vPhaseReport,
-            Building bldg, int nDamage, boolean bSalvo) {
+            Building bldg, int nDamage, boolean bSalvo, Coords coords) {
         return;
     }
 }

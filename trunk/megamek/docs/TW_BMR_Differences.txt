@@ -266,7 +266,7 @@ x27) -1 MP penalty for units carrying Mechanized Battle Armor using Magnetic Cla
 
 28) Mechanized Battle Armor fall off the ‘Mech if it falls, but not if it intentionally goes prone.
 
-29) ‘Mechs carrying Battle Armor on their backs cannot dump ammunition
+x29) ‘Mechs carrying Battle Armor on their backs cannot dump ammunition
 
 30) Mechanized Battle Armor do not take damage when the ‘Mech carrying them is hit by another unit colliding with it.
 

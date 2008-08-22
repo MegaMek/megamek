@@ -2062,10 +2062,10 @@ public abstract class Mech extends Entity implements Serializable {
             if (mounted.isDestroyed())
                 continue;
 
-            if ((etype instanceof WeaponType && etype.hasFlag(WeaponType.F_AMS)) || (etype instanceof AmmoType && ((AmmoType) etype).getAmmoType() == AmmoType.T_AMS) || (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
+            if ((etype instanceof WeaponType && (etype.hasFlag(WeaponType.F_AMS) || etype.hasFlag(WeaponType.F_B_POD))) || (etype instanceof AmmoType && ((AmmoType) etype).getAmmoType() == AmmoType.T_AMS) || (etype instanceof MiscType && (etype.hasFlag(MiscType.F_ECM) || etype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: ||
                     // etype.hasFlag(MiscType.F_BRIDGE_LAYING)
-                    || etype.hasFlag(MiscType.F_BAP) || etype.hasFlag(MiscType.F_B_POD)))) {
+                    || etype.hasFlag(MiscType.F_BAP) ))) {
                 dEquipmentBV += etype.getBV(this);
             }
         }
@@ -2396,7 +2396,7 @@ public abstract class Mech extends Entity implements Serializable {
             if (mounted.isDestroyed())
                 continue;
 
-            if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD) || mtype.hasFlag(MiscType.F_B_POD)
+            if (mtype.hasFlag(MiscType.F_ECM) || mtype.hasFlag(MiscType.F_BAP) || mtype.hasFlag(MiscType.F_AP_POD)
             // not yet coded: || etype.hasFlag(MiscType.F_BRIDGE_LAYING)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)) // targ counted with
                 // weapons

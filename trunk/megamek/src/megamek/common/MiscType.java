@@ -60,7 +60,7 @@ public class MiscType extends EquipmentType {
     public static final long F_UMU = 1L << 30;
     public static final long F_COOLANT_SYSTEM = 1L << 31;
     public static final long F_SPIKES = 1L << 32;
-    public static final long F_B_POD = 1L << 33;
+    //public static final long F_B_POD = 1L << 33; -- Unused
     public static final long F_PPC_CAPACITOR = 1L << 34;
     public static final long F_REFLECTIVE = 1L << 35;
     public static final long F_REACTIVE = 1L << 36;
@@ -451,9 +451,7 @@ public class MiscType extends EquipmentType {
         EquipmentType.addType(createCLActiveProbe());
         EquipmentType.addType(createCLLightActiveProbe());
         EquipmentType.addType(createISAPPod());
-        EquipmentType.addType(createISBPod());
         EquipmentType.addType(createCLAPPod());
-        EquipmentType.addType(createCLBPod());
         EquipmentType.addType(createSword());
         EquipmentType.addType(createISPPCCapacitor());
         EquipmentType.addType(createRetractableBlade());
@@ -1947,45 +1945,6 @@ public class MiscType extends EquipmentType {
         misc.spreadable = false;
         misc.flags |= F_AP_POD;
         misc.bv = 1;
-
-        return misc;
-    }
-
-    public static MiscType createISBPod() {
-        MiscType misc = new MiscType();
-
-        misc.name = "IS B Pod";
-        misc.techLevel = TechConstants.T_IS_LEVEL_1;
-        misc.setInternalName("ISBattleArmorPersonnelPod");
-        misc.addLookupName("ISBPod");
-        misc.addLookupName("IS B-Pod");
-        misc.tonnage = 1.0f;
-        misc.criticals = 1;
-        misc.hittable = true;
-        misc.cost = 0;
-        misc.spreadable = false;
-        misc.flags |= F_B_POD;
-        misc.bv = 0;
-
-        return misc;
-    }
-
-    public static MiscType createCLBPod() {
-        MiscType misc = new MiscType();
-
-        misc.name = "CL B Pod";
-        misc.techLevel = TechConstants.T_CLAN_LEVEL_2;
-        misc.setInternalName("CLBattleArmorPersonnelPod");
-        misc.addLookupName("CLBPod");
-        misc.addLookupName("Clan B-Pod");
-        misc.tonnage = 1.0f;
-        misc.criticals = 1;
-        misc.hittable = true;
-        misc.cost = 0;
-        misc.explosive = true;
-        misc.spreadable = false;
-        misc.flags |= F_B_POD;
-        misc.bv = 0;
 
         return misc;
     }

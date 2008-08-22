@@ -152,6 +152,7 @@ import megamek.common.actions.TeleMissileAttackAction;
 import megamek.common.actions.ThrashAttackAction;
 import megamek.common.actions.TorsoTwistAction;
 import megamek.common.actions.TriggerAPPodAction;
+import megamek.common.actions.TriggerBPodAction;
 import megamek.common.actions.TripAttackAction;
 import megamek.common.actions.UnjamAction;
 import megamek.common.actions.UnjamTurretAction;
@@ -8058,6 +8059,20 @@ public class Server implements Runnable {
 
                     } // Check the next piece of equipment on the target.
 
+                    for (Mounted weapon : target.getWeaponList()) {
+                        if ( weapon.getType().hasFlag(WeaponType.F_B_POD) && weapon.canFire() ) {
+
+                            // Yup. Insert a game turn to handle B pods.
+                            // ASSUMPTION : B pod declarations come
+                            // immediately after the attack declaration.
+                            game.insertNextTurn(new GameTurn.TriggerBPodTurn(target.getOwnerId(), target.getId(), weaponName));
+                            send(createTurnVectorPacket());
+
+                            // We can stop looking.
+                            break;
+
+                        } // end found-available-b-pod
+                    } // Check the next piece of equipment on the target.
                 } // End check-for-available-ap-pod
             }
 
@@ -8137,6 +8152,12 @@ public class Server implements Runnable {
             if (ea instanceof TriggerAPPodAction) {
                 TriggerAPPodAction tapa = (TriggerAPPodAction) ea;
                 Mounted pod = entity.getEquipment(tapa.getPodId());
+                pod.setUsedThisRound(true);
+            }
+            // Mark any B Pod as used in this turn.
+            if (ea instanceof TriggerBPodAction) {
+                TriggerBPodAction tba = (TriggerBPodAction) ea;
+                Mounted pod = entity.getEquipment(tba.getPodId());
                 pod.setUsedThisRound(true);
             }
         }
@@ -8258,7 +8279,7 @@ public class Server implements Runnable {
             game.resetLayMinefieldActions();
         }
 
-        Vector<TriggerAPPodAction> triggerPodActions = new Vector<TriggerAPPodAction>();
+        Vector<EntityAction> triggerPodActions = new Vector<EntityAction>();
         // loop thru actions and handle everything we expect except attacks
         for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
             EntityAction ea = i.nextElement();
@@ -8287,6 +8308,20 @@ public class Server implements Runnable {
                 } else {
                     System.err.print("AP Pod #");
                     System.err.print(tapa.getPodId());
+                    System.err.print(" on ");
+                    System.err.print(entity.getDisplayName());
+                    System.err.println(" was already triggered this round!!");
+                }
+            } else if (ea instanceof TriggerBPodAction) {
+                TriggerBPodAction tba = (TriggerBPodAction) ea;
+
+                // Don't trigger the same pod twice.
+                if (!triggerPodActions.contains(tba)) {
+                    triggerBPod(entity, tba.getPodId());
+                    triggerPodActions.addElement(tba);
+                } else {
+                    System.err.print("B Pod #");
+                    System.err.print(tba.getPodId());
                     System.err.print(" on ");
                     System.err.print(entity.getDisplayName());
                     System.err.println(" was already triggered this round!!");
@@ -8479,6 +8514,110 @@ public class Server implements Runnable {
                 target.applyDamage();
 
             } // End target-is-unarmored
+
+            // Nope, the target is immune.
+            // Don't make a log entry for the triggering entity.
+            else if (!entity.equals(target)) {
+                r = new Report(3020);
+                r.indent(2);
+                r.subject = target.getId();
+                r.addDesc(target);
+                addReport(r);
+            }
+
+        } // Check the next entity in the triggering entity's hex.
+    }
+
+    /**
+     * Trigger the indicated B Pod of the entity.
+     * 
+     * @param entity
+     *            the <code>Entity</code> triggering the B Pod.
+     * @param podId
+     *            the <code>int</code> ID of the B Pod.
+     */
+    private void triggerBPod(Entity entity, int podId) {
+
+        // Get the mount for this pod.
+        Mounted mount = entity.getEquipment(podId);
+
+        // Confirm that this is, indeed, an AP Pod.
+        if (null == mount) {
+            System.err.print("Expecting to find an B Pod at ");
+            System.err.print(podId);
+            System.err.print(" on the unit, ");
+            System.err.print(entity.getDisplayName());
+            System.err.println(" but found NO equipment at all!!!");
+            return;
+        }
+        EquipmentType equip = mount.getType();
+        if (!(equip instanceof WeaponType) || !equip.hasFlag(WeaponType.F_B_POD)) {
+            System.err.print("Expecting to find an B Pod at ");
+            System.err.print(podId);
+            System.err.print(" on the unit, ");
+            System.err.print(entity.getDisplayName());
+            System.err.print(" but found ");
+            System.err.print(equip.getName());
+            System.err.println(" instead!!!");
+            return;
+        }
+
+        // Now confirm that the entity can trigger the pod.
+        // Ignore the "used this round" flag.
+        boolean oldFired = mount.isUsedThisRound();
+        mount.setUsedThisRound(false);
+        boolean canFire = mount.canFire();
+        mount.setUsedThisRound(oldFired);
+        if (!canFire) {
+            System.err.print("Can not trigger the B Pod at ");
+            System.err.print(podId);
+            System.err.print(" on the unit, ");
+            System.err.print(entity.getDisplayName());
+            System.err.println("!!!");
+            return;
+        }
+
+        Report r;
+
+        // Mark the pod as fired and log the action.
+        mount.setFired(true);
+        r = new Report(3011);
+        r.newlines = 0;
+        r.subject = entity.getId();
+        r.addDesc(entity);
+        addReport(r);
+
+        // Walk through ALL entities in the triggering entity's hex.
+        Enumeration<Entity> targets = game.getEntities(entity.getPosition());
+        while (targets.hasMoreElements()) {
+            final Entity target = targets.nextElement();
+
+            // Is this an unarmored infantry platoon?
+            if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+
+                // Roll d6-1 for damage.
+                final int damage = Compute.d6();
+
+                // Damage the platoon.
+                addReport(damageEntity(target, new HitData(Infantry.LOC_INFANTRY), damage));
+
+                // Damage from AP Pods is applied immediately.
+                target.applyDamage();
+
+             // End target-is-unarmored
+            } else if ( target instanceof BattleArmor ){
+                // Roll d6-1 for damage.
+                final int damage = 5;
+
+                // Damage the squad.
+                addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
+                addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
+                addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
+                addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
+
+                // Damage from B Pods is applied immediately.
+                target.applyDamage();
+            }
 
             // Nope, the target is immune.
             // Don't make a log entry for the triggering entity.

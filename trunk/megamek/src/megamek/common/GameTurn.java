@@ -155,6 +155,41 @@ public class GameTurn implements Serializable {
     }
 
     /**
+     * A type of game turn that allows only one specific entity to trigger their
+     * Anti-Battle Armor pods against attacking infantry/BA.
+     */
+    public static class TriggerBPodTurn extends SpecificEntityTurn {
+
+        /**
+         * 
+         */
+        private static final long serialVersionUID = -9082006433957145275L;
+        private String attackType = "";
+        
+        public TriggerBPodTurn(int playerId, int entityId, String attackType) {
+            super(playerId, entityId);
+            
+            this.attackType = attackType;
+        }
+
+        public String getAttackType(){
+            return this.attackType;
+        }
+        /**
+         * Returns true if the entity matches this game turn, even if the entity
+         * has declared an action.
+         */
+        public boolean isValidEntity(Entity entity, IGame game) {
+            final boolean oldDone = entity.done;
+            
+            entity.done = false;
+            final boolean result = super.isValidEntity(entity, game);
+            entity.done = oldDone;
+            return result;
+        }
+    }
+
+    /**
      * A type of game turn that allows only one specific entity to counterattack
      * a break grapple by original attacker
      */

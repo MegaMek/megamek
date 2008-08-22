@@ -887,7 +887,6 @@ public class Protomech extends Entity implements Serializable {
             if (mtype.hasFlag(MiscType.F_ECM)
                     || mtype.hasFlag(MiscType.F_AP_POD)
                     || mtype.hasFlag(MiscType.F_BAP)
-                    || mtype.hasFlag(MiscType.F_B_POD)
                     || mtype.hasFlag(MiscType.F_TARGCOMP)) // targ counted with
                                                             // weapons
                 continue;

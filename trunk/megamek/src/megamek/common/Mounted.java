@@ -669,9 +669,6 @@ public class Mounted implements Serializable, RoundUpdated {
                         && !linked.isFired())
                     return 15;
             } 
-            if (mtype.hasFlag(MiscType.F_B_POD)) {
-                return 2;
-            }
             return 0;
         }
         // um, otherwise, I'm not sure

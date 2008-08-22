@@ -45,6 +45,7 @@ v0.33.30-dev (SVN)
 + Bug: Streak LRM's using wrong Weapon Handler
 + Bug: Direct Blows causing Crit rolls greater then 12
 + Implemented multi-hex buildings
++ Bug: Mechs carrying BAs on their backs shouldn't be able to dump ammunition
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

@@ -36,6 +36,11 @@ import megamek.common.weapons.PPCWeapon;
  * You know what mechs are, silly.
  */
 public abstract class Mech extends Entity implements Serializable {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -1929593228891136561L;
+
     public static final int NUM_MECH_LOCATIONS = 8;
 
     // system designators for critical hits
@@ -2206,8 +2211,6 @@ public abstract class Mech extends Entity implements Serializable {
         }
 
         double weaponBV = 0;
-        double weaponsBVFront = 0;
-        double weaponsBVRear = 0;
         boolean hasTargComp = hasTargComp();
         // first, add up front-faced and rear-faced unmodified BV,
         // to know wether front- or rear faced BV should be halved

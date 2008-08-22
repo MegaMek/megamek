@@ -42,6 +42,11 @@ import megamek.common.weapons.WeaponHandler;
  * Entity is a master class for basically anything on the board except terrain.
  */
 public abstract class Entity extends TurnOrdered implements Serializable, Transporter, Targetable, RoundUpdated {
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1430806396279853295L;
+
     public static final int NONE = -1;
 
     public static final int LOC_NONE = -1;

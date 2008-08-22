@@ -1852,7 +1852,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
                         toAttacker = ChargeAttackAction.getDamageTakenBy(ce, te, client.game.getOptions().booleanOption("tacops_charge_damage"), cmd.getHexesMoved()); //$NON-NLS-1$
                     } else if ((target.getTargetType() == Targetable.TYPE_FUEL_TANK) || (target.getTargetType() == Targetable.TYPE_BUILDING)) {
                         Building bldg = client.game.getBoard().getBuildingAt(moveto);
-                        toAttacker = ChargeAttackAction.getDamageTakenBy(ce, bldg);
+                        toAttacker = ChargeAttackAction.getDamageTakenBy(ce, bldg, moveto);
                     }
 
                     // Ask the player if they want to charge.

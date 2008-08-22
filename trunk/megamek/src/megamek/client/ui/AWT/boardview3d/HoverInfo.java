@@ -314,7 +314,7 @@ class HoverInfo implements Displayable {
             buf.append(" "); //$NON-NLS-1$
             buf.append(bldg.toString());
             buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
-            buf.append(bldg.getCurrentCF());
+            buf.append(bldg.getCurrentCF(coords));
             out.add(buf.toString());
         }
 
@@ -325,7 +325,7 @@ class HoverInfo implements Displayable {
             buf.append(" "); //$NON-NLS-1$
             buf.append(bldg.toString());
             buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
-            buf.append(bldg.getCurrentCF());
+            buf.append(bldg.getCurrentCF(coords));
             out.add(buf.toString());
         }
 
@@ -336,7 +336,7 @@ class HoverInfo implements Displayable {
             buf.append(" "); //$NON-NLS-1$
             buf.append(bldg.toString());
             buf.append(Messages.getString("BoardView1.CF")); //$NON-NLS-1$
-            buf.append(bldg.getCurrentCF());
+            buf.append(bldg.getCurrentCF(coords));
             out.add(buf.toString());
         }
 

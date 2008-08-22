@@ -106,25 +106,30 @@ public class FireProcessor extends DynamicTerrainProcessor {
         Enumeration<Building> buildings = game.getBoard().getBuildings();
         while (buildings.hasMoreElements()) {
             Building bldg = buildings.nextElement();
-            if (bldg.isBurning()) {
-                int cf = Math.max(bldg.getCurrentCF() - 2, 0);
-                bldg.setCurrentCF(cf);
+            Enumeration<Coords> bldgCoords = bldg.getCoords();
+            while (bldgCoords.hasMoreElements()) {
+                Coords coords = bldgCoords.nextElement();
+                if (bldg.isBurning(coords)) {
+                    int cf = Math.max(bldg.getCurrentCF(coords) - 2, 0);
+                    bldg.setCurrentCF(cf, coords);
 
-                // Does the building burned down?
-                if (cf == 0) {
-                    r = new Report(5120, Report.PUBLIC);
-                    r.add(bldg.getName());
-                    vPhaseReport.addElement(r);
-                    server.collapseBuilding(bldg, positionMap);
+                    // Does the building burned down?
+                    if (cf == 0) {
+                        r = new Report(5120, Report.PUBLIC);
+                        r.add(bldg.getName());
+                        vPhaseReport.addElement(r);
+                        server.collapseBuilding(bldg, positionMap, coords);
+                    }
+
+                    // If it doesn't collapse under its load, mark it for update.
+                    else if (!server.checkForCollapse(bldg, positionMap, coords)) {
+                        bldg.setPhaseCF(cf, coords);
+                        burningBldgs.addElement(bldg);
+                    }
                 }
 
-                // If it doesn't collapse under its load, mark it for update.
-                else if (!server.checkForCollapse(bldg, positionMap)) {
-                    bldg.setPhaseCF(cf);
-                    burningBldgs.addElement(bldg);
-                }
             }
-        }
+         }
 
         debugTime("resolve fire 1", true);
 
@@ -181,7 +186,7 @@ public class FireProcessor extends DynamicTerrainProcessor {
                         Building bldg = game.getBoard()
                         .getBuildingAt(currentCoords);
                         if (bldg != null) {
-                            bldg.setBurning(true);
+                            bldg.setBurning(true, currentCoords);
                             burningBldgs.addElement(bldg);
                         }                 
                     }  
@@ -216,11 +221,6 @@ public class FireProcessor extends DynamicTerrainProcessor {
     } // End the ResolveFire() method
 
     public void burnDownWoods(Coords coords) {
-        /*
-         * TODO Replace this code once Tactical ops is released. Players are now
-         * allowed to set how much damage woods will burn down per round
-         * Defaults to 5 CF like the original command. -- Torren
-         */
         int burnDamage = 5;
         try {
             burnDamage = game.getOptions().intOption("woods_burn_down_amount");

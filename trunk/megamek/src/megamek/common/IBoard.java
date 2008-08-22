@@ -277,7 +277,7 @@ public interface IBoard {
      * @param bldgs - the <code>Vector</code> of <code>Building</code>
      *            objects to be collapsed.
      */
-    public abstract void collapseBuilding(Vector<Building> bldgs);
+    public abstract void collapseBuilding(Vector<Coords> bldgs);
 
     /**
      * The given building has collapsed. Remove it from the board and replace it

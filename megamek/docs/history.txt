@@ -51,7 +51,8 @@ v0.33.30-dev (SVN)
 + Bug 2022141: "Firedrake" Assault Needler
 + Added BPod Code.
 + Bug: AP ammo and TC Ammo not doing full damage to Hardened Armor
-
++ Bug: LK Munition and HE Munition using the same flag
+ 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility
 + Added new 3d libs to build.bat

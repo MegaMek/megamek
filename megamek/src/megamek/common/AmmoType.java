@@ -130,7 +130,7 @@ public class AmmoType extends EquipmentType {
 
     // LRM & SRM Munition Types
     public static final long     M_FRAGMENTATION     = 1l << 9;
-    public static final long     M_LISTEN_KILL       = 1l << 8;
+    public static final long     M_LISTEN_KILL       = 1l << 10;
     public static final long     M_ANTI_TSM          = 1l << 11;
     public static final long     M_NARC_CAPABLE      = 1l << 12;
     public static final long     M_ARTEMIS_CAPABLE   = 1l << 13;

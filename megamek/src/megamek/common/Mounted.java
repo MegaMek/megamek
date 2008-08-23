@@ -171,7 +171,7 @@ public class Mounted implements Serializable, RoundUpdated {
     public EquipmentMode curMode() {
         if (mode >= 0 && mode < type.getModesCount())
             return type.getMode(mode);
-        return null;
+        return EquipmentMode.getMode("None");
     }
 
     /**

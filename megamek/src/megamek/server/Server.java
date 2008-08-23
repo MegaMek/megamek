@@ -19690,8 +19690,16 @@ public class Server implements Runnable {
 
         // Set proper RNG
         Compute.setRNG(game.getOptions().intOption("rng_type"));
-
-        return changed > 0;
+        
+        if (changed > 0) {
+            for (Enumeration<Entity> entities = game.getEntities(); entities.hasMoreElements(); ){
+                Entity en = entities.nextElement();
+                en.setGameOptions();
+            }
+            entityAllUpdate();
+            return true;
+        }
+        return false;
     }
 
     /**

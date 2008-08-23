@@ -52,6 +52,7 @@ v0.33.30-dev (SVN)
 + Added BPod Code.
 + Bug: AP ammo and TC Ammo not doing full damage to Hardened Armor
 + Bug: LK Munition and HE Munition using the same flag
++ Bug: Update entities for changed game options
  
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

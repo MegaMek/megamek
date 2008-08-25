@@ -622,7 +622,9 @@ public class MoveStep implements Serializable {
                 setHasJustStood(true);
                 break;
             case MovePath.STEP_GO_PRONE:
-                setMp(1);
+                if ( !entity.isHullDown() ){
+                    setMp(1);
+                }
                 break;
             case MovePath.STEP_START_JUMP:
                 break;
@@ -656,10 +658,11 @@ public class MoveStep implements Serializable {
                     if ( entity instanceof BipedMech ){
                         for ( int location = Mech.LOC_RLEG; location <= Mech.LOC_LLEG; location++ ){
                             if ( entity.isLocationBad(location ) ){
-                                mpUsed += 4;
+                                mpUsed += 99;
+                                break;
                             }else {
-                                mpUsed += ((Mech)entity).countLegActuatorCrits(location);
-                                if ( ((Mech)entity).hasHipCrit() ){
+                                mpUsed += 3 - ((Mech)entity).countLegActuatorCrits(location);
+                                if ( ((Mech)entity).legHasHipCrit(location) ){
                                     mpUsed += 1;
                                 }
                             }
@@ -667,10 +670,11 @@ public class MoveStep implements Serializable {
                     }else {
                         for ( int location = Mech.LOC_RARM; location <= Mech.LOC_LLEG; location++ ){
                             if ( entity.isLocationBad(location ) ){
-                                mpUsed += 4;
+                                mpUsed += 99;
+                                break;
                             }else {
-                                mpUsed += ((QuadMech)entity).countLegActuatorCrits(location);
-                                if ( ((QuadMech)entity).hasHipCrit() ){
+                                mpUsed += 3 - ((QuadMech)entity).countLegActuatorCrits(location);
+                                if ( ((QuadMech)entity).legHasHipCrit(location) ){
                                     mpUsed += 1;
                                 }
                             }

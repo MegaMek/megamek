@@ -2712,7 +2712,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_LEVEL_2;
-        misc.name = "PPC Capacitor";
+        misc.name = "LPPC Capacitor";
         misc.setInternalName("ISLightPPCCapacitor");
         misc.tonnage = 1.0f;
         misc.criticals = 1;
@@ -2730,7 +2730,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_LEVEL_2;
-        misc.name = "PPC Capacitor";
+        misc.name = "HPPC Capacitor";
         misc.setInternalName("ISHeavyPPCCapacitor");
         misc.tonnage = 1.0f;
         misc.criticals = 1;
@@ -2748,7 +2748,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_LEVEL_2;
-        misc.name = "PPC Capacitor";
+        misc.name = "ERPPC Capacitor";
         misc.setInternalName("ISERPPCCapacitor");
         misc.tonnage = 1.0f;
         misc.criticals = 1;
@@ -2766,7 +2766,7 @@ public class MiscType extends EquipmentType {
         MiscType misc = new MiscType();
 
         misc.techLevel = TechConstants.T_IS_LEVEL_2;
-        misc.name = "PPC Capacitor";
+        misc.name = "SNPPC Capacitor";
         misc.setInternalName("ISSNPPCCapacitor");
         misc.tonnage = 1.0f;
         misc.criticals = 1;

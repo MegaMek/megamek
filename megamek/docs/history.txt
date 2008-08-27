@@ -57,6 +57,7 @@ v0.33.30-dev (SVN)
 + Bug: PPC Caps all have same external name screwing up MekWars.
 + Bug 2069823: ATM Ammo Issues
 + Bug: Hull Down calculating MP cost incorrectly
++ Bug: Quad Left and Right Side table doing all Rear shots
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

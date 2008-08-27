@@ -416,46 +416,46 @@ public class QuadMech extends Mech {
                 } else if (side == ToHitData.SIDE_LEFT) {
                     switch (roll) {
                     case 2:
-                        return tac(table, side, Mech.LOC_LT, true);
+                        return tac(table, side, Mech.LOC_LT,false);
                     case 3:
                     case 4:
-                        return new HitData(Mech.LOC_LLEG, true);
+                        return new HitData(Mech.LOC_LLEG);
                     case 5:
                     case 6:
-                        return new HitData(Mech.LOC_LARM, true);
+                        return new HitData(Mech.LOC_LARM);
                     case 7:
-                        return new HitData(Mech.LOC_LLEG, true);
+                        return new HitData(Mech.LOC_LLEG);
                     case 8:
-                        return new HitData(Mech.LOC_CT, true);
+                        return new HitData(Mech.LOC_CT);
                     case 9:
-                        return new HitData(Mech.LOC_RT, true);
+                        return new HitData(Mech.LOC_RT);
                     case 10:
                     case 11:
-                        return new HitData(Mech.LOC_RARM, true);
+                        return new HitData(Mech.LOC_RARM);
                     case 12:
-                        return new HitData(Mech.LOC_RLEG, true);
+                        return new HitData(Mech.LOC_RLEG);
                     }
                 } else if (side == ToHitData.SIDE_RIGHT) {
                     switch (roll) {
                     case 2:
-                        return tac(table, side, Mech.LOC_RT, true);
+                        return tac(table, side, Mech.LOC_RT,false);
                     case 3:
                     case 4:
-                        return new HitData(Mech.LOC_RLEG, true);
+                        return new HitData(Mech.LOC_RLEG);
                     case 5:
                     case 6:
-                        return new HitData(Mech.LOC_RARM, true);
+                        return new HitData(Mech.LOC_RARM);
                     case 7:
-                        return new HitData(Mech.LOC_RLEG, true);
+                        return new HitData(Mech.LOC_RLEG);
                     case 8:
-                        return new HitData(Mech.LOC_CT, true);
+                        return new HitData(Mech.LOC_CT);
                     case 9:
-                        return new HitData(Mech.LOC_LT, true);
+                        return new HitData(Mech.LOC_LT);
                     case 10:
                     case 11:
-                        return new HitData(Mech.LOC_LARM, true);
+                        return new HitData(Mech.LOC_LARM);
                     case 12:
-                        return new HitData(Mech.LOC_LLEG, true);
+                        return new HitData(Mech.LOC_LLEG);
                     }
                 }
             }

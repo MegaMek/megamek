@@ -376,7 +376,7 @@ public class PlanetaryConditions implements Serializable {
                     windStrength--;
                 break;
             case 6: // stronger
-                if (windStrength < WI_SIZE)
+                if (windStrength < WI_TORNADO_F4)
                     windStrength++;
             }
         }

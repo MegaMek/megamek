@@ -287,61 +287,53 @@ public class SmallCraft extends Aero {
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
         
+        int arc = Compute.ARC_NOSE;
         if(!isSpheroid()) {
             switch (mounted.getLocation()) {
                 case LOC_NOSE:
-                    return Compute.ARC_NOSE;
+                    arc = Compute.ARC_NOSE;
+                    break;
                 case LOC_RWING:
                     if(mounted.isRearMounted()) {
-                        return Compute.ARC_RWINGA;
+                        arc = Compute.ARC_RWINGA;
                     }
-                    return Compute.ARC_RWING;
+                    arc = Compute.ARC_RWING;
+                    break;
                 case LOC_LWING:
                     if(mounted.isRearMounted()) {
-                        return Compute.ARC_LWINGA;
+                        arc = Compute.ARC_LWINGA;
                     }
-                    return Compute.ARC_LWING;
+                    arc = Compute.ARC_LWING;
+                    break;
                 case LOC_AFT:
-                    return Compute.ARC_AFT;
+                    arc = Compute.ARC_AFT;
+                    break;
                 default:
-                    return Compute.ARC_360;
+                    arc = Compute.ARC_360;
             }
         } else {
-            if(game.getBoard().inAtmosphere()) {
-                switch (mounted.getLocation()) {
-                case LOC_NOSE:
-                    return Compute.ARC_360;
-                case LOC_RWING:
-                    return Compute.ARC_RIGHT_SPHERE_GROUND;
-                case LOC_LWING:
-                    return Compute.ARC_LEFT_SPHERE_GROUND;
-                case LOC_AFT:
-                    return Compute.ARC_360;
-                default:
-                    return Compute.ARC_360;
+            switch (mounted.getLocation()) {
+            case LOC_NOSE:
+                arc = Compute.ARC_NOSE;
+            case LOC_RWING:
+                if(mounted.isRearMounted()) {
+                    arc = Compute.ARC_RIGHTSIDEA_SPHERE;
                 }
-            } else {
-                switch (mounted.getLocation()) {
-                case LOC_NOSE:
-                    return Compute.ARC_NOSE;
-                case LOC_RWING:
-                    if(mounted.isRearMounted()) {
-                        return Compute.ARC_RIGHTSIDEA_SPHERE;
-                    }
-                    return Compute.ARC_RIGHTSIDE_SPHERE;
-                case LOC_LWING:
-                    if(mounted.isRearMounted()) {
-                        return Compute.ARC_LEFTSIDEA_SPHERE;
-                    }
-                    return Compute.ARC_LEFTSIDE_SPHERE;
-                case LOC_AFT:
-                    return Compute.ARC_AFT;
-                default:
-                    return Compute.ARC_360;
+                arc = Compute.ARC_RIGHTSIDE_SPHERE;
+            case LOC_LWING:
+                if(mounted.isRearMounted()) {
+                    arc = Compute.ARC_LEFTSIDEA_SPHERE;
                 }
+                arc = Compute.ARC_LEFTSIDE_SPHERE;
+            case LOC_AFT:
+                arc = Compute.ARC_AFT;
+            default:
+                arc = Compute.ARC_360;
             }
         
-        }   
+        } 
+        
+        return rollArcs(arc);
         
     }
     

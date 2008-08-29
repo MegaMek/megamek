@@ -234,26 +234,34 @@ public class Jumpship extends Aero {
     }
     
     //different firing arcs
+//  different firing arcs
     public int getWeaponArc(int wn) {
         final Mounted mounted = getEquipment(wn);
         
-        
+        int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
         case LOC_NOSE:
-            return Compute.ARC_NOSE;
+            arc = Compute.ARC_NOSE;
+            break;
         case LOC_FRS:
-            return Compute.ARC_RIGHTSIDE_SPHERE;
+            arc = Compute.ARC_RIGHTSIDE_SPHERE;
+            break;
         case LOC_FLS:
-            return Compute.ARC_LEFTSIDE_SPHERE;
+            arc = Compute.ARC_LEFTSIDE_SPHERE;
+            break;
         case LOC_ARS:
-            return Compute.ARC_RIGHTSIDEA_SPHERE;
+            arc = Compute.ARC_RIGHTSIDEA_SPHERE;
+            break;
         case LOC_ALS:
-            return Compute.ARC_LEFTSIDEA_SPHERE;
+            arc = Compute.ARC_LEFTSIDEA_SPHERE;
+            break;
         case LOC_AFT:
-            return Compute.ARC_AFT;
+            arc = Compute.ARC_AFT;
+            break;
         default:
-            return Compute.ARC_360;
+            arc = Compute.ARC_360;
         }        
+        return rollArcs(arc);
     }
     
     //different hit locations

@@ -589,24 +589,61 @@ public class Aero
         if(mounted.getType().getInternalName().equals(SPACE_BOMB_ATTACK)) {
             return Compute.ARC_360;
         }
+        int arc = Compute.ARC_NOSE;
         switch (mounted.getLocation()) {
             case LOC_NOSE:
-                 return Compute.ARC_NOSE;
+                 arc = Compute.ARC_NOSE;
+                 break;
             case LOC_RWING:
                 if(mounted.isRearMounted()) {
-                    return Compute.ARC_RWINGA;
+                    arc = Compute.ARC_RWINGA;
                 }
-                return Compute.ARC_RWING;
+                arc = Compute.ARC_RWING;
+                break;
             case LOC_LWING:
                 if(mounted.isRearMounted()) {
-                    return Compute.ARC_LWINGA;
+                    arc = Compute.ARC_LWINGA;
                 }
-                return Compute.ARC_LWING;
+                arc = Compute.ARC_LWING;
+                break;
             case LOC_AFT:
-                return Compute.ARC_AFT;
+                arc = Compute.ARC_AFT;
+                break;
             default:
-                return Compute.ARC_360;
+                arc = Compute.ARC_360;
         }
+        
+        return rollArcs(arc);
+    }
+    
+    /**
+     * switches certain arcs due to rolling
+     */
+    public int rollArcs(int arc) {
+        if(isRolled()) {
+            if(arc == Compute.ARC_LWING) {
+                return Compute.ARC_RWING;
+            } else if( arc == Compute.ARC_RWING) {
+                return Compute.ARC_LWING;
+            } else if( arc == Compute.ARC_LWINGA) {
+                return Compute.ARC_RWINGA;
+            } else if( arc == Compute.ARC_RWINGA) {
+                return Compute.ARC_LWINGA;
+            } else if( arc == Compute.ARC_LEFTSIDE_SPHERE) {
+                return Compute.ARC_RIGHTSIDE_SPHERE;
+            } else if( arc == Compute.ARC_RIGHTSIDE_SPHERE) {
+                return Compute.ARC_LEFTSIDE_SPHERE;
+            } else if( arc == Compute.ARC_LEFTSIDEA_SPHERE) {
+                return Compute.ARC_RIGHTSIDEA_SPHERE;
+            } else if( arc == Compute.ARC_RIGHTSIDEA_SPHERE) {
+                return Compute.ARC_LEFTSIDEA_SPHERE;
+            } else if( arc == Compute.ARC_LEFT_BROADSIDE) {
+                return Compute.ARC_RIGHT_BROADSIDE;
+            } else if( arc == Compute.ARC_RIGHT_BROADSIDE) {
+                return Compute.ARC_LEFT_BROADSIDE;
+            }
+        }
+        return arc;
     }
     
     /**

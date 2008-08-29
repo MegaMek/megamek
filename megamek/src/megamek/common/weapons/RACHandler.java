@@ -161,4 +161,9 @@ public class RACHandler extends UltraWeaponHandler {
         av = (int)(((double)howManyShots / 6) * av);
         return av;
     }
+    
+    protected boolean canDoDirectBlowDamage(){
+        return false;
+    }
+
 }

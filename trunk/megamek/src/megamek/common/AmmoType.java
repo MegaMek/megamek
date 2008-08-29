@@ -838,13 +838,13 @@ public class AmmoType extends EquipmentType {
         munitions.add( new MunitionMutator( "Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_IS_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "Acid",
-                                                   1, M_AX_HEAD, TechConstants.T_IS_LEVEL_3 ) );
+                                                   2, M_AX_HEAD, TechConstants.T_IS_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "Dead-Fire",
-                                                   1, M_DEAD_FIRE, TechConstants.T_IS_LEVEL_3 ) );
+                                                   2, M_DEAD_FIRE, TechConstants.T_IS_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "Heat-Seeking",
-                                                   1, M_HEAT_SEEKING, TechConstants.T_IS_LEVEL_3 ) );
+                                                   2, M_HEAT_SEEKING, TechConstants.T_IS_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "Tandem-Charge",
-                                                   1, M_TANDEM_CHARGE, TechConstants.T_IS_LEVEL_3 ) );
+                                                   2, M_TANDEM_CHARGE, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -865,13 +865,13 @@ public class AmmoType extends EquipmentType {
         munitions.add( new MunitionMutator( "(Clan) Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "(Clan) Acid",
-                                                   1, M_AX_HEAD, TechConstants.T_CLAN_LEVEL_3 ) );
+                                                   2, M_AX_HEAD, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "(Clan) Dead-Fire",
-                1, M_DEAD_FIRE, TechConstants.T_CLAN_LEVEL_3 ) );
+                2, M_DEAD_FIRE, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "(Clan) Heat-Seeking",
-                1, M_HEAT_SEEKING, TechConstants.T_CLAN_LEVEL_3 ) );
+                2, M_HEAT_SEEKING, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "(Clan) Tandem-Charge",
-                1, M_TANDEM_CHARGE, TechConstants.T_CLAN_LEVEL_3 ) );
+                2, M_TANDEM_CHARGE, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -946,11 +946,11 @@ public class AmmoType extends EquipmentType {
         munitions.add( new MunitionMutator( "Anti-TSM",
                                                    1, M_ANTI_TSM, TechConstants.T_IS_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "Dead-Fire",
-                                                   1, M_DEAD_FIRE, TechConstants.T_IS_LEVEL_3 ) );
+                                                   2, M_DEAD_FIRE, TechConstants.T_IS_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "Heat-Seeking",
-                                                   1, M_HEAT_SEEKING, TechConstants.T_IS_LEVEL_3 ) );
+                                                   2, M_HEAT_SEEKING, TechConstants.T_IS_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "Follow The Leader",
-                                                   1, M_FOLLOW_THE_LEADER, TechConstants.T_IS_LEVEL_3 ) );
+                                                   2, M_FOLLOW_THE_LEADER, TechConstants.T_IS_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -985,11 +985,11 @@ public class AmmoType extends EquipmentType {
         munitions.add( new MunitionMutator( "(Clan) Anti-TSM",
                                                  1, M_ANTI_TSM, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "(Clan) Dead-Fire",
-                1, M_DEAD_FIRE, TechConstants.T_CLAN_LEVEL_3 ) );
+                2, M_DEAD_FIRE, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "(Clan) Heat-Seeking",
-                1, M_HEAT_SEEKING, TechConstants.T_CLAN_LEVEL_3 ) );
+                2, M_HEAT_SEEKING, TechConstants.T_CLAN_LEVEL_3 ) );
         munitions.add( new MunitionMutator( "(Clan) Follow The Leader",
-                1, M_FOLLOW_THE_LEADER, TechConstants.T_CLAN_LEVEL_3 ) );
+                2, M_FOLLOW_THE_LEADER, TechConstants.T_CLAN_LEVEL_3 ) );
 
         // Walk through both the base types and the
         // mutators, and create munition types.
@@ -7306,9 +7306,13 @@ public class AmmoType extends EquipmentType {
             if (((munition.getAmmoType() == AmmoType.T_LRM)|| (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
                     && (munition.getMunitionType() == AmmoType.M_ANTI_TSM ||
                          munition.getMunitionType() == AmmoType.M_DEAD_FIRE ||
-                         munition.getMunitionType() == AmmoType.M_TANDEM_CHARGE ||
                          munition.getMunitionType() == AmmoType.M_FRAGMENTATION))
                 cost *= 2;
+
+            if ( (munition.getAmmoType() == AmmoType.T_MML || munition.getAmmoType() == AmmoType.T_SRM)
+                    && munition.getMunitionType() == AmmoType.M_TANDEM_CHARGE ){
+                cost *= 5;
+            }
 
             if (((munition.getAmmoType() == AmmoType.T_LRM)|| (munition.getAmmoType() == AmmoType.T_MML) || (munition.getAmmoType() == AmmoType.T_SRM))
                     && (munition.getMunitionType() == AmmoType.M_HEAT_SEEKING ||

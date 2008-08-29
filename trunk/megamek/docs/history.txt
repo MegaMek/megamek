@@ -59,6 +59,7 @@ v0.33.30-dev (SVN)
 + Bug: Hull Down calculating MP cost incorrectly
 + Bug: Quad Left and Right Side table doing all Rear shots
 + Bug: HeatSeeking, Follow the Leader, and Tandem Charge ammo should only have half the number of rounds per ton
++ Bug 2080056: Direct Blows (two bugs)
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

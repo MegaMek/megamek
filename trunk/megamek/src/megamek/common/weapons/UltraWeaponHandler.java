@@ -106,6 +106,11 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             nMod -= 4;
         if(game.getPlanetaryConditions().hasEMI())
             nMod -= 2;
+        
+        if ( bDirect ){
+            nMod += (toHit.getMoS()/3)*2;
+        }
+        
         switch (howManyShots) {
             case 1:
                 shotsHit = 1;
@@ -224,4 +229,9 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         av = (int)(((double)howManyShots / 2) * av);
         return av;
     }
+    
+    protected boolean canDoDirectBlowDamage(){
+        return false;
+    }
+
 }

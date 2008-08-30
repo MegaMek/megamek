@@ -103,7 +103,7 @@ public class HitData {
         return fromFront;
     }
 
-    public void makeArmorPiercing(AmmoType inType) {
+    public void makeArmorPiercing(AmmoType inType, int modifer) {
         if (inType.getRackSize() == 2)
             specCritMod = -4;
         else if (inType.getRackSize() == 5)
@@ -112,6 +112,8 @@ public class HitData {
             specCritMod = -2;
         else if (inType.getRackSize() == 20)
             specCritMod = -1;
+        
+        specCritMod += modifer;
     }
 
     public void makeGlancingBlow() {

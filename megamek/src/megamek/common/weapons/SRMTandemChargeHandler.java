@@ -134,7 +134,14 @@ public class SRMTandemChargeHandler extends SRMHandler {
                     hit = new HitData(loc, false, HitData.EFFECT_CRITICAL);
                 }
             }else if ( target instanceof Tank || target instanceof Mech ){
-                hit.setSpecCritmod(-2);
+                
+                if ( bGlancing ) {
+                    hit.setSpecCritmod(-4);
+                }else if ( bDirect ) {
+                    hit.setSpecCritmod((toHit.getMoS()/3)-2);
+                }else {
+                    hit.setSpecCritmod(-2);
+                }
             } 
             vPhaseReport.addAll(server.damageEntity(entityTarget, hit, nDamage, false, ae.getSwarmTargetId() == entityTarget.getId() ? DamageType.IGNORE_PASSENGER : DamageType.NONE, false, false, throughFront));
         }

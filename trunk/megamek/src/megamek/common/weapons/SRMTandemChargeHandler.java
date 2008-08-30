@@ -123,6 +123,9 @@ public class SRMTandemChargeHandler extends SRMHandler {
             if (bGlancing) {
                 hit.makeGlancingBlow();
             }
+            if ( bDirect && (!(target instanceof Infantry) || target instanceof BattleArmor)){
+                hit.makeDirectBlow(toHit.getMoS()/3);
+            }
 
             if ( target instanceof BattleArmor && ((BattleArmor)target).getInternal(hit.getLocation()) != IArmorState.ARMOR_DOOMED ){
                 int roll = Compute.d6(2);

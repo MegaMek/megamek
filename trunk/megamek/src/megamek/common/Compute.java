@@ -2961,6 +2961,10 @@ public class Compute {
             reason.append("Defender is not a Mek.");
         }
 
+        // Can't attack if flying
+        else if (attacker.getElevation()>defender.getElevation()) {
+            reason.append("Cannot do leg attack while flying.");
+        }
         // Can't target a transported entity.
         else if (Entity.NONE != defender.getTransportId()) {
             reason.append("Target is a passenger.");

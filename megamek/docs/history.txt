@@ -61,6 +61,7 @@ v0.33.30-dev (SVN)
 + Bug: HeatSeeking, Follow the Leader, and Tandem Charge ammo should only have half the number of rounds per ton
 + Bug 2080056: Direct Blows (two bugs)
 + Bug: Glancing Blows and Direct Blows not effect special crit rolls for TC and AP ammo
++ Bug 2071836: Sylphs able to Leg-Attack while hovering
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

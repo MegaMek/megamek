@@ -15,9 +15,11 @@
 package megamek.client.ui.swing;
 
 import java.awt.Color;
-import java.awt.PopupMenu;
-import java.awt.event.KeyListener;
 import java.awt.Component;
+import java.awt.event.KeyListener;
+
+import javax.swing.JPopupMenu;
+
 import megamek.client.event.BoardViewEvent;
 import megamek.client.event.BoardViewListener;
 import megamek.client.event.MechDisplayListener;
@@ -57,7 +59,7 @@ public interface IBoardView extends MechDisplayListener {
     public void zoomOut();
     public void centerOnHex(Coords position);
 
-    public void showPopup(PopupMenu popup, Coords c);
+    public void showPopup(JPopupMenu popup, Coords c);
     public void hideTooltip();
 
     public void addKeyListener(KeyListener k);

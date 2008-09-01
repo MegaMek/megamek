@@ -28,7 +28,6 @@ import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Polygon;
-import java.awt.PopupMenu;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -48,6 +47,7 @@ import java.util.Vector;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneLayout;
@@ -126,35 +126,45 @@ import megamek.common.preference.PreferenceManager;
 /**
  * Displays the board; lets the user scroll around and select points on it.
  */
-public class BoardView1 extends JPanel implements IBoardView, Scrollable,
-        BoardListener, MouseListener, KeyEventDispatcher, MechDisplayListener,
-        IPreferenceChangeListener {
+public class BoardView1 extends JPanel implements IBoardView, Scrollable, BoardListener,
+        MouseListener, KeyEventDispatcher, MechDisplayListener, IPreferenceChangeListener {
 
     private static final long serialVersionUID = -5582195884759007416L;
+
     private static final int TRANSPARENT = 0xFFFF00FF;
 
     private static final int BOARD_HEX_CLICK = 1;
+
     private static final int BOARD_HEX_DOUBLECLICK = 2;
+
     private static final int BOARD_HEX_DRAG = 3;
+
     private static final int BOARD_HEX_POPUP = 4;
-    
+
     // the dimensions of megamek's hex images
     private static final int HEX_W = 84;
+
     private static final int HEX_H = 72;
+
     private static final int HEX_WC = HEX_W - HEX_W / 4;
 
     // line width of the c3 network lines
     private static final int C3_LINE_WIDTH = 1;
 
     private static Font FONT_9 = new Font("SansSerif", Font.PLAIN, 9); //$NON-NLS-1$
+
     private static Font FONT_10 = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
+
     private static Font FONT_12 = new Font("SansSerif", Font.PLAIN, 12); //$NON-NLS-1$
 
     Dimension hex_size = null;
 
     private Font font_note = FONT_10;
+
     private Font font_hexnum = FONT_10;
+
     private Font font_elev = FONT_9;
+
     private Font font_minefield = FONT_12;
 
     IGame game;
@@ -166,13 +176,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // entity sprites
     private ArrayList<EntitySprite> entitySprites = new ArrayList<EntitySprite>();
+
     private HashMap<Integer, EntitySprite> entitySpriteIds = new HashMap<Integer, EntitySprite>();
 
     // sprites for the three selection cursors
     private CursorSprite cursorSprite;
+
     private CursorSprite highlightSprite;
+
     private CursorSprite selectedSprite;
+
     private CursorSprite firstLOSSprite;
+
     private CursorSprite secondLOSSprite;
 
     // sprite for current movement
@@ -181,7 +196,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     // vector of sprites for all firing lines
     ArrayList<AttackSprite> attackSprites = new ArrayList<AttackSprite>();
 
-    //vector of sprites for all movement paths (using vectored movement)
+    // vector of sprites for all movement paths (using vectored movement)
     private ArrayList<MovementSprite> movementSprites = new ArrayList<MovementSprite>();
 
     // vector of sprites for C3 network lines
@@ -191,7 +206,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // polygons for a few things
     Polygon hexPoly;
+
     Polygon[] facingPolys;
+
     Polygon[] movementPolys;
 
     // the player who owns this BoardView's client
@@ -211,29 +228,40 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     // Move units step by step
     private ArrayList<MovingUnit> movingUnits = new ArrayList<MovingUnit>();
+
     private long moveWait = 0;
 
     // moving entity sprites
     private ArrayList<MovingEntitySprite> movingEntitySprites = new ArrayList<MovingEntitySprite>();
+
     private HashMap<Integer, MovingEntitySprite> movingEntitySpriteIds = new HashMap<Integer, MovingEntitySprite>();
+
     private ArrayList<GhostEntitySprite> ghostEntitySprites = new ArrayList<GhostEntitySprite>();
+
     protected transient ArrayList<BoardViewListener> boardListeners = new ArrayList<BoardViewListener>();
 
     // wreck sprites
     private ArrayList<WreckSprite> wreckSprites = new ArrayList<WreckSprite>();
 
     private Coords rulerStart; // added by kenn
+
     private Coords rulerEnd; // added by kenn
+
     private Color rulerStartColor; // added by kenn
+
     private Color rulerEndColor; // added by kenn
 
     private Coords lastCursor;
+
     private Coords highlighted;
+
     private Coords selected;
+
     private Coords firstLOS;
 
     // selected entity and weapon for artillery display
     private Entity selectedEntity = null;
+
     private Mounted selectedWeapon = null;
 
     // hexes with ECM effect
@@ -259,8 +287,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         };
         addMouseMotionListener(doScrollRectToVisible);
         setAutoscrolls(true);
-        KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                .addKeyEventDispatcher(this);
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
 
         updateBoardSize();
 
@@ -274,9 +301,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         firstLOSSprite = new CursorSprite(Color.red);
         secondLOSSprite = new CursorSprite(Color.red);
 
-        PreferenceManager.getClientPreferences().addPreferenceChangeListener(
-                this);
-        
+        PreferenceManager.getClientPreferences().addPreferenceChangeListener(this);
+
         SpecialHexDisplay.Type.ARTILLERY_HIT.init(getToolkit());
         SpecialHexDisplay.Type.ARTILLERY_INCOMING.init(getToolkit());
         SpecialHexDisplay.Type.ARTILLERY_TARGET.init(getToolkit());
@@ -287,8 +313,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     protected final RedrawWorker redrawWorker = new RedrawWorker();
 
     /**
-     * this should only be called once!! this will cause a timer to schedule
-     * constant screen updates every 20 milliseconds!
+     * this should only be called once!! this will cause a timer to schedule constant screen updates
+     * every 20 milliseconds!
      */
     protected void scheduleRedrawTimer() {
         final TimerTask redraw = new TimerTask() {
@@ -316,10 +342,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Adds the specified board listener to receive board events from this
-     * board.
+     * Adds the specified board listener to receive board events from this board.
      * 
-     * @param listener the board listener.
+     * @param listener
+     *            the board listener.
      */
     public void addBoardViewListener(BoardViewListener listener) {
         if (!boardListeners.contains(listener)) {
@@ -330,7 +356,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Removes the specified board listener.
      * 
-     * @param listener the board listener.
+     * @param listener
+     *            the board listener.
      */
     public void removeBoardViewListener(BoardViewListener listener) {
         boardListeners.remove(listener);
@@ -339,7 +366,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Notifies attached board listeners of the event.
      * 
-     * @param event the board event.
+     * @param event
+     *            the board event.
      */
     public void processBoardViewEvent(BoardViewEvent event) {
         if (boardListeners == null) {
@@ -347,32 +375,33 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         for (BoardViewListener l : boardListeners) {
             switch (event.getType()) {
-                case BoardViewEvent.BOARD_HEX_CLICKED:
-                case BoardViewEvent.BOARD_HEX_DOUBLECLICKED:
-                case BoardViewEvent.BOARD_HEX_DRAGGED:
-                    l.hexMoused(event);
-                    break;
-                case BoardViewEvent.BOARD_HEX_CURSOR:
-                    l.hexCursor(event);
-                    break;
-                case BoardViewEvent.BOARD_HEX_HIGHLIGHTED:
-                    l.boardHexHighlighted(event);
-                    break;
-                case BoardViewEvent.BOARD_HEX_SELECTED:
-                    l.hexSelected(event);
-                    break;
-                case BoardViewEvent.BOARD_FIRST_LOS_HEX:
-                    l.firstLOSHex(event);
-                    break;
-                case BoardViewEvent.BOARD_SECOND_LOS_HEX:
-                    l.secondLOSHex(event, getFirstLOS());
-                    break;
-                case BoardViewEvent.FINISHED_MOVING_UNITS:
-                    l.finishedMovingUnits(event);
-                    break;
-                case BoardViewEvent.SELECT_UNIT:
-                    l.unitSelected(event);
-                    break;
+            case BoardViewEvent.BOARD_HEX_CLICKED:
+            case BoardViewEvent.BOARD_HEX_DOUBLECLICKED:
+            case BoardViewEvent.BOARD_HEX_DRAGGED:
+            case BoardViewEvent.BOARD_HEX_POPUP:
+                l.hexMoused(event);
+                break;
+            case BoardViewEvent.BOARD_HEX_CURSOR:
+                l.hexCursor(event);
+                break;
+            case BoardViewEvent.BOARD_HEX_HIGHLIGHTED:
+                l.boardHexHighlighted(event);
+                break;
+            case BoardViewEvent.BOARD_HEX_SELECTED:
+                l.hexSelected(event);
+                break;
+            case BoardViewEvent.BOARD_FIRST_LOS_HEX:
+                l.firstLOSHex(event);
+                break;
+            case BoardViewEvent.BOARD_SECOND_LOS_HEX:
+                l.secondLOSHex(event, getFirstLOS());
+                break;
+            case BoardViewEvent.FINISHED_MOVING_UNITS:
+                l.finishedMovingUnits(event);
+                break;
+            case BoardViewEvent.SELECT_UNIT:
+                l.unitSelected(event);
+                break;
             }
         }
     }
@@ -407,9 +436,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         final Dimension size = scrollpane.getViewport().getSize();
 
         if (!this.isTileImagesLoaded()) {
-            g
-                    .drawString(
-                            Messages.getString("BoardView1.loadingImages"), 20, 50); //$NON-NLS-1$
+            g.drawString(Messages.getString("BoardView1.loadingImages"), 20, 50); //$NON-NLS-1$
             if (!tileManager.isStarted()) {
                 System.out.println("boardview1: loading images for board"); //$NON-NLS-1$
                 tileManager.loadNeededImages(game);
@@ -461,9 +488,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         // draw onscreen attacks
         drawSprites(g, attackSprites);
-        
-        //draw movement vectors. 
-        if(game.useVectorMove() && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+
+        // draw movement vectors.
+        if (game.useVectorMove() && game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
             drawSprites(g, movementSprites);
         }
 
@@ -499,19 +526,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Updates the boardSize variable with the proper values for this board.
      */
     private void updateBoardSize() {
-        int width = game.getBoard().getWidth() * (int) (HEX_WC * scale)
-                + (int) (HEX_W / 4 * scale);
+        int width = game.getBoard().getWidth() * (int) (HEX_WC * scale) + (int) (HEX_W / 4 * scale);
         int height = game.getBoard().getHeight() * (int) (HEX_H * scale)
                 + (int) (HEX_H / 2 * scale);
         boardSize = new Dimension(width, height);
     }
 
     /**
-     * Looks through a vector of buffered images and draws them if they're
-     * onscreen.
+     * Looks through a vector of buffered images and draws them if they're onscreen.
      */
-    private synchronized void drawSprites(Graphics g,
-            ArrayList<? extends Sprite> spriteArrayList) {
+    private synchronized void drawSprites(Graphics g, ArrayList<? extends Sprite> spriteArrayList) {
         for (Sprite sprite : spriteArrayList) {
             drawSprite(g, sprite);
         }
@@ -526,9 +550,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (!sprite.isReady()) {
                 sprite.prepare();
             }
-            sprite
-                    .drawOnto(g, sprite.getBounds().x, sprite.getBounds().y,
-                            this);
+            sprite.drawOnto(g, sprite.getBounds().x, sprite.getBounds().y, this);
         }
     }
 
@@ -551,14 +573,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 Point p = getHexLocation(c);
                 if (board.isLegalDeployment(c, m_plDeployer)) {
                     g.setColor(Color.yellow);
-                    int[] xcoords = { p.x + (int) (21 * scale),
-                            p.x + (int) (62 * scale), p.x + (int) (83 * scale),
-                            p.x + (int) (83 * scale), p.x + (int) (62 * scale),
-                            p.x + (int) (21 * scale), p.x, p.x };
-                    int[] ycoords = { p.y, p.y, p.y + (int) (35 * scale),
-                            p.y + (int) (36 * scale), p.y + (int) (71 * scale),
-                            p.y + (int) (71 * scale), p.y + (int) (36 * scale),
-                            p.y + (int) (35 * scale) };
+                    int[] xcoords = { p.x + (int) (21 * scale), p.x + (int) (62 * scale),
+                            p.x + (int) (83 * scale), p.x + (int) (83 * scale),
+                            p.x + (int) (62 * scale), p.x + (int) (21 * scale), p.x, p.x };
+                    int[] ycoords = { p.y, p.y, p.y + (int) (35 * scale), p.y + (int) (36 * scale),
+                            p.y + (int) (71 * scale), p.y + (int) (71 * scale),
+                            p.y + (int) (36 * scale), p.y + (int) (35 * scale) };
                     g.drawPolygon(xcoords, ycoords, 8);
                 }
             }
@@ -566,8 +586,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * returns the weapon selected in the mech display, or null if none selected
-     * or it is not artillery or null if the selected entity is not owned
+     * returns the weapon selected in the mech display, or null if none selected or it is not
+     * artillery or null if the selected entity is not owned
      */
     private Mounted getSelectedArtilleryWeapon() {
         if (selectedEntity == null || selectedWeapon == null) {
@@ -582,8 +602,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return null; // inconsistent state - weapon not on entity
         }
 
-        if (!(selectedWeapon.getType() instanceof WeaponType && selectedWeapon
-                .getType().hasFlag(WeaponType.F_ARTILLERY))) {
+        if (!(selectedWeapon.getType() instanceof WeaponType && selectedWeapon.getType().hasFlag(
+                WeaponType.F_ARTILLERY))) {
             return null; // not artillery
         }
 
@@ -625,8 +645,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     // process targetted hexes
                     int amod = 0;
                     // Check the predesignated hexes
-                    if (selectedEntity.getOwner().getArtyAutoHitHexes()
-                            .contains(c)) {
+                    if (selectedEntity.getOwner().getArtyAutoHitHexes().contains(c)) {
                         amod = TargetRoll.AUTOMATIC_SUCCESS;
                     } else {
                         amod = selectedEntity.aTracker.getModifier(weapon, c);
@@ -650,8 +669,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 // process incoming attacks - requires server to update client's
                 // view of game
 
-                for (Enumeration<ArtilleryAttackAction> attacks = game
-                        .getArtilleryAttacks(); attacks.hasMoreElements();) {
+                for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks
+                        .hasMoreElements();) {
                     ArtilleryAttackAction a = attacks.nextElement();
 
                     if (a.getTarget(game).getPosition().equals(c)) {
@@ -667,10 +686,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /*
-     * NOTENOTENOTE: (itmo) wouldnt this be simpler with two arrays. One with
-     * the strings {"BoardView1.thunderblaablaa","BoardView1.Conventi.."} one
-     * with the offsets {51,51,42} etc Preferably indexed by an enum: enum{
-     * Conventional, Thunder; } or something?
+     * NOTENOTENOTE: (itmo) wouldnt this be simpler with two arrays. One with the strings
+     * {"BoardView1.thunderblaablaa","BoardView1.Conventi.."} one with the offsets {51,51,42} etc
+     * Preferably indexed by an enum: enum{ Conventional, Thunder; } or something?
      */
     /**
      * Writes "MINEFIELD" in minefield hexes...
@@ -701,68 +719,50 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 Minefield mf = game.getMinefields(c).get(0);
 
                 Image tmpImage = tileManager.getMinefieldSign();
-                g.drawImage(tmpImage, p.x + (int) (13 * scale), p.y
-                        + (int) (13 * scale), this);
+                g.drawImage(tmpImage, p.x + (int) (13 * scale), p.y + (int) (13 * scale), this);
 
                 g.setColor(Color.black);
                 int nbrMfs = game.getNbrMinefields(c);
                 if (nbrMfs > 1) {
-                    drawCenteredString(Messages
-                            .getString("BoardView1.Multiple"), //$NON-NLS-1$
+                    drawCenteredString(Messages.getString("BoardView1.Multiple"), //$NON-NLS-1$
                             p.x, p.y + (int) (51 * scale), font_minefield, g);
                 } else if (nbrMfs == 1) {
                     switch (mf.getType()) {
-                        case (Minefield.TYPE_CONVENTIONAL):
-                            drawCenteredString(
-                                    Messages
-                                            .getString("BoardView1.Conventional"), //$NON-NLS-1$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, g);
-                            break;
-                        case (Minefield.TYPE_INFERNO):
-                            drawCenteredString(
-                                    Messages
-                                            .getString("BoardView1.Inferno") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, g);
-                            break;
-                        case (Minefield.TYPE_ACTIVE):
-                            drawCenteredString(
-                                    Messages
-                                            .getString("BoardView1.Active") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, g);
-                            break;
-                        case (Minefield.TYPE_COMMAND_DETONATED):
-                            drawCenteredString(
-                                    Messages.getString("BoardView1.Command-"), //$NON-NLS-1$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, g);
-                            drawCenteredString(
-                                    Messages.getString("BoardView1.detonated"), //$NON-NLS-1$
-                                    p.x, p.y + (int) (60 * scale),
-                                    font_minefield, g);
-                            break;
-                        case (Minefield.TYPE_VIBRABOMB):
-                            drawCenteredString(
-                                    Messages.getString("BoardView1.Vibrabomb"), //$NON-NLS-1$
-                                    p.x, p.y + (int) (51 * scale),
-                                    font_minefield, g);
-                            if (mf.getPlayerId() == localPlayer.getId()) {
-                                drawCenteredString(
-                                        "(" + mf.getSetting() + ")", //$NON-NLS-1$ //$NON-NLS-2$
-                                        p.x, p.y + (int) (60 * scale),
-                                        font_minefield, g);
-                            }
-                            break;
+                    case (Minefield.TYPE_CONVENTIONAL):
+                        drawCenteredString(Messages.getString("BoardView1.Conventional"), //$NON-NLS-1$
+                                p.x, p.y + (int) (51 * scale), font_minefield, g);
+                        break;
+                    case (Minefield.TYPE_INFERNO):
+                        drawCenteredString(
+                                Messages.getString("BoardView1.Inferno") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+                                p.x, p.y + (int) (51 * scale), font_minefield, g);
+                        break;
+                    case (Minefield.TYPE_ACTIVE):
+                        drawCenteredString(
+                                Messages.getString("BoardView1.Active") + mf.getDensity() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+                                p.x, p.y + (int) (51 * scale), font_minefield, g);
+                        break;
+                    case (Minefield.TYPE_COMMAND_DETONATED):
+                        drawCenteredString(Messages.getString("BoardView1.Command-"), //$NON-NLS-1$
+                                p.x, p.y + (int) (51 * scale), font_minefield, g);
+                        drawCenteredString(Messages.getString("BoardView1.detonated"), //$NON-NLS-1$
+                                p.x, p.y + (int) (60 * scale), font_minefield, g);
+                        break;
+                    case (Minefield.TYPE_VIBRABOMB):
+                        drawCenteredString(Messages.getString("BoardView1.Vibrabomb"), //$NON-NLS-1$
+                                p.x, p.y + (int) (51 * scale), font_minefield, g);
+                        if (mf.getPlayerId() == localPlayer.getId()) {
+                            drawCenteredString("(" + mf.getSetting() + ")", //$NON-NLS-1$ //$NON-NLS-2$
+                                    p.x, p.y + (int) (60 * scale), font_minefield, g);
+                        }
+                        break;
                     }
                 }
             }
         }
     }
 
-    private void drawCenteredString(String string, int x, int y, Font font,
-            Graphics graph) {
+    private void drawCenteredString(String string, int x, int y, Font font, Graphics graph) {
         FontMetrics currentMetrics = getFontMetrics(font);
         int stringWidth = currentMetrics.stringWidth(string);
 
@@ -773,8 +773,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * This method creates an image the size of the entire board (all
-     * mapsheets), draws the hexes onto it, and returns that image.
+     * This method creates an image the size of the entire board (all mapsheets), draws the hexes
+     * onto it, and returns that image.
      */
     public Image getEntireBoardImage() {
         Image entireBoard = createImage(boardSize.width, boardSize.height);
@@ -797,17 +797,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         int drawHeight = view.height / (int) (HEX_H * scale) + 3;
 
         /*
-         * // only draw what we came to draw boardGraph.setClip(rect.x -
-         * boardRect.x, rect.y - boardRect.y, rect.width, rect.height); //
-         * clear, if we need to if (rect.x < (21*scale)) { g.clearRect( rect.x -
-         * boardRect.x, rect.y - boardRect.y, (int)(21*scale) - rect.x,
-         * rect.height); } if (rect.y < (36*scale)) { g.clearRect( rect.x -
-         * boardRect.x, rect.y - boardRect.y, rect.width, (int)(36*scale) -
-         * rect.y); } if (rect.x > boardSize.width - view.width - (21*scale)) {
-         * g.clearRect( boardRect.width - (int)(21*scale), rect.y - boardRect.y,
-         * (int)(21*scale), rect.height); } if (rect.y > boardSize.height -
-         * view.height - (int)(36*scale)) { g.clearRect( rect.x - boardRect.x,
-         * boardRect.height - (int)(36*scale), rect.width, (int)(36*scale)); }
+         * // only draw what we came to draw boardGraph.setClip(rect.x - boardRect.x, rect.y -
+         * boardRect.y, rect.width, rect.height); // clear, if we need to if (rect.x < (21*scale)) {
+         * g.clearRect( rect.x - boardRect.x, rect.y - boardRect.y, (int)(21*scale) - rect.x,
+         * rect.height); } if (rect.y < (36*scale)) { g.clearRect( rect.x - boardRect.x, rect.y -
+         * boardRect.y, rect.width, (int)(36*scale) - rect.y); } if (rect.x > boardSize.width -
+         * view.width - (21*scale)) { g.clearRect( boardRect.width - (int)(21*scale), rect.y -
+         * boardRect.y, (int)(21*scale), rect.height); } if (rect.y > boardSize.height - view.height -
+         * (int)(36*scale)) { g.clearRect( rect.x - boardRect.x, boardRect.height - (int)(36*scale),
+         * rect.width, (int)(36*scale)); }
          */
         // draw some hexes
         for (int i = 0; i < drawHeight; i++) {
@@ -818,8 +816,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Draws a hex onto the board buffer. This assumes that boardRect is
-     * current, and does not check if the hex is visible.
+     * Draws a hex onto the board buffer. This assumes that boardRect is current, and does not check
+     * if the hex is visible.
      */
     private void drawHex(Coords c, Graphics boardGraph) {
         if (!game.getBoard().contains(c)) {
@@ -844,8 +842,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         boardGraph.drawImage(baseImage, drawX, drawY, this);
 
         if (tileManager.supersFor(hex) != null) {
-            for (Iterator<Image> i = tileManager.supersFor(hex).iterator(); i
-                    .hasNext();) {
+            for (Iterator<Image> i = tileManager.supersFor(hex).iterator(); i.hasNext();) {
                 boardGraph.drawImage(i.next(), drawX, drawY, this);
             }
         }
@@ -853,71 +850,58 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         if (ecmHexes != null) {
             Integer tint = ecmHexes.get(c);
             if (tint != null) {
-                boardGraph.drawImage(tileManager.getEcmShade(tint.intValue()),
-                        drawX, drawY, this);
+                boardGraph.drawImage(tileManager.getEcmShade(tint.intValue()), drawX, drawY, this);
             }
         }
 
-        if (GUIPreferences.getInstance().getBoolean(
-                GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
+        if (GUIPreferences.getInstance().getBoolean(GUIPreferences.ADVANCED_DARKEN_MAP_AT_NIGHT)
                 && game.getPlanetaryConditions().getLight() > PlanetaryConditions.L_DAY
                 && !game.isPositionIlluminated(c)) {
             boardGraph.drawImage(tileManager.getNightFog(), drawX, drawY, this);
         }
         boardGraph.setColor(GUIPreferences.getInstance().getMapTextColor());
 
-        //draw special stuff for the hex
+        // draw special stuff for the hex
         final Collection<SpecialHexDisplay> shdList = game.getBoard().getSpecialHexDisplay(c);
         try {
-            if(shdList != null) {
-                for(SpecialHexDisplay shd : shdList)
-                {
+            if (shdList != null) {
+                for (SpecialHexDisplay shd : shdList) {
                     if (shd.drawNow(game.getPhase(), game.getRoundCount())) {
-                        boardGraph.drawImage(shd.getType().getDefaultImage(),drawX, drawY, this);
+                        boardGraph.drawImage(shd.getType().getDefaultImage(), drawX, drawY, this);
                     }
                 }
             }
         } catch (IllegalArgumentException e) {
             System.err.println("Illegal argument exception, probably can't load file.");
             e.printStackTrace();
-            drawCenteredString(
-                    "Loading Error",
-                    drawX,
-                    drawY + (int)(50*scale),
-                    font_note,
+            drawCenteredString("Loading Error", drawX, drawY + (int) (50 * scale), font_note,
                     boardGraph);
             return;
         }
         // draw hex number
         if (scale >= 0.5) {
-            drawCenteredString(c.getBoardNum(), drawX, drawY
-                    + (int) (12 * scale), font_hexnum, boardGraph);
+            drawCenteredString(c.getBoardNum(), drawX, drawY + (int) (12 * scale), font_hexnum,
+                    boardGraph);
         }
 
         // draw terrain level / water depth / building height
         if (scale > 0.5f) {
             int ypos = 70;
             if (level != 0) {
-                drawCenteredString(
-                        Messages.getString("BoardView1.LEVEL") + level, //$NON-NLS-1$
-                        drawX, drawY + (int) (ypos * scale), font_elev,
-                        boardGraph);
+                drawCenteredString(Messages.getString("BoardView1.LEVEL") + level, //$NON-NLS-1$
+                        drawX, drawY + (int) (ypos * scale), font_elev, boardGraph);
                 ypos -= 10;
             }
             if (depth != 0) {
-                drawCenteredString(
-                        Messages.getString("BoardView1.DEPTH") + depth, //$NON-NLS-1$
-                        drawX, drawY + (int) (ypos * scale), font_elev,
-                        boardGraph);
+                drawCenteredString(Messages.getString("BoardView1.DEPTH") + depth, //$NON-NLS-1$
+                        drawX, drawY + (int) (ypos * scale), font_elev, boardGraph);
                 ypos -= 10;
             }
             if (height > 0) {
                 boardGraph.setColor(GUIPreferences.getInstance().getColor(
                         "AdvancedBuildingTextColor"));
-                drawCenteredString(
-                        Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
-                        drawX, drawY + (int) (ypos * scale), font_elev,
-                        boardGraph);
+                drawCenteredString(Messages.getString("BoardView1.HEIGHT") + height, //$NON-NLS-1$
+                        drawX, drawY + (int) (ypos * scale), font_elev, boardGraph);
                 ypos -= 10;
             }
         }
@@ -925,30 +909,28 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // draw elevation borders
         boardGraph.setColor(Color.black);
         if (drawElevationLine(c, 0)) {
-            boardGraph.drawLine(drawX + (int) (21 * scale), drawY, drawX
-                    + (int) (62 * scale), drawY);
+            boardGraph.drawLine(drawX + (int) (21 * scale), drawY, drawX + (int) (62 * scale),
+                    drawY);
         }
         if (drawElevationLine(c, 1)) {
-            boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX
-                    + (int) (83 * scale), drawY + (int) (35 * scale));
+            boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX + (int) (83 * scale),
+                    drawY + (int) (35 * scale));
         }
         if (drawElevationLine(c, 2)) {
-            boardGraph.drawLine(drawX + (int) (83 * scale), drawY
-                    + (int) (36 * scale), drawX + (int) (62 * scale), drawY
-                    + (int) (71 * scale));
+            boardGraph.drawLine(drawX + (int) (83 * scale), drawY + (int) (36 * scale), drawX
+                    + (int) (62 * scale), drawY + (int) (71 * scale));
         }
         if (drawElevationLine(c, 3)) {
-            boardGraph.drawLine(drawX + (int) (62 * scale), drawY
-                    + (int) (71 * scale), drawX + (int) (21 * scale), drawY
-                    + (int) (71 * scale));
+            boardGraph.drawLine(drawX + (int) (62 * scale), drawY + (int) (71 * scale), drawX
+                    + (int) (21 * scale), drawY + (int) (71 * scale));
         }
         if (drawElevationLine(c, 4)) {
-            boardGraph.drawLine(drawX + (int) (21 * scale), drawY
-                    + (int) (71 * scale), drawX, drawY + (int) (36 * scale));
+            boardGraph.drawLine(drawX + (int) (21 * scale), drawY + (int) (71 * scale), drawX,
+                    drawY + (int) (36 * scale));
         }
         if (drawElevationLine(c, 5)) {
-            boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX
-                    + (int) (21 * scale), drawY);
+            boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX + (int) (21 * scale),
+                    drawY);
         }
 
         // draw mapsheet borders
@@ -957,43 +939,36 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     GUIPreferences.ADVANCED_MAPSHEET_COLOR));
             if (c.x % 16 == 0) {
                 // left edge of sheet (edge 4 & 5)
-                boardGraph
-                        .drawLine(drawX + (int) (21 * scale), drawY
-                                + (int) (71 * scale), drawX, drawY
-                                + (int) (36 * scale));
-                boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX
-                        + (int) (21 * scale), drawY);
+                boardGraph.drawLine(drawX + (int) (21 * scale), drawY + (int) (71 * scale), drawX,
+                        drawY + (int) (36 * scale));
+                boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX + (int) (21 * scale),
+                        drawY);
             } else if (c.x % 16 == 15) {
                 // right edge of sheet (edge 1 & 2)
-                boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX
-                        + (int) (83 * scale), drawY + (int) (35 * scale));
-                boardGraph.drawLine(drawX + (int) (83 * scale), drawY
-                        + (int) (36 * scale), drawX + (int) (62 * scale), drawY
-                        + (int) (71 * scale));
+                boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX + (int) (83 * scale),
+                        drawY + (int) (35 * scale));
+                boardGraph.drawLine(drawX + (int) (83 * scale), drawY + (int) (36 * scale), drawX
+                        + (int) (62 * scale), drawY + (int) (71 * scale));
             }
             if (c.y % 17 == 0) {
                 // top edge of sheet (edge 0 and possible 1 & 5)
-                boardGraph.drawLine(drawX + (int) (21 * scale), drawY, drawX
-                        + (int) (62 * scale), drawY);
+                boardGraph.drawLine(drawX + (int) (21 * scale), drawY, drawX + (int) (62 * scale),
+                        drawY);
                 if (c.x % 2 == 0) {
-                    boardGraph.drawLine(drawX + (int) (62 * scale), drawY,
-                            drawX + (int) (83 * scale), drawY
-                                    + (int) (35 * scale));
-                    boardGraph.drawLine(drawX, drawY + (int) (35 * scale),
-                            drawX + (int) (21 * scale), drawY);
+                    boardGraph.drawLine(drawX + (int) (62 * scale), drawY, drawX
+                            + (int) (83 * scale), drawY + (int) (35 * scale));
+                    boardGraph.drawLine(drawX, drawY + (int) (35 * scale), drawX
+                            + (int) (21 * scale), drawY);
                 }
             } else if (c.y % 17 == 16) {
                 // bottom edge of sheet (edge 3 and possible 2 & 4)
-                boardGraph.drawLine(drawX + (int) (62 * scale), drawY
-                        + (int) (71 * scale), drawX + (int) (21 * scale), drawY
-                        + (int) (71 * scale));
+                boardGraph.drawLine(drawX + (int) (62 * scale), drawY + (int) (71 * scale), drawX
+                        + (int) (21 * scale), drawY + (int) (71 * scale));
                 if (c.x % 2 == 1) {
-                    boardGraph.drawLine(drawX + (int) (83 * scale), drawY
-                            + (int) (36 * scale), drawX + (int) (62 * scale),
-                            drawY + (int) (71 * scale));
-                    boardGraph.drawLine(drawX + (int) (21 * scale), drawY
-                            + (int) (71 * scale), drawX, drawY
-                            + (int) (36 * scale));
+                    boardGraph.drawLine(drawX + (int) (83 * scale), drawY + (int) (36 * scale),
+                            drawX + (int) (62 * scale), drawY + (int) (71 * scale));
+                    boardGraph.drawLine(drawX + (int) (21 * scale), drawY + (int) (71 * scale),
+                            drawX, drawY + (int) (36 * scale));
                 }
             }
             boardGraph.setColor(Color.black);
@@ -1001,10 +976,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Returns true if an elevation line should be drawn between the starting
-     * hex and the hex in the direction specified. Results should be transitive,
-     * that is, if a line is drawn in one direction, it should be drawn in the
-     * opposite direction as well.
+     * Returns true if an elevation line should be drawn between the starting hex and the hex in the
+     * direction specified. Results should be transitive, that is, if a line is drawn in one
+     * direction, it should be drawn in the opposite direction as well.
      */
     private final boolean drawElevationLine(Coords src, int direction) {
         final IHex srcHex = game.getBoard().getHex(src);
@@ -1013,8 +987,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Returns the absolute position of the upper-left hand corner of the hex
-     * graphic
+     * Returns the absolute position of the upper-left hand corner of the hex graphic
      */
     private Point getHexLocation(int x, int y) {
         return new Point(x * (int) (HEX_WC * scale), y * (int) (HEX_H * scale)
@@ -1102,15 +1075,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Clears the sprite for an entity and prepares it to be re-drawn. Replaces
-     * the old sprite with the new! Try to prevent annoying
-     * ConcurrentModificationExceptions
+     * Clears the sprite for an entity and prepares it to be re-drawn. Replaces the old sprite with
+     * the new! Try to prevent annoying ConcurrentModificationExceptions
      */
     public void redrawEntity(Entity entity) {
         Integer entityId = new Integer(entity.getId());
         EntitySprite sprite = entitySpriteIds.get(entityId);
-        ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(
-                entitySprites);
+        ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(entitySprites);
         HashMap<Integer, EntitySprite> newSpriteIds = new HashMap<Integer, EntitySprite>(
                 entitySpriteIds);
 
@@ -1129,8 +1100,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         for (Iterator<C3Sprite> i = C3Sprites.iterator(); i.hasNext();) {
             final C3Sprite c3sprite = i.next();
-            if (c3sprite.entityId == entity.getId()
-                    || c3sprite.masterId == entity.getId()) {
+            if (c3sprite.entityId == entity.getId() || c3sprite.masterId == entity.getId()) {
                 i.remove();
             }
         }
@@ -1145,10 +1115,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      * Clears all old entity sprites out of memory and sets up new ones.
      */
     void redrawAllEntities() {
-        ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(game
+        ArrayList<EntitySprite> newSprites = new ArrayList<EntitySprite>(game.getNoOfEntities());
+        HashMap<Integer, EntitySprite> newSpriteIds = new HashMap<Integer, EntitySprite>(game
                 .getNoOfEntities());
-        HashMap<Integer, EntitySprite> newSpriteIds = new HashMap<Integer, EntitySprite>(
-                game.getNoOfEntities());
         ArrayList<WreckSprite> newWrecks = new ArrayList<WreckSprite>();
 
         Enumeration<Entity> e = game.getWreckedEntities();
@@ -1211,9 +1180,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Clears the old movement data and draws the new. Since it's less expensive
-     * to check for and reuse old step sprites than to make a whole new one, we
-     * do that.
+     * Clears the old movement data and draws the new. Since it's less expensive to check for and
+     * reuse old step sprites than to make a whole new one, we do that.
      */
     public void drawMovementData(Entity entity, MovePath md) {
         ArrayList<StepSprite> temp = pathSprites;
@@ -1221,33 +1189,32 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
         clearMovementData();
 
-//      need to update the movement sprites based on the move path for this entity
-        //only way to do this is to clear and refresh (seems wasteful)
-        
-        //first get the color for the vector
+        // need to update the movement sprites based on the move path for this entity
+        // only way to do this is to clear and refresh (seems wasteful)
+
+        // first get the color for the vector
         Color col = Color.blue;
-        if(md.getLastStep() != null) {
+        if (md.getLastStep() != null) {
             switch (md.getLastStep().getMovementType()) {
             case IEntityMovementType.MOVE_RUN:
             case IEntityMovementType.MOVE_VTOL_RUN:
             case IEntityMovementType.MOVE_OVER_THRUST:
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveRunColor");
                 break;
-            case IEntityMovementType.MOVE_JUMP :
+            case IEntityMovementType.MOVE_JUMP:
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
                 break;
-            case IEntityMovementType.MOVE_ILLEGAL :
+            case IEntityMovementType.MOVE_ILLEGAL:
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
                 break;
-            default :
+            default:
                 col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
                 break;
             }
         }
-        
+
         refreshMoveVectors(entity, md, col);
-        
-        
+
         for (Enumeration<MoveStep> i = md.getSteps(); i.hasMoreElements();) {
             final MoveStep step = i.nextElement();
             // check old movement path for reusable step sprites
@@ -1260,25 +1227,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             }
             if (!found) {
-                if (null != previousStep && 
-                        (step.getType() == MovePath.STEP_UP ||
-                                step.getType() == MovePath.STEP_DOWN ||
-                                step.getType() == MovePath.STEP_ACC ||
-                                step.getType() == MovePath.STEP_DEC ||
-                                step.getType() == MovePath.STEP_ACCN ||
-                                step.getType() == MovePath.STEP_DECN)) {
-                        //Mark the previous elevation change sprite hidden
-                        // so that we can draw a new one in it's place without
-                        // having overlap.
-                        pathSprites.get(pathSprites.size() -1 ).hidden = true;
+                if (null != previousStep
+                        && (step.getType() == MovePath.STEP_UP
+                                || step.getType() == MovePath.STEP_DOWN
+                                || step.getType() == MovePath.STEP_ACC
+                                || step.getType() == MovePath.STEP_DEC
+                                || step.getType() == MovePath.STEP_ACCN || step.getType() == MovePath.STEP_DECN)) {
+                    // Mark the previous elevation change sprite hidden
+                    // so that we can draw a new one in it's place without
+                    // having overlap.
+                    pathSprites.get(pathSprites.size() - 1).hidden = true;
                 }
-                
-                //for advanced movement, we always need to hide prior
-                //because costs will overlap and we only want the current facing
-                if(previousStep != null && game.useVectorMove()) {
-                    pathSprites.get(pathSprites.size() -1 ).hidden = true;
+
+                // for advanced movement, we always need to hide prior
+                // because costs will overlap and we only want the current facing
+                if (previousStep != null && game.useVectorMove()) {
+                    pathSprites.get(pathSprites.size() - 1).hidden = true;
                 }
-                
+
                 pathSprites.add(new StepSprite(step));
             }
             previousStep = step;
@@ -1304,8 +1270,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Specifies that this should mark the deployment hexes for a player. If the
-     * player is set to null, no hexes will be marked.
+     * Specifies that this should mark the deployment hexes for a player. If the player is set to
+     * null, no hexes will be marked.
      */
     public void markDeploymentHexesFor(Player p) {
         m_plDeployer = p;
@@ -1320,13 +1286,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return;
 
         if (e.hasC3i()) {
-            for (Enumeration<Entity> i = game.getEntities(); i
-                    .hasMoreElements();) {
+            for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
                 final Entity fe = i.nextElement();
                 if (fe.getPosition() == null)
                     return;
-                if (e.onSameC3NetworkAs(fe) && !fe.equals(e) &&
-                        !Compute.isAffectedByECM(e, e.getPosition(), fe.getPosition())) {
+                if (e.onSameC3NetworkAs(fe) && !fe.equals(e)
+                        && !Compute.isAffectedByECM(e, e.getPosition(), fe.getPosition())) {
                     C3Sprites.add(new C3Sprite(e, fe));
                 }
             }
@@ -1336,10 +1301,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 return;
 
             // ECM cuts off the network
-            if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster
-                    .getPosition())
-                    && !Compute.isAffectedByECM(eMaster, eMaster.getPosition(),
-                            eMaster.getPosition())) {
+            if (!Compute.isAffectedByECM(e, e.getPosition(), eMaster.getPosition())
+                    && !Compute.isAffectedByECM(eMaster, eMaster.getPosition(), eMaster
+                            .getPosition())) {
                 C3Sprites.add(new C3Sprite(e, e.getC3Master()));
             }
         }
@@ -1353,15 +1317,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // this is not a great solution but better than a crash
         Entity ae = game.getEntity(aa.getEntityId());
         Targetable t = game.getTarget(aa.getTargetType(), aa.getTargetId());
-        if (ae == null || t == null
-                || t.getTargetType() == Targetable.TYPE_INARC_POD
+        if (ae == null || t == null || t.getTargetType() == Targetable.TYPE_INARC_POD
                 || t.getPosition() == null || ae.getPosition() == null) {
             return;
         }
 
         repaint(100);
-        for (final Iterator<AttackSprite> i = attackSprites.iterator(); i
-                .hasNext();) {
+        for (final Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
             final AttackSprite sprite = i.next();
 
             // can we just add this attack to an existing one?
@@ -1372,8 +1334,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     WeaponAttackAction waa = (WeaponAttackAction) aa;
                     if (aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
                         sprite.addWeapon(waa);
-                    } else if (waa.getEntity(game).getOwner().getId() == localPlayer
-                            .getId()) {
+                    } else if (waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
                         sprite.addWeapon(waa);
                     }
                 }
@@ -1410,8 +1371,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             WeaponAttackAction waa = (WeaponAttackAction) aa;
             if (aa.getTargetType() != Targetable.TYPE_HEX_ARTILLERY) {
                 attackSprites.add(new AttackSprite(aa));
-            } else if (waa.getEntity(game).getOwner().getId() == localPlayer
-                    .getId()) {
+            } else if (waa.getEntity(game).getOwner().getId() == localPlayer.getId()) {
                 attackSprites.add(new AttackSprite(aa));
             }
         } else {
@@ -1436,15 +1396,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     public void refreshAttacks() {
         clearAllAttacks();
-        for (Enumeration<EntityAction> i = game.getActions(); i
-                .hasMoreElements();) {
+        for (Enumeration<EntityAction> i = game.getActions(); i.hasMoreElements();) {
             EntityAction ea = i.nextElement();
             if (ea instanceof AttackAction) {
                 addAttack((AttackAction) ea);
             }
         }
-        for (Enumeration<AttackAction> i = game.getCharges(); i
-                .hasMoreElements();) {
+        for (Enumeration<AttackAction> i = game.getCharges(); i.hasMoreElements();) {
             EntityAction ea = i.nextElement();
             if (ea instanceof PhysicalAttackAction) {
                 addAttack((AttackAction) ea);
@@ -1452,24 +1410,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
         repaint(100);
     }
-    
+
     public void refreshMoveVectors() {
         clearAllMoveVectors();
-        for(Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity e = i.nextElement();
-            if(e.getPosition() != null) 
+            if (e.getPosition() != null)
                 movementSprites.add(new MovementSprite(e, e.getVectors(), Color.gray, false));
         }
     }
-    
+
     public void refreshMoveVectors(Entity en, MovePath md, Color col) {
         clearAllMoveVectors();
-        //same as normal but when I find the active entity I used the MovePath
-        //to get vector
-        for(Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
+        // same as normal but when I find the active entity I used the MovePath
+        // to get vector
+        for (Enumeration<Entity> i = game.getEntities(); i.hasMoreElements();) {
             Entity e = i.nextElement();
-            if(e.getPosition() != null) 
-                if(e.getId() == en.getId()) {
+            if (e.getPosition() != null)
+                if (e.getId() == en.getId()) {
                     movementSprites.add(new MovementSprite(e, md.getFinalVectors(), col, true));
                 } else {
                     movementSprites.add(new MovementSprite(e, e.getVectors(), col, false));
@@ -1494,7 +1452,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     public void clearAllMoveVectors() {
         movementSprites.clear();
     }
-    
+
     protected void firstLOSHex(Coords c) {
         if (useLOSTool) {
             moveCursor(secondLOSSprite, null);
@@ -1511,26 +1469,21 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             StringBuffer message = new StringBuffer();
             LosEffects le;
             if (ae == null || te == null) {
-                boolean mechInFirst = GUIPreferences.getInstance()
-                        .getMechInFirst();
-                boolean mechInSecond = GUIPreferences.getInstance()
-                        .getMechInSecond();
+                boolean mechInFirst = GUIPreferences.getInstance().getMechInFirst();
+                boolean mechInSecond = GUIPreferences.getInstance().getMechInSecond();
                 LosEffects.AttackInfo ai = new LosEffects.AttackInfo();
                 ai.attackPos = c1;
                 ai.targetPos = c2;
                 ai.attackHeight = mechInFirst ? 1 : 0;
                 ai.targetHeight = mechInSecond ? 1 : 0;
-                ai.attackAbsHeight = game.getBoard().getHex(c1).floor()
-                        + ai.attackHeight;
-                ai.targetAbsHeight = game.getBoard().getHex(c2).floor()
-                        + ai.targetHeight;
+                ai.attackAbsHeight = game.getBoard().getHex(c1).floor() + ai.attackHeight;
+                ai.targetAbsHeight = game.getBoard().getHex(c2).floor() + ai.targetHeight;
                 le = LosEffects.calculateLos(game, ai);
                 message
                         .append(Messages
                                 .getString(
                                         "BoardView1.Attacker", new Object[] { //$NON-NLS-1$
-                                                mechInFirst ? Messages
-                                                        .getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
+                                                mechInFirst ? Messages.getString("BoardView1.Mech") : Messages.getString("BoardView1.NonMech"), //$NON-NLS-1$ //$NON-NLS-2$
                                                 c1.getBoardNum() }));
                 message
                         .append(Messages
@@ -1541,53 +1494,42 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                                                 c2.getBoardNum() }));
             } else {
                 le = LosEffects.calculateLos(game, ae.getId(), te);
-                message.append(Messages.getString(
-                        "BoardView1.Attacker", new Object[] { //$NON-NLS-1$
+                message.append(Messages.getString("BoardView1.Attacker", new Object[] { //$NON-NLS-1$
                         ae.getDisplayName(), c1.getBoardNum() }));
-                message.append(Messages.getString(
-                        "BoardView1.Target", new Object[] { //$NON-NLS-1$
+                message.append(Messages.getString("BoardView1.Target", new Object[] { //$NON-NLS-1$
                         te.getDisplayName(), c2.getBoardNum() }));
             }
             if (le.isBlocked()) {
-                message.append(Messages.getString(
-                        "BoardView1.LOSBlocked", new Object[] { //$NON-NLS-1$
+                message.append(Messages.getString("BoardView1.LOSBlocked", new Object[] { //$NON-NLS-1$
                         new Integer(c1.distance(c2)) }));
             } else {
-                message.append(Messages.getString(
-                        "BoardView1.LOSNotBlocked", new Object[] { //$NON-NLS-1$
+                message.append(Messages.getString("BoardView1.LOSNotBlocked", new Object[] { //$NON-NLS-1$
                         new Integer(c1.distance(c2)) }));
                 if (le.getHeavyWoods() > 0) {
-                    message.append(Messages.getString(
-                            "BoardView1.HeavyWoods", new Object[] { //$NON-NLS-1$
+                    message.append(Messages.getString("BoardView1.HeavyWoods", new Object[] { //$NON-NLS-1$
                             new Integer(le.getHeavyWoods()) }));
                 }
                 if (le.getLightWoods() > 0) {
-                    message.append(Messages.getString(
-                            "BoardView1.LightWoods", new Object[] { //$NON-NLS-1$
+                    message.append(Messages.getString("BoardView1.LightWoods", new Object[] { //$NON-NLS-1$
                             new Integer(le.getLightWoods()) }));
                 }
                 if (le.getLightSmoke() > 0) {
-                    message.append(Messages.getString(
-                            "BoardView1.LightSmoke", new Object[] { //$NON-NLS-1$
+                    message.append(Messages.getString("BoardView1.LightSmoke", new Object[] { //$NON-NLS-1$
                             new Integer(le.getLightSmoke()) }));
                 }
                 if (le.getHeavySmoke() > 0) {
-                    message.append(Messages.getString(
-                            "BoardView1.HeavySmoke", new Object[] { //$NON-NLS-1$
-                                    new Integer(le.getHeavySmoke()) }));
+                    message.append(Messages.getString("BoardView1.HeavySmoke", new Object[] { //$NON-NLS-1$
+                            new Integer(le.getHeavySmoke()) }));
                 }
                 if (le.isTargetCover()) {
-                    message.append(Messages
-                            .getString("BoardView1.TargetPartialCover")); //$NON-NLS-1$
+                    message.append(Messages.getString("BoardView1.TargetPartialCover")); //$NON-NLS-1$
                 }
                 if (le.isAttackerCover()) {
-                    message.append(Messages
-                            .getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
+                    message.append(Messages.getString("BoardView1.AttackerPartialCover")); //$NON-NLS-1$
                 }
             }
-            JOptionPane.showMessageDialog(this.getRootPane(), message
-                    .toString(), Messages.getString("BoardView1.LOSTitle"),
-                    JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this.getRootPane(), message.toString(), Messages
+                    .getString("BoardView1.LOSTitle"), JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -1699,8 +1641,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             moveWait += idleTime;
 
-            if (moveWait > GUIPreferences.getInstance().getInt(
-                    "AdvancedMoveStepDelay")) {
+            if (moveWait > GUIPreferences.getInstance().getInt("AdvancedMoveStepDelay")) {
 
                 ArrayList<MovingUnit> spent = new ArrayList<MovingUnit>();
 
@@ -1710,8 +1651,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     if (move.path.size() > 0) {
                         UnitLocation loc = move.path.get(0);
                         if (ge != null) {
-                            redrawMovingEntity(move.entity, loc.getCoords(),
-                                    loc.getFacing());
+                            redrawMovingEntity(move.entity, loc.getCoords(), loc.getFacing());
                         }
                         move.path.remove(0);
                     } else {
@@ -1747,52 +1687,52 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         JScrollBar vbar = scrollpane.getVerticalScrollBar();
         JScrollBar hbar = scrollpane.getHorizontalScrollBar();
         switch (ke.getKeyCode()) {
-            case KeyEvent.VK_NUMPAD7:
-                hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
-                vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
-                ke.consume();
-                break;
-            case KeyEvent.VK_NUMPAD8:
-            case KeyEvent.VK_UP:
-                vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
-                ke.consume();
-                break;
-            case KeyEvent.VK_NUMPAD9:
-                hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
-                vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
-                ke.consume();
-                break;
-            case KeyEvent.VK_NUMPAD1:
-                hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
-                vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
-                ke.consume();
-                break;
-            case KeyEvent.VK_NUMPAD2:
-            case KeyEvent.VK_DOWN:
-                vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
-                ke.consume();
-                break;
-            case KeyEvent.VK_NUMPAD3:
-                hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
-                vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
-                ke.consume();
-                break;
-            case KeyEvent.VK_NUMPAD4:
-            case KeyEvent.VK_LEFT:
-                hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
-                ke.consume();
-                break;
-            case KeyEvent.VK_NUMPAD6:
-            case KeyEvent.VK_RIGHT:
-                hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
-                ke.consume();
-                break;
-            case KeyEvent.VK_NUMPAD5:
-                // center on the selected entity
-                if (selectedEntity != null)
-                    centerOnHex(selectedEntity.getPosition());
-                ke.consume();
-                break;
+        case KeyEvent.VK_NUMPAD7:
+            hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
+            vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD8:
+        case KeyEvent.VK_UP:
+            vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD9:
+            hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
+            vbar.setValue((int) (vbar.getValue() - HEX_H * scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD1:
+            hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
+            vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD2:
+        case KeyEvent.VK_DOWN:
+            vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD3:
+            hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
+            vbar.setValue((int) (vbar.getValue() + HEX_H * scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD4:
+        case KeyEvent.VK_LEFT:
+            hbar.setValue((int) (hbar.getValue() - HEX_W * scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD6:
+        case KeyEvent.VK_RIGHT:
+            hbar.setValue((int) (hbar.getValue() + HEX_W * scale));
+            ke.consume();
+            break;
+        case KeyEvent.VK_NUMPAD5:
+            // center on the selected entity
+            if (selectedEntity != null)
+                centerOnHex(selectedEntity.getPosition());
+            ke.consume();
+            break;
         }
 
         repaint();
@@ -1864,11 +1804,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
          * !GUIPreferences.getInstance().getAutoEdgeScroll()) return;
          */
         if (me.getClickCount() == 1) {
-            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_CLICK, me
-                    .getModifiers());
+            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_CLICK, me.getModifiers());
         } else {
-            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_DOUBLECLICK, me
-                    .getModifiers());
+            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_DOUBLECLICK, me.getModifiers());
         }
     }
 
@@ -1879,10 +1817,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     public void mouseClicked(MouseEvent me) {
+        if (me.isPopupTrigger()) {
+            mouseAction(getCoordsAt(me.getPoint()), BOARD_HEX_POPUP, me.getModifiers());
+            return;
+        }
     }
 
     private class MovingUnit {
         public Entity entity;
+
         public ArrayList<UnitLocation> path;
 
         MovingUnit(Entity entity, Vector<UnitLocation> path) {
@@ -1892,30 +1835,29 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Everything in the main map view is either the board or it's a sprite
-     * displayed on top of the board. Most sprites store a transparent image
-     * which they draw onto the screen when told to. Sprites keep a bounds
-     * rectangle, so it's easy to tell when they'return onscreen.
+     * Everything in the main map view is either the board or it's a sprite displayed on top of the
+     * board. Most sprites store a transparent image which they draw onto the screen when told to.
+     * Sprites keep a bounds rectangle, so it's easy to tell when they'return onscreen.
      */
     abstract class Sprite implements ImageObserver {
         protected Rectangle bounds;
+
         protected Image image;
 
         // Set this to true if you don't want the sprite to be drawn.
         protected boolean hidden = false;
 
         /**
-         * Do any necessary preparation. This is called after creation, but
-         * before drawing, when a device context is ready to draw with.
+         * Do any necessary preparation. This is called after creation, but before drawing, when a
+         * device context is ready to draw with.
          */
         public abstract void prepare();
 
         /**
-         * When we draw our buffered images, it's necessary to implement the
-         * ImageObserver interface. This provides the necesasry functionality.
+         * When we draw our buffered images, it's necessary to implement the ImageObserver
+         * interface. This provides the necesasry functionality.
          */
-        public boolean imageUpdate(Image image, int infoflags, int x, int y,
-                int width, int height) {
+        public boolean imageUpdate(Image image, int infoflags, int x, int y, int width, int height) {
             if (infoflags == ImageObserver.ALLBITS) {
                 prepare();
                 repaint();
@@ -1925,17 +1867,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         /**
-         * Returns our bounding rectangle. The coordinates here are stored with
-         * the top left corner of the _board_ being 0, 0, so these do not always
-         * correspond to screen coordinates.
+         * Returns our bounding rectangle. The coordinates here are stored with the top left corner
+         * of the _board_ being 0, 0, so these do not always correspond to screen coordinates.
          */
         public Rectangle getBounds() {
             return bounds;
         }
 
         /**
-         * Are we ready to draw? By default, checks to see that our buffered
-         * image has been created.
+         * Are we ready to draw? By default, checks to see that our buffered image has been created.
          */
         public boolean isReady() {
             return image != null;
@@ -1953,11 +1893,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (isReady()) {
                 if (makeTranslucent) {
                     Graphics2D g2 = (Graphics2D) g;
-                    g2.setComposite(AlphaComposite.getInstance(
-                            AlphaComposite.SRC_OVER, 0.5f));
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
                     g2.drawImage(image, x, y, observer);
-                    g2.setComposite(AlphaComposite.getInstance(
-                            AlphaComposite.SRC_OVER, 1.0f));
+                    g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0f));
                 } else {
                     g.drawImage(image, x, y, observer);
                 }
@@ -1968,18 +1906,17 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         /**
-         * Returns true if the point is inside this sprite. Uses board
-         * coordinates, not screen coordinates. By default, just checks our
-         * bounding rectangle, though some sprites override this for a smaller
-         * sensitive area.
+         * Returns true if the point is inside this sprite. Uses board coordinates, not screen
+         * coordinates. By default, just checks our bounding rectangle, though some sprites override
+         * this for a smaller sensitive area.
          */
         public boolean isInside(Point point) {
             return bounds.contains(point);
         }
 
         /**
-         * Since most sprites being drawn correspond to something in the game,
-         * this returns a little info for a tooltip.
+         * Since most sprites being drawn correspond to something in the game, this returns a little
+         * info for a tooltip.
          */
         public String[] getTooltip() {
             return null;
@@ -1991,12 +1928,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
      */
     private class CursorSprite extends Sprite {
         private Color color;
+
         private Coords hexLoc;
 
         public CursorSprite(final Color color) {
             this.color = color;
-            this.bounds = new Rectangle(hexPoly.getBounds().width + 1, hexPoly
-                    .getBounds().height + 1);
+            this.bounds = new Rectangle(hexPoly.getBounds().width + 1,
+                    hexPoly.getBounds().height + 1);
             this.image = null;
 
             // start offscreen
@@ -2016,8 +1954,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             graph.drawPolygon(hexPoly);
 
             // create final image
-            image = createImage(new FilteredImageSource(tempImage.getSource(),
-                    new KeyAlphaFilter(TRANSPARENT)));
+            image = createImage(new FilteredImageSource(tempImage.getSource(), new KeyAlphaFilter(
+                    TRANSPARENT)));
             graph.dispose();
             tempImage.flush();
         }
@@ -2033,8 +1971,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         public Rectangle getBounds() {
-            this.bounds = new Rectangle(hexPoly.getBounds().width + 1, hexPoly
-                    .getBounds().height + 1);
+            this.bounds = new Rectangle(hexPoly.getBounds().width + 1,
+                    hexPoly.getBounds().height + 1);
             bounds.setLocation(getHexLocation(hexLoc));
 
             return bounds;
@@ -2043,6 +1981,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private class GhostEntitySprite extends Sprite {
         private Entity entity;
+
         private Rectangle modelRect;
 
         public GhostEntitySprite(final Entity entity) {
@@ -2050,8 +1989,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
-            modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(
-                    shortName) + 1, getFontMetrics(font).getAscent());
+            modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(shortName) + 1,
+                    getFontMetrics(font).getAscent());
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
@@ -2060,8 +1999,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         /**
-         * Creates the sprite for this entity. It is an extra pain to create
-         * transparent images in AWT.
+         * Creates the sprite for this entity. It is an extra pain to create transparent images in
+         * AWT.
          */
         public void prepare() {
             // create image for buffer
@@ -2083,8 +2022,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             graph.drawImage(tileManager.imageFor(entity), 0, 0, this);
 
             // create final image
-            image = createImage(new FilteredImageSource(tempImage.getSource(),
-                    new KeyAlphaFilter(TRANSPARENT)));
+            image = createImage(new FilteredImageSource(tempImage.getSource(), new KeyAlphaFilter(
+                    TRANSPARENT)));
             graph.dispose();
             tempImage.flush();
         }
@@ -2105,18 +2044,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     private class MovingEntitySprite extends Sprite {
         private int facing;
+
         private Entity entity;
+
         private Rectangle modelRect;
 
-        public MovingEntitySprite(final Entity entity, final Coords position,
-                final int facing) {
+        public MovingEntitySprite(final Entity entity, final Coords position, final int facing) {
             this.entity = entity;
             this.facing = facing;
 
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
-            modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(
-                    shortName) + 1, getFontMetrics(font).getAscent());
+            modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(shortName) + 1,
+                    getFontMetrics(font).getAscent());
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(position));
 
@@ -2125,8 +2065,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         /**
-         * Creates the sprite for this entity. It is an extra pain to create
-         * transparent images in AWT.
+         * Creates the sprite for this entity. It is an extra pain to create transparent images in
+         * AWT.
          */
         public void prepare() {
             // create image for buffer
@@ -2148,19 +2088,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             graph.drawImage(tileManager.imageFor(entity, facing), 0, 0, this);
 
             // create final image
-            image = createImage(new FilteredImageSource(tempImage.getSource(),
-                    new KeyAlphaFilter(TRANSPARENT)));
+            image = createImage(new FilteredImageSource(tempImage.getSource(), new KeyAlphaFilter(
+                    TRANSPARENT)));
             graph.dispose();
             tempImage.flush();
         }
     }
 
     /**
-     * Sprite for an wreck. Consists of an image, drawn from the Tile Manager
-     * and an identification label.
+     * Sprite for an wreck. Consists of an image, drawn from the Tile Manager and an identification
+     * label.
      */
     private class WreckSprite extends Sprite {
         private Entity entity;
+
         private Rectangle modelRect;
 
         public WreckSprite(final Entity entity) {
@@ -2169,8 +2110,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             String shortName = entity.getShortName();
 
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
-            modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(
-                    shortName) + 1, getFontMetrics(font).getAscent());
+            modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(shortName) + 1,
+                    getFontMetrics(font).getAscent());
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
@@ -2187,16 +2128,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         /**
-         * Creates the sprite for this entity. It is an extra pain to create
-         * transparent images in AWT.
+         * Creates the sprite for this entity. It is an extra pain to create transparent images in
+         * AWT.
          */
         public void prepare() {
             // figure out size
             String shortName = entity.getShortName();
             Font font = new Font("SansSerif", Font.PLAIN, 10); //$NON-NLS-1$
-            Rectangle tempRect = new Rectangle(47, 55, getFontMetrics(font)
-                    .stringWidth(shortName) + 1, getFontMetrics(font)
-                    .getAscent());
+            Rectangle tempRect = new Rectangle(47, 55,
+                    getFontMetrics(font).stringWidth(shortName) + 1, getFontMetrics(font)
+                            .getAscent());
 
             // create image for buffer
             Image tempImage;
@@ -2226,19 +2167,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             graph.setFont(font);
             graph.setColor(bord);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
-                    tempRect.height);
+            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
             tempRect.translate(-1, -1);
             graph.setColor(bkgd);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
-                    tempRect.height);
+            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
             graph.setColor(text);
-            graph.drawString(shortName, tempRect.x + 1, tempRect.y
-                    + tempRect.height - 1);
+            graph.drawString(shortName, tempRect.x + 1, tempRect.y + tempRect.height - 1);
 
             // create final image
-            image = createImage(new FilteredImageSource(tempImage.getSource(),
-                    new KeyAlphaFilter(TRANSPARENT)));
+            image = createImage(new FilteredImageSource(tempImage.getSource(), new KeyAlphaFilter(
+                    TRANSPARENT)));
             graph.dispose();
             tempImage.flush();
         }
@@ -2253,13 +2191,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Sprite for an entity. Changes whenever the entity changes. Consists of an
-     * image, drawn from the Tile Manager; facing and possibly secondary facing
-     * arrows; armor and internal bars; and an identification label.
+     * Sprite for an entity. Changes whenever the entity changes. Consists of an image, drawn from
+     * the Tile Manager; facing and possibly secondary facing arrows; armor and internal bars; and
+     * an identification label.
      */
     private class EntitySprite extends Sprite {
         private Entity entity;
+
         private Rectangle entityRect;
+
         private Rectangle modelRect;
 
         public EntitySprite(final Entity entity) {
@@ -2277,15 +2217,14 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             int face = entity.isCommander() ? Font.ITALIC : Font.PLAIN;
             Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
-            modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(
-                    shortName) + 1, getFontMetrics(font).getAscent());
+            modelRect = new Rectangle(47, 55, getFontMetrics(font).stringWidth(shortName) + 1,
+                    getFontMetrics(font).getAscent());
             Rectangle tempBounds = new Rectangle(hex_size).union(modelRect);
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
 
             this.bounds = tempBounds;
-            this.entityRect = new Rectangle(bounds.x + (int) (20 * scale),
-                    bounds.y + (int) (14 * scale), (int) (44 * scale),
-                    (int) (44 * scale));
+            this.entityRect = new Rectangle(bounds.x + (int) (20 * scale), bounds.y
+                    + (int) (14 * scale), (int) (44 * scale), (int) (44 * scale));
             this.image = null;
         }
 
@@ -2294,9 +2233,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             tempBounds.setLocation(getHexLocation(entity.getPosition()));
             this.bounds = tempBounds;
 
-            this.entityRect = new Rectangle(bounds.x + (int) (20 * scale),
-                    bounds.y + (int) (14 * scale), (int) (44 * scale),
-                    (int) (44 * scale));
+            this.entityRect = new Rectangle(bounds.x + (int) (20 * scale), bounds.y
+                    + (int) (14 * scale), (int) (44 * scale), (int) (44 * scale));
 
             return bounds;
         }
@@ -2314,8 +2252,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         /**
-         * Creates the sprite for this entity. It is an extra pain to create
-         * transparent images in AWT.
+         * Creates the sprite for this entity. It is an extra pain to create transparent images in
+         * AWT.
          */
         public void prepare() {
             // figure out size
@@ -2329,9 +2267,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             int face = entity.isCommander() ? Font.ITALIC : Font.PLAIN;
             Font font = new Font("SansSerif", face, 10); //$NON-NLS-1$
-            Rectangle tempRect = new Rectangle(47, 55, getFontMetrics(font)
-                    .stringWidth(shortName) + 1, getFontMetrics(font)
-                    .getAscent());
+            Rectangle tempRect = new Rectangle(47, 55,
+                    getFontMetrics(font).stringWidth(shortName) + 1, getFontMetrics(font)
+                            .getAscent());
 
             // create image for buffer
             Image tempImage;
@@ -2368,24 +2306,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
             graph.setFont(font);
             graph.setColor(bord);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
-                    tempRect.height);
+            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
             tempRect.translate(-1, -1);
             graph.setColor(bkgd);
-            graph.fillRect(tempRect.x, tempRect.y, tempRect.width,
-                    tempRect.height);
+            graph.fillRect(tempRect.x, tempRect.y, tempRect.width, tempRect.height);
             graph.setColor(text);
-            graph.drawString(shortName, tempRect.x + 1, tempRect.y
-                    + tempRect.height - 1);
+            graph.drawString(shortName, tempRect.x + 1, tempRect.y + tempRect.height - 1);
 
             // draw facing
             graph.setColor(Color.white);
             if (entity.getFacing() != -1
-                    && !(entity instanceof Infantry && ((Infantry) entity)
-                            .getDugIn() == Infantry.DUG_IN_NONE)
-                            && !(entity instanceof Aero 
-                                    && ((Aero)entity).isSpheroid()
-                                    && game.getBoard().inAtmosphere())) {
+                    && !(entity instanceof Infantry && ((Infantry) entity).getDugIn() == Infantry.DUG_IN_NONE)
+                    && !(entity instanceof Aero && ((Aero) entity).isSpheroid() && game.getBoard()
+                            .inAtmosphere())) {
                 graph.drawPolygon(facingPolys[entity.getFacing()]);
             }
 
@@ -2408,8 +2341,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             int crewStunned = 0;
             boolean ge = false;
             if (entity instanceof Tank) {
-                turretLocked = !((Tank) entity).hasNoTurret()
-                        && !entity.canChangeSecondaryFacing();
+                turretLocked = !((Tank) entity).hasNoTurret() && !entity.canChangeSecondaryFacing();
                 crewStunned = ((Tank) entity).getStunnedTurns();
             } else if (entity instanceof GunEmplacement) {
                 turretLocked = ((GunEmplacement) entity).hasTurret()
@@ -2421,109 +2353,75 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (entity.crew.isDead()) {
                 // draw "CREW DEAD"
                 graph.setColor(Color.darkGray);
-                graph.drawString(
-                        Messages.getString("BoardView1.CrewDead"), 18, 39); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.CrewDead"), 18, 39); //$NON-NLS-1$
                 graph.setColor(Color.red);
-                graph.drawString(
-                        Messages.getString("BoardView1.CrewDead"), 17, 38); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.CrewDead"), 17, 38); //$NON-NLS-1$
             } else if (!ge && entity.isImmobile()) {
                 if (entity.isProne()) {
                     // draw "IMMOBILE" and "PRONE"
                     graph.setColor(Color.darkGray);
-                    graph.drawString(
-                            Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
-                    graph.drawString(
-                            Messages.getString("BoardView1.PRONE"), 26, 48); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 48); //$NON-NLS-1$
                     graph.setColor(Color.red);
-                    graph.drawString(
-                            Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
                     graph.setColor(Color.yellow);
-                    graph.drawString(
-                            Messages.getString("BoardView1.PRONE"), 25, 47); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 47); //$NON-NLS-1$
                 } else if (crewStunned > 0) {
                     // draw IMMOBILE and STUNNED
                     graph.setColor(Color.darkGray);
-                    graph.drawString(
-                            Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
-                    graph
-                            .drawString(
-                                    Messages
-                                            .getString(
-                                                    "BoardView1.STUNNED", new Object[] { crewStunned }), 22, 48); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
+                    graph.drawString(Messages.getString(
+                            "BoardView1.STUNNED", new Object[] { crewStunned }), 22, 48); //$NON-NLS-1$
                     graph.setColor(Color.red);
-                    graph.drawString(
-                            Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
                     graph.setColor(Color.yellow);
-                    graph
-                            .drawString(
-                                    Messages
-                                            .getString(
-                                                    "BoardView1.STUNNED", new Object[] { crewStunned }), 21, 47); //$NON-NLS-1$
+                    graph.drawString(Messages.getString(
+                            "BoardView1.STUNNED", new Object[] { crewStunned }), 21, 47); //$NON-NLS-1$
                 } else if (turretLocked) {
                     // draw "IMMOBILE" and "LOCKED"
                     graph.setColor(Color.darkGray);
-                    graph.drawString(
-                            Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
-                    graph.drawString(
-                            Messages.getString("BoardView1.LOCKED"), 22, 48); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 35); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.LOCKED"), 22, 48); //$NON-NLS-1$
                     graph.setColor(Color.red);
-                    graph.drawString(
-                            Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 34); //$NON-NLS-1$
                     graph.setColor(Color.yellow);
-                    graph.drawString(
-                            Messages.getString("BoardView1.LOCKED"), 21, 47); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 47); //$NON-NLS-1$
                 } else {
                     // draw "IMMOBILE"
                     graph.setColor(Color.darkGray);
-                    graph.drawString(
-                            Messages.getString("BoardView1.IMMOBILE"), 18, 39); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 18, 39); //$NON-NLS-1$
                     graph.setColor(Color.red);
-                    graph.drawString(
-                            Messages.getString("BoardView1.IMMOBILE"), 17, 38); //$NON-NLS-1$
+                    graph.drawString(Messages.getString("BoardView1.IMMOBILE"), 17, 38); //$NON-NLS-1$
                 }
             } else if (entity.isProne()) {
                 // draw "PRONE"
                 graph.setColor(Color.darkGray);
-                graph
-                        .drawString(
-                                Messages.getString("BoardView1.PRONE"), 26, 39); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.PRONE"), 26, 39); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
-                graph
-                        .drawString(
-                                Messages.getString("BoardView1.PRONE"), 25, 38); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.PRONE"), 25, 38); //$NON-NLS-1$
             } else if (crewStunned > 0) {
                 // draw STUNNED
                 graph.setColor(Color.darkGray);
-                graph
-                        .drawString(
-                                Messages
-                                        .getString(
-                                                "BoardView1.STUNNED", new Object[] { crewStunned }), 22, 48); //$NON-NLS-1$
+                graph.drawString(Messages.getString(
+                        "BoardView1.STUNNED", new Object[] { crewStunned }), 22, 48); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
-                graph
-                        .drawString(
-                                Messages
-                                        .getString(
-                                                "BoardView1.STUNNED", new Object[] { crewStunned }), 21, 47); //$NON-NLS-1$
+                graph.drawString(Messages.getString(
+                        "BoardView1.STUNNED", new Object[] { crewStunned }), 21, 47); //$NON-NLS-1$
             } else if (turretLocked) {
                 // draw "LOCKED"
                 graph.setColor(Color.darkGray);
-                graph.drawString(
-                        Messages.getString("BoardView1.LOCKED"), 22, 39); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.LOCKED"), 22, 39); //$NON-NLS-1$
                 graph.setColor(Color.yellow);
-                graph.drawString(
-                        Messages.getString("BoardView1.LOCKED"), 21, 38); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.LOCKED"), 21, 38); //$NON-NLS-1$
             }
 
             // If this unit is being swarmed or is swarming another, say so.
             if (Entity.NONE != entity.getSwarmAttackerId()) {
                 // draw "SWARMED"
                 graph.setColor(Color.darkGray);
-                graph.drawString(
-                        Messages.getString("BoardView1.SWARMED"), 17, 22); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.SWARMED"), 17, 22); //$NON-NLS-1$
                 graph.setColor(Color.red);
-                graph.drawString(
-                        Messages.getString("BoardView1.SWARMED"), 16, 21); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.SWARMED"), 16, 21); //$NON-NLS-1$
             }
 
             // If this unit is transporting another, say so.
@@ -2538,13 +2436,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // If this unit is stuck, say so.
             if ((entity.isStuck())) {
                 graph.setColor(Color.darkGray);
-                graph
-                        .drawString(
-                                Messages.getString("BoardView1.STUCK"), 26, 61); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.STUCK"), 26, 61); //$NON-NLS-1$
                 graph.setColor(Color.orange);
-                graph
-                        .drawString(
-                                Messages.getString("BoardView1.STUCK"), 25, 60); //$NON-NLS-1$
+                graph.drawString(Messages.getString("BoardView1.STUCK"), 25, 60); //$NON-NLS-1$
 
             }
 
@@ -2557,10 +2451,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     graph.setColor(Color.black);
                     graph.drawString("U", 29, 70); //$NON-NLS-1$
                 } else if (!entity.isVisibleToEnemy()
-                        && !GUIPreferences
-                                .getInstance()
-                                .getBoolean(
-                                        GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS)) {
+                        && !GUIPreferences.getInstance().getBoolean(
+                                GUIPreferences.ADVANCED_TRANSLUCENT_HIDDEN_UNITS)) {
                     // If this unit is currently hidden from the enemy, say so.
                     // draw "H"
                     graph.setColor(Color.darkGray);
@@ -2623,15 +2515,15 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
 
             // create final image
-            image = createImage(new FilteredImageSource(tempImage.getSource(),
-                    new KeyAlphaFilter(TRANSPARENT)));
+            image = createImage(new FilteredImageSource(tempImage.getSource(), new KeyAlphaFilter(
+                    TRANSPARENT)));
             graph.dispose();
             tempImage.flush();
         }
 
         /*
-         * We only want to show double-blind visibility indicators on our own
-         * mechs and teammates mechs (assuming team vision option).
+         * We only want to show double-blind visibility indicators on our own mechs and teammates
+         * mechs (assuming team vision option).
          */
         private boolean trackThisEntitiesVisibilityInfo(Entity e) {
             if (getLocalPlayer() == null) {
@@ -2639,8 +2531,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             }
 
             if (game.getOptions().booleanOption("double_blind") //$NON-NLS-1$
-                    && (e.getOwner().getId() == getLocalPlayer().getId() || (game
-                            .getOptions().booleanOption("team_vision") //$NON-NLS-1$
+                    && (e.getOwner().getId() == getLocalPlayer().getId() || (game.getOptions()
+                            .booleanOption("team_vision") //$NON-NLS-1$
                     && e.getOwner().getTeam() == getLocalPlayer().getTeam()))) {
                 return true;
             }
@@ -2677,8 +2569,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             boolean isMD = entity.getCrew().countMDImplants() > 0;
             if (numAdv > 0) {
                 buffer.append(" <") //$NON-NLS-1$
-                        .append(numAdv).append(
-                                Messages.getString("BoardView1.advs")); //$NON-NLS-1$
+                        .append(numAdv).append(Messages.getString("BoardView1.advs")); //$NON-NLS-1$
             }
             if (isMD) {
                 buffer.append(Messages.getString("BoardView1.md")); //$NON-NLS-1$
@@ -2693,12 +2584,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             buffer = new StringBuffer();
             if (ge == null) {
                 buffer.append(Messages.getString("BoardView1.move")) //$NON-NLS-1$
-                        .append(entity.getMovementAbbr(entity.moved)).append(
-                                ":") //$NON-NLS-1$
+                        .append(entity.getMovementAbbr(entity.moved)).append(":") //$NON-NLS-1$
                         .append(entity.delta_distance).append(" (+") //$NON-NLS-1$
-                        .append(
-                                Compute.getTargetMovementModifier(game,
-                                        entity.getId()).getValue())
+                        .append(Compute.getTargetMovementModifier(game, entity.getId()).getValue())
                         .append(");") //$NON-NLS-1$
                         .append(Messages.getString("BoardView1.Heat")) //$NON-NLS-1$
                         .append(entity.heat);
@@ -2712,24 +2600,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 }
             } else {
                 if (ge.hasTurret() && ge.isTurretLocked()) {
-                    buffer
-                            .append(Messages
-                                    .getString("BoardView1.TurretLocked"));
+                    buffer.append(Messages.getString("BoardView1.TurretLocked"));
                     if (ge.getFirstWeapon() == -1) {
                         buffer.append(",");
-                        buffer.append(Messages
-                                .getString("BoardView1.WeaponsDestroyed"));
+                        buffer.append(Messages.getString("BoardView1.WeaponsDestroyed"));
                     }
                 } else if (ge.getFirstWeapon() == -1) {
-                    buffer.append(Messages
-                            .getString("BoardView1.WeaponsDestroyed"));
+                    buffer.append(Messages.getString("BoardView1.WeaponsDestroyed"));
                 } else {
                     buffer.append(Messages.getString("BoardView1.Operational"));
                 }
             }
             if (entity.isDone())
-                buffer.append(" (").append(
-                        Messages.getString("BoardView1.done")).append(")");
+                buffer.append(" (").append(Messages.getString("BoardView1.done")).append(")");
             tipStrings[1] = buffer.toString();
 
             buffer = new StringBuffer();
@@ -2751,9 +2634,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Sprite for a step in a movement path. Only one sprite should exist for
-     * any hex in a path. Contains a colored number, and arrows indicating
-     * entering, exiting or turning.
+     * Sprite for a step in a movement path. Only one sprite should exist for any hex in a path.
+     * Contains a colored number, and arrows indicating entering, exiting or turning.
      */
     private class StepSprite extends Sprite {
         private MoveStep step;
@@ -2785,304 +2667,290 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             Color col;
             // set color
             switch (step.getMovementType()) {
-                case IEntityMovementType.MOVE_RUN:
-                case IEntityMovementType.MOVE_VTOL_RUN:
-                case IEntityMovementType.MOVE_OVER_THRUST:
-                    if (step.isUsingMASC()) {
-                        col = GUIPreferences.getInstance().getColor(
-                                "AdvancedMoveMASCColor");
-                    } else {
-                        col = GUIPreferences.getInstance().getColor(
-                                "AdvancedMoveRunColor");
-                    }
-                    break;
-                case IEntityMovementType.MOVE_JUMP:
-                    col = GUIPreferences.getInstance().getColor(
-                            "AdvancedMoveJumpColor");
-                    break;
-                case IEntityMovementType.MOVE_ILLEGAL:
-                    col = GUIPreferences.getInstance().getColor(
-                            "AdvancedMoveIllegalColor");
-                    break;
-                default:
-                    if (step.getType() == MovePath.STEP_BACKWARDS) {
-                        col = GUIPreferences.getInstance().getColor(
-                                "AdvancedMoveBackColor");
-                    } else {
-                        col = GUIPreferences.getInstance().getColor(
-                                "AdvancedMoveDefaultColor");
-                    }
-                    break;
+            case IEntityMovementType.MOVE_RUN:
+            case IEntityMovementType.MOVE_VTOL_RUN:
+            case IEntityMovementType.MOVE_OVER_THRUST:
+                if (step.isUsingMASC()) {
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveMASCColor");
+                } else {
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveRunColor");
+                }
+                break;
+            case IEntityMovementType.MOVE_JUMP:
+                col = GUIPreferences.getInstance().getColor("AdvancedMoveJumpColor");
+                break;
+            case IEntityMovementType.MOVE_ILLEGAL:
+                col = GUIPreferences.getInstance().getColor("AdvancedMoveIllegalColor");
+                break;
+            default:
+                if (step.getType() == MovePath.STEP_BACKWARDS) {
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveBackColor");
+                } else {
+                    col = GUIPreferences.getInstance().getColor("AdvancedMoveDefaultColor");
+                }
+                break;
             }
-            
-            if(game.useVectorMove()) {
+
+            if (game.useVectorMove()) {
                 drawActiveVectors(step, stepPos, graph);
             }
-            
+
             drawConditions(step, stepPos, graph, col);
 
             // draw arrows and cost for the step
             switch (step.getType()) {
-                case MovePath.STEP_FORWARDS:
-                case MovePath.STEP_SWIM:
-                case MovePath.STEP_BACKWARDS:
-                case MovePath.STEP_CHARGE:
-                case MovePath.STEP_DFA:
-                case MovePath.STEP_LATERAL_LEFT:
-                case MovePath.STEP_LATERAL_RIGHT:
-                case MovePath.STEP_LATERAL_LEFT_BACKWARDS:
-                case MovePath.STEP_LATERAL_RIGHT_BACKWARDS:
-                case MovePath.STEP_DEC:
-                case MovePath.STEP_DECN:
-                case MovePath.STEP_ACC:
-                case MovePath.STEP_ACCN:
-                case MovePath.STEP_LOOP:
-                    // draw arrows showing them entering the next
-                    myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints,
-                            movePoly.npoints);
-                    graph.setColor(Color.darkGray);
-                    myPoly.translate(stepPos.x + 1, stepPos.y + 1);
-                    graph.drawPolygon(myPoly);
-                    graph.setColor(col);
-                    myPoly.translate(-1, -1);
-                    graph.drawPolygon(myPoly);
-                    // draw movement cost
-                    drawMovementCost(step, stepPos, graph, col, true);
-                    drawRemainingVelocity(step, stepPos, graph, true);
-                    break;
-                case MovePath.STEP_GO_PRONE:
-                case MovePath.STEP_HULL_DOWN:
-                case MovePath.STEP_DOWN:
-                case MovePath.STEP_DIG_IN:
-                case MovePath.STEP_FORTIFY:
-                    // draw arrow indicating dropping prone
-                    // also doubles as the descent indication
-                    Polygon downPoly = movementPolys[7];
-                    myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints,
-                            downPoly.npoints);
-                    graph.setColor(Color.darkGray);
-                    myPoly.translate(stepPos.x, stepPos.y);
-                    graph.drawPolygon(myPoly);
-                    graph.setColor(col);
-                    myPoly.translate(-1, -1);
-                    graph.drawPolygon(myPoly);
-                    offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
-                    drawMovementCost(step, offsetCostPos, graph, col, false);
-                    break;
-                case MovePath.STEP_GET_UP:
-                case MovePath.STEP_UP:
-                case MovePath.STEP_CAREFUL_STAND:
-                    // draw arrow indicating standing up
-                    // also doubles as the climb indication
-                    Polygon upPoly = movementPolys[6];
-                    myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints,
-                            upPoly.npoints);
-                    graph.setColor(Color.darkGray);
-                    myPoly.translate(stepPos.x, stepPos.y);
-                    graph.drawPolygon(myPoly);
-                    graph.setColor(col);
-                    myPoly.translate(-1, -1);
-                    graph.drawPolygon(myPoly);
-                    offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
-                    drawMovementCost(step, offsetCostPos, graph, col, false);
-                    break;
-                case MovePath.STEP_CLIMB_MODE_ON:
-                    // draw climb mode indicator
-                    String climb;
-                    if (step.getParent().getEntity().getMovementMode() == IEntityMovementMode.WIGE) {
-                        climb = Messages.getString("BoardView1.WIGEClimb"); //$NON-NLS-1$
-                    } else {
-                        climb = Messages.getString("BoardView1.Climb"); //$NON-NLS-1$
-                    }
-                    if (step.isPastDanger()) {
-                        climb = "(" + climb + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                    int climbX = stepPos.x
-                            + 42
-                            - (graph.getFontMetrics(graph.getFont())
-                                    .stringWidth(climb) / 2);
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(climb, climbX, stepPos.y + 39);
-                    graph.setColor(col);
-                    graph.drawString(climb, climbX - 1, stepPos.y + 38);
-                    break;
-                case MovePath.STEP_CLIMB_MODE_OFF:
-                    // cancel climb mode indicator
-                    String climboff;
-                    if (step.getParent().getEntity().getMovementMode() == IEntityMovementMode.WIGE) {
-                        climboff = Messages.getString("BoardView1.WIGEClimbOff"); //$NON-NLS-1$
-                    } else {
-                        climboff = Messages.getString("BoardView1.ClimbOff"); //$NON-NLS-1$
-                    }
-                    if (step.isPastDanger()) {
-                        climboff = "(" + climboff + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                    int climboffX = stepPos.x
-                            + 42
-                            - (graph.getFontMetrics(graph.getFont())
-                                    .stringWidth(climboff) / 2);
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(climboff, climboffX, stepPos.y + 39);
-                    graph.setColor(col);
-                    graph.drawString(climboff, climboffX - 1, stepPos.y + 38);
-                    break;
-                case MovePath.STEP_TURN_LEFT:
-                case MovePath.STEP_TURN_RIGHT:
-                case MovePath.STEP_THRUST:
-                case MovePath.STEP_YAW:
-                case MovePath.STEP_EVADE:
-                case MovePath.STEP_ROLL:
-                    // draw arrows showing the facing
-                    myPoly = new Polygon(facingPoly.xpoints,
-                            facingPoly.ypoints, facingPoly.npoints);
-                    graph.setColor(Color.darkGray);
-                    myPoly.translate(stepPos.x + 1, stepPos.y + 1);
-                    graph.drawPolygon(myPoly);
-                    graph.setColor(col);
-                    myPoly.translate(-1, -1);
-                    graph.drawPolygon(myPoly);
-                    break;
-                case MovePath.STEP_LOAD:
-                    // Announce load.
-                    String load = Messages.getString("BoardView1.Load"); //$NON-NLS-1$
-                    if (step.isPastDanger()) {
-                        load = "(" + load + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                    int loadX = stepPos.x
-                            + 42
-                            - (graph.getFontMetrics(graph.getFont())
-                                    .stringWidth(load) / 2);
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(load, loadX, stepPos.y + 39);
-                    graph.setColor(col);
-                    graph.drawString(load, loadX - 1, stepPos.y + 38);
-                    break;
-                case MovePath.STEP_LAUNCH:
-                    //announce launch
-                    String launch = Messages.getString("BoardView1.Launch"); //$NON-NLS-1$
-                    if (step.isPastDanger()) {
-                        launch = "(" + launch + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                    int launchX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(launch) / 2);
-                    int launchY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(launch, launchX, launchY + 1);
-                    graph.setColor(col);
-                    graph.drawString(launch, launchX - 1, launchY);
-                    break;
-                case MovePath.STEP_RECOVER:
-                    //announce launch
-                    String recover = Messages.getString("BoardView1.Recover"); //$NON-NLS-1$
-                    if (step.isPastDanger()) {
-                        launch = "(" + recover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                    int recoverX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(recover) / 2);
-                    int recoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(recover, recoverX, recoverY + 1);
-                    graph.setColor(col);
-                    graph.drawString(recover, recoverX - 1, recoverY);
-                    break;
-                case MovePath.STEP_UNLOAD:
-                    // Announce unload.
-                    String unload = Messages.getString("BoardView1.Unload"); //$NON-NLS-1$
-                    if (step.isPastDanger()) {
-                        unload = "(" + unload + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                    int unloadX = stepPos.x
-                            + 42
-                            - (graph.getFontMetrics(graph.getFont())
-                                    .stringWidth(unload) / 2);
-                    int unloadY = stepPos.y + 38
-                            + graph.getFontMetrics(graph.getFont()).getHeight();
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(unload, unloadX, unloadY + 1);
-                    graph.setColor(col);
-                    graph.drawString(unload, unloadX - 1, unloadY);
-                    break;
-                case MovePath.STEP_HOVER:
-                    //announce launch
-                    String hover = Messages.getString("BoardView1.Hover"); //$NON-NLS-1$
-                    if (step.isPastDanger()) {
-                        hover = "(" + hover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                    graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                    int hoverX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(hover) / 2);
-                    int hoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
-                    graph.setColor(Color.darkGray);
-                    graph.drawString(hover, hoverX, hoverY + 1);
-                    graph.setColor(col);
-                    graph.drawString(hover, hoverX - 1, hoverY);
-                    drawMovementCost(step, stepPos, graph, col, false);
-                    break;
-                default:
-                    break;
+            case MovePath.STEP_FORWARDS:
+            case MovePath.STEP_SWIM:
+            case MovePath.STEP_BACKWARDS:
+            case MovePath.STEP_CHARGE:
+            case MovePath.STEP_DFA:
+            case MovePath.STEP_LATERAL_LEFT:
+            case MovePath.STEP_LATERAL_RIGHT:
+            case MovePath.STEP_LATERAL_LEFT_BACKWARDS:
+            case MovePath.STEP_LATERAL_RIGHT_BACKWARDS:
+            case MovePath.STEP_DEC:
+            case MovePath.STEP_DECN:
+            case MovePath.STEP_ACC:
+            case MovePath.STEP_ACCN:
+            case MovePath.STEP_LOOP:
+                // draw arrows showing them entering the next
+                myPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, movePoly.npoints);
+                graph.setColor(Color.darkGray);
+                myPoly.translate(stepPos.x + 1, stepPos.y + 1);
+                graph.drawPolygon(myPoly);
+                graph.setColor(col);
+                myPoly.translate(-1, -1);
+                graph.drawPolygon(myPoly);
+                // draw movement cost
+                drawMovementCost(step, stepPos, graph, col, true);
+                drawRemainingVelocity(step, stepPos, graph, true);
+                break;
+            case MovePath.STEP_GO_PRONE:
+            case MovePath.STEP_HULL_DOWN:
+            case MovePath.STEP_DOWN:
+            case MovePath.STEP_DIG_IN:
+            case MovePath.STEP_FORTIFY:
+                // draw arrow indicating dropping prone
+                // also doubles as the descent indication
+                Polygon downPoly = movementPolys[7];
+                myPoly = new Polygon(downPoly.xpoints, downPoly.ypoints, downPoly.npoints);
+                graph.setColor(Color.darkGray);
+                myPoly.translate(stepPos.x, stepPos.y);
+                graph.drawPolygon(myPoly);
+                graph.setColor(col);
+                myPoly.translate(-1, -1);
+                graph.drawPolygon(myPoly);
+                offsetCostPos = new Point(stepPos.x + 1, stepPos.y + 15);
+                drawMovementCost(step, offsetCostPos, graph, col, false);
+                break;
+            case MovePath.STEP_GET_UP:
+            case MovePath.STEP_UP:
+            case MovePath.STEP_CAREFUL_STAND:
+                // draw arrow indicating standing up
+                // also doubles as the climb indication
+                Polygon upPoly = movementPolys[6];
+                myPoly = new Polygon(upPoly.xpoints, upPoly.ypoints, upPoly.npoints);
+                graph.setColor(Color.darkGray);
+                myPoly.translate(stepPos.x, stepPos.y);
+                graph.drawPolygon(myPoly);
+                graph.setColor(col);
+                myPoly.translate(-1, -1);
+                graph.drawPolygon(myPoly);
+                offsetCostPos = new Point(stepPos.x, stepPos.y + 15);
+                drawMovementCost(step, offsetCostPos, graph, col, false);
+                break;
+            case MovePath.STEP_CLIMB_MODE_ON:
+                // draw climb mode indicator
+                String climb;
+                if (step.getParent().getEntity().getMovementMode() == IEntityMovementMode.WIGE) {
+                    climb = Messages.getString("BoardView1.WIGEClimb"); //$NON-NLS-1$
+                } else {
+                    climb = Messages.getString("BoardView1.Climb"); //$NON-NLS-1$
+                }
+                if (step.isPastDanger()) {
+                    climb = "(" + climb + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int climbX = stepPos.x + 42
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(climb) / 2);
+                graph.setColor(Color.darkGray);
+                graph.drawString(climb, climbX, stepPos.y + 39);
+                graph.setColor(col);
+                graph.drawString(climb, climbX - 1, stepPos.y + 38);
+                break;
+            case MovePath.STEP_CLIMB_MODE_OFF:
+                // cancel climb mode indicator
+                String climboff;
+                if (step.getParent().getEntity().getMovementMode() == IEntityMovementMode.WIGE) {
+                    climboff = Messages.getString("BoardView1.WIGEClimbOff"); //$NON-NLS-1$
+                } else {
+                    climboff = Messages.getString("BoardView1.ClimbOff"); //$NON-NLS-1$
+                }
+                if (step.isPastDanger()) {
+                    climboff = "(" + climboff + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int climboffX = stepPos.x + 42
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(climboff) / 2);
+                graph.setColor(Color.darkGray);
+                graph.drawString(climboff, climboffX, stepPos.y + 39);
+                graph.setColor(col);
+                graph.drawString(climboff, climboffX - 1, stepPos.y + 38);
+                break;
+            case MovePath.STEP_TURN_LEFT:
+            case MovePath.STEP_TURN_RIGHT:
+            case MovePath.STEP_THRUST:
+            case MovePath.STEP_YAW:
+            case MovePath.STEP_EVADE:
+            case MovePath.STEP_ROLL:
+                // draw arrows showing the facing
+                myPoly = new Polygon(facingPoly.xpoints, facingPoly.ypoints, facingPoly.npoints);
+                graph.setColor(Color.darkGray);
+                myPoly.translate(stepPos.x + 1, stepPos.y + 1);
+                graph.drawPolygon(myPoly);
+                graph.setColor(col);
+                myPoly.translate(-1, -1);
+                graph.drawPolygon(myPoly);
+                break;
+            case MovePath.STEP_LOAD:
+                // Announce load.
+                String load = Messages.getString("BoardView1.Load"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    load = "(" + load + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int loadX = stepPos.x + 42
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(load) / 2);
+                graph.setColor(Color.darkGray);
+                graph.drawString(load, loadX, stepPos.y + 39);
+                graph.setColor(col);
+                graph.drawString(load, loadX - 1, stepPos.y + 38);
+                break;
+            case MovePath.STEP_LAUNCH:
+                // announce launch
+                String launch = Messages.getString("BoardView1.Launch"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    launch = "(" + launch + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int launchX = stepPos.x + 42
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(launch) / 2);
+                int launchY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                graph.setColor(Color.darkGray);
+                graph.drawString(launch, launchX, launchY + 1);
+                graph.setColor(col);
+                graph.drawString(launch, launchX - 1, launchY);
+                break;
+            case MovePath.STEP_RECOVER:
+                // announce launch
+                String recover = Messages.getString("BoardView1.Recover"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    launch = "(" + recover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int recoverX = stepPos.x + 42
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(recover) / 2);
+                int recoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                graph.setColor(Color.darkGray);
+                graph.drawString(recover, recoverX, recoverY + 1);
+                graph.setColor(col);
+                graph.drawString(recover, recoverX - 1, recoverY);
+                break;
+            case MovePath.STEP_UNLOAD:
+                // Announce unload.
+                String unload = Messages.getString("BoardView1.Unload"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    unload = "(" + unload + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int unloadX = stepPos.x + 42
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(unload) / 2);
+                int unloadY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                graph.setColor(Color.darkGray);
+                graph.drawString(unload, unloadX, unloadY + 1);
+                graph.setColor(col);
+                graph.drawString(unload, unloadX - 1, unloadY);
+                break;
+            case MovePath.STEP_HOVER:
+                // announce launch
+                String hover = Messages.getString("BoardView1.Hover"); //$NON-NLS-1$
+                if (step.isPastDanger()) {
+                    hover = "(" + hover + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
+                int hoverX = stepPos.x + 42
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(hover) / 2);
+                int hoverY = stepPos.y + 38 + graph.getFontMetrics(graph.getFont()).getHeight();
+                graph.setColor(Color.darkGray);
+                graph.drawString(hover, hoverX, hoverY + 1);
+                graph.setColor(col);
+                graph.drawString(hover, hoverX - 1, hoverY);
+                drawMovementCost(step, stepPos, graph, col, false);
+                break;
+            default:
+                break;
             }
 
             // create final image
-            image = createImage(new FilteredImageSource(tempImage.getSource(),
-                    new KeyAlphaFilter(TRANSPARENT)));
+            image = createImage(new FilteredImageSource(tempImage.getSource(), new KeyAlphaFilter(
+                    TRANSPARENT)));
             graph.dispose();
             tempImage.flush();
         }
-        
+
         private void drawConditions(MoveStep step, Point stepPos, Graphics graph, Color col) {
-            //draw conditions separate from the step, This allows me to keep 
-            //conditions on the Aero even when that step is erased (as per advanced 
-            //movement). For now, just evading and rolling.
-            //eventually loading and unloading as well
-            if(step.isEvading()) {
-                   String evade = Messages.getString("BoardView1.Evade"); //$NON-NLS-1$
+            // draw conditions separate from the step, This allows me to keep
+            // conditions on the Aero even when that step is erased (as per advanced
+            // movement). For now, just evading and rolling.
+            // eventually loading and unloading as well
+            if (step.isEvading()) {
+                String evade = Messages.getString("BoardView1.Evade"); //$NON-NLS-1$
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int evadeX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
+                int evadeX = stepPos.x + 42
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(evade) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(evade, evadeX, stepPos.y + 64);
                 graph.setColor(col);
                 graph.drawString(evade, evadeX - 1, stepPos.y + 63);
             }
-            
-            if(step.isRolled()) {
-                //Announce roll
+
+            if (step.isRolled()) {
+                // Announce roll
                 String roll = Messages.getString("BoardView1.Roll"); //$NON-NLS-1$
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
-                int rollX = stepPos.x + 42 - (graph.getFontMetrics(graph.getFont()).stringWidth(roll) / 2);
+                int rollX = stepPos.x + 42
+                        - (graph.getFontMetrics(graph.getFont()).stringWidth(roll) / 2);
                 graph.setColor(Color.darkGray);
                 graph.drawString(roll, rollX, stepPos.y + 18);
                 graph.setColor(col);
                 graph.drawString(roll, rollX - 1, stepPos.y + 17);
             }
-            
-            
+
         }
-        
+
         private void drawActiveVectors(MoveStep step, Point stepPos, Graphics graph) {
-            
-            /*TODO: it might be better to move this to the MovementSprite
-             * so that it is visible before first step and you can't see it 
-             * for all entities
+
+            /*
+             * TODO: it might be better to move this to the MovementSprite so that it is visible
+             * before first step and you can't see it for all entities
              */
-            
-            int[] activeXpos = {39, 59, 59, 40, 19, 19};
-            int[] activeYpos = {20, 28, 52, 59, 52, 28};
-            
+
+            int[] activeXpos = { 39, 59, 59, 40, 19, 19 };
+            int[] activeYpos = { 20, 28, 52, 59, 52, 28 };
+
             int[] v = step.getVectors();
-            for(int i = 0; i < 6; i++) {
-                
+            for (int i = 0; i < 6; i++) {
+
                 String active = Integer.toString(v[i]);
                 graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
                 graph.setColor(Color.darkGray);
                 graph.drawString(active, activeXpos[i] + stepPos.x, activeYpos[i] + stepPos.y);
                 graph.setColor(Color.red);
-                graph.drawString(active, activeXpos[i] + stepPos.x - 1, activeYpos[i] + stepPos.y - 1);
-                
+                graph.drawString(active, activeXpos[i] + stepPos.x - 1, activeYpos[i] + stepPos.y
+                        - 1);
+
             }
-            
+
         }
 
         public Rectangle getBounds() {
@@ -3093,51 +2961,46 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         public MoveStep getStep() {
             return step;
         }
-        
-        private void drawRemainingVelocity(MoveStep step, Point stepPos,
-                Graphics graph, boolean shiftFlag) {
+
+        private void drawRemainingVelocity(MoveStep step, Point stepPos, Graphics graph,
+                boolean shiftFlag) {
             String velString = null;
             StringBuffer velStringBuf = new StringBuffer();
-            
-            if (!game.useVectorMove() &&
-                    (step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST
-                || step.getMovementType() == IEntityMovementType.MOVE_OVER_THRUST)) {
-                velStringBuf.append("(")
-                    .append(step.getVelocityLeft())
-                    .append("/")
-                    .append(step.getVelocity())
-                    .append(")");
+
+            if (!game.useVectorMove()
+                    && (step.getMovementType() == IEntityMovementType.MOVE_SAFE_THRUST || step
+                            .getMovementType() == IEntityMovementType.MOVE_OVER_THRUST)) {
+                velStringBuf.append("(").append(step.getVelocityLeft()).append("/").append(
+                        step.getVelocity()).append(")");
             }
 
             Color col = Color.GREEN;
-            if(step.getVelocityLeft() > 0) {
+            if (step.getVelocityLeft() > 0) {
                 col = Color.RED;
             }
-            
-//          Convert the buffer to a String and draw it.
+
+            // Convert the buffer to a String and draw it.
             velString = velStringBuf.toString();
             graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
             int costX = stepPos.x + 42;
             if (shiftFlag) {
-                costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(
-                        velString) / 2);
+                costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(velString) / 2);
             }
             graph.setColor(Color.darkGray);
             graph.drawString(velString, costX, stepPos.y + 28);
             graph.setColor(col);
             graph.drawString(velString, costX - 1, stepPos.y + 27);
-            
+
         }
 
-        private void drawMovementCost(MoveStep step, Point stepPos,
-                Graphics graph, Color col, boolean shiftFlag) {
+        private void drawMovementCost(MoveStep step, Point stepPos, Graphics graph, Color col,
+                boolean shiftFlag) {
             String costString = null;
             StringBuffer costStringBuf = new StringBuffer();
             costStringBuf.append(step.getMpUsed());
 
             // If the step is using a road bonus, mark it.
-            if (step.isOnlyPavement()
-                    && step.getParent().getEntity() instanceof Tank) {
+            if (step.isOnlyPavement() && step.getParent().getEntity() instanceof Tank) {
                 costStringBuf.append("+"); //$NON-NLS-1$
             }
 
@@ -3163,8 +3026,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_WALK
                     || step.getMovementType() == IEntityMovementType.MOVE_SUBMARINE_RUN
                     || step.getElevation() != 0) {
-                costStringBuf.append("{").append(step.getElevation()).append(
-                        "}");
+                costStringBuf.append("{").append(step.getElevation()).append("}");
             }
 
             // Convert the buffer to a String and draw it.
@@ -3172,8 +3034,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             graph.setFont(new Font("SansSerif", Font.PLAIN, 12)); //$NON-NLS-1$
             int costX = stepPos.x + 42;
             if (shiftFlag) {
-                costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(
-                        costString) / 2);
+                costX -= (graph.getFontMetrics(graph.getFont()).stringWidth(costString) / 2);
             }
             graph.setColor(Color.darkGray);
             graph.drawString(costString, costX, stepPos.y + 39);
@@ -3184,15 +3045,18 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Sprite and info for a C3 network. Does not actually use the image buffer
-     * as this can be horribly inefficient for long diagonal lines.
+     * Sprite and info for a C3 network. Does not actually use the image buffer as this can be
+     * horribly inefficient for long diagonal lines.
      */
     private class C3Sprite extends Sprite {
         private Polygon C3Poly;
 
         protected int entityId;
+
         protected int masterId;
+
         protected Entity entityE;
+
         protected Entity entityM;
 
         Color spriteColor;
@@ -3202,8 +3066,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             this.entityM = m;
             this.entityId = e.getId();
             this.masterId = m.getId();
-            this.spriteColor = PlayerColors.getColor(e.getOwner()
-                    .getColorIndex());
+            this.spriteColor = PlayerColors.getColor(e.getOwner().getColorIndex());
 
             if (e.getPosition() == null || m.getPosition() == null) {
                 C3Poly = new Polygon();
@@ -3211,8 +3074,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 C3Poly.addPoint(1, 0);
                 C3Poly.addPoint(0, 1);
                 this.bounds = new Rectangle(C3Poly.getBounds());
-                bounds.setSize(bounds.getSize().width + 1,
-                        bounds.getSize().height + 1);
+                bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
                 this.image = null;
                 return;
             }
@@ -3221,8 +3083,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             // set bounds
             this.bounds = new Rectangle(C3Poly.getBounds());
-            bounds.setSize(bounds.getSize().width + 1,
-                    bounds.getSize().height + 1);
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
 
             // move poly to upper right of image
             C3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
@@ -3241,48 +3102,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final Point a = getHexLocation(entityE.getPosition());
             final Point t = getHexLocation(entityM.getPosition());
 
-            final double an = (entityE.getPosition().radian(
-                    entityM.getPosition()) + (Math.PI * 1.5))
+            final double an = (entityE.getPosition().radian(entityM.getPosition()) + (Math.PI * 1.5))
                     % (Math.PI * 2); // angle
             final double lw = scale * C3_LINE_WIDTH; // line width
 
             C3Poly = new Polygon();
-            C3Poly.addPoint(a.x
-                    + (int) (scale * (HEX_W / 2) - (int) Math.round(Math
-                            .sin(an)
-                            * lw)), a.y
-                    + (int) (scale * (HEX_H / 2) + (int) Math.round(Math
-                            .cos(an)
-                            * lw)));
-            C3Poly.addPoint(a.x
-                    + (int) (scale * (HEX_W / 2) + (int) Math.round(Math
-                            .sin(an)
-                            * lw)), a.y
-                    + (int) (scale * (HEX_H / 2) - (int) Math.round(Math
-                            .cos(an)
-                            * lw)));
-            C3Poly.addPoint(t.x
-                    + (int) (scale * (HEX_W / 2) + (int) Math.round(Math
-                            .sin(an)
-                            * lw)), t.y
-                    + (int) (scale * (HEX_H / 2) - (int) Math.round(Math
-                            .cos(an)
-                            * lw)));
-            C3Poly.addPoint(t.x
-                    + (int) (scale * (HEX_W / 2) - (int) Math.round(Math
-                            .sin(an)
-                            * lw)), t.y
-                    + (int) (scale * (HEX_H / 2) + (int) Math.round(Math
-                            .cos(an)
-                            * lw)));
+            C3Poly.addPoint(
+                    a.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), a.y
+                            + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
+            C3Poly.addPoint(
+                    a.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), a.y
+                            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
+            C3Poly.addPoint(
+                    t.x + (int) (scale * (HEX_W / 2) + (int) Math.round(Math.sin(an) * lw)), t.y
+                            + (int) (scale * (HEX_H / 2) - (int) Math.round(Math.cos(an) * lw)));
+            C3Poly.addPoint(
+                    t.x + (int) (scale * (HEX_W / 2) - (int) Math.round(Math.sin(an) * lw)), t.y
+                            + (int) (scale * (HEX_H / 2) + (int) Math.round(Math.cos(an) * lw)));
         }
 
         public Rectangle getBounds() {
             makePoly();
             // set bounds
             this.bounds = new Rectangle(C3Poly.getBounds());
-            bounds.setSize(bounds.getSize().width + 1,
-                    bounds.getSize().height + 1);
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
 
             // move poly to upper right of image
             C3Poly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
@@ -3298,8 +3141,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
             // makePoly();
 
-            Polygon drawPoly = new Polygon(C3Poly.xpoints, C3Poly.ypoints,
-                    C3Poly.npoints);
+            Polygon drawPoly = new Polygon(C3Poly.xpoints, C3Poly.ypoints, C3Poly.npoints);
             drawPoly.translate(x, y);
 
             g.setColor(spriteColor);
@@ -3318,24 +3160,37 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Sprite and info for an attack. Does not actually use the image buffer as
-     * this can be horribly inefficient for long diagonal lines. Appears as an
-     * arrow. Arrow becoming cut in half when two Meks attacking each other.
+     * Sprite and info for an attack. Does not actually use the image buffer as this can be horribly
+     * inefficient for long diagonal lines. Appears as an arrow. Arrow becoming cut in half when two
+     * Meks attacking each other.
      */
     private class AttackSprite extends Sprite {
         private ArrayList<AttackAction> attacks = new ArrayList<AttackAction>();
+
         private Point a;
+
         private Point t;
+
         private double an;
+
         private StraightArrowPolygon attackPoly;
+
         private Color attackColor;
+
         private int entityId;
+
         private int targetType;
+
         private int targetId;
+
         private String attackerDesc;
+
         private String targetDesc;
+
         ArrayList<String> weaponDescs = new ArrayList<String>();
+
         private final Entity ae;
+
         private final Targetable target;
 
         public AttackSprite(final AttackAction attack) {
@@ -3355,11 +3210,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             // set bounds
             this.bounds = new Rectangle(attackPoly.getBounds());
-            bounds.setSize(bounds.getSize().width + 1,
-                    bounds.getSize().height + 1);
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
             // move poly to upper right of image
-            attackPoly.translate(-bounds.getLocation().x,
-                    -bounds.getLocation().y);
+            attackPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
 
             // set names & stuff
             attackerDesc = ae.getDisplayName();
@@ -3421,11 +3274,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // Checking if given attack is mutual. In this case we building
             // halved arrow
             if (isMutualAttack()) {
-                attackPoly = new StraightArrowPolygon(a, t, (int) (8 * scale),
-                        (int) (12 * scale), true);
+                attackPoly = new StraightArrowPolygon(a, t, (int) (8 * scale), (int) (12 * scale),
+                        true);
             } else {
-                attackPoly = new StraightArrowPolygon(a, t, (int) (4 * scale),
-                        (int) (8 * scale), false);
+                attackPoly = new StraightArrowPolygon(a, t, (int) (4 * scale), (int) (8 * scale),
+                        false);
             }
         }
 
@@ -3433,40 +3286,33 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             makePoly();
             // set bounds
             this.bounds = new Rectangle(attackPoly.getBounds());
-            bounds.setSize(bounds.getSize().width + 1,
-                    bounds.getSize().height + 1);
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
             // move poly to upper right of image
-            attackPoly.translate(-bounds.getLocation().x,
-                    -bounds.getLocation().y);
+            attackPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
 
             return bounds;
         }
 
         /**
-         * If we have build full arrow already with single attack and have got
-         * counter attack from our target lately - lets change arrow to halved.
+         * If we have build full arrow already with single attack and have got counter attack from
+         * our target lately - lets change arrow to halved.
          */
         public void rebuildToHalvedPolygon() {
-            attackPoly = new StraightArrowPolygon(a, t, (int) (8 * scale),
-                    (int) (12 * scale), true);
+            attackPoly = new StraightArrowPolygon(a, t, (int) (8 * scale), (int) (12 * scale), true);
             // set bounds
             this.bounds = new Rectangle(attackPoly.getBounds());
-            bounds.setSize(bounds.getSize().width + 1,
-                    bounds.getSize().height + 1);
+            bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
             // move poly to upper right of image
-            attackPoly.translate(-bounds.getLocation().x,
-                    -bounds.getLocation().y);
+            attackPoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
         }
 
         /**
          * Cheking if attack is mutual and changing target arrow to half-arrow
          */
         private boolean isMutualAttack() {
-            for (final Iterator<AttackSprite> i = attackSprites.iterator(); i
-                    .hasNext();) {
+            for (final Iterator<AttackSprite> i = attackSprites.iterator(); i.hasNext();) {
                 final AttackSprite sprite = i.next();
-                if (sprite.getEntityId() == this.targetId
-                        && sprite.getTargetId() == this.entityId) {
+                if (sprite.getEntityId() == this.targetId && sprite.getTargetId() == this.entityId) {
                     sprite.rebuildToHalvedPolygon();
                     return true;
                 }
@@ -3482,8 +3328,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
-            Polygon drawPoly = new Polygon(attackPoly.xpoints,
-                    attackPoly.ypoints, attackPoly.npoints);
+            Polygon drawPoly = new Polygon(attackPoly.xpoints, attackPoly.ypoints,
+                    attackPoly.npoints);
             drawPoly.translate(x, y);
 
             g.setColor(attackColor);
@@ -3512,13 +3358,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
          */
         public void addWeapon(WeaponAttackAction attack) {
             final Entity entity = game.getEntity(attack.getEntityId());
-            final WeaponType wtype = (WeaponType) entity.getEquipment(
-                    attack.getWeaponId()).getType();
+            final WeaponType wtype = (WeaponType) entity.getEquipment(attack.getWeaponId())
+                    .getType();
             final String roll = attack.toHit(game).getValueAsString();
             final String table = attack.toHit(game).getTableDesc();
-            weaponDescs
-                    .add(wtype.getName()
-                            + Messages.getString("BoardView1.needs") + roll + " " + table); //$NON-NLS-1$
+            weaponDescs.add(wtype.getName()
+                    + Messages.getString("BoardView1.needs") + roll + " " + table); //$NON-NLS-1$
         }
 
         public void addWeapon(KickAttackAction attack) {
@@ -3527,43 +3372,28 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             String rollRight = ""; //$NON-NLS-1$
             final int leg = attack.getLeg();
             switch (leg) {
-                case KickAttackAction.BOTH:
-                    rollLeft = KickAttackAction.toHit(
-                            game,
-                            attack.getEntityId(),
-                            game.getTarget(attack.getTargetType(), attack
-                                    .getTargetId()), KickAttackAction.LEFT)
-                            .getValueAsString();
-                    rollRight = KickAttackAction.toHit(
-                            game,
-                            attack.getEntityId(),
-                            game.getTarget(attack.getTargetType(), attack
-                                    .getTargetId()), KickAttackAction.RIGHT)
-                            .getValueAsString();
-                    bufer = Messages
-                            .getString(
-                                    "BoardView1.kickBoth", new Object[] { rollLeft, rollRight }); //$NON-NLS-1$
-                    break;
-                case KickAttackAction.LEFT:
-                    rollLeft = KickAttackAction.toHit(
-                            game,
-                            attack.getEntityId(),
-                            game.getTarget(attack.getTargetType(), attack
-                                    .getTargetId()), KickAttackAction.LEFT)
-                            .getValueAsString();
-                    bufer = Messages.getString(
-                            "BoardView1.kickLeft", new Object[] { rollLeft }); //$NON-NLS-1$
-                    break;
-                case KickAttackAction.RIGHT:
-                    rollRight = KickAttackAction.toHit(
-                            game,
-                            attack.getEntityId(),
-                            game.getTarget(attack.getTargetType(), attack
-                                    .getTargetId()), KickAttackAction.RIGHT)
-                            .getValueAsString();
-                    bufer = Messages.getString(
-                            "BoardView1.kickRight", new Object[] { rollRight }); //$NON-NLS-1$
-                    break;
+            case KickAttackAction.BOTH:
+                rollLeft = KickAttackAction.toHit(game, attack.getEntityId(),
+                        game.getTarget(attack.getTargetType(), attack.getTargetId()),
+                        KickAttackAction.LEFT).getValueAsString();
+                rollRight = KickAttackAction.toHit(game, attack.getEntityId(),
+                        game.getTarget(attack.getTargetType(), attack.getTargetId()),
+                        KickAttackAction.RIGHT).getValueAsString();
+                bufer = Messages.getString(
+                        "BoardView1.kickBoth", new Object[] { rollLeft, rollRight }); //$NON-NLS-1$
+                break;
+            case KickAttackAction.LEFT:
+                rollLeft = KickAttackAction.toHit(game, attack.getEntityId(),
+                        game.getTarget(attack.getTargetType(), attack.getTargetId()),
+                        KickAttackAction.LEFT).getValueAsString();
+                bufer = Messages.getString("BoardView1.kickLeft", new Object[] { rollLeft }); //$NON-NLS-1$
+                break;
+            case KickAttackAction.RIGHT:
+                rollRight = KickAttackAction.toHit(game, attack.getEntityId(),
+                        game.getTarget(attack.getTargetType(), attack.getTargetId()),
+                        KickAttackAction.RIGHT).getValueAsString();
+                bufer = Messages.getString("BoardView1.kickRight", new Object[] { rollRight }); //$NON-NLS-1$
+                break;
             }
             weaponDescs.add(bufer);
         }
@@ -3574,77 +3404,56 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             String rollRight = ""; //$NON-NLS-1$
             final int arm = attack.getArm();
             switch (arm) {
-                case PunchAttackAction.BOTH:
-                    rollLeft = PunchAttackAction.toHit(
-                            game,
-                            attack.getEntityId(),
-                            game.getTarget(attack.getTargetType(), attack
-                                    .getTargetId()), PunchAttackAction.LEFT)
-                            .getValueAsString();
-                    rollRight = PunchAttackAction.toHit(
-                            game,
-                            attack.getEntityId(),
-                            game.getTarget(attack.getTargetType(), attack
-                                    .getTargetId()), PunchAttackAction.RIGHT)
-                            .getValueAsString();
-                    bufer = Messages
-                            .getString(
-                                    "BoardView1.punchBoth", new Object[] { rollLeft, rollRight }); //$NON-NLS-1$
-                    break;
-                case PunchAttackAction.LEFT:
-                    rollLeft = PunchAttackAction.toHit(
-                            game,
-                            attack.getEntityId(),
-                            game.getTarget(attack.getTargetType(), attack
-                                    .getTargetId()), PunchAttackAction.LEFT)
-                            .getValueAsString();
-                    bufer = Messages.getString(
-                            "BoardView1.punchLeft", new Object[] { rollLeft }); //$NON-NLS-1$
-                    break;
-                case PunchAttackAction.RIGHT:
-                    rollRight = PunchAttackAction.toHit(
-                            game,
-                            attack.getEntityId(),
-                            game.getTarget(attack.getTargetType(), attack
-                                    .getTargetId()), PunchAttackAction.RIGHT)
-                            .getValueAsString();
-                    bufer = Messages
-                            .getString(
-                                    "BoardView1.punchRight", new Object[] { rollRight }); //$NON-NLS-1$
-                    break;
+            case PunchAttackAction.BOTH:
+                rollLeft = PunchAttackAction.toHit(game, attack.getEntityId(),
+                        game.getTarget(attack.getTargetType(), attack.getTargetId()),
+                        PunchAttackAction.LEFT).getValueAsString();
+                rollRight = PunchAttackAction.toHit(game, attack.getEntityId(),
+                        game.getTarget(attack.getTargetType(), attack.getTargetId()),
+                        PunchAttackAction.RIGHT).getValueAsString();
+                bufer = Messages.getString(
+                        "BoardView1.punchBoth", new Object[] { rollLeft, rollRight }); //$NON-NLS-1$
+                break;
+            case PunchAttackAction.LEFT:
+                rollLeft = PunchAttackAction.toHit(game, attack.getEntityId(),
+                        game.getTarget(attack.getTargetType(), attack.getTargetId()),
+                        PunchAttackAction.LEFT).getValueAsString();
+                bufer = Messages.getString("BoardView1.punchLeft", new Object[] { rollLeft }); //$NON-NLS-1$
+                break;
+            case PunchAttackAction.RIGHT:
+                rollRight = PunchAttackAction.toHit(game, attack.getEntityId(),
+                        game.getTarget(attack.getTargetType(), attack.getTargetId()),
+                        PunchAttackAction.RIGHT).getValueAsString();
+                bufer = Messages.getString("BoardView1.punchRight", new Object[] { rollRight }); //$NON-NLS-1$
+                break;
             }
             weaponDescs.add(bufer);
         }
 
         public void addWeapon(PushAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.add(Messages.getString(
-                    "BoardView1.push", new Object[] { roll })); //$NON-NLS-1$
+            weaponDescs.add(Messages.getString("BoardView1.push", new Object[] { roll })); //$NON-NLS-1$
         }
 
         public void addWeapon(ClubAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
             final String club = attack.getClub().getName();
-            weaponDescs.add(Messages.getString(
-                    "BoardView1.hit", new Object[] { club, roll })); //$NON-NLS-1$
+            weaponDescs.add(Messages.getString("BoardView1.hit", new Object[] { club, roll })); //$NON-NLS-1$
         }
 
         public void addWeapon(ChargeAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.add(Messages.getString(
-                    "BoardView1.charge", new Object[] { roll })); //$NON-NLS-1$
+            weaponDescs.add(Messages.getString("BoardView1.charge", new Object[] { roll })); //$NON-NLS-1$
         }
 
         public void addWeapon(DfaAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.add(Messages.getString(
-                    "BoardView1.DFA", new Object[] { roll })); //$NON-NLS-1$
+            weaponDescs.add(Messages.getString("BoardView1.DFA", new Object[] { roll })); //$NON-NLS-1$
         }
 
         public void addWeapon(ProtomechPhysicalAttackAction attack) {
             final String roll = attack.toHit(game).getValueAsString();
-            weaponDescs.add(Messages.getString(
-                    "BoardView1.proto", new Object[] { roll })); //$NON-NLS-1$
+            weaponDescs.add(Messages.getString("BoardView1.proto", new Object[] { roll })); //$NON-NLS-1$
         }
 
         public void addWeapon(SearchlightAttackAction attack) {
@@ -3662,73 +3471,78 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             return tipStrings;
         }
     }
-    
+
     /**
-     * Sprite and info for movement vector (AT2 advanced movement). 
-     *  Does not actually use the image buffer
-     * as this can be horribly inefficient for long diagonal lines.
-     *
-     * Appears as an arrow pointing to the hex this entity will move to
-     * based on current movement vectors.
-     * TODO: Different color depending upon whether entity has already moved 
-     * this turn
+     * Sprite and info for movement vector (AT2 advanced movement). Does not actually use the image
+     * buffer as this can be horribly inefficient for long diagonal lines.
+     * 
+     * Appears as an arrow pointing to the hex this entity will move to based on current movement
+     * vectors. TODO: Different color depending upon whether entity has already moved this turn
      * 
      */
-    private class MovementSprite extends Sprite
-    {
+    private class MovementSprite extends Sprite {
         private Point a;
+
         private Point t;
+
         private double an;
+
         private StraightArrowPolygon movePoly;
+
         private Color moveColor;
-        //private MovementVector mv;
+
+        // private MovementVector mv;
         private int[] vectors;
+
         private Coords start;
+
         private Coords end;
+
         private Entity en;
+
         private int vel;
 
         public MovementSprite(Entity e, int[] v, Color col, boolean isCurrent) {
-            //this.mv = en.getMV();
+            // this.mv = en.getMV();
 
             this.en = e;
-            this.vectors = v;//en.getVectors();
-            //get the starting and ending position
+            this.vectors = v;// en.getVectors();
+            // get the starting and ending position
             this.start = en.getPosition();
             this.end = Compute.getFinalPosition(this.start, vectors);
-            
-            //what is the velocity
+
+            // what is the velocity
             this.vel = 0;
-            for(int i =0; i < v.length; i++) {
+            for (int i = 0; i < v.length; i++) {
                 this.vel += v[i];
             }
-            
+
             // color?
-            //player colors
+            // player colors
             moveColor = PlayerColors.getColor(en.getOwner().getColorIndex());
-            //TODO: Its not going transparent. Oh well, it is a minor issue at the moment
+            // TODO: Its not going transparent. Oh well, it is a minor issue at the moment
             /*
-            if(isCurrent) {
-                int colour = col.getRGB();
-                int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+             * if(isCurrent) { int colour = col.getRGB(); int transparency =
+             * GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+             * moveColor = new Color(colour | (transparency << 24), true); }
+             */
+            // red if offboard
+            if (!game.getBoard().contains(end)) {
+                int colour = 0xff0000; // red
+                int transparency = GUIPreferences.getInstance().getInt(
+                        GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
                 moveColor = new Color(colour | (transparency << 24), true);
             }
-            */
-            //red if offboard          
-            if(!game.getBoard().contains(end)) {
-                int colour = 0xff0000; //red
-                int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
+            // dark gray if done
+            if (en.isDone()) {
+                int colour = 0x696969; // gray
+                int transparency = GUIPreferences.getInstance().getInt(
+                        GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
                 moveColor = new Color(colour | (transparency << 24), true);
             }
-            //dark gray if done
-            if(en.isDone()) {
-                int colour = 0x696969; //gray
-                int transparency = GUIPreferences.getInstance().getInt(GUIPreferences.ADVANCED_ATTACK_ARROW_TRANSPARENCY);
-                moveColor = new Color(colour | (transparency << 24), true);
-            }
-            
-            //moveColor = PlayerColors.getColor(en.getOwner().getColorIndex());
-            //angle of line connecting two hexes
+
+            // moveColor = PlayerColors.getColor(en.getOwner().getColorIndex());
+            // angle of line connecting two hexes
             this.an = (start.radian(end) + (Math.PI * 1.5)) % (Math.PI * 2); // angle
             makePoly();
 
@@ -3737,12 +3551,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
             // move poly to upper right of image
             movePoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
-            
+
             // nullify image
             this.image = null;
         }
 
-        private void makePoly(){
+        private void makePoly() {
             // make a polygon
             this.a = getHexLocation(start);
             this.t = getHexLocation(end);
@@ -3752,26 +3566,30 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // 18 - is actually 36/2 - we do not want arrows to start and end directly
             // in the centes of hex and hiding mek under.
 
-            a.x = a.x + (int)(HEX_W/2*scale) + (int)Math.round(Math.cos(an) * (int)(18*scale));
-            t.x = t.x + (int)(HEX_W/2*scale) - (int)Math.round(Math.cos(an) * (int)(18*scale));
-            a.y = a.y + (int)(HEX_H/2*scale) + (int)Math.round(Math.sin(an) * (int)(18*scale));
-            t.y = t.y + (int)(HEX_H/2*scale) - (int)Math.round(Math.sin(an) * (int)(18*scale));
-            movePoly = new StraightArrowPolygon(a, t, (int)(4*scale), (int)(8*scale), false);
+            a.x = a.x + (int) (HEX_W / 2 * scale)
+                    + (int) Math.round(Math.cos(an) * (int) (18 * scale));
+            t.x = t.x + (int) (HEX_W / 2 * scale)
+                    - (int) Math.round(Math.cos(an) * (int) (18 * scale));
+            a.y = a.y + (int) (HEX_H / 2 * scale)
+                    + (int) Math.round(Math.sin(an) * (int) (18 * scale));
+            t.y = t.y + (int) (HEX_H / 2 * scale)
+                    - (int) Math.round(Math.sin(an) * (int) (18 * scale));
+            movePoly = new StraightArrowPolygon(a, t, (int) (4 * scale), (int) (8 * scale), false);
         }
-        
-        public Rectangle getBounds(){
+
+        public Rectangle getBounds() {
             makePoly();
             // set bounds
             this.bounds = new Rectangle(movePoly.getBounds());
             bounds.setSize(bounds.getSize().width + 1, bounds.getSize().height + 1);
             // move poly to upper right of image
             movePoly.translate(-bounds.getLocation().x, -bounds.getLocation().y);
-            
+
             return bounds;
         }
 
         public void prepare() {
-            
+
         }
 
         public boolean isReady() {
@@ -3779,21 +3597,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         public void drawOnto(Graphics g, int x, int y, ImageObserver observer) {
-            //don't draw anything if the unit has no velocity
-            
-            if(this.vel == 0) {
+            // don't draw anything if the unit has no velocity
+
+            if (this.vel == 0) {
                 return;
             }
-            
+
             Polygon drawPoly = new Polygon(movePoly.xpoints, movePoly.ypoints, movePoly.npoints);
             drawPoly.translate(x, y);
-            
+
             g.setColor(moveColor);
             g.fillPolygon(drawPoly);
             g.setColor(Color.gray.darker());
             g.drawPolygon(drawPoly);
-            
-            
+
         }
 
         /**
@@ -3804,23 +3621,19 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         }
 
         /*
-        public String[] getTooltip() {
-            String[] tipStrings = new String[1 + weaponDescs.size()];
-            int tip = 1;
-            tipStrings[0] = attackerDesc + " "+Messages.getString("BoardView1.on")+" " + targetDesc; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-            for (Iterator<String> i = weaponDescs.iterator(); i.hasNext();) {
-                tipStrings[tip++] = i.next();
-            }
-            return tipStrings;
-        }
-        */
+         * public String[] getTooltip() { String[] tipStrings = new String[1 + weaponDescs.size()];
+         * int tip = 1; tipStrings[0] = attackerDesc + " "+Messages.getString("BoardView1.on")+" " +
+         * targetDesc; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ for (Iterator<String> i =
+         * weaponDescs.iterator(); i.hasNext();) { tipStrings[tip++] = i.next(); } return
+         * tipStrings; }
+         */
     }
 
     /**
      * Determine if the tile manager's images have been loaded.
      * 
-     * @return <code>true</code> if all images have been loaded.
-     *         <code>false</code> if more need to be loaded.
+     * @return <code>true</code> if all images have been loaded. <code>false</code> if more need
+     *         to be loaded.
      */
     public boolean isTileImagesLoaded() {
         return this.tileManager.isLoaded();
@@ -3835,7 +3648,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * @param lastCursor The lastCursor to set.
+     * @param lastCursor
+     *            The lastCursor to set.
      */
     public void setLastCursor(Coords lastCursor) {
         this.lastCursor = lastCursor;
@@ -3849,7 +3663,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * @param highlighted The highlighted to set.
+     * @param highlighted
+     *            The highlighted to set.
      */
     public void setHighlighted(Coords highlighted) {
         this.highlighted = highlighted;
@@ -3863,7 +3678,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * @param selected The selected to set.
+     * @param selected
+     *            The selected to set.
      */
     public void setSelected(Coords selected) {
         this.selected = selected;
@@ -3877,7 +3693,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * @param firstLOS The firstLOS to set.
+     * @param firstLOS
+     *            The firstLOS to set.
      */
     public void setFirstLOS(Coords firstLOS) {
         this.firstLOS = firstLOS;
@@ -3891,10 +3708,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Determines if this Board contains the Coords, and if so, "selects" that
-     * Coords.
+     * Determines if this Board contains the Coords, and if so, "selects" that Coords.
      * 
-     * @param coords the Coords.
+     * @param coords
+     *            the Coords.
      */
     public void select(Coords coords) {
         if (coords == null || game.getBoard().contains(coords)) {
@@ -3910,18 +3727,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * "Selects" the specified Coords.
      * 
-     * @param x the x coordinate.
-     * @param y the y coordinate.
+     * @param x
+     *            the x coordinate.
+     * @param y
+     *            the y coordinate.
      */
     public void select(int x, int y) {
         select(new Coords(x, y));
     }
 
     /**
-     * Determines if this Board contains the Coords, and if so, highlights that
-     * Coords.
+     * Determines if this Board contains the Coords, and if so, highlights that Coords.
      * 
-     * @param coords the Coords.
+     * @param coords
+     *            the Coords.
      */
     public void highlight(Coords coords) {
         if (coords == null || game.getBoard().contains(coords)) {
@@ -3937,23 +3756,24 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Highlights the specified Coords.
      * 
-     * @param x the x coordinate.
-     * @param y the y coordinate.
+     * @param x
+     *            the x coordinate.
+     * @param y
+     *            the y coordinate.
      */
     public void highlight(int x, int y) {
         highlight(new Coords(x, y));
     }
 
     /**
-     * Determines if this Board contains the Coords, and if so, "cursors" that
-     * Coords.
+     * Determines if this Board contains the Coords, and if so, "cursors" that Coords.
      * 
-     * @param coords the Coords.
+     * @param coords
+     *            the Coords.
      */
     public void cursor(Coords coords) {
         if (coords == null || game.getBoard().contains(coords)) {
-            if (getLastCursor() == null || coords == null
-                    || !coords.equals(getLastCursor())) {
+            if (getLastCursor() == null || coords == null || !coords.equals(getLastCursor())) {
                 setLastCursor(coords);
                 moveCursor(cursorSprite, coords);
                 moveCursor(firstLOSSprite, null);
@@ -3969,8 +3789,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * "Cursors" the specified Coords.
      * 
-     * @param x the x coordinate.
-     * @param y the y coordinate.
+     * @param x
+     *            the x coordinate.
+     * @param y
+     *            the y coordinate.
      */
     public void cursor(int x, int y) {
         cursor(new Coords(x, y));
@@ -3993,29 +3815,33 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * Determines if this Board contains the (x, y) Coords, and if so, notifies
-     * listeners about the specified mouse action.
+     * Determines if this Board contains the (x, y) Coords, and if so, notifies listeners about the
+     * specified mouse action.
      */
     public void mouseAction(int x, int y, int mtype, int modifiers) {
         if (game.getBoard().contains(x, y)) {
             Coords c = new Coords(x, y);
             switch (mtype) {
-                case BOARD_HEX_CLICK:
-                    if ((modifiers & java.awt.event.InputEvent.CTRL_MASK) != 0) {
-                        checkLOS(c);
-                    } else {
-                        processBoardViewEvent(new BoardViewEvent(this, c, null,
-                                BoardViewEvent.BOARD_HEX_CLICKED, modifiers));
-                    }
-                    break;
-                case BOARD_HEX_DOUBLECLICK:
+            case BOARD_HEX_CLICK:
+                if ((modifiers & java.awt.event.InputEvent.CTRL_MASK) != 0) {
+                    checkLOS(c);
+                } else {
                     processBoardViewEvent(new BoardViewEvent(this, c, null,
-                            BoardViewEvent.BOARD_HEX_DOUBLECLICKED, modifiers));
-                    break;
-                case BOARD_HEX_DRAG:
-                    processBoardViewEvent(new BoardViewEvent(this, c, null,
-                            BoardViewEvent.BOARD_HEX_DRAGGED, modifiers));
-                    break;
+                            BoardViewEvent.BOARD_HEX_CLICKED, modifiers));
+                }
+                break;
+            case BOARD_HEX_DOUBLECLICK:
+                processBoardViewEvent(new BoardViewEvent(this, c, null,
+                        BoardViewEvent.BOARD_HEX_DOUBLECLICKED, modifiers));
+                break;
+            case BOARD_HEX_DRAG:
+                processBoardViewEvent(new BoardViewEvent(this, c, null,
+                        BoardViewEvent.BOARD_HEX_DRAGGED, modifiers));
+                break;
+            case BOARD_HEX_POPUP:
+                processBoardViewEvent(new BoardViewEvent(this, c, null,
+                        BoardViewEvent.BOARD_HEX_POPUP, modifiers));
+                break;
             }
         }
     }
@@ -4023,7 +3849,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Notifies listeners about the specified mouse action.
      * 
-     * @param coords the Coords.
+     * @param coords
+     *            the Coords.
      */
     public void mouseAction(Coords coords, int mtype, int modifiers) {
         mouseAction(coords.x, coords.y, mtype, modifiers);
@@ -4055,7 +3882,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         public void gameEntityNew(GameEntityNewEvent e) {
             updateEcmList();
             redrawAllEntities();
-            if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
         }
@@ -4063,7 +3890,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         public void gameEntityRemove(GameEntityRemoveEvent e) {
             updateEcmList();
             redrawAllEntities();
-            if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
         }
@@ -4075,11 +3902,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 // this might disrupt c3/c3i lines, so redraw all
                 redrawAllEntities();
             }
-            if(game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
+            if (game.getPhase() == IGame.Phase.PHASE_MOVEMENT) {
                 refreshMoveVectors();
             }
-            if (mp != null && mp.size() > 0
-                    && GUIPreferences.getInstance().getShowMoveStep()) {
+            if (mp != null && mp.size() > 0 && GUIPreferences.getInstance().getShowMoveStep()) {
                 addMovingUnit(e.getEntity(), mp);
             } else {
                 redrawEntity(e.getEntity());
@@ -4112,19 +3938,20 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         public void gamePhaseChange(GamePhaseChangeEvent e) {
             refreshAttacks();
             switch (e.getNewPhase()) {
-                case PHASE_MOVEMENT:
-                    refreshMoveVectors();
-                case PHASE_FIRING:
-                    clearAllMoveVectors();
-                case PHASE_PHYSICAL:
-                    refreshAttacks();
-                    break;
-                case PHASE_INITIATIVE:
-                    clearAllAttacks();
-                    break;
-                case PHASE_END:
-                case PHASE_VICTORY:
-                    clearSprites();
+            case PHASE_MOVEMENT:
+                refreshMoveVectors();
+            case PHASE_FIRING:
+                clearAllMoveVectors();
+            case PHASE_PHYSICAL:
+                refreshAttacks();
+                break;
+            case PHASE_INITIATIVE:
+                clearAllAttacks();
+                break;
+            case PHASE_END:
+            case PHASE_VICTORY:
+                clearSprites();
+            default:
             }
         }
     };
@@ -4147,12 +3974,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * the old redrawworker converted to a runnable which is called now and then
-     * from the event thread
+     * the old redrawworker converted to a runnable which is called now and then from the event
+     * thread
      */
     protected class RedrawWorker implements Runnable {
 
         protected long lastTime = System.currentTimeMillis();
+
         protected long currentTime = System.currentTimeMillis();
 
         public void run() {
@@ -4187,7 +4015,9 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
          * 
          */
         private static final long serialVersionUID = 3304636458460529324L;
+
         int range;
+
         int tint;
 
         public EcmBubble(Coords c, int range, int tint) {
@@ -4202,14 +4032,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         ArrayList<EcmBubble> list = new ArrayList<EcmBubble>();
         for (Enumeration<Entity> e = game.getEntities(); e.hasMoreElements();) {
             Entity ent = e.nextElement();
-            if (ent.getPosition() == null || !ent.isDeployed()
-                    || ent.isOffBoard()) {
+            if (ent.getPosition() == null || !ent.isDeployed() || ent.isOffBoard()) {
                 continue;
             }
             int range = ent.getECMRange();
             if (range != Entity.NONE) {
-                int tint = PlayerColors.getColorRGB(ent.getOwner()
-                        .getColorIndex());
+                int tint = PlayerColors.getColorRGB(ent.getOwner().getColorIndex());
                 list.add(new EcmBubble(ent.getPosition(), range, tint));
             }
         }
@@ -4234,8 +4062,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                             red1 = (red1 + red2) / 2;
                             green1 = (green1 + green2) / 2;
                             blue1 = (blue1 + blue2) / 2;
-                            table.put(c, new Integer((red1 << 16)
-                                    | (green1 << 8) | blue1));
+                            table.put(c, new Integer((red1 << 16) | (green1 << 8) | blue1));
                         }
                     }
                 }
@@ -4279,7 +4106,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     /**
      * Have the player select an Entity from the entities at the given coords.
      * 
-     * @param pos - the <code>Coords</code> containing targets.
+     * @param pos -
+     *            the <code>Coords</code> containing targets.
      */
     private Entity chooseEntity(Coords pos) {
 
@@ -4307,8 +4135,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             for (int loop = 0; loop < names.length; loop++) {
                 names[loop] = entities.elementAt(loop).getDisplayName();
             }
-            SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
-                    null,
+            SingleChoiceDialog choiceDialog = new SingleChoiceDialog(null,
                     Messages.getString("BoardView1.ChooseEntityDialog.title"), //$NON-NLS-1$
                     Messages
                             .getString(
@@ -4325,8 +4152,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
     }
 
     /**
-     * The text to be displayed when the mouse is at a certain point TODO: just
-     * use a StringBuffer... This is copied from the AWT version
+     * The text to be displayed when the mouse is at a certain point TODO: just use a
+     * StringBuffer... This is copied from the AWT version
      */
     public String getToolTipText(MouseEvent e) {
 
@@ -4337,8 +4164,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         // first, we have to determine how much text we are going to have
         // are we on a hex?
         final Coords mcoords = getCoordsAt(point);
-        if (GUIPreferences.getInstance().getShowMapHexPopup()
-                && game.getBoard().contains(mcoords)) {
+        if (GUIPreferences.getInstance().getShowMapHexPopup() && game.getBoard().contains(mcoords)) {
             mhex = game.getBoard().getHex(mcoords);
             stringsSize += 1;
         }
@@ -4410,40 +4236,40 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                 int ttl = mhex.getTerrain(Terrains.JUNGLE).getLevel();
                 int tf = mhex.getTerrain(Terrains.JUNGLE).getTerrainFactor();
                 if (ttl == 1)
-                    strings[stringsIndex] = Messages.getString(
-                            "BoardView1.TipLightJungle", new Object[] { tf });
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipLightJungle",
+                            new Object[] { tf });
                 else if (ttl == 2)
-                    strings[stringsIndex] = Messages.getString(
-                            "BoardView1.TipHeavyJungle", new Object[] { tf });
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipHeavyJungle",
+                            new Object[] { tf });
                 else if (ttl == 3)
-                    strings[stringsIndex] = Messages.getString(
-                            "BoardView1.TipUltraJungle", new Object[] { tf });
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipUltraJungle",
+                            new Object[] { tf });
                 else
-                    strings[stringsIndex] = Messages.getString(
-                            "BoardView1.TipJungle", new Object[] { tf });
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipJungle",
+                            new Object[] { tf });
                 stringsIndex += 1;
             } else if (mhex.containsTerrain(Terrains.WOODS)) {
                 int ttl = mhex.getTerrain(Terrains.WOODS).getLevel();
                 int tf = mhex.getTerrain(Terrains.WOODS).getTerrainFactor();
                 if (ttl == 1)
-                    strings[stringsIndex] = Messages.getString(
-                            "BoardView1.TipLightWoods", new Object[] { tf });
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipLightWoods",
+                            new Object[] { tf });
                 else if (ttl == 2)
-                    strings[stringsIndex] = Messages.getString(
-                            "BoardView1.TipHeavyWoods", new Object[] { tf });
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipHeavyWoods",
+                            new Object[] { tf });
                 else if (ttl == 3)
-                    strings[stringsIndex] = Messages.getString(
-                            "BoardView1.TipUltraWoods", new Object[] { tf });
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipUltraWoods",
+                            new Object[] { tf });
                 else
-                    strings[stringsIndex] = Messages.getString(
-                            "BoardView1.TipWoods", new Object[] { tf });
+                    strings[stringsIndex] = Messages.getString("BoardView1.TipWoods",
+                            new Object[] { tf });
                 stringsIndex += 1;
             }
 
             if (mhex.containsTerrain(Terrains.ICE)) {
                 int tf = mhex.getTerrain(Terrains.ICE).getTerrainFactor();
-                strings[stringsIndex] = Messages.getString("BoardView1.TipIce",
-                        new Object[] { tf });
+                strings[stringsIndex] = Messages
+                        .getString("BoardView1.TipIce", new Object[] { tf });
                 stringsIndex += 1;
             }
 
@@ -4455,8 +4281,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
             // Do we have swamp?
             if (mhex.containsTerrain(Terrains.SWAMP)) {
-                strings[stringsIndex] = Messages
-                        .getString("BoardView1.TipSwamp");
+                strings[stringsIndex] = Messages.getString("BoardView1.TipSwamp");
                 stringsIndex += 1;
             }
 
@@ -4464,8 +4289,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (mhex.containsTerrain(Terrains.FUEL_TANK)) {
                 // Get the building.
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                StringBuffer buf = new StringBuffer(Messages
-                        .getString("BoardView1.Height")); //$NON-NLS-1$
+                StringBuffer buf = new StringBuffer(Messages.getString("BoardView1.Height")); //$NON-NLS-1$
                 // Each hex of a building has its own elevation.
                 buf.append(mhex.terrainLevel(Terrains.FUEL_TANK_ELEV));
                 buf.append(" "); //$NON-NLS-1$
@@ -4478,8 +4302,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (mhex.containsTerrain(Terrains.BUILDING)) {
                 // Get the building.
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                StringBuffer buf = new StringBuffer(Messages
-                        .getString("BoardView1.Height")); //$NON-NLS-1$
+                StringBuffer buf = new StringBuffer(Messages.getString("BoardView1.Height")); //$NON-NLS-1$
                 // Each hex of a building has its own elevation.
                 buf.append(mhex.terrainLevel(Terrains.BLDG_ELEV));
                 buf.append(" "); //$NON-NLS-1$
@@ -4494,8 +4317,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (mhex.containsTerrain(Terrains.BRIDGE)) {
                 // Get the building.
                 Building bldg = game.getBoard().getBuildingAt(mcoords);
-                StringBuffer buf = new StringBuffer(Messages
-                        .getString("BoardView1.Height")); //$NON-NLS-1$
+                StringBuffer buf = new StringBuffer(Messages.getString("BoardView1.Height")); //$NON-NLS-1$
                 // Each hex of a building has its own elevation.
                 buf.append(mhex.terrainLevel(Terrains.BRIDGE_ELEV));
                 buf.append(" "); //$NON-NLS-1$
@@ -4513,37 +4335,31 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
                     String owner = " (" + game.getPlayer(mf.getPlayerId()).getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 
                     switch (mf.getType()) {
-                        case (Minefield.TYPE_CONVENTIONAL):
+                    case (Minefield.TYPE_CONVENTIONAL):
+                        strings[stringsIndex] = mf.getName()
+                                + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
+                    case (Minefield.TYPE_COMMAND_DETONATED):
+                        strings[stringsIndex] = mf.getName()
+                                + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
+                        break;
+                    case (Minefield.TYPE_VIBRABOMB):
+                        if (mf.getPlayerId() == localPlayer.getId()) {
                             strings[stringsIndex] = mf.getName()
-                                    + Messages
-                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                            break;
-                        case (Minefield.TYPE_COMMAND_DETONATED):
+                                    + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + "(" + mf.getSetting() + ") " + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        } else {
                             strings[stringsIndex] = mf.getName()
-                                    + Messages
-                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                            break;
-                        case (Minefield.TYPE_VIBRABOMB):
-                            if (mf.getPlayerId() == localPlayer.getId()) {
-                                strings[stringsIndex] = mf.getName()
-                                        + Messages
-                                                .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + "(" + mf.getSetting() + ") " + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                            } else {
-                                strings[stringsIndex] = mf.getName()
-                                        + Messages
-                                                .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
-                            }
-                            break;
-                        case (Minefield.TYPE_ACTIVE):
-                            strings[stringsIndex] = mf.getName()
-                                    + Messages
-                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                            break;
-                        case (Minefield.TYPE_INFERNO):
-                            strings[stringsIndex] = mf.getName()
-                                    + Messages
-                                            .getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                            break;
+                                    + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + " " + owner; //$NON-NLS-1$ //$NON-NLS-2$
+                        }
+                        break;
+                    case (Minefield.TYPE_ACTIVE):
+                        strings[stringsIndex] = mf.getName()
+                                + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        break;
+                    case (Minefield.TYPE_INFERNO):
+                        strings[stringsIndex] = mf.getName()
+                                + Messages.getString("BoardView1.minefield") + "(" + mf.getDensity() + ")" + owner; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        break;
                     }
                     stringsIndex++;
                 }
@@ -4554,8 +4370,7 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final EntitySprite eSprite = i.next();
             if (eSprite.isInside(point)) {
                 final String[] entityStrings = eSprite.getTooltip();
-                System.arraycopy(entityStrings, 0, strings, stringsIndex,
-                        entityStrings.length);
+                System.arraycopy(entityStrings, 0, strings, stringsIndex, entityStrings.length);
                 stringsIndex += entityStrings.length;
             }
         }
@@ -4565,15 +4380,13 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             final AttackSprite aSprite = i.next();
             if (aSprite.isInside(point)) {
                 final String[] attackStrings = aSprite.getTooltip();
-                System.arraycopy(attackStrings, 0, strings, stringsIndex,
-                        attackStrings.length);
+                System.arraycopy(attackStrings, 0, strings, stringsIndex, attackStrings.length);
                 stringsIndex += 1 + aSprite.weaponDescs.size();
             }
         }
 
         // check artillery attacks
-        for (Iterator<ArtilleryAttackAction> i = artilleryAttacks.iterator(); i
-                .hasNext();) {
+        for (Iterator<ArtilleryAttackAction> i = artilleryAttacks.iterator(); i.hasNext();) {
             final ArtilleryAttackAction aaa = i.next();
             final Entity ae = game.getEntity(aaa.getEntityId());
             String s = null;
@@ -4590,9 +4403,8 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             if (s == null) {
                 s = Messages.getString("BoardView1.Artillery");
             }
-            strings[stringsIndex++] = Messages.getString(
-                    "BoardView1.ArtilleryAttack", new Object[] { s,
-                            new Integer(aaa.turnsTilHit),
+            strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAttack",
+                    new Object[] { s, new Integer(aaa.turnsTilHit),
                             aaa.toHit(game).getValueAsString() });
         }
 
@@ -4601,19 +4413,16 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
             // process targetted hexes
             int amod = 0;
             // Check the predesignated hexes
-            if (selectedEntity.getOwner().getArtyAutoHitHexes().contains(
-                    mcoords)) {
+            if (selectedEntity.getOwner().getArtyAutoHitHexes().contains(mcoords)) {
                 amod = TargetRoll.AUTOMATIC_SUCCESS;
             } else {
                 amod = selectedEntity.aTracker.getModifier(curWeapon, mcoords);
             }
 
             if (amod == TargetRoll.AUTOMATIC_SUCCESS) {
-                strings[stringsIndex++] = Messages
-                        .getString("BoardView1.ArtilleryAutohit");
+                strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAutohit");
             } else {
-                strings[stringsIndex++] = Messages.getString(
-                        "BoardView1.ArtilleryAdjustment",
+                strings[stringsIndex++] = Messages.getString("BoardView1.ArtilleryAdjustment",
                         new Object[] { new Integer(amod) });
             }
         }
@@ -4626,11 +4435,10 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         return sb.toString();
     }
 
-    private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(
-            Coords c) {
+    private ArrayList<ArtilleryAttackAction> getArtilleryAttacksAtLocation(Coords c) {
         ArrayList<ArtilleryAttackAction> v = new ArrayList<ArtilleryAttackAction>();
-        for (Enumeration<ArtilleryAttackAction> attacks = game
-                .getArtilleryAttacks(); attacks.hasMoreElements();) {
+        for (Enumeration<ArtilleryAttackAction> attacks = game.getArtilleryAttacks(); attacks
+                .hasMoreElements();) {
             ArtilleryAttackAction a = attacks.nextElement();
             if (a.getTarget(game).getPosition().equals(c)) {
                 v.add(a);
@@ -4641,11 +4449,11 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
 
     public Component getComponent() {
         // Scrollbars are broken for "Brandon Drew" <brandx0@hotmail.com>
-        if (System.getProperty
-                ("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
+        if (System.getProperty("megamek.client.clientgui.hidescrollbars", "false").equals //$NON-NLS-1$ //$NON-NLS-2$
                 ("true")) //$NON-NLS-1$
             return this;
-        if (scrollpane != null) return scrollpane;
+        if (scrollpane != null)
+            return scrollpane;
 
         // Place the board viewer in a set of scrollbars.
         scrollpane = new JScrollPane(this);
@@ -4658,11 +4466,12 @@ public class BoardView1 extends JPanel implements IBoardView, Scrollable,
         repaint();
     }
 
-    public void showPopup(PopupMenu popup, Coords c) {
+    public void showPopup(JPopupMenu popup, Coords c) {
         Point p = getHexLocation(c);
-        p.x += (int)(HEX_WC*scale)-scrollpane.getX();
-        p.y += (int)(HEX_H*scale/2)-scrollpane.getY();
-        if (popup.getParent() == null) add(popup);
+        p.x += (int) (HEX_WC * scale) - scrollpane.getX();
+        p.y += (int) (HEX_H * scale / 2) - scrollpane.getY();
+        if (popup.getParent() == null)
+            add(popup);
         popup.show(this, p.x, p.y);
     }
 

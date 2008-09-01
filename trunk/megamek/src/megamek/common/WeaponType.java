@@ -470,6 +470,7 @@ public class WeaponType extends EquipmentType {
         // PPC types
         addType(new ISPPC());
         addType(new ISERPPC());
+        addType(new ISEHERPPC());
         addType(new CLERPPC());
         addType(new ISSnubNosePPC());
         addType(new ISLightPPC());

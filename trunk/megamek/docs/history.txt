@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.30 (2008-09-01, 09:35 GMT-8)
+v0.33.30-dev
 + Bug: Talons not added to equipment list.
 + Bug: Wrong messages.properties file
 + Bug: AES not loading if Unit has SuperCharger
@@ -66,6 +66,7 @@ v0.33.30 (2008-09-01, 09:35 GMT-8)
 + Bug: Crit rolls over 12 not getting calculated for Meks
 + Bug 2084738: RACs Unaffected By TacOps Cluster Hit Penalties
 + Bug 2084823: AP Gauss Rifles should explode
++ Patch 2060776: Enhanced ER PPC
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.30-dev (2008-09-01, GMT-8)
+v0.33.30 (2008-09-01, 09:35 GMT-8)
 + Bug: Talons not added to equipment list.
 + Bug: Wrong messages.properties file
 + Bug: AES not loading if Unit has SuperCharger

@@ -20792,7 +20792,7 @@ public class Server implements Runnable {
     public boolean checkForCollapse(Building bldg, Hashtable<Coords, Vector<Entity>> positionMap, Coords coords) {
 
         // If the input is meaningless, do nothing and throw no exception.
-        if (bldg == null || positionMap == null || positionMap.isEmpty() || coords == null) {
+        if (bldg == null || positionMap == null || positionMap.isEmpty() || coords == null || !bldg.isIn(coords) || !bldg.hasCFIn(coords)) {
             return false;
         }
 

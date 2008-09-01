@@ -63,6 +63,8 @@ v0.33.30-dev (SVN)
 + Bug: Glancing Blows and Direct Blows not effect special crit rolls for TC and AP ammo
 + Bug 2071836: Sylphs able to Leg-Attack while hovering
 + Bug 2081205: Host Crashes when Fuel Tanks are shot
++ Bug: Crit rolls over 12 not getting calculated for Meks
++ Bug 2084738: RACs Unaffected By TacOps Cluster Hit Penalties
 
 v0.33.29 (2008-08-08, 16:54 GMT+2)
 + Bug: restore Java 1.5 compatibility

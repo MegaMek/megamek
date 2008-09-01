@@ -33,7 +33,7 @@ public class ISEHERPPC extends PPCWeapon {
      */
     public ISEHERPPC() {
         super();
-        this.techLevel = TechConstants.T_IS_LEVEL_2;
+        this.techLevel = TechConstants.T_IS_LEVEL_3;
         this.name = "Enhanced ER PPC";
         this.setInternalName("ISEHERPPC");
         this.addLookupName("IS EH ER PPC");

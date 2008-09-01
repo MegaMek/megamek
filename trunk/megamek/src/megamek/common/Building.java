@@ -297,6 +297,16 @@ public class Building implements Serializable {
     }
 
     /**
+     * Determins if the coord exist in the currentCF has.
+     * @param coords - the <code>Coords</code> being examined.
+     * @return <code>true</code> if the building has CF at the coordinates.
+     *         <code>false</code> otherwise.
+     */
+    public boolean hasCFIn(Coords coords) {
+        return this.currentCF.containsKey(coords);
+        
+    }
+    /**
      * Get the coordinates that the building occupies.
      * 
      * @return an <code>Enumeration</code> of the <code>Coord</code>

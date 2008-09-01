@@ -17437,7 +17437,6 @@ public class Server implements Runnable {
      */
     public Vector<Report> criticalEntity(Entity en, int loc, int critMod, boolean rollNumber, boolean isCapital) {
         
-        critMod = Math.min(12, critMod);
         if (en instanceof Tank)
             return criticalTank((Tank) en, loc, critMod);
         if (en instanceof Aero)
@@ -17493,7 +17492,7 @@ public class Server implements Runnable {
                 r.subject = en.getId();
                 r.newlines = 0;
                 vDesc.addElement(r);
-            } else if (roll == 12) {
+            } else if (roll >= 12) {
                 if (en instanceof Protomech) {
                     hits = 3;
                     r = new Report(6325);

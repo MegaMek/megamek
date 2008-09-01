@@ -111,6 +111,23 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             nMod += (toHit.getMoS()/3)*2;
         }
         
+        boolean tacopscluster = game.getOptions().booleanOption("tacops_clusterhitpen");
+        
+        int[] ranges = wtype.getRanges(weapon);
+        if (tacopscluster) {
+            if (nRange <= 1) {
+                nMod += 1;
+            } else if (nRange <= ranges[RangeType.RANGE_MEDIUM]) {
+                nMod += 0;
+            } else {
+                nMod -= 1;
+            } 
+        }
+
+        if ( game.getOptions().booleanOption("tacops_range") && nRange > ranges[RangeType.RANGE_LONG] ) {
+            nMod -= 2;
+        }
+
         switch (howManyShots) {
             case 1:
                 shotsHit = 1;

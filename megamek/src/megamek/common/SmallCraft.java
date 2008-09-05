@@ -315,18 +315,22 @@ public class SmallCraft extends Aero {
             switch (mounted.getLocation()) {
             case LOC_NOSE:
                 arc = Compute.ARC_NOSE;
+                break;
             case LOC_RWING:
                 if(mounted.isRearMounted()) {
                     arc = Compute.ARC_RIGHTSIDEA_SPHERE;
                 }
                 arc = Compute.ARC_RIGHTSIDE_SPHERE;
+                break;
             case LOC_LWING:
                 if(mounted.isRearMounted()) {
                     arc = Compute.ARC_LEFTSIDEA_SPHERE;
                 }
                 arc = Compute.ARC_LEFTSIDE_SPHERE;
+                break;
             case LOC_AFT:
                 arc = Compute.ARC_AFT;
+                break;
             default:
                 arc = Compute.ARC_360;
             }

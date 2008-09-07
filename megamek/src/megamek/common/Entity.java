@@ -33,6 +33,7 @@ import megamek.common.actions.WeaponAttackAction;
 import megamek.common.event.GameEntityChangeEvent;
 import megamek.common.preference.PreferenceManager;
 import megamek.common.util.StringUtil;
+import megamek.common.weapons.ACWeapon;
 import megamek.common.weapons.BayWeapon;
 import megamek.common.weapons.GaussWeapon;
 import megamek.common.weapons.ISBombastLaser;
@@ -7072,20 +7073,20 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
         for (Mounted mounted : this.getWeaponList()) {
             if (mounted.getType() instanceof GaussWeapon
                     && game.getOptions().booleanOption("tacops_gauss_weapons")) {
-
                 String[] modes = {"Powered Up","Powered Down"};
                 ((WeaponType) mounted.getType()).setModes(modes);
                 ((WeaponType) mounted.getType()).setInstantModeSwitch(false);
-            }else if ( mounted.getType() instanceof ISBombastLaser ){
+            } else if (mounted.getType() instanceof ACWeapon 
+            		&& game.getOptions().booleanOption("tacops_rapid_ac")) {
+            	String[] modes = { "", "Rapid" };
+            	((WeaponType) mounted.getType()).setModes(modes);
+            } else if ( mounted.getType() instanceof ISBombastLaser ){
                 int damage = 12;
                 ArrayList<String> modes = new ArrayList<String>();
                 String[] stringArray = {};
 
                 for (; damage >= 7; damage--) {
                     modes.add("Damage " + damage);
-                }
-                if ( ((WeaponType)mounted.getType()).hasFlag(WeaponType.F_FLAMER) ){
-                    modes.add("Heat");
                 }
                 ((WeaponType) mounted.getType()).setModes(modes.toArray(stringArray));
                 

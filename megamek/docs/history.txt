@@ -2,6 +2,7 @@
 ----------------
 v0.33.31-dev (SVN)
 + Bug: Improved Heavy Large Laser had the wrong crit/Tonnage
++ Bug: Rapidfire AC possible when option is not set
 
  v0.33.30 (2008-09-01, 09:40 GMT-8)
 + Bug: Talons not added to equipment list.

@@ -2141,14 +2141,6 @@ public class MechDisplay extends BufferedPanel {
                         m_chMode.removeAll();
                         return;
                     }
-
-                    // disables AC mode switching from system tab if
-                    // tacops_rapid_ac is not turned on
-                    if (m.getType() instanceof ACWeapon
-                            && !clientgui.getClient().game.getOptions().booleanOption("tacops_rapid_ac")) {
-                        m_chMode.removeAll();
-                        return;
-                    }
                     //disable rapid fire mode switching for Aeros
                     if(en instanceof Aero && m.getType() instanceof ACWeapon 
                             || m.getType() instanceof RACWeapon 

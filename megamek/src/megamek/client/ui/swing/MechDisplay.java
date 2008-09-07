@@ -2228,13 +2228,6 @@ public class MechDisplay extends JPanel {
                         return;
                     }
 
-                    // disables AC mode switching from system tab if
-                    // tacops_rapid_ac is not turned on
-                    if (m.getType() instanceof ACWeapon
-                            && !clientgui.getClient().game.getOptions().booleanOption("tacops_rapid_ac")) {
-                        ((DefaultComboBoxModel) m_chMode.getModel()).removeAllElements();
-                        return;
-                    }
                     //disable rapid fire mode switching for Aeros
                     if(en instanceof Aero && m.getType() instanceof ACWeapon 
                             || m.getType() instanceof RACWeapon 

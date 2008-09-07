@@ -551,13 +551,6 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
             return;
         }
 
-        // disables mode button for AC's if tacops_rapid_ac is not turned on
-        if (m.getType() instanceof ACWeapon
-                && !clientgui.getClient().game.getOptions().booleanOption("tacops_rapid_ac")) {
-
-            return;
-        }
-
         // send change to the server
         int nMode = m.switchMode();
         client.sendModeChange(cen, wn, nMode);

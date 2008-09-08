@@ -5,6 +5,7 @@ v0.33.31-dev (SVN)
 + Bug: Rapidfire AC possible when option is not set
 + Bug 2098132: Stackpole rolls for vehicle engine crits
 + Bug 2098980: Standing up with missing leg not working
++ Bug 2096126: swarming infantry shouldn't get a movement turn
 
  v0.33.30 (2008-09-01, 09:40 GMT-8)
 + Bug: Talons not added to equipment list.

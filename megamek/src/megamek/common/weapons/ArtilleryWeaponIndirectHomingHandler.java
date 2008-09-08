@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import megamek.common.AmmoType;
 import megamek.common.Building;
 import megamek.common.Compute;
 import megamek.common.Coords;
@@ -191,6 +192,12 @@ public class ArtilleryWeaponIndirectHomingHandler extends
             bMissed = true;
         }
         nDamPerHit = wtype.getRackSize();
+        
+        
+        // copperhead gets 10 damage less than standard
+        if (((AmmoType)ammo.getType()).getAmmoType() != AmmoType.T_ARROW_IV) {
+            nDamPerHit -= 10;
+        }
 
         // Do we need some sort of special resolution (minefields, artillery,
         if (specialResolution(vPhaseReport, entityTarget, bMissed)) {

@@ -22958,7 +22958,10 @@ public class Server implements Runnable {
             falloff = 25;
         }
         if (ammo.getMunitionType() == AmmoType.M_CLUSTER) {
-            damage -= 5;
+            // non-arrow-iv cluster does 5 less than standard
+            if (ammo.getAmmoType() != AmmoType.T_ARROW_IV) 
+                damage -= 5;
+            // thumper gets falloff 9 for 1 damage at 1 hex range
             if (ammo.getAmmoType() == AmmoType.T_THUMPER)
                 falloff = 9;
             attackSource = centre;

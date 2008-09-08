@@ -56,7 +56,7 @@ public class QuadMech extends Mech {
         setCritical(LOC_LARM, 3, new CriticalSlot(CriticalSlot.TYPE_SYSTEM, ACTUATOR_FOOT));
     }
 
-    /*
+    /**
      * Returns true if the Mech cannot stand up any longer.
      */
     public boolean cannotStandUp() {

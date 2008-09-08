@@ -40,7 +40,7 @@ public class Terrains implements ITerrainFactory {
     public static final int LEGS = 19; // blown off legs for use as clubs,
                                         // level = number of legs in that hex
     public static final int ICE = 20;
-    // level 3 terrain types (MaxTech)
+    // level 3 terrain types (TacOps)
     public static final int FORTIFIED = 21;
     public static final int GEYSER = 22; // 1: dormant 2: active 3: magma
                                             // vent

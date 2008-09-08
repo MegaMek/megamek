@@ -2494,7 +2494,9 @@ public class Server implements Runnable {
             final Entity entity = loop.nextElement();
             if (entity.isSelectableThisTurn()) {
                 final Player player = entity.getOwner();
-                if (entity instanceof Infantry) {
+                if (entity instanceof Infantry
+                        // only non-swarming infantry get a movement turn
+                        &&!(game.getPhase() == IGame.Phase.PHASE_MOVEMENT && entity.getSwarmTargetId() != Entity.NONE)) {
                     if (infMoveEven)
                         player.incrementEvenTurns();
                     else if (infMoveMulti)

@@ -239,7 +239,10 @@ public abstract class Mech extends Entity implements Serializable {
         this.autoEject = !PreferenceManager.getClientPreferences().defaultAutoejectDisabled();
     }
     
-    public abstract boolean cannotStandUp();
+    /**
+     * @return if this mech cannot stand up from hulldown
+     */
+    public abstract boolean cannotStandUpFromHullDown();
 
     public void setCowl(int armor) {
         hasCowl = true;

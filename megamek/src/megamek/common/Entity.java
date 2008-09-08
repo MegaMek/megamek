@@ -4064,6 +4064,13 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
 
         PilotingRollData roll = getBasePilotingRoll(step.getParent().getLastStepMovementType());
 
+        if (this instanceof BipedMech) {
+            if (((Mech)this).countBadLegs() >= 1 && (isLocationBad(Mech.LOC_LARM) && isLocationBad(Mech.LOC_LARM))) {
+                roll.addModifier(TargetRoll.IMPOSSIBLE, "can't get up with destroyed leg and arms");
+                return roll;
+            }
+        }
+        
         if (isHullDown() && this instanceof QuadMech) {
             roll.addModifier(TargetRoll.AUTOMATIC_SUCCESS, "getting up from hull down");
             return roll;

@@ -724,10 +724,15 @@ public class BipedMech extends Mech {
     }
 
     /**
-     * Returns true if the Mech cannot stand up any longer.
+     * @return if this mech cannot stand up from hulldown
      */
-    public boolean cannotStandUp() {
-        return (isLocationBad(LOC_RARM) && isLocationBad(LOC_LARM) && (isLocationBad(LOC_LLEG) || isLocationBad(LOC_RLEG)))
+    public boolean cannotStandUpFromHullDown() {
+        int i = 0;
+        if (isLocationBad(LOC_LLEG))
+            i++;
+        if (isLocationBad(LOC_RLEG))
+            i++;
+        return (i >= 1) 
         || (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1 && getGyroType() != Mech.GYRO_HEAVY_DUTY) 
         || (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 2 && getGyroType() == Mech.GYRO_HEAVY_DUTY);
     }

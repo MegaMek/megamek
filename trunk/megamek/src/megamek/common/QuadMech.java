@@ -59,7 +59,7 @@ public class QuadMech extends Mech {
     /**
      * Returns true if the Mech cannot stand up any longer.
      */
-    public boolean cannotStandUp() {
+    public boolean cannotStandUpFromHullDown() {
         int i = 0;
         if (isLocationBad(LOC_LARM))
             i++;
@@ -69,9 +69,7 @@ public class QuadMech extends Mech {
             i++;
         if (isLocationBad(LOC_RLEG))
             i++;
-        return i >= 3
-        || (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1 && getGyroType() != Mech.GYRO_HEAVY_DUTY) 
-        || (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 2 && getGyroType() == Mech.GYRO_HEAVY_DUTY);
+        return i >= 3;
     }
 
     public int getWalkMP(boolean gravity, boolean ignoreheat) {

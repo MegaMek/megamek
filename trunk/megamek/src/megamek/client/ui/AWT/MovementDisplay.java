@@ -848,20 +848,6 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
             butFortify.setEnabled(false);
         }
         setTurnEnabled(!ce.isImmobile() && !ce.isStuck() && (ce.getWalkMP() > 0 || ce.getJumpMP() > 0));
-
-        if (ce.isProne()) {
-            setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
-            setGoProneEnabled(false);
-            setHullDownEnabled(false);
-        } else if (ce.isHullDown()) {
-            setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
-            setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck());
-            setHullDownEnabled(false);
-        } else {
-            setGetUpEnabled(false);
-            setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck());
-            setHullDownEnabled(ce.canGoHullDown());
-        }
         updateProneButtons();
         updateRACButton();
         updateSearchlightButton();
@@ -1928,24 +1914,30 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
 
     private synchronized void updateProneButtons() {
         final Entity ce = ce();
+        if (ce != null) {
+            boolean isMech = ce instanceof Mech;
 
-        if (ce != null && !ce.isImmobile()) {
-            setGetUpEnabled(cmd.getFinalProne() || cmd.getFinalHullDown());
-            setGoProneEnabled(!(butUp.isEnabled()) && ce instanceof Mech);
-            setHullDownEnabled(ce.canGoHullDown());
+            if (cmd.getFinalProne()) {
+                setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
+                setGoProneEnabled(false);
+                setHullDownEnabled(false);
+            } else if (cmd.getFinalHullDown()) {
+                if (isMech)
+                    setGetUpEnabled(!ce.isImmobile() && !ce.isStuck() && !((Mech)ce).cannotStandUpFromHullDown());
+                else
+                    setGetUpEnabled(!ce.isImmobile() && !ce.isStuck());
+                setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck());
+                setHullDownEnabled(false);
+            } else {
+                setGetUpEnabled(false);
+                setGoProneEnabled(!ce.isImmobile() && isMech && !ce.isStuck() && !(butUp.isEnabled()));
+                setHullDownEnabled(ce.canGoHullDown());
+            }
         } else {
             setGetUpEnabled(false);
             setGoProneEnabled(false);
             setHullDownEnabled(false);
         }
-        // TW Rules change: Mechs missing both arms and one leg can't stand up
-        if (ce instanceof Mech) {
-            Mech mech = (Mech) ce;
-            if (mech.cannotStandUp()) {
-                setGetUpEnabled(false);
-            }
-        }
-
     }
 
     private void updateRACButton() {

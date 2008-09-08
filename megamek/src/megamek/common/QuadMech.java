@@ -69,7 +69,9 @@ public class QuadMech extends Mech {
             i++;
         if (isLocationBad(LOC_RLEG))
             i++;
-        return i >= 3;
+        return i >= 3
+        || (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 1 && getGyroType() != Mech.GYRO_HEAVY_DUTY) 
+        || (getBadCriticals(CriticalSlot.TYPE_SYSTEM, Mech.SYSTEM_GYRO, Mech.LOC_CT) > 2 && getGyroType() == Mech.GYRO_HEAVY_DUTY);
     }
 
     public int getWalkMP(boolean gravity, boolean ignoreheat) {

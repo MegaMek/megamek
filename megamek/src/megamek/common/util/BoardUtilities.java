@@ -747,7 +747,6 @@ public class BoardUtilities {
                         field.addTerrain(f.createTerrain(Terrains.WOODS,
                                 newlevel));
                         field.addTerrain(f.createTerrain(Terrains.FIRE, 1));
-                        field.addTerrain(f.createTerrain(Terrains.SMOKE, 1));
                     }
                 }
             }

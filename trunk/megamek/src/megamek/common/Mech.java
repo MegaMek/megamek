@@ -238,10 +238,8 @@ public abstract class Mech extends Entity implements Serializable {
         // ejection systems are disabled by default or not.
         this.autoEject = !PreferenceManager.getClientPreferences().defaultAutoejectDisabled();
     }
-
-    public boolean cannotStandUp() {
-        return isLocationBad(LOC_RARM) && isLocationBad(LOC_LARM) && (isLocationBad(LOC_LLEG) || isLocationBad(LOC_RLEG));
-    }
+    
+    public abstract boolean cannotStandUp();
 
     public void setCowl(int armor) {
         hasCowl = true;

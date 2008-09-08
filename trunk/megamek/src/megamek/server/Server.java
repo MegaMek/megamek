@@ -18811,18 +18811,6 @@ public class Server implements Runnable {
         createSmoke(coords, smokeLevel, 0);
     }
 
-    public void removeSmoke(int x, int y, int windDir) { // L2 smoke removal
-        Coords smokeCoords = new Coords(Coords.xInDir(x, y, windDir), Coords.yInDir(x, y, windDir));
-        IHex nextHex = game.getBoard().getHex(smokeCoords);
-        if (nextHex != null && nextHex.containsTerrain(Terrains.SMOKE)) {
-            nextHex.removeTerrain(Terrains.SMOKE);
-            sendChangedHex(smokeCoords);
-            Report r = new Report(5205, Report.PUBLIC);
-            r.add(smokeCoords.getBoardNum());
-            addReport(r);
-        }
-    }
-
     /**
      * Scans the boards directory for map boards of the appropriate size and
      * returns them.

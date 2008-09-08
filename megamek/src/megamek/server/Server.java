@@ -6142,7 +6142,6 @@ public class Server implements Runnable {
             r.add(coords.getBoardNum());
             vPhaseReport.add(r);
             createSmoke(coords);
-            //h.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, 2));
             sendChangedHex(coords);
         }
     }

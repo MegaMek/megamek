@@ -15289,7 +15289,8 @@ public class Server implements Runnable {
             hitsPerRound = 1;
         }
 
-        if (en.rolledForEngineExplosion)
+        // Non mechs and mechs that already rolled are safe
+        if (en.rolledForEngineExplosion || !(en instanceof Mech))
             return false;
         // ICE can always explode and roll every time hit
         if (engine.isFusion() 

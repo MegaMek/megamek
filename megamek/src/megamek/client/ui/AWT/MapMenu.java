@@ -689,7 +689,9 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
             }
 
-            if (myEntity instanceof BipedMech && !myEntity.isLocationBad(Mech.LOC_LARM) && !myEntity.isLocationBad(Mech.LOC_RARM)) {
+            if (myEntity instanceof BipedMech 
+                    && (!myEntity.isLocationBad(Mech.LOC_LARM) 
+                    || !myEntity.isLocationBad(Mech.LOC_RARM)) ) {
                 item = createPunchMenuItem();
 
                 if (item != null) {
@@ -698,7 +700,8 @@ public class MapMenu extends PopupMenu implements ActionListener {
 
             }
 
-            if (myEntity instanceof BipedMech && (!myEntity.isLocationBad(Mech.LOC_LARM) || !myEntity.isLocationBad(Mech.LOC_RARM))) {
+            if (myEntity instanceof BipedMech 
+                    && !myEntity.isLocationBad(Mech.LOC_LARM) && !myEntity.isLocationBad(Mech.LOC_RARM) ) {
                 item = createPushMenuItem();
 
                 if (item != null) {

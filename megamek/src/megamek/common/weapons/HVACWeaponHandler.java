@@ -33,7 +33,7 @@ import megamek.server.Server.DamageType;
 /**
  * @author Jason Tighe
  */
-public class HVACWeaponHandler extends ACWeaponHandler {
+public class HVACWeaponHandler extends RapidfireACWeaponHandler {
 
     /**
      * 

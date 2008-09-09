@@ -819,4 +819,8 @@ public class PlanetaryConditions implements Serializable {
     public boolean isTerrainAffected() {
         return terrainAffected;
     }
+    
+    public boolean isRecklessConditions() {
+        return fog > FOG_NONE || lightConditions > L_DUSK;
+    }
 }

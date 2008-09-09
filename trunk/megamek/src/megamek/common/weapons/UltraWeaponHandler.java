@@ -46,8 +46,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
      * @param w
      * @param g
      */
-    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g,
-            Server s) {
+    public UltraWeaponHandler(ToHitData t, WeaponAttackAction w, IGame g, Server s) {
         super(t, w, g, s);
     }
 
@@ -81,8 +80,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
             ae.loadWeapon(weapon);
             ammo = weapon.getLinked();
             // that fired one, do we need to fire another?
-            ammo.setShotsLeft(ammo.getShotsLeft()
-                    - ((howManyShots == 2) ? 1 : 0));
+            ammo.setShotsLeft(ammo.getShotsLeft() - ((howManyShots == 2) ? 1 : 0));
         } else {
             ammo.setShotsLeft(ammo.getShotsLeft() - howManyShots);
         }
@@ -100,19 +98,26 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             return 1;
         }
+
+        bSalvo = true;
+
+        if (howManyShots == 1) {
+            return howManyShots;
+        }
+
         int shotsHit;
         int nMod = 0;
-        if(bGlancing) 
+        if (bGlancing)
             nMod -= 4;
-        if(game.getPlanetaryConditions().hasEMI())
+        if (game.getPlanetaryConditions().hasEMI())
             nMod -= 2;
-        
-        if ( bDirect ){
-            nMod += (toHit.getMoS()/3)*2;
+
+        if (bDirect) {
+            nMod += (toHit.getMoS() / 3) * 2;
         }
-        
+
         boolean tacopscluster = game.getOptions().booleanOption("tacops_clusterhitpen");
-        
+
         int[] ranges = wtype.getRanges(weapon);
         if (tacopscluster) {
             if (nRange <= 1) {
@@ -121,48 +126,39 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                 nMod += 0;
             } else {
                 nMod -= 1;
-            } 
+            }
         }
 
-        if ( game.getOptions().booleanOption("tacops_range") && nRange > ranges[RangeType.RANGE_LONG] ) {
+        if (game.getOptions().booleanOption("tacops_range") && nRange > ranges[RangeType.RANGE_LONG]) {
             nMod -= 2;
         }
 
-        switch (howManyShots) {
-            case 1:
-                shotsHit = 1;
-                break;
-            default:
-                shotsHit = allShotsHit() ? howManyShots : Compute
-                            .missilesHit(howManyShots, nMod);
-            
-                // report number of shots that hit only when weapon doesn't jam
-                if (!weapon.isJammed()) {
-                    r = new Report(3325);
-                    r.subject = subjectId;
-                    r.add(shotsHit);
-                    r.add(" shot(s) ");
-                    r.add(toHit.getTableDesc());
-                    r.newlines = 0;
-                    vPhaseReport.addElement(r);
-                    if (nMod != 0) {
-                        if (nMod > 0)
-                            r = new Report(3340);
-                        else
-                            r = new Report(3341);
-                        r.subject = subjectId;
-                        r.add(nMod);
-                        r.newlines = 0;
-                        vPhaseReport.addElement(r);
-                    }
-                    r = new Report(3345);
-                    r.subject = subjectId;
-                    r.newlines = 0;
-                    vPhaseReport.addElement(r);
-                }
-                break;
+        shotsHit = allShotsHit() ? howManyShots : Compute.missilesHit(howManyShots, nMod);
+
+        // report number of shots that hit only when weapon doesn't jam
+        if (!weapon.isJammed()) {
+            r = new Report(3325);
+            r.subject = subjectId;
+            r.add(shotsHit);
+            r.add(" shot(s) ");
+            r.add(toHit.getTableDesc());
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
+            if (nMod != 0) {
+                if (nMod > 0)
+                    r = new Report(3340);
+                else
+                    r = new Report(3341);
+                r.subject = subjectId;
+                r.add(nMod);
+                r.newlines = 0;
+                vPhaseReport.addElement(r);
+            }
+            r = new Report(3345);
+            r.subject = subjectId;
+            r.newlines = 0;
+            vPhaseReport.addElement(r);
         }
-        bSalvo = true;
         return shotsHit;
     }
 
@@ -198,7 +194,7 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         }
         return false;
     }
-    
+
     /*
      * (non-Javadoc)
      * 
@@ -209,46 +205,42 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
         // infantry get hit by all shots
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = wtype.getDamage() * howManyShots;
-            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
+            toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS() / 3 : 0, Compute.WEAPON_DIRECT_FIRE);
             if (howManyShots > 1) {
-                //ok, more than 1 shot, +1 for cluster
+                // ok, more than 1 shot, +1 for cluster
                 toReturn += 1;
             }
-        }/*if (bGlancing) {
-            toReturn = (int) Math.floor(toReturn / 2.0);
-        }*/
-        
-        if ( game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG] ) {
+        }/*
+             * if (bGlancing) { toReturn = (int) Math.floor(toReturn / 2.0); }
+             */
+
+        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
             toReturn = (int) Math.floor(toReturn * .75);
         }
-        return (int)toReturn;
+        return (int) toReturn;
     }
-    
+
     protected boolean usesClusterTable() {
         return true;
     }
-    
+
     protected int calcAttackValue() {
         int distance = ae.getPosition().distance(target.getPosition());
         int av = 0;
         int range = RangeType.rangeBracket(distance, wtype.getATRanges(), true);
-        if(range == WeaponType.RANGE_SHORT) {
+        if (range == WeaponType.RANGE_SHORT) {
             av = wtype.getRoundShortAV();
-        } else if(range == WeaponType.RANGE_MED) {
+        } else if (range == WeaponType.RANGE_MED) {
             av = wtype.getRoundMedAV();
         } else if (range == WeaponType.RANGE_LONG) {
             av = wtype.getRoundLongAV();
         } else if (range == WeaponType.RANGE_EXT) {
             av = wtype.getRoundExtAV();
         }
-        //if firing only one shot due to ammo limits, then divide
-        //AV in half (not strictly by the rules, but makes sense).
-        av = (int)(((double)howManyShots / 2) * av);
+        // if firing only one shot due to ammo limits, then divide
+        // AV in half (not strictly by the rules, but makes sense).
+        av = (int) (((double) howManyShots / 2) * av);
         return av;
-    }
-    
-    protected boolean canDoDirectBlowDamage(){
-        return false;
     }
 
 }

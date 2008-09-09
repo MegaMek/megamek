@@ -45,7 +45,6 @@ import megamek.common.Terrains;
 import megamek.common.ToHitData;
 import megamek.common.WeaponType;
 import megamek.common.actions.BreakGrappleAttackAction;
-import megamek.common.actions.FlipArmsAction;
 import megamek.common.actions.GrappleAttackAction;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.CLFireExtinguisher;

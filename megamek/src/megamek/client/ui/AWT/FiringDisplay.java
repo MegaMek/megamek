@@ -83,7 +83,6 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
-import megamek.common.weapons.ACWeapon;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements
         BoardViewListener, GameListener, ActionListener, DoneButtoned,

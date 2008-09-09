@@ -787,7 +787,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      * Adds a weapon attack with the currently selected weapon to the attack
      * queue.
      */
-    private void fire() {
+    public void fire() {
         // get the selected weaponnum
         int weaponNum = clientgui.mechD.wPan.getSelectedWeaponNum();
         Mounted mounted = ce().getEquipment(weaponNum);
@@ -905,7 +905,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Skips to the next weapon
      */
-    private void nextWeapon() {
+    public void nextWeapon() {
         int nextWeapon = ce().getNextWeapon(
                 clientgui.mechD.wPan.getSelectedWeaponNum());
         // if there's no next weapon, forget about it
@@ -920,7 +920,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * The entity spends the rest of its turn finding a club
      */
-    private void findClub() {
+    public void findClub() {
         if (ce() == null) {
             return;
         }
@@ -1132,7 +1132,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
     /**
      * Torso twist in the proper direction.
      */
-    private void torsoTwist(Coords target) {
+    public void torsoTwist(Coords target) {
         int direction = ce().getFacing();
 
         if (null != target)
@@ -1155,7 +1155,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
      *            right, 0 if we're twisting to the left, 1 if to the right.
      */
 
-    private void torsoTwist(int target) {
+    public void torsoTwist(int target) {
         int direction = ce().getSecondaryFacing();
         if (target == 0) {
             clearAttacks();
@@ -1345,7 +1345,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    private void updateFlipArms(boolean armsFlipped) {
+    public void updateFlipArms(boolean armsFlipped) {
         if (armsFlipped == ce().getArmsFlipped()) {
             return;
         }

@@ -114,8 +114,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     public MechDisplay mechD;
     public Dialog minimapW;
     public MiniMap minimap;
-    public PopupMenu popup = new PopupMenu(Messages
-            .getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
+    public PopupMenu popup;// = new PopupMenu(Messages.getString("ClientGUI.BoardPopup")); //$NON-NLS-1$
     private UnitOverview uo;
     public Ruler ruler; // added by kenn
     protected Component curPanel;
@@ -986,7 +985,10 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     }
 
     protected void fillPopup(Coords coords) {
-        popup.removeAll();
+        
+        popup = new MapMenu(coords,client,curPanel,this);
+        
+        /*popup.removeAll();
 
         // add select options
         if (canSelectEntities()) {
@@ -1091,7 +1093,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
                             Targetable.TYPE_HEX_ARTILLERY)));
                 }
             }
-        }
+        }*/
     }
 
     /**

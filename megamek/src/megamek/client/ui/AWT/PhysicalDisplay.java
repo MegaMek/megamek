@@ -493,7 +493,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     /**
      * Punch the target!
      */
-    private void punch() {
+    public void punch() {
         final ToHitData leftArm = PunchAttackAction.toHit(client.game, cen,
                 target, PunchAttackAction.LEFT);
         final ToHitData rightArm = PunchAttackAction.toHit(client.game, cen,
@@ -574,7 +574,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     /**
      * Kick the target!
      */
-    private void kick() {
+    public void kick() {
         ToHitData leftLeg = KickAttackAction.toHit(client.game, cen, target,
                 KickAttackAction.LEFT);
         ToHitData rightLeg = KickAttackAction.toHit(client.game, cen, target,
@@ -636,7 +636,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     /**
      * Push that target!
      */
-    private void push() {
+    public void push() {
         ToHitData toHit = PushAttackAction.toHit(client.game, cen, target);
         String title = Messages
                 .getString(
@@ -663,7 +663,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     /**
      * Trip that target!
      */
-    private void trip() {
+    public void trip() {
         ToHitData toHit = TripAttackAction.toHit(client.game, cen, target);
         String title = Messages
                 .getString(
@@ -689,7 +689,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     /**
      * Grapple that target!
      */
-    private void doGrapple() {
+    public void doGrapple() {
         if (((Mech) ce()).getGrappled() == Entity.NONE)
             grapple(false);
         else
@@ -752,7 +752,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
         }
     }
 
-    private void jumpjetatt() {
+    public void jumpjetatt() {
         ToHitData toHit;
         int leg;
         int damage;
@@ -841,8 +841,42 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     /**
      * Club that target!
      */
-    private void club() {
+    public void club() {
         Mounted club = chooseClub();
+        if (null == club)
+            return;
+        ToHitData toHit = ClubAttackAction.toHit(client.game, cen, target,
+                club, ash.getAimTable());
+        String title = Messages
+                .getString(
+                        "PhysicalDisplay.ClubDialog.title", new Object[] { target.getDisplayName() }); //$NON-NLS-1$
+        String message = Messages.getString(
+                "PhysicalDisplay.ClubDialog.message", new Object[] { //$NON-NLS-1$
+                        toHit.getValueAsString(),
+                        new Double(Compute.oddsAbove(toHit.getValue())),
+                        toHit.getDesc(),
+                        ClubAttackAction.getDamageFor(ce(), club,
+                                target instanceof Infantry && 
+                                !(target instanceof BattleArmor))
+                                + toHit.getTableDesc() });
+        if (clientgui.doYesNoDialog(title, message)) {
+            disableButtons();
+            // declare searchlight, if possible
+            if (GUIPreferences.getInstance().getAutoDeclareSearchlight()) {
+                doSearchlight();
+            }
+
+            attacks.addElement(new ClubAttackAction(cen,
+                    target.getTargetType(), target.getTargetId(), club, ash
+                            .getAimTable()));
+            ready();
+        }
+    }
+
+    /**
+     * Club that target!
+     */
+    public void club(Mounted club) {
         if (null == club)
             return;
         ToHitData toHit = ClubAttackAction.toHit(client.game, cen, target,
@@ -1073,7 +1107,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
     /**
      * Thrash at the target, unless the player cancels the action.
      */
-    private void thrash() {
+    public void thrash() {
         ThrashAttackAction act = new ThrashAttackAction(cen, target
                 .getTargetType(), target.getTargetId());
         ToHitData toHit = act.toHit(client.game);
@@ -1101,7 +1135,7 @@ public class PhysicalDisplay extends StatusBarPhaseDisplay implements
      * Dodge like that guy in that movie that I won't name for copywrite
      * reasons!
      */
-    private void dodge() {
+    public void dodge() {
         if (clientgui
                 .doYesNoDialog(
                         Messages.getString("PhysicalDisplay.DodgeDialog.title"), Messages.getString("PhysicalDisplay.DodgeDialog.message"))) { //$NON-NLS-1$ //$NON-NLS-2$

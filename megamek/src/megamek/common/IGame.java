@@ -607,6 +607,11 @@ public interface IGame {
     public abstract Enumeration<Entity> getEntities(Coords c);
 
     /**
+     * Returns a Vector of the active entities at the given coordinates.
+     */
+    public abstract Vector<Entity> getEntitiesVector(Coords c);
+
+    /**
      * Returns a Target for an Accidental Fall From above, or null if no
      * possible target is there
      * 

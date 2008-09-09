@@ -8,6 +8,7 @@ v0.33.31-dev (SVN)
 + Bug 2096126: swarming infantry shouldn't get a movement turn
 + Bug 2095661: Artillery Damage
 + Bug 2087303: RACs at Extreme Range
++ New Context menu for AWT.
 
  v0.33.30 (2008-09-01, 09:40 GMT-8)
 + Bug: Talons not added to equipment list.

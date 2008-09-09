@@ -118,6 +118,7 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
     public static final String MOVE_MODE_AIRMECH = "moveModeAirmech"; //$NON-NLS-1$
     public static final String MOVE_MODE_AIRCRAFT = "moveModeAircraft"; //$NON-NLS-1$
     public static final String MOVE_RECKLESS = "moveReckless"; //$NON-NLS-1$
+    public static final String MOVE_CAREFUL_STAND = "moveCarefulStand"; //$NON-NLS-1$
     // Aero Movement
     public static final String MOVE_ACC = "MoveAccelerate"; //$NON-NLS-1$
     public static final String MOVE_DEC = "MoveDecelerate"; //$NON-NLS-1$
@@ -2986,30 +2987,17 @@ public class MovementDisplay extends StatusBarPhaseDisplay implements ActionList
         } else if (ev.getActionCommand().equals(MOVE_GET_UP)) {
             clearAllMoves();
             
-            if ( client.game.getOptions().booleanOption("tacops_careful_stand") && ce.getWalkMP() > 2) {
-                ConfirmDialog nag = new ConfirmDialog(clientgui.frame, 
-                    Messages.getString("MovementDisplay.CarefulStand.title"), //$NON-NLS-1$
-                    Messages.getString("MovementDisplay.CarefulStand.message"), false);
-                
-                nag.setVisible(true);
-                
-                if ( nag.getAnswer() ) {
-                    ce.setCarefulStand(true);
-                    if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                        cmd.addStep(MovePath.STEP_CAREFUL_STAND);
-                    }
-                } else {
-                    if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                        cmd.addStep(MovePath.STEP_GET_UP);
-                    }
-                }
-            }else {
-                butDone.setLabel(Messages.getString("MovementDisplay.Move")); //$NON-NLS-1$
-                if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
-                    cmd.addStep(MovePath.STEP_GET_UP);
-                }
+            if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
+                cmd.addStep(MovePath.STEP_GET_UP);
             }
-       
+            clientgui.bv.drawMovementData(ce, cmd);
+        }else if (ev.getActionCommand().equals(MOVE_CAREFUL_STAND)) {
+            clearAllMoves();
+            
+            ce.setCarefulStand(true);
+            if (cmd.getFinalProne() || cmd.getFinalHullDown()) {
+                cmd.addStep(MovePath.STEP_CAREFUL_STAND);
+            }
             clientgui.bv.drawMovementData(ce, cmd);
         } else if (ev.getActionCommand().equals(MOVE_GO_PRONE)) {
             gear = MovementDisplay.GEAR_LAND;

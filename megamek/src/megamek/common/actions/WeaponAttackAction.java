@@ -1484,6 +1484,20 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             }
         }
         
+        if (Infantry.LEG_ATTACK.equals(wtype.getInternalName())) {
+            for (Enumeration<EntityAction> actions = game.getActions(); actions.hasMoreElements();) {
+                EntityAction ea = actions.nextElement();
+                if (ea instanceof WeaponAttackAction) {
+                    WeaponAttackAction waa = (WeaponAttackAction)ea;
+                    if (waa.getTargetType() == Targetable.TYPE_ENTITY && waa.getTarget(game) instanceof Mech) {
+                        if (waa.getEntity(game).getEquipment(waa.getWeaponId()).getType().getInternalName().equals(Infantry.LEG_ATTACK)) {
+                            return "Target mech can only be targeted by one leg attack";
+                        }
+                    }
+                }
+            }
+        }
+        
         
         // missing, breached or jammed weapons can't fire
         if (!weapon.canFire() && !exchangeSwarmTarget) {

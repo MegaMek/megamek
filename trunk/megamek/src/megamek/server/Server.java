@@ -7558,7 +7558,7 @@ public class Server implements Runnable {
                     // roll
                     PilotingRollData pilotRoll = entity.getBasePilotingRoll();
                     pilotRoll.append(roll);
-                    entity.addPilotingModifierForTerrain(pilotRoll, dest);
+                    //entity.addPilotingModifierForTerrain(pilotRoll, dest);
                     vPhaseReport.addAll(doEntityFall(entity, dest, fallElevation, 3, pilotRoll));
                     vPhaseReport.addAll(doEntityDisplacementMinefieldCheck(entity, src, dest, entity.getElevation()));
 

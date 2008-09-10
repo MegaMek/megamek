@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.actions.ArtilleryAttackAction;
@@ -28,6 +29,7 @@ import megamek.common.event.GameEvent;
 import megamek.common.event.GameListener;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.AttackHandler;
+import megamek.server.SmokeCloud;
 import megamek.server.victory.Victory;
 
 /**
@@ -583,6 +585,16 @@ public interface IGame {
      * Resets this game by removing all entities.
      */
     public abstract void reset();
+    
+    /**
+     * add a smoke cloud to the list of smoke clouds
+     */
+    public abstract void addSmokeCloud(SmokeCloud cloud);
+    
+    /**
+     * get the list of smokeclouds
+     */
+    public abstract List<SmokeCloud> getSmokeCloudList();
 
     /**
      * Returns the first entity at the given coordinate, if any. Only returns

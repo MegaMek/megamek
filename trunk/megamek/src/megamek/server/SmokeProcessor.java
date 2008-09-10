@@ -79,7 +79,6 @@ public class SmokeProcessor extends DynamicTerrainProcessor {
                     if ( smokeHex.terrainLevel(Terrains.SMOKE) == 1 ) {
                         smokeHex.removeTerrain(Terrains.SMOKE);
                         smokeHex.addTerrain(Terrains.getTerrainFactory().createTerrain(Terrains.SMOKE, 2));
-                        
                         server.sendChangedHex(coords);
                     }
                 }

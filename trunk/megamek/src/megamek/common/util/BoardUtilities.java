@@ -702,8 +702,7 @@ public class BoardUtilities {
                     level -= modifier;
                     field.removeTerrain(Terrains.WATER);
                     if (level > 0) {
-                        field
-                                .addTerrain(f.createTerrain(Terrains.WATER,
+                        field.addTerrain(f.createTerrain(Terrains.WATER,
                                         level));
                     }
                 }

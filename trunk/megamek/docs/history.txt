@@ -11,6 +11,7 @@ v0.33.31-dev (SVN)
 + New Context menu for AWT.
 + Bug: Punch and Push logic reversed in Context menu
 + Logic change to how Direct Blow damage is calculated.
++ Bug: smoke not removed when server is reset
 
  v0.33.30 (2008-09-01, 09:40 GMT-8)
 + Bug: Talons not added to equipment list.

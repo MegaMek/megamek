@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -279,8 +280,6 @@ public class Server implements Runnable {
 
     private static Server serverInstance = null;
 
-    private ArrayList<SmokeCloud> smokeCloudList = new ArrayList<SmokeCloud>();
-    
     private ConnectionListenerAdapter connectionListener = new ConnectionListenerAdapter() {
 
         /**
@@ -23251,7 +23250,7 @@ public class Server implements Runnable {
      */
     public void createSmoke(Coords coords, int level, int duration){
         SmokeCloud cloud = new SmokeCloud(coords,level,duration);
-        smokeCloudList.add(cloud);
+        game.addSmokeCloud(cloud);
     }
     
     /**
@@ -23262,7 +23261,7 @@ public class Server implements Runnable {
      */
     public void createSmoke(ArrayList<Coords> coords, int level, int duration){
         SmokeCloud cloud = new SmokeCloud(coords,level,duration);
-        smokeCloudList.add(cloud);
+        game.addSmokeCloud(cloud);
     }
     
     /**
@@ -23289,7 +23288,7 @@ public class Server implements Runnable {
         }
     }
     
-    public ArrayList<SmokeCloud> getSmokeCloudList(){
-        return this.smokeCloudList;
+    public List<SmokeCloud> getSmokeCloudList(){
+        return game.getSmokeCloudList();
     }
 }

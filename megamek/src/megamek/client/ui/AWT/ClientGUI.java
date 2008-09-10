@@ -31,7 +31,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Label;
-import java.awt.MenuItem;
 import java.awt.Panel;
 import java.awt.PopupMenu;
 import java.awt.Rectangle;
@@ -58,18 +57,12 @@ import megamek.client.event.BoardViewListener;
 import megamek.client.ui.AWT.util.PlayerColors;
 import megamek.client.ui.AWT.widget.BackGroundDrawer;
 import megamek.client.ui.AWT.widget.BufferedPanel;
-import megamek.common.BuildingTarget;
 import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.EntityListFile;
-import megamek.common.HexTarget;
 import megamek.common.IGame;
-import megamek.common.IHex;
 import megamek.common.MechSummaryCache;
-import megamek.common.MinefieldTarget;
 import megamek.common.Player;
-import megamek.common.Targetable;
-import megamek.common.Terrains;
 import megamek.common.event.GameEndEvent;
 import megamek.common.event.GameListener;
 import megamek.common.event.GameListenerAdapter;
@@ -921,7 +914,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
         }
     }
 
-    private boolean canTargetEntities() {
+/*    private boolean canTargetEntities() {
         return client.isMyTurn()
                 && (curPanel instanceof FiringDisplay
                         || curPanel instanceof PhysicalDisplay || curPanel instanceof TargetingPhaseDisplay);
@@ -933,7 +926,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
                         || curPanel instanceof PhysicalDisplay
                         || curPanel instanceof MovementDisplay || curPanel instanceof TargetingPhaseDisplay);
     }
-
+*/
     /**
      * Toggles the entity display window
      */
@@ -1315,10 +1308,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
     /**
      * A menu item that lives to view an entity.
      */
-    private class ViewMenuItem extends MenuItem implements ActionListener {
-        /**
-         * 
-         */
+/*    private class ViewMenuItem extends MenuItem implements ActionListener {
         private static final long serialVersionUID = 3756822619315859847L;
         Entity entity;
 
@@ -1336,16 +1326,13 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             mechD.displayEntity(entity);
         }
     }
-
+*/
     /**
      * A menu item that would really like to select an entity. You can use this
      * during movement, firing & physical phases. (Deployment would just be
      * silly.)
      */
-    private class SelectMenuItem extends MenuItem implements ActionListener {
-        /**
-         * 
-         */
+/*    private class SelectMenuItem extends MenuItem implements ActionListener {
         private static final long serialVersionUID = -2472642242836893482L;
         Entity entity;
 
@@ -1366,15 +1353,12 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             }
         }
     }
-
+*/
     /**
      * A menu item that will target an entity, provided that it's sensible to do
      * so
      */
-    private class TargetMenuItem extends MenuItem implements ActionListener {
-        /**
-         * 
-         */
+  /*  private class TargetMenuItem extends MenuItem implements ActionListener {
         private static final long serialVersionUID = -3854766135227390453L;
         Targetable target;
 
@@ -1395,7 +1379,7 @@ public class ClientGUI extends Panel implements WindowListener, ActionListener, 
             }
         }
     }
-
+*/
     /**
      * @return the frame this client is displayed in
      */

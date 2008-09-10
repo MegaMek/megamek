@@ -15,6 +15,7 @@ v0.33.31-dev (SVN)
 + Bug: Terrain Modifier added Twice for Pilot damage roll when unit falls
 + Bug 2103038: ECM should still work if the pilot is unconscious
 + Bug 2103147: Artillery Direct Fire Minimum range
++ Bug 2020986: BA Leg Attack Bug
 
  v0.33.30 (2008-09-01, 09:40 GMT-8)
 + Bug: Talons not added to equipment list.

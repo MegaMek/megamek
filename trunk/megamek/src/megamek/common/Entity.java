@@ -2857,7 +2857,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
             //TacOps p. 100 Angle ECM can have 1 ECM and 1 ECCM at the same time
             if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM)
                     && ( m.curMode().equals("ECM") || m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECM & Ghost Targets")) ) {
-                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown() || this.getCrew().isUnconscious());
+                return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
             }
         }
         return false;
@@ -2916,7 +2916,7 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
                 //TacOps p. 100 Angle ECM can have 1 ECM and 1 ECCM at the same time
                 if (type instanceof MiscType && type.hasFlag(MiscType.F_ECM) 
                         && ( m.curMode().equals("ECCM") || m.curMode().equals("ECM & ECCM") || m.curMode().equals("ECCM & Ghost Targets")) ) {
-                    return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown() || this.getCrew().isUnconscious());
+                    return !(m.isDestroyed() || m.isMissing() || m.isBreached() || isShutDown());
                 }
             }
         }

@@ -1524,6 +1524,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (game.getPhase() != IGame.Phase.PHASE_OFFBOARD && isTAG) {
             return "TAG can only be fired in the offboard attack phase";
         }
+        if (isArtilleryDirect && Compute.effectiveDistance(game, ae, target) <= 6) {
+            return "Direct-Fire artillery attacks impossible at range <= 6";
+        }
 
         if (atype != null
                 && (atype.getAmmoType() == AmmoType.T_LRM 

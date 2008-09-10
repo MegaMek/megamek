@@ -212,7 +212,7 @@ public class SRMInfernoHandler extends SRMHandler {
 
         //Set Margin of Success/Failure.
         toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1);
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && entityTarget != null;
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();

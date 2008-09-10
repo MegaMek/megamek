@@ -268,7 +268,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
 
         //Set Margin of Success/Failure.
         toHit.setMoS(roll-Math.max(2,toHit.getValue()));
-        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1);
+        bDirect = game.getOptions().booleanOption("tacops_direct_blow") && ((toHit.getMoS()/3) >= 1) && entityTarget != null;
         if (bDirect) {
             r = new Report(3189);
             r.subject = ae.getId();
@@ -401,9 +401,19 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
-        }if (bGlancing) {
+        } else if ( bDirect ){
+            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
+        }
+        
+        if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
+
+        if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
+            toReturn = (int) Math.floor(toReturn * .75);
+        }
+
+
         return (int) toReturn;
     }
     
@@ -505,14 +515,9 @@ public class WeaponHandler implements AttackHandler, Serializable {
         // Resolve damage normally.
         nDamage = nDamPerHit * Math.min(nCluster, hits);
 
-        if ( bDirect && (!(target instanceof Infantry) || target instanceof BattleArmor)){
-            
-            if ( canDoDirectBlowDamage() ){
-                nDamage = Math.min(nDamage+(toHit.getMoS()/3), nDamage*2);
-            }
+        if ( bDirect ){
             hit.makeDirectBlow(toHit.getMoS()/3);
         }
-        
         // A building may be damaged, even if the squad is not.
         if (bldgAbsorbs > 0) {
             int toBldg = Math.min(bldgAbsorbs, nDamage);

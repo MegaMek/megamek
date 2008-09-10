@@ -73,6 +73,8 @@ public class VariableSpeedPulseLaserWeaponHandler extends EnergyWeaponHandler {
             }else{
                 toReturn++;
             }
+        } else if (bDirect){            
+            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         }
         
         if ( game.getOptions().booleanOption("tacops_range") && nRange > nRanges[RangeType.RANGE_LONG] ) {

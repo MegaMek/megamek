@@ -59,7 +59,7 @@ public class MGHandler extends AmmoWeaponHandler {
      * @see megamek.common.weapons.WeaponHandler#calcDamagePerHit()
      */
     protected int calcDamagePerHit() {
-    if (weapon.isRapidfire() && !(target instanceof Infantry && !(target instanceof BattleArmor))) {
+        if (weapon.isRapidfire() && !(target instanceof Infantry && !(target instanceof BattleArmor))) {
             // Check for rapid fire Option. Only MGs can be rapidfire.
             // nDamPerHit was already set in useAmmo
             if (bGlancing)

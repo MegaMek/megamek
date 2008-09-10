@@ -69,7 +69,11 @@ public class ACAPHandler extends AmmoWeaponHandler {
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
             toReturn = Compute.directBlowInfantryDamage(toReturn, bDirect ? toHit.getMoS()/3 : 0, Compute.WEAPON_DIRECT_FIRE);
+        } else if (bDirect){            
+            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
         }
+        
+        
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
@@ -111,8 +115,6 @@ public class ACAPHandler extends AmmoWeaponHandler {
         // Resolve damage normally.
         nDamage = nDamPerHit * Math.min(nCluster, hits);
         if ( bDirect && (!(target instanceof Infantry) || target instanceof BattleArmor) ){
-            
-            nDamage = Math.min(nDamage+(toHit.getMoS()/3), nDamage*2);
             hit.makeDirectBlow(toHit.getMoS()/3);
         }
 

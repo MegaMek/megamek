@@ -210,10 +210,14 @@ public class UltraWeaponHandler extends AmmoWeaponHandler {
                 // ok, more than 1 shot, +1 for cluster
                 toReturn += 1;
             }
-        }/*
-             * if (bGlancing) { toReturn = (int) Math.floor(toReturn / 2.0); }
-             */
-
+        } else if ( bDirect ){
+            toReturn = Math.min(toReturn+(toHit.getMoS()/3), toReturn*2);
+        }
+             
+        if (bGlancing) { 
+            toReturn = (int) Math.floor(toReturn / 2.0); 
+        }
+             
         if (game.getOptions().booleanOption("tacops_range") && nRange > wtype.getRanges(weapon)[RangeType.RANGE_LONG]) {
             toReturn = (int) Math.floor(toReturn * .75);
         }

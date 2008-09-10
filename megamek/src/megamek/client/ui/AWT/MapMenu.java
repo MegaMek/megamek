@@ -873,12 +873,12 @@ public class MapMenu extends PopupMenu implements ActionListener {
                     if (client.game.getOptions().booleanOption("tacops_start_fire") && (h.containsTerrain(Terrains.WOODS) || h.containsTerrain(Terrains.JUNGLE) || h.containsTerrain(Terrains.FIELDS) || hasMunitionType(AmmoType.M_INFERNO) || hasMunitionType(AmmoType.M_INFERNO_IV) || hasMunitionType(AmmoType.M_THUNDER_INFERNO))) { //$NON-NLS-1$
                         menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_IGNITE)));
                     }
-                } else if (h != null && h.containsTerrain(Terrains.FUEL_TANK)) {
+                } if (h != null && h.containsTerrain(Terrains.FUEL_TANK)) {
                     menu.add(TargetMenuItem(new BuildingTarget(coords, board, false)));
                     if (client.game.getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
                         menu.add(TargetMenuItem(new BuildingTarget(coords, board, true)));
                     }
-                } else if (h != null && h.containsTerrain(Terrains.BUILDING)) {
+                } if (h != null && h.containsTerrain(Terrains.BUILDING)) {
                     menu.add(TargetMenuItem(new BuildingTarget(coords, board, false)));
                     if (client.game.getOptions().booleanOption("tacops_start_fire")) { //$NON-NLS-1$
                         menu.add(TargetMenuItem(new BuildingTarget(coords, board, true)));
@@ -1076,11 +1076,12 @@ public class MapMenu extends PopupMenu implements ActionListener {
         if (list.size() == 1) {
             myTarget = selectedEntity = list.firstElement();
 
-            gui.bv.centerOnHex(myTarget.getPosition());
-            gui.getBoardView().select(myTarget.getPosition());
+            //gui.bv.centerOnHex(myTarget.getPosition());
+           // gui.getBoardView().select(myTarget.getPosition());
 
             if (currentPanel instanceof FiringDisplay) {
-                ((FiringDisplay) currentPanel).target(myTarget);
+                FiringDisplay panel = (FiringDisplay) currentPanel; 
+                panel.target(myTarget);
             } else if (currentPanel instanceof PhysicalDisplay) {
                 ((PhysicalDisplay) currentPanel).target(myTarget);
             } else if (currentPanel instanceof TargetingPhaseDisplay) {
@@ -1290,6 +1291,13 @@ public class MapMenu extends PopupMenu implements ActionListener {
         });
 
         return item;
+    }
+    
+    public void show(Component comp, int x, int y){
+        if (client.isMyTurn() && myEntity != null) {
+            selectTarget();
+        }
+        super.show(comp, x, y);
     }
 
 }

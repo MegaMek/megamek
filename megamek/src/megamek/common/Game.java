@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 
 import megamek.common.actions.ArtilleryAttackAction;
@@ -48,6 +49,7 @@ import megamek.common.event.GameSettingsChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.options.GameOptions;
 import megamek.common.weapons.AttackHandler;
+import megamek.server.SmokeCloud;
 import megamek.server.victory.SpaghettiVictoryFactory;
 import megamek.server.victory.Victory;
 import megamek.server.victory.VictoryFactory;
@@ -141,6 +143,9 @@ public class Game implements Serializable, IGame {
     // victorycondition related stuff
     private Victory victory = null;
     private VictoryFactory vf = new SpaghettiVictoryFactory();
+    
+    // smoke clouds
+    private ArrayList<SmokeCloud> smokeCloudList = new ArrayList<SmokeCloud>();
 
     /**
      * Constructor
@@ -1235,6 +1240,7 @@ public class Game implements Serializable, IGame {
         resetLayMinefieldActions();
         flares.removeAllElements();
         clearAllReports();
+        smokeCloudList.clear();
 
         forceVictory = false;
         victoryPlayerId = Player.PLAYER_NONE;
@@ -2927,6 +2933,14 @@ public class Game implements Serializable, IGame {
             this.planetaryConditions = conditions;
             processGameEvent(new GameSettingsChangeEvent(this));
         }
+    }
+    
+    public void addSmokeCloud(SmokeCloud cloud) {
+        smokeCloudList.add(cloud);
+    }
+    
+    public List<SmokeCloud> getSmokeCloudList() {
+        return smokeCloudList;
     }
     
 }

@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import megamek.common.Aero;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
+import megamek.common.BipedMech;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
 import megamek.common.Dropship;
@@ -47,6 +48,7 @@ import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
 import megamek.common.Protomech;
+import megamek.common.QuadMech;
 import megamek.common.RangeType;
 import megamek.common.Tank;
 import megamek.common.TargetRoll;
@@ -285,6 +287,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         if (reason != null) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, reason);
         }
+        
+        
+        //B-Pod firing at infantry in the same hex autohit
+        if (wtype.hasFlag(WeaponType.F_B_POD) && target instanceof Infantry
+                && target.getPosition().equals(ae.getPosition()))
+            return new ToHitData(TargetRoll.AUTOMATIC_SUCCESS, "B-Pod firing at infantry");
+        
         long munition = AmmoType.M_STANDARD;
         if (atype != null) {
             munition = atype.getMunitionType();
@@ -1501,7 +1510,24 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             boolean isArtilleryDirect, boolean isTargetECMAffected) {
         boolean isHoming = false;
         ToHitData toHit = null;
-
+        
+        
+        // only leg mounted b-pods can be fired normally
+        if (wtype.hasFlag(WeaponType.F_B_POD)) {
+            if (!(target instanceof Infantry)) {
+                return "B-Pods can't target non-infantry";
+            }
+            if (ae instanceof BipedMech) {
+                if (!(weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG)) {
+                    return "can fire only leg-mounted B-Pods";
+                }
+            } else if (ae instanceof QuadMech) {
+                if (!(weapon.getLocation() == Mech.LOC_LLEG || weapon.getLocation() == Mech.LOC_RLEG
+                        || weapon.getLocation() == Mech.LOC_LARM || weapon.getLocation() == Mech.LOC_RARM)) {
+                    return "can fire only leg-mounted B-Pods";
+                }
+            }
+        }
         if (ae.hasShield()
                 && ae.hasActiveShield(weapon.getLocation(), weapon
                         .isRearMounted())) {
@@ -2065,7 +2091,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         // BA Micro bombs only when flying
         if (atype != null && atype.getAmmoType() == AmmoType.T_BA_MICRO_BOMB) {
-            if (ae.getElevation() == 0) {
+            if (!ae.isFlying()) {
                 return "attacker must be at least at elevation 1";
             } else if (target.getTargetType() != Targetable.TYPE_HEX_BOMB) {
                 return "must target hex with bombs";
@@ -2094,13 +2120,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
 
         int eistatus = 0;
 
-        boolean MPMelevationHack = false;
+        boolean multiPurposeelevationHack = false;
         if (usesAmmo
                 && wtype.getAmmoType() == AmmoType.T_LRM
                 && atype.getMunitionType() == AmmoType.M_MULTI_PURPOSE
                 && ae.getElevation() == -1
                 && (ae.getLocationStatus(weapon.getLocation()) == ILocationExposureStatus.WET)) {
-            MPMelevationHack = true;
+            multiPurposeelevationHack = true;
             // surface to fire
             ae.setElevation(0);
         }
@@ -2142,7 +2168,7 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             losMods = los.losModifiers(game);
         } 
         
-        if (MPMelevationHack) {
+        if (multiPurposeelevationHack) {
             // and descend back to depth 1
             ae.setElevation(-1);
         }

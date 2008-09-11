@@ -373,7 +373,8 @@ public class TargetingPhaseDisplay extends StatusBarPhaseDisplay implements
         } else if (client.game.getTurn() instanceof GameTurn.TriggerBPodTurn
                 && null != ce()) {
             disableButtons();
-            TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui.getFrame(), ce(), ((GameTurn.TriggerBPodTurn)client.game.getTurn()).getAttackType());
+            TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
+            ((GameTurn.TriggerBPodTurn)client.game.getTurn()).getAttackType());
             dialog.setVisible(true);
             attacks.removeAllElements();
             Enumeration<EntityAction> actions = dialog.getActions();

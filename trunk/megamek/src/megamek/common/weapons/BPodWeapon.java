@@ -32,6 +32,11 @@ public abstract class BPodWeapon extends AmmoWeapon {
     /**
      * 
      */
+    private static final long serialVersionUID = 654643305102487115L;
+
+    /**
+     * 
+     */
     public BPodWeapon() {
         super();
         this.heat = 0;
@@ -45,7 +50,7 @@ public abstract class BPodWeapon extends AmmoWeapon {
         this.extremeRange = 0;
         this.tonnage = 1.0f;
         this.criticals = 1;
-        this.flags |= F_AUTO_TARGET | F_ONESHOT | F_B_POD;
+        this.flags |=  F_ONESHOT | F_B_POD;
         this.explosive = true; 
         this.bv = 5;
         this.cost = 6000;

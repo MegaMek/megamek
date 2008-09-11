@@ -89,7 +89,6 @@ import megamek.common.event.GamePhaseChangeEvent;
 import megamek.common.event.GameTurnChangeEvent;
 import megamek.common.util.Distractable;
 import megamek.common.util.DistractableAdapter;
-import megamek.common.weapons.ACWeapon;
 
 public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewListener,
         GameListener, ActionListener, DoneButtoned, KeyListener, ItemListener, Distractable,
@@ -471,7 +470,7 @@ public class FiringDisplay extends StatusBarPhaseDisplay implements BoardViewLis
             ready();
         } else if (client.game.getTurn() instanceof GameTurn.TriggerBPodTurn && null != ce()) {
             disableButtons();
-            TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui.getFrame(), ce(),
+            TriggerBPodDialog dialog = new TriggerBPodDialog(clientgui, ce(),
                     ((GameTurn.TriggerBPodTurn) client.game.getTurn()).getAttackType());
             dialog.setVisible(true);
             attacks.removeAllElements();

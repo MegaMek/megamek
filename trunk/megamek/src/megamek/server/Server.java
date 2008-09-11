@@ -8023,7 +8023,7 @@ public class Server implements Runnable {
     private void processAttack(Entity entity, Vector<EntityAction> vector) {
 
         // Not **all** actions take up the entity's turn.
-        boolean setDone = !(game.getTurn() instanceof GameTurn.TriggerAPPodTurn);
+        boolean setDone = !(game.getTurn() instanceof GameTurn.TriggerAPPodTurn || game.getTurn() instanceof GameTurn.TriggerBPodTurn) ;
         for (Enumeration<EntityAction> i = vector.elements(); i.hasMoreElements();) {
             EntityAction ea = i.nextElement();
 

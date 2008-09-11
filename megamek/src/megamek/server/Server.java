@@ -8317,7 +8317,7 @@ public class Server implements Runnable {
 
                 // Don't trigger the same pod twice.
                 if (!triggerPodActions.contains(tba)) {
-                    triggerBPod(entity, tba.getPodId());
+                    triggerBPod(entity, tba.getPodId(), tba.getTarget());
                     triggerPodActions.addElement(tba);
                 } else {
                     System.err.print("B Pod #");
@@ -8536,12 +8536,12 @@ public class Server implements Runnable {
      * @param podId
      *            the <code>int</code> ID of the B Pod.
      */
-    private void triggerBPod(Entity entity, int podId) {
+    private void triggerBPod(Entity entity, int podId, Entity target) {
 
         // Get the mount for this pod.
         Mounted mount = entity.getEquipment(podId);
 
-        // Confirm that this is, indeed, an AP Pod.
+        // Confirm that this is, indeed, an Anti-BA Pod.
         if (null == mount) {
             System.err.print("Expecting to find an B Pod at ");
             System.err.print(podId);
@@ -8587,49 +8587,43 @@ public class Server implements Runnable {
         r.addDesc(entity);
         addReport(r);
 
-        // Walk through ALL entities in the triggering entity's hex.
-        Enumeration<Entity> targets = game.getEntities(entity.getPosition());
-        while (targets.hasMoreElements()) {
-            final Entity target = targets.nextElement();
 
-            // Is this an unarmored infantry platoon?
-            if (target instanceof Infantry && !(target instanceof BattleArmor)) {
+        // Is this an unarmored infantry platoon?
+        if (target instanceof Infantry && !(target instanceof BattleArmor)) {
 
-                // Roll d6-1 for damage.
-                final int damage = Compute.d6();
+            // Roll d6-1 for damage.
+            final int damage = Compute.d6();
 
-                // Damage the platoon.
-                addReport(damageEntity(target, new HitData(Infantry.LOC_INFANTRY), damage));
+            // Damage the platoon.
+            addReport(damageEntity(target, new HitData(Infantry.LOC_INFANTRY), damage));
 
-                // Damage from AP Pods is applied immediately.
-                target.applyDamage();
+            // Damage from AP Pods is applied immediately.
+            target.applyDamage();
 
-             // End target-is-unarmored
-            } else if ( target instanceof BattleArmor ){
-                // Roll d6-1 for damage.
-                final int damage = 5;
+            // End target-is-unarmored
+        } else if ( target instanceof BattleArmor ){
+            // Roll d6-1 for damage.
+            final int damage = 5;
 
-                // Damage the squad.
-                addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
-                addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
-                addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
-                addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
+            // Damage the squad.
+            addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
+            addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
+            addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
+            addReport(damageEntity(target, target.rollHitLocation(0,0), damage));
 
-                // Damage from B Pods is applied immediately.
-                target.applyDamage();
-            }
+            // Damage from B Pods is applied immediately.
+            target.applyDamage();
+        }
 
-            // Nope, the target is immune.
-            // Don't make a log entry for the triggering entity.
-            else if (!entity.equals(target)) {
-                r = new Report(3020);
-                r.indent(2);
-                r.subject = target.getId();
-                r.addDesc(target);
-                addReport(r);
-            }
-
-        } // Check the next entity in the triggering entity's hex.
+        // Nope, the target is immune.
+        // Don't make a log entry for the triggering entity.
+        else if (!entity.equals(target)) {
+            r = new Report(3020);
+            r.indent(2);
+            r.subject = target.getId();
+            r.addDesc(target);
+            addReport(r);
+        }
     }
 
     /**

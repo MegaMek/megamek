@@ -30,10 +30,12 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 
+import megamek.client.ui.swing.Messages;
+import megamek.client.ui.swing.SingleChoiceDialog;
+import megamek.common.Coords;
 import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.Mech;
@@ -43,7 +45,7 @@ import megamek.common.actions.TriggerBPodAction;
 
 /**
  * A dialog displayed to the player when they have an opportunity to trigger an
- * Anti-Personell Pod on one of their units.
+ * Anti-BA Pod on one of their units.
  */
 public class TriggerBPodDialog extends JDialog implements ActionListener {
 
@@ -55,22 +57,24 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
     private JTextArea labMessage;
 
     /**
-     * The <code>FirePodTracker</code>s for the entity's active AP Pods.
+     * The <code>FirePodTracker</code>s for the entity's active Anti-BA Pods.
      */
     private ArrayList<TriggerPodTracker> trackers = new ArrayList<TriggerPodTracker>();
 
     /**
-     * The <code>int</code> ID of the entity that can fire AP Pods.
+     * The <code>int</code> ID of the entity that can fire Anti-BA Pods.
      */
     private int entityId = Entity.NONE;
     
+    private ClientGUI clientgui;
+    
     /**
-     * A helper class to track when a AP Pod has been selected to be triggered.
+     * A helper class to track when a Anti-BA Pod has been selected to be triggered.
      */
     private class TriggerPodTracker {
 
         /**
-         * The equipment number of the AP Pod that this is listening to.
+         * The equipment number of the Anti-BA Pod that this is listening to.
          */
         private int podNum = Entity.NONE;
 
@@ -88,7 +92,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         }
 
         /**
-         * See if this AP Pod should be triggered
+         * See if this Anti-BA Pod should be triggered
          * 
          * @return <code>true</code> if the pod should be triggered.
          */
@@ -97,7 +101,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         }
 
         /**
-         * Get the equipment number of this AP Pod.
+         * Get the equipment number of this Anti-BA Pod.
          * 
          * @return the <code>int</code> of the pod.
          */
@@ -107,20 +111,22 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
     }
 
     /**
-     * Display a dialog that shows the AP Pods on the entity, and allows the
+     * Display a dialog that shows the Anti-BA Pods on the entity, and allows the
      * player to fire any active pods.
      * 
      * @param parent the <code>Frame</code> parent of this dialog
      * @param entity the <code>Entity</code> that can fire AP Pods.
      */
-    public TriggerBPodDialog(JFrame parent, Entity entity, String attackType) {
-        super(parent, Messages.getString("TriggerBPodDialog.title"), true); //$NON-NLS-1$
+    public TriggerBPodDialog(ClientGUI clientgui, Entity entity, String attackType) {
+        super(clientgui.frame, Messages.getString("TriggerBPodDialog.title"), true); //$NON-NLS-1$
         entityId = entity.getId();
+        this.clientgui = clientgui;
+        
 
         labMessage = new JTextArea(
-                Messages
-                        .getString(
-                                "TriggerBPodDialog.selectPodsToTrigger", new Object[] { entity.getDisplayName() })); //$NON-NLS-1$
+                Messages.getString(
+                        "TriggerBPodDialog.selectPodsToTrigger",
+                        new Object[] { entity.getDisplayName() })); //$NON-NLS-1$
         labMessage.setEditable(false);
         labMessage.setOpaque(false);
 
@@ -128,11 +134,11 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
         JPanel panPods = new JPanel();
         panPods.setLayout(new GridLayout(0, 1));
 
-        // Walk through the entity's misc equipment, looking for AP Pods.
+        // Walk through the entity's weapons equipment, looking for Anti-BA Pods.
         for (Mounted mount : entity.getWeaponList()) {
 
             
-            // Is this an AP Pod?
+            // Is this an Anti-BA Pod?
             if (mount.getType().hasFlag(WeaponType.F_B_POD)) {
 
                 // Create a checkbox for the pod, and add it to the panel.
@@ -171,7 +177,7 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                     pod.setEnabled(false);
                 }
 
-            } // End found-AP-Pod
+            } // End found-Anti-BA-Pod
 
         } // Look at the next piece of equipment.
 
@@ -222,9 +228,9 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
             size = getSize();
         }
         setResizable(false);
-        setLocation(parent.getLocation().x + parent.getSize().width / 2
-                - size.width / 2, parent.getLocation().y
-                + parent.getSize().height / 2 - size.height / 2);
+        setLocation(clientgui.frame.getLocation().x + clientgui.frame.getSize().width / 2
+                - size.width / 2, clientgui.frame.getLocation().y
+                + clientgui.frame.getSize().height / 2 - size.height / 2);
     }
 
     public void actionPerformed(ActionEvent e) {
@@ -245,11 +251,65 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
 
             // Should we create an action for this pod?
             if (pod.isTriggered()) {
-                temp.addElement(new TriggerBPodAction(entityId, pod.getNum()));
+                
+                temp.addElement(new TriggerBPodAction(entityId, pod.getNum(), chooseTarget(clientgui.client.game.getEntity(entityId).getPosition())));
             }
         }
 
         return temp.elements();
     }
+    
+    /**
+     * Have the player select a target from the entities at the given coords.
+     * 
+     * @param pos - the <code>Coords</code> containing targets.
+     */
+    private Entity chooseTarget(Coords pos) {
+
+        // Assume that we have *no* choice.
+        Entity choice = null;
+
+        // Get the available choices.
+        Enumeration<Entity> choices = clientgui.client.game.getEntities(pos);
+
+        // Convert the choices into a List of targets.
+        Vector<Entity> targets = new Vector<Entity>();
+        while (choices.hasMoreElements()) {
+            choice = choices.nextElement();
+            if (!clientgui.client.game.getEntity(entityId).equals(choice) && choice instanceof Infantry) {
+                targets.addElement(choice);
+            }
+        }
+
+        // Do we have a single choice?
+        if (targets.size() == 1) {
+
+            // Return that choice.
+            choice = targets.elementAt(0);
+
+        }
+
+        // If we have multiple choices, display a selection dialog.
+        else if (targets.size() > 1) {
+            String[] names = new String[targets.size()];
+            for (int loop = 0; loop < names.length; loop++) {
+                names[loop] = targets.elementAt(loop).getDisplayName();
+            }
+            SingleChoiceDialog choiceDialog = new SingleChoiceDialog(
+                    clientgui.frame,
+                    Messages.getString("TriggerBPodDialog.ChooseTargetDialog.title"), //$NON-NLS-1$
+                    Messages.getString(
+                                    "TriggerBPodDialog.ChooseTargetDialog.message", new Object[] { pos.getBoardNum() }), //$NON-NLS-1$
+                    names);
+            choiceDialog.setVisible(true);
+            if (choiceDialog.getAnswer() == true) {
+                choice = targets.elementAt(choiceDialog.getChoice());
+            }
+        } // End have-choices
+
+        // Return the chosen unit.
+        return choice;
+
+    } // End private Entity chooseTarget( Coords )
 
 }

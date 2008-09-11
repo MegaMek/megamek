@@ -6786,10 +6786,14 @@ public abstract class Entity extends TurnOrdered implements Serializable, Transp
 
     /**
      * returns true if the entity is flying.
-     * 
-     * @return false, should be overridden by subclasses.
      */
     public boolean isFlying() {
+        //stuff that moves like a VTOL is flying unless at elevation 0 or on top of/in a building,
+        if (this.getMovementMode() == IEntityMovementMode.VTOL) {
+            if (game.getBoard().getHex(this.getPosition()).terrainLevel(Terrains.BLDG_ELEV) >= getElevation())
+                return false;
+            else return getElevation() > 0;
+        }
         return false;
     }
 

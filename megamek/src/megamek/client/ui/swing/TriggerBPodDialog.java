@@ -40,6 +40,7 @@ import megamek.common.Entity;
 import megamek.common.Infantry;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.QuadMech;
 import megamek.common.WeaponType;
 import megamek.common.actions.TriggerBPodAction;
 
@@ -156,7 +157,13 @@ public class TriggerBPodDialog extends JDialog implements ActionListener {
                             && mount.getLocation() != Mech.LOC_CT
                             && mount.getLocation() != Mech.LOC_LLEG
                             && mount.getLocation() != Mech.LOC_RLEG ){
-                        pod.setEnabled(false);
+                        if (entity instanceof QuadMech) {
+                            if (mount.getLocation() != Mech.LOC_LARM
+                                    || mount.getLocation() != Mech.LOC_RARM) {
+                                        pod.setEnabled(false);
+                        } 
+                        } else
+                            pod.setEnabled(false);
                     } //Only Forward Mounted Arm and Side Torso B-Pod's can be used against
                       //Swarm attacks
                     else if ( attackType.equals(Infantry.SWARM_MEK) 

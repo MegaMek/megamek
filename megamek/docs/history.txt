@@ -20,6 +20,7 @@ v0.33.31-dev (SVN)
 + Bug 2104615: Airborne Direct Fire artillery
 + Bug: leg-mounted B-Pods not being able to fired as a normal weapon against
     Infantry in the same hex.
++ Bug 2104831: AMS and Streak SRMs
 
  v0.33.30 (2008-09-01, 09:40 GMT-8)
 + Bug: Talons not added to equipment list.

@@ -58,21 +58,18 @@ public class BPodHandler extends AmmoWeaponHandler {
     protected int calcnCluster() {
         return 5;
     }
-
+    
     /*
      * (non-Javadoc)
      * 
-     * @see megamek.common.weapons.WeaponHandler#calcHits(Vector<Report>
-     *      vPhaseReport)
+     * @see megamek.common.weapons.WeaponHandler#calcHits(java.util.Vector)
      */
     protected int calcHits(Vector<Report> vPhaseReport) {
-        // conventional infantry gets hit in one lump
-        // BAs do one lump of damage per BA suit
-        if (target instanceof Infantry ) {
-            return 1;
-        }
-        return 0;
+        if (target instanceof BattleArmor)
+            return 10;
+        else return 1;
     }
+
     
     /**
      * Calculate the damage per hit.
@@ -81,15 +78,9 @@ public class BPodHandler extends AmmoWeaponHandler {
      */
     protected int calcDamagePerHit() {
         double toReturn = 0;
-        // during a swarm, all damage gets applied as one block to one location
-        if (ae instanceof BattleArmor
-                && weapon.getLocation() == BattleArmor.LOC_SQUAD
-                && (ae.getSwarmTargetId() == target.getTargetId())) {
-            toReturn *= ((BattleArmor) ae).getShootingStrength();
-        }
         // we default to direct fire weapons for anti-infantry damage
         if (target instanceof Infantry && !(target instanceof BattleArmor)) {
-            toReturn = Compute.directBlowInfantryDamage(toReturn, 0, Compute.WEAPON_DIRECT_FIRE);
+            toReturn = Compute.d6();
             if ( ((Infantry)target).isMechanized() ){
                 toReturn /=3;
             }else{
@@ -98,7 +89,7 @@ public class BPodHandler extends AmmoWeaponHandler {
             
             toReturn = Math.max(1, toReturn);
         }else if ( target instanceof BattleArmor ){
-            toReturn = 10;
+            toReturn = 1;
         }
         return (int) toReturn;
     }

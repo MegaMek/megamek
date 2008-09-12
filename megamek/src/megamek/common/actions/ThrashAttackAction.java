@@ -19,6 +19,7 @@ import megamek.common.IGame;
 import megamek.common.IHex;
 import megamek.common.Infantry;
 import megamek.common.Mech;
+import megamek.common.Player;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
 import megamek.common.Terrains;
@@ -67,6 +68,15 @@ public class ThrashAttackAction extends AbstractAttackAction {
         if (target.getTargetType() == Targetable.TYPE_ENTITY) {
             te = (Entity) target;
         }
+        
+        // a friendly unit can never be the target of a direct attack.
+        if (target.getTargetType() == Targetable.TYPE_ENTITY
+                && (((Entity)target).getOwnerId() == ae.getOwnerId()
+                        || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
+                                && ae.getOwner().getTeam() != Player.TEAM_NONE
+                                && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+        
 
         // Non-mechs can't thrash.
         if (!(ae instanceof Mech)) {

@@ -25,6 +25,7 @@ v0.33.31-dev (SVN)
 + Bug: PPC damage getting halved twice when attacking reflective armor
 + Data 2030944: TRO3075 Vehicles
 + Data 2029934: 3039 ASF Revised
++ Data 2012074: 3075 Pentagons
 
  v0.33.30 (2008-09-01, 09:40 GMT-8)
 + Bug: Talons not added to equipment list.

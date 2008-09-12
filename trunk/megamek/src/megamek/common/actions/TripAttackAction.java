@@ -19,6 +19,7 @@ import megamek.common.Entity;
 import megamek.common.IGame;
 import megamek.common.Mech;
 import megamek.common.Mounted;
+import megamek.common.Player;
 import megamek.common.QuadMech;
 import megamek.common.TargetRoll;
 import megamek.common.Targetable;
@@ -65,6 +66,15 @@ public class TripAttackAction extends PhysicalAttackAction {
         if ( ae.getGrappled() != Entity.NONE ) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "impossible");
         }
+        
+        // a friendly unit can never be the target of a direct attack.
+        if (target.getTargetType() == Targetable.TYPE_ENTITY
+                && (((Entity)target).getOwnerId() == ae.getOwnerId()
+                        || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
+                                && ae.getOwner().getTeam() != Player.TEAM_NONE
+                                && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "A friendly unit can never be the target of a direct attack.");
+        
 
         ToHitData toHit;
 

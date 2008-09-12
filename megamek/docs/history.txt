@@ -22,6 +22,7 @@ v0.33.31-dev (SVN)
     Infantry in the same hex.
 + Bug 2104831: AMS and Streak SRMs
 + Bug 2001981: Missed shots on units inside Buildings (per TW Rules)
++ Bug: PPC damage getting halved twice when attacking reflective armor
 
  v0.33.30 (2008-09-01, 09:40 GMT-8)
 + Bug: Talons not added to equipment list.

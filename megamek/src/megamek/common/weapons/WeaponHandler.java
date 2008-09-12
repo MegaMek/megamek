@@ -324,14 +324,8 @@ public class WeaponHandler implements AttackHandler, Serializable {
                 nCluster = 1;
             }
         }
-        
-        // We've calculated how many hits. At this point, any missed
-        // shots damage the building instead of the target.
+
         if (bMissed) {
-            if (targetInBuilding && bldg != null) {
-                handleAccidentalBuildingDamage(vPhaseReport, bldg, hits,
-                        nDamPerHit, target.getPosition());
-            } // End missed-target-in-building
             return false;
 
         } // End missed-target
@@ -550,20 +544,6 @@ public class WeaponHandler implements AttackHandler, Serializable {
                             false, ae.getSwarmTargetId() == entityTarget
                                     .getId() ? DamageType.IGNORE_PASSENGER
                                     : damageType, false, false, throughFront));
-        }
-    }
-
-    protected void handleAccidentalBuildingDamage(Vector<Report> vPhaseReport,
-            Building bldg, int hits, int nDamPerHit, Coords coords) {
-        // Damage the building in one big lump.
-        // Only report if damage was done to the building.
-        int toBldg = hits * nDamPerHit;
-        if (toBldg > 0) {
-            Vector<Report> buildingReport = server.damageBuilding(bldg, toBldg, coords);
-            for (Report report : buildingReport) {
-                report.subject = subjectId;
-            }
-            vPhaseReport.addAll(buildingReport);
         }
     }
 

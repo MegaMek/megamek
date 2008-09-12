@@ -189,13 +189,7 @@ public class InfantryInfernoSRMHandler extends InfantrySRMHandler {
         int hits = calcHits(vPhaseReport);
         Report.addNewline(vPhaseReport);
 
-        // We've calculated how many hits. At this point, any missed
-        // shots damage the building instead of the target.
         if (bMissed) {
-            if (targetInBuilding && bldg != null) {
-                handleAccidentalBuildingDamage(vPhaseReport, bldg, hits,
-                        nDamPerHit, target.getPosition());
-            } // End missed-target-in-building
             return false;
 
         } // End missed-target

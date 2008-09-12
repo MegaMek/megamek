@@ -18,7 +18,6 @@ import java.util.Vector;
 import megamek.common.AmmoType;
 import megamek.common.BattleArmor;
 import megamek.common.Building;
-import megamek.common.BuildingTarget;
 import megamek.common.Compute;
 import megamek.common.Entity;
 import megamek.common.IGame;
@@ -115,22 +114,6 @@ public class SRMInfernoHandler extends SRMHandler {
      */
     protected int calcDamagePerHit() {
         return 0;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see megamek.common.weapons.WeaponHandler#handleAccidentalBuildingDamage(java.util.Vector,
-     *      megamek.common.Building, int, int)
-     */
-    protected void handleAccidentalBuildingDamage(Vector<Report> vPhaseReport,
-            Building bldg, int hits, int nDamPerHit) {
-        // Is the building hit by Inferno rounds?
-        if (hits > 0) {
-            vPhaseReport.addAll(server.deliverInfernoMissiles(ae, new BuildingTarget(this.waa
-                    .getTarget(game).getPosition(), game.getBoard(), false),
-                    hits));
-        }
     }
 
     public boolean handle(IGame.Phase phase, Vector<Report> vPhaseReport) {
@@ -248,15 +231,8 @@ public class SRMInfernoHandler extends SRMHandler {
         int hits = calcHits(vPhaseReport);
         Report.addNewline(vPhaseReport);
 
-        // We've calculated how many hits. At this point, any missed
-        // shots damage the building instead of the target.
         if (bMissed) {
-            if (targetInBuilding && bldg != null) {
-                handleAccidentalBuildingDamage(vPhaseReport, bldg, hits,
-                        nDamPerHit);
-            } // End missed-target-in-building
             return false;
-
         } // End missed-target
 
         // light inferno missiles all at once, if not missed

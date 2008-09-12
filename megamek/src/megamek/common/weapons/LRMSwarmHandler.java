@@ -183,13 +183,7 @@ public class LRMSwarmHandler extends LRMHandler {
         // ways
         int hits = calcHits(vPhaseReport), nCluster = calcnCluster();
 
-        // We've calculated how many hits. At this point, any missed
-        // shots damage the building instead of the target.
         if (bMissed) {
-            if (targetInBuilding && bldg != null) {
-                handleAccidentalBuildingDamage(vPhaseReport, bldg, hits,
-                        nDamPerHit, target.getPosition());
-            } // End missed-target-in-building
             return false;
 
         } // End missed-target

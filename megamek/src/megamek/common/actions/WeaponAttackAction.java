@@ -47,6 +47,7 @@ import megamek.common.MinefieldTarget;
 import megamek.common.MiscType;
 import megamek.common.Mounted;
 import megamek.common.PlanetaryConditions;
+import megamek.common.Player;
 import megamek.common.Protomech;
 import megamek.common.QuadMech;
 import megamek.common.RangeType;
@@ -1511,6 +1512,13 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         boolean isHoming = false;
         ToHitData toHit = null;
         
+        // a friendly unit can never be the target of a direct attack.
+        if (target.getTargetType() == Targetable.TYPE_ENTITY
+                && (((Entity)target).getOwnerId() == ae.getOwnerId()
+                        || (((Entity)target).getOwner().getTeam() != Player.TEAM_NONE
+                                && ae.getOwner().getTeam() != Player.TEAM_NONE
+                                && ae.getOwner().getTeam() == ((Entity)target).getOwner().getTeam())))
+            return "A friendly unit can never be the target of a direct attack.";
         
         // only leg mounted b-pods can be fired normally
         if (wtype.hasFlag(WeaponType.F_B_POD)) {

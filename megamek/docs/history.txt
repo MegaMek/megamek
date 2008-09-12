@@ -31,6 +31,7 @@ v0.33.31-dev (SVN)
 + Data 2027479: Missing Units
 + Bug 1997361, Data 2012085: Excalibur PWS
 + Data 2024274: More WS Icons
++ Data 1988368: new SHD-5D Sprite
 
  v0.33.30 (2008-09-01, 09:40 GMT-8)
 + Bug: Talons not added to equipment list.

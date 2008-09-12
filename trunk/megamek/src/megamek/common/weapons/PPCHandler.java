@@ -22,16 +22,12 @@ import java.util.Vector;
 import megamek.common.BattleArmor;
 import megamek.common.Compute;
 import megamek.common.CriticalSlot;
-import megamek.common.Entity;
-import megamek.common.EquipmentType;
 import megamek.common.HitData;
 import megamek.common.IGame;
 import megamek.common.Infantry;
-import megamek.common.Mech;
 import megamek.common.Mounted;
 import megamek.common.RangeType;
 import megamek.common.Report;
-import megamek.common.Tank;
 import megamek.common.TargetRoll;
 import megamek.common.ToHitData;
 import megamek.common.actions.WeaponAttackAction;
@@ -120,10 +116,6 @@ public class PPCHandler extends EnergyWeaponHandler {
         if (bGlancing) {
             toReturn = (int) Math.floor(toReturn / 2.0);
         }
-
-        if ((target instanceof Mech || target instanceof Tank)
-                && ((Entity) target).getArmorType() == EquipmentType.T_ARMOR_REFLECTIVE)
-            toReturn /= 2;
 
         return (int) Math.ceil(toReturn);
     }

@@ -76,6 +76,7 @@ public class LosEffects {
     int screen = 0;
     int softBuildings = 0;
     int hardBuildings = 0;
+    int buildingLevelsOrHexes = 0;
     boolean blockedByHill = false;
     boolean blockedByWater = false;
     int targetCover = COVER_NONE; // that means partial cover
@@ -107,6 +108,7 @@ public class LosEffects {
         this.ultraWoods += other.ultraWoods;
         this.lightSmoke += other.lightSmoke;
         this.heavySmoke += other.heavySmoke;
+        this.buildingLevelsOrHexes += other.buildingLevelsOrHexes;
         this.screen += other.screen;
         this.softBuildings += other.softBuildings;
         this.hardBuildings += other.hardBuildings;
@@ -419,6 +421,10 @@ public class LosEffects {
             return new ToHitData(TargetRoll.IMPOSSIBLE,
                     "Infantry protected by building.");
         }
+        
+        if (buildingLevelsOrHexes > 2) {
+            return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by buildin hexes or levels.");
+        }
 
         if (ultraWoods >= 1 || lightWoods + (heavyWoods * 2) > 2) {
             return new ToHitData(TargetRoll.IMPOSSIBLE, "LOS blocked by woods.");
@@ -462,6 +468,16 @@ public class LosEffects {
             } else {
                 modifiers.addModifier(lightWoods, lightWoods
                         + " intervening light woods");
+            }
+        }
+        
+        if (buildingLevelsOrHexes > 0) {
+            if (eistatus > 0) {
+                modifiers.addModifier(1,
+                        "firing through building hex/level with EI system");
+            } else {
+                modifiers.addModifier(buildingLevelsOrHexes, buildingLevelsOrHexes
+                        + " intervening building levels or hexes");
             }
         }
 
@@ -708,7 +724,20 @@ public class LosEffects {
 
         // ignore hexes the attacker or target are in
         if (coords.equals(ai.attackPos) || coords.equals(ai.targetPos)) {
+            if (los.getThruBldg() != null) {
+                // attacker and target in building at different height:
+                // +1 for each level of difference
+                if (ai.attackPos.equals(ai.targetPos) && ai.targetEntity)
+                    los.buildingLevelsOrHexes += (Math.abs(ai.attackHeight - ai.targetHeight));
+            }
             return los;
+        }
+        
+        // we are an attack in a building, +1 for each building hex between the
+        // 2 units
+        if (game.getBoard().getBuildingAt(ai.attackPos).equals(game.getBoard().getBuildingAt(ai.targetPos))
+                && ai.targetEntity && thruBldg.equals(game.getBoard().getBuildingAt(ai.attackPos))) {
+            los.buildingLevelsOrHexes += 1;
         }
 
         IHex hex = game.getBoard().getHex(coords);

@@ -262,6 +262,8 @@ public class WeaponAttackAction extends AbstractAttackAction implements
                 && !mLinker.isBreached() && mLinker.getType().hasFlag(
                 MiscType.F_APOLLO))
                 && atype.getAmmoType() == AmmoType.T_MRM;
+        boolean inSameBuilding = te != null && game.getBoard().getBuildingAt(ae.getPosition()) != null
+                && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
 
         if (te != null) {
             if (!isTargetECMAffected
@@ -1138,9 +1140,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
         // target terrain, not applicable when delivering minefields
         if (target.getTargetType() != Targetable.TYPE_MINEFIELD_DELIVER) {
             toHit.append(Compute.getTargetTerrainModifier(game, target,
-                    eistatus));
+                    eistatus, inSameBuilding));
             toSubtract += Compute.getTargetTerrainModifier(game, target,
-                    eistatus).getValue();
+                    eistatus, inSameBuilding).getValue();
         }
 
         // target in water?
@@ -1471,10 +1473,9 @@ public class WeaponAttackAction extends AbstractAttackAction implements
             toHit.addModifier(-toSubtract, "original target mods");
             toHit.append(Compute
                     .getImmobileMod(oldTarget, aimingAt, aimingMode));
-            toHit.append(Compute.getTargetMovementModifier(game, oldTarget
-                    .getId()));
+            toHit.append(Compute.getTargetMovementModifier(game, oldTarget.getId()));
             toHit.append(Compute.getTargetTerrainModifier(game, game
-                    .getEntity(oldTarget.getId())));
+                    .getEntity(oldTarget.getId()), eistatus, inSameBuilding));
             distance = Compute.effectiveDistance(game, ae, oldTarget);
             if (oldTarget.isProne()) {
                 // easier when point-blank

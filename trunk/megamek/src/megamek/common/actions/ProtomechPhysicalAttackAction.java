@@ -100,6 +100,8 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         final int targetElevation = target.getElevation()
                 + targHex.getElevation();
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
+        boolean inSameBuilding = te != null && game.getBoard().getBuildingAt(ae.getPosition()) != null
+                && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
         Building bldg = null;
         if (targetInBuilding) {
             bldg = game.getBoard().getBuildingAt(te.getPosition());
@@ -206,7 +208,7 @@ public class ProtomechPhysicalAttackAction extends AbstractAttackAction {
         toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
 
         // target terrain
-        toHit.append(Compute.getTargetTerrainModifier(game, te));
+        toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
 
         // attacker is spotting
         if (ae.isSpotting()) {

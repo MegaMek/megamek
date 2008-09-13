@@ -118,6 +118,8 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         Building bldg = game.getBoard().getBuildingAt(this.getTargetPos());
         ToHitData toHit = null;
         boolean targIsBuilding = ((getTargetType() == Targetable.TYPE_FUEL_TANK) || (getTargetType() == Targetable.TYPE_BUILDING));
+        boolean inSameBuilding = te != null && game.getBoard().getBuildingAt(ae.getPosition()) != null
+                && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
 
         // can't target yourself
         if (ae.equals(te)) {
@@ -209,7 +211,7 @@ public class ChargeAttackAction extends DisplacementAttackAction {
         toHit.append(Compute.getAttackerTerrainModifier(game, ae.getId()));
 
         // target terrain
-        toHit.append(Compute.getTargetTerrainModifier(game, te));
+        toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
 
         // attacker is spotting
         if (ae.isSpotting()) {

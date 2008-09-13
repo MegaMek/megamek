@@ -610,7 +610,7 @@ public class WeaponHandler implements AttackHandler, Serializable {
         vPhaseReport.addAll(buildingReport);
 
         // Damage any infantry in the hex.
-        server.damageInfantryIn(bldg, nDamage);
+        server.damageInfantryIn(bldg, nDamage, coords);
     }
 
     protected boolean allShotsHit() {

@@ -3752,7 +3752,7 @@ public class Server implements Runnable {
                 // ASSUMPTION: infantry take no damage from the
                 // building absorbing damage from
                 // Tanks and Mechs being charged.
-                damageInfantryIn(bldg, chargeDamage);
+                damageInfantryIn(bldg, chargeDamage, nextPos);
 
                 // If a building still stands, then end the skid,
                 // and add it to the list of affected buildings.
@@ -9240,7 +9240,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage);
+            damageInfantryIn(bldg, damage, target.getPosition());
 
             // And we're done!
             return;
@@ -9439,7 +9439,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage);
+            damageInfantryIn(bldg, damage, target.getPosition());
 
             // And we're done!
             return;
@@ -9667,7 +9667,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage);
+            damageInfantryIn(bldg, damage, target.getPosition());
 
             // And we're done!
             return;
@@ -9842,7 +9842,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage);
+            damageInfantryIn(bldg, damage, target.getPosition());
 
             // And we're done!
             return;
@@ -10336,7 +10336,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage);
+            damageInfantryIn(bldg, damage, target.getPosition());
 
             // And we're done!
             return;
@@ -11121,7 +11121,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage);
+            damageInfantryIn(bldg, damage, target.getPosition());
 
             // Apply damage to the attacker.
             int toAttacker = ChargeAttackAction.getDamageTakenBy(ae, bldg, target.getPosition());
@@ -11785,7 +11785,7 @@ public class Server implements Runnable {
             addReport(buildingReport);
 
             // Damage any infantry in the hex.
-            damageInfantryIn(bldg, damage);
+            damageInfantryIn(bldg, damage, target.getPosition());
 
         } else { // Target isn't building.
             if (glancing) {
@@ -20625,7 +20625,7 @@ public class Server implements Runnable {
         // Apply the correct amount of damage to infantry in the building.
         // ASSUMPTION: We inflict toBldg damage to infantry and
         // not the amount to bring building to 0 CF.
-        damageInfantryIn(bldg, toBldg);
+        damageInfantryIn(bldg, toBldg, entering?curPos:lastPos);
 
         return checkBuildingCollapseWhileMoving(bldg, entity, entering?curPos:lastPos);
     }
@@ -20672,7 +20672,7 @@ public class Server implements Runnable {
      * @param damage -
      *            the <code>int</code> amount of damage.
      */
-    public void damageInfantryIn(Building bldg, int damage) {
+    public void damageInfantryIn(Building bldg, int damage, Coords hexCoords) {
         
         if ( bldg == null ) {
             return;
@@ -20704,8 +20704,9 @@ public class Server implements Runnable {
             Entity entity = entities.nextElement();
             final Coords coords = entity.getPosition();
 
-            // If the entity is infantry in one of the building's hexes?
-            if (entity instanceof Infantry && bldg.isIn(coords)) {
+            // If the entity is infantry in the affected hex?
+            if (entity instanceof Infantry && bldg.isIn(coords)
+                    && coords.equals(hexCoords)) {
 
                 // Is the entity is inside of the building
                 // (instead of just on top of it)?

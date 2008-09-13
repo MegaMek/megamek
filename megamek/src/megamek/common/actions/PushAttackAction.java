@@ -116,6 +116,8 @@ public class PushAttackAction extends DisplacementAttackAction {
         final int attackerElevation = ae.getElevation() + attHex.getElevation();
         final int targetElevation = target.getElevation()
                 + targHex.getElevation();
+        boolean inSameBuilding = te != null && game.getBoard().getBuildingAt(ae.getPosition()) != null
+        && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(te.getPosition()));
         final boolean targetInBuilding = Compute.isInBuilding(game, te);
         Building bldg = null;
         if (targetInBuilding) {
@@ -271,7 +273,7 @@ public class PushAttackAction extends DisplacementAttackAction {
         toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
 
         // target terrain
-        toHit.append(Compute.getTargetTerrainModifier(game, te));
+        toHit.append(Compute.getTargetTerrainModifier(game, te, 0, inSameBuilding));
 
         // damaged or missing actuators
         if (!ae.hasWorkingSystem(Mech.ACTUATOR_SHOULDER, Mech.LOC_RARM)) {

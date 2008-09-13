@@ -136,6 +136,8 @@ public class PhysicalAttackAction extends AbstractAttackAction {
 
     protected static void setCommonModifiers(ToHitData toHit, IGame game,
             Entity ae, Targetable target) {
+        boolean inSameBuilding = target instanceof Entity && game.getBoard().getBuildingAt(ae.getPosition()) != null
+                && game.getBoard().getBuildingAt(ae.getPosition()).equals(game.getBoard().getBuildingAt(target.getPosition()));
         int attackerId = ae.getId();
         int targetId = target.getTargetId();
         // Battle Armor targets are hard for Meks and Tanks to hit.
@@ -150,7 +152,7 @@ public class PhysicalAttackAction extends AbstractAttackAction {
         toHit.append(Compute.getAttackerTerrainModifier(game, attackerId));
 
         // target terrain
-        toHit.append(Compute.getTargetTerrainModifier(game, target));
+        toHit.append(Compute.getTargetTerrainModifier(game, target, 0, inSameBuilding));
 
         if ( ae.hasModularArmor() ) {
             toHit.addModifier(1,"Modular Armor");

@@ -34,6 +34,7 @@ v0.33.31-dev (SVN)
 + Data 1988368: new SHD-5D Sprite
 + Bug: a friendly unit can never be the target of a direct attack.
 + Bug: missing to-hit modifiers when in-building-combat happens
++ Bug 1966594: Unit Damage inside Buildings (TW rules) 
 
  v0.33.30 (2008-09-01, 09:40 GMT-8)
 + Bug: Talons not added to equipment list.

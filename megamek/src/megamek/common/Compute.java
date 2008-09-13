@@ -1418,8 +1418,12 @@ public class Compute {
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t) {
         return getTargetTerrainModifier(game, t, 0);
     }
-
+    
     public static ToHitData getTargetTerrainModifier(IGame game, Targetable t, int eistatus) {
+        return getTargetTerrainModifier(game, t, eistatus, false);
+    }
+
+    public static ToHitData getTargetTerrainModifier(IGame game, Targetable t, int eistatus, boolean attackerInSameBuilding) {
         Entity entityTarget = null;
         IHex hex = game.getBoard().getHex(t.getPosition());
         if (t.getTargetType() == Targetable.TYPE_ENTITY) {
@@ -1433,6 +1437,11 @@ public class Compute {
         boolean isVTOL = ((entityTarget != null) && (hex != null)) && (entityTarget.absHeight() >= 2);
 
         ToHitData toHit = new ToHitData();
+        
+        // if we have in-building combat, it's a +1
+        if (attackerInSameBuilding) {
+            toHit.addModifier(1, "target in a building hex");
+        }
 
         // Smoke and woods. With L3, the effects STACK.
         int woodsLevel = hex.terrainLevel(Terrains.WOODS);

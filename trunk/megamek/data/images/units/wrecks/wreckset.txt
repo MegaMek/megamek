@@ -4,7 +4,7 @@ Santander
 Ploppy
 
 # The format goes as follows:
-# {chassis/exact} [model] [image filename] 
+# {chassis/exact} [model] [image filename]
 #
 # Note that infantry does not make wrecks...
 # 
@@ -18,6 +18,8 @@ Ploppy
 # Images should be greyscale, 84x72 pixel gifs with the chassis centered.  The
 # tinting process is subtractive, so make images light.
 # 
+
+include localclient_wreckset.txt
 
 # these 27 must be in here 
 exact "default_light" "small_boom.gif"
@@ -836,6 +838,7 @@ chassis "Rifleman" "rifleman.gif"
 #chassis "Shadow Cat" "shadow cat.gif"
 #chassis "Shadow Hawk IIC" "shadow hawk.gif"
 #chassis "Shadow Hawk" "shadowhawk.gif"
+exact "Shadow Hawk SHD-5D" "shadowhawk5d.gif"
 #chassis "Shadow" " .gif"
 #chassis "Sheepdog" " .gif"
 #chassis "Shinobi" " .gif"
@@ -995,3 +998,5 @@ chassis "Wasp" "wasp.gif"
 #chassis "Yeoman" "yeoman.gif"
 #chassis "Yu Huang" " .gif"
 #chassis "Zeus" "zeus.gif"
+
+ 	  	 

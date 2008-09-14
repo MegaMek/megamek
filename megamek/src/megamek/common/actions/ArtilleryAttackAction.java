@@ -46,6 +46,8 @@ public class ArtilleryAttackAction extends WeaponAttackAction implements
         this.firingCoords = game.getEntity(entityId).getPosition();
         int distance = Compute.effectiveDistance(game, getEntity(game),
                 getTarget(game));
+        // adjust distance for gravity
+        distance = (int)Math.floor((double)distance/game.getPlanetaryConditions().getGravity());
         EquipmentType eType = game.getEntity(entityId).getEquipment(weaponId).getType();
         if (eType.hasFlag(WeaponType.F_CRUISE_MISSILE)) {
             turnsTilHit = 1 + (distance / 17 / 5);

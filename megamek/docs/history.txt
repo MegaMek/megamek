@@ -37,6 +37,7 @@ v0.33.31-dev (SVN)
 + Bug 1966594: Unit Damage inside Buildings (TW rules)
 + Bug: Artillery flight time was not being adjusted for gravity
 + Data 2106809: Danais + Trojan dropships
++ Data 2108434: localclient_wreckset
 
  v0.33.30 (2008-09-01, 09:40 GMT-8)
 + Bug: Talons not added to equipment list.

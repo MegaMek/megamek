@@ -3,6 +3,7 @@
 v0.33.32-dev (SVN)
 + Remove unused image files
 + Bug 2111184: 0.30.31 Bot Won't Move/Deploy
++ Bug: Issue with null buildings in losEffects
 
 v0.33.31 (2009-09-14, 19:30 GMT+1)
 + Bug: Improved Heavy Large Laser had the wrong crit/Tonnage

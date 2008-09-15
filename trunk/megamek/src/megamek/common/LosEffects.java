@@ -735,7 +735,9 @@ public class LosEffects {
         
         // we are an attack in a building, +1 for each building hex between the
         // 2 units
-        if (game.getBoard().getBuildingAt(ai.attackPos).equals(game.getBoard().getBuildingAt(ai.targetPos))
+        if (game.getBoard().getBuildingAt(ai.attackPos) != null
+                && game.getBoard().getBuildingAt(ai.targetPos) != null
+                && game.getBoard().getBuildingAt(ai.attackPos).equals(game.getBoard().getBuildingAt(ai.targetPos))
                 && ai.targetEntity && thruBldg.equals(game.getBoard().getBuildingAt(ai.attackPos))) {
             los.buildingLevelsOrHexes += 1;
         }

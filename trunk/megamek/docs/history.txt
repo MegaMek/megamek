@@ -1,6 +1,6 @@
 ﻿VERSION HISTORY:
 ----------------
-v0.33.32-dev (SVN)
+v0.33.32 (2009-09-15, 21:21 GMT+1)
 + Remove unused image files
 + Bug 2111184: 0.30.31 Bot Won't Move/Deploy
 + Bug: Issue with null buildings in losEffects

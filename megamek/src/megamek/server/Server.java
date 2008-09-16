@@ -22806,9 +22806,6 @@ public class Server implements Runnable {
                     if (hex.containsTerrain(Terrains.FORTIFIED) && entity instanceof Infantry && !(entity instanceof BattleArmor)) {
                         hits *= 2;
                     }
-                    if (hex.containsTerrain(Terrains.WOODS) || hex.containsTerrain(Terrains.JUNGLE)) {
-                        hits = (hits + 1) / 2;
-                    }
                 } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
                     // wheeled and hover tanks take movement critical
                     if (entity instanceof Tank && (entity.getMovementMode() == IEntityMovementMode.WHEELED || entity.getMovementMode() == IEntityMovementMode.HOVER)) {
@@ -22946,8 +22943,7 @@ public class Server implements Runnable {
             if (ammo.getAmmoType() == AmmoType.T_THUMPER)
                 falloff = 9;
             attackSource = centre;
-        }        
-        if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
+        } else if (ammo.getMunitionType() == AmmoType.M_FLECHETTE) {
             switch (ammo.getAmmoType()) {
             // for flechette, damage and fallof is number of d6, not absolut damage
             case AmmoType.T_LONG_TOM:

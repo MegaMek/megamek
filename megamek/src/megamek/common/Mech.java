@@ -873,7 +873,7 @@ public abstract class Mech extends Entity implements Serializable {
             for (Object oMount : miscList) {
                 Mounted m = (Mounted) oMount;
                 if (m.getType().hasFlag(MiscType.F_JUMP_JET)) {
-                    if ((m.getType().getTechLevel() == TechConstants.T_IS_LEVEL_2) || (m.getType().getTechLevel() == TechConstants.T_IS_LEVEL_3) || (m.getType().getTechLevel() == TechConstants.T_CLAN_LEVEL_3)) {
+                    if (m.getType().hasSubType(MiscType.S_IMPROVED)) {
                         jumpType = JUMP_IMPROVED;
                     } else {
                         jumpType = JUMP_STANDARD;

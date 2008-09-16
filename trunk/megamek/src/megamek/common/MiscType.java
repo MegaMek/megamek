@@ -132,6 +132,10 @@ public class MiscType extends EquipmentType {
     // Secondary flags for MASC
     public static final long S_SUPERCHARGER = 1L << 0;
 
+    // Secondary flags for Jump Jets
+    public static final long S_STANDARD = 1L << 0;
+    public static final long S_IMPROVED = 1L << 1;
+    
     public static final int T_TARGSYS_UNKNOWN = -1;
     public static final int T_TARGSYS_STANDARD = 0;
     public static final int T_TARGSYS_TARGCOMP = 1;
@@ -183,9 +187,7 @@ public class MiscType extends EquipmentType {
         }
         // check for known formulas
         if (hasFlag(F_JUMP_JET)) {
-            if ((getTechLevel() == TechConstants.T_IS_LEVEL_3)
-                    || (getTechLevel() == TechConstants.T_IS_LEVEL_2)
-                    || (getTechLevel() == TechConstants.T_CLAN_LEVEL_3)) {
+            if (hasSubType(S_IMPROVED)) {
                 if (entity.getWeight() <= 55.0) {
                     return 1.0f;
                 } else if (entity.getWeight() <= 85.0) {
@@ -581,6 +583,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 1;
         misc.flags |= F_JUMP_JET;
+        misc.subType |= S_STANDARD;
         misc.bv = 0;
 
         return misc;
@@ -596,6 +599,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
         misc.flags |= F_JUMP_JET;
+        misc.subType |= S_IMPROVED;
         misc.bv = 0;
 
         return misc;
@@ -611,6 +615,7 @@ public class MiscType extends EquipmentType {
         misc.tonnage = TONNAGE_VARIABLE;
         misc.criticals = 2;
         misc.flags |= F_JUMP_JET;
+        misc.subType |= S_IMPROVED;
         misc.bv = 0;
 
         return misc;

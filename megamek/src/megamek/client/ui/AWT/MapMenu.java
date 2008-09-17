@@ -884,16 +884,11 @@ public class MapMenu extends PopupMenu implements ActionListener {
                         menu.add(TargetMenuItem(new BuildingTarget(coords, board, true)));
                     }
                 }
-                if (h != null && client.game.containsMinefield(coords) && (currentPanel instanceof FiringDisplay || currentPanel instanceof TargetingPhaseDisplay)) {
-                    if (hasAmmoType(AmmoType.T_LRM) && (hasMunitionType(AmmoType.M_FASCAM) || hasMunitionType(AmmoType.M_THUNDER) || hasMunitionType(AmmoType.M_THUNDER_ACTIVE) || hasMunitionType(AmmoType.M_THUNDER_AUGMENTED) || hasMunitionType(AmmoType.M_THUNDER_INFERNO) || hasMunitionType(AmmoType.M_THUNDER_VIBRABOMB))) {
-                        menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_MINEFIELD_DELIVER)));
-                    }
-                }
                 if (h != null && currentPanel instanceof FiringDisplay) {
                     if (board.inSpace() && hasAmmoType(AmmoType.T_SCREEN_LAUNCHER)) {
                         menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_HEX_SCREEN)));
                     } else {
-                        if (hasAmmoType(AmmoType.T_LRM) && (hasMunitionType(AmmoType.M_FASCAM) || hasMunitionType(AmmoType.M_THUNDER) || hasMunitionType(AmmoType.M_THUNDER_ACTIVE) || hasMunitionType(AmmoType.M_THUNDER_AUGMENTED) || hasMunitionType(AmmoType.M_THUNDER_INFERNO) || hasMunitionType(AmmoType.M_THUNDER_VIBRABOMB))) {
+                        if ( (hasAmmoType(AmmoType.T_LRM) || hasAmmoType(AmmoType.T_MML)) && (hasMunitionType(AmmoType.M_FASCAM) || hasMunitionType(AmmoType.M_THUNDER) || hasMunitionType(AmmoType.M_THUNDER_ACTIVE) || hasMunitionType(AmmoType.M_THUNDER_AUGMENTED) || hasMunitionType(AmmoType.M_THUNDER_INFERNO) || hasMunitionType(AmmoType.M_THUNDER_VIBRABOMB))) {
                             menu.add(TargetMenuItem(new HexTarget(coords, board, Targetable.TYPE_MINEFIELD_DELIVER)));
                         }
 
